@@ -1,3 +1,22 @@
+ /*
+ .stic_panel {
+  all: unset !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  font-family: var(--bs-body-font-family);
+  font-family: "Lato", Lato, Arial, sans-serif;
+  font-size: 13px;
+} 
+*/
+/* .stic_panel button,
+.stic_panel .btn,
+.stic_panel button[type="button"].btn {
+    background-color: transparent !important; 
+    border: 1px solid transparent !important; 
+    color: inherit !important; 
+    padding: 0 !important; 
+} */
+
 .w-32px {
   width: 32px;
 }

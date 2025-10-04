@@ -362,6 +362,28 @@ class AWF_Field {
     return this.type_in_form == "text" || this.type_in_form == "textarea" || this.type_in_form == "number";
   }
 
+  acceptValueOptions() {
+    return this.type_in_form == "select" && this.subtype_in_form != "select_checkbox" && this.type != "relate";
+  }
+
+  setValueOptions(originalOptions) {
+    this.value_options = [];
+    if (!originalOptions) return this.value_options;
+
+    originalOptions.forEach(o => {
+      this.value_options.push(new AWF_ValueOption({
+        value: o.id,
+        is_visible: true,
+        text_original: o.text,
+        text: o.text,
+      }));
+    });
+  }
+  
+  isOptionValueModified() {
+    return this.value_options.some(o => !o.is_visible || o.text_original !== o.text);
+  }
+
   static type_fieldList(asString = false) {
     return utils.getList("stic_advanced_web_forms_field_type_list", asString);
   }
@@ -375,6 +397,7 @@ class AWF_Field {
   type_in_formText(){
     return AWF_Field.type_in_formList()[this.type_in_form];  
   }
+
   static subtype_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_in_form_subtype_list", asString);
   }
@@ -392,15 +415,17 @@ class AWF_Field {
 
 /**
  * ValueOption: { 
- *    value, text
+ *    value, is_visible, text_original, text
  *  }
  */
 class AWF_ValueOption{
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      value: "",      // Valor de la opción
-      text: "",       // Texto de la opción
+      value: '',          // Valor de la opción
+      is_visible: true,   // Indica si se mostrará
+      text_original: '',  // Texto original de la opción
+      text: '',           // Texto de la opción
     });
 
     // 2. Overwrite with provided data
@@ -541,7 +566,7 @@ class AWF_Configuration {
    */
   suggestDataBlockText(moduleName) {
     let module = utils.getModuleInformation(moduleName);
-    if (module == null) {
+    if (!module || !module.textSingular) {
       return "";
     }
 

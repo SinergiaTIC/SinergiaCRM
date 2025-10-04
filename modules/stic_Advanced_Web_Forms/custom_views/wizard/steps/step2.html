@@ -3,20 +3,11 @@
   <!-- Add DataBlock from Module -->
   <div
     class="border-bottom ps-3 pt-3 mb-2 bg-light"
-    x-data="{
-      creatingDataBlock: !formConfig.data_blocks.some(b => b.module!=''), 
-      newDataBlock: {module:'', text:''},
-      async handleAddDatablockModule() {
-        formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
-        this.creatingDataBlock = false;
-        step2.loadDatablockRelationships();
-      },
-    }">
+    x-data="WizardStep2.addDataBlockModulexData(formConfig, step2);">
     <div class="d-flex mb-3">
-      <button type="button" class="btn w-auto" x-show="!creatingDataBlock" @click="creatingDataBlock=true;">
-        [Añadir Bloque de Datos de Módulo]
-      </button>
-      <h4 x-show="creatingDataBlock">[Añadir Bloque de Datos de Módulo]</h4>
+      <button type="button" class="btn w-auto" x-show="!creatingDataBlock" @click="creatingDataBlock=true;" 
+              x-text="'[Añadir Bloque de Datos de Módulo]'"></button>
+      <h4 x-show="creatingDataBlock" x-text="'[Añadir Bloque de Datos de Módulo]'"></h4>
     </div>
     <div class="row align-items-end" x-show="creatingDataBlock">
       <!-- Module -->
@@ -80,101 +71,11 @@
           </div>
           <!-- DataBlock body -->
           <div class="card-body">
+            <!-- IEPA!!! -->
+            <!-- Fer que la configuració de Camps sigui modal i que accepti qualsevol tipus de camp -->
+
             <!-- Fields Definition -->
-            <div :id="`dataBlockFields${item.id}`" x-data="{
-              creatingFieldUnlinked: false,
-              creatingFieldForm: false,
-              creatingFieldHidden: false,
-              typeField: 'form',
-
-              showAllFields: false,
-              get availableFields() { return this.showAllFields ? item.getAvailableFieldsInformation() : item.getAvailableFieldsInformation().filter(f => f.inViews); },
-                  
-              selectedFieldInfo: {},
-              newField: new AWF_Field(),
-              optionValues: [],
-
-              get availableValueTypes() { return this.newField?.getAvailableValueTypes() ?? []; },
-              get availableTypesInForm() { return this.newField?.getAvailableTypesInForm() ?? []; },
-              get availableSubtypesInForm() { return this.newField?.getAvailableSubtypesInForm() ?? []; },
-
-              get isValid() { return this.newField?.isValid() == true; },
-
-              init() {
-                this.$watch('availableFields', (newArray) => {
-                  this.newField = new AWF_Field({ name: newArray[0]?.name ?? '', type_field: this.newField?.type_field});
-                });
-                this.$watch('typeField', (newType, oldType) => {
-                  this.newField = new AWF_Field({ name: this.newField?.name ?? '', type_field: newType});
-                  this.newField.in_form = this.newField.isFieldInForm();
-                  if (!this.newField.isFieldInForm()) {
-                    this.newField.label = '';
-                    this.required_in_form = false;
-                    this.newField.type_in_form = '';
-                    this.newField.value_options = [];
-                  }
-                });
-                this.$watch('newField.name', (newName, oldName) => {
-                  this.selectedFieldInfo = this.availableFields.find(f => f.name == newName);
-                });
-                this.$watch('selectedFieldInfo', (newFieldInfo, oldFieldInfo) => {
-                  this.newField.updateWithFieldInformation(newFieldInfo)
-                  this.optionValues = utils.getFieldOptions(newFieldInfo);
-                });
-                this.$watch('availableValueTypes', (newArray) => {
-                  this.newField.value_type = newArray[0]?.id ?? '';
-                });
-                this.$watch('availableTypesInForm', (newArray) => {
-                  this.newField.type_in_form = newArray[0]?.id ?? '';
-                });
-                this.$watch('availableSubtypesInForm', (newArray) => {
-                  this.newField.subtype_in_form = newArray[0]?.id ?? '';
-                });
-                this.$watch('newField.value_type', (newType, oldType) => {
-                  if (newType != 'fixed') {
-                    this.newField.value = '';
-                  }
-                });
-                this.$watch('optionValues', (newArray) => {
-                  if (this.newField.value_type == 'fixed') {
-                    this.newField.value = newArray[0]?.id ?? '';
-                  }
-                });
-              },
-
-              openPopUp(idBase, single=true) {
-                let mode = 'single';
-                if (single!=true) {
-                  mode = 'MultiSelect';
-                }
-                let destModule = this.formConfig.getRelationshipModule(item.id, this.selectedFieldInfo.options);
-                open_popup(destModule, 600, 400, '', true, false, 
-                            { 
-                              'field_to_name_array': {'id':`${idBase}_id${item.id}`, 'name':`${idBase}_name${item.id}`},
-                              'call_back_function': 'handle_open_popup' 
-                            }, mode, true);
-              },
-
-              handleStartAddField(typeField) {
-                this.newField = new AWF_Field({ type_field: typeField });
-                this.creatingFieldUnlinked = typeField=='unlinked';
-                this.creatingFieldForm = typeField=='form';
-                this.creatingFieldHidden = typeField=='hidden';
-              },
-   
-              handleCreateField() {
-                item.addField(this.newField);
-                this.creatingFieldUnlinked = false;
-                this.creatingFieldForm = false;
-                this.creatingFieldHidden = false;
-              },
-    
-              handleCancel() {
-                this.creatingFieldUnlinked = false;
-                this.creatingFieldForm = false;
-                this.creatingFieldHidden = false;
-              },
-            }">
+            <div :id="`dataBlockFields${item.id}`" x-data="WizardStep2.creationFieldxData(item, formConfig);">
               <div class="border-bottom ps-3 pt-3 mb-2 bg-light">
                 <!-- Buttons -->
                 <div class="d-flex mb-3">
@@ -237,7 +138,7 @@
                 </div>
 
                 <!-- Add Field in Form -->
-                <div x-show="creatingFieldForm">
+                <div x-show="creatingFieldForm" x-data="WizardStep2.creationFieldInFormxData(item);">
                   <form :id="`dataBlockFieldForm${item.id}`">
                     <div class="row align-items-end">
                       <!-- Field -->
@@ -256,7 +157,7 @@
                             <option :value="field.name" x-text="field.text"></option>
                           </template>
                         </select>
-                      </div>                      
+                      </div>
                       <!-- Type in form -->
                       <div class="col-2">
                         <label :for="`dbFieldF_TypeInForm${item.id}`" class="form-label"
@@ -276,9 +177,71 @@
                             <option :value="type.id" x-text="type.text"></option>
                           </template>
                         </select>
-                      </div>                      
-                      <!-- Value options -->
+                      </div>
+                      <!-- Value options list name -->
+                      <template x-if="newField.acceptValueOptions()">
+                        <div class="col-5">
+                          <label :for="`dbFieldF_ValueOptionsDesc${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
+                          <!-- Value options configuration Check -->
+                          <div class="text-muted form-check form-switch small">
+                            <label :for="`dbFieldF_ValueOptionsConf${item.id}`" class="form-label"
+                                   x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
+                            <input class="form-check-input form-switch" type="checkbox" role="switch"
+                                   :id="`dbFieldF_ValueOptionsConf${item.id}`" x-model="configValueOptions"/>
+                          </div>
+                          <input :id="`dbFieldF_ValueOptionsDesc${item.id}`" type="text" disabled class="form-control"
+                                  x-model="optionValuesListNameModified" >
+                        </div>
+                      </template>
                     </div>
+                    <!-- Value options -->
+                    <template x-if="configValueOptions">
+                      <div class="row">
+                        <!-- Value options configuration Table -->
+                        <div class="col-12" x-data="WizardStep2.sortableListxData(newField.value_options)">
+                          <table class="table table-bordered table-striped w-auto"
+                                 :id="`dbFieldF_ValueOptionsTable${item.id}`" >
+                            <caption class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')"></caption>
+                            <thead>
+                              <tr>
+                                <th x-text="'[Id]'"></th>
+                                <th x-text="'[Texto original]'"></th>
+                                <th x-text="'[Mostrar]'"></th>
+                                <th x-text="'[Texto en el formulario]'"></th>
+                                <th x-text="'[Acción]'"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template x-for="(element, index) in newField.value_options">
+                                <tr>
+                                  <td x-text="element.value"></td>
+                                  <td x-text="element.text_original"></td>
+                                  <td> 
+                                    <div class="form-switch">
+                                      <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="element.is_visible"
+                                             :id="`dbFieldF_ValueOptionsInclude${index}${item.id}`"/>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <input class="form-control" type="text" x-model="element.text"
+                                           :id="`dbFieldF_ValueOptionsText${index}${item.id}`"/>
+                                  </td>
+                                  <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-2" :disabled="index === 0" @click="moveUp(index)">
+                                      ⬆️
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" :disabled="index === newField.value_options.length - 1" @click="moveDown(index)">
+                                      ⬇️
+                                    </button>
+                                  </td>
+                                </tr>
+                              </template> 
+                            </tbody>
+                          </table>
+                        </div>
+                      </div> 
+                    </template>
                     <div class="row align-items-end">
                       <!-- Label -->
                       <div class="col-3">
@@ -297,7 +260,7 @@
                       </template>
 
                       <!-- Required in form -->
-                      <div class="col-2 form-switch">
+                      <div class="col-3 form-switch">
                         <label :for="`dbFieldF_ReqForm${item.id}`" class="form-label"
                               x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
                         <input class="form-check-input form-switch" type="checkbox" role="switch"
@@ -315,42 +278,7 @@
                 </div>
 
                 <!-- Add Hidden Field -->
-                <div x-show="creatingFieldHidden" x-data="{
-                  get hasOptions() { return this.optionValues.length > 0; },
-                  get isRelated() { return this.newField?.type == 'relate'; },
-                  get isDate() { return this.newField?.type == 'date' || this.newField?.type == 'datetime' || this.newField?.type == 'datetimecombo'; },
-
-                  valueToday: false,
-
-                  init() {
-                    this.typeField = 'hidden';
-
-                    this.$watch('newField.value_type', (newType, oldType) => {
-                      this.valueToday = false;
-                    });
-                    this.$watch('valueToday', (newValue, oldValue) => {
-                      this.newField.value = newValue ? 'today' : '';
-                    });
-                    this.$watch('newField.value', (newValue, oldValue) => {
-                      if (this.hasOptions) {
-                        this.newField.value_text = this.optionValues.find(o => o.id == newValue)?.text ?? '';
-                      } else if(this.isDate) {
-                        if (newValue == 'today') {
-                          this.newField.value_text = utils.translate('LBL_FIELD_VALUE_TODAY');
-                        } else {
-                          this.newField.value_text = '';
-                          if (newValue) {
-                            const dateObj = new Date(newValue);
-                            this.newField.value_text = new Intl.DateTimeFormat(undefined, {year:'numeric',month:'2-digit',day:'2-digit'}).format(dateObj);
-                          }
-                        }
-                      } else if(!this.isRelated) {
-                        this.newField.value_text = newValue;
-                      }
-                    });
-                  },
-
-                }">
+                <div x-show="creatingFieldHidden" x-data="WizardStep2.creationFieldHiddenxData(item);">
                   <form :id="`dataBlockFieldHiddenForm${item.id}`">
                     <div class="row align-items-end">
                       <!-- Field -->
@@ -445,8 +373,6 @@
                     </div>
                   </form>
                 </div>
-
-                <div class="mt-3" :id="`dataFieldnewField${item.id}`" data-model="newField" x-init="sticControls.elemTableObject($el);"></div>
               </div>
 
               <!-- Fields summary Tabs -->
@@ -513,46 +439,11 @@
                   </div>
                 </div>
                 <!-- Add Relationship -->
-                <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
-                  creatingRelDataBlock: false,
-                  availableRels: [],
-                  selectedRelName:'',
-                  availableDataBlocks: [],
-                  selectedDataBlockId:'',
-                  newDataBlockText:'',
-                  relNewDataBlock:false,
-  
-                  async loadRelations() {
-                    this.availableRels = step2.unusedDatablockRelationships(item.id);
-                    this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
-                    this.availableDataBlocks = [];
-                    this.selectedDataBlockId = '';
-                    this.creatingRelDataBlock = !this.creatingRelDataBlock;
-                    this.handleRelationChange();
-                  },
-                  async handleRelationChange() {
-                    this.availableDataBlocks = formConfig.getAvailableDataBlocksForRelationship(item.id, this.selectedRelName);
-                    this.selectedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
-                    this.handleDataBlockChange();
-                  },
-                  async handleDataBlockChange() {
-                    this.newDataBlockText = '';
-                    this.relNewDataBlock = this.selectedDataBlockId == -1;
-                    if (this.relNewDataBlock) {
-                      this.newDataBlockText = formConfig.suggestDataBlockText(formConfig.getRelationshipModule(item.id, this.selectedRelName));
-                    }
-                  },
-                  async handleCreateRelationship(){
-                    formConfig.addDataBlockRelationship(item.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
-                    step2.loadDatablockRelationships();
-                    this.creatingRelDataBlock = false;
-                  },
-                  }">
+                <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="WizardStep2.addRelationshipxData(item, formConfig, step2);">
                   <div class="row">
-                    <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()">
-                      [Añadir Relación con otro Bloque de Datos]
-                    </button>
-                    <h4 x-show="creatingRelDataBlock">[Añadir Relación con otro Bloque de Datos]</h4>
+                    <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()"
+                            x-text="'[Añadir Relación con otro Bloque de Datos]'"></button>
+                    <h4 x-show="creatingRelDataBlock" x-text="'[Añadir Relación con otro Bloque de Datos]'"></h4>
                   </div>
                   <div class="row align-items-end" x-show="creatingRelDataBlock">
                     <!-- Relationship -->

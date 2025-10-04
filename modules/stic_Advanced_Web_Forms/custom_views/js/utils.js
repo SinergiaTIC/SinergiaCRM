@@ -59,19 +59,20 @@ class utils {
   /**
    * Get options for a field
    * @param {FieldInformation} fieldInfo 
-   * @returns array of options [id, text]
+   * @param {boolean} [asString=false] 
+   * @returns array or name of options [id, text]
    */
-  static getFieldOptions(fieldInfo) {
+  static getFieldOptions(fieldInfo, asString=false) {
     if (fieldInfo == undefined) {
-      return [];
+      return asString ? "" : [];
     }
     if (fieldInfo.type == "bool") {
-      return utils.getList("stic_boolean_list");
+      return utils.getList("stic_boolean_list", asString);
     }
     if (fieldInfo.options && (fieldInfo.type == "enum" || fieldInfo.type == "multienum")) {
-      return utils.getList(fieldInfo.options);
+      return utils.getList(fieldInfo.options, asString);
     }
-    return [];
+    return asString ? "" : [];
   }
 
   static _cachedModules = {};

@@ -107,7 +107,9 @@ $mod_strings = array (
   'LBL_RELATIONSHIPS' => 'Relaciones',
 
   'LBL_ADD_FIELD_FORM' => 'Añadir campo en el formulario',
+  'LBL_ADD_FIELD_UNLINKED' => 'Añadir campo no enlazado en el formulario',
   'LBL_ADD_FIELD_HIDDEN' => 'Añadir valor fijo',
+
   
   'LBL_FIELD' => 'Campo',
   'LBL_FIELDS_SHOW_ALL' => 'Mostrar todos los campos',
@@ -119,15 +121,16 @@ $mod_strings = array (
   'LBL_FIELD_SUBTYPE_IN_FORM' => 'Tipo de editor',
   'LBL_FIELD_PLACEHOLDER' => 'Texto de fondo',
   'LBL_FIELD_VALUE_TYPE' => 'Tipo de valor',
+  'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Listado asociado',
+  'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Personalizar opciones',
+  'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificado)',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE' => 'Valor',
   'LBL_FIELD_VALUE_TODAY' => 'Fecha actual',
   'LBL_FIELD_VALUE_TEXT' => 'Valor mostrado',
 
-  'LBL_ADD_FIELD_FORM' => 'Añadir campo en el formulario',
-  'LBL_ADD_FIELD_UNLINKED' => 'Añadir campo no enlazado en el formulario',
-  'LBL_ADD_FIELD_HIDDEN' => 'Añadir valor fijo',
-
+  'LBL_DUPLICATE_FIELDS' => 'Campos a verificar',
+  'LBL_ONDUPLICATE_ACTION' => 'Acción en caso de duplicado',
 
   'LBL_RELATIONSHIP' => 'Relación',
   'LBL_MODULE' => 'Módulo',
