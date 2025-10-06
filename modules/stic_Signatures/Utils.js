@@ -68,7 +68,7 @@ switch (viewType()) {
     // Enable the 'main_module' field for editing
     setDisabledStatus('main_module', false);
     setAutofill(["name"]);
-    
+
     // Initially hide step 2 and step 3 panels
     if (typeof STIC.record.name == 'undefined') {
       $('[data-id=LBL_STEP2_PANEL]').parent('.panel').hide()
@@ -83,8 +83,15 @@ switch (viewType()) {
 
     break;
   case "detail":
-    // No specific custom logic for detail view in this section.
-    break;
+    // Add the button to the detail view.
+    var buttons = {
+      notifyByCampaign: {
+        id: 'notify_by_campaign',
+        title: "🔊" + SUGAR.language.get("stic_Signatures", "LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN"),
+        onclick: "window.location='index.php?module=stic_Signatures&action=createLPOfromSignature&signatureId=" + STIC.record.id + "'"
+      },
+    };
+    createDetailViewButton(buttons.notifyByCampaign); break;
   case "list":
     // No specific custom logic for list view in this section.
     break;
@@ -92,3 +99,9 @@ switch (viewType()) {
     // No specific custom logic for other view types.
     break;
 }
+
+
+
+
+
+

@@ -120,10 +120,10 @@ class stic_SignersUtils
 
         // Attempt to send the email and log the result
         if (!$mail->Send()) {
-            SugarApplication::appendErrorMessage("<p class='msg-error'>" . $mod_strings['LBL_SIGNER_EMAIL_ERROR'] . ".</p>");
+            SugarApplication::appendErrorMessage("<p class='label label-error'>" . $mod_strings['LBL_SIGNER_EMAIL_ERROR'] . ".</p>");
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": There was an error sending the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo);
         } else {
-            SugarApplication::appendSuccessMessage("<p class='msg-success'>" . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
+            SugarApplication::appendSuccessMessage("<p class='label label-success'>" . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Email sent successfully to {$destAddress}.");
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('EMAIL_SENT', $signerId, 'SIGNER', $destAddress);
@@ -222,6 +222,15 @@ class stic_SignersUtils
 
     }
 
-   
+
+    
+  
+
+
+
 
 }
+
+
+
+

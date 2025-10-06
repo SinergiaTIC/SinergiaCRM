@@ -91,6 +91,9 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Firmantes añadidos correctamente',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes non engadidos, xa existen ou ocorreu un erro',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Omítese o seguinte rexistro porque non se atoparon firmantes',
+    'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Creouse unha campaña de notificación para a sinatura: ',
+    'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Xa existe unha campaña de notificación para a sinatura: ',
+    'LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN' => 'Solicitar sinatura a todos os firmantes mediante campaña',
 
     // Portal messages
     'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copia do seu documento asinado',

@@ -91,6 +91,9 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Signers added successfully',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Signers not added, already exist or an error occurred',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'The following record is skipped because no signers were found',
+    'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
+    'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'A notification campaign already exists for the signature: ',
+    'LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN' => 'Request signature from all signers via campaign',
 
     // Portal messages
     'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copy of your signed document',

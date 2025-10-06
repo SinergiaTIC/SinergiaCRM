@@ -91,6 +91,9 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Firmants afegits correctament',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmants no afegits, ja existeixen o s\'ha produït un error',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Es omet el següent registre perquè no s\'han trobat firmants',
+    'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'S\'ha creat una campanya de notificació per a la signatura: ',
+    'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ja existeix una campanya de notificació per a la signatura: ',
+    'LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN' => 'Sol·licitar signatura a tots els firmants mitjançant campanya',
 
     // Portal messages
     'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Còpia del seu document signat',

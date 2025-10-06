@@ -139,12 +139,12 @@ foreach ($destSigners as $destSignerId => $destSigner) {
 
 // Display success or error messages to the user
 if ($okCounter !== 0) {
-    SugarApplication::appendSuccessMessage("<p class='msg-success'><strong>{$okCounter}</strong> " . translate('LBL_SIGNERS_ADDED_MSG', 'stic_Signatures') . ".</p>");
+    SugarApplication::appendSuccessMessage("<p class='label label-success'><strong>{$okCounter}</strong> " . translate('LBL_SIGNERS_ADDED_MSG', 'stic_Signatures') . ".</p>");
     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$okCounter} signers added successfully.");
 }
 
 if ($koCounter !== 0) {
-    SugarApplication::appendErrorMessage("<p class='msg-error'><strong>{$koCounter}</strong> " . translate('LBL_SIGNERS_NOT_ADDED_MSG', 'stic_Signatures') . ".</p>");
+    SugarApplication::appendErrorMessage("<p class='label label-error'><strong>{$koCounter}</strong> " . translate('LBL_SIGNERS_NOT_ADDED_MSG', 'stic_Signatures') . ".</p>");
     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$koCounter} signers could not be added because they already exist or an error occurred.");
 }
 

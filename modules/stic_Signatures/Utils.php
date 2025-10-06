@@ -423,7 +423,6 @@ class stic_SignaturesUtils
         return ['header' => $header, 'converted' => $converted, 'footer' => $footer];
     }
 
-
     /**
      * Generates a verification code for a signed PDF associated with a given signer ID.
      * The verification code is created by computing the SHA-256 hash of the signed PDF file.
@@ -566,5 +565,82 @@ class stic_SignaturesUtils
         return 'data:image/png;base64,' . base64_encode($imgData);
     }
 
+    /**
+     * Creates a Lead or Prospect List (LPO) from a given signature ID.
+     * This function generates an LPO based on the signers associated with the signature.
+     *
+     * @param string $signatureId The ID of the signature.
+     * @return bool True if the LPO was created successfully, false otherwise.
+     */
+    public static function createLPOFromSignature($signatureId)
+    {
+        global $current_user, $mod_strings;
+
+        if (empty($signatureId)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Signature ID is empty.');
+            return false;
+        }
+        // Retrieve the signature bean
+        $signatureBean = BeanFactory::getBean('stic_Signatures', $signatureId);
+
+        if (empty($signatureBean)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Signature bean not found for ID ' . $signatureId);
+            return false;
+        }
+
+        // Determine the person who sign module (Users or Contacts)
+        $userOrContactsModule = explode(':', $signatureBean->signer_path)[0];
+
+        // Retrieve all signers associated with the signature
+        $userOrContactsTargets = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " parent_type = '{$userOrContactsModule}' ");
+
+        // check  if LPO with same name exists
+        $existingLPO = BeanFactory::getBean('ProspectLists')->get_full_list(
+            '',
+            "prospect_lists.name = '{$signatureBean->name} - LPO' AND prospect_lists.deleted = 0"
+        );
+        
+        // If no existing LPO, create a new one
+        if (empty($existingLPO)) {
+            // Create a new LPO (Prospect List)
+            $LPOBean = BeanFactory::newBean('ProspectLists');
+            $LPOBean->name = "{$signatureBean->name} - LPO";
+            $LPOBean->list_type = 'default';
+            $LPOBean->assigned_user_id = $signatureBean->assigned_user_id ?? $current_user->id;
+            $LPOBean->assigned_user_name = $signatureBean->assigned_user_name ?? $current_user->user_name;
+            $LPOBean->save();
+            SugarApplication::appendSuccessMessage("<span class='label label-success'> {$mod_strings['LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE']} {$LPOBean->name}</span>");
+        } else {
+            $LPOBean = array_shift($existingLPO);
+            SugarApplication::appendSuccessMessage("<span class='label label-success'> {$mod_strings['LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE']} {$LPOBean->name}</span>");
+        }
+
+        // Link each signer to the LPO
+        switch ($userOrContactsModule) {
+            case 'Users':
+                foreach ($userOrContactsTargets as $userTarget) {
+                    $LPOBean->load_relationship('users');
+                    $LPOBean->users->add($userTarget->parent_id);
+                }
+
+                break;
+            case 'Contacts':
+                foreach ($userOrContactsTargets as $contactTarget) {
+                    $LPOBean->load_relationship('contacts');
+                    $LPOBean->contacts->add($contactTarget->parent_id);
+                }
+                break;
+            default:
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Unsupported module for LPO creation: ' . $userOrContactsModule);
+                return false;
+        }
+
+        
+        return true;
+    }
+
+
+
+    
 
 }

@@ -108,70 +108,15 @@ class stic_SignaturesController extends SugarController
         die();
     }
 
-    // /**
-    //  * Action to resend an OTP code to the signer via email.
-    //  * This action forces the sending of a new OTP code, even if the previous one hasn't expired.
-    //  *
-    //  * @return void
-    //  */
-    // public function action_resendOtpCode()
-    // {
-    //     require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
-    //     $signerId = $_REQUEST['signerId'] ?? '';
-    //     $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
-    //     $result = stic_SignaturePortalUtils::forceSendOtpToSigner($signerBean, 'email', true);
-    //     echo json_encode($result);
-    //     die();
-    // }
-
-    // /**
-    //  * Action to save the signature data provided by the signer in handwritten mode.
-    //  * It checks for the presence of necessary data in the request and calls
-    //  * the utility function to save the signature.
-    //  *
-    //  * @return void
-    //  */
-    // public function action_saveSignature()
-    // {
-    //     require_once 'modules/stic_Signatures/Utils.php';
-    //     if (!empty($_REQUEST['signerId']) && !empty($_REQUEST['signatureData'])) {
-    //         $result = stic_SignaturesUtils::saveSignature($_REQUEST);
-    //     } else {
-    //         $result = [
-    //             'success' => false,
-    //             'message' => 'No data provided',
-    //         ];
-    //     }
-    //     echo json_encode($result);
-    //     die();
-    // }
-
-
-
+    
    
-    // /**
-    //  * Action to accept the document by the signer in button mode.
-    //  * It checks for the presence of the signer ID in the request and calls
-    //  * the utility function to process the acceptance.
-    //  *
-    //  * @return void
-    //  */
-    // public function action_acceptDocument()
-    // {
-    //     require_once 'modules/stic_Signatures/Utils.php';
-    //     if (!empty($_REQUEST['signerId'])) {
-    //         $result = stic_SignaturesUtils::acceptDocument($_REQUEST);
-    //     } else {
-    //         $result = [
-    //             'success' => false,
-    //             'message' => 'No data provided',
-    //         ];
-    //     }
-    //     echo json_encode($result);
-    //     die();
-    // }
+    public function action_createLPOfromSignature()
+    {
+        require_once 'modules/stic_Signatures/Utils.php';
+        $signatureId = $_REQUEST['signatureId'] ?? '';
+        stic_SignaturesUtils::createLPOfromSignature($signatureId);
+        die();
+    }
 
-    
- 
-    
+
 }
