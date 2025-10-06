@@ -17,6 +17,14 @@
     padding: 0 !important; 
 } */
 
+.stic_panel {
+  font-size: unset !important;
+}
+
+.stic_panel table {
+  caption-side: top;
+}
+
 .w-32px {
   width: 32px;
 }
@@ -39,6 +47,11 @@
 .wizard-nav .button[disabled]:hover {
   background-color: #828282 !important;
   cursor: not-allowed;
+}
+
+.accordion-header {
+  font-size: unset !important;
+  text-align: start !important;
 }
 
 .card .datablock {
@@ -78,8 +91,14 @@ select:invalid + label {
   margin-left: inherit;
 }
 
-.input-group .btn {
-  margin: 0 0 0 3px !important;
+button {
+  text-transform: capitalize !important;
+}
+
+
+.btn {
+  font-size: unset !important;
+  text-transform: none !important;
 }
 
 .row {
