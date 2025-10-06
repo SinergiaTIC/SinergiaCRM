@@ -95,6 +95,9 @@ $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nuevo mensaje';
 // Envío masivo de correos
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicará aos rexistros da páxina actual. Para envíos masivos recoméndase utilizar o módulo Campañas.';
 
+// Campos de filtro en relaciones muchos a muchos
+$app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grupo de seguridad';
+
 // Módulos propios de SinergiaCRM e módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizacións';
 $app_list_strings['moduleList']['Contacts'] = 'Persoas';
@@ -287,8 +290,6 @@ $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
 $app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
-$app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
-$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
 $app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Marketing por mensaje';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
@@ -335,7 +336,6 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
 $app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Marketing por mensaje';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
-
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
 
@@ -3737,15 +3737,14 @@ $app_list_strings['campaign_type_dom']['Survey'] = 'Enquisa';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
 $app_list_strings['campaign_type_dom']['SMS'] = 'SMS';
 
-// Plantillas de correo: Tipos de plantilla
+// Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
 $app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
-$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
-
 
 // Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -3754,7 +3753,10 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
-$app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
-
-// Dynamic list
-include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+// Elementos añadidos al Historial
+$app_list_strings['collection_temp_list']['Tasks'] = 'Tarefas';
+$app_list_strings['collection_temp_list']['Meetings'] = 'Reunións';
+$app_list_strings['collection_temp_list']['Calls'] = 'Chamadas';
+$app_list_strings['collection_temp_list']['Notes'] = 'Notas';
+$app_list_strings['collection_temp_list']['Emails'] = 'Correos';
+$app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';

@@ -21,7 +21,7 @@
  */
 
 var module = 'stic_Messages';
-if (!$("#mass_ids") || $("#mass_ids").val() == ''){
+if (!($("#mass_ids").length > 0) || $("#mass_ids").val() == ''){
   addToValidateCallback(
     getFormName(),
     "parent_id",
@@ -124,92 +124,30 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
   };
 
 
-  $.fn.stic_MessagesComposeView.onTemplateSelect = function (args) {
-    var confirmed = function (args) {
-      var args = JSON.parse(args);
-      $.post('index.php?entryPoint=emailTemplateData', {
-        emailTemplateId: args.name_to_value_array.template_id_c
-      }, function (jsonResponse) {
-        var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
-      });
-      set_return(args);
-    };
-
-    var mb = messageBox();
-    mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
-    mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
-    mb.css('z-index', 26000);
-    mb.show();
-
-    var args = JSON.stringify(args);
-
-    mb.on('ok', function () {
-      "use strict";
-      confirmed(args);
-      mb.remove();
-    });
-
-    mb.on('cancel', function () {
-      "use strict";
-      mb.remove();
-    });
-  };
-
-  $.fn.stic_MessagesComposeView.onTemplateChange = function (args) {
-    var confirmed = function (args) {
-      var args = JSON.parse(args);
-
-      $.post('index.php?entryPoint=emailTemplateData', {
-        emailTemplateId: $('#template_id_c').val()
-      }, function (jsonResponse) {
-        var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
-      });
-      set_return(args);
-    };
-
-    var mb = messageBox();
-    mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
-    mb.setBody(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
-    mb.css('z-index', 26000);
-    mb.show();
-
-    mb.on('ok', function () {
-      "use strict";
-      var id=$('#emails_email_templates_idb').val();
-      var name=$('#emails_email_templates_name').val();
-      args = JSON.stringify({"form_name":"ComposeView","name_to_value_array":{"emails_email_templates_idb": id,"emails_email_templates_name": name}})
-      confirmed(args);
-      mb.remove();
-    });
-
-    mb.on('cancel', function () {
-      "use strict";
-      mb.remove();
-    });
-  }
-
   $.fn.stic_MessagesComposeView.onParentSelect = function (args) {
     set_return(args);
-    if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
-      $("#phone").val(args.name_to_value_array.phone_mobile);  
-    }
-    if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
-      $("#phone").val(args.name_to_value_array.phone_office);  
+    if ($("#status").val() == 'draft') {
+      if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
+        $("#phone").val(args.name_to_value_array.phone_mobile);  
+      }
+      if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
+        $("#phone").val(args.name_to_value_array.phone_office);  
+      }
     }
   };
   $.fn.stic_MessagesComposeView.onParentChange = function (args) {
-    if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
-      $("#phone").val(args.name_to_value_array.phone_mobile);  
-    }
-    if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
-      $("#phone").val(args.name_to_value_array.phone_office);  
+    if ($("#status").val() == 'draft') {
+      if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
+        $("#phone").val(args.name_to_value_array.phone_mobile);  
+      }
+      if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
+        $("#phone").val(args.name_to_value_array.phone_office);  
+      }
     }
   };
 
 function checkStatus() {
-  if($('#status').val() === 'sent') {
+  if($('#status').val() === 'sent' && !$('#EditView input[name="record"]').val()) {
     $('input.button.primary').val(SUGAR.language.get('app_strings', 'LBL_EMAIL_SEND'));
   } 
   else {
@@ -225,18 +163,17 @@ function checkStatus() {
 YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
 
 function parentIdChanged() {
-  let parentName = $('#parent_name').val();
   let parentId = $('#parent_id').val();
   let parentType = $('#parent_type').val();
-  // We check the name and not the id because when removed manually the name, the id is not automatically cleared
-  if (parentName != null && parentName != '' ) {
+
+  if ((parentId !== null && parentId !== '')) {
     getParentAsync(parentId, parentType, applyParent);
   }
 
 }
 
 function applyParent(parentData) {
-  if(parentData!= null) {
+  if(parentData!= null && ($("#status").val() === 'draft' || !$('#EditView input[name="record"]').val())) {
     $('#phone').val(parentData['phone']);
   }
 }
@@ -295,6 +232,7 @@ $(function () {
         return indexed_array;
       }
       var formData = getFormDataAsObject($("#EditView"));
+      formData.action='SavePopUp';
       $.ajax({
         url: "index.php?module=stic_Messages&action=savePopUp",
         type: "post",
@@ -322,8 +260,10 @@ $(function () {
         },
         error: function () {
           showMessageBox(
-            $("#errorMessage").val(),
-            $("#errorMessageText").val(),
+            // $("#errorMessage").val(),
+            // $("#errorMessageText").val(),
+            SUGAR.language.get('stic_Messages', 'LBL_ERROR'),
+            SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'),
             function () {
               var baseUrl = window.location.href.split("?")[0];
               var returnModule = $('#EditView [name="return_module"]').val();

@@ -55,7 +55,7 @@ class stic_Messages extends Basic
     public $phone;
     public $sender;
     public $message;
-    public $template_id_c;
+    public $template_id;
     public $parent_type;
     public $parent_id;
     public $status;
@@ -86,19 +86,36 @@ class stic_Messages extends Basic
             $this->fillName();
         }
 
-        $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+        // If message is not in draft, only direction and related to can be changed
+        if ($this->fetched_row && $this->fetched_row['status'] !== 'draft' && !empty($this->id)) {
+            $this->template_id = $this->fetched_row['template_id'];
+            $this->message = $this->fetched_row['message'];
+            $this->type = $this->fetched_row['type'];
+            $this->phone = $this->fetched_row['phone'];
+        }
 
-        if (empty($this->message) && !empty($this->template_id_c)) {
-            $template = BeanFactory::getBean('EmailTemplates', $this->template_id_c);
+        // If there is nothing in the message field, assume the template body
+        if (empty($this->message) && !empty($this->template_id)) {
+            $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
             $this->message = $template->body;
         }
 
-        $processedText = $this->replaceTemplateVariables($this->message, $bean);
-        $this->message = $processedText;
+        // Only if we are in mass update, assume the body of the template as the message, otherwise the user may have modified the text
+        if ($this->status === 'draft' && ($_REQUEST['massupdate']??false) && $this->template_id !== $this->fetched_row['template']) {
+            $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
+            $this->message = $template->body;
+        }
+
+        if ($this->status === 'sent') {
+            $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+    
+            $processedText = $this->replaceTemplateVariables($this->message, $bean);
+            $this->message = $processedText;
+        }
 
         $this->assigned_user_id = $current_user->id;
 
-        // If Message is being created or status chenged to "sent"
+        // If Message is being created or status changed to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
             if (!empty($this->phone)){
                 $response = $this->sendMessage();
@@ -125,7 +142,7 @@ class stic_Messages extends Basic
 
     public function fillName($parentType = null, $parentId = null)
     {
-        global $current_user, $timedate, $sugar_config;
+        global $current_user, $timedate;
 
         $parentType = $parentType?? $this->parent_type;
         $parentId = $parentId ?? $this->parent_id;
@@ -136,8 +153,8 @@ class stic_Messages extends Basic
             $relatedObjectName = $relatedObject->name;
         }
         $templateName = '';
-        if (!empty($this->template_id_c)){
-            $template = BeanFactory::getBean('EmailTemplates', $this->template_id_c);
+        if (!empty($this->template_id)){
+            $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
             $templateName = ' - ' . $template->name;
         }
 
@@ -154,18 +171,12 @@ class stic_Messages extends Basic
 
         // get user timezone
         $userPreferences = new UserPreference($current_user);
-        // $userPreferences->retrieve_by_string_fields(array('assigned_user_id' => $current_user->id));
-        $userPreferences->loadPreferences();
+        $userPreferences->retrieve_by_string_fields(array('assigned_user_id' => $current_user->id));
 
         // Get the timezone from the user's preferences
         $timezone = $userPreferences->getPreference('timezone');
 
-        // $timedate = new TimeDate();
-        // $system_default_timezone = $timedate->getSystemTimezone();
-
-        // $timezone = date_default_timezone_get();
         $date = $date->setTimezone(new DateTimeZone($timezone));
-        $date = $timedate->tzUser($date);
         $formatedDate = $date->format($timedate->get_date_time_format($current_user));
 
 

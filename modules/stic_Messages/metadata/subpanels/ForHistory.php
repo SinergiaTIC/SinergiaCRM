@@ -98,11 +98,11 @@ $subpanel_layout = [
             'widget_class' => 'SubPanelEditButton',
             'width' => '2%',
         ],
-        'remove_button' => [
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
-            'width' => '2%',
-        ],
+        // 'remove_button' => [
+        //     'vname' => 'LBL_REMOVE',
+        //     'widget_class' => 'SubPanelRemoveButton',
+        //     'width' => '2%',
+        // ],
         'file_url' => [
             'usage' => 'query_only'
         ],

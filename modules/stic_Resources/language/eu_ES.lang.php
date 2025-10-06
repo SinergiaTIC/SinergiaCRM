@@ -42,6 +42,7 @@ $mod_strings = array(
     'LBL_DELETED' => 'Eliminado',
     'LBL_NAME' => 'Nombre',
     'LBL_LIST_NAME' => 'Nombre',
+    'LBL_LIST_CLOSE' => 'Cerrar',
     'LBL_EDIT_BUTTON' => 'Editar',
     'LBL_REMOVE' => 'Desvincular',
     'LBL_ASCENDING' => 'Ascendente',
@@ -70,4 +71,7 @@ $mod_strings = array(
     'LBL_OWNER_CONTACT' => 'Persona propietaria',
     'LBL_OWNER_ACCOUNT' => 'Organización propietaria',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Reservas',
+
+    // Campos de filtro en relaciones muchos a muchos
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Reserva',
 );

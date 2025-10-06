@@ -87,9 +87,8 @@ class stic_AttendancesLogicHooks
             
             // Attendance's name includes registration's and session's names, both of them potentially including event's name.
             // Let's check it in order to avoid repeating event's name in attendance's name.
-            $registrationNameEnd = trim(explode('-', $registrationBean->name)[1]);
             $sessionNameStart = trim(explode('|', $sessionBean->name)[0]);
-            if ($registrationNameEnd == $sessionNameStart) {
+            if (strpos($registrationBean->name, $sessionNameStart) !== false) {
                 // If event's name exists in both session's and registration's names, let's exclude it from session's name.
                 $cleanSessionName = str_replace($sessionNameStart, '', $sessionBean->name);
                 $cleanSessionName = trim(str_replace('|', '', $cleanSessionName));

@@ -22,7 +22,6 @@
  */
 
 // Set module name
-debugger;
 var module = "EmailTemplates";
 
 /* VIEWS CUSTOM CODE */
@@ -30,16 +29,30 @@ switch (viewType()) {
     case "edit":
     case "quickcreate":
     case "popup":    
+    
         $(document).ready(function() {
             function toggleHtmlVisibility() {
-                var selectedValue = $("[name=type").val();
+                var selectedValue = $("[name=type");
                 
+                if (selectedValue.length === 2) {
+                  selectedValue = $("[name=type").eq(1).val();
+                }
+                else {
+                  selectedValue = $("[name=type").val();
+                }
                 if (selectedValue === 'sms') {
                     // $('#myDiv').hide();
                     $("#toggle_textonly").prop("checked", true);
                     $("#toggle_textonly").attr("disabled", true);
                     $("#text_only").val(1);
                     toggle_text_only();
+                    // When editor in pop-up, the tiny editor is not contained in div assumed by std funtion 
+                    // and it is created aftwerwards, so we use an observer to monitor modifications on dom after document ready
+                		$(".tox.tox-tinymce").hide();
+                    const observer = new MutationObserver((mutationsList, observer) => {
+                      $(".tox.tox-tinymce").hide();
+                    });
+                    observer.observe(document.body, { childList: true });
                 } else {
                     // $('#myDiv').show();
                     $("#toggle_textonly").prop("checked", false);
@@ -61,7 +74,6 @@ switch (viewType()) {
       break;
   
     case "detail":
-      debugger;
       // Set autofill mark beside field label
       if ($('#text_only').prop('checked')) {
         toggle_textarea(this);

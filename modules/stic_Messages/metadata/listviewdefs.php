@@ -44,34 +44,6 @@ array(
             1 => 'parent_type',
             ),
     ),
-    'SENT_DATE' => array(
-        'type' => 'datetime',
-        'studio' => 'visible',
-        'label' => 'LBL_SENT_DATE',
-        'width' => '7%',
-        'default' => true,
-    ),
-    'TYPE' => array(
-        'type' => 'enum',
-        'studio' => 'visible',
-        'label' => 'LBL_TYPE',
-        'width' => '7%',
-        'default' => true,
-    ),
-    'DIRECTION' => array(
-        'type' => 'enum',
-        'studio' => 'visible',
-        'label' => 'LBL_DIRECTION',
-        'width' => '7%',
-        'default' => true,
-    ),
-    'STATUS' => array(
-        'type' => 'enum',
-        'studio' => 'visible',
-        'width' => '7%',
-        'label' => 'LBL_STATUS',
-        'default' => true
-    ),
     'PHONE' => array(
         'width' => '7%',
         'label' => 'LBL_PHONE',
@@ -86,6 +58,27 @@ array(
       'id' => 'TEMPLATE_ID',
       'link' => true,
       'width' => '7%',
+    ),
+    'TYPE' => array(
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_TYPE',
+        'width' => '7%',
+        'default' => true,
+    ),
+    'STATUS' => array(
+        'type' => 'enum',
+        'studio' => 'visible',
+        'width' => '7%',
+        'label' => 'LBL_STATUS',
+        'default' => true
+    ),
+    'SENT_DATE' => array(
+        'type' => 'datetime',
+        'studio' => 'visible',
+        'label' => 'LBL_SENT_DATE',
+        'width' => '7%',
+        'default' => true,
     ),
     'SENDER' => array(
         'width' => '10%',

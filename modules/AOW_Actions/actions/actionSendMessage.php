@@ -63,6 +63,9 @@ class actionSendMessage extends actionBase
             unset($app_list_strings['aow_message_type_list']['Related Field']);
         }
 
+        // Error status not allowed on message creation
+        unset($app_list_strings['stic_messages_status_list']['error']);
+
         $html = '<input type="hidden" name="aow_message_type_list" id="aow_message_type_list" value="'.get_select_options_with_id($app_list_strings['aow_message_type_list'], '').'">';
 
         $html .= "<table border='0' cellpadding='0' cellspacing='0' width='100%' data-workflow-action='send-message'>";
@@ -108,7 +111,7 @@ class actionSendMessage extends actionBase
 
         // Type & direction
         $html .= "<tr style='margin-top:20px; margin-bottom:20px;'>";
-        $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
+        $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:10%;"><label>' . translate(
             "LBL_TYPE",
             "stic_Messages"
         ) . ':<span class="required">*</span></label>';
@@ -117,20 +120,27 @@ class actionSendMessage extends actionBase
         $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
         $html .= "<select name='aow_actions_param[".$line."][type]' id='aow_actions_param[".$line."][type]' >" . get_select_options_with_id($app_list_strings['stic_messages_type_list'], $defaultType) . "</select>";
         $html .= '</td>';
-        $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
-            "LBL_DIRECTION",
-            "stic_Messages"
-        ) . ':<span class="required">*</span></label>';
+
+        // Direction field hidden until other type of messages included
+        // $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
+        //     "LBL_DIRECTION",
+        //     "stic_Messages"
+        // ) . ':<span class="required">*</span></label>';
+        // $html .= '</td>';
+
+        // $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
+        // $html .= "<select name='aow_actions_param[".$line."][direction]' id='aow_actions_param[".$line."][direction]' >" . get_select_options_with_id($app_list_strings['stic_messages_direction_list'], $defaultDirection) . "</select>";
+        // $html .= '</td>';
+        $html .= "<td style='width:20%; margin-bottom:20px;'>";
+        $html .= '</td>';
+        $html .= "<td style='width:20%; margin-bottom:20px;'>";
         $html .= '</td>';
 
-        $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
-        $html .= "<select name='aow_actions_param[".$line."][direction]' id='aow_actions_param[".$line."][direction]' >" . get_select_options_with_id($app_list_strings['stic_messages_direction_list'], $defaultDirection) . "</select>";
-        $html .= '</td>';
         $html .= '</tr>';
 
         // Status
         $html .= "<tr style='margin-top:20px; margin-bottom:20px;'>";
-        $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
+        $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:10%;"><label>' . translate(
             "LBL_STATUS",
             "stic_Messages"
         ) . ':<span class="required">*</span></label>';
@@ -335,8 +345,10 @@ class actionSendMessage extends actionBase
         $messageBean->template_id_c = $params['email_template'];
         $messageBean->status = $params['status'];
         $messageBean->type = $params['type'];
-        $messageBean->direction = $params['direction'];
-        // $messageBean->phone = $recipients['phone'];
+
+        // Direction field not used until new types added
+        // $messageBean->direction = $params['direction'];
+
         $messageBean->message = $txt;
         $name = $messageBean->fillName($bean->module_name, $bean->id);
 
@@ -348,7 +360,8 @@ class actionSendMessage extends actionBase
             $messageBean->template_id_c = $params['email_template'];
             $messageBean->status = $params['status'];
             $messageBean->type = $params['type'];
-            $messageBean->direction = $params['direction'];
+            // Direction field not used until new types added
+            // $messageBean->direction = $params['direction'];
             $messageBean->phone = $recipient['phone'];
             $messageBean->parent_type = $recipient['parent_type'];
             $messageBean->parent_id = $recipient['parent_id'];

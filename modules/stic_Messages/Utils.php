@@ -31,11 +31,11 @@ class stic_MessagesUtils {
      * If new modules must be included, this list can be modified from a custom file
      */
     public static $messageableModules = array(
-        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts', 'nameFields' => array('first_name', 'last_name') ),
-        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts', 'nameFields' => array('name')),
-        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'leads', 'nameFields' => array('first_name', 'last_name')),
-        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users', 'nameFields' => array('first_name', 'last_name')),
-        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users', 'nameFields' => array('first_name', 'last_name')),
+        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts' ),
+        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts'),
+        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'leads'),
+        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
+        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
     );
 
     /** 
@@ -188,11 +188,14 @@ class stic_MessagesUtils {
      * @return array|string The SQL query as an array if 'return_as_array' is true, or as a string otherwise.
      *
      */
-    public static function get_stic_messages($type) {
+    public static function get_stic_messages($type = null) {
         $beanId = $_REQUEST['record'];
+        $statusList = $type['status']??'';
+        $statusCond = empty($statusList)? '' : " and stic_messages.status IN ({$statusList})";
         $return_array['select'] = 'SELECT stic_messages.id ';
         $return_array['from'] = ' FROM stic_messages ';
-        $return_array['where'] = " WHERE stic_messages.parent_id = '{$beanId}'";
+        $return_array['where'] = " WHERE stic_messages.parent_id = '{$beanId}' {$statusCond} AND stic_messages.deleted = 0 ";
+        $return_array['join'] = " ";
     
         if (isset($type) && ! empty($type['return_as_array'])) {
             return $return_array;
@@ -221,5 +224,19 @@ class stic_MessagesUtils {
 
         echo "<script type='text/javascript'>function getMessagesActive() {return {$active};} function getMessagesLimit() {return {$messagesLimit};} </script>";
         echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+    }
+
+    public static function fillDynamicListMessageTemplate()
+    {
+        $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
+        $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='sms'", 0, -99, -99);
+
+        $dynamic_email_template_list = array("" => translate("LBL_NONE", "app_strings"));
+
+        foreach ($emailTemplates['list'] as $emailTemplate) {
+            $dynamic_email_template_list[$emailTemplate->id] = $emailTemplate->name;
+        }
+
+        $GLOBALS['app_list_strings']['dynamic_message_template_list'] = $dynamic_email_template_list;
     }
 }

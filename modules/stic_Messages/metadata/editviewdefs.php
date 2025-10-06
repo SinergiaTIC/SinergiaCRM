@@ -36,10 +36,10 @@ array(
                     'field' => '30',
                 ),
             ),
-            'useTabs' => false,
+            'useTabs' => true,
             'tabDefs' => array(
                 'LBL_DEFAULT_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
             ),
@@ -57,20 +57,47 @@ array(
                         'label' => 'LBL_LIST_RELATED_TO',
                     ),
                     1 => array (
-                      'name' => 'template',
-                      'studio' => 'visible',
-                      'label' => 'LBL_TEMPLATE',
-                      'displayParams' => array(
-                        'initial_filter' => "&type_advanced[]=sms"
-                        ),
+                        'name' => 'phone',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PHONE',
                     ),
                 ),
                 2 => array(
                     0 => array(
+                        'name' => 'sender',
+                        'comment' => 'Sender',
+                        'label' => 'LBL_SENDER',
+                    ),
+                    1 => array(
+                        'name' => 'template_id',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TEMPLATE',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'message',
+                        'comment' => 'Full text of the message',
+                        'label' => 'LBL_MESSAGE',
+                    ),
+                ),
+                4 => array(
+                    0 => array(
+                        'name' => 'type',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TYPE',
+                    ),
+                    1 => array(
                         'name' => 'status',
                         'studio' => 'visible',
                         'label' => 'LBL_STATUS',
                     ),
+                ),
+                5 => array(
+                    0 => array(
+
+                    ),
+                    1 => array(),
                 ),
             ),
         ),

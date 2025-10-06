@@ -96,6 +96,9 @@ $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
 
+// Many to Many filter fields
+$app_strings['LBL_SECURITYGROUPS_NAME'] = 'Security Group';
+
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';
 $app_list_strings['moduleList']['Contacts'] = 'Contacts';
@@ -3716,8 +3719,12 @@ $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaign';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notification';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Event';
-$app_list_strings['emailTemplates_type_list']['system'] = 'System';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
-// Dynamic list
-include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+// Elements added to History panel
+$app_list_strings['collection_temp_list']['Tasks'] = 'Tasks';
+$app_list_strings['collection_temp_list']['Meetings'] = 'Meetings';
+$app_list_strings['collection_temp_list']['Calls'] = 'Calls';
+$app_list_strings['collection_temp_list']['Notes'] = 'Notes';
+$app_list_strings['collection_temp_list']['Emails'] = 'Emails';
+$app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';

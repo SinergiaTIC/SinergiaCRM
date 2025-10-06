@@ -23,7 +23,7 @@
 
 require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
-
+require_once 'modules/stic_Messages/Utils.php';
 class stic_MessagesViewList extends ViewList
 {
 
@@ -38,7 +38,7 @@ class stic_MessagesViewList extends ViewList
         parent::preDisplay();
 
         SticViews::preDisplay($this);
-
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
         // Write here you custom code
 
     }

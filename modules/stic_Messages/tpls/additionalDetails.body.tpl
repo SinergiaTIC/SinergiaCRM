@@ -25,10 +25,11 @@
     </div>
 {/if}
 <br>
+
 {if !empty($FIELD.PARENT_ID)}
     <div>
         <strong>{$MOD.LBL_RELATED_TO}</strong>
-        <a href="index.php?module={$FIELD.PARENT_TYPE}&action=DetailView&record={$FIELD.PARENT_ID}">{$FIELD.PARENT_TYPE} - {$FIELD.PARENT_NAME}</a>
+        <a href="index.php?module={$FIELD.PARENT_TYPE}&action=DetailView&record={$FIELD.PARENT_ID}">{$APP_LIST.moduleList[$FIELD.PARENT_TYPE]} - {$FIELD.PARENT_NAME}</a>
     </div>
 {/if}
 <br>
@@ -48,6 +49,12 @@
     <div>
         <strong>{$PARAM.LBL_STATUS}:</strong>
         {$FIELD.STATUS}
+    </div>
+{/if}
+{if !empty($FIELD.SENT_DATE)}
+    <div>
+        <strong>{$PARAM.LBL_SENT_DATE}:</strong>
+        {$FIELD.SENT_DATE}
     </div>
 {/if}
 {if !empty($FIELD.PHONE)}

@@ -65,8 +65,9 @@ array(
                         'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
                     ),
                     1 => array(
-                        'name' => 'sent_date',
-                        'label' => 'LBL_SENT_DATE',
+                        'name' => 'phone',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PHONE',
                     ),
                 ),
                 2 => array(
@@ -76,9 +77,11 @@ array(
                         'label' => 'LBL_SENDER',
                     ),
                     1 => array(
-                        'name' => 'phone',
-                        'studio' => 'visible',
-                        'label' => 'LBL_PHONE',
+                      'name' => 'template',
+                      'studio' => 'visible',
+                      'label' => 'LBL_TEMPLATE',
+                    //   'displayParams' => array(
+                    //     'initial_filter' => "&type_advanced[]=sms"
                     ),
                 ),
                 3 => array(
@@ -95,9 +98,6 @@ array(
                         'label' => 'LBL_TYPE',
                     ),
                     1 => array(
-                        'name' => 'direction',
-                        'studio' => 'visible',
-                        'label' => 'LBL_DIRECTION',
                     ),
                 ),
                 5 => array(
@@ -107,12 +107,8 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                     1 => array (
-                      'name' => 'template',
-                      'studio' => 'visible',
-                      'label' => 'LBL_TEMPLATE',
-                      'displayParams' => array(
-                        'initial_filter' => "&type_advanced[]=sms"
-                        ),
+                        'name' => 'sent_date',
+                        'label' => 'LBL_SENT_DATE',
                     ),
                 ),
                 6 => array(

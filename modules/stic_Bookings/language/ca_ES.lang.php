@@ -63,9 +63,11 @@ $mod_strings = array(
     'LBL_MODULE_NAME_SINGULAR' => 'Reserva',
 
     'LBL_CODE' => 'Codi',
+    'LBL_PERIODIC_CODE' => 'Codi de reserva periòdica',
     'LBL_STATUS' => 'Estat',
     'LBL_ALL_DAY' => 'Tot el dia',
     'LBL_PLACE_BOOKING' => 'Reserva de places',
+    'LBL_PERIODIC_BOOKING' => 'Reserva periòdica',
     'LBL_START_DATE' => "Data d&#39;inici",
     'LBL_END_DATE' => 'Data de finalització',
     'LBL_PLANNED_START_DATE' => "Data prevista d&#39;inici",
@@ -77,7 +79,7 @@ $mod_strings = array(
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unitat familiar que reserva',
     'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromís de pagament',
 
-    // Cadenes de la secció "Afegeix recursos"
+    // Recursos de la reserva
     'LBL_RESOURCES' => 'Recursos',
     'LBL_PLACES' => 'Places',
     'LBL_RESOURCES_NAME' => 'Nom',
@@ -123,12 +125,41 @@ $mod_strings = array(
     'LBL_NUMBER_OF_PLACES' => 'Nombre de places: ',
     'LBL_TOTAL_AMOUNT' => 'Tarifa total',
     'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa de copagament',
-    
-    // Additional details
+
+    // Reserves periòdiques
+    'LBL_CREATE_PERIODIC_RECORDS' => 'Crea la reserva periòdica',
+    'LBL_CANCEL_BUTTON' => 'Cancel·la',
+    'LBL_REPEAT_DOW' => 'Dia de la setmana',
+    'LBL_REPEAT_END_AFTER' => 'Després de',
+    'LBL_REPEAT_END_BY' => 'Fins',
+    'LBL_REPEAT_END' => 'Fi',
+    'LBL_REPEAT_INTERVAL' => 'Interval',
+    'LBL_REPEAT_OCCURRENCES' => 'reserves',
+    'LBL_REPEAT_TYPE' => 'Repeteix',
+    'LBL_REPEAT_UNTIL' => 'Repeteix fins',
+    'LBL_SAVE_BUTTON' => 'Desa',
+    'LBL_UNAVAILABLE_RESOURCES' => 'Recursos no disponibles',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Resum:',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Registres processats',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Registres que es crearan',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT' => 'No hi ha incompatibilitats amb reserves ja existents, es crearan tots els registres sol·licitats.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Registres que no es crearan',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT' => 'Els registres següents no es crearan per incompatibilitat amb altres reserves ja existents.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Ves al Calendari de Reserves',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => "Ves al Calendari d'Espais",
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Ves a les Reserves',
+    'LBL_PERIODIC_BOOKING_ERROR' => 'Indiqueu la periodicitat de la reserva.',
+    'LBL_PERIODIC_BOOKING_COUNT_REQUIRED' => 'El nombre de reserves és obligatori.',
+    'LBL_PERIODIC_BOOKING_UNTIL_REQUIRED' => 'La data de finalització és obligatòria.',
+
+    // Detalls addicionals
     'LBL_RESOURCE_NAME' => 'Recurs',
     'LBL_RESOURCE_COUNT' => 'Recursos totals',
     'LBL_RESOURCES_LIST' => 'Llista de recursos',
 
-    // Tooltips help
+    // Ajuda
     'LBL_ALL_DAY_HELP' => 'Si la casella està marcada la reserva es fa en dies complets. Si està desmarcada poden indicar-se les hores inicial i final.',
+
+    // Camps de filtre en relacions molts a molts
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Recurs',
 );

@@ -33,7 +33,19 @@ require_once("modules/AOW_WorkFlow/aow_utils.php");
 
 class stic_MessagesController extends SugarController
 {
+    // We remap EditView action when no id is present (new record) to use the ComposeView
+    protected function remapAction()
+    {
+        if (!empty($this->action_remap[$this->do_action])) {
+            $this->action = $this->action_remap[$this->do_action];
+            $this->do_action = $this->action;
+        }
 
+        if ($this->do_action == 'EditView' && empty($this->bean->id)) {
+            $this->action = 'ComposeView';
+            $this->do_action = 'ComposeView';
+        }
+    }
 
     public function action_Save() {
         if (isset($_REQUEST['mass_ids']) && $_REQUEST['mass_ids'] !== '') {
@@ -85,10 +97,32 @@ class stic_MessagesController extends SugarController
             exit;
         }
         else {
+            $oldStatus = $this->bean->fetched_row['status']??'';
             $id = $this->bean->save(!empty($this->bean->notify_on_save));
             header('Content-Type: application/json');
-            $title = $this->bean->status !== 'error' ? $app_strings['LBL_EMAIL_SUCCESS'] : $mod_strings['LBL_ERROR'];
-            $detail = $this->bean->status !== 'error' ? $mod_strings['LBL_MESSAGE_SENT'] : $mod_strings['LBL_MESSAGE_NOT_SENT'];
+            switch ($this->bean->status) {
+                case 'sent':
+                    if ($this->bean->status !== $oldStatus) {
+                        $title = $app_strings['LBL_EMAIL_SUCCESS'];
+                        $detail = $mod_strings['LBL_MESSAGE_SENT'];
+                    }
+                    else {
+                        $title = $app_strings['LBL_EMAIL_SUCCESS'];
+                        $detail = $mod_strings['LBL_MESSAGE_SAVED'];
+                    }
+                    break;
+                case 'error':
+                    $title = $mod_strings['LBL_ERROR'];
+                    $detail = $mod_strings['LBL_MESSAGE_NOT_SENT'];
+                    break;
+                case 'draft':
+                    $title = $app_strings['LBL_EMAIL_SUCCESS'];
+                    $detail = $mod_strings['LBL_MESSAGE_SAVED'];
+                    break;
+                default:
+                    $title = $mod_strings['LBL_EMAIL_SUCCESS'];
+                    $detail = $mod_strings['LBL_MESSAGE_SAVED'];
+            }
             echo json_encode(array('success' => $this->bean->status === 'error' ? false : true, 'title' => $title, 'detail' => $detail, 'id' => $id));
             exit;
         }
@@ -138,9 +172,8 @@ class stic_MessagesController extends SugarController
         SugarApplication::redirect("index.php?module=stic_Messages&action=index");
     }
 
-    public function action_ComposeView()
-    {
-        $this->view = 'compose';
+    public function action_ComposeView() {
+        $this->view = 'edit';
         // For viewing the Compose as modal from other modules we need to load the stic_Messages language strings
         if (isset($_REQUEST['in_popup']) && $_REQUEST['in_popup']) {
             if (!is_file('cache/jsLanguage/stic_Messages/' . $GLOBALS['current_language'] . '.js')) {
@@ -217,8 +250,7 @@ class stic_MessagesController extends SugarController
         exit;
     }
 
-    protected function action_getPhoneField()
-    {
+    protected function action_getPhoneField() {
         $module = $_REQUEST['aow_module'];
         $aow_field = $_REQUEST['aow_newfieldname'];
 

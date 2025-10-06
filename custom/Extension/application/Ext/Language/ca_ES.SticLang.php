@@ -95,6 +95,9 @@ $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
 // Enviament massiu de correus
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
 
+// Camps de filtre en relacions molts a molts
+$app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grup de seguretat';
+
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
 $app_list_strings['moduleList']['Contacts'] = 'Persones';
@@ -3750,8 +3753,12 @@ $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campanya';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificació';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
-$app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
-// Dynamic list
-include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+// Elements afegits a l'Historial
+$app_list_strings['collection_temp_list']['Tasks'] = 'Tasques';
+$app_list_strings['collection_temp_list']['Meetings'] = 'Reunions';
+$app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
+$app_list_strings['collection_temp_list']['Notes'] = 'Notes';
+$app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
+$app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';

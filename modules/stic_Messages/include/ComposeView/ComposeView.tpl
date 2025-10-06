@@ -239,11 +239,5 @@
 
     {/literal}
 
-    <script>
-        {* Compose view has a TEMP ID in case you want to display multi instance of the ComposeView *}
-        $( "#template" ).change(function() {ldelim}
-            $.fn.stic_MessagesComposeView.onTemplateChange()
-        {rdelim});
-    </script>
     {/if}
 </form>
