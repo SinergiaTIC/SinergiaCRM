@@ -179,6 +179,27 @@ $dictionary['stic_Bookings'] = array(
                 'quickcreate' => false,
             ),
         ),
+        'periodic_code' => array(
+            'required' => false,
+            'name' => 'periodic_code',
+            'vname' => 'LBL_PERIODIC_CODE',
+            'type' => 'int',
+            'massupdate' => '1',
+            'no_default' => false,
+            'comments' => '',
+            'help' => '',
+            'importable' => 'true',
+            'duplicate_merge' => 'enabled',
+            'duplicate_merge_dom_value' => '2',
+            'inline_edit' => 0,
+            'audited' => false,
+            'reportable' => true,
+            'unified_search' => false,
+            'merge_filter' => 'enabled',
+            'len' => '11',
+            'inline_edit' => true,
+        ),
+    
         'parent_name' => array(
             'required' => false,
             'source' => 'non-db',
@@ -317,22 +338,23 @@ $dictionary['stic_Bookings'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE',
         ),
-
-        // Many to Many filter fields
-        'stic_resources_stic_bookings_name' => array (
-            'name' => 'stic_resources_stic_bookings_name',
-            'vname' => 'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME',
-            'query_type' => 'default',
-            'source' => 'non-db',
-            'type' => 'relate',
-            'width' => '10%',
-            'default' => true,
-            'studio' => array(
-                'searchview' => true, // To appear in the filter view layout editor
-                'visible' => false // To avoid appear in the record view layout editor
-            ),
-            'id_name' => 'stic_resources_stic_bookingsstic_resources_ida',
-            'module' => 'stic_Resources',
+        'periodic_booking' => array(
+            'required' => false,
+            'name' => 'periodic_booking',
+            'vname' => 'LBL_PERIODIC_BOOKING',
+            'type' => 'bool',
+            'no_default' => false,
+            'massupdate' => 0,
+            'inline_edit' => 0,
+            'comments' => '',
+            'help' => '',
+            'importable' => 'true',
+            'duplicate_merge' => 'ENABLED',
+            'duplicate_merge_dom_value' => '2',
+            'audited' => false,
+            'reportable' => true,
+            'unified_search' => false,
+            'merge_filter' => 'enabled',
         ),
         'stic_bookings_contacts' => array(
             'name' => 'stic_bookings_contacts',
@@ -388,12 +410,6 @@ $dictionary['stic_Bookings'] = array(
             'table' => 'stic_families',
             'module' => 'stic_Families',
             'rname' => 'name',
-            'db_concat_fields' => array(
-                0 => 'first_name',
-                1 => 'last_name',
-            ),
-            'massupdate' => 1,
-            'inline_edit' => 1,
         ),
         'stic_bookings_stic_familiesstic_families_ida' => array(
             'name' => 'stic_bookings_stic_familiesstic_families_ida',

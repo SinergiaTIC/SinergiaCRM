@@ -131,6 +131,7 @@ $GLOBALS['tabStructure'] = array(
             4 => 'Emails',
             5 => 'Tasks',
             6 => 'Notes',
+            7 => 'stic_Messages',
         ),
     ),
     'LBL_GROUPTAB_ECONOMY' => array(

@@ -86,6 +86,9 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 8 => array(
                     'id' => 'stic_Time_Tracker',
                 ),
+                9 => array(
+                    'id' => 'stic_Messages',
+                ),
             ),
         ),
         2 => array(
