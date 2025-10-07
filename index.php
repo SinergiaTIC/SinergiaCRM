@@ -41,9 +41,7 @@
 if (!defined('sugarEntry')) {
     define('sugarEntry', true);
 }
-if ($_REQUEST['module'] == 'Alerts'){
-    return;
-}
+
 include 'include/MVC/preDispatch.php';
 $startTime = microtime(true);
 require_once 'include/entryPoint.php';
