@@ -429,6 +429,24 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_skills_contacts'] = array(
     ),
 );
 
+// New collection in activities/history
+$layout_defs['Contacts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+$layout_defs['Contacts']['subpanel_setup']['history']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+$layout_defs['Contacts']['subpanel_setup']['activities']['collection_list']['stic_Messages'] = array(
+    'module' => 'stic_Messages',
+    'subpanel_name' => 'ForHistory',
+    'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
+    'generate_select' => true,
+    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'draft'"),
+);
+$layout_defs['Contacts']['subpanel_setup']['history']['collection_list']['stic_Messages'] = array(
+    'module' => 'stic_Messages',
+    'subpanel_name' => 'ForHistory',
+    'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
+    'generate_select' => true,
+    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'sent', 'error'"),
+);
+
 // Financial Products subpanel
 $layout_defs["Contacts"]["subpanel_setup"]['stic_financial_products_contacts'] = array (
     'order' => 100,

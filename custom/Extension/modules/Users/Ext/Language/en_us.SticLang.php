@@ -50,3 +50,32 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
 
 // Work Calendar record creation wizard
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generate Work calendar';
+
+// OAuth Authentication
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Alternative login</h3>';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'The email address ';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' does not belong to any SinergiaCRM user. If you believe this is an error, please contact an administrator.';
+
+// OAuth Authentication - Google
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Login with Google';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_TITLE'] = 'Google';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE'] = 'Enable Google Authentication';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = "This option enables Google Authentication. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>More information</a>.";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'Client ID';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = "ID of the application registered in Google API Console. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>More information</a>.";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Client Secret';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = "Secret of the application registered in Google API Console. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>More information</a>.";
+
+// OAuth Authentication - Microsoft
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT'] = 'Login with Microsoft';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TITLE'] = 'Microsoft';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = 'Enable Microsoft Authentication';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "This option enables Microsoft Authentication HELP. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>More information</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'Client ID';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID of the application registered in Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>More information</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'Tenant ID';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "Tenant ID of the application registered in Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>More information</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'Redirect URI';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = "Redirect URI of the application registered in Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>More information</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Scopes';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Scopes of the application registered in Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent' target='_blank'>More information</a>.";

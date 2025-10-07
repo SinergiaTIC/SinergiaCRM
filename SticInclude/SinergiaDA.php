@@ -75,13 +75,13 @@ class ExternalReporting
         'stic_Custom_Views',
     ];
 
-    // Autorelationships that we always exclude. 
+    // Autorelationships that we always exclude.
     // We use the module && field name instead of the relationship name, because the iteration is done through the fields and not through the relationships
 
     private $evenExcludedAutoRelationships = [
         'Contacts:reports_to_link',
         'Users:reports_to_link',
-        
+
     ];
     // Autorleationships that we always include
 
@@ -331,7 +331,7 @@ class ExternalReporting
                 // To avoid exceptional cases where the table name is defined in uppercase
                 // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
                 $fieldV['table'] = strtolower($fieldV['table'] ?? '');
-                
+
                 $fieldName = $fieldV['name'];
 
                 $fieldPrefix = ($fieldV['source'] ?? null) == 'custom_fields' ? 'c' : 'm';
@@ -440,7 +440,7 @@ class ExternalReporting
 
                                 // Check if the relationship is an autorelationship & prepare autorelationship data for use later
                                 if (($fieldV['module'] ?? null) == $moduleName) {
-                                    
+
                                     // Check if the autorelationship is excluded & skip it if it is
                                     if(in_array("{$fieldV['module']}:{$fieldV['link']}", $this->evenExcludedAutoRelationships)){
                                         continue 2;
@@ -628,7 +628,7 @@ class ExternalReporting
                         // Create listViewName for use in metadata & view creation
                         $listViewName = substr(join('_', [$tableName, $fieldV['name'], $listName]), 0, 58);
 
-                        $fieldSrc = " IFNULL(CAST({$fieldPrefix}.{$fieldV['name']} AS CHAR),'') AS {$fieldName}";
+                        $fieldSrc = " IFNULL({$fieldPrefix}.{$fieldV['name']} ,'') AS {$fieldName}";
 
                         $createdListView = $this->createEnumView($listName, $listViewName);
 
@@ -891,7 +891,7 @@ class ExternalReporting
                     $this->addMetadataRecord(
                         'sda_def_tables',
                         [
-                            'table' => "{$this->viewPrefix}_{$tableName}_{$key}",
+                            'table' =>$this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$key}", 64),
                             'label' => $qualifiedLabel,
                             'description' => addslashes($qualifiedLabel),
                         ]
@@ -906,7 +906,7 @@ class ExternalReporting
                 || (!empty($this->sdaSettings['publishAsTable'][0]) && $this->sdaSettings['publishAsTable'][0] == '1')
             ) {
                 $tableMode = 'table';
-                $createViewQueryHeader = " CREATE OR REPLACE TABLE {$viewName} ENGINE=InnoDB AS SELECT ";
+                $createViewQueryHeader = " CREATE OR REPLACE TABLE {$viewName} ENGINE=MYISAM AS SELECT ";
             } else {
                 $tableMode = 'view';
                 $createViewQueryHeader = " CREATE OR REPLACE VIEW {$viewName} AS SELECT ";
@@ -990,9 +990,9 @@ class ExternalReporting
                     } else {
                         $mode = 'VIEW';
                     }
-
+                    $objectName = $this->truncateStringMiddle($viewName.'_'.$key, 64);
                     // Create the SQL instruction with some modifications for each autorelationship view
-                    $createViewQuery[] = "CREATE OR REPLACE {$mode} {$viewName}_{$key} AS
+                    $createViewQuery[] = "CREATE OR REPLACE {$mode} {$objectName} AS
                     SELECT   {$createViewQueryFields} {$value['parentIdfieldSrc']}
                     {$createViewQueryFrom}
                     {$createViewQueryLeftJoins} {$value['innerJoin']}
@@ -1019,6 +1019,28 @@ class ExternalReporting
                     $this->info .= '<div style="font-size:80%"><b>Listas creadas:</b> ' . join(' | ', array_unique($listNames)) . '</div>';
                 };
             }
+
+            // Create indexes only if it is a table
+            if ($tableMode == 'table') {
+                foreach ($indexesToCreate as $indexColumn) {
+                    $indexName = $this->truncateStringMiddle($this->sanitizeText("idx_{$viewName}_{$indexColumn}"), 64);
+                    if($indexColumn == 'id'){
+                        $indexSql = "ALTER TABLE {$viewName} ADD UNIQUE {$indexName}  ({$indexColumn}) USING BTREE";
+                    }else{
+                        $indexSql = "ALTER TABLE {$viewName} ADD INDEX  {$indexName} ({$indexColumn}) USING BTREE";
+                    }
+                    
+                    if (!$db->query($indexSql)) {
+                        $lastSQLError = array_pop(explode(':', $db->last_error));
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$indexSql}]");
+                        $this->info .= "<div class='error' style='color:red;'>ERROR: <textarea style='width:100%;height:100px;border:1px solid red;'> {$indexSql} </textarea>  ({$lastSQLError})</div>";
+                        $this->info .= "[FATAL: Unable to create index {$indexName} on view $viewName]";
+                    } else {
+                        $this->info .= "<div style='color:green;'>OK: <textarea style='width:100%;height:100px;border:1px solid green;'>{$indexSql}</textarea>  </div>";
+                    };
+                }
+            }
+
             $this->info .= "<h2>Base fields</h2>";
             $this->info .= print_r($fieldList['base'] ?? '', true);
             $this->info .= "<h2>Custom fields</h2>";
@@ -1203,7 +1225,7 @@ class ExternalReporting
      * it creates a LEFT JOIN based on whether the current module is the left or right side of the relationship.
      * If no join table is used, it checks if the relationship is a one-to-many relationship for the
      * current table and builds the join accordingly. If no suitable relationship is found, it does not return a join.
-     * 
+     *
      *
      * @param array $field The field array containing information about the current field
      * @param string $tableName The name of the table being processed
@@ -1262,8 +1284,7 @@ class ExternalReporting
                     ];
                 } else {
                     // if an auto relationship
-                    $targetTable = "{$this->viewPrefix}_{$field['table']}_{$field['link']}";
-                    $label = "{$tableLabel} ({$field['rLabel']})|{$tableLabel}";
+                    $targetTable = $this->truncateStringMiddle("{$this->viewPrefix}_{$field['table']}_{$field['link']}",64);
                     $label = "{$tableLabel}|{$tableLabel} ({$field['rLabel']})";
 
                     // Add metadata record
@@ -2176,11 +2197,11 @@ class ExternalReporting
     {
         $db = DBManagerFactory::getInstance();
         foreach ($autoRelationships as $relationship) {
-            $this->info .= "<li>{$relationship['source_table']} -> {$relationship['target_table']}</li>";
+            $this->info .= "<li>" . ($relationship['source_table'] ?? 'N/A') . " -> " . ($relationship['target_table'] ?? 'N/A') . "</li>";
             $query = "SELECT * FROM sda_def_columns WHERE `table` = '{$this->viewPrefix}_{$relationship['table']}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
-                $row['table'] = "{$this->viewPrefix}_{$relationship['table']}_{$relationship['link']}";
+                $row['table'] = $this->truncateStringMiddle("{$this->viewPrefix}_{$relationship['table']}_{$relationship['link']}", 64);
                 $this->addMetadataRecord('sda_def_columns', $row);
             }
         }
@@ -2206,11 +2227,62 @@ class ExternalReporting
             $query = "SELECT * FROM sda_def_permissions WHERE `table` = '{$this->viewPrefix}_{$table}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
-                $row['table'] = "{$this->viewPrefix}_{$table}_{$relationship}";
+                $row['table'] = $this->truncateStringMiddle("{$this->viewPrefix}_{$table}_{$relationship}");
                 $row['id'] = null;
                 $this->addMetadataRecord('sda_def_permissions', $row);
             }
         }
+    }
+
+
+    /**
+     * Truncates a string from the middle if it exceeds a maximum length,
+     * inserting the number of removed characters in the center.
+     *
+     * @param string $string The string to process.
+     * @param int $maxLength The maximum number of allowed characters (default 64).
+     * @return string The truncated string, or the original if it doesn't exceed the limit.
+     */
+    public function truncateStringMiddle(string $string, int $maxLength = 64): string
+    {
+        // Check if the string length exceeds the maximum allowed length.
+        if (strlen($string) > $maxLength) {
+            $originalLength = strlen($string);
+            $charsRemoved = $originalLength - $maxLength; // Calculate characters to remove.
+
+            // Create the replacement string, e.g., "_123_".
+            $replacement = '_' . $charsRemoved . '_';
+            $replacementLen = strlen($replacement);
+
+            // Calculate how much actual string content we can keep.
+            $contentLength = $maxLength - $replacementLen;
+
+            // Handle edge case: if the replacement string itself is longer than maxLength.
+            if ($contentLength < 0) {
+                // Truncate and add ellipsis, as there's no space for original content or number.
+                // Using "_" instead of "..." for consistency with the new format.
+                return substr($string, 0, $maxLength - 1) . '_';
+            } else {
+                // Calculate half length for the start and end parts.
+                $halfLen = floor($contentLength / 2);
+
+                // Extract the start and end parts of the original string.
+                $start = substr($string, 0, $halfLen);
+                $end = substr($string, $originalLength - ($contentLength - $halfLen));
+
+                // Reconstruct the string with the replacement in the middle.
+                $truncatedString = $start . $replacement . $end;
+
+                // Final adjustment: if the number itself made the string too long (rare).
+                if (strlen($truncatedString) > $maxLength) {
+                    return substr($truncatedString, 0, $maxLength);
+                }
+
+                return $truncatedString;
+            }
+        }
+        // Return the original string if no truncation is needed.
+        return $string;
     }
 
 }

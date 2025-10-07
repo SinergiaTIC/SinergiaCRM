@@ -74,4 +74,7 @@ $mod_strings = array(
     'LBL_ERROR_STATUS_DURATION' => 'If Status is Yes or partial then Duration is required.',
     'LBL_DURATION_INFO' => 'Duration is in hours and can contain decimals. If no value is selected in Status and Duration is empty, the attendance will inherit the Duration from the parent session. If Status is set to Yes or Partial, then Duration cannot be empty.',
     'LBL_AMOUNT_INFO' => 'If this field is left blank when creating an attendance, it will be automatically filled in with the value of the "Session amount" field of the related registration.',
+
+    // Many to Many filter fields
+    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Event (via Registrations)',
 );

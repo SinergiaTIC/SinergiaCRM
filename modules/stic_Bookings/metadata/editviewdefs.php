@@ -108,7 +108,9 @@ array(
                     ),
                 ),
                 7 => array(
-                    0 => 'description',
+                    0 => 'periodic_booking',
+                    1 => array(
+                    ),
                 ),
                 8 => array(
                     0 => array(
@@ -120,7 +122,9 @@ array(
                         'label' => 'LBL_TOTAL_COPAYMENT_AMOUNT',
                     ),
                 ),
-
+                9 => array(
+                    0 => 'description',
+                ),
             ),
         ),
     ),

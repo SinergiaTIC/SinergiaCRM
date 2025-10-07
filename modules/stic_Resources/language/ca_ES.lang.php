@@ -42,6 +42,7 @@ $mod_strings = array(
     'LBL_DELETED' => 'Suprimit',
     'LBL_NAME' => 'Nom',
     'LBL_LIST_NAME' => 'Nom',
+    'LBL_LIST_CLOSE' => 'Tanca',
     'LBL_EDIT_BUTTON' => 'Edita',
     'LBL_REMOVE' => 'Desvincula',
     'LBL_ASCENDING' => 'Ascendent',
@@ -85,4 +86,7 @@ $mod_strings = array(
     'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No es pot canviar el tipus de recurs perquè té reserves associades.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Cal que indiqueu un centre',
     'LBL_PLACES' => 'Places',
+
+    // Camps de filtre en relacions molts a molts
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Reserva',
 );

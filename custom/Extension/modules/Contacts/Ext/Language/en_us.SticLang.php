@@ -177,5 +177,9 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 // Skills
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Skills';
 
+// Many to Many filter fields
+$mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Prospect List';
+$mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Current project';
+
 // Financial Products
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Financial products';
