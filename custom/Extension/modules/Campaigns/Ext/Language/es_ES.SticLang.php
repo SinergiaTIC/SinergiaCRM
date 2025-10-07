@@ -69,7 +69,7 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'Remitente (nombre)';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitente (dirección)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Responder a (nombre)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
-$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Categoría de lista de público objetivo';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Enviar notificación a:';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
 
@@ -78,5 +78,6 @@ $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificación se en
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correo electrónico debe ser del tipo 'Notificación' y se pueden incluir en ella campos del registro asociado a la notificación (el evento o la subvención).";
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Cuenta de correo que se utilizará para enviar la notificación. Se puede configurar en el apartado 'Correo electrónico saliente' del área de Adminstración.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde recibir los mensajes de error que se puedan producir tras el envío. Se puede configurar en el apartado 'Correo electrónico entrante' del área de Administración.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = "Se creará automáticamente una lista de público objetivo en base a la selección y esta se agregará a la notificación.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.";

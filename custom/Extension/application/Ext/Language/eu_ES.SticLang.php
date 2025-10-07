@@ -337,6 +337,7 @@ $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmas';
 
 // Categorías para la creación dinamica de Listas de público objetivo
+$app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
 $app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_all_signers'] = 'Todos los firmantes';
 $app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_signers_pending'] = 'Firmantes pendientes de firmar';
 
