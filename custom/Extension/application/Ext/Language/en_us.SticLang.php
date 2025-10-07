@@ -345,6 +345,10 @@ $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Oppor
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Signatures';
 
+// Categories for the dynamic creation of Target Lists
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_all_signers'] = 'All signers';
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_signers_pending'] = 'Pending signers';
+
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';

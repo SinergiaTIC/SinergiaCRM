@@ -346,6 +346,9 @@ $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subve
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmes';
 
+// Categorías per a la creació dinàmica de Llistes de públic objectiu
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_all_signers'] = 'Tots els signants';
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_signers_pending'] = 'Signants pendents de signar';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
