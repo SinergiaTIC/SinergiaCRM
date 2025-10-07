@@ -64,6 +64,7 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'From name';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'From address';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Reply to name';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Target List Category';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
 

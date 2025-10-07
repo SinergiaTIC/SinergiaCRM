@@ -69,6 +69,7 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'Remitent (nom)';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitent (adreça)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Respondre a (nom)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Categoria de llista de públic objectiu';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 
