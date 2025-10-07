@@ -338,6 +338,7 @@ $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';
+$app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Signatures';
 
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
