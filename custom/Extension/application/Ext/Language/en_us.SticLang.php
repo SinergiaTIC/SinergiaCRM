@@ -293,6 +293,9 @@ $app_list_strings['record_type_display']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display']['stic_Signatures'] = 'Signatures';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Signers';
+
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
@@ -335,6 +338,8 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Signatures';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Signers';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';

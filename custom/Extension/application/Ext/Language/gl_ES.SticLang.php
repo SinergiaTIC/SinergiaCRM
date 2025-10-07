@@ -295,6 +295,8 @@ $app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
 $app_list_strings['record_type_display']['stic_Places'] = 'Plazas';
+$app_list_strings['record_type_display']['stic_Signatures'] = 'Firmas';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Firmantes';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
@@ -335,11 +337,16 @@ $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experi
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
 $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmas';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
+
+
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmas';
 
-// Porcentajes de IVA vigentes
+
+        // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';
 $app_list_strings['vat_list']['5'] = '5%';

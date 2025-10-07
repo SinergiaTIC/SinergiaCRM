@@ -294,6 +294,8 @@ $app_list_strings['record_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display']['stic_Signatures'] = 'Firmes';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Signants';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -336,6 +338,9 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmes';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Signants';
+
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';

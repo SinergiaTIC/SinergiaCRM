@@ -336,6 +336,8 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmas';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvenciones';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
