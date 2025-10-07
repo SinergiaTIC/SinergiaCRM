@@ -382,7 +382,10 @@
         var $body = $(body);
         var $existingSignature = $body.find('.email-signature-element');
         $existingSignature.remove();
-        tinymce.activeEditor.setContent($body.html(), {format: 'html'});
+        // STIC-Custom 20251007 MHP - This line is commented out because it generates a JS or functionality error in SinergiaCRM.
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/803
+        // tinymce.activeEditor.setContent($body.html(), {format: 'html'});
+        // END STIC-Custom
       }
 
       var signatureElement = $('<div></div>')
@@ -1172,7 +1175,6 @@
         $.ajax({
           "url": 'index.php?module=Emails&action=getFromFields'
         }).done(function (response) {
-          debugger;
           var json = JSON.parse(response);
           if (typeof json.data !== "undefined") {
             var optionGroups = {
@@ -1642,7 +1644,7 @@
       code_dialog_height: 600,
       code_dialog_width: 650,
       plugins: [
-        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "fullpage advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",
         "insertdatetime media nonbreaking save table contextmenu directionality",
         "emoticons template paste textcolor colorpicker textpattern imagetools",
