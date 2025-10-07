@@ -94,6 +94,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Creouse unha campaña de notificación para a sinatura: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Xa existe unha campaña de notificación para a sinatura: ',
     'LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN' => 'Solicitar sinatura a todos os firmantes mediante campaña',
+    'LBL_ERROR_CREATING_CAMPAIGN_FROM_SIGNATURE' => 'Erro ao crear campaña de notificación desde sinatura',
 
     // Portal messages
     'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copia do seu documento asinado',

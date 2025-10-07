@@ -94,6 +94,8 @@ $mod_strings = array(
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'A notification campaign already exists for the signature: ',
     'LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN' => 'Request signature from all signers via campaign',
+    'LBL_ERROR_CREATING_CAMPAIGN_FROM_SIGNATURE' =>  'Error creating notification campaign from signature',
+    
 
     // Portal messages
     'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copy of your signed document',
