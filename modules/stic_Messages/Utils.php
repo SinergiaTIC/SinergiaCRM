@@ -31,11 +31,11 @@ class stic_MessagesUtils {
      * If new modules must be included, this list can be modified from a custom file
      */
     public static $messageableModules = array(
-        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts' ),
-        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts'),
-        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'leads'),
-        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
-        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
+        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts', 'nameFields' => array('first_name', 'last_name') ),
+        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts', 'nameFields' => array('name')),
+        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'leads', 'nameFields' => array('first_name', 'last_name')),
+        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users', 'nameFields' => array('first_name', 'last_name')),
+        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users', 'nameFields' => array('first_name', 'last_name')),
     );
 
     /** 

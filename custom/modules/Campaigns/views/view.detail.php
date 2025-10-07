@@ -41,8 +41,20 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
         $this->dv->defs['templateMeta']['form']['buttons'][1] = self::duplicateButton;
         $this->dv->defs['templateMeta']['form']['buttons'][2] = self::deleteButton;
         $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
-        $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testSendButton;
-        $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
+        //TODOEPS: Buscar la data correcta
+        // STIC Custom EPS - Messages campaigns
+        // $this->dv->defs['templateMeta']['form']>['buttons'][4] = self::testSendButton;
+        // $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
+
+        if ($this->bean->campaign_type !== 'SMS') {
+            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testSendButton;
+            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
+        }
+        else {
+            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testMessagesSendButton;
+            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueMessagesSendButton;
+        }
+        // END STIC Custom
         $this->dv->defs['templateMeta']['form']['buttons'][6] = self::markAsSentButton;
         $this->dv->defs['templateMeta']['form']['buttons'][7] = self::viewChangesButton;
 
@@ -106,6 +118,44 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
             ),
         )
     );
+    // TODOEPS: Buscar la data correcta
+    // STIC Custom EPS - Messages campaigns
+    private const testMessagesSendButton = array(
+        'customCode' => '<input title="{$MOD.LBL_SEND_MESSAGES_TEST}"  class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_test_button" value="{$MOD.LBL_SEND_MESSAGES_TEST}">',
+        'sugar_html' => 
+        array (
+          'type' => 'input',
+          'value' => '{$MOD.LBL_SEND_MESSAGES_TEST}',
+          'htmlOptions' => 
+          array (
+            'type' => '{$ADD_BUTTON_STATE}',
+            'title' => '{$MOD.LBL_SEND_MESSAGES_TEST}',
+            'class' => 'button',
+            'onclick' => 'this.form = document.getElementById(\'formDetailView\'); this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);',
+            'name' => 'button',
+            'id' => 'send_test_button',
+          ),
+        )
+    );
+    private const queueMessagesSendButton = array(
+
+        'customCode' => '<input title="{$MOD.LBL_SEND_MESSAGES}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_emails_button" value="{$MOD.LBL_SEND_MESSAGES}">',
+        'sugar_html' => 
+        array (
+            'type' => 'input',
+            'value' => '{$MOD.LBL_SEND_MESSAGES}',
+            'htmlOptions' => 
+            array (
+            'type' => '{$ADD_BUTTON_STATE}',
+            'title' => '{$MOD.LBL_SEND_MESSAGES}',
+            'class' => 'button',
+            'onclick' => 'this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';SUGAR.ajaxUI.submitForm(this.form);',
+            'name' => 'button',
+            'id' => 'send_emails_button',
+            ),
+        )
+    );
+    // END STIC Custom
     private const markAsSentButton = array(
         'customCode' => '<input title="{$MOD.LBL_MARK_AS_SENT}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'DetailView\';this.form.mode.value=\'set_target\';SUGAR.ajaxUI.submitForm(this.form);" type="{$TARGET_BUTTON_STATE}" name="button" id="mark_as_sent_button" value="{$MOD.LBL_MARK_AS_SENT}">',
         'sugar_html' => 

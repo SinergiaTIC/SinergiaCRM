@@ -83,4 +83,4 @@ class stic_MessagesViewEdit extends ViewEdit
         // Write here you custom code
 
     }
-
+}

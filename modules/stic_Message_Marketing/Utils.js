@@ -42,7 +42,6 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    setAutofill(["name"]);
     function toggle_message_for() {
         const isChecked = $("#select_all").is(":checked");
         multiSelect = $("#prospect_lists");

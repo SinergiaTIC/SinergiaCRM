@@ -251,7 +251,7 @@ if (!class_exists('VardefManager')) {
 VardefManager::createVardef('stic_Message_Marketing', 'stic_Message_Marketing', array('basic','assignable','security_groups'));
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Message_Marketing']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Message_Marketing']['fields']['name']['required'] = '1'; // Name is not required in this module
 $dictionary['stic_Message_Marketing']['fields']['name']['importable'] = true; // Name is importable but not required in this module
 $dictionary['stic_Message_Marketing']['fields']['assigned_user_name']['required'] = true; // Assigned user is required in this module
 $dictionary['stic_Message_Marketing']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

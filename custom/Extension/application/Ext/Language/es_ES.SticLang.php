@@ -3752,5 +3752,17 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
+$app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
+$app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
+$app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+
+// Elementos añadidos al Historial
+$app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';
+$app_list_strings['collection_temp_list']['Meetings'] = 'Reuniones';
+$app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
+$app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
+
+// Dynamic list
+include 'modules/stic_Message_Marketing/dynamicLPOs.php';
