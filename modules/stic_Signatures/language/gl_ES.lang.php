@@ -81,6 +81,7 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF' => 'En representación',
     'LBL_PDF_DOCUMENT' => 'Documento PDF',
     'LBL_SIGNATURE_MODE' => 'Modo de sinatura',
+    'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE' => 'Notificacións',
     'LBL_STEP1_PANEL' => '<b> PASO 1:</b> Seleccione plantilla PDF',
     'LBL_STEP2_PANEL' => '<b> PASO 2:</b> Seleccione a ruta á persoa asinante',
     'LBL_STEP3_PANEL' => '<b> PASO 3:</b> Configure o resto dos datos do proceso de sinatura',
