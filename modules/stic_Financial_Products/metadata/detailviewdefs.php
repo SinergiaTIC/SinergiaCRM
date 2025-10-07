@@ -98,14 +98,14 @@ array (
         array (
           0 => 
           array (
-            'name' => 'product_type',
+            'name' => 'type',
             'studio' => 'visible',
-            'label' => 'LBL_PRODUCT_TYPE',
+            'label' => 'LBL_TYPE',
           ),
           1 => 
           array (
-            'name' => 'opening_date',
-            'label' => 'LBL_OPENING_DATE',
+            'name' => 'start_date',
+            'label' => 'LBL_START_DATE',
           ),
         ),
         3 => 
@@ -135,16 +135,16 @@ array (
         array (
           0 => 
           array (
-            'name' => 'bank_account_holders',
-            'label' => 'LBL_BANK_ACCOUNT_HOLDERS',
+            'name' => 'holders',
+            'label' => 'LBL_HOLDERS',
           ),
         ),
         6 => 
         array (
           0 => 
           array (
-            'name' => 'bank_entity',
-            'label' => 'LBL_BANK_ENTITY',
+            'name' => 'entity',
+            'label' => 'LBL_ENTITY',
           ),
           1 => 
           array (

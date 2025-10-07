@@ -41,18 +41,18 @@ $subpanel_layout = array(
             'widget_class' => 'SubPanelDetailViewLink',
             'width' => '45%',
         ),
-        'opening_date' => array(
-            'vname' => 'LBL_OPENING_DATE',
+        'start_date' => array(
+            'vname' => 'LBL_START_DATE',
             'width' => '45%',
         ),
-        'product_type' =>
+        'type' =>
         array(
-            'vname' => 'LBL_PRODUCT_TYPE',
+            'vname' => 'LBL_TYPE',
             'width' => '20%',
         ),
-        'bank_entity' =>
+        'entity' =>
         array(
-            'vname' => 'LBL_BANK_ENTITY',
+            'vname' => 'LBL_ENTITY',
             'width' => '20%',
         ),
         'iban' =>

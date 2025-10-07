@@ -49,13 +49,13 @@ class stic_Financial_Products extends Basic
     public $SecurityGroups;
     public $active;
     public $iban;
-    public $opening_date;
+    public $start_date;
     public $initial_balance;
     public $current_balance;
     public $balance_error;
-    public $product_type;
-    public $bank_entity;
-    public $bank_account_holders;
+    public $type;
+    public $entity;
+    public $holders;
 	
     public function bean_implements($interface)
     {
@@ -81,7 +81,7 @@ class stic_Financial_Products extends Basic
         global $app_list_strings;
 
         // Create name even when some of the required fields change
-        $this->name = $app_list_strings['stic_financial_products_product_types_list'][$this->product_type] . ' - ' . $this->iban . ' - ' . $this->bank_entity;
+        $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type] . ' - ' . $this->iban . ' - ' . $this->entity;
         
         // Call the generic save() function from the SugarBean class
         parent::save();

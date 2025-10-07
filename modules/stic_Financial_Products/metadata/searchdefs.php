@@ -47,13 +47,13 @@ $searchdefs[$module_name] = array(
         'default' => true,
         'width' => '10%',
       ),
-      'opening_date' => 
+      'start_date' => 
       array (
         'type' => 'date',
-        'label' => 'LBL_OPENING_DATE',
+        'label' => 'LBL_START_DATE',
         'width' => '10%',
         'default' => true,
-        'name' => 'opening_date',
+        'name' => 'start_date',
       ),
       'stic_financial_products_contacts_name' => 
       array (
@@ -65,14 +65,14 @@ $searchdefs[$module_name] = array(
         'default' => true,
         'name' => 'stic_financial_products_contacts_name',
       ),
-      'product_type' => 
+      'type' => 
       array (
         'type' => 'enum',
         'studio' => 'visible',
-        'label' => 'LBL_PRODUCT_TYPE',
+        'label' => 'LBL_TYPE',
         'width' => '10%',
         'default' => true,
-        'name' => 'product_type',
+        'name' => 'type',
       ),
       'current_balance' => 
       array (
@@ -82,13 +82,13 @@ $searchdefs[$module_name] = array(
         'default' => true,
         'name' => 'current_balance',
       ),
-      'bank_entity' => 
+      'entity' => 
       array (
         'type' => 'varchar',
-        'label' => 'LBL_BANK_ENTITY',
+        'label' => 'LBL_ENTITY',
         'width' => '10%',
         'default' => true,
-        'name' => 'bank_entity',
+        'name' => 'entity',
       ),
       'assigned_user_id' => 
       array (
@@ -130,13 +130,13 @@ $searchdefs[$module_name] = array(
         'default' => true,
         'width' => '10%',
       ),
-      'opening_date' => 
+      'start_date' => 
       array (
         'type' => 'date',
-        'label' => 'LBL_OPENING_DATE',
+        'label' => 'LBL_START_DATE',
         'width' => '10%',
         'default' => true,
-        'name' => 'opening_date',
+        'name' => 'start_date',
       ),
       'active' => 
       array (
@@ -147,14 +147,14 @@ $searchdefs[$module_name] = array(
         'default' => true,
         'name' => 'active',
       ),
-      'product_type' => 
+      'type' => 
       array (
         'type' => 'enum',
         'studio' => 'visible',
-        'label' => 'LBL_PRODUCT_TYPE',
+        'label' => 'LBL_TYPE',
         'width' => '10%',
         'default' => true,
-        'name' => 'product_type',
+        'name' => 'type',
       ),
       'stic_financial_products_contacts_name' => 
       array (
@@ -191,13 +191,13 @@ $searchdefs[$module_name] = array(
         'default' => true,
         'name' => 'current_balance',
       ),
-      'bank_entity' => 
+      'entity' => 
       array (
         'type' => 'varchar',
-        'label' => 'LBL_BANK_ENTITY',
+        'label' => 'LBL_ENTITY',
         'width' => '10%',
         'default' => true,
-        'name' => 'bank_entity',
+        'name' => 'entity',
       ),
       'iban' => 
       array (
@@ -207,13 +207,13 @@ $searchdefs[$module_name] = array(
         'default' => true,
         'name' => 'iban',
       ),
-      'bank_account_holders' => 
+      'holders' => 
       array (
         'type' => 'varchar',
-        'label' => 'LBL_BANK_ACCOUNT_HOLDERS',
+        'label' => 'LBL_HOLDERS',
         'width' => '10%',
         'default' => true,
-        'name' => 'bank_account_holders',
+        'name' => 'holders',
       ),
       'assigned_user_id' => 
       array (

@@ -67,11 +67,11 @@ array (
     'width' => '10%',
     'default' => true,
   ),
-  'TRANSACTION_TYPE' => 
+  'TYPE' => 
   array (
     'type' => 'enum',
     'studio' => 'visible',
-    'label' => 'LBL_TRANSACTION_TYPE',
+    'label' => 'LBL_TYPE',
     'width' => '10%',
     'default' => true,
   ),

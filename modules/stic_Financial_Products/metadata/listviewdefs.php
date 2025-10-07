@@ -36,10 +36,10 @@ $listViewDefs[$module_name] =
       'default' => true,
       'link' => true,
     ),
-    'OPENING_DATE' =>
+    'START_DATE' =>
     array(
       'type' => 'date',
-      'label' => 'LBL_OPENING_DATE',
+      'label' => 'LBL_START_DATE',
       'width' => '10%',
       'default' => true,
     ),
@@ -52,18 +52,18 @@ $listViewDefs[$module_name] =
       'width' => '10%',
       'default' => true,
     ),
-    'PRODUCT_TYPE' =>
+    'TYPE' =>
     array(
       'type' => 'enum',
       'studio' => 'visible',
-      'label' => 'LBL_PRODUCT_TYPE',
+      'label' => 'LBL_TYPE',
       'width' => '10%',
       'default' => true,
     ),
-    'BANK_ENTITY' =>
+    'ENTITY' =>
     array(
       'type' => 'varchar',
-      'label' => 'LBL_BANK_ENTITY',
+      'label' => 'LBL_ENTITY',
       'width' => '10%',
       'default' => true,
     ),
@@ -112,10 +112,10 @@ $listViewDefs[$module_name] =
       'width' => '10%',
       'default' => false,
     ),
-    'BANK_ACCOUNT_HOLDERS' =>
+    'HOLDERS' =>
     array(
       'type' => 'varchar',
-      'label' => 'LBL_BANK_ACCOUNT_HOLDERS',
+      'label' => 'LBL_HOLDERS',
       'width' => '10%',
       'default' => false,
     ),

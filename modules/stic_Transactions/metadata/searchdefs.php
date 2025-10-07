@@ -64,14 +64,14 @@ array (
         'default' => true,
         'name' => 'category',
       ),
-      'transaction_type' => 
+      'type' => 
       array (
         'type' => 'enum',
         'studio' => 'visible',
-        'label' => 'LBL_TRANSACTION_TYPE',
+        'label' => 'LBL_TYPE',
         'width' => '10%',
         'default' => true,
-        'name' => 'transaction_type',
+        'name' => 'type',
       ),
       'stic_transactions_stic_financial_products_name' => 
       array (
@@ -158,14 +158,14 @@ array (
         'default' => true,
         'name' => 'subcategory',
       ),
-      'transaction_type' => 
+      'type' => 
       array (
         'type' => 'enum',
         'studio' => 'visible',
-        'label' => 'LBL_TRANSACTION_TYPE',
+        'label' => 'LBL_TYPE',
         'width' => '10%',
         'default' => true,
-        'name' => 'transaction_type',
+        'name' => 'type',
       ),
       'stic_transactions_stic_financial_products_name' => 
       array (

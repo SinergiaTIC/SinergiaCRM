@@ -36,7 +36,7 @@ $dashletData['stic_TransactionsDashlet']['searchFields'] = array(
     array (
       'default' => '',
     ),
-    'transaction_type' => 
+    'type' => 
     array (
       'default' => '',
     ),
@@ -105,11 +105,11 @@ $dashletData['stic_TransactionsDashlet']['columns'] = array (
       'width' => '10%',
       'default' => true,
     ),
-    'transaction_type' => 
+    'type' => 
     array (
       'type' => 'enum',
       'studio' => 'visible',
-      'label' => 'LBL_TRANSACTION_TYPE',
+      'label' => 'LBL_TYPE',
       'width' => '10%',
       'default' => true,
     ),

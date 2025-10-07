@@ -113,9 +113,9 @@ array (
           ),
           1 => 
           array (
-            'name' => 'transaction_type',
+            'name' => 'type',
             'studio' => 'visible',
-            'label' => 'LBL_TRANSACTION_TYPE',
+            'label' => 'LBL_TYPE',
           ),
         ),
         3 => 

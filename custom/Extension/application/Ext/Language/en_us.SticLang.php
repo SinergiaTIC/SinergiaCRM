@@ -3674,13 +3674,13 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
 
 // Financial Products: Product Types
-$app_list_strings['stic_financial_products_product_types_list']['checking_account'] = 'Checking account';
-$app_list_strings['stic_financial_products_product_types_list']['savings_account'] = 'Savings account';
-$app_list_strings['stic_financial_products_product_types_list']['investment_fund'] = 'Investment fund';
-$app_list_strings['stic_financial_products_product_types_list']['insurance'] = 'Insurance';
-$app_list_strings['stic_financial_products_product_types_list']['prepaid_card'] = 'Prepaid card';
-$app_list_strings['stic_financial_products_product_types_list']['stocks'] = 'Stocks';
-$app_list_strings['stic_financial_products_product_types_list']['others'] = 'Others';
+$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Current account';
+$app_list_strings['stic_financial_products_types_list']['savings_account'] = 'Savings account';
+$app_list_strings['stic_financial_products_types_list']['investment_fund'] = 'Investment fund';
+$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Insurance';
+$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Prepaid card';
+$app_list_strings['stic_financial_products_types_list']['shares'] = 'Shares';
+$app_list_strings['stic_financial_products_types_list']['other'] = 'Other';
 
 // Transactions: Type of transaction
 $app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Income';

@@ -3708,13 +3708,13 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdevenime
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 
 // Productes financers: Tipus de producte
-$app_list_strings['stic_financial_products_product_types_list']['checking_account'] = 'Compte corrent';
-$app_list_strings['stic_financial_products_product_types_list']['savings_account'] = 'D’estalvi';
-$app_list_strings['stic_financial_products_product_types_list']['investment_fund'] = 'Fons d’inversió';
-$app_list_strings['stic_financial_products_product_types_list']['insurance'] = 'Assegurances';
-$app_list_strings['stic_financial_products_product_types_list']['prepaid_card'] = 'Targeta prepagament';
-$app_list_strings['stic_financial_products_product_types_list']['stocks'] = 'Accions';
-$app_list_strings['stic_financial_products_product_types_list']['others'] = 'Altres';
+$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Compte corrent';
+$app_list_strings['stic_financial_products_types_list']['savings_account'] = 'Compte d\'estalvi';
+$app_list_strings['stic_financial_products_types_list']['investment_fund'] = 'Fons d\'inversió';
+$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Assegurança';
+$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Targeta de prepagament';
+$app_list_strings['stic_financial_products_types_list']['shares'] = 'Accions';
+$app_list_strings['stic_financial_products_types_list']['other'] = 'Altres';
 
 // Transaccions: Tipus de moviment
 $app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Ingrés';

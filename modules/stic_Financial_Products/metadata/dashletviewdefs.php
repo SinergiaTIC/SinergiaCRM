@@ -36,7 +36,7 @@ $dashletData['stic_Financial_ProductsDashlet']['searchFields'] = array(
     array (
       'default' => '',
     ),
-    'opening_date' => 
+    'start_date' => 
     array (
       'default' => '',
     ),
@@ -44,7 +44,7 @@ $dashletData['stic_Financial_ProductsDashlet']['searchFields'] = array(
     array (
       'default' => '',
     ),
-    'product_type' => 
+    'type' => 
     array (
       'default' => '',
     ),
@@ -60,7 +60,7 @@ $dashletData['stic_Financial_ProductsDashlet']['searchFields'] = array(
     array (
       'default' => '',
     ),
-    'bank_entity' => 
+    'entity' => 
     array (
       'default' => '',
     ),
@@ -68,7 +68,7 @@ $dashletData['stic_Financial_ProductsDashlet']['searchFields'] = array(
     array (
       'default' => '',
     ),
-    'bank_account_holders' => 
+    'holders' => 
     array (
       'default' => '',
     ),
@@ -106,10 +106,10 @@ $dashletData['stic_Financial_ProductsDashlet']['columns'] = array(
       'default' => true,
       'name' => 'name',
     ),
-    'opening_date' => 
+    'start_date' => 
     array (
       'type' => 'date',
-      'label' => 'LBL_OPENING_DATE',
+      'label' => 'LBL_START_DATE',
       'width' => '10%',
       'default' => true,
     ),
@@ -122,18 +122,18 @@ $dashletData['stic_Financial_ProductsDashlet']['columns'] = array(
       'width' => '10%',
       'default' => true,
     ),
-    'product_type' => 
+    'type' => 
     array (
       'type' => 'enum',
       'studio' => 'visible',
-      'label' => 'LBL_PRODUCT_TYPE',
+      'label' => 'LBL_TYPE',
       'width' => '10%',
       'default' => true,
     ),
-    'bank_entity' => 
+    'entity' => 
     array (
       'type' => 'varchar',
-      'label' => 'LBL_BANK_ENTITY',
+      'label' => 'LBL_ENTITY',
       'width' => '10%',
       'default' => true,
     ),
@@ -166,10 +166,10 @@ $dashletData['stic_Financial_ProductsDashlet']['columns'] = array(
       'width' => '10%',
       'default' => false,
     ),
-    'bank_account_holders' => 
+    'holders' => 
     array (
       'type' => 'varchar',
-      'label' => 'LBL_BANK_ACCOUNT_HOLDERS',
+      'label' => 'LBL_HOLDERS',
       'width' => '10%',
       'default' => false,
     ),

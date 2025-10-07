@@ -93,9 +93,9 @@ $subpanel_layout = array(
             'vname' => 'LBL_STATUS',
             'width' => '10%',
         ),
-        'transaction_type' => array(
-            'name' => 'transaction_type',
-            'vname' => 'LBL_TRANSACTION_TYPE',
+        'type' => array(
+            'name' => 'type',
+            'vname' => 'LBL_TYPE',
             'width' => '10%',
         ),
         'category' => array(

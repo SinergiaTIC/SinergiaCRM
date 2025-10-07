@@ -31,30 +31,30 @@ $popupMeta = array(
   'orderBy' => 'stic_financial_products.name',
   'whereClauses' => array(
     'name' => 'stic_financial_products.name',
-    'opening_date' => 'stic_financial_products.opening_date',
+    'start_date' => 'stic_financial_products.start_date',
     'active' => 'stic_financial_products.active',
     'stic_financial_products_contacts_name' => 'stic_financial_products.stic_financial_products_contacts_name',
-    'product_type' => 'stic_financial_products.product_type',
+    'type' => 'stic_financial_products.type',
     'balance_error' => 'stic_financial_products.balance_error',
     'initial_balance' => 'stic_financial_products.initial_balance',
     'current_balance' => 'stic_financial_products.current_balance',
-    'bank_entity' => 'stic_financial_products.bank_entity',
+    'entity' => 'stic_financial_products.entity',
     'iban' => 'stic_financial_products.iban',
-    'bank_account_holders' => 'stic_financial_products.bank_account_holders',
+    'holders' => 'stic_financial_products.holders',
     'assigned_user_name' => 'stic_financial_products.assigned_user_name',
   ),
   'searchInputs' => array(
     1 => 'name',
-    5 => 'opening_date',
+    5 => 'start_date',
     6 => 'active',
     7 => 'stic_financial_products_contacts_name',
-    8 => 'product_type',
+    8 => 'type',
     9 => 'balance_error',
     10 => 'initial_balance',
     11 => 'current_balance',
-    12 => 'bank_entity',
+    12 => 'entity',
     13 => 'iban',
-    14 => 'bank_account_holders',
+    14 => 'holders',
     16 => 'assigned_user_name',
   ),
   'searchdefs' => array(
@@ -63,12 +63,12 @@ $popupMeta = array(
       'name' => 'name',
       'width' => '10%',
     ),
-    'opening_date' =>
+    'start_date' =>
     array(
       'type' => 'date',
-      'label' => 'LBL_OPENING_DATE',
+      'label' => 'LBL_START_DATE',
       'width' => '10%',
-      'name' => 'opening_date',
+      'name' => 'start_date',
     ),
     'active' =>
     array(
@@ -87,13 +87,13 @@ $popupMeta = array(
       'width' => '10%',
       'name' => 'stic_financial_products_contacts_name',
     ),
-    'product_type' =>
+    'type' =>
     array(
       'type' => 'enum',
       'studio' => 'visible',
-      'label' => 'LBL_PRODUCT_TYPE',
+      'label' => 'LBL_TYPE',
       'width' => '10%',
-      'name' => 'product_type',
+      'name' => 'type',
     ),
     'balance_error' =>
     array(
@@ -117,12 +117,12 @@ $popupMeta = array(
       'width' => '10%',
       'name' => 'current_balance',
     ),
-    'bank_entity' =>
+    'entity' =>
     array(
       'type' => 'varchar',
-      'label' => 'LBL_BANK_ENTITY',
+      'label' => 'LBL_ENTITY',
       'width' => '10%',
-      'name' => 'bank_entity',
+      'name' => 'entity',
     ),
     'iban' =>
     array(
@@ -131,12 +131,12 @@ $popupMeta = array(
       'width' => '10%',
       'name' => 'iban',
     ),
-    'bank_account_holders' =>
+    'holders' =>
     array(
       'type' => 'varchar',
-      'label' => 'LBL_BANK_ACCOUNT_HOLDERS',
+      'label' => 'LBL_HOLDERS',
       'width' => '10%',
-      'name' => 'bank_account_holders',
+      'name' => 'holders',
     ),
     'assigned_user_name' =>
     array(
@@ -157,13 +157,13 @@ $popupMeta = array(
       'link' => true,
       'name' => 'name',
     ),
-    'OPENING_DATE' =>
+    'START_DATE' =>
     array(
       'type' => 'date',
-      'label' => 'LBL_OPENING_DATE',
+      'label' => 'LBL_START_DATE',
       'width' => '10%',
       'default' => true,
-      'name' => 'opening_date',
+      'name' => 'start_date',
     ),
     'STIC_FINANCIAL_PRODUCTS_CONTACTS_NAME' =>
     array(
@@ -179,18 +179,18 @@ $popupMeta = array(
     array(
       'type' => 'enum',
       'studio' => 'visible',
-      'label' => 'LBL_PRODUCT_TYPE',
+      'label' => 'LBL_TYPE',
       'width' => '10%',
       'default' => true,
-      'name' => 'product_type',
+      'name' => 'type',
     ),
     'BANK_ENTITY' =>
     array(
       'type' => 'varchar',
-      'label' => 'LBL_BANK_ENTITY',
+      'label' => 'LBL_ENTITY',
       'width' => '10%',
       'default' => true,
-      'name' => 'bank_entity',
+      'name' => 'entity',
     ),
     'IBAN' =>
     array(

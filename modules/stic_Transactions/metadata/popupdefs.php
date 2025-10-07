@@ -34,7 +34,7 @@ $popupMeta = array(
         'transaction_date' => 'stic_transactions.transaction_date',
         'status' => 'stic_transactions.status',
         'category' => 'stic_transactions.category',
-        'transaction_type' => 'stic_transactions.transaction_type',
+        'type' => 'stic_transactions.type',
         'subcategory' => 'stic_transactions.subcategory',
         'stic_transactions_stic_financial_products_name' => 'stic_transactions.stic_transactions_stic_financial_products_name',
         'payment_method' => 'stic_transactions.payment_method',
@@ -45,7 +45,7 @@ $popupMeta = array(
         4 => 'document_name',
         5 => 'transaction_date',
         6 => 'category',
-        7 => 'transaction_type',
+        7 => 'type',
         8 => 'subcategory',
         9 => 'stic_transactions_stic_financial_products_name',
         10 => 'payment_method',
@@ -80,13 +80,13 @@ $popupMeta = array(
             'width' => '10%',
             'name' => 'category',
         ),
-        'transaction_type' =>
+        'type' =>
         array(
             'type' => 'enum',
             'studio' => 'visible',
-            'label' => 'LBL_TRANSACTION_TYPE',
+            'label' => 'LBL_TYPE',
             'width' => '10%',
-            'name' => 'transaction_type',
+            'name' => 'type',
         ),
         'subcategory' =>
         array(

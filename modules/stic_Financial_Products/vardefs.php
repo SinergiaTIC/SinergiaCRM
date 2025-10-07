@@ -72,11 +72,11 @@ $dictionary['stic_Financial_Products'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'opening_date' => 
+  'start_date' => 
   array (
     'required' => false,
-    'name' => 'opening_date',
-    'vname' => 'LBL_OPENING_DATE',
+    'name' => 'start_date',
+    'vname' => 'LBL_START_DATE',
     'type' => 'date',
     'massupdate' => 0,
     'no_default' => false,
@@ -163,11 +163,11 @@ $dictionary['stic_Financial_Products'] = array(
     'studio' => 'visible',
     'dependency' => false,
   ),
-  'product_type' => 
+  'type' => 
   array (
     'required' => false,
-    'name' => 'product_type',
-    'vname' => 'LBL_PRODUCT_TYPE',
+    'name' => 'type',
+    'vname' => 'LBL_TYPE',
     'type' => 'enum',
     'massupdate' => 0,
     'no_default' => false,
@@ -183,15 +183,15 @@ $dictionary['stic_Financial_Products'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_financial_products_product_types_list',
+    'options' => 'stic_financial_products_types_list',
     'studio' => 'visible',
     'dependency' => false,
   ),
-  'bank_entity' => 
+  'entity' => 
   array (
     'required' => false,
-    'name' => 'bank_entity',
-    'vname' => 'LBL_BANK_ENTITY',
+    'name' => 'entity',
+    'vname' => 'LBL_ENTITY',
     'type' => 'varchar',
     'massupdate' => 0,
     'no_default' => false,
@@ -208,11 +208,11 @@ $dictionary['stic_Financial_Products'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'bank_account_holders' => 
+  'holders' => 
   array (
     'required' => false,
-    'name' => 'bank_account_holders',
-    'vname' => 'LBL_BANK_ACCOUNT_HOLDERS',
+    'name' => 'holders',
+    'vname' => 'LBL_HOLDERS',
     'type' => 'varchar',
     'massupdate' => 0,
     'no_default' => false,

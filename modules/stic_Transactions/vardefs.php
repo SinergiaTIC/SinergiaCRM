@@ -48,11 +48,11 @@ $dictionary['stic_Transactions'] = array(
     'options' => 'date_range_search_dom',
     'enable_range_search' => true,
   ),
-  'transaction_type' => 
+  'type' => 
   array (
     'required' => true,
-    'name' => 'transaction_type',
-    'vname' => 'LBL_TRANSACTION_TYPE',
+    'name' => 'type',
+    'vname' => 'LBL_TYPE',
     'type' => 'enum',
     'massupdate' => 0,
     'no_default' => false,
@@ -68,7 +68,7 @@ $dictionary['stic_Transactions'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_transactions_transaction_types_list',
+    'options' => 'stic_payments_transaction_types_list',
     'studio' => 'visible',
     'dependency' => false,
   ),
@@ -281,7 +281,7 @@ $dictionary['stic_Transactions'] = array(
     'options' => 'stic_transactions_categories_list',
     'studio' => 'visible',
     'dbType' => 'enum',
-    'parentenum' => 'transaction_type',
+    'parentenum' => 'type',
   ),
   'subcategory' => 
   array (
