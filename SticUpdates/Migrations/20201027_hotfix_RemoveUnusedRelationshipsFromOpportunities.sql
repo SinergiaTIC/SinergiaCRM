@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS accounts_opportunities_1_c;

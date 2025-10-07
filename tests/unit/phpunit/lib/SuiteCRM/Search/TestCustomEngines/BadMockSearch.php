@@ -1,6 +1,0 @@
-<?php
-
-#[\AllowDynamicProperties]
-class BadMockSearch
-{
-}
