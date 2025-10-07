@@ -708,13 +708,13 @@ $app_list_strings = array(
     'dom_cal_month_short' => array(
         '0' => '',
         '1' => 'gen.',
-        '2' => 'febr.',
+        '2' => 'feb.',
         '3' => 'març',
         '4' => 'abr.',
         '5' => 'maig',
         '6' => 'juny',
         '7' => 'jul.',
-        '8' => 'ag.',
+        '8' => 'ago.',
         '9' => 'set.',
         '10' => 'oct.',
         '11' => 'nov.',
@@ -756,7 +756,7 @@ $app_list_strings = array(
     ],
 
     'dom_inbound_email_auth_types' => [
-        'basic' => 'Autenticació Bàsica',
+        'basic' => 'Autenticació bàsica',
         'oauth' => 'OAuth',
     ],
 
@@ -783,8 +783,8 @@ $app_list_strings = array(
     ],
 
     'dom_email_body_filtering_option' => [
-      'multi' => 'Cerca de Múltiples Paraules',
-      'single' => "Cerca d'una Paraula",
+      'multi' => 'Cerca de múltiples paraules',
+      'single' => "Cerca d'una paraula",
     ],
 
     'dom_email_types' => array(
@@ -801,8 +801,8 @@ $app_list_strings = array(
         'read' => 'Llegit',
         'replied' => 'Respost',
         'sent' => 'Enviat',
-        'send_error' => 'Error d\'Enviament',
-        'unread' => 'No Llegit',
+        'send_error' => "Error d'enviament",
+        'unread' => 'No llegit',
     ),
     'dom_email_archived_status' => array(
         'archived' => 'Arxivat',
@@ -828,17 +828,17 @@ $app_list_strings = array(
         2 => 'Heu d\'assignar només elements marcats quan assignació directa d\'elements.',
     ),
     'dom_email_bool' => array(
-        'bool_true' => 'Si',
+        'bool_true' => 'Sí',
         'bool_false' => 'No',
     ),
     'dom_int_bool' => array(
-        1 => 'Si',
+        1 => 'Sí',
         0 => 'No',
     ),
     'dom_switch_bool' => array(
-        'on' => 'Si',
-        'off' => 'No',
         '' => '--Cap--',
+        'on' => 'Sí',
+        'off' => 'No',
     ),
 
     'dom_email_link_type' => array(
@@ -853,9 +853,9 @@ $app_list_strings = array(
     ),
 
     'dom_email_editor_option' => array(
-        '' => 'Format d\'Email per defecte',
-        'html' => 'Correu electrònic HTML',
-        'plain' => 'Correu electrònic amb text plà',
+        '' => 'Format de correu per defecte',
+        'html' => 'HTML',
+        'plain' => 'Text pla',
     ),
 
     'schedulers_times_dom' => array(
@@ -901,7 +901,7 @@ $app_list_strings = array(
         'Draft' => 'Esborrany',
         'FAQ' => 'Preguntes freqüents',
         'Expired' => 'Caducat',
-        'Under Review' => 'En Revisió',
+        'Under Review' => 'En revisió',
         'Pending' => 'Pendent',
     ),
     'document_template_type_dom' => array(
@@ -1040,12 +1040,12 @@ $app_list_strings = array(
         'collapselegend' => 'Contrau la llegenda',
         'clickfordrilldown' => 'Cliqueu per aprofundir',
         'detailview' => 'Més detalls...',
-        'piechart' => 'Gràfic Circular',
-        'groupchart' => 'Gràfic Agrupat',
-        'stackedchart' => 'Gràfic Apilat',
-        'barchart' => 'Gràfic de Barres',
-        'horizontalbarchart' => 'Gràfic de Barres Horitzontal',
-        'linechart' => 'Gràfic de Línies',
+        'piechart' => 'Gràfic circular',
+        'groupchart' => 'Gràfic agrupat',
+        'stackedchart' => 'Gràfic apilat',
+        'barchart' => 'Gràfic de barres',
+        'horizontalbarchart' => 'Gràfic de barres horitzontal',
+        'linechart' => 'Gràfic de línies',
         'noData' => 'Dades no disponibles',
         'print' => 'Imprimeix',
         'pieWedgeName' => 'seccions',
@@ -1060,9 +1060,9 @@ $app_list_strings = array(
         '2' => 'TTL',
     ),
     'import_enclosure_options' => array(
+        '' => '--Cap--',
         '\'' => 'Cometes simples (&#39;)',
         '"' => 'Cometes dobles (&#34;)',
-        '' => '--Cap--',
         'other' => 'Altre:',
     ),
     'import_delimeter_options' => array(
@@ -1072,11 +1072,11 @@ $app_list_strings = array(
         '.' => '.',
         ':' => ':',
         '|' => '|',
-        'other' => 'Altre:',
+        'other' => 'Un altre:',
     ),
     'link_target_dom' => array(
         '_blank' => 'Nova finestra',
-        '_self' => 'A la mateix finestra',
+        '_self' => 'A la mateixa finestra',
     ),
     'dashlet_auto_refresh_options' => array(
         '-1' => 'No refresquis automàticament',
