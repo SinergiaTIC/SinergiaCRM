@@ -3702,7 +3702,7 @@ $app_list_strings['campaign_type_dom']['Television'] = 'Television';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Newsletter';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Survey';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notification';
-$app_list_strings['campaign_type_dom']['SMS'] = 'SMS';
+$app_list_strings['campaign_type_dom']['Mensaje'] = 'Phone message';
 
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';

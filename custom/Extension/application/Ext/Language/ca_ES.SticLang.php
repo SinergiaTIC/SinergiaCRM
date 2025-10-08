@@ -3736,7 +3736,7 @@ $app_list_strings['campaign_type_dom']['Television'] = 'Televisió';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Butlletí de notícies';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Enquesta';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificació';
-$app_list_strings['campaign_type_dom']['SMS'] = 'SMS';
+$app_list_strings['campaign_type_dom']['Mensaje'] = 'Missatge telefònic';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';

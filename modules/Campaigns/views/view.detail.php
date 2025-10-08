@@ -164,7 +164,7 @@ class CampaignsViewDetail extends ViewDetail
 
             // STIC-Custom EPS 20241105 Message Marketing
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/473
-            if ($this->bean->campaign_type != 'SMS') {
+            if ($this->bean->campaign_type != 'Mensaje') {
                 // Bug #49893  - 20120120 - Captivea (ybi) - Remove trackers subpanels if not on an email/newsletter campaign (useless subpannl)
                 $subpanel->subpanel_definitions->exclude_tab('campaigns_stic_message_marketing');
             }
