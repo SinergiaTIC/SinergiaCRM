@@ -79,5 +79,7 @@ $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correo elec
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Cuenta de correo que se utilizará para enviar la notificación. Se puede configurar en el apartado 'Correo electrónico saliente' del área de Adminstración.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde recibir los mensajes de error que se puedan producir tras el envío. Se puede configurar en el apartado 'Correo electrónico entrante' del área de Administración.";
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = "Se creará automáticamente una lista de público objetivo en base a la selección y esta se agregará a la notificación.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = 'Ha ocurrido un error al crear la lista de público objetivo.';
+
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.";

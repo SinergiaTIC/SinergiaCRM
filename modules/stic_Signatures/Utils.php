@@ -566,13 +566,14 @@ class stic_SignaturesUtils
     }
 
     /**
-     * Creates a Lead or Prospect List (LPO) from a given signature ID.
-     * This function generates an LPO based on the signers associated with the signature.
+     * Creates or retrieves a LPO list from a signature's signers.
      *
      * @param string $signatureId The ID of the signature.
-     * @return bool True if the LPO was created successfully, false otherwise.
+     * @param string $type The type of signers to include ('stic_Signatures_all_signers' or 'stic_Signatures_signers_pending').
+     * @param string $label A label to include in the LPO name.
+     * @return array|bool An array with LPO details if successful, or false on failure.
      */
-    public static function createLPOFromSignature($signatureId)
+    public static function createLpoFromSignature($signatureId, $type, $label)
     {
         global $current_user, $mod_strings;
 
@@ -591,20 +592,38 @@ class stic_SignaturesUtils
         // Determine the person who sign module (Users or Contacts)
         $userOrContactsModule = explode(':', $signatureBean->signer_path)[0];
 
+        // Set filter depent on type
+        $filter = '';
+        switch ($type) {
+            case 'stic_Signatures_all_signers':
+                $filter = "";
+                break;
+            case 'stic_Signatures_signers_pending':
+                $filter = " AND status = 'pending' ";
+                break;
+            default:
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Unsupported type for LPO creation: ' . $type);
+                return false;
+        }
+
         // Retrieve all signers associated with the signature
-        $userOrContactsTargets = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " parent_type = '{$userOrContactsModule}' ");
+        $userOrContactsTargets = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " parent_type = '{$userOrContactsModule}'  {$filter}");
+
+        // Create a unique name for the LPO
+        // Format: [PDF Template] - ([Label]) - [Date]
+        $lpoName = "{$signatureBean->pdf_template} - ({$label}) - " . date('d-m-Y');
 
         // check  if LPO with same name exists
         $existingLPO = BeanFactory::getBean('ProspectLists')->get_full_list(
             '',
-            "prospect_lists.name = '{$signatureBean->name} - LPO' AND prospect_lists.deleted = 0"
+            "prospect_lists.name = '{$lpoName}' AND prospect_lists.deleted = 0"
         );
-        
+
         // If no existing LPO, create a new one
         if (empty($existingLPO)) {
             // Create a new LPO (Prospect List)
             $LPOBean = BeanFactory::newBean('ProspectLists');
-            $LPOBean->name = "{$signatureBean->name} - LPO";
+            $LPOBean->name = $lpoName;
             $LPOBean->list_type = 'default';
             $LPOBean->assigned_user_id = $signatureBean->assigned_user_id ?? $current_user->id;
             $LPOBean->assigned_user_name = $signatureBean->assigned_user_name ?? $current_user->user_name;
@@ -635,12 +654,7 @@ class stic_SignaturesUtils
                 return false;
         }
 
-        
-        return true;
+        return ['status' => 'success', 'lpoId' => $LPOBean->id, 'lpoName' => $LPOBean->name];
     }
-
-
-
-    
 
 }

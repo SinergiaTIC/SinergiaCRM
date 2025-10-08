@@ -88,7 +88,7 @@ switch (viewType()) {
       notifyByCampaign: {
         id: 'notify_by_campaign',
         title: "🔊" + SUGAR.language.get("stic_Signatures", "LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN"),
-        onclick: "window.location='index.php?module=stic_Signatures&action=createLPOfromSignature&signatureId=" + STIC.record.id + "'"
+        onclick: "window.location='index.php?module=stic_Signatures&action=createCampaignFromSignature&signatureId=" + STIC.record.id + "'"
       },
     };
     createDetailViewButton(buttons.notifyByCampaign); break;

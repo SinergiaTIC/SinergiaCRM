@@ -110,11 +110,21 @@ class stic_SignaturesController extends SugarController
 
     
    
-    public function action_createLPOfromSignature()
+    /**
+     * Action to create a Prospect List from a Signature.
+     * This action invokes the `createCampaignFromSignature` utility function
+     * with the provided signature ID and terminates the script.
+     *
+     * @return void
+     */
+    public function action_createLpoFromSignature()
     {
         require_once 'modules/stic_Signatures/Utils.php';
         $signatureId = $_REQUEST['signatureId'] ?? '';
-        stic_SignaturesUtils::createLPOfromSignature($signatureId);
+        $type = $_REQUEST['type'] ?? '';
+        $label = $_REQUEST['label'] ?? 'LPO';
+        $result = stic_SignaturesUtils::createLpoFromSignature($signatureId, $type, $label);
+        echo json_encode($result);
         die();
     }
 
