@@ -72,7 +72,7 @@ array (
           ),
           1 => 
           array (
-            'name' => 'template',
+            'name' => 'template_id',
           ),
         ),
         3 => 

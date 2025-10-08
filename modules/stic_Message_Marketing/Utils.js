@@ -54,6 +54,7 @@ switch (viewType()) {
         }
     }
     $(document).ready(function() {
+      addEditCreateTemplateLinks();
       $("#select_all").on("click", toggle_message_for);
       toggle_message_for();
       var baseURL = 'index.php';
@@ -63,18 +64,6 @@ switch (viewType()) {
         module: 'stic_Message_Marketing',
         action: 'getDefaultSender',
       };
-        $.ajax({
-          url: baseURL,
-          type: 'POST',
-          data: paramsPost,
-          success: function(data) {
-            let parsedData = JSON.parse(data);
-            $("#sender").val(parsedData.data.defaultSender)
-          },
-          error: function(xhr, status, error) {
-              // No error treatment required as it is only retrieving a default string
-          }
-        });
     });
     if (viewType() == "quickcreate") {
       // Disabling the "Campaign" field relationship
@@ -109,3 +98,25 @@ function checkAllOrSelectedLists() {
     return false;
 }
 
+function addEditCreateTemplateLinks() {
+  if ($("#template_id_edit_link").length == 0) {
+    var $select = $("#template_id");
+    var $div = $select.parent();
+
+    $select.css("width","50%");
+
+    var editText = SUGAR.language.translate("app_strings", "LNK_EDIT");
+    var $editLink = $('<a href="#" id="template_id_edit_link" style="margin-left:10px;">'+editText+'</a>').on("click", function(e) {
+      e.preventDefault();
+      edit_email_template_form();
+    });
+    $div.append($editLink);
+
+    var createText = SUGAR.language.translate("app_strings", "LNK_CREATE");
+    var $createLink = $('<a href="#" id="template_id_create_link" style="margin-left:10px;">'+createText+'</a>').on("click", function(e) {
+      e.preventDefault();
+      open_email_template_form();
+    });
+    $div.append($createLink);
+  }
+}

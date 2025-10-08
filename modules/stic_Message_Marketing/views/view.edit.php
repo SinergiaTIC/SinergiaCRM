@@ -23,6 +23,8 @@
 
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
+require_once 'modules/stic_Messages/Utils.php';
+require_once('modules/stic_Settings/Utils.php');
 
 class stic_Message_MarketingViewEdit extends ViewEdit
 {
@@ -42,14 +44,17 @@ class stic_Message_MarketingViewEdit extends ViewEdit
 
         SticViews::preDisplay($this);
 
-        if (!isset($this->bean->sender) || empty($this->bean->sender) ){
-            $this->bean->sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER');
-        }
+
 
     }
 
     public function display()
     {
+        if (!isset($this->bean->sender) || empty($this->bean->sender) ){
+            $this->bean->sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER');
+            $this->ev->focus->sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER');
+        }
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
         parent::display();
 
         SticViews::display($this);
