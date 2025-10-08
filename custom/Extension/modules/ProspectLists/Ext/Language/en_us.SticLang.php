@@ -41,3 +41,9 @@ $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
 
 // Many to Many filter fields
 $mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Contact';
+
+// Filtros para creación dinmámica de listas de público objetivo (LPO)
+$mod_strings['LBL_LPO_STIC_SIGNATURES_RANDOM_SIGNERS'] =  'Random signers';
+$mod_strings['LBL_LPO_STIC_SIGNATURES_ALL_SIGNERS'] = 'All signers';
+$mod_strings['LBL_LPO_STIC_SIGNATURES_PENDING_SIGNERS'] = 'Pending signers';
+$mod_strings['LBL_LPO_STIC_EVENTS_CONFIRMED_REGISTRATIONS'] = 'Confirmed registrations';

@@ -338,8 +338,9 @@ $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Fir
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
-$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_all_signers'] = 'Todos los firmantes';
-$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures_signers_pending'] = 'Firmantes pendientes de firmar';
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures__exampleFilter'] = 'Filtro de ejemplo de Firmas';
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Events__exampleFilter'] =  'Filtro de ejemplo de Eventos';
+$app_list_strings['notification_auto_prospect_list_name_list']['Opportunities__exampleFilter'] =  'Filtro de ejemplo de Subvenciones';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
