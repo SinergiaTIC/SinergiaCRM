@@ -230,7 +230,8 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                 // STIC-Custom 20251003 MHP - Add the help property to the result of the call to the API method: get_module_fields
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/819
                 $entry['help'] = $var['help'];
-                $entry['comments'] = $var['comments'];                
+                $entry['comment'] = $var['comment'];
+                $entry['comments'] = $var['comments'];
                 // END STIC-Custom
                 if (isset($var['parentenum'])) {
                     $entry['parentenum'] = $var['parentenum'];
