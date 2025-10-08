@@ -3702,7 +3702,8 @@ $app_list_strings['campaign_type_dom']['Television'] = 'Television';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Newsletter';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Survey';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notification';
-$app_list_strings['campaign_type_dom']['Mensaje'] = 'Phone message';
+$app_list_strings['campaign_type_dom']['Message'] = 'Phone message';
+$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notification by Message';
 
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';

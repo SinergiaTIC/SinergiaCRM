@@ -3735,7 +3735,8 @@ $app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Enquisa';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
-$app_list_strings['campaign_type_dom']['Mensaje'] = 'Mensaje telefónico';
+$app_list_strings['campaign_type_dom']['Message'] = 'Mensaje telefónico';
+$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notificación por mensaje';
 
 // Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
