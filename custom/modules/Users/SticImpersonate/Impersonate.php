@@ -94,14 +94,17 @@ class Impersonate {
 
         // Store original user information
         $_SESSION['stic_impersonate_original_user'] = $current_user->id;
-        $_SESSION['stic_impersonate_target_user'] = $target_user_id;
+        $_SESSION['stic_impersonate_target_user'] = $target_user->id;
 
         // Log the activity
-        ImpersonateUtils::logActivity('impersonate_start', $target_user_id);
+        ImpersonateUtils::logActivity('impersonate_start', $target_user->id);
+
+        // Notify user
+        ImpersonateUtils::addImpersonationNotification($target_user->id);
 
         // Switch current user
         $current_user = $target_user;
-        $_SESSION['authenticated_user_id'] = $target_user_id;
+        $_SESSION['authenticated_user_id'] = $target_user->id;
 
         return true;
     }

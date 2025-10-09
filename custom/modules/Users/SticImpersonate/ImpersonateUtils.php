@@ -171,5 +171,24 @@ class ImpersonateUtils
         
         return true;
     }
+
+    public static function addImpersonationNotification($targetUserId) {
+        global $current_user, $app_strings;
+
+        $alert = BeanFactory::getBean('Alerts');
+
+        $alert->name = $app_strings['LBL_IMPERSONATION_NOTICE'];
+        $alert->name = 'name';
+        $alert->description = $app_strings['LBL_IMPERSONATION_NOTICE_DESC'];
+        $alert->description = 'desc';
+        $alert->assigned_user_id = $targetUserId;
+        $alert->is_read = 0;
+        $alert->target_module = 'Impersonating';
+        $alert->type = 'info'; // No other types available
+        // $alert->reminder_id = uniqid(); // Not needed in this case
+        // $alert->url_redirect = 'url'; // Not needed in this case
+
+        $alert->save();
+    }
 }
 
