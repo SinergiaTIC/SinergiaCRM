@@ -77,6 +77,14 @@ class EmailTemplateParser
      * @var EmailInterface
      */
     private $module;
+  
+    // STIC-Custom - JCH - 20251009 - Notifications: Parse Email Templates with notified module
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+    /**
+     * @var EmailInterface
+     */
+    private $notificationModule;
+    // END STIC-Custom
 
     /**
      * @var string
@@ -114,7 +122,8 @@ class EmailTemplateParser
         $this->trackerId = $trackerId;
 
         // STIC-Custom - JBL - 20240709 - Notifications: Parse Email Templates with notified module
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44        
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
         if ($campaign->campaign_type == "Notification" && !empty($campaign->parent_id)) {
             global $beanList, $beanFiles;
 
@@ -127,8 +136,8 @@ class EmailTemplateParser
                     require_once($beanFiles[$class]);
                 }
                 // Instantiate the related object and retrieve its data using parent_id
-                $this->module = new $class();
-                $this->module->retrieve($campaign->parent_id);
+                $this->notificationModule = new $class();
+                $this->notificationModule->retrieve($campaign->parent_id);
             }
         }
         // END STIC-Custom
@@ -160,14 +169,45 @@ class EmailTemplateParser
         $matches = preg_match_all(static::PATTERN, $attributeValue, $variables);
 
         if ($matches !== 0) {
-            foreach ($variables[0] as $variable) {
-                $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
+
+            // STIC-Custom - JCH - 20251009 - Notifications: Parse Email Templates with notified module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+            // foreach ($variables[0] as $variable) {
+            //     $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
+            // }
+
+            // If the campaign is not of type Notification, parse as usual
+            if ($this->campaign->campaign_type != 'Notification') {
+                foreach ($variables[0] as $variable) {
+                    $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
+                }
+
+            } else {
+                // If the campaign is of type Notification, first parse with contact/lead/user/account module
+                // without replacing empty values, then parse with notified module
+                foreach ($variables[0] as $variable) {
+                    $valueToReplaceWith = $this->getValueFromBean($variable);
+                    
+                    // Prevent replacing with empty string if value is empty (eg.)
+                    if (!empty($valueToReplaceWith)) {
+                        $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
+                    }
+                }
+
+                $this->module = $this->notificationModule;
+
+                // Now parse again with the notified module, finally replacing empty values 
+                foreach ($variables[0] as $variable) {
+                    $valueToReplaceWith = $this->getValueFromBean($variable);
+                    $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
+                }
+        // END STIC-Custom        
             }
         }
 
         return $attributeValue;
     }
-
+    
     /**
      * This is need to be extended properly and replace the method below in the future
      * @see EmailTemplate::parse_email_template
