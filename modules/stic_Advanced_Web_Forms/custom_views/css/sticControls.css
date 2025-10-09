@@ -1,4 +1,90 @@
- /*
+[x-cloak] { display: none !important; }
+
+.custom-modal-wrapper {
+  z-index: 1050; 
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  overflow-y: auto;
+  outline: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.6); 
+}
+
+.custom-modal-dialog {
+  z-index: 1051;
+
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+
+  margin: 1.75rem auto;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+
+  overflow: hidden; 
+
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.custom-modal-content {
+  background-color: white;
+  border-radius: 0.3rem;
+
+  display: flex;
+  flex-direction: column; 
+  
+  flex-grow: 1;
+  min-height: 0; 
+}
+
+.custom-modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto; 
+  padding: 1rem; 
+}
+
+.custom-modal-footer {
+  padding: 0.75rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* .custom-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+} */
+
+/*
  .stic_panel {
   all: unset !important;
   display: block !important;
@@ -11,11 +97,15 @@
 /* .stic_panel button,
 .stic_panel .btn,
 .stic_panel button[type="button"].btn {
-    background-color: transparent !important; 
-    border: 1px solid transparent !important; 
-    color: inherit !important; 
-    padding: 0 !important; 
+  background-color: transparent !important; 
+  border: 1px solid transparent !important; 
+  color: inherit !important; 
+  padding: 0 !important; 
 } */
+
+.selectize-dropdown .option {
+  opacity: unset !important;
+}
 
 .stic_panel {
   font-size: unset !important;
@@ -26,7 +116,7 @@
 }
 
 .w-32px {
-  width: 32px;
+  width: 32px !important;
 }
 .mb-1px {
   margin-bottom: 1px;
@@ -84,6 +174,12 @@ select:invalid + label {
   color: red;
 } */
 
+.modal.fade.show {
+  z-index: 99999 !important; 
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .form-switch {
   padding-left: calc(var(--bs-gutter-x) * .5);
 }
@@ -95,14 +191,29 @@ button {
   text-transform: capitalize !important;
 }
 
-
 .btn {
   font-size: unset !important;
   text-transform: none !important;
+  margin-right: 5px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+}
+.input-group .btn {
+  margin-right: inherit !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .row {
   margin-bottom: 1.5rem;
+}
+
+.btn[disabled] {
+  text-transform: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
 }
 
 select,
@@ -141,17 +252,6 @@ textarea,
 
 .jstree-icon {
   background-image: none !important;
-}
-
-.btn {
-  height: 32px;
-}
-
-.btn[disabled] {
-  text-transform: inherit;
-  line-height: inherit;
-  font-weight: inherit;
-  letter-spacing: inherit;
 }
 
 .wizard-sidebar {

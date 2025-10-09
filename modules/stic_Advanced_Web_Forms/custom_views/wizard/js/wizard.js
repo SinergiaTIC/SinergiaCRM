@@ -159,9 +159,92 @@ function handle_open_popup(popup_reply_data) {
       $(`#${el[0]}`)[0].dispatchEvent(new Event('input', { bubbles: true }));
     })
   }
+  if (popup_reply_data.selection_list) {
+    const idField = popup_reply_data.passthru_data.id;
+    $(`#${idField}`).val(Object.values(popup_reply_data.selection_list).join("|"));
+  }
 }
 
 class WizardStep2 {
+  static generalDatablocksxData() {
+    return {
+      init() {
+        // Store for the Field Editor management
+        Alpine.store('fieldEditor', {
+          isOpen: false,
+          field: new AWF_Field(),  // Copia de los datos del campo
+          original_name: '',       // Nombre original del campo
+          dataBlock: null,         // El bloque de datos del campo
+
+          /**
+           * Abre el Modal para Crear un campo
+           * @param {AWF_DataBlock} dataBlock El Bloque de datos
+           * @param {string} type Tipo de campo: unlinked, form, hidden
+           */
+          openCreate(dataBlock, type) {
+            this._open(dataBlock, null, type);
+          },
+
+          /**
+           * Abre el Modal para Editar un campo
+           * @param {AWF_DataBlock} dataBlock El Bloque de datos
+           * @param {AWF_Field} fieldData El campo
+           */
+          openEdit(dataBlock, field) {
+            this._open(dataBlock, field, '');
+          },
+
+          /**
+           * Abre el Modal para editar o crear un campo
+           * @param {AWF_DataBlock} dataBlock El Bloque de datos
+           * @param {AWF_Field} fieldData El campo
+           * @param {string} type Tipo de campo: unlinked, form, hidden
+           */
+          _open(dataBlock, fieldData, type) {
+            this.dataBlock = dataBlock;
+            this.field = fieldData ? JSON.parse(JSON.stringify(fieldData)) : new AWF_Field ({type_field: type});
+            this.original_name = this.field.name;
+            this.isOpen = true;
+          },
+
+          /**
+           * Retorna si es un campo nuevo
+           * @returns {boolean}
+           */
+          get isNewField() { return this.original_name === ''; },
+
+          /**
+           * Retorna si el campo es válido
+           */
+          get isValid() { return this.field.isValid() == true; },
+
+          /**
+           * Cierra el modal de edición de un campo
+           */
+          close() {
+            this.isOpen = false;
+            this.dataBlock = null;
+            this.field = null;
+            this.original_name = '';
+          },
+
+          /**
+           * Guarda los cambios de la edición (o creación) de un campo
+           */
+          saveChanges() {
+            if(this.isNewField) {
+              this.dataBlock.addField(this.field);
+            } else {
+              this.dataBlock.updateField(this.original_name, this.field);
+            }
+            this.close();
+          },
+        });
+      },
+
+    };
+  }
+
   static sortableListxData(initial_items) {
     return {
       items: initial_items,
@@ -169,8 +252,8 @@ class WizardStep2 {
       moveUp(index) {
         if (index <= 0) return;
 
-        const itemToMove = this.items[index]; 
-        this.items.splice(index, 1); 
+        const itemToMove = this.items[index];
+        this.items.splice(index, 1);
         this.items.splice(index - 1, 0, itemToMove);
       },
 
@@ -188,7 +271,7 @@ class WizardStep2 {
     return {
       formConfig: initial_formConfig,
       step2: initial_step2,
-      
+
       creatingDataBlock: !this.formConfig?.data_blocks.some(b => b.module!='') ?? false,
 
       newDataBlock: {module:'', text:''},
@@ -201,79 +284,98 @@ class WizardStep2 {
     };
   }
 
-  static creationFieldxData(dataBlock, initial_formConfig) {
+  static editionFieldxData(fieldStore, config) {
     return {
-      formConfig: initial_formConfig,
+      formConfig: config,
+      store: fieldStore,
 
-      creatingFieldUnlinked: false,
-      creatingFieldForm: false,
-      creatingFieldHidden: false,
-      typeField: 'form',
+      get dataBlock() { return this.store?.dataBlock; },
+      get field() { return this.store?.field; },
+
+      configValueOptions: false,
 
       showAllFields: false,
-      get availableFields() { return this.showAllFields ? dataBlock.getAvailableFieldsInformation() : dataBlock.getAvailableFieldsInformation().filter(f => f.inViews); },
-          
-      selectedFieldInfo: {},
-      newField: new AWF_Field(),
-      optionValues: [],
-      optionValuesListName: '',
+      get availableFields() {
+        return this.showAllFields ? this.dataBlock?.getAvailableFieldsInformation() : this.dataBlock?.getAvailableFieldsInformation().filter(f => f.inViews) ?? [];
+      },
 
-      get availableValueTypes() { return this.newField?.getAvailableValueTypes() ?? []; },
-      get availableTypesInForm() { return this.newField?.getAvailableTypesInForm() ?? []; },
-      get availableSubtypesInForm() { return this.newField?.getAvailableSubtypesInForm() ?? []; },
+      get selectedFieldInfo() { return this.availableFields.find(f => f.name == this.field?.name); },
+      get optionValues() { return utils.getFieldOptions(this.selectedFieldInfo); },
+      get optionValuesListName() {
+        let listName = utils.getFieldOptions(this.selectedFieldInfo, true);
+        if (listName != '') {
+          let lastDot = listName.lastIndexOf('.');
+          if (lastDot != -1) {
+            return listName.substring(lastDot + 1);
+          }
+        };
+        if (listName == '' && this.optionValues.length > 0) {
+          listName = this.optionValues.filter(v => v.is_visible).map(v => v.text).join(', ');
+        }
+        if(this.optionValuesRelated!=''){
+          listName = this.optionValuesRelated;
+        }
+        return listName;
+      },
+      optionValuesRelated: '',      
 
-      get isValid() { return this.newField?.isValid() == true; },
+      get availableValueTypes() { return this.field?.getAvailableValueTypes() ?? [{id:'',text:''}]; },
+      get availableTypesInForm() { return this.field?.getAvailableTypesInForm() ?? [{id:'',text:''}]; },
+      get availableSubtypesInForm() { return this.field?.getAvailableSubtypesInForm() ?? [{id:'',text:''}]; },
+
+      get isDate() {return this.field?.type == 'date' || this.field?.type == 'datetime' || this.field?.type == 'datetimecombo'; },
+
+      get isInFormSelectableValues() { return this.field?.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type != "relate"},
+      get isInFormSelectableRelation() { return this.field?.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type == "relate" },
+
+      get isFixedValue() { return this.field && this.field.type_field == 'hidden' && this.field.value_type == 'fixed'; },
+      get isFixedValueOfEnum() { return this.isFixedValue && this.optionValues.length > 0; },
+      get isFixedValueOfRelated() { return this.isFixedValue && this.field.type == 'relate'},
+      get isFixedValueOfDate() { return this.isFixedValue && this.isDate; },
+      get isFixedValueOfDefault() { return this.isFixedValue && !this.isFixedValueOfEnum && !this.isFixedValueOfRelated && !this.isFixedValueOfDate },
+      valueToday: false,
+
+      get isValid() { return this.field?.isValid() == true; },
 
       init() {
+        this.$watch('field.name', (newName, oldName) => {
+          if(newName != oldName) {
+            this.field?.updateWithFieldInformation(this.selectedFieldInfo);
+            this.configValueOptions = false;
+          }
+        });
+
         this.$watch('availableFields', (newArray) => {
-          this.newField = new AWF_Field({ name: newArray[0]?.name ?? '', type_field: this.newField?.type_field});
-        });
-        this.$watch('typeField', (newType, oldType) => {
-          this.newField = new AWF_Field({ name: this.newField?.name ?? '', type_field: newType});
-          this.newField.in_form = this.newField.isFieldInForm();
-          if (!this.newField.isFieldInForm()) {
-            this.newField.label = '';
-            this.required_in_form = false;
-            this.newField.type_in_form = '';
-            this.newField.value_options = [];
-          }
-        });
-        this.$watch('newField.name', (newName, oldName) => {
-          this.selectedFieldInfo = this.availableFields.find(f => f.name == newName);
-        });
-        this.$watch('selectedFieldInfo', (newFieldInfo, oldFieldInfo) => {
-          this.newField.updateWithFieldInformation(newFieldInfo)
-          this.optionValues = utils.getFieldOptions(newFieldInfo);
-          this.optionValuesListName = utils.getFieldOptions(newFieldInfo, true);
-          if (this.optionValuesListName != '') {
-            let lastDot = this.optionValuesListName.lastIndexOf('.');
-            if (lastDot != -1) {
-              this.optionValuesListName = this.optionValuesListName.substring(lastDot + 1);
-            }
-          }
+          this.field && (this.field.name = newArray[0]?.name ?? '');
         });
         this.$watch('availableValueTypes', (newArray) => {
-          this.newField.value_type = newArray[0]?.id ?? '';
+          this.field && (this.field.value_type = newArray[0]?.id ?? '');
         });
         this.$watch('availableTypesInForm', (newArray) => {
-          this.newField.type_in_form = newArray[0]?.id ?? '';
+          this.field && (this.field.type_in_form = newArray[0]?.id ?? '');
         });
         this.$watch('availableSubtypesInForm', (newArray) => {
-          this.newField.subtype_in_form = newArray[0]?.id ?? '';
+          this.field && (this.field.subtype_in_form = newArray[0]?.id ?? '');
         });
-        this.$watch('newField.value_type', (newType, oldType) => {
-          if (newType != 'fixed') {
-            this.newField.value = '';
+        this.$watch('field.value_type', (newType, oldType) => {
+          if (newType != 'fixed' && this.field) {
+            this.field.value = '';
           }
         });
-        this.$watch('newField.subtype_in_form', (newType, oldType) => {
-          this.newField.setValueOptions(this.optionValues);
+        this.$watch('field.subtype_in_form', (newType, oldType) => {
+          this.field?.setValueOptions(this.optionValues);
         });
         this.$watch('optionValues', (newArray) => {
-          if (this.newField.value_type == 'fixed') {
-            this.newField.value = newArray[0]?.id ?? '';
+          if (this.field && this.field.value_type == 'fixed') {
+            this.field.value = newArray[0]?.id ?? '';
           }
         });
+        this.$watch('optionValuesRelated', (newRelateds, oldRelateds) => {
+          debugger;
+          let arrIds = newRelateds.split('|');
+          // IEPA!!! Falta aconseguir els texts de cada element!!
+          this.optionValues = arrIds.map(v => ({id: v, text: v}));
+        }); 
       },
 
       openPopUp(idBase, single=true) {
@@ -281,90 +383,18 @@ class WizardStep2 {
         if (single!=true) {
           mode = 'MultiSelect';
         }
-        let destModule = this.formConfig.getRelationshipModule(dataBlock.id, this.selectedFieldInfo.options);
-        open_popup(destModule, 600, 400, '', true, false, 
-                    { 
-                      'field_to_name_array': {'id':`${idBase}_id${dataBlock.id}`, 'name':`${idBase}_name${dataBlock.id}`},
-                      'call_back_function': 'handle_open_popup' 
+        let destModule = this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo.options);
+        let objMap = {'id':`${idBase}_id`, 'name':`${idBase}_name`};
+        open_popup(destModule, 600, 400, '', true, false,
+                    {
+                      'passthru_data': objMap,
+                      'field_to_name_array': objMap,
+                      'call_back_function': 'handle_open_popup'
                     }, mode, true);
       },
-
-      handleStartAddField(typeField) {
-        this.newField = new AWF_Field({ type_field: typeField });
-        this.creatingFieldUnlinked = typeField=='unlinked';
-        this.creatingFieldForm = typeField=='form';
-        this.creatingFieldHidden = typeField=='hidden';
-      },
-
-      handleCreateField() {
-        dataBlock.addField(this.newField);
-        this.creatingFieldUnlinked = false;
-        this.creatingFieldForm = false;
-        this.creatingFieldHidden = false;
-      },
-
-      handleCancel() {
-        this.creatingFieldUnlinked = false;
-        this.creatingFieldForm = false;
-        this.creatingFieldHidden = false;
-      },
     };
   }
 
-  static creationFieldInFormxData(dataBlock) {
-    return {
-      configValueOptions: false,
-                  
-      get isOptionValueModified() { return this.newField?.isOptionValueModified() ?? false; },
-      get optionValuesListNameModified() {
-        return this.optionValuesListName + (this.isOptionValueModified ? ' ' + utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED') : '');
-      },
-
-      init() {
-        this.$watch('newField.name', (newName, oldName) => {
-          this.configValueOptions = false;
-        });
-      },
-    };
-  }
-  
-  static creationFieldHiddenxData(dataBlock) {
-    return {
-      get hasOptions() { return this.optionValues.length > 0; },
-      get isRelated() { return this.newField?.type == 'relate'; },
-      get isDate() { return this.newField?.type == 'date' || this.newField?.type == 'datetime' || this.newField?.type == 'datetimecombo'; },
-
-      valueToday: false,
-
-      init() {
-        this.typeField = 'hidden';
-
-        this.$watch('newField.value_type', (newType, oldType) => {
-          this.valueToday = false;
-        });
-        this.$watch('valueToday', (newValue, oldValue) => {
-          this.newField.value = newValue ? 'today' : '';
-        });
-        this.$watch('newField.value', (newValue, oldValue) => {
-          if (this.hasOptions) {
-            this.newField.value_text = this.optionValues.find(o => o.id == newValue)?.text ?? '';
-          } else if(this.isDate) {
-            if (newValue == 'today') {
-              this.newField.value_text = utils.translate('LBL_FIELD_VALUE_TODAY');
-            } else {
-              this.newField.value_text = '';
-              if (newValue) {
-                const dateObj = new Date(newValue);
-                this.newField.value_text = new Intl.DateTimeFormat(undefined, {year:'numeric',month:'2-digit',day:'2-digit'}).format(dateObj);
-              }
-            }
-          } else if(!this.isRelated) {
-            this.newField.value_text = newValue;
-          }
-        });
-      },
-    };
-  }
 
   static addRelationshipxData(dataBlock, initial_formConfig, initial_step2) {
     return {

@@ -121,6 +121,18 @@ class AWF_DataBlock {
     return field;
   }
 
+  updateField(oldName, newField) {
+    const index = this.fields.findIndex(f => f.name === oldName);
+    
+    if (index == -1) {
+      return this.addField(newField);
+    } else {
+      newField.order = this.fields[index].order;
+      this.fields[index] = newField;
+      return newField;
+    }
+  }
+
   /**
    * Checks current DataBlock
    */
@@ -204,6 +216,9 @@ class AWF_Field {
     }
     if (!this.isFieldInForm()) {
       this.label = '';
+      this.required_in_form = false;
+      this.type_in_form = '';
+      this.value_options = [];
     }
 
     return this;
@@ -363,7 +378,7 @@ class AWF_Field {
   }
 
   acceptValueOptions() {
-    return this.type_in_form == "select" && this.subtype_in_form != "select_checkbox" && this.type != "relate";
+    return this.type_in_form == "select" && this.subtype_in_form != "select_checkbox";
   }
 
   setValueOptions(originalOptions) {
