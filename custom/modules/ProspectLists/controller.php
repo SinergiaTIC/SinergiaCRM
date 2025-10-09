@@ -24,7 +24,7 @@ class CustomProspectListsController extends SugarController
         // Attempt to include custom LPO types first
         if (file_exists("custom/modules/{$module}/CustomLPOTypes.php")) {
             require_once "custom/modules/{$module}/CustomLPOTypes.php";
-            $result = LPOTypes::generateLPO($id, $type, $label);
+            $result = CustomLPOTypes::generateLPO($id, $type, $label);
         }
 
         // Fallback to standard LPO types if custom fails or does not exist
