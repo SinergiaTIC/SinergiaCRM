@@ -101,8 +101,8 @@ $mod_strings['LBL_ADD_TO_TARGET_LIST_PROCESSING'] = 'Processing...';
 
 $mod_strings['LBL_CONFIG_TITLE'] = 'Configuration Settings';
 $mod_strings['LBL_CONFIG_SAVED'] = 'Settings Saved Successfully!';
-$mod_strings['LBL_BILLING_ADDRESS'] = 'Primary Address';
-$mod_strings['LBL_SHIPPING_ADDRESS'] = 'Alternative Address';
+$mod_strings['LBL_BILLING_ADDRESS'] = 'Billing Address';
+$mod_strings['LBL_SHIPPING_ADDRESS'] = 'Shipping Address';
 $mod_strings['LBL_PRIMARY_ADDRESS'] = 'Primary Address';
 $mod_strings['LBL_ALTERNATIVE_ADDRESS'] = 'Alternative Address';
 $mod_strings['LBL_ADDRESS_FLEX_RELATE'] = 'Flex Relate';
