@@ -377,7 +377,8 @@ class Importer
                 // STIC-Code MHP 
                 // Create the error message with all duplicated fields of the record
                 $msg = '';
-                foreach ($idc->_dupedFields as $field) {
+                foreach ($enabled_dupes as $field) {
+                    $field = explode( '::', $field)[1];
                     $msg .= translate($focus->field_name_map[$field]["vname"], $focus->module_dir) . ' && ';
                 }
                 $msg = substr($msg, 0, -4);
@@ -511,9 +512,15 @@ class Importer
         // Add the rest of the duplicate search filters
         for ($i=0; $i < count($fields); $i++) { 
             if ($fields[$i]['name'] != 'email1') {
-                $query .= $fields[$i]['custom'] ? 'c.' : 'm.'; 
-                $query .= $fields[$i]['name'] . " = ";
-                $query .= "'" . $fields[$i]['value'] . "'"; 
+                if ($fields[$i]['name'] == 'full_name') {
+                    $query .= "m.first_name = '" . $focus->first_name . "'";
+                    $query .= " AND ";
+                    $query .= "m.last_name = '" . $focus->last_name . "'";
+                } else {
+                    $query .= $fields[$i]['custom'] ? 'c.' : 'm.'; 
+                    $query .= $fields[$i]['name'] . " = ";
+                    $query .= "'" . $fields[$i]['value'] . "'"; 
+                }
                 $query .= ($i < count($fields) - 1 && isset($fields[$i + 1]) && $fields[$i + 1]['name'] != 'email1') ? " OR " : ")" ;
             }
         }
