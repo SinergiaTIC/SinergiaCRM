@@ -100,8 +100,11 @@
                                                     id='date_start_date' size='11' tabindex='1' maxlength='10'
                                                     type="text" value="{DATE_START}"> <span id="jscal_trigger"
                                                     class="suitepicon suitepicon-module-calendar"></span>&nbsp;</td>
-                                            <td nowrap><input type="text" size='5' maxlength='5' name='time_start'
-                                                    tabindex="1" value="{TIME_START}" />{TIME_MERIDIEM}</td>
+                                                    <td nowrap>
+                                                        <select id="time_hour" name="time_hour"></select>
+                                                        <select id="time_minute" name="time_minute"></select>
+                                                        {TIME_MERIDIEM}
+                                                    </td>
                                         </tr>
                                         <tr>
                                             <td nowrap><span class="dateFormat">{USER_DATEFORMAT}</span></td>
@@ -205,6 +208,55 @@
 <script type="text/javascript">
     Calendar.setup({
         inputField: "date_start_date", ifFormat: "{CALENDAR_DATEFORMAT}", showsTime: false, button: "jscal_trigger", singleClick: true, step: 1
+    });
+
+    document.addEventListener("DOMContentLoaded", function() 
+    {
+        var timeFormat = "{TIME_FORMAT}".trim();
+        var is12h = timeFormat.toLowerCase().includes('pm');
+        var maxHour = is12h ? 11 : 23;
+
+        var hourSelect = document.getElementById('time_hour');
+        var minuteSelect = document.getElementById('time_minute');
+        var meridiemSelect = document.querySelector('select[name="meridiem"]');
+
+        // Add the options to the hours input
+        for (var val = 0; val <= maxHour; val++) {
+            var opt = document.createElement('option');
+            opt.value = val.toString().padStart(2, '0');
+            opt.text = val.toString().padStart(2, '0');
+            hourSelect.appendChild(opt);
+        }
+
+        // Add the options to the minutes input
+        for (var m = 0; m < 60; m++) {
+            var opt = document.createElement('option');
+            opt.value = m.toString().padStart(2, '0');
+            opt.text = m.toString().padStart(2, '0');
+            minuteSelect.appendChild(opt);
+        }
+
+        // Preload values ​​if they already exist
+        var existingTime = "{TIME_START}";
+        if (existingTime) {
+            debugger;
+            var timeParts = existingTime.split(':');
+            if (timeParts.length >= 2) {
+                hourSelect.value = timeParts[0].padStart(2, '0');
+                minuteSelect.value = timeParts[1].padStart(2, '0');
+            }
+        }
+
+        // Rebuild date_start before saving
+        var form = document.forms.EditView;
+        form.addEventListener('submit', function() {
+            var hour = parseInt(hourSelect.value, 10);
+            var minute = minuteSelect.value;
+            var dateStart = document.getElementById('date_start_date');
+            var timeValue = hour.toString().padStart(2, '0') + ':' + minute;
+            var meridiemValue = meridiemSelect.value;           
+            dateStart.value = dateStart.value.split(' ')[0] + ' ' + timeValue + meridiemValue;
+        });
     });
 
     function show_edit_template_link(field) {
