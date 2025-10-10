@@ -102,6 +102,7 @@
                                                     class="suitepicon suitepicon-module-calendar"></span>&nbsp;</td>
                                                     <td nowrap>
                                                         <select id="time_hour" name="time_hour"></select>
+                                                        <span id="time_separator"></span>
                                                         <select id="time_minute" name="time_minute"></select>
                                                         {TIME_MERIDIEM}
                                                     </td>
@@ -210,54 +211,61 @@
         inputField: "date_start_date", ifFormat: "{CALENDAR_DATEFORMAT}", showsTime: false, button: "jscal_trigger", singleClick: true, step: 1
     });
 
-    document.addEventListener("DOMContentLoaded", function() 
-    {
-        var timeFormat = "{TIME_FORMAT}".trim();
-        var is12h = timeFormat.toLowerCase().includes('pm');
-        var maxHour = is12h ? 11 : 23;
+    document.addEventListener("DOMContentLoaded", () => {
+        const timeFormat = "{TIME_FORMAT}".trim();
+        const is12h = timeFormat.toLowerCase().includes("pm");
+        const maxHour = is12h ? 11 : 23;
+        const timeSeparator = timeFormat.includes(":") ? ":" : ".";
 
-        var hourSelect = document.getElementById('time_hour');
-        var minuteSelect = document.getElementById('time_minute');
-        var meridiemSelect = document.querySelector('select[name="meridiem"]');
+        const hourSelect = document.getElementById("time_hour");
+        const minuteSelect = document.getElementById("time_minute");
+        const meridiemSelect = document.querySelector('select[name="meridiem"]');
+        const timeSeparatorField = document.getElementById("time_separator");
+        if (timeSeparator) timeSeparatorField.textContent = timeSeparator;
 
         // Add the options to the hours input
-        for (var val = 0; val <= maxHour; val++) {
-            var opt = document.createElement('option');
-            opt.value = val.toString().padStart(2, '0');
-            opt.text = val.toString().padStart(2, '0');
+        for (let val = 0; val <= maxHour; val++) {
+            const opt = document.createElement("option");
+            opt.value = val.toString().padStart(2, "0");
+            opt.text = opt.value;
             hourSelect.appendChild(opt);
         }
 
         // Add the options to the minutes input
-        for (var m = 0; m < 60; m++) {
-            var opt = document.createElement('option');
-            opt.value = m.toString().padStart(2, '0');
-            opt.text = m.toString().padStart(2, '0');
+        for (let m = 0; m < 60; m++) {
+            const opt = document.createElement("option");
+            opt.value = m.toString().padStart(2, "0");
+            opt.text = opt.value;
             minuteSelect.appendChild(opt);
         }
 
         // Preload values ​​if they already exist
-        var existingTime = "{TIME_START}";
+        const existingTime = "{TIME_START}";
         if (existingTime) {
-            debugger;
-            var timeParts = existingTime.split(':');
+            const timeParts = existingTime.split(timeSeparator);
             if (timeParts.length >= 2) {
-                hourSelect.value = timeParts[0].padStart(2, '0');
-                minuteSelect.value = timeParts[1].padStart(2, '0');
+                hourSelect.value = timeParts[0].padStart(2, "0");
+                minuteSelect.value = timeParts[1].padStart(2, "0");
             }
         }
 
         // Rebuild date_start before saving
-        var form = document.forms.EditView;
-        form.addEventListener('submit', function() {
-            var hour = parseInt(hourSelect.value, 10);
-            var minute = minuteSelect.value;
-            var dateStart = document.getElementById('date_start_date');
-            var timeValue = hour.toString().padStart(2, '0') + ':' + minute;
-            var meridiemValue = meridiemSelect.value;           
-            dateStart.value = dateStart.value.split(' ')[0] + ' ' + timeValue + meridiemValue;
+        const form = document.forms.EditView;
+        form.addEventListener("submit", () => {
+            const hour = parseInt(hourSelect.value, 10);
+            const minute = minuteSelect.value;
+            const dateStart = document.getElementById("date_start_date");
+            const separator = timeSeparatorField.textContent;
+
+            let timeValue = hour.toString().padStart(2, "0") + separator + minute;
+            if (is12h && meridiemSelect) {
+                timeValue += meridiemSelect.value;
+            }
+
+            dateStart.value = dateStart.value.split(" ")[0] + " " + timeValue;
         });
     });
+
 
     function show_edit_template_link(field) {
 
