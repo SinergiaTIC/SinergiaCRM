@@ -187,18 +187,18 @@ select:invalid + label {
   margin-left: inherit;
 }
 
-button {
+.stic_panel button {
   text-transform: capitalize !important;
 }
 
-.btn {
+.stic_panel .btn {
   font-size: unset !important;
   text-transform: none !important;
   margin-right: 5px !important;
   height: 32px !important;
   min-width: 32px !important;
 }
-.input-group .btn {
+.stic_panel .input-group .btn {
   margin-right: inherit !important;
   display: flex;
   justify-content: center;

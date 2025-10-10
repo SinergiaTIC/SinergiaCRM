@@ -9,8 +9,9 @@
  *   Relationship: {
  *     name, text, module_orig, field_orig, relationship, module_dest
  *   }
+ * 
  */
-function getModuleInformation($moduleName, $availableModules){
+function getModuleInformation($moduleName, $availableModules) {
     global $app_list_strings, $dictionary;
 
     $result = [
@@ -218,7 +219,7 @@ function getModuleInformation($moduleName, $availableModules){
  *   name, text, module_orig, field_orig, relationship, module_dest
  * }
  */
-function getRelationships($moduleName, $availableModules){
+function getRelationships($moduleName, $availableModules) {
     global $beanList;
 
     $result = [];
@@ -301,8 +302,7 @@ function getRelationships($moduleName, $availableModules){
  *   name, text, module_orig, field_orig, relationship, module_dest
  * }
  */
-function getRelationshipsBetween($availableModules)
-{
+function getRelationshipsBetween($availableModules) {
     global $beanList;
 
     $result = [];
@@ -372,8 +372,7 @@ function getRelationshipsBetween($availableModules)
  *   name, text, textSingular, inStudio, icon
  * }
  */
-function getEnabledModules()
-{
+function getEnabledModules() {
     global $app_list_strings;
 
     // Get Enabled Modules
@@ -413,4 +412,50 @@ function getEnabledModules()
 
     return $enabled;
 }
+
+/**
+ * Retrieves the Id and text of required records
+ * Results: [{ id, text }]
+ */
+function getRecordsTextById($module, $ids = []) {
+    $results = [];
+    if (empty($module) || empty($ids)) {
+        return $results;
+    }
+
+    foreach ($ids as $id) {
+        $bean = BeanFactory::getBean($module, $id);
+
+        if (empty($bean) || empty($bean->id)) {
+            continue;
+        }
+
+        $displayField = detectDisplayField($bean);
+        $text = isset($bean->$displayField) ? $bean->$displayField : $bean->id;
+
+        $results[] = [
+            'id' => $bean->id,
+            'text' => $text,
+        ];
+    }
+
+    return $results;
+}
+
+/**
+ * Gets the field name for the text of a record
+ */
+function detectDisplayField($bean) {
+    $fields = $bean->field_defs;
+
+    $priorityFields = ['name', 'document_name', 'subject', 'full_name', 'first_name', 'last_name', 'title'];
+    foreach ($priorityFields as $f) {
+        if (isset($fields[$f])) {
+            return $f;
+        }
+    }
+    return 'id';
+}
+
+
 

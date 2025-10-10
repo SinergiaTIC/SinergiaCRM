@@ -109,4 +109,19 @@ class stic_Advanced_Web_FormsController extends SugarController
 
         sugar_cleanup(true);
     }
+
+    /**
+     * Handles the 'getRecordsTextById' action to retrieve the text to be shown for a list of Ids of given module 
+     */
+    public function action_getRecordsTextById() {
+        // Ensure return json 
+        header('Content-Type: application/json');
+
+        require_once "modules/stic_Advanced_Web_Forms/Utils.php";
+        $result = getRecordsTextById($_REQUEST['reqmodule'], json_decode(html_entity_decode($_REQUEST['reqids']),true));
+        $resultStr = json_encode($result, JSON_UNESCAPED_UNICODE);
+        echo $resultStr;
+
+        sugar_cleanup(true);
+    }
 }

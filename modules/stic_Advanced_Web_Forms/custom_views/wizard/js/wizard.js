@@ -162,6 +162,7 @@ function handle_open_popup(popup_reply_data) {
   if (popup_reply_data.selection_list) {
     const idField = popup_reply_data.passthru_data.id;
     $(`#${idField}`).val(Object.values(popup_reply_data.selection_list).join("|"));
+    $(`#${idField}`)[0].dispatchEvent(new Event('input', { bubbles: true }));
   }
 }
 
@@ -171,10 +172,34 @@ class WizardStep2 {
       init() {
         // Store for the Field Editor management
         Alpine.store('fieldEditor', {
-          isOpen: false,
+          isOpen: false,           // Indica si está abierto el editor de campos
           field: new AWF_Field(),  // Copia de los datos del campo
           original_name: '',       // Nombre original del campo
           dataBlock: null,         // El bloque de datos del campo
+
+          /**
+           * Retorna si es un campo nuevo
+           * @returns {boolean}
+           */
+          get isNewField() { return this.original_name === ''; },
+
+          /**
+           * Retorna el título del editor
+           */
+          get title() {
+            if (this.isNewField) {
+              switch (this.field.type_field) {
+                case 'form':
+                  return utils.translate('LBL_NEW_FIELD_FORM');
+                case 'unlinked':
+                  return utils.translate('LBL_NEW_FIELD_UNLINKED');
+                case 'hidden':
+                  return utils.translate('LBL_NEW_FIELD_HIDDEN');
+              }
+            } else {
+              return $store.fieldEditor.original_name
+            }
+          },
 
           /**
            * Abre el Modal para Crear un campo
@@ -206,17 +231,6 @@ class WizardStep2 {
             this.original_name = this.field.name;
             this.isOpen = true;
           },
-
-          /**
-           * Retorna si es un campo nuevo
-           * @returns {boolean}
-           */
-          get isNewField() { return this.original_name === ''; },
-
-          /**
-           * Retorna si el campo es válido
-           */
-          get isValid() { return this.field.isValid() == true; },
 
           /**
            * Cierra el modal de edición de un campo
@@ -309,15 +323,22 @@ class WizardStep2 {
             return listName.substring(lastDot + 1);
           }
         };
+        if (this.optionValuesRelated != ''){
+          listName = `${utils.getModuleInformation(this.relatedModule)?.text} (${this.optionValuesRelated.split('|').length})`;
+        }
         if (listName == '' && this.optionValues.length > 0) {
           listName = this.optionValues.filter(v => v.is_visible).map(v => v.text).join(', ');
         }
-        if(this.optionValuesRelated!=''){
-          listName = this.optionValuesRelated;
-        }
         return listName;
       },
-      optionValuesRelated: '',      
+      optionValuesRelated: '',
+
+      get relatedModule() {
+        if (this.field.type == 'relate') {
+          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo.options);
+        }
+        return '';
+      },
 
       get availableValueTypes() { return this.field?.getAvailableValueTypes() ?? [{id:'',text:''}]; },
       get availableTypesInForm() { return this.field?.getAvailableTypesInForm() ?? [{id:'',text:''}]; },
@@ -339,12 +360,19 @@ class WizardStep2 {
 
       init() {
         this.$watch('field.name', (newName, oldName) => {
-          if(newName != oldName) {
+          if (newName != oldName) {
+            this.field?.setValueOptions();
             this.field?.updateWithFieldInformation(this.selectedFieldInfo);
             this.configValueOptions = false;
+            this.optionValuesRelated = '';
           }
         });
-
+        this.$watch('field.text_original', (newText, oldText) => {
+          if (this.field.type_field == 'unlinked') {
+            this.field.name = this.dataBlock.suggestFieldName(AWF_Configuration.cleanName(newText));
+            this.field.label = utils.toFieldLabelText(newText);
+          }
+        });
         this.$watch('availableFields', (newArray) => {
           this.field && (this.field.name = newArray[0]?.name ?? '');
         });
@@ -371,10 +399,9 @@ class WizardStep2 {
           }
         });
         this.$watch('optionValuesRelated', (newRelateds, oldRelateds) => {
-          debugger;
           let arrIds = newRelateds.split('|');
-          // IEPA!!! Falta aconseguir els texts de cada element!!
-          this.optionValues = arrIds.map(v => ({id: v, text: v}));
+          let destModule = this.relatedModule;
+          this.field?.setValueOptions(utils.getRecordsTextById(destModule, arrIds));
         }); 
       },
 
@@ -383,7 +410,7 @@ class WizardStep2 {
         if (single!=true) {
           mode = 'MultiSelect';
         }
-        let destModule = this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo.options);
+        let destModule = this.relatedModule;
         let objMap = {'id':`${idBase}_id`, 'name':`${idBase}_name`};
         open_popup(destModule, 600, 400, '', true, false,
                     {

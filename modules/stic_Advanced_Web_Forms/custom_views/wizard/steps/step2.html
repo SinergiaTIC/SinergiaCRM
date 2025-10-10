@@ -210,214 +210,252 @@
     <div x-show="$store.fieldEditor.isOpen" x-cloak class="custom-modal-wrapper">
       <div class="custom-modal-backdrop"></div>
       <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalEditField">
-        <div class="custom-modal-content">
+        <div class="custom-modal-content" x-data="WizardStep2.editionFieldxData($store.fieldEditor, formConfig);">
           <div class="custom-modal-header">
-            <h3 class="modal-title" id="modalEditField" x-text="$store.fieldEditor.isNewField ? '[Crear campo]' : '[Editar campo] » ' + $store.fieldEditor.original_name"></h3>
+            <h3 class="modal-title" id="modalEditField" x-text="$store.fieldEditor.title"></h3>
             <button type="button" class="btn-close" @click="$store.fieldEditor.close()"></button>
           </div>
-          <div class="custom-modal-body" x-data="WizardStep2.editionFieldxData($store.fieldEditor, formConfig);">
+          <div class="custom-modal-body">
             <form id="dataBlockFieldModalForm">
-              <div class="row align-items-end">
-                <!-- Field -->
-                <template x-if="field && field.type_field != 'unlinked'">
-                  <div class="col-3">
-                    <label for="modalField_field" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
-                    <!-- Show all fields -->
-                    <div class="text-muted form-check form-switch small">
-                      <label for="modalField_field_allcheck" class="form-label" x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
-                      <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_field_allcheck" x-model="showAllFields"/>
-                    </div>
-                    <select id="modalField_field" class="form-select" x-model="field.name">
-                      <template x-for="moduleField in availableFields" :key="moduleField.name">
-                        <option :value="moduleField.name" x-text="moduleField.text"></option>
-                      </template>
-                    </select>
-                  </div>
-                </template>
-                <!-- Type in form -->
-                <template x-if="field && field.type_field != 'hidden'">
-                  <div class="col-3">
-                    <label for="modalField_TypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
-                    <select id="modalField_TypeInForm" class="form-select" x-model="field.type_in_form">
-                      <template x-for="type in availableTypesInForm" :key="type.id">
-                        <option :value="type.id" x-text="type.text"></option>
-                      </template>
-                    </select>
-                  </div>
-                </template>
-                <!-- Subtype in form -->
-                <template x-if="field && field.type_field != 'hidden'">
-                  <div class="col-3">
-                    <label for="modalField_SubtypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_SUBTYPE_IN_FORM')"></label>
-                    <select id="modalField_SubtypeInForm" class="form-select" x-model="field.subtype_in_form">
-                      <template x-for="type in availableSubtypesInForm" :key="type.id">
-                        <option :value="type.id" x-text="type.text"></option>
-                      </template>
-                    </select>
-                  </div>
-                </template>
-                <!-- Value options list name -->
-                <template x-if="isInFormSelectableValues">
-                  <div class="col-3">
-                    <label for="modalField_ValueOptionsDesc" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
-                    <!-- Value options configuration Check -->
-                    <div class="text-muted form-check form-switch small">
-                      <label for="modalField_ValueOptionsConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
-                      <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsConf" x-model="configValueOptions"/>
-                    </div>
-                    <input id="modalField_ValueOptionsDesc" type="text" disabled class="form-control" x-model="optionValuesListName"/>
-                  </div>
-                </template>
-                <!-- Value options of related -->
-                <template x-if="isInFormSelectableRelation">
-                  <div class="col-3">
-                    <label for="modalField_ValueOptionsRel_name" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
-                    <!-- Value options configuration Check -->
-                    <div class="text-muted form-check form-switch small">
-                      <label for="modalField_ValueOptionsRelConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
-                      <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsRelConf" x-model="configValueOptions"/>
-                    </div>
-                    <div class="input-group">
-                      <input id="modalField_ValueOptionsRel_name" type="text" disabled class="form-control" x-model="optionValuesListName"/>
-                      <input type="hidden" id="modalField_ValueOptionsRel_id" x-model="optionValuesRelated" />
-                      <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)">
-                        <span class="suitepicon suitepicon-action-select"></span>
-                      </button>
-                      <button class="btn" type="button" @click="field.setValueOptions([]);">
-                        <span class="suitepicon suitepicon-action-clear"></span>
-                      </button>
-                    </div>                    
-                  </div>
-                </template>
-                <!-- Value options edition -->
-                <template x-if="configValueOptions">
-                  <div class="row">
-                    <!-- Value options configuration Table -->
-                    <div class="col-12" x-data="WizardStep2.sortableListxData(field.value_options)">
-                      <table class="table table-bordered table-striped w-auto" id="modalField_ValueOptionsTable">
-                        <caption class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></caption>
-                        <thead>
-                          <tr>
-                            <th x-text="'[Id]'"></th>
-                            <th x-text="'[Texto original]'"></th>
-                            <th x-text="'[Mostrar]'"></th>
-                            <th x-text="'[Texto en el formulario]'"></th>
-                            <th x-text="'[Mover]'"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <template x-for="(element, index) in field.value_options">
-                            <tr>
-                              <td x-text="element.value"></td>
-                              <td x-text="element.text_original"></td>
-                              <td>
-                                <div class="form-switch">
-                                  <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="element.is_visible" :id="`modalField_ValueOptionsInclude${index}`"/>
-                                </div>
-                              </td>
-                              <td>
-                                <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"/>
-                              </td>
-                              <td>
-                                <div class="input-group">
-                                  <button type="button" class="btn" :disabled="index === 0" @click="moveUp(index)">
-                                    <span class="suitepicon suitepicon-action-move-up"></span>
-                                  </button>
-                                  <button type="button" class="btn" :disabled="index === field.value_options.length - 1" @click="moveDown(index)">
-                                    <span class="suitepicon suitepicon-action-move-down"></span>
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
+              <div class="card">
+                <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION')"></div>
+                <div class="card-body">
+                  <div class="row align-items-end">
+                    <!-- Name (Text)-->
+                    <template x-if="field && field.type_field == 'unlinked'">
+                      <!-- Text -->
+                      <div class="col-3">
+                        <label for="modalField_Text" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_NAME')"></label>
+                        <input id="modalField_Text" type="text" class="form-control" autocomplete="off" x-model="field.text_original"/>
+                      </div>
+                    </template>
+                    <!-- Name (Internal)-->
+                    <template x-if="field && field.type_field == 'unlinked'">
+                      <!-- Name -->
+                      <div class="col-3">
+                        <label for="modalField_Name" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_INTERNAL_NAME')"></label>
+                        <input id="modalField_Name" type="text" disabled class="form-control" autocomplete="off" x-model="field.name"/>
+                      </div>
+                    </template>
+                    <!-- Field -->
+                    <template x-if="field && field.type_field != 'unlinked'">
+                      <div class="col-3">
+                        <label for="modalField_field" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
+                        <!-- Show all fields -->
+                        <div class="text-muted form-check form-switch small">
+                          <label for="modalField_field_allcheck" class="form-label" x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_field_allcheck" x-model="showAllFields"/>
+                        </div>
+                        <select id="modalField_field" class="form-select" x-model="field.name">
+                          <template x-for="moduleField in availableFields" :key="moduleField.name">
+                            <option :value="moduleField.name" x-text="moduleField.text"></option>
                           </template>
-                        </tbody>
-                      </table>
-                    </div>
+                        </select>
+                      </div>
+                    </template>
+                    <!-- Type in form -->
+                    <template x-if="field && field.type_field != 'hidden'">
+                      <div class="col-3">
+                        <label for="modalField_TypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
+                        <select id="modalField_TypeInForm" class="form-select" x-model="field.type_in_form">
+                          <template x-for="type in availableTypesInForm" :key="type.id">
+                            <option :value="type.id" x-text="type.text"></option>
+                          </template>
+                        </select>
+                      </div>
+                    </template>
+                    <!-- Subtype in form -->
+                    <template x-if="field && field.type_field != 'hidden'">
+                      <div class="col-3">
+                        <label for="modalField_SubtypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_SUBTYPE_IN_FORM')"></label>
+                        <select id="modalField_SubtypeInForm" class="form-select" x-model="field.subtype_in_form">
+                          <template x-for="type in availableSubtypesInForm" :key="type.id">
+                            <option :value="type.id" x-text="type.text"></option>
+                          </template>
+                        </select>
+                      </div>
+                    </template>
+                    <!-- Value options list name -->
+                    <template x-if="isInFormSelectableValues">
+                      <div class="col-3">
+                        <label for="modalField_ValueOptionsDesc" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
+                        <!-- Value options configuration Check -->
+                        <div class="text-muted form-check form-switch small">
+                          <label for="modalField_ValueOptionsConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsConf" x-model="configValueOptions"/>
+                        </div>
+                        <input id="modalField_ValueOptionsDesc" type="text" disabled class="form-control" x-model="optionValuesListName"/>
+                      </div>
+                    </template>
+                    <!-- Value options of related -->
+                    <template x-if="isInFormSelectableRelation">
+                      <div class="col-3">
+                        <label for="modalField_ValueOptionsRel_name" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
+                        <template x-if="optionValuesRelated==''">
+                          <!-- Select Records -->
+                          <button class="btn form-control" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SELECT_REGS')"></button>
+                        </template>
+                        <template x-if="optionValuesRelated!=''">
+                          <div>
+                            <!-- Value options configuration Check -->
+                            <div class="text-muted form-check form-switch small">
+                              <label for="modalField_ValueOptionsRelConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
+                              <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsRelConf" x-model="configValueOptions"/>
+                            </div>
+                            <div class="input-group">
+                              <input id="modalField_ValueOptionsRel_name" type="text" disabled class="form-control" x-model="optionValuesListName"/>
+                              <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)">
+                                <span class="suitepicon suitepicon-action-select"></span>
+                              </button>
+                            </div>
+                          </div>
+                        </template>
+                        <input type="hidden" id="modalField_ValueOptionsRel_id" x-model="optionValuesRelated" />
+                      </div>
+                    </template>
+                    <!-- Value options edition -->
+                    <template x-if="configValueOptions">
+                      <div class="row">
+                        <!-- Value options configuration Table -->
+                        <div class="col-12" x-data="WizardStep2.sortableListxData(field.value_options)">
+                          <table class="table table-bordered table-striped w-auto" id="modalField_ValueOptionsTable">
+                            <caption class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></caption>
+                            <thead>
+                              <tr>
+                                <th x-text="'[Nombre]'"></th>
+                                <th x-text="'[Texto original]'"></th>
+                                <th x-text="'[Mostrar]'"></th>
+                                <th x-text="'[Texto en el formulario]'"></th>
+                                <th x-text="'[Mover]'"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template x-for="(element, index) in field.value_options">
+                                <tr>
+                                  <td x-text="element.value"></td>
+                                  <td x-text="element.text_original"></td>
+                                  <td>
+                                    <div class="form-switch">
+                                      <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="element.is_visible" :id="`modalField_ValueOptionsInclude${index}`"/>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"/>
+                                  </td>
+                                  <td>
+                                    <div class="input-group">
+                                      <button type="button" class="btn" :disabled="index === 0" @click="moveUp(index)">
+                                        <span class="suitepicon suitepicon-action-move-up"></span>
+                                      </button>
+                                      <button type="button" class="btn" :disabled="index === field.value_options.length - 1" @click="moveDown(index)">
+                                        <span class="suitepicon suitepicon-action-move-down"></span>
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </template>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </template>
+                    <!-- Value type -->
+                    <template x-if="field && field.type_field == 'hidden'">
+                      <div class="col-3">
+                        <label for="modalField_ValueType" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
+                        <select id="modalField_ValueType" x-bind:disabled="availableValueTypes.length<=1;" class="form-select" x-model="field.value_type">
+                          <template x-for="type in availableValueTypes" :key="type.id">
+                            <option :value="type.id" x-text="type.text"></option>
+                          </template>
+                        </select>
+                      </div>
+                    </template>
+                    <!-- Value (fixed value of enum) -->
+                    <template x-if="isFixedValueOfEnum">
+                      <div class="col-3">
+                        <label for="modalField_ValFixOptions" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                        <select id="modalField_ValFixOptions" class="form-select" x-model="field.value">
+                          <template x-for="option in optionValues" :key="option.id">
+                            <option :value="option.id" x-text="option.text"></option>
+                          </template>
+                        </select>
+                      </div>
+                    </template>
+                    <!-- Value (fixed value of related) -->
+                    <template x-if="isFixedValueOfRelated">
+                      <div class="col-3">
+                        <label for="modalField_ValFixRel_name" class="form-label" x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')" ></label>
+                        <div class="input-group">
+                          <input class="form-control" type="text" id="modalField_ValFixRel_name" x-model="field.value_text" readonly style="background-color: rgb(255, 255, 255)"/>
+                          <input type="hidden" id="modalField_ValFixRel_id" x-model="field.value" />
+                          <button class="btn" type="button" @click="openPopUp('modalField_ValFixRel')">
+                            <span class="suitepicon suitepicon-action-select"></span>
+                          </button>
+                          <button class="btn" type="button" @click="field.value='';field.value_text='';">
+                            <span class="suitepicon suitepicon-action-clear"></span>
+                          </button>
+                        </div>
+                      </div>
+                    </template>
+                    <!-- Value (fixed value of date) -->
+                    <template x-if="isFixedValueOfDate">
+                      <div class="col-3">
+                        <label for="modalField_ValFixDate" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')" ></label>
+                        <div class="form-switch">
+                          <label for="modalField_ValFixDate_Today" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TODAY')" ></label>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValFixDate_Today" x-model="valueToday" />
+                        </div>
+                        <input id="modalField_ValFixDate" type="date" class="form-control" autocomplete="off" :disabled="valueToday" x-model="field.value"/>
+                      </div>
+                    </template>
+                    <!-- Value (fixed value of default) -->
+                    <template x-if="isFixedValueOfDefault">
+                      <div class="col-3">
+                        <label for="modalField_ValFixText" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                        <input id="modalField_ValFixText" type="text" class="form-control" autocomplete="off" x-model="field.value"/>
+                      </div>
+                    </template>
                   </div>
-                </template>
-                <!-- Value type -->
-                <template x-if="field && field.type_field == 'hidden'">
-                  <div class="col-3">
-                    <label for="modalField_ValueType" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
-                    <select id="modalField_ValueType" class="form-select" x-model="field.value_type">
-                      <template x-for="type in availableValueTypes" :key="type.id">
-                        <option :value="type.id" x-text="type.text"></option>
-                      </template>
-                    </select>
-                  </div>
-                </template>
-                <!-- Value (fixed value of enum) -->
-                <template x-if="isFixedValueOfEnum">
-                  <div class="col-3">
-                    <label for="modalField_ValFixOptions" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                    <select id="modalField_ValFixOptions" class="form-select" x-model="field.value">
-                      <template x-for="option in optionValues" :key="option.id">
-                        <option :value="option.id" x-text="option.text"></option>
-                      </template>
-                    </select>
-                  </div>
-                </template>
-                <!-- Value (fixed value of related) -->
-                <template x-if="isFixedValueOfRelated">
-                  <div class="col-3">
-                    <label for="modalField_ValFixRel_name" class="form-label" x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')" ></label>
-                    <div class="input-group">
-                      <input class="form-control" type="text" id="modalField_ValFixRel_name" x-model="field.value_text" readonly style="background-color: rgb(255, 255, 255)"/>
-                      <input type="hidden" id="modalField_ValFixRel_id" x-model="field.value" />
-                      <button class="btn" type="button" @click="openPopUp('modalField_ValFixRel')">
-                        <span class="suitepicon suitepicon-action-select"></span>
-                      </button>
-                      <button class="btn" type="button" @click="field.value='';field.value_text='';">
-                        <span class="suitepicon suitepicon-action-clear"></span>
-                      </button>
-                    </div>
-                  </div>
-                </template>
-                <!-- Value (fixed value of date) -->
-                <template x-if="isFixedValueOfDate">
-                  <div class="col-3">
-                    <label for="modalField_ValFixDate" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')" ></label>
-                    <div class="form-switch">
-                      <label for="modalField_ValFixDate_Today" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TODAY')" ></label>
-                      <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValFixDate_Today" x-model="valueToday" />
-                    </div>
-                    <input id="modalField_ValFixDate" type="date" class="form-control" autocomplete="off" :disabled="valueToday" x-model="field.value"/>
-                  </div>
-                </template>
-                <!-- Value (fixed value of default) -->
-                <template x-if="isFixedValueOfDefault">
-                  <div class="col-3">
-                    <label for="modalField_ValFixText" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                    <input id="modalField_ValFixText" type="text" class="form-control" autocomplete="off" x-model="field.value"/>
-                  </div>
-                </template>
+                </div>
               </div>
-              <div class="row align-items-end">
-                <!-- Label -->
-                <template x-if="field && field.type_field != 'hidden'">
-                  <div class="col-3">
-                    <label for="modalField_Label" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
-                    <input id="modalField_Label" type="text" class="form-control" x-model="field.label" />
+              <template x-if="field && field.in_form">
+                <div class="card">
+                  <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION_FORM')"></div>
+                  <div class="card-body">
+                    <div class="row align-items-end">
+                      <!-- Label -->
+                      <div class="col-3">
+                        <label for="modalField_Label" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
+                        <input id="modalField_Label" type="text" class="form-control" x-model="field.label" />
+                      </div>
+                      <!-- Placeholder -->
+                      <template x-if="field.acceptPlaceholder()">
+                        <div class="col-3">
+                          <label for="modalField_Placeholder" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_PLACEHOLDER')"></label>
+                          <input id="modalField_Placeholder" type="text" class="form-control" x-model="field.placeholder" />
+                        </div>
+                      </template>
+                    </div>
                   </div>
-                </template>
-                <!-- Placeholder -->
-                <template x-if="field && field.type_field != 'hidden' && field.acceptPlaceholder()">
-                  <div class="col-3">
-                    <label for="modalField_Placeholder" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_PLACEHOLDER')"></label>
-                    <input id="modalField_Placeholder" type="text" class="form-control" x-model="field.placeholder" />
+                </div>
+              </template>
+              <template x-if="field && field.in_form">
+                <div class="card">
+                  <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION_VALIDATIONS')"></div>
+                  <div class="card-body">
+                    <div class="row align-items-end">
+                      <!-- Required in form -->
+                      <div class="col-3 form-switch">
+                        <label for="modalField_ReqForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
+                        <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ReqForm" x-model="field.required_in_form"/>
+                      </div>
+                    </div>                  
                   </div>
-                </template>
-                <!-- Required in form -->
-                <template x-if="field && field.type_field != 'hidden'">
-                  <div class="col-3 form-switch">
-                    <label for="modalField_ReqForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
-                    <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ReqForm" x-model="field.required_in_form"/>
-                  </div>
-                </template>
-              </div>
+                </div>
+              </template>
             </form>
 
-            <!-- Field Details-->
+            <!-- Debug: Field Details-->
             <div x-data="{ showFieldDetails: false}">
               <div class="text-muted form-check form-switch mb-3 mt-5" id="showDetailsDataToggleSwitch" data-model="showFieldDetails" 
                    data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
@@ -429,8 +467,9 @@
             </div>
           </div>
           <div class="custom-modal-footer">
-            <button type="button" class="btn btn-secondary" @click="$store.fieldEditor.close()" x-text="'[Cerrar]'"></button>
-            <button type="button" class="btn btn-primary" @click="$store.fieldEditor.saveChanges()" x-text="$store.fieldEditor.isNewField?'[Crear]':'[Guardar]'"></button>
+            <button type="button" class="col-2 btn btn-secondary" @click="$store.fieldEditor.close()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" @click="$store.fieldEditor.saveChanges()" 
+                    x-bind:disabled="!isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
           </div>
         </div>
       </div>

@@ -130,4 +130,38 @@ class utils {
   static newId(prefix = "") {
     return prefix + Date.now().toString(36) + Math.random().toString(36).substring(2);
   }
+
+  /**
+   * Retrieves the text to be shown for a list of Ids of given Module
+   * @param {string} moduleName 
+   * @param {array} ids 
+   */
+  static getRecordsTextById(moduleName, ids) {
+    let finalResponse = [];
+    $.ajax({
+      url: "index.php",
+      type: "POST",
+      async: false,
+      dataType: "json",
+      data: {
+        module: "stic_Advanced_Web_Forms",
+        action: "getRecordsTextById",
+        reqmodule: moduleName,
+        reqids: JSON.stringify(ids),
+      },
+      success: function (response) {
+        finalResponse = response;
+      },
+      error: function (xhr, status, error) {
+        console.error(
+          "Error retrieving Text fith Ids for module: '" + moduleName + "'",
+          status,
+          error,
+          xhr.responseText
+        );
+      },
+    });
+
+    return finalResponse;
+  }
 }

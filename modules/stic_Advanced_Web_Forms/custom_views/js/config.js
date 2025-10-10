@@ -151,6 +151,42 @@ class AWF_DataBlock {
       }
     });
   }
+
+  /**
+   * Gets a suggested name for a new Field for this DataBlock
+   * @param {*} fieldName The fieldName 
+   * @returns {string} The suggested text for a new DataBlock
+   */
+  suggestFieldName(fieldName) {
+    let index = 0;
+    let name = fieldName;
+    while(this.fields.some((f) => f.name === fieldName)) {
+      index++;
+      name = `${fieldName}_${index}`;
+    }
+    return name;
+  }
+
+
+  /**
+   * Gets a suggested text for a new DataBlock for a module
+   * @param {string} moduleName The module
+   * @returns {string} The suggested text for a new DataBlock
+   */
+  suggestDataBlockText(moduleName) {
+    let module = utils.getModuleInformation(moduleName);
+    if (!module || !module.textSingular) {
+      return "";
+    }
+
+    let text = module.textSingular;
+    let index = 0;
+    while(this.data_blocks.some((b) => b.text === text || b.name === name)) {
+      index++;
+      text = `${module.textSingular} ${index}`;
+    }
+    return text;
+  }
 }
 
 /**
@@ -164,6 +200,7 @@ class AWF_Field {
     // 1. Set default values
     Object.assign(this, {
       name: '',                // Nombre del campo
+      text_original: '',       // Texto original del campo
       label: '',               // Etiqueta que aparecerá con el campo
       order: 0,                // Orden del campo en el bloque de datos
       required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
@@ -185,6 +222,10 @@ class AWF_Field {
 
     // 3. Map sub-objects and arrays to their classes
     this.value_options = (data.value_options || this.value_options).map(d => new AWF_ValueOption(d));
+
+    if (!data.in_form) {
+      this.in_form = this.type_field != 'hidden';
+    }
   }
 
   /**
@@ -200,6 +241,7 @@ class AWF_Field {
     typeField = typeField || this.type_field;
 
     this.name = fieldInfo.name;
+    this.text_original = fieldInfo.text;
     this.label = utils.toFieldLabelText(fieldInfo.text);
     this.type_field = typeField;
     this.required = fieldInfo.required;
