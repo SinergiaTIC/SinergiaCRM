@@ -87,7 +87,7 @@ class EmailMarketing extends SugarBean
     {
         global $current_user;
 
-        // STIC-Custom 20251009 MHP - 
+        // STIC-Custom 20251009 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/834
         // Prevent start_date from being recalculated as it arrives with the correct value
         // $date_start = trim($this->date_start);
         // $time_start = trim($this->time_start);
