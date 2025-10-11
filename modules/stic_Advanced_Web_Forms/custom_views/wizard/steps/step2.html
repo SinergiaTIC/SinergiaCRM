@@ -1,24 +1,38 @@
 <!-- Main Panel -->
 <main class="wizard-main flex-fill d-flex flex-column">
   <!-- Add DataBlock from Module -->
-  <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="WizardStep2.addDataBlockModulexData(formConfig, step2);">
-    <div class="d-flex mb-3">
-      <button type="button" class="btn w-auto" x-show="!creatingDataBlock" @click="creatingDataBlock=true;" x-text="'[Añadir Bloque de Datos de Módulo]'"></button>
-      <h4 x-show="creatingDataBlock" x-text="'[Añadir Bloque de Datos de Módulo]'"></h4>
-    </div>
-    <div class="row align-items-end" x-show="creatingDataBlock">
-      <!-- Module -->
-      <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
-      <!-- Data Block name -->
-      <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_NEW_DATABLOCK_NAME" 
-                       x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)" keydown.enter="$('#addDataBlockModuleButton').click();"
-                       keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
-      <button type="button" class="btn w-32px mb-1px" id="addDataBlockModuleButton" @click="handleAddDatablockModule();">
-        <span class="suitepicon suitepicon-action-confirm"></span>
-      </button>
-      <button type="button" class="btn w-32px mb-1px" id="cancelAddDataBlockModuleButton" @click="creatingDataBlock = false;">
-        <span class="suitepicon suitepicon-action-clear"></span>
-      </button>
+  <div class="row mb-3" x-data="WizardStep2.addDataBlockModulexData(formConfig, step2);">
+    <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" x-text="utils.translate('LBL_ADD_DATABLOCK')"></button>
+
+    <!-- Modal: Create DataBlock -->
+    <div x-show="creatingDataBlock" x-cloak class="custom-modal-wrapper">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalCreateDataBlock">
+        <div class="custom-modal-content">
+          <div class="custom-modal-header">
+            <h3 class="modal-title" id="modalCreateDataBlock" x-text="utils.translate('LBL_NEW_DATABLOCK')"></h3>
+            <button type="button" class="btn-close" @click="creatingDataBlock = false;"></button>
+          </div>
+          <div class="custom-modal-body">
+            <form id="newDataBlockModalForm">
+              <div class="row align-items-end">
+                <!-- Module -->
+                <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
+                <!-- Data Block name -->
+                <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_NEW_DATABLOCK_NAME" 
+                                 x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
+                                 keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
+              </div>
+            </form>
+          </div>
+          <div class="custom-modal-footer">
+            <button type="button" class="col-2 btn btn-secondary" id="cancelAddDataBlockModuleButton" @click="creatingDataBlock = false;" 
+                    x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" id="addDataBlockModuleButton" @click="handleAddDatablockModule();" 
+                    x-bind:disabled="!isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- Data Blocks -->

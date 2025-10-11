@@ -107,6 +107,10 @@
   opacity: unset !important;
 }
 
+.selectize-dropdown, .selectize-dropdown.form-control {
+  z-index: 1052;
+}
+
 .stic_panel {
   font-size: unset !important;
 }
@@ -205,7 +209,7 @@ select:invalid + label {
   align-items: center;
 }
 
-.row {
+.stic_panel form .row {
   margin-bottom: 1.5rem;
 }
 

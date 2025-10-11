@@ -98,6 +98,8 @@ $mod_strings = array (
 
   'LBL_DATABLOCKS' => 'Bloques de datos',
   'LBL_DATABLOCK_DETACHED' => 'Datos no enlazados',
+  'LBL_ADD_DATABLOCK' => 'Añadir Bloque de datos',
+  'LBL_NEW_DATABLOCK' => 'Nuevo Bloque de datos',
 
   'LBL_FIELDS' => 'Campos',
   'LBL_FIELDS_ALL' => 'Todos',

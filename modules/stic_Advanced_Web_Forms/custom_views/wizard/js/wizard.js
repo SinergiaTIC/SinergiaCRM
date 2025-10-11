@@ -286,15 +286,24 @@ class WizardStep2 {
       formConfig: initial_formConfig,
       step2: initial_step2,
 
-      creatingDataBlock: !this.formConfig?.data_blocks.some(b => b.module!='') ?? false,
+      creatingDataBlock: false,
 
       newDataBlock: {module:'', text:''},
+      get isValid() { 
+        return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
+      },
 
       handleAddDatablockModule() {
         this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
         this.creatingDataBlock = false;
         this.step2.loadDatablockRelationships();
-      }
+      },
+
+      init() {
+        if (this.formConfig && !this.formConfig.data_blocks.some(b => b.module!='')) {
+          this.creatingDataBlock = true;
+        }
+      },
     };
   }
 
