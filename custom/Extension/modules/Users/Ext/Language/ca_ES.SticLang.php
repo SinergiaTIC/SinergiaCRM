@@ -80,7 +80,7 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = "URL de redirecció
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Àmbits';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbits de l'aplicació registrada a Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent' target='_blank'>Més informació</a>";
 
-// Suplantació d'usuaris - Usuari que suplanta
+// Emulació d'usuaris - Usuari que emula
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emula aquest usuari';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = '<strong>Accés emulat</strong><br>';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'Ara mateix esteu emulant aquest usuari: ';
@@ -89,7 +89,7 @@ $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuari original';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuari emulat';
 $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = "Finalitza l'accés";
 
-// Suplantació d'usuaris - Usuari suplantat
+// Emulació d'usuaris - Usuari emulat
 $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = "Emulació d'usuari";
 $mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador està emulant el vostre usuari.';
 $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = "Un administrador ha finalitzat l'emulació del vostre usuari.";
