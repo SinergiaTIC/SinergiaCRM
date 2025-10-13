@@ -49,10 +49,10 @@ function showImpersonationMessage() {
     message.id = 'stic-impersonation-message';
     message.className = 'msg-fatal-lock';   
     message.innerHTML = `
-        ${modImpersonate.LBL_IMPERSONATE_ALERT_TITLE} 
-        ${modImpersonate.LBL_IMPERSONATE_ALERT_DESCRIPTION}
+        ${modImpersonate.LBL_IMPERSONATE_MESSAGE_TITLE} 
+        ${modImpersonate.LBL_IMPERSONATE_MESSAGE_DESCRIPTION}
         <strong>${impersonationData.target_user_name}</strong>
-        ${modImpersonate.LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION}
+        ${modImpersonate.LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION}
     `;
     // Inserting as the first child of the reference node
     ref.insertBefore(message, ref.firstChild);
@@ -82,17 +82,13 @@ function showImpersonationIndicator() {
             </button>
             <ul class="dropdown-menu user-dropdown impersonation-dropdown" role="menu" aria-labelledby="with-label">
                 <li role="presentation" class="dropdown-header">
-                    ${modImpersonate.LBL_IMPERSONATE_ALERT_TITLE}
+                    ${modImpersonate.LBL_IMPERSONATE_MESSAGE_TITLE}
                 </li>
                 <li role="presentation">
-                    <a href="javascript:void(0)">
-                        <strong>${modImpersonate.LBL_IMPERSONATE_TARGET_USER}:</strong> ${impersonationData.target_user_full_name}
-                    </a>
+                    <strong>${modImpersonate.LBL_IMPERSONATE_TARGET_USER}:</strong> ${impersonationData.target_user_full_name}
                 </li>
                 <li role="presentation">
-                    <a href="javascript:void(0)">
-                        <strong>${modImpersonate.LBL_IMPERSONATE_ORIGINAL_USER}:</strong> ${impersonationData.original_user_full_name}
-                    </a>
+                    <strong>${modImpersonate.LBL_IMPERSONATE_ORIGINAL_USER}:</strong> ${impersonationData.original_user_full_name}
                 </li>
                 <li role="presentation">
                     <a id="stop-impersonation-btn" href="index.php?module=Users&action=stopImpersonation" class="text-danger">

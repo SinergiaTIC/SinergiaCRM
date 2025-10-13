@@ -154,36 +154,45 @@ class ImpersonateUtils
     }
 
     /**
-     * Validate session integrity
+     * Check if there is an active impersonation session
      * 
      * @return bool
      */
-    public static function validateSession()
-    {
-        if (isset($_SESSION['stic_impersonate_original_user'])) {
-            $original_user_id = $_SESSION['stic_impersonate_original_user'];
-            $original_user = BeanFactory::getBean('Users', $original_user_id);
-            
-            if (!$original_user || empty($original_user->id) || !$original_user->is_admin) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-
-    public static function addImpersonationNotification($targetUserId) {
-        global $current_user, $app_strings;
+    public static function addStartImpersonationNotification($targetUserId) {
+        global $mod_strings, $timedate, $current_user;
 
         $alert = BeanFactory::getBean('Alerts');
 
-        $alert->name = $app_strings['LBL_IMPERSONATION_NOTICE'];
-        $alert->name = 'name';
-        $alert->description = $app_strings['LBL_IMPERSONATION_NOTICE_DESC'];
-        $alert->description = 'desc';
+        $alert->target_module = $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] .' - '.$timedate->now();
+        $alert->name = $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'];
+        $alert->description = $mod_strings['LBL_IMPERSONATION_ALERT_USER'] . $current_user->user_name;
+        // $alert->description = $mod_strings['LBL_IMPERSONATION_START_ALERT_DATE'] . $timedate->now();
         $alert->assigned_user_id = $targetUserId;
         $alert->is_read = 0;
-        $alert->target_module = 'Impersonating';
+        $alert->type = 'info'; // No other types available
+        // $alert->reminder_id = uniqid(); // Not needed in this case
+        // $alert->url_redirect = 'url'; // Not needed in this case
+
+        $alert->save();
+    }
+    
+    /**
+     * Add notification alert to user when impersonation stops
+     * 
+     * @param string $targetUserId
+     * @param User $original_user
+     */
+    public static function addStopImpersonationNotification($targetUserId, $original_user) {
+        global $mod_strings, $timedate, $current_user;
+
+        $alert = BeanFactory::getBean('Alerts');
+
+        $alert->target_module = $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] .' - '.$timedate->now();
+        $alert->name = $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'];
+        $alert->description = $mod_strings['LBL_IMPERSONATION_ALERT_USER'] . $original_user->user_name;
+        // $alert->description = $mod_strings['LBL_IMPERSONATION_ALERT_START_DATE'] . $timedate->now();
+        $alert->assigned_user_id = $targetUserId;
+        $alert->is_read = 0;
         $alert->type = 'info'; // No other types available
         // $alert->reminder_id = uniqid(); // Not needed in this case
         // $alert->url_redirect = 'url'; // Not needed in this case

@@ -32,29 +32,24 @@ class CustomUsersController extends UsersController
 
         if (!$current_user->is_admin) {
             $GLOBALS['log']->fatal(__METHOD__.__LINE__.'Access denied. Only administrators can use impersonation.');
-            $this->view_object_map['message'] = 'Access denied. Only administrators can use this feature.';
-            $this->view = 'error';
-            return;
+            die('Access denied. Only administrators can use this feature.');
         }
 
         $target_user_id = $_REQUEST['userId'] ?? '';
         
         if (empty($target_user_id)) {
             $GLOBALS['log']->fatal(__METHOD__.__LINE__.'Target user ID is missing.');
-            $this->view_object_map['message'] = 'Target user ID is required.';
-            $this->view = 'error';
-            return;
+            die('Target user ID is missing.');
         }
         require_once 'custom/modules/Users/SticImpersonate/Impersonate.php';
         $impersonate = new Impersonate();
         
         if ($impersonate->startImpersonation($target_user_id)) {
             // Redirect to home page
-            SugarApplication::redirect('index.php');
+            SugarApplication::redirect('index.php?module=Home&action=index');
         } else {
             $GLOBALS['log']->fatal(__METHOD__.__LINE__.'Failed to start impersonation for user ID: ' . $target_user_id);
-            $this->view_object_map['message'] = 'Failed to start impersonation. Please check if the target user exists.';
-            $this->view = 'error';
+            die('Failed to start impersonation for user ID: ' . $target_user_id);
         }
         
         SugarApplication::redirect('index.php?module=Home&action=index');
@@ -72,8 +67,7 @@ class CustomUsersController extends UsersController
             SugarApplication::redirect('index.php');
         } else {
             $GLOBALS['log']->fatal(__METHOD__.__LINE__.'Failed to stop impersonation.');
-            $this->view_object_map['message'] = 'Failed to stop impersonation.';
-            $this->view = 'error';
+            die('Failed to stop impersonation.');
         }
     }
 }

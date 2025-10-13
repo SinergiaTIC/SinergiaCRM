@@ -82,9 +82,16 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Scopes of the applicatio
 
 // Impersonating users
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Impersonate the user';
-$mod_strings['LBL_IMPERSONATE_ALERT_TITLE'] = '<strong>Active impersonation</strong><br>';
-$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'You are currently impersonating the user: ';
-$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>To return to your own user, please click <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">here.</a>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = '<strong>Active impersonation</strong><br>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'You are currently impersonating the user: ';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>To return to your own user, please click <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">here.</a>';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Original user';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Impersonated user';
 $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Stop impersonation';
+
+// Suplantació d'usuaris - Usuari suplantat
+$mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'User impersonation';
+$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'An administrator has started an impersonation of your user.';
+$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'An administrator has stopped an impersonation of your user.';
+$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DATE'] = 'End of impersonation: ';
+$mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'User who impersonates: ';

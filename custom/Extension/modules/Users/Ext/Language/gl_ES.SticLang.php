@@ -82,9 +82,16 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbitos de la aplicaci�
 
 // Suplantación de usuarios
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Suplantar usuario';
-$mod_strings['LBL_IMPERSONATE_ALERT_TITLE'] = '<strong>Suplantación activa</strong><br>';
-$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'En este momento está suplantando a este usuario: ';
-$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>Para volver a su propio usuario haga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = '<strong>Suplantación activa</strong><br>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'En este momento está suplantando a este usuario: ';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Para volver a su propio usuario haga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuario original';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuario suplantado';
 $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalizar suplantación';
+
+// Suplantació d'usuaris - Usuari suplantat
+$mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'Suplantación de usuario';
+$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador ha iniciado una suplantación de su usuario.';
+$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'Un administrador ha finalizado una suplantación de su usuario.';
+$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DATE'] = 'Fin de suplantación: ';
+$mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario que suplanta: ';

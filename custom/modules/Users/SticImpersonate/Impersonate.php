@@ -100,7 +100,7 @@ class Impersonate {
         ImpersonateUtils::logActivity('impersonate_start', $target_user->id);
 
         // Notify user
-        ImpersonateUtils::addImpersonationNotification($target_user->id);
+        ImpersonateUtils::addStartImpersonationNotification($target_user->id);
 
         // Switch current user
         $current_user = $target_user;
@@ -121,11 +121,7 @@ class Impersonate {
         require_once('custom/modules/Users/SticImpersonate/ImpersonateUtils.php');
 
         if (!$this->isImpersonating()) {
-            return false;
-        }
-
-        // Validate session integrity
-        if (!ImpersonateUtils::validateSession()) {
+            $GLOBALS['log']->fatal(__METHOD__.__LINE__.'No active impersonation session found.');
             return false;
         }
 
@@ -135,11 +131,15 @@ class Impersonate {
         // Load original user
         $original_user = BeanFactory::getBean('Users', $original_user_id);
         if (!$original_user || empty($original_user->id)) {
+            $GLOBALS['log']->fatal(__METHOD__.__LINE__.'Original user not found or invalid.');
             return false;
         }
 
         // Log the activity
         ImpersonateUtils::logActivity('impersonate_stop', $target_user_id, $original_user_id);
+
+        // Notify user
+        ImpersonateUtils::addStopImpersonationNotification($target_user_id, $original_user);
 
         // Restore original user
         $current_user = $original_user;
