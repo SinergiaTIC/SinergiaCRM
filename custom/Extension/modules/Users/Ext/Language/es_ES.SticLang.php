@@ -91,7 +91,7 @@ $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalizar emulación';
 
 // Emulación de usuarios - Usuario emulado
 $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'Emulación de usuario';
-$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador ha iniciado la emulación de su usuario.';
+$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador está emulando su usuario.';
 $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'Un administrador ha finalizado la emulación de su usuario.';
 $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DATE'] = 'Fin de emulación: ';
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
