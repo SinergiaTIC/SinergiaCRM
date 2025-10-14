@@ -48,7 +48,7 @@ class AWF_DataBlock {
     if (this.module) {
       return `${utils.translateForFieldLabel('LBL_MODULE')} ${this.getModuleInformation().text}`;
     }
-    return utils.translate('LBL_MODULE_RELATED');
+    return utils.translate('LBL_NO_MODULE_RELATED');
   }
 
   /**
@@ -107,18 +107,21 @@ class AWF_DataBlock {
   }
 
   addField(field) {
-    let order = 0;
     if (field.type_field == 'hidden') {
-      order = -1;
-    } else if (this.fields.length > 0) {
-      order = this.fields.reduce((max, db) => { return Math.max(max, db.order); }, 0);
-      order++;
+      this.fields.unshift(field);
     }
-    field.order = order;
-    this.fields.push(field);
-    this.fields.sort((a, b) => a.order - b.order);
+    else {
+      this.fields.push(field);
+    }
 
     return field;
+  }
+
+  deleteField(fieldName) {
+    const index = this.fields.findIndex(f => f.name == fieldName);
+    if (index !== -1) {
+      this.fields.splice(index, 1);
+    }
   }
 
   updateField(oldName, newField) {
@@ -127,7 +130,6 @@ class AWF_DataBlock {
     if (index == -1) {
       return this.addField(newField);
     } else {
-      newField.order = this.fields[index].order;
       this.fields[index] = newField;
       return newField;
     }
@@ -202,7 +204,6 @@ class AWF_Field {
       name: '',                // Nombre del campo
       text_original: '',       // Texto original del campo
       label: '',               // Etiqueta que aparecerá con el campo
-      order: 0,                // Orden del campo en el bloque de datos
       required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
       type_field: 'form',      // Tipo de campo: unlinked, form, hidden
       required_in_form: false, // Indica si el campo será obligado en el formulario
@@ -253,15 +254,17 @@ class AWF_Field {
 
     this.type_in_form = this.getAvailableTypesInForm()[0]?.id;
     this.value_type = this.getAvailableValueTypes()[0]?.id;
-    if (this.value_type!='selectable') {
+    if (this.value_type != 'selectable' && this.value_type != 'fixed') {
+      // Reset value_options
       this.value_options = [];
     }
     if (!this.isFieldInForm()) {
       this.label = '';
       this.required_in_form = false;
       this.type_in_form = '';
-      this.value_options = [];
     }
+
+    this.in_form = this.type_field != 'hidden';
 
     return this;
   }
@@ -279,13 +282,11 @@ class AWF_Field {
 
     if (this.isFieldInForm()) {
       if (this.label.trim() == '') return false;
-      // if (this.order < 0) return false;
       if (this.type_in_form == '') return false;
       if (this.value_type == 'fixed' || this.value_type == 'dataBlock') return false;
       if (this.value_type == 'selectable' && this.value_options.length == 0) return false;
       return true;
     } else {
-      // if (this.order >= 0) return false;
       if (this.value_type == 'editable' || this.value_type == 'selectable') return false;
       if (this.value == '') return false;
       return true;
@@ -435,6 +436,7 @@ class AWF_Field {
         text: o.text,
       }));
     });
+    return this.value_options;
   }
   
   isOptionValueModified() {
@@ -444,29 +446,29 @@ class AWF_Field {
   static type_fieldList(asString = false) {
     return utils.getList("stic_advanced_web_forms_field_type_list", asString);
   }
-  type_fieldText(){
-    return AWF_Field.type_fieldList()[this.type_field];  
+  get type_fieldText(){
+    return AWF_Field.type_fieldList().find(i => i.id == this.type_field)?.text;  
   }
 
   static type_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_in_form_type_list", asString);
   }
-  type_in_formText(){
-    return AWF_Field.type_in_formList()[this.type_in_form];  
+  get type_in_formText(){
+    return AWF_Field.type_in_formList().find(i => i.id == this.type_in_form)?.text;  
   }
 
   static subtype_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_in_form_subtype_list", asString);
   }
-  subtype_in_formText(){
-    return AWF_Field.subtype_in_formList()[this.subtype_in_form];  
+  get subtype_in_formText(){
+    return AWF_Field.subtype_in_formList().find(i => i.id == this.subtype_in_form)?.text;  
   }
 
   static value_typeList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_in_form_value_type_list", asString);
   }
-  value_typeText(){
-    return AWF_Field.value_typeList()[this.value_type];  
+  get value_typeText(){
+    return AWF_Field.value_typeList().find(i => i.id == this.value_type)?.text;  
   }
 }
 
@@ -514,8 +516,8 @@ class AWF_DuplicateDetection {
   static on_duplicateList(asString = false){
     return utils.getList("stic_advanced_web_forms_datablocks_duplicate_action_list", asString);
   }
-  on_duplicateText(){
-    return AWF_DuplicateDetection.on_duplicateList()[this.on_duplicate];  
+  get on_duplicateText(){
+    return AWF_DuplicateDetection.on_duplicateList().find(i => i.id == this.on_duplicate)?.text;  
   }
 }
 

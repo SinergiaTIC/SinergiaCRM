@@ -77,32 +77,6 @@
   justify-content: flex-end;
 }
 
-/* .custom-close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-} */
-
-/*
- .stic_panel {
-  all: unset !important;
-  display: block !important;
-  box-sizing: border-box !important;
-  font-family: var(--bs-body-font-family);
-  font-family: "Lato", Lato, Arial, sans-serif;
-  font-size: 13px;
-} 
-*/
-/* .stic_panel button,
-.stic_panel .btn,
-.stic_panel button[type="button"].btn {
-  background-color: transparent !important; 
-  border: 1px solid transparent !important; 
-  color: inherit !important; 
-  padding: 0 !important; 
-} */
-
 .selectize-dropdown .option {
   opacity: unset !important;
 }
@@ -156,27 +130,10 @@
   margin: -5px 0px -5px -6px;
 }
 
-/* [required] + label::after {
-  content: " *";
-  color: red;
-} */
-
 label.field-required::after {
   content: " *";
   color: red;
 }
-
-
-/* input:invalid,
-select:invalid {
-  background-color: #ffe6e6;
-  border-color: red;
-}
-
-input:invalid + label,
-select:invalid + label {
-  color: red;
-} */
 
 .modal.fade.show {
   z-index: 99999 !important; 
@@ -321,56 +278,49 @@ h4 {
 }
 
 /* TABS */
-/* Amaguem els radio buttons originals */
+/* Hide original radio buttons*/
 .stic-tab input {
   display: none;
 }
 
-/* Estil per a les etiquetes, que seran les nostres "pestanyes" */
 .stic-tab label {
-  /* Propietats bàsiques per semblar un botó */
   display: block;
   padding: 0.5rem 1rem;
   cursor: pointer;
   border: 1px solid transparent;
-  border-radius: 0.25rem 0.25rem 0 0; /* Arrodoniment superior */
+  border-radius: 0.25rem 0.25rem 0 0;
 
-  /* Estil inactiu */
-  background-color: #dee2e6; /* #f8f9fa Gris clar, típic de pestanyes inactives */
+  /* Inactive Styles */
+  background-color: #dee2e6; 
   color: #495057;
   border-color: #dee2e6 #dee2e6 #fff;
-  margin-bottom: -1px; /* Per a que es solapi amb el contenidor del panell */
+  margin-bottom: -1px; 
   margin-right: 1px;
   margin-left: 1px;
 }
 
-/* Estil quan la pestanya està seleccionada (el radio button està "checked") */
+/* Selected tab */
 .stic-tab input:checked + label {
-  /* Estil actiu */
   background-color: #fff;
-  /* border-color: #dee2e6 #dee2e6 #fff; */
   border-color: #0d6efd #dee2e6 #fff;
   border-top-width: 2px;
   color: #495057;
   font-weight: 500;
 }
 
-/* Efecte visual quan es passa el ratolí per sobre */
 .stic-tab label:hover {
   background-color: #e9ecef;
   border-color: #e9ecef #e9ecef #dee2e6;
 }
 
-/* Estils per al contenidor dels radio buttons */
 .stic-tabs {
   border-bottom: 1px solid #dee2e6;
-  display: flex; /* Per assegurar que les pestanyes estiguin en una sola línia */
-  margin-bottom: 0 !important; /* Per a que el panell de sota s'enganxi */
+  display: flex; 
+  margin-bottom: 0 !important; 
 }
 
-/* Estil per al contenidor del panell de contingut */
 .stic-tabcontent {
   border: 1px solid #dee2e6;
-  border-top: none; /* Sense la vora superior, ja que l'etiqueta la tapa */
+  border-top: none; 
   padding: 1rem;
 }

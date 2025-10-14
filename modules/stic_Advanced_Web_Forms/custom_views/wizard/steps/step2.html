@@ -19,7 +19,7 @@
                 <!-- Module -->
                 <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
                 <!-- Data Block name -->
-                <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_NEW_DATABLOCK_NAME" 
+                <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_NEW_DATABLOCK" 
                                  x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
                                  keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
               </div>
@@ -79,62 +79,106 @@
         <div class="card-body">
           <!-- Fields Definition -->
           <div :id="`dataBlockFields${item.id}`">
-            <!-- Buttons -->
-            <div class="d-flex mb-3">
-              <!-- Add Unlinked Field in Form -->
-              <template x-if="!item.module">
-                <div>
-                  <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_ADD_FIELD_UNLINKED')"></button>
-                </div>
-              </template>
-              <!-- Add Field in Form -->
-              <template x-if="item.module">
-                <div>
-                  <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_ADD_FIELD_FORM')"></button>
-                </div>
-              </template>
-              <!-- Add Hidden Field -->
-              <template x-if="item.module">
-                <div>
-                  <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'hidden')" x-text="utils.translate('LBL_ADD_FIELD_HIDDEN')"></button>
-                </div>
-              </template>
-            </div>
-
             <!-- Fields summary Tabs -->
-            <!-- Fields Details -->
-            <div>
-              <!-- All Fields -->
-              <div :id="`dataBlockFieldsAll${item.id}`" class="overflow-auto">
-                [Todos los campos del Bloque de datos]
-                <div class="mt-3" :id="`dataFieldsTableAll${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
-              </div>
-              <!-- Fields in Form -->
-              <template x-if="item.module">
-                <div :id="`dataBlockFieldsForm${item.id}`" class="overflow-auto">
-                  [Los campos en el formulario del Bloque de datos]
-                  <div class="mt-3" :id="`dataFieldsTableForm${item.id}`" :data-objects="'item.fields.filter(f => f.isFieldInForm())'" 
-                       x-init="sticControls.elemTableObjects($el);"></div>
-                </div>
-              </template>
-              <!-- Hidden Fields -->
-              <template x-if="item.module">
-                <div :id="`dataBlockFieldsHidden${item.id}`" class="overflow-auto">
-                  [Los campos Ocultos del Bloque de datos]
-                  <div class="mt-3" :id="`dataFieldsTableHidden${item.id}`" :data-objects="'item.fields.filter(f => !f.isFieldInForm())'"
-                       x-init="sticControls.elemTableObjects($el);"></div>
-                </div>
-              </template>
-
+            <div x-data="WizardStep2.fieldsSummaryxData(item, formConfig);">
               <!-- Tab Headers -->
-              <template x-if="item.module">
-                <div :id="`dataBlockFieldsTabs${item.id}`" :data-sections="JSON.stringify([
-                    {headerText:`utils.translate('LBL_FIELDS_ALL') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFieldsAll'+item.id},
-                    {headerText:`utils.translate('LBL_FIELDS_FORM') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'`, selected:false, contentId:'dataBlockFieldsForm'+item.id},
-                    {headerText:`utils.translate('LBL_FIELDS_HIDDEN') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'`, selected:false, contentId:'dataBlockFieldsHidden'+item.id},
-                  ]);" x-init="sticControls.tabs($el)"></div>
-              </template>
-            </div>
+              <div class="stic-tabs">
+                <div class="stic-tab">
+                  <input class="form-check-input" type="radio" :id="`dataBlockFieldsFormTab${item.id}`" x-model="fieldTabSelected" value="form"/>
+                  <label class="form-label" :for="`dataBlockFieldsFormTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FORM') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'"></label>
+                </div>
+                <template x-if="item.module">
+                  <div class="stic-tab">
+                    <input class="form-check-input" type="radio" :id="`dataBlockFieldsHiddenTab${item.id}`" x-model="fieldTabSelected" value="hidden"/>
+                    <label class="form-label" :for="`dataBlockFieldsHiddenTab${item.id}`" x-text="utils.translate('LBL_FIELDS_HIDDEN') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'"></label>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Tab Content-->
+              <div class="stic-tabcontent" x-data="WizardStep2.sortableListxData(item.fields)">
+                <!-- Description -->
+                <p x-text="summaryDescription"></p>
+                <!-- Buttons -->
+                <div class="mb-2">
+                  <!-- Button: Add Unlinked Field in Form -->
+                  <template x-if="!item.module && fieldTabSelected=='form'">
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_ADD_FIELD_UNLINKED')"></button>
+                  </template>
+                  <!-- Button: Add Field in Form -->
+                  <template x-if="item.module && fieldTabSelected=='form'">
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_ADD_FIELD_FORM')"></button>
+                  </template>
+                  <!-- Button: Add Hidden Field -->
+                  <template x-if="item.module && fieldTabSelected=='hidden'">
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'hidden')" x-text="utils.translate('LBL_ADD_FIELD_HIDDEN')"></button>
+                  </template>
+                </div>
+                <!-- Fields -->
+                <table id="${id}" class="table table-bordered table-striped" ${attribute}>
+                  <thead>
+                    <tr>
+                      <th x-text="utils.translate(dataBlock.module?'LBL_FIELD':'LBL_FIELD_NAME')" x-show="canShowFieldColumn('text_original')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_LABEL')" x-show="canShowFieldColumn('label')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_TYPE_IN_FORM')" x-show="canShowFieldColumn('type_in_form')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_SUBTYPE_IN_FORM')" x-show="canShowFieldColumn('subtype_in_form')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_VALUE_TYPE')" x-show="canShowFieldColumn('value_type')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_VALUE')" x-show="canShowFieldColumn('value_text')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_REQUIRED_IN_FORM')" x-show="canShowFieldColumn('required_in_form')"></th>
+                      <th x-text="utils.translate('LBL_ACTIONS')"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="(field, index) in item.fields">
+                      <template x-if="canShowField(field)">
+                        <tr>
+                          <td x-text="field?.text_original" x-show="canShowFieldColumn('text_original')"></td>
+                          <td x-show="canShowFieldColumn('label')">
+                            <div class="mb-0 me-3" :id="`dataBlockFieldLabel-${item.id}-${field.name}`" 
+                                 data-model="field.label" x-init="sticControls.editableText($el);">
+                            </div>
+                          </td>
+                          <td x-text="field?.type_in_formText" x-show="canShowFieldColumn('type_in_form')"></td>
+                          <td x-text="field?.subtype_in_formText" x-show="canShowFieldColumn('subtype_in_form')"></td>
+                          <td x-text="field?.value_typeText" x-show="canShowFieldColumn('value_type')"></td>
+                          <td x-text="field?.value_text" x-show="canShowFieldColumn('value_text')"></td>
+                          <td x-show="canShowFieldColumn('required_in_form')">
+                            <div class="form-switch">
+                              <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="field.required_in_form" 
+                                     :id="`dataBlockFieldReqForm-${item.id}-${field.name}`"/>
+                            </div>
+                          </td>
+                          <td >
+                            <div class="d-inline-flex">
+                              <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
+                                      :title="utils.translate('LBL_ACTION_EDIT')">
+                                <span class="suitepicon suitepicon-action-edit"></span>
+                              </button>
+                              <template x-if="field.isFieldInForm()">
+                                <div class="input-group" role="group">
+                                  <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
+                                          :title="utils.translate('LBL_ACTION_MOVE_UP')">
+                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                  </button>
+                                  <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
+                                          :title="utils.translate('LBL_ACTION_MOVE_DOWN')">
+                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                  </button>
+                                </div>
+                              </template>
+                              <button type="button" class="btn ms-2" :disabled="field.required" @click="item.deleteField(field.name);"
+                                      :title="utils.translate('LBL_ACTION_DELETE')">
+                                <span class="suitepicon suitepicon-action-delete"></span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </template>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+           </div>
           </div>
           <!-- Duplicate Definition -->
           <template x-if="item.module">
@@ -189,7 +233,7 @@
                   </div>
                   <!-- New Data Block -->
                   <div class="col-3" x-show="relNewDataBlock">
-                    <label :for="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" class="form-label" x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK_NAME')"></label>
+                    <label :for="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" class="form-label" x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK')"></label>
                     <input :id="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" type="text" class="form-control" x-model="newDataBlockText"/>
                   </div>
                   <button type="button" class="btn w-32px mb-1px" @click="handleCreateRelationship();">
@@ -220,17 +264,31 @@
       </div>
     </template>
 
-    <!-- Modal: Create Field -->
+    <!-- Modal: Create/Edit Field -->
     <div x-show="$store.fieldEditor.isOpen" x-cloak class="custom-modal-wrapper">
       <div class="custom-modal-backdrop"></div>
-      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalEditField">
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalEditFieldTitle">
         <div class="custom-modal-content" x-data="WizardStep2.editionFieldxData($store.fieldEditor, formConfig);">
           <div class="custom-modal-header">
-            <h3 class="modal-title" id="modalEditField" x-text="$store.fieldEditor.title"></h3>
+            <div>
+              <h3 class="modal-title" id="modalEditFieldTitle" x-text="$store.fieldEditor.title"></h3>
+              <span class="text-muted small ms-3" x-text="$store.fieldEditor.subtitle"></span>
+            </div>
             <button type="button" class="btn-close" @click="$store.fieldEditor.close()"></button>
           </div>
           <div class="custom-modal-body">
             <form id="dataBlockFieldModalForm">
+              <!-- Buttons -->
+              <div class="mb-2">
+                <!-- Button: Convert to Field in Form -->
+                <template x-if="isEdit && field && field.type_field=='hidden'">
+                  <button type="button" class="btn" @click="convertFieldToType('form')" x-text="utils.translate('LBL_CONVERT_TO_FIELD_FORM')"></button>
+                </template>
+                <!-- Button: Convert to Hidden Field -->
+                <template x-if="isEdit && field && field.type_field=='form'">
+                  <button type="button" class="btn" @click="convertFieldToType('hidden')" x-text="utils.translate('LBL_CONVERT_TO_FIELD_HIDDEN')"></button>
+                </template>
+              </div>
               <div class="card">
                 <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION')"></div>
                 <div class="card-body">
@@ -251,8 +309,15 @@
                         <input id="modalField_Name" type="text" disabled class="form-control" autocomplete="off" x-model="field.name"/>
                       </div>
                     </template>
-                    <!-- Field -->
-                    <template x-if="field && field.type_field != 'unlinked'">
+                    <!-- Field (Name)-->
+                    <template x-if="isEdit && field && field.type_field != 'unlinked'">
+                      <div class="col-3">
+                        <label for="modalField_fieldName" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
+                        <input id="modalField_fieldName" type="text" disabled class="form-control" autocomplete="off" x-model="field.text_original"/>
+                      </div>
+                    </template>
+                    <!-- Field (Selector)-->
+                    <template x-if="!isEdit && field && field.type_field != 'unlinked'">
                       <div class="col-3">
                         <label for="modalField_field" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
                         <!-- Show all fields -->
@@ -271,7 +336,7 @@
                     <template x-if="field && field.type_field != 'hidden'">
                       <div class="col-3">
                         <label for="modalField_TypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
-                        <select id="modalField_TypeInForm" class="form-select" x-model="field.type_in_form">
+                        <select id="modalField_TypeInForm" x-bind:disabled="availableTypesInForm.length<=1;" class="form-select" x-model="field.type_in_form">
                           <template x-for="type in availableTypesInForm" :key="type.id">
                             <option :value="type.id" x-text="type.text"></option>
                           </template>
@@ -282,7 +347,7 @@
                     <template x-if="field && field.type_field != 'hidden'">
                       <div class="col-3">
                         <label for="modalField_SubtypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_SUBTYPE_IN_FORM')"></label>
-                        <select id="modalField_SubtypeInForm" class="form-select" x-model="field.subtype_in_form">
+                        <select id="modalField_SubtypeInForm" x-bind:disabled="availableSubtypesInForm.length<=1;" class="form-select" x-model="field.subtype_in_form">
                           <template x-for="type in availableSubtypesInForm" :key="type.id">
                             <option :value="type.id" x-text="type.text"></option>
                           </template>
@@ -328,7 +393,7 @@
                       </div>
                     </template>
                     <!-- Value options edition -->
-                    <template x-if="configValueOptions">
+                    <template x-if="configValueOptions && field">
                       <div class="row">
                         <!-- Value options configuration Table -->
                         <div class="col-12" x-data="WizardStep2.sortableListxData(field.value_options)">
@@ -336,11 +401,11 @@
                             <caption class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></caption>
                             <thead>
                               <tr>
-                                <th x-text="'[Nombre]'"></th>
-                                <th x-text="'[Texto original]'"></th>
-                                <th x-text="'[Mostrar]'"></th>
-                                <th x-text="'[Texto en el formulario]'"></th>
-                                <th x-text="'[Mover]'"></th>
+                                <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></th>
+                                <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL')"></th>
+                                <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></th>
+                                <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_LABEL')"></th>
+                                <th x-text="utils.translate('LBL_ACTIONS')"></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -388,9 +453,9 @@
                     <template x-if="isFixedValueOfEnum">
                       <div class="col-3">
                         <label for="modalField_ValFixOptions" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <select id="modalField_ValFixOptions" class="form-select" x-model="field.value">
-                          <template x-for="option in optionValues" :key="option.id">
-                            <option :value="option.id" x-text="option.text"></option>
+                        <select id="modalField_ValFixOptions" x-bind:disabled="field.value_options.length<=1;" class="form-select" x-model="field.value">
+                          <template x-for="option in field.value_options" :key="option.value">
+                            <option :value="option.value" x-text="option.text"></option>
                           </template>
                         </select>
                       </div>
@@ -432,7 +497,7 @@
                   </div>
                 </div>
               </div>
-              <template x-if="field && field.in_form">
+              <template x-if="field && field.isFieldInForm()">
                 <div class="card">
                   <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION_FORM')"></div>
                   <div class="card-body">
@@ -453,7 +518,7 @@
                   </div>
                 </div>
               </template>
-              <template x-if="field && field.in_form">
+              <template x-if="field && field.isFieldInForm()">
                 <div class="card">
                   <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION_VALIDATIONS')"></div>
                   <div class="card-body">

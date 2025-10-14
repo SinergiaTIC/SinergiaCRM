@@ -173,9 +173,10 @@ class WizardStep2 {
         // Store for the Field Editor management
         Alpine.store('fieldEditor', {
           isOpen: false,           // Indica si está abierto el editor de campos
+          isEdit: false,           // Indica si es modo edición (false: modo creación)
           field: new AWF_Field(),  // Copia de los datos del campo
-          original_name: '',       // Nombre original del campo
           dataBlock: null,         // El bloque de datos del campo
+          needDeleteOld: false,    // Indica si es necesario eliminar el campo anterior antes de guardar
 
           /**
            * Retorna si es un campo nuevo
@@ -197,8 +198,24 @@ class WizardStep2 {
                   return utils.translate('LBL_NEW_FIELD_HIDDEN');
               }
             } else {
-              return $store.fieldEditor.original_name
+              let title = "";
+              switch (this.field.type_field) {
+                case 'form':
+                case 'unlinked':
+                  title += utils.translate('LBL_FIELD_FORM') + ' » ';
+                  break;
+                case 'hidden':
+                  title += utils.translate('LBL_FIELD_HIDDEN') + ' » ';
+              }
+              title += this.field.text_original;
+              return title;
             }
+          },
+          /**
+           * Retorna el tubtítulo del editor
+           */
+          get subtitle() {
+            return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();
           },
 
           /**
@@ -207,6 +224,7 @@ class WizardStep2 {
            * @param {string} type Tipo de campo: unlinked, form, hidden
            */
           openCreate(dataBlock, type) {
+            this.isEdit = false;
             this._open(dataBlock, null, type);
           },
 
@@ -216,6 +234,7 @@ class WizardStep2 {
            * @param {AWF_Field} fieldData El campo
            */
           openEdit(dataBlock, field) {
+            this.isEdit = true;
             this._open(dataBlock, field, '');
           },
 
@@ -227,8 +246,9 @@ class WizardStep2 {
            */
           _open(dataBlock, fieldData, type) {
             this.dataBlock = dataBlock;
-            this.field = fieldData ? JSON.parse(JSON.stringify(fieldData)) : new AWF_Field ({type_field: type});
+            this.field = new AWF_Field(fieldData || {type_field: type});
             this.original_name = this.field.name;
+            this.needDeleteOld = false;
             this.isOpen = true;
           },
 
@@ -246,16 +266,20 @@ class WizardStep2 {
            * Guarda los cambios de la edición (o creación) de un campo
            */
           saveChanges() {
-            if(this.isNewField) {
+            if (this.isNewField) {
               this.dataBlock.addField(this.field);
             } else {
-              this.dataBlock.updateField(this.original_name, this.field);
+              if (this.needDeleteOld) {
+                this.dataBlock.deleteField(this.field.name);
+                this.dataBlock.addField(this.field);
+              } else {
+                this.dataBlock.updateField(this.original_name, this.field);
+              }
             }
             this.close();
           },
         });
       },
-
     };
   }
 
@@ -306,7 +330,7 @@ class WizardStep2 {
       },
     };
   }
-
+ 
   static editionFieldxData(fieldStore, config) {
     return {
       formConfig: config,
@@ -314,16 +338,19 @@ class WizardStep2 {
 
       get dataBlock() { return this.store?.dataBlock; },
       get field() { return this.store?.field; },
+      get isEdit() { return this.store?.isEdit; },
 
       configValueOptions: false,
 
       showAllFields: false,
       get availableFields() {
+        if (this.isEdit) {
+          return [this.dataBlock?.getModuleInformation()?.fields[this.field.name]];
+        }
         return this.showAllFields ? this.dataBlock?.getAvailableFieldsInformation() : this.dataBlock?.getAvailableFieldsInformation().filter(f => f.inViews) ?? [];
       },
 
       get selectedFieldInfo() { return this.availableFields.find(f => f.name == this.field?.name); },
-      get optionValues() { return utils.getFieldOptions(this.selectedFieldInfo); },
       get optionValuesListName() {
         let listName = utils.getFieldOptions(this.selectedFieldInfo, true);
         if (listName != '') {
@@ -335,8 +362,8 @@ class WizardStep2 {
         if (this.optionValuesRelated != ''){
           listName = `${utils.getModuleInformation(this.relatedModule)?.text} (${this.optionValuesRelated.split('|').length})`;
         }
-        if (listName == '' && this.optionValues.length > 0) {
-          listName = this.optionValues.filter(v => v.is_visible).map(v => v.text).join(', ');
+        if (listName == '' && this.field && this.field.value_options.length > 0) {
+          listName = this.field.value_options.filter(v => v.is_visible).map(v => v.text).join(', ');
         }
         return listName;
       },
@@ -359,7 +386,7 @@ class WizardStep2 {
       get isInFormSelectableRelation() { return this.field?.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type == "relate" },
 
       get isFixedValue() { return this.field && this.field.type_field == 'hidden' && this.field.value_type == 'fixed'; },
-      get isFixedValueOfEnum() { return this.isFixedValue && this.optionValues.length > 0; },
+      get isFixedValueOfEnum() { return this.isFixedValue && this.field.value_options.length > 0; },
       get isFixedValueOfRelated() { return this.isFixedValue && this.field.type == 'relate'},
       get isFixedValueOfDate() { return this.isFixedValue && this.isDate; },
       get isFixedValueOfDefault() { return this.isFixedValue && !this.isFixedValueOfEnum && !this.isFixedValueOfRelated && !this.isFixedValueOfDate },
@@ -369,49 +396,130 @@ class WizardStep2 {
 
       init() {
         this.$watch('field.name', (newName, oldName) => {
+          if (!this.field) return;
+          if (this.isEdit) return;
           if (newName != oldName) {
-            this.field?.setValueOptions();
-            this.field?.updateWithFieldInformation(this.selectedFieldInfo);
+            if (this.field.type_field == 'hidden') {
+              this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
+            } else {
+              this.field.setValueOptions();
+            }
+            this.field.updateWithFieldInformation(this.selectedFieldInfo);
             this.configValueOptions = false;
             this.optionValuesRelated = '';
           }
         });
         this.$watch('field.text_original', (newText, oldText) => {
+          if (!this.field) return;
           if (this.field.type_field == 'unlinked') {
             this.field.name = this.dataBlock.suggestFieldName(AWF_Configuration.cleanName(newText));
             this.field.label = utils.toFieldLabelText(newText);
           }
         });
         this.$watch('availableFields', (newArray) => {
-          this.field && (this.field.name = newArray[0]?.name ?? '');
+          if (!this.field) return;
+          if (this.isEdit) return;
+          this.field.name = newArray[0]?.name ?? '';
         });
         this.$watch('availableValueTypes', (newArray) => {
-          this.field && (this.field.value_type = newArray[0]?.id ?? '');
+          if (!this.field) return;
+          if (this.isEdit) {
+            // Force reactive
+            const currentValue = this.field.value_type; 
+            setTimeout(() => {
+              this.field.value_type = ''; 
+              this.field.value_type = currentValue;
+            }, 50);            
+          } else {
+            this.field.value_type = newArray[0]?.id ?? '';
+          }
         });
         this.$watch('availableTypesInForm', (newArray) => {
-          this.field && (this.field.type_in_form = newArray[0]?.id ?? '');
+          if (!this.field) return;
+          if (this.isEdit) {
+            // Force reactive
+            const currentValue = this.field.type_in_form; 
+            setTimeout(() => {
+              this.field.type_in_form = ''; 
+              this.field.type_in_form = currentValue;
+            }, 50);
+          } else {
+            this.field.type_in_form = newArray[0]?.id ?? '';
+          }
         });
         this.$watch('availableSubtypesInForm', (newArray) => {
-          this.field && (this.field.subtype_in_form = newArray[0]?.id ?? '');
+          if (!this.field) return;
+          if (this.isEdit) { 
+            // Force reactive
+            const currentValue = this.field.subtype_in_form; 
+            setTimeout(() => {
+              this.field.subtype_in_form = ''; 
+              this.field.subtype_in_form = currentValue;
+            }, 50);
+          } else {
+            this.field.subtype_in_form = newArray[0]?.id ?? '';
+          }
         });
         this.$watch('field.value_type', (newType, oldType) => {
-          if (newType != 'fixed' && this.field) {
+          if (!this.field) return;
+          if (this.isEdit) return;
+          if (this.isFixedValue) {
             this.field.value = '';
+            this.field.value_text = '';
           }
         });
         this.$watch('field.subtype_in_form', (newType, oldType) => {
-          this.field?.setValueOptions(this.optionValues);
+          if (!this.field) return;
+          if (this.isEdit) return;
+          this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
         });
-        this.$watch('optionValues', (newArray) => {
-          if (this.field && this.field.value_type == 'fixed') {
-            this.field.value = newArray[0]?.id ?? '';
+        this.$watch('field.value_options', (newArray) => {
+          if (!this.field) return;
+          if (this.isEdit) { 
+            // Force reactive
+            const currentValue = this.field.value; 
+            setTimeout(() => {
+              this.field.value = ''; 
+              this.field.value = currentValue;
+            }, 50);
+          } else {
+            if (this.field.type_field == 'hidden' && newArray.length > 0) {
+              this.field.value = newArray[0]?.value ?? '';
+            }
+          }
+        });
+        this.$watch('field.value', (newValue, oldValue) => {
+          if (!this.field) return;
+          if (this.isFixedValueOfEnum) {
+            this.field.value_text = this.field.value_options.find(v => v.value == newValue)?.text;
+          } else if (this.isFixedValueOfDate) {
+            if (newValue == 'today') {
+              this.field.value_text = utils.translate('LBL_FIELD_VALUE_TODAY');
+            } else {
+              this.field.value_text = new Date(newValue).toLocaleDateString();
+            }
+          } else if (this.isFixedValueOfDefault) {
+            this.field.value_text = this.field.value;
           }
         });
         this.$watch('optionValuesRelated', (newRelateds, oldRelateds) => {
+          if (!this.field) return;
           let arrIds = newRelateds.split('|');
           let destModule = this.relatedModule;
-          this.field?.setValueOptions(utils.getRecordsTextById(destModule, arrIds));
-        }); 
+          this.field.setValueOptions(utils.getRecordsTextById(destModule, arrIds));
+        });
+        this.$watch('valueToday', (newValue, oldValue) => {
+          if (!this.field) return;
+          this.field.value = newValue ? 'today' : '';
+        });
+      },
+
+      convertFieldToType(type) {
+        if (type == this.field.type_field) return;
+        if (type == 'form' || type == 'hidden') {
+          this.field.updateWithFieldInformation(this.selectedFieldInfo, type);
+          this.store.needDeleteOld = true;
+        }
       },
 
       openPopUp(idBase, single=true) {
@@ -430,6 +538,57 @@ class WizardStep2 {
       },
     };
   }
+
+  static fieldsSummaryxData(dataBlock, config) {
+    return {
+      formConfig: config,
+      dataBlock: dataBlock,
+
+      fieldTabSelected: 'form',
+
+      get firstFieldInFormIndex() {
+        return this.dataBlock.fields.filter(f => !f.isFieldInForm()).length;
+      },
+
+      get summaryDescription() {
+        switch(this.fieldTabSelected) {
+          case 'form':
+            return utils.translate('LBL_FIELDS_FORM_DESC');
+          case 'hidden':
+            return utils.translate('LBL_FIELDS_HIDDEN_DESC');
+        }
+        return '';
+      },
+
+      canShowField(field) {
+        switch(this.fieldTabSelected) {
+          case 'form':
+            return field.isFieldInForm();
+          case 'hidden':
+            return !field.isFieldInForm();
+        }
+        return true;
+      },
+
+      canShowFieldColumn(column) {
+        if (column == 'label' || column == 'type_in_form' || column == 'subtype_in_form' ||
+            column == 'value_options' || column == 'required_in_form') {
+          return this.fieldTabSelected != 'hidden';
+        } 
+        if (column == 'type_field') {
+          return this.fieldTabSelected != 'form' && this.dataBlock.module;
+        } 
+        if (column == 'value' || column == 'value_text') {
+          return this.fieldTabSelected != 'form';
+        } 
+        if (column == 'value_type') {
+          return this.fieldTabSelected == 'hidden';
+        }
+        return true;
+      }
+    }
+  }
+
 
 
   static addRelationshipxData(dataBlock, initial_formConfig, initial_step2) {
