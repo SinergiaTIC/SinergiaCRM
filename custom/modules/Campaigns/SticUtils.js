@@ -518,10 +518,9 @@ function createAutoProspectListFromCategory(filterName, label) {
       var $select = $('#notification_prospect_list_ids')[0].selectize;
       $select.addOption({ value: data.lpoId, text: data.lpoName });
       $select.addItem(data.lpoId);
-      // $select.enable();
-      // Clear the auto-prospect list selector
-      // $('#notification_auto_prospect_list_name').val('');
-      alert('Auto-prospect list "' + data.lpoName + '" created successfully.');
+
+
+      alert(SUGAR.language.get('Campaigns', 'LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS') + '\n' + data.lpoName );
     }
   }
   ).catch(error => {
