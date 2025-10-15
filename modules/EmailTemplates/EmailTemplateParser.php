@@ -182,7 +182,7 @@ class EmailTemplateParser
                 
             // special variables replacement
             global $sugar_config;
-            $attributeValue = str_replace('sugarurl', $sugar_config['site_url'], $attributeValue);
+            $attributeValue = str_replace('$sugarurl', $sugar_config['site_url'], $attributeValue);
 
             // If the campaign is not of type Notification, parse as usual
             if ($this->campaign->campaign_type != 'Notification') {
