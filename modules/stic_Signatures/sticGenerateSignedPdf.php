@@ -53,7 +53,7 @@ class sticGenerateSignedPdf
      */
     public static function generateSignedPdf($signedMode = 'handwritten')
     {
-        global $sugar_config, $app_list_strings, $mod_strings;
+        global $sugar_config, $app_list_strings, $app_strings;
 
         // require_once 'modules/AOS_PDF_Templates/templateParser.php';
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
@@ -177,6 +177,7 @@ class sticGenerateSignedPdf
             // start with new page html mark
 
             $sugar_smarty = new Sugar_Smarty();
+
             $sugar_smarty->assign('DOCUMENT_NAME', $templateBean->name);
             $sugar_smarty->assign('SIGNER_NAME', $signerBean->parent_name);
             $sugar_smarty->assign('SIGNER_EMAIL', $signerBean->email_address);
@@ -184,10 +185,10 @@ class sticGenerateSignedPdf
             $sugar_smarty->assign('SIGNER_USER_TIME', $userTime);
             $sugar_smarty->assign('SIGNER_MODE', $app_list_strings['stic_signatures_modes_list'][$signedMode]);
             $sugar_smarty->assign('SIGNER_STATUS', $app_list_strings['stic_signers_status_list'][$signerBean->status]);
-            
-            $sugar_smarty->assign('BROWSER', $signerBean->browser);
-            $sugar_smarty->assign('MOD_STRINGS', $mod_strings);
-            $sugar_smarty->assign('APP_STRINGS', $app_list_strings);
+
+            $sugar_smarty->assign('BROWSER', $signerBean->browser || '');
+            $sugar_smarty->assign('MOD_STRINGS', return_module_language($GLOBALS['current_language'], 'stic_Signatures'));
+            $sugar_smarty->assign('APP_STRINGS', $app_strings);
 
             $auditHtml = '<p style="page-break-before: always;">&nbsp;</p>';
             $auditHtml .= $sugar_smarty->fetch('modules/stic_Signatures/AuditPageTemplate.tpl');

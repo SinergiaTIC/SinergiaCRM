@@ -95,8 +95,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'A notification campaign already exists for the signature: ',
     'LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN' => 'Request signature from all signers via campaign',
-    'LBL_ERROR_CREATING_CAMPAIGN_FROM_SIGNATURE' =>  'Error creating notification campaign from signature',
-    
+    'LBL_ERROR_CREATING_CAMPAIGN_FROM_SIGNATURE' => 'Error creating notification campaign from signature',
 
     // Portal messages
     'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copy of your signed document',
@@ -140,5 +139,24 @@ $mod_strings = array(
     'LBL_PORTAL_CHECK_CODE_BTN' => 'Check code',
     'LBL_PORTAL_RESEND_CODE' => 'Didn\'t receive the code? Resend',
     'LBL_PORTAL_FOOTER' => 'Electronic signature portal from',
+
+    //Audit page
+    'LBL_AUDIT_PAGE_TITLE' => 'Digital Signature Audit Page',
+    'LBL_AUDIT_PAGE_SIGNATURE_DATA_TITLE' => 'Signature data',
+    'LBL_AUDIT_PAGE_DOCUMENT_NAME' => 'Document name',
+    'LBL_AUDIT_PAGE_SIGNATURE_STATUS' => 'Signature status',
+    'LBL_AUDIT_PAGE_SIGNATURE_DATETIME' => 'Date and time of signature',
+    'LBL_AUDIT_PAGE_SIGNATURE_MODE' => 'Signature mode',
+    'LBL_AUDIT_PAGE_SIGNER_DATA_TITLE' => 'Signer\'s data',
+    'LBL_AUDIT_PAGE_SIGNER_NAME' => 'Signer\'s name',
+    'LBL_AUDIT_PAGE_REPRESENTING' => 'Representing',
+    'LBL_AUDIT_PAGE_EMAIL' => 'Email',
+    'LBL_AUDIT_PAGE_PHONE' => 'Phone',
+    'LBL_AUDIT_PAGE_EVENTS_LOG_TITLE' => 'Event log',
+    'LBL_AUDIT_PAGE_EVENT_1' => 'Event 1',
+    'LBL_AUDIT_PAGE_EVENT_2' => 'Event 2',
+    'LBL_AUDIT_PAGE_EVENT_3' => 'Event 3',
+    'LBL_AUDIT_PAGE_EVENT_4' => 'Event 4',
+    'LBL_AUDIT_PAGE_EVENT_5' => 'Event 5',
 
 );

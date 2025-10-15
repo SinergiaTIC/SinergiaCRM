@@ -141,4 +141,23 @@ $mod_strings = array(
     'LBL_PORTAL_RESEND_CODE' => '¿No ha recibido el código? Reenviar',
     'LBL_PORTAL_FOOTER' => 'Portal de firmas electrónicas de',
 
+    // Audit page
+    'LBL_AUDIT_PAGE_TITLE' => 'Página de Auditoría de Firma Digital',
+    'LBL_AUDIT_PAGE_SIGNATURE_DATA_TITLE' => 'Datos de la firma',
+    'LBL_AUDIT_PAGE_DOCUMENT_NAME' => 'Nombre del documento',
+    'LBL_AUDIT_PAGE_SIGNATURE_STATUS' => 'Estado de la firma',
+    'LBL_AUDIT_PAGE_SIGNATURE_DATETIME' => 'Fecha y hora de la firma',
+    'LBL_AUDIT_PAGE_SIGNATURE_MODE' => 'Modo de firma',
+    'LBL_AUDIT_PAGE_SIGNER_DATA_TITLE' => 'Datos de la persona firmante',
+    'LBL_AUDIT_PAGE_SIGNER_NAME' => 'Nombre del Firmante',
+    'LBL_AUDIT_PAGE_REPRESENTING' => 'En representación de',
+    'LBL_AUDIT_PAGE_EMAIL' => 'Correo electrónico',
+    'LBL_AUDIT_PAGE_PHONE' => 'Teléfono',
+    'LBL_AUDIT_PAGE_EVENTS_LOG_TITLE' => 'Registro de eventos',
+    'LBL_AUDIT_PAGE_EVENT_1' => 'Evento 1',
+    'LBL_AUDIT_PAGE_EVENT_2' => 'Evento 2',
+    'LBL_AUDIT_PAGE_EVENT_3' => 'Evento 3',
+    'LBL_AUDIT_PAGE_EVENT_4' => 'Evento 4',
+    'LBL_AUDIT_PAGE_EVENT_5' => 'Evento 5',
+
 );

@@ -197,6 +197,38 @@ section.signed-area iframe {
     font-size: large;
 }
 
+/* Container styles for responsive layout */
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Solo aplicar max-width en pantallas grandes */
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+    }
+}
+
 /* Media queries for responsiveness (Tailwind handles most, but for fine adjustments) */
 @media (max-width: 768px) {
     .stic-container {
@@ -218,4 +250,9 @@ section.signed-area iframe {
     .document-scroll-content {
         max-height: 300px; /* Adjust height on mobile if necessary */
     }
+}
+
+.signature-canvas-container canvas {
+    max-width: 100% !important;
+    height: auto !important;
 }

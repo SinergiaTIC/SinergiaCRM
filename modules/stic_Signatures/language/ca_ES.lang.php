@@ -140,4 +140,23 @@ $mod_strings = array(
     'LBL_PORTAL_RESEND_CODE' => 'No heu rebut el codi? Reenviar',
     'LBL_PORTAL_FOOTER' => 'Portal de firmes electròniques de',
 
+    // Audit Page
+    'LBL_AUDIT_PAGE_TITLE' => 'Pàgina d\'Auditoria de Firma Digital',
+    'LBL_AUDIT_PAGE_SIGNATURE_DATA_TITLE' => 'Dades de la firma',
+    'LBL_AUDIT_PAGE_DOCUMENT_NAME' => 'Nom del document',
+    'LBL_AUDIT_PAGE_SIGNATURE_STATUS' => 'Estat de la firma',
+    'LBL_AUDIT_PAGE_SIGNATURE_DATETIME' => 'Data i hora de la firma',
+    'LBL_AUDIT_PAGE_SIGNATURE_MODE' => 'Mode de firma',
+    'LBL_AUDIT_PAGE_SIGNER_DATA_TITLE' => 'Dades de la persona signant',
+    'LBL_AUDIT_PAGE_SIGNER_NAME' => 'Nom del Signant',
+    'LBL_AUDIT_PAGE_REPRESENTING' => 'En representació de',
+    'LBL_AUDIT_PAGE_EMAIL' => 'Correu electrònic',
+    'LBL_AUDIT_PAGE_PHONE' => 'Telèfon',
+    'LBL_AUDIT_PAGE_EVENTS_LOG_TITLE' => 'Registre d\'esdeveniments',
+    'LBL_AUDIT_PAGE_EVENT_1' => 'Esdeveniment 1',
+    'LBL_AUDIT_PAGE_EVENT_2' => 'Esdeveniment 2',
+    'LBL_AUDIT_PAGE_EVENT_3' => 'Esdeveniment 3',
+    'LBL_AUDIT_PAGE_EVENT_4' => 'Esdeveniment 4',
+    'LBL_AUDIT_PAGE_EVENT_5' => 'Esdeveniment 5',
+
 );
