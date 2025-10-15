@@ -174,6 +174,11 @@ class sticGenerateSignedPdf
 
         // if $signature->pdf_audit_page_c is set, add a new page to the PDF with the audit information
         if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page) {
+
+            // Get logs related to the signer
+            require_once 'modules/stic_Signature_Log/Utils.php';
+            $signerLog = stic_SignatureLogUtils::getSignatureLogActions($signerBean->id, 'SIGNER', ['OPEN_PORTAL_BEFORE_SIGN']);
+
             // start with new page html mark
 
             $sugar_smarty = new Sugar_Smarty();
@@ -189,6 +194,8 @@ class sticGenerateSignedPdf
             $sugar_smarty->assign('BROWSER', $signerBean->browser || '');
             $sugar_smarty->assign('MOD_STRINGS', return_module_language($GLOBALS['current_language'], 'stic_Signatures'));
             $sugar_smarty->assign('APP_STRINGS', $app_strings);
+
+            $sugar_smarty->assign('SIGNER_LOG', $signerLog);
 
             $auditHtml = '<p style="page-break-before: always;">&nbsp;</p>';
             $auditHtml .= $sugar_smarty->fetch('modules/stic_Signatures/AuditPageTemplate.tpl');

@@ -39,18 +39,18 @@ class stic_SignersController extends SugarController
     public function action_sendToSign($signerId = null)
     {
         // Determine the signer IDs to process
-        if ($signerId === null) {
+        if ($_REQUEST['signerId'] === null) {
             if (empty($_REQUEST['uid'])) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'No signer ID provided in request.');
                 throw new Exception("No signer ID provided.");
             }
             $signersIds = explode(',', $_REQUEST['uid']);
         } else {
-            if (!is_string($signerId)) {
+            if (!is_string($_REQUEST['signerId'])) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Invalid signer ID type. Expected string.');
                 throw new Exception("Invalid signer ID type.");
             }
-            $signersIds = [$signerId];
+            $signersIds = [$_REQUEST['signerId']];
         }
 
         // Get the number of signers to determine redirection logic

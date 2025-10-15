@@ -23,10 +23,8 @@
     <h3 style="font-size: 11pt; font-weight: bold; color: #555;">{$MOD_STRINGS.LBL_AUDIT_PAGE_EVENTS_LOG_TITLE}</h3>
 
     <ul style="font-size: 8pt; line-height: .75;">
-        <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_EVENT_1}:</strong>&nbsp;<span>[Descripción del Evento 1]</span></li>
-        <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_EVENT_2}:</strong>&nbsp;<span>[Descripción del Evento 2]</span></li>
-        <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_EVENT_3}:</strong>&nbsp;<span>[Descripción del Evento 3]</span></li>
-        <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_EVENT_4}:</strong>&nbsp;<span>[Descripción del Evento 4]</span></li>
-        <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_EVENT_5}:</strong>&nbsp;<span>[Descripción del Evento 5]</span></li>
+        {foreach from=$SIGNER_LOG item=event}
+            <li><strong>{$event.name}:</strong>&nbsp;<span>{$event.description}</span></li>
+        {/foreach}
     </ul>
 </div>
