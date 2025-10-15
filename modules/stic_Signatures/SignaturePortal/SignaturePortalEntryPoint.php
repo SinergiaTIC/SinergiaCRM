@@ -21,6 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+use League\OAuth2\Server\ResponseTypes\RedirectResponse;
+
 /**
  * Entry point for handling signature-related actions and displaying the signature portal.
  * This script processes various actions such as saving signatures, resending OTP codes,
@@ -32,6 +34,28 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+// If signatureId and targetId are provided, retrieve the corresponding signerId and redirect
+if (
+    isset($_REQUEST['signatureId'])
+    && is_string($_REQUEST['signatureId'])
+    && isset($_REQUEST['targetId'])
+    && is_string($_REQUEST['targetId'])
+) {
+
+    $signatureBean = BeanFactory::getBean('stic_Signatures', $_REQUEST['signatureId']);
+    if (empty($signatureBean)) {
+        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signature with ID {$_REQUEST['signatureId']} not found");
+        sugar_die('Signature not found');
+    }
+     $userOrContactsTargets = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " parent_id = '{$_REQUEST['targetId']}' ");
+
+     // Redirect to the signature portal with the signerId parameter
+     Header('Location: index.php?entryPoint=sticSign&signerId=' . $userOrContactsTargets[0]->id);
+     die();
+
+}
+
+// Validate the presence and type of signerId parameter
 if (empty($_REQUEST['signerId'])
     || !is_string($_REQUEST['signerId'])
 
@@ -42,15 +66,16 @@ if (empty($_REQUEST['signerId'])
 
 global $sugar_config;
 
+// Retrieve the signer bean using the provided signerId
 if (!empty($_REQUEST['signatureAction'])) {
 
     require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
 
     // Handle different actions based on the 'signatureAction' parameter
     switch ($_REQUEST['signatureAction']) {
-        
+
         case 'saveSignature':
-        // Save the signature data for the specified signer    
+            // Save the signature data for the specified signer
             if (!empty($_REQUEST['signerId']) && !empty($_REQUEST['signatureData'])) {
                 $result = stic_SignaturePortalUtils::saveSignature($_REQUEST);
             } else {
@@ -79,7 +104,7 @@ if (!empty($_REQUEST['signatureAction'])) {
             die();
             break;
         case 'acceptDocument':
-            // Accept the document 
+            // Accept the document
             if (!empty($_REQUEST['signerId'])) {
                 $result = stic_SignaturePortalUtils::acceptDocument($_REQUEST);
             } else {
@@ -132,7 +157,6 @@ if (!empty($_REQUEST['signatureAction'])) {
             sugar_die('Unknown action');
     }
 } else {
-    // If no action is specified, display the signature portal view
 
     // Include necessary files to load the view class
     require_once 'include/MVC/View/SugarView.php';

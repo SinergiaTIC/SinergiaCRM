@@ -43,6 +43,7 @@ class stic_SignaturesUtils
     {
         global $beanList;
 
+
         $options_array = ['' => ''];
         $mod_options_array = [];
 
@@ -411,9 +412,9 @@ class stic_SignaturesUtils
         $footer = str_replace('$authorized_', '$contacts_', $footer);
 
         // Second parse, using authorized contact data
-        $converted = templateParser::parse_template($converted, $authorizedSourceModuleArray);
-        $header = templateParser::parse_template($header, $authorizedSourceModuleArray);
-        $footer = templateParser::parse_template($footer, $authorizedSourceModuleArray);
+        $converted = templateParser::parse_template($converted, $authorizedSourceModuleArray ?? []);
+        $header = templateParser::parse_template($header, $authorizedSourceModuleArray ?? []);
+        $footer = templateParser::parse_template($footer, $authorizedSourceModuleArray ?? []);
 
         // Replace last break lines by HTML tags (this line seems redundant if HTML tags are stripped earlier,
         // but it implies converting remaining newlines to <br /> for display purposes after parsing)

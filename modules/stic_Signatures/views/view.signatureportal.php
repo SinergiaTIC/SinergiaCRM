@@ -51,12 +51,9 @@ class stic_SignaturePortal extends SugarView
      */
     public function display()
     {
-        global $smarty;
-        global $app_list_strings; // General application language strings
-        global $sugar_config;
+        global $app_list_strings, $app_strings, $sugar_config;
 
-
-        // Determine the base URI for constructing URLs (to handle different server setups) 
+        // Determine the base URI for constructing URLs (to handle different server setups)
         // $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
         $uri = rtrim($sugar_config['site_url'], '/') . '/';
 
@@ -138,7 +135,7 @@ class stic_SignaturePortal extends SugarView
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
             $this->ss->assign('SHOW_PORTAL', true);
             $this->ss->assign('SIGNER_NAME', $signerBean->parent_name);
-            
+
             $this->ss->assign('SIGNER_VERIFICATION_CODE', $signerBean->verification_code);
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OPEN_PORTAL_BEFORE_SIGN', $signerBean->id, 'SIGNER');
