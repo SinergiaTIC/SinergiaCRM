@@ -77,7 +77,7 @@ class EmailTemplateParser
      * @var EmailInterface
      */
     private $module;
-  
+
     // STIC-Custom - JCH - 20251009 - Notifications: Parse Email Templates with notified module
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
     /**
@@ -126,7 +126,7 @@ class EmailTemplateParser
         $this->trackerId = $trackerId;
 
         // STIC-Custom - JBL - 20240709 - Notifications: Parse Email Templates with notified module
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44        
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
         if ($campaign->campaign_type == "Notification" && !empty($campaign->parent_id)) {
             global $beanList, $beanFiles;
@@ -173,12 +173,16 @@ class EmailTemplateParser
         $matches = preg_match_all(static::PATTERN, $attributeValue, $variables);
 
         if ($matches !== 0) {
-
+            
             // STIC-Custom - JCH - 20251009 - Notifications: Parse Email Templates with notified module
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
             // foreach ($variables[0] as $variable) {
-            //     $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
-            // }
+                //     $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
+                // }
+                
+            // special variables replacement
+            global $sugar_config;
+            $attributeValue = str_replace('sugarurl', $sugar_config['site_url'], $attributeValue);
 
             // If the campaign is not of type Notification, parse as usual
             if ($this->campaign->campaign_type != 'Notification') {
@@ -191,7 +195,7 @@ class EmailTemplateParser
                 // without replacing empty values, then parse with notified module
                 foreach ($variables[0] as $variable) {
                     $valueToReplaceWith = $this->getValueFromBean($variable);
-                    
+
                     // Prevent replacing with empty string if value is empty (eg.)
                     if (!empty($valueToReplaceWith)) {
                         $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
@@ -199,25 +203,25 @@ class EmailTemplateParser
                 }
                 // preserve original module
                 $this->origModule = $this->module;
-                
+
                 // switch to notified module
                 $this->module = $this->notificationModule;
 
-                // Now parse again with the notified module, finally replacing empty values 
+                // Now parse again with the notified module, finally replacing empty values
                 foreach ($variables[0] as $variable) {
                     $valueToReplaceWith = $this->getValueFromBean($variable);
                     $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
                 }
-                
+
                 // restore original module
                 $this->module = $this->origModule;
-        // END STIC-Custom        
+                // END STIC-Custom
             }
         }
 
         return $attributeValue;
     }
-    
+
     /**
      * This is need to be extended properly and replace the method below in the future
      * @see EmailTemplate::parse_email_template
@@ -252,7 +256,7 @@ class EmailTemplateParser
         {
             $variable = ltrim($variable, $charVariable);
             $moduleName = strtolower($this->module->object_name);
-            
+
             switch ($moduleName) {
                 case 'user':
                     $attribute = str_replace('contact_user_', '', $variable);
@@ -262,10 +266,10 @@ class EmailTemplateParser
                     $attribute = str_replace('contact_', '', $variable);
                     break;
                 default:
-                     $attribute = substr($variable, strlen($moduleName . '_'));
+                    $attribute = substr($variable, strlen($moduleName . '_'));
                     break;
             }
-            
+
         } else {
             $parts = explode($charUnderscore, ltrim($variable, $charVariable));
             list($moduleName, $attribute) = [array_shift($parts), implode($charUnderscore, $parts)];
