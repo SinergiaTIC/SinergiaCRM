@@ -177,6 +177,7 @@ class WizardStep2 {
           field: new AWF_Field(),  // Copia de los datos del campo
           dataBlock: null,         // El bloque de datos del campo
           needDeleteOld: false,    // Indica si es necesario eliminar el campo anterior antes de guardar
+          original_name: '',       // Nombre original del campo
 
           /**
            * Retorna si es un campo nuevo
@@ -245,6 +246,7 @@ class WizardStep2 {
            * @param {string} type Tipo de campo: unlinked, form, hidden
            */
           _open(dataBlock, fieldData, type) {
+            debugger;
             this.dataBlock = dataBlock;
             this.field = new AWF_Field(fieldData || {type_field: type});
             this.original_name = this.field.name;
@@ -260,6 +262,7 @@ class WizardStep2 {
             this.dataBlock = null;
             this.field = null;
             this.original_name = '';
+            this.needDeleteOld = false
           },
 
           /**
@@ -404,6 +407,9 @@ class WizardStep2 {
             } else {
               this.field.setValueOptions();
             }
+            if (this.field.type_field == 'unlinked') {
+              this.dataBlock.fixFieldName(this.field);
+            }
             this.field.updateWithFieldInformation(this.selectedFieldInfo);
             this.configValueOptions = false;
             this.optionValuesRelated = '';
@@ -412,7 +418,7 @@ class WizardStep2 {
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
           if (this.field.type_field == 'unlinked') {
-            this.field.name = this.dataBlock.suggestFieldName(AWF_Configuration.cleanName(newText));
+            this.field.name = AWF_Configuration.cleanName(newText); 
             this.field.label = utils.toFieldLabelText(newText);
           }
         });

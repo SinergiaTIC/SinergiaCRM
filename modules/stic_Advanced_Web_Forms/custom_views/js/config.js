@@ -169,6 +169,16 @@ class AWF_DataBlock {
     return name;
   }
 
+  fixFieldName(field) {
+    let index = 0;
+    let name = fieldName;
+    while(this.fields.filter((f) => f.name === field.name).length==2) {
+      index++;
+      name = `${fieldName}_${index}`;
+    }
+    field.name = name;
+    return name;
+  }
 
   /**
    * Gets a suggested text for a new DataBlock for a module

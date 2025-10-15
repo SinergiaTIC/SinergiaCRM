@@ -57,17 +57,23 @@
               get canMoveDown() { return item.order<formConfig.data_blocks.length-1;  }, 
               get canRemove() { return !item.required;  },
             }">
-              <div class="input-group">
-                <button type="button" class="btn" x-bind:disabled="!canMoveUp" @click="formConfig.setDataBlockOrder(item, item.order-1);">
-                  <span class="suitepicon suitepicon-action-move-up"></span>
-                </button>
-                <button type="button" class="btn" x-bind:disabled="!canMoveDown" @click="formConfig.setDataBlockOrder(item, item.order+1);">
-                  <span class="suitepicon suitepicon-action-move-down"></span>
-                </button>
-                <button type="button" class="btn" x-bind:disabled="!canRemove" @click="deleteDataBlock(key);">
+              <div class="d-inline-flex">
+                <div class="input-group" role="group">
+                  <button type="button" class="btn" x-bind:disabled="!canMoveUp" @click="formConfig.setDataBlockOrder(item, item.order-1);"
+                          :title="utils.translate('LBL_ACTION_MOVE_UP')">
+                    <span class="suitepicon suitepicon-action-move-up"></span>
+                  </button>
+                  <button type="button" class="btn" x-bind:disabled="!canMoveDown" @click="formConfig.setDataBlockOrder(item, item.order+1);"
+                          :title="utils.translate('LBL_ACTION_MOVE_DOWN')">
+                    <span class="suitepicon suitepicon-action-move-down"></span>
+                  </button>
+                </div>
+                <button type="button" class="btn ms-2" x-bind:disabled="!canRemove" @click="deleteDataBlock(key);"
+                        :title="utils.translate('LBL_ACTION_DELETE')">
                   <span class="suitepicon suitepicon-action-delete"></span>
                 </button>
               </div>
+
               <!-- <span class="btn suitepicon suitepicon-action-move-up" x-bind:disabled="!canMoveUp" @click="formConfig.setDataBlockOrder(item, item.order-1);"></span> -->
               <!-- <span class="btn suitepicon suitepicon-action-move-down" x-bind:disabled="!canMoveDown" @click="formConfig.setDataBlockOrder(item, item.order+1);"></span> -->
               <!-- <span class="btn suitepicon suitepicon-action-delete" x-bind:disabled="!canRemove" @click="deleteDataBlock(key);"></span> -->
