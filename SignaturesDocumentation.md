@@ -6,6 +6,9 @@
 ### Parseado de plantillas de email.
 
  Se ha modificado el parser de plantillas de email para que en las campañas de notificaciones, los campos de las plantillas se resuelvan en primer lugar con el módulo del contacto, interesado, usuario u organización notificado y en segundo lugar con el módulo que genera la notificación (firma, subvención, evento, etc). Esto permite utilizar en las plantillas de email campos de ambos módulos.
+
+ También se ha corregido un error en el parseado de plantillas que impedía que se parsearan los campos del módulo Users, modificando el desarrollo que se hizo en el PR https://github.com/SinergiaTIC/SinergiaCRM/pull/696
+
   
 
 ### Campañas de notificaciones

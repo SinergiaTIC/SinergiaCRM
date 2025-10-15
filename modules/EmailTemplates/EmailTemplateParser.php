@@ -83,6 +83,10 @@ class EmailTemplateParser
     /**
      * @var EmailInterface
      */
+    private $origModule;
+    /**
+     * @var EmailInterface
+     */
     private $notificationModule;
     // END STIC-Custom
 
@@ -193,7 +197,10 @@ class EmailTemplateParser
                         $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
                     }
                 }
-
+                // preserve original module
+                $this->origModule = $this->module;
+                
+                // switch to notified module
                 $this->module = $this->notificationModule;
 
                 // Now parse again with the notified module, finally replacing empty values 
@@ -201,6 +208,9 @@ class EmailTemplateParser
                     $valueToReplaceWith = $this->getValueFromBean($variable);
                     $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
                 }
+                
+                // restore original module
+                $this->module = $this->origModule;
         // END STIC-Custom        
             }
         }
@@ -235,13 +245,27 @@ class EmailTemplateParser
 
         // STIC-Custom 20250624 MHP - Get the module name correctly
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/696
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
         // $parts = explode($charUnderscore, ltrim($variable, $charVariable));
         // list($moduleName, $attribute) = [array_shift($parts), implode($charUnderscore, $parts)];
         if ($this->campaign->campaign_type == 'Notification')
         {
             $variable = ltrim($variable, $charVariable);
             $moduleName = strtolower($this->module->object_name);
-            $attribute = substr($variable, strlen($moduleName . '_'));
+            
+            switch ($moduleName) {
+                case 'user':
+                    $attribute = str_replace('contact_user_', '', $variable);
+                    break;
+                case 'lead':
+                case 'prospect':
+                    $attribute = str_replace('contact_', '', $variable);
+                    break;
+                default:
+                     $attribute = substr($variable, strlen($moduleName . '_'));
+                    break;
+            }
+            
         } else {
             $parts = explode($charUnderscore, ltrim($variable, $charVariable));
             list($moduleName, $attribute) = [array_shift($parts), implode($charUnderscore, $parts)];
