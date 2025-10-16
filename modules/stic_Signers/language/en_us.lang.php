@@ -77,6 +77,8 @@ $mod_strings = array(
     'LBL_VARIABLES' => 'Variables',
     'LBL_REJECTION_REASON' => 'Rejection reason',
     'LBL_ON_BEHALF_OF_ID' => 'Authorized to sign on behalf of (ID)',
+    'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Signatures',
+    'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Signatures',
 
     'LBL_SIGNER_PREVIEW' => 'Signer Preview',
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Request signature by email to',

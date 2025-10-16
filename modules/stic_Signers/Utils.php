@@ -86,7 +86,7 @@ class stic_SignersUtils
         // Construct the unique signing URL
         // Determine the base URI for constructing URLs (to handle different server setups)
         // $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
-        
+
         $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
 
         // Prepare the complete HTML body of the email
@@ -129,7 +129,6 @@ class stic_SignersUtils
             stic_SignatureLogUtils::logSignatureAction('EMAIL_SENT', $signerId, 'SIGNER', $destAddress);
         }
 
-        
     }
 
     /**
@@ -222,15 +221,81 @@ class stic_SignersUtils
 
     }
 
+/**
+ * Get stic_Signers records for a specific contact
+ *
+ * @param array $params Parameters from subpanel configuration
+ * @return array Query result for subpanel
+ */
+    public static function getSticSignersForContacts()
+    {
+        $contact_id =  $_REQUEST['record'];
+        if (empty($contact_id)) {
+            return array();
+        }
 
-    
-  
+        $query = "
+      
+        SELECT
+                stic_signers.id,
+                stic_signers.name,
+                stic_signers.date_entered,
+                stic_signers.date_modified,
+                stic_signers.modified_user_id,
+                stic_signers.created_by,
+                stic_signers.description,
+                stic_signers.deleted,
+                stic_signers.assigned_user_id,
+                stic_signers.status,
+                stic_signers.signature_date,
+                stic_signers.parent_type,
+                stic_signers.parent_id
+            FROM stic_signers
+            WHERE parent_type = 'Contacts'
+                AND parent_id = '{$contact_id}'
+                AND status in ('pending','signed')
+                AND deleted = 0 
+            ORDER BY stic_signers.date_modified DESC
+        ";
+        return $query;
+    }
+/**
+ * Get stic_Signers records for a specific user
+ *
+ * @param array $params Parameters from subpanel configuration
+ * @return array Query result for subpanel
+ */
+    public static function getSticSignersForUsers()
+    {
+        $user_id =  $_REQUEST['record'];
+        if (empty($user_id)) {
+            return array();
+        }
 
-
-
+        $query = "
+      
+        SELECT
+                stic_signers.id,
+                stic_signers.name,
+                stic_signers.date_entered,
+                stic_signers.date_modified,
+                stic_signers.modified_user_id,
+                stic_signers.created_by,
+                stic_signers.description,
+                stic_signers.deleted,
+                stic_signers.assigned_user_id,
+                stic_signers.status,
+                stic_signers.signature_date,
+                stic_signers.parent_type,
+                stic_signers.parent_id
+            FROM stic_signers
+            WHERE parent_type = 'Users'
+                AND parent_id = '{$user_id}'
+                AND status in ('pending','signed')
+                AND deleted = 0 
+            ORDER BY stic_signers.date_modified DESC
+        ";
+        return $query;
+    }
 
 }
-
-
-
-

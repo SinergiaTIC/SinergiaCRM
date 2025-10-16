@@ -77,6 +77,8 @@ $mod_strings = array(
     'LBL_VARIABLES' => 'Variables',
     'LBL_REJECTION_REASON' => 'Motivo de rechazo',
     'LBL_ON_BEHALF_OF_ID' => 'Autorizado a firmar en nombre de (ID)',
+    'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Firmas',
+    'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Firmas',
 
 
     'LBL_SIGNER_PREVIEW' => 'Vista previa de la firma',
