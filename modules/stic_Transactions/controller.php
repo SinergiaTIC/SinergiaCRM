@@ -21,17 +21,68 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-class stic_TransactionsController extends SugarController {
+class stic_TransactionsController extends SugarController
+{
+    /**
+     * Step 1: Upload file
+     */
+    public function action_uploadNorma43()
+    {
+        $this->view = 'norma43upload';
+    }
 
-    // Acción que procesa el fichero
-    public function action_loadNorma43() {
+    /**
+     * Step 2: Process file
+     */
+    public function action_loadNorma43()
+    {
         require_once 'modules/stic_Transactions/importNorma43.php';
-        Norma43::importNorma43();
+
+        // Analyze file
+        $summary = Norma43::importNorma43(true);
+
+        if (isset($summary['success']) && !$summary['success']) {
+            $_SESSION['norma43_error'] = $summary['error'];
+            SugarApplication::redirect('index.php?module=stic_Transactions&action=uploadNorma43');
+            return;
+        }
+
+        $_SESSION['norma43_summary'] = $summary;
+
+        // Get parsed accounts for mapping
+        SugarApplication::redirect('index.php?module=stic_Transactions&action=mapNorma43');
     }
 
-    // Acción para mostrar el formulario de carga
-    public function action_loadFile() {
-        $this->view = 'load_file';
+    /**
+     * Paso 3: Map fields
+     */
+    public function action_mapNorma43()
+    {
+        // Verify that session data exists
+        if (!isset($_SESSION['norma43_summary']) || !isset($_SESSION['norma43_parsed_accounts'])) {
+            SugarApplication::redirect('index.php?module=stic_Transactions&action=uploadNorma43');
+            return;
+        }
+
+        $this->view = 'norma43mapping';
     }
 
+    /**
+     * Step 4: Final preview
+     */
+    public function action_previewNorma43()
+    {
+        $this->view = 'norma43preview';
+    }
+
+    /**
+     * Step 5: Save the transactions
+     */
+    public function action_executeFinalImport()
+    {
+        require_once 'modules/stic_Transactions/importNorma43.php';
+        Norma43::finalizeImport([]);
+
+        SugarApplication::redirect('index.php?module=stic_Transactions&action=index&import_status=completed');
+    }
 }
