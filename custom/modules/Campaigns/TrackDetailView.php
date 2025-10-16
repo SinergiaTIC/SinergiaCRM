@@ -104,6 +104,7 @@ if (isset($focus->campaign_type)) {
     if ($focus->campaign_type == "Email" || $focus->campaign_type == "NewsLetter" || $focus->campaign_type == "Notification") {
         $smarty->assign("TRACK_DELETE_BUTTON", "<input title=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_TITLE']}\" class=\"button\" onclick=\"this.form.module.value='Campaigns'; this.form.action.value='Delete';this.form.return_module.value='Campaigns'; this.form.return_action.value='TrackDetailView';this.form.mode.value='Test';return confirm('{$mod_strings['LBL_TRACK_DELETE_CONFIRM']}');\" type=\"submit\" name=\"button\" value=\"  {$mod_strings['LBL_TRACK_DELETE_BUTTON_LABEL']}  \">");
     }
+    // TODOEPS
     if ($focus->campaign_type == "Notification") {
         $smarty->assign("DISABLE_LINK", "display:none");
     }

@@ -118,6 +118,53 @@ class CampaignsUtils
         }
         $beanCampaign->notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
     }
+    /**
+     * Function populates custom 'non-db' fields for a Campaign record of the type 'Notification by message'.
+     * It retrieves and sets values related to email marketing and prospect lists associated with the campaign.
+     *
+     * @param $beanCampaign: The campaign bean (object) which represents the current campaign record being processed.
+     */
+    public static function fillCampaignMessageNotificationFields($beanCampaign)
+    {
+        global $db;
+
+        // Find email_marketing information
+        $query =
+            " SELECT c.id as campaigns_id" .
+            ", et.id as template_id" .
+            ", mm.sender as message_marketing_from_name" .
+            ", mm.type as type" .
+            " FROM campaigns c" .
+            " LEFT JOIN stic_message_marketing mm on mm.campaign_id = c.id and mm.deleted = '0'" .
+            " LEFT JOIN email_templates et on et.id = mm.template_id and et.deleted = '0'" .
+            " WHERE c.id = '{$beanCampaign->id}'" .
+            " LIMIT 1";
+
+        // Fill Notification fields related to email_marketing
+        $result = $db->query($query);
+        if ($row = $db->fetchByAssoc($result)) {
+            $beanCampaign->msg_notification_template_id = $row['template_id'];
+            $beanCampaign->sender = $row['message_marketing_from_name'];
+            $beanCampaign->notification_message_type = $row['type'];
+        }
+
+        // Find prospect_lists information
+        $query =
+            " SELECT c.id as campaigns_id" .
+            ", pl.id as prospect_lists_id" .
+            " FROM campaigns c" .
+            " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
+            " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
+            " WHERE c.id = '{$beanCampaign->id}'";
+
+        // Fill Notification prospect_lists field (multienum)
+        $result = $db->query($query);
+        $plArray = array();
+        while ($row = $db->fetchByAssoc($result)) {
+            $plArray[] = $row['prospect_lists_id'];
+        }
+        $beanCampaign->notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
+    }
 
 /**
  * Populates custom dynamic lists used in 'non-db' enum and multienum fields for a Campaigns records of type 'Notification'
@@ -128,6 +175,9 @@ class CampaignsUtils
         self::fillDynamicListEmailTemplate();
         self::fillDynamicOutboundEmailAccounts();
         self::fillDynamicInboundEmailAccounts();
+
+        require_once 'modules/stic_Messages/Utils.php';
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
     }
 
     /**

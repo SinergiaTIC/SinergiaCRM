@@ -37,6 +37,7 @@ $dictionary["Campaign"]["fields"]["stic_payment_commitments_campaigns"] = array(
 // parent_name, parent_type and parent_id: The Parent element of the Notification 
 $dictionary["Campaign"]["fields"]["parent_name"] = array(
     'name' => 'parent_name',
+    'rname' => 'name', 
     'parent_type' => 'record_type_display',
     'type_name' => 'parent_type',
     'id_name' => 'parent_id',
@@ -183,6 +184,130 @@ $dictionary["Campaign"]["fields"]['notification_reply_to_addr'] = array(
     'source' => 'non-db',
     'len' => '100',
 );
+
+// Notification by message fields
+// $dictionary["Campaign"]["fields"]["msg_parent_name"] = array(
+//     'name' => 'msg_parent_name',
+//     'rname' => 'name', 
+//     'parent_type' => 'record_type_display',
+//     'type_name' => 'msg_parent_type',
+//     'id_name' => 'msg_parent_id',
+//     'vname' => 'LBL_FLEX_RELATE',
+//     'type' => 'parent',
+//     'group' => 'msg_parent_name',
+//     'source' => 'non-db',
+//     'options' => 'parent_type_display_notifications', // Available Notification parent types
+//     'inline_edit' => 0,
+//     'studio' => 'visible',
+//     'popupHelp' => 'LBL_FLEX_RELATE_HELP',
+// );
+// $dictionary["Campaign"]["fields"]['msg_parent_type'] = array(
+//     'name' => 'msg_parent_type',
+//     'vname' => 'LBL_PARENT_TYPE',
+//     'type' => 'parent_type',
+//     'dbType' => 'varchar',
+//     'group' => 'msg_parent_name',
+//     'options' => 'parent_type_display_notifications', // Available Notification parent types
+//     'len' => 255,
+//     'studio' => 'hidden',
+//     'source' => 'custom_fields',
+// );
+// $dictionary["Campaign"]["fields"]['msg_parent_id'] = array(
+//     'name' => 'msg_parent_id',
+//     'type' => 'id',
+//     'group' => 'msg_parent_name',
+//     'reportable' => false,
+//     'vname' => 'LBL_PARENT_ID',
+//     'source' => 'custom_fields',
+// );
+$dictionary["Campaign"]["fields"]["parent_field_placeholder"] = array(
+    'name' => 'parent_field_placeholder',
+    'vname' => 'LBL_FLEX_RELATE', // Re-use the same label
+    'type' => 'varchar',             // 'html' type is perfect for placeholders
+    'source' => 'non-db',         // Crucial: ensures it's not added to the database
+    'studio' => 'hidden',         // Hide it from Studio to prevent confusion
+    'reportable' => false,
+);
+
+$dictionary["Campaign"]["fields"]['msg_notification_prospect_list_ids'] = array(
+    'name' => 'msg_notification_prospect_list_ids',
+    'vname' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
+    'type' => 'multienum',
+    'massupdate' => 0,
+    'no_default' => false,
+    'module' => 'ProspectLists',
+    'source' => 'non-db',
+    'comments' => '',
+    'help' => '',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'dynamic_prospect_list_list',
+    'dependency' => false,
+    'popupHelp' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP',
+);
+
+$dictionary["Campaign"]["fields"]['msg_notification_template_id'] = array(
+    'name' => 'msg_notification_template_id',
+    'vname' => 'LBL_MSG_NOTIFICATION_TEMPLATE_ID',
+    'type' => 'enum',
+    'massupdate' => 0,
+    'no_default' => false,
+    'source' => 'non-db',
+    'comments' => '',
+    'help' => '',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'dynamic_message_template_list',
+    'dependency' => false,
+    // 'popupHelp' => 'LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP',
+);
+
+$dictionary["Campaign"]["fields"]['notification_message_type'] = array(
+    'name' => 'notification_message_type',
+    'vname' => 'LBL_MSG_TYPE',
+    'type' => 'enum',
+    'massupdate' => 0,
+    'no_default' => false,
+    'source' => 'non-db',
+    'comments' => '',
+    'help' => '',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'stic_messages_type_list',
+    'dependency' => false,
+);
+
+$dictionary["Campaign"]["fields"]['sender'] = array(
+    'name' => 'sender',
+    'vname' => 'LBL_NOTIFICATION_FROM_NAME',
+    'type' => 'varchar',
+    'len' => '100',
+    'source' => 'non-db',
+);
+
+
+
 
 $dictionary['Campaign']['fields']['campaign_type']['inline_edit'] = false;
 

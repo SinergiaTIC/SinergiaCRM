@@ -268,7 +268,7 @@ class Campaign extends SugarBean
         // STIC-Custom - JBL - 20240612 - New Campaign type (Notification)
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 		// return parent::save($check_notify);
-        if ($this->campaign_type == "Notification" && 
+        if (($this->campaign_type == "Notification" || $this->campaign_type == "NotifMsg") && 
             !empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == "getNotificationsFromParent" &&
             !empty($_REQUEST['relate_id']) && !empty($_REQUEST['return_module'])) {
             // Set parent type and ID for Notification campaigns
@@ -311,7 +311,7 @@ class Campaign extends SugarBean
                 $startDate = $userDate->asDBDate();
             }
             $date = SugarDateTime::createFromFormat(TimeDate::DB_DATE_FORMAT, $startDate, null);
-            $startDateFormatted = $date->format($timedate->get_date_format($user));
+            $startDateFormatted = $date->format($timedate->get_date_format($current_user));
 
             $nameArray[] = $startDateFormatted;
             
@@ -321,6 +321,16 @@ class Campaign extends SugarBean
         if ($this->campaign_type != "Notification") {
             // Reset Prospect lists for non-Notification campaigns
             $this->notification_prospect_list_ids = "";
+        }
+
+        if ($this->campaign_type != "NotifMsg") {
+            // Reset Prospect lists for non-Notification campaigns
+            $this->msg_notification_prospect_list_ids = "";
+        }
+
+        if ($this->campaign_type == "NotifMsg") {
+            // Reset Prospect lists for non-Notification campaigns
+            $this->notification_prospect_list_ids = $this->msg_notification_prospect_list_ids;
         }
 
         $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
@@ -337,7 +347,7 @@ class Campaign extends SugarBean
         $return_id = parent::save($check_notify);
 
         // For new Notification campaigns, set relationships and queue the campaign
-        if ($isNewCampaign && $this->campaign_type == "Notification") {
+        if ($isNewCampaign && ($this->campaign_type == "Notification" || $this->campaign_type == "NotifMsg")) {
             // Set ProspectList relationships
             $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
             $prospect_list_name_array = array();
@@ -355,7 +365,8 @@ class Campaign extends SugarBean
                     }
                 }
             }
-
+        }
+        if ($isNewCampaign && $this->campaign_type == "Notification") {
             // Save or Update EmailMarketing record
             $emailMarketing = BeanFactory::newBean('EmailMarketing');
             $relatedEmailMarketingList = $emailMarketing->get_list("name", "email_marketing.campaign_id='{$return_id}'", 0, -99, -99);
@@ -389,6 +400,43 @@ class Campaign extends SugarBean
             $_REQUEST['campaign_id'] = $return_id;
 
             include_once("modules/Campaigns/QueueCampaign.php");
+        }
+        if ($isNewCampaign && $this->campaign_type == "NotifMsg") {
+            // Save or Update EmailMarketing record
+            $messageMarketing = BeanFactory::newBean('stic_Message_Marketing');
+
+            // TODOEPS: És necessari preveure que tingui un message marketing si la campanya és nova?
+            // Si és necessari, cal recuperar el registre de diferent forma: load_relationship i getBeans()
+            // $relatedMessageMarketingList = $messageMarketing->get_list("name", "email_marketing.campaign_id='{$return_id}'", 0, -99, -99);
+            // if(!empty($relatedMessageMarketingList['list'])) {
+            //     $emailMarketing = $relatedMessageMarketingList['list'][0];
+            // }
+            // Set EmailMarketing fields
+            $messageMarketing->name = $this->name . ' - Message';
+            // $messageMarketing->campaign_id = $return_id;
+            $messageMarketing->template_id = $this->msg_notification_template_id;
+            $messageMarketing->sender = $this->sender;
+            $messageMarketing->start_date_time = $_REQUEST["start_date"];
+            $messageMarketing->status = 'active';
+            $messageMarketing->select_all = 1;
+            $messageMarketing->type = $this->notification_message_type;
+            $messageMarketing->campaigns_stic_message_marketingcampaign_ida = $return_id;
+
+            $messageMarketing->save();
+            $messageMarketingId = $messageMarketing->id;
+
+            // Queue Notification campaign
+            $_POST['mass'] = array(0 => $messageMarketingId);
+            $_REQUEST['module'] = "Campaigns";
+            $_REQUEST['record'] = $return_id;
+            $_REQUEST['return_action'] = "TrackDetailView";
+            $_REQUEST['return_module'] = "Campaigns";
+            $_REQUEST['return_id'] = $return_id;
+            $_REQUEST['action'] = "QueueCampaign";
+            $_REQUEST['campaign_id'] = $return_id;
+
+            require_once("modules/stic_Message_Marketing/Utils.php");
+            stic_Message_MarketingUtils::queueMessages($messageMarketingId);
         }
         return $return_id;
         // END STIC-Custom

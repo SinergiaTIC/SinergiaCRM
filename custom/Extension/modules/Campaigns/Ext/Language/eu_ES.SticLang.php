@@ -69,8 +69,11 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'Remitente (nombre)';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitente (dirección)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Responder a (nombre)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
+$mod_strings['LBL_MSG_TYPE'] = 'Tipo';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
+$mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones por mensaje';
 
 $mod_strings['LBL_FLEX_RELATE_HELP'] = 'Registro del que se desea realizar la notificación. Puede ser un evento o una subvención.';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificación se enviará a los miembros de las listas de público objetivo seleccionadas, que deben ser del tipo 'Por defecto'.";

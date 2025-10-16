@@ -46,7 +46,7 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
         // $this->dv->defs['templateMeta']['form']>['buttons'][4] = self::testSendButton;
         // $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
 
-        if ($this->bean->campaign_type !== 'SMS') {
+        if ($this->bean->campaign_type !== 'Message' && $this->bean->campaign_type !== 'NotifMsg') {
             $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testSendButton;
             $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
         }
