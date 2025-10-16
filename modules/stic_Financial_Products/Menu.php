@@ -33,3 +33,6 @@ if(ACLController::checkAccess('stic_Financial_Products', 'edit', true)){
 if(ACLController::checkAccess('stic_Financial_Products', 'list', true)){
     $module_menu[]=array('index.php?module=stic_Financial_Products&action=index&return_module=stic_Financial_Products&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Financial_Products');
 }
+if (ACLController::checkAccess('stic_Financial_Products', 'import', true)) {
+    $module_menu[] = array('index.php?module=Import&action=Step1&import_module=stic_Financial_Products&return_module=stic_Financial_Products&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Financial_Products');
+}

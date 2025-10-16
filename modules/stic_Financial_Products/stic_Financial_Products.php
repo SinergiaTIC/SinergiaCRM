@@ -29,7 +29,7 @@ class stic_Financial_Products extends Basic
     public $module_dir = 'stic_Financial_Products';
     public $object_name = 'stic_Financial_Products';
     public $table_name = 'stic_financial_products';
-    public $importable = false;
+    public $importable = true;
 
     public $id;
     public $name;
@@ -81,7 +81,9 @@ class stic_Financial_Products extends Basic
         global $app_list_strings;
 
         // Create name even when some of the required fields change
-        $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type] . ' - ' . $this->iban . ' - ' . $this->entity;
+        if(empty($this->name)) {
+            $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type] . ' - ' . $this->iban;
+        }
         
         // Call the generic save() function from the SugarBean class
         parent::save();
