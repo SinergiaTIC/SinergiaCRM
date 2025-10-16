@@ -156,6 +156,17 @@ class stic_SignaturesUtils
         $relatedModules = stic_SignaturesUtils::getRelatedEmailableModules($moduleName);
         $app_list_strings['stic_signatures_signer_path_list'][''] = '';
         foreach ($relatedModules as $key => $value) {
+            $module = explode(':', $key)[0];
+            $moduleField = explode(':', $key)[1] ?? '';
+            // Exclude Leads module as signers
+            if ($module == 'Leads') {
+                continue;
+            }
+            // Exclude Users module except for assigned_user_id field
+            if($module == 'Users' && $moduleField != 'assigned_user_id'){ 
+                continue;
+            }
+           
             $app_list_strings['stic_signatures_signer_path_list'][$key] = $value;
         }
     }
