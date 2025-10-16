@@ -11,6 +11,10 @@
     <link rel="icon" type="image/png" sizes="16x16"
         href="modules/stic_Signatures/SignaturePortal/favicon/favicon-16x16.png">
     <link rel="manifest" href="modules/stic_Signatures/SignaturePortal/favicon/site.webmanifest">
+    <script type="text/javascript">
+        // load module language strings
+        var MODS = {$MODS|@json_encode};
+    </script>
     <title>{$MODS.LBL_PORTAL_TITLE_PAGE}</title>
     {$BOOTSTRAP_CSS}
     {$BOOTSTRAP_JS}

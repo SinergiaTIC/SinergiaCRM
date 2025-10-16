@@ -239,9 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                     warningMessage.innerHTML = `
                 <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                    <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
-                    <p class="text-secondary mb-4">Por favor, escriba su nombre para generar la firma de texto.</p>
-                    <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                    <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
+                    <p class="text-secondary mb-4">${MODS.LBL_PORTAL_ENTER_NAME_TEXT}</p>
+                    <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                 </div>
             `;
                     document.body.appendChild(warningMessage);
@@ -323,9 +323,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         errorMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                         errorMessage.innerHTML = `
                             <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                                <h3 class="fs-4 fw-bold text-danger mb-3">Error</h3>
-                                <p class="text-secondary mb-4">No se pudo cargar la imagen. Por favor, asegúrese de que es un archivo PNG o JPG válido.</p>
-                                <button id="closeErrorBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                                <h3 class="fs-4 fw-bold text-danger mb-3">${MODS.LBL_PORTAL_ERROR}</h3>
+                                <p class="text-secondary mb-4">${MODS.LBL_PORTAL_IMG_ERROR}</p>
+                                <button id="closeErrorBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                             </div>
                         `;
                         document.body.appendChild(errorMessage);
@@ -348,9 +348,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 warningMessage.innerHTML = `
                     <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                        <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
-                        <p class="text-secondary mb-4">Por favor, dibuje su firma o use una opción alternativa antes de guardar.</p>
-                        <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                        <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
+                        <p class="text-secondary mb-4">${MODS.LBL_PORTAL_DRAW_OR_USE_OTHER_OPTION}</p>
+                        <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                     </div>
                 `;
                 document.body.appendChild(warningMessage);
@@ -388,9 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 successMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-success mb-3">Firma guardada</h3>
-                            <p class="text-secondary mb-4">La firma se ha guardado correctamente.</p>
-                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                            <h3 class="fs-4 fw-bold text-success mb-3">${MODS.LBL_PORTAL_SIGNATURE_SAVED}</h3>
+                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_SIGNATURE_SAVED_SUCCESSFULLY}</p>
+                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                         </div>
                     `;
 
@@ -407,9 +407,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 warningMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
-                            <p class="text-secondary mb-4">Ha ocurrido un error inesperado al guardar la firma. Por favor, inténtelo de nuevo.</p>
-                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                            <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
+                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR}</p>
+                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                         </div>
                     `;
                 document.body.appendChild(warningMessage);
@@ -457,9 +457,9 @@ document.addEventListener('DOMContentLoaded', () => {
             successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
             successMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-success mb-3">Firma guardada</h3>
-                            <p class="text-secondary mb-4">Se ha registrado correctamente la aceptación del documento.</p>
-                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                            <h3 class="fs-4 fw-bold text-success mb-3">${MODS.LBL_PORTAL_SIGNATURE_SAVED}</h3>
+                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_ACCEPTANCE_REGISTERED_SUCCESSFULLY}</p>
+                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                         </div>
                     `;
 
@@ -476,9 +476,9 @@ document.addEventListener('DOMContentLoaded', () => {
             warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
             warningMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
-                            <p class="text-secondary mb-4">Ha habido un error al registrar la aceptación del documento.</p>
-                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                            <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
+                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_ACCEPTANCE_ERROR}</p>
+                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                         </div>
                     `;
             document.body.appendChild(warningMessage);
@@ -538,9 +538,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 successMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-success mb-3">Correo enviado</h3>
-                            <p class="text-secondary mb-4">El documento firmado ha sido enviado a su correo electrónico.</p>
-                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                            <h3 class="fs-4 fw-bold text-success mb-3">${MODS.LBL_PORTAL_EMAIL_SENT}</h3>
+                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_PDF_SENT_SUCCESSFULLY}</p>
+                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                         </div>
                     `;
 
@@ -556,9 +556,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 warningMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
-                            <p class="text-secondary mb-4">Ha habido un error al enviar el documento firmado por correo electrónico.</p>
-                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                            <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
+                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_PDF_SEND_ERROR}</p>
+                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
                         </div>
                     `;
                 document.body.appendChild(warningMessage);
