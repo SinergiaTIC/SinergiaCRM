@@ -130,6 +130,11 @@
   margin: -5px 0px -5px -6px;
 }
 
+label, .form-label {
+  display: inline-block;
+  font-weight: bold;
+}
+
 label.field-required::after {
   content: " *";
   color: red;

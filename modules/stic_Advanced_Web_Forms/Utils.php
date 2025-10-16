@@ -91,12 +91,13 @@ function getModuleInformation($moduleName, $availableModules) {
                 // In source Module: Set fields information
                 if ($moduleOrigName == $moduleName) {
                     // Add field information
-                    // name, text, type, required, options, inViews
+                    // name, text, type, required, default, options, inViews
                     $result['fields'][$fieldName] = [
                         'name' => $fieldName,
                         'text' => rtrim(trim(translate($arr['vname'] ?? '', $moduleOrigName)), ":"),
                         'type' => $arr['type'],
                         'required' => isset($arr['required']) && $arr['required'],
+                        'default' => $arr['default'] ?? null,
                         'options' => $arr['options'] ?? '',
                         'inViews' => false
                     ];

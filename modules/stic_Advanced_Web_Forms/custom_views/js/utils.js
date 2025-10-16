@@ -82,7 +82,7 @@ class utils {
    * @returns Module Information
    * Result: [name, text, textSingular, inStudio, icon, fields:[Field], relationships:[Relationship]]
    *   Field: {
-   *     name, text, type, required, options, inViews
+   *     name, text, type, required, default, options, inViews
    *   }
    *   Relationship: {
    *     name, text, module_orig, field_orig, relationship, module_dest

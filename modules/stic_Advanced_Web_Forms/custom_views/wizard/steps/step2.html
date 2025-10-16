@@ -42,7 +42,7 @@
     <!-- Main Content -->
 
     <!-- DataBlocks -->
-    <template x-for="(item, key) in formConfig.data_blocks">
+    <template x-for="item in formConfig.data_blocks" :key="item.id">
       <!-- DataBlock -->
       <div class="card datablock">
         <!-- DataBlock header -->
@@ -52,32 +52,15 @@
           </div>
           <div class="d-flex justify-content-between align-items-center">
             <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
-            <div x-data="{ 
-              get canMoveUp() { return item.order>0; }, 
-              get canMoveDown() { return item.order<formConfig.data_blocks.length-1;  }, 
-              get canRemove() { return !item.required;  },
-            }">
-              <div class="d-inline-flex">
-                <div class="input-group" role="group">
-                  <button type="button" class="btn" x-bind:disabled="!canMoveUp" @click="formConfig.setDataBlockOrder(item, item.order-1);"
-                          :title="utils.translate('LBL_ACTION_MOVE_UP')">
-                    <span class="suitepicon suitepicon-action-move-up"></span>
-                  </button>
-                  <button type="button" class="btn" x-bind:disabled="!canMoveDown" @click="formConfig.setDataBlockOrder(item, item.order+1);"
-                          :title="utils.translate('LBL_ACTION_MOVE_DOWN')">
-                    <span class="suitepicon suitepicon-action-move-down"></span>
-                  </button>
-                </div>
-                <button type="button" class="btn ms-2" x-bind:disabled="!canRemove" @click="deleteDataBlock(key);"
+            <!-- Buttons -->
+            <div class="d-inline-flex">
+              <!-- Delete DataBlock -->
+              <template x-if="!item.required">
+                <button type="button" class="btn ms-2" @click="deleteDataBlock(item.id);"
                         :title="utils.translate('LBL_ACTION_DELETE')">
                   <span class="suitepicon suitepicon-action-delete"></span>
                 </button>
-              </div>
-
-              <!-- <span class="btn suitepicon suitepicon-action-move-up" x-bind:disabled="!canMoveUp" @click="formConfig.setDataBlockOrder(item, item.order-1);"></span> -->
-              <!-- <span class="btn suitepicon suitepicon-action-move-down" x-bind:disabled="!canMoveDown" @click="formConfig.setDataBlockOrder(item, item.order+1);"></span> -->
-              <!-- <span class="btn suitepicon suitepicon-action-delete" x-bind:disabled="!canRemove" @click="deleteDataBlock(key);"></span> -->
-              <!-- <p x-text="`Order: ${item.order}; CanMoveUp: ${canMoveUp}; CanMoveDown: ${canMoveDown}`"></p> -->
+              </template>
             </div>
           </div>
         </div>
@@ -87,7 +70,7 @@
           <div :id="`dataBlockFields${item.id}`">
             <!-- Fields summary Tabs -->
             <div x-data="WizardStep2.fieldsSummaryxData(item, formConfig);">
-              <!-- Tab Headers -->
+              <!-- Tab Headers: Fields -->
               <div class="stic-tabs">
                 <div class="stic-tab">
                   <input class="form-check-input" type="radio" :id="`dataBlockFieldsFormTab${item.id}`" x-model="fieldTabSelected" value="form"/>
@@ -100,20 +83,19 @@
                   </div>
                 </template>
               </div>
-
-              <!-- Tab Content-->
+              <!-- Tab Content: Fields-->
               <div class="stic-tabcontent" x-data="WizardStep2.sortableListxData(item.fields)">
                 <!-- Description -->
                 <p x-text="summaryDescription"></p>
                 <!-- Buttons -->
                 <div class="mb-2">
-                  <!-- Button: Add Unlinked Field in Form -->
-                  <template x-if="!item.module && fieldTabSelected=='form'">
-                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_ADD_FIELD_UNLINKED')"></button>
-                  </template>
                   <!-- Button: Add Field in Form -->
                   <template x-if="item.module && fieldTabSelected=='form'">
                     <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_ADD_FIELD_FORM')"></button>
+                  </template>
+                  <!-- Button: Add Unlinked Field in Form -->
+                  <template x-if="fieldTabSelected=='form'">
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_ADD_FIELD_UNLINKED')"></button>
                   </template>
                   <!-- Button: Add Hidden Field -->
                   <template x-if="item.module && fieldTabSelected=='hidden'">
@@ -138,22 +120,33 @@
                     <template x-for="(field, index) in item.fields">
                       <template x-if="canShowField(field)">
                         <tr>
-                          <td x-text="field?.text_original" x-show="canShowFieldColumn('text_original')"></td>
+                          <!-- Field -->
+                          <td x-show="canShowFieldColumn('text_original')">
+                            <i x-show="field?.type_field == 'unlinked'" x-text="'[ ' + field.text_original +' ]'"></i>
+                            <div x-show="field?.type_field != 'unlinked'" x-text="field?.text_original"></div>
+                          </td>
+                          <!-- Label -->
                           <td x-show="canShowFieldColumn('label')">
                             <div class="mb-0 me-3" :id="`dataBlockFieldLabel-${item.id}-${field.name}`" 
                                  data-model="field.label" x-init="sticControls.editableText($el);">
                             </div>
                           </td>
+                          <!-- Type in form -->
                           <td x-text="field?.type_in_formText" x-show="canShowFieldColumn('type_in_form')"></td>
+                          <!-- Subtype in form -->
                           <td x-text="field?.subtype_in_formText" x-show="canShowFieldColumn('subtype_in_form')"></td>
+                          <!-- Value type -->
                           <td x-text="field?.value_typeText" x-show="canShowFieldColumn('value_type')"></td>
+                          <!-- Value -->
                           <td x-text="field?.value_text" x-show="canShowFieldColumn('value_text')"></td>
+                          <!-- Required in form -->
                           <td x-show="canShowFieldColumn('required_in_form')">
                             <div class="form-switch">
                               <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="field.required_in_form" 
                                      :id="`dataBlockFieldReqForm-${item.id}-${field.name}`"/>
                             </div>
                           </td>
+                          <!-- Buttons -->
                           <td >
                             <div class="d-inline-flex">
                               <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
@@ -187,20 +180,65 @@
            </div>
           </div>
           <!-- Duplicate Definition -->
-          <template x-if="item.module">
+          <template x-if="item && item.module">
             <div :id="`dataBlockDuplicates${item.id}`">
-              <div class="row">
-                <!-- Action -->
-                <div class="col-3" :id="`duplicateAction${item.id}`" :data-model="'item.duplicate_detection.on_duplicate'" data-label="LBL_ONDUPLICATE_ACTION"
-                     :data-map="utils.getList('stic_advanced_web_forms_datablocks_duplicate_action_list', true)" x-init="sticControls.fieldSelect($el)"></div>
-                <!-- Fields -->
-                <div class="col-9" :id="`duplicateFields${item.id}`" :data-model="'item.duplicate_detection.fields'" data-label="LBL_DUPLICATE_FIELDS"
-                     :data-map="`utils.getModuleInformation('${item.module}').fields`" data-map-property="text" data-multiple x-init="sticControls.fieldSelect($el)"></div>
-              </div>
+              <table class="table table-bordered table-striped w-auto">
+                <thead>
+                  <tr>
+                    <th x-text="utils.translate('LBL_ONDUPLICATE_ACTION')"></th>
+                    <th x-text="utils.translate('LBL_DUPLICATE_FIELDS')"></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="(dupli, index) in item.duplicate_detections">
+                    <tr>
+                      <!-- Duplicate Action -->
+                      <td class="col-3">
+                        <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate">
+                          <template x-for="action in AWF_DuplicateDetection.on_duplicateList()" :key="action.id">
+                            <option :value="action.id" x-text="action.text"></option>
+                          </template>
+                        </select>
+                      </td>
+                      <!-- Duplicate Fields -->
+                      <td class="col-8">
+                        <div x-data="WizardStep2.duplicateFieldsxData(item, index)">
+                          <div class="dropdown" x-ref="dropdown">
+                            <button type="button" class="form-select form-control text-start" @click="opened = !opened">
+                              <span x-text="selectedFieldsText" class="text-truncate me-2" style="max-width: 90%;"></span>
+                            </button>
+                            <div x-show="opened" x-transition @click.away="opened = false" class="bg-white border shadow p-3 mt-1 position-absolute" 
+                                 style="max-height: 200px; overflow-y: auto; width: 100%; z-index: 1052; top: 100%; left: 0;">
+                              <template x-for="field in item.fields.filter(f => f.type_field!='unlinked')" :key="field.name">
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input"  :value="field.name" x-model="dupli.fields" :id="`check_${field.name}_${index}`">
+                                  <label class="form-check-label" :for="`check_${field.name}_${index}`" x-text="field.text_original"></label>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <!-- Delete Button -->
+                      <td>
+                        <template x-if="index>0">
+                          <button type="button" class="btn" @click="item.duplicate_detections.splice(index, 1);" :title="utils.translate('LBL_ACTION_DELETE')">
+                            <span class="suitepicon suitepicon-action-delete"></span>
+                          </button>
+                        </template>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              <button type="button" class="btn" @click="item.duplicate_detections.push(new AWF_DuplicateDetection());" :title="utils.translate('LBL_ACTION_ADD')">
+                <span class="suitepicon suitepicon-action-plus"></span>
+              </button>
             </div>
           </template>
           <!-- Relationships Definition -->
-          <template x-if="item.module">
+          <template x-if="item && item.module">
             <div :id="`dataBlockRels${item.id}`">
               [Las relaciones del Bloque de datos]
               <!-- Relationships Details -->
@@ -256,13 +294,13 @@
           <!-- Accordion Headers -->
           <template x-if="!item.module">
             <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
-                    {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                    {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
                   ]);" x-init="sticControls.accordion($el)"></div>
           </template>
           <template x-if="item.module">
             <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
-                    {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                    {headerText:`utils.translate('LBL_DUPLICATE_CHECK') + ' ('+item.duplicate_detection.fields.length+' - '+item.duplicate_detection.on_duplicate+')'`, selected:false, contentId:'dataBlockDuplicates'+item.id},
+                    {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                    {headerText:`utils.translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.id},
                     {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
                   ]);" x-init="sticControls.accordion($el)"></div>
           </template>
@@ -403,8 +441,8 @@
                       <div class="row">
                         <!-- Value options configuration Table -->
                         <div class="col-12" x-data="WizardStep2.sortableListxData(field.value_options)">
+                          <span class="form-label mt-3" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></span>
                           <table class="table table-bordered table-striped w-auto" id="modalField_ValueOptionsTable">
-                            <caption class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></caption>
                             <thead>
                               <tr>
                                 <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></th>

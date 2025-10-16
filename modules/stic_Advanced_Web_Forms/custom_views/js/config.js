@@ -3,7 +3,7 @@
  *   id, name, text, editable_text, module, required,
  *   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form, 
  *               show_in_form, value_type, value, value_text }],
- *    duplicate_detection: {fields: [<field_name>], on_duplicate},
+ *    duplicate_detections: [{fields: [<field_name>], on_duplicate}],
  *  }
  */
 class AWF_DataBlock {
@@ -14,11 +14,10 @@ class AWF_DataBlock {
       name: "",                 // Nombre interno (identificador en UI) del Bloque de Datos
       text: "",                 // Texto a mostrar para el Bloque de Datos
       editable_text: true,      // Indica si el texto se puede modificar
-      order: 0,                 // Orden del Bloque de datos
       module: "",               // Nombre del módulo
       required: false,          // Indica si es obligado (interno, no se puede eliminar)
       fields: [],               // Campos del Bloque de Datos
-      duplicate_detection: {},  // Definición de detección de duplicados
+      duplicate_detections: [], // Definición de detección de duplicados
     });
 
     // 2. Overwrite with provided data
@@ -26,7 +25,11 @@ class AWF_DataBlock {
 
     // 3. Map sub-objects and arrays to their classes
     this.fields = (data.fields || this.fields).map(d => new AWF_Field(d));
-    this.duplicate_detection = new AWF_DuplicateDetection(data.duplicate_detection || {});
+    this.duplicate_detections = (data.duplicate_detections || this.duplicate_detections).map(d => new AWF_DuplicateDetection(d));
+
+    if (this.duplicate_detections.length == 0) {
+      this.duplicate_detections.push(new AWF_DuplicateDetection());
+    }
   }
 
   /**
@@ -72,15 +75,19 @@ class AWF_DataBlock {
    * Add a Field to the DataBlock, from a FieldInformation (the summarized field definition in vardefs)
    * @param {object} moduleField: FieldInformation
    * @returns {AWF_Field} the field added to DataBlock
-   * FieldInformation: { name, text, type, required, options, inViews }
+   * FieldInformation: { name, text, type, required, default, options, inViews }
    */
   addFieldFromModuleField(moduleField) {
-    // FieldInformation: { name, text, type, required, options, inViews }
+    // FieldInformation: { name, text, type, required, default, options, inViews }
 
     let field = this.fields.find((f) => f.name === moduleField.name);
     if (!field) {
       field = new AWF_Field();
-      field.updateWithFieldInformation(moduleField);
+      let type_field = 'form';
+      if (moduleField.required && moduleField.default != null && moduleField.default != '') {
+        type_field = 'hidden';
+      }
+      field.updateWithFieldInformation(moduleField, type_field);
       field = this.addField(field);
     }
     // Update field info
@@ -99,8 +106,8 @@ class AWF_DataBlock {
     let field = this.addFieldFromModuleField(moduleField);
     field.required_in_form = true;
     
-    if (!this.duplicate_detection.fields.find(f => f === field.name)) {
-      this.duplicate_detection.fields.push(field.name);
+    if (!this.duplicate_detections[0].fields.find(f => f === field.name)) {
+      this.duplicate_detections[0].fields.push(field.name);
     }
 
     return field;
@@ -146,7 +153,7 @@ class AWF_DataBlock {
    * Checks current DataBlock with DuplicateDetection directives
    */
   checkDuplicateDetectionFields(){
-    this.duplicate_detection.fields.forEach(d => {
+    this.duplicate_detections[0].fields.forEach(d => {
       if (!this.fields.find(f => f.name === d)) {
         let field = this.addFieldFromModuleField(this.getModuleInformation().fields[d]);
         field.required_in_form = true;
@@ -242,10 +249,10 @@ class AWF_Field {
   /**
    * Updates current Field with FieldInformation
    * @param {object} fieldInfo FieldInformation
-   * FieldInformation: { name, text, type, required, options, inViews }
+   * FieldInformation: { name, text, type, required, default, options, inViews }
    */
   updateWithFieldInformation(fieldInfo, typeField) {
-    // FieldInformation: { name, text, type, required, options, inViews }
+    // FieldInformation: { name, text, type, required, default, options, inViews }
     if (!fieldInfo){
       return;
     }
@@ -275,6 +282,12 @@ class AWF_Field {
     }
 
     this.in_form = this.type_field != 'hidden';
+    if (this.value_type == 'fixed') {
+      if (fieldInfo.default != null && fieldInfo.default != '') {
+        this.value = fieldInfo.default;
+        this.value_text = fieldInfo.default;
+      }
+    }
 
     return this;
   }
@@ -594,9 +607,6 @@ class AWF_Configuration {
     this._ensureDefaultDataBlocks();
     this._ensureDefaultFlows();
     this._ensureDefaultLayout();
-
-    // 5. Sort datablocks
-    this.sortDataBlocks();
   }
   static fromJSON(jsonString){
     return new AWF_Configuration(JSON.parse(jsonString));
@@ -606,17 +616,18 @@ class AWF_Configuration {
   }
 
   _ensureDefaultDataBlocks() {
-    // Check exists Detached DataBlock
-    const detachedDataBlockExists = this.data_blocks.some((b) => b.name === "_Detached");
-    if (!detachedDataBlockExists) {
-      this.data_blocks.push(new AWF_DataBlock({
-        name: "_Detached",
-        text: utils.translate("LBL_DATABLOCK_DETACHED"),
-        module: "",
-        editable_text: false,
-        required: true,
-      }));
-    }
+    // TODO: Add Detached DataBlock
+    // // Check exists Detached DataBlock
+    // const detachedDataBlockExists = this.data_blocks.some((b) => b.name === "_Detached");
+    // if (!detachedDataBlockExists) {
+    //   this.data_blocks.push(new AWF_DataBlock({
+    //     name: "_Detached",
+    //     text: utils.translate("LBL_DATABLOCK_DETACHED"),
+    //     module: "",
+    //     editable_text: false,
+    //     required: true,
+    //   }));
+    // }
   }
   _ensureDefaultFlows() {
     // Check exists Main Flow
@@ -624,11 +635,7 @@ class AWF_Configuration {
   }
   _ensureDefaultLayout() {}
 
-  sortDataBlocks() {
-    return this.data_blocks.sort((a, b) => a.order - b.order)
-  }
-
-  /**
+ /**
    * Gets a suggested text for a new DataBlock for a module
    * @param {string} moduleName The module
    * @returns {string} The suggested text for a new DataBlock
@@ -702,16 +709,9 @@ class AWF_Configuration {
       name = AWF_Configuration.cleanName(text);
     }
 
-    let order = 0;
-    if (this.data_blocks.length > 0) {
-      order = this.data_blocks.reduce((max, db) => { return Math.max(max, db.order); }, 0);
-      order++;
-    }
-
     dataBlock = new AWF_DataBlock({
       name: name,
       text: text,
-      order: order,
       module: moduleName,
     });
 
@@ -724,7 +724,6 @@ class AWF_Configuration {
     }
 
     this.data_blocks.push(dataBlock);
-    this.sortDataBlocks();
 
     return dataBlock;
   }
@@ -877,36 +876,5 @@ class AWF_Configuration {
     dataBlocks.push({ id: -1, text: utils.translate("[< Nuevo Bloque de Datos >]") });
 
     return dataBlocks;
-  }
-
-  setDataBlockOrder(datablock, newOrder) {
-    if (!datablock) {
-      return -1;
-    }
-    let oldOrder = datablock.order;
-    if (newOrder < 0 || newOrder >= this.data_blocks.length || newOrder == oldOrder) {
-      return oldOrder;
-    }
-
-    if (newOrder < oldOrder) {
-      let prevItem = this.data_blocks.find(db => db.order == datablock.order-1);
-      if (prevItem) {
-        // Change previous item with current
-        prevItem.order++;
-        datablock.order--;
-      }
-    }
-    if (newOrder > oldOrder) {
-      let nexItem = this.data_blocks.find(db => db.order == datablock.order+1);
-      if (nexItem) {
-        // Change next item with current
-        nexItem.order--;
-        datablock.order++;
-      }
-    }
-    this.setDataBlockOrder(datablock, newOrder);
-
-    this.sortDataBlocks();
-    return datablock.order;
   }
 }

@@ -189,6 +189,8 @@ class WizardStep2 {
            * Retorna el título del editor
            */
           get title() {
+            if (!this.field) return '';
+
             if (this.isNewField) {
               switch (this.field.type_field) {
                 case 'form':
@@ -202,8 +204,10 @@ class WizardStep2 {
               let title = "";
               switch (this.field.type_field) {
                 case 'form':
-                case 'unlinked':
                   title += utils.translate('LBL_FIELD_FORM') + ' » ';
+                  break;
+                case 'unlinked':
+                  title += utils.translate('LBL_FIELD_UNLINKED') + ' » ';
                   break;
                 case 'hidden':
                   title += utils.translate('LBL_FIELD_HIDDEN') + ' » ';
@@ -246,7 +250,6 @@ class WizardStep2 {
            * @param {string} type Tipo de campo: unlinked, form, hidden
            */
           _open(dataBlock, fieldData, type) {
-            debugger;
             this.dataBlock = dataBlock;
             this.field = new AWF_Field(fieldData || {type_field: type});
             this.original_name = this.field.name;
@@ -591,10 +594,35 @@ class WizardStep2 {
           return this.fieldTabSelected == 'hidden';
         }
         return true;
-      }
+      },
+
+      getfieldText(field) {
+        if (!field) return '';
+        if (!field.isFieldInForm()) return '';
+
+        if (field.type_field == 'unlinked') {
+          return `<i>[${field.text_original}]</i>`;
+        }
+        return field.text_original;
+      },
     }
   }
 
+  static duplicateFieldsxData(dataBlock, index) {
+    return {
+      dataBlock: dataBlock,
+      duplicateDef: dataBlock.duplicate_detections[index],
+
+      opened: false, 
+
+      get selectedFieldsText() {
+        return this.duplicateDef.fields.length > 0 
+               ? this.duplicateDef.fields.map(d => this.dataBlock.fields.find(f => f.name == d)?.text_original).join(', ')
+               : utils.translate('LBL_ACTION_SEL_FIELDS');
+      },
+
+    }
+  }
 
 
   static addRelationshipxData(dataBlock, initial_formConfig, initial_step2) {
