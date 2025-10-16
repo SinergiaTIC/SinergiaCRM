@@ -9,6 +9,7 @@
 
  También se ha corregido un error en el parseado de plantillas que impedía que se parsearan los campos del módulo Users, modificando el desarrollo que se hizo en el PR https://github.com/SinergiaTIC/SinergiaCRM/pull/696
 
+En el parseado de las plantilla de email se ha incluido la sustitución de la variable $sugarurl, que se sustituye por la URL base de SugarCRM, obtenida de la configuración del sistema `$_sugar_config[‘site_url’]`. (esto debe ser documentado en campañas de todo tipo, ya que las url que se construyan mediante esta variable no podan ser incluidas en el tracking de enlaces de las campañas).
   
 
 ### Campañas de notificaciones
@@ -56,6 +57,9 @@ o en caso de error:
 ```php
 return false;
 ```
+
+Hay que tener en cuenta que _en el caso de las firmas_ la LPO se crea concatenando la fecha actual al nombre del filtro, y se utiliza el nombre para verificar si ya existe una LPO con ese nombre. Por lo que si se intenta crear una LPO con el mismo filtro y sobre la misma firma varias veces en el mismo día, tendrían el mismo nombre y no se crearán varias LPOs iguales, sino que se reutilizará la misma y se añadirán los nuevos contactos.
+
 
 ## Pasos para añadir un filtro custom
 1. Definir el filtro en la lista desplegable `notification_auto_prospect_list_name_list` a través de la interfaz de administración de listas desplegables. El valor interno debe seguir el formato `Module__filterName`. Por ejemplo para añadir a Eventos un filtro para inscripciones rechazadas:
