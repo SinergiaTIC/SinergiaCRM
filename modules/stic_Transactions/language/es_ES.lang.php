@@ -120,4 +120,13 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producto financiero',
+
+  // NORMA 43
+  'LBL_NORMA_43' => 'Importar Norma 43',
+  'LBL_STEP_1' => 'Paso 1: Subir Fichero Norma 43',
+  'LBL_SELECT_FILE' => 'Seleccionar un archivo',
+  'LBL_INSTRUCTION_1_STEP_1' => 'Seleccione un fichero en formato de texto plano (<strong>.txt</strong>).',
+  'LBL_INSTRUCTION_2_STEP_1' => 'El fichero debe seguir la estructura del <strong>estándar oficial de Norma 43</strong>.',
+  'LBL_INSTRUCTION_3_STEP_1' => 'Cada línea del fichero debe tener una longitud máxima de <strong>80 caracteres</strong>.',
+
 );
