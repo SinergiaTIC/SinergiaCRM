@@ -71,8 +71,8 @@ class stic_SignaturePortal extends SugarView
         // Get beans
         $signatureBean = $stic_SignaturePortalUtils->getSignatureBeans()['signature'];
         $signerBean = $stic_SignaturePortalUtils->getSignatureBeans()['signer'];
-
-        $this->ss->assign('MODS', return_module_language($GLOBALS['current_language'], 'stic_Signatures'));
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Signatures');
+        $this->ss->assign('MODS', $mod_strings);
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('APP_LIST_STRINGS', $app_list_strings);
 
@@ -96,6 +96,9 @@ class stic_SignaturePortal extends SugarView
         $passed = false;
         $errorMsg = '';
 
+        require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+        $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+
         // Validate authentication mode
         switch ($authMode) {
             case 'unique_link':
@@ -111,8 +114,7 @@ class stic_SignaturePortal extends SugarView
                         $this->ss->assign('OTP_ERROR_MSG', $errorMsg);
                     }
                     $this->ss->assign('OTP_REQUIRED', true);
-                    require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
-                    $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+
                     // Send OTP
                     $sendResult = stic_SignaturePortalUtils::sendOtpToSigner($signerBean);
                     if (($sendResult['success'] ?? null) === true) {
@@ -122,6 +124,22 @@ class stic_SignaturePortal extends SugarView
                         $this->ss->assign('OTP_SENT_ERROR', $signerStrings['LBL_OTP_SENT_ERROR']);
                     }
 
+                }
+                break;
+            case 'phone':
+                $this->ss->assign('FIELD_VALIDATION_REQUIRED', true);
+                if ($stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_REQUEST['field_value'] ?? '')) {
+                    $passed = true;
+                } else {
+                    if (isset($_REQUEST['field_name'])) {
+                        $errorMsg = 'El valor proporcionado no es válido. Por favor, inténtalo de nuevo.';
+                        $this->ss->assign('FIELD_ERROR_MSG', $errorMsg);
+                    }
+                    $this->ss->assign('FIELD_VALIDATION_LABEL', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_' . strtoupper($signatureBean->auth_method)]);
+                    $this->ss->assign('FIELD_REQUIRED', true);
+                    // asignamos una variable con la validación regular correspondiente a 9 dígitos
+                    $this->ss->assign('FIELD_VALIDATION_REGEXP', '[0-9]{9}');
+                    // $this->ss->assign('FIELD_LABEL', $stic_SignaturePortalUtils::getFieldLabel($signatureBean));
                 }
                 break;
             default:
@@ -137,6 +155,10 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('SIGNER_NAME', $signerBean->parent_name);
 
             $this->ss->assign('SIGNER_VERIFICATION_CODE', $signerBean->verification_code);
+            // $this->ss->assign('SIGNER_VERIFICATION_FIELD_NAME', $signatureBean->auth_field_name);
+            // $this->ss->assign('SIGNER_VERIFICATION_FIELD_VALUE', $signerBean->auth_field_value);
+
+            // Log the portal opening action
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OPEN_PORTAL_BEFORE_SIGN', $signerBean->id, 'SIGNER');
 

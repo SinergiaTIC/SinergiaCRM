@@ -32,7 +32,8 @@
                 {/if}
             </div>
             <div class="w-100 w-sm-50 d-flex flex-column  align-items-sm-start text-center">
-                <h2 class="text-white fs-5 text-base font-weight-bold tracking-tight mb-0">{$MODS.LBL_PORTAL_SIGNATURES}</h2>
+                <h2 class="text-white fs-5 text-base font-weight-bold tracking-tight mb-0">{$MODS.LBL_PORTAL_SIGNATURES}
+                </h2>
                 { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
                 <h3 class="text-white fs-6 font-weight-bold tracking-tight mt-1 mb-0">
                     {$ORGANIZATION_NAME}
@@ -61,7 +62,8 @@
                 { if $SHOW_PORTAL === true }
                 { if $STATUS === 'pending' }
                 <section class="document-area">
-                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-primary">{$MODS.LBL_PORTAL_DOC_SIGNATURE}</h1>
+                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-primary">{$MODS.LBL_PORTAL_DOC_SIGNATURE}
+                    </h1>
                     <div id="documentContent" class="document-scroll-content">
                         {$DOCUMENT_HTML_CONTENT}
                     </div>
@@ -73,7 +75,8 @@
 
                 { if $SIGNATURE_MODE === 'handwritten' }
                 <section class="signature-area mt-4">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_SIGNATURE_AREA}</h2>
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_SIGNATURE_AREA}
+                    </h2>
                     <p class="text-sm text-secondary mb-3 text-center">
                         {$MODS.LBL_PORTAL_HANDWRITTEN_INSTRUCTION}
                     </p>
@@ -84,15 +87,18 @@
 
                     <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
                         <button id="clearSignatureBtn" class="btn btn-secondary">{$MODS.LBL_PORTAL_BTN_CLEAR}</button>
-                        <button id="saveSignatureBtn" class="btn btn-primary">{$MODS.LBL_PORTAL_BTN_SAVE_SIGNATURE}</button>
+                        <button id="saveSignatureBtn"
+                            class="btn btn-primary">{$MODS.LBL_PORTAL_BTN_SAVE_SIGNATURE}</button>
                     </div>
 
                     <div class="signature-alternatives w-100 mt-4 pt-3 border-top border-secondary">
-                        <h3 class="text-xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ALTERNATIVE_OPTIONS}
+                        <h3 class="text-xl font-weight-bold mb-4 text-center text-dark">
+                            {$MODS.LBL_PORTAL_ALTERNATIVE_OPTIONS}
                         </h3>
 
                         <div class="text-signature-option mb-3 p-3 border border-secondary rounded bg-light">
-                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">{$MODS.LBL_PORTAL_TEXT_SIGNATURE_TITLE}</h4>
+                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">
+                                {$MODS.LBL_PORTAL_TEXT_SIGNATURE_TITLE}</h4>
                             <div class="mb-3">
                                 <label for="textSignatureInput"
                                     class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FULL_NAME}:</label>
@@ -110,18 +116,21 @@
                                     <option value="Indie Flower">Indie Flower</option>
                                 </select>
                             </div>
-                            <button id="renderTextSignatureBtn" class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_RENDER_TEXT_SIGNATURE}</button>
+                            <button id="renderTextSignatureBtn"
+                                class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_RENDER_TEXT_SIGNATURE}</button>
                         </div>
 
                         <div class="image-signature-option p-3 border border-secondary rounded bg-light">
-                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_TITLE}</h4>
+                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">
+                                {$MODS.LBL_PORTAL_UPLOAD_IMAGE_TITLE}</h4>
                             <div class="mb-3">
                                 <label for="imageSignatureInput"
                                     class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_IMAGE_FILE_SELECTION}:</label>
                                 <input type="file" id="imageSignatureInput" accept="image/png, image/jpeg"
                                     class="form-control text-dark">
                             </div>
-                            <button id="uploadImageSignatureBtn" class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_SIGNATURE}</button>
+                            <button id="uploadImageSignatureBtn"
+                                class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_SIGNATURE}</button>
                         </div>
                     </div>
                 </section>
@@ -129,13 +138,15 @@
 
                 { if $SIGNATURE_MODE === 'button' }
                 <section id="buttonAcceptationArea" class="mt-4">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ACCEPTANCE_AREA}</h2>
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ACCEPTANCE_AREA}
+                    </h2>
                     <p class="text-sm text-secondary mb-3 text-center">
                         {$MODS.LBL_PORTAL_ACCEPTANCE_INSTRUCTION}
                     </p>
 
                     <div class="action-buttons d-flex justify-content-center mt-3">
-                        <button id="acceptDocumentBtn" class="btn btn-primary w-100 max-w-sm" disabled>{$MODS.LBL_PORTAL_ACCEPT_AND_SIGN_BTN}</button>
+                        <button id="acceptDocumentBtn" class="btn btn-primary w-100 max-w-sm"
+                            disabled>{$MODS.LBL_PORTAL_ACCEPT_AND_SIGN_BTN}</button>
                     </div>
                 </section>
                 { /if }
@@ -144,7 +155,8 @@
 
                 { if $STATUS === 'signed' }
                 <section class="signed-area text-center mt-4">
-                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">{$MO.LBL_PORTAL_DOCUMENT_SIGNED}</h1>
+                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">{$MO.LBL_PORTAL_DOCUMENT_SIGNED}
+                    </h1>
                     <div class="text-center mb-4"><i class="bi bi-check-circle-fill text-success text-center"
                             style="font-size: 4rem;"></i></div>
                     <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}" target="_blank" rel="noopener noreferrer"><i
@@ -152,7 +164,7 @@
                     <button id="send-signed-pdf-by-email" class="btn btn-primary mt-3"><i
                             class="bi bi-envelope-at-fill"></i> {$MODS.LBL_PORTAL_SEND_COPY_EMAIL}</button>
                     <p class="text-sm text-secondary mt-3">
-                        {$MODS.LBL_PORTAL_VERIFICATION_CODE_INFO} 
+                        {$MODS.LBL_PORTAL_VERIFICATION_CODE_INFO}
                     </p>
                     <div class="verification-code bg-light p-2 rounded mt-2 d-inline-block">
                         <code class="text-break font-monospace">{$SIGNER_VERIFICATION_CODE}</code> <i
@@ -196,7 +208,8 @@
 
                 { if $OTP_REQUIRED === true && $SHOW_PORTAL !== true }
                 <section class="otp-area max-w-md mx-auto mt-4">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_VERIFICATION_CODE}</h2>
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">
+                        {$MODS.LBL_PORTAL_VERIFICATION_CODE}</h2>
                     { if isset($OTP_ERROR_MSG) && !empty($OTP_ERROR_MSG) }
                     <p class="alert alert-danger mb-4">
                         <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$OTP_ERROR_MSG}
@@ -235,6 +248,35 @@
                     </div>
                 </section>
                 {$JAVASCRIPT_OTP}
+                {/if}
+
+                { if $FIELD_VALIDATION_REQUIRED === true && $SHOW_PORTAL !== true }
+                <section class="field-validation-area max-w-md mx-auto mt-4">
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">
+                        {$MODS.LBL_PORTAL_FIELD_VALIDATION}</h2> 
+                    { if isset($FIELD_VALIDATION_ERROR_MSG) && !empty($FIELD_VALIDATION_ERROR_MSG) }
+                    <p class="alert alert-danger mb-4">
+                        <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$FIELD_VALIDATION_ERROR_MSG}
+                    </p>
+                    {/if}
+                    <p class="text-sm text-secondary mb-3 text-center">
+                        {$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}
+                    </p>
+                    <form id="fieldValidationForm" method="post" action="">
+                        <div class="mb-3">
+                            <label for="validationFieldInput"
+                                class="form-label text-sm font-weight-medium text-dark mb-1">{$FIELD_VALIDATION_LABEL}:</label>
+                            <input type="text" id="validationFieldInput" name="validation_field_value" required pattern="{$FIELD_VALIDATION_REGEXP}"
+                                class="form-control text-dark" value="{$PREVIOUS_FIELD_VALUE}">
+                        </div>
+                    </form>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <button type="submit" form="fieldValidationForm"
+                            class="btn btn-primary py-2 px-3 mt-3 mt-lg-0 ml-lg-3">
+                            {$MODS.LBL_PORTAL_VALIDATE_FIELD_BTN}
+                        </button>
+                    </div>
+                </section>
                 {/if}
             </div>
             {/if}

@@ -153,6 +153,12 @@ $mod_strings = array(
     'LBL_PORTAL_EMAIL_SENT' => 'Email sent',
     'LBL_PORTAL_PDF_SENT_SUCCESSFULLY' => 'The signed document has been sent to your email address.',
     'LBL_PORTAL_PDF_SEND_ERROR' => 'An error occurred while sending the signed document by email.',
+    'LBL_PORTAL_FIELD_VALIDATION' => 'Field Validation',
+    'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'Please, to continue, provide the value for the following validation field:',
+    'LBL_PORTAL_VALIDATE_FIELD_BTN' => 'Validate Field',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'Mobile Phone (9 digits)',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_ID_NUMBER' => 'ID Number',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'Birthdate',
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Digital Signature Audit Page',

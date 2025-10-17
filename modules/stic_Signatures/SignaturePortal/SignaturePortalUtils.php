@@ -135,11 +135,40 @@ class stic_SignaturePortalUtils
         }
     }
 
+    /**
+     * Verifies the provided OTP code against the signer's stored OTP and expiration.
+     *
+     * @param object $signerBean The signer bean object.
+     * @param string $otpCode The OTP code to verify.
+     * @return bool True if the OTP code is valid and not expired, false otherwise.
+     */
     public static function verifyOtpCode($signerBean, $otpCode)
     {
 
         $expireDatetime = $signerBean->db->getOne("SELECT otp_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
         if ($signerBean->otp === $otpCode && $expireDatetime >= date('Y-m-d H:i:s')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function verifyFieldValidation($signerBean, $fieldValue)
+    {
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        switch ($signatureBean->auth_method) {
+            case 'phone':
+                $expectedValue = $signerBean->phone;
+                break;
+            case 'id_number':
+                $expectedValue = $signerBean->id_number;
+                break;
+            default:
+                
+                break;
+        }
+
+        if ($expectedValue === $fieldValue) {
             return true;
         } else {
             return false;

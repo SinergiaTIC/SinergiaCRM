@@ -153,6 +153,12 @@ $mod_strings = array(
     'LBL_PORTAL_EMAIL_SENT' => 'Correo enviado',
     'LBL_PORTAL_PDF_SENT_SUCCESSFULLY' => 'O documento asinado foi enviado ao seu enderezo de correo electrónico.',
     'LBL_PORTAL_PDF_SEND_ERROR' => 'Houbo un erro ao enviar o documento asinado por correo electrónico.',
+    'LBL_PORTAL_FIELD_VALIDATION' => 'Validación de Campo',
+    'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'Por favor, para continuar indique o valor do seguinte campo de validación:',
+    'LBL_PORTAL_VALIDATE_FIELD_BTN' => 'Validar Campo',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'Teléfono móbil (9 díxitos)',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_ID_NUMBER' => 'Número de identificación',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'Data de nacemento',
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de Auditoría de Sinatura Dixital',

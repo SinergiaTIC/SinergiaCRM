@@ -262,7 +262,7 @@ class stic_SignaturesUtils
                         'id' => $signer->id,
                         'name' => $signer->name,
                         'email' => $signer->email1 ?? '',
-                        'phone' => $signer->phone_work ?? $signer->phone_mobile ?? '', // Prioritize work phone, then mobile
+                        'phone' => $signer->phone_mobile ?? '', // Prioritize work phone, then mobile
                     ];
                 }
             }

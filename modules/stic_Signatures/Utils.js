@@ -83,15 +83,8 @@ switch (viewType()) {
 
     break;
   case "detail":
-    // Add the button to the detail view.
-    var buttons = {
-      notifyByCampaign: {
-        id: 'notify_by_campaign',
-        title: "🔊" + SUGAR.language.get("stic_Signatures", "LBL_SIGNATURE_NOTIFY_BY_CAMPAIGN"),
-        onclick: "window.location='index.php?module=stic_Signatures&action=createCampaignFromSignature&signatureId=" + STIC.record.id + "'"
-      },
-    };
-    createDetailViewButton(buttons.notifyByCampaign); break;
+    // No specific custom logic for detail view in this section.
+    break;
   case "list":
     // No specific custom logic for list view in this section.
     break;

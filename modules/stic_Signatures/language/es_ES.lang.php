@@ -154,6 +154,12 @@ $mod_strings = array(
     'LBL_PORTAL_EMAIL_SENT' => 'Correo enviado',
     'LBL_PORTAL_PDF_SENT_SUCCESSFULLY' => 'El documento firmado ha sido enviado a su correo electrónico.',
     'LBL_PORTAL_PDF_SEND_ERROR' => 'Ha habido un error al enviar el documento firmado por correo electrónico.',
+    'LBL_PORTAL_FIELD_VALIDATION' => 'Validación de Campo',
+    'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'Por favor, para continuar indique el valor del siguiente campo de validación:',
+    'LBL_PORTAL_VALIDATE_FIELD_BTN' => 'Validar Campo',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'Teléfono móvil (9 dígitos)',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_ID_NUMBER' => 'Número de identificación',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'Fecha de nacimiento',
 
     // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Página de Auditoría de Firma Digital',

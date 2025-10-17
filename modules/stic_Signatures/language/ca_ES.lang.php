@@ -153,6 +153,12 @@ $mod_strings = array(
     'LBL_PORTAL_EMAIL_SENT' => 'Correu enviat',
     'LBL_PORTAL_PDF_SENT_SUCCESSFULLY' => 'El document signat ha estat enviat al teu correu electrònic.',
     'LBL_PORTAL_PDF_SEND_ERROR' => 'S\'ha produït un error en enviar el document signat per correu electrònic.',
+    'LBL_PORTAL_FIELD_VALIDATION' => 'Validació de Camp',
+    'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'Per favor, per continuar indiqueu el valor del següent camp de validació:',
+    'LBL_PORTAL_VALIDATE_FIELD_BTN' => 'Validar Camp',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'Telèfon mòbil (9 dígits)',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_ID_NUMBER' => 'Número de identificació',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'Data de naixement',
 
     // Audit Page
     'LBL_AUDIT_PAGE_TITLE' => 'Pàgina d\'Auditoria de Firma Digital',
