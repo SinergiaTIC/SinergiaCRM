@@ -8,23 +8,6 @@ function wizardForm(readOnly) {
     bean: STIC.record || {},
     formConfig: {},
 
-    // [name, text, textSingular, inStudio, icon]
-    step1: {},
-    step2: {
-      allDatablockRelationships: {},
-      loadDatablockRelationships() {
-        this.allDatablockRelationships = window.alpineComponent.formConfig.getAllDataBlockRelationships();
-      },
-      usedDatablockRelationships(datablockId) {
-        return this.allDatablockRelationships[datablockId].filter(r => r.datablock_orig != '' && r.datablock_dest != '');
-      },
-      unusedDatablockRelationships(datablockId) {
-        return this.allDatablockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
-      },
-    },
-    step3: {},
-    step4: {},
-
     async initWizard() {
       // Set Context accessible
       window.alpineComponent = this;
@@ -167,124 +150,161 @@ function handle_open_popup(popup_reply_data) {
 }
 
 class WizardStep2 {
-  static generalDatablocksxData() {
+  static mainStep2xData() {
     return {
       init() {
+        // Store for the Datablock relationship management
+        if (!Alpine.store('dataBlockRelationships')) {
+          Alpine.store('dataBlockRelationships', {
+            get formConfig() { return window.alpineComponent.formConfig; },
+
+            _dataBlockRelationships: null,
+            get dataBlockRelationships() { 
+              if (this._dataBlockRelationships == null) {
+                this._dataBlockRelationships = this.formConfig.getAllDataBlockRelationships(); 
+              }
+              return this._dataBlockRelationships;
+            },
+            resetDataBlockRelationships() {
+              this._dataBlockRelationships = null;
+            },
+            usedDatablockRelationships(datablockId) {
+              return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig != '' && r.datablock_dest != '');
+            },
+            unusedDatablockRelationships(datablockId) {
+              return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
+            },
+          });
+        }
+
         // Store for the Field Editor management
-        Alpine.store('fieldEditor', {
-          isOpen: false,           // Indica si está abierto el editor de campos
-          isEdit: false,           // Indica si es modo edición (false: modo creación)
-          field: new AWF_Field(),  // Copia de los datos del campo
-          dataBlock: null,         // El bloque de datos del campo
-          needDeleteOld: false,    // Indica si es necesario eliminar el campo anterior antes de guardar
-          original_name: '',       // Nombre original del campo
+        if (!Alpine.store('fieldEditor')) {
+          Alpine.store('fieldEditor', {
+            isOpen: false,           // Indica si está abierto el editor de campos
+            isEdit: false,           // Indica si es modo edición (false: modo creación)
+            field: new AWF_Field(),  // Copia de los datos del campo
+            dataBlock: null,         // El bloque de datos del campo
+            needDeleteOld: false,    // Indica si es necesario eliminar el campo anterior antes de guardar
+            original_name: '',       // Nombre original del campo
 
-          /**
-           * Retorna si es un campo nuevo
-           * @returns {boolean}
-           */
-          get isNewField() { return this.original_name === ''; },
+            /**
+             * Retorna si es un campo nuevo
+             * @returns {boolean}
+             */
+            get isNewField() { return this.original_name === ''; },
 
-          /**
-           * Retorna el título del editor
-           */
-          get title() {
-            if (!this.field) return '';
+            /**
+             * Retorna el título del editor
+             */
+            get title() {
+              if (!this.field) return '';
 
-            if (this.isNewField) {
-              switch (this.field.type_field) {
-                case 'form':
-                  return utils.translate('LBL_NEW_FIELD_FORM');
-                case 'unlinked':
-                  return utils.translate('LBL_NEW_FIELD_UNLINKED');
-                case 'hidden':
-                  return utils.translate('LBL_NEW_FIELD_HIDDEN');
+              if (this.isNewField) {
+                switch (this.field.type_field) {
+                  case 'form':
+                    return utils.translate('LBL_NEW_FIELD_FORM');
+                  case 'unlinked':
+                    return utils.translate('LBL_NEW_FIELD_UNLINKED');
+                  case 'hidden':
+                    return utils.translate('LBL_NEW_FIELD_HIDDEN');
+                }
+              } else {
+                let title = "";
+                switch (this.field.type_field) {
+                  case 'form':
+                    title += utils.translate('LBL_FIELD_FORM') + ' » ';
+                    break;
+                  case 'unlinked':
+                    title += utils.translate('LBL_FIELD_UNLINKED') + ' » ';
+                    break;
+                  case 'hidden':
+                    title += utils.translate('LBL_FIELD_HIDDEN') + ' » ';
+                }
+                title += this.field.text_original;
+                return title;
               }
-            } else {
-              let title = "";
-              switch (this.field.type_field) {
-                case 'form':
-                  title += utils.translate('LBL_FIELD_FORM') + ' » ';
-                  break;
-                case 'unlinked':
-                  title += utils.translate('LBL_FIELD_UNLINKED') + ' » ';
-                  break;
-                case 'hidden':
-                  title += utils.translate('LBL_FIELD_HIDDEN') + ' » ';
-              }
-              title += this.field.text_original;
-              return title;
-            }
-          },
-          /**
-           * Retorna el tubtítulo del editor
-           */
-          get subtitle() {
-            return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();
-          },
+            },
+            /**
+             * Retorna el tubtítulo del editor
+             */
+            get subtitle() {
+              return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();
+            },
 
-          /**
-           * Abre el Modal para Crear un campo
-           * @param {AWF_DataBlock} dataBlock El Bloque de datos
-           * @param {string} type Tipo de campo: unlinked, form, hidden
-           */
-          openCreate(dataBlock, type) {
-            this.isEdit = false;
-            this._open(dataBlock, null, type);
-          },
+            /**
+             * Abre el Modal para Crear un campo
+             * @param {AWF_DataBlock} dataBlock El Bloque de datos
+             * @param {string} type Tipo de campo: unlinked, form, hidden
+             */
+            openCreate(dataBlock, type) {
+              this.isEdit = false;
+              this._open(dataBlock, null, type);
+            },
 
-          /**
-           * Abre el Modal para Editar un campo
-           * @param {AWF_DataBlock} dataBlock El Bloque de datos
-           * @param {AWF_Field} fieldData El campo
-           */
-          openEdit(dataBlock, field) {
-            this.isEdit = true;
-            this._open(dataBlock, field, '');
-          },
+            /**
+             * Abre el Modal para Editar un campo
+             * @param {AWF_DataBlock} dataBlock El Bloque de datos
+             * @param {AWF_Field} fieldData El campo
+             */
+            openEdit(dataBlock, field) {
+              this.isEdit = true;
+              this._open(dataBlock, field, '');
+            },
 
-          /**
-           * Abre el Modal para editar o crear un campo
-           * @param {AWF_DataBlock} dataBlock El Bloque de datos
-           * @param {AWF_Field} fieldData El campo
-           * @param {string} type Tipo de campo: unlinked, form, hidden
-           */
-          _open(dataBlock, fieldData, type) {
-            this.dataBlock = dataBlock;
-            this.field = new AWF_Field(fieldData || {type_field: type});
-            this.original_name = this.field.name;
-            this.needDeleteOld = false;
-            this.isOpen = true;
-          },
+            /**
+             * Abre el Modal para editar o crear un campo
+             * @param {AWF_DataBlock} dataBlock El Bloque de datos
+             * @param {AWF_Field} fieldData El campo
+             * @param {string} type Tipo de campo: unlinked, form, hidden
+             */
+            _open(dataBlock, fieldData, type) {
+              this.dataBlock = dataBlock;
+              this.field = new AWF_Field(fieldData || {type_field: type});
+              this.original_name = this.field.name;
+              this.needDeleteOld = false;
+              this.isOpen = true;
+            },
 
-          /**
-           * Cierra el modal de edición de un campo
-           */
-          close() {
-            this.isOpen = false;
-            this.dataBlock = null;
-            this.field = null;
-            this.original_name = '';
-            this.needDeleteOld = false
-          },
+            /**
+             * Cierra el modal de edición de un campo
+             */
+            close() {
+              this.isOpen = false;
+              this.dataBlock = null;
+              this.field = null;
+              this.original_name = '';
+              this.needDeleteOld = false
+            },
 
-          /**
-           * Guarda los cambios de la edición (o creación) de un campo
-           */
-          saveChanges() {
-            if (this.isNewField) {
-              this.dataBlock.addField(this.field);
-            } else {
-              if (this.needDeleteOld) {
-                this.dataBlock.deleteField(this.field.name);
+            /**
+             * Guarda los cambios de la edición (o creación) de un campo
+             */
+            saveChanges() {
+              if (this.isNewField) {
                 this.dataBlock.addField(this.field);
               } else {
-                this.dataBlock.updateField(this.original_name, this.field);
+                if (this.needDeleteOld) {
+                  this.dataBlock.deleteField(this.field.name);
+                  this.dataBlock.addField(this.field);
+                } else {
+                  this.dataBlock.updateField(this.original_name, this.field);
+                }
               }
-            }
-            this.close();
-          },
-        });
+              this.close();
+            },
+          });
+        }
+      },
+    };
+  }
+
+  static generalDatablocksxData(initial_formConfig) {
+    return {
+      formConfig: initial_formConfig,
+
+      deleteDataBlock(dataBlock) {
+        this.formConfig.deleteDataBlock(dataBlock);
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
       },
     };
   }
@@ -311,10 +331,9 @@ class WizardStep2 {
     };
   }
 
-  static addDataBlockModulexData(initial_formConfig, initial_step2) {
+  static addDataBlockModulexData(initial_formConfig) {
     return {
       formConfig: initial_formConfig,
-      step2: initial_step2,
 
       creatingDataBlock: false,
 
@@ -326,7 +345,7 @@ class WizardStep2 {
       handleAddDatablockModule() {
         this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
         this.creatingDataBlock = false;
-        this.step2.loadDatablockRelationships();
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
       },
 
       init() {
@@ -625,10 +644,9 @@ class WizardStep2 {
   }
 
 
-  static addRelationshipxData(dataBlock, initial_formConfig, initial_step2) {
+  static addRelationshipxData(dataBlock, initial_formConfig) {
     return {
       formConfig: initial_formConfig,
-      step2: initial_step2,
 
       creatingRelDataBlock: false,
       availableRels: [],
@@ -639,7 +657,7 @@ class WizardStep2 {
       relNewDataBlock:false,
 
       async loadRelations() {
-        this.availableRels = this.step2.unusedDatablockRelationships(dataBlock.id);
+        this.availableRels = Alpine.store('dataBlockRelationships').unusedDatablockRelationships(dataBlock.id);
         this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
         this.availableDataBlocks = [];
         this.selectedDataBlockId = '';
@@ -660,7 +678,7 @@ class WizardStep2 {
       },
       async handleCreateRelationship(){
         this.formConfig.addDataBlockRelationship(dataBlock.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
-        this.step2.loadDatablockRelationships();
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
         this.creatingRelDataBlock = false;
       },
     };

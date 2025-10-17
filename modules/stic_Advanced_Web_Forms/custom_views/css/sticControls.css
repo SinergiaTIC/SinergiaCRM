@@ -135,6 +135,11 @@ label, .form-label {
   font-weight: bold;
 }
 
+.datablock.has-errors, tr.has-errors td {
+  color: red !important;
+  font-style: italic;
+}
+
 label.field-required::after {
   content: " *";
   color: red;

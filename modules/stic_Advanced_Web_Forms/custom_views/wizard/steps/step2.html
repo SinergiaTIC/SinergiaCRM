@@ -1,7 +1,7 @@
 <!-- Main Panel -->
-<main class="wizard-main flex-fill d-flex flex-column">
+<main class="wizard-main flex-fill d-flex flex-column" x-data="WizardStep2.mainStep2xData();">
   <!-- Add DataBlock from Module -->
-  <div class="row mb-3" x-data="WizardStep2.addDataBlockModulexData(formConfig, step2);">
+  <div class="row mb-3" x-data="WizardStep2.addDataBlockModulexData(formConfig);">
     <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" x-text="utils.translate('LBL_ADD_DATABLOCK')"></button>
 
     <!-- Modal: Create DataBlock -->
@@ -36,15 +36,14 @@
     </div>
   </div>
   <!-- Data Blocks -->
-  <div class="flex-fill border rounded p-2 overflow-auto" x-data="WizardStep2.generalDatablocksxData();" @keydown.escape.window="$store.fieldEditor.close();"
-       x-init="step2.loadDatablockRelationships();">
+  <div class="flex-fill border rounded p-2 overflow-auto" x-data="WizardStep2.generalDatablocksxData(formConfig);" @keydown.escape.window="$store.fieldEditor.close();">
     <h2 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')"></h2>
     <!-- Main Content -->
 
     <!-- DataBlocks -->
     <template x-for="item in formConfig.data_blocks" :key="item.id">
       <!-- DataBlock -->
-      <div class="card datablock">
+      <div class="card datablock" :class="{'has-errors':!item.isValid()}">
         <!-- DataBlock header -->
         <div class="card-header d-flex flex-column">
           <div class="d-flex justify-content-start datablock-module">
@@ -56,7 +55,7 @@
             <div class="d-inline-flex">
               <!-- Delete DataBlock -->
               <template x-if="!item.required">
-                <button type="button" class="btn ms-2" @click="deleteDataBlock(item.id);"
+                <button type="button" class="btn ms-2" @click="deleteDataBlock(item);"
                         :title="utils.translate('LBL_ACTION_DELETE')">
                   <span class="suitepicon suitepicon-action-delete"></span>
                 </button>
@@ -119,7 +118,7 @@
                   <tbody>
                     <template x-for="(field, index) in item.fields">
                       <template x-if="canShowField(field)">
-                        <tr>
+                        <tr :class="{'has-errors':!field.isValid()}">
                           <!-- Field -->
                           <td x-show="canShowFieldColumn('text_original')">
                             <i x-show="field?.type_field == 'unlinked'" x-text="'[ ' + field.text_original +' ]'"></i>
@@ -246,12 +245,12 @@
                 <div class="text-muted form-check form-switch mt-3" :id="`dataRelationshipsDetails${item.id}`" data-model="showRelationshipsTable" 
                      data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
                 <div class="card p-2 overflow-auto" x-show="showRelationshipsTable">
-                  <div class="mt-3" :id="`dataBlockRelsTable${item.id}`" :data-objects="`step2.usedDatablockRelationships('${item.id}')`"
+                  <div class="mt-3" :id="`dataBlockRelsTable${item.id}`" :data-objects="`$store.dataBlockRelationships.usedDatablockRelationships('${item.id}')`"
                        x-init="sticControls.elemTableObjects($el);"></div>
                 </div>
               </div>
               <!-- Add Relationship -->
-              <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="WizardStep2.addRelationshipxData(item, formConfig, step2);">
+              <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="WizardStep2.addRelationshipxData(item, formConfig);">
                 <div class="row">
                   <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()" x-text="'[Añadir Relación con otro Bloque de Datos]'"></button>
                   <h4 x-show="creatingRelDataBlock" x-text="'[Añadir Relación con otro Bloque de Datos]'"></h4>
@@ -610,7 +609,7 @@
       </div>
       <!-- Relationships -->
       <div id="detailsRelationships">
-        <div class="mt-3" id="relationshipsTable" data-objects="step2.allDatablockRelationships" data-model="step2.allDatablockRelationships" 
+        <div class="mt-3" id="relationshipsTable" data-objects="$store.dataBlockRelationships.datablockRelationships" data-model="$store.dataBlockRelationships.datablockRelationships" 
              x-init="sticControls.elemListObject($el);"></div>
       </div>
       <!-- Tab Headers -->

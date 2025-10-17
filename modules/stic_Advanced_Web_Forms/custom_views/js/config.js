@@ -32,6 +32,12 @@ class AWF_DataBlock {
     }
   }
 
+  isValid() {
+    if ((this.name??"").trim()=='') return false;
+    if ((this.text??"").trim()=='') return false;
+    return this.fields.every(f => f.isValid());
+  }
+
   /**
    * Gets the module information of the current DataBlock
    * @returns {object} ModuleInformation 
@@ -88,6 +94,8 @@ class AWF_DataBlock {
         type_field = 'hidden';
       }
       field.updateWithFieldInformation(moduleField, type_field);
+      field.setValueOptions(utils.getFieldOptions(moduleField));
+
       field = this.addField(field);
     }
     // Update field info
@@ -270,6 +278,7 @@ class AWF_Field {
     this.value_text = "";
 
     this.type_in_form = this.getAvailableTypesInForm()[0]?.id;
+    this.subtype_in_form = this.getAvailableSubtypesInForm()[0]?.id;
     this.value_type = this.getAvailableValueTypes()[0]?.id;
     if (this.value_type != 'selectable' && this.value_type != 'fixed') {
       // Reset value_options
@@ -279,6 +288,7 @@ class AWF_Field {
       this.label = '';
       this.required_in_form = false;
       this.type_in_form = '';
+      this.subtype_in_form = '';
     }
 
     this.in_form = this.type_field != 'hidden';
@@ -301,13 +311,14 @@ class AWF_Field {
   }
 
   isValid() {
-    if ((this.name??"").trim()=='')  return false;
+    if ((this.name??"").trim()=='') return false;
 
     if (this.isFieldInForm()) {
       if (this.label.trim() == '') return false;
       if (this.type_in_form == '') return false;
       if (this.value_type == 'fixed' || this.value_type == 'dataBlock') return false;
       if (this.value_type == 'selectable' && this.value_options.length == 0) return false;
+      if (this.value_type == 'selectable' && this.value_options.every(o => !o.is_visible)) return false;
       return true;
     } else {
       if (this.value_type == 'editable' || this.value_type == 'selectable') return false;
@@ -585,7 +596,6 @@ class AWF_Layout {
   }  
 }
 
-
 class AWF_Configuration {
   constructor(data = {}) {
     // 1. Set default values
@@ -726,6 +736,23 @@ class AWF_Configuration {
     this.data_blocks.push(dataBlock);
 
     return dataBlock;
+  }
+
+  /**
+   * Deletes a DataBlock, removing all field references to the DataBlock
+   * @param {AWF_DataBlock} dataBlock 
+   */
+  deleteDataBlock(dataBlock) {
+    // Reset all fields pointing to this DataBlock
+    this.data_blocks.forEach(d => {
+      d.fields.filter(f => f.value_type == 'dataBlock' && f.value == dataBlock.id).forEach(f => {
+        f.value = '';
+        f.value_text = '';
+      });
+    });
+
+    // Remove DataBlock
+    this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
   }
 
   /**
