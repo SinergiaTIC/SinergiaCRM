@@ -255,7 +255,7 @@ class stic_SignersUtils
                 AND parent_id = '{$contact_id}'
                 AND status in ('pending','signed')
                 AND deleted = 0 
-            ORDER BY stic_signers.date_modified DESC
+            ORDER BY date_modified DESC
         ";
         return $query;
     }
@@ -293,7 +293,7 @@ class stic_SignersUtils
                 AND parent_id = '{$user_id}'
                 AND status in ('pending','signed')
                 AND deleted = 0 
-            ORDER BY stic_signers.date_modified DESC
+            ORDER BY date_modified DESC
         ";
         return $query;
     }
