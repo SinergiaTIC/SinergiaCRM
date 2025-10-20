@@ -153,18 +153,45 @@ class stic_SignaturePortalUtils
         }
     }
 
+    /**
+     * Verifies the provided field value against the signer's expected value based on the authentication method.
+     *
+     * @param object $signerBean The signer bean object.
+     * @param string $fieldValue The field value to verify.
+     * @return bool True if the field value matches the expected value, false otherwise.
+     */
     public static function verifyFieldValidation($signerBean, $fieldValue)
     {
+        $fieldValue = strtoupper(trim($fieldValue));
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        // Get the related Users or Contacts bean based on signer_path
+        $userOrContactsModule = explode(':', $signatureBean->signer_path)[0];
+        if ($userOrContactsModule === 'Users') {
+            $userOrContactsBean = BeanFactory::getBean('Users', $signerBean->record_id);
+        } else {
+            $userOrContactsBean = BeanFactory::getBean('Contacts', $signerBean->record_id);
+        }
+
+        if (!$userOrContactsBean || empty($userOrContactsBean->id)) {
+            return false;
+        }
+
+        // Determine the expected value based on the authentication method
+        $expectedValue = '';
         switch ($signatureBean->auth_method) {
             case 'phone':
                 $expectedValue = $signerBean->phone;
                 break;
-            case 'id_number':
-                $expectedValue = $signerBean->id_number;
+            case 'identification_number':
+                // remove spaces and dashes for comparison and set in uppercase
+                $expectedValue = strtoupper(str_replace([' ', '-'], '', $userOrContactsBean->stic_identification_number_c));
+                break;
+            case 'birthdate':
+                // Format the birthdate to match the expected format (DD/MM/YYYY)
+                $expectedValue = date('d/m/Y', strtotime($userOrContactsBean->birthdate));
                 break;
             default:
-                
+                return false;
                 break;
         }
 

@@ -3768,7 +3768,7 @@ $app_list_strings['stic_signatures_status_list']['expired'] = 'Vençuda';
 $app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enllaç únic';
 $app_list_strings['stic_signatures_auth_methods_list']['otp'] = "Codi d'un sol ús";
 $app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Telèfon';
-$app_list_strings['stic_signatures_auth_methods_list']['id_number'] = "Número d'identificació";
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = "Número d'identificació";
 $app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Data de naixement';
 
 // Signaturas: Tipus de signatura

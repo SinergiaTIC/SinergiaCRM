@@ -3765,7 +3765,7 @@ $app_list_strings['stic_signatures_status_list']['expired'] = 'Vencida';
 $app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enlace único';
 $app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código de un solo uso';
 $app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Teléfono';
-$app_list_strings['stic_signatures_auth_methods_list']['id_number'] = 'Número de identificación';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Número de identificación';
 $app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Fecha de nacimiento';
 
 // Firmas: Tipos de firma

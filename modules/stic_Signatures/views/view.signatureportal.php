@@ -127,21 +127,31 @@ class stic_SignaturePortal extends SugarView
                 }
                 break;
             case 'phone':
+            case 'identification_number':
+            case 'birthdate':
                 $this->ss->assign('FIELD_VALIDATION_REQUIRED', true);
-                if ($stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_REQUEST['field_value'] ?? '')) {
+                if ($stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_REQUEST['field-value'] ?? '')) {
                     $passed = true;
                 } else {
-                    if (isset($_REQUEST['field_name'])) {
+                    if (isset($_REQUEST['field-value'])) {
                         $errorMsg = 'El valor proporcionado no es válido. Por favor, inténtalo de nuevo.';
                         $this->ss->assign('FIELD_ERROR_MSG', $errorMsg);
+                        $this->ss->assign('PREVIOUS_FIELD_VALUE', $_REQUEST['field-value']);
                     }
                     $this->ss->assign('FIELD_VALIDATION_LABEL', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_' . strtoupper($signatureBean->auth_method)]);
+                    $this->ss->assign('FIELD_VALIDATION_LABEL_FORMAT', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_' . strtoupper($signatureBean->auth_method)]);
                     $this->ss->assign('FIELD_REQUIRED', true);
-                    // asignamos una variable con la validación regular correspondiente a 9 dígitos
-                    $this->ss->assign('FIELD_VALIDATION_REGEXP', '[0-9]{9}');
-                    // $this->ss->assign('FIELD_LABEL', $stic_SignaturePortalUtils::getFieldLabel($signatureBean));
+                    
+                    if ($signatureBean->auth_method === 'birthdate') {
+                        $this->ss->assign('FIELD_VALIDATION_REGEXP', '^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$');
+                    } elseif ($signatureBean->auth_method === 'identification_number') {
+                        $this->ss->assign('FIELD_VALIDATION_REGEXP', '^[A-Za-z0-9]*$');
+                    } elseif ($signatureBean->auth_method === 'phone') {
+                        $this->ss->assign('FIELD_VALIDATION_REGEXP', '[0-9]{9}');
+                    }
                 }
                 break;
+            
             default:
                 $errorMsg = 'El modo de autenticación no es válido.';
                 $this->ss->assign('ERROR_MSG', $errorMsg);
@@ -195,7 +205,7 @@ class stic_SignaturePortal extends SugarView
 
         $this->ss->assign('STYLESHEETS', '<link rel="stylesheet" href="modules/stic_Signatures/SignaturePortal/SignaturePortal.css">');
         $this->ss->assign('JAVASCRIPT', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortal.js"></script>');
-        $this->ss->assign('JAVASCRIPT_OTP', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortalOtp.js"></script>');
+        $this->ss->assign('JAVASCRIPT_VALIDATION', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortalValidation.js"></script>');
 
         // Load the Smarty template
         // The path should be relative to the SuiteCRM base directory

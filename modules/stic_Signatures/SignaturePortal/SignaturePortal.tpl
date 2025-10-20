@@ -247,7 +247,7 @@
                         </button>
                     </div>
                 </section>
-                {$JAVASCRIPT_OTP}
+                {$JAVASCRIPT_VALIDATION}
                 {/if}
 
                 { if $FIELD_VALIDATION_REQUIRED === true && $SHOW_PORTAL !== true }
@@ -259,24 +259,23 @@
                         <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$FIELD_VALIDATION_ERROR_MSG}
                     </p>
                     {/if}
-                    <p class="text-sm text-secondary mb-3 text-center">
-                        {$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}
-                    </p>
                     <form id="fieldValidationForm" method="post" action="">
                         <div class="mb-3">
-                            <label for="validationFieldInput"
-                                class="form-label text-sm font-weight-medium text-dark mb-1">{$FIELD_VALIDATION_LABEL}:</label>
+                            <label for="validationFieldInput" class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}<strong> {$FIELD_VALIDATION_LABEL}</strong><span class="text-muted"> ({$FIELD_VALIDATION_LABEL_FORMAT}):</span></label>
                             <input type="text" id="validationFieldInput" name="validation_field_value" required pattern="{$FIELD_VALIDATION_REGEXP}"
-                                class="form-control text-dark" value="{$PREVIOUS_FIELD_VALUE}">
+                                class="form-control text-center text-xl font-weight-bold" value="{$PREVIOUS_FIELD_VALUE}">
+                            <span class="text-danger">{$FIELD_ERROR_MSG}</span>    
                         </div>
                     </form>
                     <div class="d-flex justify-content-center align-items-center">
                         <button type="submit" form="fieldValidationForm"
                             class="btn btn-primary py-2 px-3 mt-3 mt-lg-0 ml-lg-3">
                             {$MODS.LBL_PORTAL_VALIDATE_FIELD_BTN}
+                            <i class="bi bi-arrow-right"></i>
                         </button>
                     </div>
                 </section>
+                {$JAVASCRIPT_VALIDATION}
                 {/if}
             </div>
             {/if}

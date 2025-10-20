@@ -3735,7 +3735,7 @@ $app_list_strings['stic_signatures_status_list']['expired'] = 'Expired';
 $app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Unique Link';
 $app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'One-Time Password';
 $app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Phone';
-$app_list_strings['stic_signatures_auth_methods_list']['id_number'] = 'Identification Number';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Identification Number';
 $app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Date of Birth';
 
 // Signatures: Types of signatures
