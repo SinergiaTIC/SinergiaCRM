@@ -88,6 +88,11 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
         }
 
+        if($signerBean->status === 'unnecessary') {
+            $this->ss->assign('UNNECESSARY_TEXT', true);
+        }
+
+
         $this->ss->assign('SIGNATURE_MODE', $signatureBean->signature_mode ?? 'handwritten');
 
         // Get authentication mode

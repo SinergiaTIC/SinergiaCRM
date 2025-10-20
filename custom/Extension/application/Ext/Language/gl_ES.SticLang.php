@@ -3791,6 +3791,7 @@ $app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
 $app_list_strings['stic_signers_status_list']['rejected'] = 'Rechazado';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Caducado';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Ya no se necesita la firma';
 
 // Registro de firmas: Acciones
 $app_list_strings['stic_signature_log_actions'][''] = '';
@@ -3803,7 +3804,7 @@ $app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electró
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF asinado descargado';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF asinado enviado por correo electrónico';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Sinatura caducada';
-$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por otra persona autorizada';
 
 // Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';

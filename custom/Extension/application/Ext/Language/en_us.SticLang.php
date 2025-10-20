@@ -3759,6 +3759,8 @@ $app_list_strings['stic_signers_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Signed';
 $app_list_strings['stic_signers_status_list']['rejected'] = 'Rejected';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Expired';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Signature not necessary';
+
 
 // Signature logs: Actions
 $app_list_strings['stic_signature_log_actions'][''] = '';    
@@ -3772,6 +3774,8 @@ $app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] =  'S
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Signed document downloaded by signer';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Signed document sent to signer by email';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signature process expired';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document signed by another authorized person';
+
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaign';

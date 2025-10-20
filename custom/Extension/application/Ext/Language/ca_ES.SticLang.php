@@ -3792,6 +3792,9 @@ $app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmat';
 $app_list_strings['stic_signers_status_list']['rejected'] = 'Rebutjat';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Vençut';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Ja no se necessita la firma';
+
+
 
 // Registre de Signatures: Accions
 $app_list_strings['stic_signature_log_actions'][''] = '';    
@@ -3805,7 +3808,7 @@ $app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Po
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF signat descarregat pel signant';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF signat enviat al signant';  
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signatura vençuda';
-$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document firmat per altra persona autoritzada';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';

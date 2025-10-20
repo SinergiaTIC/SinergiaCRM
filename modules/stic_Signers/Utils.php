@@ -229,13 +229,13 @@ class stic_SignersUtils
  */
     public static function getSticSignersForContacts()
     {
-        $contact_id =  $_REQUEST['record'];
+        $contact_id = $_REQUEST['record'];
         if (empty($contact_id)) {
             return array();
         }
 
         $query = "
-      
+
         SELECT
                 stic_signers.id,
                 stic_signers.name,
@@ -254,7 +254,7 @@ class stic_SignersUtils
             WHERE parent_type = 'Contacts'
                 AND parent_id = '{$contact_id}'
                 AND status in ('pending','signed')
-                AND deleted = 0 
+                AND deleted = 0
             ORDER BY date_modified DESC
         ";
         return $query;
@@ -267,13 +267,13 @@ class stic_SignersUtils
  */
     public static function getSticSignersForUsers()
     {
-        $user_id =  $_REQUEST['record'];
+        $user_id = $_REQUEST['record'];
         if (empty($user_id)) {
             return array();
         }
 
         $query = "
-      
+
         SELECT
                 stic_signers.id,
                 stic_signers.name,
@@ -292,10 +292,32 @@ class stic_SignersUtils
             WHERE parent_type = 'Users'
                 AND parent_id = '{$user_id}'
                 AND status in ('pending','signed')
-                AND deleted = 0 
+                AND deleted = 0
             ORDER BY date_modified DESC
         ";
         return $query;
     }
 
+    
+    public static function deactivateOtherSignersForSameSignature($signerBean)
+    {
+        if ($signerBean->fetched_row['status'] != 'pending' || $signerBean->status != 'signed') {
+            // Only proceed if the signer's status has changed from 'pending' to 'signed'
+            return;
+        }
+        
+        require_once 'SticInclude/Utils.php';
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        if ($signatureBean->on_behalf_of == 1);
+
+        // Deactivate other signers for the same Signature
+        $otherSigners = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers','',  0, 0, 0, " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'");
+        foreach ($otherSigners as $otherSigner) {
+            $otherSigner->status = 'unnecessary';
+            $otherSigner->save();
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Deactivated signer {$otherSigner->id} for signature {$signatureBean->id} because signature was completed by $signerBean->name.");
+            require_once 'modules/stic_Signature_Log/Utils.php';
+            stic_SignatureLogUtils::logSignatureAction('SIGNATURE_NOT_NEEDED', $otherSigner->id, 'SIGNER', "{$mod_strings['LBL_SIGNATURE_COMPLETED_BY']} {$signerBean->parent_name}.");
+        }
+    }
 }

@@ -166,6 +166,7 @@ $mod_strings = array(
     'LBL_PORTAL_OTP_SENT' => 'S\'ha enviat un nou codi OTP. Si us plau, reviseu la vostra bústia d\'entrada.',
     'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Error en sol·licitar OTP:',
     'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'Hi ha hagut un error en sol·licitar el codi OTP.',
+    'LBL_PORTAL_UNNECESSARY_TEXT' => 'No és necessari que signi aquest document, ja ha estat signat per una altra persona autoritzada.',
 
     // Audit Page
     'LBL_AUDIT_PAGE_TITLE' => 'Pàgina d\'Auditoria de Firma Digital',

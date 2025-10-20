@@ -93,5 +93,6 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Correu electrònic enviat correctament al firmant',
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Anar al document',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Si té problemes per accedir a l\'enllaç, copiï i enganxi\'l al seu navegador',
+    'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signatura completada per',
 
 );

@@ -166,6 +166,7 @@ $mod_strings = array(
     'LBL_PORTAL_OTP_SENT' => 'A new OTP code has been sent. Please check your inbox.',
     'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Error requesting OTP:',
     'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'An error occurred while requesting the OTP code.',
+    'LBL_PORTAL_UNNECESSARY_TEXT' => 'It is not necessary for you to sign this document, it has already been signed by another authorized person.',
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Digital Signature Audit Page',

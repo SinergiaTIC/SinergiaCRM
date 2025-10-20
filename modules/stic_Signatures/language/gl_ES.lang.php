@@ -166,6 +166,7 @@ $mod_strings = array(
     'LBL_PORTAL_OTP_SENT' => 'Enviouse un novo código OTP. Por favor, revise a súa caixa de entrada.',
     'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Erro ao solicitar OTP:',
     'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'Ocorreu un erro ao solicitar o código OTP.',
+    'LBL_PORTAL_UNNECESSARY_TEXT' => 'Non é necesario que asine este documento, xa foi asinado por outra persoa autorizada.',
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de Auditoría de Sinatura Dixital',

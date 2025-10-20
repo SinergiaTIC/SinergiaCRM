@@ -177,6 +177,19 @@
                 </section>
                 { /if }
 
+                { if $STATUS === 'unnecessary' }
+                <section class="unnecessary-area text-center mt-4">
+                    <div class="text-center mb-4"><i class="bi bi-info-circle-fill text-info text-center"
+                            style="font-size: 4rem;"></i></div>
+                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-info">{$MODS.LBL_PORTAL_UNNECESSARY_TEXT}
+                    </h1>
+                </section>
+                
+                { /if }
+             
+
+
+
                 { if $SHOW_LOGS === true }
                 <section class="logs-area mt-5">
                     <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ACTIONS_LOG}</h2>

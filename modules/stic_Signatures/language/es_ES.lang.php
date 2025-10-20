@@ -167,6 +167,7 @@ $mod_strings = array(
     'LBL_PORTAL_OTP_SENT' => 'Se ha enviado un nuevo código OTP. Por favor, revise su bandeja de entrada.',
     'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Error al solicitar OTP:',
     'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'Ha ocurrido un error al solicitar el código OTP.',
+    'LBL_PORTAL_UNNECESSARY_TEXT' => 'No es necesario que firme este documento, ya ha sido firmado por otra persona autorizada.',
 
     // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Página de Auditoría de Firma Digital',

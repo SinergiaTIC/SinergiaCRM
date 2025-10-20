@@ -93,5 +93,6 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Email sent successfully to signer',
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Go to document',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'If you have problems accessing the link, copy and paste it into your browser',
+    'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signature completed by',
 
 );
