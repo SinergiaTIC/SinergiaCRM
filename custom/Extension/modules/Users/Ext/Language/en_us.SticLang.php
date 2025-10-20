@@ -93,5 +93,4 @@ $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Stop impersonation';
 $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'User impersonation';
 $mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'An administrator has started an impersonation of your user.';
 $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'An administrator has stopped an impersonation of your user.';
-$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DATE'] = 'End of impersonation: ';
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'User who impersonates: ';

@@ -164,7 +164,7 @@ class ImpersonateUtils
         $alert = BeanFactory::getBean('Alerts');
 
         $alert->target_module = $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] .' - '.$timedate->now();
-        $alert->name = $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'];
+        $alert->name = $mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'];
         $alert->description = $mod_strings['LBL_IMPERSONATION_ALERT_USER'] . $current_user->user_name;
         // $alert->description = $mod_strings['LBL_IMPERSONATION_START_ALERT_DATE'] . $timedate->now();
         $alert->assigned_user_id = $targetUserId;

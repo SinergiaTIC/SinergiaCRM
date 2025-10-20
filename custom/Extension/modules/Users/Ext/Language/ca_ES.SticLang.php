@@ -93,5 +93,4 @@ $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = "Finalitza l'accés";
 $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = "Emulació d'usuari";
 $mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador està emulant el vostre usuari.';
 $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = "Un administrador ha finalitzat l'emulació del vostre usuari.";
-$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DATE'] = "Fi de l'emulació: ";
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuari emulador: ';
