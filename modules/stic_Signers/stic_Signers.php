@@ -48,6 +48,8 @@ class stic_Signers extends Basic
     public $parent_name;
     public $parent_type;
     public $parent_id;
+    public $record_name;
+    public $record_type;
     public $record_id;
     public $email_address;
     public $phone;

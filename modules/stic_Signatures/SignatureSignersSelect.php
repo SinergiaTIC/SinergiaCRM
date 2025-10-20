@@ -116,6 +116,7 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean->parent_id = $destSignerId;
     $stic_SignerBean->parent_name = $destSignerBean->full_name;
     $stic_SignerBean->record_id = $destSigner['sourceId'];
+    $stic_SignerBean->record_type = $destSigner['sourceModule'];
     $stic_SignerBean->email_address = $destSigner['email'];
     $stic_SignerBean->phone = $destSigner['phone'];
     $stic_SignerBean->status = 'pending';
