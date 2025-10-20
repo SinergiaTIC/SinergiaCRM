@@ -157,11 +157,15 @@ $mod_strings = array(
     'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'Please, to continue, enter the value of your',
     'LBL_PORTAL_VALIDATE_FIELD_BTN' => 'Next',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'MOBILE PHONE',
-    'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_PHONE'=> '9 digits, no spaces or dashes',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_PHONE' => '9 digits, no spaces or dashes',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_IDENTIFICATION_NUMBER' => 'ID NUMBER',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_IDENTIFICATION_NUMBER' => 'Letters and numbers, no spaces or dashes',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'BIRTHDATE',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_BIRTHDATE' => 'Format DD/MM/YYYY (ex: 31/12/1990)',
+    'LBL_PORTAL_NETWORK_ERROR' => 'Network or server error',
+    'LBL_PORTAL_OTP_SENT' => 'A new OTP code has been sent. Please check your inbox.',
+    'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Error requesting OTP:',
+    'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'An error occurred while requesting the OTP code.',
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Digital Signature Audit Page',

@@ -46,7 +46,6 @@ if (otpForm) {
      *  Function to resend the OTP code to the user's email. 
      */
     function resendOtp() {
-        console.log("Solicitando un nuevo código OTP...");
 
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -69,18 +68,17 @@ if (otpForm) {
 
             // Manage the response
             if (!response.ok) {
-                throw new Error('Error de red o del servidor');
+                throw new Error(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_NETWORK_ERROR'));
             }
             return response.json();
             // Parsea la respuesta como JSON
         }
         ).then(data => {
-            console.log('Nuevo OTP solicitado:', data);
-            alert('Se ha enviado un nuevo código OTP. Por favor, revise su bandeja de entrada.');
+            alert(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_OTP_SENT'));
         }
         ).catch(error => {
-            console.error('Error al solicitar OTP:', error);
-            alert('Ha ocurrido un error al solicitar el código OTP.');
+            console.error('Error:', error);
+            alert(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT'));
         }
         );
 

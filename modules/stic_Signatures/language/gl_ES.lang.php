@@ -157,11 +157,15 @@ $mod_strings = array(
     'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'Por favor, para continuar, introduza o valor do seu',
     'LBL_PORTAL_VALIDATE_FIELD_BTN' => 'Continuar',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'TELÉFONO MÓBIL',
-    'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_PHONE'=> '9 díxitos, sen espazos nin guións',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_PHONE' => '9 díxitos, sen espazos nin guións',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_IDENTIFICATION_NUMBER' => 'NÚMERO DE IDENTIFICACIÓN',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_IDENTIFICATION_NUMBER' => 'Letras e números, sen espazos nin guións',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'DATA DE NACEMENTO',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_BIRTHDATE' => 'Formato DD/MM/AAAA (ex: 31/12/1990)',
+    'LBL_PORTAL_NETWORK_ERROR' => 'Erro de rede ou do servidor',
+    'LBL_PORTAL_OTP_SENT' => 'Enviouse un novo código OTP. Por favor, revise a súa caixa de entrada.',
+    'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Erro ao solicitar OTP:',
+    'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'Ocorreu un erro ao solicitar o código OTP.',
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de Auditoría de Sinatura Dixital',

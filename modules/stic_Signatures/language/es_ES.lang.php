@@ -163,6 +163,10 @@ $mod_strings = array(
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_IDENTIFICATION_NUMBER' => 'Letras y números, sin espacios ni guiones',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'FECHA DE NACIMIENTO',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_BIRTHDATE' => 'Formato DD/MM/AAAA (ej: 31/12/1990)',
+    'LBL_PORTAL_NETWORK_ERROR' => 'Error de red o del servidor',
+    'LBL_PORTAL_OTP_SENT' => 'Se ha enviado un nuevo código OTP. Por favor, revise su bandeja de entrada.',
+    'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Error al solicitar OTP:',
+    'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'Ha ocurrido un error al solicitar el código OTP.',
 
     // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Página de Auditoría de Firma Digital',
