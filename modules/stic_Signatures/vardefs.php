@@ -466,7 +466,7 @@ $dictionary['stic_Signatures'] = array(
             'merge_filter' => 'disabled',
             'len' => 100,
             'size' => '20',
-            'options' => 'stic_boolean_list',
+            'options' => 'stic_signatures_on_behalf_of_list',
             'studio' => 'visible',
             'dependency' => false,
         ),

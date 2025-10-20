@@ -3748,7 +3748,12 @@ $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternative';
 $app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Handwritten';
 $app_list_strings['stic_signatures_modes_list']['button'] = 'Button';
 
-// Firmantes: Estados
+// Signatures: On behalf of whom
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Yes, only one representative';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Yes, all representatives';
+
+// Signers: Status
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Signed';

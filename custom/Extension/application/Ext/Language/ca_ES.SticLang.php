@@ -3781,6 +3781,11 @@ $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
 $app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
 $app_list_strings['stic_signatures_modes_list']['button'] = 'Botó';
 
+// Firmas: Signatures en nom de
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, un sol representant';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, tots els representants';
+
 // Signant: Estat
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
