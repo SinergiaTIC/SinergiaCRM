@@ -122,14 +122,15 @@ class AWF_DataBlock {
   }
 
   addField(field) {
-    if (field.type_field == 'hidden') {
-      this.fields.unshift(field);
+    let newField = new AWF_Field(field);
+    if (newField.type_field == 'hidden') {
+      this.fields.unshift(newField);
     }
     else {
-      this.fields.push(field);
+      this.fields.push(newField);
     }
 
-    return field;
+    return newField;
   }
 
   deleteField(fieldName) {
@@ -186,7 +187,7 @@ class AWF_DataBlock {
 
   fixFieldName(field) {
     let index = 0;
-    let name = fieldName;
+    let name = field.name;
     while(this.fields.filter((f) => f.name === field.name).length==2) {
       index++;
       name = `${fieldName}_${index}`;
@@ -459,17 +460,28 @@ class AWF_Field {
   }
 
   setValueOptions(originalOptions) {
-    this.value_options = [];
-    if (!originalOptions) return this.value_options;
+    debugger;
+    if (this.type_field == 'unlinked' && this.acceptValueOptions()) {
+      if ((this.value_options?.length ?? 0) == 0) {
+        this.value_options = [new AWF_ValueOption()];
+      }
+      return this.value_options;
+    }
+    if (this.type_field == 'form' && this.type == 'relate' && (originalOptions?.length ?? 0) == 0 ) {
+      return this.value_options;
+    }
 
-    originalOptions.forEach(o => {
-      this.value_options.push(new AWF_ValueOption({
-        value: o.id,
-        is_visible: true,
-        text_original: o.text,
-        text: o.text,
-      }));
-    });
+    this.value_options = [];
+    if (originalOptions) {
+      originalOptions.forEach(o => {
+        this.value_options.push(new AWF_ValueOption({
+          value: o.id,
+          is_visible: true,
+          text_original: o.text,
+          text: o.text,
+        }));
+      });
+    }
     return this.value_options;
   }
   

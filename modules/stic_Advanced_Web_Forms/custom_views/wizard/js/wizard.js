@@ -375,7 +375,10 @@ class WizardStep2 {
         return this.showAllFields ? this.dataBlock?.getAvailableFieldsInformation() : this.dataBlock?.getAvailableFieldsInformation().filter(f => f.inViews) ?? [];
       },
 
-      get selectedFieldInfo() { return this.availableFields.find(f => f.name == this.field?.name); },
+      get selectedFieldInfo() { 
+        if (this.field.type_field == 'unlinked') return null;
+        return this.availableFields.find(f => f.name == this.field?.name); 
+      },
       get optionValuesListName() {
         let listName = utils.getFieldOptions(this.selectedFieldInfo, true);
         if (listName != '') {
@@ -396,7 +399,7 @@ class WizardStep2 {
 
       get relatedModule() {
         if (this.field.type == 'relate') {
-          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo.options);
+          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options);
         }
         return '';
       },
@@ -421,10 +424,13 @@ class WizardStep2 {
 
       init() {
         this.$watch('field.name', (newName, oldName) => {
+          this.configValueOptions = false;
+
           if (!this.field) return;
           if (this.isEdit) return;
           if (newName != oldName) {
-            if (this.field.type_field == 'hidden') {
+            this.field.updateWithFieldInformation(this.selectedFieldInfo);
+            if (this.field.type_field == 'hidden' || this.isInFormSelectableValues) {
               this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
             } else {
               this.field.setValueOptions();
@@ -432,7 +438,6 @@ class WizardStep2 {
             if (this.field.type_field == 'unlinked') {
               this.dataBlock.fixFieldName(this.field);
             }
-            this.field.updateWithFieldInformation(this.selectedFieldInfo);
             this.configValueOptions = false;
             this.optionValuesRelated = '';
           }
@@ -500,6 +505,9 @@ class WizardStep2 {
           if (!this.field) return;
           if (this.isEdit) return;
           this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
+          if (this.field.type_field == 'unlinked') {
+            this.configValueOptions = this.isInFormSelectableValues;
+          }
         });
         this.$watch('field.value_options', (newArray) => {
           if (!this.field) return;
@@ -510,6 +518,10 @@ class WizardStep2 {
               this.field.value = ''; 
               this.field.value = currentValue;
             }, 50);
+            // Set aux OptionValuesRelated var
+            if (this.field.type == 'relate') {
+              optionValuesRelated = this.field.value_options.map(o => o.value).join("|");
+            }
           } else {
             if (this.field.type_field == 'hidden' && newArray.length > 0) {
               this.field.value = newArray[0]?.value ?? '';
@@ -534,7 +546,9 @@ class WizardStep2 {
           if (!this.field) return;
           let arrIds = newRelateds.split('|');
           let destModule = this.relatedModule;
-          this.field.setValueOptions(utils.getRecordsTextById(destModule, arrIds));
+          if (this.field.type == 'relate') {
+            this.field.setValueOptions(utils.getRecordsTextById(destModule, arrIds));
+          }
         });
         this.$watch('valueToday', (newValue, oldValue) => {
           if (!this.field) return;
@@ -547,6 +561,7 @@ class WizardStep2 {
         if (type == 'form' || type == 'hidden') {
           this.field.updateWithFieldInformation(this.selectedFieldInfo, type);
           this.store.needDeleteOld = true;
+          this.configValueOptions = false;
         }
       },
 

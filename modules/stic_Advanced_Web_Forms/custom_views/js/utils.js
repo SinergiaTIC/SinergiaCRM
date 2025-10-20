@@ -63,7 +63,7 @@ class utils {
    * @returns array or name of options [id, text]
    */
   static getFieldOptions(fieldInfo, asString=false) {
-    if (fieldInfo == undefined) {
+    if (fieldInfo == undefined || fieldInfo == null) {
       return asString ? "" : [];
     }
     if (fieldInfo.type == "bool") {
