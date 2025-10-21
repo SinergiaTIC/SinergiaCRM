@@ -187,4 +187,9 @@ $mod_strings = array(
     'LBL_AUDIT_PAGE_EVENT_4' => 'Event 4',
     'LBL_AUDIT_PAGE_EVENT_5' => 'Event 5',
 
+        // Labels for popupHelps
+    'LBL_AUTH_METHOD_HELP' => 'Methods of authentication available for signers. <ul><li><strong>Single link:</strong> the signer accesses the document via a link. <li><strong>One-time code (via SMS or Email):</strong> the signer must enter a verification code sent by SMS or email. <li><strong>Phone, Identification Number or Birthdate</strong> the signer must provide the selected data to be able to sign.</ul>',
+    'LBL_SIGNATURE_MODE_HELP' => 'Select the signing mode for the document. <ul><li><strong>Handwritten:</strong> the signer draws their signature using the mouse or touchscreen. <li><strong>Button:</strong> the signer only has to click on the acceptance button</ul>',
+    'LBL_ON_BEHALF_OF_HELP' => 'Select: <ul><li><strong>No (default value):</strong> If the signer signs the document in their own name. <li><strong>Yes, only one representative:</strong> Only a representative of the signature holder must sign. <li><strong>Yes, all representatives</strong> All representatives of the holder must sign the document</ul>',
+
 );

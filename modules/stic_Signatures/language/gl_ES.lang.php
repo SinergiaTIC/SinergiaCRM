@@ -187,4 +187,9 @@ $mod_strings = array(
     'LBL_AUDIT_PAGE_EVENT_4' => 'Evento 4',
     'LBL_AUDIT_PAGE_EVENT_5' => 'Evento 5',
 
+        // Labels for popupHelps
+    'LBL_AUTH_METHOD_HELP' => 'Métodos de autenticación disponibles para os sinantes <ul><li><strong>Enlace único:</strong> o firmante accede ao documento mediante un enlace. <li><strong>Código de un solo uso (por SMS ou Correo electrónico):</strong> o firmante debe introducir un código de verificación enviado por SMS ou correo electrónico. <li><strong>Teléfono, Número de identificación ou Data de nacemento</strong> o firmante debe indicar o dato seleccionado para poder assinar.</ul>',
+    'LBL_SIGNATURE_MODE_HELP' => 'Seleccione o modo de sinatura para o documento. <ul><li><strong>Manuscrita:</strong> o firmante debuxa a súa sinatura utilizando o rato ou a pantalla táctil. <li><strong>Botón:</strong> o firmante só terá que pulsar sobre o botón de aceptación</ul>',
+    'LBL_ON_BEHALF_OF_HELP' => 'Seleccione: <ul><li><strong>No (valor por defecto):</strong> Se o firmante sinatura o documento en nome propio. <li><strong>Sí, solamente un representante:</strong>Deberá sinatura exclusivamente un representante do titular da sinatura.<li><strong>Sí, todos os representantes</strong> Deberán sinatura o documento todas as persoas representantes do titular</ul>',
+
 );

@@ -119,6 +119,7 @@ $dictionary['stic_Signatures'] = array(
             'options' => 'stic_signatures_auth_methods_list',
             'studio' => 'visible',
             'dependency' => false,
+            'popupHelp' => 'LBL_AUTH_METHOD_HELP',
         ),
         'type' => array(
             'required' => true,
@@ -167,6 +168,7 @@ $dictionary['stic_Signatures'] = array(
             'default' => 'handwritten',
             'studio' => 'visible',
             'dependency' => false,
+            'popupHelp' => 'LBL_SIGNATURE_MODE_HELP',
         ),
         'activation_date' => array(
             'required' => true,
@@ -469,6 +471,7 @@ $dictionary['stic_Signatures'] = array(
             'options' => 'stic_signatures_on_behalf_of_list',
             'studio' => 'visible',
             'dependency' => false,
+            'popupHelp' => 'LBL_ON_BEHALF_OF_HELP',
         ),
         'pdf_document' => array(
             'required' => false,

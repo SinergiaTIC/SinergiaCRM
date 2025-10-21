@@ -187,4 +187,11 @@ $mod_strings = array(
     'LBL_AUDIT_PAGE_EVENT_4' => 'Esdeveniment 4',
     'LBL_AUDIT_PAGE_EVENT_5' => 'Esdeveniment 5',
 
+
+    // Labels for popupHelps
+    'LBL_AUTH_METHOD_HELP' => 'Mètodes de autenticació disponibles per als signants. <ul><li><strong>Enllaç únic:</strong> el signant accedeix al document mitjançant un enllaç. <li><strong>Codi d\'un sol ús (per SMS o Correu electrònic):</strong> el signant ha d\'introduir un codi de verificació enviat per SMS o correu electrònic. <li><strong>Telèfon, Número d\'identificació o Data de naixement</strong> el signant ha d\'indicar les dades seleccionades per poder signar.</ul>',
+    'LBL_SIGNATURE_MODE_HELP' => 'Seleccioneu el mode de signatura per al document. <ul><li><strong>Manuscrita:</strong> el signant dibuixa la seva signatura utilitzant el ratolí o la pantalla tàctil. <li><strong>Botó:</strong> el signant només haurà de prémer sobre el botó d\'acceptació</ul>',
+    'LBL_ON_BEHALF_OF_HELP' => 'Seleccioneu: <ul><li><strong>No (valor per defecte):</strong> Si el signant signa el document en el seu propi nom. <li><strong>Sí, només un representant:</strong> Ha de signar exclusivament un representant del titular de la firma. <li><strong>Sí, tots els representants</strong> Han de signar el document totes les persones representants del titular</ul>',
+
+
 );
