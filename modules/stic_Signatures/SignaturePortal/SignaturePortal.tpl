@@ -246,6 +246,7 @@
                                     class="otp-input form-control text-center text-xl font-weight-bold">
                                 <input type="text" id="otp-6" name="otp_code_6" maxlength="1" required
                                     class="otp-input form-control text-center text-xl font-weight-bold">
+                                <input type="hidden" id="otp-code" name="otp-code" maxlength="6" >
                             </div>
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
@@ -272,7 +273,7 @@
                         <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$FIELD_VALIDATION_ERROR_MSG}
                     </p>
                     {/if}
-                    <form id="fieldValidationForm" method="post" action="">
+                    <form id="fieldValidationForm" method="POST" action="">
                         <div class="mb-3">
                             <label for="validationFieldInput" class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}<strong> {$FIELD_VALIDATION_LABEL}</strong><span class="text-muted"> ({$FIELD_VALIDATION_LABEL_FORMAT}):</span></label>
                             <input type="text" id="validationFieldInput" name="validation_field_value" required pattern="{$FIELD_VALIDATION_REGEXP}"

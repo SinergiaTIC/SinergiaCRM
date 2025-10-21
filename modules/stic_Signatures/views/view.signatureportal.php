@@ -135,12 +135,12 @@ class stic_SignaturePortal extends SugarView
             case 'identification_number':
             case 'birthdate':
                 $this->ss->assign('FIELD_VALIDATION_REQUIRED', true);
-                if ($stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_REQUEST['field-value'] ?? '')) {
+                if (stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_POST['validation_field_value'] ?? '')) {
                     $passed = true;
                 } else {
                     if (isset($_REQUEST['field-value'])) {
-                        $errorMsg = 'El valor proporcionado no es válido. Por favor, inténtalo de nuevo.';
-                        $this->ss->assign('FIELD_ERROR_MSG', $errorMsg);
+                        $errorMsg = 'El valor pDroporcionado no es válido. Por favor, inténtalo de nuevo.';
+                        $this->ss->assign('FIEL_ERROR_MSG', $errorMsg);
                         $this->ss->assign('PREVIOUS_FIELD_VALUE', $_REQUEST['field-value']);
                     }
                     $this->ss->assign('FIELD_VALIDATION_LABEL', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_' . strtoupper($signatureBean->auth_method)]);

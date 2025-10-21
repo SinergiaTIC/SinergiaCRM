@@ -9,12 +9,14 @@ if (otpForm) {
         input.addEventListener('input', (e) => {
             if (e.target.value.length === 1 && index < inputs.length - 1) {
                 inputs[index + 1].focus();
+
             }
         });
 
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
                 inputs[index - 1].focus();
+
             }
         });
     });
@@ -22,89 +24,71 @@ if (otpForm) {
     // send OTP form
 
     otpForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const fullCode = Array.from(inputs).map(input => input.value).join('');
-
-        let newParam = 'otp-code';
-        let value = fullCode;
-        let url = new URL(window.location.href);
-        url.searchParams.set(newParam, value);
-        window.location.href = url.toString();
-
-
-    });
+        const otpCode = document.getElementById('otp-code');
+        otpCode.value = Array.from(inputs).map(input => input.value).join('');
+        
+        // let newParam = 'otp-code';
+        // let value = fullCode;
+        // let url = new URL(window.location.href);
+        // url.searchParams.set(newParam, value);
+        // window.location.href = url.toString();
 
 
-    // Agrega la lógica para el botón de reenviar OTP
-    const resendButton = document.getElementById('resend-otp-btn');
-    resendButton.addEventListener('click', () => {
-        resendOtp();
-    });
+        // });
 
 
-    /**
-     *  Function to resend the OTP code to the user's email. 
-     */
-    function resendOtp() {
+        // Agrega la lógica para el botón de reenviar OTP
+        const resendButton = document.getElementById('resend-otp-btn');
+        resendButton.addEventListener('click', () => {
+            resendOtp();
+        });
 
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const url = 'index.php';
-        const signerId = urlParams.get('signerId');
+        /**
+         *  Function to resend the OTP code to the user's email. 
+         */
+        function resendOtp() {
 
-        const data = {
-            entryPoint: "sticSign",
-            signatureAction: "resendOtpCode",
-            signerId: signerId,
-        };
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams(data),
-        }).then(response => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const url = 'index.php';
+            const signerId = urlParams.get('signerId');
 
-            // Manage the response
-            if (!response.ok) {
-                throw new Error(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_NETWORK_ERROR'));
+            const data = {
+                entryPoint: "sticSign",
+                signatureAction: "resendOtpCode",
+                signerId: signerId,
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data),
+            }).then(response => {
+
+                // Manage the response
+                if (!response.ok) {
+                    throw new Error(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_NETWORK_ERROR'));
+                }
+                return response.json();
+                // Parsea la respuesta como JSON
             }
-            return response.json();
-            // Parsea la respuesta como JSON
-        }
-        ).then(data => {
-            alert(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_OTP_SENT'));
-        }
-        ).catch(error => {
-            console.error('Error:', error);
-            alert(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT'));
-        }
-        );
+            ).then(data => {
+                alert(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_OTP_SENT'));
+            }
+            ).catch(error => {
+                console.error('Error:', error);
+                alert(SUGAR.language.get('stic_Signatures', 'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT'));
+            }
+            );
 
-    }
+        }
 
+    });
 }
 // End OTP form handling
 // **************************************************************************
 
 
-// **************************************************************************
-// Form field validation
-const formFieldValidation = document.getElementById('fieldValidationForm');
-if (formFieldValidation) {
-    formFieldValidation.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const inputField = document.getElementById('validationFieldInput');
-        const fieldValue = inputField.value;
-        let newParam = 'field-value';
-        let value = fieldValue;
-        let url = new URL(window.location.href);
-        url.searchParams.set(newParam, value);
-        window.location.href = url.toString();
-    });
-
-}
-
-// End form field validation
-// **************************************************************************

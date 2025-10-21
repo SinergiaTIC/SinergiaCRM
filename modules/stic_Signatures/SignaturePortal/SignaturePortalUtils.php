@@ -144,11 +144,21 @@ class stic_SignaturePortalUtils
      */
     public static function verifyOtpCode($signerBean, $otpCode)
     {
+        // Check if the signer has already been authenticated in the session
+        if ($_SESSION['stic_authenticated_signers'][$signerBean->id] ?? false === true) {
+            return true;
+        }
 
         $expireDatetime = $signerBean->db->getOne("SELECT otp_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
         if ($signerBean->otp === $otpCode && $expireDatetime >= date('Y-m-d H:i:s')) {
+            $_SESSION['stic_authenticated_signers'][$signerBean->id] = true;
+            // remove OTP info in database after successful validation
+            $signerBean->otp = '';
+            $signerBean->otp_expiration = '';
+            $signerBean->save();
             return true;
         } else {
+            $_SESSION['stic_authenticated_signers'][$signerBean->id] = false;
             return false;
         }
     }
@@ -162,14 +172,20 @@ class stic_SignaturePortalUtils
      */
     public static function verifyFieldValidation($signerBean, $fieldValue)
     {
+
+        // Check if the signer has already been authenticated in the session
+        if ($_SESSION['stic_authenticated_signers'][$signerBean->id] === true) {
+            return true;
+        }
+
         $fieldValue = strtoupper(trim($fieldValue));
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
         // Get the related Users or Contacts bean based on signer_path
         $userOrContactsModule = explode(':', $signatureBean->signer_path)[0];
         if ($userOrContactsModule === 'Users') {
-            $userOrContactsBean = BeanFactory::getBean('Users', $signerBean->record_id);
+            $userOrContactsBean = BeanFactory::getBean('Users', $signerBean->parent_id);
         } else {
-            $userOrContactsBean = BeanFactory::getBean('Contacts', $signerBean->record_id);
+            $userOrContactsBean = BeanFactory::getBean('Contacts', $signerBean->parent_id);
         }
 
         if (!$userOrContactsBean || empty($userOrContactsBean->id)) {
@@ -191,13 +207,14 @@ class stic_SignaturePortalUtils
                 $expectedValue = date('d/m/Y', strtotime($userOrContactsBean->birthdate));
                 break;
             default:
-                return false;
                 break;
         }
 
         if ($expectedValue === $fieldValue) {
+            $_SESSION['stic_authenticated_signers'][$signerBean->id] = true;
             return true;
         } else {
+            $_SESSION['stic_authenticated_signers'][$signerBean->id] = false;
             return false;
         }
     }
