@@ -1,0 +1,2 @@
+This is a Playwright test upload file for Documents module.
+Created by automated tests.
