@@ -34,7 +34,7 @@ function getNotificationsFromParent($params)
     $return_as_array = isset($args[0]['return_as_array']) ? $args[0]['return_as_array'] : false;
     $parentId = $args[0]['parent_id'] ?? $_REQUEST['record'];
     $parentType = $args[0]['parent_type'];
-    $campaignType = "Notification";
+    $campaignTypes = "('Notification', 'NotifMsg')";
 
     $return_array['select'] =
         " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date" .
@@ -45,7 +45,7 @@ function getNotificationsFromParent($params)
 
     $return_array['where'] =
         " WHERE campaigns.deleted = '0'" .
-        " AND campaigns.campaign_type = '$campaignType'" .
+        " AND campaigns.campaign_type IN $campaignTypes " .
         " AND cc.parent_type = '$parentType'" .
         " AND cc.parent_id = '$parentId'";
 

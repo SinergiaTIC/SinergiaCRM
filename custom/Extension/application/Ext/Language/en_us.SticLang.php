@@ -92,6 +92,9 @@ $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New message';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content. Do you want to continue?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'The limit of messages that can be sent simultaneously has been exceeded.';
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
+$app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificació';
+$app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificació per missatge';
+
 
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';

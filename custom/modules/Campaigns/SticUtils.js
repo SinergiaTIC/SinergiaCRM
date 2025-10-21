@@ -400,10 +400,11 @@ function initializeQuickCreate() {
   if (formName == "form_SubpanelQuickCreate_Campaigns") {
     // Is a New notification from Subpanel
 
-    var $form = $("form#" + formName);
-    $form.find("[data-field='campaign_type']").hide();
     // TODOEPS: AIxò haurà de canviar doncs ara es podran crear notificacions per e-mail i per missatge
-    $form.find("#campaign_type").val("Notification");
+    var $form = $("form#" + formName);
+    // $form.find("[data-field='campaign_type']").hide();
+    // // $form.find("#campaign_type").val("Notification");
+    // $form.find("#campaign_type").val("NotifMsg");
 
     $form.find("#status").val("Active");
     addEditCreateTemplateLinks();

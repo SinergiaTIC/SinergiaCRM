@@ -91,6 +91,8 @@ $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou missatge';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge. Segur que voleu continuar?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = "S'ha sobrepassat el límit de missatges que es poden enviar simultàniament.";
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
+$app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificació';
+$app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificació per missatge';
 
 // Enviament massiu de correus
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
