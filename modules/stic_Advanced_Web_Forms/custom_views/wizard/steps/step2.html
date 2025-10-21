@@ -25,6 +25,8 @@
               </div>
             </form>
           </div>
+
+          <!-- Accept / Cancel Buttons -->
           <div class="custom-modal-footer">
             <button type="button" class="col-2 btn btn-secondary" id="cancelAddDataBlockModuleButton" @click="creatingDataBlock = false;" 
                     x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
@@ -51,6 +53,11 @@
           </div>
           <div class="d-flex justify-content-between align-items-center">
             <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
+            <div>
+              <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
+                <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel.name);"></div>
+              </template>
+            </div>
             <!-- Buttons -->
             <div class="d-inline-flex">
               <!-- Delete DataBlock -->
@@ -102,7 +109,7 @@
                   </template>
                 </div>
                 <!-- Fields -->
-                <table id="${id}" class="table table-bordered table-striped" ${attribute}>
+                <table class="table table-bordered table-striped" >
                   <thead>
                     <tr>
                       <th x-text="utils.translate(dataBlock.module?'LBL_FIELD':'LBL_FIELD_NAME')" x-show="canShowFieldColumn('text_original')"></th>
@@ -137,7 +144,7 @@
                           <!-- Value type -->
                           <td x-text="field?.value_typeText" x-show="canShowFieldColumn('value_type')"></td>
                           <!-- Value -->
-                          <td x-text="field?.value_text" x-show="canShowFieldColumn('value_text')"></td>
+                          <td x-text="getfieldValueText(field)" x-show="canShowFieldColumn('value_text')"></td>
                           <!-- Required in form -->
                           <td x-show="canShowFieldColumn('required_in_form')">
                             <div class="form-switch">
@@ -239,60 +246,49 @@
           <!-- Relationships Definition -->
           <template x-if="item && item.module">
             <div :id="`dataBlockRels${item.id}`">
-              [Las relaciones del Bloque de datos]
-              <!-- Relationships Details -->
-              <div x-data="{ showRelationshipsTable: false}">
-                <div class="text-muted form-check form-switch mt-3" :id="`dataRelationshipsDetails${item.id}`" data-model="showRelationshipsTable" 
-                     data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
-                <div class="card p-2 overflow-auto" x-show="showRelationshipsTable">
-                  <div class="mt-3" :id="`dataBlockRelsTable${item.id}`" :data-objects="`$store.dataBlockRelationships.usedDatablockRelationships('${item.id}')`"
-                       x-init="sticControls.elemTableObjects($el);"></div>
-                </div>
-              </div>
-              <!-- Add Relationship -->
-              <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="WizardStep2.addRelationshipxData(item, formConfig);">
-                <div class="row">
-                  <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()" x-text="'[Añadir Relación con otro Bloque de Datos]'"></button>
-                  <h4 x-show="creatingRelDataBlock" x-text="'[Añadir Relación con otro Bloque de Datos]'"></h4>
-                </div>
-                <div class="row align-items-end" x-show="creatingRelDataBlock">
-                  <!-- Relationship -->
-                  <div class="col-3">
-                    <label :for="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-label" x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP')"></label>
-                    <select :id="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-select" x-model="selectedRelName" @change="handleRelationChange()">
-                      <template x-for="relation in availableRels" :key="relation.name">
-                        <option :value="relation.name" x-text="relation.textExtended"></option>
-                      </template>
-                    </select>
-                  </div>
-                  <!-- Data Block -->
-                  <div class="col-3">
-                    <label :for="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></label>
-                    <select :id="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-select" x-model="selectedDataBlockId" @change="handleDataBlockChange()">
-                      <template x-for="dataBlock in availableDataBlocks" :key="dataBlock.id">
-                        <option :value="dataBlock.id" x-text="dataBlock.text"></option>
-                      </template>
-                    </select>
-                  </div>
-                  <!-- New Data Block -->
-                  <div class="col-3" x-show="relNewDataBlock">
-                    <label :for="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" class="form-label" x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK')"></label>
-                    <input :id="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" type="text" class="form-control" x-model="newDataBlockText"/>
-                  </div>
-                  <button type="button" class="btn w-32px mb-1px" @click="handleCreateRelationship();">
-                    <span class="suitepicon suitepicon-action-confirm"></span>
-                  </button>
-                  <button type="button" class="btn w-32px mb-1px" @click="creatingRelDataBlock = false;">
-                    <span class="suitepicon suitepicon-action-clear"></span>
-                  </button>
-                </div>
-              </div>
+              <!-- Description -->
+              <p x-text="utils.translate('LBL_RELATIONSHIPS_DESC')"></p>
+              <!-- Button -->
+              <button type="button" class="btn mb-2" @click="$store.relCreator.openCreate(item)" x-text="utils.translate('LBL_ADD_RELATIONSHIP')"></button>
+
+              <!-- Relationships -->
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
+                    <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_ORIG')"></th>
+                    <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_DEST')"></th>
+                    <th x-text="utils.translate('LBL_ACTIONS')"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
+                    <tr>
+                      <!-- Relationship -->
+                      <td x-text="rel.text"></td>
+                      <!-- DataBlock Orig -->
+                      <td x-text="getDataBlockText(rel.datablock_orig)"></td>
+                      <!-- DataBlock Dest -->
+                      <td x-text="getDataBlockText(rel.datablock_dest)"></td>
+                      <!-- Buttons -->
+                      <td >
+                        <div class="d-inline-flex">
+                          <!-- <button type="button" class="btn ms-2" :disabled="field.required" @click="item.deleteField(field.name);"
+                                  :title="utils.translate('LBL_ACTION_DELETE')">
+                            <span class="suitepicon suitepicon-action-delete"></span>
+                          </button> -->
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
             </div>
           </template>
 
           <!-- Accordion Headers -->
           <template x-if="!item.module">
-            <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
+            <div :id="`dataDef_${item.id}`" :class="{'has-errors':!item.isValid()}" :data-sections="JSON.stringify([
                     {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
                   ]);" x-init="sticControls.accordion($el)"></div>
           </template>
@@ -619,6 +615,8 @@
               </div>
             </div>
           </div>
+
+          <!-- Accept / Cancel Buttons -->
           <div class="custom-modal-footer">
             <button type="button" class="col-2 btn btn-secondary" @click="$store.fieldEditor.close()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
             <button type="button" class="col-2 btn btn-primary" @click="$store.fieldEditor.saveChanges()" 
@@ -627,27 +625,59 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Details Data [DEBUG] -->
-  <div x-data="{ showDetails: false}">
-    <div class="text-muted form-check form-switch mb-3 mt-5" id="showDetailsDataToggleSwitch" data-model="showDetails" data-label-text="[Mostrar Detalles]" 
-         x-init="sticControls.fieldCheckbox($el);"></div>
-    <div class="card p-2" x-show="showDetails">
-      <!-- Data Blocks -->
-      <div id="detailsDataBlocks">
-        <div class="mt-3" id="dataBlocksTable" data-objects="formConfig.data_blocks" x-init="sticControls.elemTableObjects($el);"></div>
+    <!-- Modal: Create Relationship -->
+    <div x-show="$store.relCreator.isOpen" x-cloak class="custom-modal-wrapper">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalCreateRelTitle">
+        <div class="custom-modal-content">
+          <div class="custom-modal-header">
+            <div>
+              <h3 class="modal-title" id="modalCreateRelTitle" x-text="$store.relCreator.title"></h3>
+              <span class="text-muted small ms-3" x-text="$store.relCreator.subtitle"></span>
+            </div>
+            <button type="button" class="btn-close" @click="$store.relCreator.close()"></button>
+          </div>
+          <div class="custom-modal-body">
+            <form id="dataBlockRelModalForm">
+              <div class="row align-items-end">
+                <!-- Relationship -->
+                <div class="col-5">
+                  <label for="modalRel_Relation" class="form-label" x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP')"></label>
+                  <select id="modalRel_Relation" class="form-select" x-model="$store.relCreator.selectedRelName">
+                    <template x-for="relation in $store.relCreator.availableRels" :key="relation.name">
+                      <option :value="relation.name" x-text="relation.textExtended"></option>
+                    </template>
+                  </select>
+                </div>
+                <!-- Data Block -->
+                <div class="col-3">
+                  <label for="modalRel_DataBlock" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></label>
+                  <select id="modalRel_DataBlock" class="form-select" x-model="$store.relCreator.relatedDataBlockId" 
+                          x-bind:disabled="$store.relCreator.availableDataBlocks.length<=1;">
+                    <template x-for="dataBlock in $store.relCreator.availableDataBlocks" :key="dataBlock.id">
+                      <option :value="dataBlock.id" x-text="dataBlock.text"></option>
+                    </template>
+                  </select>
+                </div>
+                <!-- New Data Block -->
+                <div class="col-3" x-show="$store.relCreator.isNewDataBlock">
+                  <label for="modalRel_NewDataBlockText" class="form-label" x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK')"></label>
+                  <input id="modalRel_NewDataBlockText" type="text" class="form-control" x-model="$store.relCreator.newDataBlockText"/>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Accept / Cancel Buttons -->
+          <div class="custom-modal-footer">
+            <button type="button" class="col-2 btn btn-secondary" @click="$store.relCreator.close()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" @click="$store.relCreator.saveChanges()" 
+                    x-bind:disabled="!$store.relCreator.isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
+          </div>
+        </div>
       </div>
-      <!-- Relationships -->
-      <div id="detailsRelationships">
-        <div class="mt-3" id="relationshipsTable" data-objects="$store.dataBlockRelationships.datablockRelationships" data-model="$store.dataBlockRelationships.datablockRelationships" 
-             x-init="sticControls.elemListObject($el);"></div>
-      </div>
-      <!-- Tab Headers -->
-      <div id="details" :data-sections="JSON.stringify([
-              {headerText:`'[Bloques de datos]'`, selected:true, contentId:'detailsDataBlocks'},
-              {headerText:`'[Relaciones]'`, selected:false, contentId:'detailsRelationships'},
-           ]);" x-init="sticControls.tabs($el)"></div>
     </div>
   </div>
+
 </main>

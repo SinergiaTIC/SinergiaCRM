@@ -3741,8 +3741,8 @@ $app_list_strings['stic_advanced_web_forms_links_record_action_list']['enriched'
 $app_list_strings['stic_advanced_web_forms_links_record_action_list']['skipped'] = 'Ignorado';
 
 // Acción a realizar con un registro del CRM si se detecta existente
-$app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['update'] = 'Actualizar';
 $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['enrich'] = 'Ampliar';
+$app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['update'] = 'Actualizar';
 $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['skip'] = 'Ignorar';
 $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['error'] = 'Error';
 

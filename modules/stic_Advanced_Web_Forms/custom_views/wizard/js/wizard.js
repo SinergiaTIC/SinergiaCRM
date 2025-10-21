@@ -174,6 +174,33 @@ class WizardStep2 {
             unusedDatablockRelationships(datablockId) {
               return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
             },
+            addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText) {
+              let dataBlock = this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
+              if (dataBlock) {
+                this.resetDataBlockRelationships();
+              }
+              return dataBlock;
+            },
+            getAvailableDataBlocksForRelationship(datablockId, relName) { 
+              return this.formConfig.getAvailableDataBlocksForRelationship(datablockId, relName);
+            },
+            suggestNewDestDataBlockText(origDatablockId, relName) {
+              return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
+            },
+            getRelText(datablockId, relName) {
+              let rel = this.dataBlockRelationships[datablockId].find(r => r.name == relName);
+              let dataBlock_orig = this.formConfig.data_blocks.find(d => d.id == rel.datablock_orig);
+              let dataBlock_dest = this.formConfig.data_blocks.find(d => d.id == rel.datablock_dest);
+              let str;
+              if (dataBlock_orig.id == datablockId) {
+                str = `${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
+              } else {
+                str = `${dataBlock_dest.text} ⟵ ${dataBlock_orig.text}`;
+              }
+              str += ` (${rel.text})`;
+              return str;
+            },
+            
           });
         }
 
@@ -194,7 +221,7 @@ class WizardStep2 {
             get isNewField() { return this.original_name === ''; },
 
             /**
-             * Retorna el título del editor
+             * Retorna el título del modal
              */
             get title() {
               if (!this.field) return '';
@@ -225,7 +252,7 @@ class WizardStep2 {
               }
             },
             /**
-             * Retorna el tubtítulo del editor
+             * Retorna el tubtítulo del modal
              */
             get subtitle() {
               return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();
@@ -273,7 +300,7 @@ class WizardStep2 {
               this.dataBlock = null;
               this.field = null;
               this.original_name = '';
-              this.needDeleteOld = false
+              this.needDeleteOld = false;
             },
 
             /**
@@ -294,6 +321,98 @@ class WizardStep2 {
             },
           });
         }
+
+        // Store for the Relationship Creator management
+        if (!Alpine.store('relCreator')) {
+          Alpine.store('relCreator', {
+            isOpen: false,           // Indica si está abierto el creador de relaciones
+            dataBlock: null,         // El bloque de datos del campo
+            relationships: Alpine.store('dataBlockRelationships'), // Store con las operaciones generales de Relaciones
+
+            availableRels: [],
+            selectedRelName: '',
+
+            availableDataBlocks: [],
+            relatedDataBlockId: null,
+
+            newDataBlockText: '',
+            get isNewDataBlock() { return this.relatedDataBlockId == -1; },
+
+            get isValid() { return this.relatedDataBlockId != null && (!this.isNewDataBlock || this.newDataBlockText != ''); },
+
+            /**
+             * Retorna el título del modal
+             */
+            get title() {
+              return utils.translate('LBL_NEW_RELATIONSHIP');
+            },
+            /**
+             * Retorna el tubtítulo del modal
+             */
+            get subtitle() {
+              return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();
+            },
+
+            /**
+             * Abre el modal de creación de relaciones
+             * @param {AWF_DataBlock} dataBlock 
+             */
+            openCreate(dataBlock) {
+              this.dataBlock = dataBlock;
+              this.availableRels = this.relationships.unusedDatablockRelationships(dataBlock.id);
+              this.selectedRelName = this.availableRels[0]?.name ?? '';
+              this.relationships.resetDataBlockRelationships(); // Forzar recargar relaciones
+              this.isOpen = true;
+            },
+
+            /**
+             * Cierra el modal de creación de relaciones
+             */
+            close() {
+              this.isOpen = false;
+              this.dataBlock = null;
+              this.formConfig = null;
+              this.availableRels = [];
+              this.selectedRelName = '';
+            },
+
+            /**
+             * Guarda los cambios de la creación de una relación
+             */
+            saveChanges() {
+              this.relationships.addDataBlockRelationship(this.dataBlock.id, this.selectedRelName, this.relatedDataBlockId, this.newDataBlockText);
+              this.close();
+            },
+
+            init() {
+              let selectedRelName_old = this.selectedRelName;
+              let relatedDataBlockId_old = this.relatedDataBlockId;
+
+              // En Stores, la observación de cambios la hacemos por effect (bajo nivel, no vinculado a elemento DOM)
+              Alpine.effect(() => {
+                // Changes in selectedRelName
+                if (this.selectedRelName != selectedRelName_old && this.dataBlock) {
+                  relatedDataBlockId_old = null; // To force changes in relatedDataBlockId
+                  this.availableDataBlocks = this.relationships.getAvailableDataBlocksForRelationship(this.dataBlock.id, this.selectedRelName);
+                  this.relatedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
+                }
+
+                // Changes in relatedDataBlockId
+                if (this.relatedDataBlockId != relatedDataBlockId_old) {
+                  if (this.relatedDataBlockId == -1 && this.dataBlock) {
+                    this.newDataBlockText = this.relationships.suggestNewDestDataBlockText(this.dataBlock.id, this.selectedRelName);
+                  } else {
+                    this.newDataBlockText = '';
+                  }
+                }
+
+                // Update watched properties
+                selectedRelName_old = this.selectedRelName;
+                relatedDataBlockId_old = this.relatedDataBlockId;
+              });
+            }
+          });
+        };
       },
     };
   }
@@ -306,6 +425,12 @@ class WizardStep2 {
         this.formConfig.deleteDataBlock(dataBlock);
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
       },
+
+      getDataBlockText(dataBlockId) {
+        let dataBlock = this.formConfig.data_blocks.find(d => d.id == dataBlockId);
+        if (!dataBlock) return '';
+        return `${dataBlock.text} (${dataBlock.getModuleText()})`;
+      }
     };
   }
 
@@ -639,6 +764,14 @@ class WizardStep2 {
         }
         return field.text_original;
       },
+
+      getfieldValueText(field) {
+        if (!field) return '';
+        if (field.value_type == 'dataBlock') {
+          return this.formConfig.data_blocks.find(d => d.id == field.value)?.text;
+        }
+        return field.value_text;
+      }
     }
   }
 
@@ -658,44 +791,4 @@ class WizardStep2 {
     }
   }
 
-
-  static addRelationshipxData(dataBlock, initial_formConfig) {
-    return {
-      formConfig: initial_formConfig,
-
-      creatingRelDataBlock: false,
-      availableRels: [],
-      selectedRelName:'',
-      availableDataBlocks: [],
-      selectedDataBlockId:'',
-      newDataBlockText:'',
-      relNewDataBlock:false,
-
-      async loadRelations() {
-        this.availableRels = Alpine.store('dataBlockRelationships').unusedDatablockRelationships(dataBlock.id);
-        this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
-        this.availableDataBlocks = [];
-        this.selectedDataBlockId = '';
-        this.creatingRelDataBlock = !this.creatingRelDataBlock;
-        this.handleRelationChange();
-      },
-      async handleRelationChange() {
-        this.availableDataBlocks = this.formConfig.getAvailableDataBlocksForRelationship(dataBlock.id, this.selectedRelName);
-        this.selectedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
-        this.handleDataBlockChange();
-      },
-      async handleDataBlockChange() {
-        this.newDataBlockText = '';
-        this.relNewDataBlock = this.selectedDataBlockId == -1;
-        if (this.relNewDataBlock) {
-          this.newDataBlockText = this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(dataBlock.id, this.selectedRelName));
-        }
-      },
-      async handleCreateRelationship(){
-        this.formConfig.addDataBlockRelationship(dataBlock.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
-        this.creatingRelDataBlock = false;
-      },
-    };
-  }
 }

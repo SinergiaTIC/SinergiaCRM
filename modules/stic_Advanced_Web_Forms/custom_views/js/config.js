@@ -60,6 +60,13 @@ class AWF_DataBlock {
     return utils.translate('LBL_NO_MODULE_RELATED');
   }
 
+  getModuleText() {
+    if (this.module) {
+      return this.getModuleInformation().text;
+    }
+    return '';
+  }
+
   /**
    * Gets all fields available to be setted in this DataBlock
    * @returns {array} FieldInformation
@@ -460,7 +467,6 @@ class AWF_Field {
   }
 
   setValueOptions(originalOptions) {
-    debugger;
     if (this.type_field == 'unlinked' && this.acceptValueOptions()) {
       if ((this.value_options?.length ?? 0) == 0) {
         this.value_options = [new AWF_ValueOption()];
@@ -819,10 +825,10 @@ class AWF_Configuration {
      *  }
      */
     let dataField_orig = dataBlock_orig.addFieldFromModuleField(module_orig.fields[rel.field_orig]);
+    dataField_orig.type_field = 'hidden';
     dataField_orig.in_form = false;
     dataField_orig.value_type = "dataBlock";
     dataField_orig.value = dataBlock_dest.id;
-    dataField_orig.value_text = dataBlock_dest.text;
 
     return dataBlock;
   }
@@ -837,51 +843,47 @@ class AWF_Configuration {
     // DataBlockRelationship: {name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest}
     let allRelationships = {};
     let relsToReview = [];
+
     this.data_blocks.forEach(d => {
       if (d.module) {
         allRelationships[d.id] = [];
         Object.values(utils.getModuleInformation(d.module).relationships).forEach(r => {
-          // All available relationships for every DataBlock
-          r.datablock = d.id;
-          r.module = r.module_orig == d.module ? r.module_dest : r.module_orig;
-          r.textExtended = `${r.text} (${STIC.enabledModules[r.module].text})`;
-          r.datablock_orig = "";
-          r.datablock_dest = "";
-          if (r.module_orig == d.module) {
-            // Find field orig if is set as DataBlock
-            let field = d.fields.find(f => f.name == r.field_orig && f.value_type == "dataBlock");
-            if (field) {
-              // Fill Orig -> Dest info
-              r.datablock_orig = d.id;
-              r.datablock_dest = field.value;
-              relsToReview.push({
-                datablock: r.datablock,
-                relationship: r.relationship,
-              })
-            }
+          let rel = {...r}; // Copy relationship object
+
+          // Fill all available relationships for every DataBlock
+          rel.datablock = d.id;
+          rel.module = rel.module_orig == d.module ? rel.module_dest : rel.module_orig;
+          rel.textExtended = `${rel.text} (${STIC.enabledModules[rel.module].text})`;
+          rel.datablock_orig = "";
+          rel.datablock_dest = "";
+
+          allRelationships[d.id].push(rel);
+        });
+        // Find and fill defined relationships in datablock fields
+        d.fields.filter(f => f.value_type == "dataBlock").forEach(f => {
+          let rel = allRelationships[d.id].find(r => r.module_orig == d.module && r.field_orig == f.name);
+          if (rel) {
+            // Fill Orig -> Dest info
+            rel.datablock_orig = d.id;
+            rel.datablock_dest = f.value;
+
+            // Mark to review to fill Dest <- Orig info
+            relsToReview.push(rel);
           }
-          allRelationships[d.id].push(r);
         });
       }
     });
 
-    // Fill Orig->Dest in Dest 
-    relsToReview.forEach(v => {
-      let rOrig = allRelationships[v.datablock].find(r => r.relationship == v.relationship && r.datablock_orig != "");
-      if (rOrig) {
-        // There is Orig -> Dest info: Find Dest and Fill info in  Dest <- Orig
-        let rDest = allRelationships[rOrig.datablock_dest].find(r => r.relationship == rOrig.relationship);
-        if (rDest) {
-          rDest.datablock_orig = rOrig.datablock_orig;
-          rDest.datablock_dest = rOrig.datablock_dest;
-        }
+    // Review and fill Dest <- Orig info
+    relsToReview.forEach(r => {
+      let rel = allRelationships[r.datablock_dest].find(v => v.name == r.name);
+      if (rel) {
+        // Fill Dest <- Orig info
+        rel.datablock_orig = r.datablock_orig;
+        rel.datablock_dest = r.datablock_dest;
       }
     });
 
-    // Sort relationships
-    Object.keys(allRelationships).forEach(k => {
-      allRelationships[k].sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
-    });
     return allRelationships;
   }
 
@@ -912,7 +914,7 @@ class AWF_Configuration {
     this.data_blocks.filter(d => d.module == module).forEach(db => {
       dataBlocks.push({id: db.id, text: db.text});
     });
-    dataBlocks.push({ id: -1, text: utils.translate("[< Nuevo Bloque de Datos >]") });
+    dataBlocks.push({ id: -1, text: utils.translate('LBL_NEW_DATABLOCK') });
 
     return dataBlocks;
   }

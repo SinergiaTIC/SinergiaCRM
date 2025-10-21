@@ -114,6 +114,7 @@ $mod_strings = array (
   'LBL_FIELD_UNLINKED' => 'Campo no enlazado',
   'LBL_DUPLICATE_CHECK' => 'Detección de duplicados',
   'LBL_RELATIONSHIPS' => 'Relaciones',
+  'LBL_RELATIONSHIPS_DESC' => 'Las relaciones definidas entre los Bloques de datos',
 
   'LBL_ADD_FIELD_FORM' => 'Añadir campo en el formulario',
   'LBL_ADD_FIELD_UNLINKED' => 'Añadir campo no enlazado en el formulario',
@@ -123,6 +124,8 @@ $mod_strings = array (
   'LBL_NEW_FIELD_FORM' => 'Nuevo campo en el formulario',
   'LBL_NEW_FIELD_UNLINKED' => 'Nuevo campo no enlazado en el formulario',
   'LBL_NEW_FIELD_HIDDEN' => 'Nuevo valor fijo',
+  'LBL_ADD_RELATIONSHIP' => 'Añadir relación',
+  'LBL_NEW_RELATIONSHIP' => 'Nueva relación entre Bloques de Datos',
   
   
   'LBL_FIELD_DEFINITION' => 'Definición',
@@ -159,6 +162,8 @@ $mod_strings = array (
   'LBL_RELATIONSHIP' => 'Relación',
   'LBL_NO_MODULE_RELATED' => 'Sin módulo relacionado',
   'LBL_NEW_DATABLOCK' => 'Nuevo Bloque de datos',
+  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloque de datos Inicial',
+  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloque de datos Destino',
 
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
