@@ -3733,10 +3733,12 @@ $app_list_strings['stic_signatures_status_list']['expired'] = 'Expired';
 
 // Signatures: Auth methods
 $app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Unique Link';
-$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'One-Time Password';
-$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Phone';
-$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Identification Number';
-$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Date of Birth';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código de un solo uso (por SMS o Correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Código de un solo uso (por Correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_sms'] = 'Código de un solo uso (por SMS)';
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Teléfono';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Número de identificación';
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Fecha de nacimiento';
 
 // Signatures: Types of signatures
 $app_list_strings['stic_signatures_types_list'][''] = '';
