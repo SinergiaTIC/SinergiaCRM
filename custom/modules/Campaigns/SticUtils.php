@@ -39,7 +39,7 @@ function getNotificationsFromParent($params)
     $return_array['select'] =
         " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date" .
         ", cc.stic_notification_prospect_list_names_c as stic_notification_prospect_list_names_c" .
-        ", et.name as notification_email_template_name";
+        ", TT.name as notification_email_template_name";
 
     $return_array['from'] = " FROM campaigns ";
 
@@ -49,10 +49,25 @@ function getNotificationsFromParent($params)
         " AND cc.parent_type = '$parentType'" .
         " AND cc.parent_id = '$parentId'";
 
-    $return_array['join'] =
-        " LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id" .
-        " LEFT JOIN email_marketing em on em.campaign_id = campaigns.id and em.deleted = '0'" .
-        " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'";
+    // $return_array['join'] =
+    //     " LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id" .
+    //     " LEFT JOIN email_marketing em on em.campaign_id = campaigns.id and em.deleted = '0'" .
+    //     " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'";
+
+    $return_array['join'] = 
+    "
+        LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id
+        left join (select et.name, em.campaign_id as campaign_id
+        from email_marketing em -- on em.campaign_id = campaigns.id and em.deleted = '0'
+        LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'
+        union
+        select et.name, csmmc.campaigns_stic_message_marketingcampaign_ida as campaign_id
+        from campaigns_stic_message_marketing_c csmmc -- on csmmc.campaigns_stic_message_marketingcampaign_ida = campaigns.id and em.deleted = '0'
+        left join stic_message_marketing smm on smm.id = csmmc.campaigns_stic_message_marketingmessage_idb
+        left join email_templates et on et.id = smm.template_id and et.deleted = '0'
+        ) TT on TT.campaign_id = campaigns.id";
+
+
 
     $return_array['join_tables'] = '';
 
