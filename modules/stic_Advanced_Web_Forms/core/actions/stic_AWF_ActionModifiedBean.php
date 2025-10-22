@@ -31,7 +31,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class stic_AWF_ActionModifiedBean {
     public function __construct(
         public string $id,
-        public string $label,
+        public string $text,
         public string $type     // ex: 'Contacts'
     ) {}
 }

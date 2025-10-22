@@ -45,17 +45,4 @@
       <stic-field-textarea class="col-12" x-model="bean.description" label="LBL_DESCRIPTION"></stic-field-textarea>
     </div>
   </div>
-
-  <div x-data="{ showDetailsData:false }">
-    <!-- Bean Details [DEBUG] -->
-    <stic-field-checkbox
-      class="text-muted form-switch"
-      x-model="showDetailsData"
-      label="[Mostrar Bean]"
-    ></stic-field-checkbox>
-    <div class="card p-2" x-show="showDetailsData">
-      <h3 class="card-title" x-text="'Bean: ' + bean.name"></h3>
-      <div class="overflow-auto" id="detailsBean" data-model="bean" x-init="sticControls.elemTableObject($el);"></div>
-    </div>
-  </div>
 </form>

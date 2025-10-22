@@ -40,7 +40,7 @@ interface stic_AWF_ActionInterface {
     public function getLabel(): string;
 
     /**
-     * Obtiene el conjunto de tags la acción
+     * Obtiene el conjunto de tags de la acción
      * @return string[] Tags de la acción
      */
     public function getTags(): array;

@@ -25,15 +25,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Clase para indicar un parámetro de una acción
- */
-class stic_AWF_ActionParameter {
-    public function __construct(
-        public string $name,
-        public string $text,
-        public string $type,
-        public bool $required = false,
-        public array $options = []
-    ) {}
-}
+include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
+
+class SaveRecordAction extends

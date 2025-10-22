@@ -340,9 +340,9 @@ class AWF_Field {
       return [];
     }
     if (this.type_field == 'hidden') {
-      if (this.type == 'relate') {
-        return AWF_Field.value_typeList().filter(t => t.id == 'fixed' || t.id == 'dataBlock');
-      }
+      // if (this.type == 'relate') {
+      //   return AWF_Field.value_typeList().filter(t => t.id == 'fixed' || t.id == 'dataBlock');
+      // }
       return AWF_Field.value_typeList().filter(t => t.id == 'fixed');
     }
 
@@ -583,8 +583,50 @@ class AWF_Flow {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      name: "",              // Nombre del flujo
-      // TODO: Definir campos
+      id: utils.newId("awffa"), // Id del Flujo de acciones
+      name: "",                 // Nombre del Flujo de acciones
+      label: "",                // La etiqueta a traducir para el nombre
+      text: "",                 // El texto a mostrar 
+      actions: [],              // Las acciones del Flujo
+    });
+
+    // 2. Overwrite with provided data
+    Object.assign(this, data);
+
+    // 3. Map sub-objects and arrays to their classes
+    this.actions = (data.actions || this.actions).map(f => new AWF_Action(f));
+  }
+
+  getText() {
+    return this.label != "" ? utils.translate(this.label) : this.text;
+  }
+}
+
+class AWF_Action {
+  constructor(data = {}) {
+    // 1. Set default values
+    Object.assign(this, {
+      id: utils.newId("awfa"),  // Id de la acción
+      name: "",                 // Nombre interno de la acción
+      data_block_id: '',        // Id del Bloque de datos al que pertenece
+      requisite_actions: [],    // Array con los identificadores de las acciones previas a la actual
+      parameters: [],           // Los parámetros de la acción
+    });
+
+    // 2. Overwrite with provided data
+    Object.assign(this, data);
+
+    // 3. Map sub-objects and arrays to their classes
+    this.parameters = (data.parameters || this.parameters).map(a => new AWF_ActionParameter(a));
+  }
+}
+
+class AWF_ActionParameter {
+  constructor(data = {}) {
+    // 1. Set default values
+    Object.assign(this, {
+      name: '',                // Nombre del parámetro
+      text: '',                // Texto del parámetro
     });
 
     // 2. Overwrite with provided data
@@ -659,7 +701,25 @@ class AWF_Configuration {
   }
   _ensureDefaultFlows() {
     // Check exists Main Flow
+    const mainFlowExists = this.flows.some(f => f.id == '0');
+    if (!mainFlowExists) {
+      this.flows.push(new AWF_Flow({
+        id: 0,
+        name: "main",
+        label: "LBL_FLOW_MAIN",
+      }));
+    }
+
     // Check exists OnError Flow
+    const onErrorFlowExists = this.flows.some(f => f.id == '-1');
+    if (!onErrorFlowExists) {
+      this.flows.push(new AWF_Flow({
+        id: -1,
+        name: "onError",
+        label: "LBL_FLOW_ONERROR",
+      }));
+    }
+    
   }
   _ensureDefaultLayout() {}
 

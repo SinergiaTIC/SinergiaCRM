@@ -26,6 +26,7 @@ function wizardForm(readOnly) {
 }
 class WizardNavigation {
   static cacheSteps = [];
+  static cacheDebug = null;
 
   static async loadStep() {
     const step = window.alpineComponent.navigation.step;
@@ -35,16 +36,26 @@ class WizardNavigation {
       return;
     }
 
+    // Step title
+    $("#wizard-section-title").text(utils.translate(`LBL_WIZARD_TITLE_STEP${step}`) + ` (${step}/${totalSteps})`);
+
+    // Step content
     if (!(step in WizardNavigation.cacheSteps)) {
       WizardNavigation.cacheSteps[step] = await (
         await fetch(`modules/stic_Advanced_Web_Forms/custom_views/wizard/steps/step${step}.html`)
       ).text();
     }
-
-    $("#wizard-section-title").text(utils.translate(`LBL_WIZARD_TITLE_STEP${step}`) + ` (${step}/${totalSteps})`);
-
     let $el = document.getElementById("wizard-step-container");
     $el.innerHTML = WizardNavigation.cacheSteps[step];
+
+    // Debug options
+    if (!(WizardNavigation.cacheDebug)) {
+      WizardNavigation.cacheDebug = await (
+        await fetch(`modules/stic_Advanced_Web_Forms/custom_views/wizard/steps/debug.html`)
+      ).text();
+    }
+    let $elDebug = document.getElementById("debug-container");
+    $elDebug.innerHTML = WizardNavigation.cacheDebug;
 
     // Initialize Alpine.js over new content
     Alpine.initTree($el);
@@ -535,8 +546,8 @@ class WizardStep2 {
 
       get isDate() {return this.field?.type == 'date' || this.field?.type == 'datetime' || this.field?.type == 'datetimecombo'; },
 
-      get isInFormSelectableValues() { return this.field?.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type != "relate"},
-      get isInFormSelectableRelation() { return this.field?.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type == "relate" },
+      get isInFormSelectableValues() { return this.field && this.field.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type != "relate"},
+      get isInFormSelectableRelation() { return this.field && this.field.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type == "relate" },
 
       get isFixedValue() { return this.field && this.field.type_field == 'hidden' && this.field.value_type == 'fixed'; },
       get isFixedValueOfEnum() { return this.isFixedValue && this.field.value_options.length > 0; },
@@ -791,4 +802,19 @@ class WizardStep2 {
     }
   }
 
+}
+
+class WizardStep3 {
+  static mainStep3xData() {
+    return {
+      get formConfig() { return window.alpineComponent.formConfig; },
+
+      flowTabSelected: 0,
+      get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
+      get actions() { return this.flow?.actions ?? []; },
+
+      init() {
+      },
+    };
+  }
 }

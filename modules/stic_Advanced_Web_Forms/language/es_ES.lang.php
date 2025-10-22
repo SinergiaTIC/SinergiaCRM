@@ -165,6 +165,7 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloque de datos Inicial',
   'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloque de datos Destino',
 
+  'LBL_FLOWS' => 'Flujos de acciones',
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
   'LBL_ACTIONS' => 'Acciones',
