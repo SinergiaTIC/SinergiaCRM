@@ -217,28 +217,28 @@ $mod_strings['LNK_IMPORT_CONTACTS'] = 'Importar Persoas';
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direccións de correo";
 
-// Medication
+// Cadeas Medicación
 $mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Rexistro de medicación";
 $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescricións";
 
-// Cadeas de Ayudas
+// Cadeas Ayudas
 $mod_strings['LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 
-// Cadeas de Diario
+// Cadeas Diario
 $mod_strings['LBL_STIC_JOURNAL_CONTACTS_FROM_STIC_JOURNAL_TITLE'] = 'Diario';
 
-// Cadenas Formación
+// Cadeas Formación
 $mod_strings['LBL_STIC_TRAINING_CONTACTS_FROM_STIC_TRAINING_TITLE'] = 'Formación';
 
-// Cadenas Experiencia laboral
+// Cadeas Experiencia laboral
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiencia laboral';
 
-// Cadenas Competencias
+// Cadeas Competencias
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competencias';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Lista de público objectivo';
 $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';
 
-// Cadenas Productos financieros
+// Cadeas Productos financieros
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
