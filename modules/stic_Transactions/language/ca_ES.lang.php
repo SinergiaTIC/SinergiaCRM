@@ -1,25 +1,25 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
+/
+  This file is part of SinergiaCRM.
+  SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+  Copyright (C) 2013 - 2023 SinergiaTIC Association
+ 
+  This program is free software; you can redistribute it and/or modify it under
+  the terms of the GNU Affero General Public License version 3 as published by the
+  Free Software Foundation.
+ 
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+  details.
+ 
+  You should have received a copy of the GNU Affero General Public License along with
+  this program; if not, see http://www.gnu.org/licenses or write to the Free
+  Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301 USA.
+ 
+  You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ /
 
 $mod_strings = array (
   'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
@@ -120,4 +120,27 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producte financer',
+
+  // NORMA 43
+  'LBL_NORMA_43' => 'Importar Norma 43',
+  'LBL_STEP_1' => 'Pas 1: Pujar Fitxer Norma 43',
+  'LBL_SELECT_FILE' => 'Seleccionar un arxiu',
+  'LBL_INSTRUCTION_1_STEP_1' => 'Seleccioni un fitxer en format de text pla (<strong>.txt</strong>).',
+  'LBL_INSTRUCTION_2_STEP_1' => 'El fitxer ha de seguir l\'estructura de l\'estàndard <strong> oficial de Norma 43</strong>.',
+  'LBL_INSTRUCTION_3_STEP_1' => 'Cada línia del fitxer ha de tenir una longitud màxima de <strong>80 caràcters</strong>.',
+  'LBL_STEP_2' => 'Pas 2: Mapatge de Campos',
+  'LBL_FIELD_1_STEP_2' => 'Campos Norma 43',
+  'LBL_FIELD_2_STEP_2' => 'Valor',
+  'LBL_FIELD_3_STEP_2' => 'Campos Módulo',
+  'LBL_BACK_TO_STEP_1' => 'Desitges tornar a pujar un altre arxiu? Es perdran les dades actuals.',
+  'LBL_CANCELL_IMPORT_NORMA_43' => 'Segur que desitges cancel·lar la importació?',
+  'LBL_NOT_IMPORT_FIELD' => '-- No importar --',
+  'LBL_STEP_3' => 'Pas 3: Confirmar Importació de Norma 43',
+  'LBL_INSTRUCTION_1_STEP_3' => 'Estàs a punt de guardar les següents transaccions. Si us plau, revisa el resum i confirma l\'operació.',
+  'LBL_SUMMARY_STEP_3' => 'Resum de la Importació',
+  'LBL_TOTAL_TRANSACTIONS' => 'Transaccions en l\'arxiu',
+  'LBL_TOTAL_DUPLICATES' => 'Duplicats que s\'ometran',
+  'LBL_TOTAL_NEW_TRANSACTIONS' => 'Noves transaccions a importar',
+  'LBL_DUPLICATE_NORMA_43' => 'Aquestes transaccions ja existeixen per a la mateixa data i import i no s\'importaran',
+  'LBL_COMPLETI_IMPORT_NORMA_43' => 'Finalitzar Importació',
 );

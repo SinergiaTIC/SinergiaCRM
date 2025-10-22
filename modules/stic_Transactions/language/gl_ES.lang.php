@@ -135,4 +135,12 @@ $mod_strings = array (
   'LBL_BACK_TO_STEP_1' => '¿Deseas volver a subir otro archivo? Se perderán los datos actuales.',
   'LBL_CANCEL_IMPORT_NORMA_43' => '¿Seguro que deseas cancelar la importación?',
   'LBL_NOT_IMPORT_FIELD' => '-- No importar --',
+  'LBL_STEP_3' => 'Paso 3: Confirmar Importación de Norma 43',
+  'LBL_INSTRUCTION_1_STEP_3' => 'Estás a punto de guardar las siguientes transacciones. Por favor, revisa el resumen y confirma la operación.',
+  'LBL_SUMMARY_STEP_3' => 'Resumen de la Importación',
+  'LBL_TOTAL_TRANSACTIONS' => 'Transacciones en el archivo',
+  'LBL_TOTAL_DUPLICATES' => 'Duplicados que se omitirán',
+  'LBL_TOTAL_NEW_TRANSACTIONS' => 'Nuevas transacciones a importar',
+  'LBL_DUPLICATE_NORMA_43' => 'Estas transacciones ya existen para la misma fecha e importe y no se van a importar',
+  'LBL_COMPLETE_IMPORT_NORMA_43' => 'Finalizar Importación',
 );
