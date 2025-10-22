@@ -100,8 +100,22 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_campaigns_notification'] =
     'title_key' => 'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE',
     'top_buttons' => array(
         0 => array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate', 
-            'title' => 'LBL_NEW_BUTTON_TITLE',
+            'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
+            'title' => 'LBL_NEW_NOTIFICATION',
+            'id'=> 'NEW_NOTIFICATION',
+            'additional_form_fields' => array(
+                'campaign_type' => 'Notification', // This will pre-populate the 'type' field
+                // 'another_field' => 'another_value', // You can add more here
+            ),
+        ),
+        1 => array(
+            'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
+            'id' => 'NEW_MSG_NOTIFICATION',
+            'title' => 'LBL_NEW_MSG_NOTIFICATION',
+            'additional_form_fields' => array(
+                'campaign_type' => 'NotifMsg', // This will pre-populate the 'type' field
+                // 'another_field' => 'another_value', // You can add more here
+            ),
         ),
     ),
 );
