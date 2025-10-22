@@ -120,4 +120,13 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
 
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Financial product',
+
+  // NORMA 43
+  'LBL_NORMA_43' => 'Import Norma 43',
+  'LBL_STEP_1' => 'Step 1: Upload Norma 43 File',
+  'LBL_SELECT_FILE' => 'Select a file',
+  'LBL_INSTRUCTION_1_STEP_1' => 'Select a file in plain text format (<strong>.txt</strong>).',
+  'LBL_INSTRUCTION_2_STEP_1' => 'The file must follow the structure of the <strong>official Norma 43 standard</strong>.',
+  'LBL_INSTRUCTION_3_STEP_1' => 'Each line of the file must have a maximum length of <strong>80 characters</strong>.',
+
 );
