@@ -153,9 +153,6 @@ class stic_Message_MarketingController extends SugarController {
 
         header("Location: index.php?module=Campaigns&action=DetailView&record={$_REQUEST['return_id']}");
         $this->redirect_url = "index.php?module=Campaigns&action=DetailView&record={$_REQUEST['return_id']}";
-        // exit;
-        // SugarApplication::redirect("index.php?module=Campaigns&action=index");
-        // SugarApplication::redirect("index.php?module=Campaigns&action=DetailView&record={$_REQUEST['return_id']}");
     }
 
     public function action_getDefaultSender() {

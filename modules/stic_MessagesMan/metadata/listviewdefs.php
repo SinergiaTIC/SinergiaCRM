@@ -81,8 +81,6 @@ $listViewDefs['stic_MessagesMan'] = array(
         'width' => '5%',
         'label' => 'LBL_LIST_IN_QUEUE',
         'default' => true),
-    // STIC-Custom 20220928 MHP - Add fields to the list view
-    // STIC#873        
     'date_entered' => array(
         'width' => '10%',
         'label' => 'LBL_DATE_ENTERED',
@@ -99,5 +97,4 @@ $listViewDefs['stic_MessagesMan'] = array(
         'width' => '10%',
         'label' => 'LBL_USER_ID',
         'default' => false),             
-    // END STIC-Custom
 );

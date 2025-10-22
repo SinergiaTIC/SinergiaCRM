@@ -83,7 +83,6 @@ $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.";
 
-$mod_strings['LBL_STIC_MESSAGES_MARKETING_CAMPAIGNS_TITLE'] = "Marketing por mensaje";
 $mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = "Marketing por mensaje";
 $mod_strings['LBL_SEND_MESSAGES'] = "Enviar Mensajes";
 $mod_strings['LBL_SEND_MESSAGES_TEST'] = "Enviar Mensajesde prueba";

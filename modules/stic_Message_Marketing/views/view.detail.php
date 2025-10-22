@@ -49,8 +49,6 @@ class stic_Message_MarketingViewDetail extends ViewDetail
 
         SticViews::display($this);
 
-        // echo getVersionedScript("modules/stic_Message_Marketing/Utils.js");
-
         // Write here you custom code
     }
 

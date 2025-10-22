@@ -185,41 +185,6 @@ $dictionary["Campaign"]["fields"]['notification_reply_to_addr'] = array(
     'len' => '100',
 );
 
-// Notification by message fields
-// $dictionary["Campaign"]["fields"]["msg_parent_name"] = array(
-//     'name' => 'msg_parent_name',
-//     'rname' => 'name', 
-//     'parent_type' => 'record_type_display',
-//     'type_name' => 'msg_parent_type',
-//     'id_name' => 'msg_parent_id',
-//     'vname' => 'LBL_FLEX_RELATE',
-//     'type' => 'parent',
-//     'group' => 'msg_parent_name',
-//     'source' => 'non-db',
-//     'options' => 'parent_type_display_notifications', // Available Notification parent types
-//     'inline_edit' => 0,
-//     'studio' => 'visible',
-//     'popupHelp' => 'LBL_FLEX_RELATE_HELP',
-// );
-// $dictionary["Campaign"]["fields"]['msg_parent_type'] = array(
-//     'name' => 'msg_parent_type',
-//     'vname' => 'LBL_PARENT_TYPE',
-//     'type' => 'parent_type',
-//     'dbType' => 'varchar',
-//     'group' => 'msg_parent_name',
-//     'options' => 'parent_type_display_notifications', // Available Notification parent types
-//     'len' => 255,
-//     'studio' => 'hidden',
-//     'source' => 'custom_fields',
-// );
-// $dictionary["Campaign"]["fields"]['msg_parent_id'] = array(
-//     'name' => 'msg_parent_id',
-//     'type' => 'id',
-//     'group' => 'msg_parent_name',
-//     'reportable' => false,
-//     'vname' => 'LBL_PARENT_ID',
-//     'source' => 'custom_fields',
-// );
 $dictionary["Campaign"]["fields"]["parent_field_placeholder"] = array(
     'name' => 'parent_field_placeholder',
     'vname' => 'LBL_FLEX_RELATE', // Re-use the same label

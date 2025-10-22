@@ -107,11 +107,8 @@ array(
         'name' => 'send_date_time' ,
         'vname' => 'LBL_SEND_DATE_TIME',
         'type' => 'datetime',
-        // STIC-Custom 20220928 MHP - Add search properties
-        // STIC#873        
         'enable_range_search' => true,
         'options' => 'date_range_search_dom',
-        // END STIC-Custom
     ),
     'modified_user_id' => array(
         'name' => 'modified_user_id',

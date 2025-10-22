@@ -41,8 +41,7 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
         $this->dv->defs['templateMeta']['form']['buttons'][1] = self::duplicateButton;
         $this->dv->defs['templateMeta']['form']['buttons'][2] = self::deleteButton;
         $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
-        //TODOEPS: Buscar la data correcta
-        // STIC Custom EPS - Messages campaigns
+        // STIC Custom 20241105 EPS - Messages campaigns
         // $this->dv->defs['templateMeta']['form']>['buttons'][4] = self::testSendButton;
         // $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
 
@@ -118,8 +117,7 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
             ),
         )
     );
-    // TODOEPS: Buscar la data correcta
-    // STIC Custom EPS - Messages campaigns
+    // STIC Custom 20241105 EPS - Messages campaigns
     private const testMessagesSendButton = array(
         'customCode' => '<input title="{$MOD.LBL_SEND_MESSAGES_TEST}"  class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_test_button" value="{$MOD.LBL_SEND_MESSAGES_TEST}">',
         'sugar_html' => 

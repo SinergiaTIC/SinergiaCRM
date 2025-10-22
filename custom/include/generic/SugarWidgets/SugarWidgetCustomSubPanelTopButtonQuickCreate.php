@@ -38,9 +38,6 @@ class SugarWidgetCustomSubPanelTopButtonQuickCreate extends SugarWidgetField
 		$return_module = $_REQUEST['module'];
 		$return_id = $_REQUEST['record']; 
 		$module_name = $defines['module'];
-		// $record_id = $layout_def['fields']['ID'];
-		// $subpanel = $layout_def['subpanel_id'];
-        // $unique_id = $layout_def['subpanel_id']."_form_".$subpanel_item_count; //bug 51512
 		$unique_id = $defines['id'];
 
 
@@ -49,29 +46,10 @@ class SugarWidgetCustomSubPanelTopButtonQuickCreate extends SugarWidgetField
 		
 		$subpanel = $defines['subpanel_definition']->name;
 
-		// $labelText = "Quick Edit";
-		// $label = null;
-		// if (isset($layout_def['vname'])) {
-		// 	$label = $layout_def['vname'];
-		// } elseif (isset($layout_def['label'])) {
-		// 	$label = $layout_def['label'];
-		// }
-		// if ($label != null) {
-		// 	if (isset($app_strings[$label])) {
-		// 		$labelText = $app_strings[$label];
-		// 	} elseif (isset($mod_strings[$label])) {
-		// 		$labelText = $mod_strings[$label];
-		// 	}
-		// }
         $labelText = $app_strings[$defines['title']];
 
-
-
-		// <input type="hidden" name="record" value="'.$record_id.'">
-		// <form onsubmit="return SUGAR.subpanelUtils.sendAndRetrieve(this.id, \'subpanel_'.$subpanel.'\', \'Loading ...\');" action="index.php" method="post" name="form" id="formformgetNotificationsFromParent">
 		$html = '
 		<form onsubmit="return SUGAR.subpanelUtils.sendAndRetrieve(this.id, \'subpanel_'.$subpanel.'\', \'Loading ...\');" action="index.php" method="post" name="form" id="'.$unique_id.'">
-        
 		<input type="hidden" name="target_module" value="'.$module_name.'">
 		<input type="hidden" name="tpl" value="QuickCreate.tpl">
 		<input type="hidden" name="return_module" value="'.$return_module.'">

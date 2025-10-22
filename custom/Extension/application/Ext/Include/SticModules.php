@@ -183,8 +183,7 @@ $modInvisList[] = 'stic_Custom_Views';
 $modInvisList[] = 'stic_Custom_View_Customizations';
 $modInvisList[] = 'stic_Custom_View_Conditions';
 $modInvisList[] = 'stic_Custom_View_Actions';
-// TODOEPS: Activar para no mostrar en menú
-// $modInvisList[] = 'stic_MessagesMan';
+$modInvisList[] = 'stic_MessagesMan';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
@@ -199,8 +198,7 @@ $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
 $adminOnlyList['stic_Custom_Views'] = array('all' => 1);
-// TODOEPS: Activar para no mostrar en menú
-// $adminOnlyList['stic_MessagesMan'] = array('all' => 1);
+$adminOnlyList['stic_MessagesMan'] = array('all' => 1);
 $adminOnlyList['Trackers'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events

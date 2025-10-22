@@ -167,20 +167,6 @@ class stic_MessagesMan extends SugarBean
             . '.* , '
             . 'campaigns.name as campaign_name, '
             . 'stic_message_marketing.name as message_name, '
-            // . '(CASE related_type '
-            // . 'WHEN \'Contacts\' THEN '
-            // . $this->db->concat('contacts', array('first_name', 'last_name'), '&nbsp;')
-            // . ' '
-            // . 'WHEN \'Leads\' THEN '
-            // . $this->db->concat('leads', array('first_name', 'last_name'), '&nbsp;')
-            // . ' '
-            // . 'WHEN \'Accounts\' THEN accounts.name '
-            // . 'WHEN \'Users\' THEN '
-            // . $this->db->concat('users', array('first_name', 'last_name'), '&nbsp;') . ' '
-            // . "WHEN 'Prospects' THEN "
-            // . $this->db->concat('prospects', array('first_name', 'last_name'), '&nbsp;')
-            // . ' '
-            // . 'END) recipient_name';
             . $recipientName . ' recipient_name,'
             . $recipientPhone . ' recipient_phone';
 
@@ -203,7 +189,6 @@ class stic_MessagesMan extends SugarBean
             . $this->table_name  . '.related_id and '.$this->table_name.'.related_type =\'Accounts\' '
             . 'LEFT JOIN prospects ON prospects.id = '.$this->table_name.'.related_id and '.$this->table_name.'.related_type =\'Prospects\' '
             . 'LEFT JOIN prospect_lists ON prospect_lists.id = '.$this->table_name.'.list_id '
-            // . 'LEFT JOIN email_addr_bean_rel ON email_addr_bean_rel.bean_id = '.$this->table_name.'.related_id and '.$this->table_name.'.related_type = email_addr_bean_rel.bean_module and email_addr_bean_rel.primary_address = 1 and email_addr_bean_rel.deleted=0 '
             . 'LEFT JOIN campaigns ON campaigns.id = '.$this->table_name.'.campaign_id '
             . 'LEFT JOIN stic_message_marketing ON stic_message_marketing.id = '.$this->table_name.'.marketing_id ';
 
@@ -283,9 +268,6 @@ class stic_MessagesMan extends SugarBean
             . 'LEFT JOIN accounts ON accounts.id = '.$this->table_name.'.related_id and '.$this->table_name.'.related_type =\'Accounts\' '
             . 'LEFT JOIN prospects ON prospects.id = '.$this->table_name.'.related_id and '.$this->table_name.'.related_type =\'Prospects\' '
             . 'LEFT JOIN prospect_lists ON prospect_lists.id = '.$this->table_name.'.list_id '
-            // . 'LEFT JOIN email_addr_bean_rel ON email_addr_bean_rel.bean_id = '
-            // . $this->table_name.'.related_id and '
-            // . $this->table_name.'.related_type = email_addr_bean_rel.bean_module and email_addr_bean_rel.primary_address = 1 and email_addr_bean_rel.deleted=0 '
             . 'LEFT JOIN campaigns ON campaigns.id = '.$this->table_name.'.campaign_id '
             . 'LEFT JOIN stic_message_marketing ON stic_message_marketing.id = '.$this->table_name.'.marketing_id';
 
@@ -525,14 +507,9 @@ class stic_MessagesMan extends SugarBean
             . 'LEFT JOIN accounts ON accounts.id = '. $this->table_name .'.related_id and '. $this->table_name .'.related_type =\'Accounts\' '
             . 'LEFT JOIN prospects ON prospects.id = '. $this->table_name .'.related_id and '. $this->table_name .'.related_type =\'Prospects\' '
             . 'LEFT JOIN prospect_lists ON prospect_lists.id = '. $this->table_name .'.list_id '
-            // . 'LEFT JOIN email_addr_bean_rel ON email_addr_bean_rel.bean_id = '. $this->table_name .'.related_id and '
-            // . $this->table_name
-            // .'.related_type = email_addr_bean_rel.bean_module and email_addr_bean_rel.primary_address = 1 and email_addr_bean_rel.deleted=0 '
             . 'LEFT JOIN campaigns ON campaigns.id = '. $this->table_name .'.campaign_id '
-            // . 'LEFT JOIN email_marketing ON email_marketing.id = '. $this->table_name .'.marketing_id ';
             . 'LEFT JOIN stic_message_marketing ON stic_message_marketing.id = '. $this->table_name .'.marketing_id ';
 
-            //B.F. #37943
         if (isset($params['group_by'])) {
             $group_by = str_replace("stic_messagesman", "em", (string) $params['group_by']);
             $query .= "INNER JOIN (select min(id) as id from stic_messagesman em GROUP BY $group_by) secondary on {$this->table_name}.id = secondary.id ";

@@ -82,3 +82,10 @@ $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Cuenta de correo que 
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde recibir los mensajes de error que se puedan producir tras el envío. Se puede configurar en el apartado 'Correo electrónico entrante' del área de Administración.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.";
+
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = "Marketing por mensaje";
+$mod_strings['LBL_SEND_MESSAGES'] = "Enviar Mensajes";
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = "Enviar Mensajesde prueba";
+
+$mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cola de correo electrónico';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de mensajes';
