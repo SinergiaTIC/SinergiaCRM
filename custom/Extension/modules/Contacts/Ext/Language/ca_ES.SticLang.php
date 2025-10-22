@@ -217,7 +217,7 @@ $mod_strings['LNK_IMPORT_CONTACTS'] = 'Importa Persones';
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 
-// Medication
+// Medicació
 $mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Registre de medicació";
 $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescripcions";
 
