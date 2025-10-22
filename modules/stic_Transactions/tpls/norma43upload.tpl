@@ -21,11 +21,10 @@
  *}
 
 <div class="moduleTitle">
-    <h2 class="module-title-text" style="font-size: 18px;">{$MOD['LBL_STEP_1']}</h2>
+    <h2 class="module-title-text" style="font-size: 18px; margin-bottom: 0px;">{$MOD['LBL_STEP_1']}</h2>
 </div>
 <br>
 <div  class="import_instruction">
-    <br>
     <br>
     {$MOD['LBL_INSTRUCTION_1_STEP_1']}
     <br>
