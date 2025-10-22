@@ -27,4 +27,4 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 
-class SaveRecordAction extends
+// class SaveRecordAction extends
