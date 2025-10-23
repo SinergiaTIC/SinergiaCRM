@@ -72,7 +72,7 @@ $app_strings['LBL_GROUPTAB_EXPLOITATION'] = 'Explotació';
 $app_strings['LBL_GROUPTAB_DC_PERSONALINFO'] = 'Informació personal';
 $app_strings['LBL_GROUPTAB_DC_WORKPLAN'] = 'Pla de treball';
 $app_strings['LBL_GROUPTAB_DC_MEDICATION'] = 'Medicació';
-$app_strings['LBL_GROUPTAB_FINANCIAL_MANAGEMENT'] = 'Gestió financera';
+$app_strings['LBL_GROUPTAB_FINANCIAL_MANAGEMENT'] = 'Finances de tercers';
 
 // Subtema propi de SinergiaCRM
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
@@ -3642,6 +3642,65 @@ $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuari connectat';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inici de sessió erroni';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
 
+// Productes financers: Tipus de productes
+$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Compte corrent';
+$app_list_strings['stic_financial_products_types_list']['savings_account'] = "Compte d'estalvi";
+$app_list_strings['stic_financial_products_types_list']['investment_fund'] = "Fons d'inversió";
+$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Assegurança';
+$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Targeta de prepagament';
+$app_list_strings['stic_financial_products_types_list']['shares'] = 'Accions';
+$app_list_strings['stic_financial_products_types_list']['other'] = 'Altres';
+
+// Transaccions: Tipus de moviments
+$app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Ingrés';
+$app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Despesa';
+$app_list_strings['stic_transactions_transaction_types_list']['withdrawal'] = 'Retirada';
+$app_list_strings['stic_transactions_transaction_types_list']['deposit'] = 'Dipòsit';
+
+// Transaccions: Estat
+$app_list_strings['stic_transactions_status_list']['completed'] = 'Completat';
+$app_list_strings['stic_transactions_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_transactions_status_list']['failed'] = 'Fallit';
+$app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputat';
+
+// Transaccions: Categoria
+$app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sou';
+$app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversions';
+$app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regals';
+$app_list_strings['stic_transactions_categories_list']['income_sales'] = 'Vendes';
+$app_list_strings['stic_transactions_categories_list']['income_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['expense_housing'] = 'Habitatge';
+$app_list_strings['stic_transactions_categories_list']['expense_transportation'] = 'Transport';
+$app_list_strings['stic_transactions_categories_list']['expense_food'] = 'Alimentació';
+$app_list_strings['stic_transactions_categories_list']['expense_services'] = 'Serveis';
+$app_list_strings['stic_transactions_categories_list']['expense_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_withdrawal'] = 'Retirada';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['deposit_deposit'] = 'Dipòsit';
+$app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Altres';
+
+// Transaccions: Subcategoria
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sou';
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bons';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividends';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_interest'] = 'Interessos';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_products'] = 'Productes';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_services'] = 'Serveis';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_gifts'] = 'Regals';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_refunds'] = 'Reemborsaments';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_rent_mortgage'] = 'Lloguer/Hipoteca';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_utilities'] = 'Serveis públics';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_fuel'] = 'Combustible';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_transportation_public_transportation'] = 'Transport/Transport públic';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_telephone'] = 'Telefonia';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_subscriptions'] = 'Subscripcions';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_groceries'] = 'Supermercat';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_restaurants_bars'] = 'Restaurant/Bar';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_atm'] = 'Caixer automàtic';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'A finestreta';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectiu';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferència';
+
 // Modificacions del core de SuiteCRM
 
 // Cadenes generals (procedents d'include)
@@ -3763,62 +3822,3 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
-
-// Productes financers: Tipus de producte
-$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Compte corrent';
-$app_list_strings['stic_financial_products_types_list']['savings_account'] = 'Compte d\'estalvi';
-$app_list_strings['stic_financial_products_types_list']['investment_fund'] = 'Fons d\'inversió';
-$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Assegurança';
-$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Targeta de prepagament';
-$app_list_strings['stic_financial_products_types_list']['shares'] = 'Accions';
-$app_list_strings['stic_financial_products_types_list']['other'] = 'Altres';
-
-// Transaccions: Tipus de moviment
-$app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Ingrés';
-$app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Despesa';
-$app_list_strings['stic_transactions_transaction_types_list']['withdrawal'] = 'Retirada';
-$app_list_strings['stic_transactions_transaction_types_list']['deposit'] = 'Dipòsit';
-
-// Transaccions: Estat
-$app_list_strings['stic_transactions_status_list']['completed'] = 'Completat';
-$app_list_strings['stic_transactions_status_list']['pending'] = 'Pendent';
-$app_list_strings['stic_transactions_status_list']['failed'] = 'Fallit';
-$app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputat';
-
-// Transaccions: Categoria
-$app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sou';
-$app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversions';
-$app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regals';
-$app_list_strings['stic_transactions_categories_list']['income_sales'] = 'Vendes';
-$app_list_strings['stic_transactions_categories_list']['expense_housing'] = 'Habitatge';
-$app_list_strings['stic_transactions_categories_list']['expense_transportation'] = 'Transport';
-$app_list_strings['stic_transactions_categories_list']['expense_food'] = 'Alimentació';
-$app_list_strings['stic_transactions_categories_list']['expense_services'] = 'Serveis';
-$app_list_strings['stic_transactions_categories_list']['withdrawal_withdrawal'] = 'Retirada';
-$app_list_strings['stic_transactions_categories_list']['deposit_deposit'] = 'Dipòsit';
-$app_list_strings['stic_transactions_categories_list']['income_other'] = 'Altres';
-$app_list_strings['stic_transactions_categories_list']['expense_other'] = 'Altres';
-$app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Altres';
-$app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Altres';
-
-// Transaccions: Subcategoria
-$app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sou';
-$app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bons';
-$app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividends';
-$app_list_strings['stic_transactions_subcategories_list']['income_investments_interest'] = 'Interessos';
-$app_list_strings['stic_transactions_subcategories_list']['income_sales_products'] = 'Productes';
-$app_list_strings['stic_transactions_subcategories_list']['income_sales_services'] = 'Serveis';
-$app_list_strings['stic_transactions_subcategories_list']['income_gifts_gifts'] = 'Regals';
-$app_list_strings['stic_transactions_subcategories_list']['income_gifts_refunds'] = 'Reemborsaments';
-$app_list_strings['stic_transactions_subcategories_list']['expense_housing_rent_mortgage'] = 'Lloguer/Hipoteca';
-$app_list_strings['stic_transactions_subcategories_list']['expense_housing_utilities'] = 'Serveis públics';
-$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_fuel'] = 'Combustible';
-$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_transportation_public_transportation'] = 'Transport/Transport públic';
-$app_list_strings['stic_transactions_subcategories_list']['expense_services_telephone'] = 'Telefonia';
-$app_list_strings['stic_transactions_subcategories_list']['expense_services_subscriptions'] = 'Subscripcions';
-$app_list_strings['stic_transactions_subcategories_list']['expense_food_groceries'] = 'Supermercat';
-$app_list_strings['stic_transactions_subcategories_list']['expense_food_restaurants_bars'] = 'Restaurant/Bar';
-$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_atm'] = 'Caixer automàtic';
-$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'En finestreta';
-$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectiu';
-$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferència';
