@@ -3642,6 +3642,65 @@ $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inicio de sesión erróneo';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
 
+// Productos financieros: Tipos de productos
+$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';
+$app_list_strings['stic_financial_products_types_list']['savings_account'] = 'Cuenta de ahorro';
+$app_list_strings['stic_financial_products_types_list']['investment_fund'] = 'Fondo de inversión';
+$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Seguro';
+$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Tarjeta prepago';
+$app_list_strings['stic_financial_products_types_list']['shares'] = 'Acciones';
+$app_list_strings['stic_financial_products_types_list']['other'] = 'Otros';
+
+// Transacciones: Tipos de movimientos
+$app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Ingreso';
+$app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Gasto';
+$app_list_strings['stic_transactions_transaction_types_list']['withdrawal'] = 'Retirada';
+$app_list_strings['stic_transactions_transaction_types_list']['deposit'] = 'Depósito';
+
+// Transacciones: Estado
+$app_list_strings['stic_transactions_status_list']['completed'] = 'Completado';
+$app_list_strings['stic_transactions_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_transactions_status_list']['failed'] = 'Fallido';
+$app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputado';
+
+// Transacciones: Categorías
+$app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sueldo';
+$app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversiones';
+$app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regalos';
+$app_list_strings['stic_transactions_categories_list']['income_sales'] = 'Ventas';
+$app_list_strings['stic_transactions_categories_list']['expense_housing'] = 'Vivienda';
+$app_list_strings['stic_transactions_categories_list']['expense_transportation'] = 'Transporte';
+$app_list_strings['stic_transactions_categories_list']['expense_food'] = 'Alimentación';
+$app_list_strings['stic_transactions_categories_list']['expense_services'] = 'Servicios';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_withdrawal'] = 'Retirada';
+$app_list_strings['stic_transactions_categories_list']['deposit_deposit'] = 'Depósito';
+$app_list_strings['stic_transactions_categories_list']['income_other'] = 'Otros';
+$app_list_strings['stic_transactions_categories_list']['expense_other'] = 'Otros';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Otros';
+$app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Otros';
+
+// Transacciones: Subcategorías
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sueldo';
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bonos';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividendos';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_interest'] = 'Intereses';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_products'] = 'Productos';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_services'] = 'Servicios';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_gifts'] = 'Regalos';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_refunds'] = 'Reembolso';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_rent_mortgage'] = 'Alquiler/Hipoteca';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_utilities'] = 'Servicios públicos';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_fuel'] = 'Combustible';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_transportation_public_transportation'] = 'Transporte/Transporte público';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_telephone'] = 'Telefonía';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_subscriptions'] = 'Suscripciones';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_groceries'] = 'Supermercado';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_restaurants_bars'] = 'Restaurante/Bar';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_atm'] = 'Cajero automático';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'En ventanilla';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectivo';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferencia';
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)
@@ -3763,62 +3822,3 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Chamadas';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
-
-// Productos financieros: Tipos de productos
-$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';
-$app_list_strings['stic_financial_products_types_list']['savings_account'] = 'De ahorro';
-$app_list_strings['stic_financial_products_types_list']['investment_fund'] = 'Fondo de inversión';
-$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Seguros';
-$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Tarjeta prepago';
-$app_list_strings['stic_financial_products_types_list']['shares'] = 'Acciones';
-$app_list_strings['stic_financial_products_types_list']['other'] = 'Otros';
-
-// Transacciones: Tipo de movimiento
-$app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Ingreso';
-$app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Gasto';
-$app_list_strings['stic_transactions_transaction_types_list']['withdrawal'] = 'Retirada';
-$app_list_strings['stic_transactions_transaction_types_list']['deposit'] = 'Depósito';
-
-// Transacciones: Estado
-$app_list_strings['stic_transactions_status_list']['completed'] = 'Completado';
-$app_list_strings['stic_transactions_status_list']['pending'] = 'Pendiente';
-$app_list_strings['stic_transactions_status_list']['failed'] = 'Fallido';
-$app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputado';
-
-// Transacciones: Categoría
-$app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sueldo';
-$app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversiones';
-$app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regalos';
-$app_list_strings['stic_transactions_categories_list']['income_sales'] = 'Ventas';
-$app_list_strings['stic_transactions_categories_list']['expense_housing'] = 'Vivienda';
-$app_list_strings['stic_transactions_categories_list']['expense_transportation'] = 'Transporte';
-$app_list_strings['stic_transactions_categories_list']['expense_food'] = 'Alimentación';
-$app_list_strings['stic_transactions_categories_list']['expense_services'] = 'Servicios';
-$app_list_strings['stic_transactions_categories_list']['withdrawal_withdrawal'] = 'Retirada';
-$app_list_strings['stic_transactions_categories_list']['deposit_deposit'] = 'Depósito';
-$app_list_strings['stic_transactions_categories_list']['income_other'] = 'Otros';
-$app_list_strings['stic_transactions_categories_list']['expense_other'] = 'Otros';
-$app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Otros';
-$app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Otros';
-
-// Transacciones: Subcategoría
-$app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sueldo';
-$app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bonos';
-$app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividendos';
-$app_list_strings['stic_transactions_subcategories_list']['income_investments_interest'] = 'Intereses';
-$app_list_strings['stic_transactions_subcategories_list']['income_sales_products'] = 'Productos';
-$app_list_strings['stic_transactions_subcategories_list']['income_sales_services'] = 'Servicios';
-$app_list_strings['stic_transactions_subcategories_list']['income_gifts_gifts'] = 'Regalos';
-$app_list_strings['stic_transactions_subcategories_list']['income_gifts_refunds'] = 'Reembolso';
-$app_list_strings['stic_transactions_subcategories_list']['expense_housing_rent_mortgage'] = 'Alquiler/Hipoteca';
-$app_list_strings['stic_transactions_subcategories_list']['expense_housing_utilities'] = 'Servicios públicos';
-$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_fuel'] = 'Combustible';
-$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_transportation_public_transportation'] = 'Transporte/Transporte público';
-$app_list_strings['stic_transactions_subcategories_list']['expense_services_telephone'] = 'Telefonía';
-$app_list_strings['stic_transactions_subcategories_list']['expense_services_subscriptions'] = 'Suscripciones';
-$app_list_strings['stic_transactions_subcategories_list']['expense_food_groceries'] = 'Supermercado';
-$app_list_strings['stic_transactions_subcategories_list']['expense_food_restaurants_bars'] = 'Restaurante/Bar';
-$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_atm'] = 'Cajero automático';
-$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'En ventanilla';
-$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectivo';
-$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferencia';
