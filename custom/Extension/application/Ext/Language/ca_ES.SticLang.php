@@ -293,7 +293,7 @@ $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitz
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccions';
-$app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productos financers';
+$app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productes financers';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
