@@ -148,7 +148,16 @@ if (isset($focus->campaign_type)) {
 
         $options_str .= '<option value="all">'.$app_strings["LBL_CAMPAIGN_NONE"].'</option>';
         //query for all email marketing records related to this campaign
-        $latest_marketing_query = "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' order by date_modified desc";
+        // $latest_marketing_query = "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' order by date_modified desc";
+        $latest_marketing_query = 
+            "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' 
+            union 
+            select smm.id, smm.name, smm.date_modified 
+            from stic_message_marketing smm 
+            join campaigns_stic_message_marketing_c csmmc on smm.id = csmmc.campaigns_stic_message_marketingmessage_idb
+            where csmmc.campaigns_stic_message_marketingcampaign_ida = '$focus->id' 
+            order by date_modified desc
+            ";
 
         //build string with value(s) retrieved
         $result =$focus->db->query($latest_marketing_query);
