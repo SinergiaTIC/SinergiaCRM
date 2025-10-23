@@ -30,8 +30,6 @@
     <br>
     {$MOD['LBL_INSTRUCTION_2_STEP_1']}
     <br>
-    {$MOD['LBL_INSTRUCTION_3_STEP_1']}
-    <br>
 </div>
 
 <div class="listViewBody">
