@@ -72,7 +72,6 @@ $mod_strings = array (
   'LBL_DESTINATION_ACCOUNT' => 'Cuenta destino',
   'LBL_ACCOUNTING_ACCOUNT' => 'Cuenta contable',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
-
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producto financiero',
 
   // Norma 43
