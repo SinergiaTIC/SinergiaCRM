@@ -182,7 +182,6 @@
         .stat-label {
             font-size: 0.9em;
             color: #666;
-            text-transform: uppercase;
         }
 
         .list.view th {
