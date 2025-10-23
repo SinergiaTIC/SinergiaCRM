@@ -40,14 +40,22 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
 
 // Creación de rexistro horario vía cabeceira
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Crearase un rexistro horario coa seguinte información:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Cerrarase o último rexistro horario aberto de hoxe:'; 
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'coa seguinte información:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crear registro';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Crearase un rexistro horario coa seguinte información';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Actualizar registro'; 
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'Cerrarase o último rexistro horario aberto de hoxe'; 
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'coa seguinte información';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nome: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Data e hora de inicio: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data e hora de finalización: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empregado: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1'] = 'Información de los registros creados en las últimas 24 horas';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2'] = 'Total de horas trabajadas';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'No existen otros registros además del que se está actualizando en este momento.';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'] = 'En curso';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_HOURS'] = 'horas';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_MINUTES'] = 'minutos';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Aceptar';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancelar';
 

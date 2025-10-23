@@ -52,6 +52,23 @@ function showTimeTrackerConfirmBox()
         });
 }
 
+// Format a float indicating hours and minutes in text format
+function formatHoursMinutes(time) 
+{
+    const hours = Math.floor(time);
+    const minutes = Math.round((time - hours) * 60);
+
+    if (hours == 0 && minutes == 0) {
+        return '-';
+    } else if (hours == 0) {
+        return `${minutes} ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_MINUTES')}`;
+    } else if (hours == 0) {
+        return `${hours} ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_HOURS')}`;
+    } else {
+        return `${hours} ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_HOURS')} ${minutes} ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_MINUTES')}`;
+    }  
+}
+
 // Draw dinamically the content of the confirmation box
 function drawTimeTrackerConfimrBox(data) 
 {
@@ -60,34 +77,90 @@ function drawTimeTrackerConfimrBox(data)
 
     if (localStorage.todayRegistrationStarted == '0') {
         content += `
-            <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_CREATE')}</span>
-            <br /><br />
-            <ul class='time-tracker-dialog-row'>
-                <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_START_DATE')} <span style="font-weight: bold;">` + localStorage.date + `</span></li>
-                <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE')} <span style="font-weight: bold;">${userName}</span></li>
-            </ul>
-            <br />`;
+            <span class='time-tracker-popup-header'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_CREATE_1')}</span>
+            <div class='time-tracker-info-div'>
+                <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_CREATE_2')}:</span>
+                <br /><br />
+                <ul class='time-tracker-dialog-row'>
+                    <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_START_DATE')}: <span style="font-weight: bold;">` + localStorage.date + `</span></li>
+                    <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE')}: <span style="font-weight: bold;">${userName}</span></li>
+                </ul>
+                <br /><br />
+            </div>`;            
     } else {
         content += `
-        <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_UPDATE_1')}</span>
-        <br /><br />
-        <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_NAME')} <span style="font-weight: bold;">${data.recordName}</span></li>
-        </ul>
-        <br /><br />   
-        <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_UPDATE_2')}</span>
-        <br /><br />
-        <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_END_DATE')} <span style="font-weight: bold;">` + localStorage.date + `</span></li>
-        </ul>`;
+            <span class='time-tracker-popup-header'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_UPDATE_1')}:</span>
+            <div class='time-tracker-info-div'>
+                <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_UPDATE_2')}:</span>
+                <br /><br />
+                <ul class='time-tracker-dialog-row'>
+                    <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_NAME')}: <span style="font-weight: bold;">${data.recordName}</span></li>
+                </ul>
+                <br /><br />
+                <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_UPDATE_3')}:</span>
+                <br /><br />
+                <ul class='time-tracker-dialog-row'>
+                    <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_END_DATE')}: <span style="font-weight: bold;">` + localStorage.date + `</span></li>
+                </ul>
+            </div>`;
+
+        const url = 'index.php?module=stic_Time_Tracker&action=getTodayTimeTrackerRecords';
+        fetch(url)
+            .then(response => response.json())
+            .then(data => 
+            {
+                const buttonsDiv = document.getElementById('time-tracker-dialog-buttons');
+                buttonsDiv.insertAdjacentHTML('beforebegin', `<br />`);
+                buttonsDiv.insertAdjacentHTML('beforebegin', `<br />`);
+                buttonsDiv.insertAdjacentHTML('beforebegin', `
+                    <span class='time-tracker-popup-header'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1')}</span>
+                    <br />
+                    <ul id="time-tracker-dynamic-list" class="time-tracker-dialog-row"></ul>
+                `);
+
+                const list = document.getElementById('time-tracker-dynamic-list');
+                if (data.length > 1) 
+                {
+                    let suma = 0;
+                    data.forEach((record, index) => 
+                    {
+                        const li = document.createElement('li');
+
+                        let name = record.name;
+                        if (!record.end_date) 
+                            name +=` - ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_OPEN')}`;
+
+                        let duration = parseFloat(record.duration);
+                        suma += duration;
+                        
+                        href= window.location.origin + window.location.pathname + `?module=stic_Time_Tracker&action=DetailView&record=${record.id}`;
+                        li.innerHTML = `<a href='${href}' target='_blank'>${name}</a>`;
+                        if (record.end_date) 
+                            li.innerHTML += `&nbsp&nbsp&nbsp&nbsp&nbsp (${formatHoursMinutes(duration)})`;
+
+                        list.appendChild(li);
+                    });
+                    list.insertAdjacentHTML('beforebegin', `<p style='padding-left:4px;padding-bottom:2rem;'><span style='font-weight:bold'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2')}: </span> ${formatHoursMinutes(suma)}</p>`);
+                } else {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3')}`;
+                    list.insertAdjacentElement('afterbegin', li);
+                }
+            })
+            .catch(error => {
+                console.error('Failed to get today time tracker record for logged employee:', error);
+            }
+        );
     }
 
     content += `
-        <br /><br />
-        <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_QUESTION')}</span>
-        <br /><br />
-        <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
-        <br /><br />
+        <div class='time-tracker-info-div'>
+            <br />
+            <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_QUESTION')}</span>
+            <br /><br />
+            <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
+        </div>
+
         <div id="time-tracker-dialog-buttons">
             <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(localStorage.date, document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_OK')}</button>
             <button id="timeTrackerButtonCancel" onclick="timeTrackerDialogCancel()">${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_CANCEL')}</button>                                
