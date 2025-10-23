@@ -91,7 +91,7 @@ $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou missatge';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge. Segur que voleu continuar?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = "S'ha sobrepassat el límit de missatges que es poden enviar simultàniament.";
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
-$app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificació';
+$app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificació per email';
 $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificació per missatge';
 
 // Enviament massiu de correus
@@ -3737,7 +3737,7 @@ $app_list_strings['campaign_type_dom']['Radio'] = 'Ràdio';
 $app_list_strings['campaign_type_dom']['Television'] = 'Televisió';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Butlletí de notícies';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Enquesta';
-$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació per email';
 $app_list_strings['campaign_type_dom']['Message'] = 'Missatge telefònic';
 $app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notificació per missatge';
 
