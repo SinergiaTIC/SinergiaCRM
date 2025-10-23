@@ -67,17 +67,7 @@ class stic_SignaturePortalUtils
         ];
     }
 
-    /**
-     * Sends an OTP code to the signer via email, forcing a new code to be sent.
-     *
-     * @param object $signerBean The signer bean object.
-     * @param string $method The method of sending the OTP (default is 'email').
-     * @return array An associative array indicating success or failure and relevant messages.
-     */
-    public static function forceSendOtpToSigner($signerBean, $method = 'email', $forceSend = true)
-    {
-        return self::sendOtpToSigner($signerBean, $method, true);
-    }
+   
 
     /**
      * Sends an OTP code to the signer via email.
@@ -98,19 +88,20 @@ class stic_SignaturePortalUtils
             return ['success' => false, 'message' => 'OTP code already sent and not expired yet'];
         }
 
-        if ($method !== 'email') {
-            return false; // Only email method is supported for now
-        }
-        $email = $signerBean->email_address;
-
-        $maskedEmail = preg_replace('/(?<=.).(?=[^@]*?@)/', '*', $email);
         $otpCode = rand(100000, 999999);
         $signerBean->otp = $otpCode;
         $signerBean->otp_expiration = date('Y-m-d H:i:s', strtotime('+10 minutes'));
         $signerBean->save();
         // send email
         require_once 'modules/stic_Signers/Utils.php';
-        if (stic_SignersUtils::sendOTPToSign($signerBean) === true) {
+
+        if ($method === 'email') {
+            $result = stic_SignersUtils::sendOtpEmailToSigner($signerBean, $otpCode);
+        } elseif ($method === 'phone') {
+            $result = stic_SignersUtils::sendOtpPhoneMessageToSigner($signerBean, $otpCode);
+        }
+
+        if ($result === true) {
             return ['success' => true, 'maskedEmail' => "{$maskedEmail}"];
         } else {
             return ['success' => false];

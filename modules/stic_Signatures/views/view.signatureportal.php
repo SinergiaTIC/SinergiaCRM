@@ -98,18 +98,28 @@ class stic_SignaturePortal extends SugarView
         // Get authentication mode
         $authMode = $signatureBean->auth_method ?? 'unique_link';
 
+        $this->ss->assign('AUTH_MODE', $authMode);
+
         $passed = false;
         $errorMsg = '';
 
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
         $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
-
+        
         // Validate authentication mode
         switch ($authMode) {
             case 'unique_link':
                 $passed = true;
                 break;
             case 'otp':
+            case 'otp_email':
+            case 'otp_phone_message':
+                $this->ss->assign('OTP_SENT', ($_SESSION['otp_signed_sent'][$signerBean->id] ?? false) ? true : false);
+                $maskedEmail = preg_replace('/(?<=.).(?=[^@]*?@)/', '*', $signerBean->email_address);
+                $this->ss->assign('OTP_MASKED_EMAIL', $maskedEmail);
+                $maskedPhone = preg_replace('/.(?=.{2})/', '*', $signerBean->phone);
+                $this->ss->assign('OTP_MASKED_PHONE', $maskedPhone);
+                
                 // Check if OTP code is provided in REQUEST and valid
                 if ($stic_SignaturePortalUtils::verifyOtpCode($signerBean, $_REQUEST['otp-code'] ?? '')) {
                     $passed = true;
@@ -120,14 +130,6 @@ class stic_SignaturePortal extends SugarView
                     }
                     $this->ss->assign('OTP_REQUIRED', true);
 
-                    // Send OTP
-                    $sendResult = stic_SignaturePortalUtils::sendOtpToSigner($signerBean);
-                    if (($sendResult['success'] ?? null) === true) {
-                        $this->ss->assign('OTP_SENT_SUCCESS', $signerStrings['LBL_OTP_SENT_SUCCESS']);
-                        $this->ss->assign('OTP_MASKED_EMAIL', $sendResult['maskedEmail']);
-                    } else {
-                        $this->ss->assign('OTP_SENT_ERROR', $signerStrings['LBL_OTP_SENT_ERROR']);
-                    }
 
                 }
                 break;

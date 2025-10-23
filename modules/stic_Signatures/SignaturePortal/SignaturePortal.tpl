@@ -184,9 +184,9 @@
                     <h1 class="text-3xl font-weight-bold mb-4 text-center text-info">{$MODS.LBL_PORTAL_UNNECESSARY_TEXT}
                     </h1>
                 </section>
-                
+
                 { /if }
-             
+
 
 
 
@@ -228,9 +228,28 @@
                         <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$OTP_ERROR_MSG}
                     </p>
                     {/if}
-                    <p class="text-sm text-secondary mb-3 text-center">
-                        {$MODS.LBL_PORTAL_OTP_INSTRUCTION} <strong>{$OTP_MASKED_EMAIL}</strong>.
-                    </p>
+                    {if !$OTP_SENT}
+                    <div class="alert alert-info ">
+                        {$MODS.LBL_PORTAL_OTP_INSTRUCTION}
+                    </div>
+                    <div class="d-flex align-items-center btn-group justify-content-center mb-4" role="group"
+                        aria-label="Resend OTP Options">
+
+                        {if $AUTH_MODE == 'otp_email' || $AUTH_MODE == 'otp' }
+                        <button id="resend-otp-btn-email" class="btn btn-light">
+                            <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL}
+                            {$OTP_MASKED_EMAIL}
+                        </button>
+                        {/if}
+                        {if $AUTH_MODE == 'otp_phone_message' || $AUTH_MODE == 'otp' }
+                        <button id="resend-otp-btn-phone-message" class="btn btn-light">
+                            <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE}
+                            {$OTP_MASKED_PHONE}
+                        </button>
+                        {/if}
+                    </div>
+                    {/if}
+
                     <form id="otpForm" method="post" action="">
                         <div class="mb-3">
                             <div class="d-flex justify-content-center space-x-2">
@@ -246,20 +265,34 @@
                                     class="otp-input form-control text-center text-xl font-weight-bold">
                                 <input type="text" id="otp-6" name="otp_code_6" maxlength="1" required
                                     class="otp-input form-control text-center text-xl font-weight-bold">
-                                <input type="hidden" id="otp-code" name="otp-code" maxlength="6" >
+                                <input type="hidden" id="otp-code" name="otp-code" maxlength="6">
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center">
+                        <div class="mt-4 text-center">
                             <button type="submit" class="btn btn-primary py-2 px-3 mt-3 mt-lg-0 ml-lg-3">
-                                {$MODS.LBL_PORTAL_CHECK_CODE_BTN}
+                                {$MODS.LBL_PORTAL_OTP_CHECK_BTN}
                             </button>
                         </div>
                     </form>
-                    <div class="mt-3 text-center">
-                        <button id="resend-otp-btn" class="btn btn-link">
-                            {$MODS.LBL_PORTAL_RESEND_CODE}
+                    {if $OTP_SENT}
+                    <div class="alert alert-info mt-4">{$MODS.LBL_PORTAL_OTP_DONT_RECEIVED}</div>
+                    <div class="d-flex align-items-center btn-group justify-content-center m-4" role="group"
+                        aria-label="Resend OTP Options">
+
+                        {if $AUTH_MODE == 'otp_email' || $AUTH_MODE == 'otp' }
+                        <button id="resend-otp-btn-email" class="btn btn-light">
+                            <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL}
+                            {$OTP_MASKED_EMAIL}
                         </button>
+                        {/if}
+                        {if $AUTH_MODE == 'otp_phone_message' || $AUTH_MODE == 'otp' }
+                        <button id="resend-otp-btn-phone-message" class="btn btn-light">
+                            <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE}
+                            {$OTP_MASKED_PHONE}
+                        </button>
+                        {/if}
                     </div>
+                    {/if}
                 </section>
                 {$JAVASCRIPT_VALIDATION}
                 {/if}
@@ -267,7 +300,7 @@
                 { if $FIELD_VALIDATION_REQUIRED === true && $SHOW_PORTAL !== true }
                 <section class="field-validation-area max-w-md mx-auto mt-4">
                     <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">
-                        {$MODS.LBL_PORTAL_FIELD_VALIDATION}</h2> 
+                        {$MODS.LBL_PORTAL_FIELD_VALIDATION}</h2>
                     { if isset($FIELD_VALIDATION_ERROR_MSG) && !empty($FIELD_VALIDATION_ERROR_MSG) }
                     <p class="alert alert-danger mb-4">
                         <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$FIELD_VALIDATION_ERROR_MSG}
@@ -275,10 +308,15 @@
                     {/if}
                     <form id="fieldValidationForm" method="POST" action="">
                         <div class="mb-3">
-                            <label for="validationFieldInput" class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}<strong> {$FIELD_VALIDATION_LABEL}</strong><span class="text-muted"> ({$FIELD_VALIDATION_LABEL_FORMAT}):</span></label>
-                            <input type="text" id="validationFieldInput" name="validation_field_value" required pattern="{$FIELD_VALIDATION_REGEXP}"
-                                class="form-control text-center text-xl font-weight-bold" value="{$PREVIOUS_FIELD_VALUE}">
-                            <span class="text-danger">{$FIELD_ERROR_MSG}</span>    
+                            <label for="validationFieldInput"
+                                class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}<strong>
+                                    {$FIELD_VALIDATION_LABEL}</strong><span class="text-muted">
+                                    ({$FIELD_VALIDATION_LABEL_FORMAT}):</span></label>
+                            <input type="text" id="validationFieldInput" name="validation_field_value" required
+                                pattern="{$FIELD_VALIDATION_REGEXP}"
+                                class="form-control text-center text-xl font-weight-bold"
+                                value="{$PREVIOUS_FIELD_VALUE}">
+                            <span class="text-danger">{$FIELD_ERROR_MSG}</span>
                         </div>
                     </form>
                     <div class="d-flex justify-content-center align-items-center">

@@ -94,5 +94,7 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Anar al document',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Si té problemes per accedir a l\'enllaç, copiï i enganxi\'l al seu navegador',
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signatura completada per',
+    'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hola',
+    'LBL_SIGNER_OTP_SMS_BODY_2' => 'aquí tens el codi d\'un sol ús que has sol·licitat per a la signatura del document, vàlid per 10 minuts:',
 
 );

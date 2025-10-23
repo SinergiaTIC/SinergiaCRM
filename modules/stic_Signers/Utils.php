@@ -140,7 +140,7 @@ class stic_SignersUtils
      * @throws Exception If the signer ID is empty or the destination email address is invalid.
      * @return bool True if the email was sent successfully, false otherwise.
      */
-    public static function sendOTPToSign($signerBean)
+    public static function sendOtpEmailToSigner($signerBean, $otpCode)
     {
         global $sugar_config, $current_user, $mod_strings;
         $signerId = $signerBean->id;
@@ -215,10 +215,70 @@ class stic_SignersUtils
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": OTP Email sent successfully to {$destAddress}.");
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OTP_SENT', $signerId, 'SIGNER', $destAddress);
-
+            $_SESSION['otp_signed_sent'][$signerId] = [
+                'method' => 'email',
+                'time' => time(),
+                'email' => $destAddress,
+            ];
             return true;
         }
 
+    }
+
+    /**
+     * Sends a One-Time Password (OTP) to the signer via phone (SMS).
+     * This function retrieves signer details, generates an OTP if not already present,
+     * constructs an SMS message with the OTP, and sends it using an SMS gateway.
+     *
+     * @param object $signerBean The bean object of the signer to whom the OTP should be sent.
+     * @throws Exception If the signer ID is empty or the destination phone number is invalid.
+     * @return bool True if the SMS was sent successfully, false otherwise.
+     */
+    public static function sendOtpPhoneMessageToSigner($signerBean, $otpCode)
+    {
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+        $signerId = $signerBean->id;
+        $destPhone = $signerBean->phone ?? '';
+
+        if (empty($destPhone)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No phone number available for signer ID {$signerId}.");
+            return false;
+        }
+
+        require_once 'modules/stic_Settings/Utils.php';
+        $sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER') ?? 'SinergiaCRM Signature Portal';
+
+        $templateMark = $signerBean->parent_type == 'Contacts' ? '$contact_first_name' : '$contact_user_first_name';
+
+        $messageBean = BeanFactory::newBean('stic_Messages');
+        $messageBean->phone = $signerBean->phone;
+        $messageBean->parent_type = $signerBean->parent_type;
+        $messageBean->parent_id = $signerBean->parent_id;
+        $messageBean->message = $mod_strings['LBL_SIGNER_OTP_SMS_BODY_1'] . ' ' . ($templateMark) . ', ' . $mod_strings['LBL_SIGNER_OTP_SMS_BODY_2'] . ' ' . $otpCode;
+        $messageBean->sender = $sender;
+        $messageBean->status = 'sent';
+        $messageBean->type = 'SevenSmsHelper';
+        $messageBean->save();
+
+        if (!is_string($messageBean->id) || $messageBean->status !== 'sent') {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to create message record for OTP via phone to signer ID {$signerId}.");
+            return false;
+
+        }
+
+        // Log the OTP sending action
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": OTP sent via phone to {$destPhone} for signer ID {$signerId}.");
+
+        require_once 'modules/stic_Signature_Log/Utils.php';
+        stic_SignatureLogUtils::logSignatureAction('OTP_SENT_PHONE', $signerId, 'SIGNER', $destPhone);
+
+        $_SESSION['otp_signed_sent'][$signerId] = [
+            'method' => 'phone',
+            'time' => time(),
+            'phone' => $destPhone,
+        ];
+
+        return true;
     }
 
 /**
@@ -298,20 +358,19 @@ class stic_SignersUtils
         return $query;
     }
 
-    
     public static function deactivateOtherSignersForSameSignature($signerBean)
     {
         if ($signerBean->fetched_row['status'] != 'pending' || $signerBean->status != 'signed') {
             // Only proceed if the signer's status has changed from 'pending' to 'signed'
             return;
         }
-        
+
         require_once 'SticInclude/Utils.php';
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
         if ($signatureBean->on_behalf_of == 1);
 
         // Deactivate other signers for the same Signature
-        $otherSigners = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers','',  0, 0, 0, " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'");
+        $otherSigners = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'");
         foreach ($otherSigners as $otherSigner) {
             $otherSigner->status = 'unnecessary';
             $otherSigner->save();

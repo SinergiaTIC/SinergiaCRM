@@ -88,11 +88,12 @@ if (!empty($_REQUEST['signatureAction'])) {
             die();
             break;
 
-        case 'resendOtpCode':
+        case 'sendOtpCode':
             // Resend the OTP code to the signer
+            $method = $_REQUEST['method'] ?? 'email';
             $signerId = $_REQUEST['signerId'] ?? '';
             $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
-            $result = stic_SignaturePortalUtils::forceSendOtpToSigner($signerBean, 'email', true);
+            $result = stic_SignaturePortalUtils::sendOtpToSigner($signerBean, $method, true);
             echo json_encode($result);
             die();
             break;

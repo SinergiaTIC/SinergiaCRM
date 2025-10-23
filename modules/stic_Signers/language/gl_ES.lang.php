@@ -94,4 +94,5 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Ir ao documento',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Se ten problemas para acceder á ligazón, cópiela e péguena no seu navegador',
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Sinatura completada por',
-);
+    'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hola',
+    'LBL_SIGNER_OTP_SMS_BODY_2' => 'aquí  tes o código de un só uso que has solicitado para a sinatura do documento, válido por 10 minutos:',

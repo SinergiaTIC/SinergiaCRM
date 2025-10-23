@@ -94,5 +94,7 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Go to document',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'If you have problems accessing the link, copy and paste it into your browser',
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signature completed by',
+    'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hello',
+    'LBL_SIGNER_OTP_SMS_BODY_2' => 'here is the one-time code you requested for document signing, valid for 10 minutes:',
 
 );
