@@ -28,6 +28,9 @@
  * @param array $params An array of parameters used to generate the query.
  * @return array|string The SQL query as an array if 'return_as_array' is true, or as a string otherwise.
  */
+
+require_once 'modules/Campaigns/utils.php';
+
 function getNotificationsFromParent($params)
 {
     $args = func_get_args();

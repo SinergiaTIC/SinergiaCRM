@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
+require_once 'modules/stic_Settings/Utils.php';
 
 #[\AllowDynamicProperties]
 class CustomCampaignsViewEdit extends ViewEdit
@@ -146,6 +147,7 @@ class CustomCampaignsViewEdit extends ViewEdit
 
     public function display()
     {
+        $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
         parent::display();
 
         SticViews::display($this);
