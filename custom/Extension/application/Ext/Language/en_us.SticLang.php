@@ -42,15 +42,15 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'All names of other compan
 
 // Create a time tracker record from the header
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Create record';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'A time tracker record will be created with the following information:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'A time tracker record will be created with the following information';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Update record';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = "Today's last open time tracker record will be closed:";
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'with the following information:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Name: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Start date and time: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'End date and time: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Employee: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comments (optional): ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = "Today's last open time tracker record will be closed";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'with the following information';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Name';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Start date and time';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'End date and time';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Employee';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comments (optional)';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1'] = 'Information about records created in the last 24 hours';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2'] = 'Total hours worked';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'There are no other records besides the one currently being updated.';

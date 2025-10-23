@@ -156,7 +156,7 @@ function drawTimeTrackerConfimrBox(data)
     content += `
         <div class='time-tracker-info-div'>
             <br />
-            <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_QUESTION')}</span>
+            <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_QUESTION')}:</span>
             <br /><br />
             <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
         </div>

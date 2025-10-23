@@ -41,15 +41,15 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres em
 
 // Creació de registre horari via capçalera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crear registre';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Es crearà un registre horari amb la informació següent:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Es crearà un registre horari amb la informació següent';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Actualitzar registre';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'Es tancarà el darrer registre horari obert avui:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'amb la informació següent: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nom: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici: ";
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional):';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'Es tancarà el darrer registre horari obert avui';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'amb la informació següent';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nom';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional)';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1'] = 'Informació dels registres creats en les darreres 24 hores';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2'] = "Total d'hores treballades";
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = "No hi ha altres registres a més del que s'està actualitzant en aquest moment.";
