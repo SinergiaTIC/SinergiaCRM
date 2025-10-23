@@ -93,5 +93,5 @@ $mod_strings = array (
   'LBL_TOTAL_DUPLICATES' => "Transaccions duplicades que s'ometran",
   'LBL_TOTAL_NEW_TRANSACTIONS' => 'Transaccions per importar',
   'LBL_DUPLICATE_NORMA_43' => "Aquestes transaccions no s'importaran perquè ja existeixen amb els mateixos valors de data i import.",
-  'LBL_COMPLETI_IMPORT_NORMA_43' => 'Finalitza la importació',
+  'LBL_COMPLETE_IMPORT_NORMA_43' => 'Finalitza la importació',
 );
