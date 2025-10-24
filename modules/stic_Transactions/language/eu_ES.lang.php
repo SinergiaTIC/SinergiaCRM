@@ -94,8 +94,8 @@ $mod_strings = array (
   'LBL_TOTAL_NEW_TRANSACTIONS' => 'Transacciones a importar',
   'LBL_DUPLICATE_NORMA_43' => 'Estas transacciones no se importarán porque ya existen con los mismos valores de fecha e importe.',
   'LBL_COMPLETE_IMPORT_NORMA_43' => 'Finalizar importación',
-  'LBL_ERROR_FILE_TEXT_PLAIN' => 'El fichero no es de texto plano',
-  'LBL_ERROR_NORMA_43_INVALID' => 'El fichero no cumple el estándar Norma 43',
-  'LBL_ERROR_FILE_CANNOT_OPEN' => 'No se puede abrir el fichero',
-  'LBL_ERROR_FILE_NOT_SELECTED' => 'No se ha seleccionado ningún fichero',
+  'LBL_ERROR_FILE_TEXT_PLAIN' => 'El fichero no es de texto plano.',
+  'LBL_ERROR_NORMA_43_INVALID' => 'El fichero no cumple el estándar Norma 43.',
+  'LBL_ERROR_FILE_CANNOT_OPEN' => 'No se puede abrir el fichero.',
+  'LBL_ERROR_FILE_NOT_SELECTED' => 'No se ha seleccionado ningún fichero.',
 );
