@@ -35,12 +35,12 @@ class Norma43
      */
     public static function importNorma43($preview = false)
     {
-        global $db;
+        global $db, $mod_strings;
         self::$db = $db;
 
         // Validate file upload
         if (empty($_FILES['file']['name'])) {
-            return ['success' => false, 'error' => 'No se ha seleccionado un fichero.'];
+            return ['success' => false, 'error' => $mod_strings['LBL_ERROR_FILE_NOT_SELECTED']];
         }
 
         $upload_dir = 'upload/';
@@ -50,10 +50,18 @@ class Norma43
 
         $uploaded_file = $upload_dir . basename($_FILES['file']['name']);
         
-        // Ensure the file is a .txt
         move_uploaded_file($_FILES['file']['tmp_name'], $uploaded_file);
-        if (strtolower(pathinfo($uploaded_file, PATHINFO_EXTENSION)) !== 'txt') {
-            return ['success' => false, 'error' => 'El formato del fichero no es el correcto. Debe ser un .txt'];
+
+        // Check MIME type
+        $mime = mime_content_type($uploaded_file);
+        if (strpos($mime, 'text') === false && $mime !== 'application/octet-stream') {
+            return ['success' => false, 'error' => $mod_strings['LBL_ERROR_FILE_TEXT_PLAIN']];
+        }
+
+        // Check the first line to verify it's a Norma 43 file
+        $firstLine = trim(fgets(fopen($uploaded_file, 'r')));
+        if (substr($firstLine, 0, 2) !== '11') {
+            return ['success' => false, 'error' => $mod_strings['LBL_ERROR_NORMA_43_INVALID']];
         }
 
         // Parse the Norma 43 file
@@ -201,10 +209,12 @@ class Norma43
      */
     private static function parseNorma43($filePath)
     {
+        global $mod_strings;
+
         $accounts = [];
         $currentAccount = null;
         $handle = fopen($filePath, 'r');
-        if (!$handle) return ['success' => false, 'error' => 'No se pudo abrir el archivo.'];
+        if (!$handle) return ['success' => false, 'error' => $mod_strings['LBL_ERROR_FILE_CANNOT_OPEN']];
 
         while (($line = fgets($handle)) !== false) {
             $line = rtrim($line, "\r\n");
