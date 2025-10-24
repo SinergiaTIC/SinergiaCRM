@@ -46,23 +46,18 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $searchFields['stic_MessagesMan'] =
     array(
         'campaign_name' => array( 'query_type'=>'default','db_field'=>array('campaigns.name')),
-        // Add account name in search by name
-        // 'to_name'=> array('query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name','leads.first_name','leads.last_name','prospects.first_name','prospects.last_name')),
         'to_name'=> array('query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name','accounts.name','leads.first_name','leads.last_name','prospects.first_name','prospects.last_name', 'users.user_name')),
-        // Modify the query to search by email
-        // 'to_email'=> array('query_type'=>'default','db_field'=>array('contacts.email1','leads.email1','prospects.email1')),
-        // 'to_phone'=> array(
-        //     'query_type'=>'default',
-        //     'operator' => 'subquery',
-        //     'subquery' => 'SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND eabr.primary_address = 1 AND eabr.deleted=0 AND ea.email_address LIKE',
-        //     'db_field'=>array(
-        //         0 => 'related_id',
-        //     ),        
-        // ),
+        'to_phone' => array(
+            'query_type' => 'default',
+            'db_field' => array(
+                'contacts.phone_mobile',
+                'accounts.phone_office',
+                'leads.phone_mobile',
+                'users.phone_mobile'
+            )    
+        ),
         'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
-        // Add logic to search by other fields
-        'message_name' => array( 'query_type'=>'default','db_field'=>array('email_marketing.name')),
-        'send_attempts' => array( 'query_type'=>'default','db_field'=>array('emailman.send_attempts')),
+        'message_name' => array( 'query_type'=>'default','db_field'=>array('stic_message_marketing.name')),
         'in_queue' => array( 'query_type'=>'default','db_field'=>array('emailman.in_queue')),
         'range_send_date_time' => array(
             'query_type' => 'default',
