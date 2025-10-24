@@ -171,6 +171,8 @@ $mod_strings = array(
     'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Error al solicitar OTP:',
     'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'Ha ocurrido un error al solicitar el código OTP.',
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'No es necesario que firme este documento, ya ha sido firmado por otra persona autorizada.',
+    'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'El período para firmar este documento ha expirado. Fecha de expiración:',
+    'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'El período para firmar este documento aún no ha comenzado. La firma estará disponible a partir de:',
 
     // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Página de Auditoría de Firma Digital',

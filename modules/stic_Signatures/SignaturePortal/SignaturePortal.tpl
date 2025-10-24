@@ -45,6 +45,9 @@
     <main class="flex-grow">
         { if isset($ERROR_MSG) && !empty($ERROR_MSG) }
         <div class="stic-container container mt-4 mx-auto">
+           
+           
+           
             <section class="error-area">
                 <h1 class="text-3xl font-weight-bold mb-4 text-center text-danger">{$MODS.LBL_PORTAL_ERROR}</h1>
                 <div class="alert alert-danger" role="alert">
@@ -58,7 +61,7 @@
                 </div>
             </section>
             {else}
-            <div class="stic-container container mt-4 max-w-md mx-auto">
+            <div class="stic-container container mt-4 max-w-md mx-auto d-flex align-items-center">
                 { if $SHOW_PORTAL === true }
                 { if $STATUS === 'pending' }
                 <section class="document-area">
@@ -186,7 +189,7 @@
                 </section>
 
                 { /if }
-
+                
 
 
 
@@ -328,6 +331,25 @@
                     </div>
                 </section>
                 {$JAVASCRIPT_VALIDATION}
+                {/if}
+
+                { if $IS_EXPIRED === true }
+                <div class="alert alert-warning mt-4 text-center" role="alert">
+                    <div>
+                        <i class="bi bi-calendar-x h1"></i>
+                        <br>
+                        <strong>{$MODS.LBL_PORTAL_ATTENTION}:</strong> {$EXPIRATION_MSG}
+                    </div>
+                </div>
+                {/if}
+                { if $IS_ACTIVATED === false }
+                <div class="alert alert-warning mt-4 text-center" role="alert">
+                    <div>
+                        <i class="bi bi-calendar-x h1"></i>
+                        <br>
+                        <strong>{$MODS.LBL_PORTAL_ATTENTION}:</strong> {$ACTIVATION_MSG}
+                    </div>
+                </div>
                 {/if}
             </div>
             {/if}

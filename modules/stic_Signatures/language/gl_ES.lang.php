@@ -170,6 +170,8 @@ $mod_strings = array(
     'LBL_PORTAL_ERROR_REQUEST_OTP' => 'Erro ao solicitar OTP:',
     'LBL_PORTAL_ERROR_REQUEST_OTP_ALERT' => 'Ocorreu un erro ao solicitar o código OTP.',
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'Non é necesario que asine este documento, xa foi asinado por outra persoa autorizada.',
+    'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'O período para asinar este documento expirou. Data de expiración:',
+    'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'O período para asinar este documento aínda non comezou. A sinatura estará dispoñible a partir de:',
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de Auditoría de Sinatura Dixital',

@@ -379,4 +379,41 @@ class stic_SignersUtils
             stic_SignatureLogUtils::logSignatureAction('SIGNATURE_NOT_NEEDED', $otherSigner->id, 'SIGNER', "{$mod_strings['LBL_SIGNATURE_COMPLETED_BY']} {$signerBean->parent_name}.");
         }
     }
+
+    /**
+     * Check if the signer's status is expired based on the signature's expiration date.
+     *
+     * @param object $signerBean The bean object of the signer.
+     * @param object $signatureBean The bean object of the associated signature.
+     * @return bool True if the signer's status is not expired, false if expired.
+     */
+    public static function checkExpiredStatus($signatureBean)
+    {
+        global $timedate;
+        
+        $expirationDate = $timedate->fromUser($signatureBean->expiration_date);
+        $currentDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
+
+        if ($currentDate > $expirationDate) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function checkActivatedStatus($signatureBean){
+        global $timedate;
+        
+        $startDate = $timedate->fromUser($signatureBean->activation_date);
+        $currentDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
+
+        if ($currentDate < $startDate) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+    
+
 }

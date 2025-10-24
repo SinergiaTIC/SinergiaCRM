@@ -58,12 +58,12 @@ class stic_SignaturePortal extends SugarView
         $uri = rtrim($sugar_config['site_url'], '/') . '/';
 
         require_once 'modules/stic_Settings/Utils.php';
+        require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+        require_once 'modules/stic_Signers/Utils.php';
 
         $documentHtmlContent = '
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Acuerdo de Confidencialidad</h2>
         ';
-
-        require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
 
         // Create an instance of the utility class
         $stic_SignaturePortalUtils = new stic_SignaturePortalUtils();
@@ -88,10 +88,9 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
         }
 
-        if($signerBean->status === 'unnecessary') {
+        if ($signerBean->status === 'unnecessary') {
             $this->ss->assign('UNNECESSARY_TEXT', true);
         }
-
 
         $this->ss->assign('SIGNATURE_MODE', $signatureBean->signature_mode ?? 'handwritten');
 
@@ -105,7 +104,29 @@ class stic_SignaturePortal extends SugarView
 
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
         $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
-        
+
+        global $timedate, $current_user;
+        $user = BeanFactory::getBean('Users', '1');
+
+        // Check if signature is expired
+        $isExpired = stic_SignersUtils::checkExpiredStatus($signatureBean) && $signerBean->status === 'pending' ? true : false;
+        $this->ss->assign('IS_EXPIRED', $isExpired);
+        if ($isExpired === true) {
+            $expirationDate = $timedate->to_display_date_time($signatureBean->fetched_row['expiration_date'], true, true, $user);
+            $expirationMsg = "{$mod_strings['LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE']} {$expirationDate}";
+            $this->ss->assign('EXPIRATION_MSG', $expirationMsg);
+
+        }
+
+        // Check if signature is activated
+        $isActivated = stic_SignersUtils::checkActivatedStatus($signatureBean);
+        $this->ss->assign('IS_ACTIVATED', $isActivated);
+        if ($isActivated === false) {
+            $activationDate = $timedate->to_display_date_time($signatureBean->fetched_row['activation_date'], true, true, $user);
+            $activationMsg = "{$mod_strings['LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE']} {$activationDate}";
+            $this->ss->assign('ACTIVATION_MSG', $activationMsg);
+        }
+
         // Validate authentication mode
         switch ($authMode) {
             case 'unique_link':
@@ -119,7 +140,7 @@ class stic_SignaturePortal extends SugarView
                 $this->ss->assign('OTP_MASKED_EMAIL', $maskedEmail);
                 $maskedPhone = preg_replace('/.(?=.{2})/', '*', $signerBean->phone);
                 $this->ss->assign('OTP_MASKED_PHONE', $maskedPhone);
-                
+
                 // Check if OTP code is provided in REQUEST and valid
                 if ($stic_SignaturePortalUtils::verifyOtpCode($signerBean, $_REQUEST['otp-code'] ?? '')) {
                     $passed = true;
@@ -128,8 +149,7 @@ class stic_SignaturePortal extends SugarView
                         $errorMsg = 'El código OTP proporcionado no es válido. Por favor, inténtalo de nuevo.';
                         $this->ss->assign('OTP_ERROR_MSG', $errorMsg);
                     }
-                    $this->ss->assign('OTP_REQUIRED', true);
-
+                    $this->ss->assign('OTP_REQUIRED', ($isExpired === false && $isActivated === true) ? true : false);
 
                 }
                 break;
@@ -148,7 +168,7 @@ class stic_SignaturePortal extends SugarView
                     $this->ss->assign('FIELD_VALIDATION_LABEL', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_' . strtoupper($signatureBean->auth_method)]);
                     $this->ss->assign('FIELD_VALIDATION_LABEL_FORMAT', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_' . strtoupper($signatureBean->auth_method)]);
                     $this->ss->assign('FIELD_REQUIRED', true);
-                    
+
                     if ($signatureBean->auth_method === 'birthdate') {
                         $this->ss->assign('FIELD_VALIDATION_REGEXP', '^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$');
                     } elseif ($signatureBean->auth_method === 'identification_number') {
@@ -158,7 +178,7 @@ class stic_SignaturePortal extends SugarView
                     }
                 }
                 break;
-            
+
             default:
                 $errorMsg = 'El modo de autenticación no es válido.';
                 $this->ss->assign('ERROR_MSG', $errorMsg);
@@ -172,8 +192,7 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('SIGNER_NAME', $signerBean->parent_name);
 
             $this->ss->assign('SIGNER_VERIFICATION_CODE', $signerBean->verification_code);
-            // $this->ss->assign('SIGNER_VERIFICATION_FIELD_NAME', $signatureBean->auth_field_name);
-            // $this->ss->assign('SIGNER_VERIFICATION_FIELD_VALUE', $signerBean->auth_field_value);
+            
 
             // Log the portal opening action
             require_once 'modules/stic_Signature_Log/Utils.php';
