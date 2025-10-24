@@ -110,11 +110,8 @@ function drawTimeTrackerConfimrBox(data)
             .then(data => 
             {
                 const buttonsDiv = document.getElementById('time-tracker-dialog-buttons');
-                buttonsDiv.insertAdjacentHTML('beforebegin', `<br />`);
-                buttonsDiv.insertAdjacentHTML('beforebegin', `<br />`);
                 buttonsDiv.insertAdjacentHTML('beforebegin', `
-                    <span class='time-tracker-popup-header'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1')}</span>
-                    <br />
+                    <span class='time-tracker-popup-header' style='padding-top:5%'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1')}</span>
                     <ul id="time-tracker-dynamic-list" class="time-tracker-dialog-row"></ul>
                 `);
 
@@ -128,7 +125,7 @@ function drawTimeTrackerConfimrBox(data)
 
                         let name = record.name;
                         if (!record.end_date) 
-                            name +=` - ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_OPEN')}`;
+                            name +=` - ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS')}`;
 
                         let duration = parseFloat(record.duration);
                         suma += duration;
@@ -140,7 +137,7 @@ function drawTimeTrackerConfimrBox(data)
 
                         list.appendChild(li);
                     });
-                    list.insertAdjacentHTML('beforebegin', `<p style='padding-left:4px;padding-bottom:2rem;'><span style='font-weight:bold'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2')}: </span> ${formatHoursMinutes(suma)}</p>`);
+                    list.insertAdjacentHTML('beforebegin', `<span style='padding-left:4px;padding-top:3%;padding-bottom:3%;'><span style='font-weight:bold'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2')}: </span> ${formatHoursMinutes(suma)}</span>`);
                 } else {
                     const li = document.createElement('li');
                     li.innerHTML = `${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3')}`;
@@ -154,11 +151,9 @@ function drawTimeTrackerConfimrBox(data)
     }
 
     content += `
-        <div class='time-tracker-info-div'>
-            <br />
+        <div class='time-tracker-info-div'style='padding-top:3%;'>
             <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_QUESTION')}:</span>
-            <br /><br />
-            <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
+            <textarea id="time-tracker-dialog-description" rows="2" cols="20" style='margin-top:3%;'></textarea>
         </div>
 
         <div id="time-tracker-dialog-buttons">
