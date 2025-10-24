@@ -214,7 +214,7 @@ class stic_SignersUtils
         } else {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": OTP Email sent successfully to {$destAddress}.");
             require_once 'modules/stic_Signature_Log/Utils.php';
-            stic_SignatureLogUtils::logSignatureAction('OTP_SENT', $signerId, 'SIGNER', $destAddress);
+            stic_SignatureLogUtils::logSignatureAction('OTP_SENT_EMAIL', $signerId, 'SIGNER', $destAddress);
             $_SESSION['otp_signed_sent'][$signerId] = [
                 'method' => 'email',
                 'time' => time(),
