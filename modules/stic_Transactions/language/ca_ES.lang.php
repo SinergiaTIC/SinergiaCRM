@@ -94,8 +94,8 @@ $mod_strings = array (
   'LBL_TOTAL_NEW_TRANSACTIONS' => 'Transaccions per importar',
   'LBL_DUPLICATE_NORMA_43' => "Aquestes transaccions no s'importaran perquè ja existeixen amb els mateixos valors de data i import.",
   'LBL_COMPLETE_IMPORT_NORMA_43' => 'Finalitza la importació',
-  'LBL_ERROR_FILE_TEXT_PLAIN' => 'El fitxer no és de text pla',
-  'LBL_ERROR_NORMA_43_INVALID' => "El fitxer no compleix l'estàndard Norma 43",
-  'LBL_ERROR_FILE_CANNOT_OPEN' => 'No es pot obrir el fitxer',
-  'LBL_ERROR_FILE_NOT_SELECTED' => "No s'ha seleccionat cap fitxer",
+  'LBL_ERROR_FILE_TEXT_PLAIN' => 'El fitxer no és de text pla.',
+  'LBL_ERROR_NORMA_43_INVALID' => "El fitxer no compleix l'estàndard Norma 43.",
+  'LBL_ERROR_FILE_CANNOT_OPEN' => 'No es pot obrir el fitxer.',
+  'LBL_ERROR_FILE_NOT_SELECTED' => "No s'ha seleccionat cap fitxer.",
 );
