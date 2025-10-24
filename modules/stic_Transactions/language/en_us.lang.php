@@ -95,8 +95,8 @@ $mod_strings = array (
   'LBL_TOTAL_NEW_TRANSACTIONS' => 'Transactions to be imported',
   'LBL_DUPLICATE_NORMA_43' => 'These transactions already exist with the same date and amount and will not be imported',
   'LBL_COMPLETE_IMPORT_NORMA_43' => 'Finish import',
-  'LBL_ERROR_FILE_TEXT_PLAIN' => 'The file is not plain text',
-  'LBL_ERROR_NORMA_43_INVALID' => 'The file does not comply with Norma 43 standard',
-  'LBL_ERROR_FILE_CANNOT_OPEN' => 'The file cannot be opened',
-  'LBL_ERROR_FILE_NOT_SELECTED' => 'No file has been selected',
+  'LBL_ERROR_FILE_TEXT_PLAIN' => 'The file is not plain text.',
+  'LBL_ERROR_NORMA_43_INVALID' => 'The file does not comply with Norma 43 standard.',
+  'LBL_ERROR_FILE_CANNOT_OPEN' => 'The file cannot be opened.',
+  'LBL_ERROR_FILE_NOT_SELECTED' => 'No file has been selected.',
 );
