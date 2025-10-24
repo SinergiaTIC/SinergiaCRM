@@ -1,4 +1,9 @@
 // **************************************************************************
+// Include utilities
+document.head.appendChild(Object.assign(document.createElement('script'), {
+    src: 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.js'
+}));
+
 // OTP form handling
 const otpForm = document.getElementById('otpForm');
 if (otpForm) {
@@ -64,11 +69,12 @@ if (otpForm) {
             // Parsea la respuesta como JSON
         }
         ).then(data => {
-            alert(MODS.LBL_PORTAL_OTP_SENT);
+            let messageKey = method === 'email' ? 'LBL_PORTAL_OTP_EMAIL_SENT' : 'LBL_PORTAL_OTP_PHONE_SENT';
+            showAlert('success', MODS.LBL_PORTAL_ATTENTION, MODS[messageKey]);
         }
         ).catch(error => {
             console.error('Error:', error);
-            alert(MODS.LBL_PORTAL_ERROR_REQUEST_OTP_ALERT);
+            showAlert('error', MODS.LBL_PORTAL_ERROR, MODS.LBL_PORTAL_ERROR_REQUEST_OTP_ALERT);
         }
         );
 

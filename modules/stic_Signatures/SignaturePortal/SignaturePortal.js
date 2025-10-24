@@ -25,6 +25,11 @@
  * and the (simulated) management of audit records.
  */
 
+// Include utilities
+document.head.appendChild(Object.assign(document.createElement('script'), {
+    src: 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.js'
+}));
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // General elements
@@ -234,20 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const selectedFont = fontSelector.value;
 
                 if (signatureText === '') {
-                    const warningMessage = document.createElement('div');
-                    warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                    warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                    warningMessage.innerHTML = `
-                <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                    <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
-                    <p class="text-secondary mb-4">${MODS.LBL_PORTAL_ENTER_NAME_TEXT}</p>
-                    <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                </div>
-            `;
-                    document.body.appendChild(warningMessage);
-                    document.getElementById('closeWarningBtn').addEventListener('click', () => {
-                        warningMessage.remove();
-                    });
+                    showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ENTER_NAME_TEXT);
                     return;
                 }
 
@@ -318,20 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     img.onerror = () => {
                         console.error('Error loading signature image.');
-                        const errorMessage = document.createElement('div');
-                        errorMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                        errorMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                        errorMessage.innerHTML = `
-                            <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                                <h3 class="fs-4 fw-bold text-danger mb-3">${MODS.LBL_PORTAL_ERROR}</h3>
-                                <p class="text-secondary mb-4">${MODS.LBL_PORTAL_IMG_ERROR}</p>
-                                <button id="closeErrorBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                            </div>
-                        `;
-                        document.body.appendChild(errorMessage);
-                        document.getElementById('closeErrorBtn').addEventListener('click', () => {
-                            errorMessage.remove();
-                        });
+                        showAlert('error', MODS.LBL_PORTAL_ERROR, MODS.LBL_PORTAL_IMG_ERROR);
                     };
                     img.src = event.target.result;
                 };
@@ -343,20 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function saveSignature() {
             const currentCanvasData = signatureCanvas.toDataURL('image/png');
             if (currentCanvasData === initialCanvasData) {
-                const warningMessage = document.createElement('div');
-                warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                warningMessage.innerHTML = `
-                    <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                        <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
-                        <p class="text-secondary mb-4">${MODS.LBL_PORTAL_DRAW_OR_USE_OTHER_OPTION}</p>
-                        <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                    </div>
-                `;
-                document.body.appendChild(warningMessage);
-                document.getElementById('closeWarningBtn').addEventListener('click', () => {
-                    warningMessage.remove();
-                });
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_DRAW_OR_USE_OTHER_OPTION);
                 return;
             }
 
@@ -383,39 +349,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             }).then(data => {
                 console.log('Signature data sent successfully:', data);
-                const successMessage = document.createElement('div');
-                successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                successMessage.innerHTML = `
-                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-success mb-3">${MODS.LBL_PORTAL_SIGNATURE_SAVED}</h3>
-                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_SIGNATURE_SAVED_SUCCESSFULLY}</p>
-                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                        </div>
-                    `;
-
-                document.body.appendChild(successMessage);
-                document.getElementById('closeMessageBtn').addEventListener('click', () => {
-                    successMessage.remove();
-                    window.location.reload();
-                });
+                showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_SIGNATURE_SAVED_SUCCESSFULLY, null, true);
 
             }).catch(error => {
                 console.error('Error sending signature data:', error);
-                const warningMessage = document.createElement('div');
-                warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                warningMessage.innerHTML = `
-                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
-                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR}</p>
-                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                        </div>
-                    `;
-                document.body.appendChild(warningMessage);
-                document.getElementById('closeWarningBtn').addEventListener('click', () => {
-                    warningMessage.remove();
-                });
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR);
             });
         }
 
@@ -452,39 +390,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         }).then(data => {
             console.log('Signature data sent successfully:', data);
-            const successMessage = document.createElement('div');
-            successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-            successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-            successMessage.innerHTML = `
-                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-success mb-3">${MODS.LBL_PORTAL_SIGNATURE_SAVED}</h3>
-                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_ACCEPTANCE_REGISTERED_SUCCESSFULLY}</p>
-                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                        </div>
-                    `;
-
-            document.body.appendChild(successMessage);
-            document.getElementById('closeMessageBtn').addEventListener('click', () => {
-                successMessage.remove();
-                window.location.reload();
-            });
+            showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_ACCEPTANCE_REGISTERED_SUCCESSFULLY, null, true);
 
         }).catch(error => {
             console.error('Error sending acceptation data:', error);
-            const warningMessage = document.createElement('div');
-            warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-            warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-            warningMessage.innerHTML = `
-                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
-                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_ACCEPTANCE_ERROR}</p>
-                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                        </div>
-                    `;
-            document.body.appendChild(warningMessage);
-            document.getElementById('closeWarningBtn').addEventListener('click', () => {
-                warningMessage.remove();
-            });
+            showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ACCEPTANCE_ERROR);
         });
         // }
     }
@@ -533,38 +443,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             }).then(data => {
                 console.log('Request to send signed PDF by email was successful:', data);
-                const successMessage = document.createElement('div');
-                successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                successMessage.innerHTML = `
-                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-success mb-3">${MODS.LBL_PORTAL_EMAIL_SENT}</h3>
-                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_PDF_SENT_SUCCESSFULLY}</p>
-                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                        </div>
-                    `;
-
-                document.body.appendChild(successMessage);
-                document.getElementById('closeMessageBtn').addEventListener('click', () => {
-                    successMessage.remove();
-                });
+                showAlert('success', MODS.LBL_PORTAL_EMAIL_SENT, MODS.LBL_PORTAL_PDF_SENT_SUCCESSFULLY);
 
             }).catch(error => {
                 console.error('Error sending request to send signed PDF by email:', error);
-                const warningMessage = document.createElement('div');
-                warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                warningMessage.innerHTML = `
-                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-warning mb-3">${MODS.LBL_PORTAL_ATTENTION}</h3>
-                            <p class="text-secondary mb-4">${MODS.LBL_PORTAL_PDF_SEND_ERROR}</p>
-                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">${MODS.LBL_PORTAL_CLOSE}</button>
-                        </div>
-                    `;
-                document.body.appendChild(warningMessage);
-                document.getElementById('closeWarningBtn').addEventListener('click', () => {
-                    warningMessage.remove();
-                });
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_PDF_SEND_ERROR);
             });
         });
     }

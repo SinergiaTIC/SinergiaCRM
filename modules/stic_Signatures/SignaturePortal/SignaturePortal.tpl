@@ -228,7 +228,7 @@
                         <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$OTP_ERROR_MSG}
                     </p>
                     {/if}
-                    {if !$OTP_SENT}
+                    {if !$OTP_SENT_EMAIL}
                     <div class="alert alert-info ">
                         {$MODS.LBL_PORTAL_OTP_INSTRUCTION}
                     </div>
@@ -274,7 +274,7 @@
                             </button>
                         </div>
                     </form>
-                    {if $OTP_SENT}
+                    {if $OTP_SENT_EMAIL}
                     <div class="alert alert-info mt-4">{$MODS.LBL_PORTAL_OTP_DONT_RECEIVED}</div>
                     <div class="d-flex align-items-center btn-group justify-content-center m-4" role="group"
                         aria-label="Resend OTP Options">
