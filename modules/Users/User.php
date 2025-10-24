@@ -1023,7 +1023,7 @@ class User extends Person implements EmailInterface
                 // END STIC Custom
             }
             // STIC Custom 20251024 JBL - Fix Reset User Preferences 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/848
             // if (isset($_POST['ut'])) {
             //     $this->setPreference('ut', '0', 0, 'global');
             // } else {
@@ -1169,7 +1169,7 @@ class User extends Person implements EmailInterface
                 $this->setPreference('email_show_counts', $_REQUEST['email_show_counts'], 0, 'global');
             } else {
                 // STIC Custom 20251024 JBL - Fix Reset User Preferences 
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/848
                 // $this->setPreference('email_show_counts', 0, 0, 'global');
                 $emailShowCounts = $this->getCurrentPreference('email_show_counts');
                 $this->setPreference('email_show_counts', $emailShowCounts ?? 0, 0, 'global');

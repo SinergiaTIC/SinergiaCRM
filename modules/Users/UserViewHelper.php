@@ -674,7 +674,7 @@ class UserViewHelper
         }
 
         // STIC Custom 20251024 JBL - Fix Reset User Preferences 
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/848
         // if (!$this->bean->getPreference('ut')) {
         $ut = $this->bean->getPreference('ut');
 

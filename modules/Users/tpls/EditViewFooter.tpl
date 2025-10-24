@@ -373,7 +373,7 @@
                     </td>
                     <td>
                         {{* STIC Custom 20251024 JBL - Fix Reset User Preferences  *}}
-                        {{* https://github.com/SinergiaTIC/SinergiaCRM/pull/??? *}}
+                        {{* https://github.com/SinergiaTIC/SinergiaCRM/pull/848 *}}
                         {{* <slot><input type="checkbox" tabindex='14' class="checkbox" name="ut" value="0" {$PROMPTTZ}> *}}
                         <slot><input type="checkbox" tabindex='14' class="checkbox" name="ut" {$PROMPTTZ}>
                         {{* End STIC Custom 20251024 JBL *}}
