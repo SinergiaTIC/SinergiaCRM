@@ -84,4 +84,5 @@ $mod_strings = array (
   'LBL_LIST_DATE_MODIFIED' => 'Data de Modificació',
   'LBL_LIST_STATUS' => 'Estat',
   'LBL_LIST_SUBJECT' => 'Assumpte',
+  'LBL_INFO_TXT' => 'Si se superen els 160 caracters, el missatge es dividirà en diverses parts segons convingui.',
 );

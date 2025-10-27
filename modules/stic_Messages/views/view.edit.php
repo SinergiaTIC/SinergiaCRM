@@ -73,6 +73,8 @@ class stic_MessagesViewEdit extends ViewEdit
 
     public function display()
     {
+        global $mod_strings;
+        $this->bean->info = "<p class='msg-warning'><span style='font-style: italic;'>⚠️{$mod_strings['LBL_INFO_TXT']}.</span></p";
         parent::display();
 
         SticViews::display($this);
