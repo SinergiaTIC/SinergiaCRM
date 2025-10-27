@@ -135,3 +135,6 @@ sdaRebuildError.txt
 
 # Ignore TEST folder
 /TEST
+
+# Ignore STIC internal files
+SticRepair.php
