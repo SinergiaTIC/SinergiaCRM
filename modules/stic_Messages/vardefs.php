@@ -273,7 +273,7 @@ $dictionary['stic_Messages'] = array(
             'required' => false,
             'massupdate' => 0,
             'no_default' => 0,
-            'default' => '<p>Estono est&aacute; <span style="text-decoration: underline;">subrayado</span></p>',
+            // 'default' => '<p>Estono est&aacute; <span style="text-decoration: underline;">subrayado</span></p>',
             'comment' => 'Additional information about the message',
             'rows' => 6,
             'cols' => 80,
@@ -283,6 +283,7 @@ $dictionary['stic_Messages'] = array(
             'inline_edit' => 0,
             'reportable' => 1,
             'unified_search' => 0,
+            'source' => 'non-db',
         ),
     ),
     'indices' => array(
