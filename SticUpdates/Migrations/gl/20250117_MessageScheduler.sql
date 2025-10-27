@@ -1,2 +1,4 @@
 INSERT IGNORE INTO schedulers (id, deleted, date_entered, date_modified, created_by, modified_user_id, name, job, date_time_start, date_time_end, job_interval, time_from, time_to, last_run, status, catch_up) VALUES
 ('96c34b2d-d499-11ef-af33-0242ac120003', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Envio planificado de mensajes a teléfono', 'function::sticSendPhoneMessages', NOW(), NULL, '*::2-6::*::*::*', NULL, NULL, NULL, 'Active', 0);
+INSERT IGNORE INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_user_id`, `created_by`, `deleted`, `assigned_user_id`, `type`, `name`, `value`, `description`) VALUES
+('e5a26eec-b326-11f0-b8b0-f2de65fe24cb', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_MESSAGES_BULK', '5000', "Número máximo de mensajes que se envian por hora en el envío de campañas.");
