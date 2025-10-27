@@ -9,11 +9,12 @@ $db = DBManagerFactory::getInstance();
 
 if ($db instanceof DBManager) 
 {
-    if ($db->query($query)) {
-        $GLOBALS['log']->debug("Deleted template section lines successfully.");
-    } else {
-        $GLOBALS['log']->debug("Deleted template section lines unsuccessfully.");
-    }
+    // Comprobar si ya existen plantillas personalizadas. En dicho caso, no se ejecutará el scrip
+    $query = "SELECT count(id) FROM templatesectionline WHERE deleted = 0";
+    if ($db->getOne($query) > 10) {
+        $GLOBALS['log']->debug("Se detiene la ejecución del script por que la entidad ya ha creado sus propias secciones de plantilla. Ejecutar el script de forma manual atentiendo a lo realizado por la entidad.");
+        die();
+    } 
 
     $site_url = $sugar_config['site_url'];
     $default_language = $sugar_config['default_language'];
