@@ -83,9 +83,9 @@ $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Bústia de correu on r
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
 
-$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = "Marketing per missatge";
-$mod_strings['LBL_SEND_MESSAGES'] = "Enviar missatges";
-$mod_strings['LBL_SEND_MESSAGES_TEST'] = "Enviar missatges de prova";
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Enviaments de missatges';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Envia els missatges';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Envia els missatges de prova';
 
 $mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cua de correu electrònic';
 $mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cua de missatges';
