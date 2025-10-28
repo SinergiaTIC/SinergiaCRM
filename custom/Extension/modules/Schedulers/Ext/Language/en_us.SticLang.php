@@ -40,4 +40,4 @@ $mod_strings['LBL_OPPORTUNITIESREMINDER'] = 'Opportunities reminder';
 $mod_strings['LBL_VALIDATIONACTIONS'] = 'Validation actions';
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_SCHEDULERS_FROM_STIC_VALIDATION_ACTIONS_TITLE'] = 'Validation Actions';
 $mod_strings['LBL_CREATEMEDICATIONLOGS'] = 'Create medication logs';
-$mod_strings['LBL_STICSENDPHONEMESSAGES'] = 'Scheduled sending of Phone Messages';
+$mod_strings['LBL_STICSENDPHONEMESSAGES'] = 'Send messages to phones';
