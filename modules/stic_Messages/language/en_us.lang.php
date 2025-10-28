@@ -84,5 +84,5 @@ $mod_strings = array (
   'LBL_LIST_DATE_MODIFIED' => 'Date Modified',
   'LBL_LIST_STATUS' => 'Status',
   'LBL_LIST_SUBJECT' => 'Subject',
-  'LBL_INFO_TXT' => 'If the message exceeds 160 characters, it will be split into multiple parts as needed.',
+  'LBL_INFO_TXT' => 'If the message exceeds 160 characters, it will be divided into as many parts as necessary, with the effects that this may have on the number of messages sent and, therefore, billable.',
 );
