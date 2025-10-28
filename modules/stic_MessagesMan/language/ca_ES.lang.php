@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LNK_LIST' => 'Mostra la cua de missatges',
+    'LNK_LIST' => 'Mostra la Cua de missatges',
     'LBL_SEARCH_FORM_TITLE' => 'Cerca a la cua',
     'LBL_FORCE_QUEUE' => "Força l'enviament de la cua",
     'LBL_ID' => 'Id',
