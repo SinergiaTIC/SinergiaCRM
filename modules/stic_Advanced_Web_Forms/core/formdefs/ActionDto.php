@@ -25,10 +25,33 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_Group_ActionInterface 
-  extends stic_AWF_ActionInterface, stic_AWF_Scoped_ActionInterface {
+class ActionDto {
+    public string $id;      // Id del Flujo de acciones
+    public string $name;    // Nombre del Flujo de acciones
+    public string $label;   // La etiqueta a traducir para el nombre
+    public string $text;    // El texto a mostrar 
+    // @var ActionsDto[]
+    public array $actions;  // Las acciones del Flujo
+
     /**
-     * @return stic_AWF_ActionInterface[]
+     * Crea una instancia de ActionDto a partir de un array JSON.
+     * @param array $data Los datos en formato array
+     * @return ActionDto La instancia creada
      */
-    public function getSubActions(): array;   
+    public static function fromJsonArray(array $data): self {
+        $dto = new self();
+        $dto->id = $data['id'];
+        $dto->name = $data['name'];
+        $dto->label = $data['label'];
+        $dto->text = $data['text'];
+
+        $dto->actions = [];
+        if (isset($data['actions'])) {
+            foreach ($data['actions'] as $actionData) {
+                $dto->actions[] = ActionDto::fromJsonArray($actionData);
+            }
+        }
+
+        return $dto;
+    }
 }

@@ -25,14 +25,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_Deferred_ActionInterface 
-  extends stic_AWF_Hook_ActionInterface {
+abstract class AbstractUIAction extends AbstractAction
+{
     /**
-     * Procesa una petición entrante (webhook) de un servicio externo.
-     * Este método solo es relevante para aquellas acciones que esperan un callback de servidor.
-     * 
-     * @param array $requestData Los datos de la petición entrante.
-     * @return stic_AWF_WebhookResult El objeto con el ID de la transacción y el estado.
+     * Retorna los cambios en la UI a aplicar.
+     * Ex: ['script' => ['https://recaptcha.js'], 'html' => ['<div class="..."></div>']]
+     * @param array $config Configuración específica de la acción
+     * @return string[] Los cambios a aplicar
      */
-    public function processWebhook(array $requestData): stic_AWF_WebhookResult;
-}
+    abstract public function getFrontendAssets(array $config): array;
+}   

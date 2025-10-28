@@ -25,14 +25,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_Deferred_ManualReviewInterface 
-  extends stic_AWF_Deferred_ActionInterface {
+include_once __DIR__."/DataBlockDto.php";
+include_once __DIR__."/DataBlockFieldDto.php";
+include_once __DIR__."/DuplicateRuleDto.php";
 
-    /**
-     * Retorna los botones a mostrar
-     * Ejemplo: [['label' => 'Aprobar', 'action' => 'approve_manual_review', 'class' => 'btn-success'], 
-     *           ['label' => 'Rechazar', 'action' => 'reject_manual_review', 'class' => 'btn-danger']]
-     * @return string[]
-     */
-    public function getManualReviewButtons(): array;
-}
+include_once __DIR__."/FlowDto.php";
+include_once __DIR__."/ActionDto.php";

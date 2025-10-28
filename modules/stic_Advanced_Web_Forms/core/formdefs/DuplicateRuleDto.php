@@ -25,13 +25,28 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Clase para indicar un objecto modificado por una acción
- */
-class stic_AWF_ActionModifiedBean {
-    public function __construct(
-        public string $id,
-        public string $text,
-        public string $type     // ex: 'Contacts'
-    ) {}
+enum OnDuplicateAction: string {
+    case UPDATE = 'update';
+    case ENRICH = 'enrich';
+    case SKIP   = 'skip';
+    case ERROR  = 'error';
+}
+
+class DuplicateRuleDto {
+    // @var string[] 
+    public array $fields;                     // Array con el nombre de los campos para la detección de duplicados
+    public OnDuplicateAction $on_duplicate;   // Acción a realizar con los duplicados: update, enrich, skip, error
+
+    /**
+     * Crea una instancia de DuplicateRuleDto a partir de un array JSON.
+     * @param array $data Los datos en formato array
+     * @return DuplicateRuleDto La instancia creada
+     */
+    public static function fromJsonArray(array $data): self {
+        $dto = new self();
+        $dto->fields = $data['fields'];
+        $dto->on_duplicate = OnDuplicateAction::from($data['on_duplicate']);
+
+        return $dto;
+    }
 }

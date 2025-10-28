@@ -25,29 +25,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_Scoped_ActionInterface {
-    public const SCOPE_FORM = 'form';
-    public const SCOPE_BLOCK = 'block';
-    public const SCOPE_FIELD  = 'field';
+abstract class AbstractDataProviderAction extends AbstractAction 
+{
     /**
-     * Define a qué parte del formulario aplica la acción
-     * @return string el Scope al que aplica
+     * Retorna datos dinámicos para el formulario
+     * @param array $config Configuración específica de la acción
+     * @param array $params Parámetros recibidos para la acción
+     * @return string[] Los datos obtenidos
      */
-    public function getScope(): string;
-
-    /**
-     * Si el scope es 'field', especifica los tipos de campo soportados.
-     * Ej: ['varchar', 'text', 'int']
-     * Retorna un array vacío si aplica a todos.
-     * @return string[] Los tipos de campo soportados
-     */
-    public function getSupportedFieldTypes(): array;
-
-    /**
-     * Si el scope es 'block', especifica los módulos soportados.
-     * Ej: ['Contacts', 'Leads']
-     * Retorna un array vacío si aplica a todos.
-     * @return string[] Los Módulos soportados
-     */
-    public function getSupportedModules(): array;
+    abstract public function getData(array $config, array $params): array;
 }

@@ -25,18 +25,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Clase para indicar el resultado de la ejecución de una acción
- */
-class stic_AWF_ActionResult {
-    public const STATUS_OK      = 'ok';
-    public const STATUS_SKIPPED = 'skipped';
-    public const STATUS_ERROR   = 'error';
-
-    public function __construct(
-        public string $status,
-        public ?SugarBean $bean = null,
-        public ?string $message = null,
-        public array $extra = []
-    ) {}
+abstract class AbstractHookAction extends AbstractAction {
+    /**
+     * Ejecuta la lógica principal de la acción.
+     * @param array $config Configuración específica de la acción
+     * @param array $formData Datos del formulario actual (respuesta)
+     * @param array $context Resultados y valores de otras acciones
+     * @return ActionResult Resultado formalizado
+     */
+    public abstract function execute(array $config, array $formData, array &$context): ActionResult;
 }

@@ -25,33 +25,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_ActionInterface {
-    /**
-     * Indica si la acción es pública (se mostrará en la UI)
-     * @return bool
-     */
-    public function isPublic(): bool;
-    
-
-    /**
-     * Obtiene el nombre público de la acción
-     * @return string Etiqueta (nombre) de la acción
-     */
-    public function getLabel(): string;
-
-    /**
-     * Obtiene el conjunto de tags de la acción
-     * @return string[] Tags de la acción
-     */
-    public function getTags(): array;
-
-    /**
-     * Parámetros configurables de la acción.
-     * @return stic_AWF_ActionParameter[]
-     */
-    public function getParameters(): array;
-
-    public function getOrder(): int;
-    public function setOrder(int $order): void;
+abstract class AbstractAction {
+    public bool $isPublic = true;
+    public string $name = 'BaseAction';
+    public string $label = 'Base Action';
+    public array $tags = [];
+    public ActionScope $scope = ActionScope::BLOCK;
+    public array $supportedModules = [];       // moduleList
+    public array $supportedFieldSubTypes = []; // stic_advanced_web_forms_field_in_form_subtype_list
+    public array $parameters = [];
+    public int $order = 0;
 }
-

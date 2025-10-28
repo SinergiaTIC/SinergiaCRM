@@ -25,12 +25,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_Hook_ActionInterface 
-  extends stic_AWF_Executable_ActionInterface {
+abstract class AbstractHookBeanAction extends AbstractHookAction {
+
     /**
-     * Indica si la acción finaliza la ejecución del flujo.
-     * Si retorna true, no es posible ejecutar ninguna otra acción después de esta.
-     * @return bool
+     * Carga o crea un bean según los datos proporcionados y la acción en caso de duplicado.
+     * @param string $module Módulo del bean
+     * @param array $beanData Datos del bean
+     * @param OnDuplicateAction $onDuplicateAction Acción a tomar en caso de duplicado
+     * @return SugarBean|null El bean cargado o creado, o null si se omitió
      */
-    public function isTerminal(): bool;    
+    protected function loadOrCreateBean(string $module, array $beanData, OnDuplicateAction $onDuplicateAction): ?SugarBean {
+        // Retorno temporal
+        return BeanFactory::getBean($module); 
+    }
 }

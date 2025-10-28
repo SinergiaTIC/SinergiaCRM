@@ -25,13 +25,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_UI_ActionInterface 
-  extends stic_AWF_ActionInterface, stic_AWF_Scoped_ActionInterface {
-    /**
-     * Retorna los cambios en la UI a aplicar.
-     * Ex: ['script' => ['https://recaptcha.js'], 'html' => ['<div class="..."></div>']]
-     * @param array $config Configuración específica de la acción
-     * @return string[] Los cambios a aplicar
-     */
-    public function getFrontendAssets(array $config): array;
+interface ITerminalAction {
+
 }

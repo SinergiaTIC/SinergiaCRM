@@ -25,14 +25,18 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_Executable_ActionInterface 
-  extends stic_AWF_ActionInterface {
-    /**
-     * Ejecuta la lógica principal de la acción.
-     * @param array $config Configuración específica de la acción
-     * @param array $formData Datos del formulario actual (respuesta)
-     * @param array $context Resultados y valores de otras acciones
-     * @return stic_AWF_ActionResult Resultado formalizado
-     */
-    public function execute(array $config, array $formData, array &$context): stic_AWF_ActionResult;
-}
+include_once __DIR__."/Enums.php";
+include_once __DIR__."/Dtos.php";
+
+include_once __DIR__."/AbstractAction.php";
+include_once __DIR__."/ITerminalAction.php";
+
+include_once __DIR__."/UI/AbstractUIAction.php";
+
+include_once __DIR__."/DataProvider/AbstractDataProviderAction.php";
+
+include_once __DIR__."/Hook/AbstractHookAction.php";
+include_once __DIR__."/Hook/AbstractHookBeanAction.php";
+include_once __DIR__."/Hook/AbstractDeferredAction.php";
+
+include_once __DIR__."/Group/AbstractGroupAction.php";

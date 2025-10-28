@@ -25,13 +25,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface stic_AWF_DataProvider_ActionInterface 
-  extends stic_AWF_ActionInterface {
+abstract class AbstractDeferredAction extends AbstractHookAction {
     /**
-     * Retorna datos dinámicos para el formulario
-     * @param array $config Configuración específica de la acción
-     * @param array $params Parámetros recibidos para la acción
-     * @return string[] Los datos obtenidos
+     * Procesa una petición entrante (webhook) de un servicio externo.
+     * Este método solo es relevante para aquellas acciones que esperan un callback de servidor.
+     * 
+     * @param array $requestData Los datos de la petición entrante.
+     * @return WebhookResult El objeto con el ID de la transacción y el estado.
      */
-    public function getData(array $config, array $params): array;
+    public abstract function processWebhook(array $requestData): WebhookResult;
 }
