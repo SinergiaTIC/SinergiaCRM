@@ -79,9 +79,9 @@ $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive err
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving the notification the emails to be sent will be automatically added to the sending queue.";
 
-$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = "Message Marketing";
-$mod_strings['LBL_SEND_MESSAGES'] = "Send Messages";
-$mod_strings['LBL_SEND_MESSAGES_TEST'] = "Send Test Messages";
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Message sendings';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Send messages';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Send test messages';
 
 $mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Email Queue';
-$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Message Queue';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Messages Queue';
