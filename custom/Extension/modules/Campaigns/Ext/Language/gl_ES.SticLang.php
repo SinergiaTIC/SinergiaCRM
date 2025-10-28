@@ -81,11 +81,11 @@ $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "A plantilla de correo elect
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Conta de correo que se utilizará para enviar a notificación. Pódese configurar no apartado 'Correo electrónico saínte' da área de Adminstración.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo onde recibir as mensaxes de erro que se poidan producir tralo envío. Pódese configurar no apartado 'Correo electrónico entrante' da área de Administración.";
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.";
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
 
-$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = "Marketing por mensaje";
-$mod_strings['LBL_SEND_MESSAGES'] = "Enviar Mensajes";
-$mod_strings['LBL_SEND_MESSAGES_TEST'] = "Enviar Mensajesde prueba";
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Envíos de mensajes';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Enviar mensajes';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Enviar mensajes de prueba';
 
 $mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cola de correo electrónico';
 $mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de mensajes';
