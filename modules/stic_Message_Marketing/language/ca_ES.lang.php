@@ -44,6 +44,8 @@ $mod_strings = array (
     'LBL_LIST_NAME' => 'Nom',
     'LBL_EDIT_BUTTON' => 'Edita',
     'LBL_REMOVE' => 'Desvincula',
+    'LBL_ASCENDING' => 'Ascendent',
+    'LBL_DESCENDING' => 'Descendent',
     'LBL_DEFAULT_PANEL' => 'Dades generals',
     'LBL_LIST_FORM_TITLE' => "Llista d'Enviaments de missatges",
     'LBL_MODULE_NAME' => 'Enviaments de missatges',
@@ -63,7 +65,7 @@ $mod_strings = array (
     'LBL_STATUS' => 'Estat',
     'LBL_SENDER' => 'Remitent',
     'LBL_TEMPLATE' => 'Plantilla de missatge',
-    'LBL_SELECT_ALL' => 'Selecciona totes les llistes de públic objectiu de la campanya',
+    'LBL_SELECT_ALL' => 'Feu clic per seleccionar totes les llistes de públic objectiu de la campanya',
     'LBL_PROSPECT_LISTS_TITLE' => 'Llistes de públic objectiu',
     'LBL_TYPE' => 'Tipus',
 
