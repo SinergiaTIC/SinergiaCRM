@@ -368,7 +368,11 @@ class Importer
                 if (!isset($_SESSION["stic_ImporValidation"]['duplicateFilters'][$fieldNameTranslate])){
                     $_SESSION["stic_ImporValidation"]['duplicateFilters'][$fieldNameTranslate] = [];
                 }
-                array_push($_SESSION["stic_ImporValidation"]['duplicateFilters'][$fieldNameTranslate], $focus->$name);
+                if ($name === 'full_name') {
+                    array_push($_SESSION["stic_ImporValidation"]['duplicateFilters'][$fieldNameTranslate], $focus->first_name . ' ' . $focus->last_name);
+                } else {
+                    array_push($_SESSION["stic_ImporValidation"]['duplicateFilters'][$fieldNameTranslate], $focus->$name);
+                }
             } // END STIC-Code
                         
             $idc = new ImportDuplicateCheck($focus);
