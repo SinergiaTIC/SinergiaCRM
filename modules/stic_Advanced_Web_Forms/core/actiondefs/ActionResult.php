@@ -25,19 +25,37 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/ActionParameter.php";
-include_once __DIR__."/ActionResult.php";
-include_once __DIR__."/WebhookResult.php";
+enum ResultStatus: string {
+    case OK      = 'ok';
+    case SKIPPED = 'skipped';
+    case ERROR   = 'error';
+}
 
-include_once __DIR__."/AbstractAction.php";
-include_once __DIR__."/ITerminalAction.php";
+/**
+ * Clase para representar el resultado de una acción.
+ */
+class ActionResult {
+    public function __construct(
+        public ResultStatus $status,
+        public ?string $message = null,
+        public array $modifiedBeans = [],
+    ) {}
+}
 
-include_once __DIR__."/UI/AbstractUIAction.php";
+enum BeanModificationType: string {
+    case CREATED  = 'create';
+    case UPDATED  = 'update';
+    case ENRICHED = 'enrich';
+    case SKIPPED  = 'skip';
+}
 
-include_once __DIR__."/DataProvider/AbstractDataProviderAction.php";
-
-include_once __DIR__."/Hook/AbstractHookAction.php";
-include_once __DIR__."/Hook/AbstractHookBeanAction.php";
-include_once __DIR__."/Hook/AbstractDeferredAction.php";
-
-include_once __DIR__."/Group/AbstractGroupAction.php";
+/**
+ * Clase para indicar un Bean modificado por una acción
+ */
+class ModifiedBean {
+    public function __construct(
+        public string $id,
+        public string $module,
+        public BeanModificationType $modificationType
+    ) {}
+}

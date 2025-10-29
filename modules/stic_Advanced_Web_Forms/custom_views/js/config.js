@@ -627,6 +627,7 @@ class AWF_ActionParameter {
     Object.assign(this, {
       name: '',                // Nombre del parámetro
       text: '',                // Texto del parámetro
+      value: '',               // Valor del parámetro
     });
 
     // 2. Overwrite with provided data

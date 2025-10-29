@@ -38,6 +38,8 @@ enum DataBlockFieldValueType: string {
 }
 
 class DataBlockFieldDto {
+    public DataBlockDto $data_block;             // El Bloque de datos al que pertenece
+
     public string $name;                         // Nombre del campo
     public string $text_original;                // Texto original del campo
     public string $label;                        // Etiqueta que aparecerá con el campo
@@ -52,11 +54,14 @@ class DataBlockFieldDto {
 
     /**
      * Crea una instancia de DataBlockFieldDto a partir de un array JSON.
+     * @param DataBlockDto $dataBlock El Bloque de datos al que pertenece
      * @param array $data Los datos en formato array
      * @return DataBlockFieldDto La instancia creada
      */
-    public static function fromJsonArray(array $data): self {
+    public static function fromJsonArray(DataBlockDto $dataBlock, array $data): self {
         $dto = new self();
+        $dto->data_block = $dataBlock;
+        
         $dto->name = $data['name'];
         $dto->text_original = $data['text_original'];
         $dto->label = $data['label'];

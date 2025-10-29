@@ -26,6 +26,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class DataBlockDto {
+    public FormConfigDto $form_config;   // La configuración del formulario al que pertenece
+
     public string $id;                   // Id del Bloque de datos
     public string $name;                 // Nombre interno (identificador en UI) del Bloque de Datos
     public string $text;                 // Texto a mostrar para el Bloque de Datos
@@ -37,11 +39,14 @@ class DataBlockDto {
 
     /**
      * Crea una instancia de DataBlockDto a partir de un array JSON.
+     * @param FormConfigDto $form La configuración del formulario al que pertenece
      * @param array $data Los datos en formato array
      * @return DataBlockDto La instancia creada
      */
-    public static function fromJsonArray(array $data): self {
+    public static function fromJsonArray(FormConfigDto $form, array $data): self {
         $dto = new self();
+        $dto->form_config = $form;
+
         $dto->id = $data['id'];
         $dto->name = $data['name'];
         $dto->text = $data['text'];
@@ -50,14 +55,14 @@ class DataBlockDto {
         $dto->fields = [];
         if (isset($data['fields'])) {
             foreach ($data['fields'] as $fieldData) {
-                $dto->fields[] = DataBlockFieldDto::fromJsonArray($fieldData);
+                $dto->fields[] = DataBlockFieldDto::fromJsonArray($dto, $fieldData);
             }
         }
 
         $dto->duplicate_detections = [];
         if (isset($data['duplicate_detections'])) {
             foreach ($data['duplicate_detections'] as $dupData) {
-                $dto->duplicate_detections[] = DuplicateRuleDto::fromJsonArray($dupData);
+                $dto->duplicate_detections[] = DuplicateRuleDto::fromJsonArray($dto, $dupData);
             }
         }
 

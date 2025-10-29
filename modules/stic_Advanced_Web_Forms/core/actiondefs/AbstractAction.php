@@ -25,14 +25,24 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+enum ActionScope: string {
+    case FORM  = 'form';
+    case BLOCK = 'block';
+    case FIELD = 'field';
+}
+
 abstract class AbstractAction {
     public bool $isPublic = true;
     public string $name = 'BaseAction';
     public string $label = 'Base Action';
+    // @var string[]
     public array $tags = [];
     public ActionScope $scope = ActionScope::BLOCK;
+    // @var string[]
     public array $supportedModules = [];       // moduleList
+    // @var string[]
     public array $supportedFieldSubTypes = []; // stic_advanced_web_forms_field_in_form_subtype_list
+    // @var ActionParameter[]
     public array $parameters = [];
     public int $order = 0;
 }

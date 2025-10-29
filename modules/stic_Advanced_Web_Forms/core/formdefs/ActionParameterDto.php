@@ -25,51 +25,27 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Clase para representar el resultado de una acción.
- */
-class ActionResult {
-    public function __construct(
-        public ResultStatus $status,
-        public ?SugarBean $bean = null,
-        public ?string $message = null,
-        public array $extra = []
-    ) {}
-}
+class ActionParameterDto {
+    public ActionDto $action;  // La Acción a la que pertenece
 
-/**
- * Clase para indicar un parámetro de una acción
- */
-class ActionParameter {
-    public function __construct(
-        public string $name,
-        public string $text,
-        public string $type,
-        public bool $required = false,
-        public array $options = []
-    ) {}
-}
+    public string $name;       // Nombre del Parámetro
+    public string $text;       // El texto a mostrar 
+    public string $value;      // El valor del Parámetro
 
-/**
- * Clase para indicar un objecto modificado por una acción
- */
-class ModifiedBean {
-    public function __construct(
-        public string $id,
-        public string $name,
-        public string $module,
-        public BeanModification $modificationType
-    ) {}
-}
+    /**
+     * Crea una instancia de ActionParameterDto a partir de un array JSON.
+     * @param ActionDto $action La Acción a la que pertenece
+     * @param array $data Los datos en formato array
+     * @return ActionParameterDto La instancia creada
+     */
+    public static function fromJsonArray(ActionDto $action, array $data): self {
+        $dto = new self();
+        $dto->action = $action;
+        
+        $dto->name = $data['name'];
+        $dto->text = $data['text'];
+        $dto->value = $data['value'];
 
-/**
- * Clase para representar el resultado de un webhook.
- */
-class WebhookResult {
-    public function __construct(
-        public ?string $externalTransactionId,
-        public WebhookStatus $status,
-        public ?string $message = null,
-        public array $extraData = []
-    ) {}
+        return $dto;
+    }
 }

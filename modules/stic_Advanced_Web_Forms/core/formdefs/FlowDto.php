@@ -26,38 +26,35 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FlowDto {
-    public string $id;                // Id de la acción
-    public string $name;              // Nombre interno de la acción
-    public string $data_block_id;     // Id del Bloque de datos al que pertenece
-    public array $requisite_actions;  // Array con los identificadores de las acciones previas a la actual
-    // @var ActionParameterDto[]
-    public array $parameters;         // Los parámetros de la acción
-    // @var ActionsDto[]
-    public array $actions;            // Las acciones del Flujo
+    public FormConfigDto $form_config;  // La configuración del formulario al que pertenece
+
+    public string $id;                  // Id de la acción
+    public string $name;                // Nombre interno de la acción
+    public string $data_block_id;       // Id del Bloque de datos al que pertenece
+    // @var string[]
+    public array $requisite_actions;    // Array con los identificadores de las acciones previas a la actual
+    // @var ActionDto[]
+    public array $actions;              // Las acciones del Flujo
 
     /**
      * Crea una instancia de FlowDto a partir de un array JSON.
+     * @param FormConfigDto $form La configuración del formulario al que pertenece
      * @param array $data Los datos en formato array
      * @return FlowDto La instancia creada
      */
-    public static function fromJsonArray(array $data): self {
+    public static function fromJsonArray(FormConfigDto $form, array $data): self {
         $dto = new self();
+        $dto->form_config = $form;
+
         $dto->id = $data['id'];
         $dto->name = $data['name'];
         $dto->data_block_id = $data['data_block_id'];
         $dto->requisite_actions = $data['requisite_actions'] ?? [];
         
-        $dto->parameters = [];
-        if (isset($data['parameters'])) {
-            foreach ($data['parameters'] as $parameterData) {
-                $dto->parameters[] = ActionParameterDto::fromJsonArray($parameterData);
-            }
-        }
-
         $dto->actions = [];
         if (isset($data['actions'])) {
             foreach ($data['actions'] as $actionData) {
-                $dto->actions[] = ActionDto::fromJsonArray($actionData);
+                $dto->actions[] = ActionDto::fromJsonArray($dto, $actionData);
             }
         }
 

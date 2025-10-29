@@ -25,28 +25,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-enum BeanModification: string {
-    case CREATED  = 'create';
-    case UPDATED  = 'update';
-    case ENRICHED = 'enrich';
-    case SKIPPED  = 'skip';
-}
-
-enum ResultStatus: string {
-    case OK      = 'ok';
-    case SKIPPED = 'skipped';
-    case ERROR   = 'error';
-}
-
-enum ActionScope: string {
-    case FORM  = 'form';
-    case BLOCK = 'block';
-    case FIELD = 'field';
-}
-
 enum WebhookStatus: string {
     case SUCCESS = 'success';
     case FAILURE = 'failure';
     case PENDING = 'pending';
     case IGNORED = 'ignored';
+}
+
+/**
+ * Clase para representar el resultado de un webhook.
+ */
+class WebhookResult {
+    public function __construct(
+        public ?string $externalTransactionId,
+        public WebhookStatus $status,
+        public ?string $message = null,
+        public array $extraData = []
+    ) {}
 }

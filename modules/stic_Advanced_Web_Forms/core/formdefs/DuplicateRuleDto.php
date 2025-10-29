@@ -33,17 +33,22 @@ enum OnDuplicateAction: string {
 }
 
 class DuplicateRuleDto {
+    public DataBlockDto $data_block;          // El Bloque de datos al que pertenece
+
     // @var string[] 
     public array $fields;                     // Array con el nombre de los campos para la detección de duplicados
     public OnDuplicateAction $on_duplicate;   // Acción a realizar con los duplicados: update, enrich, skip, error
 
     /**
      * Crea una instancia de DuplicateRuleDto a partir de un array JSON.
+     * @param DataBlockDto $dataBlock El Bloque de datos al que pertenece
      * @param array $data Los datos en formato array
      * @return DuplicateRuleDto La instancia creada
      */
-    public static function fromJsonArray(array $data): self {
+    public static function fromJsonArray(DataBlockDto $dataBlock, array $data): self {
         $dto = new self();
+        $dto->data_block = $dataBlock;
+        
         $dto->fields = $data['fields'];
         $dto->on_duplicate = OnDuplicateAction::from($data['on_duplicate']);
 

@@ -25,35 +25,31 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class ActionDto {
-    public FlowDto $flow;      // El Flujo de acciones al que pertenece
-
-    public string $id;         // Id del Flujo de acciones
-    public string $name;       // Nombre del Flujo de acciones
-    public string $label;      // La etiqueta a traducir para el nombre
-    public string $text;       // El texto a mostrar 
-    // @var ActionParameterDto[]
-    public array $parameters;  // Los parámetros de la acción
+class FormConfigDto {
+    // @var DataBlockDto[]
+    public array $data_blocks;        // Los bloques de datos del formulario
+    // @var FlowDto[]
+    public array $flows;              // Los flujos de acciones del formulario
 
     /**
-     * Crea una instancia de ActionDto a partir de un array JSON.
-     * @param FlowDto $flow El Flujo de acciones al que pertenece 
+     * Crea una instancia de FormConfigDto a partir de un array JSON.
      * @param array $data Los datos en formato array
-     * @return ActionDto La instancia creada
+     * @return FormConfigDto La instancia creada
      */
-    public static function fromJsonArray(FlowDto $flow, array $data): self {
+    public static function fromJsonArray(array $data): self {
         $dto = new self();
-        $dto->flow = $flow;
 
-        $dto->id = $data['id'];
-        $dto->name = $data['name'];
-        $dto->label = $data['label'];
-        $dto->text = $data['text'];
+        $dto->data_blocks = [];
+        if (isset($data['data_blocks'])) {
+            foreach ($data['data_blocks'] as $dataBlockData) {
+                $dto->data_blocks[] = DataBlockDto::fromJsonArray($dto, $dataBlockData);
+            }
+        }
 
-        $dto->parameters = [];
-        if (isset($data['parameters'])) {
-            foreach ($data['parameters'] as $parameterData) {
-                $dto->parameters[] = ActionParameterDto::fromJsonArray($dto, $parameterData);
+        $dto->flows = [];
+        if (isset($data['flows'])) {
+            foreach ($data['flows'] as $flowData) {
+                $dto->flows[] = FlowDto::fromJsonArray($dto, $flowData);
             }
         }
 

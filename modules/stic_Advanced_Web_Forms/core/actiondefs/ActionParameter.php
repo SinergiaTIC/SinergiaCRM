@@ -25,19 +25,22 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/ActionParameter.php";
-include_once __DIR__."/ActionResult.php";
-include_once __DIR__."/WebhookResult.php";
+enum ActionParameterType: string {
+    case VALUE       = 'value';
+    case DATA_BLOCK  = 'dataBlock';
+    case FIELD       = 'field';
+}
 
-include_once __DIR__."/AbstractAction.php";
-include_once __DIR__."/ITerminalAction.php";
+/**
+ * Clase para definir un parámetro de una acción
+ */
+class ActionParameter {
+    public function __construct(
+        public string $name,
+        public string $text,
+        public ActionParameterType $type,
+        public bool $required = true,
+        public string $defaultValue = ''
+    ) {}
+}
 
-include_once __DIR__."/UI/AbstractUIAction.php";
-
-include_once __DIR__."/DataProvider/AbstractDataProviderAction.php";
-
-include_once __DIR__."/Hook/AbstractHookAction.php";
-include_once __DIR__."/Hook/AbstractHookBeanAction.php";
-include_once __DIR__."/Hook/AbstractDeferredAction.php";
-
-include_once __DIR__."/Group/AbstractGroupAction.php";
