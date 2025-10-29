@@ -14,6 +14,7 @@ array(
         'studio' => 'visible',
         'label' => 'LBL_STATUS',
         'width' => '10%',
+        // 'customCode' => '<span class="label label-danger">{$STATUS}</span>',
     ),
     'SIGNATURE_DATE' => array(
         'type' => 'datetimecombo',
@@ -25,7 +26,7 @@ array(
         'type' => 'varchar',
         'label' => 'LBL_RECORD_ID',
         'width' => '10%',
-        'default' => true,
+        'default' => false,
     ),
     'STIC_SIGNATURES_STIC_SIGNERS_NAME' => array(
         'type' => 'relate',
@@ -74,7 +75,7 @@ array(
         'type' => 'varchar',
         'label' => 'LBL_OTP',
         'width' => '10%',
-        'default' => true,
+        'default' => false,
     ),
     'DATE_ENTERED' => array(
         'type' => 'datetime',

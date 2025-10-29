@@ -76,6 +76,7 @@ $mod_strings = array(
     'LBL_VARIABLES' => 'Variables',
     'LBL_REJECTION_REASON' => 'Motiu de rebuig',
     'LBL_ON_BEHALF_OF_ID' => 'Autoritzat a signar en nom de (ID)',
+    'LBL_ON_BEHALF_OF_ID_CONTACT_ID' => 'Autoritzat a signar en nom de',
     'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Firmes',
     'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Firmes',
     'LBL_DEFAULT_PANEL' => 'Dades generals',

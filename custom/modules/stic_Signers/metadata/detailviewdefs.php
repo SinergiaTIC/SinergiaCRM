@@ -2,8 +2,16 @@
 $module_name = 'stic_Signers';
 $viewdefs[$module_name] =
 array(
-    'EditView' => array(
+    'DetailView' => array(
         'templateMeta' => array(
+            'form' => array(
+                'buttons' => array(
+                    0 => 'EDIT',
+                    1 => 'DUPLICATE',
+                    2 => 'DELETE',
+                    3 => 'FIND_DUPLICATES',
+                ),
+            ),
             'maxColumns' => '2',
             'widths' => array(
                 0 => array(
@@ -78,10 +86,7 @@ array(
                     0 => array(
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',
-                        'nl2br' => true,
-                        'displayParams' => array(
-                            'colspan' => 2,
-                        ),
+                        
                     ),
                 ),
             ),
