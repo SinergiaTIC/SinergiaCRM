@@ -25,19 +25,19 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."ActionParameter.php";
-include_once __DIR__."ActionSelectorOption.php";
 
-include_once __DIR__."ActionDefinition.php";
-include_once __DIR__."ServerActionDefinition.php";
-include_once __DIR__."ITerminalAction.php";
+/**
+ * Definición de una opción para un parámetro de tipo selector de objetos.
+ */
+class ActionSelectorOption {
+    public string $name;                       // Nombre interno de la opción
+    public string $text;                       // El texto a mostrar
+    public ActionParameterType $resolvedType;  // Tipo de parámetro resuelto para esta opción
 
-include_once __DIR__."UI/UIActionDefinition.php";
+    // @var string[]
+    public array $supportedModules = [];       // Módulos soportados por esta opción si el destino es un registro CRM
 
-include_once __DIR__."DataProvider/DataProviderActionDefinition.php";
+    // @var ActionDataType[]
+    public array $supportedDataTypes = [];     // Lista de Tipos de datos permitidos por esta acción, si aplica
+}
 
-include_once __DIR__."Hook/HookActionDefinition.php";
-include_once __DIR__."Hook/HookBeanActionDefinition.php";
-include_once __DIR__."Hook/DeferredActionDefinition.php";
-
-include_once __DIR__."Group/GroupActionDefinition.php";

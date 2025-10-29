@@ -50,8 +50,6 @@ abstract class ActionDefinition {
     public array $supportedModules = [];       // moduleList
     // @var string[]
     public array $supportedFieldSubTypes = []; // stic_advanced_web_forms_field_in_form_subtype_list
-    // @var ActionParameterDefinition[]
-    public array $parameters = [];
     public int $order = 0;
 
     /**
@@ -86,6 +84,12 @@ abstract class ActionDefinition {
      * @return string La descripción de la acción
      */
     public abstract function getDescription(): string;
+
+    /**
+     * Retorna los parámetros definidos para la acción
+     * @return ActionParameter[] Los parámetros de la acción
+     */
+    public abstract function getParameters(): array;
 
     /**
      * Retorna el tipo de la acción

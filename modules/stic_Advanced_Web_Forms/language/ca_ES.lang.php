@@ -184,4 +184,18 @@ $mod_strings = array (
   'LBL_INTERNAL_NAME' => 'Nombre interno',
 
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
-);
+
+  'LBL_SENDEMAILACTION_TITLE' => 'Enviar correo electrónico',
+  'LBL_SENDEMAILACTION_DESCRIPTION' => 'Envia un correo electrónico a un destinatario basado en la configuración del formulario',
+  'LBL_SENDEMAILACTION_PARAM_TEMPLATEID_TEXT' => 'Plantilla de correo electrónico',
+  'LBL_SENDEMAILACTION_PARAM_TEMPLATEID_DESCRIPTION' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
+  'LBL_SENDEMAILACTION_PARAM_BASEDATABLOCK_TEXT' => 'Bloque de datos para la plantilla',
+  'LBL_SENDEMAILACTION_PARAM_BASEDATABLOCK_DESCRIPTION' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
+  'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_TEXT' => 'Destinatario del correo electrónico',
+  'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_DESCRIPTION' => 'Seleccione el destinatario del correo electrónico',
+  'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_FIELD_TEXT' => 'Campo del Formulario',
+  'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
+  'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT' => 'Valor fijo',
+  'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_BEANID_TEXT' => 'Registro del CRM',
+  'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT' => 'Campo relacionado',
+);  

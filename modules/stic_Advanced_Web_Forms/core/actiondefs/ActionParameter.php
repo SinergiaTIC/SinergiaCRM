@@ -26,9 +26,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 enum ActionParameterType: string {
-    case VALUE       = 'value';
-    case DATA_BLOCK  = 'dataBlock';
-    case FIELD       = 'field';
+    case VALUE           = 'value';
+    case DATA_BLOCK      = 'dataBlock';
+    case FIELD           = 'field';
+    case CRM_RECORD      = 'crmRecord';
+    case OBJECT_SELECTOR = 'objectSelector';
 }
 
 enum ActionDataType: string {
@@ -49,22 +51,22 @@ enum ActionDataType: string {
     // Specific formats
     case EMAIL         = 'email';
     case PHONE         = 'phone';
-     
-    // References to specific objects
-    case TARGET_LIST   = 'target_list';     // Permite seleccionar una LPO
-    case TEMPLATE      = 'email_template';  // Permite seleccionar una plantilla de email
 }
 
 /**
  * Clase para definir un parámetro de una acción
  */
-class ActionParameterDefinition {
-    public string $name;                // Nombre del Parámetro
-    public string $text;                // El texto a mostrar
-    public ActionParameterType $type;   // El tipo de parámetro
-    public ActionDataType $dataType;    // El tipo de dato del parámetro: Obligado si $type es VALUE
-    public bool $required = true;       // Indica si el parámetro es obligatorio
-    public string $defaultValue = '';   // Valor por defecto del parámetro
-    public string $helpText = '';       // Texto de ayuda para el parámetro
+class ActionParameter {
+    public string $name;                 // Nombre del Parámetro
+    public string $text;                 // El texto a mostrar
+    public string $description;          // La descripción del parámetro
+    public ActionParameterType $type;    // El tipo de parámetro
+    public ActionDataType $dataType;     // El tipo de dato del parámetro: Obligado si $type es VALUE
+    public bool $required = true;        // Indica si el parámetro es obligatorio
+    public string $defaultValue = '';    // Valor por defecto del parámetro
+    // @var ActionSelectorOption[]
+    public array $selectorOptions = [];  // Opciones adicionales para selectores de objetos
+    // @var string[]
+    public array $supportedModules = []; // Módulos soportados si el destino es un registro CRM
 }
 
