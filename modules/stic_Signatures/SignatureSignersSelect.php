@@ -113,6 +113,7 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean = BeanFactory::newBean('stic_Signers');
     $stic_SignerBean->name = "{$destSignerBean->full_name} - {$stic_SignatureBean->name}";
     $stic_SignerBean->assigned_user_id = $current_user->id ?? $stic_SignatureBean->assigned_user_id;
+    $stic_SignerBean->created_by = $current_user->id ?? $stic_SignatureBean->assigned_user_id;
     $stic_SignerBean->parent_type = $destSigner['module'];
     $stic_SignerBean->parent_id = $destSignerId;
     $stic_SignerBean->parent_name = $destSignerBean->full_name;

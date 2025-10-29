@@ -367,16 +367,17 @@ class stic_SignersUtils
 
         require_once 'SticInclude/Utils.php';
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
-        if ($signatureBean->on_behalf_of == 1);
+        if ($signatureBean->on_behalf_of == 1) {
 
-        // Deactivate other signers for the same Signature
-        $otherSigners = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'");
-        foreach ($otherSigners as $otherSigner) {
-            $otherSigner->status = 'unnecessary';
-            $otherSigner->save();
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Deactivated signer {$otherSigner->id} for signature {$signatureBean->id} because signature was completed by $signerBean->name.");
-            require_once 'modules/stic_Signature_Log/Utils.php';
-            stic_SignatureLogUtils::logSignatureAction('SIGNATURE_NOT_NEEDED', $otherSigner->id, 'SIGNER', "{$mod_strings['LBL_SIGNATURE_COMPLETED_BY']} {$signerBean->parent_name}.");
+            // Deactivate other signers for the same Signature
+            $otherSigners = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'");
+            foreach ($otherSigners as $otherSigner) {
+                $otherSigner->status = 'unnecessary';
+                $otherSigner->save();
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Deactivated signer {$otherSigner->id} for signature {$signatureBean->id} because signature was completed by $signerBean->name.");
+                require_once 'modules/stic_Signature_Log/Utils.php';
+                stic_SignatureLogUtils::logSignatureAction('SIGNATURE_NOT_NEEDED', $otherSigner->id, 'SIGNER', "{$mod_strings['LBL_SIGNATURE_COMPLETED_BY']} {$signerBean->parent_name}.");
+            }
         }
     }
 
@@ -390,7 +391,7 @@ class stic_SignersUtils
     public static function checkExpiredStatus($signatureBean)
     {
         global $timedate;
-        
+
         $expirationDate = $timedate->fromUser($signatureBean->expiration_date);
         $currentDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
 
@@ -401,9 +402,10 @@ class stic_SignersUtils
         }
     }
 
-    public static function checkActivatedStatus($signatureBean){
+    public static function checkActivatedStatus($signatureBean)
+    {
         global $timedate;
-        
+
         $startDate = $timedate->fromUser($signatureBean->activation_date);
         $currentDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
 
@@ -414,6 +416,5 @@ class stic_SignersUtils
         }
 
     }
-    
 
 }

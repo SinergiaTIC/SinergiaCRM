@@ -23,17 +23,21 @@ array(
                     'field' => '30',
                 ),
             ),
-            'useTabs' => false,
+            'useTabs' => true,
             'tabDefs' => array(
-                'DEFAULT' => array(
-                    'newTab' => false,
+                'LBL_DEFAULT_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
+                'LBL_PANEL_RECORD_DETAILS' => array(
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
             ),
             'syncDetailEditViews' => true,
         ),
         'panels' => array(
-            'default' => array(
+            'lbl_default_panel' => array(
                 0 => array(
                     0 => 'name',
                     1 => 'assigned_user_name',
@@ -52,24 +56,22 @@ array(
                 ),
                 2 => array(
                     0 => array(
-                        'name' => 'signature_image',
-                        'studio' => 'visible',
-                        'customCode' => '{if $fields.signature_image.value != \'\'}<img src="{$fields.signature_image.value}" alt="Signature Image" style="max-width:250px; max-height:100px;">{/if}',
-                        'label' => 'LBL_SIGNATURE_IMAGE',
-                    ),
-                    1 => array(
-                        'name' => 'signature_date',
-                        'label' => 'LBL_SIGNATURE_DATE',
-                    ),
-                ),
-                3 => array(
-                    0 => array(
                         'name' => 'phone',
                         'label' => 'LBL_PHONE',
                     ),
                     1 => array(
                         'name' => 'email_address',
                         'label' => 'LBL_EMAIL_ADDRESS',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'signature_date',
+                        'label' => 'LBL_SIGNATURE_DATE',
+                    ),
+                    1 => array(
+                        'name' => 'verification_code',
+                        'label' => 'LBL_VERIFICATION_CODE',
                     ),
                 ),
                 4 => array(
@@ -84,22 +86,48 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_ON_BEHALF_OF_ID',
                     ),
-                  
                 ),
                 5 => array(
-                    0 => 'description',
-                    1 => array(
+                    0 => array(
                         'name' => 'stic_signatures_stic_signers_name',
                     ),
+                    1 => '',
                 ),
                 6 => array(
                     0 => array(
-                        'name' => 'verification_code',
-                        'label' => 'LBL_VERIFICATION_CODE',
+                        'name' => 'description',
+                        'label' => 'LBL_DESCRIPTION',
+                        'nl2br' => true,
+                        'displayParams' => array('colspan' => 2),
                     ),
-                    1 => '',
+                    
+                ),
+            ),
+            'lbl_panel_record_details' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'created_by_name',
+                        'label' => 'LBL_CREATED',
+                    ),
+                    1 => array(
+                        'name' => 'date_entered',
+                        'comment' => 'Date record created',
+                        'label' => 'LBL_DATE_ENTERED',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'modified_by_name',
+                        'label' => 'LBL_MODIFIED_NAME',
+                    ),
+                    1 => array(
+                        'name' => 'date_modified',
+                        'comment' => 'Date record last modified',
+                        'label' => 'LBL_DATE_MODIFIED',
+                    ),
+                ),
             ),
         ),
     ),
-    ),
 );
+?>

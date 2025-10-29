@@ -79,6 +79,8 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_ID' => 'Authorized to sign on behalf of (ID)',
     'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Signatures',
     'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Signatures',
+    'LBL_DEFAULT_PANEL' => 'General Data',
+    'LBL_PANEL_RECORD_DETAILS' => 'Record Details',
 
     'LBL_SIGNER_PREVIEW' => 'Signer Preview',
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Request signature by email to',
@@ -96,5 +98,12 @@ $mod_strings = array(
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signature completed by',
     'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hello',
     'LBL_SIGNER_OTP_SMS_BODY_2' => 'here is the one-time code you requested for document signing, valid for 10 minutes:',
+
+    'LBL_EMAIL_ADDRESS_HELP' => 'Email address of the signer to whom the signing notification will be sent. Extracted from the contact.',
+    'LBL_PHONE_HELP' => 'Phone number of the signer, used for verification and notifications.',
+    'LBL_STATUS_HELP' => 'Current status of the signing request:<ul><li><strong>Pending:</strong> The signer has not yet signed the document.</li> <li><strong>Signed:</strong> The signer has completed the signing of the document.</li>  <li><strong>Expired:</strong> The signing request has expired without the signer having signed.</li><li><strong>No longer needed:</strong> The signing request is no longer needed because another authorized person has signed first.</li></ul>',
+    'LBL_PDF_DOCUMENT_HELP' => 'PDF document already signed.',
+    'LBL_SIGNATURE_DATE_HELP' => 'Date on which the document was signed.',
+    'LBL_VERIFICATION_CODE_HELP' => 'Verification code generated after the document is signed based on its content.',
 
 );

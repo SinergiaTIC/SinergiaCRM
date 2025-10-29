@@ -37,6 +37,10 @@ array(
                     'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_PANEL_RECORD_DETAILS' => array(
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
             ),
             'syncDetailEditViews' => true,
         ),
@@ -127,9 +131,33 @@ array(
                 6 => array(
                     0 => array(
                         'name' => 'description',
-                        
+
                     ),
-                    
+
+                ),
+            ),
+            'lbl_panel_record_details' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'created_by_name',
+                        'label' => 'LBL_CREATED',
+                    ),
+                    1 => array(
+                        'name' => 'date_entered',
+                        'comment' => 'Date record created',
+                        'label' => 'LBL_DATE_ENTERED',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'modified_by_name',
+                        'label' => 'LBL_MODIFIED_NAME',
+                    ),
+                    1 => array(
+                        'name' => 'date_modified',
+                        'comment' => 'Date record last modified',
+                        'label' => 'LBL_DATE_MODIFIED',
+                    ),
                 ),
             ),
         ),

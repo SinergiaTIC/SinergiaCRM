@@ -106,13 +106,7 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'SIGNATURE_IMAGE' => array(
-        'type' => 'image',
-        'studio' => 'visible',
-        'width' => '10%',
-        'label' => 'LBL_SIGNATURE_IMAGE',
-        'default' => false,
-    ),
+
     'VERIFICATION_CODE' => array(
         'type' => 'varchar',
         'label' => 'LBL_VERIFICATION_CODE',

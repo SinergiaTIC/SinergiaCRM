@@ -221,10 +221,15 @@ class stic_SignaturePortalUtils
         $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
 
         if ($signerBean && !empty($signerBean->id)) {
+            $currentDate = gmdate("Y-m-d H:i:s");
             $signerBean->signature_image = $data['signatureData'];
             $signerBean->status = 'signed';
-            $signerBean->signature_date = gmdate("Y-m-d H:i:s");
-            if (!$signerBean->save()) {
+            $signerBean->signature_date = $currentDate;
+            $signerBean->save();
+            
+            // Reopen the signer bean to verify saved data
+            $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
+            if ($signerBean->signature_date != $currentDate || $signerBean->status != 'signed') {
                 return ['success' => false, 'message' => 'Failed to save signature data.'];
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to save signature data for Signer ID: {$signerBean->id}");
             } else {

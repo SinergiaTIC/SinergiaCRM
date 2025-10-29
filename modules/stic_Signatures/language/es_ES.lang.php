@@ -82,6 +82,7 @@ $mod_strings = array(
     'LBL_STEP1_PANEL' => '<b>PASO 1:</b> Seleccione plantilla PDF',
     'LBL_STEP2_PANEL' => '<b>PASO 2:</b> Seleccione la ruta hacia la persona firmante',
     'LBL_STEP3_PANEL' => '<b>PASO 3:</b> Configure el resto de datos del proceso de firma',
+    'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "La fecha de activación debe ser anterior a la fecha de expiración.",

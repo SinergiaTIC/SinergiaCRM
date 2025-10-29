@@ -79,6 +79,8 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_ID' => 'Autorizado a asinar en nome de (ID)',
     'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Sinaturas',
     'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Sinaturas',
+    'LBL_DEFAULT_PANEL' => 'Datos xerais',
+    'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
 
     'LBL_SIGNER_PREVIEW' => 'Vista previa do firmante',
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar sinatura por correo electrónico a',
@@ -96,3 +98,11 @@ $mod_strings = array(
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Sinatura completada por',
     'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hola',
     'LBL_SIGNER_OTP_SMS_BODY_2' => 'aquí  tes o código de un só uso que has solicitado para a sinatura do documento, válido por 10 minutos:',
+
+    'LBL_EMAIL_ADDRESS_HELP' => 'Dirección de correo electrónico do firmante á que se enviará a notificación de sinatura. Extraída do contacto.',
+    'LBL_PHONE_HELP' => 'Número de teléfono do firmante, utilizado para a verificación e notificacións.',
+    'LBL_STATUS_HELP' => 'Estado actual da solicitude de sinatura:<ul><li><strong>Pendente:</strong> O firmante aínda non asinou o documento.</li> <li><strong>Asinado:</strong> O firmante completou a sinatura do documento.</li>  <li><strong>Vencido:</strong> A solicitude de sinatura expirou sen que o firmante asinase.</li><li><strong>Xa non se necesita a sinatura:</strong> A solicitude de sinatura xa non é necesaria porque outra persoa autorizada asinou primeiro.</li></ul>',
+    'LBL_PDF_DOCUMENT_HELP' => 'Documento PDF xa asinada.',
+    'LBL_SIGNATURE_DATE_HELP' => 'Data na que se asinou o documento.',
+    'LBL_VERIFICATION_CODE_HELP' => 'Código de verificación xenerado tras a sinatura do documento a partir do contido do mesmo.',
+);

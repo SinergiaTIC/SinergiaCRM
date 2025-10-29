@@ -204,7 +204,7 @@ $dictionary['stic_Signers'] = array(
             'merge_filter' => 'disabled',
             'len' => '100',
             'size' => '20',
-        ),
+            'popupHelp' => 'LBL_EMAIL_ADDRESS_HELP',
         'phone' => array(
             'required' => false,
             'name' => 'phone',
@@ -224,6 +224,7 @@ $dictionary['stic_Signers'] = array(
             'merge_filter' => 'disabled',
             'len' => '12',
             'size' => '20',
+            'popupHelp' => 'LBL_PHONE_HELP',
         ),
         'status' => array(
             'required' => true,
@@ -248,6 +249,7 @@ $dictionary['stic_Signers'] = array(
             'options' => 'stic_signers_status_list',
             'studio' => 'visible',
             'dependency' => false,
+            'popupHelp' => 'LBL_STATUS_HELP',
         ),
         'unique_link' => array(
             'required' => true,
@@ -293,6 +295,7 @@ $dictionary['stic_Signers'] = array(
             'border' => '',
             'width' => '120',
             'height' => '',
+            'popupHelp' => 'LBL_PDF_DOCUMENT_HELP',
         ),
         'signature_date' => array(
             'required' => false,
@@ -314,6 +317,7 @@ $dictionary['stic_Signers'] = array(
             'size' => '20',
             'enable_range_search' => false,
             'dbType' => 'datetime',
+            'popupHelp' => 'LBL_SIGNATURE_DATE_HELP',
         ),
         'verification_code' => array(
             'required' => false,
@@ -334,6 +338,7 @@ $dictionary['stic_Signers'] = array(
             'merge_filter' => 'disabled',
             'len' => '255',
             'size' => '20',
+            'popupHelp' => 'LBL_VERIFICATION_CODE_HELP',
         ),
         'otp' => array(
             'required' => false,

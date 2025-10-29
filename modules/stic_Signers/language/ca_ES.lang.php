@@ -79,6 +79,8 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_ID' => 'Autoritzat a signar en nom de (ID)',
     'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Firmes',
     'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Firmes',
+    'LBL_DEFAULT_PANEL' => 'Dades generals',
+    'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
     'LBL_SIGNER_PREVIEW' => 'Vista prèvia del firmant',
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Sol·licitar signatura per correu electrònic a',
@@ -96,5 +98,12 @@ $mod_strings = array(
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signatura completada per',
     'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hola',
     'LBL_SIGNER_OTP_SMS_BODY_2' => 'aquí tens el codi d\'un sol ús que has sol·licitat per a la signatura del document, vàlid per 10 minuts:',
+
+    'LBL_EMAIL_ADDRESS_HELP' => 'Adreça de correu electrònic del firmant a la qual s\'enviarà la notificació de signatura. Extreta del contacte.',
+    'LBL_PHONE_HELP' => 'Número de telèfon del firmant, utilitzat per a la verificació i notificacions.',
+    'LBL_STATUS_HELP' => 'Estat actual de la sol·licitud de signatura:<ul><li><strong>Pendent:</strong> El firmant encara no ha signat el document.</li> <li><strong>Signat:</strong> El firmant ha completat la signatura del document.</li>  <li><strong>Caducat:</strong> La sol·licitud de signatura ha expirat sense que el firmant hagi signat.</li><li><strong>Ja no es necessita la signatura:</strong> La sol·licitud de signatura ja no és necessària perquè una altra persona autoritzada ha signat primer.</li></ul>',
+    'LBL_PDF_DOCUMENT_HELP' => 'Document PDF ja signat.',
+    'LBL_SIGNATURE_DATE_HELP' => 'Data en què es va signar el document.',
+    'LBL_VERIFICATION_CODE_HELP' => 'Codi de verificació generat després de la signatura del document a partir del contingut del mateix.',
 
 );

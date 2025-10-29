@@ -82,6 +82,7 @@ $mod_strings = array(
     'LBL_STEP1_PANEL' => '<b> PASO 1:</b> Seleccioneu plantilla PDF',
     'LBL_STEP2_PANEL' => '<b> PASO 2:</b> Seleccioneu la ruta cap a la persona signant',
     'LBL_STEP3_PANEL' => '<b> PASO 3:</b> Configureu la resta de dades del procés de signatura',
+    'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",
