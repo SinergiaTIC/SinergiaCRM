@@ -65,13 +65,7 @@ array (
     'width' => '10%',
     'default' => true,
   ),
-  'END_DATE' => 
-  array (
-    'type' => 'datetimecombo',
-    'label' => 'LBL_END_DATE',
-    'width' => '10%',
-    'default' => true,
-  ),
+
   'ON_BEHALF_OF' => 
   array (
     'type' => 'enum',
@@ -88,21 +82,7 @@ array (
     'id' => 'ASSIGNED_USER_ID',
     'default' => true,
   ),
-  'VERIFICATION_CODE' => 
-  array (
-    'type' => 'varchar',
-    'label' => 'LBL_VERIFICATION_CODE',
-    'width' => '10%',
-    'default' => false,
-  ),
-  'GENERATE_PDF' => 
-  array (
-    'type' => 'enum',
-    'default' => false,
-    'studio' => 'visible',
-    'label' => 'LBL_GENERATE_PDF',
-    'width' => '10%',
-  ),
+  
   'PDF_AUDIT_PAGE' => 
   array (
     'type' => 'enum',
@@ -110,20 +90,6 @@ array (
     'label' => 'LBL_PDF_AUDIT_PAGE',
     'width' => '10%',
     'default' => false,
-  ),
-  'REMINDER_FREQUENCY' => 
-  array (
-    'type' => 'int',
-    'label' => 'LBL_REMINDER_FREQUENCY',
-    'width' => '10%',
-    'default' => false,
-  ),
-  'MINIMUM_SIGNATURES' => 
-  array (
-    'type' => 'int',
-    'default' => false,
-    'label' => 'LBL_MINIMUM_SIGNATURES',
-    'width' => '10%',
   ),
   'SIGNER_PATH' => 
   array (

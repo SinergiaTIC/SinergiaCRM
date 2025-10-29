@@ -60,9 +60,7 @@ class stic_Signatures extends Basic
     public $activation_date;
     public $expiration_date;
     public $minimum_signatures;
-    public $reminder_frequency;
     public $pdf_audit_page;
-    public $generate_pdf;
     public $end_date;
     public $verification_code;
     public $emailtemplate_id_c;

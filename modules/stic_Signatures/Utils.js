@@ -69,7 +69,7 @@ switch (viewType()) {
     setDisabledStatus('main_module', false);
     setAutofill(["name"]);
 
-    // Initially hide step 2 and step 3 panels
+    // // Initially hide step 2 and step 3 panels
     if (typeof STIC.record.name == 'undefined') {
       $('[data-id=LBL_STEP2_PANEL]').parent('.panel').hide()
       $('[data-id=LBL_STEP3_PANEL]').parent('.panel').hide()
@@ -78,8 +78,6 @@ switch (viewType()) {
       //$('[data-id=LBL_STEP2_PANEL]').parent('.panel').hide()
       $('[data-id=LBL_STEP3_PANEL]').parent('.panel').hide()
     }
-
-
 
     break;
   case "detail":

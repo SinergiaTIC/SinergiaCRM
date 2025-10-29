@@ -70,11 +70,8 @@ $mod_strings = array(
     'LBL_MINIMUM_SIGNATURES' => 'Firmas mínimas',
     'LBL_EMAIL_TEMPLATE' => 'Plantilla de correo',
     'LBL_PDF_TEMPLATE' => 'Plantilla PDF',
-    'LBL_REMINDER_FREQUENCY' => 'Frecuencia del recordatorio',
     'LBL_PDF_AUDIT_PAGE' => 'Incluir página de auditoría',
-    'LBL_GENERATE_PDF' => 'Generar PDF',
     'LBL_END_DATE' => 'Fecha de Finalización',
-    'LBL_VERIFICATION_CODE' => 'Código de Verificación',
     'LBL_EMAIL_TEMPLATE_EMAILTEMPLATE_ID' => 'Plantilla de email (relacionado Plantilla de Email ID)',
     'LBL_EDITVIEW_PANEL1' => 'Configuración PDF',
     'LBL_EDITVIEW_PANEL2' => 'Plantilla',
@@ -198,5 +195,11 @@ $mod_strings = array(
     'LBL_AUTH_METHOD_HELP' => 'Métodos de autenticación disponibles para los firmantes. <ul><li><strong>Enlace único:</strong> el firmante accede al documento mediante un enlace. <li><strong>Código de un solo uso (por SMS o Correo electrónico):</strong> el firmante debe introducir un código de verificación enviado por SMS o correo electrónico. <li><strong>Teléfono, Número de identificación o Fecha de nacimiento</strong> el firmante debe indicar el datos seleccioando para poder firmar.',
     'LBL_SIGNATURE_MODE_HELP' => 'Seleccione el modo de firma para el documento. <ul><li><strong>Manuscrita:</strong> el firmante dibuja su firma utilizando el ratón o la pantalla táctil. <li><strong>Botón:</strong> el firmante solo tendrá que pulsar sobre el botón de aceptación</ul>',
     'LBL_ON_BEHALF_OF_HELP' => 'Seleccione: <ul><li><strong>No (valor por defecto):</strong> Si el  firmante firma el documento en su propio nombre. <li><strong>Sí, solamente un representante:</strong>Deberá firmar exclusivamente un representante del titular de la firma.<li><strong>Sí, todos los representantes</strong> Deberán firmar el documento todas las persoonas representantes del titular</ul>',
+    'LBL_ACTIVATION_DATE_HELP' => 'Fecha a partir de la cual el firmante podrá firmar el documento. Antes de esta fecha, el portal de firmas no permitirá la firma del documento. Por defecto, el días siguiente a las 00:00 horas.',
+    'LBL_EXPIRATION_DATE_HELP' => 'Fecha límite para que el firmante pueda firmar el documento. Después de esta fecha, el portal de firmas no permitirá la firma del documento, pero sí el acceso para consultar el mismo si ya está firmado.',
+    'LBL_STATUS_HELP' => 'Seleccione el estado actual de la firma. Los estados disponibles son: <ul><li><strong>Borrador:</strong> La firma está en proceso de configuración y aún no se pueden añadir firmantes. <li><strong>Enviado:</strong> La firma está abierta para añadir firmantes y enviarles las notificaciones correspondientes. <li><strong>Completado:</strong> Todos los firmantes han completado el proceso de firma. <li><strong>Expirado:</strong> El período para firmar el documento ha expirado sin que todos los firmantes hayan completado la firma. </ul>',
+    'LBL_PDF_AUDIT_PAGE_HELP' => 'Seleccione si desea incluir una página de auditoría al final del documento PDF firmado. La página de auditoría contiene información detallada sobre el proceso de firma, incluyendo datos del firmante, fechas y horas de las firmas, y un registro de eventos relacionados con la firma del documento.',
+    'LBL_TYPE_HELP' => 'Tipo de firma a configurar.  Actualmente solo disponible la opción "Individual".',
+    'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que se utilizará para informar a los firmantes. Esta plantilla aplica para informar a los firmantes directamente, <strong>cuando no se les notifica mediante campaña de notificaciones, en cuyo caso se usa la plantilla indicada en el propio proceso.</strong>. En caso de no estar informada, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla por defecto.</a>',
 
 );

@@ -70,11 +70,8 @@ $mod_strings = array(
     'LBL_MINIMUM_SIGNATURES' => 'Sinaturas mínimas',
     'LBL_EMAIL_TEMPLATE' => 'Modelo de correo',
     'LBL_PDF_TEMPLATE' => 'Plantilla PDF',
-    'LBL_REMINDER_FREQUENCY' => 'Frecuencia do recordatorio',
     'LBL_PDF_AUDIT_PAGE' => 'Incluír páxina de auditoría',
-    'LBL_GENERATE_PDF' => 'Xerar PDF',
     'LBL_END_DATE' => 'Data de finalización',
-    'LBL_VERIFICATION_CODE' => 'Código de verificación',
     'LBL_EMAIL_TEMPLATE_EMAILTEMPLATE_ID' => 'Modelo de correo electrónico (relacionado ID de modelo de correo electrónico)',
     'LBL_EDITVIEW_PANEL1' => 'Configuración de PDF',
     'LBL_EDITVIEW_PANEL2' => 'Modelo',
@@ -196,5 +193,11 @@ $mod_strings = array(
     'LBL_AUTH_METHOD_HELP' => 'Métodos de autenticación disponibles para os sinantes <ul><li><strong>Enlace único:</strong> o firmante accede ao documento mediante un enlace. <li><strong>Código de un solo uso (por SMS ou Correo electrónico):</strong> o firmante debe introducir un código de verificación enviado por SMS ou correo electrónico. <li><strong>Teléfono, Número de identificación ou Data de nacemento</strong> o firmante debe indicar o dato seleccionado para poder assinar.</ul>',
     'LBL_SIGNATURE_MODE_HELP' => 'Seleccione o modo de sinatura para o documento. <ul><li><strong>Manuscrita:</strong> o firmante debuxa a súa sinatura utilizando o rato ou a pantalla táctil. <li><strong>Botón:</strong> o firmante só terá que pulsar sobre o botón de aceptación</ul>',
     'LBL_ON_BEHALF_OF_HELP' => 'Seleccione: <ul><li><strong>No (valor por defecto):</strong> Se o firmante sinatura o documento en nome propio. <li><strong>Sí, solamente un representante:</strong>Deberá sinatura exclusivamente un representante do titular da sinatura.<li><strong>Sí, todos os representantes</strong> Deberán sinatura o documento todas as persoas representantes do titular</ul>',
+    'LBL_ACTIVATION_DATE_HELP' => 'Data a partir da cal o firmante poderá sinatura o documento. Antes desta data, o portal de sinaturas non permitirá a sinatura do documento. Por defecto, o día seguinte a las 00:00 horas.',
+    'LBL_EXPIRATION_DATE_HELP' => 'Data límite para que o firmante poida sinatura o documento. Despois desta data, o portal de sinaturas non permitirá a sinatura do documento, pero si o acceso para consultar o mesmo se xa está asinada.',
+    'LBL_STATUS_HELP' => 'Estado actual do proceso de sinatura. <ul><li><strong>Borrador:</strong> O proceso de sinatura está a configurarse e aínda non se enviou aos sinantes. <li><strong>Enviado:</strong> O proceso de sinatura enviouse aos sinantes e está pendente de completarse. <li><strong>Completado:</strong> Todos os sinantes asináron o documento e o proceso de sinatura completouse. <li><strong>Expirado:</strong> O período para asinar o documento expirou sen que todos os sinantes o asinaren. </ul>',
+    'LBL_PDF_AUDIT_PAGE_HELP' => 'Seleccione se quere incluír unha páxina de auditoría ao final do documento PDF asinada. A páxina de auditoría contén información detallada sobre o proceso de sinatura, incluíndo datos do sinante, datas e horas das sinaturas, e un rexistro de eventos relacionados coa sinatura do documento.',
+    'LBL_TYPE_HELP' => 'Tipo de firma a configurar. Actualmente só disponible a opción "Individual".',
+    'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que se utilizará para informar aos sinantes. Esta plantilla aplica para informar aos sinantes directamente, <strong>cando non se lles notifica mediante campaña de notificacións, no cal caso se usa a plantilla indicada no propio proceso.</strong>. En caso de non estar informada, utilízase a <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla por defecto.</a>'
 
 );

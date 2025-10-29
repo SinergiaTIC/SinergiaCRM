@@ -70,11 +70,8 @@ $mod_strings = array(
     'LBL_MINIMUM_SIGNATURES' => 'Firmes mínimes',
     'LBL_EMAIL_TEMPLATE' => 'Plantilla de correu',
     'LBL_PDF_TEMPLATE' => 'Plantilla PDF',
-    'LBL_REMINDER_FREQUENCY' => 'Freqüència del recordatori',
     'LBL_PDF_AUDIT_PAGE' => "Inclou la pàgina d'auditoria",
-    'LBL_GENERATE_PDF' => 'Genera el PDF',
     'LBL_END_DATE' => 'Fecha de Finalización',
-    'LBL_VERIFICATION_CODE' => 'Código de Verificación',
     'LBL_EMAIL_TEMPLATE_EMAILTEMPLATE_ID' => 'Plantilla de email (relacionado Plantilla de Email ID)',
     'LBL_EDITVIEW_PANEL1' => 'Configuración PDF',
     'LBL_EDITVIEW_PANEL2' => 'Plantilla',
@@ -134,7 +131,6 @@ $mod_strings = array(
     'LBL_PORTAL_COPY_TO_CLIPBOARD' => 'Copiar al porta-retalls',
     'LBL_PORTAL_ACTIONS_LOG' => 'Registre d\'accions',
     'LBL_PORTAL_SIGNER_ACTIONS' => 'Accions del Firmant',
-    'LBL_PORTAL_VERIFICATION_CODE' => 'Codi de verificació',
     'LBL_PORTAL_OTP_INSTRUCTION' => 'Per continuar és necessari introduir un codi de un sol ús en el següent formulari.<br>Si us plau utilitzeu les opcions disponibles per rebre el codi.',
     'LBL_PORTAL_OTP_CHECK_BTN' => 'Comprovar codi',
     'LBL_PORTAL_OTP_DONT_RECEIVED' => '¿No ha rebut el codi?',
@@ -196,5 +192,12 @@ $mod_strings = array(
     'LBL_AUTH_METHOD_HELP' => 'Mètodes de autenticació disponibles per als signants. <ul><li><strong>Enllaç únic:</strong> el signant accedeix al document mitjançant un enllaç. <li><strong>Codi d\'un sol ús (per SMS o Correu electrònic):</strong> el signant ha d\'introduir un codi de verificació enviat per SMS o correu electrònic. <li><strong>Telèfon, Número d\'identificació o Data de naixement</strong> el signant ha d\'indicar les dades seleccionades per poder signar.</ul>',
     'LBL_SIGNATURE_MODE_HELP' => 'Seleccioneu el mode de signatura per al document. <ul><li><strong>Manuscrita:</strong> el signant dibuixa la seva signatura utilitzant el ratolí o la pantalla tàctil. <li><strong>Botó:</strong> el signant només haurà de prémer sobre el botó d\'acceptació</ul>',
     'LBL_ON_BEHALF_OF_HELP' => 'Seleccioneu: <ul><li><strong>No (valor per defecte):</strong> Si el signant signa el document en el seu propi nom. <li><strong>Sí, només un representant:</strong> Ha de signar exclusivament un representant del titular de la firma. <li><strong>Sí, tots els representants</strong> Han de signar el document totes les persones representants del titular</ul>',
+    'LBL_ON_BEHALF_OF_HELP' => 'Seleccione: <ul><li><strong>No (valor por defecto):</strong> Si el  firmante firma el documento en su propio nombre. <li><strong>Sí, solamente un representante:</strong>Deberá firmar exclusivamente un representante del titular de la firma.<li><strong>Sí, todos los representantes</strong> Deberán firmar el documento todas las persoonas representantes del titular</ul>',
+    'LBL_ACTIVATION_DATE_HELP' => 'Data a partir de la qual el signant podrà signar el document. Abans d\'aquesta data, el portal de firmes no permetrà la signatura del document. Per defecte, el dia següent a les 00:00 hores.',
+    'LBL_EXPIRATION_DATE_HELP' => 'Data límit perquè el signant pugui signar el document. Després d\'aquesta data, el portal de firmes no permetrà la signatura del document, però sí l\'accés per consultar el mateix si ja està signat.',
+    'LBL_STATUS_HELP' => 'Estat actual del procés de signatura. <ul><li><strong>Esborrany:</strong> El procés de signatura s\'està configurant i encara no s\'ha enviat als signants. <li><strong>Enviat:</strong> El procés de signatura s\'ha enviat als signants i està pendent de completar-se. <li><strong>Completat:</strong> Tots els signants han signat el document i el procés de signatura s\'ha completat. <li><strong>Expirat:</strong> El període per signar el document ha expirat sense que tots els signants l\'hagin signat. <li><strong>Cancel·lat:</strong> El procés de signatura ha estat cancel·lat manualment per un usuari autoritzat.</ul>',
+    'LBL_PDF_AUDIT_PAGE_HELP' => 'Seleccioneu si voleu incloure una pàgina d\'auditoria al final del document PDF signat. La pàgina d\'auditoria conté informació detallada sobre el procés de signatura, incloent dades del signant, dates i hores de les signatures, i un registre d\'esdeveniments relacionats amb la signatura del document.',
+    'LBL_TYPE_HELP' => 'Tipus de signatura a configurar.  Actualment només disponible l\'opció "Individual".',
+    'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que s\'utilitzarà per informar als signants. Aquesta plantilla aplica per informar als signants directament, <strong>quan no se\'ls notifica mitjançant campanya de notificacions, en quin cas s\'utilitza la plantilla indicada en el propi procés.</strong>. En cas de no estar informada, s\'utilitza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla per defecte.</a>'
 
 );

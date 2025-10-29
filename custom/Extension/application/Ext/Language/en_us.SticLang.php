@@ -3741,10 +3741,10 @@ $app_list_strings['stic_signatures_auth_methods_list']['identification_number'] 
 $app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Fecha de nacimiento';
 
 // Signatures: Types of signatures
-$app_list_strings['stic_signatures_types_list'][''] = '';
+// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list'][''] = '';
 $app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
-$app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (Custom)';
-$app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternative';
+// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (Custom)';
+// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternative';
 
 // Signatures: Modes of signatures
 $app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Handwritten';

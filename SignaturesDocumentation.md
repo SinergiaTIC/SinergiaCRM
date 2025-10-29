@@ -126,3 +126,7 @@ Hay que tener en cuenta que _en el caso de las firmas_ la LPO se crea concatenan
     | Resultado (Éxito/Error)       |
     +-------------------------------+
     ```
+
+
+    ## TODO: Pendiente
+    - Usar la plantilla de email definida en la firma para notificar a los firmantes, en lugar de la plantilla por defecto de notificaciones si está definida.
