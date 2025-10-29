@@ -96,6 +96,7 @@ $dictionary['stic_Signatures'] = array(
             'merge_filter' => 'disabled',
             'len' => '255',
             'size' => '20',
+            'popupHelp' => 'LBL_SIGNER_PATH_HELP',
         ),
         'auth_method' => array(
             'required' => true,

@@ -202,5 +202,6 @@ $mod_strings = array(
     'LBL_PDF_AUDIT_PAGE_HELP' => 'Seleccione si desea incluir una página de auditoría al final del documento PDF firmado. La página de auditoría contiene información detallada sobre el proceso de firma, incluyendo datos del firmante, fechas y horas de las firmas, y un registro de eventos relacionados con la firma del documento.',
     'LBL_TYPE_HELP' => 'Tipo de firma a configurar.  Actualmente solo disponible la opción "Individual".',
     'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que se utilizará para informar a los firmantes. Esta plantilla aplica para informar a los firmantes directamente, <strong>cuando no se les notifica mediante campaña de notificaciones, en cuyo caso se usa la plantilla indicada en el propio proceso.</strong>. En caso de no estar informada, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla por defecto.</a>',
+    'LBL_SIGNER_PATH_HELP' => 'Ruta hacia la persona firmante dentro del módulo principal, se muestran las posibles opciones a elegir, que relacionan el módulo principal de la firma con el módulo de firmantes (Personas o Usuarios).',
 
 );

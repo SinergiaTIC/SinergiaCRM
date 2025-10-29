@@ -199,5 +199,6 @@ $mod_strings = array(
     'LBL_PDF_AUDIT_PAGE_HELP' => 'Select whether to include an audit page at the end of the signed PDF document. The audit page contains detailed information about the signing process, including signer data, dates and times of signatures, and a log of events related to the signing of the document.',
     'LBL_TYPE_HELP' => 'Type of signature to configure. Currently only the "Individual" option is available.',
     'LBL_PDF_TEMPLATE_HELP' => 'PDF template that will be used to inform the signers. This template applies to inform the signers directly, <strong>when they are not notified through a notification campaign, in which case the template indicated in the process itself is used.</strong>. If not informed, the <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">default template.</a> is used.',
+    'LBL_SIGNER_PATH_HELP' => 'Path to the signer within the main module, showing the possible options to choose from, which relate the main module of the signature with the signers module (Contacts or Users).',
 
 );
