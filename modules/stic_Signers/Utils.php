@@ -390,6 +390,10 @@ class stic_SignersUtils
      */
     public static function checkExpiredStatus($signatureBean)
     {
+        if (empty($signatureBean->expiration_date)) {
+            return false;
+        }
+        
         global $timedate;
 
         $expirationDate = $timedate->fromUser($signatureBean->expiration_date);
