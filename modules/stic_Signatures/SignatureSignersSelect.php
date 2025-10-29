@@ -31,7 +31,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-global $mod_strings;
+global $mod_strings, $current_user;
 
 $bean = BeanFactory::getBean($_REQUEST['module']);
 
@@ -112,6 +112,7 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     // Create a new stic_Signer bean
     $stic_SignerBean = BeanFactory::newBean('stic_Signers');
     $stic_SignerBean->name = "{$destSignerBean->full_name} - {$stic_SignatureBean->name}";
+    $stic_SignerBean->assigned_user_id = $current_user->id ?? $stic_SignatureBean->assigned_user_id;
     $stic_SignerBean->parent_type = $destSigner['module'];
     $stic_SignerBean->parent_id = $destSignerId;
     $stic_SignerBean->parent_name = $destSignerBean->full_name;
@@ -120,15 +121,15 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean->email_address = $destSigner['email'];
     $stic_SignerBean->phone = $destSigner['phone'];
     $stic_SignerBean->status = 'pending';
-    $stic_SignerBean->on_behalf_of_id = $destSigner['onBehalfOfId'] ?? null; 
+    $stic_SignerBean->on_behalf_of_id = $destSigner['onBehalfOfId'] ?? null;
     // $stic_SignerBean->unique_link is commented out as it's not needed here
 
     $newId = $stic_SignerBean->save();
-    if($newId){
+    if ($newId) {
         require_once 'modules/stic_Signature_Log/Utils.php';
-        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE',$newId,'SIGNER', $stic_SignatureBean->name);
-        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE',$stic_SignatureBean,'SIGNATURE', $stic_SignerBean->name);
-        
+        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $newId, 'SIGNER', $stic_SignatureBean->name);
+        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $stic_SignatureBean, 'SIGNATURE', $stic_SignerBean->name);
+
     }
 
     // Add relationships between stic_Signers and stic_Signatures records
