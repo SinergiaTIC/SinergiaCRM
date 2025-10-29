@@ -3759,7 +3759,6 @@ $app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Yes, all representa
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Signed';
-$app_list_strings['stic_signers_status_list']['rejected'] = 'Rejected';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Expired';
 $app_list_strings['stic_signers_status_list']['unnecessary'] = 'Signature not necessary';
 

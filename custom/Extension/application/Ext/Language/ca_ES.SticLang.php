@@ -3792,7 +3792,6 @@ $app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, tots els repre
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmat';
-$app_list_strings['stic_signers_status_list']['rejected'] = 'Rebutjat';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Vençut';
 $app_list_strings['stic_signers_status_list']['unnecessary'] = 'Ja no se necessita la firma';
 

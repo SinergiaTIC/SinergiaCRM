@@ -3791,7 +3791,6 @@ $app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, todos los repr
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
-$app_list_strings['stic_signers_status_list']['rejected'] = 'Rechazado';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Caducado';
 $app_list_strings['stic_signers_status_list']['unnecessary'] = 'Ya no se necesita la firma';
 
