@@ -25,32 +25,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-enum OnDuplicateAction: string {
-    case UPDATE = 'update';
-    case ENRICH = 'enrich';
-    case SKIP   = 'skip';
-    case ERROR  = 'error';
-}
+class FormActionParameter {
+    public FormAction $action;  // La Acción a la que pertenece
 
-class DuplicateRuleDto {
-    public DataBlockDto $data_block;          // El Bloque de datos al que pertenece
-
-    // @var string[] 
-    public array $fields;                     // Array con el nombre de los campos para la detección de duplicados
-    public OnDuplicateAction $on_duplicate;   // Acción a realizar con los duplicados: update, enrich, skip, error
+    public string $name;       // Nombre del Parámetro
+    public string $text;       // El texto a mostrar 
+    public string $value;      // El valor del Parámetro
 
     /**
-     * Crea una instancia de DuplicateRuleDto a partir de un array JSON.
-     * @param DataBlockDto $dataBlock El Bloque de datos al que pertenece
+     * Crea una instancia de FormActionParameter a partir de un array JSON.
+     * @param FormAction $action La Acción a la que pertenece
      * @param array $data Los datos en formato array
-     * @return DuplicateRuleDto La instancia creada
+     * @return FormActionParameter La instancia creada
      */
-    public static function fromJsonArray(DataBlockDto $dataBlock, array $data): self {
+    public static function fromJsonArray(FormAction $action, array $data): self {
         $dto = new self();
-        $dto->data_block = $dataBlock;
+        $dto->action = $action;
         
-        $dto->fields = $data['fields'];
-        $dto->on_duplicate = OnDuplicateAction::from($data['on_duplicate']);
+        $dto->name = $data['name'];
+        $dto->text = $data['text'];
+        $dto->value = $data['value'];
 
         return $dto;
     }

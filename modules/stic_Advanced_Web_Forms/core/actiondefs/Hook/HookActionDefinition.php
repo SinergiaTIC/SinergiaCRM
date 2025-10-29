@@ -25,13 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class AbstractUIAction extends AbstractAction
-{
-    /**
-     * Retorna los cambios en la UI a aplicar.
-     * Ex: ['script' => ['https://recaptcha.js'], 'html' => ['<div class="..."></div>']]
-     * @param array $config Configuración específica de la acción
-     * @return string[] Los cambios a aplicar
-     */
-    abstract public function getFrontendAssets(array $config): array;
-}   
+abstract class HookActionDefinition extends ServerActionDefinition {
+    final public function getType(): ActionType {
+        return ActionType::HOOK;
+    }
+}

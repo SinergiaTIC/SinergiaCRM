@@ -35,11 +35,46 @@ enum ResultStatus: string {
  * Clase para representar el resultado de una acción.
  */
 class ActionResult {
-    public function __construct(
-        public ResultStatus $status,
-        public ?string $message = null,
-        public array $modifiedBeans = [],
-    ) {}
+    public ResultStatus $status;        // Estado del resultado
+    public ?string $message;            // Mensaje adicional del resultado
+    // @var ModifiedBean[]
+    public array $modifiedBeans;        // Beans modificados por la acción
+
+    public float $timestamp;            // Marca temporal de la ejecución
+    public ?FormAction $actionConfig;   // Configuración de la acción ejecutada
+
+    public function __construct(ResultStatus $status, ?FormAction $actionConfig, ?string $message = null) {
+        $this->status = $status;
+        $this->actionConfig = $actionConfig;
+        $this->message = $message;
+        $this->modifiedBeans = [];
+        $this->timestamp = microtime(true);
+    }
+
+    public function addModifiedBean(ModifiedBean $bean): void {
+        $this->modifiedBeans[] = $bean;
+    }
+
+    public function hasModifiedBeans(): bool {
+        return !empty($this->modifiedBeans);
+    }
+
+    public function resetTimestamp(): void {
+        $this->timestamp = microtime(true);
+    }
+
+    public function isError(): bool {
+        return $this->status === ResultStatus::ERROR;
+    }
+
+    public function isSkipped(): bool {
+        return $this->status === ResultStatus::SKIPPED;
+    }
+
+    public function isOk(): bool {
+        return $this->status === ResultStatus::OK;
+    }
+
 }
 
 enum BeanModificationType: string {

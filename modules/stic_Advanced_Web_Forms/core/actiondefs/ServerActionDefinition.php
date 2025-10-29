@@ -25,13 +25,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class AbstractHookAction extends AbstractAction {
+abstract class ServerActionDefinition extends ActionDefinition {
+
     /**
-     * Ejecuta la lógica principal de la acción.
-     * @param array $config Configuración específica de la acción
-     * @param array $formData Datos del formulario actual (respuesta)
-     * @param array $context Resultados y valores de otras acciones
-     * @return ActionResult Resultado formalizado
+     * Ejecuta la acción definida por esta definición.
+     *
+     * @param ExecutionContext $context Contexto de ejecución de la acción
+     * @param FormAction $actionConfig Configuración de la acción del formulario
+     * @return ActionResult Resultado de la ejecución de la acción
      */
-    public abstract function execute(array $config, array $formData, array &$context): ActionResult;
+    public abstract function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult;
 }

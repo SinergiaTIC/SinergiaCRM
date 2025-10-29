@@ -608,6 +608,8 @@ class AWF_Action {
     Object.assign(this, {
       id: utils.newId("awfa"),  // Id de la acción
       name: "",                 // Nombre interno de la acción
+      text: "",                 // Texto a mostrar para la acción
+      description: "",          // Descripción de la acción 
       data_block_id: '',        // Id del Bloque de datos al que pertenece
       requisite_actions: [],    // Array con los identificadores de las acciones previas a la actual
       parameters: [],           // Los parámetros de la acción

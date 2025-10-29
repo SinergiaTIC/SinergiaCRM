@@ -25,25 +25,25 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class DataBlockDto {
-    public FormConfigDto $form_config;   // La configuración del formulario al que pertenece
+class FormDataBlock {
+    public FormConfig $form_config;   // La configuración del formulario al que pertenece
 
     public string $id;                   // Id del Bloque de datos
     public string $name;                 // Nombre interno (identificador en UI) del Bloque de Datos
     public string $text;                 // Texto a mostrar para el Bloque de Datos
     public string $module;               // Nombre del módulo
-    // @var DataBlockFieldDto[]
+    // @var FormDataBlockField[]
     public array $fields;               // Campos del Bloque de Datos
-    // @var DuplicateRuleDto[]
+    // @var FormDuplicateRule[]
     public array $duplicate_detections; // Definición de detección de duplicados
 
     /**
-     * Crea una instancia de DataBlockDto a partir de un array JSON.
-     * @param FormConfigDto $form La configuración del formulario al que pertenece
+     * Crea una instancia de FormDataBlock a partir de un array JSON.
+     * @param FormConfig $form La configuración del formulario al que pertenece
      * @param array $data Los datos en formato array
-     * @return DataBlockDto La instancia creada
+     * @return FormDataBlock La instancia creada
      */
-    public static function fromJsonArray(FormConfigDto $form, array $data): self {
+    public static function fromJsonArray(FormConfig $form, array $data): self {
         $dto = new self();
         $dto->form_config = $form;
 
@@ -55,14 +55,14 @@ class DataBlockDto {
         $dto->fields = [];
         if (isset($data['fields'])) {
             foreach ($data['fields'] as $fieldData) {
-                $dto->fields[] = DataBlockFieldDto::fromJsonArray($dto, $fieldData);
+                $dto->fields[] = FormDataBlockField::fromJsonArray($dto, $fieldData);
             }
         }
 
         $dto->duplicate_detections = [];
         if (isset($data['duplicate_detections'])) {
             foreach ($data['duplicate_detections'] as $dupData) {
-                $dto->duplicate_detections[] = DuplicateRuleDto::fromJsonArray($dto, $dupData);
+                $dto->duplicate_detections[] = FormDuplicateRule::fromJsonArray($dto, $dupData);
             }
         }
 

@@ -31,16 +31,40 @@ enum ActionParameterType: string {
     case FIELD       = 'field';
 }
 
+enum ActionDataType: string {
+    // Primive types
+    case TEXT          = 'text';
+    case INTEGER       = 'integer';
+    case FLOAT         = 'float';
+    case BOOLEAN       = 'boolean';
+
+    // Date types
+    case DATE          = 'date';
+    case DATETIME      = 'datetime';
+    case TIME          = 'time';
+
+    // Relative dates
+    case RELATIVE_DATE = 'relative_date';   // Para aceptar fechas relativas como "today", "yesterday", "tomorrow", etc.
+    
+    // Specific formats
+    case EMAIL         = 'email';
+    case PHONE         = 'phone';
+     
+    // References to specific objects
+    case TARGET_LIST   = 'target_list';     // Permite seleccionar una LPO
+    case TEMPLATE      = 'email_template';  // Permite seleccionar una plantilla de email
+}
+
 /**
  * Clase para definir un parámetro de una acción
  */
-class ActionParameter {
-    public function __construct(
-        public string $name,
-        public string $text,
-        public ActionParameterType $type,
-        public bool $required = true,
-        public string $defaultValue = ''
-    ) {}
+class ActionParameterDefinition {
+    public string $name;                // Nombre del Parámetro
+    public string $text;                // El texto a mostrar
+    public ActionParameterType $type;   // El tipo de parámetro
+    public ActionDataType $dataType;    // El tipo de dato del parámetro: Obligado si $type es VALUE
+    public bool $required = true;       // Indica si el parámetro es obligatorio
+    public string $defaultValue = '';   // Valor por defecto del parámetro
+    public string $helpText = '';       // Texto de ayuda para el parámetro
 }
 

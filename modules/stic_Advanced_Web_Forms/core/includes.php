@@ -25,17 +25,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class AbstractHookBeanAction extends AbstractHookAction {
+include_once __DIR__."ActionResult.php";
+include_once __DIR__."WebhookResult.php";
+include_once __DIR__."ExecutionContext.php";
 
-    /**
-     * Carga o crea un bean según los datos proporcionados y la acción en caso de duplicado.
-     * @param string $module Módulo del bean
-     * @param array $beanData Datos del bean
-     * @param OnDuplicateAction $onDuplicateAction Acción a tomar en caso de duplicado
-     * @return SugarBean|null El bean cargado o creado, o null si se omitió
-     */
-    protected function loadOrCreateBean(string $module, array $beanData, OnDuplicateAction $onDuplicateAction): ?SugarBean {
-        // Retorno temporal
-        return BeanFactory::getBean($module); 
-    }
-}
+include_once __DIR__."ServerActionFactory.php";
+include_once __DIR__."ServerActionFlowExecutor.php";
+
+include_once __DIR__."formdefs/includes.php";
+include_once __DIR__."actiondefs/includes.php";

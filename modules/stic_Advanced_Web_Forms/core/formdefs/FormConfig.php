@@ -25,21 +25,34 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-enum WebhookStatus: string {
-    case SUCCESS = 'success';
-    case FAILURE = 'failure';
-    case PENDING = 'pending';
-    case IGNORED = 'ignored';
-}
+class FormConfig {
+    // @var FormDataBlock[]
+    public array $data_blocks;        // Los bloques de datos del formulario
+    // @var FormFlow[]
+    public array $flows;              // Los flujos de acciones del formulario
 
-/**
- * Clase para representar el resultado de un webhook.
- */
-class WebhookResult {
-    public function __construct(
-        public ?string $externalTransactionId,
-        public WebhookStatus $status,
-        public ?string $message = null,
-        public array $extraData = []
-    ) {}
+    /**
+     * Crea una instancia de FormConfig a partir de un array JSON.
+     * @param array $data Los datos en formato array
+     * @return FormConfig La instancia creada
+     */
+    public static function fromJsonArray(array $data): self {
+        $dto = new self();
+
+        $dto->data_blocks = [];
+        if (isset($data['data_blocks'])) {
+            foreach ($data['data_blocks'] as $dataBlockData) {
+                $dto->data_blocks[] = FormDataBlock::fromJsonArray($dto, $dataBlockData);
+            }
+        }
+
+        $dto->flows = [];
+        if (isset($data['flows'])) {
+            foreach ($data['flows'] as $flowData) {
+                $dto->flows[] = FormFlow::fromJsonArray($dto, $flowData);
+            }
+        }
+
+        return $dto;
+    }
 }

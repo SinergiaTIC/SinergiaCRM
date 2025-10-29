@@ -25,13 +25,16 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class AbstractDeferredAction extends AbstractHookAction {
+abstract class DataProviderActionDefinition extends ActionDefinition 
+{
+    final public function getType(): ActionType {
+        return ActionType::DATAPROVIDER;
+    }
+    
     /**
-     * Procesa una petición entrante (webhook) de un servicio externo.
-     * Este método solo es relevante para aquellas acciones que esperan un callback de servidor.
-     * 
-     * @param array $requestData Los datos de la petición entrante.
-     * @return WebhookResult El objeto con el ID de la transacción y el estado.
+     * Retorna datos dinámicos para el formulario
+     * @param FormActionParameter[] $params Parámetros recibidos para la acción
+     * @return string[] Los datos obtenidos
      */
-    public abstract function processWebhook(array $requestData): WebhookResult;
+    abstract public function getData(array $params): array;
 }

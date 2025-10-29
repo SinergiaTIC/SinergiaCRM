@@ -37,8 +37,8 @@ enum DataBlockFieldValueType: string {
     case DATABLOCK  = 'dataBlock';
 }
 
-class DataBlockFieldDto {
-    public DataBlockDto $data_block;             // El Bloque de datos al que pertenece
+class FormDataBlockField {
+    public FormDataBlock $data_block;             // El Bloque de datos al que pertenece
 
     public string $name;                         // Nombre del campo
     public string $text_original;                // Texto original del campo
@@ -53,15 +53,15 @@ class DataBlockFieldDto {
     public string $value_text;                   // El texto a mostrar para el valor del campo
 
     /**
-     * Crea una instancia de DataBlockFieldDto a partir de un array JSON.
-     * @param DataBlockDto $dataBlock El Bloque de datos al que pertenece
+     * Crea una instancia de FormDataBlockField a partir de un array JSON.
+     * @param FormDataBlock $dataBlock El Bloque de datos al que pertenece
      * @param array $data Los datos en formato array
-     * @return DataBlockFieldDto La instancia creada
+     * @return FormDataBlockField La instancia creada
      */
-    public static function fromJsonArray(DataBlockDto $dataBlock, array $data): self {
+    public static function fromJsonArray(FormDataBlock $dataBlock, array $data): self {
         $dto = new self();
         $dto->data_block = $dataBlock;
-        
+
         $dto->name = $data['name'];
         $dto->text_original = $data['text_original'];
         $dto->label = $data['label'];

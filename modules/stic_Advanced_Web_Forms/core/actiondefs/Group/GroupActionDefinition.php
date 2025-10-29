@@ -25,27 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class ActionParameterDto {
-    public ActionDto $action;  // La Acción a la que pertenece
+abstract class GroupActionDefinition extends ActionDefinition {
 
-    public string $name;       // Nombre del Parámetro
-    public string $text;       // El texto a mostrar 
-    public string $value;      // El valor del Parámetro
+  final public function getType(): ActionType {
+      return ActionType::GROUP;
+  }
 
-    /**
-     * Crea una instancia de ActionParameterDto a partir de un array JSON.
-     * @param ActionDto $action La Acción a la que pertenece
-     * @param array $data Los datos en formato array
-     * @return ActionParameterDto La instancia creada
-     */
-    public static function fromJsonArray(ActionDto $action, array $data): self {
-        $dto = new self();
-        $dto->action = $action;
-        
-        $dto->name = $data['name'];
-        $dto->text = $data['text'];
-        $dto->value = $data['value'];
-
-        return $dto;
-    }
+  /**
+   * Retorna las subacciones que componen este grupo de acciones.
+   * @return AbstractActionDefinition[] Lista de definiciones de acciones
+   */
+  abstract public function getSubActions(): array;
 }

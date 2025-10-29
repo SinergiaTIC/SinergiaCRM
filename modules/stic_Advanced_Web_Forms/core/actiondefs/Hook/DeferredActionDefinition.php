@@ -25,34 +25,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class FormConfigDto {
-    // @var DataBlockDto[]
-    public array $data_blocks;        // Los bloques de datos del formulario
-    // @var FlowDto[]
-    public array $flows;              // Los flujos de acciones del formulario
+abstract class DeferredAction extends ServerActionDefinition {
+    final public function getType(): ActionType {
+        return ActionType::DEFERRED;
+    }
 
     /**
-     * Crea una instancia de FormConfigDto a partir de un array JSON.
-     * @param array $data Los datos en formato array
-     * @return FormConfigDto La instancia creada
+     * Procesa una petición entrante (webhook) de un servicio externo.
+     * Este método solo es relevante para aquellas acciones que esperan un callback de servidor.
+     * 
+     * @param array $requestData Los datos de la petición entrante.
+     * @return WebhookResult El objeto con el ID de la transacción y el estado.
      */
-    public static function fromJsonArray(array $data): self {
-        $dto = new self();
-
-        $dto->data_blocks = [];
-        if (isset($data['data_blocks'])) {
-            foreach ($data['data_blocks'] as $dataBlockData) {
-                $dto->data_blocks[] = DataBlockDto::fromJsonArray($dto, $dataBlockData);
-            }
-        }
-
-        $dto->flows = [];
-        if (isset($data['flows'])) {
-            foreach ($data['flows'] as $flowData) {
-                $dto->flows[] = FlowDto::fromJsonArray($dto, $flowData);
-            }
-        }
-
-        return $dto;
-    }
+    public abstract function processWebhook(array $requestData): WebhookResult;
 }

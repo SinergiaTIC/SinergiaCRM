@@ -25,9 +25,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/DataBlockDto.php";
-include_once __DIR__."/DataBlockFieldDto.php";
-include_once __DIR__."/DuplicateRuleDto.php";
+include_once __DIR__."FormConfig.php";
 
-include_once __DIR__."/FlowDto.php";
-include_once __DIR__."/ActionDto.php";
+include_once __DIR__."FormDataBlock.php";
+include_once __DIR__."FormDataBlockField.php";
+include_once __DIR__."FormDuplicateRule.php";
+
+include_once __DIR__."FormFlow.php";
+include_once __DIR__."FormAction.php";
+include_once __DIR__."FormActionParameter.php";

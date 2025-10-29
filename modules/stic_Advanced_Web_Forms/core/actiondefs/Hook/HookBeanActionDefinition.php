@@ -25,13 +25,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class AbstractDataProviderAction extends AbstractAction 
-{
+abstract class HookBeanActionDefinition extends HookActionDefinition {
+
     /**
-     * Retorna datos dinámicos para el formulario
-     * @param array $config Configuración específica de la acción
-     * @param array $params Parámetros recibidos para la acción
-     * @return string[] Los datos obtenidos
+     * Carga o crea un bean según los datos proporcionados y la acción en caso de duplicado.
+     * @param string $module Módulo del bean
+     * @param array $beanData Datos del bean
+     * @param OnDuplicateAction $onDuplicateAction Acción a tomar en caso de duplicado
+     * @return SugarBean|null El bean cargado o creado, o null si se omitió
      */
-    abstract public function getData(array $config, array $params): array;
+    protected function loadOrCreateBean(string $module, array $beanData, OnDuplicateAction $onDuplicateAction): ?SugarBean {
+        // Retorno temporal
+        return BeanFactory::getBean($module); 
+    }
 }

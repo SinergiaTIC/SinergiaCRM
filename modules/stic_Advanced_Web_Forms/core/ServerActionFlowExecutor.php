@@ -1,0 +1,91 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+// Prevents directly accessing this file from a web browser
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+class ServerActionFlowExecutor {
+    private ExecutionContext $context; 
+    private ServerActionFactory $factory;
+
+    public function __construct(ExecutionContext $context, ServerActionFactory $factory) {
+        $this->context = $context;
+        $this->factory = $factory;
+    }
+
+    /**
+     * Ejecuta el flujo principal y gestiona los errores cambiando al flujo de error si es necesario.
+     * @param FormFlow $flowConfig La definición del flujo a ejecutar.
+     * @param ?FormFlow $errorFlowConfig La definición del flujo de error (null si no hay flujo de error).
+     * @return ExecutionContext El contexto de ejecución actualizado.
+     */
+    public function executeFlow(FormFlow $flowConfig, ?FormFlow $errorFlowConfig = null): ExecutionContext {
+        $lastActionConfig = null;
+        try {
+            foreach ($flowConfig->actions as $actionConfig) {
+                $lastActionConfig = $actionConfig;
+
+                // Buscamos la acción a ejecutar (excepción si no existe)
+                $actionExecutor = $this->factory->createAction($actionConfig);
+
+                // TODO: Verificación de Condiciones (si existen)
+                // if (!$this->checkConditions($actionConfig->conditions, $this->context)) { continue; }
+
+                // Ejecutamos la acción
+                $actionResult = $actionExecutor->execute($this->context, $actionConfig); 
+
+                // Actualización del Contexto
+                $this->context->addActionResult($actionConfig, $actionResult);
+
+                // Detección de Error
+                if ($actionResult->isError()) {
+                    // Si hay flujo de error: cambio inmediato al flujo de error
+                    if ($errorFlowConfig !== null) {
+                        return $this->executeFlow($errorFlowConfig);
+                    }
+                    // Si no hay flujo de error, retorno del contexto actual
+                    return $this->context; 
+                }
+            
+                // Control Terminal
+                if ($actionExecutor instanceof ITerminalAction) {
+                    return $this->context; // Retorno immediato, finalizando el flujo
+                }
+            }
+        } catch (\Exception $e) {
+            // Captura Cualquier Excepción de PHP y la convierte en un error del contexto
+            $this->context->addError($e, $lastActionConfig);
+            
+            // Si hay flujo de error: cambio inmediato al flujo de error
+            if ($errorFlowConfig !== null) {
+                return $this->executeFlow($errorFlowConfig);
+            }
+            // Si no hay flujo de error, retorno del contexto actual
+            return $this->context; 
+        }
+        
+        return $this->context;
+    }
+
+}

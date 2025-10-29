@@ -25,18 +25,22 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."ActionParameterDefinition.php";
+enum WebhookStatus: string {
+    case SUCCESS = 'success';
+    case FAILURE = 'failure';
+    case PENDING = 'pending';
+    case IGNORED = 'ignored';
+}
 
-include_once __DIR__."ActionDefinition.php";
-include_once __DIR__."ServerActionDefinition.php";
-include_once __DIR__."ITerminalAction.php";
-
-include_once __DIR__."UI/UIActionDefinition.php";
-
-include_once __DIR__."DataProvider/DataProviderActionDefinition.php";
-
-include_once __DIR__."Hook/HookActionDefinition.php";
-include_once __DIR__."Hook/HookBeanActionDefinition.php";
-include_once __DIR__."Hook/DeferredActionDefinition.php";
-
-include_once __DIR__."Group/GroupActionDefinition.php";
+/**
+ * Clase para representar el resultado de un webhook.
+ */
+class WebhookResult {
+    public function __construct(
+        public ?string $externalTransactionId,
+        public WebhookStatus $status,
+        public ?string $message = null,
+        // @var string[]
+        public array $extraData = []
+    ) {}
+}
