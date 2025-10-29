@@ -59,7 +59,20 @@ abstract class ActionDefinition {
      * @return string El nombre del fichero de la acción
      */
     final public function getName(): string {
-        return pathinfo(basename(__FILE__), PATHINFO_FILENAME);
+        $class = static::class;
+        $reflect = new ReflectionClass($class);
+        
+        // ClassName without namespace
+        $shortName = $reflect->getShortName();
+
+        // File name without extension
+        $fileName = pathinfo($reflect->getFileName(), PATHINFO_FILENAME);
+
+        // If they match (usual case), return short name, else return file name
+        if (strcasecmp($shortName, $fileName) === 0) {
+            return $shortName;
+        }
+        return $fileName;
     }
 
     /**

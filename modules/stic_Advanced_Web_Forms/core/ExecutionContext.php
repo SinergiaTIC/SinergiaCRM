@@ -56,7 +56,12 @@ class ExecutionContext {
      */
     public function addActionResult(ActionResult $result): void {
         $result->resetTimestamp();
-        $this->actionResults[$result->actionConfig?->id ?? 'unknown'] = $result;
+        $key = $result->actionConfig?->id;
+        if ($key === null) {
+            $key = 'unknown_' . count($this->actionResults);
+            $GLOBALS['log']->warning("Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
+        }
+        $this->actionResults[$key] = $result;
         if($result->isError()) {
             $GLOBALS['log']->error("Action '{$result->actionConfig?->name}' resulted in ERROR: " . $result->message);
         }
@@ -71,9 +76,9 @@ class ExecutionContext {
         $errorResult = new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         $this->addActionResult($errorResult);
 
-        $GLOBALS['log']->error($e->getMessage());
+        $GLOBALS['log']->error("Exception: " . $e->getMessage());
         $GLOBALS['log']->error($e->getTraceAsString());
     }
-}   
+}
 
 
