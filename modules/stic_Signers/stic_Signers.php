@@ -54,7 +54,6 @@ class stic_Signers extends Basic
     public $email_address;
     public $phone;
     public $status;
-    public $unique_link;
     public $pdf_document;
     public $signature_date;
     public $otp;

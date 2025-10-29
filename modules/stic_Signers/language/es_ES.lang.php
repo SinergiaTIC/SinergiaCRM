@@ -66,7 +66,6 @@ $mod_strings = array(
     'LBL_EMAIL_ADDRESS' => 'Dirección de correo',
     'LBL_PHONE' => 'Teléfono',
     'LBL_STATUS' => 'Estado',
-    'LBL_UNIQUE_LINK' => 'Enlace único',
     'LBL_PDF_DOCUMENT' => 'Documento PDF',
     'LBL_SIGNATURE_DATE' => 'Fecha de firma',
     'LBL_VERIFICATION_CODE' => 'Código de verificación',

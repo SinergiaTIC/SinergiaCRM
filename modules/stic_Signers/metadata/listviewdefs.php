@@ -143,12 +143,6 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'UNIQUE_LINK' => array(
-        'type' => 'varchar',
-        'label' => 'LBL_UNIQUE_LINK',
-        'width' => '10%',
-        'default' => false,
-    ),
     'OTP_EXPIRATION' => array(
         'type' => 'datetimecombo',
         'label' => 'LBL_OTP_EXPIRATION',

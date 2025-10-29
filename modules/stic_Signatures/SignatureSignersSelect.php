@@ -123,7 +123,7 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean->phone = $destSigner['phone'];
     $stic_SignerBean->status = 'pending';
     $stic_SignerBean->on_behalf_of_id = $destSigner['onBehalfOfId'] ?? null;
-    // $stic_SignerBean->unique_link is commented out as it's not needed here
+    
 
     $newId = $stic_SignerBean->save();
     if ($newId) {

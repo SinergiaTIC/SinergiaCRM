@@ -130,5 +130,9 @@ Hay que tener en cuenta que _en el caso de las firmas_ la LPO se crea concatenan
 
     ## TODO: Pendiente
     - Usar la plantilla de email definida en la firma para notificar a los firmantes, en lugar de la plantilla por defecto de notificaciones si está definida.
+    - ON_behalf_of_id: convertir a campo flex relate para poder mostyrar el nombre de la persona en lugar del ID
+    
+    
+    ### Hecho
     - Descargar docuimento firmado desde el portal de firmas no fucniona
     - Enviar por email el documento firmado al firmante una vez firmado desde el portal de firmas no funciona

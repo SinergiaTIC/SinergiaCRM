@@ -96,7 +96,7 @@ $dictionary['stic_Signers'] = array(
             'len' => 36,
             'size' => '20',
         ),
-         'record_name' => array(
+        'record_name' => array(
             'required' => true,
             'source' => 'non-db',
             'name' => 'record_name',
@@ -205,6 +205,7 @@ $dictionary['stic_Signers'] = array(
             'len' => '100',
             'size' => '20',
             'popupHelp' => 'LBL_EMAIL_ADDRESS_HELP',
+        ),
         'phone' => array(
             'required' => false,
             'name' => 'phone',
@@ -250,26 +251,6 @@ $dictionary['stic_Signers'] = array(
             'studio' => 'visible',
             'dependency' => false,
             'popupHelp' => 'LBL_STATUS_HELP',
-        ),
-        'unique_link' => array(
-            'required' => true,
-            'name' => 'unique_link',
-            'vname' => 'LBL_UNIQUE_LINK',
-            'type' => 'varchar',
-            'massupdate' => 0,
-            'no_default' => false,
-            'comments' => '',
-            'help' => '',
-            'importable' => 'true',
-            'duplicate_merge' => 'disabled',
-            'duplicate_merge_dom_value' => '0',
-            'audited' => false,
-            'inline_edit' => true,
-            'reportable' => true,
-            'unified_search' => false,
-            'merge_filter' => 'disabled',
-            'len' => '255',
-            'size' => '20',
         ),
         'pdf_document' => array(
             'required' => false,
