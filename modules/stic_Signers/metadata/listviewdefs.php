@@ -8,34 +8,6 @@ array(
         'default' => true,
         'link' => true,
     ),
-    'STATUS' => array(
-        'type' => 'enum',
-        'default' => true,
-        'studio' => 'visible',
-        'label' => 'LBL_STATUS',
-        'width' => '10%',
-        // 'customCode' => '<span class="label label-danger">{$STATUS}</span>',
-    ),
-    'SIGNATURE_DATE' => array(
-        'type' => 'datetimecombo',
-        'label' => 'LBL_SIGNATURE_DATE',
-        'width' => '10%',
-        'default' => true,
-    ),
-    'RECORD_ID' => array(
-        'type' => 'varchar',
-        'label' => 'LBL_RECORD_ID',
-        'width' => '10%',
-        'default' => false,
-    ),
-    'STIC_SIGNATURES_STIC_SIGNERS_NAME' => array(
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_STIC_SIGNATURES_STIC_SIGNERS_FROM_STIC_SIGNATURES_TITLE',
-        'id' => 'STIC_SIGNATURES_STIC_SIGNERSSTIC_SIGNATURES_IDA',
-        'width' => '10%',
-        'default' => true,
-    ),
     'PARENT_NAME' => array(
         'type' => 'parent',
         'studio' => 'visible',
@@ -49,6 +21,27 @@ array(
             0 => 'parent_id',
             1 => 'parent_type',
         ),
+        'width' => '10%',
+        'default' => true,
+    ),
+    'STATUS' => array(
+        'type' => 'enum',
+        'default' => true,
+        'studio' => 'visible',
+        'label' => 'LBL_STATUS',
+        'width' => '10%',
+    ),
+    'SIGNATURE_DATE' => array(
+        'type' => 'datetimecombo',
+        'label' => 'LBL_SIGNATURE_DATE',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'STIC_SIGNATURES_STIC_SIGNERS_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_STIC_SIGNATURES_STIC_SIGNERS_FROM_STIC_SIGNATURES_TITLE',
+        'id' => 'STIC_SIGNATURES_STIC_SIGNERSSTIC_SIGNATURES_IDA',
         'width' => '10%',
         'default' => true,
     ),
@@ -71,12 +64,6 @@ array(
         'id' => 'ASSIGNED_USER_ID',
         'default' => true,
     ),
-    'OTP' => array(
-        'type' => 'varchar',
-        'label' => 'LBL_OTP',
-        'width' => '10%',
-        'default' => false,
-    ),
     'DATE_ENTERED' => array(
         'type' => 'datetime',
         'label' => 'LBL_DATE_ENTERED',
@@ -89,9 +76,15 @@ array(
         'width' => '10%',
         'default' => true,
     ),
-    'REJECTION_REASON' => array(
+    'RECORD_ID' => array(
         'type' => 'varchar',
-        'label' => 'LBL_REJECTION_REASON',
+        'label' => 'LBL_RECORD_ID',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'OTP' => array(
+        'type' => 'varchar',
+        'label' => 'LBL_OTP',
         'width' => '10%',
         'default' => false,
     ),
@@ -101,13 +94,6 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'VARIABLES' => array(
-        'type' => 'varchar',
-        'label' => 'LBL_VARIABLES',
-        'width' => '10%',
-        'default' => false,
-    ),
-
     'VERIFICATION_CODE' => array(
         'type' => 'varchar',
         'label' => 'LBL_VERIFICATION_CODE',
