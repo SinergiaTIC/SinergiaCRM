@@ -1,46 +1,215 @@
 <?php
-/**
-* This file is part of SinergiaCRM.
-* SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
-* Copyright (C) 2013 - 2023 SinergiaTIC Association
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Affero General Public License version 3 as published by the
-* Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Affero General Public License along with
-* this program; if not, see http://www.gnu.org/licenses or write to the Free
-* Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-* 02110-1301 USA.
-*
-* You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
-*/
-
 $module_name = 'stic_Signatures';
-$searchdefs[$module_name] = array(
+$searchdefs[$module_name] =
+array(
+    'layout' => array(
+        'basic_search' => array(
+            'name' => array(
+                'name' => 'name',
+                'default' => true,
+                'width' => '10%',
+            ),
+            'main_module' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_MAIN_MODULE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'main_module',
+            ),
+            'pdf_template' => array(
+                'type' => 'relate',
+                'studio' => 'visible',
+                'label' => 'LBL_PDF_TEMPLATE',
+                'link' => true,
+                'width' => '10%',
+                'default' => true,
+                'id' => 'PDFTEMPLATE_ID_C',
+                'name' => 'pdf_template',
+            ),
+            'status' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_STATUS',
+                'width' => '10%',
+                'name' => 'status',
+            ),
+            'signature_mode' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_SIGNATURE_MODE',
+                'width' => '10%',
+                'name' => 'signature_mode',
+            ),
+            'type' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_TYPE',
+                'width' => '10%',
+                'name' => 'type',
+            ),
+            'activation_date' => array(
+                'type' => 'datetimecombo',
+                'label' => 'LBL_ACTIVATION_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'activation_date',
+            ),
+            'expiration_date' => array(
+                'type' => 'datetimecombo',
+                'label' => 'LBL_EXPIRATION_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'expiration_date',
+            ),
+            'email_template' => array(
+                'type' => 'relate',
+                'studio' => 'visible',
+                'label' => 'LBL_EMAIL_TEMPLATE',
+                'id' => 'EMAILTEMPLATE_ID_C',
+                'link' => true,
+                'width' => '10%',
+                'default' => true,
+                'name' => 'email_template',
+            ),
+            'auth_method' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_AUTH_METHOD',
+                'width' => '10%',
+                'name' => 'auth_method',
+            ),
+            'on_behalf_of' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_ON_BEHALF_OF',
+                'width' => '10%',
+                'name' => 'on_behalf_of',
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+                'default' => true,
+                'width' => '10%',
+            ),
+        ),
+        'advanced_search' => array(
+            'name' => array(
+                'name' => 'name',
+                'default' => true,
+                'width' => '10%',
+            ),
+            'main_module' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_MAIN_MODULE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'main_module',
+            ),
+            'pdf_template' => array(
+                'type' => 'relate',
+                'studio' => 'visible',
+                'label' => 'LBL_PDF_TEMPLATE',
+                'id' => 'PDFTEMPLATE_ID_C',
+                'link' => true,
+                'width' => '10%',
+                'default' => true,
+                'name' => 'pdf_template',
+            ),
+            'status' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_STATUS',
+                'width' => '10%',
+                'name' => 'status',
+            ),
+            'type' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_TYPE',
+                'width' => '10%',
+                'name' => 'type',
+            ),
+            'activation_date' => array(
+                'type' => 'datetimecombo',
+                'label' => 'LBL_ACTIVATION_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'activation_date',
+            ),
+            'expiration_date' => array(
+                'type' => 'datetimecombo',
+                'label' => 'LBL_EXPIRATION_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'expiration_date',
+            ),
+            'email_template' => array(
+                'type' => 'relate',
+                'studio' => 'visible',
+                'label' => 'LBL_EMAIL_TEMPLATE',
+                'id' => 'EMAILTEMPLATE_ID_C',
+                'link' => true,
+                'width' => '10%',
+                'default' => true,
+                'name' => 'email_template',
+            ),
+            'auth_method' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_AUTH_METHOD',
+                'width' => '10%',
+                'name' => 'auth_method',
+            ),
+            'on_behalf_of' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_ON_BEHALF_OF',
+                'width' => '10%',
+                'name' => 'on_behalf_of',
+            ),
+            'signature_mode' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_SIGNATURE_MODE',
+                'width' => '10%',
+                'name' => 'signature_mode',
+            ),
+            'pdf_audit_page' => array(
+                'type' => 'enum',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_PDF_AUDIT_PAGE',
+                'width' => '10%',
+                'name' => 'pdf_audit_page',
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+                'default' => true,
+                'width' => '10%',
+            ),
+        ),
+    ),
     'templateMeta' => array(
         'maxColumns' => '3',
         'maxColumnsBasic' => '4',
-        'widths' => array('label' => '10', 'field' => '30'),
-    ),
-    'layout' => array(
-        'basic_search' => array(
-            'name',
-            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
-        ),
-        'advanced_search' => array(
-            'name',
-            array(
-                'name' => 'assigned_user_id',
-                'label' => 'LBL_ASSIGNED_TO',
-                'type' => 'enum',
-                'function' => array('name' => 'get_user_array', 'params' => array(false))
-            ),
+        'widths' => array(
+            'label' => '10',
+            'field' => '30',
         ),
     ),
 );
