@@ -3,14 +3,17 @@
 
 
 ## Otros desarrollos colaterales
-### Parseado de plantillas de email.
+### Parseado de plantillas de email en campañas de notificaciones.
 
  Se ha modificado el parser de plantillas de email para que en las campañas de notificaciones, los campos de las plantillas se resuelvan en primer lugar con el módulo del contacto, interesado, usuario u organización notificado y en segundo lugar con el módulo que genera la notificación (firma, subvención, evento, etc). Esto permite utilizar en las plantillas de email campos de ambos módulos.
 
  También se ha corregido un error en el parseado de plantillas que impedía que se parsearan los campos del módulo Users, modificando el desarrollo que se hizo en el PR https://github.com/SinergiaTIC/SinergiaCRM/pull/696
 
 En el parseado de las plantilla de email se ha incluido la sustitución de la variable $sugarurl, que se sustituye por la URL base de SugarCRM, obtenida de la configuración del sistema `$_sugar_config[‘site_url’]`. (esto debe ser documentado en campañas de todo tipo, ya que las url que se construyan mediante esta variable no podan ser incluidas en el tracking de enlaces de las campañas).
-  
+
+### Parseado de plantillas de email en el envío de solicitudes de firma directas
+Se ha añadido en SticInclude/Utils.php una función `SticUtils::parseEmailTemplate($templateId, $Beans)` que permite parsear plantillas de email utilizando múltiples Beans para la sustitución de variables. Se ha añadido esta función debido a la dificultad de parsear plantillas de email que contienen variables de múltiples módulos (contactos, usuarios, firmas, etc) en el contexto del envío de solicitudes de firma.
+Se ha colocado en SticInclude/Utils.php para que pueda ser utilizada tanto en el módulo de firmas como en otros módulos relacionados con firmas que puedan necesitar esta funcionalidad en el futuro.
 
 ### Campañas de notificaciones
 
@@ -129,10 +132,11 @@ Hay que tener en cuenta que _en el caso de las firmas_ la LPO se crea concatenan
 
 
     ## TODO: Pendiente
-    - Usar la plantilla de email definida en la firma para notificar a los firmantes, en lugar de la plantilla por defecto de notificaciones si está definida.
-    - ON_behalf_of_id: convertir a campo flex relate para poder mostyrar el nombre de la persona en lugar del ID
+    - Limpieza de campos innecesarios en firmantes.
     
     
     ### Hecho
-    - Descargar docuimento firmado desde el portal de firmas no fucniona
+    - Descargar documento firmado desde el portal de firmas no funciona
     - Enviar por email el documento firmado al firmante una vez firmado desde el portal de firmas no funciona
+    - Usar la plantilla de email definida en la firma para notificar a los firmantes, en lugar de la plantilla por defecto de notificaciones si está definida.
+    - ON_behalf_of_id: convertir a campo relate para poder mostyrar el nombre de la persona en lugar del ID

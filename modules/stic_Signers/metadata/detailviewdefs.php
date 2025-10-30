@@ -88,6 +88,14 @@ array(
                 ),
                 5 => array(
                     0 => array(
+                        'name' => 'verification_code',
+                        'studio' => 'visible',
+                        'label' => 'LBL_VERIFICATION_CODE',
+                    ),
+                    1 => '',
+                ),
+                6 => array(
+                    0 => array(
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',
                         'nl2br' => true,

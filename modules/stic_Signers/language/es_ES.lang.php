@@ -73,7 +73,6 @@ $mod_strings = array(
     'LBL_OTP_EXPIRATION' => 'Fecha de expiración de OTP',
     'LBL_IP_ADDRESS' => 'Dirección IP',
     'LBL_SIGNATURE_IMAGE' => 'Imagen de la firma',
-    'LBL_VARIABLES' => 'Variables',
     'LBL_REJECTION_REASON' => 'Motivo de rechazo',
     'LBL_ON_BEHALF_OF_ID' => 'Autorizado a firmar en nombre de (ID)',
     'LBL_ON_BEHALF_OF_ID_CONTACT_ID' => 'Autorizado a firmar en nombre de',

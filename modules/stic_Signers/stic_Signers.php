@@ -58,8 +58,11 @@ class stic_Signers extends Basic
     public $signature_date;
     public $otp;
     public $signature_image;
-    public $variables;
-    public $rejection_reason;
+    public $verification_code;
+    public $otp_expiration;
+    public $on_behalf_of_id;
+    public $contact_id_c;
+
 
     public function bean_implements($interface)
     {
