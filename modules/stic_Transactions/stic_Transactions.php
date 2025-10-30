@@ -105,7 +105,11 @@ class stic_Transactions extends File
 
         // Build the document_name if not provided
         if(empty($this->description)) {
-            $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type] . ' - ' . $this->transaction_date . ' - ' . $this->amount;
+            if($this->type === 'expense'){
+                $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type] . ' - ' . $this->transaction_date . ' - (' . $this->amount . '€)';
+            } else {
+                $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type] . ' - ' . $this->transaction_date . ' - ' . $this->amount . '€';
+            }
         } elseif (!empty($this->description) && empty($this->document_name)) { 
             $this->document_name = $this->description;
         }
@@ -125,7 +129,7 @@ class stic_Transactions extends File
                     'initial_balance' => null,
                 ]);
             } catch (Exception $e) {
-                $GLOBALS['error']->fatal("Error recalculating balance after save transaction: " . $e->getMessage());
+                $GLOBALS['log']->error("Error recalculating balance after save transaction: " . $e->getMessage());
             }
         }
     }
