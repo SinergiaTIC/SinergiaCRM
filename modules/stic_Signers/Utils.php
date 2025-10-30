@@ -42,11 +42,29 @@ class stic_SignersUtils
 
         // Validate signer ID
         if (empty($signerId)) {
-            throw new Exception("Signer ID cannot be empty.");
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer ID cannot be empty.");
+            return;
         }
 
         // Retrieve the signer bean
         $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+
+        if (!$signerBean) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer with ID {$signerId} not found.");
+            return;
+        }
+
+        // Retrieve the related signature bean
+        require_once 'SticInclude/Utils.php';
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        if (!$signatureBean) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Related signature for signer ID {$signerId} not found.");
+            return;
+        }
+
+      
+        // Get the email template ID from the signature, or use a default if not set
+        $templateId = $signatureBean->email_template_id ?? '000005f1-2e4e-3b11-051f-68e3c9e70331'; // Default template ID
 
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
@@ -89,39 +107,46 @@ class stic_SignersUtils
 
         $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
 
-        // Prepare the complete HTML body of the email
-        $completeHTML = "<html>
-                            <head>
-                                <title>{$subject}</title>
-                            </head>
-                            <body style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333;\">
+        // Intentamos construir el body y el subject desde la plantilla $templateId usando APIs de SuiteCRM
+        $mailBodyHtml = null;
+        $mailSubject = null;
 
-                            {$mod_strings['LBL_SIGNER_EMAIL_BODY']}
+        // Cargar beans relacionados: signature, contact/user (si aplica) y el signer ya cargado
+        // $signatureBean ya está disponible arriba
+        $relatedContactOrUser = null;
+        if (!empty($signerBean->parent_type) && !empty($signerBean->parent_id)) {
+            $relatedContactOrUserBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
+        }
 
-                            <p style=\"margin-top: 20px;\">Para completar el proceso, por favor, firma el documento haciendo clic en el siguiente botón:</p>
+       require_once 'SticInclude/Utils.php';
+       $parsedMailArray = SticUtils::parseEmailTemplate($templateId, [
+            $signerBean,
+            $signatureBean,
+            $relatedContactOrUserBean,
+            
+        ]);
 
-                            <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\">
-                                <tr>
-                                    <td style=\"border-radius: 5px; background: #007BFF;\" align=\"center\">
-                                        <a href=\"{$signURL}\" target=\"_blank\" style=\"font-size: 16px; font-family: Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 5px; padding: 12px 20px; border: 1px solid #007BFF; display: inline-block; font-weight: bold;\">
-                                            {$mod_strings['LBL_SIGNER_EMAIL_BUTTON_TEXT']}
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
+        $body_html = $parsedMailArray['body_html'] ?? '';
+        $subject_parsed = $parsedMailArray['subject'] ?? '';
 
-                            <p style=\"margin-top: 20px; font-size: 12px; color: #777;\">{$mod_strings['LBL_SIGNER_EMAIL_LINK_PROBLEM']}: <br> <a href=\"{$signURL}\" target=\"_blank\" style=\"color: #007BFF; text-decoration: underline;\">{$signURL}</a></p>
+        // Validar resultado final
+        if (empty($body_html)) {
+            throw new Exception("Parsed email body is empty after applying template '{$templateId}'.");
+        }
+        $mailBodyHtml = $body_html;
+        $mailSubject = $subject_parsed ?: ($templateBean->subject ?? $mod_strings['LBL_SIGNER_EMAIL_SUBJECT']);
 
-                            </body>
-                        </html>";
-        $mail->Body = from_html($completeHTML);
+        // Asignar subject y body al mailer
+        $mail->Subject = $mailSubject;
+        $mail->Body = from_html($mailBodyHtml);
         $mail->isHtml(true);
         $mail->prepForOutbound();
 
-        // Attempt to send the email and log the result
+        // Attempt to send the email and log the result (lanzar excepción si falla)
         if (!$mail->Send()) {
-            SugarApplication::appendErrorMessage("<p class='label label-error'>" . $mod_strings['LBL_SIGNER_EMAIL_ERROR'] . ".</p>");
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": There was an error sending the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo);
+            $msg = "There was an error sending the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo;
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $msg);
+            throw new Exception($msg);
         } else {
             SugarApplication::appendSuccessMessage("<p class='label label-success'>" . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Email sent successfully to {$destAddress}.");
@@ -393,7 +418,7 @@ class stic_SignersUtils
         if (empty($signatureBean->expiration_date)) {
             return false;
         }
-        
+
         global $timedate;
 
         $expirationDate = $timedate->fromUser($signatureBean->expiration_date);
