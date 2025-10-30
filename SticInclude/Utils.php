@@ -682,4 +682,225 @@ EOQ;
         }
     }
 
+    /**
+     * Parses a SuiteCRM email template by replacing variables
+     * with values from a provided set of Beans and special variables such $sugarurl.
+     *
+     * @param string $templateId The ID of the EmailTemplate to parse.
+     * @param array  $Beans      An array of SugarBean objects (e.g., a Contact, an Account, stic_Payments, etc.)
+     * whose data will be used for replacements.
+     *
+     * @return array An associative array with keys 'subject', 'body', and 'body_html'
+     * containing the parsed and cleaned content.
+     */
+    public static function parseEmailTemplate($templateId, $Beans)
+    {
+
+        // Load SuiteCRM global variables
+        global $app_list_strings, $sugar_config, $current_user;
+
+        // 1. Fetch the email template
+        // Using getBean instead of retrieveBean as requested
+        $template = BeanFactory::getBean('EmailTemplates', $templateId);
+
+        // Initialize the response array
+        $parsedTemplate = [
+            'subject' => '',
+            'body' => '',
+            'body_html' => '',
+        ];
+
+        // Check if the template was loaded successfully
+        if (!$template) {
+            // Use SuiteCRM logger
+            $GLOBALS['log']->error("parseEmailTemplate: Could not find EmailTemplate with ID: $templateId");
+            return $parsedTemplate; // Return empty array if template not found
+        }
+
+        // Load the original content to be parsed
+        $parsedTemplate['subject'] = $template->subject;
+        $parsedTemplate['body'] = $template->body;
+        $parsedTemplate['body_html'] = $template->body_html;
+
+        // --- SUBSTITUTION COLLECTION ---
+
+        // 2. Create collection arrays
+        // We use one for plain text (subject, body) and one for HTML (body_html)
+        // as the value formatting can differ (e.g., nl2br for textareas).
+        $replacements_text = [];
+        $replacements_html = [];
+
+        // 3. Iterate over each provided Bean (Contact, Account, Quote, etc.)
+        foreach ($Beans as $bean) {
+            if (!$bean || !isset($bean->module_dir)) {
+                continue; // Skip if it's not a valid bean
+            }
+
+            $moduleName = $bean->module_dir;
+            $prefix = '';
+
+            // 4. Determine the variable prefix based on the module
+            // Variable syntax is $<prefix>_<field_name>
+            switch ($moduleName) {
+                case 'Contacts':
+                    $prefix = '$contact_';
+                    break;
+                case 'Users':
+                    // $contact_user_ refers to a User Bean (e.g., "Assigned To")
+                    $prefix = '$contact_user_';
+                    break;
+                case 'Leads':
+                    $prefix = '$contact_lead_';
+                    break;
+                case 'Accounts':
+                    $prefix = '$contact_account_';
+                    break;
+                default:
+                    // Standard module (e.g., Quotes -> $quotes_)
+                    $prefix = '$' . strtolower($moduleName) . '_';
+                    break;
+            }
+
+            // 5. Iterate over the Bean's fields and collect values
+            foreach ($bean->field_defs as $fieldName => $def) {
+
+                $placeholder = $prefix . $fieldName;
+                $rawValue = $bean->$fieldName ?? '';
+                $displayValue = $rawValue;
+                $htmlValue = $rawValue;
+
+                // 6. Handle dropdown fields (enum)
+                // We want the display label (e.g., "In Progress") instead of the internal key (e.g., "in_progress")
+                if (isset($def['type']) && ($def['type'] == 'enum' || $def['type'] == 'multienum' || $def['type'] == 'radioenum') && isset($def['options'])) {
+
+                    $listName = $def['options']; // e.g., 'sales_stage_dom'
+
+                    if (isset($app_list_strings[$listName]) && isset($app_list_strings[$listName][$rawValue])) {
+                        // Found the corresponding label
+                        $displayValue = $app_list_strings[$listName][$rawValue];
+                        $htmlValue = $displayValue;
+                    }
+                }
+
+                // 7. Handle HTML formatting (e.g., newlines in textareas)
+                // 'text' type fields (textareas) store newlines as \n.
+                // In HTML, these must be converted to <br>.
+                if (isset($def['type']) && $def['type'] == 'text') {
+                    $htmlValue = nl2br((string) $htmlValue);
+                }
+
+                // Ensure values are scalar (not null, array, or object) before replacing
+                if (!is_scalar($displayValue)) {
+                    $displayValue = '';
+                }
+
+                if (!is_scalar($htmlValue)) {
+                    $htmlValue = '';
+                }
+
+                // 8. Add to the collection arrays (instead of replacing immediately)
+                $replacements_text[$placeholder] = $displayValue;
+                $replacements_html[$placeholder] = $htmlValue;
+            }
+        }
+
+        // 9. Collect Special and Global Substitutions
+
+        // 9.1. Static substitutions (like $sugarurl)
+        $specialSubstitutions = [
+            '$sugarurl' => $sugar_config['site_url'] ?? '',
+            // You can add more here:
+            // '$company_name' => $sugar_config['company_name'] ?? 'My Company',
+        ];
+
+        foreach ($specialSubstitutions as $placeholder => $value) {
+            if (!is_scalar($value)) {
+                $value = '';
+            }
+
+            $replacements_text[$placeholder] = $value;
+            $replacements_html[$placeholder] = $value;
+        }
+
+        // 9.2. Logged-in User (Current User) substitutions
+        // We use the $current_user_ prefix to distinguish from $contact_user_ (a passed-in bean)
+        if (isset($current_user) && !empty($current_user->id)) {
+
+            $prefix = '$current_user_';
+
+            foreach ($current_user->field_defs as $fieldName => $def) {
+                $placeholder = $prefix . $fieldName;
+                $rawValue = $current_user->$fieldName ?? '';
+                $displayValue = $rawValue;
+                $htmlValue = $rawValue;
+
+                // Re-apply enum and textarea logic for the current user
+                if (isset($def['type']) && ($def['type'] == 'enum' || $def['type'] == 'multienum' || $def['type'] == 'radioenum') && isset($def['options'])) {
+                    $listName = $def['options'];
+                    if (isset($app_list_strings[$listName]) && isset($app_list_strings[$listName][$rawValue])) {
+                        $displayValue = $app_list_strings[$listName][$rawValue];
+                        $htmlValue = $displayValue;
+                    }
+                }
+
+                if (isset($def['type']) && $def['type'] == 'text') {
+                    $htmlValue = nl2br((string) $htmlValue);
+                }
+
+                if (!is_scalar($displayValue)) {
+                    $displayValue = '';
+                }
+
+                if (!is_scalar($htmlValue)) {
+                    $htmlValue = '';
+                }
+
+                $replacements_text[$placeholder] = $displayValue;
+                $replacements_html[$placeholder] = $htmlValue;
+            }
+        }
+
+        // --- SUBSTITUTION APPLICATION ---
+
+        // 10. Sort the replacement arrays by key length (descending)
+        // This is CRUCIAL. It ensures that "$contact_user_first_name" is replaced
+        // BEFORE "$contact_user_", preventing partial, broken replacements.
+        uksort($replacements_text, function ($a, $b) {return strlen($b) - strlen($a);});
+        uksort($replacements_html, function ($a, $b) {return strlen($b) - strlen($a);});
+
+        // 11. Perform the replacement (only once)
+        // str_replace can take arrays of keys and values.
+        $parsedTemplate['subject'] = str_replace(
+            array_keys($replacements_text),
+            array_values($replacements_text),
+            $parsedTemplate['subject']
+        );
+
+        $parsedTemplate['body'] = str_replace(
+            array_keys($replacements_text),
+            array_values($replacements_text),
+            $parsedTemplate['body']
+        );
+
+        $parsedTemplate['body_html'] = str_replace(
+            array_keys($replacements_html),
+            array_values($replacements_html),
+            $parsedTemplate['body_html']
+        );
+
+        // 12. Final Cleanup: Remove any unreplaced variables
+        // This regex looks for any variable starting with $
+        // followed by letters/numbers/underscores (e.g., $contact_name, $quotes_total, $rare_variable)
+        // and replaces it with an empty string.
+        // We use [a-zA-Z_] at the start to avoid matching currency values like $500.
+        $final_cleanup_pattern = '/\$[a-zA-Z_][a-zA-Z0-9_]*/';
+
+        $parsedTemplate['subject'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['subject']);
+        $parsedTemplate['body'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['body']);
+        $parsedTemplate['body_html'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['body_html']);
+
+        // 13. Return the parsed and cleaned array
+        return $parsedTemplate;
+    }
+
 }
