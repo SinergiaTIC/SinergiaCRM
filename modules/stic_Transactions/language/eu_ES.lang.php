@@ -75,6 +75,8 @@ $mod_strings = array (
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producto financiero',
   'LBL_DESTINATION_ACCOUNT_INFO' => 'Número de la cuenta destino en caso de transferencia.',
   'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Número de la cuenta contable oficial asociada a esta transacción.',
+  'LBL_CATEGORY_INFO' => 'Una vez seleccionado el tipo de transacción, se podrá especificar una categoría.',
+  'LBL_SUBCATEGORY_INFO' => 'Una vez seleccionada la categoría, se podrá especificar una subcategoría.',
 
   // Norma 43
   'LBL_NORMA_43' => 'Importar fichero Norma 43',
