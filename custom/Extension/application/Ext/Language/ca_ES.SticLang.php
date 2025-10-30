@@ -3752,3 +3752,70 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
+
+// Ofertes laborals: Tipus d'oferta
+$app_list_strings['stic_job_offers_types_list']['job'] = 'Feina';
+$app_list_strings['stic_job_offers_types_list']['external'] = 'Externo';
+$app_list_strings['stic_job_offers_types_list']['volunteering'] = 'Voluntariat';
+
+// Ofertes laborals: Modalitat de l'oferta
+$app_list_strings['stic_job_offers_modes_list']['on_site'] = 'Presencial';
+$app_list_strings['stic_job_offers_modes_list']['remote'] = 'Teletreball';
+$app_list_strings['stic_job_offers_modes_list']['hybrid'] = 'Híbrid';
+
+// Ofertes laborals: Àmbit territorial
+$app_list_strings['stic_territorial_scopes_list']['local'] = 'Local';
+$app_list_strings['stic_territorial_scopes_list']['district'] = 'Comarcal';
+$app_list_strings['stic_territorial_scopes_list']['provincial'] = 'Provincial';
+$app_list_strings['stic_territorial_scopes_list']['regional'] = 'Autonòmic';
+$app_list_strings['stic_territorial_scopes_list']['national'] = 'Estatal';
+
+// Ofertes laborals: Temporalitat
+$app_list_strings['stic_job_offers_temporalities_list']['permanent'] = 'Indefinit';
+$app_list_strings['stic_job_offers_temporalities_list']['temporary'] = 'Temporal';
+
+// Valoracions: Tipus de valoració
+$app_list_strings['stic_assesments_types_list']['service_user'] = 'Usuario/a servicio';
+$app_list_strings['stic_assesments_types_list']['volunteering'] = 'Voluntariado';
+$app_list_strings['stic_assesments_types_list']['other'] = 'Otros';
+
+// Valoracions: Opcions booleanes
+$app_list_strings['stic_yes_no_na_list']['yes'] = 'Sí';
+$app_list_strings['stic_yes_no_na_list']['no'] = 'No';
+$app_list_strings['stic_yes_no_na_list']['not_applicable'] = 'No procede';
+
+// Documents: Categories
+$app_list_strings['stic_documents_categories_list']['identification'] = 'Identificación';
+$app_list_strings['stic_documents_categories_list']['certificate'] = 'Certificado';
+$app_list_strings['stic_documents_categories_list']['insurance'] = 'Seguro';
+
+// Documents: Subcategories
+$app_list_strings['stic_documents_subcategories_list']['identification_nif'] = 'NIF';
+$app_list_strings['stic_documents_subcategories_list']['identification_nie'] = 'NIE';
+$app_list_strings['stic_documents_subcategories_list']['identification_passport'] = 'Passaport';
+$app_list_strings['stic_documents_subcategories_list']['identification_other'] = 'Altres';
+$app_list_strings['stic_documents_subcategories_list']['certificate_disability'] = 'Discapacitat';
+$app_list_strings['stic_documents_subcategories_list']['certificate_dependency'] = 'Dependència';
+$app_list_strings['stic_documents_subcategories_list']['certificate_residence'] = 'Empadronament';
+$app_list_strings['stic_documents_subcategories_list']['certificate_sexual_offences'] = 'Delictes sexuals';
+$app_list_strings['stic_documents_subcategories_list']['certificate_other'] = 'Altres';
+$app_list_strings['stic_documents_subcategories_list']['insurance_volunteering'] = 'Voluntariat';
+$app_list_strings['stic_documents_subcategories_list']['insurance_liability'] = 'Responsabilitat civil';
+$app_list_strings['stic_documents_subcategories_list']['insurance_travel'] = 'Viatge';
+$app_list_strings['stic_documents_subcategories_list']['insurance_premises'] = 'Locals';
+$app_list_strings['stic_documents_subcategories_list']['insurance_other'] = 'Altres';
+
+// Esdeveniments: Modalitats de voluntariat
+$app_list_strings['stic_events_volunteer_modes_list']['no_volunteering'] = 'Sense voluntariat';
+$app_list_strings['stic_events_volunteer_modes_list']['mixed'] = 'Mixta';
+$app_list_strings['stic_events_volunteer_modes_list']['volunteering'] = 'Voluntariat';
+
+// Esdeveniments: Públic objectiu
+$app_list_strings['stic_events_target_audiences_list']['service_users'] = 'Usuaris/àries de serveis';
+$app_list_strings['stic_events_target_audiences_list']['volunteering'] = 'Voluntariat';
+$app_list_strings['stic_events_target_audiences_list']['institutional_relations'] = 'Relacions institucionals';
+
+// Competències: Moment de l'avaluació
+$app_list_strings['stic_skills_evaluation_stages_list']['initial'] = 'Inicial';
+$app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Intermedi';
+$app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
