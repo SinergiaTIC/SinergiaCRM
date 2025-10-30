@@ -67,9 +67,9 @@ class ActionParameterDefinition {
     public ActionDataType $dataType;     // El tipo de dato del parámetro: Obligado si $type es VALUE
     public bool $required = true;        // Indica si el parámetro es obligatorio
     public string $defaultValue = '';    // Valor por defecto del parámetro
-    // @var ActionSelectorOptionDefinition[]
+    /** @var ActionSelectorOptionDefinition[] */
     public array $selectorOptions = [];  // Opciones adicionales para selectores de objetos
-    // @var string[]
+    /** @var string[] */
     public array $supportedModules = []; // Módulos soportados si el destino es un registro CRM
 }
 

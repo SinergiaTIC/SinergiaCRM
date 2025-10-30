@@ -32,7 +32,7 @@ class FormFlow {
     public string $name;             // Nombre interno del flujo de acciones
     public string $text;             // El texto a mostrar
 
-    // @var FormAction[]
+    /** @var FormAction[] */
     public array $actions;           // Las acciones del Flujo
 
     /**
@@ -52,7 +52,8 @@ class FormFlow {
         $dto->actions = [];
         if (isset($data['actions'])) {
             foreach ($data['actions'] as $actionData) {
-                $dto->actions[] = FormAction::fromJsonArray($dto, $actionData);
+                $formAction = FormAction::fromJsonArray($dto, $actionData);
+                $dto->actions[$formAction->id] = $formAction;
             }
         }
 

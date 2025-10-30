@@ -41,14 +41,14 @@ enum ActionType: string {
 }
 
 abstract class ActionDefinition {
-    public bool $isPublic = true;
+    public bool $isActive = true;
    
-    // @var string[]
+    /** @var string[] */
     public array $tags = [];
     public ActionScope $scope;
-    // @var string[]
+    /** @var string[] */
     public array $supportedModules = [];       // moduleList
-    // @var string[]
+    /** @var string[] */
     public array $supportedFieldSubTypes = []; // stic_advanced_web_forms_field_in_form_subtype_list
     public int $order = 0;
 

@@ -26,9 +26,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormConfig {
-    // @var FormDataBlock[]
+    /** @var FormDataBlock[] */
     public array $data_blocks;        // Los bloques de datos del formulario
-    // @var FormFlow[]
+    /** @var FormFlow[] */
     public array $flows;              // Los flujos de acciones del formulario
 
     /**
@@ -42,14 +42,16 @@ class FormConfig {
         $dto->data_blocks = [];
         if (isset($data['data_blocks'])) {
             foreach ($data['data_blocks'] as $dataBlockData) {
-                $dto->data_blocks[] = FormDataBlock::fromJsonArray($dto, $dataBlockData);
+                $formDataBlock = FormDataBlock::fromJsonArray($dto, $dataBlockData);
+                $dto->data_blocks[$formDataBlock->id] = $formDataBlock;
             }
         }
 
         $dto->flows = [];
         if (isset($data['flows'])) {
             foreach ($data['flows'] as $flowData) {
-                $dto->flows[] = FormFlow::fromJsonArray($dto, $flowData);
+                $formFlow = FormFlow::fromJsonArray($dto, $flowData);
+                $dto->flows[$formFlow->id] = $formFlow;
             }
         }
 

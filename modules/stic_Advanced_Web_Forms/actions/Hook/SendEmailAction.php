@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 class SendEmailAction extends HookActionDefinition {
 
     public function __construct() {
-        $this->baseLabel = 'LBL_SENDEMAILACTION';
+        $this->baseLabel = 'LBL_SEND_EMAIL_ACTION';
     }
 
     /**
@@ -41,9 +41,9 @@ class SendEmailAction extends HookActionDefinition {
         return [
             // Plantilla de email
             new ActionParameterDefinition(
-                name: 'templateId',
-                text: $this->translate('PARAM_TEMPLATEID_TEXT'),
-                description: $this->translate('PARAM_TEMPLATEID_DESCRIPTION'),
+                name: 'template',
+                text: $this->translate('PARAM_TEMPLATE_TEXT'),
+                description: $this->translate('PARAM_TEMPLATE_DESCRIPTION'),
                 type: ActionParameterType::CRM_RECORD,
                 supportedModules: ['EmailTemplates'],
                 required: true,
@@ -115,10 +115,9 @@ class SendEmailAction extends HookActionDefinition {
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult {
         // Lógica para enviar el correo electrónico
         
-        $params = $actionConfig->parameters;
-        $templateId = $params['templateId']?->value;
-        $baseDataBlock = $params['baseDataBlock']?->value;
-        $recipientSource = $params['recipientSource'] ?? null;
+        $template = $actionConfig->getResolvedParameter('template'); // BeanReference
+        // $baseDataBlock = $params['baseDataBlock']?->value;
+        // $recipientSource = $params['recipientSource'] ?? null;
         // IEPA!!
         // Json: modificar per saber quina opció és i a què correspon el valor reals
 

@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 class SendEmailToAssignedUserAction extends SendEmailAction {
 
     public function __construct() {
-        $this->baseLabel = 'LBL_SENDEMAILTOASSIGNEDUSERACTION';
+        $this->baseLabel = 'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION';
     }
 
     /**
@@ -41,9 +41,9 @@ class SendEmailToAssignedUserAction extends SendEmailAction {
         return [
             // Plantilla de email
             new ActionParameterDefinition(
-                name: 'templateId',
-                text: $this->translate('PARAM_TEMPLATEID_TEXT'),
-                description: $this->translate('PARAM_TEMPLATEID_DESCRIPTION'),
+                name: 'template',
+                text: $this->translate('PARAM_TEMPLATE_TEXT'),
+                description: $this->translate('PARAM_TEMPLATE_DESCRIPTION'),
                 type: ActionParameterType::CRM_RECORD,
                 supportedModules: ['EmailTemplates'],
                 required: true,
@@ -93,7 +93,7 @@ class SendEmailToAssignedUserAction extends SendEmailAction {
         // Lógica para enviar el correo electrónico
         
         $params = $actionConfig->parameters;
-        $templateId = $params['templateId']?->value;
+        $templateId = $params['template']?->value;
         $baseDataBlock = $params['baseDataBlock']?->value;
         $recipientSource = $params['recipientSource'] ?? null;
         // IEPA!!

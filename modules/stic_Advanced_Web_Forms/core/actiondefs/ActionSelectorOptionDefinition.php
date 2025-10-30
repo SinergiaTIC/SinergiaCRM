@@ -34,10 +34,10 @@ class ActionSelectorOptionDefinition {
     public string $text;                       // El texto a mostrar
     public ActionParameterType $resolvedType;  // Tipo de parámetro resuelto para esta opción
 
-    // @var string[]
+    /** @var string[] */
     public array $supportedModules = [];       // Módulos soportados por esta opción si el destino es un registro CRM
 
-    // @var ActionDataType[]
+    /** @var ActionDataType[] */
     public array $supportedDataTypes = [];     // Lista de Tipos de datos permitidos por esta acción, si aplica
 }
 

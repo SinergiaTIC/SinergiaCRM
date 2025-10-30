@@ -40,7 +40,7 @@ class WebhookResult {
         public ?string $externalTransactionId,
         public WebhookStatus $status,
         public ?string $message = null,
-        // @var string[]
+        /** @var string[] */
         public array $extraData = []
     ) {}
 }

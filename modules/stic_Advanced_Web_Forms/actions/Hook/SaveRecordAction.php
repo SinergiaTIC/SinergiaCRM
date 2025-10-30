@@ -27,4 +27,49 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 
-// class SaveRecordAction extends
+class SaveRecordAction extends HookActionDefinition {
+    public function __construct() {
+        $this->baseLabel = 'LBL_SAVE_RECORD_ACTION';
+    }
+
+    /**
+     * Retorna los parámetros definidos para la acción
+     * @return ActionParameterDefinition[] Los parámetros de la acción
+     */
+    public function getParameters(): array {
+        return [
+            // Bloque de datos
+            new ActionParameterDefinition(
+                name: 'dataBlock',
+                text: $this->translate('PARAM_DATABLOCK_TEXT'),
+                description: $this->translate('PARAM_DATABLOCK_DESCRIPTION'),
+                type: ActionParameterType::DATA_BLOCK,
+                required: true,
+            ),
+        ];
+    }
+
+    /**
+     * Ejecuta la acción definida por esta definición.
+     *
+     * @param ExecutionContext $context Contexto de ejecución de la acción
+     * @param FormAction $actionConfig Configuración de la acción del formulario
+     * @return ActionResult Resultado de la ejecución de la acción
+     */
+    public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult {
+        // Lógica para enviar el correo electrónico
+        
+        $params = $actionConfig->parameters;
+        $templateId = $params['templateId']?->value;
+        $baseDataBlock = $params['baseDataBlock']?->value;
+        $recipientSource = $params['recipientSource'] ?? null;
+        // IEPA!!
+        // Json: modificar per saber quina opció és i a què correspon el valor reals
+
+
+        // Validar y procesar los parámetros para enviar el correo electrónico
+        // Aquí se implementaría la lógica para enviar el correo utilizando los parámetros obtenidos.
+
+        return new ActionResult(ResultStatus::OK, $actionConfig, "Email sent successfully.");
+    }
+}

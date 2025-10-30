@@ -32,9 +32,9 @@ class FormDataBlock {
     public string $name;                 // Nombre interno (identificador en UI) del Bloque de Datos
     public string $text;                 // Texto a mostrar para el Bloque de Datos
     public string $module;               // Nombre del módulo
-    // @var FormDataBlockField[]
+    /** @var FormDataBlockField[] */
     public array $fields;               // Campos del Bloque de Datos
-    // @var FormDuplicateRule[]
+    /** @var FormDuplicateRule[] */
     public array $duplicate_detections; // Definición de detección de duplicados
 
     /**
@@ -55,7 +55,8 @@ class FormDataBlock {
         $dto->fields = [];
         if (isset($data['fields'])) {
             foreach ($data['fields'] as $fieldData) {
-                $dto->fields[] = FormDataBlockField::fromJsonArray($dto, $fieldData);
+                $formDataBlockField = FormDataBlockField::fromJsonArray($dto, $fieldData);
+                $dto->fields[$formDataBlockField->name] = $formDataBlockField;
             }
         }
 

@@ -25,12 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+include_once __DIR__."BeanReference.php";
+include_once __DIR__."BeanModified.php";
 include_once __DIR__."ActionResult.php";
 include_once __DIR__."WebhookResult.php";
 include_once __DIR__."ExecutionContext.php";
 
 include_once __DIR__."ServerActionFactory.php";
 include_once __DIR__."ServerActionFlowExecutor.php";
+include_once __DIR__."ActionDiscoveryService.php";
 
 include_once __DIR__."formdefs/includes.php";
 include_once __DIR__."actiondefs/includes.php";

@@ -33,10 +33,12 @@ class FormAction {
     public string $text;             // El texto a mostrar
     public string $description;      // La descripción de la acción
     public string $data_block_id;    // Id del Bloque de datos al que pertenece
-    // @var string[]
+    /** @var string[] */
     public array $requisite_actions; // Array con los identificadores de las acciones previas a la actual
-    // @var FormActionParameter[]
+    /** @var FormActionParameter[] */
     public array $parameters;        // Los parámetros de la acción
+
+    private array $resolvedParameters = []; // Parámetros resueltos, con el valor final
 
     /**
      * Crea una instancia de FormAction a partir de un array JSON.
@@ -58,10 +60,29 @@ class FormAction {
         $dto->parameters = [];
         if (isset($data['parameters'])) {
             foreach ($data['parameters'] as $parameterData) {
-                $dto->parameters[] = FormActionParameter::fromJsonArray($dto, $parameterData);
+                $formActionParameter = FormActionParameter::fromJsonArray($dto, $parameterData);
+                $dto->parameters[$formActionParameter->name] = $formActionParameter;
             }
         }
 
         return $dto;
+    }
+
+    /**
+     * Método para guardar los parámetros resueltos
+     * @param array $params [name => resolved_value]
+     */
+    public function setResolvedParameters(array $params): void {
+        $this->resolvedParameters = $params;
+    }
+
+    /**
+     * Método para que las Acciones obtengan los valores resueltos
+     * @param string $name El nombre del parámetro
+     * @param mixed $default Un valor por defecto si no se encuentra
+     * @return mixed El valor resuelto
+     */
+    public function getResolvedParameter(string $name, mixed $default = null): mixed { 
+        return $this->resolvedParameters[$name] ?? $default;
     }
 }

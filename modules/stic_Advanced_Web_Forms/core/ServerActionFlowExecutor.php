@@ -28,10 +28,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class ServerActionFlowExecutor {
     private ExecutionContext $context; 
     private ServerActionFactory $factory;
+    private ParameterResolverService $resolver;
 
-    public function __construct(ExecutionContext $context, ServerActionFactory $factory) {
+    public function __construct(ExecutionContext $context) {
         $this->context = $context;
-        $this->factory = $factory;
+        $this->factory = new ServerActionFactory();
+        $this->resolver = new ParameterResolverService($this->context);
     }
 
     /**
@@ -52,11 +54,21 @@ class ServerActionFlowExecutor {
                 // TODO: Verificación de Condiciones (si existen)
                 // if (!$this->checkConditions($actionConfig->conditions, $this->context)) { continue; }
 
+                // Resolución de Parámetros 
+                $resolvedActionConfig = clone $actionConfig;
+                $resolvedActionConfig->parameters = [];
+                $resolvedParameters = [];
+                foreach ($actionConfig->parameters as $paramConfig) {
+                    $resolvedValue = $this->resolver->resolve($paramConfig);
+                    $resolvedParameters[$paramConfig->name] = $resolvedValue;
+                }
+                $resolvedActionConfig->setResolvedParameters($resolvedParameters);
+
                 // Ejecutamos la acción
-                $actionResult = $actionExecutor->execute($this->context, $actionConfig); 
+                $actionResult = $actionExecutor->execute($this->context, $resolvedActionConfig); 
 
                 // Actualización del Contexto
-                $this->context->addActionResult($actionConfig, $actionResult);
+                $this->context->addActionResult($actionResult);
 
                 // Detección de Error
                 if ($actionResult->isError()) {

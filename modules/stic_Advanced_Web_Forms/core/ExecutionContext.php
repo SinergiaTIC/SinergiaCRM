@@ -33,7 +33,10 @@ class ExecutionContext {
 
     public FormConfig $formConfig;     // Configuración del formulario
 
-    // @var ActionResult[]
+    /** @var array<string, BeanReference[]> */
+    public array $dataBlockBean = [];  // Bean que representa el bloque de datos
+
+    /** @var ActionResult[] */
     public array $actionResults = [];
 
     /**
@@ -48,6 +51,8 @@ class ExecutionContext {
         $this->responseId = $responseId;
         $this->formData = $formData;
         $this->formConfig = $formConfig;
+        $this->dataBlockBean = [];
+        $this->actionResults = [];
     }
 
     /**
@@ -78,6 +83,34 @@ class ExecutionContext {
 
         $GLOBALS['log']->error("Exception: " . $e->getMessage());
         $GLOBALS['log']->error($e->getTraceAsString());
+    }
+
+    /**
+     * Obtiene el resultado de una acción por su ID.
+     * @param string $actionId ID de la acción
+     * @return ?ActionResult Resultado de la acción o null si no se encuentra
+     */
+    public function getActionResultById(string $actionId): ?ActionResult {
+        return $this->actionResults[$actionId] ?? null;
+    }
+
+    /**
+     * Obtiene el bloque de datos por su ID.
+     * @param string $blockId ID del bloque de datos
+     * @return ?FormDataBlock El bloque de datos o null si no se encuentra
+     */
+    public function getDataBlock(string $blockId): array {
+        return $this->formConfig->data_blocks[$blockId] ?? [];
+    }
+
+    public function addDataBlockBean(string $blockId, string $beanId): void {
+        $dataBlock = $this->getDataBlock($blockId);
+        if ($dataBlock === null) {
+            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Trying to add bean to unknown data block ID: {$blockId}");
+            return;
+        }
+
+        $this->dataBlockBean[$blockId] = new BeanReference($dataBlock->module, $beanId);
     }
 }
 

@@ -25,33 +25,31 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-enum OnDuplicateAction: string {
-    case UPDATE = 'update';
-    case ENRICH = 'enrich';
-    case SKIP   = 'skip';
-    case ERROR  = 'error';
-}
-
-class FormDuplicateRule {
-    public FormDataBlock $data_block;          // El Bloque de datos al que pertenece
+/**
+ * Data Transfer Object (DTO) para la definición de una opción de selector de acción
+ * Se enviará al Frontend para mostrar la configuración de la opción
+ */
+class ActionSelectorOptionDefinitionDTO {
+    public string $name;
+    public string $text;
+    public string $resolvedType; // Tipo de parámetro resuelto para esta opción (ex: 'value', 'field')
 
     /** @var string[] */
-    public array $fields;                     // Array con el nombre de los campos para la detección de duplicados
-    public OnDuplicateAction $on_duplicate;   // Acción a realizar con los duplicados: update, enrich, skip, error
+    public array $supportedModules;
 
-    /**
-     * Crea una instancia de FormDuplicateRule a partir de un array JSON.
-     * @param FormDataBlock $dataBlock El Bloque de datos al que pertenece
-     * @param array $data Los datos en formato array
-     * @return FormDuplicateRule La instancia creada
-     */
-    public static function fromJsonArray(FormDataBlock $dataBlock, array $data): self {
-        $dto = new self();
-        $dto->data_block = $dataBlock;
+    /** @var string[] */
+    public array $supportedDataTypes; // Lista de Tipos de datos permitidos por esta acción, si aplica (ex: 'text', 'relate')
 
-        $dto->fields = $data['fields'];
-        $dto->on_duplicate = OnDuplicateAction::from($data['on_duplicate']);
-
-        return $dto;
+    public function __construct(ActionSelectorOptionDefinition $def) {
+        $this->name = $def->name;
+        $this->text = $def->text;
+        $this->resolvedType = $def->resolvedType->value; // Convertim l'Enum a string
+        $this->supportedModules = $def->supportedModules;
+        
+        // Convertim l'array d'Enums de dataTypes a un array de strings
+        $this->supportedDataTypes = array_map(
+            fn($dataType) => $dataType->value,
+            $def->supportedDataTypes
+        );
     }
 }

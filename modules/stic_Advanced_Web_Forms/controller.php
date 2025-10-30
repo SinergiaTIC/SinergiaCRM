@@ -124,4 +124,19 @@ class stic_Advanced_Web_FormsController extends SugarController
 
         sugar_cleanup(true);
     }
+
+
+    public function action_getServerActions()
+    {
+        // Ensure return json 
+        header('Content-Type: application/json');
+
+        require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
+        $serverActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::DEFERRED]);
+        $actionDTOs = array_map(fn($actionDef) => new ActionDefinitionDTO($actionDef), $serverActions);
+        $resultStr = json_encode($actionDTOs, JSON_UNESCAPED_UNICODE);
+        echo $resultStr;
+
+        sugar_cleanup(true);
+    }
 }

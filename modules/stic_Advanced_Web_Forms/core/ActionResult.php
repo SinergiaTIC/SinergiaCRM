@@ -37,7 +37,7 @@ enum ResultStatus: string {
 class ActionResult {
     public ResultStatus $status;        // Estado del resultado
     public ?string $message;            // Mensaje adicional del resultado
-    // @var ModifiedBean[]
+    /** @var BeanModified[] */
     public array $modifiedBeans;        // Beans modificados por la acción
 
     public float $timestamp;            // Marca temporal de la ejecución
@@ -51,7 +51,7 @@ class ActionResult {
         $this->timestamp = microtime(true);
     }
 
-    public function addModifiedBean(ModifiedBean $bean): void {
+    public function addModifiedBean(BeanModified $bean): void {
         $this->modifiedBeans[] = $bean;
     }
 
@@ -75,22 +75,4 @@ class ActionResult {
         return $this->status === ResultStatus::OK;
     }
 
-}
-
-enum BeanModificationType: string {
-    case CREATED  = 'create';
-    case UPDATED  = 'update';
-    case ENRICHED = 'enrich';
-    case SKIPPED  = 'skip';
-}
-
-/**
- * Clase para indicar un Bean modificado por una acción
- */
-class ModifiedBean {
-    public function __construct(
-        public string $id,
-        public string $module,
-        public BeanModificationType $modificationType
-    ) {}
 }
