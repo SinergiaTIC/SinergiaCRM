@@ -71,7 +71,10 @@ $mod_strings = array (
   'LBL_ENTITY' => 'Entidad financiera',
   'LBL_HOLDERS' => 'Titulares',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
-
+  'LBL_INITIAL_BALANCE_INFO' => 'El saldo inicial es el saldo con el que se creó el producto financiero. Normalmente, este saldo coincide con el saldo de la primera transacción registrada en el producto financiero.',
+  'LBL_CURRENT_BALANCE_INFO' => 'Representa el saldo actual de la cuenta o producto financiero en cuestión. Se actualiza automáticamente con cada importación de movimientos bancarios.',
+  'LBL_BALANCE_ERROR_INFO' => 'Indica si el saldo obtenido mediante importación no coincide con el resultado de la suma de todas las transacciones vinculadas más el saldo incial.',
+  'LBL_WARDED_PERSON_INFO' => 'Individuo bajo tutela legal que necesita seguimiento de sus cuentas bancarias y transacciones financieras.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transacciones',
   'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona tutelada',
 );

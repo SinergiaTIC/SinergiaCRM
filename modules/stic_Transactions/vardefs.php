@@ -188,6 +188,7 @@ $dictionary['stic_Transactions'] = array(
     'merge_filter' => 'disabled',
     'len' => '255',
     'size' => '20',
+    'popupHelp' => 'LBL_DESTINATION_ACCOUNT_INFO',
   ),
   'accounting_account' => 
   array (
@@ -209,6 +210,7 @@ $dictionary['stic_Transactions'] = array(
     'merge_filter' => 'disabled',
     'len' => '255',
     'size' => '20',
+    'popupHelp' => 'LBL_ACCOUNTING_ACCOUNT_INFO',
   ),
   'category_id' => 
   array (

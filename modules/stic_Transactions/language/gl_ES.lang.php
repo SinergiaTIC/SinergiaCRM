@@ -73,6 +73,8 @@ $mod_strings = array (
   'LBL_ACCOUNTING_ACCOUNT' => 'Cuenta contable',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producto financiero',
+  'LBL_DESTINATION_ACCOUNT_INFO' => 'Número de la cuenta destino en caso de transferencia.',
+  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Número de la cuenta contable oficial asociada a esta transacción.',
 
   // Norma 43
   'LBL_NORMA_43' => 'Importar fichero Norma 43',

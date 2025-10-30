@@ -115,6 +115,7 @@ $dictionary['stic_Financial_Products'] = array(
     'size' => '20',
     'enable_range_search' => false,
     'precision' => '2',
+    'popupHelp' => 'LBL_INITIAL_BALANCE_INFO',
   ),
   'current_balance' => 
   array (
@@ -138,6 +139,7 @@ $dictionary['stic_Financial_Products'] = array(
     'size' => '20',
     'enable_range_search' => false,
     'precision' => '2',
+    'popupHelp' => 'LBL_CURRENT_BALANCE_INFO',
   ),
   'balance_error' => 
   array (
@@ -162,6 +164,7 @@ $dictionary['stic_Financial_Products'] = array(
     'options' => 'checkbox_dom',
     'studio' => 'visible',
     'dependency' => false,
+    'popupHelp' => 'LBL_BALANCE_ERROR_INFO',
   ),
   'type' => 
   array (
@@ -289,6 +292,7 @@ $dictionary['stic_Financial_Products'] = array(
     'table' => 'contacts',
     'module' => 'Contacts',
     'rname' => 'name',
+    'popupHelp' => 'LBL_WARDED_PERSON_INFO',
     'db_concat_fields' => 
     array (
       0 => 'first_name',

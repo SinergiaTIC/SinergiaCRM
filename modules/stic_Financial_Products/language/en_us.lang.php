@@ -71,7 +71,10 @@ $mod_strings = array (
   'LBL_ENTITY' => 'Financial entity',
   'LBL_HOLDERS' => 'Holders',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
-
+  'LBL_INITIAL_BALANCE_INFO' => 'The initial balance is the balance with which the financial product was created. Normally, this balance coincides with the balance of the first transaction recorded in the financial product.',
+  'LBL_CURRENT_BALANCE_INFO' => 'Represents the current balance of the account or financial product in question. It is automatically updated with each import of bank movements.',
+  'LBL_BALANCE_ERROR_INFO' => 'Indicates whether the balance obtained through import does not match the result of the sum of all linked transactions plus the initial balance.',
+  'LBL_WARDED_PERSON_INFO' => 'Individual under legal guardianship who requires monitoring of their bank accounts and financial transactions.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transactions',
   'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Warded person',
 );

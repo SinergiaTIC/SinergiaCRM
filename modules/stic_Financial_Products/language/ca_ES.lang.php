@@ -71,7 +71,10 @@ $mod_strings = array (
   'LBL_ENTITY' => 'Entitat financera',
   'LBL_HOLDERS' => 'Titulars',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
-
+  'LBL_INITIAL_BALANCE_INFO' => 'El saldo inicial és el saldo amb el qual es va crear el producte financer. Normalment, aquest saldo coincideix amb el saldo de la primera transacció registrada en el producte financer.',
+  'LBL_CURRENT_BALANCE_INFO' => "Representa el saldo actual del compte o producte financer en qüestió. S'actualitza automàticament amb cada importació de moviments bancaris.",
+  'LBL_BALANCE_ERROR_INFO' => 'Indica si el saldo obtingut mitjançant importació no coincideix amb el resultat de la suma de totes les transaccions vinculades més el saldo incial.',
+  'LBL_WARDED_PERSON_INFO' => 'Individu sota tutela legal que necessita seguiment dels seus comptes bancaris i transaccions financeres.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transaccions',
   'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona tutelada',
 );

@@ -72,6 +72,8 @@ $mod_strings = array (
   'LBL_ACCOUNTING_ACCOUNT' => 'Compte comptable',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producte financer',
+  'LBL_DESTINATION_ACCOUNT_INFO' => 'Número del compte destino en cas de transferència.',
+  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Número del compte comptable oficial associada a aquesta transacció.',
 
   // Norma 43
   'LBL_NORMA_43' => 'Importa un fitxer Norma 43',

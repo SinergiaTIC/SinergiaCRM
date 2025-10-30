@@ -73,6 +73,8 @@ $mod_strings = array (
   'LBL_ACCOUNTING_ACCOUNT' => 'Accounting account',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Financial product',
+  'LBL_DESTINATION_ACCOUNT_INFO' => 'Destination account number in case of transfer.',
+  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Official accounting account number associated with this transaction.',
 
   // Norma 43
   'LBL_NORMA_43' => 'Import a Norma 43 file',
