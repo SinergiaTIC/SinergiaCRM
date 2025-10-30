@@ -25,8 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."ActionParameter.php";
-include_once __DIR__."ActionSelectorOption.php";
+include_once __DIR__."ActionParameterDefinition.php";
+include_once __DIR__."ActionSelectorOptionDefinition.php";
 
 include_once __DIR__."ActionDefinition.php";
 include_once __DIR__."ServerActionDefinition.php";

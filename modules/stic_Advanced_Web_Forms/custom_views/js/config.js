@@ -630,6 +630,7 @@ class AWF_ActionParameter {
       name: '',                // Nombre del parámetro
       text: '',                // Texto del parámetro
       value: '',               // Valor del parámetro
+      selectedOption: '',      // Opción seleccionada (si aplica)
     });
 
     // 2. Overwrite with provided data

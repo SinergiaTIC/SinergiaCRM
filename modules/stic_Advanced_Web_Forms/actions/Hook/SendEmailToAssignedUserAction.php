@@ -27,10 +27,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 
-class SendEmailAction extends HookActionDefinition {
+class SendEmailToAssignedUserAction extends SendEmailAction {
 
     public function __construct() {
-        $this->baseLabel = 'LBL_SENDEMAILACTION';
+        $this->baseLabel = 'LBL_SENDEMAILTOASSIGNEDUSERACTION';
     }
 
     /**
@@ -64,41 +64,18 @@ class SendEmailAction extends HookActionDefinition {
                 type: ActionParameterType::OBJECT_SELECTOR,
                 required: true,
                 selectorOptions: [
-                    // Opción 1: Campo definido en el formulario
-                    new ActionSelectorOptionDefinition(
-                        name: 'field',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIELD_TEXT'),
-                        resolvedType: ActionParameterType::FIELD,
-                        supportedDataTypes: [ActionDataType::EMAIL, ActionDataType::TEXT]
-                    ),
-                    // Opción 2: El email de un bloque de datos (Accounts/Contacts/Leads/Users)
+                    // Opción 1: El Asignado a de un bloque de datos 
                     new ActionSelectorOptionDefinition(
                         name: 'dataBlock',
                         text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT'),
                         resolvedType: ActionParameterType::DATA_BLOCK,
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
                     ),
-                    // Opción 3: Email fijo
-                    new ActionSelectorOptionDefinition(
-                        name: 'fixed',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT'),
-                        resolvedType: ActionParameterType::VALUE,
-                        supportedDataTypes: [ActionDataType::EMAIL],
-                    ),
-                    // Opción 4: Email de un registro fijo del CRM
-                    new ActionSelectorOptionDefinition(
-                        name: 'beanId',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_BEANID_TEXT'),
-                        resolvedType: ActionParameterType::CRM_RECORD,
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
-                    ),
-                    // Opción 5: Campo relacionado con un módulo válido (Accounts/Contacts/Leads/Users)
+                    // Opción 2: Campo relacionado con un módulo
                     new ActionSelectorOptionDefinition(
                         name: 'relatedField',
                         text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT'),
                         resolvedType: ActionParameterType::FIELD,
                         supportedDataTypes: [ActionDataType::RELATE],
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
                     ),
                 ],
             ),

@@ -198,4 +198,15 @@ $mod_strings = array (
   'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT' => 'Valor fijo',
   'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_BEANID_TEXT' => 'Registro del CRM',
   'LBL_SENDEMAILACTION_PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT' => 'Campo relacionado',
+
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_TITLE' => 'Enviar correo electrónico al usuario asignado',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_DESCRIPTION' => 'Envia un correo electrónico al usuario asignado al registro creado o actualizado por el formulario',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_TEMPLATEID_TEXT' => 'Plantilla de correo electrónico',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_TEMPLATEID_DESCRIPTION' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_BASEDATABLOCK_TEXT' => 'Bloque de datos para la plantilla',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_BASEDATABLOCK_DESCRIPTION' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_RECIPIENTSOURCE_TEXT' => 'Destinatario del correo electrónico',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_RECIPIENTSOURCE_DESCRIPTION' => 'Seleccione el destinatario del correo electrónico',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
+  'LBL_SENDEMAILTOASSIGNEDUSERACTION_PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT' => 'Campo relacionado',
 );  

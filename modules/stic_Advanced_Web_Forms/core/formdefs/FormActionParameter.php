@@ -26,11 +26,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormActionParameter {
-    public FormAction $action;  // La Acción a la que pertenece
+    public FormAction $action;      // La Acción a la que pertenece
 
-    public string $name;       // Nombre del Parámetro
-    public string $text;       // El texto a mostrar 
-    public string $value;      // El valor del Parámetro
+    public string $name;            // Nombre del Parámetro
+    public string $text;            // El texto a mostrar
+    public string $selectedOption;  // El nombre de la opción seleccionada (si aplica)
+    public string $value;           // El valor del Parámetro
 
     /**
      * Crea una instancia de FormActionParameter a partir de un array JSON.
@@ -45,6 +46,7 @@ class FormActionParameter {
         $dto->name = $data['name'];
         $dto->text = $data['text'];
         $dto->value = $data['value'];
+        $dto->selectedOption = $data['selectedOption'] ?? '';
 
         return $dto;
     }

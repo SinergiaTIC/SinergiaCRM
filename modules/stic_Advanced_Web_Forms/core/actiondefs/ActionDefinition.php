@@ -52,6 +52,16 @@ abstract class ActionDefinition {
     public array $supportedFieldSubTypes = []; // stic_advanced_web_forms_field_in_form_subtype_list
     public int $order = 0;
 
+    protected string $baseLabel = 'LBL_ACTION';
+    /**
+     * Traduce una subclave al idioma actual (usando el baseLabel de la acción y el módulo stic_Advanced_Web_Forms)
+     * @param string $subkey La subclave a traducir
+     * @return string El texto traducido
+     */
+    protected function translate(string $subkey): string {
+        return translate($this->baseLabel.'_'.$subkey, 'stic_Advanced_Web_Forms');
+    }
+
     /**
      * Retorna el nombre de la acción (es el del fichero de la acción sin extensión)
      * @return string El nombre del fichero de la acción
@@ -77,17 +87,17 @@ abstract class ActionDefinition {
      * Retorna el título descriptivo de la acción
      * @return string El título de la acción
      */
-    public abstract function getTitle(): string;
+    public function getTitle(): string { return $this->translate('TITLE'); }
 
     /**
      * Retorna la descripción de la acción
      * @return string La descripción de la acción
      */
-    public abstract function getDescription(): string;
+    public function getDescription(): string { return translate('DESCRIPTION'); }
 
     /**
      * Retorna los parámetros definidos para la acción
-     * @return ActionParameter[] Los parámetros de la acción
+     * @return ActionParameterDefinition[] Los parámetros de la acción
      */
     public abstract function getParameters(): array;
 

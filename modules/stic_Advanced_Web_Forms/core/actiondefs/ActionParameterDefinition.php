@@ -40,6 +40,9 @@ enum ActionDataType: string {
     case FLOAT         = 'float';
     case BOOLEAN       = 'boolean';
 
+    // Related
+    case RELATE        = 'relate';
+
     // Date types
     case DATE          = 'date';
     case DATETIME      = 'datetime';
@@ -56,7 +59,7 @@ enum ActionDataType: string {
 /**
  * Clase para definir un parámetro de una acción
  */
-class ActionParameter {
+class ActionParameterDefinition {
     public string $name;                 // Nombre del Parámetro
     public string $text;                 // El texto a mostrar
     public string $description;          // La descripción del parámetro
@@ -64,7 +67,7 @@ class ActionParameter {
     public ActionDataType $dataType;     // El tipo de dato del parámetro: Obligado si $type es VALUE
     public bool $required = true;        // Indica si el parámetro es obligatorio
     public string $defaultValue = '';    // Valor por defecto del parámetro
-    // @var ActionSelectorOption[]
+    // @var ActionSelectorOptionDefinition[]
     public array $selectorOptions = [];  // Opciones adicionales para selectores de objetos
     // @var string[]
     public array $supportedModules = []; // Módulos soportados si el destino es un registro CRM
