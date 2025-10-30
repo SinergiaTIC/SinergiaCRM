@@ -33,11 +33,11 @@ enum ActionScope: string {
 
 
 enum ActionType: string {
-    case UI            = 'ui';
-    case DATAPROVIDER  = 'dataprovider';
-    case HOOK          = 'hook';
-    case DEFERRED      = 'deferred';
-    case GROUP         = 'group';
+    case UI            = 'UI';
+    case DATAPROVIDER  = 'DataProvider';
+    case HOOK          = 'Hook';
+    case DEFERRED      = 'Deferred';
+    case GROUP         = 'Group';
 }
 
 abstract class ActionDefinition {
