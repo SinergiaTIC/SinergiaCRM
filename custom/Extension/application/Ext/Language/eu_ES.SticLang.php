@@ -3664,6 +3664,7 @@ $app_list_strings['stic_transactions_status_list']['failed'] = 'Fallido';
 $app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputado';
 
 // Transacciones: Categorías
+$app_list_strings['stic_transactions_categories_list'][''] = '';
 $app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sueldo';
 $app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversiones';
 $app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regalos';
@@ -3680,6 +3681,7 @@ $app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Ot
 $app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Otros';
 
 // Transacciones: Subcategorías
+$app_list_strings['stic_transactions_subcategories_list'][''] = '';
 $app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sueldo';
 $app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bonos';
 $app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividendos';
