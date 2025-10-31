@@ -56,9 +56,6 @@ class DataBlockResolved {
                 $this->detachedData[$detachedFieldName] = $value;
             }
         }
-
-        // TODO: Verificar que todos los campos del Bloque de datos vienen
-        // Qué hacer si no hay algun campo definido?
     }
 
     public function getFieldValue($fieldName) {

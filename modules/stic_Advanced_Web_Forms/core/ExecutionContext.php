@@ -36,19 +36,23 @@ class ExecutionContext {
     /** @var ActionResult[] */
     public array $actionResults = [];
 
+    public float $submissionTimestamp;
+
     /**
      * Constructor de la clase ExecutionContext.
      * @param string $formId ID del formulario que se está procesando
      * @param string $responseId ID de respuesta generado para este envío
      * @param array $formData Datos RAW del formulario recibido
      * @param FormConfig $formConfig Configuración del formulario
+     * @param ?float $timestamp El timestamp del envío de datos del formulario (opcional)
      */
-    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig) {
+    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null) {
         $this->formId = $formId;
         $this->responseId = $responseId;
         $this->formData = $formData;
         $this->formConfig = $formConfig;
         $this->actionResults = [];
+        $this->submissionTimestamp = $timestamp ?? microtime(true);
     }
 
     /**

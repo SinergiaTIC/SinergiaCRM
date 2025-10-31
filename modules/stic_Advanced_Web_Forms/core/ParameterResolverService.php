@@ -25,9 +25,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-//IEPA!!!
-// Revisar
-
 class ParameterResolverService {
 
     /**
@@ -61,132 +58,167 @@ class ParameterResolverService {
      */
     private function resolveSingleParam(ActionParameterDefinition $def, ?FormActionParameter $config, ExecutionContext $context): mixed {
         // Gestión del parámetro no configurado
-        if ($config === null) {
-            if ($def->type == ActionParameterType::VALUE) {
-                return $this->resolveFixedValue($def->defaultValue, $def->dataType?->value);
-            }
-        } else {
-            $value = $config->value;
-            switch ($def->type) {
-                case ActionParameterType::VALUE:
-                    // El parámetro es un valor fijo. Value contiene el valor
-                    return $this->resolveFixedValue($value, $def->dataType?->value);
+        $value = $config?->value;
+        switch ($def->type) {
+            case ActionParameterType::VALUE:
+                // El parámetro es un valor fijo. Value contiene el valor
+                return $this->resolveFixedValue($def, $value, $context);
 
-                case ActionParameterType::DATA_BLOCK:
-                    // El parámetro es un Bloque de datos. Value contiene el id del bloque
-                    return $this->resolveDataBlockConfig($value, $context);
-                    
-                case ActionParameterType::CRM_RECORD:
-                    // El parámetro es un Registro del crm. Value contiene 'modulo|id'
-                    return $this->resolveDataBlockBean($value, $context);
+            case ActionParameterType::DATA_BLOCK:
+                // El parámetro es un Bloque de datos. Value contiene el id del bloque
+                return $this->resolveDataBlock($def, $value, $context);
+                
+            case ActionParameterType::FIELD:
+                // El parámetro es un campo del formulario. Value contiene el nombre del campo
+                return $this->resolveFormField($def, $value, $context);
 
-                case ActionParameterType::FIELD:
-                    // El parámetro es un campo del formulario. Value contiene el nombre del campo
-                    return $this->resolveFormField($value, $context);
+            case ActionParameterType::CRM_RECORD:
+                // El parámetro es un Registro del crm. Value contiene 'modulo|id'
+                return $this->resolveBean($def, $value, $context);
 
-                case ActionParameterType::OBJECT_SELECTOR:
-                    // El parámetro es un selector 'selectedOption' contiene la selección
-                    $selectedOption = $config->selectedOption;
-                    return $this->resolveObjectSelector($def, $config, $context);
-            }
+            case ActionParameterType::OBJECT_SELECTOR:
+                // El parámetro es un selector 'selectedOption' contiene la selección
+                $selectedOption = $config?->selectedOption;
+                return $this->resolveObjectSelector($def, $selectedOption, $value, $context);
         }
 
         // No se ha retornado ninguna resolución
-        if ($def->required) {
-            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Required parameter {$def->name} not informed in form configuration.");
-        } else {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Parameter {$def->name} not informed in form configuration.");
-        }
+        $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Parameter {$def->name} not informed in form configuration.");
         return null;
     }
 
-    // --- MÈTODES PRIVATS D'AJUDA ---
-
-    private function resolveDataBlockConfig(string $dataBlockId, ExecutionContext $context): ?FormDataBlock {
-        foreach ($context->formConfig->data_blocks as $dataBlock) {
-            if ($dataBlock->id === $dataBlockId) {
-                return $dataBlock;
-            }
-        }
-        $GLOBALS['log']->warning("ParameterResolver: Configuració del bloc '{$dataBlockId}' no trobada.");
-        return null;
-    }
-
-    // TODO: Esta lógica se tendrá que refactorizar cuando se implementen los Grupos de Bloques de Datos:
-    // Se crearán múltiples bloques de datos con el mísmo FormDataBlock, y por lo tanto sólo se tendrá
-    // la beanReference del último (se sobreescribirá en cada iteración)
-
-    private function resolveDataBlockBean(string $dataBlockId, ExecutionContext $context): ?BeanReference {
-        // Busquem la configuració del bloc
-        $dataBlock = $this->resolveDataBlockConfig($dataBlockId, $context);
-        
-        if ($dataBlock === null) {
-            $GLOBALS['log']->warning("ParameterResolver: No es pot resoldre el bean per al bloc '{$dataBlockId}' (bloc no trobat).");
+    private function resolveFixedValue(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?mixed {
+        $valueToCast = $value !== null ? $value : $def->defaultValue;
+        if ($valueToCast === null) {
             return null;
         }
 
-        // *** APLIQUEM LA TEVA ÚLTIMA LÒGICA ***
-        // Accedim a la propietat on la SaveBeanAction ha desat el seu resultat
-        $beanReference = $dataBlock->getBeanReference();
-        if ($beanReference != null)
-            return $beanReference;
+        switch ($def->dataType) { 
+            case ActionDataType::INTEGER:
+                return (int)$valueToCast;
 
-        // TODO: (Refactorització futura per DataGroups)
-        
-        $GLOBALS['log']->warning("ParameterResolver: Bloc '{$dataBlockId}' trobat, però encara no té un BeanReference.");
-        return null;
+            case ActionDataType::FLOAT:
+                return (float)$valueToCast;
+
+            case ActionDataType::BOOLEAN:
+                $lowerValue = strtolower(trim($valueToCast));
+                if ($lowerValue === 'false' || $lowerValue === '0' || $lowerValue === 'off' || $lowerValue === '') {
+                    return false;
+                }
+                return true;
+
+            case ActionDataType::DATE:
+            case ActionDataType::DATETIME:
+            case ActionDataType::TIME:
+            case ActionDataType::RELATIVE_DATE:
+                $baseTimestamp = (int)$context->submissionTimestamp;
+                // strtotime gestiona fechas fijas ("2025-10-31") y relativas ("today", "+1 day")
+                $parsedTime = @strtotime($valueToCast, $baseTimestamp);
+                if ($parsedTime === false) {
+                    $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Can not parse date '{$valueToCast}' with base timestamp '{$baseTimestamp}'.");
+                    return null;
+                }
+                try {
+                    $dateTimeObj = new \DateTime();
+                    $dateTimeObj->setTimestamp($parsedTime);
+                    return $dateTimeObj;
+                } catch (\Exception $e) {
+                    $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Error creating DateTime from timestamp '{$parsedTime}': " . $e->getMessage());
+                    return null;
+                }
+
+            case ActionDataType::TEXT:
+            default:
+                return (string)$valueToCast;
+        }
+            
+        return $valueToCast;
     }
 
-    private function resolveFormField(string $fieldName, ExecutionContext $context): mixed {
+    private function resolveDataBlock(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?DataBlockResolved {
+        $dataBlockId = $value !== null ? $value : $def->defaultValue;
+        if ($dataBlockId === null) {
+            return null;
+        }
+
+        $dataBlockConfig = $context->formConfig->data_blocks[$dataBlockId] ?? null;
+        if ($dataBlockConfig === null) {
+            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": DataBlock config not found with Id: '{$dataBlockId}'.");
+            return null;
+        }
+
+        return new DataBlockResolved($dataBlockConfig, $context->formData);
+    }
+
+    private function resolveBean(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?BeanReference {
+        $recordString = $value !== null ? $value : $def->defaultValue;
+        if ($recordString === null) {
+            return null;
+        }
+
+        // recordString: 'module|id'
+        $parts = explode('|', $recordString, 2);
+        if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1])) {
+            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Format error. Expected 'Module|id', but received '{$recordString}'.");
+            return null;
+        }
+
+        return new BeanReference($parts[0], $parts[1]);
+    }
+
+    private function resolveFormField(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?mixed {
+        $fieldName = $value !== null ? $value : $def->defaultValue;
+        if ($fieldName === null) {
+            return null;
+        }
+
         if (array_key_exists($fieldName, $context->formData)) {
             return $context->formData[$fieldName];
         }
-        $GLOBALS['log']->warning("ParameterResolver: Camp '{$fieldName}' no trobat a formData.");
+        $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Field '{$fieldName}' not found in received form data.");
         return null;
     }
 
-    private function resolveFixedValue(string $value, ?string $dataType): mixed {
-        // Aquí podríem fer 'type casting' basat en el $dataType
-        // (ex: 'boolean', 'integer')
-        return $value;
-    }
-
-    private function resolveObjectSelector(
-        ActionParameterDefinition $def, 
-        FormActionParameter $config,
-        ExecutionContext $context
-    ): mixed {
+    private function resolveObjectSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?mixed {
+        if ($selectedOption === null) {
+            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Selected option is null");
+            return null;
+        }
         
-        $selectedOptionName = $config->selectedOption;
-        $value = $config->value;
-
-        // Trobem la definició de l'opció seleccionada
+        // Find the SelectedOption definition
         $optionDef = null;
         foreach ($def->selectorOptions as $o) {
-            if ($o->name === $selectedOptionName) {
+            if ($o->name === $selectedOption) {
                 $optionDef = $o;
                 break;
             }
         }
         
         if ($optionDef === null) {
-            $GLOBALS['log']->warning("ParameterResolver: Opció '{$selectedOptionName}' no trobada. Tornant a 'fixed_value'.");
-            return $this->resolveFixedValue($value, $def->dataType?->value);
+            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Option '{$selectedOption}' not found.");
+            return null;
         }
 
-        // Ara resolem basant-nos en el 'resolvedType' de l'OPCIÓ
+        // Resolve parameter with resolvedType
         switch ($optionDef->resolvedType) {
             case ActionParameterType::VALUE:
-                return $this->resolveFixedValue($value, $def->dataType?->value);
-            case ActionParameterType::FIELD:
-                return $this->resolveFormField($value, $context);
+                // El parámetro es un valor fijo. Value contiene el valor
+                return $this->resolveFixedValue($def, $value, $context);
+
             case ActionParameterType::DATA_BLOCK:
-                return $this->resolveDataBlockConfig($value, $context);
+                // El parámetro es un Bloque de datos. Value contiene el id del bloque
+                return $this->resolveDataBlock($def, $value, $context);
+                
+            case ActionParameterType::FIELD:
+                // El parámetro es un campo del formulario. Value contiene el nombre del campo
+                return $this->resolveFormField($def, $value, $context);
+
             case ActionParameterType::CRM_RECORD:
-                return $this->resolveDataBlockBean($value, $context);
-            default:
-                return null;
+                // El parámetro es un Registro del crm. Value contiene 'modulo|id'
+                return $this->resolveBean($def, $value, $context);
         }
+        
+        return null;        
     }
 }
 
