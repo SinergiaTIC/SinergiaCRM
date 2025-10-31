@@ -68,13 +68,11 @@ class stic_SignatureLogUtils
             case 'SIGNER':
                 $logBean->load_relationship('stic_signers_stic_signature_log');
                 $logBean->stic_signers_stic_signature_log->add($id);
-                $logBean->save();
                 break;
 
             case 'SIGNATURE':
                 $logBean->load_relationship('stic_signatures_stic_signature_log');
                 $logBean->stic_signatures_stic_signature_log->add($id);
-                $logBean->save();
                 break;
 
             default:

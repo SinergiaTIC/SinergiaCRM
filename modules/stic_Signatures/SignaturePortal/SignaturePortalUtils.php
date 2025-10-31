@@ -233,14 +233,15 @@ class stic_SignaturePortalUtils
                 return ['success' => false, 'message' => 'Failed to save signature data.'];
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to save signature data for Signer ID: {$signerBean->id}");
             } else {
+                require_once 'modules/stic_Signature_Log/Utils.php';
+                stic_SignatureLogUtils::logSignatureAction('SIGNED_HANDWRITTEN_MODE', $signerBean->id, 'SIGNER');
+
                 require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
                 // Generate the signed PDF after saving the signature
                 $savedFile = sticGenerateSignedPdf::generateSignedPdf('handwritten');
                 $signerBean->verification_code = stic_SignaturesUtils::getVerificationCodeForSignedPdf($savedFile);
                 $signerBean->save();
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
-                require_once 'modules/stic_Signature_Log/Utils.php';
-                stic_SignatureLogUtils::logSignatureAction('SIGNED_HANDWRITTEN_MODE', $signerBean->id, 'SIGNER');
                 return ['success' => true, 'message' => 'Signature data saved successfully.'];
             }
         }
@@ -382,16 +383,18 @@ class stic_SignaturePortalUtils
             $signerBean->status = 'signed';
             $signerBean->signature_image = ''; // No signature image in button mode
             $signerBean->signature_date = gmdate("Y-m-d H:i:s");
-            if (!$signerBean->save()) {
+            $signerBean->save();
+            if ($signerBean->status != 'signed' || !empty($signerBean->signature_image)) {
                 return ['success' => false, 'message' => 'Failed to accept document.'];
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to accept document for Signer ID: {$signerBean->id}");
             } else {
-                require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
-                // Generate the signed PDF after saving the signature
-                sticGenerateSignedPdf::generateSignedPdf('button');
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
                 stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER');
+                
+                // Generate the signed PDF after saving the signature
+                require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
+                sticGenerateSignedPdf::generateSignedPdf('button');
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
                 return ['success' => true, 'message' => 'Document accepted successfully.'];
             }
         }
