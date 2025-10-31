@@ -84,6 +84,7 @@ $mod_strings = array (
   'LBL_SELECT_FILE' => 'Seleccionar un fichero',
   'LBL_INSTRUCTION_1_STEP_1' => 'Antes de subir el fichero, asegúrese de que cumple el estándar Norma 43.', 
   'LBL_INSTRUCTION_2_STEP_1' => 'Entre otras características, debe ser un fichero de texto plano y las líneas deben tener una longitud máxima de 80 caracteres.',
+  'LBL_STEP_2' => 'Paso 2: Mapear los campos',
   'LBL_FIELD_1_STEP_2' => 'Campos del fichero Norma 43',
   'LBL_FIELD_2_STEP_2' => 'Valor',
   'LBL_FIELD_3_STEP_2' => 'Campos del módulo',
