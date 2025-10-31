@@ -33,7 +33,7 @@ class ServerActionFlowExecutor {
     public function __construct(ExecutionContext $context) {
         $this->context = $context;
         $this->factory = new ServerActionFactory();
-        $this->resolver = new ParameterResolverService($this->context);
+        $this->resolver = new ParameterResolverService();
     }
 
     /**
@@ -55,17 +55,13 @@ class ServerActionFlowExecutor {
                 // if (!$this->checkConditions($actionConfig->conditions, $this->context)) { continue; }
 
                 // Resolución de Parámetros 
-                $resolvedActionConfig = clone $actionConfig;
-                $resolvedActionConfig->parameters = [];
-                $resolvedParameters = [];
-                foreach ($actionConfig->parameters as $paramConfig) {
-                    $resolvedValue = $this->resolver->resolve($paramConfig);
-                    $resolvedParameters[$paramConfig->name] = $resolvedValue;
-                }
-                $resolvedActionConfig->setResolvedParameters($resolvedParameters);
+                $paramDefinitions  = $actionExecutor->getParameters();
+                $paramConfigurations = $actionConfig->parameters;
+                $resolvedParameters = $this->resolver->resolveAll($paramDefinitions, $paramConfigurations, $this->context);
+                $actionConfig->setResolvedParameters($resolvedParameters);
 
                 // Ejecutamos la acción
-                $actionResult = $actionExecutor->execute($this->context, $resolvedActionConfig); 
+                $actionResult = $actionExecutor->execute($this->context, $actionConfig); 
 
                 // Actualización del Contexto
                 $this->context->addActionResult($actionResult);

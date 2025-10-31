@@ -41,7 +41,7 @@ enum ActionType: string {
 }
 
 abstract class ActionDefinition {
-    public bool $isActive = true;
+    public bool $isActive = false;
    
     /** @var string[] */
     public array $tags = [];

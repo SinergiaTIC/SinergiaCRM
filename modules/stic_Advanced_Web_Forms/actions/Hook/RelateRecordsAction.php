@@ -28,6 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 class RelateRecordsAction extends HookActionDefinition {
     public function __construct() {
+        $this->isActive = true;
         $this->baseLabel = 'LBL_RELATE_RECORDS_ACTION';
     }
 

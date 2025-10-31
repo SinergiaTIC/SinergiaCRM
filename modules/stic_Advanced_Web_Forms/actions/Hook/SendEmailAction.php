@@ -30,6 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 class SendEmailAction extends HookActionDefinition {
 
     public function __construct() {
+        $this->isActive = false;
         $this->baseLabel = 'LBL_SEND_EMAIL_ACTION';
     }
 

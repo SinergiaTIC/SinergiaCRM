@@ -33,9 +33,6 @@ class ExecutionContext {
 
     public FormConfig $formConfig;     // Configuración del formulario
 
-    /** @var array<string, BeanReference[]> */
-    public array $dataBlockBean = [];  // Bean que representa el bloque de datos
-
     /** @var ActionResult[] */
     public array $actionResults = [];
 
@@ -51,7 +48,6 @@ class ExecutionContext {
         $this->responseId = $responseId;
         $this->formData = $formData;
         $this->formConfig = $formConfig;
-        $this->dataBlockBean = [];
         $this->actionResults = [];
     }
 
@@ -101,16 +97,6 @@ class ExecutionContext {
      */
     public function getDataBlock(string $blockId): array {
         return $this->formConfig->data_blocks[$blockId] ?? [];
-    }
-
-    public function addDataBlockBean(string $blockId, string $beanId): void {
-        $dataBlock = $this->getDataBlock($blockId);
-        if ($dataBlock === null) {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Trying to add bean to unknown data block ID: {$blockId}");
-            return;
-        }
-
-        $this->dataBlockBean[$blockId] = new BeanReference($dataBlock->module, $beanId);
     }
 }
 

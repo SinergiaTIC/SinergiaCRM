@@ -30,6 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 class SendEmailToAssignedUserAction extends SendEmailAction {
 
     public function __construct() {
+        $this->isActive = false;
         $this->baseLabel = 'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION';
     }
 

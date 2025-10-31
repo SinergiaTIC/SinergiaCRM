@@ -27,6 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once __DIR__."BeanReference.php";
 include_once __DIR__."BeanModified.php";
+include_once __DIR__."DataBlockResolved.php";
 include_once __DIR__."ActionResult.php";
 include_once __DIR__."WebhookResult.php";
 include_once __DIR__."ExecutionContext.php";

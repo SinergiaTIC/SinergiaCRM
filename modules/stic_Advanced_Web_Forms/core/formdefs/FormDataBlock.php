@@ -26,16 +26,18 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormDataBlock {
-    public FormConfig $form_config;   // La configuración del formulario al que pertenece
+    public FormConfig $form_config;       // La configuración del formulario al que pertenece
 
-    public string $id;                   // Id del Bloque de datos
-    public string $name;                 // Nombre interno (identificador en UI) del Bloque de Datos
-    public string $text;                 // Texto a mostrar para el Bloque de Datos
-    public string $module;               // Nombre del módulo
+    public string $id;                    // Id del Bloque de datos
+    public string $name;                  // Nombre interno (identificador en UI) del Bloque de Datos
+    public string $text;                  // Texto a mostrar para el Bloque de Datos
+    public string $module;                // Nombre del módulo
     /** @var FormDataBlockField[] */
-    public array $fields;               // Campos del Bloque de Datos
+    public array $fields;                 // Campos del Bloque de Datos
     /** @var FormDuplicateRule[] */
-    public array $duplicate_detections; // Definición de detección de duplicados
+    public array $duplicate_detections;   // Definición de detección de duplicados
+
+    private ?BeanReference $beanReference = null; // Bean donde se ha guardado el Bloque de Datos
 
     /**
      * Crea una instancia de FormDataBlock a partir de un array JSON.
@@ -68,5 +70,13 @@ class FormDataBlock {
         }
 
         return $dto;
+    }
+
+    public function setBeanReference(string $beanId): void {
+        $this->beanReference = new BeanReference($this->module, $beanId);
+    }
+
+    public function getBeanReference(): ?BeanReference {
+        return $this->beanReference;
     }
 }
