@@ -43,13 +43,13 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signature_log
     'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE',
     'get_subpanel_data' => 'stic_signatures_stic_signature_log',
     'top_buttons' => array(
-        0 => array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
+        // 0 => array(
+        //     'widget_class' => 'SubPanelTopButtonQuickCreate',
+        // ),
+        // 1 => array(
+        //     'widget_class' => 'SubPanelTopSelectButton',
+        //     'mode' => 'MultiSelect',
+        // ),
     ),
 );
 
@@ -62,13 +62,13 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signers'] = a
     'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNERS_FROM_STIC_SIGNERS_TITLE',
     'get_subpanel_data' => 'stic_signatures_stic_signers',
     'top_buttons' => array(
-        0 => array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
+        // 0 => array(
+        //     'widget_class' => 'SubPanelTopButtonQuickCreate',
+        // ),
+        // 1 => array(
+        //     'widget_class' => 'SubPanelTopSelectButton',
+        //     'mode' => 'MultiSelect',
+        // ),
     ),
 );
 

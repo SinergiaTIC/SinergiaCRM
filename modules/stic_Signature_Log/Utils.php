@@ -59,6 +59,9 @@ class stic_SignatureLogUtils
         $logBean->user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
         $logBean->description = $extraInfo;
         $logBean->date = TimeDate::getInstance()->nowDb();
+        $logBean->created_by = '1';
+        $logBean->modified_user_id = '1';
+        $logBean->assigned_user_id = '1';
         $logBean->save();
 
         switch ($idType) {

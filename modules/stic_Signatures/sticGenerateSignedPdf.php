@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
@@ -41,21 +40,26 @@
 use SuiteCRM\PDF\Exceptions\PDFException;
 use SuiteCRM\PDF\PDFWrapper;
 
+/**
+ * Handles the generation and finalization of a signed PDF document
+ * by retrieving template data, inserting signature/acceptance images,
+ * adding an audit page (if configured), and saving the resulting PDF file.
+ */
 class sticGenerateSignedPdf
 {
-
-    /** Generates a signed PDF for a given signer ID and saves it to the file system.
+    /**
+     * Generates a signed PDF for a given signer ID and saves it to the file system.
      * The generated PDF file name is stored in the 'pdf_document' field of the signer record.
      *
-     * @param string $signedMode The mode of signing, either 'handwritten' or 'button'.
-     *                           Defaults to 'handwritten'.
-     * @return void
+     * @param string $signedMode The mode of signing, either 'handwritten' (for drawn signature) or 'button' (for acceptance).
+     * Defaults to 'handwritten'.
+     * @return string The file path of the generated PDF document.
      */
     public static function generateSignedPdf($signedMode = 'handwritten')
     {
         global $sugar_config, $app_list_strings, $app_strings;
 
-        // require_once 'modules/AOS_PDF_Templates/templateParser.php';
+        // Required utility and function files
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
         require_once 'modules/stic_Signatures/Utils.php';
         require_once 'modules/stic_Signers/Utils.php';
@@ -66,28 +70,29 @@ class sticGenerateSignedPdf
             sugar_die('No signerId received');
         }
 
-// Retrieve the signer bean
+        // Retrieve the signer bean
         $signerBean = BeanFactory::getBean('stic_Signers', $_REQUEST['signerId']);
         if (!$signerBean) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid Signer ID: {$_REQUEST['signerId']}");
             sugar_die("Invalid Signer");
         }
 
-// Retrieve the signature bean
+        // Retrieve the signature bean
         $signatureBean = BeanFactory::getBean('stic_Signatures', $signerBean->stic_signatures_stic_signersstic_signatures_ida);
         if (!$signatureBean) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid Signature ID: {$signerBean->signature_id} for Signer ID: {$signerBean->id}");
             sugar_die("Invalid Signature");
         }
 
-// Check that the signature is completed
         $sourceModule = $signatureBean->main_module;
         $sourceId = $signerBean->record_id;
+        // Check that the signature has an associated record
         if (empty($sourceModule) || empty($sourceId)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature ID: {$signatureBean->id} has no associated record");
             sugar_die("Signature has no associated record");
         }
 
+        // Retrieve the PDF template bean
         $templateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c);
 
         if (!$templateBean) {
@@ -97,6 +102,7 @@ class sticGenerateSignedPdf
 
         $file_name = str_replace(" ", "_", (string) $templateBean->name) . ".pdf";
 
+        // PDF Configuration based on the template bean
         $pdfConfig = [
             'mode' => 'en',
             'page_size' => $templateBean->page_size,
@@ -117,13 +123,14 @@ class sticGenerateSignedPdf
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
         }
 
-        // Retrieve the record bean
+        // Retrieve the record bean (source of data for the PDF)
         $sourceBean = BeanFactory::getBean($sourceModule, $sourceId);
         if (!$sourceBean) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid Record ID: {$sourceId} for Module: {$sourceModule}");
             sugar_die("Invalid Record");
         }
 
+        // PDF History (unused here, but configured)
         try {
             $pdfHistory = PDFWrapper::getPDFEngine();
             $pdfHistory->configurePDF($pdfConfig);
@@ -131,58 +138,60 @@ class sticGenerateSignedPdf
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
         }
 
-        $object_arr = array();
-        $object_arr[$sourceBean->module_dir] = $sourceBean->id;
+        // Array for template parsing
+        $object_arr = [$sourceBean->module_dir => $sourceBean->id];
 
-        if ($sourceBean->module_dir === 'Contacts') {
+        // Add related Accounts ID if the source is Contacts for backward compatibility
+        if ($sourceBean->module_dir === 'Contacts' && isset($sourceBean->account_id)) {
             $object_arr['Accounts'] = $sourceBean->account_id;
         }
 
-        // Replace the signature placeholder with the actual signature image.
-        // As the image image placeholder is recovery encoded from the database, the pattern must be encoded too.
+        // Replace the signature placeholder with the actual signature image/acceptance image.
+        // The placeholder string is HTML-encoded.
         $stringToreplace = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
 
-        // Set time in user format and UTC for use later
-        $userTime = new Datetime()->format('Y-m-d H:i:s (\U\T\C P)');
-        $utcTime = new Datetime('UTC')->format('Y-m-d H:i:s P');
+        // Set time in user format and UTC for use later in audit/acceptance
+        $userTime = (new DateTime())->format('Y-m-d H:i:s (\U\T\C P)');
+        $utcTime = (new DateTime('UTC'))->format('Y-m-d H:i:s P');
 
-        // Depending on the signed mode, prepare the replacement HTML
         $replaceWith = '';
+        // Prepare the replacement HTML based on the signed mode
         switch ($signedMode) {
             case 'handwritten':
+                // Use the drawn signature image URL from the signer bean
                 $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
                 break;
             case 'button':
-
+                // Generate an acceptance image with signer details and timestamp
                 $textArray = [
-                    'Documento aceptado por:',
+                    'Document accepted by:',
                     $signerBean->parent_name,
                     $signerBean->email_address,
                     $userTime,
-                    // $utcTime
+                    // $utcTime // UTC time is commented out but available
                 ];
 
                 $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
                 $replaceWith = htmlspecialchars('<img class="signature" src="' . $acceptImage . '" width="200"></div>');
                 break;
             default:
-                # code...
+                // Default case, no replacement
                 break;
         }
 
+        // Perform the replacement in the template description
         $templateBean->description = str_replace($stringToreplace, $replaceWith, (string) $templateBean->description);
 
-        // if $signature->pdf_audit_page_c is set, add a new page to the PDF with the audit information
+        // If 'pdf_audit_page' is enabled, append an audit page to the PDF content
         if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page) {
 
             // Get logs related to the signer
             require_once 'modules/stic_Signature_Log/Utils.php';
             $signerLog = stic_SignatureLogUtils::getSignatureLogActions($signerBean->id, 'SIGNER', ['OPEN_PORTAL_BEFORE_SIGN']);
 
-            // start with new page html mark
-
             $sugar_smarty = new Sugar_Smarty();
 
+            // Assign variables for the audit page template
             $sugar_smarty->assign('DOCUMENT_NAME', $templateBean->name);
             $sugar_smarty->assign('SIGNER_NAME', $signerBean->parent_name);
             $sugar_smarty->assign('SIGNER_EMAIL', $signerBean->email_address);
@@ -197,15 +206,17 @@ class sticGenerateSignedPdf
 
             $sugar_smarty->assign('SIGNER_LOG', $signerLog);
 
+            // Construct the audit HTML content
             $auditHtml = '<p style="page-break-before: always;">&nbsp;</p>';
             $auditHtml .= $sugar_smarty->fetch('modules/stic_Signatures/AuditPageTemplate.tpl');
-
             $auditHtml .= file_get_contents('modules/stic_Signatures/AuditPageTemplate.html');
 
+            // Append the audit page HTML (encoded) to the template description
             $templateBean->description .= htmlspecialchars($auditHtml);
         }
 
-        $search = array(
+        // HTML Cleaning and Replacement preparation
+        $search = [
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
             '@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
             '@([\r\n])[\s]+@', // Strip out white space
@@ -216,9 +227,9 @@ class sticGenerateSignedPdf
             '@&(nbsp|#160);@i',
             '@&(iexcl|#161);@i',
             '@<address[^>]*?>@si',
-        );
+        ];
 
-        $replace = array(
+        $replace = [
             '',
             '',
             '\1',
@@ -229,9 +240,12 @@ class sticGenerateSignedPdf
             ' ',
             chr(161),
             '<br>',
-        );
+        ];
 
+        // Apply initial cleaning to the description
         $text = preg_replace($search, $replace, (string) $templateBean->description);
+        
+        // Replace {DATE <format>} placeholders with the current date
         $text = preg_replace_callback(
             '/{DATE\s+(.*?)}/',
             function ($matches) {
@@ -240,21 +254,22 @@ class sticGenerateSignedPdf
             $text
         );
 
-// STIC-Custom 20240125 JBL - Product line items in pdf
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/76
+        // STIC-Custom 20240125 JBL - Product line items in pdf
+        // Handle AOS (Advanced OpenSales) specific modules for line items
         if (str_starts_with($sourceModule, "AOS_")) {
             $variableName = strtolower($sourceBean->module_dir);
-            $lineItemsGroups = array();
-            $lineItems = array();
+            $lineItemsGroups = [];
+            $lineItems = [];
 
-            $sql = "SELECT pg.id, pg.product_id, pg.group_id FROM aos_products_quotes pg LEFT JOIN aos_line_item_groups lig ON pg.group_id = lig.id WHERE pg.parent_type = '" . $sourceBean->object_name . "' AND pg.parent_id = '" . $sourceBean->id . "' AND pg.deleted = 0 ORDER BY lig.number ASC, pg.number ASC";
+            // Query to fetch line items and groups
+            $sql = "SELECT pg.id, pg.product_id, pg.group_id FROM aos_products_quotes pg LEFT JOIN aos_line_item_groups lig ON pg.group_id = lig.id WHERE pg.parent_type = '" . $sourceBean->object_name . "' AND pg->parent_id = '" . $sourceBean->id . "' AND pg->deleted = 0 ORDER BY lig.number ASC, pg.number ASC";
             $res = $sourceBean->db->query($sql);
             while ($row = $sourceBean->db->fetchByAssoc($res)) {
                 $lineItemsGroups[$row['group_id']][$row['id']] = $row['product_id'];
                 $lineItems[$row['id']] = $row['product_id'];
             }
 
-            //backward compatibility
+            // Backward compatibility for related beans in AOS modules
             if (isset($sourceBean->billing_account_id)) {
                 $object_arr['Accounts'] = $sourceBean->billing_account_id;
             }
@@ -268,6 +283,7 @@ class sticGenerateSignedPdf
                 $object_arr['Currencies'] = $sourceBean->currency_id;
             }
 
+            // Replace specific AOS variables with dynamic ones
             $text = str_replace("\$aos_quotes", "\$" . $variableName, $text);
             $text = str_replace("\$aos_invoices", "\$" . $variableName, $text);
             $text = str_replace("\$total_amt", "\$" . $variableName . "_total_amt", $text);
@@ -277,39 +293,45 @@ class sticGenerateSignedPdf
             $text = str_replace("\$shipping_amount", "\$" . $variableName . "_shipping_amount", $text);
             $text = str_replace("\$total_amount", "\$" . $variableName . "_total_amount", $text);
 
+            // Populate group lines (products/services) in the template
             $text = populate_group_lines($text, $lineItemsGroups, $lineItems);
         }
         // END STIC-Custom 20240125
 
+        // Apply cleaning to header and footer
         $header = preg_replace($search, $replace, (string) $templateBean->pdfheader);
         $footer = preg_replace($search, $replace, (string) $templateBean->pdffooter);
 
+        // Final template parsing using the utility function, which handles advanced placeholders
         $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id);
         $converted = $parsedText['converted'];
         $header = $parsedText['header'];
         $footer = $parsedText['footer'];
 
+        // Replace newlines with HTML line breaks for PDF generation
         $printable = str_replace("\n", "<br />", (string) $converted);
 
         try {
-            // Generar un nombre de archivo único utilizando el ID (GUID) del firmante
+            // Generate a unique file name using the signer's GUID
             $fileName = "{$signerBean->id}_signed.pdf";
             $filePath = $sugar_config['upload_dir'] . $fileName;
 
-            // Generar el PDF y guardarlo en el sistema de archivos
+            // Generate the PDF and save it to the file system
             $pdf->writeHeader($header);
             $pdf->writeFooter($footer);
             $pdf->writeHTML($printable);
-            $pdf->outputPDF($filePath, 'F'); // El parámetro 'F' indica que se guardará como un archivo
+            $pdf->outputPDF($filePath, 'F'); // 'F' parameter saves to a local file
 
-            // Almacenar la referencia del archivo en el base de datos
+            // Store the file reference in the signer bean's 'pdf_document' field
             $signerBean->pdf_document = $fileName;
             $signerBean->save();
+            
+            return $filePath;
 
         } catch (PDFException $e) {
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
+            // Die with a user-friendly error message
             sugar_die("Error al generar o guardar el PDF: " . $e->getMessage());
         }
-        return $filePath;
     }
 }

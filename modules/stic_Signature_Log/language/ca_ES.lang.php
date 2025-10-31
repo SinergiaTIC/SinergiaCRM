@@ -64,4 +64,6 @@ $mod_strings = array(
     'LBL_DATE' => 'Data',
     'LBL_IP_ADDRESS' => 'Adreça IP',
     'LBL_USER_AGENT' => "Agent d'usuari",
+    'LBL_DEFAULT_PANEL' => 'Dades generals',
+    'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 );

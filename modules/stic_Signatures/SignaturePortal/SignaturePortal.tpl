@@ -162,7 +162,7 @@
                     </h1>
                     <div class="text-center mb-4"><i class="bi bi-check-circle-fill text-success text-center"
                             style="font-size: 4rem;"></i></div>
-                    <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}" target="_blank" rel="noopener noreferrer"><i
+                    <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}&from_portal=1" target="_blank" rel="noopener noreferrer"><i
                             class="bi bi-cloud-download-fill"></i> {$MODS.LBL_PORTAL_DOWNLOAD_SIGNED_DOC}</a>
                     <button id="send-signed-pdf-by-email" class="btn btn-primary mt-3"><i
                             class="bi bi-envelope-at-fill"></i> {$MODS.LBL_PORTAL_SEND_COPY_EMAIL}</button>
@@ -239,13 +239,13 @@
                         aria-label="Resend OTP Options">
 
                         {if $AUTH_MODE == 'otp_email' || $AUTH_MODE == 'otp' }
-                        <button id="resend-otp-btn-email" class="btn btn-light">
+                        <button id="resend-otp-btn-email" class="btn btn-link">
                             <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL}
                             {$OTP_MASKED_EMAIL}
                         </button>
                         {/if}
                         {if $AUTH_MODE == 'otp_phone_message' || $AUTH_MODE == 'otp' }
-                        <button id="resend-otp-btn-phone-message" class="btn btn-light">
+                        <button id="resend-otp-btn-phone-message" class="btn btn-link">
                             <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE}
                             {$OTP_MASKED_PHONE}
                         </button>
@@ -283,13 +283,13 @@
                         aria-label="Resend OTP Options">
 
                         {if $AUTH_MODE == 'otp_email' || $AUTH_MODE == 'otp' }
-                        <button id="resend-otp-btn-email" class="btn btn-light">
+                        <button id="resend-otp-btn-email" class="btn btn-link">
                             <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL}
                             {$OTP_MASKED_EMAIL}
                         </button>
                         {/if}
                         {if $AUTH_MODE == 'otp_phone_message' || $AUTH_MODE == 'otp' }
-                        <button id="resend-otp-btn-phone-message" class="btn btn-light">
+                        <button id="resend-otp-btn-phone-message" class="btn btn-link">
                             <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE}
                             {$OTP_MASKED_PHONE}
                         </button>

@@ -102,6 +102,7 @@ foreach ($destSigners as $destSignerId => $destSigner) {
         $koCounter++;
         continue;
     }
+
     // Skip if the signer already exists for this signature
     if (in_array($destSignerId, $existingSigners)) {
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Skipping existing signer with ID: " . $destSignerId);
@@ -124,13 +125,11 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean->status = 'pending';
     $stic_SignerBean->contact_id_c = $destSigner['onBehalfOfId'] ?? null;
     
-
     $newId = $stic_SignerBean->save();
     if ($newId) {
         require_once 'modules/stic_Signature_Log/Utils.php';
         stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $newId, 'SIGNER', $stic_SignatureBean->name);
         stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $stic_SignatureBean, 'SIGNATURE', $stic_SignerBean->name);
-
     }
 
     // Add relationships between stic_Signers and stic_Signatures records

@@ -1,4 +1,4 @@
-INSERT INTO email_templates (id,date_entered,date_modified,modified_user_id,created_by,published,name,description,subject,body,body_html,deleted,assigned_user_id,text_only,`type`) VALUES
+REPLACE INTO email_templates (id,date_entered,date_modified,modified_user_id,created_by,published,name,description,subject,body,body_html,deleted,assigned_user_id,text_only,`type`) VALUES
      ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-10-06 13:51:23','2025-10-15 13:03:19','2','2','off','Solicitud firma',NULL,'[Dokumentua sinatzeko eskaera] $stic_signatures_pdf_template','Kaixo $contact_first_name$contact_user_first_name,
 
 Zure sinadura eskatu da hurrengo dokumenturako:

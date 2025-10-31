@@ -132,11 +132,14 @@ Hay que tener en cuenta que _en el caso de las firmas_ la LPO se crea concatenan
 
 
     ## TODO: Pendiente
-    - Limpieza de campos innecesarios en firmantes.
-    
+    - Al firmar la página de auditoría no incluye el registro de la acción de firma, ya que esta se registra despues de generar el PDF firmado. Hay que revisar si es posible registrar la acción antes de generar el PDF.
+    - Utilizar una plantilla de email para enviar la copia del documento firmado, en lugar de un email genérico.
+    - Utilizar una plantilla de email para enviar el OTP, en lugar de un email genérico.
+
     
     ### Hecho
     - Descargar documento firmado desde el portal de firmas no funciona
     - Enviar por email el documento firmado al firmante una vez firmado desde el portal de firmas no funciona
     - Usar la plantilla de email definida en la firma para notificar a los firmantes, en lugar de la plantilla por defecto de notificaciones si está definida.
     - ON_behalf_of_id: convertir a campo relate para poder mostyrar el nombre de la persona en lugar del ID
+    - Limpieza de campos innecesarios en firmantes.

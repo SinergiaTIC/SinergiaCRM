@@ -21,14 +21,14 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-use League\OAuth2\Server\ResponseTypes\RedirectResponse;
-
 /**
  * Entry point for handling signature-related actions and displaying the signature portal.
  * This script processes various actions such as saving signatures, resending OTP codes,
  * sending signed PDFs via email, accepting documents, and downloading signed PDFs.
  * If no specific action is provided, it displays the signature portal view.
  */
+
+global $current_user;
 
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
@@ -136,7 +136,12 @@ if (!empty($_REQUEST['signatureAction'])) {
             }
 
             require_once 'modules/stic_Signature_Log/Utils.php';
-            stic_SignatureLogUtils::logSignatureAction('SIGNED_PDF_DOWNLOADED', $signerBean->id, 'SIGNER', "Signed PDF downloaded for signer {$signerBean->name} (ID: {$signerBean->name})");
+
+            // Log the download action only if accessed from the portal (not internal CRM links)
+            if($_REQUEST['from_portal'] ?? 0 == 1)
+            {
+                stic_SignatureLogUtils::logSignatureAction('SIGNED_PDF_DOWNLOADED', $signerBean->id, 'SIGNER', "Signed PDF downloaded for signer {$signerBean->name} (ID: {$signerBean->name})");
+            }
 
             // Set headers for file download
             header('Content-Description: File Transfer');

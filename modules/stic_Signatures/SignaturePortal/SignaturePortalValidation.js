@@ -1,4 +1,7 @@
 // **************************************************************************
+// Manages the behavior of the OTP (One-Time Password) input form,
+// including input navigation and resend functionality.
+
 // Include utilities
 document.head.appendChild(Object.assign(document.createElement('script'), {
     src: 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.js'
@@ -8,38 +11,41 @@ document.head.appendChild(Object.assign(document.createElement('script'), {
 const otpForm = document.getElementById('otpForm');
 if (otpForm) {
 
-
     const inputs = document.querySelectorAll('.otp-input');
     inputs.forEach((input, index) => {
         input.addEventListener('input', (e) => {
+            // Move focus to the next input when a character is entered
             if (e.target.value.length === 1 && index < inputs.length - 1) {
                 inputs[index + 1].focus();
-
             }
         });
 
         input.addEventListener('keydown', (e) => {
+            // Move focus to the previous input on backspace if current is empty
             if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
                 inputs[index - 1].focus();
-
             }
         });
     });
 
-    // Agrega la lógica para el botón de reenviar OTP por email
+    // OTP Resend button (Email)
     const resendButtonOtpMail = document.getElementById('resend-otp-btn-email');
     resendButtonOtpMail.addEventListener('click', () => {
         resendOtp('email');
     });
 
+    // OTP Resend button (Phone)
     const resendButtonOtpPhone = document.getElementById('resend-otp-btn-phone-message');
     resendButtonOtpPhone.addEventListener('click', () => {
         resendOtp('phone');
     });
 
     /**
-       *  Function to resend the OTP code to the user's email. 
-       */
+     * Sends a request to resend the OTP code via the specified method.
+     *
+     * @param {string} method - The delivery method ('email' or 'phone').
+     * @returns {void}
+     */
     function resendOtp(method) {
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -60,34 +66,26 @@ if (otpForm) {
             },
             body: new URLSearchParams(data),
         }).then(response => {
-
             // Manage the response
             if (!response.ok) {
                 throw new Error(MODS.LBL_PORTAL_NETWORK_ERROR);
             }
             return response.json();
-            // Parsea la respuesta como JSON
-        }
-        ).then(data => {
+        }).then(data => {
             let messageKey = method === 'email' ? 'LBL_PORTAL_OTP_EMAIL_SENT' : 'LBL_PORTAL_OTP_PHONE_SENT';
             showAlert('success', MODS.LBL_PORTAL_ATTENTION, MODS[messageKey]);
-        }
-        ).catch(error => {
+        }).catch(error => {
             console.error('Error:', error);
             showAlert('error', MODS.LBL_PORTAL_ERROR, MODS.LBL_PORTAL_ERROR_REQUEST_OTP_ALERT);
-        }
-        );
-
+        });
     }
 
-
-    // send OTP form
+    // Send OTP form
     otpForm.addEventListener('submit', (e) => {
         const otpCode = document.getElementById('otp-code');
+        // Concatenate all individual OTP inputs into the hidden 'otp-code' field before submission.
         otpCode.value = Array.from(inputs).map(input => input.value).join('');
     });
 }
 // End OTP form handling
 // **************************************************************************
-
-

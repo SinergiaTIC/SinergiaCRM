@@ -23,17 +23,18 @@
 
 /**
  * Utility class for handling operations related to stic_Signers module.
- * This includes functionality for sending signature requests via email.
+ * This includes functionality for sending signature requests via email,
+ * sending One-Time Passwords (OTP), managing subpanel queries, and checking status.
  */
 class stic_SignersUtils
 {
     /**
      * Sends a signature request email to the specified signer.
-     * This function retrieves signer details, constructs an email with a unique
-     * signing link, and sends it using SugarCRM's mailer.
+     * This function retrieves signer and signature details, constructs an email with a unique
+     * signing link, parses the email template, and sends the request using SugarCRM's mailer.
      *
      * @param string $signerId The ID of the signer to whom the email should be sent.
-     * @throws Exception If the signer ID is empty or the destination email address is invalid.
+     * @throws Exception If a required bean is not found, the destination email is empty, or the email sending fails.
      * @return void
      */
     public static function sendToSign($signerId)
@@ -62,9 +63,9 @@ class stic_SignersUtils
             return;
         }
 
-      
         // Get the email template ID from the signature, or use a default if not set
-        $templateId = $signatureBean->email_template_id ?? '000005f1-2e4e-3b11-051f-68e3c9e70331'; // Default template ID
+        // The default ID '000005f1-2e4e-3b11-051f-68e3c9e70331' is hardcoded here.
+        $templateId = $signatureBean->email_template_id ?? '000005f1-2e4e-3b11-051f-68e3c9e70331';
 
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
@@ -76,17 +77,11 @@ class stic_SignersUtils
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-        // Set From and FromName
-        $fromEmail = $current_user->email1;
-        if (!$fromEmail) {
-            $fromEmail = $defaults['email'];
-        }
+        // Set From and FromName using current user or system defaults
+        $fromEmail = $current_user->email1 ?: $defaults['email'];
         $mail->From = $fromEmail;
 
-        $fromName = $current_user->name;
-        if (!$fromName) {
-            $fromName = $defaults['name'];
-        }
+        $fromName = $current_user->name ?: $defaults['name'];
         $mail->FromName = $fromName;
 
         // Add recipient
@@ -97,86 +92,75 @@ class stic_SignersUtils
         }
         $mail->AddAddress($destAddress);
 
-        // Set the email subject
-        $subject = $mod_strings['LBL_SIGNER_EMAIL_SUBJECT'];
-        $mail->Subject = $subject;
-
-        // Construct the unique signing URL
-        // Determine the base URI for constructing URLs (to handle different server setups)
-        // $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
-
+        // Construct the unique signing URL (used for template parsing)
         $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
 
-        // Intentamos construir el body y el subject desde la plantilla $templateId usando APIs de SuiteCRM
-        $mailBodyHtml = null;
-        $mailSubject = null;
-
         // Cargar beans relacionados: signature, contact/user (si aplica) y el signer ya cargado
-        // $signatureBean ya está disponible arriba
-        $relatedContactOrUser = null;
+        $relatedContactOrUserBean = null;
         if (!empty($signerBean->parent_type) && !empty($signerBean->parent_id)) {
             $relatedContactOrUserBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
         }
 
-       require_once 'SticInclude/Utils.php';
-       $parsedMailArray = SticUtils::parseEmailTemplate($templateId, [
+        require_once 'SticInclude/Utils.php';
+        // Parse the email template using all relevant beans
+        $parsedMailArray = SticUtils::parseEmailTemplate($templateId, [
             $signerBean,
             $signatureBean,
             $relatedContactOrUserBean,
-            
         ]);
 
         $body_html = $parsedMailArray['body_html'] ?? '';
         $subject_parsed = $parsedMailArray['subject'] ?? '';
 
-        // Validar resultado final
+        // Validate final parsed body
         if (empty($body_html)) {
             throw new Exception("Parsed email body is empty after applying template '{$templateId}'.");
         }
+        
         $mailBodyHtml = $body_html;
+        // Use parsed subject, falling back to template subject or module string
         $mailSubject = $subject_parsed ?: ($templateBean->subject ?? $mod_strings['LBL_SIGNER_EMAIL_SUBJECT']);
 
-        // Asignar subject y body al mailer
+        // Assign subject and body to the mailer
         $mail->Subject = $mailSubject;
         $mail->Body = from_html($mailBodyHtml);
         $mail->isHtml(true);
         $mail->prepForOutbound();
 
-        // Attempt to send the email and log the result (lanzar excepción si falla)
+        // Attempt to send the email and log the result
         if (!$mail->Send()) {
             $msg = "There was an error sending the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo;
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $msg);
             throw new Exception($msg);
         } else {
+            // On success: display message, log debug, and log the action
             SugarApplication::appendSuccessMessage("<p class='label label-success'>" . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Email sent successfully to {$destAddress}.");
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('EMAIL_SENT', $signerId, 'SIGNER', $destAddress);
         }
-
     }
 
     /**
      * Sends a One-Time Password (OTP) to the signer via email.
-     * This function retrieves signer details, generates an OTP if not already present,
-     * constructs an email with the OTP, and sends it using SugarCRM's mailer.
+     * This function uses the provided OTP code to construct and send a simple
+     * verification email using SugarCRM's mailer.
      *
      * @param object $signerBean The bean object of the signer to whom the OTP should be sent.
+     * @param string $otpCode The one-time password to include in the email body.
      * @throws Exception If the signer ID is empty or the destination email address is invalid.
      * @return bool True if the email was sent successfully, false otherwise.
      */
     public static function sendOtpEmailToSigner($signerBean, $otpCode)
     {
-        global $sugar_config, $current_user, $mod_strings;
+        global $current_user;
         $signerId = $signerBean->id;
         $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+        
         // Validate signer ID
         if (empty($signerId)) {
             throw new Exception("Signer ID cannot be empty.");
         }
-
-        // Retrieve the signer bean
-        $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
 
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
@@ -189,21 +173,15 @@ class stic_SignersUtils
         $mail->setMailerForSystem();
 
         // Set From and FromName
-        $fromEmail = $current_user->email1;
-        if (!$fromEmail) {
-            $fromEmail = $defaults['email'];
-        }
+        $fromEmail = $current_user->email1 ?: $defaults['email'];
         $mail->From = $fromEmail;
 
-        $fromName = $current_user->name;
-        if (!$fromName) {
-            $fromName = $defaults['name'];
-        }
+        $fromName = $current_user->name ?: $defaults['name'];
         $mail->FromName = $fromName;
 
         // Add recipient
         if (empty($destAddress)) {
-            // If no destination address, return false (or handle error appropriately)
+            // If no destination address, return false
             echo json_encode(false);
             die();
         }
@@ -213,19 +191,16 @@ class stic_SignersUtils
         $subject = $signerStrings['LBL_SIGNER_EMAIL_OTP_SUBJECT'];
         $mail->Subject = $subject;
 
-        // // Construct the unique signing URL
-        // $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
-
-        // Prepare the complete HTML body of the email
+        // Prepare the complete HTML body of the email with the OTP code
         $completeHTML = "<html>
                             <head>
                                 <title>{$subject}</title>
                             </head>
                             <body style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333;\">
 
-                            <h2>El código de verificación es {$signerBean->otp}</h2>
-                            <p style=\"margin-top: 20px;\">Este código es válido por 10 minutos.</p>
-                            <p style=\"margin-top: 20px;\">Para completar el proceso, por favor, vuelve al portal de firmas e introduce el código en el campo correspondiente
+                            <h2>The verification code is {$signerBean->otp}</h2>
+                            <p style=\"margin-top: 20px;\">This code is valid for 10 minutes.</p>
+                            <p style=\"margin-top: 20px;\">To complete the process, please return to the signature portal and enter the code in the corresponding field.</p>
                             </body>
                         </html>";
         $mail->Body = from_html($completeHTML);
@@ -237,6 +212,7 @@ class stic_SignersUtils
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": There was an error sending OTP the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo);
             return false;
         } else {
+            // On success: log debug, log the action, and update session tracking
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": OTP Email sent successfully to {$destAddress}.");
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OTP_SENT_EMAIL', $signerId, 'SIGNER', $destAddress);
@@ -247,15 +223,15 @@ class stic_SignersUtils
             ];
             return true;
         }
-
     }
 
     /**
      * Sends a One-Time Password (OTP) to the signer via phone (SMS).
-     * This function retrieves signer details, generates an OTP if not already present,
-     * constructs an SMS message with the OTP, and sends it using an SMS gateway.
+     * This function uses the provided OTP code to construct an SMS message
+     * and sends it using the configured SMS gateway via the stic_Messages module.
      *
      * @param object $signerBean The bean object of the signer to whom the OTP should be sent.
+     * @param string $otpCode The one-time password to include in the SMS body.
      * @throws Exception If the signer ID is empty or the destination phone number is invalid.
      * @return bool True if the SMS was sent successfully, false otherwise.
      */
@@ -270,28 +246,31 @@ class stic_SignersUtils
             return false;
         }
 
+        // Retrieve the SMS sender setting
         require_once 'modules/stic_Settings/Utils.php';
         $sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER') ?? 'SinergiaCRM Signature Portal';
 
+        // Determine the placeholder for the signer's name
         $templateMark = $signerBean->parent_type == 'Contacts' ? '$contact_first_name' : '$contact_user_first_name';
 
+        // Create a new stic_Messages bean to record and send the SMS
         $messageBean = BeanFactory::newBean('stic_Messages');
         $messageBean->phone = $signerBean->phone;
         $messageBean->parent_type = $signerBean->parent_type;
         $messageBean->parent_id = $signerBean->parent_id;
         $messageBean->message = $mod_strings['LBL_SIGNER_OTP_SMS_BODY_1'] . ' ' . ($templateMark) . ', ' . $mod_strings['LBL_SIGNER_OTP_SMS_BODY_2'] . ' ' . $otpCode;
         $messageBean->sender = $sender;
-        $messageBean->status = 'sent';
-        $messageBean->type = 'SevenSmsHelper';
+        $messageBean->status = 'sent'; // Assuming 'sent' is set upon creation/attempt
+        $messageBean->type = 'SevenSmsHelper'; // Specific SMS gateway type
         $messageBean->save();
 
+        // Check if the message record was successfully created/sent
         if (!is_string($messageBean->id) || $messageBean->status !== 'sent') {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to create message record for OTP via phone to signer ID {$signerId}.");
             return false;
-
         }
 
-        // Log the OTP sending action
+        // Log the OTP sending action and update session tracking
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": OTP sent via phone to {$destPhone} for signer ID {$signerId}.");
 
         require_once 'modules/stic_Signature_Log/Utils.php';
@@ -306,100 +285,125 @@ class stic_SignersUtils
         return true;
     }
 
-/**
- * Get stic_Signers records for a specific contact
- *
- * @param array $params Parameters from subpanel configuration
- * @return array Query result for subpanel
- */
+    /**
+     * Retrieves the stic_Signers records associated with a specific Contact for use in a subpanel.
+     * It filters for 'pending' or 'signed' statuses and orders by modification date descending.
+     *
+     * @return string The SQL query string to fetch the required stic_Signers records.
+     */
     public static function getSticSignersForContacts()
     {
         $contact_id = $_REQUEST['record'];
         if (empty($contact_id)) {
-            return array();
+            return '';
         }
 
+        // Construct the SQL query
         $query = "
-
-        SELECT
-                stic_signers.id,
-                stic_signers.name,
-                stic_signers.date_entered,
-                stic_signers.date_modified,
-                stic_signers.modified_user_id,
-                stic_signers.created_by,
-                stic_signers.description,
-                stic_signers.deleted,
-                stic_signers.assigned_user_id,
-                stic_signers.status,
-                stic_signers.signature_date,
-                stic_signers.parent_type,
-                stic_signers.parent_id
-            FROM stic_signers
-            WHERE parent_type = 'Contacts'
-                AND parent_id = '{$contact_id}'
-                AND status in ('pending','signed')
-                AND deleted = 0
-            ORDER BY date_modified DESC
+            SELECT
+                    stic_signers.id,
+                    stic_signers.name,
+                    stic_signers.date_entered,
+                    stic_signers.date_modified,
+                    stic_signers.modified_user_id,
+                    stic_signers.created_by,
+                    stic_signers.description,
+                    stic_signers.deleted,
+                    stic_signers.assigned_user_id,
+                    stic_signers.status,
+                    stic_signers.signature_date,
+                    stic_signers.parent_type,
+                    stic_signers.parent_id
+                FROM stic_signers
+                WHERE parent_type = 'Contacts'
+                    AND parent_id = '{$contact_id}'
+                    AND status in ('pending','signed')
+                    AND deleted = 0
+                ORDER BY date_modified DESC
         ";
+        
         return $query;
     }
-/**
- * Get stic_Signers records for a specific user
- *
- * @param array $params Parameters from subpanel configuration
- * @return array Query result for subpanel
- */
+    
+    /**
+     * Retrieves the stic_Signers records associated with a specific User for use in a subpanel.
+     * It filters for 'pending' or 'signed' statuses and orders by modification date descending.
+     *
+     * @return string The SQL query string to fetch the required stic_Signers records.
+     */
     public static function getSticSignersForUsers()
     {
         $user_id = $_REQUEST['record'];
         if (empty($user_id)) {
-            return array();
+            return '';
         }
 
+        // Construct the SQL query
         $query = "
-
-        SELECT
-                stic_signers.id,
-                stic_signers.name,
-                stic_signers.date_entered,
-                stic_signers.date_modified,
-                stic_signers.modified_user_id,
-                stic_signers.created_by,
-                stic_signers.description,
-                stic_signers.deleted,
-                stic_signers.assigned_user_id,
-                stic_signers.status,
-                stic_signers.signature_date,
-                stic_signers.parent_type,
-                stic_signers.parent_id
-            FROM stic_signers
-            WHERE parent_type = 'Users'
-                AND parent_id = '{$user_id}'
-                AND status in ('pending','signed')
-                AND deleted = 0
-            ORDER BY date_modified DESC
+            SELECT
+                    stic_signers.id,
+                    stic_signers.name,
+                    stic_signers.date_entered,
+                    stic_signers.date_modified,
+                    stic_signers.modified_user_id,
+                    stic_signers.created_by,
+                    stic_signers.description,
+                    stic_signers.deleted,
+                    stic_signers.assigned_user_id,
+                    stic_signers.status,
+                    stic_signers.signature_date,
+                    stic_signers.parent_type,
+                    stic_signers.parent_id
+                FROM stic_signers
+                WHERE parent_type = 'Users'
+                    AND parent_id = '{$user_id}'
+                    AND status in ('pending','signed')
+                    AND deleted = 0
+                ORDER BY date_modified DESC
         ";
+        
         return $query;
     }
 
+    /**
+     * Deactivates other 'pending' signers for the same signature when one signer
+     * has successfully completed the signature process (status changed to 'signed'),
+     * specifically for signatures with the 'on behalf of' flag enabled.
+     *
+     * @param object $signerBean The bean object of the signer whose status has just changed.
+     * @return void
+     */
     public static function deactivateOtherSignersForSameSignature($signerBean)
     {
-        if ($signerBean->fetched_row['status'] != 'pending' || $signerBean->status != 'signed') {
-            // Only proceed if the signer's status has changed from 'pending' to 'signed'
+        // Only proceed if the signer's status has just changed from 'pending' to 'signed'
+        if (!isset($signerBean->fetched_row['status']) || $signerBean->fetched_row['status'] != 'pending' || $signerBean->status != 'signed') {
             return;
         }
 
         require_once 'SticInclude/Utils.php';
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
-        if ($signatureBean->on_behalf_of == 1) {
+        
+        // Only run logic if 'on_behalf_of' is enabled on the signature
+        if (isset($signatureBean->on_behalf_of) && $signatureBean->on_behalf_of == 1) {
+            global $mod_strings;
 
-            // Deactivate other signers for the same Signature
-            $otherSigners = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'");
+            // Find other pending signers linked to the same signature AND the same on_behalf_of_id
+            $otherSigners = $signatureBean->get_linked_beans(
+                'stic_signatures_stic_signers',
+                'stic_Signers',
+                '',
+                0,
+                0,
+                0,
+                " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'"
+            );
+            
+            // Deactivate and log
             foreach ($otherSigners as $otherSigner) {
                 $otherSigner->status = 'unnecessary';
                 $otherSigner->save();
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Deactivated signer {$otherSigner->id} for signature {$signatureBean->id} because signature was completed by $signerBean->name.");
+                
                 require_once 'modules/stic_Signature_Log/Utils.php';
                 stic_SignatureLogUtils::logSignatureAction('SIGNATURE_NOT_NEEDED', $otherSigner->id, 'SIGNER', "{$mod_strings['LBL_SIGNATURE_COMPLETED_BY']} {$signerBean->parent_name}.");
             }
@@ -407,11 +411,10 @@ class stic_SignersUtils
     }
 
     /**
-     * Check if the signer's status is expired based on the signature's expiration date.
+     * Checks if the signature associated with a signer has expired based on its expiration date.
      *
-     * @param object $signerBean The bean object of the signer.
      * @param object $signatureBean The bean object of the associated signature.
-     * @return bool True if the signer's status is not expired, false if expired.
+     * @return bool True if the signature has expired, false otherwise.
      */
     public static function checkExpiredStatus($signatureBean)
     {
@@ -421,9 +424,12 @@ class stic_SignersUtils
 
         global $timedate;
 
+        // Convert user-facing expiration date to internal DateTime object
         $expirationDate = $timedate->fromUser($signatureBean->expiration_date);
+        // Get current time in DB format and convert to DateTime object
         $currentDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
 
+        // Compare current date with expiration date
         if ($currentDate > $expirationDate) {
             return true;
         } else {
@@ -431,19 +437,26 @@ class stic_SignersUtils
         }
     }
 
+    /**
+     * Checks if the signature associated with a signer is active based on its activation date.
+     *
+     * @param object $signatureBean The bean object of the associated signature.
+     * @return bool True if the signature is active (current date is greater than or equal to activation date), false otherwise.
+     */
     public static function checkActivatedStatus($signatureBean)
     {
         global $timedate;
 
+        // Convert user-facing activation date to internal DateTime object
         $startDate = $timedate->fromUser($signatureBean->activation_date);
+        // Get current time in DB format and convert to DateTime object
         $currentDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
 
+        // Compare current date with activation date
         if ($currentDate < $startDate) {
             return false;
         } else {
             return true;
         }
-
     }
-
 }

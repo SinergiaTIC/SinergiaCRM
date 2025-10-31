@@ -43,7 +43,6 @@ class stic_SignaturesUtils
     {
         global $beanList;
 
-
         $options_array = ['' => ''];
         $mod_options_array = [];
 
@@ -57,7 +56,9 @@ class stic_SignaturesUtils
 
         // Process main module's fields
         foreach ($module->field_defs as $name => $arr) {
+            // Exclude 'id' and 'link' type fields from the reportable list
             if (!((isset($arr['dbType']) && strtolower($arr['dbType']) == 'id') || (isset($arr['type']) && $arr['type'] == 'id') || (isset($arr['type']) && $arr['type'] == 'link'))) {
+                // Check if the field is explicitly marked as non-reportable
                 if (!isset($arr['reportable']) || $arr['reportable']) {
                     $options_array['$' . $module->table_name . ':' . $name] = translate($arr['vname'] ?? '', $module->module_dir);
                 }
@@ -73,11 +74,12 @@ class stic_SignaturesUtils
 
         $fmod_options_array = [];
 
-        // Process related module fields
+        // Process related module fields (non-db relates)
         foreach ($module->field_defs as $module_name => $module_arr) {
             if (isset($module_arr['type']) && $module_arr['type'] == 'relate' && isset($module_arr['source']) && $module_arr['source'] == 'non-db') {
                 $options_array = ['' => ''];
 
+                // Skip 'EmailAddress' module as it's not a primary related module for reporting
                 if (isset($module_arr['module']) && $module_arr['module'] !== '' && $module_arr['module'] !== 'EmailAddress') {
                     $relate_module_class_name = $beanList[$module_arr['module']];
 
@@ -88,6 +90,7 @@ class stic_SignaturesUtils
 
                     $options = $options_array;
 
+                    // Build module path and label if not 'LBL_DELETED'
                     if ($module_arr['vname'] !== 'LBL_DELETED') {
                         $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
                         $module_path = $module_arr['module'] . ':' . ($module_arr['id_name'] ?? $module_arr['link']);
@@ -116,33 +119,39 @@ class stic_SignaturesUtils
 
     /**
      * Retrieves related modules that are emailable (i.e., modules that can have email addresses).
+     * It checks if related modules are instances of the 'Person' class.
      *
      * @param string $mainModule The main module to check for related emailable modules.
-     * @return array An associative array of related emailable modules with their labels.
+     * @return array An associative array of related emailable modules with their labels (beanPath => beanLabel).
      */
     public static function getRelatedEmailableModules($mainModule)
     {
         global $beanFiles, $beanList;
-        $emailableModules = array();
+        $emailableModules = [];
 
         $relatedModules = self::getModuleRelationships($mainModule);
         foreach ($relatedModules as $beanPath => $beanLabel) {
+            // Extract the bean name from the path (e.g., 'Contacts:contact_id' -> 'Contacts')
             $beanName = explode(':', $beanPath)[0];
+
             if (isset($beanList[$beanName]) && isset($beanFiles[$beanList[$beanName]])) {
                 require_once $beanFiles[$beanList[$beanName]];
-                $obj = new $beanList[$beanName];
+                $obj = new $beanList[$beanName]();
+                
+                // Check if the related module is a 'Person' type, which implies it can be 'emailable'
                 if ($obj instanceof Person) {
                     $emailableModules[$beanPath] = $beanLabel;
                 }
             }
         }
+        
         asort($emailableModules);
         return $emailableModules;
     }
 
     /**
      * Populates the global `app_list_strings` with emailable related modules
-     * for the 'signer_path' dropdown.
+     * for the 'signer_path' dropdown. Leads and non-assigned 'Users' are excluded.
      *
      * @param string $moduleName The name of the module for which to get emailable related modules.
      * @return void
@@ -150,20 +159,25 @@ class stic_SignaturesUtils
     public static function populateSignerPathListString($moduleName)
     {
         global $app_list_strings;
+        
         // Get emailable related modules and populate the dropdown
-        // This is used to select the path for extracting email addresses or phone data for signers
         require_once 'modules/stic_Signatures/Utils.php';
         $relatedModules = stic_SignaturesUtils::getRelatedEmailableModules($moduleName);
+        
         $app_list_strings['stic_signatures_signer_path_list'][''] = '';
+        
+        // Populate the list, applying exclusions
         foreach ($relatedModules as $key => $value) {
             $module = explode(':', $key)[0];
             $moduleField = explode(':', $key)[1] ?? '';
+            
             // Exclude Leads module as signers
             if ($module == 'Leads') {
                 continue;
             }
+            
             // Exclude Users module except for assigned_user_id field
-            if($module == 'Users' && $moduleField != 'assigned_user_id'){ 
+            if ($module == 'Users' && $moduleField != 'assigned_user_id') {
                 continue;
             }
            
@@ -173,18 +187,21 @@ class stic_SignaturesUtils
 
     /**
      * Retrieves the signers for a given signature ID and main module IDs.
+     * It handles direct relationships and relate fields, and optionally retrieves authorized signers.
      *
      * @param string $signatureId The ID of the signature.
      * @param array|string $mainModuleIds An array or single value of main module IDs.
-     * @return array An array of signer data.
+     * @return array An array of unique signer data (id => ['module', 'sourceModule', 'sourceId', 'signerPath', 'onBehalfOfId', 'id', 'name', 'email', 'phone']).
      */
     public static function getSignatureSigners($signatureId, $mainModuleIds)
     {
         global $app_list_strings;
+        
         if (empty($signatureId) || empty($mainModuleIds)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature [{$signatureId}] or Main Module ID [{$mainModuleIds}] is empty.");
             return [];
         }
+        
         // Initialize an empty array to hold unique signer IDs
         $signersIdList = [];
 
@@ -201,9 +218,10 @@ class stic_SignaturesUtils
         $mainModule = $signatureBean->main_module;
         $signerPath = $signatureBean->signer_path;
         $signerModule = explode(':', $signerPath)[0];
-        $signerPath = explode(':', $signerPath)[1] ?? $signerPath;
+        // Handle case where $signerPath is just the module name (direct bean)
+        $signerPath = explode(':', $signerPath)[1] ?? $signerPath; 
 
-        // Check if the main module and signer module are valid
+        // Process each main module ID to find related signers
         foreach ($mainModuleIds as $mainModuleId) {
             $mainModuleBean = BeanFactory::getBean($mainModule, $mainModuleId);
             if (empty($mainModuleBean)) {
@@ -212,12 +230,11 @@ class stic_SignaturesUtils
             }
 
             $signers = [];
+            // Try to retrieve linked beans based on relationships
             if ($signerPath !== $signerModule) {
-                // Try to retrieve the linked beans based on relationships
                 $signers = $mainModuleBean->get_linked_beans($signerPath, $signerModule);
             } else {
-                // If the signerPath is the same as the signerModule, we can directly access the bean
-                // This means the signer *is* the main module bean itself.
+                // If the signerPath is the same as the signerModule, the signer *is* the main module bean itself.
                 $signers = [$mainModuleBean];
             }
 
@@ -229,17 +246,18 @@ class stic_SignaturesUtils
                 if (!empty($relatedBean)) {
                     $signers[] = $relatedBean;
                 } else {
+                    // Log error if related bean is not found
                     SugarApplication::appendErrorMessage("<p class='msg-error'> " . translate('LBL_SIGNERS_NOT_ADDED_NOT_EXISTS', 'stic_Signatures') . " : [" . $app_list_strings['moduleListSingular'][$mainModuleBean->object_name] . "-{$mainModuleBean->name}]</p>");
 
                 }
             }
 
-            // Check if authorized signer option is enabled. In these cases, we need to fetch authorized signers
-            // and replace the current signers list with autorized signers
+            // Check if authorized signer option is enabled (on behalf of a contact).
             $useAuthorizedSigner = $signatureBean->on_behalf_of ?? false;
             $onBehalfOfId = $signers[0]->id ?? '';
-            if ($useAuthorizedSigner == true && $signerModule === 'Contacts') {
-                // If using authorized signers, fetch them and merge with existing signers
+            
+            // If using authorized signers, fetch them and replace/merge the current signers list
+            if ($useAuthorizedSigner == true && $signerModule === 'Contacts' && !empty($onBehalfOfId)) {
                 $signers = self::getAuthorizedSigner($onBehalfOfId);
             }
 
@@ -262,11 +280,12 @@ class stic_SignaturesUtils
                         'id' => $signer->id,
                         'name' => $signer->name,
                         'email' => $signer->email1 ?? '',
-                        'phone' => $signer->phone_mobile ?? '', // Prioritize work phone, then mobile
+                        'phone' => $signer->phone_mobile ?? '', // Prioritize mobile phone
                     ];
                 }
             }
         }
+        
         return $signersIdList;
     }
 
@@ -274,10 +293,10 @@ class stic_SignaturesUtils
      * Retrieves the parsed HTML template for a given signer ID.
      * This function fetches the PDF template associated with the signature,
      * populates it with data from the source module related to the signer,
-     * and returns the resulting HTML.
+     * and returns the resulting HTML header, content, and footer.
      *
      * @param string $signerId The ID of the signer.
-     * @return string The parsed HTML template, or an error message if beans are invalid.
+     * @return array An associative array containing the parsed 'header', 'converted' (content), and 'footer'.
      */
     public static function getParsedTemplate($signerId)
     {
@@ -291,28 +310,34 @@ class stic_SignaturesUtils
             sugar_die("Invalid Signer ID provided: {$signerId}");
         }
 
+        // Retrieve the related Signature Bean
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
         // Ensure signatureBean exists
         if (!$signatureBean || empty($signatureBean->id)) {
             sugar_die("Invalid Signature Bean related to Signer ID: {$signerId}");
         }
 
+        // Retrieve the related PDF Template Bean
         $pdfTemplateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c ?? '');
         // Ensure pdfTemplateBean exists
         if (!$pdfTemplateBean || empty($pdfTemplateBean->id)) {
             sugar_die("Invalid PDF Template Bean related to Signature ID: {$signatureBean->id}");
         }
 
+        // Retrieve the Source Module Bean (e.g., Accounts, Contacts)
         $sourceModuleBean = BeanFactory::getBean($signatureBean->main_module ?? '', $signerBean->record_id ?? '');
         // Ensure sourceModuleBean exists
         if (!$sourceModuleBean || empty($sourceModuleBean->id)) {
             sugar_die("Invalid Source Module Bean related to Signer ID: {$signerId} (Module: {$signatureBean->main_module}, Record ID: {$signerBean->record_id})");
         }
-
+        
+        $authorizedSourceModuleArray = [];
+        // Handle case for authorized signers (on behalf of a contact)
         if ($signerBean->parent_type === 'Contacts' && $signatureBean->on_behalf_of == 1) {
             foreach (self::getAuthorizedSigner($signerBean->on_behalf_of_id ?? '') as $auth) {
                 if ($signerBean->parent_id == $auth->id) {
-                    $authorizedSourceModuleArray = ['Contacts' => $auth->id];
+                    $authorizedSourceModuleArray['Contacts'] = $auth->id;
+                    break;
                 }
             }
         }
@@ -323,7 +348,7 @@ class stic_SignaturesUtils
         $templateBean = $pdfTemplateBean;
 
         // Define the patterns used to clean the template HTML code
-        $search = array(
+        $search = [
             '/<script[^>]*?>.*?<\/script>/si', // Strip out javascript
             '/<[\/\!]*?[^<>]*?>/si', // Strip out HTML tags
             '/([\r\n])[\s]+/', // Strip out white space
@@ -336,9 +361,9 @@ class stic_SignaturesUtils
             '/<address[^>]*?>/si',
             '/&(apos|#0*39);/',
             '/&#(\d+);/',
-        );
+        ];
 
-        $replace = array(
+        $replace = [
             '',
             '',
             '\1',
@@ -351,13 +376,16 @@ class stic_SignaturesUtils
             '<br>',
             "'",
             'chr(%1)',
-        );
+        ];
 
-        // Clean the template content
+        // Clean the template content (header, footer, description)
         $header = preg_replace($search, $replace, $templateBean->pdfheader);
         $footer = preg_replace($search, $replace, $templateBean->pdffooter);
         $text = preg_replace($search, $replace, $templateBean->description);
+        
+        // Replace custom pagebreak tag
         $text = str_replace("<p><pagebreak /></p>", "<pagebreak />", $text);
+        
         // Replace {DATE} placeholder with current date formatted as specified in the template
         $text = preg_replace_callback(
             '/\{DATE\s+(.*?)\}/',
@@ -370,9 +398,10 @@ class stic_SignaturesUtils
         // Handle AOS (Advanced OpenSales) specific modules for line items
         if (str_starts_with($_REQUEST['module'], "AOS_")) {
             $variableName = strtolower($bean->module_dir);
-            $lineItemsGroups = array();
-            $lineItems = array();
+            $lineItemsGroups = [];
+            $lineItems = [];
 
+            // Query to fetch line items and groups
             $sql = "SELECT pg.id, pg.product_id, pg.group_id FROM aos_products_quotes pg LEFT JOIN aos_line_item_groups lig ON pg.group_id = lig.id WHERE pg.parent_type = '" . $bean->object_name . "' AND pg.parent_id = '" . $bean->id . "' AND pg.deleted = 0 ORDER BY lig.number ASC, pg.number ASC";
             $res = $bean->db->query($sql);
             while ($row = $bean->db->fetchByAssoc($res)) {
@@ -381,6 +410,7 @@ class stic_SignaturesUtils
             }
 
             // Backward compatibility for related beans in AOS modules
+            $object_arr = [];
             if (isset($bean->billing_account_id)) {
                 $object_arr['Accounts'] = $bean->billing_account_id;
             }
@@ -394,7 +424,7 @@ class stic_SignaturesUtils
                 $object_arr['Currencies'] = $bean->currency_id;
             }
 
-            // Replace specific AOS variables with dynamic ones
+            // Replace specific AOS variables with dynamic ones based on the module name
             $text = str_replace("\$aos_quotes", "\$" . $variableName, $text);
             $text = str_replace("\$aos_invoices", "\$" . $variableName, $text);
             $text = str_replace("\$total_amt", "\$" . $variableName . "_total_amt", $text);
@@ -409,68 +439,69 @@ class stic_SignaturesUtils
         }
 
         // The parse_template function requires an array of beans
-        $beanArray = array();
-        $beanArray[$bean->module_dir] = $bean->id;
+        $beanArray = [$bean->module_dir => $bean->id];
 
-        // Parse the template using the record's data
+        // First parse: Parse the template using the record's data
         $converted = templateParser::parse_template($text, $beanArray);
         $header = templateParser::parse_template($header, $beanArray);
         $footer = templateParser::parse_template($footer, $beanArray);
 
-        // Replace $authorized_ marks with $contacts_, to re-parse later
+        // Replace $authorized_ marks with $contacts_, to re-parse later with authorized contact data
         $converted = str_replace('$authorized_', '$contacts_', $converted);
         $header = str_replace('$authorized_', '$contacts_', $header);
         $footer = str_replace('$authorized_', '$contacts_', $footer);
 
-        // Second parse, using authorized contact data
-        $converted = templateParser::parse_template($converted, $authorizedSourceModuleArray ?? []);
-        $header = templateParser::parse_template($header, $authorizedSourceModuleArray ?? []);
-        $footer = templateParser::parse_template($footer, $authorizedSourceModuleArray ?? []);
+        // Second parse: using authorized contact data (if available)
+        $converted = templateParser::parse_template($converted, $authorizedSourceModuleArray);
+        $header = templateParser::parse_template($header, $authorizedSourceModuleArray);
+        $footer = templateParser::parse_template($footer, $authorizedSourceModuleArray);
 
-        // Replace last break lines by HTML tags (this line seems redundant if HTML tags are stripped earlier,
-        // but it implies converting remaining newlines to <br /> for display purposes after parsing)
+        // Replace last break lines by HTML tags (to handle remaining newlines as <br /> for display)
         $printable = str_replace("\n", "<br />", $converted);
 
-        // return "{$header}{$converted}{$footer}";
         return ['header' => $header, 'converted' => $converted, 'footer' => $footer];
     }
 
     /**
-     * Generates a verification code for a signed PDF associated with a given signer ID.
+     * Generates a verification code for a signed PDF.
      * The verification code is created by computing the SHA-256 hash of the signed PDF file.
      *
-     * @param string $signerId The ID of the signer whose signed PDF is to be verified.
-     * @return string The SHA-256 hash of the signed PDF file, or an empty string if the file does not exist or the signer ID is invalid.
+     * @param string $pdfPath The file system path to the signed PDF file.
+     * @return string The SHA-256 hash of the signed PDF file, or an empty string if the file does not exist.
      */
     public static function getVerificationCodeForSignedPdf($pdfPath)
     {
-
         if (!file_exists($pdfPath)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signed PDF file does not exist for Signer ID: {$signerBean->id}");
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signed PDF file does not exist for path: {$pdfPath}");
             return '';
         }
+        
         $verificationCode = hash_file('sha256', $pdfPath);
         return $verificationCode;
-
     }
 
     /**
      * Retrieves authorized signers associated with a given contact ID.
+     * Authorized signers are linked to the contact via 'stic_Personal_Environment' beans 
+     * where the 'authorized_signer' field is set to true.
      *
      * @param string $contactId The ID of the contact.
-     * @return array An array of authorized signer beans.
+     * @return array An array of authorized signer contact beans.
      */
     public static function getAuthorizedSigner($contactId)
     {
         // Initialize an empty array to hold authorized signers
         $authorizedSigners = [];
 
-        // Load the contact bean
+        // Load the contact bean, check if ID is valid
+        $contactBean = null;
         if (is_string($contactId) && !empty($contactId)) {
             $contactBean = BeanFactory::getBean('Contacts', $contactId);
         }
+        
         // Ensure contactBean exists
         if ($contactBean && !empty($contactBean->id)) {
+            // Find 'stic_Personal_Environment' beans linked to the contact and marked as 'authorized_signer = 1'
             $environment = $contactBean->get_linked_beans(
                 'stic_personal_environment_contacts',
                 'stic_Personal_Environment',
@@ -478,9 +509,10 @@ class stic_SignaturesUtils
                 0,
                 0,
                 0,
-                'authorized_signer = 1');
+                'authorized_signer = 1'
+            );
 
-            // Loop through each environment and collect authorized signers
+            // Loop through each environment and collect authorized signers (Contacts)
             foreach ($environment as $env) {
                 foreach ($env->get_linked_beans('stic_personal_environment_contacts_1', 'Contacts') as $authSigner) {
                     $authorizedSigners[] = $authSigner;
@@ -489,15 +521,17 @@ class stic_SignaturesUtils
         } else {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Contact Bean for ID [{$contactId}] is empty.");
         }
+        
         return $authorizedSigners;
     }
 
     /**
      * Generates an acceptance image with provided text lines.
      * This image is used to represent acceptance in button mode signatures.
+     * The image is generated based on a background template and includes text overlaid.
      *
-     * @param array $lines An array of text lines to include in the acceptance image.
-     * @return string A Base64-encoded PNG image string.
+     * @param array $lines An array of text lines to include in the acceptance image. Default is ['No text received'].
+     * @return string A Base64-encoded PNG image string ('data:image/png;base64,...').
      */
     public static function generateAcceptImage($lines = ['No text received'])
     {
@@ -516,26 +550,26 @@ class stic_SignaturesUtils
             $width = 200;
             $height = 50;
             $image = imagecreatetruecolor($width, $height);
-            $bg_color = imagecolorallocate($image, 255, 200, 200); // Fondo rojo claro para indicar error
+            $bg_color = imagecolorallocate($image, 255, 200, 200); // Light red background for error
             imagefill($image, 0, 0, $bg_color);
-            $text_color = imagecolorallocate($image, 255, 0, 0); // Texto rojo
-            imagestring($image, 3, 10, 10, "Error: Fondo no encontrado!", $text_color);
+            $text_color = imagecolorallocate($image, 255, 0, 0); // Red text
+            imagestring($image, 3, 10, 10, "Error: Background not found!", $text_color);
             imagestring($image, 3, 10, 30, join(' ', $lines), $text_color);
         } else {
-            //  create the image from the background PNG file
+            // Create the image from the background PNG file
             $image = imagecreatefrompng($background_image_path);
 
-            // get image dimensions
+            // Get image dimensions
             $width = imagesx($image);
             $height = imagesy($image);
 
-            // create a semi-transparent overlay
+            // Create a semi-transparent white overlay
             $attenuated_color = imagecolorallocatealpha($image, 255, 255, 255, 20);
 
-            // fill the image with the semi-transparent overlay
+            // Fill the image with the semi-transparent overlay
             imagefilledrectangle($image, 0, 0, $width, $height, $attenuated_color);
 
-            // set the text color (dark blue)
+            // Set the text color (dark blue)
             $text_color = imagecolorallocate($image, 0, 51, 102);
 
             // Check if the font file exists
@@ -552,15 +586,15 @@ class stic_SignaturesUtils
                 // Calculate the starting Y position to vertically center the text block
                 $y_pos = ($height / 2) - ($total_height / 2) + $font_size;
 
-                //  Draw each line of text
+                // Draw each line of text
                 foreach ($lines as $line) {
-                    // set the X position to start drawing text (left-aligned with some padding)
+                    // Set the X position to start drawing text (left-aligned with some padding)
                     $x_pos = 5;
 
                     // Render the text on the image
                     imagettftext($image, $font_size, $angle, $x_pos, $y_pos, $text_color, $font_path, $line);
 
-                    // Mueve la posición Y para la siguiente línea
+                    // Move the Y position for the next line
                     $y_pos += $line_height;
                 }
             }
@@ -576,7 +610,4 @@ class stic_SignaturesUtils
         // Return the Base64-encoded image data
         return 'data:image/png;base64,' . base64_encode($imgData);
     }
-
-   
-
 }

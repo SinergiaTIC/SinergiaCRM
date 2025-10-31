@@ -27,9 +27,10 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Signature_Log', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Signature_Log&action=EditView&return_module=stic_Signature_Log&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Signature_Log');
-}
+// Disable creation of new records
+// if(ACLController::checkAccess('stic_Signature_Log', 'edit', true)){
+//     $module_menu[]=array('index.php?module=stic_Signature_Log&action=EditView&return_module=stic_Signature_Log&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Signature_Log');
+// }
 if(ACLController::checkAccess('stic_Signature_Log', 'list', true)){
     $module_menu[]=array('index.php?module=stic_Signature_Log&action=index&return_module=stic_Signature_Log&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Signature_Log');
 }
