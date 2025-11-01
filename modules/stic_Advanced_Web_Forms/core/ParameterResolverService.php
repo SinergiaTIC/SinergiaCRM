@@ -166,17 +166,49 @@ class ParameterResolverService {
         return new BeanReference($parts[0], $parts[1]);
     }
 
-    private function resolveFormField(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?mixed {
-        $fieldName = $value !== null ? $value : $def->defaultValue;
-        if ($fieldName === null) {
+    private function resolveFormField(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?DataBlockFieldResolved {
+        $formKey = $value !== null ? $value : $def->defaultValue;
+        if ($formKey === null || $formKey == '') {
+            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Field name is null or empty.");
             return null;
         }
 
-        if (array_key_exists($fieldName, $context->formData)) {
-            return $context->formData[$fieldName];
+        $submittedValue = $context->formData[$formKey] ?? null;
+
+        // Parse formKey to find the dataBlock and dataBlockField definitions
+        $isDetached = str_starts_with($formKey, '_detached.');
+        $keyToParse = $isDetached ? substr($formKey, strlen('_detached.')) : $formKey;
+        $parts = explode('.', $keyToParse, 2);
+        if (count($parts) !== 2) {
+            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": The field name '{$formKey}' has an invalid format.");
+
+            $fieldName = $formKey; 
+            return new DataBlockFieldResolved($formKey, $fieldName, null, $submittedValue);
         }
-        $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Field '{$fieldName}' not found in received form data.");
-        return null;
+        $blockName = $parts[0];
+        $fieldName = $parts[1];
+
+        // Find the dataBlock definition
+        $dataBlockConfig = null;
+        foreach ($context->formConfig->data_blocks as $block) {
+            if ($block->name === $blockName) {
+                $dataBlockConfig = $block;
+                break;
+            }
+        }
+
+        // Find the dataBlockField definition
+        $fieldDefinition = null;
+        if ($dataBlockConfig !== null) {
+            foreach ($dataBlockConfig->fields as $fieldDef) {
+                if ($fieldDef->name === $fieldName) {
+                    $fieldDefinition = $fieldDef;
+                    break;
+                }
+            }
+        }
+
+        return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $submittedValue);
     }
 
     private function resolveObjectSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?mixed {

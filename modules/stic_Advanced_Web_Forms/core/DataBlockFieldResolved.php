@@ -25,17 +25,24 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."BeanReference.php";
-include_once __DIR__."BeanModified.php";
-include_once __DIR__."DataBlockResolved.php";
-include_once __DIR__."DataBlockFieldResolved.php";
-include_once __DIR__."ActionResult.php";
-include_once __DIR__."WebhookResult.php";
-include_once __DIR__."ExecutionContext.php";
+/**
+ * Clase para un campo de bloque de datos con los datos rellenados de un formulario
+ */
+class DataBlockFieldResolved {
+    public ?FormDataBlockField $dataBlockField;   // La confifuración del Campo del Bloque de datos (si existe)
 
-include_once __DIR__."ServerActionFactory.php";
-include_once __DIR__."ServerActionFlowExecutor.php";
-include_once __DIR__."ActionDiscoveryService.php";
+    public string $formKey;         // El nombre completo del campo en el formulario
+    public string $fieldName;       // El nombre del campo (después del prefijo) (ex: email1, first_name)
+    public ?mixed $value;           // El valor enviado desde el formulario
 
-include_once __DIR__."formdefs/includes.php";
-include_once __DIR__."actiondefs/includes.php";
+    public function __construct(string $formKey, string $fieldName, ?FormDataBlockField $config, mixed $value) {
+        $this->formKey = $formKey;
+        $this->fieldName = $fieldName;
+        $this->dataBlockField = $config;
+        $this->value = $value;
+    }
+
+    public function isDetached(): bool {
+        return str_starts_with($this->formKey, '_detached.');
+    }
+}
