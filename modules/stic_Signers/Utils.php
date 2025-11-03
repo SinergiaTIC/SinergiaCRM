@@ -65,7 +65,7 @@ class stic_SignersUtils
 
         // Get the email template ID from the signature, or use a default if not set
         // The default ID '000005f1-2e4e-3b11-051f-68e3c9e70330' is hardcoded here.
-        $templateId = $signatureBean->emailtemplate_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70330';
+        $templateId = empty($signatureBean->emailtemplate_id_c) ? '000005f1-2e4e-3b11-051f-68e3c9e70330' : $signatureBean->emailtemplate_id_c;
 
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
@@ -91,9 +91,6 @@ class stic_SignersUtils
             die();
         }
         $mail->AddAddress($destAddress);
-
-        // Construct the unique signing URL (used for template parsing)
-        $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
 
         // Cargar beans relacionados: signature, contact/user (si aplica) y el signer ya cargado
         $relatedContactOrUserBean = null;
@@ -176,10 +173,12 @@ class stic_SignersUtils
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' .              __METHOD__ . ': ' . " Related user/contact not found for Signer ID: {$signerId}");
             return false;
         }
-
-        $parsedMailArray = SticUtils::parseEmailTemplate(($signatureBean->emailtemplateotp_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70332'), [
+        
+        // Get the email template ID from the signature, or use a default if not set
+        $templateId = empty($signatureBean->emailtemplateotp_id_c) ? '000005f1-2e4e-3b11-051f-68e3c9e70332' : $signatureBean->emailtemplateotp_id_c;
+        $parsedMailArray = SticUtils::parseEmailTemplate($templateId, [
             $signerBean,
-            $signatureBean,
+            $signatureBean, 
             $userOrContactsBean,
         ]);
 
@@ -282,7 +281,8 @@ class stic_SignersUtils
             return false;
         }
 
-        $parsedTemplateArray = SticUtils::parseEmailTemplate(($signatureBean->emailtemplateotpsms_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70333'), [
+        $templateId = empty($signatureBean->emailtemplateotpsms_id_c) ? '000005f1-2e4e-3b11-051f-68e3c9e70333' : $signatureBean->emailtemplateotpsms_id_c;
+        $parsedTemplateArray = SticUtils::parseEmailTemplate($templateId, [
             $signerBean,
             $signatureBean,
             $userOrContactsBean,

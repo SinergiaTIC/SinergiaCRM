@@ -340,7 +340,9 @@ class stic_SignaturePortalUtils
         }
         $mail->AddAddress($destAddress);
 
-        $parsedTemplate = SticUtils::parseEmailTemplate(($signatureBean->emailtemplatesenddocument_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70331'), [
+        // Parse the email template using all relevant beans
+        $templateId = empty($signatureBean->emailtemplatesenddocument_id_c) ? '000005f1-2e4e-3b11-051f-68e3c9e70331' : $signatureBean->emailtemplatesenddocument_id_c;
+        $parsedTemplate = SticUtils::parseEmailTemplate($templateId, [
             $signerBean,
             $signatureBean,
             $userOrContactsBean,

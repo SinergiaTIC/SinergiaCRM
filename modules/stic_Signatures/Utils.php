@@ -176,8 +176,8 @@ class stic_SignaturesUtils
                 continue;
             }
             
-            // Exclude Users module except for assigned_user_id field
-            if ($module == 'Users' && $moduleField != 'assigned_user_id') {
+            // Exclude Users module except for assigned_user_id field when main module is also Users
+            if ($moduleName != 'Users' &&$module == 'Users' && $moduleField != 'assigned_user_id') {
                 continue;
             }
            
