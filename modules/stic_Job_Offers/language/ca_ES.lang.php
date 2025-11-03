@@ -143,6 +143,7 @@ $mod_strings = array(
     'LBL_EDITVIEW_PANEL4' => 'SEPE/Incorpora',
     'LBL_EDITVIEW_PANEL5' => 'Descripció Oferta',
     'LBL_EDITVIEW_PANEL7' => 'Requisits Oferta Incorpora',
+    'LBL_EDITVIEW_PANEL8' => 'Voluntariat',
     'LBL_DETAILVIEW_PANEL6' => 'Detalls de sincronització',
     'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE' => 'Candidatures',
     'LBL_DEFAULT_PANEL' => 'Dades generals',

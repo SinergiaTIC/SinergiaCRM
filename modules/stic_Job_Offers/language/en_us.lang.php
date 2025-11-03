@@ -143,6 +143,7 @@ $mod_strings = array(
     'LBL_EDITVIEW_PANEL4' => 'SEPE/Incorpora',
     'LBL_EDITVIEW_PANEL5' => 'Offer description',
     'LBL_EDITVIEW_PANEL7' => 'Offer requirements Incorpora',
+    'LBL_EDITVIEW_PANEL8' => 'Volunteering',
     'LBL_DETAILVIEW_PANEL6' => 'Synchronization details',
     'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE' => 'Job applications',
     'LBL_DEFAULT_PANEL' => 'Overview',

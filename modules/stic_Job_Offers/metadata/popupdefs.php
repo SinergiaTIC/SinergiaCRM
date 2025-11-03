@@ -26,7 +26,10 @@ $popupMeta = array (
     'orderBy' => 'stic_job_offers.name',
     'whereClauses' => array (
   'name' => 'stic_job_offers.name',
+  'offer_type' => 'stic_job_offers.offer_type',
   'status' => 'stic_job_offers.status',
+  'offer_mode' => 'stic_job_offers.offer_mode',
+  'weekdays' => 'stic_job_offers.weekdays',
   'professional_profile' => 'stic_job_offers.professional_profile',
   'process_start_date' => 'stic_job_offers.process_start_date',
   'process_end_date' => 'stic_job_offers.process_end_date',
@@ -35,26 +38,42 @@ $popupMeta = array (
   'applications_end_date' => 'stic_job_offers.applications_end_date',
   'type' => 'stic_job_offers.type',
   'stic_job_offers_accounts_name' => 'stic_job_offers.stic_job_offers_accounts_name',
+  'responsible' => 'stic_job_offers.responsible',
+  'center' => 'stic_job_offers.center',
+  'project' => 'stic_job_offers.project',
   'assigned_user_id' => 'stic_job_offers.assigned_user_id',
 ),
     'searchInputs' => array (
   1 => 'name',
+  2 => 'offer_type',
   3 => 'status',
-  5 => 'professional_profile',
-  6 => 'process_start_date',
-  7 => 'process_end_date',
+  4 => 'offer_mode',
+  5 => 'weekdays',
+  6 => 'professional_profile',
+  7 => 'process_start_date',
+  8 => 'process_end_date',
   9 => 'offer_code',
   10 => 'applications_start_date',
   13 => 'applications_end_date',
   14 => 'type',
   15 => 'stic_job_offers_accounts_name',
-  18 => 'assigned_user_id',
+  18 => 'responsible',
+  17 => 'center',
+  16 => 'project',
+  19 => 'assigned_user_id',
 ),
     'searchdefs' => array (
   'name' => 
   array (
     'name' => 'name',
     'width' => '10%',
+  ),
+  'offer_type' => 
+  array (
+    'type' => 'enum',
+    'label' => 'LBL_OFFER_TYPE',
+    'width' => '10%',
+    'name' => 'offer_type',
   ),
   'offer_code' => 
   array (
@@ -70,6 +89,21 @@ $popupMeta = array (
     'label' => 'LBL_STATUS',
     'width' => '10%',
     'name' => 'status',
+  ),
+  'offer_mode' => 
+  array (
+    'type' => 'enum',
+    'label' => 'LBL_OFFER_MODE',
+    'width' => '10%',
+    'name' => 'offer_code',
+  ),
+  'weekdays' => 
+  array (
+    'type' => 'multienum',
+    'studio' => 'visible',
+    'label' => 'LBL_WEEKDAYS',
+    'width' => '10%',
+    'name' => 'weekdays',
   ),
   'professional_profile' => 
   array (
@@ -123,6 +157,33 @@ $popupMeta = array (
     'width' => '10%',
     'id' => 'STIC_JOB_OFFERS_ACCOUNTSACCOUNTS_IDA',
     'name' => 'stic_job_offers_accounts_name',
+  ),
+  'responsible' =>
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_RESPONSIBLE',
+    'width' => '10%',
+    'id' => 'responsible_id',
+    'name' => 'responsible',
+  ),
+  'center' =>
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_CENTER',
+    'width' => '10%',
+    'id' => 'center_id',
+    'name' => 'center',
+  ),
+  'project' =>
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_PROJECT',
+    'width' => '10%',
+    'id' => 'project_id',
+    'name' => 'project',
   ),
   'assigned_user_id' => 
   array (
