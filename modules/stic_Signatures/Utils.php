@@ -334,7 +334,7 @@ class stic_SignaturesUtils
         $authorizedSourceModuleArray = [];
         // Handle case for authorized signers (on behalf of a contact)
         if ($signerBean->parent_type === 'Contacts' && $signatureBean->on_behalf_of == 1) {
-            foreach (self::getAuthorizedSigner($signerBean->on_behalf_of_id ?? '') as $auth) {
+            foreach (self::getAuthorizedSigner($signerBean->contact_id_c ?? '') as $auth) {
                 if ($signerBean->parent_id == $auth->id) {
                     $authorizedSourceModuleArray['Contacts'] = $auth->id;
                     break;
