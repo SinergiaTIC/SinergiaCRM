@@ -68,7 +68,10 @@ $mod_strings = array(
     'LBL_ACTIVATION_DATE' => 'Fecha de activación',
     'LBL_EXPIRATION_DATE' => 'Fecha de vencimiento',
     'LBL_MINIMUM_SIGNATURES' => 'Firmes mínimes',
-    'LBL_EMAIL_TEMPLATE' => 'Plantilla de correu',
+    'LBL_EMAIL_TEMPLATE' => 'Plantilla de correu per a notificació al firmant',
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT' => 'Plantilla de correu per a l\'enviament de documents',
+    'LBL_EMAIL_TEMPLATE_OTP' => 'Plantilla de correu per a OTP',
+    'LBL_EMAIL_TEMPLATE_OTP_SMS' => 'Plantilla de SMS per a OTP',
     'LBL_PDF_TEMPLATE' => 'Plantilla PDF',
     'LBL_PDF_AUDIT_PAGE' => "Inclou la pàgina d'auditoria",
     'LBL_END_DATE' => 'Fecha de Finalización',
@@ -201,5 +204,9 @@ $mod_strings = array(
     'LBL_TYPE_HELP' => 'Tipus de signatura a configurar.  Actualment només disponible l\'opció "Individual".',
     'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que s\'utilitzarà per informar als signants. Aquesta plantilla aplica per informar als signants directament, <strong>quan no se\'ls notifica mitjançant campanya de notificacions, en quin cas s\'utilitza la plantilla indicada en el propi procés.</strong>. En cas de no estar informada, s\'utilitza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla per defecte.</a>',
     'LBL_SIGNER_PATH_HELP' => 'Ruta cap a la persona signant dins del mòdul principal, es mostren les possibles opcions a triar, que relacionen el mòdul principal de la signatura amb el mòdul de signants (Persones o Usuaris).',
+    'LBL_EMAIL_TEMPLATE_HELP' => 'Plantilla de correu utilitzada per notificar als signants sobre el procés de signatura. Aquesta plantilla ha d\'incloure la informació necessària perquè el signant pugui accedir al portal de firmes i completar el procés.',
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correu utilitzada per enviar el document signat als signants.',
+    'LBL_EMAIL_TEMPLATE_OTP_HELP' => 'Plantilla de correu utilitzada per enviar el codi OTP als signants per correu electrònic.',
+    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'Plantilla de SMS utilitzada per enviar el codi OTP als signants per SMS.',    
 
 );

@@ -261,6 +261,8 @@ class stic_SignaturePortalUtils
     {
         global $sugar_config, $current_user;
 
+        require_once 'SticInclude/Utils.php';
+
         $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Signatures');
 
         // Validate signer ID
@@ -270,7 +272,33 @@ class stic_SignaturePortalUtils
 
         // Retrieve the signer bean
         $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+        if(empty($signerBean) || empty($signerBean->id)) {
+            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " Signer not found for ID: {$signerId}");
+            return [
+                'success' => false,
+                'message' => 'Signer not found.',
+            ];
+        }
 
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        if (empty($signatureBean) || empty($signatureBean->id)) {
+            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " Signature not found for Signer ID: {$signerId}");
+            return [
+                'success' => false,
+                'message' => 'Signature not found for signer.',
+            ];
+        }
+
+        $userOrContactsBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
+        if (empty($userOrContactsBean) || empty($userOrContactsBean->id)) {
+            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " Related user/contact not found for Signer ID: {$signerId}");
+            return [
+                'success' => false,
+                'message' => 'Related user/contact not found for signer.',
+            ];
+        }
+            
+            
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
         if (empty($destAddress)) {
@@ -279,6 +307,8 @@ class stic_SignaturePortalUtils
                 'message' => 'No destination email address.',
             ];
         }
+
+
 
         // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
@@ -310,32 +340,21 @@ class stic_SignaturePortalUtils
         }
         $mail->AddAddress($destAddress);
 
+        $parsedTemplate = SticUtils::parseEmailTemplate(($signatureBean->emailtemplatesenddocument_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70331'), [
+            $signerBean,
+            $signatureBean,
+            $userOrContactsBean,
+        ]);
+
+
+
         // Set the email subject
-        $subject = $mod_strings['LBL_SIGNED_PDF_EMAIL_SUBJECT'];
+        $subject = $parsedTemplate['subject'];
         $mail->Subject = $subject;
 
-        // Construct the signed PDF URL
-        // Determine the base URI for constructing URLs (to handle different server setups)
-        $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}&otp-code={$signerBean->otp}";
+        // Generate the email body using the template
+        $completeHTML=$parsedTemplate['body_html'];
 
-        // Prepare the complete HTML body of the email
-        $completeHTML = "<html>
-                            <head>
-                                <title>{$subject}</title>
-                            </head>
-                            <body style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333;\">
-                            <h1>    {$signerBean->name}    </h1>
-                            {$mod_strings['LBL_SIGNED_PDF_EMAIL_BODY']}.
-                            <pre>{$signerBean->verification_code}</pre>
-                            <br>
-                            {$mod_strings['LBL_SIGNED_PDF_REOPEN_PORTAL']}
-                            <br><a href=\"{$signURL}\" target=\"_blank\" style=\"font-size: 16px; width: auto; font-family: Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 5px; padding: 12px 20px; background-color: #007BFF; border: 1px solid #007BFF; display: inline-block; font-weight: bold;\">
-                                            {$mod_strings['LBL_SIGNER_REDIRECT_TO_PORTAL']}
-                                        </a>
-
-
-                            </body>
-                        </html>";
         $mail->Body = from_html($completeHTML);
         $mail->isHtml(true);
         $mail->prepForOutbound();

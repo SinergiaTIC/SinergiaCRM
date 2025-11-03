@@ -115,20 +115,36 @@ array(
                         'label' => 'LBL_PDF_AUDIT_PAGE',
                     ),
                     1 => array(
-                        'name' => 'email_template',
-                        'studio' => 'visible',
-                        'label' => 'LBL_EMAIL_TEMPLATE',
-                    ),
-                ),
-                5 => array(
-                    0 => array(
                         'name' => 'on_behalf_of',
                         'studio' => 'visible',
                         'label' => 'LBL_ON_BEHALF_OF',
                     ),
-                    1 => array(),
+                ),
+                5 => array(
+                    0 => array(
+                        'name' => 'email_template',
+                        'studio' => 'visible',
+                        'label' => 'LBL_EMAIL_TEMPLATE',
+                    ),
+                    1 => array(
+                        'name' => 'email_template_send_document',
+                        'studio' => 'visible',
+                        'label' => 'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT',
+                    ),
                 ),
                 6 => array(
+                    0 => array(
+                        'name' => 'email_template_otp',
+                        'studio' => 'visible',
+                        'label' => 'LBL_EMAIL_TEMPLATE_OTP',
+                    ),
+                    1 => array(
+                        'name' => 'email_template_otp_sms',
+                        'studio' => 'visible',
+                        'label' => 'LBL_EMAIL_TEMPLATE_OTP_SMS',
+                    ),
+                ),
+                7 => array(
                     0 => array(
                         'name' => 'description',
 

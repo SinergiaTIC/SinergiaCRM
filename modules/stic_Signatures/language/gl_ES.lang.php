@@ -68,7 +68,10 @@ $mod_strings = array(
     'LBL_ACTIVATION_DATE' => 'Data de activación',
     'LBL_EXPIRATION_DATE' => 'Data de caducidade',
     'LBL_MINIMUM_SIGNATURES' => 'Sinaturas mínimas',
-    'LBL_EMAIL_TEMPLATE' => 'Modelo de correo',
+    'LBL_EMAIL_TEMPLATE' => 'Modelo de correo para notificación ao asinante',
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT' => 'Modelo de correo para o envío de documentos',
+    'LBL_EMAIL_TEMPLATE_OTP' => 'Modelo de correo para OTP',
+    'LBL_EMAIL_TEMPLATE_OTP_SMS' => 'Modelo de SMS para OTP',
     'LBL_PDF_TEMPLATE' => 'Plantilla PDF',
     'LBL_PDF_AUDIT_PAGE' => 'Incluír páxina de auditoría',
     'LBL_END_DATE' => 'Data de finalización',
@@ -201,5 +204,9 @@ $mod_strings = array(
     'LBL_TYPE_HELP' => 'Tipo de firma a configurar. Actualmente só disponible a opción "Individual".',
     'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que se utilizará para informar aos sinantes. Esta plantilla aplica para informar aos sinantes directamente, <strong>cando non se lles notifica mediante campaña de notificacións, no cal caso se usa a plantilla indicada no propio proceso.</strong>. En caso de non estar informada, utilízase a <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla por defecto.</a>',
     'LBL_SIGNER_PATH_HELP' => 'Ruta cara á persoa asinante dentro do módulo principal, móstranse as posibles opcións a elixir, que relacionan o módulo principal da sinatura co módulo de asinantes (Persoas ou Usuarios).',
+    'LBL_EMAIL_TEMPLATE_HELP' => 'Plantilla de correo utilizada para notificar a los sinantes sobre el proceso de firma. Esta plantilla debe incluir la información necesaria para que el firmante pueda acceder al portal de firmas y completar el proceso.',
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correo utilizada para enviar el documento firmado a los sinantes.',
+    'LBL_EMAIL_TEMPLATE_OTP_HELP' => 'Plantilla de correo utilizada para enviar el código OTP a los sinantes por correo electrónico.',
+    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'Plantilla de SMS utilizada para enviar el código OTP a los sinantes por SMS.',
 
 );

@@ -68,7 +68,10 @@ $mod_strings = array(
     'LBL_ACTIVATION_DATE' => 'Activation date',
     'LBL_EXPIRATION_DATE' => 'Expiration date',
     'LBL_MINIMUM_SIGNATURES' => 'Minimum signatures',
-    'LBL_EMAIL_TEMPLATE' => 'Email template',
+    'LBL_EMAIL_TEMPLATE' => 'Email template for signer notification',
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT' => 'Email template for document sending',
+    'LBL_EMAIL_TEMPLATE_OTP' => 'Email template for OTP',
+    'LBL_EMAIL_TEMPLATE_OTP_SMS' => 'SMS template for OTP',
     'LBL_PDF_TEMPLATE' => 'PDF template',
     'LBL_PDF_AUDIT_PAGE' => 'Include audit page',
     'LBL_END_DATE' => 'End date',
@@ -200,5 +203,9 @@ $mod_strings = array(
     'LBL_TYPE_HELP' => 'Type of signature to configure. Currently only the "Individual" option is available.',
     'LBL_PDF_TEMPLATE_HELP' => 'PDF template that will be used to inform the signers. This template applies to inform the signers directly, <strong>when they are not notified through a notification campaign, in which case the template indicated in the process itself is used.</strong>. If not informed, the <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">default template.</a> is used.',
     'LBL_SIGNER_PATH_HELP' => 'Path to the signer within the main module, showing the possible options to choose from, which relate the main module of the signature with the signers module (Contacts or Users).',
+    'LBL_EMAIL_TEMPLATE_HELP' => 'Email template used to notify signers about the signing process. This template must include the necessary information for the signer to access the signing portal and complete the process.',
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Email template used to send the signed document to the signers.',
+    'LBL_EMAIL_TEMPLATE_OTP_HELP' => 'Email template used to send the OTP code to the signers via email.',
+    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'SMS template used to send the OTP code to the signers via SMS.',
 
 );

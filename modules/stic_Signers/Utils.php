@@ -64,8 +64,8 @@ class stic_SignersUtils
         }
 
         // Get the email template ID from the signature, or use a default if not set
-        // The default ID '000005f1-2e4e-3b11-051f-68e3c9e70331' is hardcoded here.
-        $templateId = $signatureBean->email_template_id ?? '000005f1-2e4e-3b11-051f-68e3c9e70331';
+        // The default ID '000005f1-2e4e-3b11-051f-68e3c9e70330' is hardcoded here.
+        $templateId = $signatureBean->emailtemplate_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70330';
 
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
@@ -154,9 +154,36 @@ class stic_SignersUtils
     public static function sendOtpEmailToSigner($signerBean, $otpCode)
     {
         global $current_user;
+        require_once 'SticInclude/Utils.php';
+
+
         $signerId = $signerBean->id;
         $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
-        
+
+        if(empty($signerBean) || empty($signerBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid signer bean provided.");
+            return false;
+        }
+
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        if (empty($signatureBean) || empty($signatureBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related signature for signer ID {$signerId} not found.");
+            return false;
+        }   
+
+        $userOrContactsBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
+        if (empty($userOrContactsBean) || empty($userOrContactsBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' .              __METHOD__ . ': ' . " Related user/contact not found for Signer ID: {$signerId}");
+            return false;
+        }
+
+        $parsedMailArray = SticUtils::parseEmailTemplate(($signatureBean->emailtemplateotp_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70332'), [
+            $signerBean,
+            $signatureBean,
+            $userOrContactsBean,
+        ]);
+
+
         // Validate signer ID
         if (empty($signerId)) {
             throw new Exception("Signer ID cannot be empty.");
@@ -187,22 +214,12 @@ class stic_SignersUtils
         }
         $mail->AddAddress($destAddress);
 
-        // Set the email subject
-        $subject = $signerStrings['LBL_SIGNER_EMAIL_OTP_SUBJECT'];
-        $mail->Subject = $subject;
+        // Use parsed subject, falling back to module string
+        $mail->Subject = $parsedMailArray['subject'] ?? $signerStrings['LBL_SIGNER_OTP_EMAIL_SUBJECT'];
 
-        // Prepare the complete HTML body of the email with the OTP code
-        $completeHTML = "<html>
-                            <head>
-                                <title>{$subject}</title>
-                            </head>
-                            <body style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333;\">
-
-                            <h2>The verification code is {$signerBean->otp}</h2>
-                            <p style=\"margin-top: 20px;\">This code is valid for 10 minutes.</p>
-                            <p style=\"margin-top: 20px;\">To complete the process, please return to the signature portal and enter the code in the corresponding field.</p>
-                            </body>
-                        </html>";
+        // Prepare the complete HTML body of the email
+        $completeHTML = $parsedMailArray['body_html'] ; 
+                            
         $mail->Body = from_html($completeHTML);
         $mail->isHtml(true);
         $mail->prepForOutbound();
@@ -237,7 +254,9 @@ class stic_SignersUtils
      */
     public static function sendOtpPhoneMessageToSigner($signerBean, $otpCode)
     {
-        $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+        require_once 'SticInclude/Utils.php';
+
+        
         $signerId = $signerBean->id;
         $destPhone = $signerBean->phone ?? '';
 
@@ -245,6 +264,36 @@ class stic_SignersUtils
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No phone number available for signer ID {$signerId}.");
             return false;
         }
+
+        if(empty($signerBean) || empty($signerBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid signer bean provided.");
+            return false;
+        }
+
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        if (empty($signatureBean) || empty($signatureBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related signature for signer ID {$signerId} not found.");      
+            return false;
+        }
+ 
+        $userOrContactsBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
+        if (empty($userOrContactsBean) || empty($userOrContactsBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related user/contact not found for Signer ID: {$signerId}");
+            return false;
+        }
+
+        $parsedTemplateArray = SticUtils::parseEmailTemplate(($signatureBean->emailtemplateotpsms_id_c ?? '000005f1-2e4e-3b11-051f-68e3c9e70333'), [
+            $signerBean,
+            $signatureBean,
+            $userOrContactsBean,
+        ]);
+
+        $messageText = $parsedTemplateArray['body'] ?? '';  
+        if (empty($messageText)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Parsed SMS body is empty for signer ID {$signerId}.");
+            return false;
+        }
+
 
         // Retrieve the SMS sender setting
         require_once 'modules/stic_Settings/Utils.php';
@@ -258,7 +307,7 @@ class stic_SignersUtils
         $messageBean->phone = $signerBean->phone;
         $messageBean->parent_type = $signerBean->parent_type;
         $messageBean->parent_id = $signerBean->parent_id;
-        $messageBean->message = $mod_strings['LBL_SIGNER_OTP_SMS_BODY_1'] . ' ' . ($templateMark) . ', ' . $mod_strings['LBL_SIGNER_OTP_SMS_BODY_2'] . ' ' . $otpCode;
+        $messageBean->message = $messageText;
         $messageBean->sender = $sender;
         $messageBean->status = 'sent'; // Assuming 'sent' is set upon creation/attempt
         $messageBean->type = 'SevenSmsHelper'; // Specific SMS gateway type
