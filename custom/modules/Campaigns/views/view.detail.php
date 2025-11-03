@@ -45,13 +45,21 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
         // $this->dv->defs['templateMeta']['form']>['buttons'][4] = self::testSendButton;
         // $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
 
-        if ($this->bean->campaign_type !== 'Message' && $this->bean->campaign_type !== 'NotifMsg') {
-            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testSendButton;
+        if ($this->bean->campaign_type == 'Message') {
+            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testMessagesSendButton;
+            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueMessagesSendButton;
+        }
+        else if ($this->bean->campaign_type == 'NotifMsg') {
+            $this->dv->defs['templateMeta']['form']['buttons'][4] = array();
+            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueMessagesSendButton;
+        }
+        else if ($this->bean->campaign_type == 'Notification') {
+            $this->dv->defs['templateMeta']['form']['buttons'][4] = array();
             $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
         }
         else {
-            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testMessagesSendButton;
-            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueMessagesSendButton;
+            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testSendButton;
+            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
         }
         // END STIC Custom
         $this->dv->defs['templateMeta']['form']['buttons'][6] = self::markAsSentButton;
