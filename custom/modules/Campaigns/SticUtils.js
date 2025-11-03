@@ -510,7 +510,7 @@ function open_email_template_form(type) {
   } else if(typeof currentModule !== 'undefined') {
     parent_type = currentModule;
   } 
-  URL = "index.php?module=EmailTemplates&action=EditView&type="+type+"inboundEmail=" + inboundId + "&parent_type=" + parent_type;
+  URL = "index.php?module=EmailTemplates&action=EditView&type="+type+"&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
   URL += "&show_js=1";
 
   windowName = 'email_template';
