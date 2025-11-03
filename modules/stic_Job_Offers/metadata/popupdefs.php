@@ -48,18 +48,19 @@ $popupMeta = array (
   2 => 'offer_type',
   3 => 'status',
   4 => 'offer_mode',
-  5 => 'weekdays',
-  6 => 'professional_profile',
-  7 => 'process_start_date',
-  8 => 'process_end_date',
-  9 => 'offer_code',
-  10 => 'applications_start_date',
+  5 => 'territorial_scope',
+  6 => 'weekdays',
+  7 => 'professional_profile',
+  8 => 'process_start_date',
+  9 => 'process_end_date',
+  10 => 'offer_code',
+  11 => 'applications_start_date',
   13 => 'applications_end_date',
   14 => 'type',
   15 => 'stic_job_offers_accounts_name',
-  18 => 'responsible',
+  16 => 'responsible',
   17 => 'center',
-  16 => 'project',
+  18 => 'project',
   19 => 'assigned_user_id',
 ),
     'searchdefs' => array (
@@ -96,6 +97,13 @@ $popupMeta = array (
     'label' => 'LBL_OFFER_MODE',
     'width' => '10%',
     'name' => 'offer_code',
+  ),
+  'territorial_scope' => array (
+      'type' => 'enum',
+      'studio' => 'visible',
+      'label' => 'LBL_TERRITORIAL_SCOPE',
+      'width' => '10%',
+      'name' => 'territorial_scope',
   ),
   'weekdays' => 
   array (
@@ -158,6 +166,7 @@ $popupMeta = array (
     'id' => 'STIC_JOB_OFFERS_ACCOUNTSACCOUNTS_IDA',
     'name' => 'stic_job_offers_accounts_name',
   ),
+
   'responsible' =>
   array (
     'type' => 'relate',
