@@ -153,7 +153,8 @@ class CampaignsUtils
             ", mm.sender as message_marketing_from_name" .
             ", mm.type as type" .
             " FROM campaigns c" .
-            " LEFT JOIN stic_message_marketing mm on mm.campaign_id = c.id and mm.deleted = '0'" .
+            " LEFT JOIN campaigns_stic_message_marketing_c csmmc on csmmc.campaigns_stic_message_marketingcampaign_ida = c.id and csmmc.deleted = '0'" .
+            " LEFT JOIN stic_message_marketing mm on mm.id = csmmc.campaigns_stic_message_marketingmessage_idb and mm.deleted = '0'" .
             " LEFT JOIN email_templates et on et.id = mm.template_id and et.deleted = '0'" .
             " WHERE c.id = '{$beanCampaign->id}'" .
             " LIMIT 1";
@@ -181,7 +182,7 @@ class CampaignsUtils
         while ($row = $db->fetchByAssoc($result)) {
             $plArray[] = $row['prospect_lists_id'];
         }
-        $beanCampaign->notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
+        $beanCampaign->msg_notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
     }
 
 /**

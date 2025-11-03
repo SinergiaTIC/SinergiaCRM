@@ -340,9 +340,11 @@ function updateViewNotificationType(isNotification) {
       );
     }
   } else {
-    $form.find("#parent_type").val("");
-    $form.find("#parent_name").val("");
-    $form.find("#parent_id").val("");
+    if($("#campaign_type").val() != 'NotifMsg'){
+      $form.find("#parent_type").val("");
+      $form.find("#parent_name").val("");
+      $form.find("#parent_id").val("");
+    }
     $form.find('[data-field="status"]').show();
     $form.find('[data-field="end_date"]').show();
     $form.find('[data-field="parent_name"]').hide();
@@ -384,9 +386,11 @@ function updateViewNotificationMsgType(isNotification) {
       }
     }
   } else {
-    $form.find("#msg_parent_type").val("");
-    $form.find("#msg_parent_name").val("");
-    $form.find("#msg_parent_id").val("");
+    if($("#campaign_type").val() != 'Notification') {
+      $form.find("#msg_parent_type").val("");
+      $form.find("#msg_parent_name").val("");
+      $form.find("#msg_parent_id").val("");
+    }
     $form.find('[data-field="status"]').show();
     $form.find('[data-field="end_date"]').show();
     $form.find('[data-field="msg_parent_name"]').hide();
@@ -433,10 +437,10 @@ function initilizeEditView() {
     $("#LBL_NOTIFICATION_NEW_INFO").hide();
     $("#campaign_type").prop("disabled", true);
     $("#start_date").parent().children().prop("disabled", true);
-    $("#msg_parent_id").parent().children().prop("disabled", true);
-    $("#msg_parent_id").parent().find("span").hide();
+    $("#parent_id").parent().children().prop("disabled", true);
+    $("#parent_id").parent().find("span").hide();
     $("#msg_notification_template_id").prop("disabled", true);
-    $("#notification_type").prop("disabled", true);
+    $("#notification_message_type").prop("disabled", true);
     $("#sender").parent().children().prop("disabled", true);
     // TODOEPS: Hauré de fer una llista diferent
     $("#msg_notification_prospect_list_ids")[0].selectize.disable();
