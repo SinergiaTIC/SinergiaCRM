@@ -23,13 +23,13 @@ Este es un correo automático, por favor no responda a este mensaje.','<!DOCTYPE
 <head>
 </head>
 <body>
-<p> </p>
+<p> </p>
 <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden;">
 <div style="background-color: #b5bc31; color: #000000; padding: 20px; text-align: center;">
 <h1 style="margin: 0; font-size: 24px;">Firma de documento</h1>
 </div>
 <div style="padding: 20px;">
-<p style="font-size: 16px; color: #555555;">Hola <strong>$contact_first_name$contact_user_first_name</strong>,</p>
+<p style="font-size: 16px; color: #555555;">Hola <strong>$contact_first_name$contact_user_first_name </strong>,</p>
 <p style="font-size: 16px; color: #555555;">Se ha solicitado su firma para el siguiente documento:</p>
 <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #eeeeee; margin-top: 20px;">
 <p style="margin: 0; font-size: 16px; color: #333333;"><strong>Nombre del Documento: $stic_signatures_pdf_template</strong></p>
@@ -38,9 +38,9 @@ Este es un correo automático, por favor no responda a este mensaje.','<!DOCTYPE
 <p style="margin: 5px 0 0 0; font-size: 14px; color: #888888;"><strong>Correo electrónico de contacto: </strong>$contact_email1$contact_user_email1</p>
 </div>
 <p style="font-size: 16px; color: #555555; margin-top: 20px;">Para firmar el documento, haga clic en el siguiente enlace. Será redirigido al portal de firma segura.</p>
-<p style="font-size: 16px; color: #555555; margin-top: 20px;"> </p>
-<div style="text-align: center; margin-top: 30px;"><a style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #000000; background-color: #b5bc31; border-radius: 5px; text-decoration: none; font-weight: bold;" href="$sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId=$contact_id$contact_user_id">Firmar documento</a></div>
-<p style="font-size: 14px; color: #aaaaaa; text-align: center; margin-top: 30px;">Si tiene problemas para acceder, por favor, copie y pegue este enlace en su navegador: <br /><a style="color: #b5bc31; text-decoration: none;" href="$sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId=$contact_id">$sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId=$contact_id$contact_user_id</a></p>
+<p style="font-size: 16px; color: #555555; margin-top: 20px;"> </p>
+<div style="text-align: center; margin-top: 30px;"><a style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #000000; background-color: #b5bc31; border-radius: 5px; text-decoration: none; font-weight: bold;" href="$sugarurl/index.php?entryPoint=sticSign&amp;signatureId=$stic_signatures_id&amp;targetId=$contact_id$contact_user_id">Firmar documento</a></div>
+<p style="font-size: 14px; color: #aaaaaa; text-align: center; margin-top: 30px;">Si tiene problemas para acceder, por favor, copie y pegue este enlace en su navegador: <br /><a style="color: #b5bc31; text-decoration: none;" href="$sugarurl/index.php?entryPoint=sticSign&amp;signatureId=$stic_signatures_id&amp;targetId=$contact_id$contact_user_id">$sugarurl/index.php?entryPoint=sticSign&amp;signatureId=$stic_signatures_id&amp;targetId=$contact_id$contact_user_id</a></p>
 </div>
 <div style="background-color: #f0f0f0; color: #aaaaaa; text-align: center; padding: 15px; font-size: 12px;">
 <p style="margin: 0;">Este es un correo automático, por favor no responda a este mensaje.</p>
