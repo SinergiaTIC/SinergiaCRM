@@ -799,8 +799,8 @@ EOQ;
                 }
 
                 // 8. Add to the collection arrays (instead of replacing immediately)
-                $replacements_text[$placeholder] = $displayValue;
-                $replacements_html[$placeholder] = $htmlValue;
+                $replacements_text[$placeholder] = "$@@{$displayValue}";
+                $replacements_html[$placeholder] = "$@@{$htmlValue}";
             }
         }
 
@@ -822,53 +822,15 @@ EOQ;
             $replacements_html[$placeholder] = $value;
         }
 
-        // 9.2. Logged-in User (Current User) substitutions
-        // We use the $current_user_ prefix to distinguish from $contact_user_ (a passed-in bean)
-        if (isset($current_user) && !empty($current_user->id)) {
-
-            $prefix = '$current_user_';
-
-            foreach ($current_user->field_defs as $fieldName => $def) {
-                $placeholder = $prefix . $fieldName;
-                $rawValue = $current_user->$fieldName ?? '';
-                $displayValue = $rawValue;
-                $htmlValue = $rawValue;
-
-                // Re-apply enum and textarea logic for the current user
-                if (isset($def['type']) && ($def['type'] == 'enum' || $def['type'] == 'multienum' || $def['type'] == 'radioenum') && isset($def['options'])) {
-                    $listName = $def['options'];
-                    if (isset($app_list_strings[$listName]) && isset($app_list_strings[$listName][$rawValue])) {
-                        $displayValue = $app_list_strings[$listName][$rawValue];
-                        $htmlValue = $displayValue;
-                    }
-                }
-
-                if (isset($def['type']) && $def['type'] == 'text') {
-                    $htmlValue = nl2br((string) $htmlValue);
-                }
-
-                if (!is_scalar($displayValue)) {
-                    $displayValue = '';
-                }
-
-                if (!is_scalar($htmlValue)) {
-                    $htmlValue = '';
-                }
-
-                $replacements_text[$placeholder] = $displayValue;
-                $replacements_html[$placeholder] = $htmlValue;
-            }
-        }
-
         // --- SUBSTITUTION APPLICATION ---
 
-        // 10. Sort the replacement arrays by key length (descending)
+        // 9. Sort the replacement arrays by key length (descending)
         // This is CRUCIAL. It ensures that "$contact_user_first_name" is replaced
         // BEFORE "$contact_user_", preventing partial, broken replacements.
         uksort($replacements_text, function ($a, $b) {return strlen($b) - strlen($a);});
         uksort($replacements_html, function ($a, $b) {return strlen($b) - strlen($a);});
 
-        // 11. Perform the replacement (only once)
+        // 10. Perform the replacement (only once)
         // str_replace can take arrays of keys and values.
         $parsedTemplate['subject'] = str_replace(
             array_keys($replacements_text),
@@ -888,18 +850,24 @@ EOQ;
             $parsedTemplate['body_html']
         );
 
-        // 12. Final Cleanup: Remove any unreplaced variables
+        // 11. Final Cleanup: Remove any unreplaced variables
         // This regex looks for any variable starting with $
         // followed by letters/numbers/underscores (e.g., $contact_name, $quotes_total, $rare_variable)
         // and replaces it with an empty string.
         // We use [a-zA-Z_] at the start to avoid matching currency values like $500.
+
         $final_cleanup_pattern = '/\$[a-zA-Z_][a-zA-Z0-9_]*/';
 
         $parsedTemplate['subject'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['subject']);
         $parsedTemplate['body'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['body']);
         $parsedTemplate['body_html'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['body_html']);
 
-        // 13. Return the parsed and cleaned array
+        // Remove intermediate markup ($@@)
+        $parsedTemplate['subject'] = str_replace('$@@', '', $parsedTemplate['subject']);
+        $parsedTemplate['body'] = str_replace('$@@', '', $parsedTemplate['body']);
+        $parsedTemplate['body_html'] = str_replace('$@@', '', $parsedTemplate['body_html']);
+
+        // 12. Return the parsed and cleaned array
         return $parsedTemplate;
     }
 
