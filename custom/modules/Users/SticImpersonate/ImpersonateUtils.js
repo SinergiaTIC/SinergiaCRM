@@ -62,6 +62,17 @@ function showImpersonationMessage() {
  * Shows an impersonation indicator in the top navigation bar.
  */
 function showImpersonationIndicator() {
+
+    // We hide the clear all alerts button to the user that emulates.
+    const observer = new MutationObserver(() => {
+        document.querySelectorAll('.clear-all-alerts-container').forEach(el => {
+            el.style.display = 'none';
+        });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+
+
     // Removing previous indicators
     document.querySelectorAll('#stic-impersonation-indicator').forEach(el => el.remove());
 
@@ -74,24 +85,24 @@ function showImpersonationIndicator() {
 
     refs.forEach(ref => {
         var indicator = document.createElement(ref.tagName.toLowerCase());
-        indicator.id = 'stic-impersonation-indicator';
-        indicator.className = 'dropdown nav navbar-nav desktop_notifications impersonate-indicator';
+        indicator.id = 'globalLinks';
+        indicator.className = 'dropdown nav navbar-nav stic-impersonation-indicator-row';
 
         indicator.innerHTML = `
-            <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-view impersonate-indicator-icon user-menu-button"  data-toggle="dropdown" aria-expanded="false">
+            <button class="btn dropdown-toggle suitepicon suitepicon-action-view stic-impersonation-indicator"  data-toggle="dropdown" aria-expanded="false">
             </button>
-            <ul class="dropdown-menu user-dropdown impersonation-dropdown" role="menu" aria-labelledby="with-label">
-                <li role="presentation" class="dropdown-header">
-                    ${modImpersonate.LBL_IMPERSONATE_MESSAGE_TITLE}
+            <ul class="dropdown-menu stic-impersonation-dropdown" role="menu">
+                <li class="stic-impersonation-dropdown-text">
+                    <div class="stic-impersonation-dropdown-text-label">${modImpersonate.LBL_IMPERSONATE_MESSAGE_TITLE}</div>
                 </li>
-                <li role="presentation">
-                    <strong>${modImpersonate.LBL_IMPERSONATE_TARGET_USER}:</strong> ${impersonationData.target_user_full_name}
+                <li class="stic-impersonation-dropdown-text">
+                    <div class="stic-impersonation-dropdown-text-label">${modImpersonate.LBL_IMPERSONATE_TARGET_USER}:</div>${impersonationData.target_user_full_name}
                 </li>
-                <li role="presentation">
-                    <strong>${modImpersonate.LBL_IMPERSONATE_ORIGINAL_USER}:</strong> ${impersonationData.original_user_full_name}
+                <li class="stic-impersonation-dropdown-text">
+                    <div class="stic-impersonation-dropdown-text-label">${modImpersonate.LBL_IMPERSONATE_ORIGINAL_USER}:</div>${impersonationData.original_user_full_name}
                 </li>
-                <li role="presentation">
-                    <a id="stop-impersonation-btn" href="index.php?module=Users&action=stopImpersonation" class="text-danger">
+                <li >
+                    <a id="stic-impersonation-stop-btn" href="index.php?module=Users&action=stopImpersonation">
                         ✖ ${modImpersonate.LBL_IMPERSONATE_STOP_BUTTON}
                     </a>
                 </li>

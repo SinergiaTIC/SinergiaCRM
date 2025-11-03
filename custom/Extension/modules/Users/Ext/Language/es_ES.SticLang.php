@@ -82,7 +82,7 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbitos de la aplicaci�
 
 // Emulación de usuarios - Usuario emulador
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emular usuario';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = '<strong>Emulación activa</strong><br>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Emulación activa';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'En este momento está emulando a este usuario: ';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Para volver a su propio usuario haga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuario original';

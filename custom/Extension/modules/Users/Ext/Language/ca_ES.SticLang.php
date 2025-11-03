@@ -82,7 +82,7 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbits de l'aplicació 
 
 // Emulació d'usuaris - Usuari que emula
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emula aquest usuari';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = '<strong>Accés emulat</strong><br>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Accés emulat';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'Ara mateix esteu emulant aquest usuari: ';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Per tornar al vostre usuari feu clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuari original';

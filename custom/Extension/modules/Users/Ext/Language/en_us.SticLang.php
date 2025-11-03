@@ -82,7 +82,7 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Scopes of the applicatio
 
 // Impersonating users - Impersonating user
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Impersonate the user';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = '<strong>Active impersonation</strong><br>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Active impersonation';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'You are currently impersonating the user: ';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>To return to your own user, please click <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">here.</a>';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Original user';

@@ -20,14 +20,30 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
  
-.impersonate-indicator {
-    padding-left: 5px;
+.stic-impersonation-indicator {
+    background: red;
+    animation: blink 1.5s linear infinite;
+    font-size: 3rem;
+    color: white !important;
 }
 
-.impersonate-indicator-icon {
-    background-color: red !important;
-    color:red;
-    animation: blink 1.5s linear infinite;
+/* Large screen / wide desktop */
+@media (max-width: 1200px) {  
+    /* Time Tracker Dialog box */  
+    .stic-impersonation-indicator {       
+        padding-top: 3px !important;
+    }
+}
+/* small screen / phone-tablet */
+@media (max-width: 750px) {  
+    /* Time Tracker Dialog box */  
+    .stic-impersonation-indicator {       
+        padding: unset;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
 }
 
 @keyframes blink {
@@ -39,17 +55,26 @@
     }
 }
 
-.impersonation-dropdown {
+.stic-impersonation-dropdown {
   right: 0;
   left: auto;
+  background-color: rgb(53, 53, 53) !important;
+  width: auto !important;
+  min-width: unset !important;
+  white-space: nowrap; 
 }
-
-.impersonate-indicator:hover .impersonation-dropdown {
-  display: block;
-}
-
-#stop-impersonation-btn {
+.stic-impersonation-dropdown-text {
   color: white !important;
+  font-size: 13px !important;
+  display: flex;
+}
+.stic-impersonation-dropdown-text-label {
+  color: white !important;
+  font-weight: 800 !important;
+  margin-right: 2px;
+}
+
+#stic-impersonation-stop-btn {
+  margin-top: 2px;
   background-color: red !important;
-  border-color: red !important;
 }
