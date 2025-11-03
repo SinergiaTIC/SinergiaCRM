@@ -50,6 +50,13 @@ $subpanel_layout['list_fields'] = array (
     'width' => '10%',
     'default' => true,
   ),
+ 'on_behalf_of_id' => 
+  array (
+    'type' => 'varchar',
+    'vname' => 'LBL_ON_BEHALF_OF_ID',    
+    'width' => '10%',
+    'default' => true,
+  ),
   'phone' => 
   array (
     'type' => 'varchar',

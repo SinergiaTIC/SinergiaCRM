@@ -113,7 +113,7 @@ class stic_SignersUtils
         if (empty($body_html)) {
             throw new Exception("Parsed email body is empty after applying template '{$templateId}'.");
         }
-        
+
         $mailBodyHtml = $body_html;
         // Use parsed subject, falling back to template subject or module string
         $mailSubject = $subject_parsed ?: ($templateBean->subject ?? $mod_strings['LBL_SIGNER_EMAIL_SUBJECT']);
@@ -153,11 +153,10 @@ class stic_SignersUtils
         global $current_user;
         require_once 'SticInclude/Utils.php';
 
-
         $signerId = $signerBean->id;
         $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
 
-        if(empty($signerBean) || empty($signerBean->id)) {
+        if (empty($signerBean) || empty($signerBean->id)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid signer bean provided.");
             return false;
         }
@@ -166,22 +165,21 @@ class stic_SignersUtils
         if (empty($signatureBean) || empty($signatureBean->id)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related signature for signer ID {$signerId} not found.");
             return false;
-        }   
+        }
 
         $userOrContactsBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
         if (empty($userOrContactsBean) || empty($userOrContactsBean->id)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' .              __METHOD__ . ': ' . " Related user/contact not found for Signer ID: {$signerId}");
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related user/contact not found for Signer ID: {$signerId}");
             return false;
         }
-        
+
         // Get the email template ID from the signature, or use a default if not set
         $templateId = empty($signatureBean->emailtemplateotp_id_c) ? '000005f1-2e4e-3b11-051f-68e3c9e70332' : $signatureBean->emailtemplateotp_id_c;
         $parsedMailArray = SticUtils::parseEmailTemplate($templateId, [
             $signerBean,
-            $signatureBean, 
+            $signatureBean,
             $userOrContactsBean,
         ]);
-
 
         // Validate signer ID
         if (empty($signerId)) {
@@ -217,8 +215,8 @@ class stic_SignersUtils
         $mail->Subject = $parsedMailArray['subject'] ?? $signerStrings['LBL_SIGNER_OTP_EMAIL_SUBJECT'];
 
         // Prepare the complete HTML body of the email
-        $completeHTML = $parsedMailArray['body_html'] ; 
-                            
+        $completeHTML = $parsedMailArray['body_html'];
+
         $mail->Body = from_html($completeHTML);
         $mail->isHtml(true);
         $mail->prepForOutbound();
@@ -255,7 +253,6 @@ class stic_SignersUtils
     {
         require_once 'SticInclude/Utils.php';
 
-        
         $signerId = $signerBean->id;
         $destPhone = $signerBean->phone ?? '';
 
@@ -264,17 +261,17 @@ class stic_SignersUtils
             return false;
         }
 
-        if(empty($signerBean) || empty($signerBean->id)) {
+        if (empty($signerBean) || empty($signerBean->id)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid signer bean provided.");
             return false;
         }
 
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
         if (empty($signatureBean) || empty($signatureBean->id)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related signature for signer ID {$signerId} not found.");      
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related signature for signer ID {$signerId} not found.");
             return false;
         }
- 
+
         $userOrContactsBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
         if (empty($userOrContactsBean) || empty($userOrContactsBean->id)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related user/contact not found for Signer ID: {$signerId}");
@@ -288,12 +285,11 @@ class stic_SignersUtils
             $userOrContactsBean,
         ]);
 
-        $messageText = $parsedTemplateArray['body'] ?? '';  
+        $messageText = $parsedTemplateArray['body'] ?? '';
         if (empty($messageText)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Parsed SMS body is empty for signer ID {$signerId}.");
             return false;
         }
-
 
         // Retrieve the SMS sender setting
         require_once 'modules/stic_Settings/Utils.php';
@@ -362,18 +358,20 @@ class stic_SignersUtils
                     stic_signers.status,
                     stic_signers.signature_date,
                     stic_signers.parent_type,
-                    stic_signers.parent_id
+                    stic_signers.parent_id,
+                    concat_ws(' ', contacts.first_name, contacts.last_name) as on_behalf_of_id
                 FROM stic_signers
+                LEFT JOIN contacts ON contacts.id = stic_signers.contact_id_c 
                 WHERE parent_type = 'Contacts'
-                    AND parent_id = '{$contact_id}'
-                    AND status in ('pending','signed')
-                    AND deleted = 0
-                ORDER BY date_modified DESC
+                    AND stic_signers.parent_id = '{$contact_id}'
+                    AND stic_signers.status in ('pending','signed')
+                    AND stic_signers.deleted = 0
+                ORDER BY stic_signers.date_modified DESC
         ";
-        
+
         return $query;
     }
-    
+
     /**
      * Retrieves the stic_Signers records associated with a specific User for use in a subpanel.
      * It filters for 'pending' or 'signed' statuses and orders by modification date descending.
@@ -410,7 +408,7 @@ class stic_SignersUtils
                     AND deleted = 0
                 ORDER BY date_modified DESC
         ";
-        
+
         return $query;
     }
 
@@ -431,7 +429,7 @@ class stic_SignersUtils
 
         require_once 'SticInclude/Utils.php';
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
-        
+
         // Only run logic if 'on_behalf_of' is enabled on the signature
         if (isset($signatureBean->on_behalf_of) && $signatureBean->on_behalf_of == 1) {
             global $mod_strings;
@@ -446,13 +444,13 @@ class stic_SignersUtils
                 0,
                 " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'"
             );
-            
+
             // Deactivate and log
             foreach ($otherSigners as $otherSigner) {
                 $otherSigner->status = 'unnecessary';
                 $otherSigner->save();
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Deactivated signer {$otherSigner->id} for signature {$signatureBean->id} because signature was completed by $signerBean->name.");
-                
+
                 require_once 'modules/stic_Signature_Log/Utils.php';
                 stic_SignatureLogUtils::logSignatureAction('SIGNATURE_NOT_NEEDED', $otherSigner->id, 'SIGNER', "{$mod_strings['LBL_SIGNATURE_COMPLETED_BY']} {$signerBean->parent_name}.");
             }
