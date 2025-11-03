@@ -246,7 +246,7 @@ $dictionary['stic_Job_Applications'] = array(
         ),
         'account_id' => array(
             'required' => false,
-            'name' => 'project_id',
+            'name' => 'account_id',
             'vname' => '',
             'type' => 'id',
             'massupdate' => 0,

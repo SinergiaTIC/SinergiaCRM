@@ -125,6 +125,34 @@ array (
     'width' => '10%',
     'default' => false,
   ),
+  'PREVIOUS_EXPERIENCE' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_PREVIOUS_EXPERIENCE',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'AVAILABLE_DAYS' => array (
+    'type' => 'multienum',
+    'studio' => 'visible',
+    'label' => 'LBL_AVAILABLE_DAYS',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'AVAILABLE_TIME' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_AVAILABLE_TIME',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'ACCOUNT' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_ACCOUNT',
+    'id' => 'account_id',
+    'width' => '10%',
+    'default' => false,
+  ),
   'REJECTION_REASON' => 
   array (
     'type' => 'enum',
