@@ -3757,6 +3757,59 @@ $app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
+// Firmas: Estados
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Borrador';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Abierta';
+$app_list_strings['stic_signatures_status_list']['complete'] = 'Completa';
+$app_list_strings['stic_signatures_status_list']['expired'] = 'Vencida';
+
+// Firmas: Métodos de autenticación
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enlace único';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código de un solo uso (por SMS o Correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Código de un solo uso (por Correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = 'Código de un solo uso (por SMS)';
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Teléfono';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Número de identificación';
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Fecha de nacimiento';
+
+// Firmas: Tipos de firma
+// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (Personalizada)';
+// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
+
+// Firmas: Modo de firma
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Botón';
+
+// Firmas: Firma en nombre de
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, solamente un representante';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, todos los representantes';
+
+// Firmantes: Estados
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
+$app_list_strings['stic_signers_status_list']['expired'] = 'Vencido';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Ya no se necesita la firma';
+
+// Registo de firmas: acciones
+$app_list_strings['stic_signature_log_actions'][''] = '';
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Documento aceptado mediante botón de aceptación';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Documento firmado con firma manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Firmante añadido a la firma';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Código de un solo uso enviado al correo electrónico del firmante';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Código de un solo uso enviado al teléfono del firmante';
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código de un solo uso verificado por el firmante';
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado al firmante';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Acceso al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Documento firmado descargado por el firmante';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Documento firmado enviado al firmante';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma vencida';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por otra persona autorizada';
+
 // Elementos añadidos al Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';
 $app_list_strings['collection_temp_list']['Meetings'] = 'Reuniones';
