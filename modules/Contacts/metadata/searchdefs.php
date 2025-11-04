@@ -552,6 +552,41 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
+            'confidentiality_agreement_c' => 
+            array (
+                'type' => 'bool',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_CONFIDENTIALITY_AGREEMENT',
+                'width' => '10%',
+                'name' => 'confidentiality_agreement_c',
+            ),
+            'conduct_code_c' => 
+            array (
+                'type' => 'bool',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_CONDUCT_CODE',
+                'width' => '10%',
+                'name' => 'conduct_code_c',
+            ),
+            'occupational_safety_c' => 
+            array (
+                'type' => 'bool',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_OCCUPATIONAL_SAFETY',
+                'width' => '10%',
+                'name' => 'occupational_safety_c',
+            ),
+            'time_availability_c' => 
+            array (
+                'type' => 'varchar',
+                'label' => 'LBL_TIME_AVAILABILITY',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'time_availability',
+            ),
             'jjwg_maps_geocode_status_c' => array(
                 'type' => 'varchar',
                 'default' => true,

@@ -148,6 +148,7 @@ $mod_strings['LBL_SEPE_DISABILITY'] = 'Disability indicator (SEPE)';
 $mod_strings['LBL_SEPE_EDUCATION_LEVEL'] = 'Education level (SEPE)';
 $mod_strings['LBL_SEPE_IMMIGRANT'] = 'Immigrant indicator (SEPE)';
 $mod_strings['LBL_SEPE_INSERTION_DIFFICULTIES'] = 'Group insertion difficulties indicator (SEPE)';
+$mod_strings['LBL_STIC_PANEL_VOLUNTEERING'] = 'Volunteering';
 $mod_strings['LBL_CONFIDENTIALITY_AGREEMENT'] = 'Occupational safety';
 $mod_strings['LBL_CONDUCT_CODE'] = 'Occupational safety';
 $mod_strings['LBL_OCCUPATIONAL_SAFETY'] = 'Occupational safety';

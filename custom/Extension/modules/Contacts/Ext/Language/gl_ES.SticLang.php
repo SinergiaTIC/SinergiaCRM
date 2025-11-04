@@ -165,6 +165,7 @@ $mod_strings['LBL_SEPE_DISABILITY'] = 'Indicador discapacidade (SEPE)';
 $mod_strings['LBL_SEPE_EDUCATION_LEVEL'] = 'Nivel formativo (SEPE)';
 $mod_strings['LBL_SEPE_IMMIGRANT'] = 'Indicador inmigrante (SEPE)';
 $mod_strings['LBL_SEPE_INSERTION_DIFFICULTIES'] = 'Indicador colectivo dificultades inserción (SEPE)';
+$mod_strings['LBL_STIC_PANEL_VOLUNTEERING'] = 'Voluntariado';
 $mod_strings['LBL_CONFIDENTIALITY_AGREEMENT'] = 'Acuerdo de confidencialidad';
 $mod_strings['LBL_CONDUCT_CODE'] = 'Código de conducta';
 $mod_strings['LBL_OCCUPATIONAL_SAFETY'] = 'PRL';
