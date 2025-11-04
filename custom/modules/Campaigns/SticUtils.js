@@ -86,6 +86,9 @@ switch (viewType()) {
 }
 
 $(document).ready(function() {
+  debugger;
+  console.log('ppppp');
+  
   if (viewType() != "list") {
     $("#notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
     $("#msg_notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
@@ -195,8 +198,9 @@ function getCampaingType() {
 
 function type_change() {
   var typeValue = getCampaingType();
-
+debugger;
   updateViewNewsLetterType(typeValue == "NewsLetter");
+  updateViewAnyNotificationType(typeValue);
   updateViewNotificationType(typeValue == "Notification");
   updateViewNotificationMsgType(typeValue == "NotifMsg");
   mail_change();
@@ -292,12 +296,23 @@ function setAutofillMark(autofill, field) {
   }
 }
 
-function updateViewNotificationType(isNotification) {
-  setRequired(!isNotification, "name");
-  setAutofillMark(isNotification, "name");
+function updateViewAnyNotificationType(type) {
+  var isAnyNotification = (type == "Notification" || type == 'NotifMsg');
 
-  setRequired(isNotification, "start_date");
-  setRequired(isNotification, "parent_name");
+  setRequired(!isAnyNotification, "name");
+  setAutofillMark(isAnyNotification, "name");
+
+  setRequired(isAnyNotification, "start_date");
+  setRequired(isAnyNotification, "parent_name");
+
+}
+
+function updateViewNotificationType(isNotification) {
+  // setRequired(!isNotification, "name");
+  // setAutofillMark(isNotification, "name");
+
+  // setRequired(isNotification, "start_date");
+  // setRequired(isNotification, "parent_name");
   setRequired(isNotification, "notification_outbound_email_id");
   setRequired(isNotification, "notification_inbound_email_id");
   setRequired(isNotification, "notification_prospect_list_ids");
@@ -357,11 +372,10 @@ function updateViewNotificationType(isNotification) {
   }
 }
 function updateViewNotificationMsgType(isNotification) {
-  setRequired(!isNotification, "name");
-  setAutofillMark(isNotification, "name");
+  // setRequired(!isNotification, "name");
+  // setAutofillMark(isNotification, "name");
 
-  setRequired(isNotification, "start_date");
-  // TODOEPS
+  // setRequired(isNotification, "start_date");
   setRequired(isNotification, "msg_parent_name");
   setRequired(isNotification, "msg_notification_prospect_list_ids");
   setRequired(isNotification, "msg_notification_template_id");
@@ -373,8 +387,8 @@ function updateViewNotificationMsgType(isNotification) {
 
   if (isNotification) {
     $form.find("#status").val("Active");
-    $form.find('[data-field="status"]').hide();
-    $form.find('[data-field="end_date"]').hide();
+    // $form.find('[data-field="status"]').hide();
+    // $form.find('[data-field="end_date"]').hide();
     $form.find('[data-field="msg_parent_name"]').show();
     $form.find(".panel-body[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL']").parent().show();
     $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
