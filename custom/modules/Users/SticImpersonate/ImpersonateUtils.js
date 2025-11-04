@@ -68,6 +68,9 @@ function showImpersonationIndicator() {
         document.querySelectorAll('.clear-all-alerts-container').forEach(el => {
             el.style.display = 'none';
         });
+        document.querySelectorAll('.alert-info button').forEach(el => {
+            el.style.display = 'none';
+        });
     });
     observer.observe(document.body, { childList: true, subtree: true });
 

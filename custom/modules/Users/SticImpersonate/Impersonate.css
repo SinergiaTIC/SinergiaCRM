@@ -25,6 +25,7 @@
     animation: blink 1.5s linear infinite;
     font-size: 3rem;
     color: white !important;
+    margin-left: 8px;  
 }
 
 /* Large screen / wide desktop */
