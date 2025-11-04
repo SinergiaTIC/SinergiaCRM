@@ -30,7 +30,6 @@ class ActionDiscoveryService {
     private static array $basePaths = [
         'modules/stic_Advanced_Web_Forms/actions/',
         'custom/modules/stic_Advanced_Web_Forms/actions/',
-        'custom/Extension/modules/stic_Advanced_Web_Forms/actions/'
     ];
 
     /**
