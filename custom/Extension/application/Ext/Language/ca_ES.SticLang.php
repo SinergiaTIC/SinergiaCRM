@@ -3785,11 +3785,13 @@ $app_list_strings['stic_yes_no_na_list']['no'] = 'No';
 $app_list_strings['stic_yes_no_na_list']['not_applicable'] = 'No procede';
 
 // Documents: Categories
+$app_list_strings['stic_documents_categories_list'][''] = '';
 $app_list_strings['stic_documents_categories_list']['identification'] = 'Identificación';
 $app_list_strings['stic_documents_categories_list']['certificate'] = 'Certificado';
 $app_list_strings['stic_documents_categories_list']['insurance'] = 'Seguro';
 
 // Documents: Subcategories
+$app_list_strings['stic_documents_subcategories_list'][''] = '';
 $app_list_strings['stic_documents_subcategories_list']['identification_nif'] = 'NIF';
 $app_list_strings['stic_documents_subcategories_list']['identification_nie'] = 'NIE';
 $app_list_strings['stic_documents_subcategories_list']['identification_passport'] = 'Passaport';

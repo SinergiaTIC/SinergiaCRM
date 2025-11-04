@@ -3751,11 +3751,13 @@ $app_list_strings['stic_yes_no_na_list']['no'] = 'No';
 $app_list_strings['stic_yes_no_na_list']['not_applicable'] = 'Not applicable';
 
 // Documents: Categories
+$app_list_strings['stic_documents_categories_list'][''] = '';
 $app_list_strings['stic_documents_categories_list']['identification'] = 'Identification';
 $app_list_strings['stic_documents_categories_list']['certificate'] = 'Certificate';
 $app_list_strings['stic_documents_categories_list']['insurance'] = 'Insurance';
 
 // Documents: Subcategories
+$app_list_strings['stic_documents_subcategories_list'][''] = '';
 $app_list_strings['stic_documents_subcategories_list']['identification_nif'] = 'NIF';
 $app_list_strings['stic_documents_subcategories_list']['identification_nie'] = 'NIE';
 $app_list_strings['stic_documents_subcategories_list']['identification_passport'] = 'Passport';
