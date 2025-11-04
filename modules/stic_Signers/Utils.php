@@ -359,16 +359,15 @@ class stic_SignersUtils
                     stic_signers.signature_date,
                     stic_signers.parent_type,
                     stic_signers.parent_id,
-                    concat_ws(' ', contacts.first_name, contacts.last_name) as on_behalf_of_id
+                    if(stic_signers.parent_id = stic_signers.contact_id_c, '', CONCAT_WS(' ', c1.first_name, c1.last_name)) as on_behalf_of_id
                 FROM stic_signers
-                LEFT JOIN contacts ON contacts.id = stic_signers.contact_id_c 
+                LEFT JOIN contacts c1 ON c1.id = stic_signers.contact_id_c -- to get on_behalf_of_id
                 WHERE parent_type = 'Contacts'
-                    AND stic_signers.parent_id = '{$contact_id}'
+                    AND (stic_signers.parent_id = '{$contact_id}' OR stic_signers.contact_id_c = '{$contact_id}')
                     AND stic_signers.status in ('pending','signed')
                     AND stic_signers.deleted = 0
                 ORDER BY stic_signers.date_modified DESC
         ";
-
         return $query;
     }
 

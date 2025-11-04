@@ -132,12 +132,17 @@ Hay que tener en cuenta que _en el caso de las firmas_ la LPO se crea concatenan
 
 
     ## TODO: Pendiente
-    - Al firmar la página de auditoría no incluye el registro de la acción de firma, ya que esta se registra despues de generar el PDF firmado. Hay que revisar si es posible registrar la acción antes de generar el PDF.
-    - Utilizar una plantilla de email para enviar la copia del documento firmado, en lugar de un email genérico.
-    - Utilizar una plantilla de email para enviar el OTP, en lugar de un email genérico.
+    - En las firmas de autorizados, hay que controlar cuando han firmado todos los representantes, para cambiar el estado a completada (o lo que corresponda). 
+    - Al llegar al final de documento, se redimensiona el área visible del PDF, hay que revisar si es posible evitar este comportamiento.
 
     
     ### Hecho
+    - Añadir en subpanel firmas de personas que han sido representadas.
+    - Revisar subpaneles de firmas en personas y usuarios.
+    - búsquedas en registro de firmas.
+    - Utilizar una plantilla de email para enviar la copia del documento firmado, en lugar de un email genérico.
+    - Utilizar una plantilla de email para enviar el OTP, en lugar de un email genérico.
+    - Al firmar la página de auditoría no incluye el registro de la acción de firma, ya que esta se registra despues de generar el PDF firmado. Hay que revisar si es posible registrar la acción antes de generar el PDF.
     - Descargar documento firmado desde el portal de firmas no funciona
     - Enviar por email el documento firmado al firmante una vez firmado desde el portal de firmas no funciona
     - Usar la plantilla de email definida en la firma para notificar a los firmantes, en lugar de la plantilla por defecto de notificaciones si está definida.

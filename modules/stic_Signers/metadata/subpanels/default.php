@@ -8,12 +8,19 @@ $subpanel_layout['list_fields'] = array (
     'width' => '45%',
     'default' => true,
   ),
-  'date_modified' => 
+  'on_behalf_of_id' => 
   array (
-    'vname' => 'LBL_DATE_MODIFIED',
-    'width' => '45%',
+    'type' => 'varchar',
+    'vname' => 'LBL_ON_BEHALF_OF_ID',    
+    'width' => '10%',
     'default' => true,
   ),
+  // 'date_modified' => 
+  // array (
+  //   'vname' => 'LBL_DATE_MODIFIED',
+  //   'width' => '45%',
+  //   'default' => false,
+  // ),
   'parent_name' => 
   array (
     'type' => 'parent',
@@ -50,49 +57,43 @@ $subpanel_layout['list_fields'] = array (
     'width' => '10%',
     'default' => true,
   ),
- 'on_behalf_of_id' => 
-  array (
-    'type' => 'varchar',
-    'vname' => 'LBL_ON_BEHALF_OF_ID',    
-    'width' => '10%',
-    'default' => true,
-  ),
-  'phone' => 
-  array (
-    'type' => 'varchar',
-    'vname' => 'LBL_PHONE',
-    'width' => '10%',
-    'default' => true,
-  ),
-  'email_address' => 
-  array (
-    'type' => 'varchar',
-    'vname' => 'LBL_EMAIL_ADDRESS',
-    'width' => '10%',
-    'default' => true,
-  ),
-  'edit_button' => 
-  array (
-    'vname' => 'LBL_EDIT_BUTTON',
-    'widget_class' => 'SubPanelEditButton',
-    'module' => 'stic_Signers',
-    'width' => '4%',
-    'default' => true,
-  ),
-  'quickedit_button' => 
-  array (
-    'vname' => 'LBL_QUICKEDIT_BUTTON',
-    'widget_class' => 'SubPanelQuickEditButton',
-    'module' => 'stic_Signers',
-    'width' => '4%',
-    'default' => true,
-  ),
-  'remove_button' => 
-  array (
-    'vname' => 'LBL_REMOVE',
-    'widget_class' => 'SubPanelRemoveButton',
-    'module' => 'stic_Signers',
-    'width' => '5%',
-    'default' => true,
-  ),
+ 
+  // 'phone' => 
+  // array (
+  //   'type' => 'varchar',
+  //   'vname' => 'LBL_PHONE',
+  //   'width' => '10%',
+  //   'default' => false,
+  // ),
+  // 'email_address' => 
+  // array (
+  //   'type' => 'varchar',
+  //   'vname' => 'LBL_EMAIL_ADDRESS',
+  //   'width' => '10%',
+  //   'default' => false,
+  // ),
+  // 'edit_button' => 
+  // array (
+  //   'vname' => 'LBL_EDIT_BUTTON',
+  //   'widget_class' => 'SubPanelEditButton',
+  //   'module' => 'stic_Signers',
+  //   'width' => '4%',
+  //   'default' => true,
+  // ),
+  // 'quickedit_button' => 
+  // array (
+  //   'vname' => 'LBL_QUICKEDIT_BUTTON',
+  //   'widget_class' => 'SubPanelQuickEditButton',
+  //   'module' => 'stic_Signers',
+  //   'width' => '4%',
+  //   'default' => true,
+  // ),
+  // 'remove_button' => 
+  // array (
+  //   'vname' => 'LBL_REMOVE',
+  //   'widget_class' => 'SubPanelRemoveButton',
+  //   'module' => 'stic_Signers',
+  //   'width' => '5%',
+  //   'default' => true,
+  // ),
 );
