@@ -89,7 +89,6 @@ $(document).ready(function() {
   if (viewType() != "list") {
     $("#notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
     $("#msg_notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
-debugger;
     if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
       $(
         "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
@@ -127,7 +126,6 @@ debugger;
 
     // As no 2 flex relate fields can coexist, we wil use only one, moving it from section to section on demand
     // --- Get references to all the elements we need to control ---
-    debugger;
     const campaignTypeDropdown = $('#campaign_type');
 
     // Panels (SuiteCRM creates DIVs with IDs based on the panel's label)
@@ -146,8 +144,6 @@ debugger;
 
     // --- This is the main function that controls the display ---
     function toggleCampaignView() {
-      debugger;
-      
       // This is the specific text input field for the typeahead
       // const parentNameInput = 'parent_name';
       
@@ -297,7 +293,6 @@ function setAutofillMark(autofill, field) {
 }
 
 function updateViewNotificationType(isNotification) {
-  debugger;
   setRequired(!isNotification, "name");
   setAutofillMark(isNotification, "name");
 

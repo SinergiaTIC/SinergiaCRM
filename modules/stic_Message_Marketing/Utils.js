@@ -107,7 +107,6 @@ function addEditCreateTemplateLinks() {
 
     var editText = SUGAR.language.translate("app_strings", "LNK_EDIT");
     var $editLink = $('<a href="#" id="template_id_edit_link" style="margin-left:10px;">'+editText+'</a>').on("click", function(e) {
-      debugger;
       e.preventDefault();
       edit_mm_email_template_form();
     });
