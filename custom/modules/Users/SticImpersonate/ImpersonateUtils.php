@@ -113,7 +113,7 @@ class ImpersonateUtils
             $log_message .= ", Current User: {$current_user->user_name} ({$current_user->id})";
         }
         
-        $GLOBALS['log']->info($log_message);
+        $GLOBALS['log']->debug($log_message);
         
         // Also log to database for audit trail
         self::logToDatabase($action, $target_user_id, $original_user_id);
@@ -128,7 +128,7 @@ class ImpersonateUtils
      */
     private static function logToDatabase($action, $target_user_id = null, $original_user_id = null)
     {
-        global $current_user, $app_list_strings;
+        global $current_user, $app_list_strings, $mod_strings;
 
         $trackerManager = TrackerManager::getInstance();
 
@@ -136,19 +136,16 @@ class ImpersonateUtils
 
         if ($monitor) {
             $target_user = BeanFactory::getBean('Users', $target_user_id);
-
             $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
-
             $monitor->setValue('user_id', $original_user_id ?: $current_user->id);
             $monitor->setValue('assigned_user_id', $original_user_id ?: $current_user->id);
             $monitor->setValue('module_name', 'Users');
             $monitor->setValue('action', $action);
             $monitor->setValue('item_id', $target_user_id);
-            $item_summary = 'Impersonation of user '.$target_user->user_name.' with ID '.$target_user_id. ' '.$app_list_strings['trackers_actions_list'][$action];
+            $item_summary = $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'].$target_user->user_name.$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'].$target_user_id. ' '.$app_list_strings['trackers_actions_list'][$action];
             $monitor->setValue('item_summary', $item_summary);
             $monitor->setValue('visible', true);
             $monitor->setValue('session_id', $monitor->getSessionId());
-
             $trackerManager->saveMonitor($monitor, true, true);
         }
     }
@@ -162,17 +159,12 @@ class ImpersonateUtils
         global $mod_strings, $timedate, $current_user;
 
         $alert = BeanFactory::getBean('Alerts');
-
         $alert->target_module = $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] .' - '.$timedate->now();
         $alert->name = $mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'];
         $alert->description = $mod_strings['LBL_IMPERSONATION_ALERT_USER'] . $current_user->user_name;
-        // $alert->description = $mod_strings['LBL_IMPERSONATION_START_ALERT_DATE'] . $timedate->now();
         $alert->assigned_user_id = $targetUserId;
         $alert->is_read = 0;
         $alert->type = 'info'; // No other types available
-        // $alert->reminder_id = uniqid(); // Not needed in this case
-        // $alert->url_redirect = 'url'; // Not needed in this case
-
         $alert->save();
     }
     
@@ -183,20 +175,15 @@ class ImpersonateUtils
      * @param User $original_user
      */
     public static function addStopImpersonationNotification($targetUserId, $original_user) {
-        global $mod_strings, $timedate, $current_user;
+        global $mod_strings, $timedate;
 
         $alert = BeanFactory::getBean('Alerts');
-
         $alert->target_module = $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] .' - '.$timedate->now();
         $alert->name = $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'];
         $alert->description = $mod_strings['LBL_IMPERSONATION_ALERT_USER'] . $original_user->user_name;
-        // $alert->description = $mod_strings['LBL_IMPERSONATION_ALERT_START_DATE'] . $timedate->now();
         $alert->assigned_user_id = $targetUserId;
         $alert->is_read = 0;
         $alert->type = 'info'; // No other types available
-        // $alert->reminder_id = uniqid(); // Not needed in this case
-        // $alert->url_redirect = 'url'; // Not needed in this case
-
         $alert->save();
     }
 }

@@ -94,3 +94,7 @@ $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = "Emulació d'usuari";
 $mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador està emulant el vostre usuari.';
 $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = "Un administrador ha finalitzat l'emulació del vostre usuari.";
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuari emulador: ';
+
+// Emulació d'usuaris - Monitorització
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulació del usuari ';
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' amb ID ';

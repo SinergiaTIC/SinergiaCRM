@@ -94,3 +94,7 @@ $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'User impersonation';
 $mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'An administrator has started an impersonation of your user.';
 $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'An administrator has stopped an impersonation of your user.';
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'User who impersonates: ';
+
+// Impersonating users - Monitoring
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Impersonation of user ';
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' with ID ';
