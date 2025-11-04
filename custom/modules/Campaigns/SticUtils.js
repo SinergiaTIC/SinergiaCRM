@@ -305,6 +305,26 @@ function updateViewAnyNotificationType(type) {
   setRequired(isAnyNotification, "start_date");
   setRequired(isAnyNotification, "parent_name");
 
+  var $form = $("form#" + getFormName());
+
+  if (isAnyNotification) {
+    $form.find("#status").val("Active");
+    $form.find('[data-field="status"]').hide();
+    $form.find('[data-field="end_date"]').hide();
+    $form.find('[data-field="parent_name"]').show();
+
+    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
+  }
+  else {
+      $form.find("#parent_type").val("");
+      $form.find("#parent_name").val("");
+      $form.find("#parent_id").val("");
+
+    $form.find('[data-field="status"]').show();
+    $form.find('[data-field="end_date"]').show();
+    $form.find('[data-field="parent_name"]').hide();
+    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
+  }
 }
 
 function updateViewNotificationType(isNotification) {
@@ -324,12 +344,7 @@ function updateViewNotificationType(isNotification) {
   var $form = $("form#" + getFormName());
 
   if (isNotification) {
-    $form.find("#status").val("Active");
-    $form.find('[data-field="status"]').hide();
-    $form.find('[data-field="end_date"]').hide();
-    $form.find('[data-field="parent_name"]').show();
     $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().show();
-    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
     if ($form.find("#start_date").val() == "") {
       var formatDate = $form.find("#start_date").parent().children(".dateFormat").text().toUpperCase();
       if (formatDate == "") {
@@ -357,25 +372,12 @@ function updateViewNotificationType(isNotification) {
       );
     }
   } else {
-    if($("#campaign_type").val() != 'NotifMsg'){
-      $form.find("#parent_type").val("");
-      $form.find("#parent_name").val("");
-      $form.find("#parent_id").val("");
-    }
-    $form.find('[data-field="status"]').show();
-    $form.find('[data-field="end_date"]').show();
-    $form.find('[data-field="parent_name"]').hide();
     $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
-    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
     removeFromValidate(getFormName(), 'notification_from_addr');
     removeFromValidate(getFormName(), 'notification_reply_to_addr');
   }
 }
 function updateViewNotificationMsgType(isNotification) {
-  // setRequired(!isNotification, "name");
-  // setAutofillMark(isNotification, "name");
-
-  // setRequired(isNotification, "start_date");
   setRequired(isNotification, "msg_parent_name");
   setRequired(isNotification, "msg_notification_prospect_list_ids");
   setRequired(isNotification, "msg_notification_template_id");
@@ -387,11 +389,8 @@ function updateViewNotificationMsgType(isNotification) {
 
   if (isNotification) {
     $form.find("#status").val("Active");
-    // $form.find('[data-field="status"]').hide();
-    // $form.find('[data-field="end_date"]').hide();
     $form.find('[data-field="msg_parent_name"]').show();
     $form.find(".panel-body[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL']").parent().show();
-    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
     if ($form.find("#start_date").val() == "") {
       var formatDate = $form.find("#start_date").parent().children(".dateFormat").text().toUpperCase();
       if (formatDate == "") {
@@ -402,16 +401,7 @@ function updateViewNotificationMsgType(isNotification) {
       }
     }
   } else {
-    if($("#campaign_type").val() != 'Notification') {
-      $form.find("#msg_parent_type").val("");
-      $form.find("#msg_parent_name").val("");
-      $form.find("#msg_parent_id").val("");
-    }
-    $form.find('[data-field="status"]').show();
-    $form.find('[data-field="end_date"]').show();
-    $form.find('[data-field="msg_parent_name"]').hide();
     $form.find(".panel-body[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
-    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
   }
 }
 
