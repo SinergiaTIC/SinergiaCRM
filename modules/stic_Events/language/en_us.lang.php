@@ -93,6 +93,7 @@ $mod_strings = array(
     'LBL_TARGET_AUDIENCE' => 'Target audience',
     'LBL_DEFAULT_PANEL' => 'Overview',
     'LBL_PANEL_RECORD_DETAILS' => 'Record details',
+    'LBL_STIC_PANEL_VOLUNTEERING' => 'Volunteering',
     'LBL_ECONOMY_PANEL' => 'Economy',
     'LBL_STATUS_PANEL' => 'Attendees by status',
     'LBL_BTN_ADD_TARGET_LIST' => 'Register target list members',

@@ -93,6 +93,7 @@ $mod_strings = array(
     'LBL_TARGET_AUDIENCE' => 'Público objetivo del evento',    
     'LBL_DEFAULT_PANEL' => 'Datos xerais',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
+    'LBL_STIC_PANEL_VOLUNTEERING' => 'Voluntariado',
     'LBL_ECONOMY_PANEL' => 'Economía',
     'LBL_STATUS_PANEL' => 'Asistentes por estado',
     'LBL_BTN_ADD_TARGET_LIST' => 'Inscribe aos membros da lista de público obxectivo',

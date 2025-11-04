@@ -59,6 +59,11 @@ array (
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
+        'LBL_STIC_PANEL_VOLUNTEERING' => 
+        array(
+          'newTab' => false,
+          'panelDefault' => 'expanded',
+        ),         
         'LBL_STATUS_PANEL' => 
         array (
           'newTab' => true,
@@ -194,6 +199,24 @@ array (
           ),
         ),
       ),
+      'LBL_STIC_PANEL_VOLUNTEERING' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'name' => 'volunteer_mode',
+            'studio' => 'visible',
+            'label' => 'LBL_VOLUNTEER_MODE',
+          ),
+          1 => 
+          array (
+            'name' => 'target_audience',
+            'studio' => 'visible',
+            'label' => 'LBL_TARGET_AUDIENCE',
+          ),
+        ),
+      ),               
       'lbl_status_panel' => 
       array (
         0 => 
