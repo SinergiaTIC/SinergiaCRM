@@ -34,6 +34,7 @@ $mod_strings['LBL_MODIFIED_USER'] = 'Modificat per';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modificat per (ID)';
 $mod_strings['LBL_LEADS_DOCUMENTS_1_FROM_LEADS_TITLE'] = 'Interessats';
 $mod_strings['LBL_OVERVIEW_PANEL'] = 'Dades generals';
+$mod_strings['LBL_STIC_PANEL_VOLUNTEERING'] = 'Voluntariat';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalls del registre';
 $mod_strings['LBL_STIC_CATEGORY'] = 'Categoria';
 $mod_strings['LBL_STIC_SUBCATEGORY'] = 'Subcategoria';

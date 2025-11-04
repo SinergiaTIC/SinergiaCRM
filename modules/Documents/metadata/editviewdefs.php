@@ -212,6 +212,11 @@ $viewdefs['Documents']['EditView'] = array (
         'newTab' => true,
         'panelDefault' => 'expanded',
       ),
+      'LBL_STIC_PANEL_VOLUNTEERING' => 
+      array(
+        'newTab' => false,
+        'panelDefault' => 'expanded',
+      ),
     ),
   ),
   'panels' => 
@@ -265,6 +270,24 @@ $viewdefs['Documents']['EditView'] = array (
         0 => 
         array (
           'name' => 'description',
+        ),
+      ),
+    ),
+    'LBL_STIC_PANEL_VOLUNTEERING' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          'name' => 'stic_category_c',
+          'studio' => 'visible',
+          'label' => 'LBL_STIC_CATEGORY',
+        ),
+        1 => 
+        array (
+          'name' => 'stic_subcategory_c',
+          'studio' => 'visible',
+          'label' => 'LBL_STIC_SUBCATEGORY',
         ),
       ),
     ),
