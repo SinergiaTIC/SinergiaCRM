@@ -49,6 +49,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2rem; /* Space between sections */
+    align-items: stretch; /* ensure children stretch to container width */
 }
 
 section.signed-area iframe {
@@ -56,6 +57,41 @@ section.signed-area iframe {
     width: 100%;
 }
 
+/* Make all main portal sections use full width of the container and be responsive */
+.stic-container > section,
+.stic-container .document-area,
+.stic-container .signature-area,
+.stic-container .audit-trail-area,
+.stic-container .logs-area,
+.stic-container .otp-area,
+.stic-container .field-validation-area,
+.stic-container .signed-area,
+.stic-container .unnecessary-area {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure the scrollable content fills available width */
+.document-scroll-content {
+    width: 100%;
+}
+
+/* Make the canvas responsive inside the signature area; height controlled by JS */
+#signatureCanvas {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+}
+
+/* Center and wrap action buttons responsively */
+.signature-area .action-buttons,
+.stic-container .action-buttons {
+    width: 100%;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
 
 /* Styles for the document area */
 .document-area {
@@ -65,6 +101,7 @@ section.signed-area iframe {
     background-color: #fdfdfd; /* Base background for the area, content will have white */
     line-height: 1.6;
     /* box-shadow and background-color moved to .document-scroll-content */
+    position: relative; /* allow absolute positioning of the instruction message */
 }
 
 /* Styles for scrollable document content */

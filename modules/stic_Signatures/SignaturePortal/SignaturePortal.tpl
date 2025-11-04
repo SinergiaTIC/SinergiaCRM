@@ -61,7 +61,7 @@
                 </div>
             </section>
             {else}
-            <div class="stic-container container mt-4 max-w-md mx-auto d-flex align-items-center">
+            <div class="stic-container container pt-3 mt-4 max-w-md mx-auto d-flex align-items-center">
                 { if $SHOW_PORTAL === true }
                 { if $STATUS === 'pending' }
                 <section class="document-area">
