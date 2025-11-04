@@ -72,6 +72,7 @@ $mod_strings = array(
     'LBL_EVALUATION_STAGE' => 'Momento de la valoración',
     'LBL_DEFAULT_PANEL' => 'Datos generales',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
-    'LBL_PANEL_LANGUAGE' => 'Idioma',  
+    'LBL_PANEL_LANGUAGE' => 'Idioma',
+    'LBL_PANEL_EVALUATION' => 'Evaluación',    
     'LBL_STIC_SKILLS_CONTACTS_FROM_CONTACTS_TITLE'=> 'Persona',
 );

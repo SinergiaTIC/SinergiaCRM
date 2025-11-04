@@ -73,5 +73,6 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LBL_PANEL_LANGUAGE' => 'Idioma',
+  'LBL_PANEL_EVALUATION' => 'Avaluació',
   'LBL_STIC_SKILLS_CONTACTS_FROM_CONTACTS_TITLE'=> 'Persona',
 );
