@@ -78,6 +78,7 @@ $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Email account that wi
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive error messages that may occur after sending. It can be configured in the 'Inbound email' section of the Administration area.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving the notification the emails to be sent will be automatically added to the sending queue.";
+$mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = "When saving the notification the messages to be sent will be automatically added to the sending queue.";
 
 $mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Message sendings';
 $mod_strings['LBL_SEND_MESSAGES'] = 'Send messages';

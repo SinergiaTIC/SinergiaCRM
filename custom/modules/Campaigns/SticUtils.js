@@ -89,8 +89,7 @@ $(document).ready(function() {
   if (viewType() != "list") {
     $("#notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
     $("#msg_notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
-
-    // TODOEPS: Fer el mateix pel panel de MSG_NOTIFICATION? Per què posa NEW_INFO?
+debugger;
     if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
       $(
         "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
@@ -100,6 +99,14 @@ $(document).ready(function() {
 
       $("#notification_outbound_email_id").on("change paste keyup", mail_change);
       $("#notification_template_id").on("change paste keyup", template_change);
+    }
+    if ($("#LBL_MSG_NOTIFICATION_NEW_INFO").length == 0) {
+      $(
+        "<div id='LBL_MSG_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
+          SUGAR.language.get("Campaigns", "LBL_MSG_NOTIFICATION_NEW_INFO") +
+          "</div>"
+      ).prependTo("[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] .tab-content .row");
+
     }
 
     // Check Notification panel exists
