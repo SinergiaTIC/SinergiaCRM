@@ -115,13 +115,11 @@ class DetailView2 extends EditView
             
             // STIC-Custom 20250716 JCH - Show the Add Signature button and popupHTML in detail view
             // // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
-            if (!in_array($this->module, $excludedModules)){
-                $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showPopupSignature(\'popup-div-signature\');" value="{$APP.LBL_ADD_TO_SIGNATURE_PROCESS}">');
-                require_once('modules/stic_Signatures/SignaturePopup.php');
-                SelectSignatureTemplate::DVPopupHtml($this->module);
-                $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SHOW_RELATED_SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showRelatedSignatures(\'popup-div-related-signature\');" value="{$APP.LBL_SHOW_RELATED_SIGNATURES}">');
-                SelectSignatureTemplate::DVPopupRelatedSignaturesHtml($this->module, $this->focus->id);
-            }
+            $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showPopupSignature(\'popup-div-signature\');" value="{$APP.LBL_ADD_TO_SIGNATURE_PROCESS}">');
+            require_once('modules/stic_Signatures/SignaturePopup.php');
+            SelectSignatureTemplate::DVPopupHtml($this->module);
+            $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SHOW_RELATED_SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showRelatedSignatures(\'popup-div-related-signature\');" value="{$APP.LBL_SHOW_RELATED_SIGNATURES}">');
+            SelectSignatureTemplate::DVPopupRelatedSignaturesHtml($this->module, $this->focus->id);
             // END STIC-Custom
 
         } else {

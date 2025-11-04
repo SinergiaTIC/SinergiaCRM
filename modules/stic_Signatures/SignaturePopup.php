@@ -250,7 +250,7 @@ class SelectSignatureTemplate
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title"><img src="themes/SuiteP/images/insert-signature.png" width="32" height="32" />&nbsp;' . $app_strings['LBL_SHOW_RELATED_SIGNATURES'] . '</h4>
-                        <span style="margin-right: 0.5rem;">&nbsp;&nbsp;' . $app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] . '</span>
+                        <span style="margin-right: 0.5rem;">&nbsp;&nbsp;' . $app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] . ' <strong>' . $app_list_strings['moduleList'][$module] . '</strong></span>
                      </div>
                      <div class="modal-body">
                         <div style="padding: 5px 5px; overflow: auto; height: auto;">
