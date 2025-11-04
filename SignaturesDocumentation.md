@@ -132,11 +132,11 @@ Hay que tener en cuenta que _en el caso de las firmas_ la LPO se crea concatenan
 
 
     ## TODO: Pendiente
-    - En las firmas de autorizados, hay que controlar cuando han firmado todos los representantes, para cambiar el estado a completada (o lo que corresponda). 
-    - Al llegar al final de documento, se redimensiona el área visible del PDF, hay que revisar si es posible evitar este comportamiento.
-
+    
     
     ### Hecho
+    - Mostrar botón para mostrar firmas relaionadas con cada registro en el subpanel de firmas relacionadas.
+    - Al llegar al final de documento, se redimensiona el área visible del PDF, hay que revisar si es posible evitar este comportamiento.
     - Añadir en subpanel firmas de personas que han sido representadas.
     - Revisar subpaneles de firmas en personas y usuarios.
     - búsquedas en registro de firmas.
