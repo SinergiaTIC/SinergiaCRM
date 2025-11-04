@@ -73,6 +73,9 @@ function cascadeAccessOption(action,selectEle) {
 </p>
 <p>
 </p>
+{* STIC-Custom AAM 20251104 - Added scroll wrapper to ACL Roles Edit All Body to improve usability when many roles exist *}
+<div id="acl-scroll-wrapper">
+{* END STIC-Custom *}
 <TABLE width='100%' class='detail view' border='0' cellpadding=0 cellspacing = 1  >
 <TR id="ACLEditView_Access_Header">
 <td id="ACLEditView_Access_Header_category"></td>
@@ -179,6 +182,9 @@ Not ideal but it'll work since it's the only way to get that info without editin
     <tr> <td colspan="2">No Actions Defined</td></tr>
 {/foreach}
 </TABLE>
+{* STIC-Custom AAM 20251104 - Added scroll wrapper to ACL Roles Edit All Body to improve usability when many roles exist *}
+</div>
+{* END STIC-Custom *}
 <div style="padding-top:10px;">
 &nbsp;<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button" onclick="this.form.action.value='Save';aclviewer.save('ACLEditView');return false;" type="button" name="button" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " id="SAVE_FOOTER"> &nbsp;
 <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}"   class='button' type='button' name='save' value="  {$APP.LBL_CANCEL_BUTTON_LABEL} " class='button' onclick='aclviewer.view("{$ROLE.id}", "All");'>

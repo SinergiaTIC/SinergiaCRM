@@ -1428,3 +1428,28 @@ span.totals{
   cursor: not-allowed !important;
   pointer-events: none;
 }
+
+// Fix for ACL Edit View header sticky
+#ACLEditView_Access_Header {
+  position: sticky;
+  top: 0;
+  background: #f8f8f8;
+  z-index: 20;
+}
+// Fix for ACL Edit View scrollable area
+#acl-scroll-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#acl-scroll-wrapper table tr:hover td {
+  background-color: lighten($stic-base, 40%) !important;
+  font-weight: bold;
+}
+
+.acl-saving-message {
+  color: bw($stic-base);
+  padding: 10px;
+  text-align: center;
+  font-size: 16px;
+}
