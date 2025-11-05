@@ -76,10 +76,10 @@ class ParameterResolverService {
                 // El parámetro es un Registro del crm. Value contiene 'modulo|id'
                 return $this->resolveBean($def, $value, $context);
 
-            case ActionParameterType::OBJECT_SELECTOR:
+            case ActionParameterType::OPTION_SELECTOR:
                 // El parámetro es un selector 'selectedOption' contiene la selección
                 $selectedOption = $config?->selectedOption;
-                return $this->resolveObjectSelector($def, $selectedOption, $value, $context);
+                return $this->resolveOptionSelector($def, $selectedOption, $value, $context);
         }
 
         // No se ha retornado ninguna resolución
@@ -87,7 +87,7 @@ class ParameterResolverService {
         return null;
     }
 
-    private function resolveFixedValue(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?mixed {
+    private function resolveFixedValue(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): mixed {
         $valueToCast = $value !== null ? $value : $def->defaultValue;
         if ($valueToCast === null) {
             return null;
@@ -211,7 +211,7 @@ class ParameterResolverService {
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $submittedValue);
     }
 
-    private function resolveObjectSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?mixed {
+    private function resolveOptionSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?OptionSelectorResolved {
         if ($selectedOption === null) {
             $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Selected option is null");
             return null;
@@ -232,25 +232,34 @@ class ParameterResolverService {
         }
 
         // Resolve parameter with resolvedType
+        $resolvedValue = null;
         switch ($optionDef->resolvedType) {
             case ActionParameterType::VALUE:
                 // El parámetro es un valor fijo. Value contiene el valor
-                return $this->resolveFixedValue($def, $value, $context);
+                $resolvedValue = $this->resolveFixedValue($def, $value, $context);
+                break;
 
             case ActionParameterType::DATA_BLOCK:
                 // El parámetro es un Bloque de datos. Value contiene el id del bloque
-                return $this->resolveDataBlock($def, $value, $context);
+                $resolvedValue = $this->resolveDataBlock($def, $value, $context);
+                break;
                 
             case ActionParameterType::FIELD:
                 // El parámetro es un campo del formulario. Value contiene el nombre del campo
-                return $this->resolveFormField($def, $value, $context);
+                $resolvedValue = $this->resolveFormField($def, $value, $context);
+                break;
 
             case ActionParameterType::CRM_RECORD:
                 // El parámetro es un Registro del crm. Value contiene 'modulo|id'
-                return $this->resolveBean($def, $value, $context);
+                $resolvedValue = $this->resolveBean($def, $value, $context);
+                break;
+
+            default:
+                $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Unknown ResolvedType '{$optionDef->resolvedType->value}'.");
+                return null;
         }
         
-        return null;        
+        return new OptionSelectorResolved($selectedOption, $resolvedValue);        
     }
 }
 

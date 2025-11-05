@@ -26,23 +26,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Clase para un campo de bloque de datos con los datos rellenados de un formulario
+ * Clase para un campo de Selección de opciones con los datos rellenados de un formulario
  */
-class DataBlockFieldResolved {
-    public ?FormDataBlockField $dataBlockField;   // La confifuración del Campo del Bloque de datos (si existe)
+class OptionSelectorResolved {
+    public string $selectedOptionName;   // El nombre de la opción seleccionada de la definición del parámetro
 
-    public string $formKey;         // El nombre completo del campo en el formulario
-    public string $fieldName;       // El nombre del campo (después del prefijo) (ex: email1, first_name)
-    public mixed $value;           // El valor enviado desde el formulario
+    public mixed $resolvedValue;         // El valor enviado desde el formulario y resuelto según la definición de la opción seleccionada
 
-    public function __construct(string $formKey, string $fieldName, ?FormDataBlockField $config, mixed $value) {
-        $this->formKey = $formKey;
-        $this->fieldName = $fieldName;
-        $this->dataBlockField = $config;
-        $this->value = $value;
-    }
-
-    public function isDetached(): bool {
-        return str_starts_with($this->formKey, '_detached.');
+    public function __construct(string $optionName, mixed $resolvedValue) {
+        $this->selectedOptionName = $optionName;
+        $this->resolvedValue = $resolvedValue;
     }
 }

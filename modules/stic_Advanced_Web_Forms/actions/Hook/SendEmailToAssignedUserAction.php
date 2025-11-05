@@ -62,7 +62,7 @@ class SendEmailToAssignedUserAction extends SendEmailAction {
                 name: 'recipientSource',
                 text: $this->translate('PARAM_RECIPIENTSOURCE_TEXT'),
                 description: $this->translate('PARAM_RECIPIENTSOURCE_DESCRIPTION'),
-                type: ActionParameterType::OBJECT_SELECTOR,
+                type: ActionParameterType::OPTION_SELECTOR,
                 required: true,
                 selectorOptions: [
                     // Opción 1: El Asignado a de un bloque de datos 

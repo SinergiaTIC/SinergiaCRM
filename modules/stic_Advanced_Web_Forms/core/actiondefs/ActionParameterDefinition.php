@@ -30,7 +30,7 @@ enum ActionParameterType: string {
     case DATA_BLOCK      = 'dataBlock';
     case FIELD           = 'field';
     case CRM_RECORD      = 'crmRecord';
-    case OBJECT_SELECTOR = 'objectSelector';
+    case OPTION_SELECTOR = 'optionSelector';
 }
 
 enum ActionDataType: string {

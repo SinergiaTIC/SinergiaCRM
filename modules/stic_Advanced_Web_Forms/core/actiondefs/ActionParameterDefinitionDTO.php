@@ -33,7 +33,7 @@ class ActionParameterDefinitionDTO {
     public string $name;
     public string $text;
     public string $description;
-    public string $type;         // Ex: 'value','dataBlock','field','crmRecord','objectSelector'
+    public string $type;         // Ex: 'value','dataBlock','field','crmRecord','optionSelector'
     public ?string $dataType;    // Ex: 'text', 'boolean'
     public bool $required;
     public string $defaultValue;
