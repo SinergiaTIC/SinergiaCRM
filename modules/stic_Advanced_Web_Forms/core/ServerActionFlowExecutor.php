@@ -57,7 +57,7 @@ class ServerActionFlowExecutor {
                 // Resolución de Parámetros 
                 $paramDefinitions  = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
-                $resolvedParameters = $this->resolver->resolveAll($paramDefinitions, $paramConfigurations, $this->context);
+                $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
                 $actionConfig->setResolvedParameters($resolvedParameters);
 
                 // Ejecutamos la acción

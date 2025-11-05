@@ -25,20 +25,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."BeanReference.php";
-include_once __DIR__."BeanModified.php";
-include_once __DIR__."DataBlockResolved.php";
-include_once __DIR__."DataBlockFieldResolved.php";
-include_once __DIR__."ActionResult.php";
-include_once __DIR__."WebhookResult.php";
-include_once __DIR__."ExecutionContext.php";
-
-include_once __DIR__."RequiredParameterException.php";
-include_once __DIR__."ParameterResolverService.php";
-
-include_once __DIR__."ServerActionFactory.php";
-include_once __DIR__."ServerActionFlowExecutor.php";
-include_once __DIR__."ActionDiscoveryService.php";
-
-include_once __DIR__."formdefs/includes.php";
-include_once __DIR__."actiondefs/includes.php";
+class RequiredParameterException extends \Exception {
+    public function __construct(string $paramName, string $actionName) {
+        $message = "Parameter '{$paramName}' is required for action '{$actionName}' but could not be resolved (resolved to null).";
+        $GLOBALS['log']->error($message);
+        parent::__construct($message);
+    }
+}

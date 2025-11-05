@@ -30,12 +30,13 @@ class ParameterResolverService {
     /**
      * Resuelve todos los parámetros de una acción, paritiendo de las definiciones y la configuración del wizard
      *
+     * @param FormAction $actionConfig La configuración de la acción
      * @param ActionParameterDefinition[] $paramDefinitions Las definiciones de los parámetros
      * @param FormActionParameter[] $paramConfigurations La configuración de los parámetros
      * @param ExecutionContext $context El contexto de ejecución
      * @return array Un mapa [param_name => resolved_value]
      */
-    public function resolveAll(array $paramDefinitions, array $paramConfigurations, ExecutionContext $context): array {
+    public function resolveAll(FormAction $actionConfig, array $paramDefinitions, array $paramConfigurations, ExecutionContext $context): array {
         $resolvedParameters = [];
 
         $paramConfigMap = [];
@@ -47,7 +48,11 @@ class ParameterResolverService {
         foreach ($paramDefinitions as $paramDef) {
             $paramName = $paramDef->name;
             $paramConfig = $paramConfigMap[$paramName] ?? null;
-            $resolvedParameters[$paramName] = $this->resolveSingleParam($paramDef, $paramConfig, $context);
+            $resolvedValue = $this->resolveSingleParam($paramDef, $paramConfig, $context);
+            if ($paramDef->required && $resolvedValue === null) {
+                throw new RequiredParameterException($paramName, $actionConfig->name);
+            }
+            $resolvedParameters[$paramName] = $resolvedValue;
         }
         
         return $resolvedParameters;
