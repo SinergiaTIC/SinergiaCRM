@@ -319,7 +319,7 @@ class sticGenerateSignedPdf
         switch ($signedMode) {
             case 'handwritten':
                 // Use the drawn signature image URL from the signer bean
-                $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
+                $replaceWith = 'src="' . $signerBean->signature_image . '";';
                 break;
             case 'button':
                 // Generate an acceptance image with signer details and timestamp
