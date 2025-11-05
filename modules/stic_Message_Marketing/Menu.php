@@ -27,12 +27,13 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Message_Marketing', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Message_Marketing&action=EditView&return_module=stic_Message_Marketing&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Message_Marketing');
-}
-if(ACLController::checkAccess('stic_Message_Marketing', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Message_Marketing&action=index&return_module=stic_Message_Marketing&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Message_Marketing');
-}
-if(ACLController::checkAccess('stic_Message_Marketing', 'import', true)){
-    $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Message_Marketing&return_module=stic_Message_Marketing&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Message_Marketing');
-}
+// No actions have sense
+// if(ACLController::checkAccess('stic_Message_Marketing', 'edit', true)){
+//     $module_menu[]=array('index.php?module=stic_Message_Marketing&action=EditView&return_module=stic_Message_Marketing&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Message_Marketing');
+// }
+// if(ACLController::checkAccess('stic_Message_Marketing', 'list', true)){
+//     $module_menu[]=array('index.php?module=stic_Message_Marketing&action=index&return_module=stic_Message_Marketing&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Message_Marketing');
+// }
+// if(ACLController::checkAccess('stic_Message_Marketing', 'import', true)){
+//     $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Message_Marketing&return_module=stic_Message_Marketing&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Message_Marketing');
+// }
