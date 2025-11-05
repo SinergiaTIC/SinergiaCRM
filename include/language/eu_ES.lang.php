@@ -3857,4 +3857,4 @@ $app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'Solo puede contener cara
 $app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'El nombre del fichero de importación no es válido';
 
 $app_strings['LBL_PASSWORD_SET_NEW_VALUE_TO_RESET'] = 'Contraseña establecida. Introduzca un valor para establecer una nueva contraseña.';
-$app_strings['LBL_VALUE_SET_PLACEHOLDER'] = 'Valor establecido. Introduzca un nuevo valor para sobrescribir el valor actual.';
+$app_strings['LBL_VALUE_SET_PLACEHOLDER'] = 'Balioa ezarrita. Sartu balio berri bat egungo balioa gainidazteko.';
