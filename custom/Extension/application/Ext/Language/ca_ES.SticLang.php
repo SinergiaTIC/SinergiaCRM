@@ -32,12 +32,12 @@ $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Afege
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
-$app_strings['LBL_SELECT_SIGNATURE'] = 'Selecciona un procés de firma';
-$app_strings['LBL_SELECT_SIGNATURE_INFO'] = 'Solament es mostren els processos de firma amb estat Obert';
-$app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra firmes relacionades';
+$app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
+$app_strings['LBL_SELECT_SIGNATURE_INFO'] = 'Només es mostren els processos de firma amb estat Obert';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra les firmes relacionades';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Firmes relacionades';
-$app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Ara es mostren les firmes relacionades amb aquest registre del mòdul';
-$app_strings['LBL_NO_SIGNATURES_FOUND'] = 'No s\'han trobat firmes relacionades';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Es mostren les firmes relacionades amb aquest registre del mòdul';
+$app_strings['LBL_NO_SIGNATURES_FOUND'] = "No s'han trobat firmes relacionades";
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Valida la importació';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = "S'ha produït un error";
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Mostra-ho a la vista de llista';
@@ -213,7 +213,7 @@ $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organitza
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaça';
 $app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Registre de firmes';
-$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firme';
+$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
 $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmant';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
@@ -299,7 +299,7 @@ $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitz
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
 $app_list_strings['record_type_display']['stic_Signatures'] = 'Firmes';
-$app_list_strings['record_type_display']['stic_Signers'] = 'Signants';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Firmants';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -343,18 +343,17 @@ $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Or
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
 $app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmes';
-$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Signants';
-
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmants';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmes';
 
-// Categorías per a la creació dinàmica de Llistes de públic objectiu
+// Creació dinàmica de Llistes de públic objectiu
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
-$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures__exampleFilter'] = 'Filtro de ejemplo de Firmes';
-$app_list_strings['notification_auto_prospect_list_name_list']['stic_Events__exampleFilter'] = 'Filtro de ejemplo de Esdeveniments';
-$app_list_strings['notification_auto_prospect_list_name_list']['Opportunities__exampleFilter'] =  'Filtro de ejemplo de Subvencions';
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures__exampleFilter'] = "Filtre d'exemple de Firmes";
+$app_list_strings['notification_auto_prospect_list_name_list']['stic_Events__exampleFilter'] = "Filtre d'exemple d'Esdeveniments";
+$app_list_strings['notification_auto_prospect_list_name_list']['Opportunities__exampleFilter'] = "Filtre d'exemple de Subvencions";
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3656,6 +3655,59 @@ $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuari connectat';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inici de sessió erroni';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
 
+// Firmes: Estat
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Oberta';
+$app_list_strings['stic_signatures_status_list']['complete'] = 'Completada';
+$app_list_strings['stic_signatures_status_list']['expired'] = 'Caducada';
+
+// Firmes: Mètodes d'autenticació
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enllaç únic';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = "Codi d'un sol ús (per SMS o correu electrònic)";
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = "Codi d'un sol ús (per correu electrònic)";
+$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = "Codi d'un sol ús (per SMS)";
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Telèfon';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = "Número d'identificació";
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Data de naixement';
+
+// Firmes: Tipus
+// (preserved for next development phase) $app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+//(preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (personalitzada)';
+//(preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
+
+// Firmes: Modes
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Botó';
+
+// Firmas: En nom de...
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, un sol representant';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, tots els representants';
+
+// Firmants: Estat
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Firmat';
+$app_list_strings['stic_signers_status_list']['expired'] = 'Caducat';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecessari';
+
+// Registre de Firmes: Accions
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] =  'Document firmat amb botó';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document firmat amb firma manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] =  'Firmant afegit a la firma';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = "Codi d'un sol ús enviat al correu electrònic del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = "Codi d'un sol ús enviat al telèfon del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = "Codi d'un sol ús verificat pel firmant";
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = "Correu electrònic enviat al firmant';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Portal de firma obert pel firmant';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF firmat descarregat pel firmant';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF firmat enviat al signant';  
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma caducada';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document firmat per una altra persona autoritzada';
+
 // Modificacions del core de SuiteCRM
 
 // Cadenes generals (procedents d'include)
@@ -3760,61 +3812,6 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
-
-// Signaturas: Estat
-$app_list_strings['stic_signatures_status_list'][''] = '';
-$app_list_strings['stic_signatures_status_list']['draft'] = 'Esborrany';
-$app_list_strings['stic_signatures_status_list']['open'] = 'Oberta';
-$app_list_strings['stic_signatures_status_list']['complete'] = 'Completa';
-$app_list_strings['stic_signatures_status_list']['expired'] = 'Vençuda';
-
-// Signaturas: Mètodes d'autenticació
-$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enllaç únic';
-$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Codi d\'un sol ús (per SMS o Correu electrònic)';
-$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Codi d\'un sol ús (per Correu electrònic)';
-$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = 'Codi d\'un sol ús (per SMS)';
-$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Telèfon';
-$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = "Número d'identificació";
-$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Data de naixement';
-
-// Signaturas: Tipus de signatura
-//(preserved for signatures next phase) $app_list_strings['stic_signatures_types_list'][''] = '';
-$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
-//(preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (Personalitzada)';
-//(preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
-
-// Signaturas: Modes de signatura
-$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
-$app_list_strings['stic_signatures_modes_list']['button'] = 'Botó';
-
-// Firmas: Signatures en nom de
-$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
-$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, un sol representant';
-$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, tots els representants';
-
-// Signant: Estat
-$app_list_strings['stic_signers_status_list'][''] = '';
-$app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
-$app_list_strings['stic_signers_status_list']['signed'] = 'Firmat';
-$app_list_strings['stic_signers_status_list']['expired'] = 'Vençut';
-$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Ja no se necessita la firma';
-
-
-
-// Registre de Signatures: Accions
-$app_list_strings['stic_signature_log_actions'][''] = '';    
-$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] =  'Document signat mitjançant botó';
-$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document signat mitjançant signatura manuscrita';
-$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] =  'Signant afegit a la signatura';
-$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Codi de un sol ús enviat al correu electrònic del signant';
-$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Codi de un sol ús enviat al telèfon del signant';
-$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Codi de un sol ús verificat pel signant';
-$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correu electrònic enviat al signant';
-$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Portal de signatura obert pel signant';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF signat descarregat pel signant';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF signat enviat al signant';  
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signatura vençuda';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document firmat per altra persona autoritzada';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
