@@ -99,8 +99,8 @@ class ExecutionContext {
      * @param string $blockId ID del bloque de datos
      * @return ?FormDataBlock El bloque de datos o null si no se encuentra
      */
-    public function getDataBlock(string $blockId): array {
-        return $this->formConfig->data_blocks[$blockId] ?? [];
+    public function getDataBlock(string $blockId): ?FormDataBlock {
+        return $this->formConfig->data_blocks[$blockId] ?? null;
     }
 }
 

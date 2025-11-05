@@ -51,6 +51,8 @@ class FormDataBlockField {
     public DataBlockFieldValueType $value_type;  // Tipo de valor: editable, selectable, fixed, dataBlock
     public string $value;                        // El valor del campo
     public string $value_text;                   // El texto a mostrar para el valor del campo
+    /** @var FormValueOption[] */
+    public array $value_options = [];            // Opciones del campo
 
     /**
      * Crea una instancia de FormDataBlockField a partir de un array JSON.
@@ -74,6 +76,12 @@ class FormDataBlockField {
         $dto->value = $data['value'];
         $dto->value_text = $data['value_text'];
 
+        if (isset($data['value_options'])) {
+            foreach ($data['value_options'] as $optionData) {
+                $dto->value_options[] = FormValueOption::fromJsonArray($optionData);
+            }
+        }
+        
         return $dto;
     }
 }

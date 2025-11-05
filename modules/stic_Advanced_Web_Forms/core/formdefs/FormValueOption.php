@@ -25,24 +25,18 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Clase para un campo de bloque de datos con los datos rellenados de un formulario
- */
-class DataBlockFieldResolved {
-    public ?FormDataBlockField $dataBlockField;   // La confifuración del Campo del Bloque de datos (si existe)
+class FormValueOption {
+    public string $value;
+    public bool $is_visible;
+    public string $text_original;
+    public string $text;
 
-    public string $formKey;         // El nombre completo del campo en el formulario
-    public string $fieldName;       // El nombre del campo (después del prefijo) (ex: email1, first_name)
-    public mixed $value;            // El valor enviado desde el formulario
-
-    public function __construct(string $formKey, string $fieldName, ?FormDataBlockField $config, mixed $value) {
-        $this->formKey = $formKey;
-        $this->fieldName = $fieldName;
-        $this->dataBlockField = $config;
-        $this->value = $value;
-    }
-
-    public function isDetached(): bool {
-        return str_starts_with($this->formKey, '_detached.');
+    public static function fromJsonArray(array $data): self {
+        $dto = new self();
+        $dto->value = $data['value'];
+        $dto->is_visible = $data['is_visible'];
+        $dto->text_original = $data['text_original'];
+        $dto->text = $data['text'];
+        return $dto;
     }
 }

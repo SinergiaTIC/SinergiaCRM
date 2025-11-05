@@ -28,6 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 include_once __DIR__."FormConfig.php";
 
 include_once __DIR__."FormDataBlock.php";
+include_once __DIR__."FormValueOption.php";
 include_once __DIR__."FormDataBlockField.php";
 include_once __DIR__."FormDuplicateRule.php";
 

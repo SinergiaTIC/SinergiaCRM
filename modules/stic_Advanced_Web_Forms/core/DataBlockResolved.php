@@ -37,12 +37,29 @@ class DataBlockResolved {
     /** @var array<string, DataBlockFieldResolved> */
     public array $detachedData = [];     // Los datos no mapeados [detached_field_name => DataBlockFieldResolved]
 
-    public function __construct(FormDataBlock $config, array $fullFormData) {
+    public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context) {
         $this->dataBlock = $config;
 
-        $fieldDefMap = [];
-        foreach ($config->fields as $fieldDef) {
-            $fieldDefMap[$fieldDef->name] = $fieldDef;
+        // Procesamos los valores fijos (hidden) del Bloque de datos: 
+        //  los consideramos valores por defecto, se sobreescriben por los valores del formulario
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->value_type !== DataBlockFieldValueType::FIXED) { 
+                continue;
+            }
+
+            // Obtenemos el tipo de campo en el crm para hacer su casting
+            $castedValue = $this->castCrmValue($fieldDef->value, $fieldDef->type, $context);
+            $formKey = ""; // El campo no está en el formulario
+
+            // Creamos el campo resuelto
+            $fieldResolved = new DataBlockFieldResolved($formKey, $fieldName, $fieldDef, $castedValue);
+
+            // Comprobamos si el campo hidden es 'unlinked'
+            if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                 $this->detachedData[$fieldName] = $fieldResolved;
+            } else {
+                 $this->formData[$fieldName] = $fieldResolved;
+            }
         }
 
         // Form field names:
@@ -59,17 +76,90 @@ class DataBlockResolved {
             // Campo enlazado al crm (Ex: persona_tutor.first_name)
             if (str_starts_with($formKey, $namePrefix)) {
                 $fieldName = substr($formKey, $namePrefixLen);
-                $definition = $fieldDefMap[$fieldName] ?? null; // Puede ser un campo no definido en la configuración
+                $definition = $config->fields[$fieldName] ?? null; // Puede ser un campo no definido en la configuración
 
-                $this->formData[$fieldName] = new DataBlockFieldResolved($formKey, $fieldName, $definition, $value);
+                // Obtenemos el tipo de campo en el crm para hacer su casting
+                $crmFieldType = $definition?->type;
+                $castedValue = $this->castCrmValue($value, $crmFieldType, $context);
+
+                $this->formData[$fieldName] = new DataBlockFieldResolved($formKey, $fieldName, $definition, $castedValue);
             
             // Campo NO enlazado al crm (Ex: _detached.persona_menor.accept_photos)
             } else if (str_starts_with($formKey, $detachedPrefix)) {
                 $fieldName = substr($formKey, $detachedPrefixLen);
-                $definition = $fieldDefMap[$fieldName] ?? null; // Puede ser un campo no definido en la configuración
+                $definition = $config->fields[$fieldName] ?? null; // Puede ser un campo no definido en la configuración
 
+                // Los campos no enlazados al crm los tratamos como strings (no hay tipo a mapear)
                 $this->detachedData[$fieldName] = new DataBlockFieldResolved($formKey, $fieldName, $definition, $value);
             }
+        }
+    }
+
+    /**
+     * Convierte un valor string del formulario al tipo PHP correcto basándose en el tipo de campo en el CRM.
+     * @param mixed $valueToCast El valor a convertir
+     * @param ?string $crmFieldType El tipo de campo en el CRM
+     * @param ExecutionContext $context El contexto de ejecución
+     * @return mixed El valor convertido
+     */
+    private function castCrmValue(mixed $valueToCast, ?string $crmFieldType, ExecutionContext $context): mixed {
+        // Si no es un string (ej: un array de un multiselect), lo retornamos tal cual.
+        if (!is_string($valueToCast)) {
+            return $valueToCast;
+        }
+
+        // Si no hay tipo definido, lo tratamos como texto
+        if ($crmFieldType === null) {
+            $crmFieldType = 'text';
+        }
+
+        switch ($crmFieldType) {
+            // Boolean
+            case 'bool':
+            case 'checkbox':
+                $lowerValue = strtolower(trim($valueToCast));
+                return !($lowerValue === 'false' || $lowerValue === '0' || $lowerValue === 'off' || $lowerValue === '');
+
+            // Numéricos
+            case 'int':
+                return (int)$valueToCast;
+            
+            case 'float':
+            case 'double':
+            case 'decimal':
+            case 'currency': 
+                return (float)$valueToCast;
+
+            // Fechas y horas
+            case 'date':
+            case 'time':
+            case 'datetime':
+            case 'datetimecombo':
+                $baseTimestamp = (int)$context->submissionTimestamp;
+                // strtotime también gestiona "today", "+1 day", etc.
+                $parsedTime = @strtotime($valueToCast, $baseTimestamp);
+                
+                if ($parsedTime === false) {
+                    $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Can not parse date '{$valueToCast}'.");
+                    return null;
+                }
+                try {
+                    $dateTimeObj = new \DateTime();
+                    $dateTimeObj->setTimestamp($parsedTime);
+                    return $dateTimeObj;
+                } catch (\Exception $e) { return null; }
+
+            // Strings 
+            case 'varchar':
+            case 'text':
+            case 'relate':
+            case 'enum':
+            case 'multienum':
+            case 'phone':
+            case 'email':
+            case 'text':
+            default:
+                return (string)$valueToCast;
         }
     }
 

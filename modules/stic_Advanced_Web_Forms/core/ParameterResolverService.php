@@ -147,7 +147,7 @@ class ParameterResolverService {
             return null;
         }
 
-        return new DataBlockResolved($dataBlockConfig, $context->formData);
+        return new DataBlockResolved($dataBlockConfig, $context->formData, $context);
     }
 
     private function resolveBean(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?BeanReference {
@@ -200,12 +200,7 @@ class ParameterResolverService {
         // Find the dataBlockField definition
         $fieldDefinition = null;
         if ($dataBlockConfig !== null) {
-            foreach ($dataBlockConfig->fields as $fieldDef) {
-                if ($fieldDef->name === $fieldName) {
-                    $fieldDefinition = $fieldDef;
-                    break;
-                }
-            }
+            $fieldDefinition = $dataBlockConfig->fields[$fieldName] ?? null;
         }
 
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $submittedValue);
