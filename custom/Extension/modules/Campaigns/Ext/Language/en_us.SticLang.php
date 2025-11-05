@@ -73,8 +73,8 @@ $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "Notification will be s
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "The email template must be of type 'Notification' and can include fields from the record related to the notification (the event or the opportunity).";
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Email account that will be used to send the notification. It can be configured in the 'Outbound email' section of the Administration area.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive error messages that may occur after sending. It can be configured in the 'Inbound email' section of the Administration area.";
-$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = "A target list will be automatically created based on the selection and it will be added to the notification.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = 'A target list will be automatically created based on the selection and it will be added to the notification.';
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = 'An error occurred while creating the target list.';
-$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = 'The following target list has been created for notifications: ';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = 'The following target list has been created: ';
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving the notification the emails to be sent will be automatically added to the sending queue.";
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving the notification the emails to be sent will be automatically added to the sending queue.';
