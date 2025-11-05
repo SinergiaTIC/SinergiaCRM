@@ -24,7 +24,7 @@ if (!empty($campaignId)) {
 
     $result = $db->query($sql);
 
-    // $app_list_strings['stic_prospectlists_campaign'][''] = '';
+    $app_list_strings['stic_prospectlists_campaign'] = array();
     while ($row = $db->fetchByAssoc($result)) {
         $app_list_strings['stic_prospectlists_campaign'][$row['id']] = $row['value'];
     }
