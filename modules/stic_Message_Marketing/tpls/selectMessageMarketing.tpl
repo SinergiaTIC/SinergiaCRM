@@ -14,8 +14,8 @@
         <p>
         </p>
         <h3>{$MOD.LBL_CAMPAIGNS_TITLE}</h3>
-        <input id="sendButton" title="Send" class="button" onclick="this.form.module.value='stic_Message_Marketing';this.form.action.value='sendMessages';" type="submit" name="Schedule" value="  Send  ">
-        <input title="Cancel" accesskey="l" class="button" onclick="this.form.module.value='Campaigns';this.form.action.value='DetailView';this.form.record.value='{$MAP.RETURN_ID}';" type="submit" name="Schedule" value="  Cancel  ">
+        <input id="sendButton" title="Send" class="button" onclick="this.form.module.value='stic_Message_Marketing';this.form.action.value='sendMessages';" type="submit" name="Schedule" value="  {$APP.LBL_SEND}  ">
+        <input title="Cancel" accesskey="l" class="button" onclick="this.form.module.value='Campaigns';this.form.action.value='DetailView';this.form.record.value='{$MAP.RETURN_ID}';" type="submit" name="Schedule" value="  {$APP.LBL_EMAIL_CANCEL}  ">
 
 
 <table id="messageMarketingTable" cellpadding="0" cellspacing="0" width="100%" border="0" class="list view">
@@ -53,9 +53,9 @@
             -->
                 <input type="checkbox" class="bootstrap-checkbox-hidden checkbox" title="Select all" name="massall" id="massall" value="" onclick="sListView.check_all(document.MassUpdate, &quot;mass[]&quot;, this.checked)">
             </td>
-            <td scope="col" width="35%" nowrap=""><span>Name</span></td>
-            <td scope="col" width="15%" nowrap=""><span>Status</span></td>
-            <td scope="col" width="50%" nowrap=""><span>Targeted Lists</span></td>
+            <td scope="col" width="35%" nowrap=""><span>{$MOD.LBL_NAME}</span></td>
+            <td scope="col" width="15%" nowrap=""><span>{$MOD.LBL_STATUS}</span></td>
+            <td scope="col" width="50%" nowrap=""><span>{$MOD.LBL_PROSPECT_LISTS_TITLE}</span></td>
         </tr>
 
         {foreach from=$MAP.MMLIST key=KEY item=ITEM}
