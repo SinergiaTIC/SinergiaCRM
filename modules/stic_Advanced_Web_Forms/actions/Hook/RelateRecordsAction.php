@@ -26,105 +26,81 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
-class RelateRecordsAction extends HookActionDefinition {
+class RelateRecordsAction extends HookBeanActionDefinition {
     public function __construct() {
         $this->isActive = true;
         $this->baseLabel = 'LBL_RELATE_RECORDS_ACTION';
     }
 
     /**
-     * Retorna los parámetros definidos para la acción
-     * @return ActionParameterDefinition[] Los parámetros de la acción
+     * getCustomParameters()
+     * Definim els paràmetres ADICIONALS que necessitem,
+     * a més del paràmetre de bloc principal que ja defineix la classe pare.
      */
-    public function getParameters(): array {
-        return [
-            // Plantilla de email
-            new ActionParameterDefinition(
-                name: 'templateId',
-                text: $this->translate('PARAM_TEMPLATEID_TEXT'),
-                description: $this->translate('PARAM_TEMPLATEID_DESCRIPTION'),
-                type: ActionParameterType::CRM_RECORD,
-                supportedModules: ['EmailTemplates'],
-                required: true,
-            ),
-            // Bloque de datos base para las variables de la plantilla
-            new ActionParameterDefinition(
-                name: 'baseDataBlock',
-                text: $this->translate('PARAM_BASEDATABLOCK_TEXT'),
-                description: $this->translate('PARAM_BASEDATABLOCK_DESCRIPTION'),
-                type: ActionParameterType::DATA_BLOCK,
-                required: false,
-            ),
-            // Destinatario del email
-            new ActionParameterDefinition(
-                name: 'recipientSource',
-                text: $this->translate('PARAM_RECIPIENTSOURCE_TEXT'),
-                description: $this->translate('PARAM_RECIPIENTSOURCE_DESCRIPTION'),
-                type: ActionParameterType::OPTION_SELECTOR,
-                required: true,
-                selectorOptions: [
-                    // Opción 1: Campo definido en el formulario
-                    new ActionSelectorOptionDefinition(
-                        name: 'field',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIELD_TEXT'),
-                        resolvedType: ActionParameterType::FIELD,
-                        supportedDataTypes: [ActionDataType::EMAIL, ActionDataType::TEXT]
-                    ),
-                    // Opción 2: El email de un bloque de datos (Accounts/Contacts/Leads/Users)
-                    new ActionSelectorOptionDefinition(
-                        name: 'dataBlock',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT'),
-                        resolvedType: ActionParameterType::DATA_BLOCK,
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
-                    ),
-                    // Opción 3: Email fijo
-                    new ActionSelectorOptionDefinition(
-                        name: 'fixed',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT'),
-                        resolvedType: ActionParameterType::VALUE,
-                        supportedDataTypes: [ActionDataType::EMAIL],
-                    ),
-                    // Opción 4: Email de un registro fijo del CRM
-                    new ActionSelectorOptionDefinition(
-                        name: 'beanId',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_BEANID_TEXT'),
-                        resolvedType: ActionParameterType::CRM_RECORD,
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
-                    ),
-                    // Opción 5: Campo relacionado con un módulo válido (Accounts/Contacts/Leads/Users)
-                    new ActionSelectorOptionDefinition(
-                        name: 'relatedField',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT'),
-                        resolvedType: ActionParameterType::FIELD,
-                        supportedDataTypes: [ActionDataType::RELATE],
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
-                    ),
-                ],
-            ),
-        ];
+    protected function getCustomParameters(): array
+    {
+        // --- Paràmetre 1: El Bloc B (el bloc "destí" del qual agafarem l'ID) ---
+        $paramTargetBlock = new ActionParameterDefinition();
+        $paramTargetBlock->name = 'target_data_block';
+        $paramTargetBlock->text = $this->translate('TARGET_BLOCK_TEXT'); // Ej: "Bloque de datos de destino"
+        $paramTargetBlock->description = $this->translate('TARGET_BLOCK_DESC'); // Ej: "El bloque del cual se obtendrá el ID"
+        $paramTargetBlock->type = ActionParameterType::DATA_BLOCK; 
+        $paramTargetBlock->required = true;
+
+        // --- Paràmetre 2: El "Camp X" (el camp que actualitzarem al Bean A) ---
+        $paramFieldName = new ActionParameterDefinition();
+        $paramFieldName->name = 'field_to_update';
+        $paramFieldName->text = $this->translate('FIELD_TO_UPDATE_TEXT'); // Ej: "Campo a actualizar"
+        $paramFieldName->description = $this->translate('FIELD_TO_UPDATE_DESC'); // Ej: "El nombre del campo (ej: 'contact_id_c') que recibirá el ID"
+        $paramFieldName->type = ActionParameterType::VALUE; 
+        $paramFieldName->dataType = ActionDataType::TEXT; 
+        $paramFieldName->required = true;
+
+        return [$paramTargetBlock, $paramFieldName];
     }
 
     /**
-     * Ejecuta la acción definida por esta definición.
+     * executeWithBean()
+     * Aquest és el nucli de la nostra lògica.
+     * La classe base ja ens dóna el '$bean' (Bean A) carregat.
      *
-     * @param ExecutionContext $context Contexto de ejecución de la acción
-     * @param FormAction $actionConfig Configuración de la acción del formulario
-     * @return ActionResult Resultado de la ejecución de la acción
+     * @param ExecutionContext $context El context global.
+     * @param FormAction $actionConfig La configuració de l'acció.
+     * @param SugarBean $bean El bean del bloc principal (Bean A), carregat i llest.
+     * @param DataBlockResolved $block El bloc de dades principal (Bloc A), amb les dades del formulari.
+     * @return ActionResult
      */
-    public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult {
-        // Lógica para enviar el correo electrónico
+    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
+    {
+        // 1. Obtenim els nostres paràmetres personalitzats
+        $fieldName = $actionConfig->getResolvedParameter('field_to_update');
         
-        $params = $actionConfig->parameters;
-        $templateId = $params['templateId']?->value;
-        $baseDataBlock = $params['baseDataBlock']?->value;
-        $recipientSource = $params['recipientSource'] ?? null;
-        // IEPA!!
-        // Json: modificar per saber quina opció és i a què correspon el valor reals
+        /** @var ?DataBlockResolved $targetBlock */
+        $targetBlock = $actionConfig->getResolvedParameter('target_data_block');
 
+        // 2. Validem els paràmetres (encara que el Resolver ja ho fa, és bona pràctica)
+        if (empty($fieldName) || $targetBlock === null) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Paràmetres 'field_to_update' o 'target_data_block' no resolts.");
+        }
 
-        // Validar y procesar los parámetros para enviar el correo electrónico
-        // Aquí se implementaría la lógica para enviar el correo utilizando los parámetros obtenidos.
+        // 3. Obtenim la referència del Bean B
+        $targetBeanRef = $targetBlock->dataBlock->getBeanReference();
+        if ($targetBeanRef === null) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "El bloc destí '{$targetBlock->dataBlock->name}' no té un bean desat.");
+        }
 
-        return new ActionResult(ResultStatus::OK, $actionConfig, "Email sent successfully.");
+        // 4. Fem l'assignació (Lògica principal)
+        $bean->{$fieldName} = $targetBeanRef->beanId;
+
+        // 5. Desem el Bean A (el bean que hem modificat)
+        $bean->save();
+
+        // 6. Notifiquem el resultat
+        $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Relació establerta: {$bean->module_name}.{$fieldName} = {$targetBeanRef->beanId}");
+        
+        // Notifiquem que hem ACTUALITZAT el Bean A
+        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED);
+
+        return $actionResult;
     }
 }

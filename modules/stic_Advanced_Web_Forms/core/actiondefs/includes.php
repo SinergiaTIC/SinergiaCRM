@@ -42,6 +42,7 @@ include_once __DIR__."DataProvider/DataProviderActionDefinition.php";
 
 include_once __DIR__."Hook/HookActionDefinition.php";
 include_once __DIR__."Hook/HookDataBlockActionDefinition.php";
+include_once __DIR__."Hook/HookBeanActionDefinition.php";
 
 include_once __DIR__."Deferred/DeferredActionDefinition.php";
 

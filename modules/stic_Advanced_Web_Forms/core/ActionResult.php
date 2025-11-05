@@ -81,7 +81,15 @@ class ActionResult {
             throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
         }
 
-        $this->registerBeanModification($bean, $action);
+        // Extraemos los datos del formulario mapeables al bean para registrarlos
+        $dataToLog = [];
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            $dataToLog[$fieldName] = $fieldResolved->value;
+        }
+
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $dataToLog);
+        $this->addModifiedBean($modifiedBean);
+
         $block->dataBlock->setBeanReference($bean->id);
     }
 

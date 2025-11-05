@@ -32,10 +32,28 @@ if (!defined('sugarEntry') || !sugarEntry) {
 abstract class HookDataBlockActionDefinition extends HookActionDefinition {
 
     /** 
-     * Define el nombre del parámetro que contiene el bloque de datos.
-     * Por defecto es 'data_block_id'
+     * (Opcional) Sobreescribir para cambiar el nombre del parámetro que contiene el bloque de datos.
+     * @return string
     */
-    protected string $dataBlockParameterName = 'data_block_id';
+    protected function getDataBlockParameterName(): string {
+        return 'data_block_id';
+    }
+
+    /**
+     * (Opcional) Sobreescribir para definir el texto (label) del parámetro de bloque de datos.
+     * @return string
+     */
+    protected function getDataBlockParameterText(): string {
+        return translate('LBL_ACTION_DATABLOCK_PARAM_TEXT', 'stic_Advanced_Web_Forms');
+    }
+
+    /**
+     * (Opcional) Sobreescribir para definir la descripción (help text) del parámetro de bloque de datos.
+     * @return string
+     */
+    protected function getDataBlockParameterDescription(): string {
+        return translate('LBL_ACTION_DATABLOCK_PARAM_DESC', 'stic_Advanced_Web_Forms');
+    }
 
     /**
      * (Opcional) Sobreescribir para limitar a qué módulos puede apuntar el parámetro de bloque de datos.
@@ -57,9 +75,9 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
     {
         // Crear el parámetro de bloque de datos
         $blockParam = new ActionParameterDefinition();
-        $blockParam->name = $this->dataBlockParameterName;
-        $blockParam->text = translate('LBL_ACTION_DATABLOCK_PARAM_TEXT', 'stic_Advanced_Web_Forms');
-        $blockParam->description = translate('LBL_ACTION_DATABLOCK_PARAM_DESC', 'stic_Advanced_Web_Forms');
+        $blockParam->name = $this->getDataBlockParameterName();
+        $blockParam->text = $this->getDataBlockParameterText();
+        $blockParam->description = $this->getDataBlockParameterDescription();
         $blockParam->type = ActionParameterType::DATA_BLOCK;
         $blockParam->supportedModules = $this->getSupportedModules();
         $blockParam->required = true;
@@ -73,10 +91,10 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
     final public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
         /** @var ?DataBlockResolved $block */
-        $block = $actionConfig->getResolvedParameter($this->dataBlockParameterName);
+        $block = $actionConfig->getResolvedParameter($this->getDataBlockParameterName());
 
         if ($block === null) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not resolve DataBlock parameter '{$this->dataBlockParameterName}'.");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not resolve DataBlock parameter '{$this->getDataBlockParameterName()}'.");
         }
 
         // Llamar al nuevo método que se implementará en la acción
