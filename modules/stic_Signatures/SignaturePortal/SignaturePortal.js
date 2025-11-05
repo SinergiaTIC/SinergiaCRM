@@ -33,7 +33,6 @@ document.head.appendChild(Object.assign(document.createElement('script'), {
 document.addEventListener('DOMContentLoaded', () => {
 
     // General elements
-    const auditRecordsDiv = document.getElementById('auditRecords');
     const documentContentDiv = document.getElementById('documentContent');
     const scrollInstructionMessage = document.getElementById('scrollInstructionMessage');
 
