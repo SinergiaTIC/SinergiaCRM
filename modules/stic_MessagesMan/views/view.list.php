@@ -34,6 +34,9 @@ class stic_MessagesManViewList extends ViewList
 
         // This line disables the inline edit pencil icon
         $this->lv->quickViewLinks = false;
+
+        // To remove the "Export" button
+        $this->lv->export = false;
     }
 }
 ?>
