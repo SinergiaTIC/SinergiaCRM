@@ -31,6 +31,13 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "La validación 
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Añadir Organizaciones y Personas a una lista de público objetivo';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronización Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Enviar PDF por correo';
+$app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Añadir al proceso de firma';
+$app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccione un proceso de firma';
+$app_strings['LBL_SELECT_SIGNATURE_INFO'] = 'Solamente se muestran los procesos de firma en estado Abierto';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Ver firmas relacionadas';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Firmas relacionadas';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Se muestran las firmas relacionadas con este registro del módulo';
+$app_strings['LBL_NO_SIGNATURES_FOUND'] = 'No se han encontrado firmas relacionadas';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validar la importación';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'Ha ocurrido un error';
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Ver en la vista de lista';
@@ -151,6 +158,9 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Acciones';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizaciones';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condiciones';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['moduleList']['stic_Signature_Log'] = 'Registro de Firmas';
+$app_list_strings['moduleList']['stic_Signatures'] = 'Firmas';
+$app_list_strings['moduleList']['stic_Signers'] = 'Firmantes';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
@@ -202,6 +212,9 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condic
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaza';
+$app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Registro de firmas';
+$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
+$app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmante';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -3642,6 +3655,59 @@ $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inicio de sesión erróneo';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
 
+// Firmas: Estados
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Borrador';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Abierta';
+$app_list_strings['stic_signatures_status_list']['complete'] = 'Completada';
+$app_list_strings['stic_signatures_status_list']['expired'] = 'Caducada';
+
+// Firmas: Métodos de autenticación
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enlace único';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código de un solo uso (por SMS o correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Código de un solo uso (por correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = 'Código de un solo uso (por SMS)';
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Teléfono';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Número de identificación';
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Fecha de nacimiento';
+
+// Firmas: Tipos
+// $app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+// $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (personalizada)';
+// $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
+
+// Firmas: Modos
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Botón';
+
+// Firmas: En nombre de...
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, solamente un representante';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, todos los representantes';
+
+// Firmantes: Estados
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
+$app_list_strings['stic_signers_status_list']['expired'] = 'Caducado';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecesario';
+
+// Registo de Firmas: Acciones
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Documento firmado mediante botón';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Documento firmado con firma manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Firmante añadido a la firma';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Código de un solo uso enviado al correo electrónico del firmante';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Código de un solo uso enviado al teléfono del firmante';
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código de un solo uso verificado por el firmante';
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado al firmante';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Acceso al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Documento firmado descargado por el firmante';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Documento firmado enviado al firmante';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma caducada';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por otra persona autorizada';
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)
@@ -3756,59 +3822,6 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
-
-// Firmas: Estados
-$app_list_strings['stic_signatures_status_list'][''] = '';
-$app_list_strings['stic_signatures_status_list']['draft'] = 'Borrador';
-$app_list_strings['stic_signatures_status_list']['open'] = 'Abierta';
-$app_list_strings['stic_signatures_status_list']['complete'] = 'Completa';
-$app_list_strings['stic_signatures_status_list']['expired'] = 'Vencida';
-
-// Firmas: Métodos de autenticación
-$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enlace único';
-$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código de un solo uso (por SMS o Correo electrónico)';
-$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Código de un solo uso (por Correo electrónico)';
-$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = 'Código de un solo uso (por SMS)';
-$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Teléfono';
-$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Número de identificación';
-$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Fecha de nacimiento';
-
-// Firmas: Tipos de firma
-// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list'][''] = '';
-$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
-// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (Personalizada)';
-// (preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
-
-// Firmas: Modo de firma
-$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
-$app_list_strings['stic_signatures_modes_list']['button'] = 'Botón';
-
-// Firmas: Firma en nombre de
-$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
-$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, solamente un representante';
-$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, todos los representantes';
-
-// Firmantes: Estados
-$app_list_strings['stic_signers_status_list'][''] = '';
-$app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
-$app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
-$app_list_strings['stic_signers_status_list']['expired'] = 'Vencido';
-$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Ya no se necesita la firma';
-
-// Registo de firmas: acciones
-$app_list_strings['stic_signature_log_actions'][''] = '';
-$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Documento aceptado mediante botón de aceptación';
-$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Documento firmado con firma manuscrita';
-$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Firmante añadido a la firma';
-$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Código de un solo uso enviado al correo electrónico del firmante';
-$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Código de un solo uso enviado al teléfono del firmante';
-$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código de un solo uso verificado por el firmante';
-$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado al firmante';
-$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Acceso al portal de firma';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Documento firmado descargado por el firmante';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Documento firmado enviado al firmante';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma vencida';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por otra persona autorizada';
 
 // Elementos añadidos al Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';
