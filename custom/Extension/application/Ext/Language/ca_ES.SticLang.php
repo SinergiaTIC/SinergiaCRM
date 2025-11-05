@@ -697,6 +697,7 @@ $app_list_strings['stic_contacts_relationships_types_list']['board_directors'] =
 $app_list_strings['stic_contacts_relationships_types_list']['member'] = 'Soci/a';
 $app_list_strings['stic_contacts_relationships_types_list']['employee'] = 'Treballador/a';
 $app_list_strings['stic_contacts_relationships_types_list']['beneficiary'] = 'Usuari/a dels serveis';
+$app_list_strings['stic_contacts_relationships_types_list']['pre-volunteer'] = 'Pre-Voluntari/ària';
 $app_list_strings['stic_contacts_relationships_types_list']['volunteer'] = 'Voluntari/a';
 
 // Relacions amb Persones: Rols en projectes

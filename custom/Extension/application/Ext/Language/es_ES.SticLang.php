@@ -697,6 +697,7 @@ $app_list_strings['stic_contacts_relationships_types_list']['board_directors'] =
 $app_list_strings['stic_contacts_relationships_types_list']['member'] = 'Socio/a';
 $app_list_strings['stic_contacts_relationships_types_list']['employee'] = 'Trabajador/a';
 $app_list_strings['stic_contacts_relationships_types_list']['beneficiary'] = 'Usuario/a de servicios';
+$app_list_strings['stic_contacts_relationships_types_list']['pre-volunteer'] = 'Pre-Voluntario/a';
 $app_list_strings['stic_contacts_relationships_types_list']['volunteer'] = 'Voluntario/a';
 
 // Relaciones con Personas: Roles en proyectos
