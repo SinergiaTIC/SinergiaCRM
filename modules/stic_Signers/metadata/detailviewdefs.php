@@ -78,7 +78,7 @@ array(
                 4 => array(
                     0 => array(
                         'name' => 'pdf_document',
-                        'customCode' => '{if $fields.pdf_document.value != \'\'}<a href="index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$fields.id.value}" >Descargar documento firmado</a>{else}<span>No hay documento firmado</span>{/if}',
+                        'customCode' => '{if $fields.pdf_document.value != \'\'}<a href="index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$fields.id.value}" >{$MOD.LBL_DOWNLOAD_PDF_SIGNATURE}</a>{else}<span>{$MOD.LBL_NO_PDF_SIGNATURE}</span>{/if}',
                         'studio' => 'visible',
                         'label' => 'LBL_PDF_DOCUMENT',
                     ),

@@ -97,6 +97,8 @@ $mod_strings = array(
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signatura completada per',
     'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hola',
     'LBL_SIGNER_OTP_SMS_BODY_2' => 'aquí tens el codi d\'un sol ús que has sol·licitat per a la signatura del document, vàlid per 10 minuts:',
+    'LBL_DOWNLOAD_PDF_SIGNATURE' => 'Descarregar document signat',
+    'LBL_NO_PDF_SIGNATURE' => 'No hi ha document signat',
 
     'LBL_EMAIL_ADDRESS_HELP' => 'Adreça de correu electrònic del firmant a la qual s\'enviarà la notificació de signatura. Extreta del contacte.',
     'LBL_PHONE_HELP' => 'Número de telèfon del firmant, utilitzat per a la verificació i notificacions.',

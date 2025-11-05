@@ -97,6 +97,9 @@ $mod_strings = array(
     'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Signature completed by',
     'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hello',
     'LBL_SIGNER_OTP_SMS_BODY_2' => 'here is the one-time code you requested for document signing, valid for 10 minutes:',
+    'LBL_DOWNLOAD_PDF_SIGNATURE' => 'Download signed document',
+    'LBL_NO_PDF_SIGNATURE' => 'No signed document available',
+
 
     'LBL_EMAIL_ADDRESS_HELP' => 'Email address of the signer to whom the signing notification will be sent. Extracted from the contact.',
     'LBL_PHONE_HELP' => 'Phone number of the signer, used for verification and notifications.',
