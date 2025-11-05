@@ -51,6 +51,40 @@ class ActionResult {
         $this->timestamp = microtime(true);
     }
 
+    /**
+     * Registra una modificación de un bean al resultado de la acción
+     * Se usa cuando el bean NO proviene de un DataBlock 
+     * 
+     * @param SugarBean $bean El bean modificado.
+     * @param BeanModificationType $action El tipo de modificación (CREATED, UPDATED, ENRICHED, SKIPPED)
+     */
+    public function registerBeanModification(SugarBean $bean, BeanModificationType $action): void 
+    {
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action);
+        $this->addModifiedBean($modifiedBean);
+    }
+
+    /**
+     * Registra una modificación de un bean que SÍ proviene de un DataBlock.
+     *  - Registra la modificación
+     *  - Guarda la referencia al bean en el FormDataBlock original para futures acciones.
+     * 
+     * @param SugarBean $bean El bean que se ha procesado.
+     * @param DataBlockResolved $block El DataBlockResolved que se ha procesado.
+     * @param BeanModificationType $action El tipo de modificación  (CREATED, UPDATED, ENRICHED, SKIPPED)
+     * @throws \LogicException Si el módulo del bean no coincide con el del bloque.
+     */
+    public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action): void 
+    {
+        $blockModule = $block->dataBlock->module;
+        if ($bean->module_name !== $blockModule) {
+            throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
+        }
+
+        $this->registerBeanModification($bean, $action);
+        $block->dataBlock->setBeanReference($bean->id);
+    }
+
     public function addModifiedBean(BeanModified $bean): void {
         $this->modifiedBeans[] = $bean;
     }
