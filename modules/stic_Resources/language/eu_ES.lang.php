@@ -84,7 +84,7 @@ $mod_strings = array(
     'LBL_AMOUNT_COPAYMENT' => 'Importe diario de copago',
 
     'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No se puede cambiar el tipo de recurso porque tiene reservas asociadas.',
-    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
+    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Zentroa adierazi behar da',
     'LBL_PLACES' => 'Plazas',
 
     // Campos de filtro en relaciones muchos a muchos
