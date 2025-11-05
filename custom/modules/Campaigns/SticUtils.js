@@ -86,9 +86,6 @@ switch (viewType()) {
 }
 
 $(document).ready(function() {
-  debugger;
-  console.log('ppppp');
-  
   if (viewType() != "list") {
     $("#notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
     $("#msg_notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
@@ -466,6 +463,7 @@ function initilizeDetailView() {
 
     // All Subpanels buttons
     $(".clickMenu").hide();
+    $("#viewRoiButtonId").hide();
   }
 }
 
