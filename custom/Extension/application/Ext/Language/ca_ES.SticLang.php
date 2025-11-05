@@ -3703,8 +3703,8 @@ $app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = "Codi d'un s
 $app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = "Codi d'un sol ús verificat pel firmant";
 $app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = "Correu electrònic enviat al firmant';
 $app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Portal de firma obert pel firmant';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF firmat descarregat pel firmant';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF firmat enviat al signant';  
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Document firmat descarregat pel firmant';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Document firmat enviat al firmant';  
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma caducada';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document firmat per una altra persona autoritzada';
 
