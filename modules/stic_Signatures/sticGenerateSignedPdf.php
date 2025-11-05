@@ -244,7 +244,7 @@ class sticGenerateSignedPdf
 
         // Apply initial cleaning to the description
         $text = preg_replace($search, $replace, (string) $templateBean->description);
-        
+
         // Replace {DATE <format>} placeholders with the current date
         $text = preg_replace_callback(
             '/{DATE\s+(.*?)}/',
@@ -308,6 +308,39 @@ class sticGenerateSignedPdf
         $header = $parsedText['header'];
         $footer = $parsedText['footer'];
 
+        // Replace the signature src with the actual signature image/acceptance image.
+        $stringToreplace = 'src="themes/SuiteP/images/SignaturePlaceholder.png"';
+
+        // Set time in user format and UTC for use later in audit/acceptance
+        $userTime = (new DateTime())->format('Y-m-d H:i:s (\U\T\C P)');
+
+        $replaceWith = '';
+        // Prepare the replacement HTML based on the signed mode
+        switch ($signedMode) {
+            case 'handwritten':
+                // Use the drawn signature image URL from the signer bean
+                $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
+                break;
+            case 'button':
+                // Generate an acceptance image with signer details and timestamp
+                $textArray = [
+                    'Document accepted by:',
+                    $signerBean->parent_name,
+                    $signerBean->email_address,
+                    $userTime,
+                ];
+
+                $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
+                $replaceWith = 'src="' . $acceptImage . '";';
+                break;
+            default:
+                // Default case, no replacement
+                break;
+        }
+
+        // Perform the replacement in the $text
+        $converted = str_replace($stringToreplace, $replaceWith, (string) $converted);
+
         // Replace newlines with HTML line breaks for PDF generation
         $printable = str_replace("\n", "<br />", (string) $converted);
 
@@ -325,13 +358,13 @@ class sticGenerateSignedPdf
             // Store the file reference in the signer bean's 'pdf_document' field
             $signerBean->pdf_document = $fileName;
             $signerBean->save();
-            
+
             return $filePath;
 
         } catch (PDFException $e) {
-            LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
-            // Die with a user-friendly error message
-            sugar_die("Error al generar o guardar el PDF: " . $e->getMessage());
+            
+            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " PDF generation failed for Signer ID: {$signerBean->id} - " . $e->getMessage());
+            sugar_die('PDF generation failed. Please contact the system administrator.');
         }
     }
 }
