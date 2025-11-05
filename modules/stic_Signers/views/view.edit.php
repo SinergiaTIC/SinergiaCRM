@@ -37,11 +37,14 @@ class stic_SignersViewEdit extends ViewEdit
 
     public function preDisplay()
     {
+        global $app_list_strings;
+
         parent::preDisplay();
+
+        $this->ev->ss->assign('RECORD_TYPE', $app_list_strings['moduleList'][$this->bean->record_type]);
 
         SticViews::preDisplay($this);
 
-        
     }
 
     public function display()
@@ -53,8 +56,6 @@ class stic_SignersViewEdit extends ViewEdit
         // Write here you custom code
 
         echo getVersionedScript("modules/stic_Signers/Utils.js");
-        
-
 
     }
 

@@ -62,7 +62,9 @@ $mod_strings = array(
     'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE' => 'Signer log',
     'LBL_SIGNATURE_ID' => 'Signature',
     'LBL_FLEX_RELATE' => 'Signer',
-    'LBL_RECORD_ID' => 'Record id',
+    'LBL_RECORD_ID' => 'Related record ID',
+    'LBL_RECORD_TYPE' => 'Related record type',
+    'LBL_RECORD_NAME' => 'Related record name',
     'LBL_EMAIL_ADDRESS' => 'Email address',
     'LBL_PHONE' => 'Phone',
     'LBL_STATUS' => 'Status',
@@ -107,5 +109,6 @@ $mod_strings = array(
     'LBL_PDF_DOCUMENT_HELP' => 'PDF document already signed.',
     'LBL_SIGNATURE_DATE_HELP' => 'Date on which the document was signed.',
     'LBL_VERIFICATION_CODE_HELP' => 'Verification code generated after the document is signed based on its content.',
+    'LBL_RECORD_NAME_HELP' => 'Name of the record related to the signature, from which the signer record was generated.',
 
 );

@@ -62,7 +62,9 @@ $mod_strings = array(
     'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE' => 'Registro del firmante',
     'LBL_SIGNATURE_ID' => 'Firma',
     'LBL_FLEX_RELATE' => 'Firmante',
-    'LBL_RECORD_ID' => 'ID del registro',
+    'LBL_RECORD_ID' => 'ID del registro relacionado',
+    'LBL_RECORD_TYPE' => 'Tipo de registro relacionado',
+    'LBL_RECORD_NAME' => 'Nombre del registro relacionado',
     'LBL_EMAIL_ADDRESS' => 'Dirección de correo',
     'LBL_PHONE' => 'Teléfono',
     'LBL_STATUS' => 'Estado',
@@ -109,5 +111,6 @@ $mod_strings = array(
     'LBL_PDF_DOCUMENT_HELP' => 'Documento PDF ya firmado.',
     'LBL_SIGNATURE_DATE_HELP' => 'Fecha en la que se firmó el documento.',
     'LBL_VERIFICATION_CODE_HELP' => 'Código de verificación generado tras la firma del documento a partir del contenido del mismo.',
+    'LBL_RECORD_NAME_HELP' => 'Nombre del registro relacionado con la firma, a partir del cual se generó el registro del firmante.',
 
 );

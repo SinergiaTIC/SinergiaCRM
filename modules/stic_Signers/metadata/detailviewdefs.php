@@ -1,5 +1,7 @@
 <?php
 $module_name = 'stic_Signers';
+global $app_list_strings;
+
 $viewdefs[$module_name] =
 array(
     'DetailView' => array(
@@ -38,7 +40,7 @@ array(
         ),
         'panels' => array(
             'lbl_default_panel' => array(
-                                0 => array(
+                0 => array(
                     0 => 'name',
                     1 => 'assigned_user_name',
                 ),
@@ -56,6 +58,17 @@ array(
                 ),
                 2 => array(
                     0 => array(
+                        'name' => 'record_name',
+                        'studio' => 'visible',
+                        'label' => 'LBL_RECORD_NAME',
+                        'customCode' => '{if $fields.record_id.value != "" && $fields.record_type.value != ""}{$RECORD_TYPE}<br><a href="index.php?module={$fields.record_type.value}&action=DetailView&record={$fields.record_id.value}">{$fields.record_name.value}</a>{else}<span>{$fields.record_name.value}</span>{/if}',
+                    ),
+                    1 => array(
+                        'name' => 'stic_signatures_stic_signers_name',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
                         'name' => 'status',
                         'studio' => 'visible',
                         'label' => 'LBL_STATUS',
@@ -65,7 +78,22 @@ array(
                         'label' => 'LBL_SIGNATURE_DATE',
                     ),
                 ),
-                3 => array(
+                4 => array(
+                    0 => array(
+                        'name' => 'pdf_document',
+                        'customCode' => '{if $fields.pdf_document.value != \'\'}<a href="index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$fields.id.value}" >{$MOD.LBL_DOWNLOAD_PDF_SIGNATURE}</a>{else}<span>{$MOD.LBL_NO_PDF_SIGNATURE}</span>{/if}',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PDF_DOCUMENT',
+                    ),
+
+                    1 => array(
+                        'name' => 'verification_code',
+                        'studio' => 'visible',
+                        'label' => 'LBL_VERIFICATION_CODE',
+                    ),
+
+                ),
+                5 => array(
                     0 => array(
                         'name' => 'phone',
                         'label' => 'LBL_PHONE',
@@ -75,34 +103,13 @@ array(
                         'label' => 'LBL_EMAIL_ADDRESS',
                     ),
                 ),
-                4 => array(
-                    0 => array(
-                        'name' => 'pdf_document',
-                        'customCode' => '{if $fields.pdf_document.value != \'\'}<a href="index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$fields.id.value}" >{$MOD.LBL_DOWNLOAD_PDF_SIGNATURE}</a>{else}<span>{$MOD.LBL_NO_PDF_SIGNATURE}</span>{/if}',
-                        'studio' => 'visible',
-                        'label' => 'LBL_PDF_DOCUMENT',
-                    ),
-                    1 => array(
-                        'name' => 'stic_signatures_stic_signers_name',
-                    ),
-                ),
-                5 => array(
-                    0 => array(
-                        'name' => 'verification_code',
-                        'studio' => 'visible',
-                        'label' => 'LBL_VERIFICATION_CODE',
-                    ),
-                    1 => '',
-                ),
+
                 6 => array(
                     0 => array(
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',
-                        'nl2br' => true,
-                        'displayParams' => array(
-                            'colspan' => 2,
-                        ),
                     ),
+                    
                 ),
             ),
             'lbl_panel_record_details' => array(

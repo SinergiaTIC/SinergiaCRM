@@ -62,7 +62,9 @@ $mod_strings = array(
     'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE' => 'Registro del firmante',
     'LBL_SIGNATURE_ID' => 'Firma',
     'LBL_FLEX_RELATE' => 'Firmante',
-    'LBL_RECORD_ID' => 'ID do rexistro',
+    'LBL_RECORD_ID' => 'ID do rexistro relacionado',
+    'LBL_RECORD_TYPE' => 'Tipo de rexistro relacionado',
+    'LBL_RECORD_NAME' => 'Nome do rexistro relacionado',
     'LBL_EMAIL_ADDRESS' => 'Enderezo de correo electrónico',
     'LBL_PHONE' => 'Teléfono',
     'LBL_STATUS' => 'Estado',
@@ -105,4 +107,5 @@ $mod_strings = array(
     'LBL_PDF_DOCUMENT_HELP' => 'Documento PDF xa asinada.',
     'LBL_SIGNATURE_DATE_HELP' => 'Data na que se asinou o documento.',
     'LBL_VERIFICATION_CODE_HELP' => 'Código de verificación xenerado tras a sinatura do documento a partir do contido do mesmo.',
+    'LBL_RECORD_NAME_HELP' => 'Nome do rexistro relacionado coa sinatura, a partir do cal se xerou o rexistro do firmante.',
 );

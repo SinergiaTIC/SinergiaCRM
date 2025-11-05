@@ -275,6 +275,7 @@ class stic_SignaturesUtils
                         'module' => $signerModule,
                         'sourceModule' => $mainModule,
                         'sourceId' => $mainModuleId,
+                        'sourceName' => $mainModuleBean->name,
                         'signerPath' => $signerPath,
                         'onBehalfOfId' => $onBehalfOfId,
                         'id' => $signer->id,
