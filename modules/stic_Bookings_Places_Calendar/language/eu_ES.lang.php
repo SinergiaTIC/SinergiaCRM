@@ -27,5 +27,5 @@ $mod_strings = array(
     'LBL_MONTH' => 'Mes',
     'LBL_WEEK' => 'Semana',
     'LBL_DAY' =>  'Día',
-    'LBL_LIST' => 'Lista',
+    'LBL_LIST' => 'Zerrenda',
 );
