@@ -185,6 +185,9 @@ $mod_strings = array (
 
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
 
+  'LBL_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
+  'LBL_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione el bloque de datos que será utilizado como parámetro en la acción',
+
   'LBL_SEND_EMAIL_ACTION_TITLE' => 'Enviar correo electrónico',
   'LBL_SEND_EMAIL_ACTION_DESCRIPTION' => 'Envia un correo electrónico a un destinatario basado en la configuración del formulario',
   'LBL_SEND_EMAIL_ACTION_PARAM_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
@@ -212,8 +215,6 @@ $mod_strings = array (
 
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
   'LBL_SAVE_RECORD_ACTION_DESCRIPTION' => 'Guarda o actualiza un registro en el CRM basado en los datos del formulario',
-  'LBL_SAVE_RECORD_ACTION_PARAM_DATABLOCK_TEXT' => 'Bloque de datos',
-  'LBL_SAVE_RECORD_ACTION_PARAM_DATABLOCK_DESCRIPTION' => 'Seleccione el bloque de datos que será utilizado para crear o actualizar el registro en el CRM',
 
   'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación entre registros',
   'LBL_RELATE_RECORDS_ACTION_DESCRIPTION' => 'Crea una relación entre dos registros del CRM',

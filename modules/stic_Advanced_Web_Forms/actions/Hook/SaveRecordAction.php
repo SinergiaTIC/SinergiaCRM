@@ -27,50 +27,38 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 
-class SaveRecordAction extends HookActionDefinition {
+class SaveRecordAction extends HookDataBlockActionDefinition {
     public function __construct() {
         $this->isActive = true;
         $this->baseLabel = 'LBL_SAVE_RECORD_ACTION';
     }
 
     /**
-     * Retorna los parámetros definidos para la acción
-     * @return ActionParameterDefinition[] Los parámetros de la acción
-     */
-    public function getParameters(): array {
-        return [
-            // Bloque de datos
-            new ActionParameterDefinition(
-                name: 'dataBlock',
-                text: $this->translate('PARAM_DATABLOCK_TEXT'),
-                description: $this->translate('PARAM_DATABLOCK_DESCRIPTION'),
-                type: ActionParameterType::DATA_BLOCK,
-                required: true,
-            ),
-        ];
-    }
-
-    /**
-     * Ejecuta la acción definida por esta definición.
+     * Ejecuta la acción, recibe el bloque de datos principal resuelto y validado.
      *
-     * @param ExecutionContext $context Contexto de ejecución de la acción
-     * @param FormAction $actionConfig Configuración de la acción del formulario
-     * @return ActionResult Resultado de la ejecución de la acción
+     * @param ExecutionContext $context El contexto global.
+     * @param FormAction $actionConfig La configuración de la acción.
+     * @param DataBlockResolved $block El bloque de datos principal, listo para ser usado.
+     * @return ActionResult
      */
-    public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult {
-        // Lógica para enviar el correo electrónico
-        
-        $params = $actionConfig->parameters;
-        $templateId = $params['templateId']?->value;
-        $baseDataBlock = $params['baseDataBlock']?->value;
-        $recipientSource = $params['recipientSource'] ?? null;
+    public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
+    {
         // IEPA!!
-        // Json: modificar per saber quina opció és i a què correspon el valor reals
+        // TODO: Aplicar la lógica de detección y gestión de duplicados
 
+        // Lógica de negocio
+        $bean = BeanFactory::newBean($block->dataBlock->module);
+        
+        // El $block ya contiene los datos parseados y con el casting
+        foreach ($block->formData as $fieldName => $field) {
+            $bean->{$fieldName} = $field->value;
+        }
+        $bean->save();
 
-        // Validar y procesar los parámetros para enviar el correo electrónico
-        // Aquí se implementaría la lógica para enviar el correo utilizando los parámetros obtenidos.
+        // Registro
+        $actionResult = new ActionResult(ResultStatus::OK, $actionConfig);
+        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::CREATED);
 
-        return new ActionResult(ResultStatus::OK, $actionConfig, "Email sent successfully.");
+        return $actionResult;
     }
 }
