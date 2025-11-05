@@ -3672,10 +3672,10 @@ $app_list_strings['stic_signatures_auth_methods_list']['identification_number'] 
 $app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Data de naixement';
 
 // Firmes: Tipus
-// (preserved for next development phase) $app_list_strings['stic_signatures_types_list'][''] = '';
+// $app_list_strings['stic_signatures_types_list'][''] = '';
 $app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
-//(preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (personalitzada)';
-//(preserved for signatures next phase) $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
+// $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (personalitzada)';
+// $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
 
 // Firmes: Modes
 $app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
