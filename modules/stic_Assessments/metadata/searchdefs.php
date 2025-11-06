@@ -222,6 +222,15 @@ array(
                 'width' => '10%',
                 'name' => 'type',
             ),
+            'project_stic_assessments_name' => array(
+                'type' => 'relate',
+                'link' => true,
+                'label' => 'LBL_PROJECT_STIC_ASSESSMENTS_FROM_PROJECT_TITLE',
+                'id' => 'PROJECT_STIC_ASSESSMENTS_ID',
+                'width' => '10%',
+                'default' => false,
+                'name' => 'project_stic_assessments_name',
+            ),            
             'training_completed' => array(
                 'type' => 'enum',
                 'default' => false,

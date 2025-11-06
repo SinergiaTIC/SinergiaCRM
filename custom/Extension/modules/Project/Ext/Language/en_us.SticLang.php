@@ -46,6 +46,7 @@ $mod_strings['LBL_OPPORTUNITIES_SUBPANEL_TITLE'] = 'Opportunities';
 $mod_strings['LBL_STIC_FOLLOWUPS_PROJECT_FROM_STIC_FOLLOWUPS_TITLE'] = 'FollowUps';
 $mod_strings['LBL_STIC_GOALS_PROJECT_FROM_STIC_GOALS_TITLE'] = 'Goals';
 $mod_strings['LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofertas laborales';
+$mod_strings['LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE'] = 'Valoraciones';
 $mod_strings['LBL_STIC_LOCATION'] = 'Locations';
 $mod_strings['LBL_ESTIMATED_END_DATE_ERROR'] = 'End date must be equal or after Start date.';
 $mod_strings['LBL_ESTIMATED_START_DATE_ERROR'] = 'Start date must be equal or before End date.';

@@ -92,7 +92,9 @@ $viewdefs [$module_name] = array (
             'studio' => 'visible',
             'label' => 'LBL_TYPE',
           ),
-          1 => array (),
+          1 => array (
+            'name' => 'project_stic_assessments_name',
+          ),
         ),        
         4 => array (
           0 => array (

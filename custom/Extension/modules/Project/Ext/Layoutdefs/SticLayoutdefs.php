@@ -237,6 +237,29 @@ $layout_defs["Project"]["subpanel_setup"]['project_stic_job_offers'] = array (
   ),
 );
 
+// Assesment subpanel
+$layout_defs["Project"]["subpanel_setup"]['project_stic_assessments'] = array (
+  'order' => 100,
+  'module' => 'stic_Assessments',
+  'subpanel_name' => 'default',
+  'sort_order' => 'asc',
+  'sort_by' => 'id',
+  'title_key' => 'LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE',
+  'get_subpanel_data' => 'project_stic_assessments',
+  'top_buttons' => 
+  array (
+    0 => 
+    array (
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+    ),
+    1 => 
+    array (
+      'widget_class' => 'SubPanelTopSelectButton',
+      'mode' => 'MultiSelect',
+    ),
+  ),
+);
+
 // Subpanels default sorting
 $layout_defs['Project']['subpanel_setup']['activities']['sort_order'] = 'asc';
 $layout_defs['Project']['subpanel_setup']['activities']['sort_by'] = 'date_due';

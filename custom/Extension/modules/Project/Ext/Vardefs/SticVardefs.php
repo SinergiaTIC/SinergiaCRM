@@ -160,6 +160,17 @@ $dictionary["Project"]["fields"]["project_stic_job_offers"] = array (
   'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE',
 );
 
+// Assesment relationship
+$dictionary["Project"]["fields"]["project_stic_assessments"] = array (
+  'name' => 'project_stic_assessments',
+  'type' => 'link',
+  'relationship' => 'project_stic_assessments',
+  'source' => 'non-db',
+  'module' => 'stic_Assessments',
+  'bean_name' => 'stic_Assessments',
+  'side' => 'right',
+  'vname' => 'LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE',
+);
 // Base fields from the module
 $dictionary['Project']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 

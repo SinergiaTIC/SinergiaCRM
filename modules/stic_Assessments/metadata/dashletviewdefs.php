@@ -142,6 +142,14 @@ $dashletData['stic_AssessmentsDashlet']['columns'] = array(
         'width' => '10%',
         'name' => 'type',
     ),
+    'PROJECT_STIC_ASSESSMENTS_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_PROJECT_STIC_ASSESSMENTS_FROM_PROJECT_TITLE',
+        'id' => 'PROJECT_STIC_ASSESSMENTS_ID',
+        'width' => '10%',
+        'default' => false,
+    ),
     'training_completed' => array(
         'type' => 'enum',
         'default' => false,

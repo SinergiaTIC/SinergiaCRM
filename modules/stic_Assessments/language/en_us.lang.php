@@ -74,6 +74,7 @@ $mod_strings = array (
     'LBL_DERIVATION' => 'Referred from',
     'LBL_NEXT_DATE' => 'Next assessment',
     'LBL_TYPE' => 'Type',
+    'LBL_PROJECT_STIC_ASSESSMENTS_FROM_PROJECT_TITLE' => 'Project',
     'LBL_TRAINING_COMPLETED' => 'Training completed',
     'LBL_HAS_CRIMINAL_CERTIFICATE' => 'Has criminal record certificate',
     'LBL_NEEDS_FINANCIAL_AID' => 'Needs financial aid',
