@@ -3721,16 +3721,19 @@ $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
 
 // Job offers: Offer types
+$app_list_strings['stic_job_offers_types_list'][''] = '';
 $app_list_strings['stic_job_offers_types_list']['job'] = 'Job';
 $app_list_strings['stic_job_offers_types_list']['external'] = 'External';
 $app_list_strings['stic_job_offers_types_list']['volunteering'] = 'Volunteering';
 
 // Job offers: Offer modes
+$app_list_strings['stic_job_offers_modes_list'][''] = '';
 $app_list_strings['stic_job_offers_modes_list']['on_site'] = 'On site';
 $app_list_strings['stic_job_offers_modes_list']['remote'] = 'Remote';
 $app_list_strings['stic_job_offers_modes_list']['hybrid'] = 'Hybrid';
 
 // Job offers: Territorial scope
+$app_list_strings['stic_territorial_scopes_list'][''] = '';
 $app_list_strings['stic_territorial_scopes_list']['local'] = 'Local';
 $app_list_strings['stic_territorial_scopes_list']['district'] = 'District/County';
 $app_list_strings['stic_territorial_scopes_list']['provincial'] = 'State/Province';
@@ -3738,15 +3741,18 @@ $app_list_strings['stic_territorial_scopes_list']['regional'] = 'Regional';
 $app_list_strings['stic_territorial_scopes_list']['national'] = 'National';
 
 // Job offers: Temporary
+$app_list_strings['stic_job_offers_temporalities_list'][''] = '';
 $app_list_strings['stic_job_offers_temporalities_list']['permanent'] = 'Permanent';
 $app_list_strings['stic_job_offers_temporalities_list']['temporary'] = 'Temporary';
 
 // Assesment: Assesment type
+$app_list_strings['stic_assesments_types_list'][''] = '';
 $app_list_strings['stic_assesments_types_list']['service_user'] = 'Service user';
 $app_list_strings['stic_assesments_types_list']['volunteering'] = 'Volunteering';
 $app_list_strings['stic_assesments_types_list']['other'] = 'Other';
 
 // Assesment: Boolean options
+$app_list_strings['stic_yes_no_na_list'][''] = '';
 $app_list_strings['stic_yes_no_na_list']['yes'] = 'Yes';
 $app_list_strings['stic_yes_no_na_list']['no'] = 'No';
 $app_list_strings['stic_yes_no_na_list']['not_applicable'] = 'Not applicable';
@@ -3775,16 +3781,19 @@ $app_list_strings['stic_documents_subcategories_list']['insurance_premises'] = '
 $app_list_strings['stic_documents_subcategories_list']['insurance_other'] = 'Other';
 
 // Events: Volunteering modalities
+$app_list_strings['stic_events_volunteer_modes_list'][''] = '';
 $app_list_strings['stic_events_volunteer_modes_list']['no_volunteering'] = 'No volunteering';
 $app_list_strings['stic_events_volunteer_modes_list']['mixed'] = 'Mixed';
 $app_list_strings['stic_events_volunteer_modes_list']['volunteering'] = 'Volunteering';
 
 // Events: Target audiences
+$app_list_strings['stic_events_target_audiences_list'][''] = '';
 $app_list_strings['stic_events_target_audiences_list']['service_users'] = 'Service users';
 $app_list_strings['stic_events_target_audiences_list']['volunteering'] = 'Volunteering';
 $app_list_strings['stic_events_target_audiences_list']['institutional_relations'] = 'Institutional relations';
 
 // Competencies: Time of evaluation
+$app_list_strings['stic_skills_evaluation_stages_list'][''] = '';
 $app_list_strings['stic_skills_evaluation_stages_list']['initial'] = 'Initial';
 $app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Intermediate';
 $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
