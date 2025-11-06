@@ -40,7 +40,6 @@ $popupMeta = array (
   'stic_job_offers_accounts_name' => 'stic_job_offers.stic_job_offers_accounts_name',
   'responsible' => 'stic_job_offers.responsible',
   'center' => 'stic_job_offers.center',
-  'project' => 'stic_job_offers.project',
   'assigned_user_id' => 'stic_job_offers.assigned_user_id',
 ),
     'searchInputs' => array (
@@ -60,7 +59,6 @@ $popupMeta = array (
   15 => 'stic_job_offers_accounts_name',
   16 => 'responsible',
   17 => 'center',
-  18 => 'project',
   19 => 'assigned_user_id',
 ),
     'searchdefs' => array (
@@ -184,15 +182,6 @@ $popupMeta = array (
     'width' => '10%',
     'id' => 'center_id',
     'name' => 'center',
-  ),
-  'project' =>
-  array (
-    'type' => 'relate',
-    'link' => true,
-    'label' => 'LBL_PROJECT',
-    'width' => '10%',
-    'id' => 'project_id',
-    'name' => 'project',
   ),
   'assigned_user_id' => 
   array (

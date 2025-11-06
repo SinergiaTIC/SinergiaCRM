@@ -211,12 +211,7 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_CENTER',
                     ),
-                    1 => 
-                    array (
-                        'name' => 'project',
-                        'studio' => 'visible',
-                        'label' => 'LBL_PROJECT',
-                    ),
+                    1 => array (),
                 ),
                 11 => array (
                     0 => 'description',

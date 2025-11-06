@@ -175,15 +175,6 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'PROJECT' => array (
-        'type' => 'relate',
-        'studio' => 'visible',
-        'label' => 'LBL_PROJECT',
-        'id' => 'PROJECT_ID',
-        'link' => true,
-        'width' => '10%',
-        'default' => false,
-    ),
     'EXPECTED_DURATION' => array (
         'type' => 'varchar',
         'label' => 'LBL_EXPECTED_DURATION',

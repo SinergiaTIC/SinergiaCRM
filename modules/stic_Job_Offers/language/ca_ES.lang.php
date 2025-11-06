@@ -74,7 +74,6 @@ $mod_strings = array(
     'LBL_TIMETABLE' => 'Horari',
     'LBL_TERRITORIAL_SCOPE' => 'Àmbit territorial',
     'LBL_EVALUATION' => 'Mecanismes de control, seguiment i avaluació',
-    'LBL_PROJECT' => 'Projecte',
     'LBL_CENTER' => 'Centre',
     'LBL_RESPONSIBLE' => 'Responsable',
     'LBL_TEMPORALITY' => 'Temporalitat',

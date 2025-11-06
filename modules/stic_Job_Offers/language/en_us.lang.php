@@ -74,7 +74,6 @@ $mod_strings = array(
     'LBL_TIMETABLE' => 'Timetable',
     'LBL_TERRITORIAL_SCOPE' => 'Territorial scope',
     'LBL_EVALUATION' => 'Control, monitoring and evaluation mechanisms',
-    'LBL_PROJECT' => 'Project',
     'LBL_CENTER' => 'Center',
     'LBL_RESPONSIBLE' => 'Responsible',
     'LBL_TEMPORALITY' => 'Temporality',

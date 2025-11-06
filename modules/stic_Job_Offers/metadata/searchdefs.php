@@ -208,15 +208,6 @@ array(
                 'default' => true,
                 'name' => 'center',
             ),
-            'project' => array(
-                'type' => 'relate',
-                'link' => true,
-                'label' => 'LBL_PROJECT',
-                'id' => 'project_id',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'project',
-            ),
             'professional_profile' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
