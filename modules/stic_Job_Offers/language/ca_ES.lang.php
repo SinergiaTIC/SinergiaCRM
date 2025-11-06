@@ -163,4 +163,5 @@ $mod_strings = array(
     'LBL_SEPE_COVERED_DATE_ERROR' => 'La Data oferta coberta (SEPE) ha de ser igual o posterior a la Data activació (SEPE).',
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "Aquest camp existeix tant als mòduls Persones i Ofertes i s'utilitza per poder fer l'enllaç entre registres dels dos mòduls. Les tipologies de perfils es poden gestionar a la llista 'stic_professional_profile_list' de l'Editor de llistes desplegables.",
     'LBL_INC_INCORPORA_RECORD_HELP' => "Quan aquesta casella estigui marcada tots el camps que són obligatoris per fer una alta a Incopora s'assenyalaran amb el caràcter <span style='color:red;'>#</span>.",
+    'LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_PROJECT_TITLE' => 'Project',
 );

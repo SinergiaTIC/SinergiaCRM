@@ -175,6 +175,14 @@ array(
         'width' => '10%',
         'default' => false,
     ),
+    'PROJECT_STIC_JOB_OFFERS_1_NAME' => array (
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_PROJECT_TITLE',
+        'id' => 'PROJECT_STIC_JOB_OFFERS_1PROJECT_IDA',
+        'width' => '10%',
+        'default' => false,
+    ),
     'EXPECTED_DURATION' => array (
         'type' => 'varchar',
         'label' => 'LBL_EXPECTED_DURATION',

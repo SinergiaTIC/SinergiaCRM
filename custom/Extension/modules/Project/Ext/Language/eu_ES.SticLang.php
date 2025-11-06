@@ -45,6 +45,7 @@ $mod_strings['LBL_PROJECT_OPPORTUNITIES_1_FROM_OPPORTUNITIES_TITLE'] = 'Subvenci
 $mod_strings['LBL_OPPORTUNITIES_SUBPANEL_TITLE'] = 'Subvenciones';
 $mod_strings['LBL_STIC_FOLLOWUPS_PROJECT_FROM_STIC_FOLLOWUPS_TITLE'] = 'Seguimientos';
 $mod_strings['LBL_STIC_GOALS_PROJECT_FROM_STIC_GOALS_TITLE'] = 'Objetivos';
+$mod_strings['LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofertas laborales';
 $mod_strings['LBL_STIC_LOCATION'] = 'Ubicaciones';
 $mod_strings['LBL_ESTIMATED_END_DATE_ERROR'] = 'La fecha de finalización debe ser igual o posterior a la fecha de inicio.';
 $mod_strings['LBL_ESTIMATED_START_DATE_ERROR'] = 'La fecha de inicio debe ser igual o anterior a la fecha de finalización.';

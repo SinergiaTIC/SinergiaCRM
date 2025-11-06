@@ -211,7 +211,10 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_CENTER',
                     ),
-                    1 => array (),
+                    1 => 
+                    array (
+                        'name' => 'project_stic_job_offers_1_name',
+                    ),
                 ),
                 11 => array (
                     0 => 'description',
