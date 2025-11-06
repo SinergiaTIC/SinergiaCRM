@@ -215,14 +215,14 @@ $layout_defs["Project"]["subpanel_setup"]['stic_centers_project'] = array(
 );
 
 // Job offers subpanel
-$layout_defs["Project"]["subpanel_setup"]['project_stic_job_offers_1'] = array (
+$layout_defs["Project"]["subpanel_setup"]['project_stic_job_offers'] = array (
   'order' => 100,
   'module' => 'stic_Job_Offers',
   'subpanel_name' => 'default',
   'sort_order' => 'asc',
   'sort_by' => 'id',
-  'title_key' => 'LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_STIC_JOB_OFFERS_TITLE',
-  'get_subpanel_data' => 'project_stic_job_offers_1',
+  'title_key' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE',
+  'get_subpanel_data' => 'project_stic_job_offers',
   'top_buttons' => 
   array (
     0 => 

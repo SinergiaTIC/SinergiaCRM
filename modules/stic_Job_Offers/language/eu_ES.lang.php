@@ -164,5 +164,5 @@ $mod_strings = array(
     'LBL_SEPE_COVERED_DATE_ERROR' => 'La Fecha oferta cubierta (SEPE) debe ser igual o posterior a la Fecha activación (SEPE).',
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "Este campo existe tanto en el módulo de Personas como en el de Ofertas y se utiliza para enlazar unas y otras. Las tipologías de perfiles se pueden gestionar en la lista 'stic_professional_profile_list' del Editor de listas desplegables.",
     'LBL_INC_INCORPORA_RECORD_HELP' => "Cuando este campo esté activado todos los campos que son obligatorios para hacer un alta en Incorpora se marcarán con el carácter <span style='color:red;'>#</span>.",
-        'LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_PROJECT_TITLE' => 'Proyecto',
+        'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE' => 'Proyecto',
 );

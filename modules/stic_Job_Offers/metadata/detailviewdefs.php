@@ -213,7 +213,7 @@ array(
                     ),
                     1 => 
                     array (
-                        'name' => 'project_stic_job_offers_1_name',
+                        'name' => 'project_stic_job_offers_name',
                     ),
                 ),
                 11 => array (

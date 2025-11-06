@@ -175,11 +175,11 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'PROJECT_STIC_JOB_OFFERS_1_NAME' => array (
+    'PROJECT_STIC_JOB_OFFERS_NAME' => array (
         'type' => 'relate',
         'link' => true,
-        'label' => 'LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_PROJECT_TITLE',
-        'id' => 'PROJECT_STIC_JOB_OFFERS_1PROJECT_IDA',
+        'label' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE',
+        'id' => 'PROJECT_STIC_JOB_OFFERSPROJECT_IDA',
         'width' => '10%',
         'default' => false,
     ),

@@ -163,5 +163,5 @@ $mod_strings = array(
     'LBL_SEPE_COVERED_DATE_ERROR' => "Covered date (SEPE) must be equal or after to the Activation date (SEPE) (if exists).",
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "This field exists in Contacts and Job Offers and is used to match records from both modules. The types of profiles can be managed by editing 'stic_professional_profile_list' in the Dropdown list editor.",
     'LBL_INC_INCORPORA_RECORD_HELP' => "When this field is checked all the required fields for record creation in Incorpora will be marked with a red hashtag (<span style='color:red;'>#</span>).",
-    'LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_PROJECT_TITLE' => 'Project',
+    'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE' => 'Project',
 );

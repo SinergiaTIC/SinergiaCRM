@@ -7285,12 +7285,12 @@ $dictionary["stic_resources_stic_centers"] = array (
     ),
   );
   
-$dictionary["project_stic_job_offers_1"] = array (
+$dictionary["project_stic_job_offers"] = array (
   'true_relationship_type' => 'one-to-many',
   'from_studio' => true,
   'relationships' => 
   array (
-    'project_stic_job_offers_1' => 
+    'project_stic_job_offers' => 
     array (
       'lhs_module' => 'Project',
       'lhs_table' => 'project',
@@ -7299,12 +7299,12 @@ $dictionary["project_stic_job_offers_1"] = array (
       'rhs_table' => 'stic_job_offers',
       'rhs_key' => 'id',
       'relationship_type' => 'many-to-many',
-      'join_table' => 'project_stic_job_offers_1_c',
-      'join_key_lhs' => 'project_stic_job_offers_1project_ida',
-      'join_key_rhs' => 'project_stic_job_offers_1stic_job_offers_idb',
+      'join_table' => 'project_stic_job_offers_c',
+      'join_key_lhs' => 'project_stic_job_offersproject_ida',
+      'join_key_rhs' => 'project_stic_job_offersstic_job_offers_idb',
     ),
   ),
-  'table' => 'project_stic_job_offers_1_c',
+  'table' => 'project_stic_job_offers_c',
   'fields' => 
   array (
     0 => 
@@ -7328,13 +7328,13 @@ $dictionary["project_stic_job_offers_1"] = array (
     ),
     3 => 
     array (
-      'name' => 'project_stic_job_offers_1project_ida',
+      'name' => 'project_stic_job_offersproject_ida',
       'type' => 'varchar',
       'len' => 36,
     ),
     4 => 
     array (
-      'name' => 'project_stic_job_offers_1stic_job_offers_idb',
+      'name' => 'project_stic_job_offersstic_job_offers_idb',
       'type' => 'varchar',
       'len' => 36,
     ),
@@ -7343,7 +7343,7 @@ $dictionary["project_stic_job_offers_1"] = array (
   array (
     0 => 
     array (
-      'name' => 'project_stic_job_offers_1spk',
+      'name' => 'project_stic_job_offersspk',
       'type' => 'primary',
       'fields' => 
       array (
@@ -7352,20 +7352,20 @@ $dictionary["project_stic_job_offers_1"] = array (
     ),
     1 => 
     array (
-      'name' => 'project_stic_job_offers_1_ida1',
+      'name' => 'project_stic_job_offers_ida1',
       'type' => 'index',
       'fields' => 
       array (
-        0 => 'project_stic_job_offers_1project_ida',
+        0 => 'project_stic_job_offersproject_ida',
       ),
     ),
     2 => 
     array (
-      'name' => 'project_stic_job_offers_1_alt',
+      'name' => 'project_stic_job_offers_alt',
       'type' => 'alternate_key',
       'fields' => 
       array (
-        0 => 'project_stic_job_offers_1stic_job_offers_idb',
+        0 => 'project_stic_job_offersstic_job_offers_idb',
       ),
     ),
   ),

@@ -149,15 +149,15 @@ $dictionary["Project"]["fields"]["stic_centers_project"] = array (
   );
 
 // Job offers relationship
-$dictionary["Project"]["fields"]["project_stic_job_offers_1"] = array (
-  'name' => 'project_stic_job_offers_1',
+$dictionary["Project"]["fields"]["project_stic_job_offers"] = array (
+  'name' => 'project_stic_job_offers',
   'type' => 'link',
-  'relationship' => 'project_stic_job_offers_1',
+  'relationship' => 'project_stic_job_offers',
   'source' => 'non-db',
   'module' => 'stic_Job_Offers',
   'bean_name' => 'stic_Job_Offers',
   'side' => 'right',
-  'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_1_FROM_STIC_JOB_OFFERS_TITLE',
+  'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE',
 );
 
 // Base fields from the module
