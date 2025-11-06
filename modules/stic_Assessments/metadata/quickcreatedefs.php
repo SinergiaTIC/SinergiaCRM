@@ -90,11 +90,7 @@ $viewdefs [$module_name] = array (
             'studio' => 'visible',
             'label' => 'LBL_TYPE',
           ),
-          1 => array (
-            'name' => 'project',
-            'studio' => 'visible',
-            'label' => 'LBL_PROJECT',
-          ),
+          1 => array (),
         ),  
         4 => array (
           0 => array (

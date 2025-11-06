@@ -74,7 +74,6 @@ $mod_strings = array (
     'LBL_DERIVATION' => 'Derivado por',
     'LBL_NEXT_DATE' => 'Próxima valoración',
     'LBL_TYPE' => 'Tipo',
-    'LBL_PROJECT' => 'Proyecto',
     'LBL_TRAINING_COMPLETED' => 'Formación completada',
     'LBL_HAS_CRIMINAL_CERTIFICATE' => 'Tiene certificado de delitos',
     'LBL_NEEDS_FINANCIAL_AID' => 'Necesita ayudas / becas / dietas',

@@ -141,14 +141,6 @@ array(
         'label' => 'LBL_TYPE',
         'width' => '10%',
     ),
-    'PROJECT' => array(
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_PROJECT',
-        'id' => 'PROJECT_ID',
-        'width' => '10%',
-        'default' => false,
-    ),
     'TRAINING_COMPLETED' => array(
         'type' => 'enum',
         'default' => false,
