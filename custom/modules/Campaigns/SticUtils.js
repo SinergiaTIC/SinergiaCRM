@@ -463,7 +463,7 @@ function initilizeDetailView() {
 
     // All Subpanels buttons
     $(".clickMenu").hide();
-    $("#viewRoiBxuttonId").hide();
+    $("#viewRoiButtonId").hide();
     $("#mark_as_sent_button").parent().hide();
   }
 }
