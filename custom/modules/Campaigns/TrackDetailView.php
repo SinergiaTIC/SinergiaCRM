@@ -107,7 +107,7 @@ if (isset($focus->campaign_type)) {
     if ($focus->campaign_type == "Notification" || $focus->campaign_type == "NotifMsg") {
         $smarty->assign("DISABLE_LINK", "display:none");
     }
-    if ($focus->campaign_type != "Notification" && $focus->campaign_type != "NotifMsg") {
+    if ($focus->campaign_type != "Notification" && $focus->campaign_type != "NotifMsg" && $focus->campaign_type != "Message") {
         $smarty->assign("TRACK_WIZARD_BUTTON", "<input type=\"button\" class=\"button\" id=\"launch_wizard_button\" onclick=\"javascript:window.location='index.php?module=Campaigns&action=WizardHome&record={$focus->id}';\" value=\"{$mod_strings['LBL_TO_WIZARD_TITLE']}\" />");
     }
 }
