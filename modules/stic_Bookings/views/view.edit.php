@@ -138,7 +138,7 @@ class stic_BookingsViewEdit extends ViewEdit
                     }
                 } else {
                     // If start_date is empty, use current date
-                    $this->bean->start_date = date('Y-m-d') . ' 00:00';
+                    // $this->bean->start_date = date('Y-m-d') . ' 00:00';
                 }
     
                 // Process end_date
@@ -197,7 +197,7 @@ class stic_BookingsViewEdit extends ViewEdit
                     }
                 } else {
                     // If end_date is empty, use current date
-                    $this->bean->end_date = date('Y-m-d') . ' 23:59';
+                    // $this->bean->end_date = date('Y-m-d') . ' 23:59';
                 }
             }
         }
