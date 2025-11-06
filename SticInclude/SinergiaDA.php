@@ -1474,7 +1474,8 @@ class ExternalReporting
                                     1
                             ) email,
                             u.user_hash AS password,
-                            if(u.status='Active' AND uc.sda_allowed_c=1 ,1,0) as 'active'
+                            if(u.status='Active' AND uc.sda_allowed_c=1 ,1,0) as 'active',
+                            if(u.status='Active' AND uc.sda_readonly_c=1 ,1,0) as 'readonly'
                         FROM
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c

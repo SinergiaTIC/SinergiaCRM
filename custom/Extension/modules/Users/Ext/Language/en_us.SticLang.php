@@ -44,6 +44,8 @@ $mod_strings['LBL_STIC_CLOCK'] = 'Time tracker';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indicates whether the Time tracker is enabled for the user.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'SinergiaDA access';
 $mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Sets user access to Sinergia Data Analytics';
+$mod_strings['LBL_SDA_READONLY'] = 'SinergiaDA read-only access';
+$mod_strings['LBL_SDA_READONLY_INFO'] = 'If the user has access to Sinergia Data Analytics, they will only be able to view data, but will not be able to create or modify reports or dashboards.';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";

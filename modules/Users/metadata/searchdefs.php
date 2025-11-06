@@ -177,6 +177,15 @@
           'width' => '10%',
           'name' => 'sda_allowed_c',
         ),
+        'sda_readonly_c' =>
+        array (
+          'type' => 'bool',
+          'default' => true,
+          'studio' => 'visible',
+          'label' => 'LBL_SDA_READONLY',
+          'width' => '10%',
+          'name' => 'sda_readonly_c',
+        ),
         'stic_work_calendar_c' => 
         array (
           'type' => 'bool',

@@ -175,18 +175,14 @@ array(
                     1 => 'photo',
                 ),
                 3 => array (
-
                     0 => 'sda_allowed_c',
-                    1 => array (
-                      'name' => 'stic_work_calendar_c',
-                      'studio' => 'visible',
-                      'label' => 'LBL_STIC_WORK_CALENDAR',
-                    ),
-                  ),
-                  4 => array (
+                    1 => 'sda_readonly_c',
+                ),
+                4 => array (
                     0 => array (
-                      'name' => 'factor_auth',
-                      'label' => 'LBL_FACTOR_AUTH',
+                    'name' => 'stic_work_calendar_c',
+                    'studio' => 'visible',
+                    'label' => 'LBL_STIC_WORK_CALENDAR',
                     ),
                     1 => array (
                       'name' => 'stic_clock_c',
@@ -194,6 +190,13 @@ array(
                       'label' => 'LBL_STIC_CLOCK',
                     ),
                   ),
+                5 => array (
+                    0 => array (
+                      'name' => 'factor_auth',
+                      'label' => 'LBL_FACTOR_AUTH',
+                    ),
+                    1 => array ()
+                ),
               ),
             'LBL_EMPLOYEE_INFORMATION' => array(
                 0 => array(

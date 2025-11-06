@@ -44,6 +44,8 @@ $mod_strings['LBL_STIC_CLOCK'] = 'Registro horario';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indica si la funcionalidad de Registro horario está activada para el usuario.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'Acceso a SinergiaDA';
 $mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica si el usuario dispone de acceso a Sinergia Data Analytics';
+$mod_strings['LBL_SDA_READONLY'] = 'Acceso de solo lectura a SinergiaDA';
+$mod_strings['LBL_SDA_READONLY_INFO'] = 'Si el usuario tienen acceso a Sinergia Data Analytics, solo podrá ver datos, pero no  podrá crear ni modificar informes ni paneles.';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';

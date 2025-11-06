@@ -135,7 +135,7 @@ $dictionary['User']['fields']['sda_allowed_c'] = array(
     'id' => 'Userssda_allowed_c',
     'name' => 'sda_allowed_c',
     'vname' => 'LBL_SDA_ALLOWED',
-    'custom_module Data Analytics' => 'Users',
+    'custom_module' => 'Users',
     'source' => 'custom_fields',
     'comments' => '',
     'help' => '',
@@ -154,6 +154,31 @@ $dictionary['User']['fields']['sda_allowed_c'] = array(
     'merge_filter' => 'enabled',
     'studio' => 'visible',
     'popupHelp' => 'LBL_SDA_ALLOWED_INFO',
+);
+
+$dictionary['User']['fields']['sda_readonly_c'] = array(
+    'id' => 'Userssda_readonly_c',
+    'name' => 'sda_readonly_c',
+    'vname' => 'LBL_SDA_READONLY',
+    'custom_module' => 'Users',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'bool',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => '1',
+    'no_default' => 0,
+    'inline_edit' => 1,
+    'importable' => 1,
+    'massupdate' => 1,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'enabled',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_SDA_READONLY_INFO',
 );
 
 $dictionary['User']['fields']['stic_work_calendar_c'] = array(

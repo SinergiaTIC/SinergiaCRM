@@ -172,6 +172,14 @@ array (
     'label' => 'LBL_SDA_ALLOWED',
     'width' => '10%',
   ),
+  'SDA_READONLY_C' =>
+  array (
+    'type' => 'bool',
+    'default' => true,
+    'studio' => 'visible',
+    'label' => 'LBL_SDA_READONLY',
+    'width' => '10%',
+  ),
   'STIC_WORK_CALENDAR_c' => 
   array (
     'width' => '10%',
