@@ -3809,9 +3809,7 @@ $app_list_strings['stic_documents_subcategories_list']['certificate_residence'] 
 $app_list_strings['stic_documents_subcategories_list']['certificate_sexual_offences'] = 'Delictes sexuals';
 $app_list_strings['stic_documents_subcategories_list']['certificate_other'] = 'Altres';
 $app_list_strings['stic_documents_subcategories_list']['insurance_volunteering'] = 'Voluntariat';
-$app_list_strings['stic_documents_subcategories_list']['insurance_liability'] = 'Responsabilitat civil';
 $app_list_strings['stic_documents_subcategories_list']['insurance_travel'] = 'Viatge';
-$app_list_strings['stic_documents_subcategories_list']['insurance_premises'] = 'Locals';
 $app_list_strings['stic_documents_subcategories_list']['insurance_other'] = 'Altres';
 
 // Esdeveniments: Modalitats de voluntariat

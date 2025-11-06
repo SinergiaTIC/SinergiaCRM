@@ -3775,9 +3775,7 @@ $app_list_strings['stic_documents_subcategories_list']['certificate_residence'] 
 $app_list_strings['stic_documents_subcategories_list']['certificate_sexual_offences'] = 'Sexual offences';
 $app_list_strings['stic_documents_subcategories_list']['certificate_other'] = 'Other';
 $app_list_strings['stic_documents_subcategories_list']['insurance_volunteering'] = 'Volunteering';
-$app_list_strings['stic_documents_subcategories_list']['insurance_liability'] = 'Civil liability';
 $app_list_strings['stic_documents_subcategories_list']['insurance_travel'] = 'Travel';
-$app_list_strings['stic_documents_subcategories_list']['insurance_premises'] = 'Premises';
 $app_list_strings['stic_documents_subcategories_list']['insurance_other'] = 'Other';
 
 // Events: Volunteering modalities
