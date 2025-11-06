@@ -62,8 +62,8 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             FROM stic_resources sr
             JOIN stic_resources_stic_bookings_c srsb ON sr.id = srsb.stic_resources_stic_bookingsstic_resources_ida
             JOIN stic_bookings sb ON srsb.stic_resources_stic_bookingsstic_bookings_idb = sb.id
-            LEFT JOIN stic_resources_stic_centers_c srsc ON sr.id = srsc.stic_resources_stic_centersstic_resources_idb
-            LEFT JOIN stic_centers sc ON srsc.stic_resources_stic_centersstic_centers_ida = sc.id
+            LEFT JOIN stic_resources_stic_centers_c srsc ON sr.id = srsc.stic_resources_stic_centersstic_resources_idb and srsc.deleted = 0
+            LEFT JOIN stic_centers sc ON srsc.stic_resources_stic_centersstic_centers_ida = sc.id and sc.deleted = 0
             WHERE sb.end_date >= '$start_date'
             AND sb.start_date <= '$end_date'
             AND sr.type ='place'
@@ -199,10 +199,10 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                 FROM
                     stic_resources
                 JOIN  stic_resources_stic_centers_c
-                ON    stic_resources.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_resources_idb
+                ON    stic_resources.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_resources_idb and stic_resources_stic_centers_c.deleted = 0
                 JOIN
                     stic_centers
-                ON    stic_centers.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_centers_ida
+                ON    stic_centers.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_centers_ida and stic_centers.deleted = 0
                 WHERE
                     stic_resources.deleted = 0 AND stic_resources.type = 'place'";
         // Filters are added
