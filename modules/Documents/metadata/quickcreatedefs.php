@@ -140,11 +140,6 @@ $viewdefs['Documents']['QuickCreate'] = array (
         'newTab' => true,
         'panelDefault' => 'expanded',
       ),
-      'LBL_STIC_PANEL_VOLUNTEERING' => 
-      array(
-        'newTab' => false,
-        'panelDefault' => 'expanded',
-      ),      
     ),
   ),
   'panels' => 
@@ -185,6 +180,19 @@ $viewdefs['Documents']['QuickCreate'] = array (
       array (
         0 => 
         array (
+          'name' => 'stic_category_c',
+          'label' => 'LBL_STIC_CATEGORY',
+        ),
+        1 => 
+        array (
+          'name' => 'stic_subcategory_c',
+          'label' => 'LBL_STIC_SUBCATEGORY',
+        ),
+      ),      
+      4 => 
+      array (
+        0 => 
+        array (
           'name' => 'active_date',
           'displayParams' => 
           array (
@@ -197,7 +205,7 @@ $viewdefs['Documents']['QuickCreate'] = array (
           'label' => 'LBL_DOC_EXP_DATE',
         ),
       ),
-      4 => 
+      5 => 
       array (
         0 => 
         array (
@@ -210,24 +218,6 @@ $viewdefs['Documents']['QuickCreate'] = array (
         ),
       ),
     ),
-    'LBL_STIC_PANEL_VOLUNTEERING' => 
-    array (
-      0 => 
-      array (
-        0 => 
-        array (
-          'name' => 'stic_category_c',
-          'studio' => 'visible',
-          'label' => 'LBL_STIC_CATEGORY',
-        ),
-        1 => 
-        array (
-          'name' => 'stic_subcategory_c',
-          'studio' => 'visible',
-          'label' => 'LBL_STIC_SUBCATEGORY',
-        ),
-      ),
-    ),    
   ),
 );
 // END STIC-Custom

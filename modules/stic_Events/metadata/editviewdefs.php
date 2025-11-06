@@ -49,11 +49,6 @@ array (
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
-        'LBL_STIC_PANEL_VOLUNTEERING' => 
-        array(
-          'newTab' => false,
-          'panelDefault' => 'expanded',
-        ),        
         'LBL_ECONOMY_PANEL' => 
         array (
           'newTab' => true,
@@ -175,27 +170,22 @@ array (
         array (
           0 => 
           array (
-            'name' => 'description',
-            'comment' => 'Full text of the note',
-            'label' => 'LBL_DESCRIPTION',
-          ),
-        ),
-      ),
-      'LBL_STIC_PANEL_VOLUNTEERING' => 
-      array (
-        0 => 
-        array (
-          0 => 
-          array (
             'name' => 'volunteer_mode',
-            'studio' => 'visible',
             'label' => 'LBL_VOLUNTEER_MODE',
           ),
           1 => 
           array (
             'name' => 'target_audience',
-            'studio' => 'visible',
             'label' => 'LBL_TARGET_AUDIENCE',
+          ),
+        ),        
+        10 => 
+        array (
+          0 => 
+          array (
+            'name' => 'description',
+            'comment' => 'Full text of the note',
+            'label' => 'LBL_DESCRIPTION',
           ),
         ),
       ),

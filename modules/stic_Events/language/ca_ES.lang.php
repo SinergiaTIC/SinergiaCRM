@@ -92,7 +92,6 @@ $mod_strings = array(
     'LBL_VOLUNTEER_MODE' => 'Modalitat de voluntariat',
     'LBL_TARGET_AUDIENCE' => "Públic objectiu de l'esdeveniment",
     'LBL_DEFAULT_PANEL' => 'Dades generals',
-    'LBL_STIC_PANEL_VOLUNTEERING' => 'Volunteering',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
     'LBL_ECONOMY_PANEL' => 'Economia',
     'LBL_STATUS_PANEL' => 'Assistents per estat',

@@ -92,7 +92,6 @@ $mod_strings = array(
     'LBL_VOLUNTEER_MODE' => 'Modalidad voluntariado',
     'LBL_TARGET_AUDIENCE' => 'Público objetivo del evento',    
     'LBL_DEFAULT_PANEL' => 'Datos generales',
-    'LBL_STIC_PANEL_VOLUNTEERING' => 'Voluntariado',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
     'LBL_ECONOMY_PANEL' => 'Economía',
     'LBL_STATUS_PANEL' => 'Asistentes por estado',
