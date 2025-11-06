@@ -36,15 +36,15 @@ class stic_SignersViewDetail extends ViewDetail
     public function preDisplay()
     {
         global $app_list_strings;
-        
+
         parent::preDisplay();
-        
+
         $this->dv->ss->assign('RECORD_TYPE', $app_list_strings['moduleList'][$this->bean->record_type]);
-        
+
         SticViews::preDisplay($this);
 
-        echo getVersionedScript("SticInclude/js/Utils.js");    
-        
+        echo getVersionedScript("SticInclude/js/Utils.js");
+
     }
 
     public function display()
@@ -53,9 +53,7 @@ class stic_SignersViewDetail extends ViewDetail
 
         SticViews::display($this);
 
-        
         echo getVersionedScript("modules/stic_Signers/Utils.js");
-
 
         // Write here you custom code
     }
