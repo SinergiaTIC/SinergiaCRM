@@ -178,37 +178,38 @@ class ParameterResolverService {
             return null;
         }
 
-        $submittedValue = $context->formData[$formKey] ?? null;
-
         // Parse formKey to find the dataBlock and dataBlockField definitions
         $isDetached = str_starts_with($formKey, '_detached.');
         $keyToParse = $isDetached ? substr($formKey, strlen('_detached.')) : $formKey;
         $parts = explode('.', $keyToParse, 2);
-        if (count($parts) !== 2) {
+
+        $fieldName = $formKey;
+        $fieldDefinition = null;
+        if (count($parts) == 2) {
+            $blockName = $parts[0];
+            $fieldName = $parts[1];
+
+            // Find the Field definition
+            $dataBlockConfig = $context->getDataBlockByName($blockName);
+            if ($dataBlockConfig !== null) {
+                $fieldDefinition = $dataBlockConfig->fields[$fieldName] ?? null;
+            }
+        } else {
             $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": The field name '{$formKey}' has an invalid format.");
-
-            $fieldName = $formKey; 
-            return new DataBlockFieldResolved($formKey, $fieldName, null, $submittedValue);
         }
-        $blockName = $parts[0];
-        $fieldName = $parts[1];
 
-        // Find the dataBlock definition
-        $dataBlockConfig = null;
-        foreach ($context->formConfig->data_blocks as $block) {
-            if ($block->name === $blockName) {
-                $dataBlockConfig = $block;
-                break;
+        $finalValue = null;
+        $crmFieldType = $fieldDefinition?->type ?? 'text';
+        if (array_key_exists($formKey, $context->formData)) {
+            // Fill value from form data
+            $finalValue = Utils::castCrmValue($context->formData[$formKey], $crmFieldType, $context);
+        } else {
+            // If not set in form data, then find if is a field with fixed value in DataBlock
+            if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
+                $finalValue = Utils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
             }
         }
-
-        // Find the dataBlockField definition
-        $fieldDefinition = null;
-        if ($dataBlockConfig !== null) {
-            $fieldDefinition = $dataBlockConfig->fields[$fieldName] ?? null;
-        }
-
-        return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $submittedValue);
+        return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $finalValue);
     }
 
     private function resolveOptionSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?OptionSelectorResolved {

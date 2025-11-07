@@ -24,6 +24,7 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
+include_once __DIR__."Utils.php";
 
 include_once __DIR__."BeanReference.php";
 include_once __DIR__."BeanModified.php";
