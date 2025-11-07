@@ -73,11 +73,11 @@ $mod_strings = array (
   'LBL_TRANSACTION_HASH' => 'Hash de la transacció',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producte financer',
-  'LBL_DESTINATION_ACCOUNT_INFO' => 'Número del compte destino en cas de transferència.',
-  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Número del compte comptable oficial associada a aquesta transacció.',
-  'LBL_CATEGORY_INFO' => 'Una vegada seleccionat el tipus de transacció, es podrà especificar una categoria.',
-  'LBL_SUBCATEGORY_INFO' => 'Una vegada seleccionada la categoria, es podrà especificar una subcategoria.',
-  'LBL_TRANSACTION_HASH_INFO' => 'Identificador únic de la transacció, per comprovar si ja existeix i ignorar un possible duplicat.',
+  'LBL_DESTINATION_ACCOUNT_INFO' => 'Compte bancari destí en cas de transferència.',
+  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Codi del compte comptable associat a la transacció.',
+  'LBL_CATEGORY_INFO' => 'Per poder indicar una categoria cal establir primer el tipus de transacció.',
+  'LBL_SUBCATEGORY_INFO' => 'Per poder indicar una subcategoria cal establir primer la categoria.',
+  'LBL_TRANSACTION_HASH_INFO' => "L'identificador únic de la transacció evita la importació de registres duplicats.",
 
   // Norma 43
   'LBL_NORMA_43' => 'Importa un fitxer Norma 43',
