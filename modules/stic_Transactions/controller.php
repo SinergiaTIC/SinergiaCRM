@@ -50,25 +50,11 @@ class stic_TransactionsController extends SugarController
         $_SESSION['norma43_summary'] = $summary;
 
         // Get parsed accounts for mapping
-        SugarApplication::redirect('index.php?module=stic_Transactions&action=mapNorma43');
+        SugarApplication::redirect('index.php?module=stic_Transactions&action=previewNorma43');
     }
 
     /**
-     * Paso 3: Map fields
-     */
-    public function action_mapNorma43()
-    {
-        // Verify that session data exists
-        if (!isset($_SESSION['norma43_summary']) || !isset($_SESSION['norma43_parsed_accounts'])) {
-            SugarApplication::redirect('index.php?module=stic_Transactions&action=uploadNorma43');
-            return;
-        }
-
-        $this->view = 'norma43mapping';
-    }
-
-    /**
-     * Step 4: Final preview
+     * Step 3: Final preview
      */
     public function action_previewNorma43()
     {
@@ -76,7 +62,7 @@ class stic_TransactionsController extends SugarController
     }
 
     /**
-     * Step 5: Save the transactions
+     * Step 4: Save the transactions
      */
     public function action_executeFinalImport()
     {

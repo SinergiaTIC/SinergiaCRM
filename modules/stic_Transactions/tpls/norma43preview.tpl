@@ -21,13 +21,13 @@
  *}
 
 <div class="moduleTitle">
-    <h2 class="module-title-text" style="font-size: 18px; margin-bottom: 0px;">{$MOD['LBL_STEP_3']}</h2>
+    <h2 class="module-title-text" style="font-size: 18px; margin-bottom: 0px;">{$MOD['LBL_STEP_2']}</h2>
 </div>
 <br>
 
-<div  class="import_instruction">
+<div class="import_instruction">
     <br>
-    {$MOD['LBL_INSTRUCTION_1_STEP_3']}
+    {$MOD['LBL_INSTRUCTION_1_STEP_2']}
     <br>
 </div>
 
@@ -36,7 +36,7 @@
         action="index.php?module=stic_Transactions&action=executeFinalImport">
 
         <div style="margin-bottom: 25px;">
-            <h3>{$MOD['LBL_SUMMARY_STEP_3']}</h3>
+            <h3>{$MOD['LBL_SUMMARY_STEP_2']}</h3>
             <div
                 style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div class="stat-card">
@@ -136,8 +136,8 @@
         {/if}
 
         <div style="text-align: left; padding: 15px 0; border-top: 2px solid #ddd; margin-top: 30px;">
-            <input type="button" class="button" value="{$APP['LBL_BACK']}" 
-                onclick="history.back();" />
+            <input type="button" class="button" value="{$APP['LBL_BACK']}"
+                onclick="if(confirm('{$MOD['LBL_BACK_TO_STEP_1']}')) location.href='index.php?module=stic_Transactions&action=uploadNorma43';" />
             <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}"/>
             <input type="button" class="button" value="{$APP['LBL_CANCEL']}"
                 onclick="location.href='index.php?module=stic_Transactions&action=index';" />

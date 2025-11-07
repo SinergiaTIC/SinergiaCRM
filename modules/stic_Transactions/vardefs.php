@@ -239,6 +239,22 @@ $dictionary['stic_Transactions'] = array(
     'parentenum' => 'category',
     'popupHelp' => 'LBL_CATEGORY_INFO',
   ),
+  'transaction_hash' =>
+  array (
+    'name' => 'transaction_hash',
+    'vname' => 'LBL_TRANSACTION_HASH',
+    'type' => 'varchar',
+    'len' => 64,
+    'audited' => false,
+    'duplicate_merge' => 'disabled',
+    'reportable' => true,
+    'unified_search' => false,
+    'massupdate' => false,
+    'importable' => 'true',
+    'studio' => true,
+    'required' => false,
+    'popupHelp' => 'LBL_TRANSACTION_HASH_INFO',
+  ),
 
   // Relationships
   'stic_transactions_stic_financial_products' =>

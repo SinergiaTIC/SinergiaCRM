@@ -85,8 +85,8 @@ class Norma43
             'accounts' => []
         ];
 
-        // To avoid duplicates within the same file
-        $seenHashes = [];
+        // To avoid duplicates within the same file and DB
+        $importedHashes = [];
 
         foreach (self::$parsedAccounts as &$account) {
             // Generate IBAN from entity, office, and account number
@@ -126,22 +126,13 @@ class Norma43
                 $name   = trim(preg_replace('/\s+/', ' ', mb_strtolower($mapped['name'] ?? '', 'UTF-8')));
                 $hash   = md5($productId . '|' . $date . '|' . number_format($amount, 2, '.', '') . '|' . $name);
 
-                // Duplicates within the same file
-                if (isset($seenHashes[$hash])) {
-                    $summary['skipped_duplicates']++;
-                    $summary['duplicates'][] = $mapped;
-                    continue;
-                }
-                $seenHashes[$hash] = true;
-
-                // Duplicate in the database
-                if (self::isDuplicate($mapped, $productId)) {
+                // Check for duplicates
+                if (self::isDuplicate($mapped, $productId, $importedHashes)) {
                     $summary['skipped_duplicates']++;
                     $summary['duplicates'][] = $mapped;
                     continue;
                 }
 
-                // If is not a duplicate, add it
                 $summary['new_movements'][] = $mapped;
             }
             // In preview mode, we do not insert movements or update balances
@@ -170,8 +161,8 @@ class Norma43
 
         $summary = ['imported_movements' => 0];
 
-        // To avoid duplicates within the same file
-        $seenHashes = [];
+        // To avoid duplicates within the same file and DB
+        $importedHashes = [];
 
         // Loop through accounts and movements to insert them
         foreach ($parsedAccounts as $account) {
@@ -185,12 +176,8 @@ class Norma43
                 $name   = trim(preg_replace('/\s+/', ' ', mb_strtolower($mapped['name'] ?? '', 'UTF-8')));
                 $hash   = md5($productId . '|' . $date . '|' . number_format($amount, 2, '.', '') . '|' . $name);
 
-                // Avoiding duplicates within the same file
-                if (isset($seenHashes[$hash])) continue;
-                $seenHashes[$hash] = true;
-
                 // Avoiding duplicates in the database
-                if (self::isDuplicate($mapped, $productId)) continue;
+                if (self::isDuplicate($mapped, $productId, $importedHashes)) continue;
 
                 self::insertTransaction($mapped, $productId);
                 $summary['imported_movements']++;
@@ -548,49 +535,47 @@ class Norma43
      * Check if a transaction is a duplicate
      * @param array $mapped_data The mapped transaction data
      * @param string $productId The ID of the associated financial product
+     * @param array $importedHashes Reference to the array of already imported hashes in the current session
      * @return bool True if the transaction is a duplicate, false otherwise
      */
-    private static function isDuplicate($mapped_data, $productId)
+    private static function isDuplicate($mapped_data, $productId, &$importedHashes = [])
     {
         global $db;
 
-        $date   = trim($mapped_data['transaction_date']);
-        $amount = round((float)$mapped_data['amount'], 2);
-        $name   = trim(preg_replace('/\s+/', ' ', mb_strtolower($mapped_data['name'] ?? '', 'UTF-8')));
+        // Get the IBAN of the financial product
+        $product = BeanFactory::getBean('stic_Financial_Products', $productId);
+        $iban = $product ? $product->iban : '';
 
-        if (empty($date) || empty($name)) {
-            return false;
+        // Generate the transaction hash
+        $hash = self::generateTransactionHash(
+            $iban,
+            $mapped_data['transaction_date'] ?? '',
+            $mapped_data['amount'] ?? 0,
+            $mapped_data['name'] ?? ''
+        );
+
+        // Internal check (duplicate within the same file)
+        if (in_array($hash, $importedHashes)) {
+            return true; // It already exists in the imported hashes
         }
 
         // Searching for duplicates in the database correctly linked to the product
         $query = "
-            SELECT t.id
-            FROM stic_transactions t
-            INNER JOIN stic_transactions_stic_financial_products_c rel
-                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
-                AND rel.deleted = 0
-            WHERE rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
-            AND t.deleted = 0
-            AND t.transaction_date = " . $db->quoted($date) . "
-            AND ROUND(t.amount, 2) = " . $db->quoted($amount) . "
-            AND LOWER(TRIM(REPLACE(REPLACE(REPLACE(t.document_name, '\r', ''), '\n', ''), '  ', ' '))) = " . $db->quoted($name) . "
+            SELECT id
+            FROM stic_transactions
+            WHERE deleted = 0
+            AND transaction_hash = " . $db->quoted($hash) . "
             LIMIT 1
         ";
-
         $result = $db->query($query);
-        $existsInDB = $db->fetchByAssoc($result) !== false;
+        $existsInDb = $db->fetchByAssoc($result) !== false;
 
-        // Avoiding duplicates within the same file
-        static $hashes = [];
-        $hash = md5($productId . '|' . $date . '|' . number_format($amount, 2, '.', '') . '|' . $name);
-
-        if (isset($hashes[$hash])) {
-            return true;
+        // If not a duplicate, add it to the internal list
+        if (!$existsInDb) {
+            $importedHashes[] = $hash;
         }
 
-        $hashes[$hash] = true;
-
-        return $existsInDB;
+        return $existsInDb;
     }
 
     /**
@@ -614,9 +599,13 @@ class Norma43
         $tx->status = 'pending';
         $tx->stic_trans4a5broducts_ida = $productId;
 
+        // Get the IBAN of the financial product
+        $product = BeanFactory::getBean('stic_Financial_Products', $productId);
+        $iban = $product ? $product->iban : '';
+
         // Generate the movement hash for duplicate checking
-        $tx->movement_hash_c = md5(strtolower(trim(
-            $productId . '|' . $data['transaction_date'] . '|' .
+        $tx->transaction_hash = md5(strtolower(trim(
+            $iban . '|' . $data['transaction_date'] . '|' .
             number_format($data['amount'], 2, '.', '') . '|' . $data['name']
         )));
 
@@ -795,5 +784,24 @@ class Norma43
         $day   = substr($dateStr, 4, 2);
         if (!checkdate((int)$month, (int)$day, (int)$year)) return null;
         return "$year-$month-$day";
+    }
+
+    /**
+     * Generate a unique hash for a transaction based on its key attributes
+     * @param string $iban The IBAN of the financial product
+     * @param string $date The transaction date
+     * @param float $amount The transaction amount
+     * @param string $name The transaction name/description
+     * @return string The generated MD5 hash
+     */
+    private static function generateTransactionHash($iban, $date, $amount, $name)
+    {
+        $iban = trim(strtolower($iban ?? ''));
+        $date = trim($date ?? '');
+        $amount = number_format((float)$amount, 2, '.', '');
+        $name = mb_strtolower(trim($name ?? ''), 'UTF-8');
+
+        // Generate the hash
+        return md5("{$iban}|{$date}|{$amount}|{$name}");
     }
 }
