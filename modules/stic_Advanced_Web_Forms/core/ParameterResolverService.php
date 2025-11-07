@@ -115,7 +115,6 @@ class ParameterResolverService {
             case ActionDataType::DATE:
             case ActionDataType::DATETIME:
             case ActionDataType::TIME:
-            case ActionDataType::RELATIVE_DATE:
                 $baseTimestamp = (int)$context->submissionTimestamp;
                 // strtotime gestiona fechas fijas ("2025-10-31") y relativas ("today", "+1 day")
                 $parsedTime = @strtotime($valueToCast, $baseTimestamp);
@@ -132,7 +131,12 @@ class ParameterResolverService {
                     return null;
                 }
 
+            case ActionDataType::FIELD_LIST:
+                return $this->resolveFieldList($def, $valueToCast, $context);
+
             case ActionDataType::TEXT:
+            case ActionDataType::SELECT:
+                return $valueToCast;
             default:
                 return (string)$valueToCast;
         }
@@ -275,6 +279,40 @@ class ParameterResolverService {
         }
         
         return new OptionSelectorResolved($selectedOption, $resolvedValue);        
+    }
+
+    /**
+     * Convierte un string de campos separados por comas (ex: "Block.field1, Block.field2") 
+     * en un array asociativo [formKey => resolvedValue].
+     * 
+     * @param ActionParameterDefinition $def La definición del parámetro
+     * @param string $fieldListString El string con los campos separados por comas (ex: "Block.field1, Block.field2")
+     * @param ExecutionContext $context El contexto de ejecución
+     * @return array El array asociativo resuelto
+     */
+    private function resolveFieldList(ActionParameterDefinition $def, string $fieldListString, ExecutionContext $context): array
+    {
+        $resolvedData = [];
+        if (empty($fieldListString)) {
+            return $resolvedData;
+        }
+
+        $fieldNames = explode(',', $fieldListString);
+        foreach ($fieldNames as $formKey) {
+            $formKey = trim($formKey);
+            if (empty($formKey)) {
+                continue;
+            }
+
+            // Para cada campo lo resolvemos y lo añadimos al array de resultados
+            // La clave de cada elemento será el nombre completo del campo "Block.field1"
+            $fieldResolved = $this->resolveFormField($def, $formKey, $context);
+            if ($fieldResolved !== null && $fieldResolved->value !== null) {
+                $resolvedData[$formKey] = $fieldResolved->value;
+            }
+        }
+
+        return $resolvedData;
     }
 }
 

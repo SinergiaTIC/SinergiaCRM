@@ -194,6 +194,17 @@ $mod_strings = array (
   'LBL_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
   'LBL_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione el bloque de datos que será utilizado como parámetro en la acción',
 
+  'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de Redirección',
+  'LBL_REDIRECT_ACTION_URL_DESC' => 'La URL completa (con http://) a la que redirigir.',
+  'LBL_REDIRECT_ACTION_METHOD_TEXT' => 'Método de Envío',
+  'LBL_REDIRECT_ACTION_METHOD_DESC' => 'Cómo enviar los datos (si se envían).',
+  'LBL_REDIRECT_ACTION_METHOD_GET_TEXT' => 'GET (se añadirán los datos a la URL)',
+  'LBL_REDIRECT_ACTION_METHOD_POST_TEXT' => 'POST (mediante un formulario oculto)',
+  'LBL_REDIRECT_ACTION_FIELDS_TEXT' => 'Campos a Enviar',
+  'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Lista de campos separados por comas (ej: \'Bloque.campo1, _detached.Bloque.campo2\'). Dejar vacío para no enviar datos.',
+  'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionando...',
+  'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Apriete aquí para continuar',
+  
   'LBL_SEND_EMAIL_ACTION_TITLE' => 'Enviar correo electrónico',
   'LBL_SEND_EMAIL_ACTION_DESCRIPTION' => 'Envia un correo electrónico a un destinatario basado en la configuración del formulario',
   'LBL_SEND_EMAIL_ACTION_PARAM_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',

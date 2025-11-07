@@ -36,6 +36,7 @@ enum ActionParameterType: string {
 enum ActionDataType: string {
     // Primive types
     case TEXT          = 'text';
+    case TEXTAREA      = 'textarea';
     case INTEGER       = 'integer';
     case FLOAT         = 'float';
     case BOOLEAN       = 'boolean';
@@ -48,12 +49,15 @@ enum ActionDataType: string {
     case DATETIME      = 'datetime';
     case TIME          = 'time';
 
-    // Relative dates
-    case RELATIVE_DATE = 'relative_date';   // Para aceptar fechas relativas como "today", "yesterday", "tomorrow", etc.
-    
     // Specific formats
     case EMAIL         = 'email';
     case PHONE         = 'phone';
+
+    // Simple list of options
+    case SELECT        = 'select';
+
+    // List of fields
+    case FIELD_LIST    = 'field_list';
 }
 
 /**
@@ -67,6 +71,8 @@ class ActionParameterDefinition {
     public ActionDataType $dataType;     // El tipo de dato del parámetro: Obligado si $type es VALUE
     public bool $required = true;        // Indica si el parámetro es obligatorio
     public string $defaultValue = '';    // Valor por defecto del parámetro
+    /** @var ActionParameterOption[] */
+    public array $options = [];          // Las opciones del parámetro si el tipo es SELECT
     /** @var ActionSelectorOptionDefinition[] */
     public array $selectorOptions = [];  // Opciones adicionales para selectores de objetos
     /** @var string[] */

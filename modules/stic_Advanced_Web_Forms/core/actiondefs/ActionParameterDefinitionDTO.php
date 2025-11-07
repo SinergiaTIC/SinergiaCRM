@@ -37,8 +37,11 @@ class ActionParameterDefinitionDTO {
     public ?string $dataType;    // Ex: 'text', 'boolean'
     public bool $required;
     public string $defaultValue;
+    /** @var ActionParameterOption[] */
+    public array $options = [];
     /** @var ActionSelectorOptionDefinitionDTO[] */
     public array $selectorOptions;
+    
     
     public function __construct(ActionParameterDefinition $def) {
         $this->name = $def->name;
@@ -48,7 +51,12 @@ class ActionParameterDefinitionDTO {
         $this->dataType = $def->dataType?->value; // Convert enum to string
         $this->required = $def->required;
         $this->defaultValue = $def->defaultValue;
-
+        
+        $this->options = array_map(
+            fn($option) => new ActionParameterOption($option->value, $option->text),
+            $def->options
+        );
+        
         $this->selectorOptions = array_map(
             fn($optionDef) => new ActionSelectorOptionDefinitionDTO($optionDef),
             $def->selectorOptions
