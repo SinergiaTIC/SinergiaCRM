@@ -112,6 +112,7 @@ $mod_strings = array (
     'LBL_CARD_PAYMENT_SUCCESSFUL' => 'O pago foi feito efectivo correctamente.',
     'LBL_CARD_PAYMENT_COMMITMENT_EXPIRED_TITLE' => 'Compromiso de pago cancelado debido a tarxeta caducada.',
     'LBL_CARD_PAYMENT_COMMITMENT_EXPIRED_SUBTITLE' => 'O pago non se  puido facer efectivo.',
+    'LBL_CARD_PAYMENT_GATEWAY_NO_RESPONSE' => 'Non se recibiu resposta da pasarela de pago. Por favor, inténtoo de novo máis tarde ou contacte co administrador do sistema.',
     'LBL_AGGREGATED_PAYMENTS_MENU' => 'Calcular pagos agregados',
     'LBL_AGGREGATED_TITLE' => 'Pagos de servizos agregados',
     'LBL_AGGREGATED_SUMMARY_TITLE' => 'Resumo dos pagos',

@@ -113,6 +113,7 @@ $mod_strings = array(
     'LBL_CARD_PAYMENT_SUCCESSFUL' => 'Payment successfully charged.',
     'LBL_CARD_PAYMENT_COMMITMENT_EXPIRED_TITLE' => 'Payment commitment has been cancelled due to an expired card.',
     'LBL_CARD_PAYMENT_COMMITMENT_EXPIRED_SUBTITLE' => 'Payment could not be charged.',
+    'LBL_CARD_PAYMENT_GATEWAY_NO_RESPONSE' => 'No response has been received from the payment gateway. Please try again later or contact the system administrator.',
     'LBL_AGGREGATED_PAYMENTS_MENU' => 'Calculate aggregated payments',
     'LBL_AGGREGATED_TITLE' => 'Aggregated services payments',
     'LBL_AGGREGATED_SUMMARY_TITLE' => 'Payments summary',

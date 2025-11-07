@@ -123,7 +123,31 @@ class RedsysUtils
         curl_close($curl);
 
         // Decode response
-        $response = json_decode($redsysResponse, true);
+        $response = json_decode($redsysResponse, true) ?? $redsysResponse;
+
+        // If response is not valid json
+        if(!isset($response['errorCode']) && !isset($response['Ds_MerchantParameters'])) {
+            // Invalid response
+            $gatewayErrorText = $mod_strings['LBL_CARD_PAYMENT_GATEWAY_NO_RESPONSE'];
+            $paymentBean->status = 'rejected_gateway';
+            $paymentBean->gateway_rejection_reason = $gatewayErrorText;
+            $paymentBean->gateway_log .= '####### '.print_r($response, true);
+            $paymentBean->save();
+
+            if ($debugMode) {
+                $debugMsg .= '<div class="col-md-6"><b>RESPONSE</b><pre>' . print_r($response, true) . '</pre></div></div>';
+                SugarApplication::appendErrorMessage($debugMsg);
+            }
+            
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": The Redsys payment request for {$paymentBean->name} has not been processed. Response code: [{$gatewayErrorText}");
+
+            return array(
+                'res' => false,
+                'resCode' => $gatewayErrorText,
+                'id' => $paymentBean->id,
+                'name' => $paymentBean->name
+            );
+        }
 
         // Proccess decoded response
         if (isset($response['errorCode'])) {

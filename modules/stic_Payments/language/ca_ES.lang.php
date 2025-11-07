@@ -112,6 +112,7 @@ $mod_strings = array(
     'LBL_CARD_PAYMENT_SUCCESSFUL' => "El pagament s'ha fet efectiu correctament.",
     'LBL_CARD_PAYMENT_COMMITMENT_EXPIRED_TITLE' => 'Compromís de pagament donat de baixa per targeta caducada.',
     'LBL_CARD_PAYMENT_COMMITMENT_EXPIRED_SUBTITLE' => "El pagament no s'ha pogut fer efectiu.",
+    'LBL_CARD_PAYMENT_GATEWAY_NO_RESPONSE' => "No s'ha rebut resposta de la passarel·la de pagament. Si us plau, intenti-ho de nou més tard o contacti amb l'administrador del sistema.",
     'LBL_AGGREGATED_PAYMENTS_MENU' => 'Calcula els pagaments agregats',
     'LBL_AGGREGATED_TITLE' => 'Pagaments de serveis agregats',
     'LBL_AGGREGATED_SUMMARY_TITLE' => 'Resum dels pagaments',
