@@ -74,12 +74,12 @@ $mod_strings = array (
   'LBL_TRANSACTION_HASH' => 'Hash de la transacción',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producto financiero',
-  'LBL_DESTINATION_ACCOUNT_INFO' => 'Número de la cuenta destino en caso de transferencia.',
-  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Número de la cuenta contable oficial asociada a esta transacción.',
-  'LBL_CATEGORY_INFO' => 'Una vez seleccionado el tipo de transacción, se podrá especificar una categoría.',
-  'LBL_SUBCATEGORY_INFO' => 'Una vez seleccionada la categoría, se podrá especificar una subcategoría.',
-  'LBL_TRANSACTION_HASH_INFO' => 'Identificador único de la transacción, para comprobar si ya existe e ignorar un posible duplicado.',
-
+  'LBL_DESTINATION_ACCOUNT_INFO' => 'Cuenta bancaria destino en caso de transferencia.',
+  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Código de la cuenta contable asociada a la transacción.',
+  'LBL_CATEGORY_INFO' => 'Para poder indicar una categoría es necesario establecer primero el tipo de transacción.', 
+  'LBL_SUBCATEGORY_INFO' => 'Para poder indicar una subcategoría es necesario establecer primero la categoría.', 
+  'LBL_TRANSACTION_HASH_INFO' => 'El identificador único de la transacción evita la importación de registros duplicados.',
+  
   // Norma 43
   'LBL_NORMA_43' => 'Importar fichero Norma 43',
   'LBL_STEP_1' => 'Paso 1: Subir fichero Norma 43',
