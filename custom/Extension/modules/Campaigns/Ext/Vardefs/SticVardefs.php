@@ -192,6 +192,7 @@ $dictionary["Campaign"]["fields"]["parent_field_placeholder"] = array(
     'source' => 'non-db',         // Crucial: ensures it's not added to the database
     'studio' => 'hidden',         // Hide it from Studio to prevent confusion
     'reportable' => false,
+    'popupHelp' => 'LBL_FLEX_RELATE_HELP',
 );
 
 $dictionary["Campaign"]["fields"]['msg_notification_prospect_list_ids'] = array(
