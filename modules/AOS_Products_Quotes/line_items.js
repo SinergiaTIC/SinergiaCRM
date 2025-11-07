@@ -659,7 +659,11 @@ function calculateLine(ln, key){
     {
       if(discount > listPrice)
       {
-        document.getElementById(key + 'product_discount' + ln).value = listPrice;
+        // STIC Custom 20251107 JBL - Fix number format if discount is greater than price
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+        // document.getElementById(key + 'product_discount' + ln).value = listPrice;
+        document.getElementById(key + 'product_discount' + ln).value = document.getElementById(key + 'product_list_price' + ln).value
+        // END STIC Custom
         discount = listPrice;
       }
       productUnitPrice = listPrice - discount;
