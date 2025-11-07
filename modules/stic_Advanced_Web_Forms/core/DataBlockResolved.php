@@ -48,7 +48,7 @@ class DataBlockResolved {
             }
 
             // Obtenemos el tipo de campo en el crm para hacer su casting
-            $castedValue = Utils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
+            $castedValue = AWF_Utils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
             $formKey = ""; // El campo no está en el formulario
 
             // Creamos el campo resuelto
@@ -80,7 +80,7 @@ class DataBlockResolved {
 
                 // Obtenemos el tipo de campo en el crm para hacer su casting
                 $crmFieldType = $definition?->type;
-                $castedValue = Utils::castCrmValue($value, $crmFieldType, $context);
+                $castedValue = AWF_Utils::castCrmValue($value, $crmFieldType, $context);
 
                 $this->formData[$fieldName] = new DataBlockFieldResolved($formKey, $fieldName, $definition, $castedValue);
             

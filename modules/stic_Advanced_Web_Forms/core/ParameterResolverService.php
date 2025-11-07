@@ -182,13 +182,27 @@ class ParameterResolverService {
         $isDetached = str_starts_with($formKey, '_detached.');
         $keyToParse = $isDetached ? substr($formKey, strlen('_detached.')) : $formKey;
         $parts = explode('.', $keyToParse, 2);
-
+        
+        $blockName = null;
         $fieldName = $formKey;
-        $fieldDefinition = null;
-        if (count($parts) == 2) {
-            $blockName = $parts[0];
-            $fieldName = $parts[1];
+        if ($isDetached) {
+            // Ex: _detached.PersonaTutor.accept_photos
+            $parts = explode('.', $formKey, 3);
+            if (count($parts) === 3) {
+                $blockName = $parts[1]; // "PersonaTutor"
+                $fieldName = $parts[2]; // "accept_photos"
+            }
+        } else {
+            // Ex: PersonaTutor.email1
+            $parts = explode('.', $formKey, 2);
+            if (count($parts) === 2) {
+                $blockName = $parts[0]; // "PersonaTutor"
+                $fieldName = $parts[1]; // "email1"
+            }
+        }
 
+        $fieldDefinition = null;
+        if ($blockName !== null) {
             // Find the Field definition
             $dataBlockConfig = $context->getDataBlockByName($blockName);
             if ($dataBlockConfig !== null) {
@@ -202,11 +216,11 @@ class ParameterResolverService {
         $crmFieldType = $fieldDefinition?->type ?? 'text';
         if (array_key_exists($formKey, $context->formData)) {
             // Fill value from form data
-            $finalValue = Utils::castCrmValue($context->formData[$formKey], $crmFieldType, $context);
+            $finalValue = AWF_Utils::castCrmValue($context->formData[$formKey], $crmFieldType, $context);
         } else {
             // If not set in form data, then find if is a field with fixed value in DataBlock
             if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
-                $finalValue = Utils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
+                $finalValue = AWF_Utils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
             }
         }
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $finalValue);
