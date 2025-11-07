@@ -81,8 +81,8 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 
 // SinergiaCRM global links
-$app_strings['LBL_STIC_FORUMS_LINK'] = 'SinergiaCRM forums';
-$app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaCRM wiki';
+$app_strings['LBL_STIC_FORUMS_LINK'] = 'SinergiaTIC forums';
+$app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaTIC wiki';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
