@@ -75,10 +75,10 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Financial product',
   'LBL_DESTINATION_ACCOUNT_INFO' => 'Destination account number in case of transfer.',
-  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Official accounting account number associated with this transaction.',
-  'LBL_CATEGORY_INFO' => 'Once you have selected the transaction type, you can specify a category.',
-  'LBL_SUBCATEGORY_INFO' => 'Once you have selected the category, you can specify a subcategory.',
-  'LBL_TRANSACTION_HASH_INFO' => 'Unique identifier of the transaction, to check if it already exists and ignore a possible duplicate.',
+  'LBL_ACCOUNTING_ACCOUNT_INFO' => 'Transaction accounting account code.',
+  'LBL_CATEGORY_INFO' => 'To be able to indicate a category, you must first set the transaction type.',
+  'LBL_SUBCATEGORY_INFO' => 'To be able to indicate a subcategory, you must first set the category.',
+  'LBL_TRANSACTION_HASH_INFO' => 'The unique transaction identifier prevents the import of duplicate records.',
 
   // Norma 43
   'LBL_NORMA_43' => 'Import a Norma 43 file',
