@@ -75,6 +75,7 @@ class Norma43
         $summary = [
             'iban' => 0,
             'financial_product' => '',
+            'existing_product' => 0,
             'initial_balance' => 0,
             'total_movements' => 0,
             'imported_movements' => 0,
@@ -100,6 +101,7 @@ class Norma43
             // Summary data for the first account
             $summary['iban'] = $account["iban"];
             $summary['financial_product'] = $account["account_name"];
+            $summary['existing_product'] = $account['exist'];
             $summary['initial_balance'] = $account["initial_balance"];
             $summary['type'] = $account["type"];
             $summary['entity'] = self::parseEntity($account["entity_code"]);
@@ -619,17 +621,32 @@ class Norma43
      * @param bool $preview If true, do not save changes to the database
      * @return string The ID of the found or created financial product
      */
-    private static function findOrCreateProduct($account, $preview = false)
+    private static function findOrCreateProduct(&$account, $preview = false)
     {
-        global $app_list_strings, $current_user;
+        global $app_list_strings, $current_user, $db;
 
-        $iban = $account['iban'];
-        $product = BeanFactory::getBean('stic_Financial_Products')->retrieve_by_string_fields(['iban' => $iban]);
+        $iban = trim($account['iban']);
 
-        if (!$product) {
+        // Search for active product (not deleted)
+        $query = "
+            SELECT id
+            FROM stic_financial_products
+            WHERE iban = " . $db->quoted($iban) . "
+            AND deleted = 0
+            LIMIT 1
+        ";
+        $result = $db->query($query);
+        $row = $db->fetchByAssoc($result);
+
+        // If it does not exist or is deleted, create a new one
+        if (!$row) {
             $product = BeanFactory::newBean('stic_Financial_Products');
             $product->iban = $iban;
             $product->initial_balance = $account['initial_balance'];
+            $account['exist'] = 0; // New product
+        } else {
+            $product = BeanFactory::getBean('stic_Financial_Products', $row['id']);
+            $account['exist'] = 1; // Already exists
         }
 
         // Update or set other fields

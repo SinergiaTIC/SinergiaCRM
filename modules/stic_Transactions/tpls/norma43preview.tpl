@@ -56,7 +56,15 @@
 
         <div
             style="background: #fff0f3; padding: 20px; margin-bottom: 20px; border-radius: 5px; border-left: 4px solid #ff5278;">
-            <h3>{$APP_LIST['moduleListSingular']['stic_Financial_Products']}</h3>
+            <h3>
+                {if !$DATA.existing_product}
+                    {$MOD['LBL_NEW_PRODUCT']}
+                {/if}
+                {$APP_LIST['moduleListSingular']['stic_Financial_Products']}
+                {if $DATA.existing_product}
+                    {$MOD['LBL_EXISTING_PRODUCT']}
+                {/if}
+            </h3>
             <div
                 style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <p style="margin-bottom: 0; font-size: 1.1em;">
