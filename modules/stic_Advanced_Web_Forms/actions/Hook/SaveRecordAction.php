@@ -43,22 +43,110 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
      */
     public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
     {
-        // IEPA!!
-        // TODO: Aplicar la lógica de detección y gestión de duplicados
+        $module = $block->dataBlock->module;
+        $bean = null;
+        $onDuplicateAction = null;
 
-        // Lógica de negocio
-        $bean = BeanFactory::newBean($block->dataBlock->module);
-        
-        // El $block ya contiene los datos parseados y con el casting
-        foreach ($block->formData as $fieldName => $field) {
-            $bean->{$fieldName} = $field->value;
+        // Lógica de Detección de Duplicados
+        foreach ($block->dataBlock->duplicate_detections as $rule) {
+            $queryFields = [];
+            $canSearch = true;
+
+            // Construimos los campos de búsqueda para esta regla
+            foreach ($rule->fields as $fieldName) {
+                $fieldValue = $block->getFieldValue($fieldName)?->value;
+
+                // Si un campo de la regla de duplicados está vacío, no aplicamos la regla
+                // (Dos personas no pueden ser la misma si las dos tienen el campo email vacío)
+                if ($fieldValue === null || $fieldValue === '') {
+                    $canSearch = false;
+                    break; // Pasamos a la siguiente regla
+                }
+                $queryFields[$fieldName] = $fieldValue;
+            }
+
+            // Si la regla es válida y tiene campos, buscamos el bean
+            if ($canSearch && !empty($queryFields)) {
+                $tempBean = BeanFactory::newBean($module);
+                $foundBean = $tempBean->retrieve_by_string_fields($queryFields);
+
+                if ($foundBean !== null) {
+                    $bean = $foundBean; // Duplicado encontrado
+                    $onDuplicateAction = $rule->on_duplicate;
+                    break; // Dejamos de buscar, ya hemos encontrado uno
+                }
+            }
         }
-        $bean->save();
 
-        // Registro
+        // Lógica de Acción (Crear o Gestionar Duplicado)
+        $modificationType = null;
+        if ($bean === null) {
+            // No hay duplicado, creamos uno nuevo
+            $bean = BeanFactory::newBean($module);
+            // Llenar todos los campos del bean
+            $this->populateBean($bean, $block); 
+            $bean->save();
+            $modificationType = BeanModificationType::CREATED;
+
+        } else {
+            // Duplicado encontrado, aplicamos la regla
+            switch ($onDuplicateAction) {
+                case OnDuplicateAction::ERROR:
+                    // Generar un error y detener el flujo
+                    return new ActionResult(ResultStatus::ERROR, $actionConfig, "Duplicate record found for module {$module}.");
+
+                case OnDuplicateAction::UPDATE:
+                    // Sobrescribir todos los campos del bean existente
+                    $this->populateBean($bean, $block);
+                    $bean->save();
+                    $modificationType = BeanModificationType::UPDATED;
+                    break;
+
+                case OnDuplicateAction::ENRICH:
+                    // Rellenar solo los campos vacíos del bean existente
+                    $this->enrichBean($bean, $block); 
+                    $bean->save();
+                    $modificationType = BeanModificationType::ENRICHED;
+                    break;
+                
+                case OnDuplicateAction::SKIP:
+                default:
+                    // No hacemos nada, el bean se queda como estaba
+                    $modificationType = BeanModificationType::SKIPPED;
+                    break;
+            }
+        }
+
+        // Registro y Retorno
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig);
-        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::CREATED);
+        
+        // Registramos la modificación (o la no-modificación)
+        $actionResult->registerBeanModificationFromBlock($bean, $block, $modificationType);
 
         return $actionResult;
+    }
+
+    /**
+     * Rellena un bean con todos los datos del formulario (sobrescribe).
+     */
+    private function populateBean(SugarBean $bean, DataBlockResolved $block): void
+    {
+        foreach ($block->formData as $fieldName => $field) {
+            // Asignamos el valor ya procesado y con casting
+            $bean->{$fieldName} = $field->value;
+        }
+    }
+
+    /**
+     * Rellena un bean solo con los campos que están vacíos (enriquece).
+     */
+    private function enrichBean(SugarBean $bean, DataBlockResolved $block): void
+    {
+        foreach ($block->formData as $fieldName => $field) {
+            // Comprobamos si el campo en el bean está vacío o nulo
+            if ($bean->{$fieldName} === null || $bean->{$fieldName} === '') {
+                $bean->{$fieldName} = $field->value;
+            }
+        }
     }
 }
