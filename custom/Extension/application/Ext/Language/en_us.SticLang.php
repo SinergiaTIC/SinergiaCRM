@@ -86,15 +86,13 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaCRM wiki';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
-// Messages: subpanel actions
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New message';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New message';
+// Messages: actions in recipient modules
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Compose Message';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content. Do you want to continue?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'The limit of messages that can be sent simultaneously has been exceeded.';
-$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Compose Message';
 $app_strings['LBL_NEW_NOTIFICATION'] = 'New notification by email';
 $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'New notification by message';
-
 
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
