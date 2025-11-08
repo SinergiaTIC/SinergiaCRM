@@ -612,6 +612,7 @@ class AWF_Action {
       description: "",          // Descripción de la acción 
       data_block_id: '',        // Id del Bloque de datos al que pertenece
       requisite_actions: [],    // Array con los identificadores de las acciones previas a la actual
+      category: 'data',         // Categoría de la acción
       parameters: [],           // Los parámetros de la acción
     });
 
@@ -625,9 +626,9 @@ class AWF_Action {
   static category_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_action_category_list", asString);
   }
-  // get category_in_formText(){
-  //   return AWF_Action.category_in_formList().find(i => i.id == this.type_in_form)?.text;  
-  // }
+  get category_in_formText(){
+    return AWF_Action.category_in_formList().find(i => i.id == this.category)?.text;  
+  }
 }
 
 class AWF_ActionParameter {

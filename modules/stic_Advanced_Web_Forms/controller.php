@@ -25,29 +25,9 @@ require_once('include/MVC/Controller/SugarController.php');
 #[\AllowDynamicProperties]
 class stic_Advanced_Web_FormsController extends SugarController
 {
-
-    // Endpoints saveDraft/finalizeConfig/getConfig
-
-    // public function action_newsletterlist()
-    // {
-    //     $this->view = 'newsletterlist';
-    // }
-
-    // public function process()
-    // {
-    //     if ($this->action == 'EditView' && empty($_REQUEST['record'])) {
-    //         $this->action = 'WizardHome';
-    //     } else {
-    //         if ($this->action == 'EditView' && !empty($_REQUEST['record'])) {
-    //             // Show Send Email and Summary
-    //             $this->action = 'WizardHome';
-    //             // modules/Campaigns/WizardHome.php isWizardSummary
-    //             $_REQUEST['action'] = 'WizardHome';
-    //         }
-    //     }
-    //     parent::process();
-    // }
-
+    /**
+     * Handles the 'saveDraft' action to Save current configuration in bean
+     */
     public function action_saveDraft()
     {
         // Ensure return json 
@@ -126,6 +106,9 @@ class stic_Advanced_Web_FormsController extends SugarController
     }
 
 
+    /**
+     * Handles the 'getServerActions' action to retrieve all server actions (HOOK and DEFERRED)
+     */
     public function action_getServerActions()
     {
         // Ensure return json 
