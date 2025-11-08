@@ -27,6 +27,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 
+/**
+ * SaveRecordAction
+ *
+ * Acción que gestiona el guardado de un Bloque de Datos en la Base de Datos.
+ */
 class SaveRecordAction extends HookDataBlockActionDefinition {
     public function __construct() {
         $this->isActive = true;

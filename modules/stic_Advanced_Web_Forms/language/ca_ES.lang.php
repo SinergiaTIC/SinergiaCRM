@@ -192,7 +192,17 @@ $mod_strings = array (
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
 
   'LBL_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
-  'LBL_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione el bloque de datos que será utilizado como parámetro en la acción',
+  'LBL_ACTION_DATABLOCK_PARAM_DESC' => 'El bloque de datos principal sobre el que actuará la acción',
+
+  'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
+  'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro en el CRM basado en los datos del formulario',
+
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación entre registros',
+  'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros del CRM',
+  'LBL_RELATE_RECORDS_ACTION_TARGET_BLOCK_TEXT' => 'Bloque de datos destino',
+  'LBL_RELATE_RECORDS_ACTION_TARGET_BLOCK_DESC' => 'El bloque de datos destino de la relación a guardar',
+  'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_TEXT' => 'Campo a actualizar',
+  'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_DESC' => 'El nombre del campo que enlaza con el bloque de datos destino',
 
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de Redirección',
   'LBL_REDIRECT_ACTION_URL_DESC' => 'La URL completa (con http://) a la que redirigir.',
@@ -206,13 +216,13 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Apriete aquí para continuar',
 
   'LBL_SEND_EMAIL_ACTION_TITLE' => 'Enviar correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_DESCRIPTION' => 'Envia un correo electrónico a un destinatario basado en la configuración del formulario',
+  'LBL_SEND_EMAIL_ACTION_DESC' => 'Envia un correo electrónico a un destinatario basado en la configuración del formulario',
   'LBL_SEND_EMAIL_ACTION_PARAM_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_PARAM_TEMPLATE_DESCRIPTION' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
+  'LBL_SEND_EMAIL_ACTION_PARAM_TEMPLATE_DESC' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
   'LBL_SEND_EMAIL_ACTION_PARAM_BASEDATABLOCK_TEXT' => 'Bloque de datos para la plantilla',
-  'LBL_SEND_EMAIL_ACTION_PARAM_BASEDATABLOCK_DESCRIPTION' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
+  'LBL_SEND_EMAIL_ACTION_PARAM_BASEDATABLOCK_DESC' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
   'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_TEXT' => 'Destinatario del correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_DESCRIPTION' => 'Seleccione el destinatario del correo electrónico',
+  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_DESC' => 'Seleccione el destinatario del correo electrónico',
   'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_FIELD_TEXT' => 'Campo del Formulario',
   'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
   'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT' => 'Valor fijo',
@@ -220,19 +230,13 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT' => 'Campo relacionado',
 
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_TITLE' => 'Enviar correo electrónico al usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_DESCRIPTION' => 'Envia un correo electrónico al usuario asignado al registro creado o actualizado por el formulario',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado al registro creado o actualizado por el formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_TEMPLATE_DESCRIPTION' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_TEMPLATE_DESC' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_BASEDATABLOCK_TEXT' => 'Bloque de datos para la plantilla',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_BASEDATABLOCK_DESCRIPTION' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_BASEDATABLOCK_DESC' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_TEXT' => 'Destinatario del correo electrónico',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_DESCRIPTION' => 'Seleccione el destinatario del correo electrónico',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_DESC' => 'Seleccione el destinatario del correo electrónico',
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT' => 'Campo relacionado',
-
-  'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
-  'LBL_SAVE_RECORD_ACTION_DESCRIPTION' => 'Guarda o actualiza un registro en el CRM basado en los datos del formulario',
-
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación entre registros',
-  'LBL_RELATE_RECORDS_ACTION_DESCRIPTION' => 'Crea una relación entre dos registros del CRM',
 );  

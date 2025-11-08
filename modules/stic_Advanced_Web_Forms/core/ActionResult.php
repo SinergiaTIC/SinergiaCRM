@@ -57,10 +57,11 @@ class ActionResult {
      * 
      * @param SugarBean $bean El bean modificado.
      * @param BeanModificationType $action El tipo de modificación (CREATED, UPDATED, ENRICHED, SKIPPED)
+     * @param array $submittedData (Opcional) Los datos [field => value] que la acción ha usado o aplicado.
      */
-    public function registerBeanModification(SugarBean $bean, BeanModificationType $action): void 
+    public function registerBeanModification(SugarBean $bean, BeanModificationType $action, array $submittedData = []): void 
     {
-        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action);
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData);
         $this->addModifiedBean($modifiedBean);
     }
 
@@ -72,19 +73,24 @@ class ActionResult {
      * @param SugarBean $bean El bean que se ha procesado.
      * @param DataBlockResolved $block El DataBlockResolved que se ha procesado.
      * @param BeanModificationType $action El tipo de modificación  (CREATED, UPDATED, ENRICHED, SKIPPED)
+     * @param array $submittedData (Opcional) Los datos [field => value] que la acción ha usado o aplicado.
      * @throws \LogicException Si el módulo del bean no coincide con el del bloque.
      */
-    public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action): void 
+    public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action, ?array $submittedData = null): void 
     {
         $blockModule = $block->dataBlock->module;
         if ($bean->module_name !== $blockModule) {
             throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
         }
 
-        // Extraemos los datos del formulario mapeables al bean para registrarlos
         $dataToLog = [];
-        foreach ($block->formData as $fieldName => $fieldResolved) {
-            $dataToLog[$fieldName] = $fieldResolved->value;
+        if ($submittedData !== null) {
+            $dataToLog = $submittedData;
+        } else {
+            // Extraemos los datos del formulario mapeables al bean para registrarlos
+            foreach ($block->formData as $fieldName => $fieldResolved) {
+                $dataToLog[$fieldName] = $fieldResolved->value;
+            }
         }
 
         $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $dataToLog);

@@ -44,7 +44,7 @@ class SendEmailAction extends HookActionDefinition {
             new ActionParameterDefinition(
                 name: 'template',
                 text: $this->translate('PARAM_TEMPLATE_TEXT'),
-                description: $this->translate('PARAM_TEMPLATE_DESCRIPTION'),
+                description: $this->translate('PARAM_TEMPLATE_DESC'),
                 type: ActionParameterType::CRM_RECORD,
                 supportedModules: ['EmailTemplates'],
                 required: true,
@@ -53,7 +53,7 @@ class SendEmailAction extends HookActionDefinition {
             new ActionParameterDefinition(
                 name: 'baseDataBlock',
                 text: $this->translate('PARAM_BASEDATABLOCK_TEXT'),
-                description: $this->translate('PARAM_BASEDATABLOCK_DESCRIPTION'),
+                description: $this->translate('PARAM_BASEDATABLOCK_DESC'),
                 type: ActionParameterType::DATA_BLOCK,
                 required: false,
             ),
@@ -61,7 +61,7 @@ class SendEmailAction extends HookActionDefinition {
             new ActionParameterDefinition(
                 name: 'recipientSource',
                 text: $this->translate('PARAM_RECIPIENTSOURCE_TEXT'),
-                description: $this->translate('PARAM_RECIPIENTSOURCE_DESCRIPTION'),
+                description: $this->translate('PARAM_RECIPIENTSOURCE_DESC'),
                 type: ActionParameterType::OPTION_SELECTOR,
                 required: true,
                 selectorOptions: [

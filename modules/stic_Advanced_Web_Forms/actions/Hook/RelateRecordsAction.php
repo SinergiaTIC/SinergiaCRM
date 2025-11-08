@@ -26,6 +26,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
+
+/**
+ * RelateRecordsAction
+ *
+ * Acción que establece una relación entre dos Bloques de Datos en la Base de Datos.
+ */
 class RelateRecordsAction extends HookBeanActionDefinition {
     public function __construct() {
         $this->isActive = true;
@@ -34,24 +40,24 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
     /**
      * getCustomParameters()
-     * Definim els paràmetres ADICIONALS que necessitem,
-     * a més del paràmetre de bloc principal que ja defineix la classe pare.
+     * Definición de los parámetroes ADICIONALES que son necesarios para la acción
+     * El parámtreo del Bloque de Datos principal lo pide la clase padre.
      */
     protected function getCustomParameters(): array
     {
-        // --- Paràmetre 1: El Bloc B (el bloc "destí" del qual agafarem l'ID) ---
+        // El Bloque de Datos Destino (Obligatorio)
         $paramTargetBlock = new ActionParameterDefinition();
         $paramTargetBlock->name = 'target_data_block';
-        $paramTargetBlock->text = $this->translate('TARGET_BLOCK_TEXT'); // Ej: "Bloque de datos de destino"
-        $paramTargetBlock->description = $this->translate('TARGET_BLOCK_DESC'); // Ej: "El bloque del cual se obtendrá el ID"
+        $paramTargetBlock->text = $this->translate('TARGET_BLOCK_TEXT');
+        $paramTargetBlock->description = $this->translate('TARGET_BLOCK_DESC');
         $paramTargetBlock->type = ActionParameterType::DATA_BLOCK; 
         $paramTargetBlock->required = true;
 
-        // --- Paràmetre 2: El "Camp X" (el camp que actualitzarem al Bean A) ---
+        // El Campo a Actualizar (que apunta al Bloque de datos destino)
         $paramFieldName = new ActionParameterDefinition();
         $paramFieldName->name = 'field_to_update';
-        $paramFieldName->text = $this->translate('FIELD_TO_UPDATE_TEXT'); // Ej: "Campo a actualizar"
-        $paramFieldName->description = $this->translate('FIELD_TO_UPDATE_DESC'); // Ej: "El nombre del campo (ej: 'contact_id_c') que recibirá el ID"
+        $paramFieldName->text = $this->translate('FIELD_TO_UPDATE_TEXT');
+        $paramFieldName->description = $this->translate('FIELD_TO_UPDATE_DESC');
         $paramFieldName->type = ActionParameterType::VALUE; 
         $paramFieldName->dataType = ActionDataType::TEXT; 
         $paramFieldName->required = true;
@@ -59,47 +65,36 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         return [$paramTargetBlock, $paramFieldName];
     }
 
-    /**
-     * executeWithBean()
-     * Aquest és el nucli de la nostra lògica.
-     * La classe base ja ens dóna el '$bean' (Bean A) carregat.
-     *
-     * @param ExecutionContext $context El context global.
-     * @param FormAction $actionConfig La configuració de l'acció.
-     * @param SugarBean $bean El bean del bloc principal (Bean A), carregat i llest.
-     * @param DataBlockResolved $block El bloc de dades principal (Bloc A), amb les dades del formulari.
-     * @return ActionResult
-     */
+
     public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
     {
-        // 1. Obtenim els nostres paràmetres personalitzats
+        // Obtención de los parámetros adicionales (ParameterResolver asegura que no sen nulos porque son obligatorios)
+        /** @var string $fieldName */
         $fieldName = $actionConfig->getResolvedParameter('field_to_update');
-        
-        /** @var ?DataBlockResolved $targetBlock */
+        /** @var DataBlockResolved $targetBlock */
         $targetBlock = $actionConfig->getResolvedParameter('target_data_block');
 
-        // 2. Validem els paràmetres (encara que el Resolver ja ho fa, és bona pràctica)
-        if (empty($fieldName) || $targetBlock === null) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Paràmetres 'field_to_update' o 'target_data_block' no resolts.");
-        }
 
-        // 3. Obtenim la referència del Bean B
+        // Obtención de la referencia al Bean destino
         $targetBeanRef = $targetBlock->dataBlock->getBeanReference();
         if ($targetBeanRef === null) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "El bloc destí '{$targetBlock->dataBlock->name}' no té un bean desat.");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetBlock->dataBlock->name}' not saved in database.");
         }
 
-        // 4. Fem l'assignació (Lògica principal)
-        $bean->{$fieldName} = $targetBeanRef->beanId;
+        // Asignación (lógica principal)
+        $targetBeanId = $targetBeanRef->beanId;
+        if ($bean->{$fieldName} !== $targetBeanId) {
+            $bean->{$fieldName} = $targetBeanId;
+            $bean->save();
+            $modificationType = BeanModificationType::UPDATED;
+        } else {
+            $modificationType = BeanModificationType::SKIPPED;
+        }
 
-        // 5. Desem el Bean A (el bean que hem modificat)
-        $bean->save();
-
-        // 6. Notifiquem el resultat
-        $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Relació establerta: {$bean->module_name}.{$fieldName} = {$targetBeanRef->beanId}");
-        
-        // Notifiquem que hem ACTUALITZAT el Bean A
-        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED);
+        // Notificación del resultado
+        $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Relationship saved: {$bean->module_name}.{$fieldName} = {$targetBeanId}");
+        $dataToLog = [$fieldName => $targetBeanId];
+        $actionResult->registerBeanModificationFromBlock($bean, $block, $modificationType, $dataToLog);
 
         return $actionResult;
     }
