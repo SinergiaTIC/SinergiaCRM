@@ -35,6 +35,9 @@ include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
 class SaveRecordAction extends HookDataBlockActionDefinition {
     public function __construct() {
         $this->isActive = true;
+        $this->isUserSelectable = false;
+        $this->isCommon = true;
+        $this->category = 'data';
         $this->baseLabel = 'LBL_SAVE_RECORD_ACTION';
     }
 

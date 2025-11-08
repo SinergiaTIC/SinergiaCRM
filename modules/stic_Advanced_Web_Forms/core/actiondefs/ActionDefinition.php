@@ -42,9 +42,10 @@ enum ActionType: string {
 
 abstract class ActionDefinition {
     public bool $isActive = false;
+    public bool $isUserSelectable = true;
+    public bool $isCommon = false;
    
-    /** @var string[] */
-    public array $tags = [];
+    public string $category;
     public ActionScope $scope;
     /** @var string[] */
     public array $supportedModules = [];       // moduleList

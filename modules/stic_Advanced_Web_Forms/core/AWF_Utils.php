@@ -93,4 +93,41 @@ class AWF_Utils {
                 return (string)$valueToCast;
         }
     }
+
+    /**
+     * Genera un resumen en HTML con todos los datos del forumlario.
+     *
+     * @param ExecutionContext $context El contexto que contiene los datos.
+     * @return string Un string HTML con la tabla resumen.
+     */
+    public static function generateSummaryHtml(ExecutionContext $context): string
+    {
+        $html = "<h1>".translate('LBL_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
+        $formData = $context->formData; 
+        
+        foreach ($context->formConfig->data_blocks as $block) {
+            $html .= "<h2>{$block->text}</h2>";
+            $html .= "<table border='1' cellpadding='5' style='border-collapse: collapse; width: 100%;'>";
+            
+            foreach ($block->fields as $fieldDef) {
+                if (empty($fieldDef->label) || $fieldDef->type_field === DataBlockFieldType::HIDDEN) {
+                    continue;
+                }
+
+                $formKey = "{$block->name}.{$fieldDef->name}";
+                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                    $formKey = "_detached.{$formKey}";
+                }
+                $value = $formData[$formKey] ?? '';
+                
+                $html .= "<tr>";
+                $html .= "<td style='width: 30%;'><strong>" . htmlspecialchars($fieldDef->label) . "</strong></td>";
+                $html .= "<td>" . htmlspecialchars($value) . "</td>";
+                $html .= "</tr>";
+            }
+            $html .= "</table>";
+        }
+        
+        return $html;
+    }
 }

@@ -31,6 +31,8 @@ class SendEmailToAssignedUserAction extends SendEmailAction {
 
     public function __construct() {
         $this->isActive = false;
+        $this->isCommon = true;
+        $this->category = 'email';
         $this->baseLabel = 'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION';
     }
 

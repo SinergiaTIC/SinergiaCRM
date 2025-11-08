@@ -35,9 +35,10 @@ class ActionDefinitionDTO {
     public string $description;
 
     public bool $isActive;
+    public bool $isUserSelectable;
+    public bool $isCommon;
 
-    /** @var string[] */
-    public array $tags;
+    public string $category;
     
     public string $scope; // 'form', 'block', 'field'
     
@@ -58,7 +59,10 @@ class ActionDefinitionDTO {
         $this->description = $def->getDescription();
 
         $this->isActive = $def->isActive;
-        $this->tags = $def->tags;
+        $this->isUserSelectable = $def->isUserSelectable;
+        $this->isCommon = $def->isCommon;
+
+        $this->category = $def->category;
         $this->scope = $def->scope->value; // Convert enum to string
         $this->supportedModules = $def->supportedModules;
         $this->supportedFieldSubTypes = $def->supportedFieldSubTypes;

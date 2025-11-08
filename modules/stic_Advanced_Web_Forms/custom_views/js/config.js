@@ -621,6 +621,13 @@ class AWF_Action {
     // 3. Map sub-objects and arrays to their classes
     this.parameters = (data.parameters || this.parameters).map(a => new AWF_ActionParameter(a));
   }
+
+  static category_in_formList(asString = false){
+    return utils.getList("stic_advanced_web_forms_action_category_list", asString);
+  }
+  // get category_in_formText(){
+  //   return AWF_Action.category_in_formList().find(i => i.id == this.type_in_form)?.text;  
+  // }
 }
 
 class AWF_ActionParameter {

@@ -40,6 +40,8 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
     public function __construct()
     {
         $this->isActive = true;
+        $this->isCommon = true;
+        $this->category = 'navigation';
         $this->baseLabel = 'LBL_REDIRECT_ACTION';
     }
 

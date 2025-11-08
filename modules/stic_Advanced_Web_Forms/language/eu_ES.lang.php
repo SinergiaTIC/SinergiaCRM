@@ -189,6 +189,8 @@ $mod_strings = array (
 
   'LBL_INTERNAL_NAME' => 'Nombre interno',
 
+  'LBL_SUMMARY_DATA' => 'Resumen de respuestas',
+
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
 
   'LBL_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
@@ -204,6 +206,8 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_TEXT' => 'Campo a actualizar',
   'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_DESC' => 'El nombre del campo que enlaza con el bloque de datos destino',
 
+  'LBL_REDIRECT_ACTION_TITLE' => 'Ir a una página web',
+  'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página web concreta',
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de Redirección',
   'LBL_REDIRECT_ACTION_URL_DESC' => 'La URL completa (con http://) a la que redirigir.',
   'LBL_REDIRECT_ACTION_METHOD_TEXT' => 'Método de Envío',
@@ -214,6 +218,9 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Lista de campos separados por comas (ej: \'Bloque.campo1, _detached.Bloque.campo2\'). Dejar vacío para no enviar datos.',
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionando...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Apriete aquí para continuar',
+
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TEXT' => 'Mostrar resumen de respuestas',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página con el resumen de todas sus respuestas al formulario',
 
   'LBL_SEND_EMAIL_ACTION_TITLE' => 'Enviar correo electrónico',
   'LBL_SEND_EMAIL_ACTION_DESC' => 'Envia un correo electrónico a un destinatario basado en la configuración del formulario',

@@ -53,6 +53,12 @@ class ExampleAction extends HookActionDefinition
         // Indicamos si la acción está activa o no (si debe aparecer en el wizard o no).
         $this->isActive = false;
 
+        // Indicamos si la acción es una acción común (true) o avanzada (false).
+        $this->isCommon = false;
+
+        // Indicamos la categoría de la acción (del listado stic_advanced_web_forms_action_category_list)
+        $this->category = 'data';
+
         // El prefijo a usar para las etiquetas multiidioma usadas por la aplicación
         // Estas etiquetas deberán definirse en los ficheros de idioma del módulo stic_Advanced_Web_Forms
         $this->baseLabel = 'LBL_EXAMPLE_ACTION';
