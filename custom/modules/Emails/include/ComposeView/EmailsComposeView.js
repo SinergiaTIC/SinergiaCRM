@@ -379,12 +379,19 @@
 
       var body = tinymce.activeEditor.getContent();
       if (body !== '' && $(body).hasClass('email-signature-element')) {
-        var $body = $(body);
-        var $existingSignature = $body.find('.email-signature-element');
-        $existingSignature.remove();
         // STIC-Custom 20251007 MHP - This line is commented out because it generates a JS or functionality error in SinergiaCRM.
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/803
+        // var $body = $(body);
+        // var $existingSignature = $body.find('.email-signature-element');
+        // $existingSignature.remove();
         // tinymce.activeEditor.setContent($body.html(), {format: 'html'});
+        // const ed = tinymce.activeEditor;
+        const edDoc = ed.getDoc();
+        if (edDoc) {
+          const sigs = edDoc.querySelectorAll('.email-signature-element');
+          sigs.forEach(n => n.remove());
+          ed.setContent(ed.getContent(), { format: 'html' });
+        }
         // END STIC-Custom
       }
 
@@ -1644,7 +1651,7 @@
       code_dialog_height: 600,
       code_dialog_width: 650,
       plugins: [
-        "fullpage advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",
         "insertdatetime media nonbreaking save table contextmenu directionality",
         "emoticons template paste textcolor colorpicker textpattern imagetools",
