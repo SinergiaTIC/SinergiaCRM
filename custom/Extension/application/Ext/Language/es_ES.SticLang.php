@@ -3831,6 +3831,15 @@ $app_list_strings['stic_advanced_web_forms_action_category_list']['navigation'] 
 $app_list_strings['stic_advanced_web_forms_action_category_list']['integration'] = '🧩 Integración';
 $app_list_strings['stic_advanced_web_forms_action_category_list']['files'] = '📁 Ficheros';
 
+// Fechas relativas para los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['today'] = 'Hoy (fecha actual)';
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['now'] = 'Ahora (fecha y hora actual)';
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['+1_day'] = 'De aquí un día';
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['+1_week'] = 'De aquí una semana';
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['+1_month'] = 'De aquí un mes';
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['last_day_of_this_month'] = 'Último día de este mes';
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['custom'] = 'Personalizada...';
+
 // Tipos de secciones (UI) en los Formularios Web Avanzados
 $app_list_strings['stic_advanced_web_forms_sections_type_list']['panel'] = 'Panel';
 $app_list_strings['stic_advanced_web_forms_sections_type_list']['tab'] = 'Pestaña';

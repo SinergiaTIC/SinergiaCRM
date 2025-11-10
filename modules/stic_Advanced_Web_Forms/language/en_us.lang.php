@@ -160,7 +160,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Texto',
   'LBL_FIELD_VALUE_OPTION_SHOW' => 'Mostrar',
   'LBL_FIELD_VALUE' => 'Valor',
-  'LBL_FIELD_VALUE_TODAY' => 'Fecha actual',
+  'LBL_FIELD_VALUE_DATE_RELATIVE' => 'Fecha relativa',
 
   'LBL_DUPLICATE_FIELDS' => 'Campos a verificar',
   'LBL_ONDUPLICATE_ACTION' => 'Acción en caso de duplicado',

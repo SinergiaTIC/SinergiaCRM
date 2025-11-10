@@ -512,7 +512,7 @@ class WizardStep2 {
       },
 
       get selectedFieldInfo() { 
-        if (this.field.type_field == 'unlinked') return null;
+        if (!this.field || this.field.type_field  == 'unlinked') return null;
         return this.availableFields.find(f => f.name == this.field?.name); 
       },
       get optionValuesListName() {
@@ -534,7 +534,7 @@ class WizardStep2 {
       optionValuesRelated: '',
 
       get relatedModule() {
-        if (this.field.type == 'relate') {
+        if (this.field && this.field.type == 'relate') {
           return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options);
         }
         return '';
@@ -554,7 +554,10 @@ class WizardStep2 {
       get isFixedValueOfRelated() { return this.isFixedValue && this.field.type == 'relate'},
       get isFixedValueOfDate() { return this.isFixedValue && this.isDate; },
       get isFixedValueOfDefault() { return this.isFixedValue && !this.isFixedValueOfEnum && !this.isFixedValueOfRelated && !this.isFixedValueOfDate },
-      valueToday: false,
+      showRelativeDateSelector: false,
+      relativeDateSelected: 'custom',
+      get availableRelativeDates() { return utils.getList("stic_advanced_web_forms_date_relative_list"); },
+        
 
       get isValid() { return this.field?.isValid() == true; },
 
@@ -664,13 +667,25 @@ class WizardStep2 {
             }
           }
         });
+        this.$watch('relativeDateSelected', (newValue, oldValue) => {
+          if (!this.field) return;
+          if (!this.isFixedValueOfDate) return;
+          if (newValue != 'custom') {
+            this.field.value = newValue.replaceAll('_', ' ');
+          }
+        });
         this.$watch('field.value', (newValue, oldValue) => {
           if (!this.field) return;
           if (this.isFixedValueOfEnum) {
             this.field.value_text = this.field.value_options.find(v => v.value == newValue)?.text;
           } else if (this.isFixedValueOfDate) {
-            if (newValue == 'today') {
-              this.field.value_text = utils.translate('LBL_FIELD_VALUE_TODAY');
+            if (this.showRelativeDateSelector) {
+              this.field.value_text = this.availableRelativeDates.find(v => v.id == newValue.replaceAll(' ', '_'))?.text ?? '';
+              if (this.field.value_text == '') {
+                this.relativeDateSelected = 'custom';
+                this.field.value_text = newValue;
+              }
+
             } else {
               this.field.value_text = new Date(newValue).toLocaleDateString();
             }
@@ -686,13 +701,10 @@ class WizardStep2 {
             this.field.setValueOptions(utils.getRecordsTextById(destModule, arrIds));
           }
         });
-        this.$watch('valueToday', (newValue, oldValue) => {
-          if (!this.field) return;
-          this.field.value = newValue ? 'today' : '';
-        });
       },
 
       convertFieldToType(type) {
+        if (!this.field) return;
         if (type == this.field.type_field) return;
         if (type == 'form' || type == 'hidden') {
           this.field.updateWithFieldInformation(this.selectedFieldInfo, type);

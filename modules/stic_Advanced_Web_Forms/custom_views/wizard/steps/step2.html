@@ -549,11 +549,26 @@
                     <template x-if="isFixedValueOfDate">
                       <div class="col-3">
                         <label for="modalField_ValFixDate" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')" ></label>
-                        <div class="form-switch">
-                          <label for="modalField_ValFixDate_Today" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TODAY')" ></label>
-                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValFixDate_Today" x-model="valueToday" />
+                        <div class="form-switch form-check text-muted small">
+                          <label for="modalField_ValFixDate_Relative" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_DATE_RELATIVE')" ></label>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValFixDate_Relative" x-model="showRelativeDateSelector" />
                         </div>
-                        <input id="modalField_ValFixDate" type="date" class="form-control" autocomplete="off" :disabled="valueToday" x-model="field.value"/>
+                        <!-- Fixed date -->
+                        <input x-show="!showRelativeDateSelector" id="modalField_ValFixDate" type="date" class="form-control" autocomplete="off" x-model="field.value"/>
+                        <!-- Relative date selector -->
+                        <div x-show="showRelativeDateSelector" class="mt-2">
+                          <select id="modalField_RelativeDateSelector" class="form-select" x-model="relativeDateSelected">
+                            <template x-for="relDate in availableRelativeDates" :key="relDate.id">
+                              <option :value="relDate.id" x-text="relDate.text"></option>
+                            </template>
+                          </select>
+                        </div>
+                      </div>
+                    </template>
+                    <template x-if="isFixedValueOfDate && showRelativeDateSelector">
+                      <!-- Relative date text -->
+                      <div class="col-3">
+                        <input x-show="showRelativeDateSelector" type="text" class="form-control mt-2" x-model="field.value">
                       </div>
                     </template>
                     <!-- Value (fixed value of default) -->
