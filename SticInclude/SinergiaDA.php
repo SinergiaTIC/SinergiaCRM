@@ -228,6 +228,10 @@ class ExternalReporting
             $modulesList['ProjectTask'] = 'ProjectTask';
         }
 
+        if (in_array('Campaigns', $modulesList)) {
+            $modulesList['CampaignLog'] = 'CampaignLog';
+        }
+
         // If Surveys module is enabled, we automatically activate the related Surveys modules
         if (in_array('Surveys', $modulesList)) {
             $modulesList['SurveyResponses'] = 'SurveyResponses';
@@ -891,7 +895,7 @@ class ExternalReporting
                     $this->addMetadataRecord(
                         'sda_def_tables',
                         [
-                            'table' =>$this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$key}", 64),
+                            'table' => $this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$key}", 64),
                             'label' => $qualifiedLabel,
                             'description' => addslashes($qualifiedLabel),
                         ]
@@ -1029,7 +1033,7 @@ class ExternalReporting
                     }else{
                         $indexSql = "ALTER TABLE {$viewName} ADD INDEX  {$indexName} ({$indexColumn}) USING BTREE";
                     }
-                    
+
                     if (!$db->query($indexSql)) {
                         $lastSQLError = array_pop(explode(':', $db->last_error));
                         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$indexSql}]");
@@ -1068,7 +1072,10 @@ class ExternalReporting
         $this->clonePermissionRecordsForAutorelationships();
 
         $this->checkSdaColumns();
+
         $this->checkSdaTablesInViews();
+
+        $this->runPostRebuildSQLScripts($modulesList);
 
         if ($callUpdateModel) {
             $this->updateModelCall();
@@ -1284,7 +1291,7 @@ class ExternalReporting
                     ];
                 } else {
                     // if an auto relationship
-                    $targetTable = $this->truncateStringMiddle("{$this->viewPrefix}_{$field['table']}_{$field['link']}",64);
+                    $targetTable = $this->truncateStringMiddle("{$this->viewPrefix}_{$field['table']}_{$field['link']}", 64);
                     $label = "{$tableLabel}|{$tableLabel} ({$field['rLabel']})";
 
                     // Add metadata record
@@ -2284,6 +2291,83 @@ class ExternalReporting
         }
         // Return the original string if no truncation is needed.
         return $string;
+    }
+
+    /**
+     * Function to run post-rebuild SQL scripts.
+     */
+    public function runPostRebuildSQLScripts($modulesList)
+    {
+        global $db;
+
+        // 1) Include script for managing campaign_log view && relationships if Campaigns module is enabled
+        // Replace campaign_log view with this version which include differente LEFT JOINS and fields
+        // to allow to access to related modules data via SinergiaDA relationships
+
+        if (in_array('Campaigns', $modulesList)) {
+            $this->info .= "<h2>Rebuilding SinergiaDA campaign_log view and relationships</h2>";
+
+            $campaignLogQuerys['view'] = "CREATE OR REPLACE VIEW sda_campaign_log AS
+            SELECT
+                m.id AS id,
+                IFNULL(t.tracker_name, '') AS target_tracker_key,
+                IFNULL(m.target_id, '') AS target_id,
+                IFNULL(m.target_type, '') AS target_type,
+                IFNULL(m.activity_type, '') AS activity_type,
+                IFNULL(
+                    CONVERT_TZ(m.activity_date, 'UTC', 'Europe/Madrid'),
+                    ''
+                ) AS activity_date,
+                IFNULL(m.related_id, '') AS related_id,
+                IFNULL(m.related_type, '') AS related_type,
+                IFNULL(m.archived, '') AS archived,
+                CONVERT(IFNULL(m.hits, ''), decimal(20, 4)) AS hits,
+                IFNULL(
+                    CONVERT_TZ(m.date_modified, 'UTC', 'Europe/Madrid'),
+                    ''
+                ) AS date_modified,
+                IFNULL(m.more_information, '') AS more_information,
+                1 as N,
+                IFNULL(m.campaign_id, '') AS campaign_id,
+                c.id AS contact_id,
+                u.id AS user_id,
+                l.id AS lead_id,
+                a.id AS account_id
+            FROM
+                campaign_log AS m
+                LEFT JOIN campaigns ON campaigns.id = m.campaign_id AND campaigns.deleted = 0
+                LEFT JOIN contacts AS c ON c.id = m.target_id AND c.deleted = 0
+                LEFT JOIN users AS u ON u.id = m.target_id AND u.deleted = 0
+                LEFT JOIN leads AS l ON l.id = m.target_id AND l.deleted = 0
+                LEFT JOIN accounts AS a ON a.id = m.target_id AND a.deleted = 0
+                LEFT JOIN campaign_trkrs t ON t.id = m.target_tracker_key AND t.deleted = 0
+            WHERE
+                m.deleted = 0
+            GROUP BY
+                m.id;";
+
+            // Define SinergiaDA relationships for the new fields in the view
+            global $app_list_strings;
+
+            $campaignLogQuerys['relationships'] = "INSERT INTO sda_def_relationships
+                (id, source_table, source_column, target_table, target_column, label, info)
+            VALUES
+                ('campaign_log_contacts', 'sda_campaign_log', 'contact_id', 'sda_contacts', 'id', '{$app_list_strings['moduleList']['Contacts']}', 'Direct SQL relationship'),
+                ('campaign_log_users', 'sda_campaign_log', 'user_id', 'sda_users', 'id', '{$app_list_strings['moduleList']['Users']}', 'Direct SQL relationship'),
+                ('campaign_log_leads', 'sda_campaign_log', 'lead_id', 'sda_leads', 'id', '{$app_list_strings['moduleList']['Leads']}', 'Direct SQL relationship'),
+                ('campaign_log_accounts', 'sda_campaign_log', 'account_id', 'sda_accounts', 'id', '{$app_list_strings['moduleList']['Accounts']}', 'Direct SQL relationship');";
+
+            foreach ($campaignLogQuerys as $key => $value) {
+                if (!$db->query($value)) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Error creating SinergiaDA campaign_log view or relationships: ' . $db->lastError());
+                    $this->info .= '[FATAL: Error rehaciendo ' . $key . '  sda_campaign_log..]';
+                } else {
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'SinergiaDA campaign_log view or relationships created successfully.');
+                    $this->info .= ' - OK: SinergiaDA  ' . $key . ' sda_campaign_log creadas correctamente.<br>';
+                }
+            }
+        }
+
     }
 
 }
