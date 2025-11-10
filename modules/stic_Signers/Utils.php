@@ -116,7 +116,7 @@ class stic_SignersUtils
 
         $mailBodyHtml = $body_html;
         // Use parsed subject, falling back to template subject or module string
-        $mailSubject = $subject_parsed ?: ($templateBean->subject ?? $mod_strings['LBL_SIGNER_EMAIL_SUBJECT']);
+        $mailSubject = $subject_parsed ?: ($templateBean->subject);
 
         // Assign subject and body to the mailer
         $mail->Subject = $mailSubject;
