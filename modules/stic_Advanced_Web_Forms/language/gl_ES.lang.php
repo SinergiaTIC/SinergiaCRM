@@ -160,7 +160,10 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Texto',
   'LBL_FIELD_VALUE_OPTION_SHOW' => 'Mostrar',
   'LBL_FIELD_VALUE' => 'Valor',
-  'LBL_FIELD_VALUE_DATE_RELATIVE' => 'Fecha relativa',
+  'LBL_FIELD_VALUE_RELATIVE_DATE_OPTION' => 'Fecha relativa',
+  'LBL_FIELD_VALUE_RELATIVE_DATE_OPTION_DESC' => 'Permite indicar una fecha relativa a la fecha de las respuestas recibidas al formulario',
+  'LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM' => 'Fecha relativa personalizada',
+  'LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM_DESC' => 'Expresión de fecha en inglés compatible con PHP strtotime(). Ejemplos: tomorrow 14:00, next monday, +2 weeks, first day of next month',
 
   'LBL_DUPLICATE_FIELDS' => 'Campos a verificar',
   'LBL_ONDUPLICATE_ACTION' => 'Acción en caso de duplicado',

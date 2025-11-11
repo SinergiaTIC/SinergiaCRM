@@ -549,8 +549,10 @@
                     <template x-if="isFixedValueOfDate">
                       <div class="col-3">
                         <label for="modalField_ValFixDate" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')" ></label>
-                        <div class="form-switch form-check text-muted small">
-                          <label for="modalField_ValFixDate_Relative" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_DATE_RELATIVE')" ></label>
+                        <div class="form-switch form-check text-muted small" x-init="utils.setInlineHelpQtip()">
+                          <label for="modalField_ValFixDate_Relative" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_OPTION')" ></label>
+                          <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                          <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_OPTION_DESC')"></div>
                           <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValFixDate_Relative" x-model="showRelativeDateSelector" />
                         </div>
                         <!-- Fixed date -->
@@ -565,10 +567,13 @@
                         </div>
                       </div>
                     </template>
-                    <template x-if="isFixedValueOfDate && showRelativeDateSelector">
+                    <template x-if="isFixedValueOfDate && showRelativeDateSelector && relativeDateSelected == 'custom'">
                       <!-- Relative date text -->
-                      <div class="col-3">
-                        <input x-show="showRelativeDateSelector" type="text" class="form-control mt-2" x-model="field.value">
+                      <div class="col-3" x-init="utils.setInlineHelpQtip()">
+                        <label for="modalField_ValFixDateCustom" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM')" ></label>
+                        <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                        <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM_DESC')"></div>
+                        <input id="modalField_ValFixDateCustom" type="text" class="form-control mt-2" x-model="field.value">
                       </div>
                     </template>
                     <!-- Value (fixed value of default) -->

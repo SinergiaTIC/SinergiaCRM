@@ -667,10 +667,22 @@ class WizardStep2 {
             }
           }
         });
+        this.$watch('showRelativeDateSelector', (newValue, oldValue) => {
+          if (!this.field) return;
+          if (newValue == true && this.field.value == '') {
+            this.field.value = 'today';
+            this.relativeDateSelected = 'today';
+          }
+          if (newValue !== true) {
+            this.field.value = '';
+          }
+        });
         this.$watch('relativeDateSelected', (newValue, oldValue) => {
           if (!this.field) return;
           if (!this.isFixedValueOfDate) return;
-          if (newValue != 'custom') {
+          if (newValue == 'custom') {
+            this.field.value = '';
+          } else {
             this.field.value = newValue.replaceAll('_', ' ');
           }
         });
