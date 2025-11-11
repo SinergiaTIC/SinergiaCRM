@@ -56,7 +56,7 @@ $viewdefs['stic_Allocation_Proposals']['DetailView'] = array(
             ),
             array(
                 'stic_payment_commitments_name',
-                '',
+                'stic_ledger_accounts_name',
             ),
             array(
                 'active',

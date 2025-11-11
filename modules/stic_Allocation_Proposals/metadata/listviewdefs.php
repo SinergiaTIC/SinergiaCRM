@@ -43,6 +43,13 @@ $listViewDefs['stic_Allocation_Proposals'] = array(
         'label' => 'LBL_PAYMENT_AMOUNT_FIELD',
         'default' => true,
     ),
+    'STIC_LEDGER_ACCOUNTS_NAME' => array(
+        'width' => '15%',
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'module' => 'stic_Ledger_Accounts',
+        'default' => false,
+    ),
     'PERCENTAGE' => array(
         'width' => '10%',
         'label' => 'LBL_PERCENTAGE',

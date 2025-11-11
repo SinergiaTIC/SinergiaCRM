@@ -56,6 +56,10 @@ $viewdefs['stic_Allocations']['EditView'] = array(
                 'stic_payments_name',
             ),
             array(
+                'stic_ledger_accounts_name',
+                '',
+            ),
+            array(
                 array(
                     'name' => 'description',
                     'span' => 12,

@@ -68,6 +68,13 @@ $listViewDefs['stic_Allocations'] = array(
         'label' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
         'default' => false,
     ),
+    'STIC_LEDGER_ACCOUNTS_NAME' => array(
+        'width' => '12%',
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'module' => 'stic_Ledger_Accounts',
+        'default' => false,
+    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '10%',
         'label' => 'LBL_ASSIGNED_TO',
