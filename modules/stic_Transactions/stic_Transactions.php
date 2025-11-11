@@ -92,25 +92,37 @@ class stic_Transactions extends File
 
         // Normalize the sign of the amount according to the type
         if (!empty($this->type) && isset($this->amount)) {
-            $amount = (float)$this->amount;
+            $amount = trim($this->amount);
 
-            // Ensure expenses are negative and incomes are positive
-            if ($this->type === 'expense' && $amount > 0) {
-                $amount = -abs($amount);
-            } elseif ($this->type === 'income' && $amount < 0) {
-                $amount = abs($amount);
+            // If there is a value
+            if ($amount !== '') {
+                // Convert to a native number (avoids Decimal error)
+                $amount = (float)str_replace(',', '.', $amount);
+
+                // If expense is negative
+                if ($this->type === 'expense') {
+                    $amount = -abs($amount);
+                }
+                // If income is positive
+                elseif ($this->type === 'income') {
+                    $amount = abs($amount);
+                }
+
+                $this->amount = $amount;
             }
-            $this->amount = $amount;
         }
 
         // Build the document_name if not provided
-        if(empty($this->description)) {
-            if($this->type === 'expense'){
-                $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type] . ' - ' . $this->transaction_date . ' - (' . $this->amount . '€)';
+        if (empty($this->description)) {
+            $amountFormatted = number_format($this->amount, 2, ',', '.');
+            if ($this->type === 'expense') {
+                $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type]
+                    . ' - ' . $this->transaction_date . ' - (' . $amountFormatted . '€)';
             } else {
-                $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type] . ' - ' . $this->transaction_date . ' - ' . $this->amount . '€';
+                $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type]
+                    . ' - ' . $this->transaction_date . ' - ' . $amountFormatted . '€';
             }
-        } elseif (!empty($this->description) && empty($this->document_name)) { 
+        } elseif (!empty($this->description) && empty($this->document_name)) {
             $this->document_name = $this->description;
         }
 
