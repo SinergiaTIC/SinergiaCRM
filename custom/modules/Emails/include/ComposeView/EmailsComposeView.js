@@ -390,7 +390,6 @@
         if (edDoc) {
           const sigs = edDoc.querySelectorAll('.email-signature-element');
           sigs.forEach(n => n.remove());
-          ed.setContent(ed.getContent(), { format: 'html' });
         }
         // END STIC-Custom
       }
