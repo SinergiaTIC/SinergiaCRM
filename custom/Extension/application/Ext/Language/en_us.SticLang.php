@@ -154,6 +154,7 @@ $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
+$app_list_strings['moduleList']['stic_Allocation_Proposals'] = 'Allocation Proposals';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -201,6 +202,7 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condit
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Granted account';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Places';
+$app_list_strings['moduleListSingular']['stic_Allocation_Proposals'] = 'Allocation Proposal';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -242,6 +244,7 @@ $app_list_strings['parent_type_display']['stic_Messages'] = 'Messages';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
+$app_list_strings['parent_type_display']['stic_Allocation_Proposals'] = 'Allocation Proposals';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
@@ -284,6 +287,7 @@ $app_list_strings['record_type_display']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display']['stic_Allocation_Proposals'] = 'Allocation Proposals';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
@@ -326,6 +330,7 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display_notes']['stic_Allocation_Proposals'] = 'Allocation Proposals';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';
@@ -3718,3 +3723,25 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
+
+// stic_Allocation_Proposals lists
+$app_list_strings['stic_allocation_proposals_status_list'][''] = '';
+$app_list_strings['stic_allocation_proposals_status_list']['draft'] = 'Draft';
+$app_list_strings['stic_allocation_proposals_status_list']['submitted'] = 'Submitted';
+$app_list_strings['stic_allocation_proposals_status_list']['under_review'] = 'Under Review';
+$app_list_strings['stic_allocation_proposals_status_list']['approved'] = 'Approved';
+$app_list_strings['stic_allocation_proposals_status_list']['rejected'] = 'Rejected';
+$app_list_strings['stic_allocation_proposals_status_list']['cancelled'] = 'Cancelled';
+
+$app_list_strings['stic_allocation_proposals_type_list'][''] = '';
+$app_list_strings['stic_allocation_proposals_type_list']['budget'] = 'Budget Allocation';
+$app_list_strings['stic_allocation_proposals_type_list']['resource'] = 'Resource Allocation';
+$app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Personnel Allocation';
+$app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Equipment Allocation';
+$app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Other';
+
+$app_list_strings['stic_allocation_proposals_priority_list'][''] = '';
+$app_list_strings['stic_allocation_proposals_priority_list']['low'] = 'Low';
+$app_list_strings['stic_allocation_proposals_priority_list']['medium'] = 'Medium';
+$app_list_strings['stic_allocation_proposals_priority_list']['high'] = 'High';
+$app_list_strings['stic_allocation_proposals_priority_list']['urgent'] = 'Urgent';

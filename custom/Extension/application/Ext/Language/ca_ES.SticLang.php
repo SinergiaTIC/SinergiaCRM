@@ -153,6 +153,7 @@ $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
+$app_list_strings['moduleList']['stic_Allocation_Proposals'] = 'Propostes d\'Imputació';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -202,6 +203,7 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condic
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organització subvencionada';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaça';
+$app_list_strings['moduleListSingular']['stic_Allocation_Proposals'] = 'Proposta d\'Imputació';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -243,6 +245,7 @@ $app_list_strings['parent_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
+$app_list_strings['parent_type_display']['stic_Allocation_Proposals'] = 'Propostes d\'Imputació';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -285,6 +288,7 @@ $app_list_strings['record_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display']['stic_Allocation_Proposals'] = 'Propostes d\'Imputació';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -327,6 +331,7 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display_notes']['stic_Allocation_Proposals'] = 'Propostes d\'Imputació';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
@@ -3752,3 +3757,25 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
+
+// stic_Allocation_Proposals lists
+$app_list_strings['stic_allocation_proposals_status_list'][''] = '';
+$app_list_strings['stic_allocation_proposals_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_allocation_proposals_status_list']['submitted'] = 'Enviada';
+$app_list_strings['stic_allocation_proposals_status_list']['under_review'] = 'En Revisió';
+$app_list_strings['stic_allocation_proposals_status_list']['approved'] = 'Aprovada';
+$app_list_strings['stic_allocation_proposals_status_list']['rejected'] = 'Rebutjada';
+$app_list_strings['stic_allocation_proposals_status_list']['cancelled'] = 'Cancel·lada';
+
+$app_list_strings['stic_allocation_proposals_type_list'][''] = '';
+$app_list_strings['stic_allocation_proposals_type_list']['budget'] = 'Imputació de Pressupost';
+$app_list_strings['stic_allocation_proposals_type_list']['resource'] = 'Imputació de Recursos';
+$app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Imputació de Personal';
+$app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Imputació d\'Equipament';
+$app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Altra';
+
+$app_list_strings['stic_allocation_proposals_priority_list'][''] = '';
+$app_list_strings['stic_allocation_proposals_priority_list']['low'] = 'Baixa';
+$app_list_strings['stic_allocation_proposals_priority_list']['medium'] = 'Mitjana';
+$app_list_strings['stic_allocation_proposals_priority_list']['high'] = 'Alta';
+$app_list_strings['stic_allocation_proposals_priority_list']['urgent'] = 'Urgent';
