@@ -47,7 +47,7 @@ $dictionary['stic_Financial_Products'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'checkbox_dom',
+    'options' => 'stic_boolean_list',
     'studio' => 'visible',
     'dependency' => false,
   ),
@@ -161,7 +161,7 @@ $dictionary['stic_Financial_Products'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'checkbox_dom',
+    'options' => 'stic_boolean_list',
     'studio' => 'visible',
     'dependency' => false,
     'popupHelp' => 'LBL_BALANCE_ERROR_INFO',
@@ -325,3 +325,6 @@ VardefManager::createVardef('stic_Financial_Products', 'stic_Financial_Products'
 $dictionary['stic_Financial_Products']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Financial_Products']['fields']['name']['importable'] = true; // Name is importable but not required in this module
 $dictionary['stic_Financial_Products']['fields']['name']['inline_edit'] = false; // Name can not edit inline in this module
+$dictionary['stic_Financial_Products']['fields']['balance_error']['inline_edit'] = false; // Name can not edit inline in this module
+$dictionary['stic_Financial_Products']['fields']['initial_balance']['inline_edit'] = false; // Name can not edit inline in this module
+$dictionary['stic_Financial_Products']['fields']['current_balance']['inline_edit'] = false; // Name can not edit inline in this module
