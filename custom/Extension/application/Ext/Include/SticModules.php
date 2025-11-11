@@ -68,6 +68,8 @@ $moduleList[] = 'stic_Group_Opportunities';
 $moduleList[] = 'stic_Allocation_Proposals';
 $moduleList[] = 'stic_Allocations';
 $moduleList[] = 'stic_Ledger_Accounts';
+$moduleList[] = 'stic_Justifications';
+$moduleList[] = 'stic_Justification_Conditions';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -121,6 +123,8 @@ $beanList['stic_Places'] = 'stic_Places';
 $beanList['stic_Allocation_Proposals'] = 'stic_Allocation_Proposals';
 $beanList['stic_Allocations'] = 'stic_Allocations';
 $beanList['stic_Ledger_Accounts'] = 'stic_Ledger_Accounts';
+$beanList['stic_Justifications'] = 'stic_Justifications';
+$beanList['stic_Justification_Conditions'] = 'stic_Justification_Conditions';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -173,6 +177,8 @@ $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
 $beanFiles['stic_Allocation_Proposals'] = 'modules/stic_Allocation_Proposals/stic_Allocation_Proposals.php';
 $beanFiles['stic_Allocations'] = 'modules/stic_Allocations/stic_Allocations.php';
 $beanFiles['stic_Ledger_Accounts'] = 'modules/stic_Ledger_Accounts/stic_Ledger_Accounts.php';
+$beanFiles['stic_Justifications'] = 'modules/stic_Justifications/stic_Justifications.php';
+$beanFiles['stic_Justification_Conditions'] = 'modules/stic_Justification_Conditions/stic_Justification_Conditions.php';
 
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels

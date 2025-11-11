@@ -3789,3 +3789,10 @@ $app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Import
 $app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Importe Bruto';
 $app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Importe de Impostos';
 $app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Outro';
+
+$app_list_strings['stic_justifications_status_list'][''] = '';
+$app_list_strings['stic_justifications_status_list']['pending'] = 'Pendente';
+$app_list_strings['stic_justifications_status_list']['in_progress'] = 'En Progreso';
+$app_list_strings['stic_justifications_status_list']['approved'] = 'Aprobado';
+$app_list_strings['stic_justifications_status_list']['rejected'] = 'Rexeitado';
+$app_list_strings['stic_justifications_status_list']['completed'] = 'Completado';
