@@ -46,7 +46,7 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'default' => '1',
         ),
         'type' => array(
-            'required' => 0,
+            'required' => 1,
             'name' => 'type',
             'vname' => 'LBL_TYPE',
             'duplicate_merge' => 'enabled',
@@ -68,7 +68,7 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'inline_edit' => 1,
         ),
         'payment_amount_field' => array(
-            'required' => 0,
+            'required' => 1,
             'name' => 'payment_amount_field',
             'vname' => 'LBL_PAYMENT_AMOUNT_FIELD',
             'duplicate_merge' => 'enabled',
@@ -90,7 +90,7 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'inline_edit' => 1,
         ),
         'percentage' => array(
-            'required' => 0,
+            'required' => 1,
             'name' => 'percentage',
             'vname' => 'LBL_PERCENTAGE',
             'duplicate_merge' => 'enabled',
