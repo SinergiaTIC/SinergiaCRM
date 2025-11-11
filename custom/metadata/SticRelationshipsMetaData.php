@@ -7284,3 +7284,73 @@ $dictionary["stic_resources_stic_centers"] = array (
       ),
     ),
   );
+
+$dictionary["stic_payment_commitments_stic_allocation_proposals"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_payment_commitments_stic_allocation_proposals' => array(
+            'lhs_module' => 'stic_Payment_Commitments',
+            'lhs_table' => 'stic_payment_commitments',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Allocation_Proposals',
+            'rhs_table' => 'stic_allocation_proposals',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_paymec6a0proposals_c',
+            'join_key_lhs' => 'stic_payme4a62itments_ida',
+            'join_key_rhs' => 'stic_paymef676oposals_idb',
+        ),
+    ),
+    'table' => 'stic_paymec6a0proposals_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_payme4a62itments_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_paymef676oposals_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_payme223croposalsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_paymea3e2posals_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_payme4a62itments_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_payme9cfeoposals_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_paymef676oposals_idb',
+            ),
+        ),
+    ),
+);

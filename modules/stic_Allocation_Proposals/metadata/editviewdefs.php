@@ -36,6 +36,10 @@ $viewdefs['stic_Allocation_Proposals']['EditView'] = array(
                 'assigned_user_name',
             ),
             array(
+                'stic_payment_commitments_name',
+                '',
+            ),
+            array(
                 'active',
                 'type',
             ),

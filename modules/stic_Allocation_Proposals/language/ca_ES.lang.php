@@ -69,4 +69,6 @@ $mod_strings = array(
     'LBL_HOURS' => 'Hores',
     'LBL_DEFAULT_PANEL' => 'Informació general',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
+    'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE' => 'Compromís de Pagament',
+    'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromisos de Pagament',
 );

@@ -138,4 +138,5 @@ $mod_strings = array(
     'LBL_FIRST_PAYMENT_DATE_ERROR' => 'First payment date must be equal or before End date (if exists).',
     'LBL_END_DATE_ERROR' => 'End date must be equal or after First payment date.',
     'LBL_AGGREGATED_SHOULDNT_BE_PUNTUAL_ERROR' => 'A payment commitment for aggregate services may not be on a punctual periodicity.',
+    'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Allocation Proposals',
 );
