@@ -655,6 +655,16 @@ $dictionary['stic_Payments'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_PAYMENTS_STIC_ATTENDANCES_FROM_STIC_ATTENDANCES_TITLE',
         ),
+        'stic_allocations' => array(
+            'name' => 'stic_allocations',
+            'type' => 'link',
+            'relationship' => 'stic_payments_stic_allocations',
+            'source' => 'non-db',
+            'module' => 'stic_Allocations',
+            'bean_name' => 'stic_Allocations',
+            'vname' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE',
+            'id_name' => 'stic_payments_stic_aleb9a',
+        ),
     ),
     'indices' => array(
         'transaction_code_autoincrement' => array(

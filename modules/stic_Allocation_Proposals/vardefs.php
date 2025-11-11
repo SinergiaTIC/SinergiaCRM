@@ -167,6 +167,16 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE',
         ),
+        'stic_allocations' => array(
+            'name' => 'stic_allocations',
+            'type' => 'link',
+            'relationship' => 'stic_allocation_proposals_stic_allocations',
+            'source' => 'non-db',
+            'module' => 'stic_Allocations',
+            'bean_name' => 'stic_Allocations',
+            'vname' => 'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE',
+            'id_name' => 'stic_allocation_propo424d',
+        ),
     ),
     'indices' => array(
     ),

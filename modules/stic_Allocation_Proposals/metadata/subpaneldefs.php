@@ -22,6 +22,26 @@
  */
 
 $module_name = 'stic_Allocation_Proposals';
+
+$layout_defs[$module_name]['subpanel_setup']['stic_allocations'] = array(
+    'order' => 100,
+    'module' => 'stic_Allocations',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_entered',
+    'title_key' => 'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE',
+    'get_subpanel_data' => 'stic_allocations',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'mode' => 'MultiSelect',
+        ),
+    ),
+);
+
 $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
     'order' => 900,

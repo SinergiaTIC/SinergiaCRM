@@ -52,6 +52,10 @@ $viewdefs['stic_Allocations']['EditView'] = array(
                 'hours',
             ),
             array(
+                'stic_allocation_proposals_name',
+                'stic_payments_name',
+            ),
+            array(
                 array(
                     'name' => 'description',
                     'span' => 12,

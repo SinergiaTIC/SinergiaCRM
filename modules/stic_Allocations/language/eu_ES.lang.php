@@ -72,4 +72,9 @@ $mod_strings = array(
     'LBL_HOURS' => 'Imputatutako Orduak',
     'LBL_DEFAULT_PANEL' => 'Informazio orokorra',
     'LBL_PANEL_RECORD_DETAILS' => 'Erregistroaren xehetasunak',
+    // Relationship labels
+    'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE' => 'Imputazio Proposamena',
+    'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE' => 'Imputazio Proposamena',
+    'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE' => 'Ordainketa',
+    'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Ordainketa',
 );

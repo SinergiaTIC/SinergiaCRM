@@ -143,4 +143,5 @@ $mod_strings = array(
     'LBL_AGGREGATED_NOTIFICATION_BUTTON_SERVER_ERROR' => 'Server error',
     'LBL_AGGREGATED_RETURN_BUTTON' => 'Return to module',
     'LBL_AGGREGATED_REFRESH_BUTTON' => 'Repeat the process',
+    'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Allocations',
 );

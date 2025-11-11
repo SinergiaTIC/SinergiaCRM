@@ -58,6 +58,16 @@ $listViewDefs['stic_Allocations'] = array(
         'label' => 'LBL_HOURS',
         'default' => true,
     ),
+    'STIC_ALLOCATION_PROPOSALS_NAME' => array(
+        'width' => '12%',
+        'label' => 'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+        'default' => false,
+    ),
+    'STIC_PAYMENTS_NAME' => array(
+        'width' => '12%',
+        'label' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+        'default' => false,
+    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '10%',
         'label' => 'LBL_ASSIGNED_TO',

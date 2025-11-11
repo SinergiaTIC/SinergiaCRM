@@ -72,4 +72,9 @@ $mod_strings = array(
     'LBL_HOURS' => 'Horas imputadas',
     'LBL_DEFAULT_PANEL' => 'Información xeral',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
+    // Relationship labels
+    'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE' => 'Proposta de Imputación',
+    'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE' => 'Proposta de Imputación',
+    'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE' => 'Pago',
+    'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Pago',
 );

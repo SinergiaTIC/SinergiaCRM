@@ -7354,3 +7354,143 @@ $dictionary["stic_payment_commitments_stic_allocation_proposals"] = array(
         ),
     ),
 );
+
+$dictionary["stic_allocation_proposals_stic_allocations"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_allocation_proposals_stic_allocations' => array(
+            'lhs_module' => 'stic_Allocation_Proposals',
+            'lhs_table' => 'stic_allocation_proposals',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Allocations',
+            'rhs_table' => 'stic_allocations',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_allocation_propoe0ab',
+            'join_key_lhs' => 'stic_allocation_propo424d',
+            'join_key_rhs' => 'stic_allocation_propo6796',
+        ),
+    ),
+    'table' => 'stic_allocation_propoe0ab',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_allocation_propo424d',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_allocation_propo6796',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_allocation_propobd86',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_allocation_propo6b08',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_allocation_propo424d',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_allocation_propob739',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_allocation_propo6796',
+            ),
+        ),
+    ),
+);
+
+$dictionary["stic_payments_stic_allocations"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_payments_stic_allocations' => array(
+            'lhs_module' => 'stic_Payments',
+            'lhs_table' => 'stic_payments',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Allocations',
+            'rhs_table' => 'stic_allocations',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_payments_stic_al9aa0',
+            'join_key_lhs' => 'stic_payments_stic_aleb9a',
+            'join_key_rhs' => 'stic_payments_stic_aldaa6',
+        ),
+    ),
+    'table' => 'stic_payments_stic_al9aa0',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_payments_stic_aleb9a',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_payments_stic_aldaa6',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_payments_stic_ale431',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_payments_stic_alf1be',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_payments_stic_aleb9a',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_payments_stic_al4596',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_payments_stic_aldaa6',
+            ),
+        ),
+    ),
+);
