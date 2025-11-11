@@ -3740,8 +3740,16 @@ $app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Personn
 $app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Equipment Allocation';
 $app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Other';
 
-$app_list_strings['stic_allocation_proposals_priority_list'][''] = '';
-$app_list_strings['stic_allocation_proposals_priority_list']['low'] = 'Low';
-$app_list_strings['stic_allocation_proposals_priority_list']['medium'] = 'Medium';
-$app_list_strings['stic_allocation_proposals_priority_list']['high'] = 'High';
-$app_list_strings['stic_allocation_proposals_priority_list']['urgent'] = 'Urgent';
+// New Allocation Proposals dropdown lists
+$app_list_strings['stic_allocations_types_list'][''] = '';
+$app_list_strings['stic_allocations_types_list']['percentage'] = 'Percentage';
+$app_list_strings['stic_allocations_types_list']['fixed_amount'] = 'Fixed Amount';
+$app_list_strings['stic_allocations_types_list']['hours'] = 'Hours';
+$app_list_strings['stic_allocations_types_list']['other'] = 'Other';
+
+$app_list_strings['stic_allocations_amount_fields_list'][''] = '';
+$app_list_strings['stic_allocations_amount_fields_list']['total_amount'] = 'Total Amount';
+$app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Net Amount';
+$app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Gross Amount';
+$app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Tax Amount';
+$app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Other';

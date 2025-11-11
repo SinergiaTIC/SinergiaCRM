@@ -3775,8 +3775,16 @@ $app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Imputac
 $app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Imputación de Equipamiento';
 $app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Beste bat';
 
-$app_list_strings['stic_allocation_proposals_priority_list'][''] = '';
-$app_list_strings['stic_allocation_proposals_priority_list']['low'] = 'Txikia';
-$app_list_strings['stic_allocation_proposals_priority_list']['medium'] = 'Ertaina';
-$app_list_strings['stic_allocation_proposals_priority_list']['high'] = 'Altua';
-$app_list_strings['stic_allocation_proposals_priority_list']['urgent'] = 'Premiazkoa';
+// Imputazio Proposamen zerrenda berriak
+$app_list_strings['stic_allocations_types_list'][''] = '';
+$app_list_strings['stic_allocations_types_list']['percentage'] = 'Ehunekoa';
+$app_list_strings['stic_allocations_types_list']['fixed_amount'] = 'Zenbateko Finkoa';
+$app_list_strings['stic_allocations_types_list']['hours'] = 'Orduak';
+$app_list_strings['stic_allocations_types_list']['other'] = 'Beste bat';
+
+$app_list_strings['stic_allocations_amount_fields_list'][''] = '';
+$app_list_strings['stic_allocations_amount_fields_list']['total_amount'] = 'Zenbateko Osoa';
+$app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Zenbateko Garbia';
+$app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Zenbateko Gordina';
+$app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Zergaren Zenbatekoa';
+$app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Beste bat';

@@ -3774,8 +3774,16 @@ $app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Imputac
 $app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Imputació d\'Equipament';
 $app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Altra';
 
-$app_list_strings['stic_allocation_proposals_priority_list'][''] = '';
-$app_list_strings['stic_allocation_proposals_priority_list']['low'] = 'Baixa';
-$app_list_strings['stic_allocation_proposals_priority_list']['medium'] = 'Mitjana';
-$app_list_strings['stic_allocation_proposals_priority_list']['high'] = 'Alta';
-$app_list_strings['stic_allocation_proposals_priority_list']['urgent'] = 'Urgent';
+// Noves llistes per a Propostes d'Imputació
+$app_list_strings['stic_allocations_types_list'][''] = '';
+$app_list_strings['stic_allocations_types_list']['percentage'] = 'Percentatge';
+$app_list_strings['stic_allocations_types_list']['fixed_amount'] = 'Import Fix';
+$app_list_strings['stic_allocations_types_list']['hours'] = 'Hores';
+$app_list_strings['stic_allocations_types_list']['other'] = 'Altre';
+
+$app_list_strings['stic_allocations_amount_fields_list'][''] = '';
+$app_list_strings['stic_allocations_amount_fields_list']['total_amount'] = 'Import Total';
+$app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Import Net';
+$app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Import Brut';
+$app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Import d\'Impostos';
+$app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Altre';

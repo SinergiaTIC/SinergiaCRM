@@ -55,30 +55,20 @@ $viewdefs['stic_Allocation_Proposals']['DetailView'] = array(
                 'assigned_user_name',
             ),
             array(
-                'proposal_status',
-                'proposal_type',
+                'active',
+                'type',
             ),
             array(
-                'proposal_date',
-                'priority',
+                'payment_amount_field',
+                'percentage',
             ),
             array(
-                'amount',
+                'hours',
                 '',
-            ),
-            array(
-                'approval_date',
-                'approved_by',
             ),
             array(
                 array(
                     'name' => 'description',
-                    'span' => 12,
-                ),
-            ),
-            array(
-                array(
-                    'name' => 'notes',
                     'span' => 12,
                 ),
             ),

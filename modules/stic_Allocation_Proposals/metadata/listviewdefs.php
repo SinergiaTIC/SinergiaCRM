@@ -28,29 +28,29 @@ $listViewDefs['stic_Allocation_Proposals'] = array(
         'link' => true,
         'default' => true,
     ),
-    'PROPOSAL_STATUS' => array(
-        'width' => '15%',
-        'label' => 'LBL_PROPOSAL_STATUS',
-        'default' => true,
-    ),
-    'PROPOSAL_TYPE' => array(
-        'width' => '15%',
-        'label' => 'LBL_PROPOSAL_TYPE',
-        'default' => true,
-    ),
-    'PROPOSAL_DATE' => array(
-        'width' => '15%',
-        'label' => 'LBL_PROPOSAL_DATE',
-        'default' => true,
-    ),
-    'AMOUNT' => array(
+    'ACTIVE' => array(
         'width' => '10%',
-        'label' => 'LBL_AMOUNT',
+        'label' => 'LBL_ACTIVE',
         'default' => true,
     ),
-    'PRIORITY' => array(
+    'TYPE' => array(
+        'width' => '15%',
+        'label' => 'LBL_TYPE',
+        'default' => true,
+    ),
+    'PAYMENT_AMOUNT_FIELD' => array(
+        'width' => '15%',
+        'label' => 'LBL_PAYMENT_AMOUNT_FIELD',
+        'default' => true,
+    ),
+    'PERCENTAGE' => array(
         'width' => '10%',
-        'label' => 'LBL_PRIORITY',
+        'label' => 'LBL_PERCENTAGE',
+        'default' => true,
+    ),
+    'HOURS' => array(
+        'width' => '10%',
+        'label' => 'LBL_HOURS',
         'default' => false,
     ),
     'ASSIGNED_USER_NAME' => array(

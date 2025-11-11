@@ -3772,8 +3772,16 @@ $app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Imputac
 $app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Imputación de Equipamento';
 $app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Outra';
 
-$app_list_strings['stic_allocation_proposals_priority_list'][''] = '';
-$app_list_strings['stic_allocation_proposals_priority_list']['low'] = 'Baixa';
-$app_list_strings['stic_allocation_proposals_priority_list']['medium'] = 'Media';
-$app_list_strings['stic_allocation_proposals_priority_list']['high'] = 'Alta';
-$app_list_strings['stic_allocation_proposals_priority_list']['urgent'] = 'Urxente';
+// Novas listas para Propostas de Imputación
+$app_list_strings['stic_allocations_types_list'][''] = '';
+$app_list_strings['stic_allocations_types_list']['percentage'] = 'Porcentaxe';
+$app_list_strings['stic_allocations_types_list']['fixed_amount'] = 'Importe Fixo';
+$app_list_strings['stic_allocations_types_list']['hours'] = 'Horas';
+$app_list_strings['stic_allocations_types_list']['other'] = 'Outro';
+
+$app_list_strings['stic_allocations_amount_fields_list'][''] = '';
+$app_list_strings['stic_allocations_amount_fields_list']['total_amount'] = 'Importe Total';
+$app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Importe Neto';
+$app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Importe Bruto';
+$app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Importe de Impostos';
+$app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Outro';

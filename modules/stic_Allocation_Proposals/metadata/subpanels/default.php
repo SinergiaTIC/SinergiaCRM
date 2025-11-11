@@ -33,20 +33,24 @@ $subpanel_layout = array(
             'widget_class' => 'SubPanelDetailViewLink',
             'width' => '25%',
         ),
-        'proposal_status' => array(
-            'vname' => 'LBL_PROPOSAL_STATUS',
+        'active' => array(
+            'vname' => 'LBL_ACTIVE',
+            'width' => '10%',
+        ),
+        'type' => array(
+            'vname' => 'LBL_TYPE',
             'width' => '15%',
         ),
-        'proposal_type' => array(
-            'vname' => 'LBL_PROPOSAL_TYPE',
+        'payment_amount_field' => array(
+            'vname' => 'LBL_PAYMENT_AMOUNT_FIELD',
             'width' => '15%',
         ),
-        'proposal_date' => array(
-            'vname' => 'LBL_PROPOSAL_DATE',
-            'width' => '15%',
+        'percentage' => array(
+            'vname' => 'LBL_PERCENTAGE',
+            'width' => '10%',
         ),
-        'amount' => array(
-            'vname' => 'LBL_AMOUNT',
+        'hours' => array(
+            'vname' => 'LBL_HOURS',
             'width' => '10%',
         ),
         'assigned_user_name' => array(
