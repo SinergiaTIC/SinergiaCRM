@@ -385,7 +385,7 @@
         // var $existingSignature = $body.find('.email-signature-element');
         // $existingSignature.remove();
         // tinymce.activeEditor.setContent($body.html(), {format: 'html'});
-        // const ed = tinymce.activeEditor;
+        const ed = tinymce.activeEditor;
         const edDoc = ed.getDoc();
         if (edDoc) {
           const sigs = edDoc.querySelectorAll('.email-signature-element');
