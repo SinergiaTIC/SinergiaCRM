@@ -379,8 +379,8 @@
 
       var body = tinymce.activeEditor.getContent();
       if (body !== '' && $(body).hasClass('email-signature-element')) {
-        // STIC-Custom 20251007 MHP - This line is commented out because it generates a JS or functionality error in SinergiaCRM.
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/803
+        // STIC-Custom 20251007 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/803
+        // Do not delete the editor's content when switching outgoing accounts and add the signature of the newly selected account.
         // var $body = $(body);
         // var $existingSignature = $body.find('.email-signature-element');
         // $existingSignature.remove();
