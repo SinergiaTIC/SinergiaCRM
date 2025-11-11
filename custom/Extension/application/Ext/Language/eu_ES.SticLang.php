@@ -154,6 +154,7 @@ $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones su
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Allocation_Proposals'] = 'Imputaciones';
+$app_list_strings['moduleList']['stic_Allocations'] = 'Imputaciones';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -204,6 +205,7 @@ $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organizac
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaza';
 $app_list_strings['moduleListSingular']['stic_Allocation_Proposals'] = 'Imputación';
+$app_list_strings['moduleListSingular']['stic_Allocations'] = 'Imputación';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
