@@ -144,4 +144,18 @@ $mod_strings = array(
     'LBL_AGGREGATED_RETURN_BUTTON' => 'Return to module',
     'LBL_AGGREGATED_REFRESH_BUTTON' => 'Repeat the process',
     'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Allocations',
+    // Allocation tab labels
+    'LBL_ALLOCATION_PANEL' => 'Allocation',
+    'LBL_JUSTIFICATION_DATE' => 'Justification date',
+    'LBL_ALLOCATED' => 'Allocated',
+    'LBL_BLOCKED' => 'Blocked',
+    'LBL_ALLOCATED_PERCENTAGE' => 'Allocated %',
+    'LBL_JUSTIFIED_PERCENTAGE' => 'Justified %',
+    'LBL_TAX_WITHHOLDING' => 'Tax withholding',
+    'LBL_SOCIAL_SECURITY_EMPLOYEE' => 'Employee social security',
+    'LBL_SOCIAL_SECURITY_COMPANY' => 'Company social security',
+    'LBL_LIQUID_AMOUNT' => 'Liquid amount to be received',
+    'LBL_TOTAL_COST' => 'Company total cost',
+    'LBL_VAT_SUPPORTED' => 'VAT supported',
+    'LBL_BASE_AMOUNT' => 'Base amount',
 );
