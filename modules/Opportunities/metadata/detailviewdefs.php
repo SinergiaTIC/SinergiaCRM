@@ -196,6 +196,11 @@ $viewdefs['Opportunities']['DetailView'] = array (
         'newTab' => true,
         'panelDefault' => 'expanded',
       ),
+      'LBL_JUSTIFICATION' => 
+      array (
+        'newTab' => true,
+        'panelDefault' => 'expanded',
+      ),
       'LBL_STIC_PANEL_RECORD_DETAILS' => 
       array (
         'newTab' => true,
@@ -345,6 +350,37 @@ $viewdefs['Opportunities']['DetailView'] = array (
       ),
       // END STIC-Custom JBL
     ),
+    // TODOEPS - Justification tab
+    'LBL_JUSTIFICATION' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          'name' => 'justified_amount',
+          'label' => 'LBL_JUSTIFIED_AMOUNT',
+        ),
+        1 => 
+        array (
+          'name' => 'justified_percentage',
+          'label' => 'LBL_JUSTIFIED_PERCENTAGE',
+        ),
+      ),
+      1 => 
+      array (
+        0 => 
+        array (
+          'name' => 'start_date',
+          'label' => 'LBL_START_DATE',
+        ),
+        1 => 
+        array (
+          'name' => 'end_date',
+          'label' => 'LBL_END_DATE',
+        ),
+      ),
+    ),
+    // END TODOEPS
     'LBL_STIC_PANEL_RECORD_DETAILS' => 
     array (
       0 => 
