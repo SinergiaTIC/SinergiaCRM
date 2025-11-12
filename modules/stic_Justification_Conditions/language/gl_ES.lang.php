@@ -46,5 +46,6 @@ $mod_strings = array(
     'LBL_MAX_ALLOCABLE_AMOUNT_GRANT' => 'Importe máximo imputable',
     'LBL_JUSTIFIED_PERCENTAGE' => 'Porcentaxe acumulado xustificado',
     'LBL_JUSTIFIED_AMOUNT' => 'Importe acumulado xustificado',
+    'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE' => 'Xustificacións',
 );
 ?>

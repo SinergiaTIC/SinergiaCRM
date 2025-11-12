@@ -7494,3 +7494,143 @@ $dictionary["stic_payments_stic_allocations"] = array(
         ),
     ),
 );
+
+$dictionary["stic_allocations_stic_justifications"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_allocations_stic_justifications' => array(
+            'lhs_module' => 'stic_Allocations',
+            'lhs_table' => 'stic_allocations',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Justifications',
+            'rhs_table' => 'stic_justifications',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_allocations_stic_justifications_c',
+            'join_key_lhs' => 'stic_alloc8c71cations_ida',
+            'join_key_rhs' => 'stic_alloc9375cations_idb',
+        ),
+    ),
+    'table' => 'stic_allocations_stic_justifications_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_alloc8c71cations_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_alloc9375cations_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_alloc8ca3icationsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_alloc4951ations_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_alloc8c71cations_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_alloc5ef7cations_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_alloc9375cations_idb',
+            ),
+        ),
+    ),
+);
+
+$dictionary["stic_justification_conditions_stic_justifications"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_justification_conditions_stic_justifications' => array(
+            'lhs_module' => 'stic_Justification_Conditions',
+            'lhs_table' => 'stic_justification_conditions',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Justifications',
+            'rhs_table' => 'stic_justifications',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_justification_conditions_stic_justifications_c',
+            'join_key_lhs' => 'stic_justi13ccditions_ida',
+            'join_key_rhs' => 'stic_justi2c00cations_idb',
+        ),
+    ),
+    'table' => 'stic_justification_conditions_stic_justifications_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_justi13ccditions_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_justi2c00cations_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_justi9855icationsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_justibc30ations_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_justi13ccditions_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_justic61acations_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_justi2c00cations_idb',
+            ),
+        ),
+    ),
+);

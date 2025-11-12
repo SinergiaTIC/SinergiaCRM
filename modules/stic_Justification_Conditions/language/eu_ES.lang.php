@@ -46,5 +46,6 @@ $mod_strings = array(
     'LBL_MAX_ALLOCABLE_AMOUNT_GRANT' => 'Zenbateko gehienez inputagarria',
     'LBL_JUSTIFIED_PERCENTAGE' => 'Ehuneko pilatua justifikatua',
     'LBL_JUSTIFIED_AMOUNT' => 'Zenbateko pilatua justifikatua',
+    'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE' => 'Justifikazioak',
 );
 ?>

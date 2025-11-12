@@ -46,5 +46,6 @@ $mod_strings = array(
     'LBL_MAX_ALLOCABLE_AMOUNT_GRANT' => 'Max allocable amount',
     'LBL_JUSTIFIED_PERCENTAGE' => 'Justified accumulated %',
     'LBL_JUSTIFIED_AMOUNT' => 'Justified accumulated amount',
+    'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE' => 'Justifications',
 );
 ?>

@@ -44,7 +44,8 @@ $mod_strings = array(
     'LBL_MAX_ALLOCABLE_PERCENTAGE' => '% máximo imputable',
     'LBL_MAX_ALLOCABLE_PERCENTAGE_GRANT' => '% máximo imputable sobre importe concedido',
     'LBL_MAX_ALLOCABLE_AMOUNT_GRANT' => 'Importe máximo imputable',
-    'LBL_JUSTIFIED_PERCENTAGE' => 'Porcentaje acumulado justificado',
+    'LBL_JUSTIFIED_PERCENTAGE' => '% acumulado justificado',
     'LBL_JUSTIFIED_AMOUNT' => 'Importe acumulado justificado',
+    'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE' => 'Justificaciones',
 );
 ?>
