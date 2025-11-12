@@ -3776,23 +3776,29 @@ $app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Imputac
 $app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Imputación de Equipamento';
 $app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Outra';
 
-// Novas listas para Propostas de Imputación
+// Listas actualizadas segundo especificacións de lists.md
 $app_list_strings['stic_allocations_types_list'][''] = '';
-$app_list_strings['stic_allocations_types_list']['percentage'] = 'Porcentaxe';
-$app_list_strings['stic_allocations_types_list']['fixed_amount'] = 'Importe Fixo';
-$app_list_strings['stic_allocations_types_list']['hours'] = 'Horas';
-$app_list_strings['stic_allocations_types_list']['other'] = 'Outro';
+$app_list_strings['stic_allocations_types_list']['direct'] = 'Directa';
+$app_list_strings['stic_allocations_types_list']['indirect'] = 'Indirecta';
 
 $app_list_strings['stic_allocations_amount_fields_list'][''] = '';
-$app_list_strings['stic_allocations_amount_fields_list']['total_amount'] = 'Importe Total';
-$app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Importe Neto';
-$app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Importe Bruto';
-$app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Importe de Impostos';
-$app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Outro';
+$app_list_strings['stic_allocations_amount_fields_list']['irpf'] = 'Retención IRPF';
+$app_list_strings['stic_allocations_amount_fields_list']['ss_employee'] = 'Seg. Social empregado';
+$app_list_strings['stic_allocations_amount_fields_list']['ss_company'] = 'Seg. Social empresa';
+$app_list_strings['stic_allocations_amount_fields_list']['liquid_amount'] = 'Importe líquido a percibir';
+$app_list_strings['stic_allocations_amount_fields_list']['total_cost'] = 'Custo total empresa';
+$app_list_strings['stic_allocations_amount_fields_list']['vat_supported'] = 'IVA soportado';
+$app_list_strings['stic_allocations_amount_fields_list']['base_amount'] = 'Importe base';
+$app_list_strings['stic_allocations_amount_fields_list']['amount'] = 'Importe';
+
+$app_list_strings['stic_budgets_status_list'][''] = '';
+$app_list_strings['stic_budgets_status_list']['draft'] = 'Borrador';
+$app_list_strings['stic_budgets_status_list']['pending'] = 'Pendente de validación';
+$app_list_strings['stic_budgets_status_list']['validated'] = 'Validado';
+$app_list_strings['stic_budgets_status_list']['accepted'] = 'Aceptado';
+$app_list_strings['stic_budgets_status_list']['discarded'] = 'Descartado';
 
 $app_list_strings['stic_justifications_status_list'][''] = '';
 $app_list_strings['stic_justifications_status_list']['pending'] = 'Pendente';
-$app_list_strings['stic_justifications_status_list']['in_progress'] = 'En Progreso';
-$app_list_strings['stic_justifications_status_list']['approved'] = 'Aprobado';
-$app_list_strings['stic_justifications_status_list']['rejected'] = 'Rexeitado';
-$app_list_strings['stic_justifications_status_list']['completed'] = 'Completado';
+$app_list_strings['stic_justifications_status_list']['working'] = 'En curso';
+$app_list_strings['stic_justifications_status_list']['submitted'] = 'Presentada';

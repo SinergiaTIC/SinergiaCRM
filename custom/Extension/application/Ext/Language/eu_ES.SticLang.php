@@ -3781,23 +3781,29 @@ $app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Imputac
 $app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Imputación de Equipamiento';
 $app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Beste bat';
 
-// Imputazio Proposamen zerrenda berriak
+// Eguneratutako zerrendak lists.md zehaztapenen arabera
 $app_list_strings['stic_allocations_types_list'][''] = '';
-$app_list_strings['stic_allocations_types_list']['percentage'] = 'Ehunekoa';
-$app_list_strings['stic_allocations_types_list']['fixed_amount'] = 'Zenbateko Finkoa';
-$app_list_strings['stic_allocations_types_list']['hours'] = 'Orduak';
-$app_list_strings['stic_allocations_types_list']['other'] = 'Beste bat';
+$app_list_strings['stic_allocations_types_list']['direct'] = 'Zuzena';
+$app_list_strings['stic_allocations_types_list']['indirect'] = 'Zeharkakoa';
 
 $app_list_strings['stic_allocations_amount_fields_list'][''] = '';
-$app_list_strings['stic_allocations_amount_fields_list']['total_amount'] = 'Zenbateko Osoa';
-$app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Zenbateko Garbia';
-$app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Zenbateko Gordina';
-$app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Zergaren Zenbatekoa';
-$app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Beste bat';
+$app_list_strings['stic_allocations_amount_fields_list']['irpf'] = 'IRPF atxikipena';
+$app_list_strings['stic_allocations_amount_fields_list']['ss_employee'] = 'Giz. Seg. langilea';
+$app_list_strings['stic_allocations_amount_fields_list']['ss_company'] = 'Giz. Seg. enpresa';
+$app_list_strings['stic_allocations_amount_fields_list']['liquid_amount'] = 'Jasoko den zenbateko likidoa';
+$app_list_strings['stic_allocations_amount_fields_list']['total_cost'] = 'Enpresaren kostu osoa';
+$app_list_strings['stic_allocations_amount_fields_list']['vat_supported'] = 'Jasandako BEZa';
+$app_list_strings['stic_allocations_amount_fields_list']['base_amount'] = 'Oinarri-zenbatekoa';
+$app_list_strings['stic_allocations_amount_fields_list']['amount'] = 'Zenbatekoa';
+
+$app_list_strings['stic_budgets_status_list'][''] = '';
+$app_list_strings['stic_budgets_status_list']['draft'] = 'Zirriborroa';
+$app_list_strings['stic_budgets_status_list']['pending'] = 'Balioztapena zain';
+$app_list_strings['stic_budgets_status_list']['validated'] = 'Balioztatua';
+$app_list_strings['stic_budgets_status_list']['accepted'] = 'Onartua';
+$app_list_strings['stic_budgets_status_list']['discarded'] = 'Baztertua';
 
 $app_list_strings['stic_justifications_status_list'][''] = '';
 $app_list_strings['stic_justifications_status_list']['pending'] = 'Zain';
-$app_list_strings['stic_justifications_status_list']['in_progress'] = 'Abian';
-$app_list_strings['stic_justifications_status_list']['approved'] = 'Onartua';
-$app_list_strings['stic_justifications_status_list']['rejected'] = 'Ukatua';
-$app_list_strings['stic_justifications_status_list']['completed'] = 'Osatua';
+$app_list_strings['stic_justifications_status_list']['working'] = 'Lanean';
+$app_list_strings['stic_justifications_status_list']['submitted'] = 'Aurkeztua';

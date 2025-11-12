@@ -3756,23 +3756,29 @@ $app_list_strings['stic_allocation_proposals_type_list']['personnel'] = 'Personn
 $app_list_strings['stic_allocation_proposals_type_list']['equipment'] = 'Equipment Allocation';
 $app_list_strings['stic_allocation_proposals_type_list']['other'] = 'Other';
 
-// New Allocation Proposals dropdown lists
+// Updated dropdown lists according to lists.md specifications
 $app_list_strings['stic_allocations_types_list'][''] = '';
-$app_list_strings['stic_allocations_types_list']['percentage'] = 'Percentage';
-$app_list_strings['stic_allocations_types_list']['fixed_amount'] = 'Fixed Amount';
-$app_list_strings['stic_allocations_types_list']['hours'] = 'Hours';
-$app_list_strings['stic_allocations_types_list']['other'] = 'Other';
+$app_list_strings['stic_allocations_types_list']['direct'] = 'Direct';
+$app_list_strings['stic_allocations_types_list']['indirect'] = 'Indirect';
 
 $app_list_strings['stic_allocations_amount_fields_list'][''] = '';
-$app_list_strings['stic_allocations_amount_fields_list']['total_amount'] = 'Total Amount';
-$app_list_strings['stic_allocations_amount_fields_list']['net_amount'] = 'Net Amount';
-$app_list_strings['stic_allocations_amount_fields_list']['gross_amount'] = 'Gross Amount';
-$app_list_strings['stic_allocations_amount_fields_list']['tax_amount'] = 'Tax Amount';
-$app_list_strings['stic_allocations_amount_fields_list']['other'] = 'Other';
+$app_list_strings['stic_allocations_amount_fields_list']['irpf'] = 'withholding';
+$app_list_strings['stic_allocations_amount_fields_list']['ss_employee'] = 'Soc. Segurity employee';
+$app_list_strings['stic_allocations_amount_fields_list']['ss_company'] = 'Soc. Segurity company';
+$app_list_strings['stic_allocations_amount_fields_list']['liquid_amount'] = 'Liquid amount to receive';
+$app_list_strings['stic_allocations_amount_fields_list']['total_cost'] = 'Total company cost';
+$app_list_strings['stic_allocations_amount_fields_list']['vat_supported'] = 'VAT supported';
+$app_list_strings['stic_allocations_amount_fields_list']['base_amount'] = 'Base amount';
+$app_list_strings['stic_allocations_amount_fields_list']['amount'] = 'Amount';
+
+$app_list_strings['stic_budgets_status_list'][''] = '';
+$app_list_strings['stic_budgets_status_list']['draft'] = 'Draft';
+$app_list_strings['stic_budgets_status_list']['pending'] = 'Pending validation';
+$app_list_strings['stic_budgets_status_list']['validated'] = 'Validated';
+$app_list_strings['stic_budgets_status_list']['accepted'] = 'Accepted';
+$app_list_strings['stic_budgets_status_list']['discarded'] = 'Discarded';
 
 $app_list_strings['stic_justifications_status_list'][''] = '';
 $app_list_strings['stic_justifications_status_list']['pending'] = 'Pending';
-$app_list_strings['stic_justifications_status_list']['in_progress'] = 'In Progress';
-$app_list_strings['stic_justifications_status_list']['approved'] = 'Approved';
-$app_list_strings['stic_justifications_status_list']['rejected'] = 'Rejected';
-$app_list_strings['stic_justifications_status_list']['completed'] = 'Completed';
+$app_list_strings['stic_justifications_status_list']['working'] = 'Working';
+$app_list_strings['stic_justifications_status_list']['submitted'] = 'Submitted';
