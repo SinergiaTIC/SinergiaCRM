@@ -128,4 +128,27 @@ $layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justificatio
       ),
     ),
 );
+
+// Justifications subpanel
+$layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justifications'] = array (
+    'order' => 100,
+    'module' => 'stic_Justifications',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'title_key' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE',
+    'get_subpanel_data' => 'opportunities_stic_justifications',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array (
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
+    ),
+);
   

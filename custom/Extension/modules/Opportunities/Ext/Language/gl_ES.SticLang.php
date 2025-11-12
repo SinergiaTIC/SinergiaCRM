@@ -97,3 +97,6 @@ $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 
 // Cadeas para a relación con Condicións de Xustificación
 $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE'] = 'Condicións de Xustificación';
+
+// Cadeas para a relación con Xustificacións
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Xustificacións';

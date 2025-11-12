@@ -59,6 +59,10 @@ $viewdefs['stic_Justifications']['DetailView'] = array(
                 'stic_allocations_stic_justifications_name',
             ),
             array(
+                'opportunities_stic_justifications_name',
+                '',
+            ),
+            array(
                 'status',
                 'blocked',
             ),

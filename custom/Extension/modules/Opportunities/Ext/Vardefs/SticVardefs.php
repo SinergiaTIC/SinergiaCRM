@@ -474,3 +474,15 @@ $dictionary["Opportunity"]["fields"]["opportunities_stic_justification_condition
     'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE',
 );
 
+// Relationship with stic_Justifications
+$dictionary["Opportunity"]["fields"]["opportunities_stic_justifications"] = array (
+    'name' => 'opportunities_stic_justifications',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_justifications',
+    'source' => 'non-db',
+    'module' => 'stic_Justifications',
+    'bean_name' => 'stic_Justifications',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE',
+);
+

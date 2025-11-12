@@ -70,3 +70,6 @@ $mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Load participants';
 
 // Strings for Justification Conditions relationship
 $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE'] = 'Justification Conditions';
+
+// Strings for Justifications relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Justifications';

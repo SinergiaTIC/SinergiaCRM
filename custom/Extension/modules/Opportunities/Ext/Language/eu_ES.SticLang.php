@@ -97,3 +97,6 @@ $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';
 
 // Justifikazio Baldintzekiko erlazioarentzako stringak
 $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE'] = 'Justifikazio Baldintzak';
+
+// Justifikazioekin erlazioarentzako stringak
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Justifikazioak';
