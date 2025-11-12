@@ -67,3 +67,6 @@ $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Grants';
 // Strings for Group Opportunities
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Granted accounts';
 $mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Load participants';
+
+// Strings for Justification Conditions relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE'] = 'Justification Conditions';

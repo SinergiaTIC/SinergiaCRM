@@ -47,5 +47,8 @@ $mod_strings = array(
     'LBL_JUSTIFIED_PERCENTAGE' => 'Justified accumulated %',
     'LBL_JUSTIFIED_AMOUNT' => 'Justified accumulated amount',
     'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE' => 'Justifications',
+    'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_OPPORTUNITIES_TITLE' => 'Opportunity',
+    'LBL_OPPORTUNIT378FUNITIES_IDA' => 'Opportunity (related opportunity ID)',
+    'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_NAME' => 'Opportunity Name',
 );
 ?>

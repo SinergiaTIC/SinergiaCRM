@@ -462,3 +462,15 @@ $dictionary['Opportunity']['fields']['lead_source']['massupdate'] = 0;
 // STIC#981
 $dictionary['Opportunity']['fields']['account_name']['massupdate']='1';
 
+// Relationship with stic_Justification_Conditions
+$dictionary["Opportunity"]["fields"]["opportunities_stic_justification_conditions"] = array (
+    'name' => 'opportunities_stic_justification_conditions',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_justification_conditions',
+    'source' => 'non-db',
+    'module' => 'stic_Justification_Conditions',
+    'bean_name' => 'stic_Justification_Conditions',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE',
+);
+

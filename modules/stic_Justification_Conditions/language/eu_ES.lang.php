@@ -47,5 +47,8 @@ $mod_strings = array(
     'LBL_JUSTIFIED_PERCENTAGE' => 'Ehuneko pilatua justifikatua',
     'LBL_JUSTIFIED_AMOUNT' => 'Zenbateko pilatua justifikatua',
     'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE' => 'Justifikazioak',
+    'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_OPPORTUNITIES_TITLE' => 'Dirulaguntza',
+    'LBL_OPPORTUNIT378FUNITIES_IDA' => 'Dirulaguntza (erlazionatutako dirulaguntzaren IDa)',
+    'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_NAME' => 'Dirulaguntzaren Izena',
 );
 ?>

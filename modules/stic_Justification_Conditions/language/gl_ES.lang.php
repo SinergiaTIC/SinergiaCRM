@@ -47,5 +47,8 @@ $mod_strings = array(
     'LBL_JUSTIFIED_PERCENTAGE' => 'Porcentaxe acumulado xustificado',
     'LBL_JUSTIFIED_AMOUNT' => 'Importe acumulado xustificado',
     'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE' => 'Xustificacións',
+    'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_OPPORTUNITIES_TITLE' => 'Subvención',
+    'LBL_OPPORTUNIT378FUNITIES_IDA' => 'Subvención (ID de subvención relacionada)',
+    'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_NAME' => 'Nome de Subvención',
 );
 ?>
