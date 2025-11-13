@@ -3816,3 +3816,43 @@ $app_list_strings['stic_justifications_status_list'][''] = '';
 $app_list_strings['stic_justifications_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_justifications_status_list']['working'] = 'En curso';
 $app_list_strings['stic_justifications_status_list']['submitted'] = 'Presentada';
+
+// stic_Ledger_Accounts dropdown lists
+$app_list_strings['stic_ledger_groups_list'][''] = '';
+$app_list_strings['stic_ledger_groups_list']['1'] = '1 - Financiación';
+$app_list_strings['stic_ledger_groups_list']['2'] = '2 - Activo fijo';
+$app_list_strings['stic_ledger_groups_list']['3'] = '3 - Inventario';
+$app_list_strings['stic_ledger_groups_list']['4'] = '4 - Acreedores y deudores';
+$app_list_strings['stic_ledger_groups_list']['5'] = '5 - Cuentas financieras';
+$app_list_strings['stic_ledger_groups_list']['6'] = '6 - Compras y gastos';
+$app_list_strings['stic_ledger_groups_list']['7'] = '7 - Ventas e ingresos';
+$app_list_strings['stic_ledger_groups_list']['8'] = '8 - Gastos e ingresos extraordinarios';
+$app_list_strings['stic_ledger_groups_list']['9'] = '9 - Contabilidad de gestión';
+
+$app_list_strings['stic_ledger_subgroups_list'][''] = '';
+$app_list_strings['stic_ledger_subgroups_list']['10'] = '10 - Capital';
+$app_list_strings['stic_ledger_subgroups_list']['11'] = '11 - Reservas';
+$app_list_strings['stic_ledger_subgroups_list']['12'] = '12 - Resultados pendientes de aplicación';
+$app_list_strings['stic_ledger_subgroups_list']['13'] = '13 - Resultados del ejercicio';
+$app_list_strings['stic_ledger_subgroups_list']['14'] = '14 - Subvenciones, donaciones y legados';
+$app_list_strings['stic_ledger_subgroups_list']['15'] = '15 - Provisiones';
+$app_list_strings['stic_ledger_subgroups_list']['16'] = '16 - Deudas a largo plazo';
+$app_list_strings['stic_ledger_subgroups_list']['17'] = '17 - Deudas a largo plazo por financiación especial';
+
+$app_list_strings['stic_ledger_accounts_list'][''] = '';
+$app_list_strings['stic_ledger_accounts_list']['100'] = '100 - Capital social';
+$app_list_strings['stic_ledger_accounts_list']['101'] = '101 - Fondo fundacional';
+$app_list_strings['stic_ledger_accounts_list']['110'] = '110 - Prima de emisión';
+$app_list_strings['stic_ledger_accounts_list']['111'] = '111 - Reserva legal';
+$app_list_strings['stic_ledger_accounts_list']['112'] = '112 - Reservas voluntarias';
+$app_list_strings['stic_ledger_accounts_list']['120'] = '120 - Resultados de ejercicios anteriores';
+$app_list_strings['stic_ledger_accounts_list']['129'] = '129 - Resultado del ejercicio';
+$app_list_strings['stic_ledger_accounts_list']['121'] = '121 - Resultados atribuidos a la entidad';
+
+$app_list_strings['stic_ledger_subaccounts_list'][''] = '';
+$app_list_strings['stic_ledger_subaccounts_list']['1000'] = '1000 - Acciones ordinarias';
+$app_list_strings['stic_ledger_subaccounts_list']['1001'] = '1001 - Acciones preferentes';
+$app_list_strings['stic_ledger_subaccounts_list']['1010'] = '1010 - Fondo fundacional - inicial';
+$app_list_strings['stic_ledger_subaccounts_list']['1011'] = '1011 - Fondo fundacional - aumentos';
+$app_list_strings['stic_ledger_subaccounts_list']['1020'] = '1020 - Resultados positivos de ejercicios anteriores';
+$app_list_strings['stic_ledger_subaccounts_list']['1021'] = '1021 - Resultados negativos de ejercicios anteriores';

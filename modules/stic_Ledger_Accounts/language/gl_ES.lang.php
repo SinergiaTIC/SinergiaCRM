@@ -64,4 +64,9 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'Nova Conta Contable',
     'LBL_DEFAULT_PANEL' => 'Información xeral',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
+    'LBL_ACTIVE' => 'Activo',
+    'LBL_GROUP' => 'Grupo',
+    'LBL_SUBGROUP' => 'Subgrupo',
+    'LBL_ACCOUNT' => 'Conta',
+    'LBL_SUBACCOUNT' => 'Subconta',
 );

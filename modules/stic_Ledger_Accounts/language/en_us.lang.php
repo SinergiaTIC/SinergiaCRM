@@ -64,4 +64,9 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'New Ledger Account',
     'LBL_DEFAULT_PANEL' => 'Overview',
     'LBL_PANEL_RECORD_DETAILS' => 'Record details',
+    'LBL_ACTIVE' => 'Active',
+    'LBL_GROUP' => 'Group',
+    'LBL_SUBGROUP' => 'Subgroup',
+    'LBL_ACCOUNT' => 'Account',
+    'LBL_SUBACCOUNT' => 'Subaccount',
 );

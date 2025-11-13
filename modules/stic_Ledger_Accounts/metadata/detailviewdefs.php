@@ -55,6 +55,18 @@ $viewdefs['stic_Ledger_Accounts']['DetailView'] = array(
                 'assigned_user_name',
             ),
             array(
+                'active',
+                'group',
+            ),
+            array(
+                'subgroup',
+                'account',
+            ),
+            array(
+                'subaccount',
+                '',
+            ),
+            array(
                 array(
                     'name' => 'description',
                     'span' => 12,

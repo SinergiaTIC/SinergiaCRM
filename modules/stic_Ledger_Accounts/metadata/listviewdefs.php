@@ -23,15 +23,40 @@
 
 $listViewDefs['stic_Ledger_Accounts'] = array(
     'NAME' => array(
-        'width' => '30%',
+        'width' => '20%',
         'label' => 'LBL_NAME',
         'link' => true,
         'default' => true,
     ),
+    'ACTIVE' => array(
+        'width' => '8%',
+        'label' => 'LBL_ACTIVE',
+        'default' => true,
+    ),
+    'GROUP' => array(
+        'width' => '12%',
+        'label' => 'LBL_GROUP',
+        'default' => true,
+    ),
+    'SUBGROUP' => array(
+        'width' => '12%',
+        'label' => 'LBL_SUBGROUP',
+        'default' => true,
+    ),
+    'ACCOUNT' => array(
+        'width' => '12%',
+        'label' => 'LBL_ACCOUNT',
+        'default' => true,
+    ),
+    'SUBACCOUNT' => array(
+        'width' => '12%',
+        'label' => 'LBL_SUBACCOUNT',
+        'default' => false,
+    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '10%',
         'label' => 'LBL_ASSIGNED_TO',
-        'default' => true,
+        'default' => false,
     ),
     'DATE_ENTERED' => array(
         'width' => '10%',
