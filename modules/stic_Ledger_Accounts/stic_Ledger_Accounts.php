@@ -21,6 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
 class stic_Ledger_Accounts extends Basic
 {
     public $module_dir = 'stic_Ledger_Accounts';
@@ -41,5 +45,59 @@ class stic_Ledger_Accounts extends Basic
     public function __construct()
     {
         parent::__construct();
+    }
+
+    /**
+     * Override the bean's save function to auto-generate the name field
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = false)
+    {
+        $this->fillName();
+
+        // Save the bean
+        parent::save($check_notify);
+    }
+
+    /**
+     * Auto-generate the name field based on dropdown selections
+     */
+    protected function fillName()
+    {
+        // Auto name - concatenate dropdown values with hyphens
+        if (empty($this->name)) {
+            global $app_list_strings;
+            
+            $nameParts = array();
+            
+            // Add group if available
+            if (!empty($this->group) && isset($app_list_strings['stic_ledger_groups_list'][$this->group])) {
+                $nameParts[] = $app_list_strings['stic_ledger_groups_list'][$this->group];
+            }
+            
+            // Add subgroup if available
+            if (!empty($this->subgroup) && isset($app_list_strings['stic_ledger_subgroups_list'][$this->subgroup])) {
+                $nameParts[] = $app_list_strings['stic_ledger_subgroups_list'][$this->subgroup];
+            }
+            
+            // Add account if available
+            if (!empty($this->account) && isset($app_list_strings['stic_ledger_accounts_list'][$this->account])) {
+                $nameParts[] = $app_list_strings['stic_ledger_accounts_list'][$this->account];
+            }
+            
+            // Add subaccount if available
+            if (!empty($this->subaccount) && isset($app_list_strings['stic_ledger_subaccounts_list'][$this->subaccount])) {
+                $nameParts[] = $app_list_strings['stic_ledger_subaccounts_list'][$this->subaccount];
+            }
+            
+            // Join with hyphens if we have parts, otherwise use a default name
+            if (!empty($nameParts)) {
+                $this->name = implode(' - ', $nameParts);
+            } else {
+                $this->name = 'Ledger Account';
+            }
+        }
     }
 }

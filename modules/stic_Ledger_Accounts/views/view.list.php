@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once('include/MVC/View/views/view.detail.php');
+require_once('include/MVC/View/views/view.list.php');
 require_once('SticInclude/Views.php');
 
-class stic_Ledger_AccountsViewDetail extends ViewDetail
+class stic_Ledger_AccountsViewList extends ViewList
 {
     public function __construct()
     {

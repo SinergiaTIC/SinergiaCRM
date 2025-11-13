@@ -43,5 +43,8 @@ class stic_Ledger_AccountsViewEdit extends ViewEdit
     {
         parent::display();
         SticViews::display($this);
+        
+        // Custom JavaScript includes
+        echo getVersionedScript("modules/stic_Ledger_Accounts/Utils.js");
     }
 }

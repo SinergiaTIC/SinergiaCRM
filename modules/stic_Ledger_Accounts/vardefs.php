@@ -126,7 +126,7 @@ if (!class_exists('VardefManager')) {
 VardefManager::createVardef('stic_Ledger_Accounts', 'stic_Ledger_Accounts', array('basic', 'assignable', 'security_groups'));
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Ledger_Accounts']['fields']['name']['required'] = '1'; // Name is required in this module
-$dictionary['stic_Ledger_Accounts']['fields']['name']['importable'] = 'required'; // Name is required for import
+$dictionary['stic_Ledger_Accounts']['fields']['name']['required'] = false; // Name is auto-generated in this module
+$dictionary['stic_Ledger_Accounts']['fields']['name']['importable'] = 'true'; // Name is not required for import (auto-generated)
 $dictionary['stic_Ledger_Accounts']['fields']['name']['audited'] = 1;
 $dictionary['stic_Ledger_Accounts']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
