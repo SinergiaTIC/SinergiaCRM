@@ -72,20 +72,20 @@ class stic_Ledger_Accounts extends Basic
             
             $nameParts = array();
             
-            // Add group if available
-            if (!empty($this->group) && isset($app_list_strings['stic_ledger_groups_list'][$this->group])) {
-                $nameParts[] = $app_list_strings['stic_ledger_groups_list'][$this->group];
-            }
+            // // Add group if available
+            // if (!empty($this->group) && isset($app_list_strings['stic_ledger_groups_list'][$this->group])) {
+            //     $nameParts[] = $app_list_strings['stic_ledger_groups_list'][$this->group];
+            // }
             
-            // Add subgroup if available
-            if (!empty($this->subgroup) && isset($app_list_strings['stic_ledger_subgroups_list'][$this->subgroup])) {
-                $nameParts[] = $app_list_strings['stic_ledger_subgroups_list'][$this->subgroup];
-            }
+            // // Add subgroup if available
+            // if (!empty($this->subgroup) && isset($app_list_strings['stic_ledger_subgroups_list'][$this->subgroup])) {
+            //     $nameParts[] = $app_list_strings['stic_ledger_subgroups_list'][$this->subgroup];
+            // }
             
-            // Add account if available
-            if (!empty($this->account) && isset($app_list_strings['stic_ledger_accounts_list'][$this->account])) {
-                $nameParts[] = $app_list_strings['stic_ledger_accounts_list'][$this->account];
-            }
+            // // Add account if available
+            // if (!empty($this->account) && isset($app_list_strings['stic_ledger_accounts_list'][$this->account])) {
+            //     $nameParts[] = $app_list_strings['stic_ledger_accounts_list'][$this->account];
+            // }
             
             // Add subaccount if available
             if (!empty($this->subaccount) && isset($app_list_strings['stic_ledger_subaccounts_list'][$this->subaccount])) {

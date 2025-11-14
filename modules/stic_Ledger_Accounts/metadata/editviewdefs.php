@@ -45,7 +45,7 @@ $viewdefs['stic_Ledger_Accounts']['EditView'] = array(
             ),
             array(
                 'active',
-                'group',
+                'ledger_group',
             ),
             array(
                 'subgroup',

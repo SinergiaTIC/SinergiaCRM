@@ -33,7 +33,7 @@ $listViewDefs['stic_Ledger_Accounts'] = array(
         'label' => 'LBL_ACTIVE',
         'default' => true,
     ),
-    'GROUP' => array(
+    'LEDGER_GROUP' => array(
         'width' => '12%',
         'label' => 'LBL_GROUP',
         'default' => true,

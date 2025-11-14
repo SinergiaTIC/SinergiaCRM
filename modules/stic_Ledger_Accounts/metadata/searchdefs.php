@@ -30,8 +30,8 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'group' => array(
-                'name' => 'group',
+            'ledger_group' => array(
+                'name' => 'ledger_group',
                 'label' => 'LBL_GROUP',
                 'type' => 'enum',
                 'options' => 'stic_ledger_groups_list',

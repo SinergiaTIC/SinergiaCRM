@@ -41,8 +41,8 @@ $dictionary['stic_Ledger_Accounts'] = array(
             'merge_filter' => 'enabled',
             'studio' => 'visible',
         ),
-        'group' => array(
-            'name' => 'group',
+        'ledger_group' => array(
+            'name' => 'ledger_group',
             'vname' => 'LBL_GROUP',
             'type' => 'enum',
             'options' => 'stic_ledger_groups_list',
