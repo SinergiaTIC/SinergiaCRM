@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'include/MVC/View/views/view.detail.php';
-require_once 'SticInclude/Views.php';
+require_once('include/MVC/View/views/view.list.php');
+require_once('SticInclude/Views.php');
 
-class stic_Allocation_ProposalsViewDetail extends ViewDetail
+class stic_Allocation_ProposalsViewList extends ViewList
 {
     public function __construct()
     {
@@ -34,18 +34,14 @@ class stic_Allocation_ProposalsViewDetail extends ViewDetail
     public function preDisplay()
     {
         parent::preDisplay();
-
         SticViews::preDisplay($this);
-
-        // Write here your custom code
     }
 
     public function display()
     {
         parent::display();
-
         SticViews::display($this);
-
+        
         // Custom JavaScript includes
         echo getVersionedScript("modules/stic_Allocation_Proposals/Utils.js");
     }

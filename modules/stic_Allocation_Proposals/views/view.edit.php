@@ -48,6 +48,7 @@ class stic_Allocation_ProposalsViewEdit extends ViewEdit
 
         SticViews::display($this);
 
-        // Write here your custom code
+        // Custom JavaScript includes
+        echo getVersionedScript("modules/stic_Ledger_Accounts/Utils.js");
     }
 }

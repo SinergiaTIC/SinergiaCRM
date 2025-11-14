@@ -75,33 +75,38 @@ class stic_Allocation_Proposals extends Basic
      */
     public function save($check_notify = false)
     {
-        global $timedate;
+        $this->fillName();
 
-        // Auto-generate name if empty
-        if (empty($this->name)) {
-            $type_display = translate($this->proposal_type, 'stic_allocation_proposals_type_list');
-            if (empty($type_display)) {
-                $type_display = $this->proposal_type;
-            }
-            
-            if (!empty($this->proposal_date)) {
-                $userDate = $timedate->fromDBDate($this->proposal_date);
-                if ($userDate) {
-                    $this->name = $type_display . ' - ' . $userDate->asDBDate();
-                } else {
-                    $this->name = $type_display . ' - ' . $this->proposal_date;
-                }
-            } else {
-                $this->name = $type_display . ' - ' . date('Y-m-d');
-            }
-        }
-
-        // Set approval date if status is approved and no approval date is set
-        if ($this->proposal_status == 'approved' && empty($this->approval_date)) {
-            $this->approval_date = date('Y-m-d');
-        }
-
-        // Call the generic save() function from the SugarBean class
+        // Save the bean
         parent::save($check_notify);
+    }
+
+    /**
+     * Auto-generate the name field based on proposal type and date
+     */
+    protected function fillName() {
+        // Auto name - concatenate proposal type and date
+        if (empty($this->name)) {
+            global $app_list_strings;
+
+            $nameParts = array();
+
+            $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $this->stic_ledger_accounts_ida);
+            if ($ledgerAccountBean){
+                $nameParts[] = $ledgerAccountBean->name;
+            }
+
+            // Add proposal type if available
+            if (!empty($this->proposal_type) && isset($app_list_strings['stic_proposal_type_list'][$this->proposal_type])) {
+                $nameParts[] = $app_list_strings['stic_proposal_type_list'][$this->proposal_type];
+            }
+            // Add proposal payment_amount_field if available
+            if (!empty($this->payment_amount_field) && isset($app_list_strings['stic_allocations_amount_fields_list'][$this->payment_amount_field])) {
+                $nameParts[] = $app_list_strings['stic_allocations_amount_fields_list'][$this->payment_amount_field];
+            }
+
+            // Set the name by joining parts with a hyphen
+            $this->name = implode(' - ', $nameParts);
+        }
     }
 }

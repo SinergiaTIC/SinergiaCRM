@@ -1,4 +1,3 @@
-<?php
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -20,33 +19,29 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+/* HEADER */
+// Set module name
+var module = "stic_Allocation_Proposals";
 
-require_once 'include/MVC/View/views/view.detail.php';
-require_once 'SticInclude/Views.php';
+/* INCLUDES */
 
-class stic_Allocation_ProposalsViewDetail extends ViewDetail
-{
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
-    public function preDisplay()
-    {
-        parent::preDisplay();
+/* VIEWS CUSTOM CODE */
+switch (viewType()) {
+  case "edit":
+  case "quickcreate":
+  case "popup":
+    setAutofill(["name"]);
+    break;
 
-        SticViews::preDisplay($this);
+  case "detail":
+    break;
 
-        // Write here your custom code
-    }
+  case "list":
+    break;
 
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        // Custom JavaScript includes
-        echo getVersionedScript("modules/stic_Allocation_Proposals/Utils.js");
-    }
+  default:
+    break;
 }
+
+/* AUX FUNCTIONS */

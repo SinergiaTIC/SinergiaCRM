@@ -226,7 +226,7 @@ if (!class_exists('VardefManager')) {
 VardefManager::createVardef('stic_Allocation_Proposals', 'stic_Allocation_Proposals', array('basic', 'assignable', 'security_groups'));
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Allocation_Proposals']['fields']['name']['required'] = '1'; // Name is required in this module
-$dictionary['stic_Allocation_Proposals']['fields']['name']['importable'] = 'required'; // Name is required for import
+$dictionary['stic_Allocation_Proposals']['fields']['name']['required'] = '0'; // Name is required in this module
+$dictionary['stic_Allocation_Proposals']['fields']['name']['importable'] = 'true'; // Name is required for import
 $dictionary['stic_Allocation_Proposals']['fields']['name']['audited'] = 1;
 $dictionary['stic_Allocation_Proposals']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
