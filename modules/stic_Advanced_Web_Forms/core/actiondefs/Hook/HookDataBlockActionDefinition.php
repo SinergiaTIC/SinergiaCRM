@@ -44,7 +44,7 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
      * @return string
      */
     protected function getDataBlockParameterText(): string {
-        return translate('LBL_ACTION_DATABLOCK_PARAM_TEXT', 'stic_Advanced_Web_Forms');
+        return translate('LBL_CUSTOM_ACTION_DATABLOCK_PARAM_TEXT', 'stic_Advanced_Web_Forms');
     }
 
     /**
@@ -52,7 +52,7 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
      * @return string
      */
     protected function getDataBlockParameterDescription(): string {
-        return translate('LBL_ACTION_DATABLOCK_PARAM_DESC', 'stic_Advanced_Web_Forms');
+        return translate('LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC', 'stic_Advanced_Web_Forms');
     }
 
     /**

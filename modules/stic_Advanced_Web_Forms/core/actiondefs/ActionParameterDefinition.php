@@ -67,8 +67,8 @@ class ActionParameterDefinition {
     public string $name;                 // Nombre del Parámetro
     public string $text;                 // El texto a mostrar
     public string $description;          // La descripción del parámetro
-    public ActionParameterType $type;    // El tipo de parámetro
-    public ActionDataType $dataType;     // El tipo de dato del parámetro: Obligado si $type es VALUE
+    public ActionParameterType $type = ActionParameterType::VALUE;  // El tipo de parámetro
+    public ActionDataType $dataType = ActionDataType::TEXT;         // El tipo de dato del parámetro: Obligado si $type es VALUE
     public bool $required = true;        // Indica si el parámetro es obligatorio
     public string $defaultValue = '';    // Valor por defecto del parámetro
     /** @var ActionParameterOption[] */

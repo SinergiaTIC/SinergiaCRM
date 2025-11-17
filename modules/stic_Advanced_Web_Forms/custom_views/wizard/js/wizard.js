@@ -202,13 +202,15 @@ class WizardStep2 {
               let rel = this.dataBlockRelationships[datablockId].find(r => r.name == relName);
               let dataBlock_orig = this.formConfig.data_blocks.find(d => d.id == rel.datablock_orig);
               let dataBlock_dest = this.formConfig.data_blocks.find(d => d.id == rel.datablock_dest);
-              let str;
-              if (dataBlock_orig.id == datablockId) {
-                str = `${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
-              } else {
-                str = `${dataBlock_dest.text} ⟵ ${dataBlock_orig.text}`;
+              let str = "";
+              if (dataBlock_orig && dataBlock_dest) {
+                if (dataBlock_orig.id == datablockId) {
+                  str = `${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
+                } else {
+                  str = `${dataBlock_dest.text} ⟵ ${dataBlock_orig.text}`;
+                }
+                str += ` (${rel.text})`;
               }
-              str += ` (${rel.text})`;
               return str;
             },
             
@@ -240,11 +242,11 @@ class WizardStep2 {
               if (this.isNewField) {
                 switch (this.field.type_field) {
                   case 'form':
-                    return utils.translate('LBL_NEW_FIELD_FORM');
+                    return utils.translate('LBL_FIELD_FORM_NEW');
                   case 'unlinked':
-                    return utils.translate('LBL_NEW_FIELD_UNLINKED');
+                    return utils.translate('LBL_FIELD_UNLINKED_NEW');
                   case 'hidden':
-                    return utils.translate('LBL_NEW_FIELD_HIDDEN');
+                    return utils.translate('LBL_FIELD_HIDDEN_NEW');
                 }
               } else {
                 let title = "";
@@ -355,7 +357,7 @@ class WizardStep2 {
              * Retorna el título del modal
              */
             get title() {
-              return utils.translate('LBL_NEW_RELATIONSHIP');
+              return utils.translate('LBL_RELATIONSHIP_NEW');
             },
             /**
              * Retorna el tubtítulo del modal
@@ -370,9 +372,9 @@ class WizardStep2 {
              */
             openCreate(dataBlock) {
               this.dataBlock = dataBlock;
+              this.relationships.resetDataBlockRelationships(); // Forzar recargar relaciones
               this.availableRels = this.relationships.unusedDatablockRelationships(dataBlock.id);
               this.selectedRelName = this.availableRels[0]?.name ?? '';
-              this.relationships.resetDataBlockRelationships(); // Forzar recargar relaciones
               this.isOpen = true;
             },
 
@@ -515,6 +517,8 @@ class WizardStep2 {
         if (!this.field || this.field.type_field  == 'unlinked') return null;
         return this.availableFields.find(f => f.name == this.field?.name); 
       },
+
+      optionValuesRelated: '',
       get optionValuesListName() {
         let listName = utils.getFieldOptions(this.selectedFieldInfo, true);
         if (listName != '') {
@@ -531,7 +535,6 @@ class WizardStep2 {
         }
         return listName;
       },
-      optionValuesRelated: '',
 
       get relatedModule() {
         if (this.field && this.field.type == 'relate') {
@@ -659,7 +662,7 @@ class WizardStep2 {
             }, 50);
             // Set aux OptionValuesRelated var
             if (this.field.type == 'relate') {
-              optionValuesRelated = this.field.value_options.map(o => o.value).join("|");
+              this.optionValuesRelated = this.field.value_options.map(o => o.value).join("|");
             }
           } else {
             if (this.field.type_field == 'hidden' && newArray.length > 0) {
@@ -820,7 +823,7 @@ class WizardStep2 {
       get selectedFieldsText() {
         return this.duplicateDef.fields.length > 0 
                ? this.duplicateDef.fields.map(d => this.dataBlock.fields.find(f => f.name == d)?.text_original).join(', ')
-               : utils.translate('LBL_ACTION_SEL_FIELDS');
+               : utils.translate('LBL_DUPLICATE_FIELDS_SEL_FIELDS');
       },
 
     }
@@ -838,6 +841,32 @@ class WizardStep3 {
       get actions() { return this.flow?.actions ?? []; },
 
       init() {
+      },
+    };
+  }
+
+  static addActionFlowxData(initial_formConfig) {
+    return {
+      formConfig: initial_formConfig,
+
+      creatingAction: false,
+
+      newAction: {flow:''},
+      newDataBlock: {module:'', text:''},
+      get isValid() { 
+        return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
+      },
+
+      handleAddDatablockModule() {
+        this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
+        this.creatingDataBcreatingActionlock = false;
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+      },
+
+      init() {
+        if (this.formConfig && !this.formConfig.data_blocks.some(b => b.module!='')) {
+          this.creatingAction = true;
+        }
       },
     };
   }

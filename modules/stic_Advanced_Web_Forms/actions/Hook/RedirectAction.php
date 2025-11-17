@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
+include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 
 /**
  * RedirectAction

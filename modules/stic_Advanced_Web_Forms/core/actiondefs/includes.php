@@ -25,25 +25,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."ActionParameterDefinition.php";
-include_once __DIR__."ActionSelectorOptionDefinition.php";
-include_once __DIR__."ActionDefinition.php";
+include_once __DIR__."/ActionParameterOption.php";
+include_once __DIR__."/ActionParameterDefinition.php";
+include_once __DIR__."/ActionSelectorOptionDefinition.php";
+include_once __DIR__."/ActionDefinition.php";
 
-include_once __DIR__."ActionParameterDefinitionDTO.php";
-include_once __DIR__."ActionSelectorOptionDefinitionDTO.php";
-include_once __DIR__."ActionDefinitionDTO.php";
+include_once __DIR__."/ActionParameterDefinitionDTO.php";
+include_once __DIR__."/ActionSelectorOptionDefinitionDTO.php";
+include_once __DIR__."/ActionDefinitionDTO.php";
 
-include_once __DIR__."ServerActionDefinition.php";
-include_once __DIR__."ITerminalAction.php";
+include_once __DIR__."/ServerActionDefinition.php";
+include_once __DIR__."/ITerminalAction.php";
 
-include_once __DIR__."UI/UIActionDefinition.php";
+include_once __DIR__."/UI/UIActionDefinition.php";
 
-include_once __DIR__."DataProvider/DataProviderActionDefinition.php";
+include_once __DIR__."/DataProvider/DataProviderActionDefinition.php";
 
-include_once __DIR__."Hook/HookActionDefinition.php";
-include_once __DIR__."Hook/HookDataBlockActionDefinition.php";
-include_once __DIR__."Hook/HookBeanActionDefinition.php";
+include_once __DIR__."/Hook/HookActionDefinition.php";
+include_once __DIR__."/Hook/HookDataBlockActionDefinition.php";
+include_once __DIR__."/Hook/HookBeanActionDefinition.php";
 
-include_once __DIR__."Deferred/DeferredActionDefinition.php";
+include_once __DIR__."/Deferred/DeferredActionDefinition.php";
 
-include_once __DIR__."Group/GroupActionDefinition.php";
+include_once __DIR__."/Group/GroupActionDefinition.php";

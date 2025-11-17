@@ -127,6 +127,29 @@ class utils {
     return null;
   }
 
+  static _cachedActions = [];
+  static getServerActions() {
+    if (utils._cachedActions.length == 0) {
+      $.ajax({
+        url: "index.php",
+        type: "POST",
+        async: false,
+        dataType: "json",
+        data: {
+          module: "stic_Advanced_Web_Forms",
+          action: "getServerActions",
+        },
+        success: function (response) {
+          utils._cachedActions = response;
+        },
+        error: function (xhr, status, error) {
+          console.error("Error retrieving Server Actions", status, error, xhr.responseText);
+        },
+      });
+    }
+    return utils._cachedActions;
+  }
+
   static newId(prefix = "") {
     return prefix + Date.now().toString(36) + Math.random().toString(36).substring(2);
   }

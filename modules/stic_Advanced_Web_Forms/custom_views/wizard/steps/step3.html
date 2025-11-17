@@ -1,24 +1,201 @@
 <!-- Main Panel -->
 <main class="wizard-main flex-fill d-flex flex-column" x-data="WizardStep3.mainStep3xData();">
+  <div class="row mb-3" x-data="WizardStep3.addActionFlowxData(formConfig);">
+    <button type="button" class="btn w-auto" @click="creatingAction=true;" x-text="utils.translate('LBL_ACTION_ADD')"></button>
 
-    <!-- Flows -->
-    <div class="flex-fill border rounded p-2 overflow-auto">
-        <h2 class="mb-2" x-text="utils.translate('LBL_FLOWS')"></h2>
-        <div class="stic-tabs">
-            <template x-for="flow in formConfig.flows" :key="flow.id">
-                <div class="stic-tab">
-                    <input class="form-check-input" type="radio" :id="`flowTab${flow.id}`" x-model="flowTabSelected" :value="`${flow.id}`"/>
-                    <label class="form-label" :for="`flowTab${flow.id}`" x-text="flow.getText()"></label>
+    <!-- Modal: Create Action -->
+    <div x-show="creatingAction" x-cloak class="custom-modal-wrapper">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalCreateAction">
+        <div class="custom-modal-content">
+          <div class="custom-modal-header">
+            <h3 class="modal-title" id="modalCreateAction" x-text="utils.translate('LBL_ACTION_NEW')"></h3>
+            <button type="button" class="btn-close" @click="creatingAction = false;"></button>
+          </div>
+          <div class="custom-modal-body">
+            <form id="newActionModalForm">
+              <div class="row align-items-end">
+                <!-- Flow -->
+                <div class="col-3">
+                    <label for="modalCreateAction_flow" class="form-label" x-text="utils.translateForFieldLabel('LBL_FLOW')"></label>
+                    <select id="modalCreateAction_flow" class="form-select" x-model="newAction.flow">
+                        <template x-for="flow in formConfig.flows" :key="flow.id">
+                            <option :value="flow.id" x-text="flow.getText()"></option>
+                        </template>
+                    </select>
                 </div>
-            </template>
-        </div>
-        <div class="stic-tabcontent">
-            <!-- Actions -->
-            <template x-for="action in actions" :key="action.id">
-                <div class="stic-tabcontent">
-                    <h3 class="card-title" x-text="action.text"></h3>
+
+                <!-- Action -->
+                <div class="col-3">
+                    <label for="modalCreateAction_action" class="form-label" x-text="utils.translateForFieldLabel('LBL_ACTION')"></label>
+                    <select id="modalCreateAction_action" class="form-select" x-model="newAction.flow">
+                        <template x-for="action in formConfig.flows" :key="flow.id">
+                            <option :value="flow.id" x-text="flow.getText()"></option>
+                        </template>
+                    </select>
                 </div>
-            </template>
+
+                
+                <!-- Module -->
+                <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
+                <!-- Data Block name -->
+                <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_DATABLOCK_NEW" 
+                                 x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
+                                 keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
+              </div>
+            </form>
+          </div>
+
+          <!-- Accept / Cancel Buttons -->
+          <div class="custom-modal-footer">
+            <button type="button" class="col-2 btn btn-secondary" id="cancelAddDataBlockModuleButton" @click="creatingAction = false;" 
+                    x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" id="addDataBlockModuleButton" @click="handleAddDatablockModule();"
+                    x-bind:disabled="!isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+  <!-- Flows -->
+  <div class="flex-fill border rounded p-2 overflow-auto">
+    <h2 class="mb-2" x-text="utils.translate('LBL_FLOWS')"></h2>
+    <div class="stic-tabs">
+      <template x-for="flow in formConfig.flows" :key="flow.id">
+        <div class="stic-tab">
+          <input class="form-check-input" type="radio" :id="`flowTab${flow.id}`" x-model="flowTabSelected" :value="`${flow.id}`"/>
+          <label class="form-label" :for="`flowTab${flow.id}`" x-text="flow.getText()"></label>
+        </div>
+      </template>
+    </div>
+    <div class="stic-tabcontent">
+        <!-- Actions -->
+        <table class="table table-bordered align-middle" >
+            <colgroup>
+                <col style="width:20%">
+                <col style="width:20%">
+                <col style="width:45%">
+                <col style="width:15%">
+            </colgroup>            
+            <thead class="table-light">
+                <tr>
+                    <th x-text="utils.translate('LBL_ACTION_NAME')"></th>
+                    <th x-text="utils.translate('LBL_ACTION_CATEGORY')"></th>
+                    <th x-text="utils.translate('LBL_ACTION_PARAMETERS')"></th>
+                    <th x-text="utils.translate('LBL_ACTION_ACTIONS')"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="stic-tablecard-start">
+                    <!-- Name -->
+                    <td><strong>[Enviar correu]</strong></td>
+                    <!-- Category -->
+                    <td>[Comunicacions]</td>
+                    <!-- Parameters -->
+                    <td rowspan="2" class="p-0">
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                                <tr>
+                                    <th class="w-25">Assumpte</th>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm d-inline-block w-auto" value="[Notificació]">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Destinatari</th>
+                                    <td>[camp.email]</td>
+                                </tr>
+                                <tr>
+                                    <th>Prioritat</th>
+                                    <td>[Alta]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <!-- Buttons -->
+                    <td rowspan="2">
+                        <div class="d-inline-flex">
+                            <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
+                                    :title="utils.translate('LBL_BUTTON_EDIT')">
+                                <span class="suitepicon suitepicon-action-edit"></span>
+                            </button>
+                            <template x-if="field.isFieldInForm()">
+                                <div class="input-group" role="group">
+                                    <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
+                                            :title="utils.translate('LBL_BUTTON_MOVE_UP')">
+                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                    </button>
+                                    <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
+                                            :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                    </button>
+                                </div>
+                            </template>
+                            <button type="button" class="btn ms-2" :disabled="field.required" 
+                                    @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                    :title="utils.translate('LBL_BUTTON_DELETE')">
+                                <span class="suitepicon suitepicon-action-delete"></span>
+                            </button>
+                        </div> 
+                    </td>
+                </tr>
+                <tr class="stic-tablecard-end">
+                    <td colspan="2" class="text-muted small">
+                        [Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.][Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.][Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.][Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.]
+                    </td>
+                </tr>
+                <tr class="stic-tablecard-start">
+                    <!-- Name -->
+                    <td><strong>[Enviar correu]</strong></td>
+                    <!-- Category -->
+                    <td>[Comunicacions]</td>
+                    <!-- Parameters -->
+                    <td rowspan="2">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>[Assumpte:]</strong> <input type="text" class="form-control form-control-sm d-inline-block w-auto" value="[Notificació]" /></li>
+                            <li><strong>[Destinatari:]</strong> <span>[camp.email]</span></li>
+                            <li><strong>[Prioritat:]</strong>[Alta]</li>
+                        </ul>
+                    </td>
+                    <!-- Buttons -->
+                    <td rowspan="2">
+                        <div class="d-inline-flex">
+                            <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
+                                    :title="utils.translate('LBL_BUTTON_EDIT')">
+                                <span class="suitepicon suitepicon-action-edit"></span>
+                            </button>
+                            <template x-if="field.isFieldInForm()">
+                                <div class="input-group" role="group">
+                                    <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
+                                            :title="utils.translate('LBL_BUTTON_MOVE_UP')">
+                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                    </button>
+                                    <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
+                                            :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                    </button>
+                                </div>
+                            </template>
+                            <button type="button" class="btn ms-2" :disabled="field.required" 
+                                    @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                    :title="utils.translate('LBL_BUTTON_DELETE')">
+                                <span class="suitepicon suitepicon-action-delete"></span>
+                            </button>
+                        </div> 
+                    </td>
+                </tr>
+                <tr class="stic-tablecard-end">
+                    <td colspan="2" class="text-muted small">
+                        [Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.]
+                    </td>
+                </tr>                
+            </tbody>
+        </table>    
+      <template x-for="action in actions" :key="action.id">
+        <div class="stic-tabcontent">
+          <h3 class="card-title" x-text="action.text"></h3>
+        </div>
+      </template>
+    </div>
+  </div>
 </main>

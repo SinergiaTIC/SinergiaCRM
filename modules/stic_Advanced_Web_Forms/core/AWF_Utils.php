@@ -102,7 +102,7 @@ class AWF_Utils {
      */
     public static function generateSummaryHtml(ExecutionContext $context): string
     {
-        $html = "<h1>".translate('LBL_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
+        $html = "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
         $formData = $context->formData; 
         
         foreach ($context->formConfig->data_blocks as $block) {

@@ -27,7 +27,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 enum ActionScope: string {
     case FORM  = 'form';
-    case BLOCK = 'block';
     case FIELD = 'field';
 }
 
@@ -46,14 +45,14 @@ abstract class ActionDefinition {
     public bool $isCommon = false;
    
     public string $category;
-    public ActionScope $scope;
+    public ActionScope $scope = ActionScope::FORM;
     /** @var string[] */
     public array $supportedModules = [];       // moduleList
     /** @var string[] */
     public array $supportedFieldSubTypes = []; // stic_advanced_web_forms_field_in_form_subtype_list
     public int $order = 0;
 
-    protected string $baseLabel = 'LBL_ACTION';
+    protected string $baseLabel = 'LBL_CUSTOM_ACTION';
     /**
      * Traduce una subclave al idioma actual (usando el baseLabel de la acción y el módulo stic_Advanced_Web_Forms)
      * @param string $subkey La subclave a traducir
@@ -94,7 +93,7 @@ abstract class ActionDefinition {
      * Retorna la descripción de la acción
      * @return string La descripción de la acción
      */
-    public function getDescription(): string { return translate('DESCRIPTION'); }
+    public function getDescription(): string { return $this->translate('DESC'); }
 
     /**
      * Retorna los parámetros definidos para la acción

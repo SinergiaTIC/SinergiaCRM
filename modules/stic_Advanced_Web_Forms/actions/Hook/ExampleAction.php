@@ -26,7 +26,7 @@ if (! defined('sugarEntry') || ! sugarEntry) {
 }
 
 // Cargamos todas las clases necesarias para el proceso de Acciones
-include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
+include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 
 /**
  * ExampleAction
@@ -79,7 +79,7 @@ class ExampleAction extends HookActionDefinition
     /**
      * getDescription()
      * (Opcional) Devuelve la descripción de la acción.
-     * Se recomienda NO sobreescribir esta función y usar la traducción de 'LBL_EXAMPLE_ACTION_DESCRIPTION'.
+     * Se recomienda NO sobreescribir esta función y usar la traducción de 'LBL_EXAMPLE_ACTION_DESC'.
      * @return string La descripción a mostrar en el wizard.
      */
     public function getDescription(): string

@@ -64,12 +64,12 @@ class ActionDiscoveryService {
         // Instanciamos las definiciones de acción descubiertas
         $discoveredActions = [];
         foreach ($discoveredFiles as $actionName => $filePath) {
-            require_once($filePath);
-            if (!class_exists($actionName)) {
-                $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": File {$filePath} exists, but class {$actionName} is not defined.");
-                continue;
-            }
             try {
+                // Si hay un error de sintaxi, se lanzará un ParseError, capturado por el catch (\Throwable $t)
+                require_once($filePath);
+                if (!class_exists($actionName)) {
+                    throw new \RuntimeException("Line ".__LINE__.": ".__METHOD__.": File {$filePath} exists, but class {$actionName} is not defined.");
+                }
                 $reflection = new \ReflectionClass($actionName);
                 if ($reflection->isAbstract() || !$reflection->isSubclassOf(ActionDefinition::class)) { 
                     $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Class {$actionName} is abstract or not a subclass of ActionDefinition.");
@@ -77,10 +77,12 @@ class ActionDiscoveryService {
                 }
                 /** @var ActionDefinition $actionInstance */
                 $actionInstance = new $actionName();
-                $discoveredActions[$actionName] = $actionInstance;
+                if ($actionInstance->isActive) {
+                    $discoveredActions[$actionName] = $actionInstance;
+                }
 
-            } catch (\Exception $e) {
-                $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Error creating an instance for action {$actionName}: " . $e->getMessage());
+            } catch (\Throwable $t) {
+                $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Error discovering the action {$actionName}: " . $t->getMessage());
             }
         }
 

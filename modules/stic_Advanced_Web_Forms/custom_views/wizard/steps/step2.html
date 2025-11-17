@@ -2,7 +2,7 @@
 <main class="wizard-main flex-fill d-flex flex-column" x-data="WizardStep2.mainStep2xData();">
   <!-- Add DataBlock from Module -->
   <div class="row mb-3" x-data="WizardStep2.addDataBlockModulexData(formConfig);">
-    <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" x-text="utils.translate('LBL_ADD_DATABLOCK')"></button>
+    <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" x-text="utils.translate('LBL_DATABLOCK_ADD')"></button>
 
     <!-- Modal: Create DataBlock -->
     <div x-show="creatingDataBlock" x-cloak class="custom-modal-wrapper">
@@ -10,7 +10,7 @@
       <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalCreateDataBlock">
         <div class="custom-modal-content">
           <div class="custom-modal-header">
-            <h3 class="modal-title" id="modalCreateDataBlock" x-text="utils.translate('LBL_NEW_DATABLOCK')"></h3>
+            <h3 class="modal-title" id="modalCreateDataBlock" x-text="utils.translate('LBL_DATABLOCK_NEW')"></h3>
             <button type="button" class="btn-close" @click="creatingDataBlock = false;"></button>
           </div>
           <div class="custom-modal-body">
@@ -19,7 +19,7 @@
                 <!-- Module -->
                 <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
                 <!-- Data Block name -->
-                <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_NEW_DATABLOCK" 
+                <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_DATABLOCK_NEW" 
                                  x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
                                  keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
               </div>
@@ -63,7 +63,7 @@
               <!-- Delete DataBlock -->
               <template x-if="!item.required">
                 <button type="button" class="btn ms-2" @click="deleteDataBlock(item);"
-                        :title="utils.translate('LBL_ACTION_DELETE')">
+                        :title="utils.translate('LBL_BUTTON_DELETE')">
                   <span class="suitepicon suitepicon-action-delete"></span>
                 </button>
               </template>
@@ -97,15 +97,15 @@
                 <div class="mb-2">
                   <!-- Button: Add Field in Form -->
                   <template x-if="item.module && fieldTabSelected=='form'">
-                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_ADD_FIELD_FORM')"></button>
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_FIELD_FORM_ADD')"></button>
                   </template>
                   <!-- Button: Add Unlinked Field in Form -->
                   <template x-if="fieldTabSelected=='form'">
-                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_ADD_FIELD_UNLINKED')"></button>
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_FIELD_UNLINKED_ADD')"></button>
                   </template>
                   <!-- Button: Add Hidden Field -->
                   <template x-if="item.module && fieldTabSelected=='hidden'">
-                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'hidden')" x-text="utils.translate('LBL_ADD_FIELD_HIDDEN')"></button>
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'hidden')" x-text="utils.translate('LBL_FIELD_HIDDEN_ADD')"></button>
                   </template>
                 </div>
                 <!-- Fields -->
@@ -119,7 +119,7 @@
                       <th x-text="utils.translate('LBL_FIELD_VALUE_TYPE')" x-show="canShowFieldColumn('value_type')"></th>
                       <th x-text="utils.translate('LBL_FIELD_VALUE')" x-show="canShowFieldColumn('value_text')"></th>
                       <th x-text="utils.translate('LBL_FIELD_REQUIRED_IN_FORM')" x-show="canShowFieldColumn('required_in_form')"></th>
-                      <th x-text="utils.translate('LBL_ACTIONS')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_ACTIONS')"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -156,23 +156,24 @@
                           <td >
                             <div class="d-inline-flex">
                               <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
-                                      :title="utils.translate('LBL_ACTION_EDIT')">
+                                      :title="utils.translate('LBL_BUTTON_EDIT')">
                                 <span class="suitepicon suitepicon-action-edit"></span>
                               </button>
                               <template x-if="field.isFieldInForm()">
                                 <div class="input-group" role="group">
                                   <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
-                                          :title="utils.translate('LBL_ACTION_MOVE_UP')">
+                                          :title="utils.translate('LBL_BUTTON_MOVE_UP')">
                                     <span class="suitepicon suitepicon-action-move-up"></span>
                                   </button>
                                   <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
-                                          :title="utils.translate('LBL_ACTION_MOVE_DOWN')">
+                                          :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
                                     <span class="suitepicon suitepicon-action-move-down"></span>
                                   </button>
                                 </div>
                               </template>
-                              <button type="button" class="btn ms-2" :disabled="field.required" @click="item.deleteField(field.name);"
-                                      :title="utils.translate('LBL_ACTION_DELETE')">
+                              <button type="button" class="btn ms-2" :disabled="field.required" 
+                                      @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                      :title="utils.translate('LBL_BUTTON_DELETE')">
                                 <span class="suitepicon suitepicon-action-delete"></span>
                               </button>
                             </div>
@@ -229,7 +230,7 @@
                       <!-- Delete Button -->
                       <td>
                         <template x-if="index>0">
-                          <button type="button" class="btn" @click="item.duplicate_detections.splice(index, 1);" :title="utils.translate('LBL_ACTION_DELETE')">
+                          <button type="button" class="btn" @click="item.duplicate_detections.splice(index, 1);" :title="utils.translate('LBL_BUTTON_DELETE')">
                             <span class="suitepicon suitepicon-action-delete"></span>
                           </button>
                         </template>
@@ -238,7 +239,7 @@
                   </template>
                 </tbody>
               </table>
-              <button type="button" class="btn" @click="item.duplicate_detections.push(new AWF_DuplicateDetection());" :title="utils.translate('LBL_ACTION_ADD')">
+              <button type="button" class="btn" @click="item.duplicate_detections.push(new AWF_DuplicateDetection());" :title="utils.translate('LBL_DUPLICATE_CHECK_ADD')">
                 <span class="suitepicon suitepicon-action-plus"></span>
               </button>
             </div>
@@ -249,7 +250,7 @@
               <!-- Description -->
               <p x-text="utils.translate('LBL_RELATIONSHIPS_DESC')"></p>
               <!-- Button -->
-              <button type="button" class="btn mb-2" @click="$store.relCreator.openCreate(item)" x-text="utils.translate('LBL_ADD_RELATIONSHIP')"></button>
+              <button type="button" class="btn mb-2" @click="$store.relCreator.openCreate(item)" x-text="utils.translate('LBL_RELATIONSHIP_ADD')"></button>
 
               <!-- Relationships -->
               <table class="table table-bordered table-striped">
@@ -258,7 +259,7 @@
                     <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
                     <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_ORIG')"></th>
                     <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_DEST')"></th>
-                    <th x-text="utils.translate('LBL_ACTIONS')"></th>
+                    <th x-text="utils.translate('LBL_RELATIONSHIP_ACTIONS')"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -273,8 +274,9 @@
                       <!-- Buttons -->
                       <td >
                         <div class="d-inline-flex">
-                          <!-- <button type="button" class="btn ms-2" :disabled="field.required" @click="item.deleteField(field.name);"
-                                  :title="utils.translate('LBL_ACTION_DELETE')">
+                          <!-- <button type="button" class="btn ms-2" :disabled="field.required" 
+                                  @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                  :title="utils.translate('LBL_BUTTON_DELETE')">
                             <span class="suitepicon suitepicon-action-delete"></span>
                           </button> -->
                         </div>
@@ -321,11 +323,11 @@
               <div class="mb-2">
                 <!-- Button: Convert to Field in Form -->
                 <template x-if="isEdit && field && field.type_field=='hidden'">
-                  <button type="button" class="btn" @click="convertFieldToType('form')" x-text="utils.translate('LBL_CONVERT_TO_FIELD_FORM')"></button>
+                  <button type="button" class="btn" @click="convertFieldToType('form')" x-text="utils.translate('LBL_FIELD_CONVERT_TO_FIELD_FORM')"></button>
                 </template>
                 <!-- Button: Convert to Hidden Field -->
                 <template x-if="isEdit && field && field.type_field=='form'">
-                  <button type="button" class="btn" @click="convertFieldToType('hidden')" x-text="utils.translate('LBL_CONVERT_TO_FIELD_HIDDEN')"></button>
+                  <button type="button" class="btn" @click="convertFieldToType('hidden')" x-text="utils.translate('LBL_FIELD_CONVERT_TO_FIELD_HIDDEN')"></button>
                 </template>
               </div>
               <div class="card">
@@ -360,8 +362,10 @@
                       <div class="col-3">
                         <label for="modalField_field" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
                         <!-- Show all fields -->
-                        <div class="text-muted form-check form-switch small">
+                        <div class="text-muted form-check form-switch small" x-init="utils.setInlineHelpQtip()">
                           <label for="modalField_field_allcheck" class="form-label" x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
+                          <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                          <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELDS_SHOW_ALL_DESC')"></div>
                           <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_field_allcheck" x-model="showAllFields"/>
                         </div>
                         <select id="modalField_field" class="form-select" x-model="field.name">
@@ -448,7 +452,7 @@
                                   <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></th>
                                 </template>
                                 <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_LABEL')"></th>
-                                <th x-text="utils.translate('LBL_ACTIONS')"></th>
+                                <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ACTIONS')"></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -482,15 +486,15 @@
                                   <!-- Buttons -->
                                   <td class="d-flex">
                                     <div class="input-group">
-                                      <button type="button" class="btn" :disabled="index === 0" @click="moveUp(index)" :title="utils.translate('LBL_ACTION_MOVE_UP')">
+                                      <button type="button" class="btn" :disabled="index === 0" @click="moveUp(index)" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
                                         <span class="suitepicon suitepicon-action-move-up"></span>
                                       </button>
-                                      <button type="button" class="btn" :disabled="index === field.value_options.length - 1" @click="moveDown(index)" :title="utils.translate('LBL_ACTION_MOVE_DOWN')">
+                                      <button type="button" class="btn" :disabled="index === field.value_options.length - 1" @click="moveDown(index)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
                                         <span class="suitepicon suitepicon-action-move-down"></span>
                                       </button>
                                     </div>
                                     <template x-if="field.type_field == 'unlinked'">
-                                      <button type="button" class="btn ms-2" @click="field.value_options.splice(index, 1)" :title="utils.translate('LBL_ACTION_DELETE')">
+                                      <button type="button" class="btn ms-2" @click="field.value_options.splice(index, 1)" :title="utils.translate('LBL_BUTTON_DELETE')">
                                         <span class="suitepicon suitepicon-action-delete"></span>
                                       </button>
                                     </template>
@@ -500,7 +504,7 @@
                             </tbody>
                           </table>
                           <template x-if="field.type_field == 'unlinked'">
-                            <button type="button" class="btn" @click="field.value_options.push(new AWF_ValueOption());" :title="utils.translate('LBL_ACTION_ADD')">
+                            <button type="button" class="btn" @click="field.value_options.push(new AWF_ValueOption());" :title="utils.translate('LBL_BUTTON_ADD')">
                               <span class="suitepicon suitepicon-action-plus"></span>
                             </button>
                           </template>
@@ -671,7 +675,7 @@
                 </div>
                 <!-- New Data Block -->
                 <div class="col-3" x-show="$store.relCreator.isNewDataBlock">
-                  <label for="modalRel_NewDataBlockText" class="form-label" x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK')"></label>
+                  <label for="modalRel_NewDataBlockText" class="form-label" x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP_NEW_DATABLOCK')"></label>
                   <input id="modalRel_NewDataBlockText" type="text" class="form-control" x-model="$store.relCreator.newDataBlockText"/>
                 </div>
               </div>

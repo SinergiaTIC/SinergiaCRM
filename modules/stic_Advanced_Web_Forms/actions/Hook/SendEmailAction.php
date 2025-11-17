@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once "modules/stic_Advanced_Web_Forms/actions/CoreActions.php";
+include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 
 class SendEmailAction extends HookActionDefinition {
 
@@ -42,69 +42,69 @@ class SendEmailAction extends HookActionDefinition {
      */
     public function getParameters(): array {
         return [
-            // Plantilla de email
-            new ActionParameterDefinition(
-                name: 'template',
-                text: $this->translate('PARAM_TEMPLATE_TEXT'),
-                description: $this->translate('PARAM_TEMPLATE_DESC'),
-                type: ActionParameterType::CRM_RECORD,
-                supportedModules: ['EmailTemplates'],
-                required: true,
-            ),
-            // Bloque de datos base para las variables de la plantilla
-            new ActionParameterDefinition(
-                name: 'baseDataBlock',
-                text: $this->translate('PARAM_BASEDATABLOCK_TEXT'),
-                description: $this->translate('PARAM_BASEDATABLOCK_DESC'),
-                type: ActionParameterType::DATA_BLOCK,
-                required: false,
-            ),
-            // Destinatario del email
-            new ActionParameterDefinition(
-                name: 'recipientSource',
-                text: $this->translate('PARAM_RECIPIENTSOURCE_TEXT'),
-                description: $this->translate('PARAM_RECIPIENTSOURCE_DESC'),
-                type: ActionParameterType::OPTION_SELECTOR,
-                required: true,
-                selectorOptions: [
-                    // Opción 1: Campo definido en el formulario
-                    new ActionSelectorOptionDefinition(
-                        name: 'field',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIELD_TEXT'),
-                        resolvedType: ActionParameterType::FIELD,
-                        supportedDataTypes: [ActionDataType::EMAIL, ActionDataType::TEXT]
-                    ),
-                    // Opción 2: El email de un bloque de datos (Accounts/Contacts/Leads/Users)
-                    new ActionSelectorOptionDefinition(
-                        name: 'dataBlock',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT'),
-                        resolvedType: ActionParameterType::DATA_BLOCK,
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
-                    ),
-                    // Opción 3: Email fijo
-                    new ActionSelectorOptionDefinition(
-                        name: 'fixed',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT'),
-                        resolvedType: ActionParameterType::VALUE,
-                        supportedDataTypes: [ActionDataType::EMAIL],
-                    ),
-                    // Opción 4: Email de un registro fijo del CRM
-                    new ActionSelectorOptionDefinition(
-                        name: 'beanId',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_BEANID_TEXT'),
-                        resolvedType: ActionParameterType::CRM_RECORD,
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
-                    ),
-                    // Opción 5: Campo relacionado con un módulo válido (Accounts/Contacts/Leads/Users)
-                    new ActionSelectorOptionDefinition(
-                        name: 'relatedField',
-                        text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT'),
-                        resolvedType: ActionParameterType::FIELD,
-                        supportedDataTypes: [ActionDataType::RELATE],
-                        supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
-                    ),
-                ],
-            ),
+            // // Plantilla de email
+            // $paramTemplate = new ActionParameterDefinition();
+            // $paramTemplate->name = 'template';
+            // $paramTemplate->text = $this->translate('PARAM_TEMPLATE_TEXT');
+            // $paramTemplate->description = $this->translate('PARAM_TEMPLATE_DESC');
+            // $paramTemplate->type = ActionParameterType::CRM_RECORD;
+            // $paramTemplate->supportedModules = ['EmailTemplates'];
+            // $paramTemplate->required = true;
+
+            // // Bloque de datos base para las variables de la plantilla
+            // new ActionParameterDefinition(
+            //     name: 'baseDataBlock',
+            //     text: $this->translate('PARAM_BASEDATABLOCK_TEXT'),
+            //     description: $this->translate('PARAM_BASEDATABLOCK_DESC'),
+            //     type: ActionParameterType::DATA_BLOCK,
+            //     required: false,
+            // ),
+            // // Destinatario del email
+            // new ActionParameterDefinition(
+            //     name: 'recipientSource',
+            //     text: $this->translate('PARAM_RECIPIENTSOURCE_TEXT'),
+            //     description: $this->translate('PARAM_RECIPIENTSOURCE_DESC'),
+            //     type: ActionParameterType::OPTION_SELECTOR,
+            //     required: true,
+            //     selectorOptions: [
+            //         // Opción 1: Campo definido en el formulario
+            //         new ActionSelectorOptionDefinition(
+            //             name: 'field',
+            //             text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIELD_TEXT'),
+            //             resolvedType: ActionParameterType::FIELD,
+            //             supportedDataTypes: [ActionDataType::EMAIL, ActionDataType::TEXT]
+            //         ),
+            //         // Opción 2: El email de un bloque de datos (Accounts/Contacts/Leads/Users)
+            //         new ActionSelectorOptionDefinition(
+            //             name: 'dataBlock',
+            //             text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT'),
+            //             resolvedType: ActionParameterType::DATA_BLOCK,
+            //             supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
+            //         ),
+            //         // Opción 3: Email fijo
+            //         new ActionSelectorOptionDefinition(
+            //             name: 'fixed',
+            //             text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT'),
+            //             resolvedType: ActionParameterType::VALUE,
+            //             supportedDataTypes: [ActionDataType::EMAIL],
+            //         ),
+            //         // Opción 4: Email de un registro fijo del CRM
+            //         new ActionSelectorOptionDefinition(
+            //             name: 'beanId',
+            //             text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_BEANID_TEXT'),
+            //             resolvedType: ActionParameterType::CRM_RECORD,
+            //             supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
+            //         ),
+            //         // Opción 5: Campo relacionado con un módulo válido (Accounts/Contacts/Leads/Users)
+            //         new ActionSelectorOptionDefinition(
+            //             name: 'relatedField',
+            //             text: $this->translate('PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT'),
+            //             resolvedType: ActionParameterType::FIELD,
+            //             supportedDataTypes: [ActionDataType::RELATE],
+            //             supportedModules: ['Accounts', 'Contacts', 'Leads', 'Users'],
+            //         ),
+            //    ],
+            // ),
         ];
     }
 

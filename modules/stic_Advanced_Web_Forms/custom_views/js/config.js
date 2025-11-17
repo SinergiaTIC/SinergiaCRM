@@ -18,6 +18,7 @@ class AWF_DataBlock {
       required: false,          // Indica si es obligado (interno, no se puede eliminar)
       fields: [],               // Campos del Bloque de Datos
       duplicate_detections: [], // Definición de detección de duplicados
+      save_action_id: "",       // Id de la acción de guardado del bloque de datos
     });
 
     // 2. Overwrite with provided data
@@ -57,7 +58,7 @@ class AWF_DataBlock {
     if (this.module) {
       return `${utils.translateForFieldLabel('LBL_MODULE')} ${this.getModuleInformation().text}`;
     }
-    return utils.translate('LBL_NO_MODULE_RELATED');
+    return utils.translate('LBL_RELATIONSHIP_NO_MODULE_RELATED');
   }
 
   getModuleText() {
@@ -986,7 +987,7 @@ class AWF_Configuration {
     this.data_blocks.filter(d => d.module == module).forEach(db => {
       dataBlocks.push({id: db.id, text: db.text});
     });
-    dataBlocks.push({ id: -1, text: utils.translate('LBL_NEW_DATABLOCK') });
+    dataBlocks.push({ id: -1, text: utils.translate('LBL_DATABLOCK_NEW') });
 
     return dataBlocks;
   }

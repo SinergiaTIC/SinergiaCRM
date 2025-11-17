@@ -116,7 +116,16 @@ class stic_Advanced_Web_FormsController extends SugarController
 
         require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
         $serverActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::DEFERRED]);
-        $actionDTOs = array_map(fn($actionDef) => new ActionDefinitionDTO($actionDef), $serverActions);
+
+        $actionDTOs = [];
+        foreach ($serverActions as $actionDef) {
+            try {
+                $actionDTOs[] = new ActionDefinitionDTO($actionDef);
+            } catch (\Throwable $t) {
+                $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Error processing ActionDefinitionDTO for the action {$actionDef->getName()}: " . $t->getMessage());
+            }
+        }
+
         $resultStr = json_encode($actionDTOs, JSON_UNESCAPED_UNICODE);
         echo $resultStr;
 
