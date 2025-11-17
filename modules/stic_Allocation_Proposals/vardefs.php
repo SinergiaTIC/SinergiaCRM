@@ -178,7 +178,7 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'id_name' => 'stic_allocation_propo424d',
         ),
         'stic_ledger_accounts_name' => array(
-            'required' => false,
+            'required' => true,
             'source' => 'non-db',
             'name' => 'stic_ledger_accounts_name',
             'vname' => 'LBL_STIC_LEDGER_ACCOUNTS',

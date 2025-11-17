@@ -125,7 +125,7 @@ $dictionary['stic_Allocations'] = array(
             'inline_edit' => 1,
         ),
         'percentage' => array(
-            'required' => 0,
+            'required' => true,
             'name' => 'percentage',
             'vname' => 'LBL_PERCENTAGE',
             'duplicate_merge' => 'enabled',
@@ -260,7 +260,7 @@ $dictionary['stic_Allocations'] = array(
             'vname' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE',
         ),
         'stic_ledger_accounts_name' => array(
-            'required' => false,
+            'required' => true,
             'source' => 'non-db',
             'name' => 'stic_ledger_accounts_name',
             'vname' => 'LBL_STIC_LEDGER_ACCOUNTS',
@@ -354,7 +354,7 @@ $dictionary['stic_Allocations'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROJECT_STIC_ALLOCATIONS_FROM_PROJECT_TITLE',
             'save' => true,
-            'required' => false,
+            'required' => true,
             'importable' => 'true',
             'id_name' => 'project_stic_allocationsproject_ida',
             'link' => 'project_stic_allocations',
