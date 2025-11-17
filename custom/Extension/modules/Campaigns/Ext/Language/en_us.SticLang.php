@@ -68,7 +68,7 @@ $mod_strings['LBL_MSG_TYPE'] = 'Type';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Template';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = "The template must be of type 'SMS' and can include fields from the record related to the notification (the event or the opportunity).";
 
-$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
+$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications by email';
 $mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications by message';
 
 
