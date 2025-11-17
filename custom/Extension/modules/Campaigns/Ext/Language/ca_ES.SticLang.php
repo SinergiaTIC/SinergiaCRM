@@ -71,6 +71,7 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Respondre a (nom)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
 $mod_strings['LBL_MSG_TYPE'] = 'Tipus';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla ha de ser del tipus 'SMS' i s'hi poden incloure camps del registre associat a la notificació (l'esdeveniment o la subvenció).";
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 $mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions per missatge';

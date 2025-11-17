@@ -239,7 +239,7 @@ $dictionary["Campaign"]["fields"]['msg_notification_template_id'] = array(
     'size' => '20',
     'options' => 'dynamic_message_template_list',
     'dependency' => false,
-    // 'popupHelp' => 'LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP',
+    'popupHelp' => 'LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP',
 );
 
 $dictionary["Campaign"]["fields"]['notification_message_type'] = array(
