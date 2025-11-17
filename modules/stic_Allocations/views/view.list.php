@@ -21,9 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once('include/MVC/View/views/view.edit.php');
+require_once('include/MVC/View/views/view.list.php');
+require_once('SticInclude/Views.php');
 
-class stic_AllocationsViewEdit extends ViewEdit
+class stic_AllocationsViewList extends ViewList
 {
     public function __construct()
     {

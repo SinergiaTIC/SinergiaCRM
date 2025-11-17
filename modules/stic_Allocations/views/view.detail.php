@@ -29,4 +29,19 @@ class stic_AllocationsViewDetail extends ViewDetail
     {
         parent::__construct();
     }
+
+    public function preDisplay()
+    {
+        parent::preDisplay();
+        SticViews::preDisplay($this);
+    }
+
+    public function display()
+    {
+        parent::display();
+        SticViews::display($this);
+        
+        // Custom JavaScript includes
+        echo getVersionedScript("modules/stic_Allocations/Utils.js");
+    }
 }
