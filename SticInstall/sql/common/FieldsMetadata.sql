@@ -209,4 +209,11 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Usersinc_incorpora_user_c', 'Users', 'inc_incorpora_user_c'),
 ('Userssda_allowed_c', 'Users', 'sda_allowed_c'),
 ('Usersstic_work_calendar_c', 'Users', 'stic_work_calendar_c'),
-('Usersstic_clock_c', 'Users', 'stic_clock_c');
+('Usersstic_clock_c', 'Users', 'stic_clock_c'),
+-- AOS_Invoices
+('AOS_Invoicesverifactu_hash_c', 'AOS_Invoices', 'verifactu_hash_c'),
+('AOS_Invoicesverifactu_previous_hash_c', 'AOS_Invoices', 'verifactu_previous_hash_c'),
+('AOS_Invoicesverifactu_qr_data_c', 'AOS_Invoices', 'verifactu_qr_data_c'),
+('AOS_Invoicesverifactu_aeat_status_c', 'AOS_Invoices', 'verifactu_aeat_status_c'),
+('AOS_Invoicesverifactu_aeat_response_c', 'AOS_Invoices', 'verifactu_aeat_response_c'),
+('AOS_Invoicesverifactu_cancel_id_c', 'AOS_Invoices', 'verifactu_cancel_id_c');
