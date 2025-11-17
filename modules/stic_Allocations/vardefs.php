@@ -153,7 +153,7 @@ $dictionary['stic_Allocations'] = array(
             'duplicate_merge' => 'enabled',
             'merge_filter' => 'enabled',
             'type' => 'decimal',
-            'massupdate' => 1,
+            'massupdate' => 0,
             'no_default' => 0,
             'comments' => '',
             'help' => '',
@@ -166,7 +166,7 @@ $dictionary['stic_Allocations'] = array(
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => 1,
             'precision' => 2,
-            'inline_edit' => 1,
+            'inline_edit' => 0,
         ),
         'hours' => array(
             'required' => 0,

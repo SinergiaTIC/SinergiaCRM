@@ -28,6 +28,21 @@ $listViewDefs['stic_Allocations'] = array(
         'link' => true,
         'default' => true,
     ),
+    'STIC_PAYMENTS_NAME' => array(
+        'width' => '12%',
+        'label' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+        'default' => false,
+    ),
+    'STIC_ALLOCATION_PROPOSALS_NAME' => array(
+        'width' => '12%',
+        'label' => 'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+        'default' => false,
+    ),
+    'DATE' => array(
+        'width' => '12%',
+        'label' => 'LBL_DATE',
+        'default' => true,
+    ),
     'JUSTIFIED' => array(
         'width' => '8%',
         'label' => 'LBL_JUSTIFIED',
@@ -38,35 +53,19 @@ $listViewDefs['stic_Allocations'] = array(
         'label' => 'LBL_BLOCKED',
         'default' => true,
     ),
-    'TYPE' => array(
-        'width' => '10%',
-        'label' => 'LBL_TYPE',
+    'OPPORTUNITIES_STIC_ALLOCATIONS_NAME' => array(
+        'width' => '12%',
+        'label' => 'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_OPPORTUNITIES_TITLE',
+        'id' => 'OPPORTUNITIES_STIC_ALLOCATIONSOPPORTUNITIES_IDA',
+        'module' => 'Opportunities',
         'default' => true,
     ),
-    'DATE' => array(
+    'PROJECT_STIC_ALLOCATIONS_NAME' => array(
         'width' => '12%',
-        'label' => 'LBL_DATE',
+        'label' => 'LBL_PROJECT_STIC_ALLOCATIONS_FROM_PROJECT_TITLE',
+        'id' => 'PROJECT_STIC_ALLOCATIONSPROJECT_IDA',
+        'module' => 'Project',
         'default' => true,
-    ),
-    'AMOUNT' => array(
-        'width' => '12%',
-        'label' => 'LBL_AMOUNT',
-        'default' => true,
-    ),
-    'HOURS' => array(
-        'width' => '10%',
-        'label' => 'LBL_HOURS',
-        'default' => true,
-    ),
-    'STIC_ALLOCATION_PROPOSALS_NAME' => array(
-        'width' => '12%',
-        'label' => 'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
-        'default' => false,
-    ),
-    'STIC_PAYMENTS_NAME' => array(
-        'width' => '12%',
-        'label' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
-        'default' => false,
     ),
     'STIC_LEDGER_ACCOUNTS_NAME' => array(
         'width' => '12%',
@@ -75,10 +74,30 @@ $listViewDefs['stic_Allocations'] = array(
         'module' => 'stic_Ledger_Accounts',
         'default' => false,
     ),
+    'TYPE' => array(
+        'width' => '10%',
+        'label' => 'LBL_TYPE',
+        'default' => true,
+    ),
+    'PERCENTAGE' => array(
+        'width' => '10%',
+        'label' => 'LBL_PERCENTAGE',
+        'default' => false,
+    ),
+    'AMOUNT' => array(
+        'width' => '12%',
+        'label' => 'LBL_AMOUNT',
+        'default' => false,
+    ),
+    'HOURS' => array(
+        'width' => '10%',
+        'label' => 'LBL_HOURS',
+        'default' => false,
+    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '10%',
         'label' => 'LBL_ASSIGNED_TO',
-        'default' => true,
+        'default' => false,
     ),
     'DATE_ENTERED' => array(
         'width' => '10%',

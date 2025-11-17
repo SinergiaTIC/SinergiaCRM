@@ -86,7 +86,7 @@ $listViewDefs['stic_Allocation_Proposals'] = array(
         'label' => 'LBL_ASSIGNED_TO',
         'module' => 'Employees',
         'id' => 'ASSIGNED_USER_ID',
-        'default' => true,
+        'default' => false,
     ),
     'DATE_ENTERED' => array(
         'width' => '10%',

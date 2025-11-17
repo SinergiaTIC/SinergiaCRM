@@ -36,32 +36,33 @@ $viewdefs['stic_Allocations']['EditView'] = array(
                 'assigned_user_name',
             ),
             array(
+                'stic_payments_name',
+                'stic_allocation_proposals_name',
+            ),
+            array(
+                'date',
+                '',
+            ),
+            array(
                 'justified',
                 'blocked',
-            ),
-            array(
-                'type',
-                'date',
-            ),
-            array(
-                'payment_amount_field',
-                'percentage',
-            ),
-            array(
-                'amount',
-                'hours',
             ),
             array(
                 'opportunities_stic_allocations_name',
                 'project_stic_allocations_name',
             ),
             array(
-                'stic_allocation_proposals_name',
-                'stic_payments_name',
+                'stic_ledger_accounts_name',
+                'type',
             ),
             array(
-                'stic_ledger_accounts_name',
+                'payment_amount_field',
+                'percentage',
+            ),
+            array(
+                // 'amount', -- amount is auto calculated
                 '',
+                'hours',
             ),
             array(
                 array(
