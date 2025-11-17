@@ -55,24 +55,20 @@ $viewdefs['stic_Allocation_Proposals']['DetailView'] = array(
                 'assigned_user_name',
             ),
             array(
+                'stic_payment_commitments_name',
+                'active'
+            ),
+            array(
                 'opportunities_stic_allocation_proposals_name',
                 'project_stic_allocation_proposals_name',
             ),
             array(
-                'stic_payment_commitments_name',
                 'stic_ledger_accounts_name',
-            ),
-            array(
-                'active',
                 'type',
             ),
             array(
                 'payment_amount_field',
                 'percentage',
-            ),
-            array(
-                'hours',
-                '',
             ),
             array(
                 array(

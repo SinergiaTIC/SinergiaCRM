@@ -28,19 +28,30 @@ $listViewDefs['stic_Allocation_Proposals'] = array(
         'link' => true,
         'default' => true,
     ),
+    'STIC_PAYMENT_COMMITMENTS_NAME' => array(
+        'width' => '15%',
+        'label' => 'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE',
+        'id' => 'STIC_PAYMENT_COMMITMENTS_IDA',
+        'module' => 'stic_Payment_Commitments',
+        'default' => true,
+    ),
     'ACTIVE' => array(
-        'width' => '10%',
+        'width' => '5%',
         'label' => 'LBL_ACTIVE',
         'default' => true,
     ),
-    'TYPE' => array(
+    'OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_NAME' => array(
         'width' => '15%',
-        'label' => 'LBL_TYPE',
+        'label' => 'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_OPPORTUNITIES_TITLE',
+        'id' => 'OPPORTUNITIES_STIC_ALLOCATION_PROPOSALSOPPORTUNITIES_IDA',
+        'module' => 'Opportunities',
         'default' => true,
     ),
-    'PAYMENT_AMOUNT_FIELD' => array(
+    'PROJECT_STIC_ALLOCATION_PROPOSALS_NAME' => array(
         'width' => '15%',
-        'label' => 'LBL_PAYMENT_AMOUNT_FIELD',
+        'label' => 'LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_PROJECT_TITLE',
+        'id' => 'PROJECT_STIC_ALLOCATION_PROPOSALSPROJECT_IDA',
+        'module' => 'Project',
         'default' => true,
     ),
     'STIC_LEDGER_ACCOUNTS_NAME' => array(
@@ -48,12 +59,22 @@ $listViewDefs['stic_Allocation_Proposals'] = array(
         'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
         'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
         'module' => 'stic_Ledger_Accounts',
-        'default' => false,
+        'default' => true,
+    ),
+    'TYPE' => array(
+        'width' => '5%',
+        'label' => 'LBL_TYPE',
+        'default' => true,
+    ),
+    'PAYMENT_AMOUNT_FIELD' => array(
+        'width' => '10%',
+        'label' => 'LBL_PAYMENT_AMOUNT_FIELD',
+        'default' => true,
     ),
     'PERCENTAGE' => array(
         'width' => '10%',
         'label' => 'LBL_PERCENTAGE',
-        'default' => true,
+        'default' => false,
     ),
     'HOURS' => array(
         'width' => '10%',
