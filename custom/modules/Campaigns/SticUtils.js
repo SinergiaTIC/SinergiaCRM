@@ -548,7 +548,12 @@ function edit_email_template_form(type) {
   } 
   URL = "index.php?module=EmailTemplates&action=EditView&type="+type+"&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
 
-  var field = document.getElementById('notification_template_id');
+  if (type == 'sms') {
+    var field = document.getElementById('msg_notification_template_id');
+  }
+  else {
+    var field = document.getElementById('notification_template_id');
+  }
   if (field.options[field.selectedIndex].value != 'undefined') {
       URL += "&record=" + field.options[field.selectedIndex].value;
   }
