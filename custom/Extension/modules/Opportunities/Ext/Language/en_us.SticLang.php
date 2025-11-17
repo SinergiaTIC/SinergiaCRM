@@ -73,3 +73,9 @@ $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFIC
 
 // Strings for Justifications relationship
 $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Justifications';
+
+// Strings for Allocation Proposals relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Allocation Proposals';
+
+// Strings for Allocations relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Allocations';

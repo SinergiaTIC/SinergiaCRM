@@ -100,3 +100,9 @@ $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFIC
 
 // Cadenas para la relación con Justificaciones
 $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Justificaciones';
+
+// Cadenas para la relación con Propuestas de Imputación
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Propuestas de Imputación';
+
+// Cadenas para la relación con Imputaciones
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Imputaciones';

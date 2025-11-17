@@ -486,3 +486,27 @@ $dictionary["Opportunity"]["fields"]["opportunities_stic_justifications"] = arra
     'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE',
 );
 
+// Relationship with stic_Allocation_Proposals
+$dictionary["Opportunity"]["fields"]["opportunities_stic_allocation_proposals"] = array (
+    'name' => 'opportunities_stic_allocation_proposals',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_allocation_proposals',
+    'source' => 'non-db',
+    'module' => 'stic_Allocation_Proposals',
+    'bean_name' => 'stic_Allocation_Proposals',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE',
+);
+
+// Relationship with stic_Allocations
+$dictionary["Opportunity"]["fields"]["opportunities_stic_allocations"] = array (
+    'name' => 'opportunities_stic_allocations',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_allocations',
+    'source' => 'non-db',
+    'module' => 'stic_Allocations',
+    'bean_name' => 'stic_Allocations',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+);
+

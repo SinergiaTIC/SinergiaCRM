@@ -151,4 +151,50 @@ $layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justificatio
       ),
     ),
 );
+
+// Allocation Proposals subpanel
+$layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_allocation_proposals'] = array (
+    'order' => 100,
+    'module' => 'stic_Allocation_Proposals',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_entered',
+    'title_key' => 'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE',
+    'get_subpanel_data' => 'opportunities_stic_allocation_proposals',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array (
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
+    ),
+);
+
+// Allocations subpanel
+$layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_allocations'] = array (
+    'order' => 100,
+    'module' => 'stic_Allocations',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_entered',
+    'title_key' => 'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+    'get_subpanel_data' => 'opportunities_stic_allocations',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array (
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
+    ),
+);
   

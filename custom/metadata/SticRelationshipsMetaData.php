@@ -7774,3 +7774,283 @@ $dictionary["opportunities_stic_justifications"] = array(
         ),
     ),
 );
+
+$dictionary["opportunities_stic_allocation_proposals"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'opportunities_stic_allocation_proposals' => array(
+            'lhs_module' => 'Opportunities',
+            'lhs_table' => 'opportunities',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Allocation_Proposals',
+            'rhs_table' => 'stic_allocation_proposals',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'opportunities_stic_allocation_proposals_c',
+            'join_key_lhs' => 'opportunities_stic_allocation_proposalsopportunities_ida',
+            'join_key_rhs' => 'opportunit83c4oposals_idb',
+        ),
+    ),
+    'table' => 'opportunities_stic_allocation_proposals_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'opportunities_stic_allocation_proposalsopportunities_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'opportunit83c4oposals_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'opportunities_stic_allocation_proposalsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'opportunities_stic_allocation_proposals_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'opportunities_stic_allocation_proposalsopportunities_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'opportunities_stic_allocation_proposals_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'opportunit83c4oposals_idb',
+            ),
+        ),
+    ),
+);
+
+$dictionary["opportunities_stic_allocations"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'opportunities_stic_allocations' => array(
+            'lhs_module' => 'Opportunities',
+            'lhs_table' => 'opportunities',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Allocations',
+            'rhs_table' => 'stic_allocations',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'opportunities_stic_allocations_c',
+            'join_key_lhs' => 'opportunities_stic_allocationsopportunities_ida',
+            'join_key_rhs' => 'opportunities_stic_allocationsstic_allocations_idb',
+        ),
+    ),
+    'table' => 'opportunities_stic_allocations_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'opportunities_stic_allocationsopportunities_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'opportunities_stic_allocationsstic_allocations_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'opportunities_stic_allocationsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'opportunities_stic_allocations_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'opportunities_stic_allocationsopportunities_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'opportunities_stic_allocations_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'opportunities_stic_allocationsstic_allocations_idb',
+            ),
+        ),
+    ),
+);
+
+$dictionary["project_stic_allocation_proposals"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'project_stic_allocation_proposals' => array(
+            'lhs_module' => 'Project',
+            'lhs_table' => 'project',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Allocation_Proposals',
+            'rhs_table' => 'stic_allocation_proposals',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'project_stic_allocation_proposals_c',
+            'join_key_lhs' => 'project_stic_allocation_proposalsproject_ida',
+            'join_key_rhs' => 'project_st2413oposals_idb',
+        ),
+    ),
+    'table' => 'project_stic_allocation_proposals_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'project_stic_allocation_proposalsproject_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'project_st2413oposals_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'project_stic_allocation_proposalsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'project_stic_allocation_proposals_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'project_stic_allocation_proposalsproject_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'project_stic_allocation_proposals_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'project_st2413oposals_idb',
+            ),
+        ),
+    ),
+);
+
+$dictionary["project_stic_allocations"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'project_stic_allocations' => array(
+            'lhs_module' => 'Project',
+            'lhs_table' => 'project',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Allocations',
+            'rhs_table' => 'stic_allocations',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'project_stic_allocations_c',
+            'join_key_lhs' => 'project_stic_allocationsproject_ida',
+            'join_key_rhs' => 'project_stic_allocationsstic_allocations_idb',
+        ),
+    ),
+    'table' => 'project_stic_allocations_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'project_stic_allocationsproject_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'project_stic_allocationsstic_allocations_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'project_stic_allocationsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'project_stic_allocations_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'project_stic_allocationsproject_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'project_stic_allocations_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'project_stic_allocationsstic_allocations_idb',
+            ),
+        ),
+    ),
+);

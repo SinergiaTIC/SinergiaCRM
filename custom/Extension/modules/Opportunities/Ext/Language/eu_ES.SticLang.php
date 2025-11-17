@@ -100,3 +100,9 @@ $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFIC
 
 // Justifikazioekin erlazioarentzako stringak
 $mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Justifikazioak';
+
+// Esleipen Proposamenekin erlazioarentzako stringak
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Esleipen Proposamenak';
+
+// Esleipenekin erlazioarentzako stringak
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Esleipenak';
