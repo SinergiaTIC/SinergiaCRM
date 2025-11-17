@@ -71,6 +71,10 @@ $viewdefs['stic_Allocations']['DetailView'] = array(
                 'hours',
             ),
             array(
+                'opportunities_stic_allocations_name',
+                'project_stic_allocations_name',
+            ),
+            array(
                 'stic_allocation_proposals_name',
                 'stic_payments_name',
             ),

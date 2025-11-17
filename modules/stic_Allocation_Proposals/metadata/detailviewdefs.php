@@ -55,8 +55,8 @@ $viewdefs['stic_Allocation_Proposals']['DetailView'] = array(
                 'assigned_user_name',
             ),
             array(
-                'project_stic_allocation_proposals_name',
                 'opportunities_stic_allocation_proposals_name',
+                'project_stic_allocation_proposals_name',
             ),
             array(
                 'stic_payment_commitments_name',

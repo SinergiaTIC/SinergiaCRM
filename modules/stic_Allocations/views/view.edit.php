@@ -22,6 +22,7 @@
  */
 
 require_once('include/MVC/View/views/view.edit.php');
+require_once 'SticInclude/Views.php';
 
 class stic_AllocationsViewEdit extends ViewEdit
 {

@@ -90,6 +90,16 @@ class stic_Allocation_Proposals extends Basic
             global $app_list_strings;
 
             $nameParts = array();
+            
+            $opportunityBean = BeanFactory::getBean('Opportunities', $this->opportunities_stic_allocation_proposalsopportunities_ida);
+            if ($opportunityBean){
+                $nameParts[] = $opportunityBean->name;
+            }
+
+            $projectBean = BeanFactory::getBean('Project', $this->project_stic_allocation_proposalsproject_ida);
+            if ($projectBean){
+                $nameParts[] = $projectBean->name;
+            }
 
             $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $this->stic_ledger_accounts_ida);
             if ($ledgerAccountBean){
@@ -104,6 +114,8 @@ class stic_Allocation_Proposals extends Basic
             if (!empty($this->payment_amount_field) && isset($app_list_strings['stic_allocations_amount_fields_list'][$this->payment_amount_field])) {
                 $nameParts[] = $app_list_strings['stic_allocations_amount_fields_list'][$this->payment_amount_field];
             }
+
+            $nameParts[] = $this->percentage . '%';
 
             // Set the name by joining parts with a hyphen
             $this->name = implode(' - ', $nameParts);
