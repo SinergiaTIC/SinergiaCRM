@@ -146,7 +146,7 @@ $mod_strings = array(
     'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Allocations',
     // Allocation tab labels
     'LBL_ALLOCATION_PANEL' => 'Allocation',
-    'LBL_JUSTIFICATION_DATE' => 'Justification date',
+    'LBL_JUSTIFICATION_DATE' => 'Allocation date',
     'LBL_ALLOCATED' => 'Allocated',
     'LBL_BLOCKED' => 'Blocked',
     'LBL_ALLOCATED_PERCENTAGE' => 'Allocated %',

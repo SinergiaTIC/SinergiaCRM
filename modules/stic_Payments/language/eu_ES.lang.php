@@ -145,7 +145,7 @@ $mod_strings = array(
     'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Esleipenoak',
     // Egoztapeneko fitxaren etiketak
     'LBL_ALLOCATION_PANEL' => 'Egoztapena',
-    'LBL_JUSTIFICATION_DATE' => 'Justifikazio data',
+    'LBL_JUSTIFICATION_DATE' => 'Fecha de imputación',
     'LBL_ALLOCATED' => 'Egoztatua',
     'LBL_BLOCKED' => 'Blokeatua',
     'LBL_ALLOCATED_PERCENTAGE' => '% egoztatua',

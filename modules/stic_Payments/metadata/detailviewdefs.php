@@ -180,17 +180,17 @@ array(
                         'name' => 'justification_date',
                         'label' => 'LBL_JUSTIFICATION_DATE',
                     ),
-                    1 => array(
-                        'name' => 'allocated',
-                        'label' => 'LBL_ALLOCATED',
-                    ),
+                    1 => array(),
                 ),
                 1 => array(
                     0 => array(
+                        'name' => 'allocated',
+                        'label' => 'LBL_ALLOCATED',
+                    ),
+                    1 => array(
                         'name' => 'blocked',
                         'label' => 'LBL_BLOCKED',
                     ),
-                    1 => '',
                 ),
                 2 => array(
                     0 => array(
@@ -237,7 +237,7 @@ array(
                         'name' => 'vat_supported',
                         'label' => 'LBL_VAT_SUPPORTED',
                     ),
-                    1 => '',
+                    1 => array(),
                 ),
             ),
             'lbl_return_panel' => array(

@@ -145,7 +145,7 @@ $mod_strings = array(
     'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Assignacions',
     // Etiquetes de la pestanya Imputació
     'LBL_ALLOCATION_PANEL' => 'Imputació',
-    'LBL_JUSTIFICATION_DATE' => 'Data de justificació',
+    'LBL_JUSTIFICATION_DATE' => "Data d'imputació",
     'LBL_ALLOCATED' => 'Imputat',
     'LBL_BLOCKED' => 'Bloquejada',
     'LBL_ALLOCATED_PERCENTAGE' => '% imputat',
