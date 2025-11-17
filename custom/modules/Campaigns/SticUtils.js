@@ -106,6 +106,7 @@ $(document).ready(function() {
           "</div>"
       ).prependTo("[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] .tab-content .row");
 
+      $("#msg_notification_template_id").on("change paste keyup", template_change);
     }
 
     // Check Notification panel exists
@@ -219,6 +220,11 @@ function template_change() {
     $("#notification_template_id_edit_link").hide();
   } else {
     $("#notification_template_id_edit_link").show();
+  }
+  if ($("#msg_notification_template_id").val() == "") {
+    $("#msg_notification_template_id_edit_link").hide();
+  } else {
+    $("#msg_notification_template_id_edit_link").show();
   }
 }
 
