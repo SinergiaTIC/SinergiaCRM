@@ -3752,3 +3752,8 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
+
+// Tipos de estado de las facturas Verifactu
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Enviado y aceptado';
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rechazado';

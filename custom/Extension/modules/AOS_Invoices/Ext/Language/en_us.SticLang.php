@@ -24,3 +24,11 @@ $mod_strings['LBL_DEFAULT_PANEL'] = 'Overview';
 $mod_strings['LBL_PANEL_RECORD_DETAILS'] = 'Record details';
 $mod_strings['LBL_DUE_DATE_ERROR'] = 'Due date must be equal or after Invoice date.';
 $mod_strings['LBL_INVOICE_DATE_ERROR'] = 'Invoice date must be equal or before Due date.';
+
+// AEAT Verifactu labels
+$mod_strings['LBL_VERIFACTU_HASH'] = 'Invoice Hash';
+$mod_strings['LBL_VERIFACTU_PREVIOUS_HASH'] = 'Previous Invoice Hash';
+$mod_strings['LBL_VERIFACTU_QR_DATA'] = 'Invoice QR Data';
+$mod_strings['LBL_VERIFACTU_AEAT_STATUS'] = 'Invoice AEAT Status';
+$mod_strings['LBL_VERIFACTU_AEAT_RESPONSE'] = 'Invoice AEAT Response';
+$mod_strings['LBL_VERIFACTU_CANCEL_ID'] = 'Rectified Invoice ID';
