@@ -196,7 +196,6 @@ function getCampaingType() {
 
 function type_change() {
   var typeValue = getCampaingType();
-debugger;
   updateViewNewsLetterType(typeValue == "NewsLetter");
   updateViewAnyNotificationType(typeValue);
   updateViewNotificationType(typeValue == "Notification");
