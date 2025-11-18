@@ -169,7 +169,7 @@ $mod_strings = array(
     'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'The period to sign this document has expired. Expiration date:',
     'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'The period to sign this document has not yet started. Signing will be available from:',
 
-    //Audit page
+    // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Digital signature audit page',
     'LBL_AUDIT_PAGE_SIGNATURE_DATA_TITLE' => 'Signature data',
     'LBL_AUDIT_PAGE_DOCUMENT_NAME' => 'Document name',
