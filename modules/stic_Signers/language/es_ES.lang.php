@@ -93,9 +93,6 @@ $mod_strings = array(
     'LBL_SIGNER_COPY_PORTAL_URL' => 'Copiar URL del portal',
     'LBL_SIGNER_PORTAL_URL_COPIED' => 'URL del portal copiada al portapapeles',
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente al firmante',
-    'LBL_SIGNER_SIGNATURE_COMPLETED_BY' => 'Firma completada por',
-    'LBL_SIGNER_OTP_SMS_BODY_1' => 'Hola',
-    'LBL_SIGNER_OTP_SMS_BODY_2' => 'aquí tienes el código de un solo uso que has solicitado para la firma del documento, válido por 10 minutos:',
     'LBL_DOWNLOAD_PDF_SIGNATURE' => 'Descargar documento firmado',
     'LBL_NO_PDF_SIGNATURE' => 'No hay documento firmado',
 
