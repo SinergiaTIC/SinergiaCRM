@@ -232,28 +232,13 @@ array(
                     ),
                     1 => 'photo',                    
                 ),                
-                3 => array (
+                3 => array(
                     0 => 'sda_allowed_c',
-                    1 => 'sda_readonly_c',
+                    1 => 'stic_work_calendar_c',
                 ),
-                4 => array (
-                    0 => array (
-                    'name' => 'stic_work_calendar_c',
-                    'studio' => 'visible',
-                    'label' => 'LBL_STIC_WORK_CALENDAR',
-                    ),
-                    1 => array (
-                      'name' => 'stic_clock_c',
-                      'studio' => 'visible',
-                      'label' => 'LBL_STIC_CLOCK',
-                    ),
-                  ),
-                5 => array (
-                    0 => array (
-                      'name' => 'factor_auth',
-                      'label' => 'LBL_FACTOR_AUTH',
-                    ),
-                    1 => array ()
+                4 => array(
+                    0 => 'factor_auth',
+                    1 => 'stic_clock_c',
                 ),                    
             ),
             'LBL_EMPLOYEE_INFORMATION' => array(
