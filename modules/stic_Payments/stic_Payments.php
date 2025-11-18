@@ -132,6 +132,11 @@ class stic_Payments extends Basic
         $tempFetchedRow = $this->fetched_row ?? null;
 
 
+        if (!isset($this->justification_date) || empty($this->justification_date)) {
+            $this->justification_date = $this->payment_date;
+        }
+
+
         // Call the generic save() function from the SugarBean class
         parent::save();
 
