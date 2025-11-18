@@ -137,6 +137,14 @@ class stic_Payments extends Basic
         }
 
 
+        if (empty($tempFetchedRow['allocated']) && ($this->allocated == 1 || $this->allocated == 'on')) {
+            $return = $this->generateAllocationsFromPayment();
+            if ($return === false) {
+                // Allocation generation failed, do not save the payment
+                // return;
+                $this->allocated = 0;
+            }
+        }
         // Call the generic save() function from the SugarBean class
         parent::save();
 
@@ -156,7 +164,25 @@ class stic_Payments extends Basic
                 stic_Payment_CommitmentsUtils::setPaidAnnualizedFee($PCBean);
             }
         }
+
+        if (!empty($tempFetchedRow['allocated']) || $this->allocated == 0) {
+            $this->deleteAllocationsFromPayment();
+        }
+
+
+
     }
+
+    protected function deleteAllocationsFromPayment() {
+        include_once 'modules/stic_Allocations/Utils.php';
+        stic_AllocationsUtils::deleteAllocationsFromPayment($this);
+    }
+
+    protected function generateAllocationsFromPayment() {
+        include_once 'modules/stic_Allocation_Proposals/Utils.php';
+        return stic_Allocation_ProposalsUtils::createAllocationsFromPayment($this);
+    }
+
 
     /**
      * Overriding SugarBean save_relationship_changes function to insert additional logic:

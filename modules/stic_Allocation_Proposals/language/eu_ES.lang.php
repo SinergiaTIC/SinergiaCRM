@@ -75,4 +75,5 @@ $mod_strings = array(
     'LBL_STIC_LEDGER_ACCOUNTS_ID' => 'Kontu Kontablea ID',
     'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_OPPORTUNITIES_TITLE' => 'Aukera',
     'LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_PROJECT_TITLE' => 'Proiektua',
+    'LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE' => 'Propuesta de Imputación no compatible',
 );
