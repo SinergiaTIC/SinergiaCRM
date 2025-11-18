@@ -100,7 +100,7 @@ $mod_strings = array(
 
     // Portal messages
     'LBL_PORTAL_TITLE_PAGE' => 'SinergiaCRM - Electronic signature portal',
-    'LBL_PORTAL_ORG_LOGO_ALT' => 'Organization logo',
+    'LBL_PORTAL_ORG_LOGO_ALT' => 'Account logo',
     'LBL_PORTAL_SIGNATURES' => 'Signature portal',
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ERROR_MSG' => 'Please try again or contact technical support if the problem persists.',
@@ -152,9 +152,9 @@ $mod_strings = array(
     'LBL_PORTAL_PDF_SENT_SUCCESSFULLY' => 'The signed document has been sent to your email address.',
     'LBL_PORTAL_PDF_SEND_ERROR' => 'An error occurred while sending the signed document by email.',
     'LBL_PORTAL_FIELD_VALIDATION' => 'Personal data verification',
-    'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'To continue, please enter the value of your',
+    'LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION' => 'To continue, please enter your',
     'LBL_PORTAL_VALIDATE_FIELD_BTN' => 'Next',
-    'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'Mobile phobe',
+    'LBL_PORTAL_FIELD_VALIDATION_LABEL_PHONE' => 'Mobile phone',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_PHONE' => '9 numbers, no spaces or dashes',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_IDENTIFICATION_NUMBER' => 'Identification number',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_IDENTIFICATION_NUMBER' => 'Letters and numbers, no spaces or dashes',
