@@ -277,11 +277,11 @@ $dictionary['stic_Assessments'] = array(
             'enable_range_search' => true,
         ),
         'type' => array(
-            'required' => false,
+            'required' => true,
             'name' => 'type',
             'vname' => 'LBL_TYPE',
             'type' => 'enum',
-            'options' => 'stic_territorial_scopes_list',
+            'options' => 'stic_assesments_types_list',
             'len' => 100,
             'size' => '20',
             'default' => false,
