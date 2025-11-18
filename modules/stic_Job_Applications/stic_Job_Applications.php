@@ -105,7 +105,7 @@ class stic_Job_Applications extends Basic
                 $prevolunteerCount = 0;
                 $contactRelationshipBeans = $contactBean->stic_contacts_relationships_contacts->getBeans();
                 foreach ($contactRelationshipBeans as $contactRelationshipBean) {
-                    if ($contactRelationshipBean->relationship_type == 'pre-volunteer') {
+                    if ($contactRelationshipBean->relationship_type == 'pre-volunteer' && $contactRelationshipBean->active) {
                         $prevolunteerCount++;
                         break;  
                     }
