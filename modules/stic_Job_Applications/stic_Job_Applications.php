@@ -80,11 +80,12 @@ class stic_Job_Applications extends Basic
             $this->name = $contact_name .' - '.$offer_name;
         }
         
-        // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
-        $offerBean = null;
         $newRecord = !isset($this->id) || $this->new_with_id;
-        if ($newRecord) {
+        if ($newRecord) 
+        {
+            $offerBean = null;
             $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
+            // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
             if (!empty($offerBean) && ($offerBean->offer_type == 'volunteering')) {
                 $this->assigned_user_id = $offerBean->assigned_user_id;
             }
@@ -101,9 +102,9 @@ class stic_Job_Applications extends Basic
             $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_job_applications_contacts');
             if (!empty($contactBean) && ($contactBean->load_relationship('stic_contacts_relationships_contacts'))) 
             {
+                $prevolunteerCount = 0;
                 $contactRelationshipBeans = $contactBean->stic_contacts_relationships_contacts->getBeans();
                 foreach ($contactRelationshipBeans as $contactRelationshipBean) {
-                    $prevolunteerCount = 0;
                     if ($contactRelationshipBean->relationship_type == 'pre-volunteer') {
                         $prevolunteerCount++;
                         break;  
