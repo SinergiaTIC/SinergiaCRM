@@ -37,10 +37,11 @@ class ActionDefinitionDTO {
     public bool $isActive;
     public bool $isUserSelectable;
     public bool $isCommon;
+    public bool $isTerminal;
 
     public string $category;
     
-    public string $scope; // 'form', 'block', 'field'
+    public string $scope; // 'form', 'field'
     
     /** @var string[] */
     public array $supportedModules;
@@ -61,6 +62,7 @@ class ActionDefinitionDTO {
         $this->isActive = $def->isActive;
         $this->isUserSelectable = $def->isUserSelectable;
         $this->isCommon = $def->isCommon;
+        $this->isTerminal = $def instanceof ITerminalAction;
 
         $this->category = $def->category;
         $this->scope = $def->scope->value; // Convert enum to string

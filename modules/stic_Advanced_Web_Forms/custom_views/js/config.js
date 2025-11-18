@@ -611,10 +611,14 @@ class AWF_Action {
       name: "",                 // Nombre interno de la acción
       text: "",                 // Texto a mostrar para la acción
       description: "",          // Descripción de la acción 
-      data_block_id: '',        // Id del Bloque de datos al que pertenece
       requisite_actions: [],    // Array con los identificadores de las acciones previas a la actual
       category: 'data',         // Categoría de la acción
       parameters: [],           // Los parámetros de la acción
+      is_active: true,          // Indica si la acción está activa
+      is_user_selectable: true, // Indica si la acción es seleccionable por el usuario
+      is_terminal: false,       // Indica si la acción es terminal
+      order: 0,                 // El orden de ejecución de la acción
+      is_fixed_order: false,    // Indica si el orden es fijado
     });
 
     // 2. Overwrite with provided data
@@ -622,6 +626,13 @@ class AWF_Action {
 
     // 3. Map sub-objects and arrays to their classes
     this.parameters = (data.parameters || this.parameters).map(a => new AWF_ActionParameter(a));
+  }
+
+  get textExpanded() {
+    if (this.parameters.length == 1) {
+      return this.text + ' (' + this.parameters[0].value_text + ')';
+    }
+    return this.text;
   }
 
   static category_in_formList(asString = false){
@@ -639,6 +650,7 @@ class AWF_ActionParameter {
       name: '',                // Nombre del parámetro
       text: '',                // Texto del parámetro
       value: '',               // Valor del parámetro
+      value_text: '',          // Texto a mostrar para el valor del parámetro
       selectedOption: '',      // Opción seleccionada (si aplica)
     });
 
@@ -779,6 +791,30 @@ class AWF_Configuration {
     return nameClean;
   }
 
+  updateDataBlockText(dataBlock, newText) {
+    let text = newText;
+    let name = AWF_Configuration.cleanName(text);
+    let index = 0;
+    while(this.data_blocks.some((b) => b.id != dataBlock.id && (b.text === text || b.name === name))) {
+      index++;
+      text = `${newText.trim()} ${index}`;
+      name = AWF_Configuration.cleanName(text);
+    }
+    dataBlock.name = name;
+    dataBlock.text = text;
+
+    // Update value_text of all parameter actions to this dataBlock
+    this.flows.forEach(flow => {
+      flow.actions.forEach(action => {
+        action.parameters.forEach(param => {
+          if (param.value == dataBlock.id) {
+            param.value_text = text;
+          }
+        });
+      });
+    });
+  }
+
   /**
    * Gets a new DataBlock for specified module
    * @param {string} moduleName Module
@@ -826,7 +862,81 @@ class AWF_Configuration {
 
     this.data_blocks.push(dataBlock);
 
+    this._addSaveActionForDataBlock(dataBlock);
+
     return dataBlock;
+  }
+
+  _addSaveActionForDataBlock(dataBlock) {
+    const saveActionDef = utils.getServerActions().find(a => a.name == 'SaveRecordAction');
+    const params = {
+      'data_block_id': {value: dataBlock.id, valueText: dataBlock.text, selectedOption: ''} 
+    };
+    const newAction = this.addAction(saveActionDef, params);
+    dataBlock.save_action_id = newAction.id;
+  }
+  
+  /**
+   * Add new action to flow
+   *
+   * @param {object} actionDef The Action definition (from ActionDefinitionDTO)
+   * @param {object} params A map of parameters, ex: { 'param_name': { value: 'value', selectedOption: 'opt' } }
+   * @param {string} flowId Id of the flow where action will be added (ex: '0' for main flow)
+   * @returns {AWF_Action} The new action
+   */
+  addAction(actionDef, params = {}, flowId = '0') {
+    const flow = this.flows.find(f => f.id == flowId);
+    if (!flow) {
+      console.error(`Flow with ID ${flowId} not found.`);
+      return null;
+    }
+
+    const newAction = new AWF_Action({
+      name: actionDef.name,
+      text: actionDef.title, 
+      description: actionDef.description,
+      category: actionDef.category,
+      is_active: actionDef.isActive,
+      is_user_selectable: actionDef.isUserSelectable,
+      is_terminal: actionDef.isTerminal,
+      order: actionDef.order,
+      is_fixed_order: actionDef.order != 0,
+    });
+
+    const requisiteActions = new Set(); 
+    (actionDef.parameters || []).forEach(paramDef => {      
+      const paramConfig = params[paramDef.name];       
+      const paramValue = paramConfig?.value ?? paramDef.defaultValue;
+      const newParam = new AWF_ActionParameter({
+        name: paramDef.name,
+        text: paramDef.text,
+        value: paramValue,
+        value_text: paramConfig?.valueText ?? paramValue,
+        selectedOption: paramConfig?.selectedOption ?? '',
+      });
+
+      newAction.parameters.push(newParam);
+
+      // Requisites: If param is Datablock or resolvedType is DataBlock
+      const paramIsDataBlock = (paramDef.type === 'dataBlock') || 
+                               (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
+
+      if (paramIsDataBlock && newParam.value) {
+        const requiredBlock = this.data_blocks.find(b => b.id == newParam.value);
+
+        if (requiredBlock && requiredBlock.save_action_id) {
+          requisiteActions.add(requiredBlock.save_action_id);
+        }
+      }
+    });
+
+    // Assign requisites
+    newAction.requisite_actions = Array.from(requisiteActions);
+
+    // Add Action to flow
+    flow.actions.push(newAction);
+
+    return newAction;
   }
 
   /**
@@ -844,6 +954,55 @@ class AWF_Configuration {
 
     // Remove DataBlock
     this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
+
+    // Remove SaveAction and its dependants
+    this._deleteSaveActionForDataBlock(dataBlock);
+  }
+
+  _deleteSaveActionForDataBlock(dataBlock) {
+    const targetActionId = dataBlock.save_action_id;
+    
+    if (!targetActionId) {
+      return; // No save action to delete
+    }
+
+    // 1. Identify all actions to delete
+    const idsToDelete = new Set([targetActionId]);
+    let newDependentsFound = true;
+
+    // To find multilevel dependences (A -> B -> C)
+    while (newDependentsFound) {
+      newDependentsFound = false;
+
+      this.flows.forEach(flow => {
+        flow.actions.forEach(action => {
+          if (!idsToDelete.has(action.id)) {
+            
+            // Check if any requisite must be deleted
+            const dependsOnDeleted = (action.requisite_actions || []).some(reqId => idsToDelete.has(reqId));
+            if (dependsOnDeleted) {
+              idsToDelete.add(action.id);
+              newDependentsFound = true;
+            }
+          }
+        });
+      });
+    }
+
+    // 2. Remove actions in every flow
+    this.flows.forEach(flow => {
+      flow.actions = flow.actions.filter(action => !idsToDelete.has(action.id));
+    });
+
+    // 3. Clean save action in dataBlock
+    dataBlock.save_action_id = "";
+  }
+
+  deleteDataBlockField(dataBlock, field) {
+    dataBlock.deleteField(field.name);
+
+    // TODO: Update SaveRelationships if needed
+
   }
 
   /**
@@ -902,6 +1061,16 @@ class AWF_Configuration {
     dataField_orig.in_form = false;
     dataField_orig.value_type = "dataBlock";
     dataField_orig.value = dataBlock_dest.id;
+
+    // Add Action to save Relationship
+    const relateActionDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
+    const params = {
+      'data_block_id': {value: dataBlock_orig.id, valueText: dataBlock_orig.text, selectedOption: ''},
+      'target_data_block': {value: dataBlock_dest.id, valueText: dataBlock_dest.text, selectedOption: ''},
+      'field_to_update': {value: dataField_orig.name, valueText: dataField_orig.text, selectedOption: ''}
+    };
+    const newAction = this.addAction(relateActionDef, params);
+    dataBlock.save_action_id = newAction.id;
 
     return dataBlock;
   }

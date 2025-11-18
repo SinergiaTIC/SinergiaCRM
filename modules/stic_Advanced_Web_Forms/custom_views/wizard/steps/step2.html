@@ -45,7 +45,7 @@
     <!-- DataBlocks -->
     <template x-for="item in formConfig.data_blocks" :key="item.id">
       <!-- DataBlock -->
-      <div class="card datablock" :class="{'has-errors':!item.isValid()}">
+      <div class="card datablock" :class="{'has-errors':!item.isValid()}" x-data="WizardStep2.datablockxData(formConfig, item);">
         <!-- DataBlock header -->
         <div class="card-header d-flex flex-column">
           <div class="d-flex justify-content-start datablock-module">
@@ -172,7 +172,7 @@
                                 </div>
                               </template>
                               <button type="button" class="btn ms-2" :disabled="field.required" 
-                                      @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                      @click="formConfig.deleteDataBlockField(item, field); $store.dataBlockRelationships.resetDataBlockRelationships();"
                                       :title="utils.translate('LBL_BUTTON_DELETE')">
                                 <span class="suitepicon suitepicon-action-delete"></span>
                               </button>

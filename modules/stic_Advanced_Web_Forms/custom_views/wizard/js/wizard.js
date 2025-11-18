@@ -447,6 +447,21 @@ class WizardStep2 {
     };
   }
 
+  static datablockxData(initial_formConfig, dataBlock) {
+    return {
+      formConfig: initial_formConfig,
+      dataBlock: dataBlock,
+
+      init() {
+        this.$watch('dataBlock.text', (newText, oldText) => {
+          if (!this.dataBlock) return;
+          if (newText == oldText) return;
+          this.formConfig.updateDataBlockText(this.dataBlock, newText);
+        });
+      },
+    };
+  }
+
   static sortableListxData(initial_items) {
     return {
       items: initial_items,

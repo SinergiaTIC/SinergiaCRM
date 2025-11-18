@@ -128,6 +128,23 @@ class utils {
   }
 
   static _cachedActions = [];
+  /**
+   * Retrieves defined Serve actions
+   * @returns Server action array
+   * Result: [Action]
+   *   Action: {
+   *     name, title, description, isActive, isUserSelectable, isCommon, category, scope, supportedModules, supportedFieldSubTypes, order, parameters
+   *   }
+   *   Parameter: {
+   *     name, text, description, type, dataType, required, defaultValue, options, selectorOptions
+   *   }
+   *   Option: {
+   *     value, text
+   *   }
+   *   SelectorOption: {
+   *     name, text, resolvedType
+   *   }
+   */
   static getServerActions() {
     if (utils._cachedActions.length == 0) {
       $.ajax({

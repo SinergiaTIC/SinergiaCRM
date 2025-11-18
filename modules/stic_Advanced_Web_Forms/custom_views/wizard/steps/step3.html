@@ -25,17 +25,6 @@
                     </select>
                 </div>
 
-                <!-- Action -->
-                <div class="col-3">
-                    <label for="modalCreateAction_action" class="form-label" x-text="utils.translateForFieldLabel('LBL_ACTION')"></label>
-                    <select id="modalCreateAction_action" class="form-select" x-model="newAction.flow">
-                        <template x-for="action in formConfig.flows" :key="flow.id">
-                            <option :value="flow.id" x-text="flow.getText()"></option>
-                        </template>
-                    </select>
-                </div>
-
-                
                 <!-- Module -->
                 <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
                 <!-- Data Block name -->
@@ -72,11 +61,11 @@
         <!-- Actions -->
         <table class="table table-bordered align-middle" >
             <colgroup>
-                <col style="width:20%">
-                <col style="width:20%">
-                <col style="width:45%">
+                <col style="width:30%">
                 <col style="width:15%">
-            </colgroup>            
+                <col style="width:40%">
+                <col style="width:15%">
+            </colgroup>
             <thead class="table-light">
                 <tr>
                     <th x-text="utils.translate('LBL_ACTION_NAME')"></th>
@@ -86,116 +75,86 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="stic-tablecard-start">
-                    <!-- Name -->
-                    <td><strong>[Enviar correu]</strong></td>
-                    <!-- Category -->
-                    <td>[Comunicacions]</td>
-                    <!-- Parameters -->
-                    <td rowspan="2" class="p-0">
-                        <table class="table table-sm mb-0">
-                            <tbody>
-                                <tr>
-                                    <th class="w-25">Assumpte</th>
-                                    <td>
-                                        <input type="text" class="form-control form-control-sm d-inline-block w-auto" value="[Notificació]">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Destinatari</th>
-                                    <td>[camp.email]</td>
-                                </tr>
-                                <tr>
-                                    <th>Prioritat</th>
-                                    <td>[Alta]</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                    <!-- Buttons -->
-                    <td rowspan="2">
-                        <div class="d-inline-flex">
-                            <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
-                                    :title="utils.translate('LBL_BUTTON_EDIT')">
-                                <span class="suitepicon suitepicon-action-edit"></span>
-                            </button>
-                            <template x-if="field.isFieldInForm()">
-                                <div class="input-group" role="group">
-                                    <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
-                                            :title="utils.translate('LBL_BUTTON_MOVE_UP')">
-                                    <span class="suitepicon suitepicon-action-move-up"></span>
-                                    </button>
-                                    <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
-                                            :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
-                                    <span class="suitepicon suitepicon-action-move-down"></span>
-                                    </button>
-                                </div>
-                            </template>
-                            <button type="button" class="btn ms-2" :disabled="field.required" 
-                                    @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
-                                    :title="utils.translate('LBL_BUTTON_DELETE')">
-                                <span class="suitepicon suitepicon-action-delete"></span>
-                            </button>
-                        </div> 
-                    </td>
-                </tr>
-                <tr class="stic-tablecard-end">
-                    <td colspan="2" class="text-muted small">
-                        [Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.][Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.][Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.][Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.]
-                    </td>
-                </tr>
-                <tr class="stic-tablecard-start">
-                    <!-- Name -->
-                    <td><strong>[Enviar correu]</strong></td>
-                    <!-- Category -->
-                    <td>[Comunicacions]</td>
-                    <!-- Parameters -->
-                    <td rowspan="2">
-                        <ul class="list-unstyled mb-0">
-                            <li><strong>[Assumpte:]</strong> <input type="text" class="form-control form-control-sm d-inline-block w-auto" value="[Notificació]" /></li>
-                            <li><strong>[Destinatari:]</strong> <span>[camp.email]</span></li>
-                            <li><strong>[Prioritat:]</strong>[Alta]</li>
-                        </ul>
-                    </td>
-                    <!-- Buttons -->
-                    <td rowspan="2">
-                        <div class="d-inline-flex">
-                            <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
-                                    :title="utils.translate('LBL_BUTTON_EDIT')">
-                                <span class="suitepicon suitepicon-action-edit"></span>
-                            </button>
-                            <template x-if="field.isFieldInForm()">
-                                <div class="input-group" role="group">
-                                    <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
-                                            :title="utils.translate('LBL_BUTTON_MOVE_UP')">
-                                    <span class="suitepicon suitepicon-action-move-up"></span>
-                                    </button>
-                                    <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
-                                            :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
-                                    <span class="suitepicon suitepicon-action-move-down"></span>
-                                    </button>
-                                </div>
-                            </template>
-                            <button type="button" class="btn ms-2" :disabled="field.required" 
-                                    @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
-                                    :title="utils.translate('LBL_BUTTON_DELETE')">
-                                <span class="suitepicon suitepicon-action-delete"></span>
-                            </button>
-                        </div> 
-                    </td>
-                </tr>
-                <tr class="stic-tablecard-end">
-                    <td colspan="2" class="text-muted small">
-                        [Envia un correu electrònic al destinatari especificat amb l'assumpte indicat.]
-                    </td>
-                </tr>                
             </tbody>
-        </table>    
-      <template x-for="action in actions" :key="action.id">
-        <div class="stic-tabcontent">
-          <h3 class="card-title" x-text="action.text"></h3>
-        </div>
-      </template>
+        </table>
+        <template x-for="action in actions" :key="action.id">
+            <table class="table table-bordered align-middle stic-tablecard" >
+                <colgroup>
+                    <col style="width:30%">
+                    <col style="width:15%">
+                    <col style="width:40%">
+                    <col style="width:15%">
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <!-- Name -->
+                        <td><strong x-text="action.textExpanded"></strong></td>
+                        <!-- Category -->
+                        <td x-text="action.category_in_formText"></td>
+                        <!-- Parameters -->
+                        <td rowspan="2" class="p-0">
+                            <table class="table table-sm mb-0">
+                                <tbody>
+                                    <template x-for="param in action.parameters" :key="param.name">
+                                        <tr>
+                                            <th class="w-25" x-text="param.text"></th>
+                                            <td x-text="param.value_text"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </td>
+                        <!-- Buttons -->
+                        <td rowspan="2">
+                            <div class="d-inline-flex">
+                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')">
+                                    <span class="suitepicon suitepicon-action-edit"></span>
+                                </button>
+                                <div class="input-group" role="group">
+                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
+                                        <span class="suitepicon suitepicon-action-move-up"></span>
+                                    </button>
+                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                        <span class="suitepicon suitepicon-action-move-down"></span>
+                                    </button>
+                                </div>
+                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')">
+                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                </button>
+                            </div> 
+                        </td>
+                        <!-- <td rowspan="2">
+                            <div class="d-inline-flex">
+                                <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
+                                        :title="utils.translate('LBL_BUTTON_EDIT')">
+                                    <span class="suitepicon suitepicon-action-edit"></span>
+                                </button>
+                                <template x-if="field.isFieldInForm()">
+                                    <div class="input-group" role="group">
+                                        <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
+                                                :title="utils.translate('LBL_BUTTON_MOVE_UP')">
+                                        <span class="suitepicon suitepicon-action-move-up"></span>
+                                        </button>
+                                        <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
+                                                :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                        <span class="suitepicon suitepicon-action-move-down"></span>
+                                        </button>
+                                    </div>
+                                </template>
+                                <button type="button" class="btn ms-2" :disabled="field.required" 
+                                        @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                        :title="utils.translate('LBL_BUTTON_DELETE')">
+                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                </button>
+                            </div> 
+                        </td> -->
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-muted small" x-text="action.description"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>
     </div>
   </div>
 </main>
