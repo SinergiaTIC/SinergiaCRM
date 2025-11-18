@@ -1,6 +1,5 @@
 // load qtip for first non active .inline-help element
 function setInlineHelpQtip(){
-  debugger;
   $('i.inline-help:not([data-hasqtip])').qtip({
     content: {
       text: function (api) {
