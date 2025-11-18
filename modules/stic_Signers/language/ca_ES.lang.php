@@ -83,8 +83,6 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_ID_CONTACT_ID' => 'Autoritzat a firmar en nom de',
     'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Firmes',
     'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Firmes',
-    'LBL_DEFAULT_PANEL' => 'Dades generals',
-    'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Sol·licita la firma per correu electrònic a',
     'LBL_SIGNER_SEND_TO_SIGN_MASSIVE' => 'Sol·licita la firma per correu electrònic',
