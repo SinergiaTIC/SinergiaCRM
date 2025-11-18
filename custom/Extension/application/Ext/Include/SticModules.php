@@ -65,7 +65,7 @@ $moduleList[] = 'stic_Messages';
 $moduleList[] = 'stic_Bookings_Places_Calendar';
 $moduleList[] = 'stic_Places';
 $moduleList[] = 'stic_Group_Opportunities';
-// $moduleList[] = 'stic_Message_Marketing';
+// $moduleList[] = 'stic_Message_Marketing'; -- Do not want to show them at module list
 // $moduleList[] = 'stic_MessagesMan';
 
 // Bean names for custom modules
