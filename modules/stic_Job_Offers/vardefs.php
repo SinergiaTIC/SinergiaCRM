@@ -291,7 +291,7 @@ $dictionary['stic_Job_Offers'] = array(
             'size' => '20',
         ),
         'offer_type' => array(
-            'required' => false,
+            'required' => true,
             'name' => 'offer_type',
             'vname' => 'LBL_OFFER_TYPE',
             'type' => 'enum',
