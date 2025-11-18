@@ -33,9 +33,33 @@ $subpanel_layout = array(
             'widget_class' => 'SubPanelDetailViewLink',
             'width' => '25%',
         ),
+        'stic_payment_commitments_name' => array(
+            'vname' => 'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'module' => 'stic_Payment_Commitments',
+            'width' => '20%',
+        ),
         'active' => array(
             'vname' => 'LBL_ACTIVE',
             'width' => '10%',
+        ),
+        'opportunities_stic_allocation_proposals_name' => array(
+            'vname' => 'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_OPPORTUNITIES_TITLE',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'module' => 'Opportunities',
+            'width' => '20%',
+        ),
+        'project_stic_allocation_proposals_name' => array(            
+            'vname' => 'LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_PROJECT_TITLE',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'module' => 'Project',
+            'width' => '20%',
+        ),
+        'stic_ledger_accounts_name' => array(
+            'vname' => 'LBL_STIC_LEDGER_ACCOUNTS',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'module' => 'stic_Ledger_Accounts',
+            'width' => '20%',
         ),
         'type' => array(
             'vname' => 'LBL_TYPE',

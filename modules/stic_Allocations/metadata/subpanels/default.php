@@ -28,8 +28,22 @@ $subpanel_layout['list_fields'] = array(
         'width' => '20%',
         'default' => true,
     ),
-    'type' => array(
-        'vname' => 'LBL_TYPE',
+    'stic_payments_name' => array(
+        'vname' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+        'widget_class' => 'SubPanelDetailViewLink',
+        'module' => 'stic_Payments',
+        'width' => '15%',
+        'default' => true,
+    ),
+    'stic_allocation_proposals_name' => array(
+        'vname' => 'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+        'widget_class' => 'SubPanelDetailViewLink',
+        'module' => 'stic_Allocation_Proposals',
+        'width' => '15%',
+        'default' => true,
+    ),
+    'date' => array(
+        'vname' => 'LBL_DATE',
         'width' => '15%',
         'default' => true,
     ),
@@ -43,13 +57,44 @@ $subpanel_layout['list_fields'] = array(
         'width' => '10%',
         'default' => true,
     ),
-    'date' => array(
-        'vname' => 'LBL_DATE',
+    'opportunities_stic_allocations_name' => array(
+        'vname' => 'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_OPPORTUNITIES_TITLE',
+        'widget_class' => 'SubPanelDetailViewLink',
+        'module' => 'Opportunities',
         'width' => '15%',
+        'default' => true,
+    ),
+    'project_stic_allocations_name' => array(
+        'vname' => 'LBL_PROJECT_STIC_ALLOCATIONS_FROM_PROJECT_TITLE',
+        'widget_class' => 'SubPanelDetailViewLink',
+        'module' => 'Project',
+        'width' => '15%',
+        'default' => true,
+    ),
+    'stic_ledger_accounts_name' => array(
+        'vname' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'widget_class' => 'SubPanelDetailViewLink',
+        'module' => 'stic_Ledger_Accounts',
+        'width' => '15%',
+        'default' => true,
+    ),
+    'type' => array(
+        'vname' => 'LBL_TYPE',
+        'width' => '15%',
+        'default' => true,
+    ),
+    'percentage' => array(
+        'vname' => 'LBL_PERCENTAGE',
+        'width' => '10%',
         'default' => true,
     ),
     'amount' => array(
         'vname' => 'LBL_AMOUNT',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'hours' => array(
+        'vname' => 'LBL_HOURS',
         'width' => '10%',
         'default' => true,
     ),
