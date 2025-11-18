@@ -738,6 +738,8 @@ $dictionary['stic_Payments'] = array(
             'unified_search' => 0,
             'len' => 11,
             'size' => '20',
+            'enable_range_search' => 1,
+            'options' => 'numeric_range_search_dom',
         ),
         'justified_percentage' => array(
             'required' => 0,
@@ -757,6 +759,8 @@ $dictionary['stic_Payments'] = array(
             'unified_search' => 0,
             'len' => 11,
             'size' => '20',
+            'enable_range_search' => 1,
+            'options' => 'numeric_range_search_dom',
         ),
         'tax_withholding' => array(
             'required' => 0,
