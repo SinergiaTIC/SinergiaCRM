@@ -184,8 +184,8 @@ $mod_strings = array(
     'LBL_AUDIT_PAGE_EVENTS_LOG_TITLE' => "Registre d'esdeveniments",
 
     // Labels for popupHelps
-    'LBL_AUTH_METHOD_HELP' => "<ul><li><strong>Enllaç únic:</strong> el firmant accedeix al document mitjançant un enllaç. <li><strong>Codi d'un sol ús (per SMS o correu electrònic):</strong> el firmant ha d'introduir un codi de verificació enviat per SMS o correu electrònic. <li><strong>Telèfon, número d'identificació o data de naixement:</strong> el firmant ha d'indicar les dades seleccionades per poder firmar.</ul>",
-    'LBL_SIGNATURE_MODE_HELP' => "<ul><li><strong>Manuscrita:</strong> el firmant dibuixa la seva firma utilitzant el ratolí o la pantalla tàctil. <li><strong>Botó:</strong> el firmant només ha de prémer el botó d'acceptació</ul>",
+    'LBL_AUTH_METHOD_HELP' => "<ul><li><strong>Enllaç únic:</strong> El firmant accedeix al document mitjançant un enllaç. <li><strong>Codi d'un sol ús (per SMS o correu electrònic):</strong> El firmant ha d'introduir un codi de verificació enviat per SMS o correu electrònic. <li><strong>Telèfon, número d'identificació o data de naixement:</strong> El firmant ha d'indicar les dades seleccionades per poder firmar.</ul>",
+    'LBL_SIGNATURE_MODE_HELP' => "<ul><li><strong>Manuscrita:</strong> El firmant dibuixa la seva firma utilitzant el ratolí o la pantalla tàctil. <li><strong>Botó:</strong> El firmant només ha de prémer el botó d'acceptació.</ul>",
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (valor per defecte):</strong> El firmant actua en el seu propi nom. <li><strong>Sí, només un representant:</strong> Només cal que firmi un representant del titular de la firma. <li><strong>Sí, tots els representants</strong> Han de firmar tots els representants del titular.</ul>',
     'LBL_ACTIVATION_DATE_HELP' => "Data a partir de la qual es podrà firmar. Abans d'aquesta data el portal de firmes no ho permetrà.",
     'LBL_EXPIRATION_DATE_HELP' => "Data límit per firmar. Després d'aquesta data el portal de firmes no ho permetrà, però sí que es podrà consultar si el document està firmat.",
@@ -194,7 +194,7 @@ $mod_strings = array(
     'LBL_TYPE_HELP' => "Tipus de firma a configurar. Actualment només hi ha disponible l'opció Individual.",
     'LBL_PDF_TEMPLATE_HELP' => "Plantilla PDF per informar els firmants. Aquesta plantilla es fa servir quan no se'ls informa mitjançant una campanya de notificacions (que ja té la seva pròpia plantilla). Si no se n'indica cap es farà servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView'>plantilla per defecte.</a>",
     'LBL_SIGNER_PATH_HELP' => 'Permet triar la ruta a seguir des del mòdul principal de la firma fins al mòdul dels firmants (Persones o Usuaris).',
-    'LBL_EMAIL_TEMPLATE_HELP' => "Plantilla de correu per notificar als firmants sobre el procés de firma. Ha d'incloure la informació necessària perquè el firmant pugui accedir al portal de firmes i completar el procés.",
+    'LBL_EMAIL_TEMPLATE_HELP' => "Plantilla de correu per notificar als firmants sobre el procés de firma. Ha d'incloure la informació necessària perquè el firmant pugui accedir al portal de firma i completar el procés.",
     'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correu per enviar el document firmat als firmants.',
     'LBL_EMAIL_TEMPLATE_OTP_HELP' => "Plantilla de correu per enviar el codi d'un sol ús al correu electrònic dels firmants.",
     'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => "Plantilla de missatge SMS per enviar el codi d'un sol ús al telèfon dels firmants.",
