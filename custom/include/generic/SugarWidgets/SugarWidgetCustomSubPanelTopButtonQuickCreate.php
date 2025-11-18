@@ -90,58 +90,6 @@ class SugarWidgetCustomSubPanelTopButtonQuickCreate extends SugarWidgetField
 	}
 	
 
-/*
-
-<form onsubmit="return SUGAR.subpanelUtils.sendAndRetrieve(this.id, 'subpanel_stic_campaigns_notification', 'Carregant...');" action="index.php" method="post" name="form" id="formformgetNotificationsFromParent"><a id="getNotificationsFromParent_nou_button">Nou</a>
-<input type="hidden" name="target_module" value="Campaigns">
-<input type="hidden" name="stic_events_id" value="00000028-5198-0625-a457-68ecdb2333f7">
-<input type="hidden" name="stic_events_name" value="ES1"><input type="hidden" name="getNotificationsFromParent_name" value="ES1"><input type="hidden" name="to_pdf" value="true"><input type="hidden" name="tpl" value="QuickCreate.tpl"><input type="hidden" name="return_module" value="stic_Events">
-<input type="hidden" name="return_action" value="DetailView">
-<input type="hidden" name="return_id" value="00000028-5198-0625-a457-68ecdb2333f7">
-<input type="hidden" name="return_relationship" value="getNotificationsFromParent">
-<input type="hidden" name="record" value=""><input type="hidden" name="action" value="SubpanelCreates">
-<input type="hidden" name="module" value="Home">
-<input type="hidden" name="target_action" value="QuickCreate">
-<input type="hidden" name="return_name" value="ES1">
-<input type="hidden" name="parent_type" value="stic_Events">
-<input type="hidden" name="parent_name" value="ES1">
-<input type="hidden" name="parent_id" value="00000028-5198-0625-a457-68ecdb2333f7">
-<input title="Crear" accesskey="" class="button" type="submit" name="getNotificationsFromParent_nou_button" id="getNotificationsFromParent_nou_button_old" value="Nou" style="display: none;">
-</form>
-
-
-
-<form onsubmit="return SUGAR.subpanelUtils.sendAndRetrieve(this.id, 'subpanel_', 'Loading ...');" action="index.php" method="post" name="form" id=""><a id="_quickedit_button">Quick&nbsp;Edit</a>
-		<input type="hidden" name="target_module" value="Campaigns">
-		<input type="hidden" name="tpl" value="QuickCreate.tpl">
-		<input type="hidden" name="return_module" value="stic_Events">
-		<input type="hidden" name="return_action" value="DetailView">
-		<input type="hidden" name="return_id" value="00000028-5198-0625-a457-68ecdb2333f7">
-		<input type="hidden" name="return_relationship" value="">
-		<input type="hidden" name="action" value="SubpanelCreates">
-		<input type="hidden" name="module" value="Home">
-		<input type="hidden" name="target_action" value="QuickEdit">
-		<input type="hidden" name="return_name" value="XXXX">
-		<input type="hidden" name="parent_type" value="stic_Events">
-		<input type="hidden" name="parent_name" value="XXXX">
-		<input type="hidden" name="parent_id" value="00000028-5198-0625-a457-68ecdb2333f7">
-        <input type="hidden" name="stic_events_id" value="00000028-5198-0625-a457-68ecdb2333f7">
-        <input type="hidden" name="stic_events_name" value="ES1">
-        <input type="hidden" name="getNotificationsFromParent_name" value="ES1">
-        <input type="hidden" name="to_pdf" value="true">
-        <input type="hidden" name="return_relationship" value="getNotificationsFromParent">
-        <input type="hidden" name="record" value="">
-        <input type="hidden" name="action" value="SubpanelCreates">
-        <input type="hidden" name="module" value="Home">
-        <input type="hidden" name="target_action" value="QuickCreate">
-        <input type="hidden" name="return_name" value="ES1">
-		<input title="Quick Edit" accesskey="" class="button" type="submit" name="Campaigns_quickedit_button" id="_quickedit_button_old" value="Quick Edit" style="display: none;">
-		</form>
-
-
-
-
-*/
 
     /**
      * get_subpanel_relationship_name
