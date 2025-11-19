@@ -3630,6 +3630,11 @@ $app_list_strings['trackers_actions_list']['login_ok'] = 'User login';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Login failed';
 $app_list_strings['trackers_actions_list']['logout'] = 'User logout';
 
+// SinergiaDA: Users access levels
+$app_list_strings['sda_users_access_list']['0'] = 'No access';
+$app_list_strings['sda_users_access_list']['1'] = 'Full access';
+$app_list_strings['sda_users_access_list']['2'] = 'Read-only access';
+
 // SuiteCRM Core modifications
 
 // Opportunities: Roles of the contacts in the opportunity context
@@ -3718,8 +3723,3 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
-
-// SDA: Users access levels
-$app_list_strings['sda_users_access_list']['0'] = 'No Access';
-$app_list_strings['sda_users_access_list']['1'] = 'Full Access';
-$app_list_strings['sda_users_access_list']['2'] = 'Read-Only Access';
