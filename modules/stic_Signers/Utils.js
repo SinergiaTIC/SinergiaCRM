@@ -59,7 +59,7 @@ switch (viewType()) {
       rediretToSingPortal: {
         id: "bt_redirect_to_portal",
         title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_REDIRECT_TO_PORTAL"), // Localized button title with link emoji 
-        onclick: "window.location='index.php?entryPoint=sticSign&signerId=" + STIC.record.id + "'"
+        onclick: "window.open('index.php?entryPoint=sticSign&signerId=" + STIC.record.id + "', '_blank')"
       },
       copyPortalUrl: {
         id: "bt_copy_portal_url",
