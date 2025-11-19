@@ -268,6 +268,9 @@ class Campaign extends SugarBean
         // STIC-Custom - JBL - 20240612 - New Campaign type (Notification)
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 		// return parent::save($check_notify);
+        // STIC-Custom - EPS - 20241105 - Added Notification by message campaigns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/473
+        // if (($this->campaign_type == "Notification") && 
         if (($this->campaign_type == "Notification" || $this->campaign_type == "NotifMsg") && 
             !empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == "getNotificationsFromParent" &&
             !empty($_REQUEST['relate_id']) && !empty($_REQUEST['return_module'])) {
