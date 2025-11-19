@@ -127,64 +127,67 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('ACTIVATION_MSG', $activationMsg);
         }
 
-        // Validate authentication mode
-        switch ($authMode) {
-            case 'unique_link':
-                $passed = true;
-                break;
-            case 'otp':
-            case 'otp_email':
-            case 'otp_phone_message':
-                $this->ss->assign('OTP_SENT', ($_SESSION['otp_signed_sent'][$signerBean->id] ?? false) ? true : false);
-                $maskedEmail = preg_replace('/(?<=.).(?=[^@]*?@)/', '*', $signerBean->email_address);
-                $this->ss->assign('OTP_MASKED_EMAIL', $maskedEmail);
-                $maskedPhone = preg_replace('/.(?=.{2})/', '*', $signerBean->phone);
-                $this->ss->assign('OTP_MASKED_PHONE', $maskedPhone);
-
-                // Check if OTP code is provided in REQUEST and valid
-                if ($stic_SignaturePortalUtils::verifyOtpCode($signerBean, $_REQUEST['otp-code'] ?? '')) {
+        // Proceed with authentication only if not expired and activated
+        if ($isExpired === false && $isActivated === true) {            
+            // Validate authentication mode
+            switch ($authMode) {
+                case 'unique_link':
                     $passed = true;
-                } else {
-                    if (isset($_REQUEST['otp-code'])) {
-                        $errorMsg = 'El código OTP proporcionado no es válido. Por favor, inténtalo de nuevo.';
-                        $this->ss->assign('OTP_ERROR_MSG', $errorMsg);
-                    }
-                    $this->ss->assign('OTP_REQUIRED', ($isExpired === false && $isActivated === true) ? true : false);
+                    break;
+                case 'otp':
+                case 'otp_email':
+                case 'otp_phone_message':
+                    $this->ss->assign('OTP_SENT', ($_SESSION['otp_signed_sent'][$signerBean->id] ?? false) ? true : false);
+                    $maskedEmail = preg_replace('/(?<=.).(?=[^@]*?@)/', '*', $signerBean->email_address);
+                    $this->ss->assign('OTP_MASKED_EMAIL', $maskedEmail);
+                    $maskedPhone = preg_replace('/.(?=.{2})/', '*', $signerBean->phone);
+                    $this->ss->assign('OTP_MASKED_PHONE', $maskedPhone);
 
-                }
-                break;
-            case 'phone':
-            case 'identification_number':
-            case 'birthdate':
-                $this->ss->assign('FIELD_VALIDATION_REQUIRED', true);
-                if (stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_POST['validation_field_value'] ?? '')) {
-                    $passed = true;
-                } else {
-                    if (isset($_REQUEST['field-value'])) {
-                        $errorMsg = 'El valor pDroporcionado no es válido. Por favor, inténtalo de nuevo.';
-                        $this->ss->assign('FIEL_ERROR_MSG', $errorMsg);
-                        $this->ss->assign('PREVIOUS_FIELD_VALUE', $_REQUEST['field-value']);
-                    }
-                    $this->ss->assign('FIELD_VALIDATION_LABEL', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_' . strtoupper($signatureBean->auth_method)]);
-                    $this->ss->assign('FIELD_VALIDATION_LABEL_FORMAT', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_' . strtoupper($signatureBean->auth_method)]);
-                    $this->ss->assign('FIELD_REQUIRED', true);
+                    // Check if OTP code is provided in REQUEST and valid
+                    if ($stic_SignaturePortalUtils::verifyOtpCode($signerBean, $_REQUEST['otp-code'] ?? '')) {
+                        $passed = true;
+                    } else {
+                        if (isset($_REQUEST['otp-code'])) {
+                            $errorMsg = 'El código OTP proporcionado no es válido. Por favor, inténtalo de nuevo.';
+                            $this->ss->assign('OTP_ERROR_MSG', $errorMsg);
+                        }
+                        $this->ss->assign('OTP_REQUIRED', ($isExpired === false && $isActivated === true) ? true : false);
 
-                    if ($signatureBean->auth_method === 'birthdate') {
-                        $this->ss->assign('FIELD_VALIDATION_REGEXP', '^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$');
-                    } elseif ($signatureBean->auth_method === 'identification_number') {
-                        $this->ss->assign('FIELD_VALIDATION_REGEXP', '^[A-Za-z0-9]*$');
-                    } elseif ($signatureBean->auth_method === 'phone') {
-                        $this->ss->assign('FIELD_VALIDATION_REGEXP', '[0-9]{9}');
                     }
-                }
-                break;
+                    break;
+                case 'phone':
+                case 'identification_number':
+                case 'birthdate':
+                    $this->ss->assign('FIELD_VALIDATION_REQUIRED', true);
+                    if (stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_POST['validation_field_value'] ?? '')) {
+                        $passed = true;
+                    } else {
+                        if (isset($_REQUEST['field-value'])) {
+                            $errorMsg = 'El valor pDroporcionado no es válido. Por favor, inténtalo de nuevo.';
+                            $this->ss->assign('FIEL_ERROR_MSG', $errorMsg);
+                            $this->ss->assign('PREVIOUS_FIELD_VALUE', $_REQUEST['field-value']);
+                        }
+                        $this->ss->assign('FIELD_VALIDATION_LABEL', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_' . strtoupper($signatureBean->auth_method)]);
+                        $this->ss->assign('FIELD_VALIDATION_LABEL_FORMAT', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_' . strtoupper($signatureBean->auth_method)]);
+                        $this->ss->assign('FIELD_REQUIRED', true);
 
-            default:
-                $errorMsg = 'El modo de autenticación no es válido.';
-                $this->ss->assign('ERROR_MSG', $errorMsg);
-                break;
+                        if ($signatureBean->auth_method === 'birthdate') {
+                            $this->ss->assign('FIELD_VALIDATION_REGEXP', '^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$');
+                        } elseif ($signatureBean->auth_method === 'identification_number') {
+                            $this->ss->assign('FIELD_VALIDATION_REGEXP', '^[A-Za-z0-9]*$');
+                        } elseif ($signatureBean->auth_method === 'phone') {
+                            $this->ss->assign('FIELD_VALIDATION_REGEXP', '[0-9]{9}');
+                        }
+                    }
+                    break;
+
+                default:
+                    $errorMsg = 'El modo de autenticación no es válido.';
+                    $this->ss->assign('ERROR_MSG', $errorMsg);
+                    break;
+            }
         }
-
+        
         // If authentication passed, get document HTML content
         if ($passed === true) {
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
