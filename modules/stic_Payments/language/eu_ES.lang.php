@@ -157,4 +157,5 @@ $mod_strings = array(
     'LBL_TOTAL_COST' => 'Erakundearen kostu osoa',
     'LBL_VAT_SUPPORTED' => 'BEZ jasandakoa',
     'LBL_BASE_AMOUNT' => 'Oinarri zenbatekoa',
+    'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'Un pago bloqueado no puede cambiar el estado de imputación.',
 );

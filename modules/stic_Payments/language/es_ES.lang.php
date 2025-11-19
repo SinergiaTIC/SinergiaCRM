@@ -157,4 +157,5 @@ $mod_strings = array(
     'LBL_TOTAL_COST' => 'Coste total organización',
     'LBL_VAT_SUPPORTED' => 'IVA soportado',
     'LBL_BASE_AMOUNT' => 'Importe base',
+    'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'Un pago bloqueado no puede cambiar el estado de imputación.',
 );

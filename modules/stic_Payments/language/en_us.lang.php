@@ -158,4 +158,5 @@ $mod_strings = array(
     'LBL_TOTAL_COST' => 'Company total cost',
     'LBL_VAT_SUPPORTED' => 'VAT supported',
     'LBL_BASE_AMOUNT' => 'Base amount',
+    'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'A blocked payment can not change allocation status.',
 );

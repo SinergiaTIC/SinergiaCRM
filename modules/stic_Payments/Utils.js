@@ -94,8 +94,24 @@ switch (viewType()) {
 
     setAutofill(["name", "mandate"]);
 
+    checkBlockedPayment();
+    // add observer for blocked changes
+    $("form").on("change", "#blocked", function () {
+      checkBlockedPayment();
+    });
+
     break;
   case "detail":
+    checkPercentagesInDetailView();    
+  
+    checkBlockedPaymentDetailView();
+    // add observer for [field='blocked'] changes
+    const targetNode = document.querySelector('[field="blocked"]');
+    var observer = new MutationObserver(function(mutations) {
+      checkBlockedPaymentDetailView();
+    });
+    observer.observe(targetNode, { childList: true, subtree: true});
+
     break;
 
   case "list":
@@ -114,6 +130,43 @@ switch (viewType()) {
   default:
     break;
 }
+
+function checkPercentagesInDetailView() {
+  let allocatedPercentage =  $("#allocated_percentage").text().replace(/\n/g, "");
+  let justifiedPercentage =  $("#justified_percentage").text().replace(/\n/g, "");
+
+  if (allocatedPercentage > 100) {
+    $("#allocated_percentage").css("color", "red");
+  }
+  if (justifiedPercentage > 100) {
+    $("#justified_percentage").css("color", "red");
+  }
+}
+
+
+function checkBlockedPaymentDetailView() {
+  var blocked = $("[field='blocked'] input").is(":checked")
+  if (blocked) {
+    $("[field='allocated']").addClass("no-inlineEdit");
+    $("[field='allocated'] .inlineEditIcon").hide();
+    $("[field='allocated']").css("pointer-events", "none");
+  }
+  else {
+    $("[field='allocated']").removeClass("no-inlineEdit");
+    $("[field='allocated'] .inlineEditIcon").show();
+    $("[field='allocated']").css("pointer-events", "auto");
+  }
+}
+function checkBlockedPayment() {
+  var blocked = $("#blocked").is(":checked");
+  if (blocked) {
+    $("#allocated").prop("disabled", true);
+  }
+  else {
+    $("#allocated").prop("disabled", false);
+  }
+}
+
 
 function setReturnAddPaymentsToRemittance(popupReplyData) {
   SUGAR.ajaxUI.loadingPanel.hide();

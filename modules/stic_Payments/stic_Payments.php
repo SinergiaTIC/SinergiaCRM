@@ -85,6 +85,7 @@ class stic_Payments extends Basic
      */
     public function save($check_notify = false)
     {
+        global $mod_strings;
 
         include_once 'SticInclude/Utils.php';
         include_once 'modules/stic_Payments/Utils.php';
@@ -136,6 +137,14 @@ class stic_Payments extends Basic
             $this->justification_date = $this->payment_date;
         }
 
+        if ($this->blocked) {
+            // This can not happen. A blocked payment can not change allocation status.
+            if (!empty($tempFetchedRow['allocated']) && $this->allocated == 0) {
+                $this->allocated = 1;
+                // SugarApplication::appendErrorMessage('A blocked payment can not change allocation status from allocated to not allocated. Allocation status has been reset to allocated.');
+                SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $mod_strings['LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS'] . '</div>');
+            }
+        }
 
         if (empty($tempFetchedRow['allocated']) && ($this->allocated == 1 || $this->allocated == 'on')) {
             $return = $this->generateAllocationsFromPayment();
