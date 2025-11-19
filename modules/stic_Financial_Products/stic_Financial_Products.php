@@ -78,13 +78,22 @@ class stic_Financial_Products extends Basic
     public function save($check_notify = false) {
         
         include_once 'SticInclude/Utils.php';
-        global $app_list_strings;
+        global $app_list_strings, $mod_strings;
 
-        // Create name even when some of the required fields change
-        if(empty($this->name)) {
-            $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type] . ' - ' . $this->iban;
-        }
+        // Check if iban or type have changed
+        $ibanChanged = !isset($this->fetched_row['iban']) || ($this->fetched_row['iban'] !== $this->iban);
+        $typeChanged = !isset($this->fetched_row['type']) || ($this->fetched_row['type'] !== $this->type);
         
+        // Create the name if it's empty or if type or iban have changed
+        if (empty($this->name) || $ibanChanged  || $typeChanged){
+            $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type] . ' - ' . $this->iban;
+
+            // If IBAN is empty, do not include it in the name but include assigned user
+            if (empty($this->iban)) {
+            $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type]. ' - ' . $mod_strings['LBL_ASSIGNED_TO_NAME'] . ' "' . $this->assigned_user_name . '"';
+            }
+        }
+
         // Call the generic save() function from the SugarBean class
         parent::save();
     }
