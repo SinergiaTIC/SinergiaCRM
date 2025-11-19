@@ -37,6 +37,16 @@ body {
     color: #333;
 }
 
+/* Styles for the logo container in the header */
+.logo-container {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white background */
+    padding: 0.1rem; 
+    /* border-radius: 0.5rem; Rounded corners */
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
+    max-width: 100%;
+}
+
 /* Styles for the main portal container */
 .stic-container {
     max-width: 900px;

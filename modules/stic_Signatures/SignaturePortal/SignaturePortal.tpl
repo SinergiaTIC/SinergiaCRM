@@ -25,14 +25,16 @@
 <body class="bg-light font-sans antialiased text-dark">
 
     <header class="p-4 p-sm-6 shadow-sm d-flex flex-column" style="background-color: {$HEADER_COLOR};">
-        <div class="container-fluid d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-            <div class="w-100 w-sm-100 text-center mb-2 mb-sm-0" style="max-height: 50%;">
+        <div class="container-fluid d-flex flex-column flex-sm-row">
+            <div class="w-40 w-sm-100 text-center mb-2 mb-sm-0" style="max-height: 50%;">
                 { if isset($LOGO_URL) && !empty($LOGO_URL) }
-                <img src="{$LOGO_URL}" alt="{$MODS.LBL_PORTAL_ORG_LOGO_ALT}" class="w-auto" style="max-height: 50px;">
+                <div class="logo-container">
+                    <img src="{$LOGO_URL}" alt="{$MODS.LBL_PORTAL_ORG_LOGO_ALT}" class="w-auto" style="max-height: 80px;">
+                </div>
                 {/if}
             </div>
-            <div class="w-100 w-sm-50 d-flex flex-column  align-items-sm-start text-center">
-                <h2 class="text-white fs-5 text-base font-weight-bold tracking-tight mb-0">{$MODS.LBL_PORTAL_SIGNATURES}
+            <div class="w-100 w-sm-50 d-flex flex-column align-items-sm-start text-center ps-4 py-2" >
+                <h2 class="text-white fs-2 text-base font-weight-bold tracking-tight mb-0">{$MODS.LBL_PORTAL_SIGNATURES}
                 </h2>
                 { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
                 <h3 class="text-white fs-6 font-weight-bold tracking-tight mt-1 mb-0">
@@ -195,11 +197,11 @@
 
                 { if $SHOW_LOGS === true }
                 <section class="logs-area mt-5">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ACTIONS_LOG}</h2>
+                    <h3 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ACTIONS_LOG}</h3>
 
                     { if isset($SIGNER_LOG) && !empty($SIGNER_LOG) }
                     <div class="mb-5">
-                        <h3 class="text-xl font-weight-semibold mb-3 text-dark">{$MODS.LBL_PORTAL_SIGNER_ACTIONS}</h3>
+                        <h4 class="font-weight-semibold mb-3 text-dark">{$MODS.LBL_PORTAL_SIGNER_ACTIONS}</h4>
                         <ul class="list-group">
                             { foreach from=$SIGNER_LOG item=logEntry }
                             <li class="list-group-item">
