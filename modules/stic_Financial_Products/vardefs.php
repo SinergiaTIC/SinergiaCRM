@@ -164,6 +164,7 @@ $dictionary['stic_Financial_Products'] = array(
     'len' => 100,
     'size' => '20',
     'options' => 'stic_boolean_list',
+    'default' => 0,
     'studio' => 'hidden',
     'dependency' => false,
     'popupHelp' => 'LBL_BALANCE_ERROR_INFO',
