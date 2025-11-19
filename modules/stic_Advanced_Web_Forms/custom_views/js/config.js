@@ -609,6 +609,7 @@ class AWF_Action {
     Object.assign(this, {
       id: utils.newId("awfa"),  // Id de la acción
       name: "",                 // Nombre interno de la acción
+      title: "",                // Título de la acción (nombre genérico)
       text: "",                 // Texto a mostrar para la acción
       description: "",          // Descripción de la acción 
       requisite_actions: [],    // Array con los identificadores de las acciones previas a la actual
@@ -628,11 +629,8 @@ class AWF_Action {
     this.parameters = (data.parameters || this.parameters).map(a => new AWF_ActionParameter(a));
   }
 
-  get textExpanded() {
-    if (this.parameters.length == 1) {
-      return this.text + ' (' + this.parameters[0].value_text + ')';
-    }
-    return this.text;
+  isValid() {
+    return this.parameters.every(param => !param.required || (param.value !== null && param.value !== ''));
   }
 
   static category_in_formList(asString = false){
@@ -649,6 +647,8 @@ class AWF_ActionParameter {
     Object.assign(this, {
       name: '',                // Nombre del parámetro
       text: '',                // Texto del parámetro
+      type: '',                // Tipo del parámetro: value, field, dataBlock, crmRecord, optionSelector
+      required: false,         // Indica si el parámetro es obligatorio
       value: '',               // Valor del parámetro
       value_text: '',          // Texto a mostrar para el valor del parámetro
       selectedOption: '',      // Opción seleccionada (si aplica)
@@ -792,6 +792,7 @@ class AWF_Configuration {
   }
 
   updateDataBlockText(dataBlock, newText) {
+    const oldName = dataBlock.name;
     let text = newText;
     let name = AWF_Configuration.cleanName(text);
     let index = 0;
@@ -803,13 +804,30 @@ class AWF_Configuration {
     dataBlock.name = name;
     dataBlock.text = text;
 
-    // Update value_text of all parameter actions to this dataBlock
+    // Update all actions and parameters pointing to this DataBlock
     this.flows.forEach(flow => {
       flow.actions.forEach(action => {
         action.parameters.forEach(param => {
+          // Update value_text to this dataBlock
           if (param.value == dataBlock.id) {
             param.value_text = text;
           }
+
+          //Update references to fields ("OldBlockName.Field" -> "NewBlockName.Field")
+          if (typeof param.value === 'string') {
+            const prefixOld = `${oldName}.`;
+            const prefixNew = `${name}.`;
+            
+            const prefixDetachedOld = `_detached.${oldName}.`;
+            const prefixDetachedNew = `_detached.${name}.`;
+
+            if (param.value.startsWith(prefixOld)) {
+              param.value = param.value.replace(prefixOld, prefixNew);
+            } else if (param.value.startsWith(prefixDetachedOld)) {
+              param.value = param.value.replace(prefixDetachedOld, prefixDetachedNew);
+            }
+          }
+
         });
       });
     });
@@ -873,6 +891,7 @@ class AWF_Configuration {
       'data_block_id': {value: dataBlock.id, valueText: dataBlock.text, selectedOption: ''} 
     };
     const newAction = this.addAction(saveActionDef, params);
+    newAction.text = `${newAction.title}: ${dataBlock.text}`;
     dataBlock.save_action_id = newAction.id;
   }
   
@@ -891,16 +910,18 @@ class AWF_Configuration {
       return null;
     }
 
+    const actionOrder = actionDef.order ?? 0;
     const newAction = new AWF_Action({
       name: actionDef.name,
-      text: actionDef.title, 
+      title: actionDef.title, 
+      text: actionDef.title,
       description: actionDef.description,
       category: actionDef.category,
       is_active: actionDef.isActive,
       is_user_selectable: actionDef.isUserSelectable,
       is_terminal: actionDef.isTerminal,
-      order: actionDef.order,
-      is_fixed_order: actionDef.order != 0,
+      order: actionOrder,
+      is_fixed_order: actionOrder != 0,
     });
 
     const requisiteActions = new Set(); 
@@ -910,6 +931,8 @@ class AWF_Configuration {
       const newParam = new AWF_ActionParameter({
         name: paramDef.name,
         text: paramDef.text,
+        type: paramDef.type,
+        required: paramDef.required,
         value: paramValue,
         value_text: paramConfig?.valueText ?? paramValue,
         selectedOption: paramConfig?.selectedOption ?? '',
@@ -933,8 +956,15 @@ class AWF_Configuration {
     // Assign requisites
     newAction.requisite_actions = Array.from(requisiteActions);
 
-    // Add Action to flow
-    flow.actions.push(newAction);
+    // Add Action to flow: Insertion based on order
+    let insertIndex = flow.actions.length;
+    for (let i = 0; i < flow.actions.length; i++) {
+      if ((flow.actions[i].order ?? 0) > actionOrder) {
+        insertIndex = i;
+        break;
+      }
+    }
+    flow.actions.splice(insertIndex, 0, newAction);
 
     return newAction;
   }
@@ -1001,8 +1031,38 @@ class AWF_Configuration {
   deleteDataBlockField(dataBlock, field) {
     dataBlock.deleteField(field.name);
 
-    // TODO: Update SaveRelationships if needed
+    if (field.type == 'relate' && field.value_type == 'dataBlock') {
+      // Remove Relationship Action
+      const relateAction = this.flows.flatMap(f => f.actions).find(a => {
+        if (a.name == 'RelateRecordsAction') {
+          return a.parameters.find(p => p.name == 'data_block_id' && p.value == dataBlock.id) &&
+                 a.parameters.find(p => p.name == 'target_data_block' && p.value == field.value) &&
+                 a.parameters.find(p => p.name == 'field_to_update' && p.value == `${dataBlock.name}.${field.name}`);
+        }
+        return false;
+      });
+      if (relateAction) {
+        this.flows.forEach(flow => {
+          flow.actions = flow.actions.filter(a => a.id != relateAction.id);
+        });
+      }
+    }
 
+    // Invalidate paramter actions depending on this field
+    let fieldRef = `${dataBlock.name}.${field.name}`;
+    if (field.type_field === 'unlinked') { 
+      fieldRef = `_detached.${fieldRef}`;
+    }
+    this.flows.forEach(flow => {
+      flow.actions.forEach(action => {
+        action.parameters.forEach(param => {
+          if (param.value === fieldRef) {
+            param.value = "";
+            param.value_text = "";
+          }
+        });
+      });
+    });
   }
 
   /**
@@ -1067,9 +1127,10 @@ class AWF_Configuration {
     const params = {
       'data_block_id': {value: dataBlock_orig.id, valueText: dataBlock_orig.text, selectedOption: ''},
       'target_data_block': {value: dataBlock_dest.id, valueText: dataBlock_dest.text, selectedOption: ''},
-      'field_to_update': {value: dataField_orig.name, valueText: dataField_orig.text, selectedOption: ''}
+      'field_to_update': {value: `${dataBlock_orig.name}.${dataField_orig.name}`, valueText: dataField_orig.text_original, selectedOption: ''}
     };
     const newAction = this.addAction(relateActionDef, params);
+    newAction.text = `${newAction.title}: ${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
     dataBlock.save_action_id = newAction.id;
 
     return dataBlock;

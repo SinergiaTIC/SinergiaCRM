@@ -854,8 +854,70 @@ class WizardStep3 {
       flowTabSelected: 0,
       get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
+      showAllActions: false,
 
       init() {
+      },
+
+      canEditAction(action) {
+        return action.is_user_selectable;
+      },
+      canRemoveAction(action) {
+        return action.is_user_selectable;
+      },
+      removeAction(action) {
+        this.flow.actions = this.flow.actions.filter(a => a.id != action.id);
+      },
+      canMoveUpAction(action) {
+        // No podemos mover una acción fija
+        if (action.is_fixed_order) return false;
+
+        // No podemos mover la primera acción
+        const index = this.actions.findIndex(a => a.id == action.id);
+        if (index <= 0) return false;
+
+        // No podemos saltar una acción fija      
+        const prevAction = this.actions[index - 1];
+        if (prevAction.is_fixed_order) return false;
+
+        // No podemos mover antes de una acción requisito
+        if ((action.requisite_actions || []).includes(prevAction.id)) return false;
+
+        return true;
+      },
+      moveUpAction(action) {
+        if (!this.canMoveUpAction(action)) return;
+
+        const index = this.actions.findIndex(a => a.id == action.id);
+        const actionToMove = this.actions[index];
+        this.actions.splice(index, 1);
+        this.actions.splice(index - 1, 0, actionToMove);
+      },
+
+      canMoveDownAction(action) {
+        // No podemos mover una acción fija
+        if (action.is_fixed_order) return false;
+
+        // No podemos mover la última acción
+        const index = this.actions.findIndex(a => a.id == action.id);
+        if (index >= this.actions.length - 1) return false;
+
+        // No podemos saltar una acción fija      
+        const nextAction = this.actions[index + 1];
+        if (nextAction.is_fixed_order) return false;
+
+        // No podemos mover si somos requisito de la siguiente acción
+        if ((nextAction.requisite_actions || []).includes(action.id)) return false;
+
+        return true;  
+      },
+      moveDownAction(action) {
+        if (!this.canMoveDownAction(action)) return;
+
+        const index = this.actions.findIndex(a => a.id == action.id);
+        const actionToMove = this.actions[index];
+        this.actions.splice(index, 1);
+        this.actions.splice(index + 1, 0, actionToMove);
       },
     };
   }

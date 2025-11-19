@@ -61,7 +61,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $paramFieldName->name = 'field_to_update';
         $paramFieldName->text = $this->translate('FIELD_TO_UPDATE_TEXT');
         $paramFieldName->description = $this->translate('FIELD_TO_UPDATE_DESC');
-        $paramFieldName->type = ActionParameterType::VALUE; 
+        $paramFieldName->type = ActionParameterType::FIELD; 
         $paramFieldName->dataType = ActionDataType::TEXT; 
         $paramFieldName->required = true;
 
@@ -71,12 +71,19 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
     public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
     {
-        // Obtención de los parámetros adicionales (ParameterResolver asegura que no sen nulos porque son obligatorios)
-        /** @var string $fieldName */
-        $fieldName = $actionConfig->getResolvedParameter('field_to_update');
+        // Obtención de los parámetros adicionales (ParameterResolver asegura que no sean nulos porque son obligatorios)
+
+        /** @var DataBlockFieldResolved $fieldResolved */
+        $fieldResolved = $actionConfig->getResolvedParameter('field_to_update');
+
         /** @var DataBlockResolved $targetBlock */
         $targetBlock = $actionConfig->getResolvedParameter('target_data_block');
 
+        // Validación del campo a actualizar
+        $fieldName = $fieldResolved->fieldName;
+        if (empty($fieldName)) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Field to update is not specified.");
+        }
 
         // Obtención de la referencia al Bean destino
         $targetBeanRef = $targetBlock->dataBlock->getBeanReference();

@@ -197,6 +197,8 @@ $mod_strings = array (
   'LBL_ACTION_CATEGORY' => 'Categoría',
   'LBL_ACTION_PARAMETERS' => 'Parámetros',
   'LBL_ACTION_ACTIONS' => 'Acciones',
+  'LBL_ACTIONS_SHOW_ALL' => 'Mostrar todas las acciones',
+  'LBL_ACTIONS_SHOW_ALL_DESC' => 'Muestra todas las acciones definidas en el formulario, incluyendo las acciones creadas de forma automática',
   
   'LBL_RESPONSE_SUMMARY_DATA' => 'Resumen de respuestas',
   
