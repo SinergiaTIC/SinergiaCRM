@@ -53,8 +53,19 @@ class Norma43
         move_uploaded_file($_FILES['file']['tmp_name'], $uploaded_file);
 
         // Check MIME type
+        // Allow common text formats for Norma 43 files
         $mime = mime_content_type($uploaded_file);
-        if (strpos($mime, 'text') === false && $mime !== 'application/octet-stream') {
+        $allowed_mimes = [
+            'text/plain',
+            'text/csv',
+            'application/octet-stream',
+            'application/csv',
+            'application/x-csv',
+            'text/x-csv',
+            'text/comma-separated-values'
+        ];
+        
+        if (!in_array($mime, $allowed_mimes) && strpos($mime, 'text') === false) {
             return ['success' => false, 'error' => $mod_strings['LBL_ERROR_FILE_TEXT_PLAIN']];
         }
 
