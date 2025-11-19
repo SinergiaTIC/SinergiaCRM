@@ -3631,6 +3631,11 @@ $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuari connectat';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inici de sessió erroni';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
 
+// SinergiaDA: Nivells d'accés dels usuaris
+$app_list_strings['sda_users_access_list']['0'] = 'Sense accés';
+$app_list_strings['sda_users_access_list']['1'] = 'Accés complet';
+$app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura';
+
 // Modificacions del core de SuiteCRM
 
 // Cadenes generals (procedents d'include)
@@ -3752,8 +3757,3 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
-
-// SDA: nivells d'accés dels usuaris
-$app_list_strings['sda_users_access_list']['0'] = 'Sense accés';
-$app_list_strings['sda_users_access_list']['1'] = 'Accés complet';
-$app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura';
