@@ -44,7 +44,7 @@ switch (viewType()) {
   case "popup":
     function toggle_message_for() {
         const isChecked = $("#select_all").is(":checked");
-        multiSelect = $("#prospect_lists");
+        let multiSelect = $("#prospect_lists");
         if (isChecked) {
           multiSelect.prop("disabled", "disabled");
           multiSelect.css("background-color", "#bcbcbc");
@@ -89,8 +89,8 @@ switch (viewType()) {
  * Check if there is a person or a account or both
  */
 function checkAllOrSelectedLists() {
-    checkFlag = $("#select_all").is(':checked');
-    numListsSelected = $("#prospect_lists").find(':selected').length;
+    var checkFlag = $("#select_all").is(':checked');
+    var numListsSelected = $("#prospect_lists").find(':selected').length;
 
     if (checkFlag || numListsSelected > 0) {
         return true;
@@ -122,13 +122,13 @@ function addEditCreateTemplateLinks() {
 }
 
 function open_mm_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+  var URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
   URL += "&inboundEmail=false&show_js=1";
 
-  windowName = 'email_template';
-  windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
+  var windowName = 'email_template';
+  var windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
 
-  win = window.open(URL, windowName, windowFeatures);
+  var win = window.open(URL, windowName, windowFeatures);
   if (window.focus) {
       // put the focus on the popup if the browser supports the focus() method
       win.focus();
@@ -136,7 +136,7 @@ function open_mm_email_template_form() {
 }
 
 function edit_mm_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+  var URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
 
   var field = document.getElementById('template_id');
   if (field.options[field.selectedIndex].value != 'undefined') {
@@ -144,10 +144,10 @@ function edit_mm_email_template_form() {
   }
   URL += "&inboundEmail=null&show_js=1";
 
-  windowName = 'email_template';
-  windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
+  var windowName = 'email_template';
+  var windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
 
-  win = window.open(URL, windowName, windowFeatures);
+  var win = window.open(URL, windowName, windowFeatures);
   if (window.focus) {
       // put the focus on the popup if the browser supports the focus() method
       win.focus();
