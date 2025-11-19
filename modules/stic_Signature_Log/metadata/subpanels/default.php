@@ -57,28 +57,28 @@ $subpanel_layout['list_fields'] = array (
     'width' => '10%',
     'default' => true,
   ),
-  'edit_button' => 
-  array (
-    'vname' => 'LBL_EDIT_BUTTON',
-    'widget_class' => 'SubPanelEditButton',
-    'module' => 'stic_Signature_Log',
-    'width' => '4%',
-    'default' => true,
-  ),
-  'quickedit_button' => 
-  array (
-    'vname' => 'LBL_QUICKEDIT_BUTTON',
-    'widget_class' => 'SubPanelQuickEditButton',
-    'module' => 'stic_Signature_Log',
-    'width' => '4%',
-    'default' => true,
-  ),
-  'remove_button' => 
-  array (
-    'vname' => 'LBL_REMOVE',
-    'widget_class' => 'SubPanelRemoveButton',
-    'module' => 'stic_Signature_Log',
-    'width' => '5%',
-    'default' => true,
-  ),
+  // 'edit_button' => 
+  // array (
+  //   'vname' => 'LBL_EDIT_BUTTON',
+  //   'widget_class' => 'SubPanelEditButton',
+  //   'module' => 'stic_Signature_Log',
+  //   'width' => '4%',
+  //   'default' => true,
+  // ),
+  // 'quickedit_button' => 
+  // array (
+  //   'vname' => 'LBL_QUICKEDIT_BUTTON',
+  //   'widget_class' => 'SubPanelQuickEditButton',
+  //   'module' => 'stic_Signature_Log',
+  //   'width' => '4%',
+  //   'default' => true,
+  // ),
+  // 'remove_button' => 
+  // array (
+  //   'vname' => 'LBL_REMOVE',
+  //   'widget_class' => 'SubPanelRemoveButton',
+  //   'module' => 'stic_Signature_Log',
+  //   'width' => '5%',
+  //   'default' => true,
+  // ),
 );

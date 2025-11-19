@@ -24,7 +24,7 @@
 $dictionary['stic_Signature_Log'] = array(
     'table' => 'stic_signature_log',
     'audited' => true,
-    'inline_edit' => true,
+    'inline_edit' => 'false',
     'duplicate_merge' => true,
     'fields' => array(
         'action' => array(
@@ -40,7 +40,7 @@ $dictionary['stic_Signature_Log'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => '',
+            'inline_edit' => 'false',
             'reportable' => true,
             'default' => '',
             'options' => 'stic_signature_log_actions',
@@ -62,7 +62,7 @@ $dictionary['stic_Signature_Log'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => '',
+            'inline_edit' => 'false',
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
@@ -83,7 +83,7 @@ $dictionary['stic_Signature_Log'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => '',
+            'inline_edit' => 'false',
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
@@ -103,7 +103,7 @@ $dictionary['stic_Signature_Log'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => '',
+            'inline_edit' => 'false',
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
@@ -126,6 +126,7 @@ $dictionary['stic_Signature_Log'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNERS_TITLE',
             'save' => true,
+            'inline_edit' => false,
             'id_name' => 'stic_signers_stic_signature_logtic_signers_ida',
             'link' => 'stic_signers_stic_signature_log',
             'table' => 'stic_signers',
@@ -154,6 +155,7 @@ $dictionary['stic_Signature_Log'] = array(
         'stic_signatures_stic_signature_log_name' => array(
             'name' => 'stic_signatures_stic_signature_log_name',
             'type' => 'relate',
+            'inline_edit' => false,
             'source' => 'non-db',
             'vname' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURES_TITLE',
             'save' => true,
@@ -182,3 +184,8 @@ if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('stic_Signature_Log', 'stic_Signature_Log', array('basic', 'assignable', 'security_groups'));
+
+
+$dictionary['stic_Signature_Log']['fields']['name']['inline_edit']=false;
+$dictionary['stic_Signature_Log']['fields']['assigned_user_name']['inline_edit']=false;
+$dictionary['stic_Signature_Log']['fields']['description']['inline_edit']=false;
