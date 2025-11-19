@@ -383,60 +383,7 @@ class stic_MessagesMan extends SugarBean
          }
     }
 
-
-
     /**
-     * @param $email_address
-     * @param bool $delete
-     * @param null $email_id
-     * @param null $email_type
-     * @param null $activity_type
-     * @param null $resend_type
-     */
-    public function set_as_sent(
-        $phone,
-        $delete = true,
-        $email_id = null,
-        $email_type = null,
-        $activity_type = null,
-        $resend_type = null
-    ) {
-        global $timedate;
-
-        $this->send_attempts++;
-        $this->id = (int)$this->id;
-        if ($delete || $this->send_attempts > 5) {
-
-            //create new campaign log record.
-            $campaign_log = BeanFactory::newBean('CampaignLog');
-            $campaign_log->campaign_id = $this->campaign_id;
-            $campaign_log->target_tracker_key = $this->getTargetId();
-            $campaign_log->target_id = $this->related_id;
-            $campaign_log->target_type = $this->related_type;
-            $campaign_log->marketing_id = $this->marketing_id;
-
-            // if test suppress duplicate email address checking.
-            if (!$this->test) {
-                $campaign_log->more_information = $phone;
-            }
-            $campaign_log->activity_type = $activity_type;
-            $campaign_log->activity_date = $timedate->now();
-            $campaign_log->list_id = $this->list_id;
-            $campaign_log->related_id = $email_id;
-            $campaign_log->related_type = $email_type;
-            $campaign_log->resend_type = $resend_type;
-            $campaign_log->save();
-
-            $query = "DELETE FROM stic_messagesman WHERE id = $this->id";
-            $this->db->query($query);
-        } else {
-            // try to send the email again a day later.
-            $query = 'UPDATE ' . $this->table_name . " SET in_queue='1', send_attempts='$this->send_attempts', in_queue_date=" . $this->db->now() . " WHERE id = $this->id";
-            $this->db->query($query);
-        }
-    }
-
-        /**
      * @param $order_by
      * @param $where
      * @param array $filter
