@@ -95,7 +95,6 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Firmantes añadidos correctamente',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos, ya existen o se ha producido un error',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes.',
-    'LBL_NO_SIGNERS_ERROR' => 'No se han encontrado firmantes. Añada al menos un firmante para continuar.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Se ha creado una campaña de notificación para la firma: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ya existe una campaña de notificación para la firma: ',
 

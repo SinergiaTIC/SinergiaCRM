@@ -127,6 +127,7 @@ $mod_strings = array(
     'LBL_PORTAL_DOCUMENT_SIGNED' => 'Document firmat',
     'LBL_PORTAL_DOWNLOAD_SIGNED_DOC' => 'Descarrega el document firmat',
     'LBL_PORTAL_SEND_COPY_EMAIL' => "Envia-me'n una còpia per correu",
+    'LBL_PORTAL_VERIFICATION_CODE' => 'Codi de verificació',
     'LBL_PORTAL_VERIFICATION_CODE_INFO' => 'El document ha estat firmat electrònicament. Podeu copiar el següent codi de verificació per comprovar en el futur la validesa de la firma:',
     'LBL_PORTAL_TEXT_COPIED' => 'Text copiat',
     'LBL_PORTAL_COPY_TO_CLIPBOARD' => 'Copia al porta-retalls',
