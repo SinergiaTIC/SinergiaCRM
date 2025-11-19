@@ -83,7 +83,7 @@ class stic_MessagesManUtils {
     protected static function sendMessage($row, $test = false) {
         require_once 'modules/stic_Settings/Utils.php';
 
-        // No exempt list is checked just when themessage is being sent. Exempt lists are checked when messages are added to messagesMan.
+        // No exempt list is checked just when the message is being sent. Exempt lists are checked when messages are added to messagesMan.
 
         $messageman = BeanFactory::newBean('stic_MessagesMan');
         foreach ($row as $name => $value) {

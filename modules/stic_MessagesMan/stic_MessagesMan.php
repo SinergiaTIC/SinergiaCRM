@@ -106,7 +106,7 @@ class stic_MessagesMan extends SugarBean
     public $additional_column_fields = array();
 
     /**
-     * EmailMan constructor.
+     * stic_MessagesMan constructor.
      */
     public function __construct()
     {
@@ -236,7 +236,7 @@ class stic_MessagesMan extends SugarBean
     public function create_list_query($order_by, $where, $show_deleted = 0)
     {
         $query =
-            "SELECT $this->table_name.* ,campaigns.name as campaign_name,email_marketing.name as message_name,(CASE related_type WHEN 'Contacts' THEN "
+            "SELECT $this->table_name.* ,campaigns.name as campaign_name,stic_message_marketing.name as message_name,(CASE related_type WHEN 'Contacts' THEN "
             . $this->db->concat('contacts', array('first_name', 'last_name'), '&nbsp;')
             . "WHEN 'Leads' THEN "
             . $this->db->concat('leads', array('first_name', 'last_name'), '&nbsp;')
@@ -374,7 +374,6 @@ class stic_MessagesMan extends SugarBean
          $campaign_log->list_id = $this->list_id;
          $campaign_log->related_id = $this->related_id;
          $campaign_log->related_type = $this->related_type;
-        //  $campaign_log->resend_type = $resend_type;
          $campaign_log->save();
 
          if($delete) {
@@ -418,7 +417,7 @@ class stic_MessagesMan extends SugarBean
 
             // if test suppress duplicate email address checking.
             if (!$this->test) {
-                $campaign_log->more_information = $email_address;
+                $campaign_log->more_information = $phone;
             }
             $campaign_log->activity_type = $activity_type;
             $campaign_log->activity_date = $timedate->now();

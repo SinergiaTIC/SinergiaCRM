@@ -40,7 +40,7 @@ $searchFields['stic_MessagesMan'] =
         ),
         'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
         'message_name' => array( 'query_type'=>'default','db_field'=>array('stic_message_marketing.name')),
-        'in_queue' => array( 'query_type'=>'default','db_field'=>array('emailman.in_queue')),
+        'in_queue' => array( 'query_type'=>'default','db_field'=>array('stic_messagesman.in_queue')),
         'range_send_date_time' => array(
             'query_type' => 'default',
             'enable_range_search' => true,
