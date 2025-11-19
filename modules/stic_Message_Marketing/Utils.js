@@ -57,13 +57,6 @@ switch (viewType()) {
       addEditCreateTemplateLinks();
       $("#select_all").on("click", toggle_message_for);
       toggle_message_for();
-      var baseURL = 'index.php';
-
-    // Create an object with all the parameters
-      var paramsPost = {
-        module: 'stic_Message_Marketing',
-        action: 'getDefaultSender',
-      };
     });
     if (viewType() == "quickcreate") {
       // Disabling the "Campaign" field relationship

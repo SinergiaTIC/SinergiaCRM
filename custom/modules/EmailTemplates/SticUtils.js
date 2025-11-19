@@ -63,6 +63,7 @@ switch (viewType()) {
                     const observer = new MutationObserver((mutationsList, observer) => {
                       $(".tox.tox-tinymce").show();
                     });
+                    observer.observe(document.body, { childList: true });
                 }
                 
 
