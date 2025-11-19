@@ -53,17 +53,17 @@ switch (viewType()) {
     var buttons = {
       sendToSign: {
         id: "bt_send_to_sign",
-        title: "✉️ " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL") + " " + STIC.record.email_address, // Localized button title with email emoji   
+        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL"), 
         onclick: "window.location='index.php?module=stic_Signers&action=sendToSign&signerId=" + STIC.record.id + "'"
       },
       rediretToSingPortal: {
         id: "bt_redirect_to_portal",
-        title: "🔗 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_REDIRECT_TO_PORTAL"), // Localized button title with link emoji 
+        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_REDIRECT_TO_PORTAL"), // Localized button title with link emoji 
         onclick: "window.location='index.php?entryPoint=sticSign&signerId=" + STIC.record.id + "'"
       },
       copyPortalUrl: {
         id: "bt_copy_portal_url",
-        title: "📋 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_COPY_PORTAL_URL"), // Localized button title with clipboard emoji
+        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_COPY_PORTAL_URL"), // Localized button title with clipboard emoji
         onclick: "navigator.clipboard.writeText('" + window.location.origin + window.location.pathname + "?entryPoint=sticSign&signerId=" + STIC.record.id + "'); alert(SUGAR.language.get('stic_Signers', 'LBL_SIGNER_PORTAL_URL_COPIED'));"
       }
     };

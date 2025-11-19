@@ -84,7 +84,7 @@ $mod_strings = array(
     'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Sinaturas',  
     'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Sinaturas',
 
-    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar sinatura por correo electrónico a',
+    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar sinatura por correo electrónico',
     'LBL_SIGNER_SEND_TO_SIGN_MASSIVE' => 'Solicitar sinatura por correo electrónico',
     'LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT' => 'Seleccione un máximo de 20 asinantes.',
     'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Ir ao portal de sinatura',
