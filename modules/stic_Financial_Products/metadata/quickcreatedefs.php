@@ -101,34 +101,11 @@ array (
         array (
           0 => 
           array (
-            'name' => 'balance_error',
-            'studio' => 'visible',
-            'label' => 'LBL_BALANCE_ERROR',
-          ),
-          1 => '',
-        ),
-        4 => 
-        array (
-          0 => 
-          array (
-            'name' => 'initial_balance',
-            'label' => 'LBL_INITIAL_BALANCE',
-          ),
-          1 => 
-          array (
-            'name' => 'current_balance',
-            'label' => 'LBL_CURRENT_BALANCE',
-          ),
-        ),
-        5 => 
-        array (
-          0 => 
-          array (
             'name' => 'holders',
             'label' => 'LBL_HOLDERS',
           ),
         ),
-        6 => 
+        4 => 
         array (
           0 => 
           array (
@@ -141,12 +118,11 @@ array (
             'label' => 'LBL_IBAN',
           ),
         ),
-        7 => 
+        5 => 
         array (
           0 => 
           array (
             'name' => 'description',
-            'comment' => 'Full text of the note',
             'studio' => 'visible',
             'label' => 'LBL_DESCRIPTION',
           ),
