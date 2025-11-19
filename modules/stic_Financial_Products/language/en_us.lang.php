@@ -77,4 +77,5 @@ $mod_strings = array (
   'LBL_WARDED_PERSON_INFO' => 'Person for whom the management of bank accounts and financial transactions is carried out.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transactions',
   'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Warded person',
+  'LBL_INVALID_IBAN_ERROR' => 'The IBAN entered is invalid.',
 );

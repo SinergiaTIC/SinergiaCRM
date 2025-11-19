@@ -77,4 +77,5 @@ $mod_strings = array (
   'LBL_WARDED_PERSON_INFO' => 'Persona de la qual es realitza la gestió dels comptes bancaris i de les transaccions financeres.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transaccions',
   'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona tutelada',
+  'LBL_INVALID_IBAN_ERROR' => "L'IBAN introduït no és vàlid.",
 );
