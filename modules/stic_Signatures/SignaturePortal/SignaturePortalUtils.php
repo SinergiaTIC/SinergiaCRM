@@ -67,8 +67,6 @@ class stic_SignaturePortalUtils
         ];
     }
 
-   
-
     /**
      * Sends an OTP code to the signer via email.
      * If the last sent OTP has not expired, it will not send another one unless $forceSend is true.
@@ -226,7 +224,7 @@ class stic_SignaturePortalUtils
             $signerBean->status = 'signed';
             $signerBean->signature_date = $currentDate;
             $signerBean->save();
-            
+
             // Reopen the signer bean to verify saved data
             $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
             if ($signerBean->signature_date != $currentDate || $signerBean->status != 'signed') {
@@ -272,8 +270,8 @@ class stic_SignaturePortalUtils
 
         // Retrieve the signer bean
         $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
-        if(empty($signerBean) || empty($signerBean->id)) {
-            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " Signer not found for ID: {$signerId}");
+        if (empty($signerBean) || empty($signerBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signer not found for ID: {$signerId}");
             return [
                 'success' => false,
                 'message' => 'Signer not found.',
@@ -282,7 +280,7 @@ class stic_SignaturePortalUtils
 
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
         if (empty($signatureBean) || empty($signatureBean->id)) {
-            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " Signature not found for Signer ID: {$signerId}");
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature not found for Signer ID: {$signerId}");
             return [
                 'success' => false,
                 'message' => 'Signature not found for signer.',
@@ -291,14 +289,13 @@ class stic_SignaturePortalUtils
 
         $userOrContactsBean = BeanFactory::getBean($signerBean->parent_type, $signerBean->parent_id);
         if (empty($userOrContactsBean) || empty($userOrContactsBean->id)) {
-            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " Related user/contact not found for Signer ID: {$signerId}");
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Related user/contact not found for Signer ID: {$signerId}");
             return [
                 'success' => false,
                 'message' => 'Related user/contact not found for signer.',
             ];
         }
-            
-            
+
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
         if (empty($destAddress)) {
@@ -307,8 +304,6 @@ class stic_SignaturePortalUtils
                 'message' => 'No destination email address.',
             ];
         }
-
-
 
         // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
@@ -348,14 +343,12 @@ class stic_SignaturePortalUtils
             $userOrContactsBean,
         ]);
 
-
-
         // Set the email subject
         $subject = $parsedTemplate['subject'];
         $mail->Subject = $subject;
 
         // Generate the email body using the template
-        $completeHTML=$parsedTemplate['body_html'];
+        $completeHTML = $parsedTemplate['body_html'];
 
         $mail->Body = from_html($completeHTML);
         $mail->isHtml(true);
@@ -411,10 +404,14 @@ class stic_SignaturePortalUtils
             } else {
                 require_once 'modules/stic_Signature_Log/Utils.php';
                 stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER');
-                
+
                 // Generate the signed PDF after saving the signature
                 require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
-                sticGenerateSignedPdf::generateSignedPdf('button');
+                $savedFile = sticGenerateSignedPdf::generateSignedPdf('button');
+
+                $signerBean->verification_code = stic_SignaturesUtils::getVerificationCodeForSignedPdf($savedFile);
+                $signerBean->save();
+
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
                 return ['success' => true, 'message' => 'Document accepted successfully.'];
             }
