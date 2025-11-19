@@ -115,6 +115,7 @@ $dictionary['stic_Financial_Products'] = array(
     'size' => '20',
     'enable_range_search' => false,
     'precision' => '2',
+    'studio' => 'hidden',
     'popupHelp' => 'LBL_INITIAL_BALANCE_INFO',
   ),
   'current_balance' => 
@@ -139,6 +140,7 @@ $dictionary['stic_Financial_Products'] = array(
     'size' => '20',
     'enable_range_search' => false,
     'precision' => '2',
+    'studio' => 'hidden',
     'popupHelp' => 'LBL_CURRENT_BALANCE_INFO',
   ),
   'balance_error' => 
@@ -162,7 +164,7 @@ $dictionary['stic_Financial_Products'] = array(
     'len' => 100,
     'size' => '20',
     'options' => 'stic_boolean_list',
-    'studio' => 'visible',
+    'studio' => 'hidden',
     'dependency' => false,
     'popupHelp' => 'LBL_BALANCE_ERROR_INFO',
   ),
@@ -325,6 +327,6 @@ VardefManager::createVardef('stic_Financial_Products', 'stic_Financial_Products'
 $dictionary['stic_Financial_Products']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Financial_Products']['fields']['name']['importable'] = true; // Name is importable but not required in this module
 $dictionary['stic_Financial_Products']['fields']['name']['inline_edit'] = false; // Name can not edit inline in this module
-$dictionary['stic_Financial_Products']['fields']['balance_error']['inline_edit'] = false; // Name can not edit inline in this module
-$dictionary['stic_Financial_Products']['fields']['initial_balance']['inline_edit'] = false; // Name can not edit inline in this module
-$dictionary['stic_Financial_Products']['fields']['current_balance']['inline_edit'] = false; // Name can not edit inline in this module
+$dictionary['stic_Financial_Products']['fields']['balance_error']['inline_edit'] = false; // Balance error can not edit inline in this module
+$dictionary['stic_Financial_Products']['fields']['initial_balance']['inline_edit'] = false; // Initial balance can not edit inline in this module
+$dictionary['stic_Financial_Products']['fields']['current_balance']['inline_edit'] = false; // Current balance can not edit inline in this module
