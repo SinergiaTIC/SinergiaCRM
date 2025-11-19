@@ -98,7 +98,7 @@ class stic_Job_Applications extends Basic
 
         include_once 'SticInclude/Utils.php';
         $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_job_applications_contacts');
-        if (!empty($contactBean)) 
+        if (!empty($contactBean) && !empty($offerBean) && !empty($offerBean->offer_type) && ($offerBean->offer_type == 'volunteering')) 
         {
             // If the available time field has been updated, the corresponding field of the contact related also is updated.
             if (isset($this->available_time) && (!isset($this->fetched_row['available_time']) || $this->available_time != $this->fetched_row['available_time'])) {
@@ -107,7 +107,7 @@ class stic_Job_Applications extends Basic
             }
 
             // If it is a new record and it relates to a volunteering offer, if the related contact there is no 'pre-volunteer' relationship, a new one is created.
-            if ($newRecord && !empty($offerBean) && !empty($offerBean->offer_type) && ($offerBean->offer_type == 'volunteering')) {
+            if ($newRecord) {
                 if ($contactBean->load_relationship('stic_contacts_relationships_contacts')) 
                 {
                     $prevolunteerCount = 0;
