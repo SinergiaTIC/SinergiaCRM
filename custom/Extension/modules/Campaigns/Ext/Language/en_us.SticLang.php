@@ -66,11 +66,10 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Reply to name';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
 $mod_strings['LBL_MSG_TYPE'] = 'Type';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Template';
-$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = "The template must be of type 'SMS' and can include fields from the record related to the notification (the event or the opportunity).";
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = 'The template must be of SMS type and may include fields from the record related to the notification (the event or the opportunity).';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications by email';
 $mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications by message';
-
 
 $mod_strings['LBL_FLEX_RELATE_HELP'] = 'Record for which the notification is to be made. It can be an event or an opportunity.';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "Notification will be sent to members of selected target lists, which must be of type 'Default'.";
