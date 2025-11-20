@@ -3838,6 +3838,7 @@ $app_list_strings['stic_advanced_web_forms_date_relative_list']['+1_day'] = 'De 
 $app_list_strings['stic_advanced_web_forms_date_relative_list']['+1_week'] = 'De aquí una semana';
 $app_list_strings['stic_advanced_web_forms_date_relative_list']['+1_month'] = 'De aquí un mes';
 $app_list_strings['stic_advanced_web_forms_date_relative_list']['last_day_of_this_month'] = 'Último día de este mes';
+$app_list_strings['stic_advanced_web_forms_date_relative_list']['first_day_of_next_month'] = 'Primer día del próximo mes';
 $app_list_strings['stic_advanced_web_forms_date_relative_list']['custom'] = 'Personalizada...';
 
 // Tipos de secciones (UI) en los Formularios Web Avanzados

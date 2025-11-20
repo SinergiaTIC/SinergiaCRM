@@ -98,9 +98,13 @@ $mod_strings = array (
   'LBL_WIZARD_FINISH' => 'Finalizar',
   
   'LBL_WIZARD_TITLE_STEP1' => 'Información general',
+  'LBL_WIZARD_DESC_STEP1' => 'Definición de la identidad del formulario con las propiedades generales de éste.',
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
+  'LBL_WIZARD_DESC_STEP2' => 'Definción del contenido del formulario. Los Bloques de datos representan las entidades del CRM con las que se trabajará y los campos son los datos que se recogerán en el formulario. También es posible definir valores fijos ocultos y configurar la detección de duplicados para evitar la creación de registros repetidos.',
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
+  'LBL_WIZARD_DESC_STEP3' => 'Definición de la lógica del formulario mediante las acciones que se ejecutarán cuando se reciba una respuesta del formulario. Las acciones permiten guardar o actualizar registros en el CRM, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
+  'LBL_WIZARD_DESC_STEP4' => 'Diseño de la apariencia visual final del formulario. Permite organizar los campos en secciones para facilitar su uso, personalizar la cabecera o pie del formulario, o modificar el código HTML completo del formulario.',
 
   'LBL_MODULE' => 'Módulo',
   
@@ -193,6 +197,9 @@ $mod_strings = array (
   'LBL_ACTION' => 'Acción',
   'LBL_ACTION_ADD' => 'Añadir Acción',
   'LBL_ACTION_NEW' => 'Nueva Acción',
+  'LBL_ACTION_TERMINAL' => 'Acción final',
+  'LBL_ACTION_TERMINAL_ADD' => 'Añadir Acción final',
+  'LBL_ACTION_TERMINAL_NEW' => 'Nueva Acción final',
   'LBL_ACTION_NAME' => 'Nombre',
   'LBL_ACTION_CATEGORY' => 'Categoría',
   'LBL_ACTION_PARAMETERS' => 'Parámetros',
@@ -217,6 +224,20 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_TEXT' => 'Campo a actualizar',
   'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_DESC' => 'El nombre del campo que enlaza con el bloque de datos destino',
 
+  'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Añadir a Lista de Público Objetivo',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Añade el registro procesado (Persona, Interesado, Usuario o Organización) a una Lista de Público Objetivo (ProspectList) existente',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_TEXT' => 'Contacto / Entidad',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'El bloque de datos que contiene el Contacto o Entidad que se va a añadir a la Lista de Público Objetivo',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Lista de Público Objetivo (LPO)',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_DESC' => 'Selecciona la Lista de Público Objetivo (LPO o ProspectList) a la que quieres añadir el Contacto o Entidad.',
+
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar correo electrónico',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico al registro procesado (Persona, Interesado, Usuario o Organización) contenido en un Bloque de Datos',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario (Bloque de Datos)',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'El bloque de datos que contiene el destinatario del correo electrónico (y que servirá de contexto para la plantilla de correo electrónico)',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_DESC' => 'Selecciona la plantilla de correo electrónico que se utilizará para enviar el correo',
+
   'LBL_REDIRECT_ACTION_TITLE' => 'Ir a una página web',
   'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página web concreta',
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de Redirección',
@@ -232,20 +253,6 @@ $mod_strings = array (
 
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de respuestas',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página con el resumen de todas sus respuestas al formulario',
-
-  'LBL_SEND_EMAIL_ACTION_TITLE' => 'Enviar correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_DESC' => 'Envia un correo electrónico a un destinatario basado en la configuración del formulario',
-  'LBL_SEND_EMAIL_ACTION_PARAM_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_PARAM_TEMPLATE_DESC' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
-  'LBL_SEND_EMAIL_ACTION_PARAM_BASEDATABLOCK_TEXT' => 'Bloque de datos para la plantilla',
-  'LBL_SEND_EMAIL_ACTION_PARAM_BASEDATABLOCK_DESC' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_TEXT' => 'Destinatario del correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_DESC' => 'Seleccione el destinatario del correo electrónico',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_FIELD_TEXT' => 'Campo del Formulario',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_FIXED_TEXT' => 'Valor fijo',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_BEANID_TEXT' => 'Registro del CRM',
-  'LBL_SEND_EMAIL_ACTION_PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT' => 'Campo relacionado',
 
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_TITLE' => 'Enviar correo electrónico al usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado al registro creado o actualizado por el formulario',
