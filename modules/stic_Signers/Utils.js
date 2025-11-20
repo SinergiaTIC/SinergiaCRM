@@ -78,7 +78,7 @@ switch (viewType()) {
     sendMailMassive = SUGAR.language.languages.app_strings.LBL_LISTVIEW_NO_SELECTED;
     button = {
       id: "send-to-sign-massive",
-      text: "✉️ " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_MASSIVE"),
+      text: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_MASSIVE"),
       onclick: "sendToSign()"
     };
 
