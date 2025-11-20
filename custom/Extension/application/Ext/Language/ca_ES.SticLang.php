@@ -3752,8 +3752,3 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
-
-// Tipus de status de factures Verifactu
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['pending'] = 'Pendent';
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Enviat i acceptat';
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rebutjat';

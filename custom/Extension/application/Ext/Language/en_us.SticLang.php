@@ -3718,8 +3718,3 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
-
-// Status options for Invoices Verifactu 
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['pending'] = 'Pending';
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Sent and accepted';
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rejected';

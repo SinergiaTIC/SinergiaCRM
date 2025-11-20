@@ -3750,8 +3750,3 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Chamadas';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
-
-// Estados da factura Verifactu
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['pending'] = 'Pendente';
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Enviada e aceptada';
-$app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rechazada';

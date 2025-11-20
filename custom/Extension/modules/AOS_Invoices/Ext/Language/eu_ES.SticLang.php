@@ -38,11 +38,3 @@ $mod_strings['LBL_BILLING_CONTACT'] = 'Persona';
 $mod_strings['LBL_OPPORTUNITY'] = 'Subvención';
 $mod_strings['LBL_DUE_DATE_ERROR'] = 'La fecha de vencimiento debe ser igual o posterior a la fecha de facturación.';
 $mod_strings['LBL_INVOICE_DATE_ERROR'] = 'La fecha de facturación debe ser igual o anterior a la fecha de vencimiento.';
-
-// AEAT Verifactu labels
-$mod_strings['LBL_VERIFACTU_HASH'] = 'Hash de la factura';
-$mod_strings['LBL_VERIFACTU_PREVIOUS_HASH'] = 'Hash anterior de la factura';
-$mod_strings['LBL_VERIFACTU_QR_DATA'] = 'Datos QR de la factura';
-$mod_strings['LBL_VERIFACTU_AEAT_STATUS'] = 'Estado AEAT de la factura';
-$mod_strings['LBL_VERIFACTU_AEAT_RESPONSE'] = 'Respuesta AEAT de la factura';
-$mod_strings['LBL_VERIFACTU_CANCEL_ID'] = 'ID de la factura rectificada';
