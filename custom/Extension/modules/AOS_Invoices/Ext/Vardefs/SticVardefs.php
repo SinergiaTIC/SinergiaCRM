@@ -40,6 +40,7 @@ $dictionary['AOS_Invoices']['fields']['quote_date']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['invoice_date']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['due_date']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['status']['massupdate'] = 1;
+$dictionary['AOS_Invoices']['fields']['status']['default'] = 'draft'; 
 
 // Inline edition definition:
 $dictionary['AOS_Invoices']['fields']['number']['inline_edit'] = 0;

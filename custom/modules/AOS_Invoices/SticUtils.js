@@ -49,6 +49,15 @@ switch (viewType()) {
     break;
 
   case "detail":
+    var buttons = {
+      sendToAEAT: {
+        id: "bt_send_to_aeat",
+        title: SUGAR.language.get("AOS_Invoices", "LBL_SIGNER_SEND_TO_AEAT"),
+        onclick: "window.location='index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=" + STIC.record.id + "'"
+      },
+    };
+    createDetailViewButton(buttons.sendToAEAT);
+
     break;
 
   case "list":
