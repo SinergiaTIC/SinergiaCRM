@@ -13,6 +13,7 @@
     </div>
 
     <h2 id='wizard-section-title'></h2>
+    <div id='wizard-section-desc' class="text-muted small ms-3 mb-3"></div>
     <div class="card container-fluid wizard-container">
         <div class="card-body d-flex h-100" id="wizard-step-container"></div>
         <div class="card-body d-flex h-100" id="debug-container"></div>

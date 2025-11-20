@@ -601,6 +601,10 @@ class AWF_Flow {
   getText() {
     return this.label != "" ? utils.translate(this.label) : this.text;
   }
+
+  hasTerminalAction() {
+    return this.actions.some(a => a.is_terminal);
+  }
 }
 
 class AWF_Action {
@@ -615,11 +619,9 @@ class AWF_Action {
       requisite_actions: [],    // Array con los identificadores de las acciones previas a la actual
       category: 'data',         // Categoría de la acción
       parameters: [],           // Los parámetros de la acción
-      is_active: true,          // Indica si la acción está activa
       is_user_selectable: true, // Indica si la acción es seleccionable por el usuario
       is_terminal: false,       // Indica si la acción es terminal
       order: 0,                 // El orden de ejecución de la acción
-      is_fixed_order: false,    // Indica si el orden es fijado
     });
 
     // 2. Overwrite with provided data
@@ -627,6 +629,10 @@ class AWF_Action {
 
     // 3. Map sub-objects and arrays to their classes
     this.parameters = (data.parameters || this.parameters).map(a => new AWF_ActionParameter(a));
+  }
+
+  get is_fixed_order() {
+    return this.actionOrder != 0;
   }
 
   isValid() {
@@ -910,18 +916,15 @@ class AWF_Configuration {
       return null;
     }
 
-    const actionOrder = actionDef.order ?? 0;
     const newAction = new AWF_Action({
       name: actionDef.name,
       title: actionDef.title, 
       text: actionDef.title,
       description: actionDef.description,
       category: actionDef.category,
-      is_active: actionDef.isActive,
       is_user_selectable: actionDef.isUserSelectable,
       is_terminal: actionDef.isTerminal,
-      order: actionOrder,
-      is_fixed_order: actionOrder != 0,
+      order: actionDef.order ?? 0,
     });
 
     const requisiteActions = new Set(); 

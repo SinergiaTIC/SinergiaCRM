@@ -338,3 +338,11 @@ h4 {
 .stic-tablecard {
   border-width: 3px !important;
 }
+
+.stic_panel .btn:hover {
+    padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
+}
+
+.stic_panel .accordion-button:hover {
+  padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
+}

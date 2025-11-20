@@ -38,6 +38,8 @@ class WizardNavigation {
 
     // Step title
     $("#wizard-section-title").text(utils.translate(`LBL_WIZARD_TITLE_STEP${step}`) + ` (${step}/${totalSteps})`);
+    // Step description
+    $("#wizard-section-desc").text(utils.translate(`LBL_WIZARD_DESC_STEP${step}`));
 
     // Step content
     if (!(step in WizardNavigation.cacheSteps)) {
@@ -857,17 +859,276 @@ class WizardStep3 {
       showAllActions: false,
 
       init() {
+        // Store for the Action Editor management
+        if (!Alpine.store('actionEditor')) {
+          Alpine.store('actionEditor', {
+            isOpen: false,             // Indica si está abierto el editor de acciones
+            isEdit: false,             // Indica si es modo edición (false: modo creación)
+            flow: null,                // El flujo de la acción
+            original_id: '',           // Id original de la acción
+            action: null,              // Copia de los datos de la acción
+            definition: null,          // Definición de la acción
+            allDefinitions: [],        // Todas las definiciones de acciones disponibles
+            isTerminalFilter: false,   // Filtro para acciones terminales al crear
+            selectedCategory: '',      // Para guardar la categoría seleccionada 
+
+            init() {
+              // Cargar todas las definiciones de acciones seleccionables por el usuario
+              this.allDefinitions = utils.getServerActions().filter(a => a.isUserSelectable && a.isActive);
+            },
+
+            /**
+             * Retorna si es una acción nueva
+             * @returns {boolean}
+             */
+            get isNewAction() { return this.original_id === ''; },
+
+            /**
+             * Retorna el título del modal
+             * @returns {string}
+             */
+            get title() {
+              if (!this.action) return '';
+
+              if (this.isNewAction) {
+                if (this.action.is_terminal) {
+                  return utils.translate('LBL_ACTION_TERMINAL_NEW');
+                }
+                return utils.translate('LBL_ACTION_NEW');
+              } else {
+                return utils.translate('LBL_ACTION_TERMINAL') + ' » ' + this.action.text;
+              }
+            },
+
+            /**
+             * Retorna las categorías disponibles según las acciones válidas
+             * @returns {Array} Lista de categorías disponibles
+             */
+            get availableCategories() {
+              const validActions = this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter);
+              const uniqueCatIds = [...new Set(validActions.map(a => a.category))];
+              return AWF_Action.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
+            },
+
+            /**
+             * Retorna las acciones filtradas según la categoría y si son terminales
+             * @returns {Array} Lista de definiciones de acciones filtradas
+             */
+            get filteredActions() {
+                if (!this.selectedCategory) return [];
+                return this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter && d.category == this.selectedCategory);
+            },
+
+            /**
+             * Abre el Modal para Crear una acción
+             * @param {AWF_Flow} flow El Flujo de acciones
+             * @param {boolean} isTerminal Indica si es una acción terminal
+             * @returns {void}
+             */
+            openCreate(flow, isTerminal) {
+              this.isEdit = false;
+              this.flow = flow;
+              this.original_id = '';
+
+              // Para crear, empezamos sin acción ni definición: Se deberá seleccionar una definición
+              this.action = null;
+              this.definition = null;
+              this.isTerminalFilter = isTerminal;
+
+              // Preseleccionamos la primera categoría disponible
+              const cats = this.availableCategories;
+              if (cats.length > 0) this.selectedCategory = cats[0].id;
+
+              this.isOpen = true;
+            },
+
+            /**
+             * Abre el Modal para Editar una acción
+             * @param {AWF_Flow} flow El Flujo de acciones
+             * @param {AWF_Action} action La acción a editar
+             * @returns {void}
+             */
+            openEdit(flow, action) {
+              this.isEdit = true;
+              this.flow = flow;
+              this.original_id = action.id;
+
+              // Clonamos la acción para editarla
+              this.action = new AWF_Action(action);
+
+              // Buscamos la definición de la acción
+              this.definition = this.allDefinitions.find(d => d.name == action.name);
+
+              if (!this.definition) {
+                  console.error("Definition not found for action: " + action.name);
+                  return;
+              }
+
+              this.isOpen = true;
+            },
+
+            /**
+             * Selecciona un tipo de acción (en modo creación)
+             * Esto inicializa la acción vacía y carga la definición.
+             * @param {string} actionDefName Nombre de la definición de acción seleccionada
+             * @returns {void}
+             */
+            selectActionType(actionDefName) {
+              const def = this.allDefinitions.find(d => d.name == actionDefName);
+              if (!def) return;
+              
+              this.definition = def;
+              
+              // Creamos una instancia vacía basada en la definición
+              this.action = new AWF_Action({
+                name: def.name,
+                title: def.title,
+                text: def.title,
+                description: def.description,
+                category: def.category,
+                is_user_selectable: def.isUserSelectable,
+                is_terminal: def.isTerminal,
+                order: def.order ?? 0,
+              });
+
+              //Inicializamos los parámetros vacíos según la definición
+              this.action.parameters = (def.parameters || []).map(pDef => new AWF_ActionParameter({
+                name: pDef.name,
+                text: pDef.text,
+                type: pDef.type,
+                required: pDef.required,
+                value: pDef.defaultValue,
+                value_text: pDef.defaultValue,
+              }));
+            },
+
+            /**
+             * Cierra el modal de edición de una acción
+             */
+            close() {
+              this.isOpen = false;
+              this.flow = null;
+              this.original_id = '';
+              this.selectedCategory = '';
+              this.action = null;
+              this.definition = null;
+              this.isTerminalFilter = false;
+            },
+
+            /**
+             * Guarda los cambios de la edición (o creación) de una acción
+             * @returns {void}
+             */
+            saveChanges() {
+              const formConfig = window.alpineComponent.formConfig;
+
+              // Recalculate action before saving
+              this._recalculateAction(this.action, this.definition, formConfig);
+
+              if (this.isNewAction) {
+                // Add Action to flow: Insertion based on order
+                let insertIndex = this.flow.actions.length;
+                for (let i = 0; i < this.flow.actions.length; i++) {
+                  if ((this.flow.actions[i].order ?? 0) > (action.order ?? 0)) {
+                    insertIndex = i;
+                    break;
+                  }
+                }
+                this.flow.actions.splice(insertIndex, 0, action);
+              } else {
+                // Update existing Action in flow
+                const index = this.flow.actions.findIndex(a => a.id == this.original_id);
+                if (index !== -1) {
+                  this.flow.actions[index] = this.action;
+                }
+              }
+              this.close();
+            },
+
+            /**
+             * Reconstruye los parámetros y recalcula los requisitos de una acción basándose en su definición y los valores actuales.
+             * @param {AWF_Action} action La acción a procesar (se modifica in-place)
+             * @param {object} definition La definición de la acción (ActionDefinitionDTO)
+             * @param {AWF_Configuration} formConfig La configuración global (para buscar bloques)
+             * @returns {void}
+             */
+            _recalculateAction(action, definition, formConfig) {
+              const newParams = [];
+              const requisiteActions = new Set();
+
+              // Iteramos sobre la DEFINICIÓN (la fuente de verdad)
+              (definition.parameters || []).forEach(paramDef => {
+                // Buscamos el valor actual que tenía la acción (si existía)
+                const currentParam = action.parameters.find(p => p.name == paramDef.name);
+
+                // Construimos el parámetro asegurando estructura actualizada
+                const newParam = new AWF_ActionParameter({
+                  name: paramDef.name,
+                  text: paramDef.text,
+                  type: paramDef.type,
+                  required: paramDef.required,
+                        
+                  // Preservamos el valor editado o usamos el default
+                  value: currentParam ? currentParam.value : paramDef.defaultValue,
+                  value_text: currentParam ? currentParam.value_text : '', 
+                  selectedOption: currentParam ? currentParam.selectedOption : ''
+                });
+                    
+                newParams.push(newParam);
+
+                // 2. Recálculo de Requisitos (Requisite Actions)
+                // Miramos si este parámetro apunta a un DataBlock
+                const paramIsDataBlock = (paramDef.type === 'dataBlock') || 
+                                         (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
+
+                if (paramIsDataBlock && newParam.value) {
+                  const requiredBlock = formConfig.data_blocks.find(b => b.id == newParam.value);
+                  if (requiredBlock && requiredBlock.save_action_id) {
+                    requisiteActions.add(requiredBlock.save_action_id);
+                  }
+                }
+              });
+
+              // 3. Actualizamos la acción
+              action.parameters = newParams;
+              action.requisite_actions = Array.from(requisiteActions); //
+            },
+          });
+        }
       },
 
+      /**
+       * Indica si se puede editar una acción
+       * @param {AWF_Action} action La acción
+       * @returns {boolean}
+       */
       canEditAction(action) {
         return action.is_user_selectable;
       },
+
+      /**
+       * Indica si se puede eliminar una acción
+       * @param {AWF_Action} action La acción
+       * @returns {boolean}
+       */
       canRemoveAction(action) {
         return action.is_user_selectable;
       },
+
+      /**
+       * Elimina una acción del flujo
+       * @param {AWF_Action} action La acción a eliminar
+       * @return {void}
+       */
       removeAction(action) {
         this.flow.actions = this.flow.actions.filter(a => a.id != action.id);
       },
+
+      /**
+       * Indica si se puede mover hacia arriba una acción
+       * @param {AWF_Action} action La acción
+       * @returns {boolean}
+       */
       canMoveUpAction(action) {
         // No podemos mover una acción fija
         if (action.is_fixed_order) return false;
@@ -885,6 +1146,12 @@ class WizardStep3 {
 
         return true;
       },
+
+      /**
+       * Mueve hacia arriba una acción
+       * @param {AWF_Action} action La acción
+       * @returns {void}
+       */
       moveUpAction(action) {
         if (!this.canMoveUpAction(action)) return;
 
@@ -894,6 +1161,11 @@ class WizardStep3 {
         this.actions.splice(index - 1, 0, actionToMove);
       },
 
+      /**
+       * Indica si se puede mover hacia abajo una acción
+       * @param {AWF_Action} action La acción
+       * @returns {boolean}
+       */
       canMoveDownAction(action) {
         // No podemos mover una acción fija
         if (action.is_fixed_order) return false;
@@ -911,6 +1183,12 @@ class WizardStep3 {
 
         return true;  
       },
+
+      /**
+       * Mueve hacia abajo una acción
+       * @param {AWF_Action} action La acción
+       * @returns {void}
+       */
       moveDownAction(action) {
         if (!this.canMoveDownAction(action)) return;
 

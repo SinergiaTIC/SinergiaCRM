@@ -25,15 +25,9 @@
             <div class="accordion">
                 <template x-for="action in actions" :key="action.id">
                     <div class="accordion-item" x-data="{opened:false}" x-show="action.is_user_selectable || showAllActions">
-                        <div :id="action.id+'_Header'" 
-                             class="accordion-header accordion-button p-0 align-items-center"
-                             :class="{'collapsed': !opened}">
-                            <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2"
-                                 role="button"
-                                 @click="opened = !opened"
-                                 data-bs-toggle="collapse" 
-                                 :data-bs-target="'#'+action.id+'_Content'" 
-                                 :aria-controls="action.id+'_Content'">
+                        <div :id="action.id+'_Header'" class="mt-1 mb-1 pe-2 btn accordion-header accordion-button p-0 align-items-center" :class="{'collapsed': !opened}">
+                            <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
+                                 data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
                                 <div class="fw-bold text-truncate" style="max-width: 30%;">
                                     <span :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></span>
                                 </div>
@@ -42,18 +36,20 @@
                                 </div>
                             </div>
                             <!-- Buttons -->
-                            <div class="d-flex align-items-center pe-3">
-                                <div class="d-inline-flex input-group" role="group">
-                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                            :disabled="!canMoveUpAction(action);" @click="moveUpAction(action);">
-                                        <span class="suitepicon suitepicon-action-move-up"></span>
-                                    </button>
-                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                            :disabled="!canMoveDownAction(action);" @click="moveDownAction(action);">
-                                        <span class="suitepicon suitepicon-action-move-down"></span>
-                                    </button>
-                                </div> 
-                            </div>
+                            <template x-if="showAllActions">
+                                <div class="d-flex align-items-center pe-3">
+                                    <div class="d-inline-flex input-group" role="group">
+                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                :disabled="!canMoveUpAction(action);" @click="moveUpAction(action);">
+                                            <span class="suitepicon suitepicon-action-move-up"></span>
+                                        </button>
+                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                :disabled="!canMoveDownAction(action);" @click="moveDownAction(action);">
+                                            <span class="suitepicon suitepicon-action-move-down"></span>
+                                        </button>
+                                    </div> 
+                                </div>
+                            </template>
                         </div>
                         <div :id="action.id+'_Content'" class="accordion-collapse collapse" :aria-labelledby="action.id+'_Header'">
                             <div :id="action.id+'_Body'" class="accordion-body"> 
@@ -63,14 +59,18 @@
                                         <col style="width:30%">
                                         <col style="width:20%">
                                         <col style="width:40%">
-                                        <col style="width:10%">
+                                        <template x-if="action.is_user_selectable">
+                                            <col style="width:10%">
+                                        </template>
                                     </colgroup>
                                     <thead class="table-light">
                                         <tr>
                                             <th x-text="utils.translate('LBL_ACTION_NAME')"></th>
                                             <th x-text="utils.translate('LBL_ACTION_CATEGORY')"></th>
                                             <th x-text="utils.translate('LBL_ACTION_PARAMETERS')"></th>
-                                            <th x-text="utils.translate('LBL_ACTION_ACTIONS')"></th>
+                                            <template x-if="action.is_user_selectable">
+                                                <th x-text="utils.translate('LBL_ACTION_ACTIONS')"></th>
+                                            </template>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -93,16 +93,18 @@
                                                 </table>
                                             </td>
                                             <!-- Buttons -->
-                                            <td>
-                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')"
-                                                        :disabled="!canEditAction(action);" @click="$store.actionEditor.openEdit(action);">
-                                                    <span class="suitepicon suitepicon-action-edit"></span>
-                                                </button>
-                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
-                                                        :disabled="!canRemoveAction(action);" @click="removeAction(action);">
-                                                    <span class="suitepicon suitepicon-action-delete"></span>
-                                                </button>
-                                            </td>
+                                            <template x-if="action.is_user_selectable">
+                                                <td rowspan="2">
+                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')"
+                                                            :disabled="!canEditAction(action);" @click="$store.actionEditor.openEdit(action);">
+                                                        <span class="suitepicon suitepicon-action-edit"></span>
+                                                    </button>
+                                                    <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                            :disabled="!canRemoveAction(action);" @click="removeAction(action);">
+                                                        <span class="suitepicon suitepicon-action-delete"></span>
+                                                    </button>
+                                                </td>
+                                            </template>
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="text-muted small" x-text="action.description"></td>
@@ -115,8 +117,10 @@
                 </template>
             </div>
             <!-- Create Action Button -->
-            <div class="row mb-3">
+            <div class="row m-3">
                 <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD')"></button>
+                <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD_TERMINAL')" 
+                        x-bind:disabled="flow.hasTerminalAction();"></button>
                 <!-- <button type="button" class="btn w-auto" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_ACTION_ADD')"></button> -->
             </div>
         </div>
