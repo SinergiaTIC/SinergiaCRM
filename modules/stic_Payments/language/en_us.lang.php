@@ -159,4 +159,5 @@ $mod_strings = array(
     'LBL_VAT_SUPPORTED' => 'VAT supported',
     'LBL_BASE_AMOUNT' => 'Base amount',
     'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'A blocked payment can not change allocation status.',
+    'LBL_ALLOCATED_AMOUNT_ALERT' => 'There are already allocations made for this payment.',
 );
