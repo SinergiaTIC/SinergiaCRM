@@ -80,6 +80,28 @@ class stic_Financial_Products extends Basic
         include_once 'SticInclude/Utils.php';
         global $app_list_strings, $mod_strings;
 
+        // Skipped - Norma 43 import in progress
+        if (!empty($_SESSION['norma43_importing'])) {
+            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Norma 43 import in progress");
+            return parent::save($check_notify);
+        }
+
+        // Normalize decimal values to prevent truncation
+        foreach (['initial_balance', 'current_balance'] as $field) {
+            if (isset($this->$field) && !empty($this->$field)) {
+                $value = $this->$field;
+                if (is_string($value)) {
+                    // Replace comma with point for decimal conversion
+                    $value = str_replace(',', '.', $value);
+                    // Convert to float to preserve precision
+                    $this->$field = (float)$value;
+                } elseif (!is_float($this->$field) && !is_int($this->$field)) {
+                    // Ensure it's a numeric type
+                    $this->$field = (float)$value;
+                }
+            }
+        }
+
         // Check if iban or type have changed
         $ibanChanged = !isset($this->fetched_row['iban']) || ($this->fetched_row['iban'] !== $this->iban);
         $typeChanged = !isset($this->fetched_row['type']) || ($this->fetched_row['type'] !== $this->type);

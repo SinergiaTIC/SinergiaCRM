@@ -168,38 +168,114 @@ class Norma43
     {
         global $db;
         self::$db = $db;
-        // Retrieve parsed accounts from session
-        $parsedAccounts = $_SESSION['norma43_parsed_accounts'] ?? [];
-        if (empty($parsedAccounts)) return [];
-
-        $summary = ['imported_movements' => 0];
-
-        // To avoid duplicates within the same file and DB
-        $importedHashes = [];
-
-        // Loop through accounts and movements to insert them
-        foreach ($parsedAccounts as $account) {
-            // Find or create the financial product again
-            $productId = self::findOrCreateProduct($account);
-            // Insert movements
-            foreach ($account['movements'] as $mov) {
-                $mapped = self::mapMovementData($mov);
-                $date   = trim($mapped['transaction_date']);
-                $amount = round((float)$mapped['amount'], 2);
-                $name   = trim(preg_replace('/\s+/', ' ', mb_strtolower($mapped['name'] ?? '', 'UTF-8')));
-                $hash   = md5($productId . '|' . $date . '|' . number_format($amount, 2, '.', '') . '|' . $name);
-
-                // Avoiding duplicates in the database
-                if (self::isDuplicate($mapped, $productId, $importedHashes)) continue;
-
-                self::insertTransaction($mapped, $productId);
-                $summary['imported_movements']++;
+        
+        // Prevents hooks from interfering
+        $_SESSION['norma43_importing'] = true;
+        
+        try {
+            // Retrieve parsed accounts from session
+            $parsedAccounts = $_SESSION['norma43_parsed_accounts'] ?? [];
+            if (empty($parsedAccounts)) {
+                unset($_SESSION['norma43_importing']);
+                return [];
             }
-            self::updateProductBalance($productId, $account);
-        }
 
-        unset($_SESSION['norma43_parsed_accounts']);
-        return $summary;
+            $summary = $_SESSION['norma43_summary'] ?? ['imported_movements' => 0];
+
+            // To avoid duplicates within the same file and DB
+            $importedHashes = [];
+
+            // Loop through accounts and movements to insert them
+            foreach ($parsedAccounts as $account) {
+                // Find or create the financial product again
+                $productId = self::findOrCreateProduct($account);
+                
+                // Insert movements
+                foreach ($account['movements'] as $mov) {
+                    $mapped = self::mapMovementData($mov);
+                    $date   = trim($mapped['transaction_date']);
+                    $amount = round((float)$mapped['amount'], 2);
+                    $name   = trim(preg_replace('/\s+/', ' ', mb_strtolower($mapped['name'] ?? '', 'UTF-8')));
+                    $hash   = md5($productId . '|' . $date . '|' . number_format($amount, 2, '.', '') . '|' . $name);
+
+                    // Avoiding duplicates in the database
+                    if (self::isDuplicate($mapped, $productId, $importedHashes)) continue;
+
+                    self::insertTransaction($mapped, $productId);
+                    $summary['imported_movements']++;
+                }
+            }
+
+            unset($_SESSION['norma43_importing']);
+
+            // Update balances for all products after all transactions are imported
+            foreach ($parsedAccounts as $account) {
+                $productId = self::findOrCreateProduct($account);
+                
+                // For new products, set initial_balance based on imported transactions
+                if ($account['exist'] === 0) {
+                    $product = BeanFactory::getBean('stic_Financial_Products', $productId);
+                    if ($product) {
+                        $balanceQuery = "
+                            SELECT SUM(CAST(t.amount AS DECIMAL(19,4))) as total
+                            FROM stic_transactions t
+                            INNER JOIN stic_transactions_stic_financial_products_c rel
+                                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
+                                AND rel.deleted = 0
+                            WHERE rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
+                            AND t.deleted = 0
+                        ";
+                        $balanceResult = $db->query($balanceQuery);
+                        $balanceRow = $db->fetchByAssoc($balanceResult);
+                        $totalTransactions = (float)($balanceRow['total'] ?? 0);
+                        
+                        $product->initial_balance = $totalTransactions;
+                        $product->current_balance = $totalTransactions;
+                        $product->save();
+                        
+                        $summary['initial_balance'] = $totalTransactions;
+                        
+                        $GLOBALS['log']->debug( __METHOD__ . '(' . __LINE__ . ") >> Norma 43 new product: IBAN {$product->iban}. " .
+                            "Set initial_balance = current_balance = SUM(imported transactions) = {$totalTransactions}"
+                        );
+                    }
+                } else {
+                    // For existing products, update current_balance only
+                    $product = BeanFactory::getBean('stic_Financial_Products', $productId);
+                    if ($product) {
+                        $balanceQuery = "
+                            SELECT SUM(CAST(t.amount AS DECIMAL(19,4))) as total
+                            FROM stic_transactions t
+                            INNER JOIN stic_transactions_stic_financial_products_c rel
+                                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
+                                AND rel.deleted = 0
+                            WHERE rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
+                            AND t.deleted = 0
+                        ";
+                        $balanceResult = $db->query($balanceQuery);
+                        $balanceRow = $db->fetchByAssoc($balanceResult);
+                        $totalTransactions = (float)($balanceRow['total'] ?? 0);
+                        
+                        $product->current_balance = $totalTransactions;
+                        $product->save();
+                        
+                        $GLOBALS['log']->debug( __METHOD__ . '(' . __LINE__ . ") >> Norma 43 existing product (after import): IBAN {$product->iban}. " .
+                            "Updated current_balance = SUM(all transactions) = {$totalTransactions}. " .
+                            "initial_balance unchanged = {$product->initial_balance}"
+                        );
+                    }
+                }
+            }
+
+            unset($_SESSION['norma43_parsed_accounts']);
+            return $summary;
+            
+        } catch (Exception $e) {
+            // Clean up on error
+            unset($_SESSION['norma43_importing']);
+            $GLOBALS['log']->error("Error in finalizeImport: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -677,7 +753,7 @@ class Norma43
     /**
      * Update the product balance based on its transactions
      * @param string $productId The ID of the financial product to update.
-     * @param array $account Optional account data with 'final_balance' to compare.
+     * @param array $account Optional account data with 'final_balance' to compare (not used in Opción B).
      * @return void
      */
     public static function updateProductBalance($productId, $account = [])
@@ -686,12 +762,14 @@ class Norma43
         $product = BeanFactory::getBean('stic_Financial_Products', $productId);
         if (!$product) return;
 
+        // Calculate the balance based on all transactions
+        $calculatedBalance = self::calculateBalance($productId);
+
         // If 'final_balance' is provided in the account data, use it for comparison
         $finalBalanceN43 = $account['final_balance'] ?? $product->current_balance ?? 0;
 
-        // Calculate the balance based on initial balance and transactions
-        $calculatedBalance = self::calculateBalance($productId);
-        $product->current_balance = $calculatedBalance;
+        // Ensure the calculated balance is a float with proper precision
+        $product->current_balance = (float)$calculatedBalance;
 
         // Check for discrepancies greater than 0.01
         $difference = abs($calculatedBalance - $finalBalanceN43);
@@ -764,22 +842,12 @@ class Norma43
     private static function calculateBalance($productId)
     {
         global $db;
-        
-        // Get initial balance of the product
-        $query = "
-            SELECT initial_balance 
-            FROM stic_financial_products 
-            WHERE id = " . $db->quoted($productId) . "
-            AND deleted = 0
-        ";
-        $result = $db->query($query);
-        $row = $db->fetchByAssoc($result);
-        // Start with the initial balance
-        $balance = $row ? (float)$row['initial_balance'] : 0;
+
+        $balance = 0;
         
         // Sum all transactions linked to this product
         $query = "
-            SELECT SUM(t.amount) as total
+            SELECT SUM(CAST(t.amount AS DECIMAL(19,4))) as total
             FROM stic_transactions t
             INNER JOIN stic_transactions_stic_financial_products_c rel
                 ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
@@ -790,13 +858,18 @@ class Norma43
         $result = $db->query($query);
         $row = $db->fetchByAssoc($result);
         
-        // Add the sum of transactions to the initial balance
+        // Get the total sum of all transactions
         if ($row && $row['total'] !== null) {
-            $balance += (float)$row['total'];
+            $total = $row['total'];
+            // Handle string values with commas
+            if (is_string($total)) {
+                $total = str_replace(',', '.', $total);
+            }
+            $balance = (float)$total;
         }
         
-        // Round to 2 decimal places
-        return round($balance, 2);
+        // Return balance
+        return $balance;
     }
 
     /**
@@ -831,5 +904,76 @@ class Norma43
 
         // Generate the hash
         return md5("{$iban}|{$date}|{$amount}|{$name}");
+    }
+
+    /**
+     * Recalculate product balance for manual operations (subpanel/edit)
+     * @param string $productId The product ID
+     */
+    public static function recalculateProductBalance($productId)
+    {
+        global $db;
+        
+        if (empty($productId)) {
+            return;
+        }
+
+        // Load the product
+        $product = BeanFactory::getBean('stic_Financial_Products', $productId);
+        if (!$product) {
+            $GLOBALS['log']->error("Error: Product not found: {$productId}");
+            return;
+        }
+
+        // Get all transactions linked to this product
+        $query = "
+            SELECT t.id, t.amount, t.date_entered
+            FROM stic_transactions t
+            INNER JOIN stic_transactions_stic_financial_products_c rel
+                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
+                AND rel.deleted = 0
+            WHERE rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
+            AND t.deleted = 0
+            ORDER BY t.date_entered ASC
+        ";
+
+        $result = $db->query($query);
+        $transactions = [];
+        
+        while ($row = $db->fetchByAssoc($result)) {
+            $transactions[] = [
+                'id' => $row['id'],
+                'amount' => (float)$row['amount'],
+                'date_entered' => $row['date_entered']
+            ];
+        }
+
+        // Calculate balances
+        if (!empty($transactions)) {
+            // First transaction amount = initial_balance (for manual entries)
+            $product->initial_balance = $transactions[0]['amount'];
+            
+            // Sum of all transactions = current_balance
+            $totalAmount = 0;
+            foreach ($transactions as $trans) {
+                $totalAmount += $trans['amount'];
+            }
+            $product->current_balance = $totalAmount;
+            
+            $GLOBALS['log']->debug(__METHOD__ . __LINE__ . " >> ({$productId}): " .
+                "Found " . count($transactions) . " transactions. " .
+                "initial_balance = " . $transactions[0]['amount'] . 
+                ", current_balance = {$totalAmount}"
+            );
+        } else {
+            // No transactions
+            $product->initial_balance = 0;
+            $product->current_balance = 0;
+            
+            $GLOBALS['log']->debug(__METHOD__ . __LINE__ . " >>  ({$productId}): No transactions found, resetting balances to 0");
+        }
+
+        // Save without triggering after_save hook again
+        $product->save();
     }
 }

@@ -88,7 +88,16 @@ class stic_Transactions extends File
     public function save($check_notify = false)
     {
         include_once 'SticInclude/Utils.php';
-        global $app_list_strings;
+        global $app_list_strings, $db;
+
+        // Skkiped - Norma 43 import in progress
+        if (!empty($_SESSION['norma43_importing'])) {
+            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Norma 43 import in progress");
+            return parent::save($check_notify);
+        }
+
+        // Capture the original amount from user input before any normalization
+        $originalAmountString = (string)$this->amount;
 
         // Normalize the sign of the amount according to the type
         if (!empty($this->type) && isset($this->amount)) {
@@ -96,16 +105,22 @@ class stic_Transactions extends File
 
             // If there is a value
             if ($amount !== '') {
-                // Convert to a native number (avoids Decimal error)
-                $amount = (float)str_replace(',', '.', $amount);
+                // First, remove all dots
+                $amount = str_replace('.', '', $amount);
+                // Then replace comma with dot (for decimal separator)
+                $amount = str_replace(',', '.', $amount);
 
                 // If expense is negative
                 if ($this->type === 'expense') {
-                    $amount = -abs($amount);
+                    // Apply the sign without converting to float
+                    if (strpos($amount, '-') === false && $amount !== '0') {
+                        $amount = '-' . $amount;
+                    }
                 }
                 // If income is positive
                 elseif ($this->type === 'income') {
-                    $amount = abs($amount);
+                    // Remove negative sign if present
+                    $amount = ltrim($amount, '-');
                 }
 
                 $this->amount = $amount;
@@ -114,7 +129,8 @@ class stic_Transactions extends File
 
         // Build the document_name if not provided
         if (empty($this->description)) {
-            $amountFormatted = number_format($this->amount, 2, ',', '.');
+            // Use the amount value directly without formatting to preserve all decimals
+            $amountFormatted = $this->amount;
             if ($this->type === 'expense') {
                 $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type]
                     . ' - ' . $this->transaction_date . ' - (' . $amountFormatted . '€)';
@@ -128,22 +144,130 @@ class stic_Transactions extends File
 
         $this->name = $this->document_name;
 
+        // The amount is now normalized
+        $amountForDatabase = (string)$this->amount;
+
         // Save the transaction normally
         parent::save($check_notify);
         
-        // Recalculate current balance of the linked financial product
-        if (!empty($this->stic_trans4a5broducts_ida)) {
-            require_once 'modules/stic_Transactions/importNorma43.php';
-            try {
-                // Get only the ID; the method recalculates everything based on current movements
-                Norma43::updateProductBalance($this->stic_trans4a5broducts_ida, [
-                    'final_balance' => null,
-                    'initial_balance' => null,
-                ]);
-            } catch (Exception $e) {
-                $GLOBALS['log']->error("Error recalculating balance after save transaction: " . $e->getMessage());
+        // After save, restore the full-precision amount directly in the database
+        if (!empty($amountForDatabase) && !empty($this->id)) {
+            global $db;
+            
+            // Pass the amount with point decimal to the database
+            $updateQuery = "UPDATE " . $this->table_name . 
+                          " SET amount = " . $db->quoted($amountForDatabase) .
+                          " WHERE id = " . $db->quoted($this->id);
+            $db->query($updateQuery);
+            
+            // Reload the value from DB to verify it was saved correctly
+            $selectQuery = "SELECT amount FROM " . $this->table_name . " WHERE id = " . $db->quoted($this->id);
+            $result = $db->query($selectQuery);
+            if ($result) {
+                $row = $db->fetchByAssoc($result);
+                $savedAmount = (float)$row['amount'];
+                $originalAmountFloat = (float)$amountForDatabase;
+                
+                if (abs($savedAmount - $originalAmountFloat) > 0.001) {
+                    $GLOBALS['log']->error(
+                        "Error: Amount truncation detected! Original input: " . $originalAmountString . 
+                        " Requested: " . $amountForDatabase . 
+                        " (" . $originalAmountFloat . ") Saved: " . $savedAmount . 
+                        " for transaction " . $this->id
+                    );
+                } else {
+                    $GLOBALS['log']->debug(
+                        __METHOD__ . '(' . __LINE__ . ") >> Amount saved correctly! Original input: " . $originalAmountString . 
+                        " Stored in DB: " . $amountForDatabase . 
+                        " for transaction " . $this->id
+                    );
+                }
+                // Update in-memory value
+                $this->amount = $savedAmount;
             }
         }
+        
+        // After saving, check if there's an associated financial product
+        $productId = $this->getAssociatedProductId();
+        
+        // If there's an associated product, update its balance
+        if (!empty($productId)) {
+            require_once 'modules/stic_Transactions/importNorma43.php';
+            
+            // Count how many transactions exist for this product before this save
+            // If this is the first one, we log it specially
+            $countQuery = "
+                SELECT COUNT(*) as total
+                FROM stic_transactions_stic_financial_products_c
+                WHERE stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
+                AND deleted = 0
+            ";
+            $countResult = $db->query($countQuery);
+            $countRow = $db->fetchByAssoc($countResult);
+            $transactionCount = (int)$countRow['total'];
+            $isFirstTransaction = ($transactionCount <= 1);
+            
+            try {
+                // If this is the first transaction, also set the initial_balance
+                if ($isFirstTransaction) {
+                    $product = BeanFactory::getBean('stic_Financial_Products', $productId);
+                    if ($product) {
+                        // Set initial_balance to the amount of this first transaction
+                        $product->initial_balance = $this->amount;
+                        $GLOBALS['log']->debug(
+                            __METHOD__ . '(' . __LINE__ . ") >> First Transaction. Setting initial_balance to " . $originalAmountString . 
+                            " for product {$productId} | Transaction: {$this->id}"
+                        );
+                    }
+                }
+                
+                // Always update the current_balance
+                Norma43::updateProductBalance($productId, []);
+                
+                if ($isFirstTransaction) {
+                    $GLOBALS['log']->debug(
+                        __METHOD__ . '(' . __LINE__ . ") >> First Transaction. Balance initialized for product {$productId}. " .
+                        "Original input: " . $originalAmountString . 
+                        " | Transaction: {$this->id}"
+                    );
+                } else {
+                    $GLOBALS['log']->debug(
+                        __METHOD__ . '(' . __LINE__ . ") >> Balance updated for product {$productId} (Transaction #{$transactionCount}). " .
+                        "Original input: " . $originalAmountString . 
+                        " | Transaction: {$this->id}"
+                    );
+                }
+            } catch (Exception $e) {
+                $GLOBALS['log']->error("Error updating balance after save transaction: " . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Get the associated financial product ID for this transaction from the relationship table
+     * @return string|null The product ID or null if no product is associated
+     */
+    public function getAssociatedProductId()
+    {
+        global $db;
+        
+        $query = "
+            SELECT DISTINCT stic_trans4a5broducts_ida as product_id
+            FROM stic_transactions_stic_financial_products_c
+            WHERE stic_transactions_stic_financial_productsstic_transactions_idb = " . $db->quoted($this->id) . "
+            AND deleted = 0
+            LIMIT 1
+        ";
+        
+        $result = $db->query($query);
+        if ($result) {
+            $row = $db->fetchByAssoc($result);
+            if ($row && !empty($row['product_id'])) {
+                return $row['product_id'];
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -180,10 +304,10 @@ class stic_Transactions extends File
             try {
                 Norma43::updateProductBalance($productId, []); // empty array if there's no N43 file
             } catch (Exception $e) {
-                $GLOBALS['log']->fatal("Error recalculating balance after deleting transaction: " . $e->getMessage());
+                $GLOBALS['log']->error("Error updating balance after deleting transaction: " . $e->getMessage());
             }
         } else {
-            $GLOBALS['log']->warn("No associated product found to the transaction $id for recalculate balance");
+            $GLOBALS['log']->warn("No associated product found to the transaction $id for update balance");
         }
     }
 	
