@@ -248,6 +248,31 @@ array(
         'label' => 'LBL_STATUS',
         'default' => true,
     ),
+    'VERIFACTU_HASH_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_HASH',
+        'default' => false,
+    ),
+    'VERIFACTU_PREVIOUS_HASH_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_PREVIOUS_HASH',
+        'default' => false,
+    ),
+    'VERIFACTU_AEAT_STATUS_C' => array(
+        'width' => '10%',
+        'label' => 'LBL_VERIFACTU_AEAT_STATUS',
+        'default' => true,
+    ),
+    'VERIFACTU_AEAT_RESPONSE_C' => array(
+        'width' => '20%',
+        'label' => 'LBL_VERIFACTU_AEAT_RESPONSE',
+        'default' => false,
+    ),
+    'VERIFACTU_CANCEL_ID_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_CANCEL_ID',
+        'default' => false,
+    ),
     'TOTAL_AMOUNT' => array(
         'width' => '10%',
         'label' => 'LBL_GRAND_TOTAL',
