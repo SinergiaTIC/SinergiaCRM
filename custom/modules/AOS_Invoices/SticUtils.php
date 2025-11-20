@@ -1,5 +1,26 @@
 <?php
-// filepath: enviar_factura_ejemplo.php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
 require_once __DIR__ . '/../../../SticInclude/vendor/Verifactu-PHP/autoload.php';
 
 use DateTimeImmutable;
@@ -14,132 +35,247 @@ use josemmo\Verifactu\Models\Records\RegistrationRecord;
 use josemmo\Verifactu\Models\Records\TaxType;
 use josemmo\Verifactu\Services\AeatClient;
 
-// ============================================================================
-// CONFIGURACIÓN (ajusta estos valores según tus datos)
-// ============================================================================
-$CERTIFICADO_PATH = __DIR__ . '/certificado.pfx';  // Ruta al certificado
-$CERTIFICADO_PASSWORD = 'tu_contraseña';            // Contraseña del certificado
-$NIF_EMPRESA = 'A00000000';                         // NIF de tu empresa
-$NOMBRE_EMPRESA = 'Mi Empresa de Ejemplo, S.L.';   // Nombre de tu empresa
-$USAR_PRODUCCION = false;                           // false = preproducción, true = producción
+/**
+ * Utility class for AOS_Invoices Verifactu integration
+ */
+class AOS_InvoicesUtils
+{
+    /**
+     * Create a registration record for an invoice
+     * 
+     * @param string $issuerNif Company's NIF/CIF
+     * @param string $issuerName Company's name
+     * @param string $invoiceNumber Invoice number
+     * @param DateTimeImmutable $issueDate Invoice issue date
+     * @param string $description Invoice description
+     * @param array $breakdownDetails Array of breakdown details (tax breakdown)
+     * @param string $totalTaxAmount Total tax amount
+     * @param string $totalAmount Total invoice amount
+     * @param InvoiceIdentifier|null $previousInvoiceId Previous invoice ID for chaining
+     * @param string|null $previousHash Previous invoice hash for chaining
+     * 
+     * @return RegistrationRecord The created registration record
+     */
+    public static function createRegistrationRecord(
+        $issuerNif,
+        $issuerName,
+        $invoiceNumber,
+        $issueDate,
+        $description,
+        $breakdownDetails,
+        $totalTaxAmount,
+        $totalAmount,
+        $previousInvoiceId = null,
+        $previousHash = null
+    ) {
+        $record = new RegistrationRecord();
 
-// ============================================================================
-// 1. CREAR REGISTRO DE FACTURACIÓN
-// ============================================================================
-echo "Creando registro de facturación...\n";
+        // Invoice identifier
+        $record->invoiceId = new InvoiceIdentifier();
+        $record->invoiceId->issuerId = $issuerNif;
+        $record->invoiceId->invoiceNumber = $invoiceNumber;
+        $record->invoiceId->issueDate = $issueDate;
 
-$record = new RegistrationRecord();
+        // Basic invoice data
+        $record->issuerName = $issuerName;
+        $record->invoiceType = InvoiceType::Simplificada;
+        $record->description = $description;
 
-// Identificador de la factura
-$record->invoiceId = new InvoiceIdentifier();
-$record->invoiceId->issuerId = $NIF_EMPRESA;
-$record->invoiceId->invoiceNumber = 'FACT-' . date('Y-m-d-His');
-$record->invoiceId->issueDate = new DateTimeImmutable();
+        // Tax breakdown
+        $record->breakdown = $breakdownDetails;
 
-// Datos básicos de la factura
-$record->issuerName = $NOMBRE_EMPRESA;
-$record->invoiceType = InvoiceType::Simplificada;
-$record->description = 'Venta de productos varios';
+        // Totals
+        $record->totalTaxAmount = $totalTaxAmount;
+        $record->totalAmount = $totalAmount;
 
-// Desglose fiscal (IVA 21%)
-$record->breakdown[0] = new BreakdownDetails();
-$record->breakdown[0]->taxType = TaxType::IVA;
-$record->breakdown[0]->regimeType = RegimeType::C01;
-$record->breakdown[0]->operationType = OperationType::Subject;
-$record->breakdown[0]->baseAmount = '100.00';
-$record->breakdown[0]->taxRate = '21.00';
-$record->breakdown[0]->taxAmount = '21.00';
+        // Chaining (previous invoice reference)
+        $record->previousInvoiceId = $previousInvoiceId;
+        $record->previousHash = $previousHash;
 
-// Totales
-$record->totalTaxAmount = '21.00';
-$record->totalAmount = '121.00';
+        // Generate hash
+        $record->hashedAt = new DateTimeImmutable();
+        $record->hash = $record->calculateHash();
 
-// Encadenamiento (primera factura de la cadena)
-$record->previousInvoiceId = null;
-$record->previousHash = null;
+        // NOTE: Validation disabled due to incompatibility with Symfony Validator 3.4
+        // Verifactu-PHP library requires Symfony 7.3+, but SinergiaCRM uses 3.4
+        // Validation will be performed on the AEAT server
+        // $record->validate();
 
-// Generar huella (hash)
-$record->hashedAt = new DateTimeImmutable();
-$record->hash = $record->calculateHash();
-
-// NOTA: Validación deshabilitada por incompatibilidad con Symfony Validator 3.4
-// La librería Verifactu-PHP requiere Symfony 7.3+, pero SinergiaCRM usa 3.4
-// La validación se realizará en el servidor de AEAT
-// $record->validate();
-echo "✓ Registro creado (sin validación local)\n";
-
-// ============================================================================
-// 2. CONFIGURAR SISTEMA INFORMÁTICO DE FACTURACIÓN (SIF)
-// ============================================================================
-echo "Configurando sistema informático...\n";
-
-$system = new ComputerSystem();
-$system->vendorName = $NOMBRE_EMPRESA;
-$system->vendorNif = $NIF_EMPRESA;
-$system->name = 'Sistema de Facturación v1';
-$system->id = 'SF';
-$system->version = '1.0.0';
-$system->installationNumber = '001';
-$system->onlySupportsVerifactu = true;
-$system->supportsMultipleTaxpayers = false;
-$system->hasMultipleTaxpayers = false;
-
-// NOTA: Validación deshabilitada por incompatibilidad con Symfony Validator 3.4
-// $system->validate();
-echo "✓ Sistema configurado (sin validación local)\n";
-
-// ============================================================================
-// 3. ENVIAR A LA AEAT
-// ============================================================================
-echo "Enviando a la AEAT...\n";
-
-$taxpayer = new FiscalIdentifier($NOMBRE_EMPRESA, $NIF_EMPRESA);
-$client = new AeatClient($system, $taxpayer);
-
-// Configurar certificado
-if (!file_exists($CERTIFICADO_PATH)) {
-    die("❌ ERROR: No se encuentra el certificado en: $CERTIFICADO_PATH\n");
-}
-$client->setCertificate($CERTIFICADO_PATH, $CERTIFICADO_PASSWORD);
-
-// Configurar entorno (preproducción o producción)
-$client->setProduction($USAR_PRODUCCION);
-$entorno = $USAR_PRODUCCION ? 'PRODUCCIÓN' : 'PREPRODUCCIÓN';
-echo "Usando entorno: $entorno\n";
-
-try {
-    // Enviar registro
-    $response = $client->send([$record])->wait();
-    
-    echo "\n";
-    echo "════════════════════════════════════════════════════════════════\n";
-    echo "✓ FACTURA ENVIADA CORRECTAMENTE\n";
-    echo "════════════════════════════════════════════════════════════════\n";
-    echo "CSV: " . ($response->csv ?? 'N/A') . "\n";
-    echo "Estado: " . $response->status->value . "\n";
-    echo "Tiempo de espera: {$response->waitSeconds}s\n";
-    
-    if ($response->submittedAt !== null) {
-        echo "Fecha de presentación: " . $response->submittedAt->format('d-m-Y H:i:s') . "\n";
+        return $record;
     }
-    
-    echo "\nDetalles de los registros:\n";
-    foreach ($response->items as $index => $item) {
-        echo "  Factura " . ($index + 1) . ": {$item->invoiceId->invoiceNumber}\n";
-        echo "    - Estado: {$item->status->value}\n";
-        if ($item->errorCode !== null) {
-            echo "    - Error [{$item->errorCode}]: {$item->errorDescription}\n";
+
+    /**
+     * Create a breakdown detail entry
+     * 
+     * @param TaxType $taxType Tax type (IVA, IGIC, IPSI)
+     * @param RegimeType $regimeType Regime type
+     * @param OperationType $operationType Operation type
+     * @param string $baseAmount Base amount (before tax)
+     * @param string $taxRate Tax rate percentage
+     * @param string $taxAmount Tax amount
+     * 
+     * @return BreakdownDetails The created breakdown detail
+     */
+    public static function createBreakdownDetail(
+        $taxType,
+        $regimeType,
+        $operationType,
+        $baseAmount,
+        $taxRate,
+        $taxAmount
+    ) {
+        $breakdown = new BreakdownDetails();
+        $breakdown->taxType = $taxType;
+        $breakdown->regimeType = $regimeType;
+        $breakdown->operationType = $operationType;
+        $breakdown->baseAmount = $baseAmount;
+        $breakdown->taxRate = $taxRate;
+        $breakdown->taxAmount = $taxAmount;
+
+        return $breakdown;
+    }
+
+    /**
+     * Configure the Computer System (SIF - Sistema Informático de Facturación)
+     * 
+     * @param string $vendorNif Vendor's NIF/CIF
+     * @param string $vendorName Vendor's name
+     * @param string $systemName System name
+     * @param string $systemId System ID
+     * @param string $systemVersion System version
+     * @param string $installationNumber Installation number
+     * @param bool $onlySupportsVerifactu Whether the system only supports Verifactu
+     * @param bool $supportsMultipleTaxpayers Whether the system supports multiple taxpayers
+     * @param bool $hasMultipleTaxpayers Whether the system has multiple taxpayers
+     * 
+     * @return ComputerSystem The configured computer system
+     */
+    public static function configureComputerSystem(
+        $vendorNif,
+        $vendorName,
+        $systemName = 'SinergiaCRM Billing System',
+        $systemId = 'SF',
+        $systemVersion = '1.0.0',
+        $installationNumber = '001',
+        $onlySupportsVerifactu = true,
+        $supportsMultipleTaxpayers = false,
+        $hasMultipleTaxpayers = false
+    ) {
+        $system = new ComputerSystem();
+        $system->vendorName = $vendorName;
+        $system->vendorNif = $vendorNif;
+        $system->name = $systemName;
+        $system->id = $systemId;
+        $system->version = $systemVersion;
+        $system->installationNumber = $installationNumber;
+        $system->onlySupportsVerifactu = $onlySupportsVerifactu;
+        $system->supportsMultipleTaxpayers = $supportsMultipleTaxpayers;
+        $system->hasMultipleTaxpayers = $hasMultipleTaxpayers;
+
+        // NOTE: Validation disabled due to incompatibility with Symfony Validator 3.4
+        // $system->validate();
+
+        return $system;
+    }
+
+    /**
+     * Send invoice records to AEAT
+     * 
+     * @param array $records Array of RegistrationRecord objects to send
+     * @param string $issuerNif Company's NIF/CIF
+     * @param string $issuerName Company's name
+     * @param string $certificatePath Path to the certificate file (.pfx)
+     * @param string $certificatePassword Certificate password
+     * @param bool $useProduction Whether to use production environment (false = pre-production)
+     * @param ComputerSystem|null $system Computer system configuration (optional, will be created if null)
+     * 
+     * @return object The AEAT response object
+     * @throws Exception If certificate is not found or sending fails
+     */
+    public static function sendToAeat(
+        $records,
+        $issuerNif,
+        $issuerName,
+        $certificatePath,
+        $certificatePassword,
+        $useProduction = false,
+        $system = null
+    ) {
+        // Configure computer system if not provided
+        if ($system === null) {
+            $system = self::configureComputerSystem($issuerNif, $issuerName);
         }
+
+        // Create taxpayer identifier
+        $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
+        
+        // Create AEAT client
+        $client = new AeatClient($system, $taxpayer);
+
+        // Configure certificate
+        if (!file_exists($certificatePath)) {
+            throw new Exception("Certificate not found at: $certificatePath");
+        }
+        $client->setCertificate($certificatePath, $certificatePassword);
+
+        // Configure environment (pre-production or production)
+        $client->setProduction($useProduction);
+
+        // Send records and return response
+        $response = $client->send($records)->wait();
+        
+        return $response;
     }
-    
-    echo "════════════════════════════════════════════════════════════════\n";
-    
-} catch (Exception $e) {
-    echo "\n";
-    echo "════════════════════════════════════════════════════════════════\n";
-    echo "❌ ERROR AL ENVIAR LA FACTURA\n";
-    echo "════════════════════════════════════════════════════════════════\n";
-    echo "Mensaje: " . $e->getMessage() . "\n";
-    echo "════════════════════════════════════════════════════════════════\n";
-    exit(1);
+
+    /**
+     * Format AEAT response for display
+     * 
+     * @param object $response AEAT response object
+     * @return string Formatted response text
+     */
+    public static function formatAeatResponse($response)
+    {
+        $output = "\n";
+        $output .= "════════════════════════════════════════════════════════════════\n";
+        $output .= "INVOICE SENT SUCCESSFULLY\n";
+        $output .= "════════════════════════════════════════════════════════════════\n";
+        $output .= "CSV: " . ($response->csv ?? 'N/A') . "\n";
+        $output .= "Status: " . $response->status->value . "\n";
+        $output .= "Wait time: {$response->waitSeconds}s\n";
+        
+        if ($response->submittedAt !== null) {
+            $output .= "Submission date: " . $response->submittedAt->format('d-m-Y H:i:s') . "\n";
+        }
+        
+        $output .= "\nRecord details:\n";
+        foreach ($response->items as $index => $item) {
+            $output .= "  Invoice " . ($index + 1) . ": {$item->invoiceId->invoiceNumber}\n";
+            $output .= "    - Status: {$item->status->value}\n";
+            if ($item->errorCode !== null) {
+                $output .= "    - Error [{$item->errorCode}]: {$item->errorDescription}\n";
+            }
+        }
+        
+        $output .= "════════════════════════════════════════════════════════════════\n";
+        
+        return $output;
+    }
+
+    /**
+     * Format AEAT error for display
+     * 
+     * @param Exception $exception Exception object
+     * @return string Formatted error text
+     */
+    public static function formatAeatError($exception)
+    {
+        $output = "\n";
+        $output .= "════════════════════════════════════════════════════════════════\n";
+        $output .= "ERROR SENDING INVOICE\n";
+        $output .= "════════════════════════════════════════════════════════════════\n";
+        $output .= "Message: " . $exception->getMessage() . "\n";
+        $output .= "════════════════════════════════════════════════════════════════\n";
+        
+        return $output;
+    }
 }
