@@ -130,4 +130,44 @@ class AWF_Utils {
         
         return $html;
     }
+
+    /**
+     * Genera un resumen en texto plano con todos los datos del forumlario.
+     *
+     * @param ExecutionContext $context El contexto que contiene los datos.
+     * @return string Un string de texto plano con el resumen.
+     */
+    public static function generateSummaryText(ExecutionContext $context): string
+    {
+        // Título principal
+        $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms');
+        $text = $title . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
+        
+        $formData = $context->formData; 
+        
+        foreach ($context->formConfig->data_blocks as $block) {
+            // Título del bloque
+            $blockTitle = mb_strtoupper($block->text);
+            $text .= $blockTitle . "\n";
+            $text .= str_repeat('-', mb_strlen($blockTitle)) . "\n";
+            
+            foreach ($block->fields as $fieldDef) {
+                if (empty($fieldDef->label) || $fieldDef->type_field === DataBlockFieldType::HIDDEN) {
+                    continue;
+                }
+
+                $formKey = "{$block->name}.{$fieldDef->name}";
+                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                    $formKey = "_detached.{$formKey}";
+                }
+                $value = $formData[$formKey] ?? '';
+                
+                // Formato: "Etiqueta: Valor"
+                $text .= "{$fieldDef->label}: {$value}\n";
+            }
+            $text .= "\n";
+        }
+        
+        return $text;
+    }
 }

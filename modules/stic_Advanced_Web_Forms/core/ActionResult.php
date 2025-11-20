@@ -68,7 +68,7 @@ class ActionResult {
     /**
      * Registra una modificación de un bean que SÍ proviene de un DataBlock.
      *  - Registra la modificación
-     *  - Guarda la referencia al bean en el FormDataBlock original para futures acciones.
+     *  - Guarda la referencia al bean en el FormDataBlock original para futuras acciones.
      * 
      * @param SugarBean $bean El bean que se ha procesado.
      * @param DataBlockResolved $block El DataBlockResolved que se ha procesado.
