@@ -1,23 +1,19 @@
 REPLACE INTO email_templates (id,date_entered,date_modified,modified_user_id,created_by,published,name,description,subject,body,body_html,deleted,assigned_user_id,text_only,`type`) VALUES
-	 ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-11-04 16:01:43','2025-11-04 15:09:27','2','1','off','Solicitud firma','Plantilla usada para notificar al firmante que se ha solicitado su firma electrónica para un documento.','[Solicitud de firma del documento] $stic_signatures_pdf_template','Hola $contact_first_name$contact_user_first_name,
+	 ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-11-04 16:01:43','2025-11-04 15:09:27','2','1','off','Solicitud firma','Plantilla usada para notificar al firmante que se ha solicitado su firma electrónica para un documento.','[Solicitud de firma del documento] $stic_signatures_pdf_template','Firma de documento
 
-Se ha solicitado su firma para el siguiente documento:
+Se ha solicitado su firma en el siguiente documento:
 
-Nombre del Documento: $stic_signatures_pdf_template
-Fecha de Caducidad: $stic_signatures_expiration_date
+$stic_signatures_pdf_template
+
 Firmante: $contact_full_name$contact_user_full_name
-Correo electrónico de contacto: $contact_email1$contact_user_email1
+Fecha de caducidad: $stic_signatures_expiration_date
 
-Para firmar el documento, haga clic en el siguiente enlace. Será redirigido al portal de firma segura.
+Para firmar el documento, haga clic a continuación y será redirigido al portal de firma segura.
 
-Firmar Documento: $sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId=$contact_id$contact_user_id
+Firmar el documento: $sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId=$contact_id$contact_user_id
 
-Si tiene problemas para acceder, por favor, copie y pegue este enlace en su navegador:
-$sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId=$contact_id$contact_user_id
-
----
-
-Este es un correo automático, por favor no responda a este mensaje.','<!DOCTYPE html>
+Si no puede acceder al portal de firma, copie y pegue el siguiente enlace en su navegador:
+$sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId=$contact_id$contact_user_id','<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -42,19 +38,18 @@ Este es un correo automático, por favor no responda a este mensaje.','<!DOCTYPE
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-	 ('000005f1-2e4e-3b11-051f-68e3c9e70331','2025-11-04 16:01:43','2025-11-04 15:12:34','2','1','off','Documento Firmado','Plantilla usada para enviar la versión final del documento firmado electrónicamente al firmante.','[Documento Firmado] $stic_signatures_pdf_template','Hola $contact_first_name$contact_user_first_name,
+	 ('000005f1-2e4e-3b11-051f-68e3c9e70331','2025-11-04 16:01:43','2025-11-04 15:12:34','2','1','off','Documento Firmado','Plantilla usada para enviar la versión final del documento firmado electrónicamente al firmante.','[Documento Firmado] $stic_signatures_pdf_template','Documento firmado
 
-Adjunto encontrará la versión final del documento que ha firmado electrónicamente:
+Adjunto a este correo encontrará la versión final del documento que ha firmado electrónicamente.
 
-Nombre del Documento: $stic_signatures_pdf_template
+$stic_signatures_pdf_template
+
 Firmante: $contact_full_name$contact_user_full_name
-Correo electrónico: $contact_email1$contact_user_email1
+Fecha de la firma: $stic_signers_signature_date
 
-Gracias por completar el proceso de firma.
+En el portal de firma podrá acceder al documento firmado siempre que sea necesario.
 
----
-
-Este es un correo automático, por favor no responda a este mensaje.','<!DOCTYPE html>
+Ir al portal de firma: $sugarurl/index.php?entryPoint=sticSign&signerId=$stic_signers_id','<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -72,26 +67,21 @@ Este es un correo automático, por favor no responda a este mensaje.','<!DOCTYPE
 <p style="margin: 5px 0 0 0; font-size: 14px; color: #888888;"><strong>Fecha de la firma: </strong>$stic_signers_signature_date</p>
 </div>
 <p style="font-size: 16px; color: #555555; margin-top: 20px;">En el portal de firma podrá acceder al documento firmado siempre que sea necesario.</p>
-<div style="text-align: center; margin-top: 30px;"><a style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #000000; background-color: #b5bc31; border-radius: 5px; text-decoration: none; font-weight: bold;" href="#">Ir al portal de firma</a></div>
+<div style="text-align: center; margin-top: 30px;"><a style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #000000; background-color: #b5bc31; border-radius: 5px; text-decoration: none; font-weight: bold;" href="$sugarurl/index.php?entryPoint=sticSign&signerId=$stic_signers_id">Ir al portal de firma</a></div>
 </div>
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-	 ('000005f1-2e4e-3b11-051f-68e3c9e70332','2025-11-04 16:01:43','2025-11-04 15:18:28','2','1','off','Codigo OTP para Firma','Plantilla usada para enviar la Contraseña de Un Solo Uso (OTP) para validar al firmante antes de acceder al proceso de firma.','[Código de Verificación] Su clave para firmar el documento','Hola $contact_first_name$contact_user_first_name,
+	 ('000005f1-2e4e-3b11-051f-68e3c9e70332','2025-11-04 16:01:43','2025-11-04 15:18:28','2','1','off','Codigo OTP para Firma','Plantilla usada para enviar la Contraseña de Un Solo Uso (OTP) para validar al firmante antes de acceder al proceso de firma.','[Código de Verificación] Su clave para firmar el documento','Verificación de firma
 
-Para completar la firma electrónica del documento:
+Para garantizar la seguridad y autenticidad de su firma, utilice el código de verificación que se muestra a continuación.
 
-Nombre del Documento: $stic_signatures_pdf_template
+$stic_signatures_pdf_template
 
-Utilice la siguiente Contraseña de Un Solo Uso (OTP) para validarse en el portal de firma. Este código es sensible a mayúsculas y minúsculas y expira pronto.
+$stic_signers_otp
 
-Su Código de Verificación es: $stic_signatures_one_time_password
-
-Por favor, introduzca este código en la ventana de firma para continuar.
-
----
-
-Este es un correo automático, por favor no responda a este mensaje.','<!DOCTYPE html>
+Introduzca este código en el portal de firma para proceder.
+El código es válido durante 10 minutos y solo se puede usar una vez.','<!DOCTYPE html>
 <html>
 <head>
 </head>
