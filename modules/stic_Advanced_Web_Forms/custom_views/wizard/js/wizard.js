@@ -866,11 +866,18 @@ class WizardStep3 {
             isEdit: false,             // Indica si es modo edición (false: modo creación)
             flow: null,                // El flujo de la acción
             original_id: '',           // Id original de la acción
+
+            // Objetos de trabajo
             action: null,              // Copia de los datos de la acción
             definition: null,          // Definición de la acción
+
+            // Listados y filtros
             allDefinitions: [],        // Todas las definiciones de acciones disponibles
             isTerminalFilter: false,   // Filtro para acciones terminales al crear
             selectedCategory: '',      // Para guardar la categoría seleccionada 
+            selectedActionDefName: '', // Para guardar la acción seleccionada en modo creación
+
+            get formConfig() { return window.alpineComponent.formConfig; },
 
             init() {
               // Cargar todas las definiciones de acciones seleccionables por el usuario
@@ -968,38 +975,70 @@ class WizardStep3 {
             },
 
             /**
-             * Selecciona un tipo de acción (en modo creación)
-             * Esto inicializa la acción vacía y carga la definición.
-             * @param {string} actionDefName Nombre de la definición de acción seleccionada
+             * Gestiona el cambio de acción seleccionada en el selector (modo creación)
              * @returns {void}
              */
-            selectActionType(actionDefName) {
-              const def = this.allDefinitions.find(d => d.name == actionDefName);
-              if (!def) return;
-              
-              this.definition = def;
-              
-              // Creamos una instancia vacía basada en la definición
-              this.action = new AWF_Action({
-                name: def.name,
-                title: def.title,
-                text: def.title,
-                description: def.description,
-                category: def.category,
-                is_user_selectable: def.isUserSelectable,
-                is_terminal: def.isTerminal,
-                order: def.order ?? 0,
-              });
+            onActionChange() {
+                if (!this.selectedActionDefName) return;
 
-              //Inicializamos los parámetros vacíos según la definición
-              this.action.parameters = (def.parameters || []).map(pDef => new AWF_ActionParameter({
-                name: pDef.name,
-                text: pDef.text,
-                type: pDef.type,
-                required: pDef.required,
-                value: pDef.defaultValue,
-                value_text: pDef.defaultValue,
-              }));
+                const def = this.allDefinitions.find(d => d.name == this.selectedActionDefName);
+                if (!def) return;
+
+                this.definition = def;
+                
+                // Creamos una instancia vacía basada en la definición
+                this.action = new AWF_Action({
+                    name: def.name,
+                    title: def.title,
+                    text: def.title,
+                    description: def.description,
+                    category: def.category,
+                    is_terminal: def.isTerminal,
+                    order: def.order ?? 0,
+                    is_user_selectable: true
+                });
+
+                // Inicializamos los parámetros vacíos según la definición
+                this.action.parameters = (def.parameters || []).map(pDef => new AWF_ActionParameter({
+                    name: pDef.name,
+                    text: pDef.text,
+                    type: pDef.type,
+                    required: pDef.required,
+                    value: pDef.defaultValue,
+                    selectedOption: ''
+                }));
+            },
+
+            /**
+             * Retorna la lista de bloques de datos disponibles para asignar en los parámetros
+             * @returns {Array} Lista de {id, text, module} de bloques de datos
+             */
+            get dataBlocksList() {
+                
+                return this.formConfig.data_blocks.map(b => ({
+                    id: b.id, 
+                    text: `${b.text} (${b.getModuleText()})`,
+                    module: b.module,
+                }));
+            },
+
+            /**
+             * Retorna la lista de todos los campos disponibles en el formulario
+             * @returns {Array} Lista de {id, text} de campos
+             */
+            get allFieldsList() {
+                // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
+                let fields = [];
+                this.formConfig.data_blocks.forEach(block => {
+                    block.fields.forEach(field => {
+                        const prefix = field.type_field === 'unlinked' ? `_detached.${block.name}.` : `${block.name}.`;
+                        fields.push({
+                            id: prefix + field.name,
+                            text: `${block.text} » ${field.label || field.text_original}`
+                        });
+                    });
+                });
+                return fields;
             },
 
             /**
@@ -1020,10 +1059,8 @@ class WizardStep3 {
              * @returns {void}
              */
             saveChanges() {
-              const formConfig = window.alpineComponent.formConfig;
-
               // Recalculate action before saving
-              this._recalculateAction(this.action, this.definition, formConfig);
+              this._recalculateAction(this.action, this.definition);
 
               if (this.isNewAction) {
                 // Add Action to flow: Insertion based on order
@@ -1049,10 +1086,9 @@ class WizardStep3 {
              * Reconstruye los parámetros y recalcula los requisitos de una acción basándose en su definición y los valores actuales.
              * @param {AWF_Action} action La acción a procesar (se modifica in-place)
              * @param {object} definition La definición de la acción (ActionDefinitionDTO)
-             * @param {AWF_Configuration} formConfig La configuración global (para buscar bloques)
              * @returns {void}
              */
-            _recalculateAction(action, definition, formConfig) {
+            _recalculateAction(action, definition) {
               const newParams = [];
               const requisiteActions = new Set();
 
@@ -1082,7 +1118,7 @@ class WizardStep3 {
                                          (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
 
                 if (paramIsDataBlock && newParam.value) {
-                  const requiredBlock = formConfig.data_blocks.find(b => b.id == newParam.value);
+                  const requiredBlock = this.formConfig.data_blocks.find(b => b.id == newParam.value);
                   if (requiredBlock && requiredBlock.save_action_id) {
                     requisiteActions.add(requiredBlock.save_action_id);
                   }

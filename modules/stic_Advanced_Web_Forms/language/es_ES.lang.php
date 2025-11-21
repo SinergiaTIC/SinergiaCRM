@@ -238,10 +238,10 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_DESC' => 'Selecciona la plantilla de correo electrónico que se utilizará para enviar el correo',
 
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_ACTION_TITLE' => 'Enviar email a usuario asignado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar email a usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Origen del Responsable',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => "El registro del cual e obtendrá el 'Asignado a'",
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => "El registro del cual se obtendrá el 'Asignado a'",
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Responsable del Formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RECORD_TEXT' => 'Registro Fijo',
