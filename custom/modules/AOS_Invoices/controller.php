@@ -24,13 +24,23 @@
 require_once 'modules/AOS_Invoices/controller.php';
 class CustomAOS_InvoicesController extends AOS_InvoicesController
 {
-   public function action_sendToAEAT()
-   {
-       $invoiceId = $_REQUEST['invoiceId'];
-       die('Sending invoice ' . $invoiceId . ' to AEAT...'); // Placeholder for actual implementation
-       require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+    public function action_sendToAEAT()
+    {
+        global $mod_strings;
+        if (
+            empty($_REQUEST['status'] ?? '') ||
+            empty($_REQUEST['verifactu_aeat_status_c'] ?? '') ||
+            $_REQUEST['status'] !== 'emitted' ||
+            $_REQUEST['verifactu_aeat_status_c'] === 'accepted') {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($_REQUEST['status'] ?? 'N/A') . ', AEAT Status: ' . ($_REQUEST['verifactu_aeat_status_c'] ?? 'N/A'));
+            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']);
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $_REQUEST['invoiceId']);
 
+        }
 
+        $invoiceId = $_REQUEST['invoiceId'];
+        die('Sending invoice ' . $invoiceId . ' to AEAT...'); // Placeholder for actual implementation
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
 
-   }
+    }
 }
