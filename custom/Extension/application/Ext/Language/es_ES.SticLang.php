@@ -3826,7 +3826,7 @@ $app_list_strings['stic_advanced_web_forms_action_type_list']['group'] = 'Agrupa
 // Categorías para las acciones de los Formularios Web Avanzados
 $app_list_strings['stic_advanced_web_forms_action_category_list']['security'] = '🔒 Seguridad';
 $app_list_strings['stic_advanced_web_forms_action_category_list']['data'] = '📦 Datos';
-$app_list_strings['stic_advanced_web_forms_action_category_list']['email'] = '✉️ Correo electrónico';
+$app_list_strings['stic_advanced_web_forms_action_category_list']['communication'] = '💬 Comunicación';
 $app_list_strings['stic_advanced_web_forms_action_category_list']['navigation'] = '➡️ Navegación';
 $app_list_strings['stic_advanced_web_forms_action_category_list']['integration'] = '🧩 Integración';
 $app_list_strings['stic_advanced_web_forms_action_category_list']['files'] = '📁 Ficheros';

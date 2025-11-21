@@ -38,7 +38,7 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
         $this->isUserSelectable = true;
         $this->isCommon = true;
 
-        $this->category = 'email';
+        $this->category = 'communication';
         $this->baseLabel = 'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION';
     }
 
