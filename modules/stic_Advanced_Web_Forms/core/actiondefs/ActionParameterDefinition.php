@@ -31,6 +31,7 @@ enum ActionParameterType: string {
     case FIELD           = 'field';
     case CRM_RECORD      = 'crmRecord';
     case OPTION_SELECTOR = 'optionSelector';
+    case EMPTY           = 'empty'; // El parámetro u opción no requiere valor
 }
 
 enum ActionDataType: string {

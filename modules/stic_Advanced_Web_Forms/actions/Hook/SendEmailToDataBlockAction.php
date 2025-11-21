@@ -91,7 +91,6 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
         
         /** @var ?BeanReference $templateRef */
         $templateRef = $actionConfig->getResolvedParameter('email_template');
-        
         if (!$templateRef) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Email template parameter is missing.");
         }
@@ -105,7 +104,7 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
 
         // Enviamos el email
         try {
-            $this->sendEmail($emailAddress, $templateRef->beanId, $bean, $context);
+            AWF_Utils::sendTemplateEmail($emailAddress, $templateRef->beanId, $bean, $context);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error sending email: " . $e->getMessage());
         }
@@ -118,179 +117,4 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
         return $actionResult;
     }
 
-    /**
-     * Implementa el envío de correo electrónico usando una plantilla y un bean de contexto.
-     * @param string $toAddress La dirección de correo del destinatario.
-     * @param string $templateId El ID de la plantilla de correo electrónico a usar.
-     * @param SugarBean $contextBean El bean que sirve de contexto para la plantilla.
-     * @param ExecutionContext $context El contexto global.
-     * @throws \Exception Si hay algún error en el proceso de envío.
-     */
-    private function sendEmail(string $toAddress, string $templateId, SugarBean $contextBean, ExecutionContext $context): void
-    {
-        // Cargamos la plantilla de correo
-        $emailTemplate = BeanFactory::retrieveBean('EmailTemplates', $templateId);
-        if (!$emailTemplate) {
-            throw new \Exception("Email template not found: '{$templateId}'.");
-        }
-
-        // Obtenemos los adjuntos de la plantilla
-        $attachments = $this->getAttachments($emailTemplate);
-
-        // Comprobamos si necesitamos el resumen del formulario
-        // Variable mágica {::form_summary::} que será reemplazada por el resumen HTML del formulario
-        $needsSummaryHtml = strpos((string)$emailTemplate->body_html, '{::form_summary::}') !== false;
-        $needsSummaryText = strpos((string)$emailTemplate->body, '{::form_summary::}') !== false;
-        if ($needsSummaryHtml) {
-            $summaryHtml = AWF_Utils::generateSummaryHtml($context);
-            $emailTemplate->body_html = str_replace('{::form_summary::}', $summaryHtml, (string)$emailTemplate->body_html);
-        }
-        if ($needsSummaryText) {
-            $summaryText = AWF_Utils::generateSummaryText($context);
-            $emailTemplate->body = str_replace('{::form_summary::}', $summaryText, (string)$emailTemplate->body);
-        }
-
-        // Parsemos el contenido de la plantilla
-        $subject = $emailTemplate->parse_template_bean($emailTemplate->subject, $contextBean->module_dir, $contextBean);
-        $bodyHtml = $emailTemplate->parse_template_bean($emailTemplate->body_html, $contextBean->module_dir, $contextBean);
-        $bodyText = $emailTemplate->parse_template_bean($emailTemplate->body, $contextBean->module_dir, $contextBean);
-        $body = $bodyHtml;
-        if (empty($bodyHtml)) {
-            $body = nl2br($bodyText);
-        }
-
-        // Configuramos el Mailer
-        require_once 'include/SugarPHPMailer.php';
-        $mailer = new SugarPHPMailer();
-        $mailer->prepForOutbound();
-        $mailer->setMailerForSystem();
-
-        // Obtenemos la dirección de correo del sistema
-        $admin = BeanFactory::newBean('Administration');
-        $admin->retrieveSettings();
-        $systemFromAddress = $admin->settings['notify_fromaddress'] ?? '';
-        $systemFromName = $admin->settings['notify_fromname'] ?? '';
-        if (empty($systemFromAddress)) {
-            throw new \Exception("System email address not configured.");
-        }
-
-        $mailer->From = $systemFromAddress;
-        $mailer->FromName = $systemFromName;
-
-        // Configuramos el correo
-        $mailer->addAddress($toAddress);
-        $mailer->Subject = $subject;
-        $mailer->Body = $body;
-        $mailer->isHTML(true); 
-        $mailer->CharSet = 'UTF-8';
-
-        // Procesamos y añadimos los adjuntos
-        $mailer->handleAttachments($attachments);
-
-        // Enviar
-        if (!$mailer->send()) {
-            throw new \Exception("Error sending email to {$toAddress}: " . $mailer->ErrorInfo);
-        }
-
-        // Archivamos el email
-        try {
-            $this->archiveEmail($subject, $body, $systemFromAddress, $toAddress, $contextBean, $attachments);
-        } catch (\Exception $e) {
-            // Si falla el archivado no paramos el proceso pero lo registramos en el log
-            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.':  Email sent but error archiving: ' . $e->getMessage());
-        }
-    }
-
-
-    /**
-     * Obtiene los adjuntos asociados a una plantilla de correo electrónico.
-     * @param EmailTemplate $template La plantilla de correo electrónico.
-     * @return array Lista de objetos Note que representan los adjuntos
-     */
-    private function getAttachments(EmailTemplate $template): array
-    {
-        $attachments = [];
-        if (!empty($template->id)) {
-            $noteBean = BeanFactory::newBean('Notes');
-            // Obtenemos las Notas vinculadas a la plantilla de email
-            $notes = $noteBean->get_full_list('', "parent_type = 'Emails' AND parent_id = '" . $template->id . "'");
-            
-            if ($notes != null) {
-                $attachments = $notes;
-            }
-        }
-        return $attachments;
-    }
-
-
-    /**
-     * Archiva el correo electrónico enviado como un registro en el módulo Emails, vinculado al bean padre.
-     * También duplica los adjuntos del correo.
-     * 
-     * @param string $subject El asunto del correo.
-     * @param string $body El cuerpo del correo en HTML.
-     * @param string $from La dirección de correo del remitente.
-     * @param string $to La dirección de correo del destinatario.
-     * @param SugarBean $parentBean El bean al que se vinculará el correo archivado.
-     * @param array $attachments Lista de objetos Note que representan los adjuntos originales.
-     * @throws \Exception Si hay algún error durante el proceso de archivado.
-     */
-    private function archiveEmail(string $subject, string $body, string $from, string $to, SugarBean $parentBean, array $attachments): void
-    {
-        /** @var Email $emailBean */
-        $emailBean = BeanFactory::newBean('Emails');
-
-        // Datos básicos
-        $emailBean->name = $subject;
-        $emailBean->date_sent_received = TimeDate::getInstance()->nowDb();
-        $emailBean->type = 'out';
-        $emailBean->status = 'sent';
-        $emailBean->assigned_user_id = $GLOBALS['current_user']->id ?? '1'; 
-
-        // Direcciones
-        $emailBean->from_addr = $from;
-        $emailBean->to_addrs = $to;
-
-        // Contenido
-        $emailBean->description = strip_tags($body);
-        $emailBean->description_html = $body;
-
-        // Relación con el bean padre
-        $emailBean->parent_type = $parentBean->module_dir;
-        $emailBean->parent_id = $parentBean->id;
-
-        // Guardado del email
-        $emailBean->save();
-
-        // Vinculación del email al bean padre        
-        if ($parentBean->load_relationship('emails')) {
-            $parentBean->emails->add($emailBean->id);
-        }
-
-        // Duplicación de los adjuntos
-        foreach ($attachments as $originalNote) {
-            $newNote = BeanFactory::newBean('Notes');
-            $newNote->id = create_guid();
-            $newNote->new_with_id = true;
-            
-            // Vinculación con el email archivado
-            $newNote->parent_id = $emailBean->id;
-            $newNote->parent_type = 'Emails'; // Important: Ha de ser 'Emails' perquè surti com adjunt
-            
-            // Copiamos las propiedades de la Nota original
-            $newNote->name = $originalNote->name;
-            $newNote->filename = $originalNote->filename;
-            $newNote->file_mime_type = $originalNote->file_mime_type;
-            
-            // Copiamos el archivo físico
-            $source = "upload://{$originalNote->id}";
-            $dest = "upload://{$newNote->id}";
-            
-            if (file_exists($source) && copy($source, $dest)) {
-                $newNote->save();
-            } else {
-                $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.":  Cannot copy attachment file from {$source} to {$dest}.");
-            }
-        }
-    }
 }

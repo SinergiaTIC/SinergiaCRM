@@ -249,7 +249,8 @@ class AWF_Field {
       value_options: [],       // Las opciones para el valor del campo
       placeholder: '',         // El placeholder o texto de fondo en el editor
       value: '',               // El valor del campo
-      value_text: ''           // El texto a mostrar para el valor del campo
+      value_text: '',          // El texto a mostrar para el valor del campo
+      related_module: ''       // Módulo relacionado (si aplica)
     });
 
     // 2. Overwrite with provided data
@@ -292,6 +293,11 @@ class AWF_Field {
     if (this.value_type != 'selectable' && this.value_type != 'fixed') {
       // Reset value_options
       this.value_options = [];
+    }
+    if (fieldInfo.module) {
+        this.related_module = fieldInfo.module;
+    } else {
+        this.related_module = '';
     }
     if (!this.isFieldInForm()) {
       this.label = '';
@@ -632,7 +638,7 @@ class AWF_Action {
   }
 
   get is_fixed_order() {
-    return this.actionOrder != 0;
+    return this.order != 0;
   }
 
   isValid() {
@@ -962,7 +968,7 @@ class AWF_Configuration {
     // Add Action to flow: Insertion based on order
     let insertIndex = flow.actions.length;
     for (let i = 0; i < flow.actions.length; i++) {
-      if ((flow.actions[i].order ?? 0) > actionOrder) {
+      if ((flow.actions[i].order ?? 0) > newAction.order) {
         insertIndex = i;
         break;
       }

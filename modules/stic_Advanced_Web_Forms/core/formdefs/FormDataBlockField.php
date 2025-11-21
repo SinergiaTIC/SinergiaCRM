@@ -51,6 +51,7 @@ class FormDataBlockField {
     public DataBlockFieldValueType $value_type;  // Tipo de valor: editable, selectable, fixed, dataBlock
     public string $value;                        // El valor del campo
     public string $value_text;                   // El texto a mostrar para el valor del campo
+    public ?string $related_module = null;       // Módulo relacionado (si aplica)
     /** @var FormValueOption[] */
     public array $value_options = [];            // Opciones del campo
 
@@ -75,6 +76,7 @@ class FormDataBlockField {
         $dto->value_type = DataBlockFieldValueType::from($data['value_type']);
         $dto->value = $data['value'];
         $dto->value_text = $data['value_text'];
+        $dto->related_module = $data['related_module'] ?? null;
 
         if (isset($data['value_options'])) {
             foreach ($data['value_options'] as $optionData) {

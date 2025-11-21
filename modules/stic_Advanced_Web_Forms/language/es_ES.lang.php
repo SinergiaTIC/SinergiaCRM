@@ -231,12 +231,23 @@ $mod_strings = array (
   'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Lista de Público Objetivo (LPO)',
   'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_DESC' => 'Selecciona la Lista de Público Objetivo (LPO o ProspectList) a la que quieres añadir el Contacto o Entidad.',
 
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar correo electrónico',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar email',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico al registro procesado (Persona, Interesado, Usuario o Organización) contenido en un Bloque de Datos',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario (Bloque de Datos)',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'El bloque de datos que contiene el destinatario del correo electrónico (y que servirá de contexto para la plantilla de correo electrónico)',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_DESC' => 'Selecciona la plantilla de correo electrónico que se utilizará para enviar el correo',
+
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_ACTION_TITLE' => 'Enviar email a usuario asignado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Origen del Responsable',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => "El registro del cual e obtendrá el 'Asignado a'",
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Responsable del Formulario',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RECORD_TEXT' => 'Registro Fijo',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RELATE_TEXT' => 'Campo Relacionado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TEMPLATE_DESC' => 'Selecciona la plantilla de correo electrónico que se utilizará para enviar el correo',
 
   'LBL_REDIRECT_ACTION_TITLE' => 'Ir a una página web',
   'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página web concreta',
@@ -253,15 +264,5 @@ $mod_strings = array (
 
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de respuestas',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página con el resumen de todas sus respuestas al formulario',
-
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_TITLE' => 'Enviar correo electrónico al usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado al registro creado o actualizado por el formulario',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_TEMPLATE_DESC' => 'Seleccione la plantilla de correo electrónico que se utilizará para enviar el correo',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_BASEDATABLOCK_TEXT' => 'Bloque de datos para la plantilla',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_BASEDATABLOCK_DESC' => 'Seleccione el bloque de datos que será el origen de las variables de la plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_TEXT' => 'Destinatario del correo electrónico',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_DESC' => 'Seleccione el destinatario del correo electrónico',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_USER_ACTION_PARAM_RECIPIENTSOURCE_OPT_RELATEDFIELD_TEXT' => 'Campo relacionado',
+  
 );  

@@ -88,7 +88,7 @@ class AddToTargetListAction extends HookBeanActionDefinition {
     {
         // Obtención de los parámetros adicionales (ParameterResolver asegura que no sean nulos porque son obligatorios)
         
-        /** @var ?BeanReference $lpoRef */
+        /** @var BeanReference $lpoRef */
         $lpoRef = $actionConfig->getResolvedParameter('target_list_record');
         
 

@@ -31,6 +31,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class BeanReference {
     public string $moduleName;
     public string $beanId;
+    private ?SugarBean $_bean = null;
 
     /**
      * Constructor de BeanReference
@@ -40,5 +41,21 @@ class BeanReference {
     public function __construct(string $moduleName, string $beanId) {
         $this->moduleName = $moduleName;
         $this->beanId = $beanId;
+    }
+
+    /**
+     * Recupera el bean referenciado
+     * @return SugarBean|null El bean referenciado o null si no se encuentra
+     */
+    public function getBean(): ?SugarBean {
+        if ($this->_bean !== null) {
+            return $this->_bean;
+        }
+
+        if (!empty($this->moduleName) && !empty($this->beanId)) {
+            $this->_bean = BeanFactory::retrieveBean($this->moduleName, $this->beanId);
+        }
+
+        return $this->_bean;
     }
 }
