@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
+ * Free Software Foundation<
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -76,6 +76,6 @@ $mod_strings = array (
   'LBL_BALANCE_ERROR_INFO' => 'This field indicates whether the balance obtained from the import does not coincide with the sum of the initial balance plus all linked transactions.',
   'LBL_WARDED_PERSON_INFO' => 'Person for whom the management of bank accounts and financial transactions is carried out.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transactions',
-  'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Warded person',
+  'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Assisted person',
   'LBL_INVALID_IBAN_ERROR' => 'The IBAN entered is invalid.',
 );
