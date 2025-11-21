@@ -76,6 +76,6 @@ $mod_strings = array (
   'LBL_BALANCE_ERROR_INFO' => 'Este campo indica si el saldo obtenido de la importación no coincide con la suma del saldo inicial más todas las transacciones vinculadas.', 
   'LBL_WARDED_PERSON_INFO' => 'Persona de la que se realiza la gestión de las cuentas bancarias y de las transacciones financieras.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transacciones',
-  'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona tutelada',
+  'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona asistida',
   'LBL_INVALID_IBAN_ERROR' => 'El IBAN introducido no es válido.',
 );
