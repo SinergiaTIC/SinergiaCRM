@@ -67,6 +67,15 @@ class templateParser
             if (isset($field_def['name']) && $field_def['name'] != '') {
                 $fieldName = $field_def['name'];
 
+                // STIC CUSTOM - JCH - 20251121 - Exception for verifactu_qr_data_c field to show QR in PDF
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+                if ($fieldName === 'verifactu_qr_data_c' && !empty($focus->$fieldName)) {
+                    // El campo contiene una imagen en base64
+                    $repl_arr[$key . '_' . $fieldName] = '<img src="' . $focus->$fieldName . '" height="100"/>';
+                    continue;
+                }
+                // END CUSTOM
+
                 // STIC Custom - JCH - 202210006 - Check if field is really empty
                 // STIC#880
                 // if (empty($focus->$fieldName)) {
