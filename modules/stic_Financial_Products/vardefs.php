@@ -115,7 +115,6 @@ $dictionary['stic_Financial_Products'] = array(
     'size' => '20',
     'enable_range_search' => false,
     'precision' => '2',
-    'studio' => 'hidden',
     'popupHelp' => 'LBL_INITIAL_BALANCE_INFO',
   ),
   'current_balance' => 

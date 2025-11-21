@@ -101,11 +101,20 @@ array (
         array (
           0 => 
           array (
+            'name' => 'initial_balance',
+            'label' => 'LBL_INITIAL_BALANCE',
+          ),
+          1 => array (),
+        ),
+        4 => 
+        array (
+          0 => 
+          array (
             'name' => 'holders',
             'label' => 'LBL_HOLDERS',
           ),
         ),
-        4 => 
+        5 => 
         array (
           0 => 
           array (
@@ -118,7 +127,7 @@ array (
             'label' => 'LBL_IBAN',
           ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (
