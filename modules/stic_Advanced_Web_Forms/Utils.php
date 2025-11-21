@@ -99,6 +99,7 @@ function getModuleInformation($moduleName, $availableModules) {
                         'required' => isset($arr['required']) && $arr['required'],
                         'default' => $arr['default'] ?? null,
                         'options' => $arr['options'] ?? '',
+                        'module' => $arr['module'] ?? '',
                         'inViews' => false
                     ];
 
