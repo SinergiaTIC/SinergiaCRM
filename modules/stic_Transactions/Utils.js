@@ -30,6 +30,75 @@ switch (viewType()) {
   case "popup":
     $(document).ready(function() {
       setAutofill(["document_name"]);
+
+      // Definition of the behavior of fields that are conditionally enabled or disabled
+      typeStatus = {
+        income: {
+          enabled: ["category"],
+          disabled: ["subcategory"]
+        },
+        expense: {
+          enabled: ["category"],
+          disabled: ["subcategory"]
+        },
+        default: {
+          enabled: [],
+          disabled: ["category", "subcategory"]
+        }
+      };
+
+      categoryStatus = {
+        default: {
+          enabled: [],
+          disabled: ["subcategory"]
+        }
+      };
+
+      // Initialize field status on page load
+      var initialType = $("#type", "form").val();
+      setCustomStatus(typeStatus, initialType);
+      
+      // If type is selected, check if category is also selected
+      if (initialType) {
+        var initialCategory = $("#category", "form").val();
+        if (initialCategory) {
+          setEnabledStatus("subcategory");
+        } else {
+          setDisabledStatus("subcategory");
+        }
+      }
+      
+      // Handle changes to type field
+      $("form").on("change", "#type", function() {
+        var selectedType = $(this).val();
+        clear_all_errors();
+        setCustomStatus(typeStatus, selectedType);
+        
+        // Reset category and subcategory when type changes
+        if (selectedType) {
+          $("#category").change();
+        } else {
+          // If type is cleared, disable both category and subcategory
+          setDisabledStatus("category");
+          setDisabledStatus("subcategory");
+          $("#category").val("");
+          $("#subcategory").val("");
+        }
+      });
+      
+      // Handle changes to category field
+      $("form").on("change", "#category", function() {
+        var selectedCategory = $(this).val();
+        
+        if (selectedCategory) {
+          // Enable subcategory if category is selected
+          setEnabledStatus("subcategory");
+        } else {
+          // Disable subcategory if category is cleared
+          setDisabledStatus("subcategory");
+          $("#subcategory").val("");
+        }
+      });
     });
     break;
 
