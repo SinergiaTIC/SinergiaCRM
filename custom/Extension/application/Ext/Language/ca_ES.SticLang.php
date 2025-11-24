@@ -3630,6 +3630,8 @@ $app_list_strings['trackers_actions_list']['deleted'] = 'Registre esborrat';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuari connectat';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inici de sessió erroni';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
+$app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inici de suplantació';
+$app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fi de suplantació';
 
 // Modificacions del core de SuiteCRM
 
