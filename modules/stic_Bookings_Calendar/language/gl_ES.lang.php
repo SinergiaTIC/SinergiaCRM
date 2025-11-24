@@ -21,16 +21,16 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings = array(
-    'LBL_HOMEPAGE_TITLE' => 'O meu Calendario de Reservas',
-    'LBL_ACTION_VIEW_BOOKINGS_CALENDAR' => 'Ver o Calendario de Reservas',
-    'LBL_OPTIONGROUP_EMPTY' => '~ Sen categoría ~',
+    'LBL_HOMEPAGE_TITLE' => 'Mi Calendario de Reservas',
+    'LBL_ACTION_VIEW_BOOKINGS_CALENDAR' => 'Ver el Calendario de Reservas',
+    'LBL_OPTIONGROUP_EMPTY' => '~ Sin categoría ~',
     'LBL_FILTER_RESOURCES' => 'Filtro de recursos: ',
-    'LBL_FILTER_RESOURCES_PLACEHOLDER' => 'Para mostrar só as reservas de determinados recursos, seleccióneos aquí.',
-    'LBL_AVAILABILITY_FILTER_RESOURCES_PLACEHOLDER' => 'Seleccione polo menos un recurso para mostrar a súa dispoñibilidade.',
-    'LBL_AVAILABILITY_MODE_BUTTON_ENABLED' => 'Mostrar dispoñibilidade',
+    'LBL_FILTER_RESOURCES_PLACEHOLDER' => 'Para mostrar solo las reservas de determinados recursos, selecciónelos aquí.',
+    'LBL_AVAILABILITY_FILTER_RESOURCES_PLACEHOLDER' => 'Seleccione al menos un recurso para mostrar su disponibilidad.',
+    'LBL_AVAILABILITY_MODE_BUTTON_ENABLED' => 'Mostrar disponibilidad',
     'LBL_AVAILABILITY_MODE_BUTTON_DISABLED' => 'Mostrar reservas',
-    'LBL_AVAILABILITY_MODE_BUTTON_HELP' => 'Para mostrar a dispoñibilidade debe seleccionarse polo menos un recurso.',
-    'LBL_MOBILE_BUTTON' => 'Móbil',
+    'LBL_AVAILABILITY_MODE_BUTTON_HELP' => 'Para mostrar la disponibilidad debe seleccionarse por lo menos un recurso.',
+    'LBL_MOBILE_BUTTON' => 'Móvil',
 
     'LBL_TODAY' => 'Hoy',
     'LBL_MONTH' => 'Mes',
