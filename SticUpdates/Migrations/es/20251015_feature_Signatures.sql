@@ -1,5 +1,5 @@
 REPLACE INTO email_templates (id,date_entered,date_modified,modified_user_id,created_by,published,name,description,subject,body,body_html,deleted,assigned_user_id,text_only,`type`) VALUES
-	 ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-11-04 16:01:43','2025-11-04 15:09:27','2','1','off','Solicitud de firma','Plantilla para notificar al firmante que se ha solicitado su firma en un documento.','[Firma de documento] Solicitud de firma: $stic_signatures_pdf_template','Solicitud de firma
+	 ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-11-04 16:01:43','2025-11-04 15:09:27','2','1','off','Ejemplo - Solicitud de firma','Plantilla para notificar al firmante que se ha solicitado su firma en un documento.','[Firma de documento] Solicitud de firma: $stic_signatures_pdf_template','Solicitud de firma
 
 Se ha solicitado su firma en el siguiente documento:
 
@@ -38,7 +38,7 @@ $sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-	 ('000005f1-2e4e-3b11-051f-68e3c9e70331','2025-11-04 16:01:43','2025-11-04 15:12:34','2','1','off','Documento firmado','Plantilla para enviar al firmante el documento firmado.','[Firma de documento] Documento firmado: $stic_signatures_pdf_template','Documento firmado
+	 ('000005f1-2e4e-3b11-051f-68e3c9e70331','2025-11-04 16:01:43','2025-11-04 15:12:34','2','1','off','Ejemplo - Documento firmado','Plantilla para enviar al firmante el documento firmado.','[Firma de documento] Documento firmado: $stic_signatures_pdf_template','Documento firmado
 
 Adjunto a este correo encontrará la versión final del documento que ha firmado:
 
@@ -72,7 +72,7 @@ Ir al portal de firma: $sugarurl/index.php?entryPoint=sticSign&signerId=$stic_si
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-	 ('000005f1-2e4e-3b11-051f-68e3c9e70332','2025-11-04 16:01:43','2025-11-04 15:18:28','2','1','off','Codigo de un solo uso para firmar','Plantilla para enviar el código de un solo uso al firmante antes de poder firmar.','[Firma de documento] Código de verificación para firmar','Verificación de firma
+	 ('000005f1-2e4e-3b11-051f-68e3c9e70332','2025-11-04 16:01:43','2025-11-04 15:18:28','2','1','off','Ejemplo - Código de un solo uso para firmar','Plantilla para enviar el código de un solo uso al firmante antes de poder firmar.','[Firma de documento] Código de verificación para firmar','Verificación de firma
 
 Para garantizar la seguridad y autenticidad de su firma, utilice el código de verificación que se muestra a continuación:
 
@@ -101,7 +101,7 @@ Introduzca este código en el portal de firma para proceder. El código es váli
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-	 ('000005f1-2e4e-3b11-051f-68e3c9e70333','2025-11-03 11:16:29','2025-11-04 15:20:51','2','2','off','Código de un solo uso para firmar (SMS)','Plantilla para enviar vía SMS el código de un solo uso al firmante antes de poder firmar','[Firma de documento] Código de verificación para firmar','$contact_first_name$contact_user_first_name, este es su código para firmar: $stic_signers_otp. Es válido durante 10 minutos.','<!DOCTYPE html>
+	 ('000005f1-2e4e-3b11-051f-68e3c9e70333','2025-11-03 11:16:29','2025-11-04 15:20:51','2','2','off','Ejemplo - Código de un solo uso para firmar (SMS)','Plantilla para enviar vía SMS el código de un solo uso al firmante antes de poder firmar','[Firma de documento] Código de verificación para firmar','$contact_first_name$contact_user_first_name, este es su código para firmar: $stic_signers_otp. Es válido durante 10 minutos.','<!DOCTYPE html>
 <html>
 <head>
 </head>
