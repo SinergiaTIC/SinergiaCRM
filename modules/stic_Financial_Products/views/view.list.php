@@ -49,7 +49,7 @@ class stic_Financial_ProductsViewList extends ViewList
 
         SticViews::display($this);
         
-        // echo getVersionedScript("modules/stic_Financial_Products/Utils.js");
+        echo getVersionedScript("modules/stic_Financial_Products/Utils.js");
 
         // Write here you custom code
     }

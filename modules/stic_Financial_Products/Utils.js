@@ -43,56 +43,117 @@ switch (viewType()) {
     break;
 }
 
-// Attach event to remove spaces and strange characters in the IBAN
-$("body").on("blur paste change", "input#iban", function() {
-    $(this).val($(this).val().replace(/[^0-9a-zA-Z]/g, "").toUpperCase());
-});
-
 /* VALIDATION CALLBACKS */
+// Function to validate IBAN
+function validateIBAN(ibanValue) {
+    // If empty, it's valid (not required)
+    if (!ibanValue || ibanValue === "") {
+        return true;
+    }
+
+    // Make a synchronous AJAX request to validate the IBAN
+    var res;
+    $.ajax({
+        // Call the checkIBAN action in the controller
+        url: "index.php?module=stic_Financial_Products&action=checkIBAN&iban=" + encodeURIComponent(ibanValue),
+        type: "POST",
+        async: false
+    })
+        // If the AJAX request succeeds, store the response
+        .done(function (data) {
+            res = data;
+        })
+        // If the AJAX request fails, set res to false
+        .fail(function (data) {
+            res = false;
+        });
+
+    // Parse the JSON response and return the boolean result
+    try {
+        // Convert the JSON string response ("true" or "false") to a JavaScript boolean
+        return JSON.parse(res);
+    } catch (e) {
+        // If JSON parsing fails, return false (invalid IBAN)
+        return false;
+    }
+}
+
 // Register IBAN validation
-$(document).ready(function() {
-    addToValidateCallback(
-        getFormName(),
-        "iban",
-        "text",
-        false, // not required
-        SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR"),
-        function() {
-            // Get the IBAN value from the form field
-            var iban = getFieldValue("iban");
-
-            // If empty, it's valid (not required)
-            if (!iban || iban === "") {
-                return true;
-            }
-
-            // If it has content, validate
-            var res;
-            
-            // Make a synchronous AJAX request to validate the IBAN
-            $.ajax({
-                // Call the checkIBAN action in the controller
-                url: "index.php?module=stic_Financial_Products&action=checkIBAN&iban=" + encodeURIComponent(iban),
-                type: "POST",
-                async: false
-            })
-                // If the AJAX request succeeds, store the response
-                .done(function (data) {
-                    res = data;
-                })
-                // If the AJAX request fails, set res to false
-                .fail(function (data) {
-                    res = false;
-                });
-
-            // Parse the JSON response and return the boolean result
-            try {
-                // Convert the JSON string response ("true" or "false") to a JavaScript boolean
-                return JSON.parse(res);
-            } catch (e) {
-                // If JSON parsing fails, return false (invalid IBAN)
-                return false;
+$(document).ready(function() {    
+    // Capture blur event on all IBAN inputs
+    $(document).on("blur", "input[data-fieldname='iban'], input[name*='iban']", function(e) {
+        var $field = $(this);
+        var ibanValue = $field.val();
+        
+        // Remove spaces and strange characters
+        var cleanedValue = ibanValue.replace(/[^0-9a-zA-Z]/g, "").toUpperCase();
+        $field.val(cleanedValue);
+        
+        // Check if this is inline editing (list or detail view)
+        var isInlineEdit = $field.closest(".editable-cell, .inline-edit").length > 0;
+        
+        // Get or create error message container only for inline editing
+        var $errorContainer = null;
+        if (isInlineEdit) {
+            var $container = $field.closest(".field, .editable-cell, .inline-edit, [data-fieldname='iban']");
+            $errorContainer = $container.find(".inline-iban-error");
+            if (!$errorContainer.length) {
+                $errorContainer = $("<div class='inline-iban-error' style='position: absolute; color: red; font-size: 0.85em; margin-top: 2px; white-space: nowrap; z-index: 1000;'></div>");
+                $container.append($errorContainer);
+                // Make container position relative so absolute positioning works
+                if ($container.css("position") === "static") {
+                    $container.css("position", "relative");
+                }
             }
         }
-    );
+        
+        // Validate IBAN
+        if (cleanedValue && !validateIBAN(cleanedValue)) {
+            var errorMsg = SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR");
+            
+            // For inline editing, show error in custom container
+            if (isInlineEdit && $errorContainer) {
+                $field.addClass("error");
+                $errorContainer.text(errorMsg).show();
+            }
+        } else {
+            // Remove error styling if valid
+            $field.removeClass("error");
+            if (isInlineEdit && $errorContainer) {
+                $errorContainer.hide().text("");
+            }
+        }
+    });
+    
+    // Clean IBAN on paste
+    $(document).on("paste", "input[data-fieldname='iban'], input[name*='iban']", function(e) {
+        var $field = $(this);
+        setTimeout(function() {
+            var ibanValue = $field.val();
+            var cleanedValue = ibanValue.replace(/[^0-9a-zA-Z]/g, "").toUpperCase();
+            $field.val(cleanedValue);
+        }, 10);
+    });
+    
+    // Also register callback for normal edit form if available
+    if (typeof addToValidateCallback !== "undefined" && typeof getFormName !== "undefined") {
+        try {
+            var formName = getFormName();
+            if (formName) {
+                addToValidateCallback(
+                    formName,
+                    "iban",
+                    "text",
+                    false, // not required
+                    SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR"),
+                    function() {
+                        var iban = getFieldValue("iban");
+                        return validateIBAN(iban);
+                    }
+                );
+            }
+        } catch (e) {
+            console.log("IBAN validation callback not registered: " + e.message);
+        }
+    }
 });
