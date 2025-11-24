@@ -36,7 +36,8 @@ $subpanel_layout = array(
         'name' => array(
             'name' => 'name',
             'vname' => 'LBL_LIST_CAMPAIGN_NAME',
-            'widget_class' => 'SubPanelCampaignTrackDetailViewLink',
+            // 'widget_class' => 'SubPanelCampaignTrackDetailViewLink',
+            'widget_class' => 'SubPanelDetailViewLink',
         ),
         'status' => array(
             'name' => 'status',

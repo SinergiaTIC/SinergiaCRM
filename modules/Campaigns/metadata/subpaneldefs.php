@@ -159,6 +159,18 @@ $layout_defs['Campaigns'] = array(
             'title_key' => 'LBL_MESSAGE_QUEUE_TITLE',
             'sort_order' => 'desc',
         ),
+        // STIC-Custom 20241105 EPS - Add the message queue to the campaign status view
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/473
+        'message_queue' => array(
+            'order' => 100,
+            'module' => 'stic_MessagesMan',
+            'get_subpanel_data' => 'function:get_message_queue_items',
+            'function_parameters' => array('EMAIL_MARKETING_ID_VALUE' => '', 'distinct' => 'stic_messagesman.id', 'group_by' => 'stic_messagesman.related_id,stic_messagesman.marketing_id'),
+            'subpanel_name' => 'default',
+            'title_key' => 'LBL_STIC_MESSAGE_QUEUE_TITLE',
+            'sort_order' => 'desc',
+        ),
+        //END STIC-Custom
         'targeted' => array(
             'order' => 110,
             'module' => 'CampaignLog',

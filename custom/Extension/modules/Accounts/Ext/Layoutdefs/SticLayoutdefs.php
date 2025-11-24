@@ -312,7 +312,6 @@ $layout_defs["Accounts"]["subpanel_setup"]['stic_grants_accounts'] = array(
 
 // New collection in activities/history
 $layout_defs['Accounts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
-$layout_defs['Accounts']['subpanel_setup']['history']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
 $layout_defs['Accounts']['subpanel_setup']['activities']['collection_list']['stic_Messages'] = array(
     'module' => 'stic_Messages',
     'subpanel_name' => 'ForHistory',
