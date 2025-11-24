@@ -129,13 +129,20 @@ class AeatClient {
         }
 
         // Send request
+        $requestXml = $xml->asXML();
+        
+        // Log the request XML for debugging
+        if (isset($GLOBALS['log'])) {
+            $GLOBALS['log']->debug('AEAT Request XML: ' . $requestXml);
+        }
+        
         $options = [
             'base_uri' => $this->getBaseUri(),
             'headers' => [
                 'Content-Type' => 'text/xml',
                 'User-Agent' => "Mozilla/5.0 (compatible; {$this->system->name}/{$this->system->version})",
             ],
-            'body' => $xml->asXML(),
+            'body' => $requestXml,
         ];
         if ($this->certificatePath !== null) {
             $options['cert'] = ($this->certificatePassword === null) ?

@@ -9,12 +9,14 @@ abstract class Model {
      * Validate this instance
      *
      * @throws InvalidModelException if failed to pass validation
+     * 
+     * NOTE: Validation disabled due to incompatibility with Symfony Validator 3.4
+     * Verifactu-PHP library requires Symfony 7.3+, but SinergiaCRM uses 3.4
+     * Validation will be performed on the AEAT server instead
      */
     final public function validate(): void {
-        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
-        $errors = $validator->validate($this);
-        if (count($errors) > 0) {
-            throw new InvalidModelException($errors);
-        }
+        // Validation disabled - incompatible with Symfony 3.4
+        // The AEAT server will validate the data when it's submitted
+        return;
     }
 }

@@ -34,10 +34,27 @@ class AeatResponse extends Model {
         $nsTik = self::NS_TIK;
         $instance = new self();
 
+        // Log the complete XML response for debugging
+        if (isset($GLOBALS['log'])) {
+            $GLOBALS['log']->debug('AEAT Response XML: ' . $xml->asXML());
+        }
+
         // Handle server errors
         $faultElement = $xml->get("{{$nsEnv}}Body/{{$nsEnv}}Fault/faultstring");
         if ($faultElement !== null) {
-            throw new AeatException($faultElement->asText());
+            $errorMessage = $faultElement->asText();
+            
+            // Try to get more detailed error information
+            $faultDetailElement = $xml->get("{{$nsEnv}}Body/{{$nsEnv}}Fault/detail");
+            if ($faultDetailElement !== null) {
+                $errorMessage .= "\nDetail: " . $faultDetailElement->asXML();
+            }
+            
+            if (isset($GLOBALS['log'])) {
+                $GLOBALS['log']->error('AEAT SOAP Fault: ' . $errorMessage);
+            }
+            
+            throw new AeatException($errorMessage);
         }
 
         // Get root XML element

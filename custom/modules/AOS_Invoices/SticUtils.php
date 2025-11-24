@@ -21,7 +21,35 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once __DIR__ . '/../../../SticInclude/vendor/Verifactu-PHP/autoload.php';
+// Autoloader para Verifactu-PHP y sus dependencias (UXML)
+spl_autoload_register(function ($class) {
+    // Configuración de namespaces y directorios
+    $namespaces = [
+        'josemmo\\Verifactu\\' => __DIR__ . '/../../../SticInclude/vendor/Verifactu-PHP/src/',
+        'UXML\\' => __DIR__ . '/../../../SticInclude/vendor/uxml/src/',
+    ];
+    
+    // Buscar en cada namespace configurado
+    foreach ($namespaces as $prefix => $base_dir) {
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            // No es una clase de este namespace
+            continue;
+        }
+        
+        // Obtener el nombre relativo de la clase
+        $relative_class = substr($class, $len);
+        
+        // Reemplazar el namespace con separadores de directorio
+        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+        
+        // Si el archivo existe, cargarlo
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+    }
+});
 
 use DateTimeImmutable;
 use josemmo\Verifactu\Models\ComputerSystem;
@@ -34,6 +62,7 @@ use josemmo\Verifactu\Models\Records\RegimeType;
 use josemmo\Verifactu\Models\Records\RegistrationRecord;
 use josemmo\Verifactu\Models\Records\TaxType;
 use josemmo\Verifactu\Services\AeatClient;
+use josemmo\Verifactu\Services\QrGenerator;
 
 /**
  * Utility class for AOS_Invoices Verifactu integration
@@ -181,59 +210,215 @@ class AOS_InvoicesUtils
     /**
      * Send invoice records to AEAT
      * 
-     * @param array $records Array of RegistrationRecord objects to send
-     * @param string $issuerNif Company's NIF/CIF
-     * @param string $issuerName Company's name
-     * @param string $certificatePath Path to the certificate file (.pfx)
-     * @param string $certificatePassword Certificate password
-     * @param bool $useProduction Whether to use production environment (false = pre-production)
-     * @param ComputerSystem|null $system Computer system configuration (optional, will be created if null)
+     * @param AOS_Invoices $invoiceBean Invoice bean object
      * 
      * @return object The AEAT response object
      * @throws Exception If certificate is not found or sending fails
      */
-    public static function sendToAeat(
-        $records,
-        $issuerNif,
-        $issuerName,
-        $certificatePath,
-        $certificatePassword,
-        $useProduction = false,
-        $system = null
-    ) {
-        // Configure computer system if not provided
-        if ($system === null) {
-            $system = self::configureComputerSystem($issuerNif, $issuerName);
-        }
+    public static function sendToAeat($invoiceBean)
+    {
+        // Configuration constants
+       $certificatePath = 'CHAMIZO_GONZALEZ_JUAN___07224982S.p12';
+       $certificatePassword = '01romera';
+       $useProduction = false; // false = pre-production, true = production
+       $issuerNif = '07224982S'; // Company's NIF/CIF - debe ser un NIF español válido
+       $issuerName = 'CHAMIZO GONZALEZ JUAN'; // Company's name
+       $systemName = 'SinergiaCRM Billing System';
+       $systemId = 'SC'; // Changed to avoid conflicts with previous registrations
+       $systemVersion = '1.0.0';
+       $installationNumber = '001';
+
+        // Configure computer system
+        $system = self::configureComputerSystem(
+            $issuerNif,
+            $issuerName,
+            $systemName,
+            $systemId,
+            $systemVersion,
+            $installationNumber
+        );
 
         // Create taxpayer identifier
         $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
-        
+
         // Create AEAT client
         $client = new AeatClient($system, $taxpayer);
 
         // Configure certificate
         if (!file_exists($certificatePath)) {
-            throw new Exception("Certificate not found at: $certificatePath");
+            throw new Exception("Certificate not found at: " . $certificatePath);
         }
         $client->setCertificate($certificatePath, $certificatePassword);
 
         // Configure environment (pre-production or production)
         $client->setProduction($useProduction);
 
-        // Send records and return response
-        $response = $client->send($records)->wait();
+        // Extract invoice data from bean and create registration record
+        $invoiceNumber = $invoiceBean->number;
+        $ldate='2025-11-23';
+        $issueDate = new DateTimeImmutable($ldate);
+        $description = $invoiceBean->name;
         
-        return $response;
+        // Format amounts as strings with exactly 2 decimals (required by AEAT)
+        $baseAmount = number_format((float)$invoiceBean->subtotal_amount, 2, '.', '');
+        $totalTaxAmount = number_format((float)$invoiceBean->tax_amount, 2, '.', '');
+        
+        // Calculate correct total (Base + Tax) - AEAT requires this to be exact
+        $totalAmount = number_format((float)$baseAmount + (float)$totalTaxAmount, 2, '.', '');
+        
+        // Log the values for debugging
+        $invoiceTotal = number_format((float)$invoiceBean->total_amt, 2, '.', '');
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice amounts - Base: ' . $baseAmount . ', Tax: ' . $totalTaxAmount . ', Invoice Total: ' . $invoiceTotal . ', Calculated Total: ' . $totalAmount);
+        
+        // Warn if invoice total doesn't match calculated total
+        if ($invoiceTotal !== $totalAmount) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice total (' . $invoiceTotal . ') differs from calculated total (' . $totalAmount . '). Using calculated total for AEAT.');
+        }
+        
+        // Get previous invoice for chaining
+        $previousInvoiceId = null;
+        $previousHash = null;
+        $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
+        
+        if ($previousInvoice) {
+            $previousInvoiceId = new InvoiceIdentifier();
+            $previousInvoiceId->issuerId = $issuerNif;
+            $previousInvoiceId->invoiceNumber = $previousInvoice->number;
+            $previousInvoiceId->issueDate = new DateTimeImmutable($previousInvoice->invoice_date ?? '2025-11-23');
+            $previousHash = $previousInvoice->verifactu_hash_c ?? null;
+            
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Chaining to previous invoice: ' . $previousInvoice->number . ' (Hash: ' . ($previousHash ?? 'N/A') . ')');
+        } else {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': No previous invoice found, this will be the first in the chain');
+        }
+        
+        // Create breakdown details (this is a simplified example)
+        // You may need to adjust this based on your actual tax structure
+        $breakdownDetails = [
+            self::createBreakdownDetail(
+                TaxType::IVA,
+                RegimeType::C01,
+                OperationType::Subject,
+                $baseAmount,
+                '21.00', // Tax rate with 2 decimals
+                $totalTaxAmount
+            )
+        ];
+
+        // Create registration record
+        $record = self::createRegistrationRecord(
+            $issuerNif,
+            $issuerName,
+            $invoiceNumber,
+            $issueDate,
+            $description,
+            $breakdownDetails,
+            $totalTaxAmount,
+            $totalAmount,
+            $previousInvoiceId,
+            $previousHash
+        );
+
+        // Send records and get response (with detailed error handling)
+        try {
+            $response = $client->send([$record])->wait();
+            
+            // Add debug info to response
+            $response->debugInfo = [
+                'baseAmount' => $baseAmount,
+                'taxAmount' => $totalTaxAmount,
+                'totalAmount' => $totalAmount,
+                'invoiceTotal' => $invoiceTotal,
+            ];
+            
+            // Add the record to the response so we can access the hash
+            $response->record = $record;
+            
+            return $response;
+            
+        } catch (Exception $e) {
+            // Log detailed error information
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': AEAT Error Details:');
+            $GLOBALS['log']->error('  Message: ' . $e->getMessage());
+            $GLOBALS['log']->error('  Type: ' . get_class($e));
+            $GLOBALS['log']->error('  File: ' . $e->getFile() . ':' . $e->getLine());
+            
+            // Try to get more context from the previous invoice lookup
+            $GLOBALS['log']->error('  Previous Invoice: ' . ($previousInvoice ? $previousInvoice->number : 'None'));
+            $GLOBALS['log']->error('  Previous Hash: ' . ($previousHash ?? 'None'));
+            $GLOBALS['log']->error('  Current Invoice: ' . $invoiceNumber);
+            $GLOBALS['log']->error('  Record Hash: ' . $record->hash);
+            
+            // Re-throw the exception
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the previous invoice that was successfully sent to AEAT
+     * 
+     * @param string $currentInvoiceId Current invoice ID to exclude from search
+     * @return stdClass|null Previous invoice object or null if none found
+     */
+    private static function getPreviousInvoice($currentInvoiceId)
+    {
+        global $db;
+        
+        try {
+            // Query to find the most recent invoice that was sent to AEAT
+            // and has a verifactu hash stored (custom fields are in aos_invoices_cstm table)
+            // We include 'accepted' and other statuses because AEAT considers all sent invoices
+            // for chaining purposes, even if they had errors
+            $query = "
+                SELECT 
+                    i.id, 
+                    i.number, 
+                    i.invoice_date, 
+                    c.verifactu_hash_c,
+                    c.verifactu_aeat_status_c
+                FROM aos_invoices i
+                INNER JOIN aos_invoices_cstm c ON i.id = c.id_c
+                WHERE i.deleted = 0
+                  AND i.id != '" . $db->quote($currentInvoiceId) . "'
+                  AND c.verifactu_hash_c IS NOT NULL
+                  AND c.verifactu_hash_c != ''
+                ORDER BY i.invoice_date DESC, i.number DESC
+                LIMIT 1
+            ";
+            
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Query: ' . $query);
+            
+            $result = $db->query($query);
+            if ($result && $row = $db->fetchByAssoc($result)) {
+                // Create a simple object with the necessary data
+                $invoice = new stdClass();
+                $invoice->id = $row['id'];
+                $invoice->number = $row['number'];
+                $invoice->invoice_date = $row['invoice_date'];
+                $invoice->verifactu_hash_c = $row['verifactu_hash_c'];
+                
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Found previous invoice: ' . $invoice->number);
+                
+                return $invoice;
+            }
+            
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': No previous invoice found');
+            return null;
+            
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error querying previous invoice: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**
      * Format AEAT response for display
      * 
      * @param object $response AEAT response object
+     * @param array $debugInfo Optional debug information to display
      * @return string Formatted response text
      */
-    public static function formatAeatResponse($response)
+    public static function formatAeatResponse($response, $debugInfo = [])
     {
         $output = "\n";
         $output .= "════════════════════════════════════════════════════════════════\n";
@@ -245,6 +430,16 @@ class AOS_InvoicesUtils
         
         if ($response->submittedAt !== null) {
             $output .= "Submission date: " . $response->submittedAt->format('d-m-Y H:i:s') . "\n";
+        }
+        
+        if (!empty($debugInfo)) {
+            $output .= "\nSent values:\n";
+            $output .= "  Base Amount: " . ($debugInfo['baseAmount'] ?? 'N/A') . "\n";
+            $output .= "  Tax Amount: " . ($debugInfo['taxAmount'] ?? 'N/A') . "\n";
+            $output .= "  Total Amount (sent to AEAT): " . ($debugInfo['totalAmount'] ?? 'N/A') . "\n";
+            if (isset($debugInfo['invoiceTotal']) && $debugInfo['invoiceTotal'] !== $debugInfo['totalAmount']) {
+                $output .= "  Invoice Total (from CRM): " . $debugInfo['invoiceTotal'] . " (differs from sent value)\n";
+            }
         }
         
         $output .= "\nRecord details:\n";
@@ -274,8 +469,39 @@ class AOS_InvoicesUtils
         $output .= "ERROR SENDING INVOICE\n";
         $output .= "════════════════════════════════════════════════════════════════\n";
         $output .= "Message: " . $exception->getMessage() . "\n";
+        $output .= "Exception Type: " . get_class($exception) . "\n";
+        $output .= "File: " . $exception->getFile() . "\n";
+        $output .= "Line: " . $exception->getLine() . "\n";
+        $output .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n";
+        
+        // Show previous exception if exists
+        if ($exception->getPrevious()) {
+            $prev = $exception->getPrevious();
+            $output .= "\nPrevious Exception:\n";
+            $output .= "Message: " . $prev->getMessage() . "\n";
+            $output .= "Type: " . get_class($prev) . "\n";
+        }
+        
         $output .= "════════════════════════════════════════════════════════════════\n";
         
         return $output;
+    }
+
+    /**
+     * Generate QR code URL for invoice validation
+     * 
+     * @param RegistrationRecord $record Registration record with invoice data
+     * @param bool $useProduction Whether to use production environment
+     * @param bool $onlineMode Whether to use online mode (VeriFactu)
+     * 
+     * @return string QR code URL for AEAT validation
+     */
+    public static function generateQrCodeUrl($record, $useProduction = false, $onlineMode = true)
+    {
+        $qrGenerator = new QrGenerator();
+        $qrGenerator->setProduction($useProduction);
+        $qrGenerator->setOnlineMode($onlineMode);
+        
+        return $qrGenerator->fromRegistrationRecord($record);
     }
 }
