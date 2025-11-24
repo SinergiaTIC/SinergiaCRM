@@ -78,4 +78,5 @@ $mod_strings = array (
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transacciones',
   'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona asistida',
   'LBL_INVALID_IBAN_ERROR' => 'El IBAN introducido no es válido.',
+  'LBL_IBAN_REQUIRED' => 'El IBAN es requerido para este tipo de cuenta.',
 );
