@@ -90,6 +90,7 @@ $mod_strings = array(
     'LBL_SIGNER_COPY_PORTAL_URL' => 'Copiar URL del portal',
     'LBL_SIGNER_PORTAL_URL_COPIED' => 'URL del portal copiada al portapapeles.',
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente al firmante.',
+    'LBL_SIGNER_NO_EMAIL' => 'El firmante no tiene una dirección de correo electrónico válida.',
     'LBL_DOWNLOAD_PDF_SIGNATURE' => 'Descargar documento firmado',
     'LBL_NO_PDF_SIGNATURE' => 'Documento no disponible',
 

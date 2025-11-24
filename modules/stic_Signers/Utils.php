@@ -70,6 +70,12 @@ class stic_SignersUtils
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
 
+        if(empty($destAddress)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No email address available for signer ID {$signerId}.");
+            SugarApplication::appendErrorMessage("<p class='label label-warning'>{$mod_strings['LBL_SIGNER_NO_EMAIL']} ({$signerBean->name}) </p>");
+            return;
+        }
+
         // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
         $emailObj = new Email();
@@ -131,7 +137,7 @@ class stic_SignersUtils
             throw new Exception($msg);
         } else {
             // On success: display message, log debug, and log the action
-            SugarApplication::appendSuccessMessage("<p class='label label-success'>" . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
+            SugarApplication::appendSuccessMessage("<p class='label label-success'> {$mod_strings['LBL_SIGNER_EMAIL_SUCCESS']} ({$signerBean->name})</p>");
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Email sent successfully to {$destAddress}.");
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('EMAIL_SENT', $signerId, 'SIGNER', $destAddress);
