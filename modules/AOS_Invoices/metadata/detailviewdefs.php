@@ -439,7 +439,6 @@ array(
                     ),
                     1 => array(
                         'name' => 'verifactu_qr_data_c',
-                        'customCode' => '{if $fields.verifactu_qr_data_c.value != \'\'}<img src="{$fields.verifactu_qr_data_c.value}" alt="QR Code" style="max-width:200px; max-height:80px;">{/if}',
                         'label' => 'LBL_VERIFACTU_QR_DATA',
                     ),
                 ),
