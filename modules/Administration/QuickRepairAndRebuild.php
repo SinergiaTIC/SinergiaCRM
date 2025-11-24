@@ -133,6 +133,7 @@ class RepairAndClear
 
         // STIC-Custom - 20230901 - jch - STIC#1204
         //               20230919 - jch - STIC#1223
+        //               20231124 - JCH - https://github.com/SinergiaTIC/SinergiaCRM/pull/876
         // Rebuild SinergiaDA views to avoid incorrect table references and errors in mysqldump if SDA is enabled
         $sdaEnabled = $sugar_config['stic_sinergiada']['enabled'] ?? false;
         $rebuildSDAFile = 'SticInclude/SinergiaDARebuild.php';
