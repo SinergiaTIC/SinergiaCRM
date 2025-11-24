@@ -1,5 +1,5 @@
 REPLACE INTO email_templates (id,date_entered,date_modified,modified_user_id,created_by,published,name,description,subject,body,body_html,deleted,assigned_user_id,text_only,`type`) VALUES
-      ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-11-04 16:01:43','2025-11-04 15:09:27','2','1','off','Signature Request','Template to notify the signer that their signature in a document has been requested.','[Document signature] Request of signature: $stic_signatures_pdf_template','Request of signature
+      ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-11-04 16:01:43','2025-11-04 15:09:27','2','1','off','Example - Signature request','Template to notify the signer that their signature in a document has been requested.','[Document signature] Request of signature: $stic_signatures_pdf_template','Request of signature
 
 Your signature has been requested in the following document:
 
@@ -38,7 +38,7 @@ $sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-      ('000005f1-2e4e-3b11-051f-68e3c9e70331','2025-11-04 16:01:43','2025-11-04 15:12:34','2','1','off','Signed document','Template to send the signed document to the signer.','[Document signature] Signed document: $stic_signatures_pdf_template','Signed document
+      ('000005f1-2e4e-3b11-051f-68e3c9e70331','2025-11-04 16:01:43','2025-11-04 15:12:34','2','1','off','Example - Signed document','Template to send the signed document to the signer.','[Document signature] Signed document: $stic_signatures_pdf_template','Signed document
 
 Attached you will find the final version of the document you have signed:
 
@@ -72,7 +72,7 @@ Go to the signing portal: $sugarurl/index.php?entryPoint=sticSign&signerId=$stic
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-      ('000005f1-2e4e-3b11-051f-68e3c9e70332','2025-11-04 16:01:43','2025-11-04 15:18:28','2','1','off','One time code for signing','Template to send the one time code to the signer before signing.','[Document signature] Verification code for signing','Signature verification
+      ('000005f1-2e4e-3b11-051f-68e3c9e70332','2025-11-04 16:01:43','2025-11-04 15:18:28','2','1','off','Example - One time code for signing','Template to send the one time code to the signer before signing.','[Document signature] Verification code for signing','Signature verification
 
 To ensure the security and authenticity of your signature, please use the verification code shown below:
 
@@ -101,7 +101,7 @@ Please enter this code in the signing portal to proceed. The code is valid for 1
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-      ('000005f1-2e4e-3b11-051f-68e3c9e70333','2025-11-03 11:16:29','2025-11-04 15:20:51','2','2','off','One time code for signing (SMS)','Template to send by SMS the one time code to the signer before signing.','[Document signature] Verification code for signing','$contact_first_name$contact_user_first_name, this is your code for signing: $stic_signers_otp. It is valid for 10 minutes.','<!DOCTYPE html>
+      ('000005f1-2e4e-3b11-051f-68e3c9e70333','2025-11-03 11:16:29','2025-11-04 15:20:51','2','2','off','Example - One time code for signing (SMS)','Template to send by SMS the one time code to the signer before signing.','[Document signature] Verification code for signing','$contact_first_name$contact_user_first_name, this is your code for signing: $stic_signers_otp. It is valid for 10 minutes.','<!DOCTYPE html>
 <html>
 <head>
 </head>
