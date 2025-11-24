@@ -98,6 +98,7 @@ $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
 // Emulación de usuarios - Monitorización
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
+<<<<<<< HEAD
 
 // Emulación de usuarios - Usuario emulador
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emular usuario';
@@ -136,3 +137,5 @@ $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
 // Emulación de usuarios - Monitorización
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
+=======
+>>>>>>> f001d0bb58 (Enhancement - Traducciones - Idioma Euskera (#782))
