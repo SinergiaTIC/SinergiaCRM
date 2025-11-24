@@ -214,7 +214,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         const timeFormat = "{TIME_FORMAT}".trim();
         const is12h = timeFormat.toLowerCase().includes("pm");
-        const maxHour = is12h ? 11 : 23;
+        const maxHour = is12h ? 12 : 23;
         const timeSeparator = timeFormat.includes(":") ? ":" : ".";
 
         const hourSelect = document.getElementById("time_hour");
