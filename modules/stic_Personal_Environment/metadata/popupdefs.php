@@ -45,6 +45,7 @@ $popupMeta = array (
   9 => 'end_date',
   10 => 'coexistence_status',
   11 => 'assigned_user_id',
+  12 => 'authorized_signer',
 ),
     'searchdefs' => array (
   'name' => 
