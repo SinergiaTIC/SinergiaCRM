@@ -244,7 +244,9 @@
         if (existingTime) {
             const timeParts = existingTime.split(timeSeparator);
             if (timeParts.length >= 2) {
-                hourSelect.value = timeParts[0].padStart(2, "0");
+                hourSelect.value = is12h
+                    ? (timeParts[0].padStart(2, "0") % 12).toString().padStart(2, "0")
+                    : timeParts[0].padStart(2, "0");
                 minuteSelect.value = timeParts[1].padStart(2, "0");
             }
         }
