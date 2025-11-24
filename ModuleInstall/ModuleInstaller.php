@@ -296,7 +296,7 @@ class ModuleInstaller
         $rebuildSDAFile = 'SticInclude/SinergiaDARebuild.php';
         $sdaAutoRebuild = $sugar_config['stic_sinergiada']['auto_rebuild_on_studio_events'] ?? true;
 
-        if (file_exists($rebuildSDAFile) && $sdaEnabled && $sdaAutoRebuild) {
+        if (file_exists($rebuildSDAFile) && $sdaEnabled && $sdaAutoRebuild != false) {
             require_once $rebuildSDAFile;
             $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Uninstalling module. {$this->base_dir}. Rebuilding SinergiaDA");
             SinergiaDARebuild::callApiRebuildSDA(true, 'views');
