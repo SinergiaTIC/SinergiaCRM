@@ -20,24 +20,24 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a (ID)';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
 $mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
 $mod_strings['LBL_CREATED'] = 'Creado por';
 $mod_strings['LBL_CREATED_USER'] = 'Creado por';
-$mod_strings['LBL_CREATED_ID'] = 'Creado por';
+$mod_strings['LBL_CREATED_ID'] = 'Creado por (ID)';
 $mod_strings['LBL_MODIFIED'] = 'Modificado por';
 $mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
 $mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por';
-$mod_strings['LNK_IMPORT_FP_EVENT_LOCATIONS'] = 'Importar Ubicacións';
+$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
+$mod_strings['LNK_IMPORT_FP_EVENT_LOCATIONS'] = 'Importar Ubicaciones';
 $mod_strings['LBL_ADDRESS_STATE'] = 'Provincia';
 $mod_strings['LBL_STIC_ADDRESS_COUNTY'] = 'Comarca';
-$mod_strings['LBL_STIC_ADDRESS_REGION'] = 'Comunidade autónoma';
-$mod_strings['LBL_FP_EVENT_LOCATIONS_INFORMATION'] = 'Datos xerais';
-$mod_strings['LBL_STIC_PANEL_ADDRESS'] = 'Enderezo';
-$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles do rexistro';
+$mod_strings['LBL_STIC_ADDRESS_REGION'] = 'Comunidad autónoma';
+$mod_strings['LBL_FP_EVENT_LOCATIONS_INFORMATION'] = 'Datos generales';
+$mod_strings['LBL_STIC_PANEL_ADDRESS'] = 'Dirección';
+$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
 $mod_strings['LBL_STIC_EVENTS_FP_EVENT_LOCATIONS_FROM_STIC_EVENTS_TITLE'] = 'Eventos';
 $mod_strings['LBL_FP_EVENT_LOCATIONS_FP_EVENTS_1_FROM_FP_EVENTS_TITLE'] = 'Eventos-FP'; // This module is not used in SinergiaCRM and it's relabelled to avoid confusion with SinergiaCRM Events module
