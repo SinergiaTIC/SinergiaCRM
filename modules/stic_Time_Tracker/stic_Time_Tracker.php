@@ -147,6 +147,33 @@ class stic_Time_Tracker extends Basic
     }
 
     /**
+     * Return the time tracker records of the indicated user that is within the previous 24 hours
+     * @param userId User Identificator
+     * @return Stic_time_tracker record or false in case it does not exist
+     */
+    public static function getTodayTimeTrackerRecords($userId)
+    {
+        global $db, $current_user;
+        $tzone = $current_user->getPreference('timezone');
+
+        $query = "SELECT id, name, end_date, duration FROM stic_time_tracker
+            WHERE deleted = 0 
+            AND start_date IS NOT NULL AND start_date <> ''
+            AND TIMESTAMPDIFF(SECOND, CONVERT_TZ(start_date, '+00:00', '" . $tzone . "'), NOW()) BETWEEN 0 AND 86400
+            AND assigned_user_id = '" . $userId . "'  
+            ORDER BY start_date asc";
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
+        $result = $db->query($query);
+
+        $data = array();
+        while ($row = $db->fetchByAssoc($result)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    /**
      * Checks if the given user has a time tracker record between the previous 24 hours and now, in UTC.
      * @param userId User Identificator
      * @return boolean true if exist and false if not

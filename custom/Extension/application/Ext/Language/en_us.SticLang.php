@@ -41,14 +41,22 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'This program is free soft
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'All names of other companies and products mentioned here may be trademarks of their respective associated companies.';
 
 // Create a time tracker record from the header
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'A time tracker record will be created with the following information:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = "Today's last open time tracker record will be closed:";
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'with the following information:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Name: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Start date and time: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'End date and time: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Employee: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comments (optional): ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Create record';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'A time tracker record will be created with the following information';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Close record';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = "Today's last open time tracker record will be closed";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'with the following information';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Name';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Start date and time';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'End date and time';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Employee';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comments (optional)';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1'] = 'Other today records';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2'] = 'Total worked hours';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'There are no more records.';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'] = 'In progress';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_HOURS'] = 'hours';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_MINUTES'] = 'minutes';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Ok';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancel';
 
