@@ -98,3 +98,4 @@ $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
 // Emulación de usuarios - Monitorización
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
+
