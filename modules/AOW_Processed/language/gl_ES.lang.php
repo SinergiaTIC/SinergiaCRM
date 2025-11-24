@@ -12,7 +12,7 @@
  * Free Software Foundation with the addition of the following permission added
  * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
  * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OFINFRINGEMENT OF THIRD PARTY RIGHTS.
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -46,31 +46,31 @@ $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ID' => 'ID',
-    'LBL_DATE_ENTERED' => 'Data de Creación',
-    'LBL_DATE_MODIFIED' => 'Data de Modificación',
+    'LBL_DATE_ENTERED' => 'Fecha de Creación',
+    'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
     'LBL_MODIFIED' => 'Modificado por',
-    'LBL_MODIFIED_NAME' => 'Modificado por Nome',
+    'LBL_MODIFIED_NAME' => 'Modificado por Nombre',
     'LBL_CREATED' => 'Creado por',
-    'LBL_DESCRIPTION' => 'Descrición',
+    'LBL_DESCRIPTION' => 'Descripción',
     'LBL_DELETED' => 'Eliminado',
-    'LBL_NAME' => 'Nome',
-    'LBL_CREATED_USER' => 'Creado polo Usuario',
-    'LBL_MODIFIED_USER' => 'Modificado polo Usuario',
-    'LBL_LIST_NAME' => 'Nome',
+    'LBL_NAME' => 'Nombre',
+    'LBL_CREATED_USER' => 'Creado por el Usuario',
+    'LBL_MODIFIED_USER' => 'Modificado por el Usuario',
+    'LBL_LIST_NAME' => 'Nombre',
     'LBL_LIST_FORM_TITLE' => 'Lista de Auditoría de Procesos',
     'LBL_MODULE_NAME' => 'Auditoría de Procesos',
     'LBL_MODULE_TITLE' => 'Auditoría de Procesos',
-    'LBL_HOMEPAGE_TITLE' => 'A Miña Auditoría de Procesos',
+    'LBL_HOMEPAGE_TITLE' => 'Mi Auditoría de Procesos',
     'LNK_NEW_RECORD' => 'Crear Auditoría de Procesos',
     'LNK_LIST' => 'Ver Auditoría de Procesos',
     'LBL_SEARCH_FORM_TITLE' => 'Buscar Auditoría de Procesos',
     'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
     'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-    'LBL_NEW_FORM_TITLE' => 'Nova Auditoría de Procesos',
+    'LBL_NEW_FORM_TITLE' => 'Nueva Auditoría de Procesos',
     'LBL_MODULE' => 'Módulo',
-    'LBL_BEAN' => 'Rexistro',
+    'LBL_BEAN' => 'Registro',
     'LBL_STATUS' => 'Estado',
-    'LBL_AOW_WORKFLOW' => 'Fluxo de traballo',
-    'LNK_NEW_WORKFLOW' => 'Crear Fluxo de Traballo',
-    'LNK_WORKFLOW_LIST' => 'Ver Fluxo de Traballo',
+    'LBL_AOW_WORKFLOW' => 'Flujo de trabajo',
+    'LNK_NEW_WORKFLOW' => 'Crear Flujo de Trabajo',
+    'LNK_WORKFLOW_LIST' => 'Ver Flujo de Trabajo',
 );
