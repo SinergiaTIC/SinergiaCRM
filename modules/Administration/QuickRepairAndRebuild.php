@@ -136,8 +136,9 @@ class RepairAndClear
         // Rebuild SinergiaDA views to avoid incorrect table references and errors in mysqldump if SDA is enabled
         $sdaEnabled = $sugar_config['stic_sinergiada']['enabled'] ?? false;
         $rebuildSDAFile = 'SticInclude/SinergiaDARebuild.php';
+        $sdaAutoRebuild = $sugar_config['stic_sinergiada']['auto_rebuild_on_studio_events'] ?? true;
 
-        if (file_exists($rebuildSDAFile) && $sdaEnabled) {
+        if (file_exists($rebuildSDAFile) && $sdaEnabled && $sdaAutoRebuild) {
             if (
                 // It is necessary to assess whether $_REQUEST['silent'] == True, since by erase a field, the pass flow
                 // twice here with different values and we want the code to be one time. In the case of deleting relationships
