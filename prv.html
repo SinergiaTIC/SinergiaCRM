@@ -1,17 +1,120 @@
-<font size='1'><table class='xdebug-error xe-uncaught-exception' dir='ltr' border='1' cellspacing='0' cellpadding='1'>
-<tr><th align='left' bgcolor='#f57900' colspan="5"><span style='background-color: #cc0000; color: #fce94f; font-size: x-large;'>( ! )</span> Fatal error: Uncaught Error: Unknown named parameter $name in /application/sinergiacrm/modules/stic_Advanced_Web_Forms/actions/Hook/SendEmailToAssignedUserAction.php on line <i>47</i></th></tr>
-<tr><th align='left' bgcolor='#f57900' colspan="5"><span style='background-color: #cc0000; color: #fce94f; font-size: x-large;'>( ! )</span> Error: Unknown named parameter $name in /application/sinergiacrm/modules/stic_Advanced_Web_Forms/actions/Hook/SendEmailToAssignedUserAction.php on line <i>47</i></th></tr>
-<tr><th align='left' bgcolor='#e9b96e' colspan='5'>Call Stack</th></tr>
-<tr><th align='center' bgcolor='#eeeeec'>#</th><th align='left' bgcolor='#eeeeec'>Time</th><th align='left' bgcolor='#eeeeec'>Memory</th><th align='left' bgcolor='#eeeeec'>Function</th><th align='left' bgcolor='#eeeeec'>Location</th></tr>
-<tr><td bgcolor='#eeeeec' align='center'>1</td><td bgcolor='#eeeeec' align='center'>0.0170</td><td bgcolor='#eeeeec' align='right'>381720</td><td bgcolor='#eeeeec'>{main}(  )</td><td title='/application/sinergiacrm/index.php' bgcolor='#eeeeec'>.../index.php<b>:</b>0</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>2</td><td bgcolor='#eeeeec' align='center'>0.0441</td><td bgcolor='#eeeeec' align='right'>1953224</td><td bgcolor='#eeeeec'>SugarApplication->execute(  )</td><td title='/application/sinergiacrm/index.php' bgcolor='#eeeeec'>.../index.php<b>:</b>52</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>3</td><td bgcolor='#eeeeec' align='center'>0.0525</td><td bgcolor='#eeeeec' align='right'>2251984</td><td bgcolor='#eeeeec'>SugarController->execute(  )</td><td title='/application/sinergiacrm/include/MVC/SugarApplication.php' bgcolor='#eeeeec'>.../SugarApplication.php<b>:</b>107</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>4</td><td bgcolor='#eeeeec' align='center'>0.0525</td><td bgcolor='#eeeeec' align='right'>2251984</td><td bgcolor='#eeeeec'>SugarController->process(  )</td><td title='/application/sinergiacrm/include/MVC/Controller/SugarController.php' bgcolor='#eeeeec'>.../SugarController.php<b>:</b>365</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>5</td><td bgcolor='#eeeeec' align='center'>0.0526</td><td bgcolor='#eeeeec' align='right'>2265608</td><td bgcolor='#eeeeec'>SugarController->handle_action(  )</td><td title='/application/sinergiacrm/include/MVC/Controller/SugarController.php' bgcolor='#eeeeec'>.../SugarController.php<b>:</b>469</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>6</td><td bgcolor='#eeeeec' align='center'>0.0526</td><td bgcolor='#eeeeec' align='right'>2265608</td><td bgcolor='#eeeeec'>SugarController->do_action(  )</td><td title='/application/sinergiacrm/include/MVC/Controller/SugarController.php' bgcolor='#eeeeec'>.../SugarController.php<b>:</b>495</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>7</td><td bgcolor='#eeeeec' align='center'>0.0526</td><td bgcolor='#eeeeec' align='right'>2265656</td><td bgcolor='#eeeeec'>stic_Advanced_Web_FormsController->action_getServerActions(  )</td><td title='/application/sinergiacrm/include/MVC/Controller/SugarController.php' bgcolor='#eeeeec'>.../SugarController.php<b>:</b>526</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>8</td><td bgcolor='#eeeeec' align='center'>166.9012</td><td bgcolor='#eeeeec' align='right'>2352128</td><td bgcolor='#eeeeec'><a href='http://www.php.net/function.array-map' target='_new'>array_map</a>( <span>$callback = </span><span>class Closure { ... }</span>, <span>$array = </span><span>[...]</span> )</td><td title='/application/sinergiacrm/modules/stic_Advanced_Web_Forms/controller.php' bgcolor='#eeeeec'>.../controller.php<b>:</b>119</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>9</td><td bgcolor='#eeeeec' align='center'>166.9019</td><td bgcolor='#eeeeec' align='right'>2361720</td><td bgcolor='#eeeeec'>stic_Advanced_Web_FormsController->{closure:/application/sinergiacrm/modules/stic_Advanced_Web_Forms/controller.php:119-119}( <span>$actionDef = </span><span>class SendEmailToAssignedUserAction { ... }</span> )</td><td title='/application/sinergiacrm/modules/stic_Advanced_Web_Forms/controller.php' bgcolor='#eeeeec'>.../controller.php<b>:</b>119</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>10</td><td bgcolor='#eeeeec' align='center'>166.9019</td><td bgcolor='#eeeeec' align='right'>2362104</td><td bgcolor='#eeeeec'>ActionDefinitionDTO->__construct( <span>$def = </span><span>class SendEmailToAssignedUserAction { ... }</span> )</td><td title='/application/sinergiacrm/modules/stic_Advanced_Web_Forms/controller.php' bgcolor='#eeeeec'>.../controller.php<b>:</b>119</td></tr>
-<tr><td bgcolor='#eeeeec' align='center'>11</td><td bgcolor='#eeeeec' align='center'>166.9020</td><td bgcolor='#eeeeec' align='right'>2362512</td><td bgcolor='#eeeeec'>SendEmailToAssignedUserAction->getParameters(  )</td><td title='/application/sinergiacrm/modules/stic_Advanced_Web_Forms/core/actiondefs/ActionDefinitionDTO.php' bgcolor='#eeeeec'>.../ActionDefinitionDTO.php<b>:</b>73</td></tr>
-</table></font>
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        /* Apliquem les variables NOMÉS dins d'aquest contenidor */
+        #stic-awf-wrapper-FormId {
+            
+            /* 1. Definim els colors base de l'entitat */
+            --awf-main-color: #B5BC31;
+            --awf-main-rgb: 181, 188, 49; /* Calculat per PHP */
+            
+            /* 2. MAPEGEM a les variables de Bootstrap */
+            
+            /* Color Primari (Botons, links, inputs actius) */
+            --bs-primary: var(--awf-main-color);
+            --bs-primary-rgb: var(--awf-main-rgb);
+            
+            /* Color dels enllaços (per defecte BS usa primary, però per assegurar) */
+            --bs-link-color: var(--awf-main-color);
+            --bs-link-hover-color: var(--awf-main-color);
+            
+            /* Bordes i focus (Bootstrap 5.3 usa variables d'anell) */
+            --bs-focus-ring-color: rgba(var(--awf-main-rgb), 0.25);
+
+            /* Opcional: Border Radius (Més rodó o més quadrat) */
+            --bs-border-radius: 0.5rem; 
+            --bs-body-bg: #ffffff;
+            --bs-body-color: #212529;
+        }
+
+        /* PETIT AJUST EXTRA PER A BOTONS:
+           Bootstrap calcula els colors "hover" (foscos) usant SASS al compilar.
+           Com que estem en temps d'execució, no tenim SASS. 
+           Els botons primary funcionaran, però el "hover" potser no s'enfosqueix prou.
+           Podem forçar-ho fàcilment:
+        */
+        #stic-awf-wrapper-FormId .btn-primary {
+            --bs-btn-bg: var(--awf-main-color);
+            --bs-btn-border-color: var(--awf-main-color);
+            
+            /* Truc: usem un filtre per enfosquir automàticament al hover */
+            --bs-btn-hover-bg: var(--awf-main-color);
+            --bs-btn-hover-border-color: var(--awf-main-color);
+        }
+        #stic-awf-wrapper-FormId .btn-primary:hover {
+            filter: brightness(0.9); /* Enfosqueix un 10% qualsevol color */
+        }
+    </style>
+  </head>
+  <body class="bg-light py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div id="stic-awf-wrapper-FormId">
+                <form action="..." method="POST" x-data="{ d: {} }">
+                    <div class="mb-3">
+                    <label class="form-label">Nom</label>
+                    <input type="text" name="Persona.nom" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                    <label class="form-label">Tipus</label>
+                    <select name="Persona.tipus" class="form-control" x-model="d['Persona.tipus']">
+                        <option value="Particular">Particular</option>
+                        <option value="Empresa">Empresa</option>
+                    </select>
+                    </div>
+
+                    <div class="mb-3" x-show="d['Persona.tipus'] == 'Empresa'" style="display: none">
+                    <label class="form-label">CIF Empresa</label>
+                    <input type="text" name="Persona.cif" class="form-control" />
+                    </div>
+
+                    <button type="submit">Enviar</button>
+                </form>
+                <form
+                    x-data="{ 
+                                step: 1, 
+                                formData: { 'Persona.nom': '', 'Persona.email': '' } 
+                            }"
+                    action="https://teu-crm.com/entryPoint..."
+                    method="POST"
+                    class="awf-form-card bg-white p-4"
+                >
+                    <h2 class="text-center mb-4">Inscripció Esdeveniment</h2>
+
+                    <div x-show="step === 1" x-transition>
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control" x-model="formData['Persona.nom']" required />
+                    </div>
+
+                    <div class="mb-3" x-show="formData['Persona.nom'].length > 0" x-transition>
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" x-model="formData['Persona.email']" />
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100" @click="step = 2">Següent</button>
+                    </div>
+
+                    <div x-show="step === 2" style="display: none" x-transition>
+                    <div class="alert alert-info">Revisa les teves dades...</div>
+
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary" @click="step = 1">Enrere</button>
+                        <button type="submit" class="btn btn-success flex-fill">Enviar</button>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
