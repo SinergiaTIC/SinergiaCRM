@@ -63,9 +63,11 @@ $mod_strings = array(
     'LBL_MODULE_NAME_SINGULAR' => 'Reserva',
 
     'LBL_CODE' => 'Código',
+    'LBL_PERIODIC_CODE' => 'Código reserva recurrente',
     'LBL_STATUS' => 'Estado',
     'LBL_ALL_DAY' => 'Todo o día',
     'LBL_PLACE_BOOKING' => 'Reserrva de plazas',
+    'LBL_PERIODIC_BOOKING' => 'Reserva periódica',
     'LBL_START_DATE' => 'Data de inicio',
     'LBL_END_DATE' => 'Data de finalización',
     'LBL_PLANNED_START_DATE' => 'Data prevista de inicio',
@@ -77,7 +79,7 @@ $mod_strings = array(
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unidad familiar que reserva',
     'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromiso de pago',
 
-    // Cadenas de la sección "Añadir recursos"
+    // Recursos de la reserva
     'LBL_RESOURCES' => 'Recursos',
     'LBL_PLACES' => 'Plazas',
     'LBL_RESOURCES_NAME' => 'Nome',
@@ -123,12 +125,41 @@ $mod_strings = array(
     'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
     'LBL_TOTAL_AMOUNT' => 'Tarifa total',
     'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa copago',
+    
+    // Reservas periódicas
+    'LBL_CREATE_PERIODIC_RECORDS' => 'Crear registros periódicos',
+    'LBL_CANCEL_BUTTON' => 'Cancelar',
+    'LBL_REPEAT_DOW' => 'Día de la semana',
+    'LBL_REPEAT_END_AFTER' => 'Después de',
+    'LBL_REPEAT_END_BY' => 'Hasta',
+    'LBL_REPEAT_END' => 'Fin',
+    'LBL_REPEAT_INTERVAL' => 'Intervalo',
+    'LBL_REPEAT_OCCURRENCES' => 'reservas',
+    'LBL_REPEAT_TYPE' => 'Repetir',
+    'LBL_REPEAT_UNTIL' => 'Repetir hasta',
+    'LBL_SAVE_BUTTON' => 'Guardar',
+    'LBL_UNAVAILABLE_RESOURCES' => 'Recursos no disponibles',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Resumen:',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Número de registros procesados',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Número de registros a crear',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT' => 'No existen incompatibilidades con reservas ya existentes, se crearán todos los registros solicitados.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Número de registros que no se van a crear',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT' => 'Los siguientes registros no se crearán por incompatibilidad con otras reservas ya existentes.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Ir al Calendario de Reservas',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => 'Ir al Calendario de Espacios',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Ir a Reservas',
+    'LBL_PERIODIC_BOOKING_ERROR' => 'Indique la periodicidad de la reserva.',
+    'LBL_PERIODIC_BOOKING_COUNT_REQUIRED' => 'El número de reservas es obligatorio.',
+    'LBL_PERIODIC_BOOKING_UNTIL_REQUIRED' => 'La fecha de finalización es obligatoria.',
 
-    // Additional details
+    // Detalles adicionales
     'LBL_RESOURCE_NAME' => 'Recurso',
     'LBL_RESOURCE_COUNT' => 'Recursos totais',
     'LBL_RESOURCES_LIST' => 'Lista de recursos',
 
-    // Tooltips help
+    // Ayuda
     'LBL_ALL_DAY_HELP' => 'Se a casilla está marcada, a reserva  efectuarase en días completos. Se está desmarcada, poden establecerse as horas de inicio e fin.',
+
+    // Campos de filtro en relaciones muchos a muchos
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Recurso',
 );
