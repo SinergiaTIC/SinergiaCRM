@@ -65,6 +65,7 @@ class SurveyQuestions extends Basic
     public $SecurityGroups;
     public $sort_order;
     public $type;
+    public $required;
 
     public function __construct()
     {
