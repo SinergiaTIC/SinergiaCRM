@@ -3212,7 +3212,7 @@ $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'No
 // Recursos: Tipos de plazas
 $app_list_strings['stic_resources_places_type_list'][''] = '';
 $app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
-$app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocupación';
+$app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Gainokupazioa';
 
 // Recursos: Tipos de usuarios
 $app_list_strings['stic_resources_places_users_list'][''] = '';
@@ -3223,7 +3223,7 @@ $app_list_strings['stic_resources_places_users_list']['minors'] = 'Menores';
 // Recursos: Tipos de género de las plazas
 $app_list_strings['stic_resources_places_gender_list'][''] = '';
 $app_list_strings['stic_resources_places_gender_list']['men'] = 'Hombres';
-$app_list_strings['stic_resources_places_gender_list']['women'] = 'Mujeres';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Emakumeak';
 $app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
 
 // Reservas: Estados
@@ -3744,7 +3744,7 @@ $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
 
-// Plantillas de correo: Tipos de plantilla
+// Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
 $app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
@@ -3758,11 +3758,11 @@ $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
-$app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
+$app_list_strings['emailTemplates_type_list']['event'] = 'Ekitaldi';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
 // Elementos añadidos al Historial
-$app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';
+$app_list_strings['collection_temp_list']['Tasks'] = 'Zereginak';
 $app_list_strings['collection_temp_list']['Meetings'] = 'Reuniones';
 $app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
