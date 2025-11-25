@@ -247,7 +247,7 @@
                 hourSelect.value = is12h
                     ? (timeParts[0].padStart(2, "0") % 12).toString().padStart(2, "0")
                     : timeParts[0].padStart(2, "0");
-                if (hourSelect.value = "00") hourSelect.value = "12";
+                if (hourSelect.value == "00") hourSelect.value = "12";
                 minuteSelect.value = timeParts[1].padStart(2, "0");
             }
         }
