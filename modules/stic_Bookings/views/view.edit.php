@@ -89,7 +89,7 @@ class stic_BookingsViewEdit extends ViewEdit
         
 
         // If the Bookings' EditView is launched from the Bookings' Calendar, retrieve start and end dates from there
-        if (isset($_REQUEST['return_module'], $_REQUEST['start'], $_REQUEST['end']) && $_REQUEST['return_module'] == 'stic_Bookings_Calendar' && $_REQUEST['start'] && $_REQUEST['end']) {
+        if (isset($_REQUEST['return_module'], $_REQUEST['start'], $_REQUEST['end']) && ($_REQUEST['return_module'] == 'stic_Bookings_Calendar' || $_REQUEST['return_module'] == 'stic_Bookings_Places_Calendar') && $_REQUEST['start'] && $_REQUEST['end']) {
             // Parse the dates received from the calendar
             $startDate = new DateTime($_REQUEST['start']);
             $this->bean->start_date = $timedate->to_display_date_time(date_format($startDate, 'Y-m-d H:i:s'), false, false, $current_user);
@@ -138,7 +138,7 @@ class stic_BookingsViewEdit extends ViewEdit
                     }
                 } else {
                     // If start_date is empty, use current date
-                    $this->bean->start_date = date('Y-m-d') . ' 00:00';
+                    // $this->bean->start_date = date('Y-m-d') . ' 00:00';
                 }
     
                 // Process end_date
@@ -197,7 +197,7 @@ class stic_BookingsViewEdit extends ViewEdit
                     }
                 } else {
                     // If end_date is empty, use current date
-                    $this->bean->end_date = date('Y-m-d') . ' 23:59';
+                    // $this->bean->end_date = date('Y-m-d') . ' 23:59';
                 }
             }
         }
