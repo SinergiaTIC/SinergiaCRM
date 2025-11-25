@@ -21,6 +21,9 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+include_once 'modules/stic_Allocations/Utils.php';
+include_once 'modules/stic_Allocation_Proposals/Utils.php';
+
 
 #[\AllowDynamicProperties]
 class stic_Payments extends Basic
@@ -85,10 +88,12 @@ class stic_Payments extends Basic
      */
     public function save($check_notify = false)
     {
-        global $mod_strings;
 
         include_once 'SticInclude/Utils.php';
         include_once 'modules/stic_Payments/Utils.php';
+
+        global $current_language;
+        $paymentsModStrings = return_module_language($current_language, 'stic_Payments'); // can not be $mod_strings because of different contexts (specially inline edition)
 
         // Get payment commitment bean. Depending on the context (editview, subpanel, workflow, etc.)
         // stic_paymebfe2itments_ida will be an string that contains the id of the related payment
@@ -137,26 +142,81 @@ class stic_Payments extends Basic
             $this->justification_date = $this->payment_date;
         }
 
-        if ($this->blocked) {
+        $isBlocked = filter_var($this->blocked, FILTER_VALIDATE_BOOLEAN);
+        $isAllocated = filter_var($this->allocated, FILTER_VALIDATE_BOOLEAN);
+        // If record is blocked, no updates are allowed
+        if ($tempFetchedRow['blocked'] && $isBlocked) {
+            // TODOEPS
+            if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+                    // // This is an AJAX request
+                    // ob_clean();
+                    // header('HTTP/1.1 500 Internal Server Error');
+                    // echo "Save aborted: " . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
+                    // exit;
+                    // 1. Sanitize the message for JS
+                $errorMsg = $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
+                $jsMsg = json_encode($errorMsg);
+
+                // 2. Output a script to alert the user
+                echo "<script>alert($jsMsg);</script>";
+                echo "<script>location.reload();</script>";
+
+                // 4. Stop execution
+                exit();
+                }
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'] . '</div>');
+            return false;
+        }
+
+        // TODOEPS: Té sentit aquesta lògica?
+        // If record blocked, allocation status can not be changed to not allocated
+        if ($isBlocked) {
             // This can not happen. A blocked payment can not change allocation status.
-            if (!empty($tempFetchedRow['allocated']) && $this->allocated == 0) {
+            if (!empty($tempFetchedRow['allocated']) && !$isAllocated) {
                 $this->allocated = 1;
-                // SugarApplication::appendErrorMessage('A blocked payment can not change allocation status from allocated to not allocated. Allocation status has been reset to allocated.');
-                SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $mod_strings['LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS'] . '</div>');
+                SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS'] . '</div>');
             }
         }
 
-        if (empty($tempFetchedRow['allocated']) && ($this->allocated == 1 || $this->allocated == 'on')) {
+        $anyamountChanged = $this->anyAmountChanged(); // Check must be done before involing parent:save()
+        
+        // Call the generic save() function from the SugarBean class
+        parent::save();
+
+        // If changing from not allocated to allocated, generate allocations from payment
+        if (empty($tempFetchedRow['allocated']) && $isAllocated) {
             $return = $this->generateAllocationsFromPayment();
             if ($return === false) {
                 // Allocation generation failed, do not save the payment
                 // return;
                 $this->allocated = 0;
             }
+            stic_PaymentsUtils::updateAllocationPercentage($this);
         }
-        // Call the generic save() function from the SugarBean class
-        parent::save();
 
+        
+
+
+        // // Amount has changed in an allocated payment, check if there were validated allocations
+        // if(!empty($tempFetchedRow['allocated']) && $this->allocated == 1 && !empty($tempFetchedRow['amount'] && SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount']))) {
+        //     include_once 'modules/stic_Allocations/Utils.php';
+        //     $hasValidatedAllocations = stic_AllocationsUtils::paymentHasJustifiedAllocations($this);
+        //     if ($hasValidatedAllocations) {
+        //         // There are validated allocations, do not allow amount change
+        //         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_CANNOT_CHANGE_AMOUNT_ALLOCATED_PAYMENT_VALIDATED_ALLOCATIONS'] . '</div>');
+        //         // // Revert amount to previous value
+        //         // $this->amount = $tempFetchedRow['amount'];
+        //     }
+        // }
+        if (!empty($tempFetchedRow['allocated']) && $isAllocated && $anyamountChanged) {
+            $hasValidatedAllocations = stic_AllocationsUtils::paymentHasJustifiedAllocations($this);
+            if ($hasValidatedAllocations) {
+                // There are validated allocations, do not allow amount change
+                SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_CANNOT_CHANGE_AMOUNT_ALLOCATED_PAYMENT_VALIDATED_ALLOCATIONS'] . '</div>');
+            }
+            $this->updateAllocationsFromPayment();
+            stic_PaymentsUtils::updateAllocationPercentage($this);
+        }
 
         if (isset($PCBean) && isset($userDate)) {
         
@@ -174,22 +234,50 @@ class stic_Payments extends Basic
             }
         }
 
-        if (!empty($tempFetchedRow['allocated']) || $this->allocated == 0) {
+        if (!empty($tempFetchedRow['allocated']) && $tempFetchedRow['allocated'] && !$isAllocated) {
             $this->deleteAllocationsFromPayment();
+            stic_PaymentsUtils::updateAllocationPercentage($this);
         }
 
 
+        // TODOEPS : Recalcula les allocations. Necessitem helper de Allocations
+        if(!empty($tempFetchedRow['allocated']) && $isAllocated && !empty($tempFetchedRow['amount'] && SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount']))) {
+            // Amount has changed in an allocated payment, so we need to update the allocations
+            // include_once 'modules/stic_Allocations/Utils.php';
+            // $allocationBeans = stic_AllocationsUtils::allocationsFromPayment($this);
+            // foreach ($allocationBeans as $allocationBean) {
+            //     $allocationBean->amount = SticUtils::unformatDecimal($this->amount);
+            //     $allocationBean->save();
+            // }
+        }
+    }
 
+
+    protected function anyAmountChanged() {
+        // filter from $this->field_defs only the fields of type 'currency' or 'decimal'
+        foreach ($this->field_defs as $fieldName => $fieldDef) {
+            if (isset($fieldDef['type']) && ($fieldDef['type'] == 'currency' || $fieldDef['type'] == 'decimal')) {
+                // check if the field value has changed
+                $currentValue = SticUtils::unformatDecimal($this->$fieldName);
+                $previousValue = SticUtils::unformatDecimal($this->fetched_row[$fieldName] ?? 0);
+                if ($currentValue != $previousValue) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected function deleteAllocationsFromPayment() {
-        include_once 'modules/stic_Allocations/Utils.php';
         stic_AllocationsUtils::deleteAllocationsFromPayment($this);
     }
 
     protected function generateAllocationsFromPayment() {
-        include_once 'modules/stic_Allocation_Proposals/Utils.php';
         return stic_Allocation_ProposalsUtils::createAllocationsFromPayment($this);
+    }
+
+    protected function updateAllocationsFromPayment() {
+        return stic_AllocationsUtils::updateAllocationsFromPayment($this);
     }
 
 

@@ -110,7 +110,7 @@ switch (viewType()) {
     // add observer for [field='blocked'] changes
     const targetNode = document.querySelector('[field="blocked"]');
     var observer = new MutationObserver(function(mutations) {
-      checkBlockedPaymentDetailView();
+      checkBlockedPaymentInDetailView();
     });
     observer.observe(targetNode, { childList: true, subtree: true});
 
@@ -204,23 +204,26 @@ function checkPercentagesInDetailView() {
 function checkBlockedPaymentInDetailView() {
   var blocked = $("[field='blocked'] input").is(":checked")
   if (blocked) {
-    $("[field='allocated']").addClass("no-inlineEdit");
-    $("[field='allocated'] .inlineEditIcon").hide();
-    $("[field='allocated']").css("pointer-events", "none");
+    $(".inlineEdit").css("pointer-events", "none");
+    $("[field='blocked']").css("pointer-events", "auto");
   }
   else {
-    $("[field='allocated']").removeClass("no-inlineEdit");
-    $("[field='allocated'] .inlineEditIcon").show();
-    $("[field='allocated']").css("pointer-events", "auto");
+    $(".inlineEdit").css("pointer-events", "auto");
+
   }
 }
 function checkBlockedPayment() {
   var blocked = $("#blocked").is(":checked");
   if (blocked) {
-    $("#allocated").prop("disabled", true);
+    $(".edit-view-row-item input").prop('disabled', true); // text, decimals, checks, etc.
+    $(".edit-view-row-item select").prop('disabled', true); // desplegables
+    $("button[type='button']:not(.saveAndContinue)").prop('disabled', true); // buttons except "Save and Continue Edit"
+    $("#blocked").prop('disabled', false); // keep blocked enabled
   }
   else {
-    $("#allocated").prop("disabled", false);
+    $(".edit-view-row-item input").prop('disabled', false);
+    $(".edit-view-row-item select").prop('disabled', false);
+    $("button[type='button']").prop('disabled', false);
   }
 }
 

@@ -159,4 +159,5 @@ $mod_strings = array (
     'LBL_BASE_AMOUNT' => 'Importe base',
     'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'Un pago bloqueado no pode cambiar o estado de imputación.',
     'LBL_ALLOCATED_AMOUNT_ALERT' => 'Xa hai imputacións realizadas para este pago.',
+    'LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED' => 'Un pago bloqueado non se pode modificar.',
 );

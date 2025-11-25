@@ -21,6 +21,75 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 class stic_AllocationsUtils {
+
+    public static function updateAllocationsFromPayment($paymentBean) {
+        global $current_user;
+
+        global $current_language;
+        $allocationsModStrings = return_module_language($current_language, 'stic_Allocations');
+
+        // retrieve all allocations linked to the payment
+        $allocationBeans = array();
+        $linkName = 'stic_allocations';
+        if ($paymentBean->load_relationship($linkName)) {
+            $allocationBeans = $paymentBean->$linkName->getBeans();
+        }
+        foreach ($allocationBeans as $allocationBean) {
+            if (empty($paymentBean->{$allocationBean->payment_amount_field})) {
+                // validate payment field needed is filled
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE']);
+                if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+                    // This is an AJAX request
+                    ob_clean();
+                    header('HTTP/1.1 500 Internal Server Error');
+                    echo "Save aborted: " . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'];
+                    exit;
+                }
+                SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'] . '</div>');
+            }
+            else {
+                // update allocation amount from payment field
+                $allocationBean->amount = $paymentBean->{$allocationBean->payment_amount_field} * $allocationBean->percentage / 100;
+                $allocationBean->save();
+            }
+
+        }
+        return true;
+    }
+
+    public static function updatePayment($allocationBean) {
+        // retrieve payment linked to the allocation
+        $paymentBean = BeanFactory::getBean('stic_Payments', $allocationBean->stic_payments_stic_aleb9a);
+        if ($paymentBean) {
+            require_once 'modules/stic_Payments/Utils.php';
+            stic_PaymentsUtils::updateAllocationPercentage($paymentBean);
+        }
+    }
+
+    public static function updateJustificationsFromAllocation($allocationBean) {
+        // TODOEPS
+        // global $current_user;
+
+        // global $current_language;
+        // $allocationsModStrings = return_module_language($current_language, 'stic_Allocations');
+
+        // // retrieve all justifications linked to the allocation
+        // $justificationBeans = array();
+        // $linkName = 'stic_allocations_stic_justifications';
+        // if ($allocationBean->load_relationship($linkName)) {
+        //     $justificationBeans = $allocationBean->$linkName->getBeans();
+        // }
+        // foreach ($justificationBeans as $justificationBean) {
+        //     if (empty($justificationBean->amount) || $justificationBean->amount > $allocationBean->amount) {
+        //         // update justification amount from allocation
+        //         $justificationBean->amount = $allocationBean->amount;
+        //         $justificationBean->save();
+        //     }
+
+        // }
+        return true;
+    }
+
     public static function calculateTotalAllocatedAmount($paymentId) {
         global $db;
 
@@ -61,5 +130,29 @@ class stic_AllocationsUtils {
         foreach ($justificationBeans as $justificationBean) {
             $justificationBean->mark_deleted($justificationBean->id);
         }
+    }
+
+    public static function allocationsFromPayment($paymentBean) {
+        // retrieve all allocations linked to the payment
+        $allocationBeans = array();
+        $linkName = 'stic_allocations';
+        if ($paymentBean->load_relationship($linkName)) {
+            $allocationBeans = $paymentBean->$linkName->getBeans();
+        }
+        return $allocationBeans;
+    }
+
+
+    public static function paymentHasJustifiedAllocations($paymentBean)
+    {
+        // retrieve all allocations linked to the payment
+        $allocationBeans = self::allocationsFromPayment($paymentBean);
+        // check if any allocation is validated
+        foreach ($allocationBeans as $allocationBean) {
+            if ($allocationBean->justified) {
+                return true;
+            }
+        }
+        return false;
     }
 }

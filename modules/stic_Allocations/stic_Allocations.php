@@ -21,6 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+require_once 'modules/stic_Allocations/Utils.php';
+
 class stic_Allocations extends Basic
 {
     public $module_dir = 'stic_Allocations';
@@ -74,8 +76,30 @@ class stic_Allocations extends Basic
     {
         $this->fillName();
 
+        // If payment_amount_field or percentage changed, recalculate amount and hours
+        // if ($this->fetched_row) {
+        //     $oldPaymentAmountField = $this->fetched_row['payment_amount_field'];
+        //     $oldPercentage = $this->fetched_row['percentage'];
+        // } else {
+        //     $oldPaymentAmountField = null;
+        //     $oldPercentage = null;
+        // }
+        
+        
+        // Calculate amount 
+        $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
+        $this->amount = $paymentBean->{$this->payment_amount_field} * $this->percentage / 100;
+        
+        $oldAmount = $this->fetched_row['amount'] ?? null;
+        $amountChanged = ($oldAmount !== $this->amount);
+
         // Save the bean
         parent::save($check_notify);
+
+        if ($amountChanged) {
+            stic_AllocationsUtils::updateJustificationsFromAllocation($this);
+            stic_AllocationsUtils::updatePayment($this);
+        }
     }
 
     /**

@@ -142,7 +142,7 @@ $mod_strings = array(
     'LBL_AGGREGATED_NOTIFICATION_BUTTON_SERVER_ERROR' => 'Error del servidor',
     'LBL_AGGREGATED_RETURN_BUTTON' => 'Torna al mòdul',
     'LBL_AGGREGATED_REFRESH_BUTTON' => 'Repeteix el procés',
-    'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Assignacions',
+    'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Imputacions',
     // Etiquetes de la pestanya Imputació
     'LBL_ALLOCATION_PANEL' => 'Imputació',
     'LBL_JUSTIFICATION_DATE' => "Data d'imputació",
@@ -159,4 +159,5 @@ $mod_strings = array(
     'LBL_BASE_AMOUNT' => 'Import base',
     'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'Un pagament bloquejat no pot canviar l\'estat d\'imputació.',
     'LBL_ALLOCATED_AMOUNT_ALERT' => 'Ja hi ha imputacions realitzades per aquest pagament.',
+    'LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED' => 'Un pagament bloquejat no es pot modificar.',
 );
