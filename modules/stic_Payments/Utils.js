@@ -194,9 +194,23 @@ function checkPercentagesInDetailView() {
 
   if (allocatedPercentage > 100) {
     $("#allocated_percentage").css("color", "red");
+    var iconUrl = "https://cdn-icons-png.flaticon.com/512/3253/3253156.png";
+
+    // Create the image HTML with inline styles for size and spacing
+    var iconHtml = '<img src="' + iconUrl + '" style="width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" />';
+
+    // Append it to the span
+    $('#allocated_percentage').prepend(iconHtml);
   }
   if (justifiedPercentage > 100) {
     $("#justified_percentage").css("color", "red");
+    var iconUrl = "https://cdn-icons-png.flaticon.com/512/3253/3253156.png";
+
+    // Create the image HTML with inline styles for size and spacing
+    var iconHtml = '<img src="' + iconUrl + '" style="width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" />';
+
+    // Append it to the span
+    $('#justified_percentage').prepend(iconHtml);
   }
 }
 
