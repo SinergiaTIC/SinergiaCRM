@@ -40,14 +40,22 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
 
 // Creación de rexistro horario vía cabeceira
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Crearase un rexistro horario coa seguinte información:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Cerrarase o último rexistro horario aberto de hoxe:'; 
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'coa seguinte información:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nome: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Data e hora de inicio: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data e hora de finalización: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empregado: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crear registro';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Crearase un rexistro horario coa seguinte información';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Cerrar registro'; 
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'Cerrarase o último rexistro horario aberto de hoxe'; 
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'coa seguinte información';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nome';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Data e hora de inicio';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data e hora de finalización';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empregado';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentarios (opcional)';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1'] = 'Otros registros de hoy';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2'] = 'Total de horas trabajadas';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'No hay más registros.';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'] = 'En curso';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_HOURS'] = 'horas';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_MINUTES'] = 'minutos';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Aceptar';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancelar';
 
@@ -3641,6 +3649,8 @@ $app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inicio de sesión erróneo';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
+$app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inicio de suplantación';
+$app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fin de suplantación';
 
 // Productos financieros: Tipos de productos
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';
