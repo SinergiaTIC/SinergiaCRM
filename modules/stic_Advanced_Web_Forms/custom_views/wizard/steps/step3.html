@@ -88,7 +88,7 @@
                                                         <template x-for="param in action.parameters" :key="param.name">
                                                             <tr>
                                                                 <th class="w-25" x-text="param.text"></th>
-                                                                <td x-text="param.value_text"></td>
+                                                                <td x-text="param.value_text!=''?param.value_text:param.value"></td>
                                                             </tr>
                                                         </template>
                                                     </tbody>
@@ -149,39 +149,50 @@
         <div class="custom-modal-backdrop"></div>
         <div class="custom-modal-dialog modal-lg" role="dialog">
             <div class="custom-modal-content">
-                
+
                 <div class="custom-modal-header">
                     <h3 class="modal-title" x-text="$store.actionEditor.title"></h3>
                     <button type="button" class="btn-close" @click="$store.actionEditor.close()"></button>
                 </div>
 
                 <div class="custom-modal-body bg-light">
-                    
                     <div class="card mb-3">
                         <div class="card-header" x-text="utils.translate('LBL_ACTION')"></div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-3">
-                                    <label class="form-label" x-text="utils.translateForFieldLabel('LBL_CATEGORY')"></label>
-                                    <select class="form-select" x-model="$store.actionEditor.selectedCategory" :disabled="$store.actionEditor.isEdit">
-                                        <template x-for="cat in $store.actionEditor.availableCategories" :key="cat.id">
-                                            <option :value="cat.id" x-text="cat.text"></option>
-                                        </template>
-                                    </select>
-                                </div>
-
-                                <div class="col-3">
-                                    <label class="form-label" x-text="utils.translateForFieldLabel('LBL_ACTION')"></label>
-                                    <select class="form-select" x-model="$store.actionEditor.selectedActionDefName" 
-                                            @change="$store.actionEditor.onActionChange()"
+                            <div class="row g-3">
+                                <!-- Category -->
+                                <div class="col-md-3">
+                                    <label class="form-label" for="modalAction-category" x-text="utils.translateForFieldLabel('LBL_CATEGORY')"></label>
+                                    <select class="form-select" id="modalAction-category" x-model="$store.actionEditor.selectedCategory" 
                                             :disabled="$store.actionEditor.isEdit">
-                                        <template x-for="def in $store.actionEditor.filteredActions" :key="def.name">
-                                            <option :value="def.name" x-text="def.title"></option>
+                                        <template x-for="cat in $store.actionEditor.availableCategories" :key="cat.id">
+                                            <option :value="cat.id" x-text="cat.text">
+                                                <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="1" aria-describedby="qtip-1"></i>
+                                            </option>
                                         </template>
                                     </select>
                                 </div>
+                                <!-- Action  and Name -->
+                                <div class="col-md-3">
+                                    <!-- Action -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="modalAction-action" x-text="utils.translateForFieldLabel('LBL_ACTION')"></label>
+                                        <select class="form-select" id="modalAction-action" x-model="$store.actionEditor.selectedActionDefName" 
+                                                @change="$store.actionEditor.onActionChange()" :disabled="$store.actionEditor.isEdit">
+                                            <template x-for="def in $store.actionEditor.filteredActions" :key="def.name">
+                                                <option :value="def.name" x-text="def.title"></option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                    <!-- Name -->
+                                    <div >
+                                        <label class="form-label" for="modalAction-name" x-text="utils.translateForFieldLabel('LBL_ACTION_NAME')"></label>
+                                        <input id="modalAction-name" type="text" class="form-control" x-model="action.text">
+                                    </div>
+                                </div>
+                                <!-- Description -->
                                 <template x-if="$store.actionEditor.definition">
-                                    <div class="col-6 p-2 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center">
+                                    <div class="col-md-6 p-2 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center">
                                         <i class="suitepicon suitepicon-action-info me-2 flex-shrink-0"></i>
                                         <span x-text="$store.actionEditor.definition.description"></span>
                                     </div>
@@ -192,29 +203,16 @@
 
                     <template x-if="$store.actionEditor.action">
                         <div class="card">
-                            <div class="card-header">
-                                <span x-text="utils.translate('LBL_CONFIGURATION')"></span>
-                            </div>
+                            <div class="card-header" x-text="utils.translate('LBL_ACTION_PARAMETERS')"></div>
                             <div class="card-body">
                                 <form>
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold" x-text="utils.translate('LBL_ACTION_NAME_CUSTOM')"></label>
-                                        <input type="text" class="form-control" x-model="$store.actionEditor.action.text">
-                                    </div>
-
-                                    <hr class="my-4">
-
                                     <template x-for="paramDef in $store.actionEditor.definition.parameters" :key="paramDef.name">
-                                        
-                                        <div class="mb-3" x-data="{ 
-                                            param: $store.actionEditor.action.parameters.find(p => p.name == paramDef.name) 
-                                        }">
-                                            
+                                        <div class="mb-3" x-data="{ param: $store.actionEditor.action.parameters.find(p => p.name == paramDef.name) }">
                                             <label class="form-label">
                                                 <span x-text="paramDef.text"></span>
                                                 <span x-show="paramDef.required" class="text-danger" title="Obligatori">*</span>
                                             </label>
-                                            
+                                        
                                             <div class="form-text mb-2" x-text="paramDef.description"></div>
 
                                             <template x-if="paramDef.type === 'value' && (!paramDef.dataType || ['text','integer','email'].includes(paramDef.dataType))">
@@ -310,7 +308,7 @@
 
                                         </div>
                                     </template>
-                                    </form>
+                                </form>
                             </div>
                         </div>
                     </template>
