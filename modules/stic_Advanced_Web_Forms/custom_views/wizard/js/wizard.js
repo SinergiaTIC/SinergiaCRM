@@ -7,6 +7,11 @@ function wizardForm(readOnly) {
 
     bean: STIC.record || {},
     formConfig: {},
+    init() {
+      this.$watch('bean.processing_mode', (newMode, oldMode) => {
+        this.formConfig.prepareProcessingMode(newMode);
+      });
+    },
 
     async initWizard() {
       // Set Context accessible
@@ -852,6 +857,7 @@ class WizardStep3 {
   static mainStep3xData() {
     return {
       get formConfig() { return window.alpineComponent.formConfig; },
+      get bean() { return window.alpineComponent.bean; },
 
       flowTabSelected: 0,
       get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
@@ -859,6 +865,8 @@ class WizardStep3 {
       showAllActions: false,
 
       init() {
+        this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
+
         // Store for the Action Editor management
         if (!Alpine.store('actionEditor')) {
           Alpine.store('actionEditor', {

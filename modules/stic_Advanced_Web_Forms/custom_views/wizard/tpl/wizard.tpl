@@ -13,7 +13,10 @@
     </div>
 
     <h2 id='wizard-section-title'></h2>
-    <div id='wizard-section-desc' class="text-muted small ms-3 mb-3"></div>
+    <div class="col-11 ms-3 mb-3 p-2 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center">
+        <i class="suitepicon suitepicon-action-info me-2 flex-shrink-0"></i>
+        <span id='wizard-section-desc'></span>
+    </div>
     <div class="card container-fluid wizard-container">
         <div class="card-body d-flex h-100" id="wizard-step-container"></div>
         <div class="card-body d-flex h-100" id="debug-container"></div>

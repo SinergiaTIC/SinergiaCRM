@@ -738,25 +738,25 @@ class AWF_Configuration {
   }
   _ensureDefaultFlows() {
     // Check exists Main Flow
-    const mainFlowExists = this.flows.some(f => f.id == '0');
-    if (!mainFlowExists) {
-      this.flows.push(new AWF_Flow({
-        id: 0,
-        name: "main",
-        label: "LBL_FLOW_MAIN",
-      }));
+    if (!this.flows.some(f => f.id == '0')) {
+      this.flows.push(new AWF_Flow({ id: 0, name: "main", label: "LBL_FLOW_MAIN" }));
     }
 
     // Check exists OnError Flow
-    const onErrorFlowExists = this.flows.some(f => f.id == '-1');
-    if (!onErrorFlowExists) {
-      this.flows.push(new AWF_Flow({
-        id: -1,
-        name: "onError",
-        label: "LBL_FLOW_ONERROR",
-      }));
+    if (!this.flows.some(f => f.id == '-1')) {
+      this.flows.push(new AWF_Flow({ id: -1, name: "onError", label: "LBL_FLOW_ONERROR" }));
     }
     
+    // Check exists Receipt Flow
+    if (!this.flows.some(f => f.id == '1')) {
+      this.flows.push(new AWF_Flow({ id: 1, name: "receipt", label: "LBL_FLOW_RECEIPT" }));
+    }
+
+    // Sort flows: Receipt, Main, Error
+    this.flows.sort((a, b) => {
+        const order = { '1': 0, '0': 1, '-1': 2 }; // Receipt -> Main -> Error
+        return (order[a.id] ?? 99) - (order[b.id] ?? 99);
+    });
   }
   _ensureDefaultLayout() {}
 
@@ -778,6 +778,16 @@ class AWF_Configuration {
       text = `${module.textSingular} ${index}`;
     }
     return text;
+  }
+
+  prepareProcessingMode(mode) { 
+    if (mode == 'async') {
+      // Remove terminal actions from main flow
+      const mainFlow = this.flows.find(f => f.id == '0');
+      if (mainFlow) {
+        mainFlow.actions = mainFlow.actions.filter(a => !a.is_terminal);
+      }  
+    }
   }
 
   /**

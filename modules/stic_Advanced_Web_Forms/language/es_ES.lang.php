@@ -85,6 +85,7 @@ $mod_strings = array (
   'LBL_STATUS' => 'Estado',
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Modo de procesamiento',
+  'LBL_PROCESSING_MODE_DESC' => 'El modo de procesamiento define cómo se gestionan las respuestas recibidas al formulario. En el modo síncrono, cada respuesta se procresa al recibirse. En el modo asíncrono, las respuestas se almacenan temporalmente y se procesan posteriormente mediante un proceso en segundo plano (cron).',
   'LBL_CONFIGURATION' => 'Configuración',
   'LBL_CUSTOM_CSS' => 'css personalizado',
   'LBL_CUSTOM_JS' => 'js personalizado',
@@ -191,6 +192,7 @@ $mod_strings = array (
 
   'LBL_FLOWS' => 'Flujos de acciones',
   'LBL_FLOW' => 'Flujo de acciones',
+  'LBL_FLOW_RECEIPT' => 'Respuesta automática',
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
 

@@ -51,7 +51,7 @@ class ExampleAction extends HookActionDefinition
     public function __construct()
     {
         // Indicamos si la acción está activa o no (si debe aparecer en el wizard o no).
-        $this->isActive = false;
+        $this->isActive = true;
 
         // Indicamos si la acción es una acción común (true) o avanzada (false).
         $this->isCommon = false;

@@ -13,10 +13,12 @@
         <!-- Tab Headers: Flows -->
         <div class="stic-tabs">
             <template x-for="flow in formConfig.flows" :key="flow.id">
-                <div class="stic-tab">
-                    <input class="form-check-input" type="radio" :id="`flowTab${flow.id}`" x-model="flowTabSelected" :value="`${flow.id}`"/>
-                    <label class="form-label" :for="`flowTab${flow.id}`" x-text="flow.getText()"></label>
-                </div>
+                <template x-if="flow.id != 1 || bean.processing_mode == 'async'">
+                    <div class="stic-tab">
+                        <input class="form-check-input" type="radio" :id="`flowTab${flow.id}`" x-model="flowTabSelected" :value="`${flow.id}`"/>
+                        <label class="form-label" :for="`flowTab${flow.id}`" x-text="flow.getText()"></label>
+                    </div>
+                </template>
             </template>
         </div>
         <!-- Tab Content: Flows -->
@@ -117,14 +119,28 @@
                 </template>
             </div>
             <!-- Create Action Button -->
-            <div class="row m-3">
-                <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD')" 
-                        @click="$store.actionEditor.openCreate(flow, false)"></button>
-                <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_TERMINAL_ADD')" 
-                        @click="$store.actionEditor.openCreate(flow, true)"
-                        x-bind:disabled="flow.hasTerminalAction();"></button>
-                <!-- <button type="button" class="btn w-auto" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_ACTION_ADD')"></button> -->
-            </div>
+            <template x-if="bean.processing_mode == 'sync'">
+                <div class="row m-3">
+                    <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD')" 
+                            @click="$store.actionEditor.openCreate(flow, false)"></button>
+                    <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_TERMINAL_ADD')" 
+                            @click="$store.actionEditor.openCreate(flow, true)"
+                            x-bind:disabled="flow.hasTerminalAction();"></button>
+                </div>
+            </template>
+            <template x-if="bean.processing_mode == 'async'">
+                <div class="row m-3">
+                    <template x-if="flow.id == 1">
+                        <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_TERMINAL_ADD')" 
+                                @click="$store.actionEditor.openCreate(flow, true)"
+                                x-bind:disabled="flow.hasTerminalAction();"></button>
+                    </template>
+                    <template x-if="flow.id != 1">
+                        <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD')" 
+                                @click="$store.actionEditor.openCreate(flow, false)"></button>
+                    </template>
+                </div>
+            </template>
         </div>
     </div>
 
@@ -159,7 +175,6 @@
                                     <select class="form-select" x-model="$store.actionEditor.selectedActionDefName" 
                                             @change="$store.actionEditor.onActionChange()"
                                             :disabled="$store.actionEditor.isEdit">
-                                        <option value="" disabled selected>-- Selecciona --</option>
                                         <template x-for="def in $store.actionEditor.filteredActions" :key="def.name">
                                             <option :value="def.name" x-text="def.title"></option>
                                         </template>
