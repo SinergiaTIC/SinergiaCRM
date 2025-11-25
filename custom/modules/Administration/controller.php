@@ -151,11 +151,73 @@ class CustomAdministrationController extends AdministrationController
 
     }
 
-
-    public function action_configureMainMenu(){
+    public function action_configureMainMenu()
+    {
         // Add specific logic for manage main menu
-        require_once('custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php');
+        require_once 'custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php';
 
-    } 
+    }
+
+    /**
+     * Handle the upload, encryption, and storage of the digital certificate.
+     *
+     * @return void
+     */
+    public function action_SticSaveCertificate()
+    {
+        global $current_user;
+
+        if (!is_admin($current_user)) {
+            sugar_die("Not authorized access.");
+        }
+
+        if (isset($_FILES['certificate_file']) && $_FILES['certificate_file']['error'] === UPLOAD_ERR_OK) {
+
+            // 1. read file content
+            $fileContent = file_get_contents($_FILES['certificate_file']['tmp_name']);
+
+            // 2. Prepare Blowfish encryption
+            require_once 'include/utils/encryption_utils.php';
+
+            // use a specific key for certificates
+            $key = blowfishGetKey('stic_cert');
+
+            // 3. Encrypt
+            $encryptedContent = blowfishEncode($key, $fileContent);
+
+            // 4. Define secure path
+            $uploadDir = 'custom/certificates/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+                // Create .htaccess to prevent web access
+                file_put_contents($uploadDir . '.htaccess', "Order Deny,Allow\nDeny from all");
+            }
+
+            $targetFile = $uploadDir . 'cert_encrypted.bin';
+            $metadataFile = $uploadDir . 'cert_metadata.json';
+
+            // 5. Save encrypted file
+            if (file_put_contents($targetFile, $encryptedContent) !== false) {
+                // 6. Save certificate metadata
+                $metadata = array(
+                    'original_filename' => $_FILES['certificate_file']['name'],
+                    'upload_date' => date('Y-m-d H:i:s'),
+                    'uploaded_by' => $current_user->id,
+                    'uploaded_by_name' => $current_user->name,
+                );
+                file_put_contents($metadataFile, json_encode($metadata, JSON_PRETTY_PRINT));
+
+                // Redirect successfully to the view
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_SUCCESS');
+            } else {
+                // Error writing
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_WRITE');
+            }
+
+        } else {
+            // Error uploading
+            SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_UPLOAD');
+        }
+    }
 
 }
