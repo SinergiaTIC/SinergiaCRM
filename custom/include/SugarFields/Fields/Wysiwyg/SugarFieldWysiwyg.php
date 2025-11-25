@@ -62,7 +62,7 @@ class SugarFieldWysiwyg extends SugarFieldBase {
 
         $config = [];
         // STIC-Custom 20251125 MHP - Apply the same settings as in the other fields where the editor is displayed.
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/309
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/880
         // $config['height'] = 250;
         // $config['menubar'] = false;
         $config['height'] = '480';
