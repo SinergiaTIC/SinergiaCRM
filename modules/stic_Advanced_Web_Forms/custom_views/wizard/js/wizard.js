@@ -1074,12 +1074,12 @@ class WizardStep3 {
                 // Add Action to flow: Insertion based on order
                 let insertIndex = this.flow.actions.length;
                 for (let i = 0; i < this.flow.actions.length; i++) {
-                  if ((this.flow.actions[i].order ?? 0) > (action.order ?? 0)) {
+                  if ((this.flow.actions[i].order ?? 0) > (this.action.order ?? 0)) {
                     insertIndex = i;
                     break;
                   }
                 }
-                this.flow.actions.splice(insertIndex, 0, action);
+                this.flow.actions.splice(insertIndex, 0, this.action);
               } else {
                 // Update existing Action in flow
                 const index = this.flow.actions.findIndex(a => a.id == this.original_id);

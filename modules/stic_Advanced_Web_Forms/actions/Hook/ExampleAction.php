@@ -29,10 +29,13 @@ if (! defined('sugarEntry') || ! sugarEntry) {
 include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 
 /**
- * ExampleAction
+ * ExampleAction (Guía Completa para Desarrolladores)
  * - Esta es la implementación de una acción de ejemplo que sirve como plantilla para desarrolladores de nuevas acciones.
  * - Esta acción es del tipo Hook, se ejecutará en el servidor una vez recibida la respuesta del formulario.
  *
+ * * Esta clase es una plantilla exhaustiva que muestra CÓMO implementar todos los tipos
+ * de parámetros y lógicas disponibles en el sistema de Formularios Web Avanzados.
+ * 
  * * NOMENCLATURA DE FICHEROS:
  *   - El nombre de la clase (Ej: 'ExampleAction') debe coincidir exactamente con el nombre del fichero (Ej: 'ExampleAction.php').
  *
@@ -41,6 +44,13 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
  *     .../actions/Hook/ExampleAction.php
  *   - O bien en la carpeta 'custom' para extensiones:
  *     .../custom/modules/stic_Advanced_Web_Forms/actions/Hook/ExampleAction.php
+ * 
+ * * TIPOS DE ACCIÓN (Herencia):
+ *   1. HookActionDefinition: Acción genérica (ej: Enviar Email, Redirección).
+ *   2. HookDataBlockActionDefinition: Acción ligada a un Bloque de Datos (ej: Crear Registro).
+ *   3. HookBeanActionDefinition: Acción que requiere un Bean ya guardado (ej: Relacionar, Añadir a LPO).
+ * 
+ * - En este ejemplo usamos la base genérica (HookActionDefinition) para mostrar todos los casos.
  */
 class ExampleAction extends HookActionDefinition
 {
@@ -50,11 +60,14 @@ class ExampleAction extends HookActionDefinition
      */
     public function __construct()
     {
-        // Indicamos si la acción está activa o no (si debe aparecer en el wizard o no).
+        // Indicamos si la acción está activa o no.
         $this->isActive = true;
 
+        // Indicamos si el usuario puede seleccionar esta acción en el wizard al crear un formulario.
+        $this->isUserSelectable = true;
+
         // Indicamos si la acción es una acción común (true) o avanzada (false).
-        $this->isCommon = false;
+        $this->isCommon = true;
 
         // Indicamos la categoría de la acción (del listado stic_advanced_web_forms_action_category_list)
         $this->category = 'data';
@@ -98,106 +111,123 @@ class ExampleAction extends HookActionDefinition
         // En esta función se definen los parámetros que espera la acción.
         // El ParameterResolver usará esta definición para saber qué valor entregar en la función execute().
 
-        // --- 1. Ejemplo de Parámetro VALUE ---
-        // El parámetro es un valor fijo, definido en el momento de crear el formulario.
-        // Al ejecutar, recibiremos un valor "plano" (string, int, bool, o un objeto \DateTime).
-        $paramValue               = new ActionParameterDefinition();
-        $paramValue->name         = 'fixed_message';
-        $paramValue->text         = 'Fixed Message (VALUE)';
-        $paramValue->description  = 'A simple text value.';
-        $paramValue->type         = ActionParameterType::VALUE; 
-        $paramValue->dataType     = ActionDataType::TEXT;  
-        $paramValue->defaultValue = "default value";       // El ParameterResolver usará este valor si no se configura.
-        $paramValue->required     = true;
+        // =========================================================================================
+        // TIPO 1: VALORES SIMPLES (ActionParameterType::VALUE)
+        // =========================================================================================
 
-        // --- 2. Ejemplo de Parámetro DATA_BLOCK ---
-        // El parámetro es todo un bloque de datos (configuración + datos del $_POST).
-        // Al ejecutar, recibiremos un objeto 'DataBlockResolved'.
-        $paramBlock                   = new ActionParameterDefinition();
-        $paramBlock->name             = 'block_to_process';
-        $paramBlock->text             = 'Data Block (DATA_BLOCK)';
-        $paramBlock->description      = 'Select the main DataBlock for this action.';
-        $paramBlock->type             = ActionParameterType::DATA_BLOCK;
-        $paramBlock->supportedModules = ['Contacts']; // (Opcional) El wizard filtrará para mostrar solo bloques de 'Contacts'.
-        $paramBlock->required         = true;
+        // 1.1. Texto / Número / Email / Fecha
+        // El Wizard mostrará un <input> según el tipo de datos.
+        $paramText = new ActionParameterDefinition();
+        $paramText->name = 'simple_text';
+        $paramText->text = 'Texto Simple (VALUE)';
+        $paramText->type = ActionParameterType::VALUE; 
+        $paramText->dataType = ActionDataType::TEXT; // También: INTEGER, FLOAT, BOOLEAN, DATE, EMAIL...
+        $paramText->defaultValue = "Valor por defecto";
+        $paramText->required = true;
 
-        // --- 3. Ejemplo de Parámetro FIELD ---
-        // El parámetro es un campo específico del formulario.
-        // Al ejecutar, recibiremos un objeto 'DataBlockFieldResolved'.
-        $paramField              = new ActionParameterDefinition();
-        $paramField->name        = 'email_field';
-        $paramField->text        = 'Email Field (FIELD)';
-        $paramField->description = 'Select the field that contains the recipient\'s email.';
-        $paramField->type        = ActionParameterType::FIELD;
-        $paramField->required    = true;
+        // 1.2. Lista Desplegable Simple (SELECT)
+        // El Wizard mostrará un <select> con las opciones fijas definidas aquí.
+        $paramSelect = new ActionParameterDefinition();
+        $paramSelect->name = 'simple_select';
+        $paramSelect->text = 'Selección Simple (VALUE + SELECT)';
+        $paramSelect->type = ActionParameterType::VALUE;
+        $paramSelect->dataType = ActionDataType::SELECT; // Indica al Wizard que pinte un combo
+        $paramSelect->options = [
+            new ActionParameterOption('option_a', 'Opción A'),
+            new ActionParameterOption('option_b', 'Opción B (Recomendada)')
+        ];
+        $paramSelect->defaultValue = 'option_b';
 
-        // --- 4. Ejemplo de Parámetro CRM_RECORD ---
-        // El parámetro es una referencia a un registro concreto del CRM (ej: 'Module|id').
-        // Al ejecutar, recibiremos un objeto 'BeanReference'.
-        $paramBean                   = new ActionParameterDefinition();
-        $paramBean->name             = 'related_record';
-        $paramBean->text             = 'Related Record (CRM_RECORD)';
-        $paramBean->description      = 'A fixed value (e.g., "Contacts|1234-uuid-5678") or a field containing this reference.';
-        $paramBean->type             = ActionParameterType::CRM_RECORD;
-        $paramBean->supportedModules = ['Contacts', 'Leads', 'Accounts']; // (Opcional) El wizard puede usar esto para mostrar un selector de beans.
-        $paramBean->required         = false;
+        // 1.3. Lista de Campos (FIELD_LIST)
+        // El Wizard mostrará un selector de campos del formulario que se traducirán en un listado de campos separados por comas.
+        // El Backend resolverá esto automáticamente en un array asociativo [nombre_campo => valor].
+        $paramFieldList = new ActionParameterDefinition();
+        $paramFieldList->name = 'fields_to_process';
+        $paramFieldList->text = 'Lista de Campos (VALUE + FIELD_LIST)';
+        $paramFieldList->description = 'Escribe campos separados por comas (ej: Bloque.campo1, _detached.Bloque.campo2)';
+        $paramFieldList->type = ActionParameterType::VALUE;
+        $paramFieldList->dataType = ActionDataType::FIELD_LIST;
 
-        // --- 5. Ejemplo de Parámetro OPTION_SELECTOR ---
-        // El parámetro puede ser obtenido de distintas formas (es un selector de opciones).
-        // Al ejecutar, recibiremos un objeto 'OptionSelectorResolved'.
-        $paramSelector              = new ActionParameterDefinition();
-        $paramSelector->name        = 'recipient_selector';
-        $paramSelector->text        = 'Recipient (OPTION_SELECTOR)';
-        $paramSelector->description = 'Choose where to get the recipient from.';
-        $paramSelector->type        = ActionParameterType::OPTION_SELECTOR;
 
-        // Creamos las opciones para el selector
+        // =========================================================================================
+        // TIPO 2: ELEMENTOS DEL FORMULARIO
+        // =========================================================================================
+
+        // 2.1. Bloque de Datos (DATA_BLOCK)
+        // El Wizard muestra un desplegable con los bloques definidos.
+        // El Backend entrega un objeto 'DataBlockResolved' con configuración y datos.
+        $paramBlock = new ActionParameterDefinition();
+        $paramBlock->name = 'target_block';
+        $paramBlock->text = 'Bloque de Datos (DATA_BLOCK)';
+        $paramBlock->type = ActionParameterType::DATA_BLOCK;
+        $paramBlock->supportedModules = ['Contacts', 'Leads']; // Opcional: Filtro por módulo
+        $paramBlock->required = true;
+
+        // 2.2. Campo Único (FIELD)
+        // El Wizard muestra un desplegable con todos los campos del formulario.
+        // El Backend entrega un objeto 'DataBlockFieldResolved'.
+        $paramField = new ActionParameterDefinition();
+        $paramField->name = 'source_field';
+        $paramField->text = 'Campo Origen (FIELD)';
+        $paramField->type = ActionParameterType::FIELD;
+        // Opcional: Filtrar qué campos muestra el Wizard según su tipo en CRM
+        $paramField->supportedDataTypes = [ActionDataType::EMAIL, ActionDataType::TEXT]; 
+        $paramField->required = true;
+
+
+        // =========================================================================================
+        // TIPO 3: REFERENCIAS AL CRM (CRM_RECORD)
+        // =========================================================================================
+
+        // 3.1. Registro CRM
+        // El Wizard permite seleccionar un registro existente (ID fijo) o usar un campo compatible.
+        // El Backend entrega un objeto 'BeanReference' (Modulo + ID).
+        $paramRecord = new ActionParameterDefinition();
+        $paramRecord->name = 'template_record';
+        $paramRecord->text = 'Plantilla / Registro (CRM_RECORD)';
+        $paramRecord->type = ActionParameterType::CRM_RECORD;
+        $paramRecord->supportedModules = ['EmailTemplates']; // Vital para que el Wizard sepa qué buscar
+        $paramRecord->required = false;
+
+
+        // =========================================================================================
+        // TIPO 4: SELECTOR DE OPCIONES (OPTION_SELECTOR)
+        // Permite al usuario elegir el "origen" del dato (polimorfismo).
+        // =========================================================================================
+
+        $paramSelector = new ActionParameterDefinition();
+        $paramSelector->name = 'dynamic_source';
+        $paramSelector->text = 'Origen Dinámico (OPTION_SELECTOR)';
+        $paramSelector->description = 'Selecciona de dónde obtener la información.';
+        $paramSelector->type = ActionParameterType::OPTION_SELECTOR;
         
-        // Opción 1: Un valor fijo (VALUE)
-        $optFixed                     = new ActionSelectorOptionDefinition();
-        $optFixed->resolvedType       = ActionParameterType::VALUE; // Indica qué recibirá la acción
-        $optFixed->name               = 'opt_fixed';
-        $optFixed->text               = 'Fixed Email';
-        $optFixed->supportedDataTypes = [ActionDataType::EMAIL]; // Instrucción para el wizard: el input debe ser de tipo email
+        // Definimos las opciones disponibles para el usuario:
 
-        // Opción 2: Un bloque de datos (DATA_BLOCK)
-        $optBlock                   = new ActionSelectorOptionDefinition();
-        $optBlock->resolvedType     = ActionParameterType::DATA_BLOCK; // Indica qué recibirá la acción
-        $optBlock->name             = 'opt_data_block';
-        $optBlock->text             = 'Data Block (DATA_BLOCK)';
-        $optBlock->supportedModules = ['Contacts', 'Leads', 'Accounts']; // Instrucción para el wizard: el bloque debe referenciarse a uno de estos módulos
+        // Opción A: Contexto (EMPTY) - No requiere input del usuario, el valor es implícito.
+        $optOwner = new ActionSelectorOptionDefinition();
+        $optOwner->name = 'opt_owner';
+        $optOwner->text = 'El usuario actual (Contexto)';
+        $optOwner->resolvedType = ActionParameterType::EMPTY; // Backend recibirá NULL como valor
 
-        // Opción 3: Un campo del formulario (FIELD)
-        $optField                     = new ActionSelectorOptionDefinition();
-        $optField->resolvedType       = ActionParameterType::FIELD; // Indica qué recibirá la acción
-        $optField->name               = 'opt_field';
-        $optField->text               = 'Form Field';
-        $optField->supportedDataTypes = [ActionDataType::EMAIL, ActionDataType::TEXT]; // Instrucción para el wizard: filtrar campos
+        // Opción B: Bloque (DATA_BLOCK)
+        $optBlockSrc = new ActionSelectorOptionDefinition();
+        $optBlockSrc->name = 'opt_block';
+        $optBlockSrc->text = 'Desde un Bloque de Datos';
+        $optBlockSrc->resolvedType = ActionParameterType::DATA_BLOCK;
 
-        // Opción 4: Un registro fijo (CRM_RECORD)
-        $optBean                   = new ActionSelectorOptionDefinition();
-        $optBean->resolvedType     = ActionParameterType::CRM_RECORD; // Indica qué recibirá la acción
-        $optBean->name             = 'opt_bean';
-        $optBean->text             = 'Created Record (Bean)';
-        $optBean->supportedModules = ['Contacts', 'Leads'];
+        // Opción C: Valor Fijo (VALUE)
+        $optFixed = new ActionSelectorOptionDefinition();
+        $optFixed->name = 'opt_fixed';
+        $optFixed->text = 'Valor Manual';
+        $optFixed->resolvedType = ActionParameterType::VALUE;
 
-        // Opción 5: Un campo (FIELD) de tipo RELATE que apunta a Users
-        $optFieldRel                     = new ActionSelectorOptionDefinition();
-        $optFieldRel->resolvedType       = ActionParameterType::FIELD; // Indica qué recibirá la acción
-        $optFieldRel->name               = 'opt_field_rel';
-        $optFieldRel->text               = 'Form Field (User Relation)';
-        $optFieldRel->supportedDataTypes = [ActionDataType::RELATE]; // Instrucción para el wizard: filtrar campos 'relate'
-        $optFieldRel->supportedModules   = ['Users']; // Instrucción para el wizard: filtrar campos que apunten a 'Users'
+        $paramSelector->selectorOptions = [$optOwner, $optBlockSrc, $optFixed];
 
-        $paramSelector->selectorOptions = [$optFixed, $optBlock, $optField, $optBean, $optFieldRel];
 
-        // Devolvemos todos los parámetros definidos
         return [
-            $paramValue,
-            $paramBlock,
-            $paramField,
-            $paramBean,
-            $paramSelector,
+            $paramText, $paramSelect, $paramFieldList, 
+            $paramBlock, $paramField, $paramRecord, 
+            $paramSelector
         ];
     }
 
@@ -212,107 +242,96 @@ class ExampleAction extends HookActionDefinition
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        // Para depuración: podemos volcar el contexto o los parámetros al log
-        $GLOBALS['log']->debug("Starting ExampleAction. ActionConfig ID: " . $actionConfig->id);
+        // ------------------------------------------------------------------------
+        // 1. RECUPERACIÓN DE PARÁMETROS (Ya resueltos por ParameterResolverService)
+        // ------------------------------------------------------------------------
 
-        // --- 1. Obtener Parámetros Resueltos ---
-        // El ParameterResolver ya ha hecho el trabajo.
-        // Solo tenemos que pedir los valores usando la función de ayuda de FormAction.
+        // VALUE (Simple) -> string|int|bool
+        $textValue = $actionConfig->getResolvedParameter('simple_text');
+
+        // VALUE (Select) -> string (la 'value' de la opción seleccionada)
+        $selectValue = $actionConfig->getResolvedParameter('simple_select'); // ej: 'option_a'
+
+        // VALUE (Field List) -> array asociativo ['Bloque.Campo' => 'Valor Resuelto']
+        $fieldsMap = $actionConfig->getResolvedParameter('fields_to_process') ?? [];
+        foreach ($fieldsMap as $fieldKey => $fieldVal) {
+            $GLOBALS['log']->debug("Field List Item: $fieldKey = $fieldVal");
+        }
+
+        // DATA_BLOCK -> DataBlockResolved object
+        /** @var DataBlockResolved $block */
+        $block = $actionConfig->getResolvedParameter('target_block');
+        // Acceso a datos: $block->formData['campo_crm']
+        // Acceso a definición: $block->dataBlock->module
+
+        // FIELD -> DataBlockFieldResolved object
+        /** @var DataBlockFieldResolved $field */
+        $field = $actionConfig->getResolvedParameter('source_field');
+        // Acceso a valor: $field->value
+        // Acceso a definición: $field->dataBlockField (puede ser null si es _detached)
+
+        // CRM_RECORD -> BeanReference object
+        /** @var BeanReference $recordRef */
+        $recordRef = $actionConfig->getResolvedParameter('template_record');
+        // Acceso al bean (Lazy Loading): $recordRef?->getBean()
+
+        // OPTION_SELECTOR -> OptionSelectorResolved object
+        /** @var OptionSelectorResolved $selector */
+        $selector = $actionConfig->getResolvedParameter('dynamic_source');
         
-        // Parámetro VALUE
-        // No es necesario pasar un valor por defecto aquí, porque el ParameterResolver
-        // ya ha aplicado el 'defaultValue' definido en getParameters().
-        $message = $actionConfig->getResolvedParameter('fixed_message');
-        // $message es ahora un string, int, bool o \DateTime
-
-        // Parámetro DATA_BLOCK
-        /** @var ?DataBlockResolved $block */
-        $block = $actionConfig->getResolvedParameter('block_to_process');
-        // $block es un objeto DataBlockResolved
-
-        // Parámetro FIELD
-        /** @var ?DataBlockFieldResolved $field */
-        $field = $actionConfig->getResolvedParameter('email_field');
-        // $field es un objeto DataBlockFieldResolved
-
-        // Parámetro CRM_RECORD
-        /** @var ?BeanReference $beanRef */
-        $beanRef = $actionConfig->getResolvedParameter('related_record');
-        // $beanRef es un objeto BeanReference
-
-        // Parámetro OPTION_SELECTOR
-        /** @var ?OptionSelectorResolved $selector */
-        $selector = $actionConfig->getResolvedParameter('recipient_selector');
-        // $selector es un objeto OptionSelectorResolved
-
-
-        // --- 2. Utilizar los Parámetros ---
-
-        // Ejemplo con DATA_BLOCK: Acceder a los datos
-        $GLOBALS['log']->debug("Processing block: " . $block->dataBlock->name);
-        foreach ($block->formData as $fieldName => $fieldResolved) { 
-            // $fieldResolved es un DataBlockFieldResolved
-            $GLOBALS['log']->debug("  -> CRM Field: {$fieldName}, Value (type " . gettype($fieldResolved->value) . "): " . print_r($fieldResolved->value, true));
-        }
-        foreach ($block->detachedData as $fieldName => $fieldResolved) { 
-            $GLOBALS['log']->debug("  -> Detached Field: {$fieldName}, Value (type " . gettype($fieldResolved->value) . "): " . print_r($fieldResolved->value, true));
+        // Lógica según la opción elegida por el usuario
+        if ($selector) {
+            switch ($selector->selectedOptionName) {
+                case 'opt_owner':
+                    // EMPTY: El valor es null, usamos lógica de contexto
+                    $userId = $GLOBALS['current_user']->id;
+                    break;
+                case 'opt_block':
+                    // DATA_BLOCK: El valor es DataBlockResolved
+                    /** @var DataBlockResolved $selBlock */
+                    $selBlock = $selector->resolvedValue;
+                    break;
+                case 'opt_fixed':
+                    // VALUE: El valor es string
+                    $fixedVal = $selector->resolvedValue;
+                    break;
+            }
         }
 
-        // Ejemplo con FIELD: Acceder al valor y a la definición
-        $fieldValue = $field->value; 
-        $isDetached = $field->isDetached(); 
-        $fieldLabel = $field->dataBlockField?->label ?? 'N/A'; 
-        $GLOBALS['log']->debug("Processing field: {$field->formKey}, Label: {$fieldLabel}, Value: {$fieldValue}, IsDetached: {$isDetached}");
+        // ------------------------------------------------------------------------
+        // 2. LÓGICA DE NEGOCIO (Ejemplo)
+        // ------------------------------------------------------------------------
 
-        // Ejemplo con OPTION_SELECTOR: Comprobar la opción elegida
-        switch ($selector->selectedOptionName) { 
-            case 'opt_fixed':
-                $recipient = $selector->resolvedValue; // Es un string
-                $GLOBALS['log']->debug("Selector: 'opt_fixed' chosen. Value: {$recipient}");
-                break;
-            case 'opt_field':
-                /** @var ?DataBlockFieldResolved $recipientField */
-                $recipientField = $selector->resolvedValue;
-                $recipient      = $recipientField?->value;
-                $GLOBALS['log']->debug("Selector: 'opt_field' chosen. Value: {$recipient}");
-                break;
-            case 'opt_bean':
-                /** @var ?BeanReference $recipientBean */
-                $recipientBean = $selector->resolvedValue;
-                $recipient     = $recipientBean?->beanId;
-                $GLOBALS['log']->debug("Selector: 'opt_bean' chosen. BeanID: {$recipient}");
-                break;
-        }
-
-        // --- 3. Ejecutar la Lógica de Negocio (Aquí no hacemos nada) ---
-        // ...
-        // $bean = BeanFactory::getBean('Contacts', $beanRef->beanId);
-        // $bean->description = $message;
-        // $bean->save();
-        // ...
-
-        // --- 4. Devolver el Resultado ---
-
-        // Creamos un resultado OK
-        $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Example action executed successfully.");
-
-        // Si creamos o modificamos Beans, debemos registrarlo.
-
-        // CASO 1: Suponemos que creamos/modificamos el bean para el bloque de datos que hemos recibido ($block):
-        // Simulamos la creación o carga del bean (en una acción real, esto sería el resultado de $bean->save())
-        $beanFromBlock = BeanFactory::newBean($block->dataBlock->module);  // Usamos el módulo del bloque
-        $beanFromBlock->id = '1234-uuid-5678';                             // ID del bean (ficticio)
-        $action = BeanModificationType::CREATED;                           // Acción realizada
-        // Debemos registrar el Bean y su modificación en la respuesta y el bloque de datos
-        $actionResult->registerBeanModificationFromBlock($beanFromBlock, $block, $action);
-
-        // CASO 2: Suponemos que creamos/modificamos otro bean no asociado directamente a ningún bloque de datos:
-        $beanNote = BeanFactory::newBean('Notes');         // Simulamos la creación de un bean de Nota
-        $beanNote->id = '8765-uuid-4321';                  // ID del bean (ficticio)
-        $action = BeanModificationType::UPDATED;           // Acción realizada
-        // Debemos registrar el Bean y su modificación en la respuesta
-        $actionResult->registerBeanModification($beanNote, $action);
+        // Supongamos que creamos un Bean basado en los datos
+        $newBean = BeanFactory::newBean('Notes');
+        $newBean->name = "Nota generada: " . $textValue;
+        $newBean->description = "Opción elegida: " . $selectValue;
         
-        return $actionResult;
+        // Vinculamos al bloque seleccionado (si tiene un bean guardado)
+        $parentRef = $block->dataBlock->getBeanReference();
+        if ($parentRef) {
+            $newBean->parent_type = $parentRef->moduleName;
+            $newBean->parent_id = $parentRef->beanId;
+        }
+        
+        $newBean->save();
+
+
+        // ------------------------------------------------------------------------
+        // 3. RESULTADO Y AUDITORÍA
+        // ------------------------------------------------------------------------
+
+        $result = new ActionResult(ResultStatus::OK, $actionConfig, "Acción de ejemplo finalizada.");
+
+        // REGISTRAR MODIFICACIONES (Fundamental para la trazabilidad)
+        
+        // Opción A: Si hemos modificado/creado un bean "suelto" (no ligado a un bloque del form)
+        // Usamos la nueva firma que acepta el objeto SugarBean directamente.
+        $result->registerBeanModification($newBean, BeanModificationType::CREATED);
+
+        // Opción B: Si hubiéramos modificado el bean del 'target_block'
+        // $result->registerBeanModificationFromBlock($blockBean, $block, BeanModificationType::UPDATED);
+
+        return $result;
     }
 }
