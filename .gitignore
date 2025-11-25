@@ -138,3 +138,6 @@ sdaRebuildError.txt
 
 # Ignore STIC internal files
 SticRepair.php
+
+# Do not ignore cache vendor library
+!vendor/psr/cache/
