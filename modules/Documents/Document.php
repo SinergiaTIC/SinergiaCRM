@@ -238,11 +238,20 @@ class Document extends File
         $mod_strings = return_module_language($current_language, 'Documents');
 
         if (!empty($this->document_revision_id)) {
+            // STIC-Custom 20251119 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/874
+            // Use a right join instead join to return the document information even if there is no associated user.
+            // $query = "SELECT users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date,
+            // 	 document_revisions.filename AS filename, document_revisions.revision AS revision,
+            // 	 document_revisions.file_ext AS file_ext, document_revisions.file_mime_type AS file_mime_type
+            // 	 FROM users, document_revisions
+            // 	 WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id'";            
             $query = "SELECT users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date,
             	 document_revisions.filename AS filename, document_revisions.revision AS revision,
             	 document_revisions.file_ext AS file_ext, document_revisions.file_mime_type AS file_mime_type
-            	 FROM users, document_revisions
-            	 WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id'";
+            	 FROM users 
+                 RIGHT JOIN document_revisions ON users.id = document_revisions.created_by
+                 WHERE document_revisions.id = '$this->document_revision_id'";
+            // END STIC-Custom
 
             $result = $this->db->query($query);
             $row = $this->db->fetchByAssoc($result);
