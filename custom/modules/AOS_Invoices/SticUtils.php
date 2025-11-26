@@ -25,8 +25,8 @@
 spl_autoload_register(function ($class) {
     // Configuración de namespaces y directorios
     $namespaces = [
-        'josemmo\\Verifactu\\' => __DIR__ . '/../../../SticInclude/vendor/Verifactu-PHP/src/',
-        'UXML\\' => __DIR__ . '/../../../SticInclude/vendor/uxml/src/',
+        'josemmo\\Verifactu\\' => __DIR__ . '/../../../SticInclude/vendor/josemmo/verifactu-php/src/',
+        'UXML\\' => __DIR__ . '/../../../SticInclude/vendor/josemmo/uxml/src/',
     ];
 
     // Buscar en cada namespace configurado
@@ -306,24 +306,24 @@ class AOS_InvoicesUtils
         }
 
         // 2. Depuración del Certificado (Verificar en sugarcrm.log)
-        // $certData = openssl_x509_parse($certs['cert']);
-        // if ($certData) {
-        //     $certSubject = json_encode($certData['subject']);
-        //     $certSerial = $certData['subject']['serialNumber'] ?? 'No encontrado';
-        //     $certValidTo = date('Y-m-d H:i:s', $certData['validTo_time_t']);
+        $certData = openssl_x509_parse($certs['cert']);
+        if ($certData) {
+            $certSubject = json_encode($certData['subject']);
+            $certSerial = $certData['subject']['serialNumber'] ?? 'No encontrado';
+            $certValidTo = date('Y-m-d H:i:s', $certData['validTo_time_t']);
             
-        //     $GLOBALS['log']->fatal("--- DEBUG VERIFACTU CERT ---");
-        //     $GLOBALS['log']->fatal("Subject: " . $certSubject);
-        //     $GLOBALS['log']->fatal("Serial (NIF esperado): " . $certSerial);
-        //     $GLOBALS['log']->fatal("NIF Configurado: " . $issuerNif);
-        //     $GLOBALS['log']->fatal("Válido hasta: " . $certValidTo);
+            $GLOBALS['log']->fatal("--- DEBUG VERIFACTU CERT ---");
+            $GLOBALS['log']->fatal("Subject: " . $certSubject);
+            $GLOBALS['log']->fatal("Serial (NIF esperado): " . $certSerial);
+            $GLOBALS['log']->fatal("NIF Configurado: " . $issuerNif);
+            $GLOBALS['log']->fatal("Válido hasta: " . $certValidTo);
             
-        //     // Advertencia si el NIF no coincide (limpiando prefijos comunes como IDCES-)
-        //     $cleanCertNif = preg_replace('/^.*-/', '', $certSerial);
-        //     if (strtoupper($cleanCertNif) !== strtoupper($issuerNif)) {
-        //         $GLOBALS['log']->fatal("¡ALERTA! El NIF del certificado ($cleanCertNif) NO COINCIDE con el NIF configurado ($issuerNif). Esto causará error 401/Rechazo.");
-        //     }
-        // }
+            // Advertencia si el NIF no coincide (limpiando prefijos comunes como IDCES-)
+            $cleanCertNif = preg_replace('/^.*-/', '', $certSerial);
+            if (strtoupper($cleanCertNif) !== strtoupper($issuerNif)) {
+                $GLOBALS['log']->fatal("¡ALERTA! El NIF del certificado ($cleanCertNif) NO COINCIDE con el NIF configurado ($issuerNif). Esto causará error 401/Rechazo.");
+            }
+        }
 
         // 3. Construcción limpia del PEM (Solo bloques válidos, sin Bag Attributes)
         // Función auxiliar para limpiar cabeceras extrañas
@@ -334,8 +334,9 @@ class AOS_InvoicesUtils
             return $str;
         };
 
-        // Orden: Clave Privada -> Certificado -> Intermedios
-        $pemContent = $cleanPemBlock($certs['pkey']) . "\n" . $cleanPemBlock($certs['cert']);
+        // Orden: Certificado -> Clave Privada -> Intermedios
+        // Ponemos el certificado primero para facilitar el parseo en SticAeatClient::isEntitySealCertificate
+        $pemContent = $cleanPemBlock($certs['cert']) . "\n" . $cleanPemBlock($certs['pkey']);
         
         if (isset($certs['extracerts']) && is_array($certs['extracerts'])) {
             foreach ($certs['extracerts'] as $extraCert) {

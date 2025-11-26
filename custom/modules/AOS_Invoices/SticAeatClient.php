@@ -58,27 +58,31 @@ class SticAeatClient extends AeatClient {
         }
 
         if (!$cert) {
-            $GLOBALS['log']->warn("SticAeatClient: Could not parse certificate to detect type.");
+            $GLOBALS['log']->warn("SticAeatClient: Could not parse certificate to detect type. Content length: " . strlen($content));
+            $GLOBALS['log']->warn("SticAeatClient: Cert Header: " . substr($content, 0, 100));
             return false;
         }
 
         $subject = $cert['subject'];
         
         // Debug
-        // $GLOBALS['log']->debug("SticAeatClient: Certificate Subject: " . print_r($subject, true));
+        $GLOBALS['log']->debug("SticAeatClient: Certificate Subject: " . json_encode($subject));
 
         // Logic to detect Entity Seal (Sello de Entidad)
         
         // 1. Check for "CSE" (Certificado Sello Electrónico) in Common Name
         if (isset($subject['CN']) && stripos($subject['CN'], 'CSE ') !== false) {
+             $GLOBALS['log']->debug("SticAeatClient: Detected Seal via CN (CSE)");
              return true;
         }
         
         // 2. Check for "Sello" in Common Name or Organizational Unit
         if (isset($subject['OU']) && stripos($subject['OU'], 'Sello') !== false) {
+            $GLOBALS['log']->debug("SticAeatClient: Detected Seal via OU (Sello)");
             return true;
         }
         if (isset($subject['CN']) && stripos($subject['CN'], 'Sello') !== false) {
+            $GLOBALS['log']->debug("SticAeatClient: Detected Seal via CN (Sello)");
             return true;
         }
 
@@ -88,6 +92,7 @@ class SticAeatClient extends AeatClient {
         $hasPersonName = isset($subject['givenName']) || isset($subject['surname']) || isset($subject['GN']) || isset($subject['SN']);
 
         if ($hasOrganization && !$hasPersonName) {
+            $GLOBALS['log']->debug("SticAeatClient: Detected Seal via Heuristic (Org without Person Name)");
             return true;
         }
 
