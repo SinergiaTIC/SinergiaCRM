@@ -1,0 +1,4 @@
+Bootstrap version: 5.3.8
+
+El fichero bootstrap.scoped.min.css ha estado modificado para que no interfiera con los estilos del crm
+Bootstrap se aplicará a elementos DOM dentro de un div con: class="stic_panel"

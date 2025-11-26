@@ -1,0 +1,58 @@
+<div class="w-100" x-data="{ showDetailsData:false, debugTabSelected:'bean' }">
+    <!-- Bean Details [DEBUG] -->
+    <stic-field-checkbox class="text-muted form-switch" x-model="showDetailsData" label="[Mostrar Detalles]"></stic-field-checkbox>
+    <div class="card p-2" x-show="showDetailsData">
+        <div class="stic-tabs">
+            <div class="stic-tab">
+                <input class="form-check-input" type="radio" id="debugBeanTab" x-model="debugTabSelected" value="bean"/>
+                <label class="form-label" for="debugBeanTab">Bean</label>
+            </div>
+            <div class="stic-tab">
+                <input class="form-check-input" type="radio" id="debugFormConfigTab" x-model="debugTabSelected" value="formConfig"/>
+                <label class="form-label" for="debugFormConfigTab">FormConfig</label>
+            </div>
+            <div class="stic-tab">
+                <input class="form-check-input" type="radio" id="debugDataBlocksTab" x-model="debugTabSelected" value="dataBlocks"/>
+                <label class="form-label" for="debugDataBlocksTab">DataBlocks</label>
+            </div>
+            <div class="stic-tab">
+                <input class="form-check-input" type="radio" id="debugFlowsTab" x-model="debugTabSelected" value="flows"/>
+                <label class="form-label" for="debugFlowsTab">Flows</label>
+            </div>
+            <div class="stic-tab">
+                <input class="form-check-input" type="radio" id="debugLayoutsTab" x-model="debugTabSelected" value="layouts"/>
+                <label class="form-label" for="debugLayoutsTab">Layouts</label>
+            </div>
+        </div>
+        <template x-if="debugTabSelected=='bean'">
+            <div class="stic-tabcontent">
+                <h3 class="card-title" x-text="'Bean: ' + bean.name"></h3>
+                <div class="overflow-auto" id="detailsBean" data-model="bean" x-init="sticControls.elemTableObject($el);"></div>
+            </div>
+        </template>
+        <template x-if="debugTabSelected=='formConfig'">
+            <div class="stic-tabcontent">
+                <h3 class="card-title" >FormConfig</h3>
+                <pre id="detailsFormConfig" x-text="JSON.stringify(formConfig, null, 2);"></pre>
+            </div>
+        </template>
+        <template x-if="debugTabSelected=='dataBlocks'">
+            <div class="stic-tabcontent">
+                <h3 class="card-title">DataBlocks</h3>
+                <div class="overflow-auto" id="detailsDataBlocks" data-objects="formConfig.data_blocks" x-init="sticControls.elemTableObjects($el);"></div>
+            </div>
+        </template>
+        <template x-if="debugTabSelected=='flows'">
+            <div class="stic-tabcontent">
+                <h3 class="card-title">Flows</h3>
+                <div class="overflow-auto" id="detailsFlows" data-objects="formConfig.flows" x-init="sticControls.elemTableObjects($el);"></div>
+            </div>
+        </template>
+        <template x-if="debugTabSelected=='layouts'">
+            <div class="stic-tabcontent">
+                <h3 class="card-title">Layouts</h3>
+                <div class="overflow-auto" id="detailsLayouts" data-objects="formConfig.layouts" x-init="sticControls.elemTableObjects($el);"></div>
+            </div>
+        </template>
+    </div>
+</div>
