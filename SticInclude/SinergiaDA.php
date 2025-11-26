@@ -93,6 +93,7 @@ class ExternalReporting
     private $sdaSettings = [];
     private $langCode;
     private $autoRelationshipsRegistered = []; // Array to store all modules auto relationships already registered for use in ACLs
+    private $lastLogTime;
 
     public function __construct()
     {
@@ -146,6 +147,7 @@ class ExternalReporting
     {
 
         $startTime = microtime(true);
+        $this->lastLogTime = $startTime;
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA rebuild script starts!");
 
         global $app_list_strings, $sugar_config;
@@ -190,14 +192,17 @@ class ExternalReporting
 
         // Before create any view, delete previous old views
         $this->deleteOldViews();
+        $this->logStep('deleteOldViews', __LINE__, __METHOD__);
 
         $this->info .= "<div><a href='index.php?module=Administration&action=createReportingMySQLViews&print_debug=1'>All modules</a> </div>";
 
         // Reset general metadata tables
         $this->resetMetadataTables();
+        $this->logStep('resetMetadataTables', __LINE__, __METHOD__);
 
         // Reset user metadata views
         $this->resetMetadataViews();
+        $this->logStep('resetMetadataViews', __LINE__, __METHOD__);
 
         $this->info .= "<h2>Creating MySQL/MariaDB views & tables</h2>";
 
@@ -1060,16 +1065,20 @@ class ExternalReporting
             element.innerHTML += '{$isTable}';
             element.style.color='blue';
             });</script>";
+            $this->logStep("Processing module $moduleName", __LINE__, __METHOD__);
         }
 
         // Get & populate users ACL metadata (must run after $modulesList is created)
         $this->getAndSaveUserACL($modulesList);
+        $this->logStep('getAndSaveUserACL', __LINE__, __METHOD__);
 
         // We create the views Join Multienum, right now that we already have all the views and the complete metadata table.
         $this->createMultiEnumJoinViews();
+        $this->logStep('createMultiEnumJoinViews', __LINE__, __METHOD__);
 
         // Clone the permissions records for autorelationships
         $this->clonePermissionRecordsForAutorelationships();
+        $this->logStep('clonePermissionRecordsForAutorelationships', __LINE__, __METHOD__);
 
         $this->checkSdaColumns();
 
@@ -1079,6 +1088,7 @@ class ExternalReporting
 
         if ($callUpdateModel) {
             $this->updateModelCall();
+            $this->logStep('updateModelCall', __LINE__, __METHOD__);
         }
 
         $this->info .= '<script>
@@ -1879,6 +1889,7 @@ class ExternalReporting
     {
         // Track total processing time
         $startTime = microtime(true);
+        $this->lastLogTime = $startTime;
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Starting ACL processing');
 
         global $sugar_config;
@@ -1907,6 +1918,7 @@ class ExternalReporting
                 $userGroups[$group['user_name']][] = $group['group'];
             }
         }
+        $this->logStep('Preloading user groups', __LINE__, __METHOD__);
 
         // Query to get active non-admin users
         $nonAdminQuery = "SELECT id, user_name, is_admin
@@ -1917,11 +1929,15 @@ class ExternalReporting
 
         $nonAdminUsers = $db->query($nonAdminQuery);
         $userQueries = [$nonAdminUsers];
+        $this->logStep('Querying non-admin users', __LINE__, __METHOD__);
 
         // Process each user query result set
         foreach ($userQueries as $users) {
             while ($user = $db->fetchByAssoc($users, false)) {
                 $userStartTime = microtime(true);
+
+                // Fetch all actions for the user once to avoid multiple DB queries inside the loop
+                $allUserActions = ACLAction::getUserActions($user['id']);
 
                 // Process each module's permissions for current user
                 foreach ($modules as $moduleName => $moduleData) {
@@ -1930,8 +1946,8 @@ class ExternalReporting
                         continue;
                     }
 
-                    $userActions = ACLAction::getUserActions($user['id'], false, $moduleName);
-                    $value = $userActions[$moduleName]['module'] ?? $userActions['module'] ?? null;
+                    // Use the pre-fetched actions
+                    $value = $allUserActions[$moduleName]['module'] ?? null;
 
                     // Only process valid permission configurations
                     if (!empty($value) && $user['is_admin'] == 0 &&
@@ -1991,11 +2007,13 @@ class ExternalReporting
                 // Record processing time for current user
                 $userEndTime = microtime(true);
                 $userProcessingTime = round($userEndTime - $userStartTime, 4);
+                $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing user {$user['user_name']} took $userProcessingTime seconds");
             }
 
             // Insert accumulated permissions in batch
             if (!empty($permissionsBatch)) {
                 $this->batchInsertPermissions($permissionsBatch);
+                $this->logStep('batchInsertPermissions', __LINE__, __METHOD__);
                 unset($permissionsBatch);
             }
         }
@@ -2293,6 +2311,7 @@ class ExternalReporting
         return $string;
     }
 
+
     /**
      * Function to run post-rebuild SQL scripts.
      */
@@ -2370,6 +2389,26 @@ class ExternalReporting
 
     }
 
+    /**
+     * Logs the elapsed time since the last log entry.
+     *
+     * @param string $message The message to log.
+     * @param int $line The line number where the log is called.
+     * @param string $method The method name where the log is called.
+     */
+    private function logStep($message, $line, $method)
+    {
+        $currentTime = microtime(true);
+        if (!isset($this->lastLogTime)) {
+            $this->lastLogTime = $currentTime;
+            $elapsed = 0;
+        } else {
+            $elapsed = round($currentTime - $this->lastLogTime, 4);
+        }
+
+        $GLOBALS['log']->stic("Line $line: $method: $message took $elapsed seconds");
+        $this->lastLogTime = $currentTime;
+    }
 }
 
 /**
