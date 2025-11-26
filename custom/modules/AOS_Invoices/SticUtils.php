@@ -22,34 +22,11 @@
  */
 
 // Autoloader para Verifactu-PHP y sus dependencias (UXML)
-spl_autoload_register(function ($class) {
-    // Configuración de namespaces y directorios
-    $namespaces = [
-        'josemmo\\Verifactu\\' => __DIR__ . '/../../../SticInclude/vendor/josemmo/verifactu-php/src/',
-        'UXML\\' => __DIR__ . '/../../../SticInclude/vendor/josemmo/uxml/src/',
-    ];
-
-    // Buscar en cada namespace configurado
-    foreach ($namespaces as $prefix => $base_dir) {
-        $len = strlen($prefix);
-        if (strncmp($prefix, $class, $len) !== 0) {
-            // No es una clase de este namespace
-            continue;
-        }
-
-        // Obtener el nombre relativo de la clase
-        $relative_class = substr($class, $len);
-
-        // Reemplazar el namespace con separadores de directorio
-        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
-        // Si el archivo existe, cargarlo
-        if (file_exists($file)) {
-            require_once $file;
-            return;
-        }
-    }
-});
+$loader = require __DIR__ . '/../../../SticInclude/vendor/autoload.php';
+if ($loader instanceof \Composer\Autoload\ClassLoader) {
+    $loader->unregister();
+    $loader->register(true); // Prepend to ensure our dependencies (Symfony Validator 7.3) are loaded instead of the CRM's old ones
+}
 
 use DateTimeImmutable;
 use josemmo\Verifactu\Models\ComputerSystem;
