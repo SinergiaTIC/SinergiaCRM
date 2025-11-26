@@ -93,6 +93,7 @@ class ExternalReporting
     private $sdaSettings = [];
     private $langCode;
     private $autoRelationshipsRegistered = []; // Array to store all modules auto relationships already registered for use in ACLs
+    private $lastLogTime;
 
     public function __construct()
     {
@@ -146,6 +147,7 @@ class ExternalReporting
     {
 
         $startTime = microtime(true);
+        $this->lastLogTime = $startTime;
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA rebuild script starts!");
 
         global $app_list_strings, $sugar_config;
@@ -190,14 +192,17 @@ class ExternalReporting
 
         // Before create any view, delete previous old views
         $this->deleteOldViews();
+        $this->logStep('deleteOldViews', __LINE__, __METHOD__);
 
         $this->info .= "<div><a href='index.php?module=Administration&action=createReportingMySQLViews&print_debug=1'>All modules</a> </div>";
 
         // Reset general metadata tables
         $this->resetMetadataTables();
+        $this->logStep('resetMetadataTables', __LINE__, __METHOD__);
 
         // Reset user metadata views
         $this->resetMetadataViews();
+        $this->logStep('resetMetadataViews', __LINE__, __METHOD__);
 
         $this->info .= "<h2>Creating MySQL/MariaDB views & tables</h2>";
 
@@ -226,6 +231,10 @@ class ExternalReporting
         // since otherwise it would never be included, because it is not included directly in the application menu
         if (in_array('Project', $modulesList)) {
             $modulesList['ProjectTask'] = 'ProjectTask';
+        }
+
+        if (in_array('Campaigns', $modulesList)) {
+            $modulesList['CampaignLog'] = 'CampaignLog';
         }
 
         // If Surveys module is enabled, we automatically activate the related Surveys modules
@@ -891,7 +900,7 @@ class ExternalReporting
                     $this->addMetadataRecord(
                         'sda_def_tables',
                         [
-                            'table' =>$this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$key}", 64),
+                            'table' => $this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$key}", 64),
                             'label' => $qualifiedLabel,
                             'description' => addslashes($qualifiedLabel),
                         ]
@@ -1029,7 +1038,7 @@ class ExternalReporting
                     }else{
                         $indexSql = "ALTER TABLE {$viewName} ADD INDEX  {$indexName} ({$indexColumn}) USING BTREE";
                     }
-                    
+
                     if (!$db->query($indexSql)) {
                         $lastSQLError = array_pop(explode(':', $db->last_error));
                         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$indexSql}]");
@@ -1056,22 +1065,30 @@ class ExternalReporting
             element.innerHTML += '{$isTable}';
             element.style.color='blue';
             });</script>";
+            $this->logStep("Processing module $moduleName", __LINE__, __METHOD__);
         }
 
         // Get & populate users ACL metadata (must run after $modulesList is created)
         $this->getAndSaveUserACL($modulesList);
+        $this->logStep('getAndSaveUserACL', __LINE__, __METHOD__);
 
         // We create the views Join Multienum, right now that we already have all the views and the complete metadata table.
         $this->createMultiEnumJoinViews();
+        $this->logStep('createMultiEnumJoinViews', __LINE__, __METHOD__);
 
         // Clone the permissions records for autorelationships
         $this->clonePermissionRecordsForAutorelationships();
+        $this->logStep('clonePermissionRecordsForAutorelationships', __LINE__, __METHOD__);
 
         $this->checkSdaColumns();
+
         $this->checkSdaTablesInViews();
+
+        $this->runPostRebuildSQLScripts($modulesList);
 
         if ($callUpdateModel) {
             $this->updateModelCall();
+            $this->logStep('updateModelCall', __LINE__, __METHOD__);
         }
 
         $this->info .= '<script>
@@ -1284,7 +1301,7 @@ class ExternalReporting
                     ];
                 } else {
                     // if an auto relationship
-                    $targetTable = $this->truncateStringMiddle("{$this->viewPrefix}_{$field['table']}_{$field['link']}",64);
+                    $targetTable = $this->truncateStringMiddle("{$this->viewPrefix}_{$field['table']}_{$field['link']}", 64);
                     $label = "{$tableLabel}|{$tableLabel} ({$field['rLabel']})";
 
                     // Add metadata record
@@ -1474,7 +1491,8 @@ class ExternalReporting
                                     1
                             ) email,
                             u.user_hash AS password,
-                            if(u.status='Active' AND uc.sda_allowed_c=1 ,1,0) as 'active'
+                            if(u.status='Active' AND uc.sda_allowed_c IN (1,2) ,1,0) as 'active',
+                            if(u.status='Active' AND uc.sda_allowed_c=2 ,1,0) as 'readonly'
                         FROM
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c
@@ -1871,6 +1889,7 @@ class ExternalReporting
     {
         // Track total processing time
         $startTime = microtime(true);
+        $this->lastLogTime = $startTime;
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Starting ACL processing');
 
         global $sugar_config;
@@ -1899,6 +1918,7 @@ class ExternalReporting
                 $userGroups[$group['user_name']][] = $group['group'];
             }
         }
+        $this->logStep('Preloading user groups', __LINE__, __METHOD__);
 
         // Query to get active non-admin users
         $nonAdminQuery = "SELECT id, user_name, is_admin
@@ -1909,11 +1929,15 @@ class ExternalReporting
 
         $nonAdminUsers = $db->query($nonAdminQuery);
         $userQueries = [$nonAdminUsers];
+        $this->logStep('Querying non-admin users', __LINE__, __METHOD__);
 
         // Process each user query result set
         foreach ($userQueries as $users) {
             while ($user = $db->fetchByAssoc($users, false)) {
                 $userStartTime = microtime(true);
+
+                // Fetch all actions for the user once to avoid multiple DB queries inside the loop
+                $allUserActions = ACLAction::getUserActions($user['id']);
 
                 // Process each module's permissions for current user
                 foreach ($modules as $moduleName => $moduleData) {
@@ -1922,8 +1946,8 @@ class ExternalReporting
                         continue;
                     }
 
-                    $userActions = ACLAction::getUserActions($user['id'], false, $moduleName);
-                    $value = $userActions[$moduleName]['module'] ?? $userActions['module'] ?? null;
+                    // Use the pre-fetched actions
+                    $value = $allUserActions[$moduleName]['module'] ?? null;
 
                     // Only process valid permission configurations
                     if (!empty($value) && $user['is_admin'] == 0 &&
@@ -1983,11 +2007,13 @@ class ExternalReporting
                 // Record processing time for current user
                 $userEndTime = microtime(true);
                 $userProcessingTime = round($userEndTime - $userStartTime, 4);
+                $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing user {$user['user_name']} took $userProcessingTime seconds");
             }
 
             // Insert accumulated permissions in batch
             if (!empty($permissionsBatch)) {
                 $this->batchInsertPermissions($permissionsBatch);
+                $this->logStep('batchInsertPermissions', __LINE__, __METHOD__);
                 unset($permissionsBatch);
             }
         }
@@ -2285,6 +2311,104 @@ class ExternalReporting
         return $string;
     }
 
+
+    /**
+     * Function to run post-rebuild SQL scripts.
+     */
+    public function runPostRebuildSQLScripts($modulesList)
+    {
+        global $db;
+
+        // 1) Include script for managing campaign_log view && relationships if Campaigns module is enabled
+        // Replace campaign_log view with this version which include differente LEFT JOINS and fields
+        // to allow to access to related modules data via SinergiaDA relationships
+
+        if (in_array('Campaigns', $modulesList)) {
+            $this->info .= "<h2>Rebuilding SinergiaDA campaign_log view and relationships</h2>";
+
+            $campaignLogQuerys['view'] = "CREATE OR REPLACE VIEW sda_campaign_log AS
+            SELECT
+                m.id AS id,
+                IFNULL(t.tracker_name, '') AS target_tracker_key,
+                IFNULL(m.target_id, '') AS target_id,
+                IFNULL(m.target_type, '') AS target_type,
+                IFNULL(m.activity_type, '') AS activity_type,
+                IFNULL(
+                    CONVERT_TZ(m.activity_date, 'UTC', 'Europe/Madrid'),
+                    ''
+                ) AS activity_date,
+                IFNULL(m.related_id, '') AS related_id,
+                IFNULL(m.related_type, '') AS related_type,
+                IFNULL(m.archived, '') AS archived,
+                CONVERT(IFNULL(m.hits, ''), decimal(20, 4)) AS hits,
+                IFNULL(
+                    CONVERT_TZ(m.date_modified, 'UTC', 'Europe/Madrid'),
+                    ''
+                ) AS date_modified,
+                IFNULL(m.more_information, '') AS more_information,
+                1 as N,
+                IFNULL(m.campaign_id, '') AS campaign_id,
+                c.id AS contact_id,
+                u.id AS user_id,
+                l.id AS lead_id,
+                a.id AS account_id
+            FROM
+                campaign_log AS m
+                LEFT JOIN campaigns ON campaigns.id = m.campaign_id AND campaigns.deleted = 0
+                LEFT JOIN contacts AS c ON c.id = m.target_id AND c.deleted = 0
+                LEFT JOIN users AS u ON u.id = m.target_id AND u.deleted = 0
+                LEFT JOIN leads AS l ON l.id = m.target_id AND l.deleted = 0
+                LEFT JOIN accounts AS a ON a.id = m.target_id AND a.deleted = 0
+                LEFT JOIN campaign_trkrs t ON t.id = m.target_tracker_key AND t.deleted = 0
+            WHERE
+                m.deleted = 0
+            GROUP BY
+                m.id;";
+
+            // Define SinergiaDA relationships for the new fields in the view
+            global $app_list_strings;
+
+            $campaignLogQuerys['relationships'] = "INSERT INTO sda_def_relationships
+                (id, source_table, source_column, target_table, target_column, label, info)
+            VALUES
+                ('campaign_log_contacts', 'sda_campaign_log', 'contact_id', 'sda_contacts', 'id', '{$app_list_strings['moduleList']['Contacts']}', 'Direct SQL relationship'),
+                ('campaign_log_users', 'sda_campaign_log', 'user_id', 'sda_users', 'id', '{$app_list_strings['moduleList']['Users']}', 'Direct SQL relationship'),
+                ('campaign_log_leads', 'sda_campaign_log', 'lead_id', 'sda_leads', 'id', '{$app_list_strings['moduleList']['Leads']}', 'Direct SQL relationship'),
+                ('campaign_log_accounts', 'sda_campaign_log', 'account_id', 'sda_accounts', 'id', '{$app_list_strings['moduleList']['Accounts']}', 'Direct SQL relationship');";
+
+            foreach ($campaignLogQuerys as $key => $value) {
+                if (!$db->query($value)) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Error creating SinergiaDA campaign_log view or relationships: ' . $db->lastError());
+                    $this->info .= '[FATAL: Error rehaciendo ' . $key . '  sda_campaign_log..]';
+                } else {
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'SinergiaDA campaign_log view or relationships created successfully.');
+                    $this->info .= ' - OK: SinergiaDA  ' . $key . ' sda_campaign_log creadas correctamente.<br>';
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Logs the elapsed time since the last log entry.
+     *
+     * @param string $message The message to log.
+     * @param int $line The line number where the log is called.
+     * @param string $method The method name where the log is called.
+     */
+    private function logStep($message, $line, $method)
+    {
+        $currentTime = microtime(true);
+        if (!isset($this->lastLogTime)) {
+            $this->lastLogTime = $currentTime;
+            $elapsed = 0;
+        } else {
+            $elapsed = round($currentTime - $this->lastLogTime, 4);
+        }
+
+        $GLOBALS['log']->stic("Line $line: $method: $message took $elapsed seconds");
+        $this->lastLogTime = $currentTime;
+    }
 }
 
 /**

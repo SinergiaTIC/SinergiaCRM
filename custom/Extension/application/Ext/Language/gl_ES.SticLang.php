@@ -3639,6 +3639,11 @@ $app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
 $app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inicio de suplantación';
 $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fin de suplantación';
 
+// SinergiaDA: Niveis de acceso dos usuarios
+$app_list_strings['sda_users_access_list']['0'] = 'Sen acceso';
+$app_list_strings['sda_users_access_list']['1'] = 'Acceso completo';
+$app_list_strings['sda_users_access_list']['2'] = 'Acceso de só lectura';
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)

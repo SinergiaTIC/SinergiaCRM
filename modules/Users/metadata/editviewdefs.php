@@ -182,8 +182,8 @@ array(
                       'studio' => 'visible',
                       'label' => 'LBL_STIC_WORK_CALENDAR',
                     ),
-                  ),
-                  4 => array (
+                ),
+                4 => array (
                     0 => array (
                       'name' => 'factor_auth',
                       'label' => 'LBL_FACTOR_AUTH',
@@ -194,6 +194,13 @@ array(
                       'label' => 'LBL_STIC_CLOCK',
                     ),
                   ),
+                5 => array (
+                    0 => array (
+                      'name' => 'factor_auth',
+                      'label' => 'LBL_FACTOR_AUTH',
+                    ),
+                    1 => array ()
+                ),
               ),
             'LBL_EMPLOYEE_INFORMATION' => array(
                 0 => array(
