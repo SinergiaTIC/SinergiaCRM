@@ -682,4 +682,74 @@ EOQ;
         }
     }
 
+
+    /**
+     * Returns the list of roles (ID and name) associated with a Security Group
+     *
+     * @param string $groupId Security Group ID
+     * @return array List of roles (ID and name) associated with a Security Group
+     */
+    public static function getRolesByUserSecurityGroup($groupId)
+    {
+        global $db;
+
+        $sql = "
+            SELECT ar.id, ar.name
+            FROM acl_roles ar
+            INNER JOIN securitygroups_acl_roles sg_ar 
+                ON sg_ar.role_id = ar.id
+            WHERE sg_ar.securitygroup_id = '" . $groupId. "'
+            AND sg_ar.deleted = 0
+            AND ar.deleted = 0
+        ";
+
+        $result = $db->query($sql);
+
+        $roles = [];
+        while ($row = $db->fetchByAssoc($result)) {
+            $roles[] = [
+                'id' => $row['id'],
+                'name' => $row['name']
+            ];
+        }
+
+        return $roles;
+    }
+
+    /**
+     * Check if the user has $action permissions through directly related roles or through security groups 
+     *
+     * @param string $userId 
+     * @param string $module
+     * @return array $action 
+     */
+    public static function hasRolePermission($userId, $module, $action)
+    {
+        $hasActionAclsDefined = false;
+        $hasUserRole = false; 
+        $aclRole = BeanFactory::newBean('ACLRoles');
+        if (empty($aclRole->getUserRoles($userId))) {
+            $securityGroup = new SecurityGroup();
+            $userSecurityGroups = $securityGroup->getUserSecurityGroups($userId);
+            if ($userSecurityGroups) {
+                foreach ($userSecurityGroups as $userSecurityGroup) {
+                    $roles = SticUtils::getRolesByUserSecurityGroup($userSecurityGroup['id']);
+                    if (!empty($roles)) {
+                        $hasUserRole = true; 
+                        break;
+                    }
+                }
+            }
+        } else {
+            $hasUserRole = true; 
+        }
+
+        if ($hasUserRole) { 
+            $hasActionAclsDefined = ACLController::checkAccess($module, $action);
+        }
+
+        return $hasActionAclsDefined;
+    }
+
+
 }
