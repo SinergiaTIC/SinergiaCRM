@@ -71,6 +71,7 @@ function changeParentQSSearchView(field) {
     var sqsId = form.id + "_" + field.id;
     var typeField =  form.elements["{{$vardef.type_name}}"];
     var new_module = typeField.value;
+    sqs_objects[sqsId] = {}; 
     if(typeof(disabledModules[new_module]) != 'undefined') {
 		sqs_objects[sqsId]["disable"] = true;
 		field.readOnly = true;
