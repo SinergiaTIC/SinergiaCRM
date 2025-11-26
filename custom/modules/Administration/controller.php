@@ -178,9 +178,10 @@ class CustomAdministrationController extends AdministrationController
 
             // 2. Prepare Blowfish encryption
             require_once 'include/utils/encryption_utils.php';
+            global $sugar_config;
 
             // use a specific key for certificates
-            $key = blowfishGetKey('stic_cert');
+            $key = $sugar_config['unique_key'];
 
             // 3. Encrypt
             $encryptedContent = blowfishEncode($key, $fileContent);

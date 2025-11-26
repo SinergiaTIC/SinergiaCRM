@@ -22,13 +22,13 @@ class AeatClient {
     public const NS_SUM = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroLR.xsd';
     public const NS_SUM1 = 'https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroInformacion.xsd';
 
-    private readonly ComputerSystem $system;
-    private readonly FiscalIdentifier $taxpayer;
-    private readonly Client $client;
-    private ?string $certificatePath = null;
-    private ?string $certificatePassword = null;
-    private ?FiscalIdentifier $representative = null;
-    private bool $isProduction = true;
+    protected readonly ComputerSystem $system;
+    protected readonly FiscalIdentifier $taxpayer;
+    protected readonly Client $client;
+    protected ?string $certificatePath = null;
+    protected ?string $certificatePassword = null;
+    protected ?FiscalIdentifier $representative = null;
+    protected bool $isProduction = true;
 
     /**
      * Class constructor
@@ -163,7 +163,7 @@ class AeatClient {
      *
      * @return string Base URI
      */
-    private function getBaseUri(): string {
+    protected function getBaseUri(): string {
         return $this->isProduction ? 'https://www1.agenciatributaria.gob.es' : 'https://prewww1.aeat.es';
     }
 }

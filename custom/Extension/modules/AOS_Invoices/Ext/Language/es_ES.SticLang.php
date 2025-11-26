@@ -56,3 +56,4 @@ $mod_strings['LBL_VERIFACTU_CANCEL_ID_HELP'] = 'En caso de facturas rectificativ
 $mod_strings['LBL_SIGNER_SEND_TO_AEAT'] = 'Enviar a AEAT';
 $mod_strings['LBL_AEAT_STATUS_PANEL'] = 'Estado de la factura en la AEAT';
 $mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT'] = 'La factura no puede ser enviada a la AEAT. El estado debe ser "Emitida" y el estado AEAT debe ser diferente de "Aceptada".';
+$mod_strings['LBL_MISSING_SETTINGS'] = 'Faltan configuraciones obligatorias: contraseña del certificado (GENERAL_CERTIFICATE_PASSWORD), NIF de la organización (GENERAL_ORGANIZATION_ID) o nombre de la organización (GENERAL_ORGANIZATION_NAME). Por favor, revise las configuraciones de SinergiaCRM.';
