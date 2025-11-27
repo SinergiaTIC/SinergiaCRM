@@ -119,6 +119,7 @@ array (
             'studio' => 'visible',
             'label' => 'LBL_STATUS',
           ),
+          1 => array(),
         ),
         4 => 
         array (
