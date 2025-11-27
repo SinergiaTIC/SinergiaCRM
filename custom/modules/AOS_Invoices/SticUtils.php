@@ -41,8 +41,6 @@ use josemmo\Verifactu\Models\Records\TaxType;
 use josemmo\Verifactu\Services\AeatClient;
 use josemmo\Verifactu\Services\QrGenerator;
 
-require_once 'custom/modules/AOS_Invoices/SticAeatClient.php';
-
 /**
  * Utility class for AOS_Invoices Verifactu integration
  */
@@ -243,7 +241,7 @@ class AOS_InvoicesUtils
         $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
 
         // Create AEAT client
-        $client = new SticAeatClient($system, $taxpayer);
+        $client = new AeatClient($system, $taxpayer);
 
         // Configure certificate
         $encryptedCertPath = 'custom/certificates/cert_encrypted.bin';
@@ -312,7 +310,7 @@ class AOS_InvoicesUtils
         };
 
         // Orden: Certificado -> Clave Privada -> Intermedios
-        // Ponemos el certificado primero para facilitar el parseo en SticAeatClient::isEntitySealCertificate
+        // Ponemos el certificado primero para facilitar el parseo en AeatClient::isEntitySealCertificate
         $pemContent = $cleanPemBlock($certs['cert']) . "\n" . $cleanPemBlock($certs['pkey']);
         
         if (isset($certs['extracerts']) && is_array($certs['extracerts'])) {
