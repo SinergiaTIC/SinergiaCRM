@@ -912,11 +912,11 @@ class KReportQuery {
                // https://github.com/SinergiaTIC/SinergiaCRM/pull/889
                $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
                if ($actionPermission == ACL_ALLOW_NONE) {
-                   if (empty($this->whereString)) {
-                        $this->whereString = " ( 0 = 1 ) ";
-                     } else {
-                        $this->whereString .= " AND ( 0 = 1) ";
-                     }
+                  if (empty($this->whereString)) {
+                     $this->whereString = " ( 0 = 1 ) ";
+                  } else {
+                     $this->whereString .= " AND ( 0 = 1 ) ";
+                  }
                }
                // END STIC Custom
 
