@@ -21,6 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-// Agrupación de subpaneis
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupación de subpaneis';
-$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Cree os grupos e arrastre os módulos apropiados neles para definir as agrupacións de subpaneles que se mostrarán aos usuarios que elixen ver os módulos agrupados en vistas detalladas. Se quere cambiar o menú principal, debe facelo <a href="index.php?module=Administration&action=SticManageMainMenu">aquí</a>.';
+// Agrupación de subpaneles
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupación de subpaneles';
+$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Cree los grupos y arrastre los módulos que corresponda para definir las agrupaciones de subpaneles que se mostrarán a los usuarios que elijan ver los módulos agrupados en las vistas de detalle. Si desea cambiar el menú principal, puede hacerlo <a href="index.php?module=Administration&action=SticManageMainMenu">aquí</a>.';
