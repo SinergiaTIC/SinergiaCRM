@@ -289,7 +289,7 @@
                                                
                                                 <!-- Type: crmRecord -->
                                                 <template x-if="paramDef.type === 'crmRecord'">
-                                                    <div x-data="WizardStep3.editCrmRecordParamxData(paramDef, param)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
+                                                    <div x-data="WizardStep3.editCrmRecordParamxData(param, paramDef.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
                                                         <template x-if="allowedModules.length > 1">
                                                             <div>
                                                                 <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_MODULE')"></label>
@@ -335,12 +335,104 @@
                                                                 <div class="text-muted small fst-italic px-2">Selecciona un tipus per configurar el valor.</div>
                                                             </template>
 
+                                                            <!-- Resolved Type: empty -->
                                                             <template x-if="activeOpt && activeOpt.resolvedType === 'empty'">
-                                                                <div class="text-success small px-2"><i class="suitepicon suitepicon-action-confirm me-1"></i> Opción seleccionada.</div>
+                                                                <div class="text-success small px-2">
+                                                                    <i class="suitepicon suitepicon-action-confirm me-1"></i> Opción seleccionada.
+                                                                </div>
                                                             </template>
 
+                                                            <!-- Resolved Type: value -->
                                                             <template x-if="activeOpt && activeOpt.resolvedType === 'value'">
                                                                 <input type="text" class="form-control" x-model="param.value" placeholder="Valor...">
+                                                            </template>
+
+                                                            <!-- Resolved Type: value -->
+                                                            <template x-if="activeOpt && activeOpt.resolvedType === 'value'">
+                                                                <div>
+                                                                    <!-- DataType: text, date, datetime-local, time, email, tel, url -->
+                                                                    <template x-if="['text', 'date', 'datetime-local', 'time', 'email', 'tel', 'url'].includes(activeOpt.supportedDataTypes[0]||'text'))">
+                                                                        <input :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" :type="activeOpt.supportedDataTypes[0]||'text'" class="form-control" 
+                                                                               x-model="param.value" :required="paramDef.required">
+                                                                    </template>
+                                                                    
+                                                                    <!-- DataType: integer, float -->
+                                                                    <template x-if="['integer', 'float'].includes(activeOpt.supportedDataTypes[0]||'text')">
+                                                                        <input :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" type="number" class="form-control" 
+                                                                               x-model="param.value" :required="paramDef.required">
+                                                                    </template>
+                                                                    
+                                                                    <!-- Type: Value, DataType: boolean -->
+                                                                    <template x-if="(activeOpt.supportedDataTypes[0]||'text') == 'boolean'">
+                                                                        <div class="form-check form-switch">
+                                                                            <input :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" type="checkbox" class="form-check-input" 
+                                                                                   x-model="param.value" :required="paramDef.required">
+                                                                        </div>
+                                                                    </template>
+
+                                                                    <!-- Type: Value, DataType: textarea -->
+                                                                    <template x-if="(activeOpt.supportedDataTypes[0]||'text') == 'textarea'">
+                                                                        <textarea :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-control" rows="2" 
+                                                                                x-model="param.value" :required="paramDef.required"></textarea>
+                                                                    </template>
+                                                                    
+                                                                    <!-- Type: Value, DataType: select -->
+                                                                    <!-- <template x-if="(activeOpt.supportedDataTypes[0]||'text') === 'select'">
+                                                                        <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value">
+                                                                            <template x-for="opt in paramDef.options">
+                                                                                <option :value="opt.value" x-text="opt.text"></option>
+                                                                            </template>
+                                                                        </select>
+                                                                    </template> -->
+
+                                                                    <!-- Type: field, field_list -->
+                                                                    <template x-if="['field', 'field_list'].includes((activeOpt.supportedDataTypes[0]||'text'))">
+                                                                        <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" :multiple="activeOpt.supportedDataTypes[0]=='field_list'">
+                                                                            <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes)" :key="field.id">
+                                                                                <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)"></option>
+                                                                            </template>
+                                                                        </select>
+                                                                    </template>
+
+                                                                    <!-- Type: dataBlock -->
+                                                                    <template x-if="paramDef.type === 'dataBlock'">
+                                                                        <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" 
+                                                                                @change="param.value_text = $event.target.options[$event.target.selectedIndex].text">
+                                                                            <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(paramDef.supportedModules)" :key="block.id">
+                                                                                <option :value="block.id" x-text="block.text"></option>
+                                                                            </template>
+                                                                        </select>
+                                                                    </template>
+                                                                
+                                                                    <!-- Type: crmRecord -->
+                                                                    <template x-if="paramDef.type === 'crmRecord'">
+                                                                        <div x-data="WizardStep3.editCrmRecordParamxData(param, paramDef.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
+                                                                            <template x-if="allowedModules.length > 1">
+                                                                                <div>
+                                                                                    <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_MODULE')"></label>
+                                                                                    <select class="form-select mb-2" x-model="selectedModule" @change="onModuleChange()">
+                                                                                        <template x-for="mod in allowedModules" :key="mod.name">
+                                                                                            <option :value="mod.name" x-text="mod.text"></option>
+                                                                                        </template>
+                                                                                    </select>
+                                                                                    <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_RECORD')"></label>
+                                                                                </div>
+                                                                            </template>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control" type="text" :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name+'_name'" 
+                                                                                    x-model="param.value_text" readonly style="background-color: #fff; cursor: default;"/>
+                                                                                <input type="hidden" :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name+'_id'" x-model="rawId" />
+                                                                                <button class="btn btn-outline-secondary" type="button" :disabled="!selectedModule"
+                                                                                        @click="openPopUp('ModalAction-param-' + paramDef.name+'_'+activeOpt.name, selectedModule)"> 
+                                                                                    <span class="suitepicon suitepicon-action-select"></span>
+                                                                                </button>
+                                                                                <button class="btn btn-outline-secondary" type="button" @click="rawId=''; param.value_text='';">
+                                                                                    <span class="suitepicon suitepicon-action-clear"></span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
                                                             </template>
 
                                                             <template x-if="activeOpt && activeOpt.resolvedType === 'dataBlock'">

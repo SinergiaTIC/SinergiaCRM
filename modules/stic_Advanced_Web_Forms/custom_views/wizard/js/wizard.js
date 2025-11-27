@@ -1281,9 +1281,9 @@ class WizardStep3 {
     };
   }
 
-  static editCrmRecordParamxData(initial_paramDef, initial_param) {
+  static editCrmRecordParamxData(initial_param, initial_supportedModules) {
     return {
-      paramDef: initial_paramDef,
+      supportedModules: initial_supportedModules,
       param: initial_param,
       
       selectedModule: '',
@@ -1291,8 +1291,8 @@ class WizardStep3 {
       
       get allowedModules() {
         const all = Object.values(STIC.enabledModules);
-        if (!this.paramDef.supportedModules || this.paramDef.supportedModules.length === 0) return all;
-        return all.filter(m => this.paramDef.supportedModules.includes(m.name));
+        if (!this.supportedModules || this.supportedModules.length === 0) return all;
+        return all.filter(m => this.supportedModules.includes(m.name));
       },
 
       init() {
