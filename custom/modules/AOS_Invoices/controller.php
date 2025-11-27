@@ -31,101 +31,15 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         $invoiceBean = BeanFactory::getBean('AOS_Invoices', $_REQUEST['invoiceId'] ?? '');
         if(empty($invoiceBean->id)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice not found with ID ' . ($_REQUEST['invoiceId'] ?? 'N/A'));
+            SugarApplication::appendErrorMessage('Factura no encontrada');
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
             return;
         }
         
-        if (
-            empty($invoiceBean->status ?? '') ||
-            empty($invoiceBean->verifactu_aeat_status_c ?? '') ||
-            $invoiceBean->status !== 'emitted' ||
-            $invoiceBean->verifactu_aeat_status_c === 'accepted') {
-            
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($invoiceBean->verifactu_aeat_status_c ?? 'N/A'));
-            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']);
-            SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
-
-        }
-
-        
-        // die('Sending invoice ' . $invoiceId . ' to AEAT...'); // Placeholder for actual implementation
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
-        try {
-            $response = AOS_InvoicesUtils::sendToAeat($invoiceBean);
-            
-            // Update invoice with AEAT response data
-            if (isset($response->items[0])) {
-                $item = $response->items[0];
-                
-                // Save the hash from the record
-                if (isset($response->record) && isset($response->record->hash)) {
-                    $invoiceBean->verifactu_hash_c = $response->record->hash;
-                }
-                
-                // Save the previous hash from the record
-                if (isset($response->record) && isset($response->record->previousHash)) {
-                    $invoiceBean->verifactu_previous_hash_c = $response->record->previousHash;
-                }
-                
-                // Save the CSV
-                if (isset($response->csv)) {
-                    $invoiceBean->verifactu_csv_c = $response->csv;
-                }
-                
-                // Save the AEAT response (status and error if any)
-                $aeatResponse = $item->status->value;
-                if ($item->errorCode !== null) {
-                    $aeatResponse .= ' [' . $item->errorCode . ']: ' . $item->errorDescription;
-                }
-                $invoiceBean->verifactu_aeat_response_c = substr($aeatResponse, 0, 255); // Truncate to field max length
-                
-                // Update status based on AEAT response
-                if ($item->status->value === 'Correcto' || $item->status->value === 'AceptadoConErrores') {
-                    $invoiceBean->verifactu_aeat_status_c = 'accepted';
-                    
-                    // Generate and save QR code URL only when invoice is accepted
-                    if (isset($response->record)) {
-                        $qrUrl = AOS_InvoicesUtils::generateQrCodeUrl($response->record, false, true);
-                        $invoiceBean->verifactu_qr_data_c = $qrUrl;
-                        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': QR URL generated: ' . $qrUrl);
-                    }
-                } else {
-                    $invoiceBean->verifactu_aeat_status_c = 'rejected';
-                }
-                
-                // Save submission date
-                if (isset($response->submittedAt)) {
-                    $invoiceBean->verifactu_submitted_at_c = $response->submittedAt->format('Y-m-d H:i:s');
-                }
-                
-                // Save without triggering logic hooks
-                $invoiceBean->save(false);
-                
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice updated with AEAT response data');
-            }
-            
-            // Format and display the response
-            $debugInfo = $response->debugInfo ?? [];
-            $formattedResponse = AOS_InvoicesUtils::formatAeatResponse($response, $debugInfo);
-            
-            // Log the response
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': AEAT Response: ' . $formattedResponse);
-            
-            // Display response in the browser
-            echo '<pre>' . htmlspecialchars($formattedResponse) . '</pre>';
-            echo '<br><a href="index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id . '">Volver a la factura</a>';
-            die();
-            
-        } catch (Exception $e) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error sending invoice to AEAT: ' . $e->getMessage());
-            
-            // Format and display the error
-            $formattedError = AOS_InvoicesUtils::formatAeatError($e);
-            
-            // Display error in the browser
-            echo '<pre>' . htmlspecialchars($formattedError) . '</pre>';
-            echo '<br><a href="index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id . '">Volver a la factura</a>';
-            die();
-        }
-
+        AOS_InvoicesUtils::sendToAeat($invoiceBean);
+        
+        // Redirect back to invoice
+        SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
     }
 }

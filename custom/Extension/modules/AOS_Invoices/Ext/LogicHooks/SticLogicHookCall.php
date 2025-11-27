@@ -26,4 +26,4 @@ $hook_version = 1;
 $hook_array = array();
 
 $hook_array['after_save'] = array();
-$hook_array['after_save'][] = array(1, 'after_save', 'custom/modules/AOS_Invoices/SticLogicHookCode.php', 'AOS_InvoicesHook', 'after_save');
+$hook_array['after_save'][] = array(1, 'after_save', 'custom/modules/AOS_Invoices/SticLogicHooksCode.php', 'AOS_InvoicesHook', 'after_save');

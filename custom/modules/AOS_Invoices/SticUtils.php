@@ -194,210 +194,208 @@ class AOS_InvoicesUtils
      */
     public static function sendToAeat($invoiceBean)
     {
-        global $mod_strings;
-
-        // Get needing settings from stic_Setting module
-        require_once 'modules/stic_Settings/Utils.php';
-        $certificatePassword = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_PASSWORD');
-        $issuerNif = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_ID');
-        $issuerName = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME');
-
-           if(empty($certificatePassword) || empty($issuerNif) || empty($issuerName)){
-               $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '.'Missing required settings: certificate password, organization NIF or organization name.');
-               SugarApplication::appendErrorMessage("<div class=\"alert alert-danger\">{$mod_strings['LBL_MISSING_SETTINGS']}</div>");
-               SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record='.$invoiceBean->id);
-           }
-
-        // Configuration constants
-        //    SinergiaTIC
-        // $certificatePath = 'custom/certificates/certificado_stic_verifactu.p12';
-        // $certificatePassword = 'n%7Ca$^KLYj8*BZ&rj6s';
-        // $issuerNif = 'G65943664';
-        // $issuerName = 'Associacio Sinergiatic';
-
-        //    Juan Chamizo
-        // $certificatePath = 'custom/certificates/CHAMIZO_GONZALEZ_JUAN___07224982S.p12';
-        // $certificatePassword = '01romera';
-        // $issuerNif = '07224982S';
-        // $issuerName = 'CHAMIZO GONZALEZ JUAN';
-
-        $useProduction = false; // false = pre-production, true = production
-        $systemName = 'SinergiaCRM Billing System';
-        $systemId = 'ST'; // Changed to avoid conflicts with previous registrations
-        $systemVersion = '1.0.0';
-        $installationNumber = '001';
-
-        // Configure computer system
-        $system = self::configureComputerSystem(
-            $issuerNif,
-            $issuerName,
-            $systemName,
-            $systemId,
-            $systemVersion,
-            $installationNumber
-        );
-
-        // Create taxpayer identifier
-        $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
-
-        // Create AEAT client
-        $client = new AeatClient($system, $taxpayer);
-
-        // Configure certificate
-        $encryptedCertPath = 'custom/certificates/cert_encrypted.bin';
-        if (!file_exists($encryptedCertPath)) {
-            throw new Exception("Encrypted certificate not found at: " . $encryptedCertPath . ". Please upload a certificate in Administration > VeriFactu Certificate.");
-        }
-
-        // Decrypt certificate
-        require_once 'include/utils/encryption_utils.php';
-        global $sugar_config;
-        $key = $sugar_config['unique_key'];
-        $encryptedContent = file_get_contents($encryptedCertPath);
-        
-        // Manual decryption to avoid trim() corrupting binary P12
-        // blowfishDecode() uses trim() which removes whitespace and nulls, damaging binary files
-        $data = base64_decode($encryptedContent);
-        $bf = new Crypt_Blowfish($key);
-        $p12Content = $bf->decrypt($data);
-        
-        // DO NOT TRIM. OpenSSL handles the ASN.1 structure and ignores trailing padding.
-        // rtrim($p12Content, "\0") can remove valid data if the file ends with null bytes.
-
-        // Debug info
-        $GLOBALS['log']->debug("DEBUG VERIFACTU: Encrypted size: " . strlen($encryptedContent));
-        $GLOBALS['log']->debug("DEBUG VERIFACTU: Decrypted size: " . strlen($p12Content));
-        
-        // --- SOLUCIÓN MEJORADA ERROR 401 ---
-        // 1. Leer P12
-        $certs = [];
-        if (!openssl_pkcs12_read($p12Content, $certs, $certificatePassword)) {
-             $sslError = "";
-             while ($msg = openssl_error_string()) {
-                 $sslError .= $msg . "; ";
-             }
-             $GLOBALS['log']->fatal("DEBUG VERIFACTU: OpenSSL Error: " . $sslError);
-             throw new Exception("Error leyendo el certificado P12. La contraseña es incorrecta o el fichero está dañado. Detalles OpenSSL: " . $sslError);
-        }
-
-        // 2. Depuración del Certificado (Verificar en sugarcrm.log)
-        $certData = openssl_x509_parse($certs['cert']);
-        if ($certData) {
-            $certSubject = json_encode($certData['subject']);
-            $certSerial = $certData['subject']['serialNumber'] ?? 'No encontrado';
-            $certValidTo = date('Y-m-d H:i:s', $certData['validTo_time_t']);
+        GLOBAL $mod_strings;
+        if (
+            empty($invoiceBean->status ?? '') ||
+            empty($invoiceBean->verifactu_aeat_status_c ?? '') ||
+            $invoiceBean->status !== 'emitted' ||
+            $invoiceBean->verifactu_aeat_status_c === 'accepted') {
             
-            $GLOBALS['log']->fatal("--- DEBUG VERIFACTU CERT ---");
-            $GLOBALS['log']->fatal("Subject: " . $certSubject);
-            $GLOBALS['log']->fatal("Serial (NIF esperado): " . $certSerial);
-            $GLOBALS['log']->fatal("NIF Configurado: " . $issuerNif);
-            $GLOBALS['log']->fatal("Válido hasta: " . $certValidTo);
-            
-            // Advertencia si el NIF no coincide (limpiando prefijos comunes como IDCES-)
-            $cleanCertNif = preg_replace('/^.*-/', '', $certSerial);
-            if (strtoupper($cleanCertNif) !== strtoupper($issuerNif)) {
-                $GLOBALS['log']->fatal("¡ALERTA! El NIF del certificado ($cleanCertNif) NO COINCIDE con el NIF configurado ($issuerNif). Esto causará error 401/Rechazo.");
-            }
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($invoiceBean->verifactu_aeat_status_c ?? 'N/A'));
+            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']);
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+            return;
         }
 
-        // 3. Construcción limpia del PEM (Solo bloques válidos, sin Bag Attributes)
-        // Función auxiliar para limpiar cabeceras extrañas
-        $cleanPemBlock = function($str) {
-            if (preg_match('/(-----BEGIN (?:CERTIFICATE|PRIVATE KEY)-----.*?-----END (?:CERTIFICATE|PRIVATE KEY)-----)/s', $str, $matches)) {
-                return $matches[1];
-            }
-            return $str;
-        };
-
-        // Orden: Certificado -> Clave Privada -> Intermedios
-        // Ponemos el certificado primero para facilitar el parseo en AeatClient::isEntitySealCertificate
-        $pemContent = $cleanPemBlock($certs['cert']) . "\n" . $cleanPemBlock($certs['pkey']);
-        
-        if (isset($certs['extracerts']) && is_array($certs['extracerts'])) {
-            foreach ($certs['extracerts'] as $extraCert) {
-                $pemContent .= "\n" . $cleanPemBlock($extraCert);
-            }
-        }
-
-        // Guardar en archivo temporal
-        $tempPemFile = tempnam(sys_get_temp_dir(), 'stic_cert_debug_');
-        file_put_contents($tempPemFile, $pemContent);
-
-        // Usar el PEM temporal
-        $client->setCertificate($tempPemFile, null);
-        // ------------------------------------------------
-
-        // Configure environment (pre-production or production)
-        $client->setProduction($useProduction);
-
-        // Extract invoice data from bean and create registration record
-        $invoiceNumber = $invoiceBean->number;
-        $ldate = '2025-11-23';
-        $issueDate = new DateTimeImmutable($ldate);
-        $description = $invoiceBean->name;
-
-        // Format amounts as strings with exactly 2 decimals (required by AEAT)
-        $baseAmount = number_format((float) $invoiceBean->subtotal_amount, 2, '.', '');
-        $totalTaxAmount = number_format((float) $invoiceBean->tax_amount, 2, '.', '');
-
-        // Calculate correct total (Base + Tax) - AEAT requires this to be exact
-        $totalAmount = number_format((float) $baseAmount + (float) $totalTaxAmount, 2, '.', '');
-
-        // Log the values for debugging
-        $invoiceTotal = number_format((float) $invoiceBean->total_amt, 2, '.', '');
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice amounts - Base: ' . $baseAmount . ', Tax: ' . $totalTaxAmount . ', Invoice Total: ' . $invoiceTotal . ', Calculated Total: ' . $totalAmount);
-
-        // Warn if invoice total doesn't match calculated total
-        if ($invoiceTotal !== $totalAmount) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice total (' . $invoiceTotal . ') differs from calculated total (' . $totalAmount . '). Using calculated total for AEAT.');
-        }
-
-        // Get previous invoice for chaining
-        $previousInvoiceId = null;
-        $previousHash = null;
-        $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
-
-        if ($previousInvoice) {
-            $previousInvoiceId = new InvoiceIdentifier();
-            $previousInvoiceId->issuerId = $issuerNif;
-            $previousInvoiceId->invoiceNumber = $previousInvoice->number;
-            $previousInvoiceId->issueDate = new DateTimeImmutable($previousInvoice->invoice_date ?? '2025-11-23');
-            $previousHash = $previousInvoice->verifactu_hash_c ?? null;
-
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Chaining to previous invoice: ' . $previousInvoice->number . ' (Hash: ' . ($previousHash ?? 'N/A') . ')');
-        } else {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': No previous invoice found, this will be the first in the chain');
-        }
-
-        // Create breakdown details (this is a simplified example)
-        // You may need to adjust this based on your actual tax structure
-        $breakdownDetails = [
-            self::createBreakdownDetail(
-                TaxType::IVA,
-                RegimeType::C01,
-                OperationType::Subject,
-                $baseAmount,
-                '21.00', // Tax rate with 2 decimals
-                $totalTaxAmount
-            ),
-        ];
-
-        // Create registration record
-        $record = self::createRegistrationRecord(
-            $issuerNif,
-            $issuerName,
-            $invoiceNumber,
-            $issueDate,
-            $description,
-            $breakdownDetails,
-            $totalTaxAmount,
-            $totalAmount,
-            $previousInvoiceId,
-            $previousHash
-        );
-
-        // Send records and get response (with detailed error handling)
         try {
+            // Get needing settings from stic_Setting module
+            require_once 'modules/stic_Settings/Utils.php';
+            $certificatePassword = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_PASSWORD');
+            $issuerNif = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_ID');
+            $issuerName = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME');
+
+               if(empty($certificatePassword) || empty($issuerNif) || empty($issuerName)){
+                   $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '.'Missing required settings: certificate password, organization NIF or organization name.');
+                   SugarApplication::appendErrorMessage("<div class=\"alert alert-danger\">{$mod_strings['LBL_MISSING_SETTINGS']}</div>");
+                   SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record='.$invoiceBean->id);
+               }
+
+            $useProduction = false; // false = pre-production, true = production
+            $systemName = 'SinergiaCRM Billing System';
+            $systemId = 'ST'; // Changed to avoid conflicts with previous registrations
+            $systemVersion = '1.0.0';
+            $installationNumber = '001';
+
+            // Configure computer system
+            $system = self::configureComputerSystem(
+                $issuerNif,
+                $issuerName,
+                $systemName,
+                $systemId,
+                $systemVersion,
+                $installationNumber
+            );
+
+            // Create taxpayer identifier
+            $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
+
+            // Create AEAT client
+            $client = new AeatClient($system, $taxpayer);
+
+            // Configure certificate
+            $encryptedCertPath = 'custom/certificates/cert_encrypted.bin';
+            if (!file_exists($encryptedCertPath)) {
+                throw new Exception("Encrypted certificate not found at: " . $encryptedCertPath . ". Please upload a certificate in Administration > VeriFactu Certificate.");
+            }
+
+            // Decrypt certificate
+            require_once 'include/utils/encryption_utils.php';
+            global $sugar_config;
+            $key = $sugar_config['unique_key'];
+            $encryptedContent = file_get_contents($encryptedCertPath);
+            
+            // Manual decryption to avoid trim() corrupting binary P12
+            // blowfishDecode() uses trim() which removes whitespace and nulls, damaging binary files
+            $data = base64_decode($encryptedContent);
+            $bf = new Crypt_Blowfish($key);
+            $p12Content = $bf->decrypt($data);
+            
+            // DO NOT TRIM. OpenSSL handles the ASN.1 structure and ignores trailing padding.
+            // rtrim($p12Content, "\0") can remove valid data if the file ends with null bytes.
+
+            // Debug info
+            $GLOBALS['log']->debug("DEBUG VERIFACTU: Encrypted size: " . strlen($encryptedContent));
+            $GLOBALS['log']->debug("DEBUG VERIFACTU: Decrypted size: " . strlen($p12Content));
+            
+            // --- SOLUCIÓN MEJORADA ERROR 401 ---
+            // 1. Leer P12
+            $certs = [];
+            if (!openssl_pkcs12_read($p12Content, $certs, $certificatePassword)) {
+                 $sslError = "";
+                 while ($msg = openssl_error_string()) {
+                     $sslError .= $msg . "; ";
+                 }
+                 $GLOBALS['log']->fatal("DEBUG VERIFACTU: OpenSSL Error: " . $sslError);
+                 throw new Exception("Error leyendo el certificado P12. La contraseña es incorrecta o el fichero está dañado. Detalles OpenSSL: " . $sslError);
+            }
+
+            // 2. Depuración del Certificado (Verificar en sugarcrm.log)
+            $certData = openssl_x509_parse($certs['cert']);
+            if ($certData) {
+                $certSubject = json_encode($certData['subject']);
+                $certSerial = $certData['subject']['serialNumber'] ?? 'No encontrado';
+                $certValidTo = date('Y-m-d H:i:s', $certData['validTo_time_t']);
+                
+                $GLOBALS['log']->fatal("--- DEBUG VERIFACTU CERT ---");
+                $GLOBALS['log']->fatal("Subject: " . $certSubject);
+                $GLOBALS['log']->fatal("Serial (NIF esperado): " . $certSerial);
+                $GLOBALS['log']->fatal("NIF Configurado: " . $issuerNif);
+                $GLOBALS['log']->fatal("Válido hasta: " . $certValidTo);
+                
+                // Advertencia si el NIF no coincide (limpiando prefijos comunes como IDCES-)
+                $cleanCertNif = preg_replace('/^.*-/', '', $certSerial);
+                if (strtoupper($cleanCertNif) !== strtoupper($issuerNif)) {
+                    $GLOBALS['log']->fatal("¡ALERTA! El NIF del certificado ($cleanCertNif) NO COINCIDE con el NIF configurado ($issuerNif). Esto causará error 401/Rechazo.");
+                }
+            }
+
+            // 3. Construcción limpia del PEM (Solo bloques válidos, sin Bag Attributes)
+            // Función auxiliar para limpiar cabeceras extrañas
+            $cleanPemBlock = function($str) {
+                if (preg_match('/(-----BEGIN (?:CERTIFICATE|PRIVATE KEY)-----.*?-----END (?:CERTIFICATE|PRIVATE KEY)-----)/s', $str, $matches)) {
+                    return $matches[1];
+                }
+                return $str;
+            };
+
+            // Orden: Certificado -> Clave Privada -> Intermedios
+            // Ponemos el certificado primero para facilitar el parseo en AeatClient::isEntitySealCertificate
+            $pemContent = $cleanPemBlock($certs['cert']) . "\n" . $cleanPemBlock($certs['pkey']);
+            
+            if (isset($certs['extracerts']) && is_array($certs['extracerts'])) {
+                foreach ($certs['extracerts'] as $extraCert) {
+                    $pemContent .= "\n" . $cleanPemBlock($extraCert);
+                }
+            }
+
+            // Guardar en archivo temporal
+            $tempPemFile = tempnam(sys_get_temp_dir(), 'stic_cert_debug_');
+            file_put_contents($tempPemFile, $pemContent);
+
+            // Usar el PEM temporal
+            $client->setCertificate($tempPemFile, null);
+            // ------------------------------------------------
+
+            // Configure environment (pre-production or production)
+            $client->setProduction($useProduction);
+
+            // Extract invoice data from bean and create registration record
+            $invoiceNumber = $invoiceBean->number;
+            $ldate = '2025-11-23';
+            $issueDate = new DateTimeImmutable($ldate);
+            $description = $invoiceBean->name;
+
+            // Format amounts as strings with exactly 2 decimals (required by AEAT)
+            $baseAmount = number_format((float) $invoiceBean->subtotal_amount, 2, '.', '');
+            $totalTaxAmount = number_format((float) $invoiceBean->tax_amount, 2, '.', '');
+
+            // Calculate correct total (Base + Tax) - AEAT requires this to be exact
+            $totalAmount = number_format((float) $baseAmount + (float) $totalTaxAmount, 2, '.', '');
+
+            // Log the values for debugging
+            $invoiceTotal = number_format((float) $invoiceBean->total_amt, 2, '.', '');
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice amounts - Base: ' . $baseAmount . ', Tax: ' . $totalTaxAmount . ', Invoice Total: ' . $invoiceTotal . ', Calculated Total: ' . $totalAmount);
+
+            // Warn if invoice total doesn't match calculated total
+            if ($invoiceTotal !== $totalAmount) {
+                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice total (' . $invoiceTotal . ') differs from calculated total (' . $totalAmount . '). Using calculated total for AEAT.');
+            }
+
+            // Get previous invoice for chaining
+            $previousInvoiceId = null;
+            $previousHash = null;
+            $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
+
+            if ($previousInvoice) {
+                $previousInvoiceId = new InvoiceIdentifier();
+                $previousInvoiceId->issuerId = $issuerNif;
+                $previousInvoiceId->invoiceNumber = $previousInvoice->number;
+                $previousInvoiceId->issueDate = new DateTimeImmutable($previousInvoice->invoice_date ?? '2025-11-23');
+                $previousHash = $previousInvoice->verifactu_hash_c ?? null;
+
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Chaining to previous invoice: ' . $previousInvoice->number . ' (Hash: ' . ($previousHash ?? 'N/A') . ')');
+            } else {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': No previous invoice found, this will be the first in the chain');
+            }
+
+            // Create breakdown details (this is a simplified example)
+            // You may need to adjust this based on your actual tax structure
+            $breakdownDetails = [
+                self::createBreakdownDetail(
+                    TaxType::IVA,
+                    RegimeType::C01,
+                    OperationType::Subject,
+                    $baseAmount,
+                    '21.00', // Tax rate with 2 decimals
+                    $totalTaxAmount
+                ),
+            ];
+
+            // Create registration record
+            $record = self::createRegistrationRecord(
+                $issuerNif,
+                $issuerName,
+                $invoiceNumber,
+                $issueDate,
+                $description,
+                $breakdownDetails,
+                $totalTaxAmount,
+                $totalAmount,
+                $previousInvoiceId,
+                $previousHash
+            );
+
+            // Send records and get response (with detailed error handling)
             $response = $client->send([$record])->wait();
 
             // Add debug info to response
@@ -412,28 +410,89 @@ class AOS_InvoicesUtils
             // Add the record to the response so we can access the hash
             $response->record = $record;
 
-            return $response;
-
-        } catch (Exception $e) {
-            // Log detailed error information
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': AEAT Error Details:');
-            $GLOBALS['log']->error('  Message: ' . $e->getMessage());
-            $GLOBALS['log']->error('  Type: ' . get_class($e));
-            $GLOBALS['log']->error('  File: ' . $e->getFile() . ':' . $e->getLine());
-
-            // Try to get more context from the previous invoice lookup
-            $GLOBALS['log']->error('  Previous Invoice: ' . ($previousInvoice ? $previousInvoice->number : 'None'));
-            $GLOBALS['log']->error('  Previous Hash: ' . ($previousHash ?? 'None'));
-            $GLOBALS['log']->error('  Current Invoice: ' . $invoiceNumber);
-            $GLOBALS['log']->error('  Record Hash: ' . $record->hash);
-
-            // Re-throw the exception
-            throw $e;
-        } finally {
-            // Limpieza del archivo temporal
-            if (file_exists($tempPemFile)) {
-                unlink($tempPemFile);
+            // Process and save AEAT response
+            if (isset($response->items[0])) {
+                $item = $response->items[0];
+                
+                // Save the hash from the record
+                if (isset($response->record) && isset($response->record->hash)) {
+                    $invoiceBean->verifactu_hash_c = $response->record->hash;
+                }
+                
+                // Save the previous hash from the record
+                if (isset($response->record) && isset($response->record->previousHash)) {
+                    $invoiceBean->verifactu_previous_hash_c = $response->record->previousHash;
+                }
+                
+                // Save the CSV
+                if (isset($response->csv)) {
+                    $invoiceBean->verifactu_csv_c = $response->csv;
+                }
+                
+                // Save the AEAT response (status and error if any)
+                $aeatResponse = $item->status->value;
+                if ($item->errorCode !== null) {
+                    $aeatResponse .= ' [' . $item->errorCode . ']: ' . $item->errorDescription;
+                }
+                $invoiceBean->verifactu_aeat_response_c = substr($aeatResponse, 0, 255);
+                
+                // Update status based on AEAT response
+                if ($item->status->value === 'Correcto' || $item->status->value === 'AceptadoConErrores') {
+                    $invoiceBean->verifactu_aeat_status_c = 'accepted';
+                    
+                    // Generate and save QR code URL only when invoice is accepted
+                    if (isset($response->record)) {
+                        $qrUrl = self::generateQrCodeUrl($response->record, false, true);
+                        $invoiceBean->verifactu_qr_data_c = $qrUrl;
+                        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': QR URL generated: ' . $qrUrl);
+                    }
+                } else {
+                    $invoiceBean->verifactu_aeat_status_c = 'rejected';
+                }
+                
+                // Save submission date
+                if (isset($response->submittedAt)) {
+                    $invoiceBean->verifactu_submitted_at_c = $response->submittedAt->format('Y-m-d H:i:s');
+                }
+                
+                // Save without triggering logic hooks
+                $invoiceBean->save(false);
+                
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice updated with AEAT response data');
             }
+            
+            // Format response for display
+            $debugInfo = $response->debugInfo ?? [];
+            $formattedResponse = self::formatAeatResponse($response, $debugInfo);
+            
+            // Log the response
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': AEAT Response: ' . $formattedResponse);
+            
+            // Show success message with details
+            $successMessage = 'Factura enviada correctamente a la AEAT';
+            if ($invoiceBean->verifactu_aeat_status_c === 'accepted') {
+                $successMessage .= ' y aceptada';
+            }
+            $successMessage .= '. <a href="#" onclick="document.getElementById(\'aeat-response-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">Ver detalles</a>';
+            $successMessage .= '<div id="aeat-response-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedResponse) . '</pre></div>';
+            
+            SugarApplication::appendSuccessMessage($successMessage);
+            
+            return true;
+            
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error sending invoice to AEAT: ' . $e->getMessage());
+            
+            // Format error for display
+            $formattedError = self::formatAeatError($e);
+            
+            // Show error message with details
+            $errorMessage = 'Error al enviar la factura a la AEAT. <a href="#" onclick="document.getElementById(\'aeat-error-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">Ver detalles</a>';
+            $errorMessage .= '<div id="aeat-error-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedError) . '</pre></div>';
+            
+            SugarApplication::appendErrorMessage($errorMessage);
+            
+            return false;
         }
     }
 

@@ -51,5 +51,8 @@ class AOS_InvoicesHook
         }
 
         $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Sending invoice with id {$bean->id} to AEAT via Verifactu...");
+
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        AOS_InvoicesUtils::sendToAeat($bean);
     }
 }
