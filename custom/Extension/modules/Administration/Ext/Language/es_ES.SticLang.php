@@ -102,3 +102,21 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de 
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Al activar esta opción los usuarios podrán autenticarse mediante OAuth 2.0, además de hacerlo con usuario y contraseña. Después de activarla se deberá configurar por lo menos uno de los proveedores externos. Para más información, consulte la <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
+
+// Certificado digital
+$mod_strings['LBL_STIC_CERTIFICATE_TITLE'] = 'Certificado Digital';
+$mod_strings['LBL_STIC_CERTIFICATE_DESC'] = 'Subida y encriptación del certificado digital del sistema.';
+$mod_strings['LBL_STIC_CERT_UPLOAD_TITLE'] = 'Subir Certificado Digital';
+$mod_strings['LBL_STIC_CERT_CURRENT_STATUS'] = 'Estado actual:';
+$mod_strings['LBL_STIC_CERT_EXISTS'] = 'Existe un certificado almacenado y encriptado.';
+$mod_strings['LBL_STIC_CERT_NOT_EXISTS'] = 'No hay certificado almacenado.';
+$mod_strings['LBL_STIC_CERT_FILE'] = 'Archivo del certificado:';
+$mod_strings['LBL_STIC_CERT_UPLOAD_BTN'] = 'Subir y Encriptar';
+$mod_strings['LBL_STIC_CERT_SUCCESS'] = 'Certificado subido y encriptado correctamente.';
+$mod_strings['LBL_STIC_CERT_ERROR_UPLOAD'] = 'Error al subir el archivo.';
+$mod_strings['LBL_STIC_CERT_ERROR_WRITE'] = 'Error al escribir el archivo en el disco.';
+$mod_strings['LBL_STIC_CERT_UPLOAD_INFO'] = 'Información del certificado';
+$mod_strings['LBL_STIC_CERT_FILENAME'] = 'Nombre del archivo';
+$mod_strings['LBL_STIC_CERT_UPLOAD_DATE'] = 'Fecha de subida';
+$mod_strings['LBL_STIC_CERT_UPLOADED_BY'] = 'Subido por';
+$mod_strings['LBL_STIC_CERT_CONFIRM_OVERWRITE'] = '¿Está seguro de que desea sobreescribir el certificado existente? Esta acción no se puede deshacer.';

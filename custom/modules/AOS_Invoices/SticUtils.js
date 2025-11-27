@@ -49,6 +49,20 @@ switch (viewType()) {
     break;
 
   case "detail":
+    var buttons = {
+      sendToAEAT: {
+        id: "bt_send_to_aeat",
+        title: SUGAR.language.get("AOS_Invoices", "LBL_SIGNER_SEND_TO_AEAT"),
+        onclick: "window.location='index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=" + STIC.record.id + "'",        
+      },
+    };
+    if(STIC.record.status === 'emitted' && STIC.record.verifactu_aeat_status_c === 'accepted') {
+      buttons.sendToAEAT.disabled = 'disabled';
+      buttons.sendToAEAT.style = "cursor: not-allowed; opacity: .5;";
+    }
+
+    createDetailViewButton(buttons.sendToAEAT);
+
     break;
 
   case "list":

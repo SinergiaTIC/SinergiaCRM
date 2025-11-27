@@ -30,23 +30,23 @@
  * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- * 
+ *
  * The interactive user interfaces in modified source and object code versions
  * of this program must display Appropriate Legal Notices, as required under
  * Section 5 of the GNU Affero General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo. 
- * If the display of the logos is not reasonably feasible for technical reasons, 
- * the Appropriate Legal Notices must display the words "Powered by SugarCRM", 
- * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
+ * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo.
+ * If the display of the logos is not reasonably feasible for technical reasons,
+ * the Appropriate Legal Notices must display the words "Powered by SugarCRM",
+ * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”.
  */
 
 $module_name = 'AOS_Invoices';
 $_object_name = 'aos_invoices';
 
-// STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
+// STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/105
 // $viewdefs [$module_name] =
 // array(
@@ -364,6 +364,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_AEAT_STATUS_PANEL' => array(
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
                 'LBL_INVOICE_TO' => array(
                     'newTab' => false,
                     'panelDefault' => 'expanded',
@@ -427,6 +431,38 @@ array(
                     ),
                 ),
             ),
+            'LBL_AEAT_STATUS_PANEL' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'verifactu_aeat_status_c',
+                        'label' => 'LBL_VERIFACTU_AEAT_STATUS',
+                    ),
+                    1 => array(
+                        'name' => 'verifactu_qr_data_c',
+                        'label' => 'LBL_VERIFACTU_QR_DATA',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'verifactu_aeat_response_c',
+                        'label' => 'LBL_VERIFACTU_AEAT_RESPONSE',
+                    ),
+                    1 => array(
+                        'name' => 'verifactu_cancel_id_c',
+                        'label' => 'LBL_VERIFACTU_CANCEL_ID',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'verifactu_hash_c',
+                        'label' => 'LBL_VERIFACTU_HASH',
+                    ),
+                    1 => array(
+                        'name' => 'verifactu_previous_hash_c',
+                        'label' => 'LBL_VERIFACTU_PREVIOUS_HASH',
+                    ),
+                ),
+            ),
             'LBL_INVOICE_TO' => array(
                 0 => array(
                     0 => array(
@@ -457,6 +493,7 @@ array(
                     ),
                 ),
             ),
+
             'lbl_line_items' => array(
                 0 => array(
                     0 => array(
