@@ -280,6 +280,7 @@ $dictionary['stic_Transactions'] = array(
     'table' => 'stic_financial_products',
     'module' => 'stic_Financial_Products',
     'rname' => 'name',
+    'required' => true,
   ),
   'stic_trans4a5broducts_ida' =>
   array (
