@@ -78,46 +78,47 @@ class stic_Financial_Products extends Basic
     public function save($check_notify = false) {
         
         include_once 'SticInclude/Utils.php';
-        global $app_list_strings, $mod_strings;
+        global $app_list_strings;
 
-        // Skipped - Norma 43 import in progress
-        if (!empty($_SESSION['norma43_importing'])) {
-            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Norma 43 import in progress");
-            return parent::save($check_notify);
-        }
+        // During Norma 43 import, preserve the exact values from the file
+        $isNorma43Import = !empty($_SESSION['norma43_importing']) && $_SESSION['norma43_importing'] === true;
 
-        // Normalize decimal values to prevent truncation
-        foreach (['initial_balance', 'current_balance'] as $field) {
-            if (isset($this->$field) && !empty($this->$field)) {
-                $value = $this->$field;
-                if (is_string($value)) {
-                    // Replace comma with point for decimal conversion
-                    $value = str_replace(',', '.', $value);
-                    // Convert to float to preserve precision
-                    $this->$field = (float)$value;
-                } elseif (!is_float($this->$field) && !is_int($this->$field)) {
-                    // Ensure it's a numeric type
-                    $this->$field = (float)$value;
+        // Normalize decimal values to prevent truncation (only if NOT during Norma 43 import)
+        if (!$isNorma43Import) {
+            foreach (['initial_balance', 'current_balance'] as $field) {
+                if (isset($this->$field) && !empty($this->$field)) {
+                    $value = $this->$field;
+                    if (is_string($value)) {
+                        // Replace comma with point for decimal conversion
+                        $value = str_replace(',', '.', $value);
+                        // Convert to float to preserve precision
+                        $this->$field = (float)$value;
+                    } elseif (!is_float($this->$field) && !is_int($this->$field)) {
+                        // Ensure it's a numeric type
+                        $this->$field = (float)$value;
+                    }
                 }
             }
-        }
 
-        // Check if iban or type have changed
-        $ibanChanged = !isset($this->fetched_row['iban']) || ($this->fetched_row['iban'] !== $this->iban);
-        $typeChanged = !isset($this->fetched_row['type']) || ($this->fetched_row['type'] !== $this->type);
-        
-        // Create the name if it's empty or if type or iban have changed
-        if (empty($this->name) || $ibanChanged  || $typeChanged){
-            $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type] . ' - ' . $this->iban;
+            // Check if iban or type have changed
+            $ibanChanged = !isset($this->fetched_row['iban']) || ($this->fetched_row['iban'] !== $this->iban);
+            $typeChanged = !isset($this->fetched_row['type']) || ($this->fetched_row['type'] !== $this->type);
+            
+            // Create the name if it's empty or if type or iban have changed
+            if (empty($this->name) || $ibanChanged  || $typeChanged){
+                $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type] . ' - ' . $this->iban;
 
-            // If IBAN is empty, do not include it in the name but include assigned user
-            if (empty($this->iban)) {
-            $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type]. ' - ' . $mod_strings['LBL_ASSIGNED_TO_NAME'] . ' "' . $this->assigned_user_name . '"';
+                // If IBAN is empty, do not include it in the name but include assigned user
+                if (empty($this->iban)) {
+                    $this->name = $app_list_strings['stic_financial_products_types_list'][$this->type]. ' - ' . $mod_strings['LBL_ASSIGNED_TO_NAME'] . ' "' . $this->assigned_user_name . '"';
+                }
             }
         }
 
         // Call the generic save() function from the SugarBean class
         parent::save();
+        
+        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Product saved: {$this->id} - initial_balance: {$this->initial_balance}, current_balance: {$this->current_balance} (Norma43 import: " . ($isNorma43Import ? 'true' : 'false') . ")");
     }
 	
 }

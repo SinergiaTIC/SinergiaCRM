@@ -90,12 +90,6 @@ class stic_Transactions extends File
         include_once 'SticInclude/Utils.php';
         global $app_list_strings, $db;
 
-        // Skkiped - Norma 43 import in progress
-        if (!empty($_SESSION['norma43_importing'])) {
-            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Norma 43 import in progress");
-            return parent::save($check_notify);
-        }
-
         // Capture the original amount from user input before any normalization
         $originalAmountString = (string)$this->amount;
 
@@ -105,10 +99,13 @@ class stic_Transactions extends File
 
             // If there is a value
             if ($amount !== '') {
-                // First, remove all dots
-                $amount = str_replace('.', '', $amount);
-                // Then replace comma with dot (for decimal separator)
-                $amount = str_replace(',', '.', $amount);
+                // If there is a comma in the amount
+                if (strpos($amount, ',') !== false) {
+                    // Remove all dots (thousand separators)
+                    $amount = str_replace('.', '', $amount);
+                    // Replace comma with dot (decimal separator)
+                    $amount = str_replace(',', '.', $amount);
+                }
 
                 // If expense is negative
                 if ($this->type === 'expense') {
@@ -130,7 +127,7 @@ class stic_Transactions extends File
         // Build the document_name if not provided
         if (empty($this->description)) {
             // Use the amount value directly without formatting to preserve all decimals
-            $amountFormatted = $this->amount;
+            $amountFormatted = SticUtils::formatDecimalInConfigSettings($this->amount, true);
             if ($this->type === 'expense') {
                 $this->document_name = $app_list_strings['stic_payments_transaction_types_list'][$this->type]
                     . ' - ' . $this->transaction_date . ' - (' . $amountFormatted . '€)';
@@ -149,6 +146,9 @@ class stic_Transactions extends File
 
         // Save the transaction normally
         parent::save($check_notify);
+        
+        // Check if this is a Norma 43 import
+        $isNorma43Import = (!empty($_SESSION['norma43_importing']) && $_SESSION['norma43_importing'] === true) || (!empty($this->norma43_import_flag) && $this->norma43_import_flag === true);
         
         // After save, restore the full-precision amount directly in the database
         if (!empty($amountForDatabase) && !empty($this->id)) {
@@ -187,12 +187,24 @@ class stic_Transactions extends File
             }
         }
         
+        // If this is a Norma 43 import, skip hash and balance updates (already handled during import)
+        if ($isNorma43Import) {
+            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping hash and balance updates during Norma 43 import for transaction {$this->id}");
+            return;
+        }
+        
+        // After save, update the transaction hash
+        if (!empty($this->id)) {
+            require_once 'modules/stic_Transactions/Utils.php';
+            stic_TransactionsUtils::updateTransactionHash($this->id);
+        }
+        
         // After saving, check if there's an associated financial product
         $productId = $this->getAssociatedProductId();
         
         // If there's an associated product, update its balance
         if (!empty($productId)) {
-            require_once 'modules/stic_Transactions/importNorma43.php';
+            require_once 'modules/stic_Transactions/Utils.php';
             
             // Count how many transactions exist for this product before this save
             // If this is the first one, we log it specially
@@ -222,7 +234,7 @@ class stic_Transactions extends File
                 }
                 
                 // Always update the current_balance
-                Norma43::updateProductBalance($productId, []);
+                stic_TransactionsUtils::recalculateProductBalance($productId);
                 
                 if ($isFirstTransaction) {
                     $GLOBALS['log']->debug(
@@ -300,9 +312,9 @@ class stic_Transactions extends File
 
         // Recalculate the balance if there is an associated product
         if ($productId) {
-            require_once 'modules/stic_Transactions/importNorma43.php';
+            require_once 'modules/stic_Transactions/Utils.php';
             try {
-                Norma43::updateProductBalance($productId, []); // empty array if there's no N43 file
+                stic_TransactionsUtils::recalculateProductBalance($productId);
             } catch (Exception $e) {
                 $GLOBALS['log']->error("Error updating balance after deleting transaction: " . $e->getMessage());
             }

@@ -37,11 +37,16 @@ class Norma43
     {
         global $db, $mod_strings;
         self::$db = $db;
+        
+        // Activate session flag to prevent hooks and normalization during Norma 43 import
+        $_SESSION['norma43_importing'] = true;
 
-        // Validate file upload
-        if (empty($_FILES['file']['name'])) {
-            return ['success' => false, 'error' => $mod_strings['LBL_ERROR_FILE_NOT_SELECTED']];
-        }
+        try {
+            // Validate file upload
+            if (empty($_FILES['file']['name'])) {
+                unset($_SESSION['norma43_importing']);
+                return ['success' => false, 'error' => $mod_strings['LBL_ERROR_FILE_NOT_SELECTED']];
+            }
 
         $upload_dir = 'upload/';
         if (!is_dir($upload_dir)) {
@@ -108,6 +113,8 @@ class Norma43
                 preg_replace('/\D/', '', $account['account_number'])
             );
             $productId = self::findOrCreateProduct($account, $preview);
+            // Store productId in account so finalize can reuse it
+            $account['product_id'] = $productId;
 
             // Summary data for the first account
             $summary['iban'] = $account["iban"];
@@ -133,11 +140,13 @@ class Norma43
                     continue;
                 }
 
-                // Generate the hash of the movement
-                $date   = trim($mapped['transaction_date']);
-                $amount = round((float)$mapped['amount'], 2);
-                $name   = trim(preg_replace('/\s+/', ' ', mb_strtolower($mapped['name'] ?? '', 'UTF-8')));
-                $hash   = md5($productId . '|' . $date . '|' . number_format($amount, 2, '.', '') . '|' . $name);
+                // Generate the hash of the movement using centralized function
+                $hash = self::generateTransactionHash(
+                    $productId,
+                    $mapped['transaction_date'],
+                    $mapped['amount'],
+                    $mapped['name']
+                );
 
                 // Check for duplicates
                 if (self::isDuplicate($mapped, $productId, $importedHashes)) {
@@ -156,7 +165,18 @@ class Norma43
 
         $_SESSION['norma43_parsed_accounts'] = self::$parsedAccounts;
         $_SESSION['norma43_summary'] = $summary;
+        $_SESSION['norma43_imported_hashes'] = $importedHashes;  // Store hashes for finalization
+        
+        // Deactivate session flag after preview is done
+        unset($_SESSION['norma43_importing']);
+        
         return $summary;
+        
+        } catch (Exception $e) {
+            unset($_SESSION['norma43_importing']);
+            $GLOBALS['log']->error("Error in importNorma43: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -188,86 +208,78 @@ class Norma43
             // Loop through accounts and movements to insert them
             foreach ($parsedAccounts as $account) {
                 // Find or create the financial product again
-                $productId = self::findOrCreateProduct($account);
+                $productId = $account['product_id'] ?? self::findOrCreateProduct($account);
                 
                 // Insert movements
                 foreach ($account['movements'] as $mov) {
                     $mapped = self::mapMovementData($mov);
-                    $date   = trim($mapped['transaction_date']);
-                    $amount = round((float)$mapped['amount'], 2);
-                    $name   = trim(preg_replace('/\s+/', ' ', mb_strtolower($mapped['name'] ?? '', 'UTF-8')));
-                    $hash   = md5($productId . '|' . $date . '|' . number_format($amount, 2, '.', '') . '|' . $name);
+                    
+                    // Generate the hash using centralized function
+                    $hash = self::generateTransactionHash(
+                        $productId,
+                        $mapped['transaction_date'],
+                        $mapped['amount'],
+                        $mapped['name']
+                    );
 
                     // Avoiding duplicates in the database
-                    if (self::isDuplicate($mapped, $productId, $importedHashes)) continue;
+                    if (self::isDuplicate($mapped, $productId, $importedHashes)) {
+                        $summary['skipped_duplicates']++;
+                        continue;
+                    }
 
                     self::insertTransaction($mapped, $productId);
                     $summary['imported_movements']++;
                 }
+                
+                // After inserting all movements for this account, update the product balance from file
+                $newCurrentBalance = $account['final_balance'] ?? $account['initial_balance'];
+                $updateQuery = "UPDATE stic_financial_products SET 
+                    current_balance = " . $db->quoted($newCurrentBalance) . "
+                    WHERE id = " . $db->quoted($productId) . " AND deleted = 0";
+                $db->query($updateQuery);
             }
 
-            unset($_SESSION['norma43_importing']);
-
-            // Update balances for all products after all transactions are imported
+            // After all transactions are imported, verify balance discrepancies
             foreach ($parsedAccounts as $account) {
-                $productId = self::findOrCreateProduct($account);
+                // Get the product ID directly from database
+                $iban = trim($account['iban']);
+                $query = "SELECT id FROM stic_financial_products WHERE iban = " . $db->quoted($iban) . " AND deleted = 0 LIMIT 1";
+                $result = $db->query($query);
+                $row = $db->fetchByAssoc($result);
+                if (!$row) {
+                    $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> Product with IBAN {$iban} not found after creation");
+                    continue;
+                }
                 
-                // For new products, set initial_balance based on imported transactions
-                if ($account['exist'] === 0) {
-                    $product = BeanFactory::getBean('stic_Financial_Products', $productId);
-                    if ($product) {
-                        $balanceQuery = "
-                            SELECT SUM(CAST(t.amount AS DECIMAL(19,4))) as total
-                            FROM stic_transactions t
-                            INNER JOIN stic_transactions_stic_financial_products_c rel
-                                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
-                                AND rel.deleted = 0
-                            WHERE rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
-                            AND t.deleted = 0
-                        ";
-                        $balanceResult = $db->query($balanceQuery);
-                        $balanceRow = $db->fetchByAssoc($balanceResult);
-                        $totalTransactions = (float)($balanceRow['total'] ?? 0);
-                        
-                        $product->initial_balance = $totalTransactions;
-                        $product->current_balance = $totalTransactions;
-                        $product->save();
-                        
-                        $summary['initial_balance'] = $totalTransactions;
-                        
-                        $GLOBALS['log']->debug( __METHOD__ . '(' . __LINE__ . ") >> Norma 43 new product: IBAN {$product->iban}. " .
-                            "Set initial_balance = current_balance = SUM(imported transactions) = {$totalTransactions}"
-                        );
-                    }
-                } else {
-                    // For existing products, update current_balance only
-                    $product = BeanFactory::getBean('stic_Financial_Products', $productId);
-                    if ($product) {
-                        $balanceQuery = "
-                            SELECT SUM(CAST(t.amount AS DECIMAL(19,4))) as total
-                            FROM stic_transactions t
-                            INNER JOIN stic_transactions_stic_financial_products_c rel
-                                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
-                                AND rel.deleted = 0
-                            WHERE rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
-                            AND t.deleted = 0
-                        ";
-                        $balanceResult = $db->query($balanceQuery);
-                        $balanceRow = $db->fetchByAssoc($balanceResult);
-                        $totalTransactions = (float)($balanceRow['total'] ?? 0);
-                        
-                        $product->current_balance = $totalTransactions;
-                        $product->save();
-                        
-                        $GLOBALS['log']->debug( __METHOD__ . '(' . __LINE__ . ") >> Norma 43 existing product (after import): IBAN {$product->iban}. " .
-                            "Updated current_balance = SUM(all transactions) = {$totalTransactions}. " .
-                            "initial_balance unchanged = {$product->initial_balance}"
-                        );
-                    }
+                $productId = $row['id'];
+                
+                // Calculate expected balance from transactions
+                $calculatedBalance = abs(self::calculateBalance($productId));
+                $finalBalance = $account['final_balance'] ?? $account['initial_balance'];
+                // Get the file balance rounded to 2 decimals
+                $fileBalance = abs((float)round($account['initial_balance'] - $finalBalance, 2));
+                
+                // Check for discrepancies
+                $difference = $fileBalance - $calculatedBalance;
+                $hasDiscrepancy = ($difference > 0.01) ? 1 : 0;
+                
+                // Update only the balance_error
+                global $db;
+                $updateErrorQuery = "UPDATE stic_financial_products SET 
+                    balance_error = " . $db->quoted($hasDiscrepancy) . "
+                    WHERE id = " . $db->quoted($productId) . " AND deleted = 0";
+                $db->query($updateErrorQuery);
+                
+                if ($hasDiscrepancy) {
+                    $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> Norma 43: Balance discrepancy detected for product {$productId}. " .
+                        "File balance: {$fileBalance}, Calculated from transactions: {$calculatedBalance}, Difference: {$difference}");
                 }
             }
 
+            unset($_SESSION['norma43_importing']);
             unset($_SESSION['norma43_parsed_accounts']);
+            unset($_SESSION['norma43_imported_hashes']);  // Clean up hashes
             return $summary;
             
         } catch (Exception $e) {
@@ -392,7 +404,7 @@ class Norma43
         $operationDateStr = substr($line, 10, 6); // 11–16 -> Date transaction
         $sign             = substr($line, 27, 1); // 28 -> Sign
         $amountStr        = substr($line, 28, 14); // 29–42 -> Amount (14 digits without a decimal point)
-        $methodCode       = substr($line, 22, 4); // 23-27 -> Method
+        $methodCode       = substr($line, 22, 5); // 23-27 -> Method (5 digits)
 
         return [
             'operation_date' => self::parseDate($operationDateStr),
@@ -509,28 +521,86 @@ class Norma43
 
     /**
      * Parse the method code from Norma 43 format
-     * @param string $methodCode The method code (4 digits)
-     * @return string The parsed method or null if unknown
+     * @param string $methodCode The method code (5 digits)
+     * @return string|null The payment method key based on first 2 digits (main category)
      */
     public static function parseMethod($methodCode) {
-        switch ($methodCode) {
-            case '0200':
-            case '0400':
-                $method = 'bizum';
+        // Extract the main category (first 2 digits)
+        $mainCategory = substr(str_pad($methodCode, 5, '0', STR_PAD_LEFT), 0, 2);
+        switch ($mainCategory) {
+            case '01':
+            case '10':
+                $method = 'check';
                 break;
-            case '0304':
-            case '0303':
+            case '02':
+            case '08':
+            case '14':
+            case '15':
+            case '17':
+                $method = 'transfer_received';
+                break;
+            case '03':
+            case '05':
+            case '16':
                 $method = 'direct_debit';
                 break;
-            case '1204':
+            case '04':
+            case '06':
+            case '07':
+            case '13':
+                $method = 'transfer_issued';
+                break;
+            case '09':
+            case '12':
                 $method = 'card';
                 break;
-            case '1104':
+            case '11':
                 $method = 'cash';
+                break;
+            case '98':
+            case '99':
+                $method = '';
                 break;
         }
 
         return $method;
+    }
+    
+    /**
+     * Detect if a transaction is Bizum based on complementary information patterns
+     * @param string $description The transaction description
+     * @param string $currentMethod The current payment method
+     * @return bool True if likely Bizum, false otherwise
+     */
+    public static function detectBizum($description, $currentMethod = null) {
+        // Only applies to transfer methods (codes 02 and 04)
+        if (!in_array($currentMethod, ['transfer_received', 'transfer_issued'])) {
+            return false;
+        }
+
+        if (empty($description)) {
+            return false;
+        }
+
+        $bizumIndicators = 0;
+
+        // Indicator 1: All caps with semicolons
+        if (preg_match('/^[A-ZÁÉÍÓÚÑ\s;]+$/', $description)) {
+            $bizumIndicators++;
+        }
+
+        // Indicator 2: Contains lowercase
+        if (preg_match('/[a-záéíóú]/', $description)) {
+            $bizumIndicators++;
+        }
+
+        // Indicator 3: Has semicolons
+        if (strpos($description, ';') !== false) {
+            $bizumIndicators++;
+        }
+
+        // If we have 2 or more indicators, it's likely Bizum
+        return $bizumIndicators >= 2;
     }
 
     /**
@@ -568,9 +638,11 @@ class Norma43
      */
     public static function mapMovementData($movement)
     {
+        global $mod_strings;
+
         $mapped = [
             'transaction_date' => $movement['operation_date'] ?? null,
-            'name' => 'Movimiento sin descripción',
+            'name' => $mod_strings['LBL_TRANSACTION_NO_DESCRIPTION'],
             'amount' => $movement['amount'],
             'type' => ($movement['amount'] ?? 0) >= 0 ? 'income' : 'expense',
             'payment_method' => $movement['method'],
@@ -609,13 +681,18 @@ class Norma43
             $mapped['name'] = $description_parts[0];
             $mapped['description'] = $description;
         } elseif ($mapped['transaction_date']) {
-            $mapped['name'] = 'Movimiento ' . $mapped['transaction_date'];
+            $mapped['name'] = $mod_strings['LBL_MOVEMENT_NO_DESCRIPTION'] . ' ' . $mapped['transaction_date'];
         }
 
         // Format the amount with a sign
         $signSymbol = ($mapped['amount'] >= 0) ? '+' : '-';
         $absAmount = abs($mapped['amount']);
         $mapped['amount_formatted'] = sprintf('%s%s €', $signSymbol, number_format($absAmount, 2, ',', '.'));
+
+        // Detect Bizum by complementary information
+        if (self::detectBizum($description, $mapped['payment_method'])) {
+            $mapped['payment_method'] = 'bizum';
+        }
 
         return $mapped;
     }
@@ -631,13 +708,9 @@ class Norma43
     {
         global $db;
 
-        // Get the IBAN of the financial product
-        $product = BeanFactory::getBean('stic_Financial_Products', $productId);
-        $iban = $product ? $product->iban : '';
-
         // Generate the transaction hash
         $hash = self::generateTransactionHash(
-            $iban,
+            $productId,
             $mapped_data['transaction_date'] ?? '',
             $mapped_data['amount'] ?? 0,
             $mapped_data['name'] ?? ''
@@ -645,26 +718,50 @@ class Norma43
 
         // Internal check (duplicate within the same file)
         if (in_array($hash, $importedHashes)) {
+            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> [DUPLICATE_SESSION] Hash found in current session: {$hash}");
             return true; // It already exists in the imported hashes
         }
 
-        // Searching for duplicates in the database correctly linked to the product
+        // Searching for duplicates in the database
         $query = "
-            SELECT id
+            SELECT id, amount, transaction_date, transaction_hash, document_name, description
             FROM stic_transactions
             WHERE deleted = 0
             AND transaction_hash = " . $db->quoted($hash) . "
             LIMIT 1
         ";
         $result = $db->query($query);
-        $existsInDb = $db->fetchByAssoc($result) !== false;
+        $existsInDb = $db->fetchByAssoc($result);
 
-        // If not a duplicate, add it to the internal list
-        if (!$existsInDb) {
-            $importedHashes[] = $hash;
+        if ($existsInDb) {
+            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> [DUPLICATE_DB] Duplicate found in database! Hash={$hash}, DB_hash={$existsInDb['transaction_hash']}, DB_amount={$existsInDb['amount']}, DB_date={$existsInDb['transaction_date']}, DB_name={$existsInDb['document_name']}");
+            return true;
         }
 
-        return $existsInDb;
+        // If not found in DB by hash, do a manual check by all fields
+        $manualCheckQuery = "
+            SELECT t.id, t.transaction_hash, t.document_name, t.amount
+            FROM stic_transactions t
+            INNER JOIN stic_transactions_stic_financial_products_c rel
+                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
+                AND rel.deleted = 0
+            WHERE t.deleted = 0
+            AND rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
+            AND ABS(CAST(t.amount AS DECIMAL(19,4)) - " . $db->quoted($mapped_data['amount'] ?? 0) . ") < 0.01
+            AND t.transaction_date = " . $db->quoted($mapped_data['transaction_date']) . "
+            LIMIT 1
+        ";
+        $manualResult = $db->query($manualCheckQuery);
+        $manualMatch = $db->fetchByAssoc($manualResult);
+        
+        if ($manualMatch) {
+            $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> [HASH_MISMATCH] Found transaction with same date/amount/product, but DIFFERENT hash! Expected hash={$hash}, DB_hash={$manualMatch['transaction_hash']}, DB_name={$manualMatch['document_name']}. This indicates hash generation is inconsistent!");
+        }
+
+        // Not a duplicate, add it to the imported list for this session
+        $importedHashes[] = $hash;
+        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> NEW transaction: {$hash} (date={$mapped_data['transaction_date']}, amount={$mapped_data['amount']}, name={$mapped_data['name']})");
+        return false;
     }
 
     /**
@@ -677,28 +774,35 @@ class Norma43
     {
         global $current_user;
 
+        // Verify the session is active
+        $sessionActive = !empty($_SESSION['norma43_importing']) && $_SESSION['norma43_importing'] === true;
+
         $tx = BeanFactory::newBean('stic_Transactions');
+        // Mark this transaction as part of Norma 43 import so hooks know to skip balance recalculation
+        $tx->norma43_import_flag = true;
+        
         $tx->document_name = $data['name'];
         $tx->transaction_date = $data['transaction_date'];
         $tx->amount = $data['amount'];
         $tx->type = $data['type'];
-        $tx->description = $data['description'];
+        $tx->description = $data['description'] ?? '';
         $tx->payment_method = $data['payment_method'];
         $tx->assigned_user_id = $current_user->id;
-        $tx->status = 'pending';
+        $tx->status = 'completed';
         $tx->stic_trans4a5broducts_ida = $productId;
 
-        // Get the IBAN of the financial product
-        $product = BeanFactory::getBean('stic_Financial_Products', $productId);
-        $iban = $product ? $product->iban : '';
-
-        // Generate the movement hash for duplicate checking
-        $tx->transaction_hash = md5(strtolower(trim(
-            $iban . '|' . $data['transaction_date'] . '|' .
-            number_format($data['amount'], 2, '.', '') . '|' . $data['name']
-        )));
+        // Generate the movement hash for duplicate detection
+        $tx->transaction_hash = self::generateTransactionHash(
+            $productId,
+            $data['transaction_date'],
+            $data['amount'],
+            $data['name']
+        );
 
         $tx->save();
+        
+        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Transaction saved: {$tx->id} with amount {$data['amount']} for product {$productId}, payment_method: {$data['payment_method']}");
+        
         return $tx->id;
     }
 
@@ -729,23 +833,35 @@ class Norma43
         if (!$row) {
             $product = BeanFactory::newBean('stic_Financial_Products');
             $product->iban = $iban;
-            $product->initial_balance = $account['initial_balance'];
             $account['exist'] = 0; // New product
+            $isNewProduct = true;
         } else {
+            // For existing products
             $product = BeanFactory::getBean('stic_Financial_Products', $row['id']);
             $account['exist'] = 1; // Already exists
+            $isNewProduct = false;
         }
 
         // Update or set other fields
         $product->type = !empty($account['type']) ? $account['type'] : 'current_account';
         $product->name = !empty($account['account_name']) ? $account['account_name'] : $product->type . ' - ' . $product->iban;
-        $product->current_balance = $account['final_balance'] ?? $account['initial_balance'];
         $product->entity = self::parseEntity($account["entity_code"]);
         $product->assigned_user_id = $current_user->id;
         $product->start_date = empty($product->start_date) ? $account['start_date'] : $product->start_date;
         $product->active = empty($product->active) ? 1 : $product->active;
 
-        if (!$preview) $product->save();
+        if (!$preview) {
+            // For new products: set both initial_balance and current_balance from file
+            if ($isNewProduct) {
+                $product->initial_balance = $account['initial_balance'];
+                $product->current_balance = $account['final_balance'] ?? $account['initial_balance'];
+                $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Norma 43 NEW Product IBAN: {$iban} - initial_balance: {$product->initial_balance}, current_balance: {$product->current_balance} (from file)");
+                $product->save();
+            } else {
+                // For existing products: don't update balance here, will be done in finalizeImport
+                $product->save();
+            }
+        }
 
         return $product->id;
     }
@@ -759,6 +875,11 @@ class Norma43
     public static function updateProductBalance($productId, $account = [])
     {
         // Recalculate the balance based on transactions
+        if (!empty($_SESSION['norma43_importing']) && $_SESSION['norma43_importing'] === true) {
+            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping balance update during Norma 43 import - balances already set from file");
+            return;
+        }
+
         $product = BeanFactory::getBean('stic_Financial_Products', $productId);
         if (!$product) return;
 
@@ -889,91 +1010,22 @@ class Norma43
 
     /**
      * Generate a unique hash for a transaction based on its key attributes
-     * @param string $iban The IBAN of the financial product
+     * @param string $productId The ID of the associated financial product
      * @param string $date The transaction date
      * @param float $amount The transaction amount
      * @param string $name The transaction name/description
      * @return string The generated MD5 hash
      */
-    private static function generateTransactionHash($iban, $date, $amount, $name)
+    private static function generateTransactionHash($productId, $date, $amount, $name)
     {
-        $iban = trim(strtolower($iban ?? ''));
+        // Normalize productId to lowercase (must match generateTransactionHashByProduct in Utils.php)
+        $productId = trim(strtolower($productId ?? ''));
         $date = trim($date ?? '');
         $amount = number_format((float)$amount, 2, '.', '');
+        // Normalize name consistently
         $name = mb_strtolower(trim($name ?? ''), 'UTF-8');
 
         // Generate the hash
-        return md5("{$iban}|{$date}|{$amount}|{$name}");
-    }
-
-    /**
-     * Recalculate product balance for manual operations (subpanel/edit)
-     * @param string $productId The product ID
-     */
-    public static function recalculateProductBalance($productId)
-    {
-        global $db;
-        
-        if (empty($productId)) {
-            return;
-        }
-
-        // Load the product
-        $product = BeanFactory::getBean('stic_Financial_Products', $productId);
-        if (!$product) {
-            $GLOBALS['log']->error("Error: Product not found: {$productId}");
-            return;
-        }
-
-        // Get all transactions linked to this product
-        $query = "
-            SELECT t.id, t.amount, t.date_entered
-            FROM stic_transactions t
-            INNER JOIN stic_transactions_stic_financial_products_c rel
-                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
-                AND rel.deleted = 0
-            WHERE rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
-            AND t.deleted = 0
-            ORDER BY t.date_entered ASC
-        ";
-
-        $result = $db->query($query);
-        $transactions = [];
-        
-        while ($row = $db->fetchByAssoc($result)) {
-            $transactions[] = [
-                'id' => $row['id'],
-                'amount' => (float)$row['amount'],
-                'date_entered' => $row['date_entered']
-            ];
-        }
-
-        // Calculate balances
-        if (!empty($transactions)) {
-            // First transaction amount = initial_balance (for manual entries)
-            $product->initial_balance = $transactions[0]['amount'];
-            
-            // Sum of all transactions = current_balance
-            $totalAmount = 0;
-            foreach ($transactions as $trans) {
-                $totalAmount += $trans['amount'];
-            }
-            $product->current_balance = $totalAmount;
-            
-            $GLOBALS['log']->debug(__METHOD__ . __LINE__ . " >> ({$productId}): " .
-                "Found " . count($transactions) . " transactions. " .
-                "initial_balance = " . $transactions[0]['amount'] . 
-                ", current_balance = {$totalAmount}"
-            );
-        } else {
-            // No transactions
-            $product->initial_balance = 0;
-            $product->current_balance = 0;
-            
-            $GLOBALS['log']->debug(__METHOD__ . __LINE__ . " >>  ({$productId}): No transactions found, resetting balances to 0");
-        }
-
-        // Save without triggering after_save hook again
-        $product->save();
+        return md5("{$productId}|{$date}|{$amount}|{$name}");
     }
 }
