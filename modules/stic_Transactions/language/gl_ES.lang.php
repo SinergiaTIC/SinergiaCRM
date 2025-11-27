@@ -102,4 +102,6 @@ $mod_strings = array (
   'LBL_ERROR_NORMA_43_INVALID' => 'El fichero no cumple el estándar Norma 43.',
   'LBL_ERROR_FILE_CANNOT_OPEN' => 'No se puede abrir el fichero.',
   'LBL_ERROR_FILE_NOT_SELECTED' => 'No se ha seleccionado ningún fichero.',
+  'LBL_TRANSACTION_NO_DESCRIPTION' => 'Transacción sin descripción',
+  'LBL_TRANSACTION' => 'Transacción',
 );

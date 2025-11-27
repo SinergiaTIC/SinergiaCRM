@@ -102,4 +102,6 @@ $mod_strings = array (
   'LBL_ERROR_NORMA_43_INVALID' => 'The file does not comply with Norma 43 standard.',
   'LBL_ERROR_FILE_CANNOT_OPEN' => 'The file cannot be opened.',
   'LBL_ERROR_FILE_NOT_SELECTED' => 'No file has been selected.',
+  'LBL_TRANSACTION_NO_DESCRIPTION' => 'Transaction without description',
+  'LBL_TRANSACTION' => 'Transaction',
 );

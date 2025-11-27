@@ -101,4 +101,6 @@ $mod_strings = array (
   'LBL_ERROR_NORMA_43_INVALID' => "El fitxer no compleix l'estàndard Norma 43.",
   'LBL_ERROR_FILE_CANNOT_OPEN' => 'No es pot obrir el fitxer.',
   'LBL_ERROR_FILE_NOT_SELECTED' => "No s'ha seleccionat cap fitxer.",
+  'LBL_TRANSACTION_NO_DESCRIPTION' => 'Transacció sense descripció',
+  'LBL_TRANSACTION' => 'Transacció',
 );
