@@ -406,7 +406,7 @@ class AOS_InvoicesUtils
                 'taxAmount' => $totalTaxAmount,
                 'totalAmount' => $totalAmount,
                 'invoiceTotal' => $invoiceTotal,
-                'endpoint' => $client->getEndpointUrl(),
+                'endpoint' => $useProduction ? 'Production (www1.agenciatributaria.gob.es)' : 'Pre-production (prewww1/prewww10.aeat.es)',
             ];
 
             // Add the record to the response so we can access the hash
