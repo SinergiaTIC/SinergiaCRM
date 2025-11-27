@@ -139,4 +139,5 @@ $mod_strings = array(
     'LBL_END_DATE_ERROR' => 'La data de baixa ha de ser igual o posterior a la data de primer pagament.',
     'LBL_AGGREGATED_SHOULDNT_BE_PUNTUAL_ERROR' => 'Un compromís de pagament de serveis agregats no pot ser de periodicitat puntual.',
     'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Propostes d\'Imputació',
+    'LBL_COPY_PROPOSALS_BUTTON_TITTLE' => 'Copia les propostes d\'imputació d\'un altre compromís de pagament',
 );

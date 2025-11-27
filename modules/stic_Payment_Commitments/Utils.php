@@ -20,9 +20,31 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+require_once 'SticInclude/Utils.php';
 
 class stic_Payment_CommitmentsUtils
 {
+
+    public static function copyPCProposals($targetPCBean, $originPCId) {
+        //get proposals from originBean
+        $originBean = BeanFactory::getBean('stic_Payment_Commitments', $originPCId);
+        $linkName = 'stic_allocation_proposals';
+        $originBean->load_relationship($linkName);
+        $proposalsIds = $originBean->$linkName->get(); 
+
+        self::copyProposals($targetPCBean, $proposalsIds);
+    }
+
+public static function copyProposals($targetPCBean, $proposalsIds) {
+    $linkName = 'stic_allocation_proposals';
+    $targetPCBean->load_relationship($linkName);
+    foreach ($proposalsIds as $proposalId) {
+        $newProposalId = SticUtils::duplicateBeanRecord('stic_Allocation_Proposals', $proposalId, array());
+        $targetPCBean->$linkName->add($newProposalId);
+    }
+    return true;
+}
+
     /**
      * Calculation of the annualized fee based on the amount and the periodicity of the payment commitment.
      *
