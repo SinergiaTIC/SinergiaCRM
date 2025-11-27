@@ -29,6 +29,7 @@ enum ActionParameterType: string {
     case VALUE           = 'value';
     case DATA_BLOCK      = 'dataBlock';
     case FIELD           = 'field';
+    case FIELD_LIST      = 'field_list';
     case CRM_RECORD      = 'crmRecord';
     case OPTION_SELECTOR = 'optionSelector';
     case EMPTY           = 'empty'; // El parámetro u opción no requiere valor
@@ -42,41 +43,42 @@ enum ActionDataType: string {
     case FLOAT         = 'float';
     case BOOLEAN       = 'boolean';
 
-    // Related
-    case RELATE        = 'relate';
-
     // Date types
     case DATE          = 'date';
-    case DATETIME      = 'datetime';
+    case DATETIME      = 'datetime-local';
     case TIME          = 'time';
 
     // Specific formats
     case EMAIL         = 'email';
-    case PHONE         = 'phone';
+    case TEL           = 'tel';
+    case URL           = 'url';
 
     // Simple list of options
     case SELECT        = 'select';
 
-    // List of fields
-    case FIELD_LIST    = 'field_list';
+    // Related (for filtering fields)
+    case RELATE        = 'relate';
+
 }
 
 /**
  * Clase para definir un parámetro de una acción
  */
 class ActionParameterDefinition {
-    public string $name;                 // Nombre del Parámetro
-    public string $text;                 // El texto a mostrar
-    public string $description = '';     // La descripción del parámetro
+    public string $name;                   // Nombre del Parámetro
+    public string $text;                   // El texto a mostrar
+    public string $description = '';       // La descripción del parámetro
     public ActionParameterType $type = ActionParameterType::VALUE;  // El tipo de parámetro
-    public ActionDataType $dataType = ActionDataType::TEXT;         // El tipo de dato del parámetro: Obligado si $type es VALUE
-    public bool $required = true;        // Indica si el parámetro es obligatorio
-    public string $defaultValue = '';    // Valor por defecto del parámetro
+    public ?ActionDataType $dataType = ActionDataType::TEXT;         // El tipo de dato del parámetro: Obligado si $type es VALUE
+    public bool $required = false;         // Indica si el parámetro es obligatorio
+    public string $defaultValue = '';      // Valor por defecto del parámetro
     /** @var ActionParameterOption[] */
-    public array $options = [];          // Las opciones del parámetro si el tipo es SELECT
+    public array $options = [];            // Las opciones del parámetro si el tipo es SELECT
     /** @var ActionSelectorOptionDefinition[] */
-    public array $selectorOptions = [];  // Opciones adicionales para selectores de objetos
+    public array $selectorOptions = [];    // Opciones adicionales para selectores de objetos
     /** @var string[] */
-    public array $supportedModules = []; // Módulos soportados si el destino es un registro CRM
+    public array $supportedModules = [];   // Módulos soportados si el destino es un registro CRM
+    /** @var ActionDataType[] */
+    public array $supportedDataTypes = []; // Lista de Tipos de datos de los campos apuntados, si aplica (para FIELD o FIELD_LIST)
 }
 

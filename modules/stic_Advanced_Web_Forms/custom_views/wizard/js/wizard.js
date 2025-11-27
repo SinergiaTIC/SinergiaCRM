@@ -153,6 +153,7 @@ function set_wizard_assigned_user(popup_reply_data) {
   window.alpineComponent.bean.assigned_user_name = popup_reply_data.name_to_value_array.assigned_user_name;
 }
 
+
 function handle_open_popup(popup_reply_data) {
   if (popup_reply_data.name_to_value_array) {
     Object.entries(popup_reply_data.name_to_value_array).forEach(el => {
@@ -864,6 +865,9 @@ class WizardStep3 {
       get actions() { return this.flow?.actions ?? []; },
       showAllActions: false,
 
+      selectedCategory: '', 
+      selectedActionDefName: '', // Per al v-model del select d'accions
+
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
 
@@ -878,6 +882,9 @@ class WizardStep3 {
             // Objetos de trabajo
             action: null,              // Copia de los datos de la acción
             definition: null,          // Definición de la acción
+
+            // Estado de la UI
+            currentStep: 1,            // 1: Selección, 2: Configuración
 
             // Listados y filtros
             allDefinitions: [],        // Todas las definiciones de acciones disponibles
@@ -945,10 +952,13 @@ class WizardStep3 {
               this.flow = flow;
               this.original_id = '';
 
+              this.currentStep = 1;
+
               // Para crear, empezamos sin acción ni definición: Se deberá seleccionar una definición
               this.action = null;
               this.definition = null;
               this.isTerminalFilter = isTerminal;
+              this.selectedActionDefName = '';
 
               // Preseleccionamos la primera categoría disponible
               const cats = this.availableCategories;
@@ -968,18 +978,30 @@ class WizardStep3 {
               this.flow = flow;
               this.original_id = action.id;
 
+              this.currentStep = 2;
+
+              // Recuperamos definición y estado visual
+              this.definition = this.allDefinitions.find(d => d.name == action.name);
+              if (!this.definition) { console.error("Definition not found for action: " + action.name); return; }
+
+              this.selectedCategory = this.definition.category;
+              this.selectedActionDefName = this.definition.name;
+
               // Clonamos la acción para editarla
               this.action = new AWF_Action(action);
 
-              // Buscamos la definición de la acción
-              this.definition = this.allDefinitions.find(d => d.name == action.name);
-
-              if (!this.definition) {
-                  console.error("Definition not found for action: " + action.name);
-                  return;
-              }
-
               this.isOpen = true;
+            },
+
+            goToStep2() {
+                if (!this.selectedActionDefName) return;
+                
+                this.onActionChange(); 
+                this.currentStep = 2;
+            },
+
+            goBackToStep1() {
+                this.currentStep = 1;
             },
 
             /**
@@ -998,7 +1020,7 @@ class WizardStep3 {
                 this.action = new AWF_Action({
                     name: def.name,
                     title: def.title,
-                    text: def.title,
+                    text: def.title, // Por defecto el título
                     description: def.description,
                     category: def.category,
                     is_terminal: def.isTerminal,
@@ -1018,35 +1040,50 @@ class WizardStep3 {
             },
 
             /**
-             * Retorna la lista de bloques de datos disponibles para asignar en los parámetros
+             * Retorna la lista de Bloques de Datos disponibles para asignar en los parámetros
+             * @param {Array} supportedModules Lista de los módulos de los Bloques de datos a mostrar
              * @returns {Array} Lista de {id, text, module} de bloques de datos
              */
-            get dataBlocksList() {
-                
-                return this.formConfig.data_blocks.map(b => ({
+            getSupportedDataBlocksList(supportedModules = []) {
+              let blocks = [];
+              if (!supportedModules) supportedModules = [];
+
+              this.formConfig.data_blocks.forEach(b => {
+                if (supportedModules.length == 0 || supportedModules.includes(b.module)) {
+                  blocks.push({
                     id: b.id, 
                     text: `${b.text} (${b.getModuleText()})`,
                     module: b.module,
-                }));
-            },
+                  })
+                }
+              });
+              return blocks;
+            }, 
 
             /**
-             * Retorna la lista de todos los campos disponibles en el formulario
-             * @returns {Array} Lista de {id, text} de campos
+             * Retorna la lista de los campos disponibles en el formulario
+             * @param {Array} supportedDataTypes Lista de los tipos de datos de los campos a mostrar
+             * @returns Lista de {id, text, typeInActions} de campos
              */
-            get allFieldsList() {
-                // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
-                let fields = [];
-                this.formConfig.data_blocks.forEach(block => {
-                    block.fields.forEach(field => {
+            getSupportedFieldsList(supportedDataTypes = []) {
+              // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
+              let fields = [];
+              if (!supportedDataTypes) supportedDataTypes = [];
+
+              this.formConfig.data_blocks.forEach(block => {
+                  block.fields.forEach(field => {
+                      const typeInActions = field.getTypeInActions();
+                      if (supportedDataTypes.length == 0 || supportedDataTypes.includes(typeInActions)) {
                         const prefix = field.type_field === 'unlinked' ? `_detached.${block.name}.` : `${block.name}.`;
                         fields.push({
                             id: prefix + field.name,
-                            text: `${block.text} » ${field.label || field.text_original}`
+                            text: `${block.text} » ${field.label || field.text_original}`,
+                            typeInActions: typeInActions
                         });
-                    });
-                });
-                return fields;
+                      }
+                  });
+              });
+              return fields;
             },
 
             /**
@@ -1241,6 +1278,64 @@ class WizardStep3 {
         this.actions.splice(index, 1);
         this.actions.splice(index + 1, 0, actionToMove);
       },
+    };
+  }
+
+  static editCrmRecordParamxData(initial_paramDef, initial_param) {
+    return {
+      paramDef: initial_paramDef,
+      param: initial_param,
+      
+      selectedModule: '',
+      rawId: '',
+      
+      get allowedModules() {
+        const all = Object.values(STIC.enabledModules);
+        if (!this.paramDef.supportedModules || this.paramDef.supportedModules.length === 0) return all;
+        return all.filter(m => this.paramDef.supportedModules.includes(m.name));
+      },
+
+      init() {
+        this.selectedModule = this.allowedModules[0].name;
+
+        if (this.param.value && this.param.value.includes('|')) {
+          const parts = this.param.value.split('|');
+          this.selectedModule = parts[0];
+          this.rawId = parts[1];
+        } 
+        this.$watch('selectedModule', (val) => this.updateParamValue());
+        this.$watch('rawId', (val) => this.updateParamValue());
+      },
+
+      updateParamValue() {
+        if (this.selectedModule && this.rawId) {
+          this.param.value = `${this.selectedModule}|${this.rawId}`;
+        } else {
+          this.param.value = '';
+        }
+      },
+
+      onModuleChange() {
+        this.rawId = '';
+        this.param.value_text = ''; 
+        this.updateParamValue();
+      },
+
+      openPopUp(idBase, destModule, single=true) {
+        debugger;
+        let mode = 'single';
+        if (single!=true) {
+          mode = 'MultiSelect';
+        }
+        let objMap = {'id':`${idBase}_id`, 'name':`${idBase}_name`};
+        open_popup(destModule, 600, 400, '', true, false,
+          {
+            'passthru_data': objMap,
+            'field_to_name_array': objMap,
+            'call_back_function': 'handle_open_popup'
+          }, mode, true);
+      },
+      
     };
   }
 

@@ -77,6 +77,11 @@ class ParameterResolverService {
                 // El parámetro es un campo del formulario. Value contiene el nombre del campo
                 return $this->resolveFormField($def, $value, $context);
 
+            case ActionParameterType::FIELD_LIST:
+                // El parámetro es un listado de campos del formulario. Value contiene los nombres de campos separados por comas
+                $listString = $value !== null ? $value : $def->defaultValue;
+                return $this->resolveFieldList($def, $listString, $context);
+
             case ActionParameterType::CRM_RECORD:
                 // El parámetro es un Registro del crm. Value contiene 'modulo|id'
                 return $this->resolveBean($def, $value, $context);
@@ -130,9 +135,6 @@ class ParameterResolverService {
                     $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Error creating DateTime from timestamp '{$parsedTime}': " . $e->getMessage());
                     return null;
                 }
-
-            case ActionDataType::FIELD_LIST:
-                return $this->resolveFieldList($def, $valueToCast, $context);
 
             case ActionDataType::TEXT:
             case ActionDataType::SELECT:

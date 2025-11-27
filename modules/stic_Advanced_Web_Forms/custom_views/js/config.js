@@ -395,6 +395,41 @@ class AWF_Field {
     return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number");
   }
 
+  getTypeInActions() {
+    switch (this.type) {
+      case "textarea":
+      case "json":
+        return "textarea";
+      case "int":
+        return "integer";
+      case "float":
+      case "double":
+      case "decimal":
+        return "float";
+      case "bool":
+        return "boolean";
+      case "date":
+        return "date";
+      case "time":
+        return "time";
+      case "datetime":
+      case "datetimecombo":
+        return "datetime-local";
+      case "email":
+        return "email";
+      case "phone":
+        return "tel";
+      case "url":
+        return "url";
+      case "id":
+      case "link":
+      case "relate":
+        return "relate";
+      default:
+        return "text";
+    }
+  }
+
   getAvailableSubtypesInForm() {
     if (this.name == "") {
       return [];

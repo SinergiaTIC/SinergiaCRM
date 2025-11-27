@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 
 /**
- * Definición de una opción para un parámetro de tipo selector de objetos.
+ * Definición de una opción para un parámetro de tipo selector de opciones.
  */
 class ActionSelectorOptionDefinition {
     public string $name;                       // Nombre interno de la opción

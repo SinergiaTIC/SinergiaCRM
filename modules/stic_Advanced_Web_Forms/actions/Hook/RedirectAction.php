@@ -56,7 +56,7 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
         $paramUrl->text = $this->translate('URL_TEXT'); 
         $paramUrl->description = $this->translate('URL_DESC');
         $paramUrl->type = ActionParameterType::VALUE;
-        $paramUrl->dataType = ActionDataType::TEXT;
+        $paramUrl->dataType = ActionDataType::URL;
         $paramUrl->required = true;
 
         // El método de envio (GET / POST)
@@ -78,8 +78,7 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
         $paramFields->name = 'fields_to_send';
         $paramFields->text = $this->translate('FIELDS_TEXT');
         $paramFields->description = $this->translate('FIELDS_DESC');
-        $paramFields->type = ActionParameterType::VALUE;
-        $paramFields->dataType = ActionDataType::FIELD_LIST;
+        $paramFields->type = ActionParameterType::FIELD_LIST;
         $paramFields->required = false; 
 
         return [$paramUrl, $paramMethod, $paramFields];

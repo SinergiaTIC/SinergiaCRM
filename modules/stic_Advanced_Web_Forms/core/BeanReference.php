@@ -53,7 +53,7 @@ class BeanReference {
         }
 
         if (!empty($this->moduleName) && !empty($this->beanId)) {
-            $this->_bean = BeanFactory::retrieveBean($this->moduleName, $this->beanId);
+            $this->_bean = BeanFactory::getBean($this->moduleName, $this->beanId);
         }
 
         return $this->_bean;

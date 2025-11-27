@@ -41,6 +41,10 @@ class ActionParameterDefinitionDTO {
     public array $options = [];
     /** @var ActionSelectorOptionDefinitionDTO[] */
     public array $selectorOptions;
+    /** @var string[] */
+    public array $supportedModules;
+    /** @var ActionDataType[] */
+    public array $supportedDataTypes;
     
     
     public function __construct(ActionParameterDefinition $def) {
@@ -60,6 +64,13 @@ class ActionParameterDefinitionDTO {
         $this->selectorOptions = array_map(
             fn($optionDef) => new ActionSelectorOptionDefinitionDTO($optionDef),
             $def->selectorOptions
+        );
+        
+        $this->supportedModules = array_slice($def->supportedModules, 0);
+
+        $this->supportedDataTypes = array_map(
+            fn($dt) => $dt->value, 
+            $def->supportedDataTypes
         );
     }
 }

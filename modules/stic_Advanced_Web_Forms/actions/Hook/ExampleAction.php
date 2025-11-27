@@ -111,6 +111,8 @@ class ExampleAction extends HookActionDefinition
         // En esta función se definen los parámetros que espera la acción.
         // El ParameterResolver usará esta definición para saber qué valor entregar en la función execute().
 
+        $parameters = [];
+
         // =========================================================================================
         // TIPO 1: VALORES SIMPLES (ActionParameterType::VALUE)
         // =========================================================================================
@@ -124,8 +126,19 @@ class ExampleAction extends HookActionDefinition
         $paramText->dataType = ActionDataType::TEXT; // También: INTEGER, FLOAT, BOOLEAN, DATE, EMAIL...
         $paramText->defaultValue = "Valor por defecto";
         $paramText->required = true;
+        $parameters[] = $paramText;
 
-        // 1.2. Lista Desplegable Simple (SELECT)
+        // 1.2. Booleano
+        // El Wizard mostrará un checkbox.
+        $paramBool = new ActionParameterDefinition();
+        $paramBool->name = 'simple_boolean';
+        $paramBool->text = 'Valor booleano (VALUE)';
+        $paramBool->type = ActionParameterType::VALUE; 
+        $paramBool->dataType = ActionDataType::BOOLEAN; 
+        $paramBool->defaultValue = true;
+        $parameters[] = $paramBool;
+
+        // 1.3. Lista Desplegable Simple (SELECT)
         // El Wizard mostrará un <select> con las opciones fijas definidas aquí.
         $paramSelect = new ActionParameterDefinition();
         $paramSelect->name = 'simple_select';
@@ -137,16 +150,27 @@ class ExampleAction extends HookActionDefinition
             new ActionParameterOption('option_b', 'Opción B (Recomendada)')
         ];
         $paramSelect->defaultValue = 'option_b';
+        $parameters[] = $paramSelect;
 
-        // 1.3. Lista de Campos (FIELD_LIST)
+        // 1.4. Lista de Campos (FIELD_LIST)
         // El Wizard mostrará un selector de campos del formulario que se traducirán en un listado de campos separados por comas.
         // El Backend resolverá esto automáticamente en un array asociativo [nombre_campo => valor].
         $paramFieldList = new ActionParameterDefinition();
         $paramFieldList->name = 'fields_to_process';
-        $paramFieldList->text = 'Lista de Campos (VALUE + FIELD_LIST)';
-        $paramFieldList->description = 'Escribe campos separados por comas (ej: Bloque.campo1, _detached.Bloque.campo2)';
-        $paramFieldList->type = ActionParameterType::VALUE;
-        $paramFieldList->dataType = ActionDataType::FIELD_LIST;
+        $paramFieldList->text = 'Lista de Campos de Texto (FIELD_LIST)';
+        $paramFieldList->type = ActionParameterType::FIELD_LIST;
+        $paramFieldList->supportedDataTypes = [ActionDataType::TEXT, ActionDataType::TEXTAREA];
+        $parameters[] = $paramFieldList;
+
+        // 1.5. Campo relacionado (FIELD)
+        // El Wizard mostrará un selector de campos del formulario que se traducirán en un listado de campos separados por comas.
+        // El Backend resolverá esto automáticamente en un array asociativo [nombre_campo => valor].
+        $paramRelate = new ActionParameterDefinition();
+        $paramRelate->name = 'field_related';
+        $paramRelate->text = 'Campo relacionado (FIELD)';
+        $paramRelate->type = ActionParameterType::FIELD;
+        $paramRelate->supportedDataTypes = [ActionDataType::RELATE];
+        $parameters[] = $paramRelate;
 
 
         // =========================================================================================
@@ -162,6 +186,7 @@ class ExampleAction extends HookActionDefinition
         $paramBlock->type = ActionParameterType::DATA_BLOCK;
         $paramBlock->supportedModules = ['Contacts', 'Leads']; // Opcional: Filtro por módulo
         $paramBlock->required = true;
+        $parameters[] = $paramBlock;
 
         // 2.2. Campo Único (FIELD)
         // El Wizard muestra un desplegable con todos los campos del formulario.
@@ -173,6 +198,7 @@ class ExampleAction extends HookActionDefinition
         // Opcional: Filtrar qué campos muestra el Wizard según su tipo en CRM
         $paramField->supportedDataTypes = [ActionDataType::EMAIL, ActionDataType::TEXT]; 
         $paramField->required = true;
+        $parameters[] = $paramField;
 
 
         // =========================================================================================
@@ -186,8 +212,9 @@ class ExampleAction extends HookActionDefinition
         $paramRecord->name = 'template_record';
         $paramRecord->text = 'Plantilla / Registro (CRM_RECORD)';
         $paramRecord->type = ActionParameterType::CRM_RECORD;
-        $paramRecord->supportedModules = ['EmailTemplates']; // Vital para que el Wizard sepa qué buscar
+        $paramRecord->supportedModules = ['EmailTemplates', 'Contacts', 'Campaigns']; // Vital para que el Wizard sepa qué buscar
         $paramRecord->required = false;
+        $parameters[] = $paramRecord;
 
 
         // =========================================================================================
@@ -200,7 +227,7 @@ class ExampleAction extends HookActionDefinition
         $paramSelector->text = 'Origen Dinámico (OPTION_SELECTOR)';
         $paramSelector->description = 'Selecciona de dónde obtener la información.';
         $paramSelector->type = ActionParameterType::OPTION_SELECTOR;
-        
+                
         // Definimos las opciones disponibles para el usuario:
 
         // Opción A: Contexto (EMPTY) - No requiere input del usuario, el valor es implícito.
@@ -222,13 +249,9 @@ class ExampleAction extends HookActionDefinition
         $optFixed->resolvedType = ActionParameterType::VALUE;
 
         $paramSelector->selectorOptions = [$optOwner, $optBlockSrc, $optFixed];
+        $parameters[] = $paramSelector;
 
-
-        return [
-            $paramText, $paramSelect, $paramFieldList, 
-            $paramBlock, $paramField, $paramRecord, 
-            $paramSelector
-        ];
+        return $parameters;
     }
 
     /**

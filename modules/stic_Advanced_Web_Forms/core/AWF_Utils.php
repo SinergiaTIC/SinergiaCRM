@@ -86,7 +86,8 @@ class AWF_Utils {
             case 'relate':
             case 'enum':
             case 'multienum':
-            case 'phone':
+            case 'tel':
+            case 'url':
             case 'email':
             case 'text':
             default:
@@ -191,7 +192,7 @@ class AWF_Utils {
     {
         // Cargamos la plantilla de correo
         /** @var EmailTemplate $emailTemplate */
-        $emailTemplate = BeanFactory::retrieveBean('EmailTemplates', $templateId);
+        $emailTemplate = BeanFactory::getBean('EmailTemplates', $templateId);
         if (!$emailTemplate) {
             throw new \Exception("Email template not found: '{$templateId}'.");
         }

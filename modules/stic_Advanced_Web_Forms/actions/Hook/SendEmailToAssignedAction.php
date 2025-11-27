@@ -150,7 +150,7 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         }
 
         // Obtenemos el email del Bean.
-        $user = BeanFactory::retrieveBean('Users', $assignedUserId);
+        $user = BeanFactory::getBean('Users', $assignedUserId);
         if (!$user) {
              return new ActionResult(ResultStatus::ERROR, $actionConfig, "Assigned user not found (ID: {$assignedUserId}).");
         }

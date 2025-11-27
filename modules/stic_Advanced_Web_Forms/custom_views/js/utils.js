@@ -21,13 +21,33 @@ class utils {
   }
 
   /**
-   * Ensures the text hs : at the end, to put in a label for a field
+   * Ensures the text has : at the end, to put in a label for a field
    * @param {string} text 
    * @returns  {string}
    */
   static toFieldLabelText(text) {
-    if (text && !text.endsWith(":")) {
-      text += ":";
+    if (text) {
+      text = text.trimEnd();
+      if (!text.endsWith(":")) {
+        text += ":";
+      }
+    }
+    return text;
+  }
+
+
+  /**
+   * Ensures the text do not has : at the end, to take from a label for a field
+   * @param {string} text 
+   * @returns  {string}
+   */
+  static fromFieldLabelText(text) {
+    if (text) {
+      text = text.trimEnd();
+      if (text.endsWith(":")) {
+        text = text.slice(0, -1);
+        return utils.fromFieldLabelText(text);  // In case there are multiple :
+      }
     }
     return text;
   }
