@@ -909,7 +909,7 @@ class KReportQuery {
                   }
                }
                // STIC Custom 20251003 EPS - Fixing behaviour when Nothing selected in role
-               // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+               // https://github.com/SinergiaTIC/SinergiaCRM/pull/889
                $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
                if ($actionPermission == ACL_ALLOW_NONE) {
                    if (empty($this->whereString)) {
