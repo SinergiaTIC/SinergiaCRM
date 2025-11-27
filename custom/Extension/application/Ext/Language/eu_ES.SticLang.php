@@ -3661,12 +3661,6 @@ $app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Tarje
 $app_list_strings['stic_financial_products_types_list']['shares'] = 'Acciones';
 $app_list_strings['stic_financial_products_types_list']['other'] = 'Otros';
 
-// Transacciones: Tipos de movimientos
-$app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Ingreso';
-$app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Gasto';
-$app_list_strings['stic_transactions_transaction_types_list']['withdrawal'] = 'Retirada';
-$app_list_strings['stic_transactions_transaction_types_list']['deposit'] = 'Depósito';
-
 // Transacciones: Estado
 $app_list_strings['stic_transactions_status_list']['completed'] = 'Completado';
 $app_list_strings['stic_transactions_status_list']['pending'] = 'Pendiente';

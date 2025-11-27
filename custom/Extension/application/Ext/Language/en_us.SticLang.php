@@ -3660,12 +3660,6 @@ $app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Prepa
 $app_list_strings['stic_financial_products_types_list']['shares'] = 'Shares';
 $app_list_strings['stic_financial_products_types_list']['other'] = 'Other';
 
-// Transactions: Transaction types
-$app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Income';
-$app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Expense';
-$app_list_strings['stic_transactions_transaction_types_list']['withdrawal'] = 'Withdrawal';
-$app_list_strings['stic_transactions_transaction_types_list']['deposit'] = 'Deposit';
-
 // Transactions: Status
 $app_list_strings['stic_transactions_status_list']['completed'] = 'Completed';
 $app_list_strings['stic_transactions_status_list']['pending'] = 'Pending';
