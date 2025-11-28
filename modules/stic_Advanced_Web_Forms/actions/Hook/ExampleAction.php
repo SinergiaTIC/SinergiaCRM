@@ -135,10 +135,27 @@ class ExampleAction extends HookActionDefinition
         $paramBool->text = 'Valor booleano (VALUE)';
         $paramBool->type = ActionParameterType::VALUE; 
         $paramBool->dataType = ActionDataType::BOOLEAN; 
-        $paramBool->defaultValue = true;
         $parameters[] = $paramBool;
 
-        // 1.3. Lista Desplegable Simple (SELECT)
+        // 1.3. Integer
+        // El Wizard mostrará un campo de texto para numéricos.
+        $paramInt = new ActionParameterDefinition();
+        $paramInt->name = 'simple_integer';
+        $paramInt->text = 'Valor entero (VALUE)';
+        $paramInt->type = ActionParameterType::VALUE; 
+        $paramInt->dataType = ActionDataType::INTEGER; 
+        $parameters[] = $paramInt;
+
+        // 1.4. Date
+        // El Wizard mostrará un campo de texto para fechas.
+        $paramDate = new ActionParameterDefinition();
+        $paramDate->name = 'simple_date';
+        $paramDate->text = 'Valor fecha (VALUE)';
+        $paramDate->type = ActionParameterType::VALUE; 
+        $paramDate->dataType = ActionDataType::DATE; 
+        $parameters[] = $paramDate;
+
+        // 1.5. Lista Desplegable Simple (SELECT)
         // El Wizard mostrará un <select> con las opciones fijas definidas aquí.
         $paramSelect = new ActionParameterDefinition();
         $paramSelect->name = 'simple_select';
@@ -152,7 +169,7 @@ class ExampleAction extends HookActionDefinition
         $paramSelect->defaultValue = 'option_b';
         $parameters[] = $paramSelect;
 
-        // 1.4. Lista de Campos (FIELD_LIST)
+        // 1.6. Lista de Campos (FIELD_LIST)
         // El Wizard mostrará un selector de campos del formulario que se traducirán en un listado de campos separados por comas.
         // El Backend resolverá esto automáticamente en un array asociativo [nombre_campo => valor].
         $paramFieldList = new ActionParameterDefinition();
@@ -162,7 +179,7 @@ class ExampleAction extends HookActionDefinition
         $paramFieldList->supportedDataTypes = [ActionDataType::TEXT, ActionDataType::TEXTAREA];
         $parameters[] = $paramFieldList;
 
-        // 1.5. Campo relacionado (FIELD)
+        // 1.7. Campo relacionado (FIELD)
         // El Wizard mostrará un selector de campos del formulario que se traducirán en un listado de campos separados por comas.
         // El Backend resolverá esto automáticamente en un array asociativo [nombre_campo => valor].
         $paramRelate = new ActionParameterDefinition();
@@ -229,26 +246,54 @@ class ExampleAction extends HookActionDefinition
         $paramSelector->type = ActionParameterType::OPTION_SELECTOR;
                 
         // Definimos las opciones disponibles para el usuario:
+        $paramSelector->selectorOptions =[];
 
         // Opción A: Contexto (EMPTY) - No requiere input del usuario, el valor es implícito.
         $optOwner = new ActionSelectorOptionDefinition();
         $optOwner->name = 'opt_owner';
         $optOwner->text = 'El usuario actual (Contexto)';
         $optOwner->resolvedType = ActionParameterType::EMPTY; // Backend recibirá NULL como valor
+        $paramSelector->selectorOptions[] = $optOwner;
 
         // Opción B: Bloque (DATA_BLOCK)
         $optBlockSrc = new ActionSelectorOptionDefinition();
         $optBlockSrc->name = 'opt_block';
         $optBlockSrc->text = 'Desde un Bloque de Datos';
         $optBlockSrc->resolvedType = ActionParameterType::DATA_BLOCK;
+        $optBlockSrc->supportedModules = ['Contacts', 'Leads']; // Opcional: Filtro por módulo
+        $paramSelector->selectorOptions[] = $optBlockSrc;
 
-        // Opción C: Valor Fijo (VALUE)
-        $optFixed = new ActionSelectorOptionDefinition();
-        $optFixed->name = 'opt_fixed';
-        $optFixed->text = 'Valor Manual';
-        $optFixed->resolvedType = ActionParameterType::VALUE;
+        // Opción C: Valor Fijo (VALUE): TextArea
+        $optFixedTextArea = new ActionSelectorOptionDefinition();
+        $optFixedTextArea->name = 'opt_fixed_textarea';
+        $optFixedTextArea->text = 'Valor Manual: Texto largo';
+        $optFixedTextArea->resolvedType = ActionParameterType::VALUE;
+        $optFixedTextArea->resolvedDataType = ActionDataType::TEXTAREA;  // El Tipo de datos del parámetro
+        $paramSelector->selectorOptions[] = $optFixedTextArea;
 
-        $paramSelector->selectorOptions = [$optOwner, $optBlockSrc, $optFixed];
+        // Opción D: Valor Fijo (VALUE): Boolean
+        $optFixedBoolean = new ActionSelectorOptionDefinition();
+        $optFixedBoolean->name = 'opt_fixed_boolean';
+        $optFixedBoolean->text = 'Valor Manual: Boolean';
+        $optFixedBoolean->resolvedType = ActionParameterType::VALUE;
+        $optFixedBoolean->resolvedDataType = ActionDataType::BOOLEAN;  // El Tipo de datos del parámetro
+        $paramSelector->selectorOptions[] = $optFixedBoolean;
+
+        // Opción E: Valor Fijo (VALUE): Texto
+        $optFixedText = new ActionSelectorOptionDefinition();
+        $optFixedText->name = 'opt_fixed_text';
+        $optFixedText->text = 'Valor Manual: Texto';
+        $optFixedText->resolvedType = ActionParameterType::VALUE;
+        $optFixedText->resolvedDataType = ActionDataType::TEXT;  // El Tipo de datos del parámetro
+        $paramSelector->selectorOptions[] = $optFixedText;
+        
+        // Opción F: Valor Fijo (VALUE): DateTime
+        $optFixedDateTime = new ActionSelectorOptionDefinition();
+        $optFixedDateTime->name = 'opt_fixed_dateTime';
+        $optFixedDateTime->text = 'Valor Manual: Fecha y hora';
+        $optFixedDateTime->resolvedType = ActionParameterType::VALUE;
+        $optFixedDateTime->resolvedDataType = ActionDataType::DATETIME;  // El Tipo de datos del parámetro
+        $paramSelector->selectorOptions[] = $optFixedDateTime;
         $parameters[] = $paramSelector;
 
         return $parameters;

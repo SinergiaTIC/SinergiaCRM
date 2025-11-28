@@ -941,6 +941,11 @@ class WizardStep3 {
                 return this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter && d.category == this.selectedCategory);
             },
 
+            get isValid() {
+              if (!this.action) return false;
+              return this.action.isValid();
+            },
+
             /**
              * Abre el Modal para Crear una acción
              * @param {AWF_Flow} flow El Flujo de acciones
@@ -1086,6 +1091,14 @@ class WizardStep3 {
               return fields;
             },
 
+            getParameterValueInputType(paramDataType) {
+              const dataType  = (!paramDataType || paramDataType == '') ? 'text' : paramDataType;
+              if (['text', 'date', 'datetime-local', 'time', 'email', 'tel', 'url'].includes(dataType)) return dataType;
+              if (['integer', 'float'].includes(dataType)) return 'number';
+              if (dataType == 'boolean') return 'checkbox';
+              return '';
+            },
+
             /**
              * Cierra el modal de edición de una acción
              */
@@ -1104,6 +1117,19 @@ class WizardStep3 {
              * @returns {void}
              */
             saveChanges() {
+              debugger;
+              const form = document.getElementById('ModalActionConfigForm');
+              if (form) {
+                  // Ejecutamos la función nativa para comprobar la validez de los imputs y mostrar errores
+                  if (!form.reportValidity()) {
+                      return; // Si no es valido, abortamos el proceso
+                  }
+              }
+              if (!this.isValid) {
+                alert(utils.translate('LBL_ACTION_PARAM_MISSING_MESSAGE'));
+                return;
+              }
+
               // Recalculate action before saving
               this._recalculateAction(this.action, this.definition);
 
@@ -1322,7 +1348,6 @@ class WizardStep3 {
       },
 
       openPopUp(idBase, destModule, single=true) {
-        debugger;
         let mode = 'single';
         if (single!=true) {
           mode = 'MultiSelect';

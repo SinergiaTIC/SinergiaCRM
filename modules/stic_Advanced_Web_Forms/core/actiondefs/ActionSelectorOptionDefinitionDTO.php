@@ -32,19 +32,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class ActionSelectorOptionDefinitionDTO {
     public string $name;
     public string $text;
-    public string $resolvedType; // Tipo de parámetro resuelto para esta opción (ex: 'value', 'field')
+    public string $resolvedType;      // Tipo de parámetro resuelto para esta opción (ex: 'value', 'field')
 
     /** @var string[] */
     public array $supportedModules;
 
     /** @var string[] */
     public array $supportedDataTypes; // Lista de Tipos de datos permitidos por esta acción, si aplica (ex: 'text', 'relate')
+    public string $resolvedDataType;  // El tipo de datos resuelto para los parámetros resueltos a VALUE
 
     public function __construct(ActionSelectorOptionDefinition $def) {
         $this->name = $def->name;
         $this->text = $def->text;
-        $this->resolvedType = $def->resolvedType->value; // Convertim l'Enum a string
+        $this->resolvedType = $def->resolvedType->value; 
         $this->supportedModules = $def->supportedModules;
+        $this->resolvedDataType = $def->resolvedDataType?->value ?? '';
         
         // Convertim l'array d'Enums de dataTypes a un array de strings
         $this->supportedDataTypes = array_map(

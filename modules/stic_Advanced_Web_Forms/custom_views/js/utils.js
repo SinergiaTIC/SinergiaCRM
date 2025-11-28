@@ -153,16 +153,16 @@ class utils {
    * @returns Server action array
    * Result: [Action]
    *   Action: {
-   *     name, title, description, isActive, isUserSelectable, isCommon, category, scope, supportedModules, supportedFieldSubTypes, order, parameters
+   *     name, title, description, isActive, isUserSelectable, isCommon, isTerminal, category, scope, supportedModules, supportedFieldSubTypes, order, parameters
    *   }
    *   Parameter: {
-   *     name, text, description, type, dataType, required, defaultValue, options, selectorOptions
+   *     name, text, description, type, dataType, required, defaultValue, options, selectorOptions, supportedModules, supportedDataTypes
    *   }
    *   Option: {
    *     value, text
    *   }
    *   SelectorOption: {
-   *     name, text, resolvedType
+   *     name, text, resolvedType, supportedModules, supportedDataTypes, resolvedDataType
    *   }
    */
   static getServerActions() {

@@ -40,8 +40,6 @@ class ActionSelectorOptionDefinition {
     /** @var ActionDataType[] */
     public array $supportedDataTypes = [];     // Lista de Tipos de datos permitidos por esta acción, si aplica
 
-    //IEPA!!
-    // TODO: Afegir al DTO i fer que el wizard el miri quan $resolvedType és VALUE
-    public ?ActionDataType $resolvedDataType;
+    public ?ActionDataType $resolvedDataType;  // El tipo de datos resuelto para los parámetros resueltos a VALUE
 }
 

@@ -212,9 +212,12 @@ $mod_strings = array (
   'LBL_ACTION_ACTIONS' => 'Acciones',
   'LBL_ACTIONS_SHOW_ALL' => 'Mostrar todas las acciones',
   'LBL_ACTIONS_SHOW_ALL_DESC' => 'Muestra todas las acciones definidas en el formulario, incluyendo las acciones creadas de forma automática',
+  'LBL_ACTION_NO_PARAMS' => 'Sin parámetros',
+  'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Selecciona --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Módulo',
   'LBL_ACTION_PARAM_CRM_RECORD_RECORD' => 'Registro',
   'LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION' => 'Opción',
+  'LBL_ACTION_PARAM_MISSING_MESSAGE' => 'Hay parámetros obligados sin valor. Revise la configuración de la acción y asigne valores a los parámetros requeridos antes de guardar.',
   
   'LBL_RESPONSE_SUMMARY_DATA' => 'Resumen de respuestas',
   
@@ -226,7 +229,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro en el CRM basado en los datos del formulario',
 
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación entre registros',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros del CRM',
   'LBL_RELATE_RECORDS_ACTION_TARGET_BLOCK_TEXT' => 'Bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_TARGET_BLOCK_DESC' => 'El bloque de datos destino de la relación a guardar',
@@ -263,11 +266,11 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de Redirección',
   'LBL_REDIRECT_ACTION_URL_DESC' => 'La URL completa (con http://) a la que redirigir.',
   'LBL_REDIRECT_ACTION_METHOD_TEXT' => 'Método de Envío',
-  'LBL_REDIRECT_ACTION_METHOD_DESC' => 'Cómo enviar los datos (si se envían).',
+  'LBL_REDIRECT_ACTION_METHOD_DESC' => 'Cómo enviar los datos a la página de redirección (si se envían).',
   'LBL_REDIRECT_ACTION_METHOD_GET_TEXT' => 'GET (se añadirán los datos a la URL)',
   'LBL_REDIRECT_ACTION_METHOD_POST_TEXT' => 'POST (mediante un formulario oculto)',
   'LBL_REDIRECT_ACTION_FIELDS_TEXT' => 'Campos a Enviar',
-  'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Lista de campos separados por comas (ej: \'Bloque.campo1, _detached.Bloque.campo2\'). Dejar vacío para no enviar datos.',
+  'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Lista de campos que se enviarán. Dejar vacío para no enviar datos.',
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionando...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Apriete aquí para continuar',
 
