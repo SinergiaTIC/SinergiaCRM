@@ -98,7 +98,7 @@
                                             <template x-if="action.is_user_selectable">
                                                 <td rowspan="2">
                                                     <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')"
-                                                            :disabled="!canEditAction(action);" @click="$store.actionEditor.openEdit(action);">
+                                                            :disabled="!canEditAction(action);" @click="$store.actionEditor.openEdit(flow, action);">
                                                         <span class="suitepicon suitepicon-action-edit"></span>
                                                     </button>
                                                     <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
@@ -207,7 +207,8 @@
                     </div>
 
                     <!-- Step 2: Configure Action -->
-                    <template x-if="$store.actionEditor.definition">
+                    <template x-if="$store.actionEditor.definition && $store.actionEditor.definition.parameters
+                                    && $store.actionEditor.action && $store.actionEditor.action.parameters">
                         <div x-show="$store.actionEditor.currentStep === 2" x-transition>
                             <!-- Action Title & Description -->
                             <div class="alert alert-info d-flex align-items-center py-2 mb-3" role="alert">
@@ -300,7 +301,7 @@
                                                 
                                                     <!-- Type: crmRecord -->
                                                     <template x-if="paramDef.type === 'crmRecord'">
-                                                        <div x-data="WizardStep3.editCrmRecordParamxData(param, paramDef.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
+                                                        <div x-data="WizardStep3.editCrmRecordParamxData(paramDef.name, paramDef.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
                                                             <template x-if="allowedModules.length > 1">
                                                                 <div>
                                                                     <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_MODULE')"></label>
@@ -333,7 +334,8 @@
                                                         <div class="card p-3 bg-white border">
                                                             <div class="mb-2">
                                                                 <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION')"></label>
-                                                                <select class="form-select" x-model="param.selectedOption" @change="param.value = ''" :required="paramDef.required"> 
+                                                                <select class="form-select" x-model="param.selectedOption" 
+                                                                        @change="$store.actionEditor.onParamOptionChange(param, paramDef)" :required="paramDef.required"> 
                                                                     <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                                                     <template x-for="optDef in paramDef.selectorOptions" :key="optDef.name">
                                                                         <option :value="optDef.name" x-text="optDef.text"></option>
@@ -394,7 +396,7 @@
 
                                                                 <!-- Resolved Type: crmRecord -->
                                                                 <template x-if="activeOpt.resolvedType === 'crmRecord'">
-                                                                    <div x-data="WizardStep3.editCrmRecordParamxData(param, activeOpt.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
+                                                                    <div x-data="WizardStep3.editCrmRecordParamxData(paramDef.name, activeOpt.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
                                                                         <template x-if="allowedModules.length > 1">
                                                                             <div>
                                                                                 <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_MODULE')"></label>

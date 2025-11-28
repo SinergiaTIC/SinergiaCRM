@@ -106,6 +106,7 @@ $mod_strings = array (
   'LBL_WIZARD_DESC_STEP3' => 'Definición de la lógica del formulario mediante las acciones que se ejecutarán cuando se reciba una respuesta del formulario. Las acciones permiten guardar o actualizar registros en el CRM, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
   'LBL_WIZARD_DESC_STEP4' => 'Diseño de la apariencia visual final del formulario. Permite organizar los campos en secciones para facilitar su uso, personalizar la cabecera o pie del formulario, o modificar el código HTML completo del formulario.',
+  'LBL_WIZARD_SHOW_DEBUG_INFO' => 'Mostrar detalles',
 
   'LBL_MODULE' => 'Módulo',
   

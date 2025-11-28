@@ -979,6 +979,7 @@ class WizardStep3 {
              * @returns {void}
              */
             openEdit(flow, action) {
+              debugger;
               this.isEdit = true;
               this.flow = flow;
               this.original_id = action.id;
@@ -1042,6 +1043,25 @@ class WizardStep3 {
                     value: pDef.defaultValue,
                     selectedOption: ''
                 }));
+            },
+
+            /**
+             * Gestiona el cambio de opción en el selector de opciones de un parámetro
+             * Si la opción es de tipo 'empty', asigna un valor automático para pasar la validación.
+             * Si no, limpia el valor.
+             * * @param {AWF_ActionParameter} param El parámetro que se está editando
+             * @param {object} paramDef La definición del parámetro (DTO)
+             */
+            onParamOptionChange(param, paramDef) {
+              const selectedOptDef = paramDef.selectorOptions.find(o => o.name == param.selectedOption);
+              
+              if (selectedOptDef && selectedOptDef.resolvedType === 'empty') {
+                  param.value = selectedOptDef.name;
+                  param.value_text = selectedOptDef.text;
+              } else {
+                  param.value = '';
+                  param.value_text = '';
+              }
             },
 
             /**
@@ -1117,7 +1137,6 @@ class WizardStep3 {
              * @returns {void}
              */
             saveChanges() {
-              debugger;
               const form = document.getElementById('ModalActionConfigForm');
               if (form) {
                   // Ejecutamos la función nativa para comprobar la validez de los imputs y mostrar errores
@@ -1307,10 +1326,13 @@ class WizardStep3 {
     };
   }
 
-  static editCrmRecordParamxData(initial_param, initial_supportedModules) {
+  static editCrmRecordParamxData(paramName, initial_supportedModules) {
     return {
       supportedModules: initial_supportedModules,
-      param: initial_param,
+      
+      get param() {
+        return Alpine.store('actionEditor').action.parameters.find(p => p.name == paramName);
+      },
       
       selectedModule: '',
       rawId: '',
@@ -1334,11 +1356,11 @@ class WizardStep3 {
       },
 
       updateParamValue() {
+        let newValue = '';
         if (this.selectedModule && this.rawId) {
-          this.param.value = `${this.selectedModule}|${this.rawId}`;
-        } else {
-          this.param.value = '';
+          newValue = `${this.selectedModule}|${this.rawId}`;
         }
+        this.param.value = newValue;
       },
 
       onModuleChange() {
