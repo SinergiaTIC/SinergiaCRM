@@ -127,4 +127,22 @@ $searchFields['stic_Assessments'] = array (
     'enable_range_search' => true,
     'is_date_field' => true,
   ),
+  'range_resignation_date' => 
+  array (
+    'query_type' => 'default',
+    'enable_range_search' => true,
+    'is_date_field' => true,
+  ),
+  'start_range_resignation_date' => 
+  array (
+    'query_type' => 'default',
+    'enable_range_search' => true,
+    'is_date_field' => true,
+  ),
+  'end_range_resignation_date' => 
+  array (
+    'query_type' => 'default',
+    'enable_range_search' => true,
+    'is_date_field' => true,
+  ),
 );

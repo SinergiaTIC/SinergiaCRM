@@ -311,6 +311,41 @@ $dashletData['ContactsDashlet']['columns'] = array(
         'default' => false,
         'name' => 'lawful_basis',
     ),
+    'confidentiality_agreement_c' => 
+    array (
+        'type' => 'bool',
+        'default' => false,
+        'studio' => 'visible',
+        'label' => 'LBL_CONFIDENTIALITY_AGREEMENT',
+        'width' => '10%',
+        'name' => 'confidentiality_agreement_c',
+    ),
+    'conduct_code_c' => 
+    array (
+        'type' => 'bool',
+        'default' => false,
+        'studio' => 'visible',
+        'label' => 'LBL_CONDUCT_CODE',
+        'width' => '10%',
+        'name' => 'conduct_code_c',
+    ),
+    'occupational_safety_c' => 
+    array (
+        'type' => 'bool',
+        'default' => false,
+        'studio' => 'visible',
+        'label' => 'LBL_OCCUPATIONAL_SAFETY',
+        'width' => '10%',
+        'name' => 'occupational_safety_c',
+    ),
+    'time_availability_c' => 
+    array (
+        'type' => 'varchar',
+        'label' => 'LBL_TIME_AVAILABILITY',
+        'width' => '10%',
+        'default' => false,
+        'name' => 'time_availability',
+    ),
     'date_reviewed' => array(
         'type' => 'date',
         'label' => 'LBL_DATE_REVIEWED',
