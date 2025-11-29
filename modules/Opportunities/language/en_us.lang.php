@@ -109,4 +109,12 @@ $mod_strings = array(
 
     'LBL_AOS_CONTRACTS' => 'Contracts',
     'LBL_AOS_QUOTES' => 'Quotes',
+    
+    // TODOEPS - Justification tab labels
+    'LBL_JUSTIFICATION' => 'Justification',
+    'LBL_JUSTIFIED_AMOUNT' => 'Justified Amount',
+    'LBL_JUSTIFIED_PERCENTAGE' => 'Justified Percentage',
+    'LBL_START_DATE' => 'Start Date',
+    'LBL_END_DATE' => 'End Date',
+    // END TODOEPS
 );

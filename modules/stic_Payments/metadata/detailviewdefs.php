@@ -50,6 +50,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_ALLOCATION_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
                 'LBL_RETURN_PANEL' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
@@ -168,6 +172,72 @@ array(
                 ),
                 11 => array(
                     0 => 'description',
+                ),
+            ),
+            'lbl_allocation_panel' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'justification_date',
+                        'label' => 'LBL_JUSTIFICATION_DATE',
+                    ),
+                    1 => array(),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'allocated',
+                        'label' => 'LBL_ALLOCATED',
+                    ),
+                    1 => array(
+                        'name' => 'blocked',
+                        'label' => 'LBL_BLOCKED',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'allocated_percentage',
+                        'label' => 'LBL_ALLOCATED_PERCENTAGE',
+                    ),
+                    1 => array(
+                        'name' => 'justified_percentage',
+                        'label' => 'LBL_JUSTIFIED_PERCENTAGE',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'tax_withholding',
+                        'label' => 'LBL_TAX_WITHHOLDING',
+                    ),
+                    1 => array(
+                        'name' => 'base_amount',
+                        'label' => 'LBL_BASE_AMOUNT',
+                    ),
+                ),
+                4 => array(
+                    0 => array(
+                        'name' => 'social_security_employee',
+                        'label' => 'LBL_SOCIAL_SECURITY_EMPLOYEE',
+                    ),
+                    1 => array(
+                        'name' => 'social_security_company',
+                        'label' => 'LBL_SOCIAL_SECURITY_COMPANY',
+                    ),
+                ),
+                5 => array(
+                    0 => array(
+                        'name' => 'liquid_amount',
+                        'label' => 'LBL_LIQUID_AMOUNT',
+                    ),
+                    1 => array(
+                        'name' => 'total_cost',
+                        'label' => 'LBL_TOTAL_COST',
+                    ),
+                ),
+                6 => array(
+                    0 => array(
+                        'name' => 'vat_supported',
+                        'label' => 'LBL_VAT_SUPPORTED',
+                    ),
+                    1 => array(),
                 ),
             ),
             'lbl_return_panel' => array(

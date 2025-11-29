@@ -462,3 +462,51 @@ $dictionary['Opportunity']['fields']['lead_source']['massupdate'] = 0;
 // STIC#981
 $dictionary['Opportunity']['fields']['account_name']['massupdate']='1';
 
+// Relationship with stic_Justification_Conditions
+$dictionary["Opportunity"]["fields"]["opportunities_stic_justification_conditions"] = array (
+    'name' => 'opportunities_stic_justification_conditions',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_justification_conditions',
+    'source' => 'non-db',
+    'module' => 'stic_Justification_Conditions',
+    'bean_name' => 'stic_Justification_Conditions',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE',
+);
+
+// Relationship with stic_Justifications
+$dictionary["Opportunity"]["fields"]["opportunities_stic_justifications"] = array (
+    'name' => 'opportunities_stic_justifications',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_justifications',
+    'source' => 'non-db',
+    'module' => 'stic_Justifications',
+    'bean_name' => 'stic_Justifications',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE',
+);
+
+// Relationship with stic_Allocation_Proposals
+$dictionary["Opportunity"]["fields"]["opportunities_stic_allocation_proposals"] = array (
+    'name' => 'opportunities_stic_allocation_proposals',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_allocation_proposals',
+    'source' => 'non-db',
+    'module' => 'stic_Allocation_Proposals',
+    'bean_name' => 'stic_Allocation_Proposals',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE',
+);
+
+// Relationship with stic_Allocations
+$dictionary["Opportunity"]["fields"]["opportunities_stic_allocations"] = array (
+    'name' => 'opportunities_stic_allocations',
+    'type' => 'link',
+    'relationship' => 'opportunities_stic_allocations',
+    'source' => 'non-db',
+    'module' => 'stic_Allocations',
+    'bean_name' => 'stic_Allocations',
+    'side' => 'left',
+    'vname' => 'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+);
+

@@ -237,9 +237,29 @@ switch (viewType()) {
 
         break;
     case "detail":
+        // var recordId = $("#formDetailView input[type=hidden][name=record]").val();
+        var buttons = {
+          copyProposals: {
+                id: "add_prospect_list",
+                title: SUGAR.language.get("stic_Payment_Commitments", "LBL_COPY_PROPOSALS_BUTTON_TITTLE"),
+                onclick:
+                "open_popup('stic_Payment_Commitments', 800, 600, '', true, true, { 'call_back_function': 'setReturnAndCopyProposals',     'form_name': 'DetailView',    'field_to_name_array': {        'id': 'originalPC'    },    'passthru_data': {           }}, 'Select', true)",
+            }
+        };
+      createDetailViewButton(buttons.copyProposals);
         break;
 
     case "list":
+        var buttons = {
+          copyProposals: {
+                id: "add_prospect_list",
+                title: SUGAR.language.get("stic_Payment_Commitments", "LBL_COPY_PROPOSALS_BUTTON_TITTLE"),
+                text: SUGAR.language.get("stic_Payment_Commitments", "LBL_COPY_PROPOSALS_BUTTON_TITTLE"),
+                onclick:
+                "open_popup('stic_Payment_Commitments', 800, 600, '', true, true, { 'call_back_function': 'setReturnAndMassCopyProposals',     'form_name': 'DetailView',    'field_to_name_array': {        'id': 'originalPC'    },    'passthru_data': {           }}, 'Select', true)",
+            }
+        };
+      createListViewButton(buttons.copyProposals);
         break;
 
     default:
@@ -283,4 +303,46 @@ function checkPCContactOrAccount() {
         return false;
     }
     return true;
+}
+
+/**
+ * Callback function after selecting a payment commitment to copy from
+ */
+function setReturnAndCopyProposals(popupReplyData) {
+  console.log("callback");
+  debugger;
+  var obj = {
+    action: "copyPCProposals",
+    module: "stic_Payment_Commitments",
+    return_module: "stic_Payment_Commitments",
+    return_action: "DetailView",
+    record: window.document.forms["DetailView"].record.value,
+    originPC: popupReplyData.name_to_value_array.originalPC,
+  };
+  console.log(obj);
+
+  var url = "?index.php&" + $.param(obj);
+  location.href = url;
+}
+
+/**
+ * Callback function after selecting a payment commitment to copy from, from the list view
+ */
+function setReturnAndMassCopyProposals(popupReplyData) {
+    debugger;
+    sugarListView.get_checks();
+    if(sugarListView.get_checks_count() < 1) {
+        alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
+        return false;
+    }
+    document.MassUpdate.action.value='massCopyPCProposals';
+    document.MassUpdate.module.value='stic_Payment_Commitments';
+    // add element for originPC value
+    var originPCInput = document.createElement("input");
+    originPCInput.type = "hidden";
+    originPCInput.name = "originPC";
+    originPCInput.value = popupReplyData.name_to_value_array.originalPC;
+    document.MassUpdate.appendChild(originPCInput);
+
+    document.MassUpdate.submit();
 }
