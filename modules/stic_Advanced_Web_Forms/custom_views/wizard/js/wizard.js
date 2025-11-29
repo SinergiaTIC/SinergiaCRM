@@ -1022,6 +1022,9 @@ class WizardStep3 {
 
                 this.definition = def;
                 
+                // Si es una acción terminal, asignamos orden a 999
+                const defaultOrder = def.isTerminal ? 999 : (def.order ?? 0);
+
                 // Creamos una instancia vacía basada en la definición
                 this.action = new AWF_Action({
                     name: def.name,
@@ -1030,7 +1033,7 @@ class WizardStep3 {
                     description: def.description,
                     category: def.category,
                     is_terminal: def.isTerminal,
-                    order: def.order ?? 0,
+                    order: defaultOrder,
                     is_user_selectable: true
                 });
 
@@ -1256,6 +1259,7 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveUpAction(action) {
+        debugger;
         // No podemos mover una acción fija
         if (action.is_fixed_order) return false;
 
@@ -1293,6 +1297,7 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveDownAction(action) {
+        debugger;
         // No podemos mover una acción fija
         if (action.is_fixed_order) return false;
 
@@ -1410,5 +1415,14 @@ class WizardStep3 {
         }
       },
     };
+  }
+}
+
+class WizardStep4 {
+  static mainStep4xData() {
+    return {
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get bean() { return window.alpineComponent.bean; },
+    }
   }
 }

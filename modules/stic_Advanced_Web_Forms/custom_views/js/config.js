@@ -967,6 +967,9 @@ class AWF_Configuration {
       return null;
     }
 
+    // Si es una acción terminal, asignamos orden a 999
+    const defaultOrder = actionDef.isTerminal ? 999 : (actionDef.order ?? 0);
+
     const newAction = new AWF_Action({
       name: actionDef.name,
       title: actionDef.title, 
@@ -975,7 +978,7 @@ class AWF_Configuration {
       category: actionDef.category,
       is_user_selectable: actionDef.isUserSelectable,
       is_terminal: actionDef.isTerminal,
-      order: actionDef.order ?? 0,
+      order: defaultOrder,
     });
 
     const requisiteActions = new Set(); 
@@ -1185,7 +1188,6 @@ class AWF_Configuration {
     };
     const newAction = this.addAction(relateActionDef, params);
     newAction.text = `${newAction.title}: ${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
-    dataBlock.save_action_id = newAction.id;
 
     return dataBlock;
   }

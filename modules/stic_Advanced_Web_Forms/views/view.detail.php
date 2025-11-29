@@ -38,8 +38,11 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
 
         SticViews::preDisplay($this);
 
-        echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
-        echo '<script src="//unpkg.com/alpinejs" defer></script>';
+        // echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
+        
+        // Alpinejs
+        // echo '<script src="//unpkg.com/alpinejs" defer></script>';
+        echo '<script src="SticInclude/vendor/alpine/alpine.min.js" defer></script>';
     }
 
     public function display()
