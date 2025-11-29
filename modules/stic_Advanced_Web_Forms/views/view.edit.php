@@ -38,15 +38,20 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         SticViews::preDisplay($this);
 
         // Bootstrap (modified with scoped classes: do not crash current layout!)
-        echo "<link rel='stylesheet' href='SticInclude/vendor/bootstrap/css/bootstrap.scoped.min.css'>";
-        echo '<script src="SticInclude/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>';
+        echo "<link rel='stylesheet' href='". getVersionedPath("SticInclude/vendor/bootstrap/css/bootstrap.scoped.min.css"). "'>";
+        echo getVersionedScript("SticInclude/vendor/bootstrap/js/bootstrap.bundle.min.js");
 
         // Alpinejs
-        echo '<script src="//unpkg.com/alpinejs" defer></script>';
+        // echo '<script src="//unpkg.com/alpinejs" defer></script>';
+        echo '<script src="' . getVersionedPath('SticInclude/vendor/alpine/alpine.min.js') . '" defer></script>';
 
-        // jstree
-        echo '<link rel="stylesheet" href="SticInclude/vendor/jstree/themes/default/style.min.css" />';
-        echo getVersionedScript("SticInclude/vendor/jstree/jstree.min.js");
+        // // jstree
+        // echo '<link rel="stylesheet" href="SticInclude/vendor/jstree/themes/default/style.min.css" />';
+        // echo getVersionedScript("SticInclude/vendor/jstree/jstree.min.js");
+
+        // Quill
+        echo getVersionedScript("SticInclude/vendor/quill/quill.min.js");
+        echo "<link rel='stylesheet' href='". getVersionedPath("SticInclude/vendor/quill/quill.snow.css"). "'>";
 
         // AWF 
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/config.js");
