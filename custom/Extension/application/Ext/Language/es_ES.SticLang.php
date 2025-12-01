@@ -3777,3 +3777,9 @@ $app_list_strings['stic_invoices_serial_format_list']['FACT-0000'] = 'FAC-0001';
 $app_list_strings['stic_invoices_serial_format_list']['FACT-YY-000'] = 'FAC-24-001';
 $app_list_strings['stic_invoices_serial_format_list']['RECT-000'] = 'RECT-001';
 $app_list_strings['stic_invoices_serial_format_list']['RECT-YYYY-0000'] = 'RECT-2024-0001';
+
+// Tipos de operacion admitidas por AEAT para facturas
+$app_list_strings['stic_products_quotes_operation_type_list']['S'] = 'Sujeta a impuestos';
+$app_list_strings['stic_products_quotes_operation_type_list']['N'] = 'No sujeta a impuestos';
+$app_list_strings['stic_products_quotes_operation_type_list']['E'] = 'Exenta de impuestos';
+$app_list_strings['stic_products_quotes_operation_type_list']['NL'] = 'No sujeta por localización';

@@ -418,17 +418,38 @@ class AOS_InvoicesUtils
                     
                     // Normalize tax rate string (ensure 2 decimals)
                     $taxRate = number_format((float)$taxRate, 2, '.', '');
+
+                    // Determine Operation Type from custom field
+                    // Values: S=Subject, E=Exempt, N=NotSubject, NL=NotSubjectLoc
+                    $opTypeVal = $quote->verifactu_aeat_operation_type_c ?? 'S';
+                    $operationType = OperationType::Subject; // Default (S1)
                     
-                    if (!isset($taxGroups[$taxRate])) {
-                        $taxGroups[$taxRate] = [
+                    if ($opTypeVal === 'E') {
+                        // Defaulting to E1 (Article 20) for generic Exempt. 
+                        // Ideally this should be more specific.
+                        $operationType = OperationType::ExemptByArticle20;
+                    } elseif ($opTypeVal === 'N') {
+                        $operationType = OperationType::NonSubject;
+                    } elseif ($opTypeVal === 'NL') {
+                        $operationType = OperationType::NonSubjectByLocation;
+                    }
+
+                    // Group key must include Tax Rate AND Operation Type
+                    // We use the enum value for the key to ensure uniqueness
+                    $groupKey = $taxRate . '_' . $operationType->value;
+                    
+                    if (!isset($taxGroups[$groupKey])) {
+                        $taxGroups[$groupKey] = [
                             'baseAmount' => 0.0,
-                            'taxAmount' => 0.0
+                            'taxAmount' => 0.0,
+                            'taxRate' => $taxRate,
+                            'operationType' => $operationType
                         ];
                     }
                     
                     // Add amounts
-                    $taxGroups[$taxRate]['baseAmount'] += (float)$quote->product_total_price;
-                    $taxGroups[$taxRate]['taxAmount'] += (float)$quote->vat_amt;
+                    $taxGroups[$groupKey]['baseAmount'] += (float)$quote->product_total_price;
+                    $taxGroups[$groupKey]['taxAmount'] += (float)$quote->vat_amt;
                 }
             }
 
@@ -449,14 +470,25 @@ class AOS_InvoicesUtils
                     $totalTaxAmount // from invoice total
                 );
             } else {
-                foreach ($taxGroups as $rate => $amounts) {
+                foreach ($taxGroups as $key => $groupData) {
+                    $taxRateToSend = $groupData['taxRate'];
+                    $taxAmountToSend = number_format($groupData['taxAmount'], 2, '.', '');
+
+                    // Fix Error [1238]: If operation is exempt, tax rate and amount must be null
+                    $opType = $groupData['operationType'];
+                    // Check if it is an exempt type (starts with E) or Non-Subject (starts with N)
+                    if (isset($opType->value) && (strpos($opType->value, 'E') === 0 || strpos($opType->value, 'N') === 0)) {
+                        $taxRateToSend = null;
+                        $taxAmountToSend = null;
+                    }
+
                     $breakdownDetails[] = self::createBreakdownDetail(
                         $verifactuTaxType,
                         RegimeType::C01, // General regime
-                        OperationType::Subject,
-                        number_format($amounts['baseAmount'], 2, '.', ''),
-                        $rate,
-                        number_format($amounts['taxAmount'], 2, '.', '')
+                        $opType, // Dynamic Operation Type
+                        number_format($groupData['baseAmount'], 2, '.', ''),
+                        $taxRateToSend,
+                        $taxAmountToSend
                     );
                 }
             }
@@ -496,7 +528,7 @@ class AOS_InvoicesUtils
 
             // --- DEBUG MODE: volcado de datos antes de enviar ---
             // FORCE DEBUG ALWAYS for design phase
-            if (true) {
+            if (false) {
                 echo '<div style="background:white; padding:20px; border:2px solid red; margin:20px; font-family:sans-serif; z-index:99999; position:relative;">';
                 echo '<h2 style="color:red; border-bottom:1px solid red;">DEBUG VERIFACTU - DATOS A ENVIAR</h2>';
                 

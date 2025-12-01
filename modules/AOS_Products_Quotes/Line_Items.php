@@ -49,8 +49,15 @@ function display_lines($focus, $field, $value, $view)
             $html .= "<input type=\"button\" tabindex=\"116\" class=\"button\" value=\"".$mod_strings['LBL_ADD_GROUP']."\" id=\"addGroup\" onclick=\"insertGroup(0)\" />";
             $html .= "</div>";
         }
+        // STIC CUSTOM 20251201 JCH - Enable AEAT operation_type field
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+        // $html .= '<input type="hidden" name="vathidden" id="vathidden" value="'.get_select_options_with_id($app_list_strings['vat_list'], '').'">
+		// 		  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">';
         $html .= '<input type="hidden" name="vathidden" id="vathidden" value="'.get_select_options_with_id($app_list_strings['vat_list'], '').'">
-				  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">';
+				  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">
+                  <input type="hidden" name="operation_type_hidden" id="operation_type_hidden" value="'.get_select_options_with_id($app_list_strings['stic_products_quotes_operation_type_list'], '').'">';
+        // END STIC CUSTOM                  
+        
         if ($focus->id != '') {
             require_once('modules/AOS_Products_Quotes/AOS_Products_Quotes.php');
             require_once('modules/AOS_Line_Item_Groups/AOS_Line_Item_Groups.php');
