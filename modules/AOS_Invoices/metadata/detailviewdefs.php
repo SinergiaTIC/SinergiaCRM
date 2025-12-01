@@ -396,15 +396,22 @@ array(
                 ),
                 1 => array(
                     0 => array(
+                        'name' => 'stic_serial_format_c',
+                        'label' => 'LBL_STIC_SERIAL_FORMAT',
+                    ),
+                    
+                    1 => array(
                         'name' => 'number',
                         'label' => 'LBL_INVOICE_NUMBER',
                     ),
+                ),
+                2 => array(
                     1 => array(
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                2 => array(
+                3 => array(
                     0 => array(
                         'name' => 'quote_number',
                         'label' => 'LBL_QUOTE_NUMBER',
@@ -414,7 +421,7 @@ array(
                         'label' => 'LBL_QUOTE_DATE',
                     ),
                 ),
-                3 => array(
+                4 => array(
                     0 => array(
                         'name' => 'invoice_date',
                         'label' => 'LBL_INVOICE_DATE',
@@ -424,7 +431,7 @@ array(
                         'label' => 'LBL_DUE_DATE',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',

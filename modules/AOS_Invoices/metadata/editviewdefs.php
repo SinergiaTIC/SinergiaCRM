@@ -382,7 +382,10 @@ array(
                     ),
                 ),
                 1 => array(
-                    0 => '',
+                    0 => array(
+                        'name' => 'stic_serial_format_c',
+                        'label' => 'LBL_STIC_SERIAL_FORMAT',
+                    ),
                     1 => array(
                         'name' => 'status',
                         'label' => 'LBL_STATUS',

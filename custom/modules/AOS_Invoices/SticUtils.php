@@ -194,13 +194,13 @@ class AOS_InvoicesUtils
      */
     public static function sendToAeat($invoiceBean)
     {
-        GLOBAL $mod_strings;
+        global $mod_strings;
         if (
             empty($invoiceBean->status ?? '') ||
             empty($invoiceBean->verifactu_aeat_status_c ?? '') ||
             $invoiceBean->status !== 'emitted' ||
             $invoiceBean->verifactu_aeat_status_c === 'accepted') {
-            
+
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($invoiceBean->verifactu_aeat_status_c ?? 'N/A'));
             SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']);
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
@@ -214,16 +214,16 @@ class AOS_InvoicesUtils
             $issuerNif = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_ID');
             $issuerName = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME');
 
-               if(empty($certificatePassword) || empty($issuerNif) || empty($issuerName)){
-                   $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '.'Missing required settings: certificate password, organization NIF or organization name.');
-                   SugarApplication::appendErrorMessage("<div class=\"alert alert-danger\">{$mod_strings['LBL_MISSING_SETTINGS']}</div>");
-                   SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record='.$invoiceBean->id);
-               }
+            if (empty($certificatePassword) || empty($issuerNif) || empty($issuerName)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Missing required settings: certificate password, organization NIF or organization name.');
+                SugarApplication::appendErrorMessage("<div class=\"alert alert-danger\">{$mod_strings['LBL_MISSING_SETTINGS']}</div>");
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+            }
 
             $useProduction = false; // false = pre-production, true = production
-            $systemName = 'SinergiaCRM Billing System';
-            $systemId = 'ST'; // Changed to avoid conflicts with previous registrations
-            $systemVersion = '1.0.0';
+            $systemName = 'SinergiaCRM';
+            $systemId = 'SC'; 
+            $systemVersion = $sugar_config['sinergiacrm_version'] ?? 'unknown';
             $installationNumber = '001';
 
             // Configure computer system
@@ -253,30 +253,30 @@ class AOS_InvoicesUtils
             global $sugar_config;
             $key = $sugar_config['unique_key'];
             $encryptedContent = file_get_contents($encryptedCertPath);
-            
+
             // Manual decryption to avoid trim() corrupting binary P12
             // blowfishDecode() uses trim() which removes whitespace and nulls, damaging binary files
             $data = base64_decode($encryptedContent);
             $bf = new Crypt_Blowfish($key);
             $p12Content = $bf->decrypt($data);
-            
+
             // DO NOT TRIM. OpenSSL handles the ASN.1 structure and ignores trailing padding.
             // rtrim($p12Content, "\0") can remove valid data if the file ends with null bytes.
 
             // Debug info
             $GLOBALS['log']->debug("DEBUG VERIFACTU: Encrypted size: " . strlen($encryptedContent));
             $GLOBALS['log']->debug("DEBUG VERIFACTU: Decrypted size: " . strlen($p12Content));
-            
+
             // --- SOLUCIÓN MEJORADA ERROR 401 ---
             // 1. Leer P12
             $certs = [];
             if (!openssl_pkcs12_read($p12Content, $certs, $certificatePassword)) {
-                 $sslError = "";
-                 while ($msg = openssl_error_string()) {
-                     $sslError .= $msg . "; ";
-                 }
-                 $GLOBALS['log']->fatal("DEBUG VERIFACTU: OpenSSL Error: " . $sslError);
-                 throw new Exception("Error leyendo el certificado P12. La contraseña es incorrecta o el fichero está dañado. Detalles OpenSSL: " . $sslError);
+                $sslError = "";
+                while ($msg = openssl_error_string()) {
+                    $sslError .= $msg . "; ";
+                }
+                $GLOBALS['log']->fatal("DEBUG VERIFACTU: OpenSSL Error: " . $sslError);
+                throw new Exception("Error leyendo el certificado P12. La contraseña es incorrecta o el fichero está dañado. Detalles OpenSSL: " . $sslError);
             }
 
             // 2. Depuración del Certificado (Verificar en sugarcrm.log)
@@ -285,13 +285,13 @@ class AOS_InvoicesUtils
                 $certSubject = json_encode($certData['subject']);
                 $certSerial = $certData['subject']['serialNumber'] ?? 'No encontrado';
                 $certValidTo = date('Y-m-d H:i:s', $certData['validTo_time_t']);
-                
+
                 $GLOBALS['log']->fatal("--- DEBUG VERIFACTU CERT ---");
                 $GLOBALS['log']->fatal("Subject: " . $certSubject);
                 $GLOBALS['log']->fatal("Serial (NIF esperado): " . $certSerial);
                 $GLOBALS['log']->fatal("NIF Configurado: " . $issuerNif);
                 $GLOBALS['log']->fatal("Válido hasta: " . $certValidTo);
-                
+
                 // Advertencia si el NIF no coincide (limpiando prefijos comunes como IDCES-)
                 $cleanCertNif = preg_replace('/^.*-/', '', $certSerial);
                 if (strtoupper($cleanCertNif) !== strtoupper($issuerNif)) {
@@ -301,7 +301,7 @@ class AOS_InvoicesUtils
 
             // 3. Construcción limpia del PEM (Solo bloques válidos, sin Bag Attributes)
             // Función auxiliar para limpiar cabeceras extrañas
-            $cleanPemBlock = function($str) {
+            $cleanPemBlock = function ($str) {
                 if (preg_match('/(-----BEGIN (?:CERTIFICATE|PRIVATE KEY)-----.*?-----END (?:CERTIFICATE|PRIVATE KEY)-----)/s', $str, $matches)) {
                     return $matches[1];
                 }
@@ -311,7 +311,7 @@ class AOS_InvoicesUtils
             // Orden: Certificado -> Clave Privada -> Intermedios
             // Ponemos el certificado primero para facilitar el parseo en AeatClient::isEntitySealCertificate
             $pemContent = $cleanPemBlock($certs['cert']) . "\n" . $cleanPemBlock($certs['pkey']);
-            
+
             if (isset($certs['extracerts']) && is_array($certs['extracerts'])) {
                 foreach ($certs['extracerts'] as $extraCert) {
                     $pemContent .= "\n" . $cleanPemBlock($extraCert);
@@ -413,33 +413,33 @@ class AOS_InvoicesUtils
             // Process and save AEAT response
             if (isset($response->items[0])) {
                 $item = $response->items[0];
-                
+
                 // Save the hash from the record
                 if (isset($response->record) && isset($response->record->hash)) {
                     $invoiceBean->verifactu_hash_c = $response->record->hash;
                 }
-                
+
                 // Save the previous hash from the record
                 if (isset($response->record) && isset($response->record->previousHash)) {
                     $invoiceBean->verifactu_previous_hash_c = $response->record->previousHash;
                 }
-                
+
                 // Save the CSV
                 if (isset($response->csv)) {
                     $invoiceBean->verifactu_csv_c = $response->csv;
                 }
-                
+
                 // Save the AEAT response (status and error if any)
                 $aeatResponse = $item->status->value;
                 if ($item->errorCode !== null) {
                     $aeatResponse .= ' [' . $item->errorCode . ']: ' . $item->errorDescription;
                 }
                 $invoiceBean->verifactu_aeat_response_c = substr($aeatResponse, 0, 255);
-                
+
                 // Update status based on AEAT response
                 if ($item->status->value === 'Correcto' || $item->status->value === 'AceptadoConErrores') {
                     $invoiceBean->verifactu_aeat_status_c = 'accepted';
-                    
+
                     // Generate and save QR code URL only when invoice is accepted
                     if (isset($response->record)) {
                         $qrUrl = self::generateQrCodeUrl($response->record, false, true);
@@ -449,25 +449,25 @@ class AOS_InvoicesUtils
                 } else {
                     $invoiceBean->verifactu_aeat_status_c = 'rejected';
                 }
-                
+
                 // Save submission date
                 if (isset($response->submittedAt)) {
                     $invoiceBean->verifactu_submitted_at_c = $response->submittedAt->format('Y-m-d H:i:s');
                 }
-                
+
                 // Save without triggering logic hooks
                 $invoiceBean->save(false);
-                
+
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice updated with AEAT response data');
             }
-            
+
             // Format response for display
             $debugInfo = $response->debugInfo ?? [];
             $formattedResponse = self::formatAeatResponse($response, $debugInfo);
-            
+
             // Log the response
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': AEAT Response: ' . $formattedResponse);
-            
+
             // Show success message with details
             $successMessage = 'Factura enviada correctamente a la AEAT';
             if ($invoiceBean->verifactu_aeat_status_c === 'accepted') {
@@ -475,23 +475,23 @@ class AOS_InvoicesUtils
             }
             $successMessage .= '. <a href="#" onclick="document.getElementById(\'aeat-response-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">Ver detalles</a>';
             $successMessage .= '<div id="aeat-response-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedResponse) . '</pre></div>';
-            
+
             SugarApplication::appendSuccessMessage($successMessage);
-            
+
             return true;
-            
+
         } catch (Exception $e) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error sending invoice to AEAT: ' . $e->getMessage());
-            
+
             // Format error for display
             $formattedError = self::formatAeatError($e);
-            
+
             // Show error message with details
             $errorMessage = 'Error al enviar la factura a la AEAT. <a href="#" onclick="document.getElementById(\'aeat-error-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">Ver detalles</a>';
             $errorMessage .= '<div id="aeat-error-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedError) . '</pre></div>';
-            
+
             SugarApplication::appendErrorMessage($errorMessage);
-            
+
             return false;
         }
     }
@@ -649,4 +649,143 @@ class AOS_InvoicesUtils
 
         return $qrGenerator->fromRegistrationRecord($record);
     }
+
+    /**
+     * Generate the next invoice number based on the serial format
+     *
+     * @param string $format The serial format (e.g., 'YYYY-0000', 'YY-000', 'FACT-0000')
+     * @param SugarBean $bean The invoice bean
+     * @return string The generated invoice number
+     */
+    public static function generateNextInvoiceNumber($format, $bean)
+    {
+        global $db;
+
+        // Get the year from the invoice date or current date
+        $invoiceDate = !empty($bean->invoice_date) ? $bean->invoice_date : date('Y-m-d');
+        $year = date('Y', strtotime($invoiceDate));
+        $yearTwoDigits = substr($year, -2);
+
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - Format: $format, Year: $year");
+
+        // Build a pattern to search for invoices with the same format and year
+        $searchPattern = self::buildInvoiceNumber($format, 0, $year, $yearTwoDigits);
+        // Replace the numeric part with % for SQL LIKE search
+        preg_match('/(0+)/', $format, $matches);
+        if (!empty($matches)) {
+            $numericPlaceholder = $matches[0];
+            $numericLength = strlen($numericPlaceholder);
+            $zeroPattern = str_repeat('0', $numericLength);
+            $searchPattern = str_replace($zeroPattern, str_repeat('_', $numericLength), $searchPattern);
+        }
+
+        // Find all invoice numbers with the same format and year
+        // Note: stic_serial_format_c is in aos_invoices_cstm table
+        $query = "SELECT aos_invoices.number
+                  FROM aos_invoices
+                  INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
+                  WHERE aos_invoices_cstm.stic_serial_format_c = " . $db->quoted($format) . "
+                  AND aos_invoices.deleted = 0
+                  AND aos_invoices.number IS NOT NULL
+                  AND aos_invoices.number != ''
+                  AND aos_invoices.number LIKE " . $db->quoted($searchPattern) . "
+                  ORDER BY aos_invoices.number DESC
+                  LIMIT 1";
+
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - Query: $query");
+
+        $lastNumber = $db->getOne($query);
+        $nextNumber = 1;
+
+        if (!empty($lastNumber)) {
+            $numericPart = self::extractNumericPart($lastNumber, $format);
+            $GLOBALS['log']->debug("generateNextInvoiceNumber - Found invoice: {$lastNumber}, numeric part: $numericPart");
+            $nextNumber = intval($numericPart) + 1;
+        }
+
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - Next number: $nextNumber");
+
+        // Build the new invoice number
+        $generatedNumber = self::buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits);
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - Generated number: '$generatedNumber'");
+
+        return $generatedNumber;
+    }
+
+    /**
+     * Extract the numeric part from an invoice number based on the format
+     *
+     * @param string $invoiceNumber The invoice number (e.g., '2024-0015')
+     * @param string $format The format pattern (e.g., 'YYYY-0000')
+     * @return string The numeric part as string
+     */
+    private static function extractNumericPart($invoiceNumber, $format)
+    {
+        $GLOBALS['log']->debug("extractNumericPart - Invoice: '$invoiceNumber', Format: '$format'");
+
+        // Find the position and length of the numeric placeholder (0000, 000, 00, etc.)
+        preg_match('/(0+)/', $format, $matches, PREG_OFFSET_CAPTURE);
+
+        if (empty($matches)) {
+            $GLOBALS['log']->debug("extractNumericPart - No numeric placeholder found in format");
+            return '0';
+        }
+
+        $numericPlaceholder = $matches[0][0]; // e.g., '0000'
+        $numericLength = strlen($numericPlaceholder);
+        $numericPosition = $matches[0][1]; // Position in format string
+
+        // Build a regex pattern from the format to extract the numeric part
+        // Replace YYYY with \d{4}, YY with \d{2}, and 0+ with (\d+)
+        $pattern = preg_quote($format, '/');
+        $pattern = str_replace('YYYY', '\\d{4}', $pattern);
+        $pattern = str_replace('YY', '\\d{2}', $pattern);
+        $pattern = preg_replace('/0+/', '(\\d+)', $pattern, 1); // Only replace first occurrence
+
+        $GLOBALS['log']->debug("extractNumericPart - Regex pattern: '/^$pattern$/'");
+
+        // Match the invoice number against the pattern
+        if (preg_match('/^' . $pattern . '$/', $invoiceNumber, $matches)) {
+            // The numeric part is in the first capture group
+            $result = isset($matches[1]) ? $matches[1] : '0';
+            $GLOBALS['log']->debug("extractNumericPart - Extracted: '$result'");
+            return $result;
+        }
+
+        $GLOBALS['log']->debug("extractNumericPart - Pattern did not match, returning '0'");
+        return '0';
+    }
+
+    /**
+     * Build the invoice number based on the format, next number, and year
+     *
+     * @param string $format The format pattern (e.g., 'YYYY-0000')
+     * @param int $nextNumber The next sequential number
+     * @param string $year The full year (4 digits)
+     * @param string $yearTwoDigits The year with 2 digits
+     * @return string The formatted invoice number
+     */
+    private static function buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits)
+    {
+        // Find the numeric placeholder and its length
+        preg_match('/(0+)/', $format, $matches);
+
+        if (empty($matches)) {
+            return $format;
+        }
+
+        $numericPlaceholder = $matches[0]; // e.g., '0000'
+        $numericLength = strlen($numericPlaceholder);
+
+        // Format the number with leading zeros
+        $formattedNumber = str_pad($nextNumber, $numericLength, '0', STR_PAD_LEFT);
+
+        // Replace placeholders in the format
+        $result = str_replace('YYYY', $year, $format);
+        $result = str_replace('YY', $yearTwoDigits, $result);
+        $result = str_replace($numericPlaceholder, $formattedNumber, $result);
+
+        return $result;
+    }
+
 }

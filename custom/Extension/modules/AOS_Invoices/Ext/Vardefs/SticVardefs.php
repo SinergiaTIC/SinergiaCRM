@@ -44,6 +44,10 @@ $dictionary['AOS_Invoices']['fields']['status']['default'] = 'draft';
 
 // Inline edition definition:
 $dictionary['AOS_Invoices']['fields']['number']['inline_edit'] = 0;
+$dictionary['AOS_Invoices']['fields']['number']['type'] = 'varchar';
+$dictionary['AOS_Invoices']['fields']['number']['len'] = 50;
+$dictionary['AOS_Invoices']['fields']['number']['size'] = 50;
+
 $dictionary['AOS_Invoices']['fields']['billing_address_street']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['shipping_address_street']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['currency_id']['inline_edit'] = 0;
@@ -272,4 +276,34 @@ $dictionary['AOS_Invoices']['fields']['verifactu_submitted_at_c'] = array(
     'merge_filter' => 'selected',
     'studio' => 'visible',
     'popupHelp' => 'LBL_VERIFACTU_SUBMITTED_AT_HELP',
+);
+
+$dictionary["AOS_Invoices"]["fields"]["stic_serial_format_c"] = array(
+    'id' => 'AOS_Invoicesserial_format_c',
+    'name' => 'stic_serial_format_c',
+    'vname' => 'LBL_STIC_SERIAL_FORMAT',
+    'custom_module' => 'AOS_Invoices',
+    'required' => false,
+    'source' => 'custom_fields',
+    'type' => 'enum',
+    'massupdate' => '0',
+    'default' => '0',
+    'no_default' => false,
+    'default' => 'pending',
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => '2',
+    'inline_edit' => 1,
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'enabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'stic_invoices_serial_format_list',
+    'studio' => 'visible',
+    'dependency' => NULL,
+    'popupHelp' => 'LBL_STIC_SERIAL_FORMAT_HELP',
 );

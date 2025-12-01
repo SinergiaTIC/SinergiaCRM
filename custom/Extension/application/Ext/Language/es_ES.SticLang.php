@@ -3767,3 +3767,13 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Enviado y aceptado';
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rechazado';
+
+// Tipos de formato de series de facturas
+$app_list_strings['stic_invoices_serial_format_list']['YYYY-0000'] = '2024-0001';
+$app_list_strings['stic_invoices_serial_format_list']['YY-000'] = '24-001';
+$app_list_strings['stic_invoices_serial_format_list']['0000'] = '0001';
+$app_list_strings['stic_invoices_serial_format_list']['A-00'] = 'A-01';
+$app_list_strings['stic_invoices_serial_format_list']['FACT-0000'] = 'FAC-0001';
+$app_list_strings['stic_invoices_serial_format_list']['FACT-YY-000'] = 'FAC-24-001';
+$app_list_strings['stic_invoices_serial_format_list']['RECT-000'] = 'RECT-001';
+$app_list_strings['stic_invoices_serial_format_list']['RECT-YYYY-0000'] = 'RECT-2024-0001';

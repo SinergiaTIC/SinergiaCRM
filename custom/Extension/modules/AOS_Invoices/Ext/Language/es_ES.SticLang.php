@@ -53,6 +53,9 @@ $mod_strings['LBL_VERIFACTU_AEAT_RESPONSE_HELP'] = 'Respuesta completa recibida 
 $mod_strings['LBL_VERIFACTU_CANCEL_ID'] = 'ID de la factura rectificada';
 $mod_strings['LBL_VERIFACTU_CANCEL_ID_HELP'] = 'En caso de facturas rectificativas o de anulación, este campo almacena el identificador de la factura original que está siendo anulada o corregida.';
 
+$mod_strings['LBL_STIC_SERIAL_FORMAT'] = 'Formato de la serie de la factura';
+$mod_strings['LBL_STIC_SERIAL_FORMAT_HELP'] = 'Formato utilizado para generar la serie de la factura. Puede incluir elementos como el año (YEAR), y el número secuencial de su serie (NUM) secuenciales o prefijos específicos. Ejemplos: "YEAR-NUM" para 2024-1, "FACT-NUM" para FAC-1, etc.';
+
 $mod_strings['LBL_SIGNER_SEND_TO_AEAT'] = 'Enviar a AEAT';
 $mod_strings['LBL_AEAT_STATUS_PANEL'] = 'Estado de la factura en la AEAT';
 $mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT'] = 'La factura no puede ser enviada a la AEAT. El estado debe ser "Emitida" y el estado AEAT debe ser diferente de "Aceptada".';
