@@ -362,7 +362,7 @@ class AOS_InvoicesUtils
             $totalAmount = number_format((float) $baseAmount + (float) $totalTaxAmount, 2, '.', '');
 
             // Log the values for debugging
-            $invoiceTotal = number_format((float) $invoiceBean->total_amt, 2, '.', '');
+            $invoiceTotal = number_format((float) $invoiceBean->total_amount, 2, '.', '');
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice amounts - Base: ' . $baseAmount . ', Tax: ' . $totalTaxAmount . ', Invoice Total: ' . $invoiceTotal . ', Calculated Total: ' . $totalAmount);
 
             // Warn if invoice total doesn't match calculated total

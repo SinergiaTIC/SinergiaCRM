@@ -26,6 +26,7 @@ class AOS_InvoicesHook
 
     public function before_save($bean, $event, $arguments)
     {
+
         // If the serial format field is empty, set a default value
         if (empty($bean->stic_serial_format_c)) {
             $bean->stic_serial_format_c = '0';
@@ -46,6 +47,7 @@ class AOS_InvoicesHook
      */
     public function after_save($bean, $event, $arguments)
     {
+        return;
         // check if status is 'emitted'
         if ($bean->status !== 'emitted') {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} status is not 'emitted', skipping AEAT send.");
