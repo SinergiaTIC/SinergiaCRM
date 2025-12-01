@@ -59,6 +59,8 @@ class AOS_InvoicesUtils
      * @param string $totalAmount Total invoice amount
      * @param InvoiceIdentifier|null $previousInvoiceId Previous invoice ID for chaining
      * @param string|null $previousHash Previous invoice hash for chaining
+     * @param string|null $customerNif Customer's NIF/CIF
+     * @param string|null $customerName Customer's name
      *
      * @return RegistrationRecord The created registration record
      */
@@ -72,7 +74,9 @@ class AOS_InvoicesUtils
         $totalTaxAmount,
         $totalAmount,
         $previousInvoiceId = null,
-        $previousHash = null
+        $previousHash = null,
+        $customerNif = null,
+        $customerName = null
     ) {
         $record = new RegistrationRecord();
 
@@ -84,8 +88,16 @@ class AOS_InvoicesUtils
 
         // Basic invoice data
         $record->issuerName = $issuerName;
-        $record->invoiceType = InvoiceType::Simplificada;
         $record->description = $description;
+
+        // Determine invoice type and recipients
+        if (!empty($customerNif) && !empty($customerName)) {
+            $record->invoiceType = InvoiceType::Factura; // F1 - Completa
+            $recipient = new FiscalIdentifier($customerName, $customerNif);
+            $record->recipients = [$recipient];
+        } else {
+            $record->invoiceType = InvoiceType::Simplificada; // F2 - Simplificada
+        }
 
         // Tax breakdown
         $record->breakdown = $breakdownDetails;
@@ -194,7 +206,7 @@ class AOS_InvoicesUtils
      */
     public static function sendToAeat($invoiceBean)
     {
-        global $mod_strings;
+        global $mod_strings, $timedate, $sugar_config;
         if (
             empty($invoiceBean->status ?? '') ||
             empty($invoiceBean->verifactu_aeat_status_c ?? '') ||
@@ -335,8 +347,11 @@ class AOS_InvoicesUtils
 
             // Extract invoice data from bean and create registration record
             $invoiceNumber = $invoiceBean->number;
-            $ldate = '2025-11-23';
+            
+            // Force db date format
+            $ldate = $timedate->to_db_date($invoiceBean->invoice_date, false);
             $issueDate = new DateTimeImmutable($ldate);
+
             $description = $invoiceBean->name;
 
             // Format amounts as strings with exactly 2 decimals (required by AEAT)
@@ -372,18 +387,87 @@ class AOS_InvoicesUtils
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': No previous invoice found, this will be the first in the chain');
             }
 
-            // Create breakdown details (this is a simplified example)
-            // You may need to adjust this based on your actual tax structure
-            $breakdownDetails = [
-                self::createBreakdownDetail(
+            // Create breakdown details
+            $breakdownDetails = [];
+            $taxGroups = [];
+            $productQuotes = [];
+
+            // Load product quotes relationship
+            if ($invoiceBean->load_relationship('aos_products_quotes')) {
+                $productQuotes = $invoiceBean->aos_products_quotes->getBeans();
+                
+                foreach ($productQuotes as $quote) {
+                    // Skip deleted items just in case
+                    if (!empty($quote->deleted)) continue;
+
+                    // Get tax rate (vat)
+                    // vat field usually contains the percentage like "21.0" or "10.0"
+                    $taxRate = $quote->vat;
+                    if ($taxRate === '' || $taxRate === null) {
+                        $taxRate = '0.00';
+                    }
+                    
+                    // Normalize tax rate string (ensure 2 decimals)
+                    $taxRate = number_format((float)$taxRate, 2, '.', '');
+                    
+                    if (!isset($taxGroups[$taxRate])) {
+                        $taxGroups[$taxRate] = [
+                            'baseAmount' => 0.0,
+                            'taxAmount' => 0.0
+                        ];
+                    }
+                    
+                    // Add amounts
+                    $taxGroups[$taxRate]['baseAmount'] += (float)$quote->product_total_price;
+                    $taxGroups[$taxRate]['taxAmount'] += (float)$quote->vat_amt;
+                }
+            }
+
+            // If no lines found (fallback to invoice totals - legacy behavior)
+            if (empty($taxGroups)) {
+                 // Calculate rate from totals to avoid hardcoding 21%
+                 $calculatedRate = 0.00;
+                 if ((float)$baseAmount != 0) {
+                     $calculatedRate = ((float)$totalTaxAmount / (float)$baseAmount) * 100;
+                 }
+
+                 $breakdownDetails[] = self::createBreakdownDetail(
                     TaxType::IVA,
                     RegimeType::C01,
                     OperationType::Subject,
-                    $baseAmount,
-                    '21.00', // Tax rate with 2 decimals
-                    $totalTaxAmount
-                ),
-            ];
+                    $baseAmount, // from invoice total
+                    number_format($calculatedRate, 2, '.', ''), // Calculated rate
+                    $totalTaxAmount // from invoice total
+                );
+            } else {
+                foreach ($taxGroups as $rate => $amounts) {
+                    $breakdownDetails[] = self::createBreakdownDetail(
+                        TaxType::IVA, // Assuming IVA for now
+                        RegimeType::C01, // General regime
+                        OperationType::Subject,
+                        number_format($amounts['baseAmount'], 2, '.', ''),
+                        $rate,
+                        number_format($amounts['taxAmount'], 2, '.', '')
+                    );
+                }
+            }
+
+            // Get customer info
+            $customerNif = null;
+            $customerName = null;
+            if (!empty($invoiceBean->billing_account_id)) {
+                $account = BeanFactory::getBean('Accounts', $invoiceBean->billing_account_id);
+                if ($account) {
+                    $customerName = $account->name;
+                    $customerNif = $account->stic_identification_number_c;
+                }
+            } elseif (!empty($invoiceBean->billing_contact_id)) {
+                $contact = BeanFactory::getBean('Contacts', $invoiceBean->billing_contact_id);
+                if ($contact) {
+                    $customerName = trim($contact->first_name . ' ' . $contact->last_name);
+                    $customerNif = $contact->stic_identification_number_c;
+                }
+            }
 
             // Create registration record
             $record = self::createRegistrationRecord(
@@ -396,8 +480,103 @@ class AOS_InvoicesUtils
                 $totalTaxAmount,
                 $totalAmount,
                 $previousInvoiceId,
-                $previousHash
+                $previousHash,
+                $customerNif,
+                $customerName
             );
+
+            // --- DEBUG MODE: volcado de datos antes de enviar ---
+            // FORCE DEBUG ALWAYS for design phase
+            if (true) {
+                echo '<div style="background:white; padding:20px; border:2px solid red; margin:20px; font-family:sans-serif; z-index:99999; position:relative;">';
+                echo '<h2 style="color:red; border-bottom:1px solid red;">DEBUG VERIFACTU - DATOS A ENVIAR</h2>';
+                
+                echo '<h3>0. Configuración y Sistema (SIF)</h3>';
+                echo '<p><em>Estos datos forman parte de la huella digital de la factura.</em></p>';
+                echo '<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">';
+                echo '<tr><th style="background:#eee;">Campo</th><th style="background:#eee;">Valor</th></tr>';
+                echo "<tr><td>Entorno</td><td>" . ($useProduction ? 'PRODUCCIÓN' : 'PRUEBAS (Pre-producción)') . "</td></tr>";
+                echo "<tr><td>Tipo Certificado</td><td>" . ($certificateType ? 'Sello de Entidad' : 'Personal / Representante') . "</td></tr>";
+                echo "<tr><td>Nombre Sistema</td><td>{$systemName}</td></tr>";
+                echo "<tr><td>ID Sistema</td><td>{$systemId}</td></tr>";
+                echo "<tr><td>Versión Sistema</td><td>{$systemVersion}</td></tr>";
+                echo "<tr><td>Nº Instalación</td><td>{$installationNumber}</td></tr>";
+                echo '</table>';
+
+                echo '<h3>1. Datos Generales</h3>';
+                echo '<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">';
+                echo '<tr><th style="background:#eee;">Campo</th><th style="background:#eee;">Valor</th></tr>';
+                echo "<tr><td>NIF Emisor</td><td>{$issuerNif}</td></tr>";
+                echo "<tr><td>Nombre Emisor</td><td>{$issuerName}</td></tr>";
+                echo "<tr><td>Número Factura</td><td>{$invoiceNumber}</td></tr>";
+                echo "<tr><td>Fecha Expedición</td><td>{$issueDate->format('Y-m-d')}</td></tr>";
+                echo "<tr><td>Tipo Factura</td><td><strong>" . ($record->invoiceType->value ?? 'N/A') . "</strong> (" . ($record->invoiceType->name ?? '') . ")</td></tr>";
+                echo "<tr><td>Descripción</td><td>{$description}</td></tr>";
+                echo "<tr><td>NIF Cliente</td><td>{$customerNif}</td></tr>";
+                echo "<tr><td>Nombre Cliente</td><td>{$customerName}</td></tr>";
+                echo "<tr><td>Total Impuestos</td><td>{$totalTaxAmount}</td></tr>";
+                echo "<tr><td>Total Factura</td><td>{$totalAmount}</td></tr>";
+                echo "<tr><td><strong>Hash Generado (Huella)</strong></td><td style='font-family:monospace; word-break:break-all;'>{$record->hash}</td></tr>";
+                echo '</table>';
+
+                echo '<h3>2. Desglose (Breakdown)</h3>';
+                echo '<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">';
+                echo '<tr>
+                        <th style="background:#eee;">Tipo Impuesto</th>
+                        <th style="background:#eee;">Régimen</th>
+                        <th style="background:#eee;">Operación</th>
+                        <th style="background:#eee;">Base</th>
+                        <th style="background:#eee;">% Tipo</th>
+                        <th style="background:#eee;">Cuota</th>
+                      </tr>';
+                foreach ($breakdownDetails as $bd) {
+                    echo '<tr>';
+                    echo "<td>" . ($bd->taxType->value ?? 'N/A') . "</td>";
+                    echo "<td>" . ($bd->regimeType->value ?? 'N/A') . "</td>";
+                    echo "<td>" . ($bd->operationType->value ?? 'N/A') . "</td>";
+                    echo "<td>{$bd->baseAmount}</td>";
+                    echo "<td>{$bd->taxRate}</td>";
+                    echo "<td>{$bd->taxAmount}</td>";
+                    echo '</tr>';
+                }
+                echo '</table>';
+
+                echo '<h3>3. Encadenamiento</h3>';
+                echo '<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">';
+                if ($previousInvoiceId) {
+                    echo "<tr><td>Factura Anterior</td><td>{$previousInvoiceId->invoiceNumber}</td></tr>";
+                    echo "<tr><td>Hash Anterior</td><td>{$previousHash}</td></tr>";
+                } else {
+                    echo "<tr><td colspan='2'>Es la primera factura de la cadena (o no se encontró anterior)</td></tr>";
+                }
+                echo '</table>';
+
+                echo '<h3>4. Detalle de Líneas (Debug Interno)</h3>';
+                echo '<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">';
+                echo '<tr><th>ID</th><th>Producto</th><th>Total</th><th>VAT (Raw)</th><th>VAT Amt</th><th>Rate Used</th></tr>';
+                if (!empty($productQuotes)) {
+                    foreach ($productQuotes as $quote) {
+                         $rawVat = $quote->vat;
+                         $fmtVat = number_format((float)$rawVat, 2, '.', '');
+                         echo "<tr>";
+                         echo "<td>{$quote->id}</td>";
+                         echo "<td>{$quote->name}</td>";
+                         echo "<td>{$quote->product_total_price}</td>";
+                         echo "<td>'{$rawVat}'</td>";
+                         echo "<td>{$quote->vat_amt}</td>";
+                         echo "<td>{$fmtVat}</td>";
+                         echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='6'>No se encontraron líneas de producto (productQuotes empty)</td></tr>";
+                }
+                echo '</table>';
+
+                echo '<br><h3 style="color:red;">EJECUCIÓN DETENIDA POR MODO DEBUG</h3>';
+                echo '</div>';
+                die();
+            }
+            // ---------------------------------------------------
 
             // Send records and get response (with detailed error handling)
             $response = $client->send([$record])->wait();
