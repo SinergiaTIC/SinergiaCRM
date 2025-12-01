@@ -42,4 +42,32 @@ class stic_Justifications extends Basic
     {
         parent::__construct();
     }
+
+    public function save($check_notify = false)
+    {
+        global $current_language;
+        $justificationsModStrings = return_module_language($current_language, 'stic_Justifications'); // can not be $mod_strings because of different contexts (specially inline edition)     
+
+        $this->fillName();
+
+        // Save the bean
+        parent::save($check_notify);
+
+    }
+
+        /**
+         * Fill the name field with a concatenation of other fields values
+         */
+    private function fillName()
+    {
+        // get Allocation
+        $allocation = BeanFactory::getBean('stic_Allocations', $this->stic_alloc8c71cations_ida);
+        if ($allocation) {
+            $this->name = $allocation->name;
+        } else {
+            $this->name = $this->date_entered;
+        }
+    }
+
+
 }

@@ -1,4 +1,3 @@
-<?php
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -20,34 +19,29 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+/* HEADER */
+// Set module name
+var module = "stic_Justifications";
 
-require_once 'include/MVC/View/views/view.edit.php';
-require_once 'SticInclude/Views.php';
+/* INCLUDES */
 
-class stic_JustificationsViewEdit extends ViewEdit
-{
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->useForSubpanel = true;
-        $this->useModuleQuickCreateTemplate = true;
-    }
+/* VIEWS CUSTOM CODE */
+switch (viewType()) {
+  case "edit":
+  case "quickcreate":
+  case "popup":
+    setAutofill(["name"]);
+    break;
 
-    public function preDisplay()
-    {
-        parent::preDisplay();
-        SticViews::preDisplay($this);
-    }
+  case "detail":
+    break;
 
-    public function display()
-    {
-        parent::display();
-        SticViews::display($this);
-        
-        // Custom JavaScript includes
-        echo getVersionedScript("modules/stic_Justifications/Utils.js");
-        
-        // Write here you custom code
-    }
+  case "list":
+    break;
+
+  default:
+    break;
 }
+
+/* AUX FUNCTIONS */

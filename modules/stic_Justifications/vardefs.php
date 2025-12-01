@@ -35,7 +35,7 @@ $dictionary['stic_Justifications'] = array(
             'dbType' => 'varchar',
             'len' => 255,
             'unified_search' => true,
-            'required' => true,
+            'required' => false,
             'vname' => 'LBL_NAME',
         ),
         'status' => array(
@@ -129,6 +129,7 @@ $dictionary['stic_Justifications'] = array(
             'table' => 'stic_justification_conditions',
             'module' => 'stic_Justification_Conditions',
             'rname' => 'name',
+            'required' => true,
         ),
         'stic_allocations_stic_justifications' => array(
             'name' => 'stic_allocations_stic_justifications',
@@ -163,6 +164,7 @@ $dictionary['stic_Justifications'] = array(
             'table' => 'stic_allocations',
             'module' => 'stic_Allocations',
             'rname' => 'name',
+            'required' => true,
         ),
         'opportunities_stic_justifications' => array(
             'name' => 'opportunities_stic_justifications',

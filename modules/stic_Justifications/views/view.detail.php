@@ -45,6 +45,9 @@ class stic_JustificationsViewDetail extends ViewDetail
         parent::display();
         SticViews::display($this);
         
+        // Custom JavaScript includes
+        echo getVersionedScript("modules/stic_Justifications/Utils.js");
+        
         // Write here you custom code
     }
 }
