@@ -66,38 +66,23 @@ class stic_Justification_Conditions extends Basic
             global $app_list_strings;
 
             $nameParts = array();
-            
-            // Add related payment name if available
-            // $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
-            // if ($paymentBean){
-            //     $nameParts[] = $paymentBean->name;
-            // }
 
-            // $opportunityBean = BeanFactory::getBean('Opportunities', $this->opportunities_stic_allocationsopportunities_ida);
-            // if ($opportunityBean){
-            //     $nameParts[] = $opportunityBean->name;
-            // }
+            // Add related opportunity name if available
+            $opportunityBean = BeanFactory::getBean('Opportunities', $this->opportunit378funities_ida);
+            if ($opportunityBean){
+                $nameParts[] = $opportunityBean->name;
+            }
 
-            // $projectBean = BeanFactory::getBean('Project', $this->project_stic_allocationsproject_ida);
-            // if ($projectBean){
-            //     $nameParts[] = $projectBean->name;
-            // }
+            // Add related ledger account name if available
+            $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $this->stic_ledger_accounts_ida);
+            if ($ledgerAccountBean){
+                $nameParts[] = $ledgerAccountBean->name;
+            }
 
-            // $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $this->stic_ledger_accounts_ida);
-            // if ($ledgerAccountBean){
-            //     $nameParts[] = $ledgerAccountBean->name;
-            // }
-
-            // // Add allocation type if available
-            // if (!empty($this->type) && isset($app_list_strings['stic_allocations_types_list'][$this->type])) {
-            //     $nameParts[] = $app_list_strings['stic_allocations_types_list'][$this->type];
-            // }
-            // // Add allocation payment_amount_field if available
-            // if (!empty($this->payment_amount_field) && isset($app_list_strings['stic_allocations_amount_fields_list'][$this->payment_amount_field])) {
-            //     $nameParts[] = $app_list_strings['stic_allocations_amount_fields_list'][$this->payment_amount_field];
-            // }
-
-            // $nameParts[] = $this->percentage . '%';
+            // Add allocation type if available
+            if (!empty($this->allocation_type) && isset($app_list_strings['stic_allocations_types_list'][$this->allocation_type])) {
+                $nameParts[] = $app_list_strings['stic_allocations_types_list'][$this->allocation_type];
+            }
 
             // Set the name by joining parts with a hyphen
             $this->name = implode(' - ', $nameParts);

@@ -35,7 +35,7 @@ $dictionary['stic_Justification_Conditions'] = array(
             'dbType' => 'varchar',
             'len' => 255,
             'unified_search' => true,
-            'required' => true,
+            'required' => false,
             'vname' => 'LBL_NAME',
         ),
         'active' => array(

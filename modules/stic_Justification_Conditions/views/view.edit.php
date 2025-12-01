@@ -45,6 +45,9 @@ class stic_Justification_ConditionsViewEdit extends ViewEdit
         parent::display();
         SticViews::display($this);
         
+        // Custom JavaScript includes
+        echo getVersionedScript("modules/stic_Justification_Conditions/Utils.js");
+        
         // Write here you custom code
     }
 }
