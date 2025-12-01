@@ -56,7 +56,7 @@ $viewdefs['stic_Justification_Conditions']['DetailView'] = array(
             ),
             array(
                 'opportunities_stic_justification_conditions_name',
-                '',
+                'stic_ledger_accounts_name',
             ),
             array(
                 'active',
