@@ -55,4 +55,5 @@ INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_us
 ('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_SENDER', '', 'Nombre que aparecerá como remitente en los mensajes enviados.'),
 ('64b1554a-cf95-423b-ae78-7f75951f3976', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_LIMIT', '100', 'Número máximo de mensajes permitidos en un envío masivo.'),
 ('f47ac10b-58cc-4372-a567-0e02b2c3d479', NOW(), NOW(), '1', '1', 0, '1', 'GENERAL', 'GENERAL_CERTIFICATE_PASSWORD', '', 'Contraseña del certificado digital.'),
-('f47ac10b-58cc-4372-a567-0e02b2c3d480', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'VERIFACTU_TEST', 1, 'Indica el modo de trabajo (0 = Real, 1 = Test).');
+('f47ac10b-58cc-4372-a567-0e02b2c3d480', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'VERIFACTU_TEST', 1, 'Indica el modo de trabajo (0 = Real, 1 = Test).'),
+('f47ac10b-58cc-4372-a567-0e02b2c3d481', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'GENERAL_CERTIFICATE_ENTITY_SEAL', 1, 'Indica si el certificado digital es de sello de entidad (1) o de representante (0).');
