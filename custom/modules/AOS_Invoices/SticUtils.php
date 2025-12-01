@@ -224,8 +224,17 @@ class AOS_InvoicesUtils
             require_once 'modules/stic_Settings/Utils.php';
             $certificatePassword = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_PASSWORD');
             $certificateType = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_ENTITY_SEAL');
+            $taxTypeSetting = stic_SettingsUtils::getSetting('VERIFACTU_TAX_TYPE');
             $issuerNif = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_ID');
             $issuerName = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME');
+
+            // Determine Tax Type (IVA, IPSI, IGIC)
+            $verifactuTaxType = TaxType::IVA; // Default to IVA (01)
+            if ($taxTypeSetting === '02') {
+                $verifactuTaxType = TaxType::IPSI;
+            } elseif ($taxTypeSetting === '03') {
+                $verifactuTaxType = TaxType::IGIC;
+            }
 
             if (empty($certificatePassword) || empty($issuerNif) || empty($issuerName) || $certificateType === null) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Missing required settings: certificate password, organization NIF or organization name.');
@@ -432,7 +441,7 @@ class AOS_InvoicesUtils
                  }
 
                  $breakdownDetails[] = self::createBreakdownDetail(
-                    TaxType::IVA,
+                    $verifactuTaxType,
                     RegimeType::C01,
                     OperationType::Subject,
                     $baseAmount, // from invoice total
@@ -442,7 +451,7 @@ class AOS_InvoicesUtils
             } else {
                 foreach ($taxGroups as $rate => $amounts) {
                     $breakdownDetails[] = self::createBreakdownDetail(
-                        TaxType::IVA, // Assuming IVA for now
+                        $verifactuTaxType,
                         RegimeType::C01, // General regime
                         OperationType::Subject,
                         number_format($amounts['baseAmount'], 2, '.', ''),
