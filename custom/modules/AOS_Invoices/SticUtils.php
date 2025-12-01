@@ -211,10 +211,11 @@ class AOS_InvoicesUtils
             // Get needing settings from stic_Setting module
             require_once 'modules/stic_Settings/Utils.php';
             $certificatePassword = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_PASSWORD');
+            $certificateType = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_ENTITY_SEAL');
             $issuerNif = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_ID');
             $issuerName = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME');
 
-            if (empty($certificatePassword) || empty($issuerNif) || empty($issuerName)) {
+            if (empty($certificatePassword) || empty($issuerNif) || empty($issuerName) || $certificateType === null) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Missing required settings: certificate password, organization NIF or organization name.');
                 SugarApplication::appendErrorMessage("<div class=\"alert alert-danger\">{$mod_strings['LBL_MISSING_SETTINGS']}</div>");
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
@@ -222,7 +223,7 @@ class AOS_InvoicesUtils
 
             $useProduction = false; // false = pre-production, true = production
             $systemName = 'SinergiaCRM';
-            $systemId = 'SC'; 
+            $systemId = 'SC';
             $systemVersion = $sugar_config['sinergiacrm_version'] ?? 'unknown';
             $installationNumber = '001';
 
@@ -241,6 +242,9 @@ class AOS_InvoicesUtils
 
             // Create AEAT client
             $client = new AeatClient($system, $taxpayer);
+
+            // Configure certificate type (Entity Seal vs Personal)
+            $client->setEntitySeal((bool) $certificateType);
 
             // Configure certificate
             $encryptedCertPath = 'custom/certificates/cert_encrypted.bin';
