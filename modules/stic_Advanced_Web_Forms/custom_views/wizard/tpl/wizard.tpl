@@ -1,5 +1,6 @@
 <script type="text/javascript" language="JavaScript">
     STIC.enabledModules = {$enabledModules};
+    STIC.mainThemeColor = '{$mainThemeColor}';
 </script>
 
 {$title}

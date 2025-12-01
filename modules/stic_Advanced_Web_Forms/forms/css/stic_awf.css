@@ -1,0 +1,110 @@
+/* --- VARIABLES DE PERSONALIZACIÓN (generado en php) --- */
+#stic-awf-wrapper {
+    --awf-primary: #6f42c1;        /* primary_color */
+    --awf-primary-rgb: 111, 66, 193; /* primary_color */
+    --awf-body-bg: #ffffff;
+    --awf-border-radius: 12px;       /* border_radius */
+/*
+      primary_color: '#0d6efd',  // Color corporativo por defecto (Bootstrap Primary)
+      page_bg_color: '#f8f9fa',  // Fondo de la página (gris muy suave)
+      form_bg_color: '#ffffff',  // Fondo del formulario (blanco)
+
+      text_color: '#212529',     // Color del texto (gris oscuro)
+      border_color: '#dee2e6',   // Color del borde (gris claro)
+      border_radius: 6,            // Redondeo en px (6px). Range: [0..30]
+      border_width: 1,             // Ancho del borde en px
+      
+      // Tipografía
+      font_family: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      
+      // Estructura (Grid)
+      sections_per_row: '1',       // Secciones por fila (1, 2 o 3)
+      fields_per_row: '2',         // Campos por fila (1, 2, 3 o 4)    
+*/
+}
+
+/* --- Css Común a incluir --- */
+
+/* Mapeo a Bootstrap 5 */
+#stic-awf-wrapper {
+    --bs-primary: var(--awf-primary);
+    --bs-primary-rgb: var(--awf-primary-rgb);
+    --bs-body-bg: var(--awf-body-bg);
+    --bs-border-radius: var(--awf-border-radius);
+    --bs-btn-primary-bg: var(--awf-primary);
+    --bs-btn-primary-border-color: var(--awf-primary);
+}
+
+/* Clase Grid fluido: la mágia del responsive */
+#stic-awf-wrapper .awf-grid {
+    display: grid;
+    gap: 1rem;
+    
+    /* Crea tantas columnas como quepan, pero nunca menores que la variable --awf-min-width. 
+       El 'min(100%, ...)' asegura que no se rompa en móviles muy pequeños. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--awf-min-width, 300px)), 1fr));
+}
+
+/* Estilos extra para embellecer */
+#stic-awf-wrapper .card {
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+}
+#stic-awf-wrapper .card-header {
+    background-color: rgba(var(--awf-primary-rgb), 0.05);
+    color: var(--awf-primary);
+    font-weight: bold;
+    border-bottom: 1px solid rgba(var(--awf-primary-rgb), 0.1);
+}
+
+/*
+PHP:
+
+// Mapeig per a SECCIONS (Contenidors grans)
+$sectionMap = [
+    '1' => '100%',   // 1 columna (apilades)
+    '2' => '500px',  // 2 cols en pantalles > 1000px aprox // 2 cols en desktop, 1 en tablet, 1 en mòbil.
+    '3' => '350px'   // 3 cols en pantalles > 1050px aprox // 3 cols en desktop, 2 en tablet, 1 en mòbil.
+];
+
+// Mapeig per a CAMPS (Inputs petits)
+$fieldMap = [
+    '1' => '100%',   // 1 columna (apilades)
+    '2' => '300px',  // 2 cols                 // 2 cols en desktop, 1 en tablet, 1 en mòbil.
+    '3' => '200px',  // 3 cols                 // 3 cols en desktop, 2 en tablet, 1 en mòbil.
+    '4' => '150px'   // 4 cols (molt compacte) // 4 cols en desktop, 2/3 en tablet, 1 en mòbil.
+];
+
+// Recuperem configuració (amb valors per defecte segurs)
+$secWidth = $sectionMap[$layout->theme->sections_per_row ?? '1'] ?? '100%';
+$fieldWidth = $fieldMap[$layout->theme->fields_per_row ?? '1'] ?? '100%';
+*/
+
+/*
+HTML:
+
+<div class="awf-grid" style="--awf-min-width: <?php echo $secWidth; ?>; gap: 2rem;">
+
+    <section class="card">
+        <div class="card-header">Dades Personals</div>
+        <div class="card-body">
+            
+            <div class="awf-grid" style="--awf-min-width: <?php echo $fieldWidth; ?>;">
+                
+                <div class="mb-3">
+                    <label class="form-label">Nom</label>
+                    <input type="text" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Cognoms</label>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> 
+        </div>
+    </section>
+
+</div> 
+*/

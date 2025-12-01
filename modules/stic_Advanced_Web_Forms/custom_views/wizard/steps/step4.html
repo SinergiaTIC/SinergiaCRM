@@ -1,0 +1,257 @@
+<!-- Main Panel -->
+<main class="wizard-main flex-fill d-flex flex-column" x-data="WizardStep4.mainStep4xData();">
+    <div class="row h-100 g-0">
+        <!-- Themes and configurations -->
+         <div class="col-md-3 border-end bg-light overflow-auto p-3" style="max-height: calc(100vh - 200px);">
+            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_COLORS')"></h4>
+            <div class="row g-2 mb-3">
+                <div class="col-4">
+                    <label class="form-label small">Principal</label>
+                    <input type="color" 
+                           class="form-control form-control-color w-100" 
+                           x-model="formConfig.layout.theme.primary_color"
+                           :value="formConfig.layout.theme.primary_color" 
+                           :style="`background-color: ${formConfig.layout.theme.primary_color}`">
+                </div>
+                <div class="col-4">
+                    <label class="form-label small">Fons Pàgina</label>
+                    <input type="color" 
+                           class="form-control form-control-color w-100" 
+                           x-model="formConfig.layout.theme.page_bg_color"
+                           :value="formConfig.layout.theme.page_bg_color" 
+                           :style="`background-color: ${formConfig.layout.theme.page_bg_color}`">
+                </div>
+                <div class="col-4">
+                    <label class="form-label small">Fons Form.</label>
+                    <input type="color" 
+                           class="form-control form-control-color w-100" 
+                           x-model="formConfig.layout.theme.form_bg_color"
+                           :value="formConfig.layout.theme.form_bg_color" 
+                           :style="`background-color: ${formConfig.layout.theme.form_bg_color}`">
+                </div>
+            </div>
+
+            <hr class="text-muted opacity-25">
+
+            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_STRUCTURE')"></h4>
+            <div class="mb-2">
+                <label class="form-label small d-flex justify-content-between mb-1">
+                    <span>Columnes (Seccions)</span>
+                    <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.sections_per_row"></span>
+                </label>
+                <input type="range" class="form-range" min="1" max="3" step="1" 
+                       x-model.number="formConfig.layout.theme.sections_per_row">
+                <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
+                    <span>1</span><span>2</span><span>3</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small d-flex justify-content-between mb-1">
+                    <span>Columnes (Camps)</span>
+                    <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.fields_per_row"></span>
+                </label>
+                <input type="range" class="form-range" min="1" max="4" step="1" 
+                       x-model.number="formConfig.layout.theme.fields_per_row">
+                <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
+                    <span>1</span><span>2</span><span>3</span><span>4</span>
+                </div>
+            </div>
+
+            <hr class="text-muted opacity-25">
+
+            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_STYLE')"></h4>
+            <div class="mb-3">
+                <label class="form-label small d-flex justify-content-between mb-1">
+                    <span>Arrodoniment</span>
+                    <span class="text-muted small" x-text="formConfig.layout.theme.border_radius + 'px'"></span>
+                </label>
+                <input type="range" class="form-range" min="0" max="30" step="1" 
+                       x-model.number="formConfig.layout.theme.border_radius">
+            </div>
+
+            <hr class="text-muted opacity-25">
+
+            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_STYLE')"></h4>
+            <div class="mb-3">
+                <label class="form-label small d-flex justify-content-between mb-1">
+                    Text del botó d'enviar                    
+                </label>
+                <input type="text" x-model="formConfig.layout.submit_button_text">
+            </div>
+
+            <details class="mb-3">
+                <summary class="small text-primary cursor-pointer user-select-none">Opcions Avançades</summary>
+                
+                <div class="card card-body bg-light mt-2 p-2 border-0">
+                    <div class="mb-3">
+                        <label class="form-label small">Tipografia</label>
+                        <textarea rows="3" x-model="formConfig.layout.theme.font_family"></textarea>
+                    </div>
+
+                    <div class="mb-2 row align-items-center">
+                        <label class="col-8 col-form-label small">Color del Text</label>
+                        <div class="col-4">
+                            <input type="color" 
+                                class="form-control form-control-color w-100" 
+                                x-model="formConfig.layout.theme.text_color"
+                                :value="formConfig.layout.theme.text_color" 
+                                :style="`background-color: ${formConfig.layout.theme.text_color}`">
+                        </div>
+                    </div>
+
+                    <div class="mb-2 row align-items-center">
+                        <label class="col-8 col-form-label small">Color del Borde</label>
+                        <div class="col-4">
+                            <input type="color" 
+                                class="form-control form-control-color w-100" 
+                                x-model="formConfig.layout.theme.border_color"
+                                :value="formConfig.layout.theme.border_color" 
+                                :style="`background-color: ${formConfig.layout.theme.border_color}`">
+                        </div>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label small d-flex justify-content-between">
+                            <span>Gruix Borde</span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_width + 'px'"></span>
+                        </label>
+                        <input type="range" class="form-range" min="0" max="5" step="1" 
+                               x-model.number="formConfig.layout.theme.border_width">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small">Amplada Màxima</label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-select" x-model="formConfig.layout.theme.form_width">
+                                <option value="100%">Total (100%)</option>
+                                <option value="1200px">Molt Ample (1200px)</option>
+                                <option value="800px">Estàndard (800px)</option>
+                                <option value="600px">Estret / Mòbil (600px)</option>
+                                <option value="custom">Personalitzat...</option>
+                            </select>
+                            <input type="text" class="form-control" x-show="formConfig.layout.theme.form_width == 'custom'" placeholder="Ex: 50rem">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small">Mida Lletra</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control" min="12" max="24" step="1" 
+                                    x-model="formConfig.layout.theme.font_size">
+                                <span class="input-group-text">px</span>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label small">Ombra (Shadow)</label>
+                            <select class="form-select form-select-sm" x-model="formConfig.layout.theme.shadow_intensity">
+                                <option value="none">Sense (Plana)</option>
+                                <option value="sm">Subtil</option>
+                                <option value="normal">Normal</option>
+                                <option value="lg">Elevada (Flotant)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <details class="mb-3">
+                        <summary class="fw-bold cursor-pointer">💻 Codi Personalitzat (Avançat)</summary>
+                        
+                        <div class="card card-body bg-light mt-2 border-0">
+                            <div class="mb-3">
+                                <label class="form-label small font-monospace">CSS Personalitzat</label>
+                                <textarea class="form-control font-monospace small" rows="4" 
+                                        x-model="formConfig.layout.custom_css" 
+                                        placeholder=".btn { background: red !important; }"></textarea>
+                                <div class="form-text text-muted extra-small">S'injectarà dins d'un bloc &lt;style&gt;.</div>
+                            </div>
+
+                            <div class="mb-0">
+                                <label class="form-label small font-monospace">JavaScript Personalitzat</label>
+                                <textarea class="form-control font-monospace small" rows="4" 
+                                        x-model="formConfig.layout.custom_js" 
+                                        placeholder="console.log('Form loaded');"></textarea>
+                                <div class="form-text text-muted extra-small">S'injectarà al final del formulari.</div>
+                            </div>
+                        </div>
+                    </details>                    
+                </div>
+            </details>
+        </div>
+
+        <!-- Form design -->
+        <div class="col-md-9 p-4 bg-white overflow-auto" style="max-height: calc(100vh - 200px);">
+            <h2>[Disseny del Formulari]</h2>
+            <!-- Header -->
+            <h3>[Capçalera]</h3>
+            <div class="mb-4">
+                <label class="form-label fw-bold" x-text="utils.translate('LBL_HEADER_HTML')"></label>
+                
+                <div class="bg-white text-dark"> 
+                    <div x-data="quillEditor(formConfig.layout.header_html, (html) => formConfig.layout.header_html = html)">
+                        <div class="bg-white border rounded overflow-hidden">
+                            <div x-ref="editor" style="height: 100px;"></div>
+                        </div>
+                    </div>
+                <div class="form-text">Personalitza la capçalera (Logo, Títol, Instruccions).</div>
+            </div>
+
+            <!-- Main -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>[Cos]</h2>
+                <button class="btn btn-primary" @click="addSection()">
+                    <i class="suitepicon suitepicon-action-plus"></i> Afegir Secció
+                </button>
+            </div>
+            <div class="d-flex flex-column gap-3">
+                <template x-for="(section, index) in formConfig.layout.structure" :key="section.id">
+                    
+                    <div class="card border-secondary shadow-sm">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <div class="fw-bold" contenteditable="true" 
+                                 @blur="section.title = $event.target.innerText" 
+                                 x-text="section.title"></div>
+                            
+                            <div>
+                                <button class="btn btn-sm btn-link" @click="moveSectionUp(index)">⬆️</button>
+                                <button class="btn btn-sm btn-link" @click="moveSectionDown(index)">⬇️</button>
+                                <button class="btn btn-sm btn-link text-danger" @click="removeSection(index)">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body bg-white">
+                            <p class="text-muted small mb-2">Contingut de la secció:</p>
+                            
+                            <div class="d-flex flex-wrap gap-2">
+                                <template x-for="block in formConfig.data_blocks" :key="block.id">
+                                    <div class="form-check form-check-inline border rounded px-2 py-1 m-0" 
+                                         :class="{'bg-primary text-white border-primary': true || sectionHasBlock(section, block.id)}">
+                                        <input class="form-check-input" type="checkbox" 
+                                               :checked="true || sectionHasBlock(section, block.id)" 
+                                               @change="toggleBlockInSection(section, block.id)">
+                                        <label class="form-check-label small" x-text="block.text"></label>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                </template>
+            </div>
+
+            <!-- Footer -->
+            <h3>[Peu]</h3>
+            <div class="mb-4">
+                <label class="form-label fw-bold" x-text="utils.translate('LBL_HEADER_HTML')"></label>
+                
+                <div class="bg-white text-dark"> 
+                    <div x-data="quillEditor(formConfig.layout.header_html, (html) => formConfig.layout.header_html = html)">
+                        <div class="bg-white border rounded overflow-hidden">
+                            <div x-ref="editor" style="height: 100px;"></div>
+                        </div>
+                    </div>
+                <div class="form-text">Personalitza el peu (Logo, Títol, Instruccions).</div>
+            </div>
+        </div>
+    </div>
+</main>

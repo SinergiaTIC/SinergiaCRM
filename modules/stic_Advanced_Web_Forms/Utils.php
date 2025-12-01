@@ -459,5 +459,19 @@ function detectDisplayField($bean) {
     return 'id';
 }
 
+function getCustomBaseColor() {
+    // From SticInclude/SticCustomScss.php
+    $db = DBManagerFactory::getInstance();
+    $color = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_THEME_COLOR' and deleted=0");
 
+    if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
+        $color = '';
+    }
+
+    if (!empty($color)){
+        return $color;
+    } else {
+        return '#b5bc31';
+    }
+}
 

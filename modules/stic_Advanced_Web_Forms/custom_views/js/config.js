@@ -708,33 +708,162 @@ class AWF_ActionParameter {
   }
 }
 
-/**
- * Layout: {
- *   type, name, ...
- * }
- */
 class AWF_Layout {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      name: "",              // Nombre del layout
-      // TODO: Definir campos
+      theme: new AWF_Theme(),      // Variables visuales del formulario
+
+      header_html: '',             // Html con la cabecera del formulario
+      footer_html: '',             // Html con el pie del formulario
+
+      // Texto del botón de enviar
+      submit_button_text: utils.translate('LBL_SEND_BUTTON'),
+
+      custom_css: '',              // CSS personalizado
+      custom_js: '',               // JS personalizado
+
+      structure: [],               // Array de Secciones
     });
 
     // 2. Overwrite with provided data
     Object.assign(this, data);
 
-    // 3. Map sub-objects and arrays to their classes
-  }  
+    // 3. Map sub-objects
+    this.theme = new AWF_Theme(data.theme ?? {});
+    this.structure = (data.structure || this.structure).map(s => new AWF_LayoutSection(s));
+  }
+
+  /**
+   * Sincroniza la estructura visual con los bloques de datos reales.
+   * Borra referencias a bloques eliminados y añade los nuevos bloques de datos al final.
+   * @param {AWF_DataBlock[]} dataBlocks Lista actual de bloques de datos
+   */
+  syncWithDataBlocks(dataBlocks) {
+    const placedBlockIds = new Set(); // Conjunto de bloques colocados
+    const cleanStructure = [];
+
+    // Limpieza de los bloques de la estructura visual
+    this.structure.forEach(section => {
+      section.elements = section.elements.filter(el => {
+        if (el.type != 'datablock') return true; //No es un bloque, lo mantenemos
+
+        // Comprobamos que exista el bloque
+        const exists = dataBlocks.some(b => b.id === el.ref_id);
+        if (exists) {
+          // Marcamos el bloque como colocado
+          placedBlockIds.add(el.ref_id); 
+          return true;
+        }
+        // El bloque no existe
+        return false; 
+      });
+
+      cleanStructure.push(section);
+    });
+    this.structure = cleanStructure;
+
+    // Añadimos los bloques que falten
+    const orphanBlocks = dataBlocks.filter(b => !placedBlockIds.has(b.id));
+    if (orphanBlocks.length > 0) {
+      // Creamos una sección para cada bloque
+      orphanBlocks.forEach(block => {
+        this._addSectionWithBlock(block);
+      });
+    }
+  }
+
+  _addSectionWithBlock(block) {
+    const section = new AWF_LayoutSection({
+      title: block.text, 
+      containerType: 'panel'
+    });
+    
+    const element = new AWF_LayoutElement({
+      type: 'datablock',
+      ref_id: block.id
+    });
+
+    section.elements.push(element);
+    this.structure.push(section);
+  }
+
+  addSection(title) {
+    this.structure.push(new AWF_LayoutSection({ title: title }));
+  }
+}
+
+class AWF_Theme {
+  constructor(data = {}) {
+    Object.assign(this, {
+      primary_color: STIC.mainThemeColor ?? '#0d6efd',  // Color corporativo por defecto 
+      page_bg_color: '#f8f9fa',  // Fondo de la página (gris muy suave)
+      form_bg_color: '#ffffff',  // Fondo del formulario (blanco)
+      border_radius: 6,            // Redondeo en px (6px). Range: [0..30]
+
+      text_color: '#212529',     // Color del texto (gris oscuro)
+      border_color: '#dee2e6',   // Color del borde (gris claro)
+      border_width: 1,             // Ancho del borde en px
+      
+      // Tipografía
+      font_family: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+
+      font_size: 16,               // Tamaño de letra en px. 
+      form_width: '1200px',        // Ancho máximo del formulario. String para permitir %, px, rem
+      shadow_intensity: 'normal',  // Intensidad de la sombra: 'none', 'light', 'normal', 'heavy'
+      
+      // Estructura (Grid)
+      sections_per_row: 1,         // Secciones por fila (1, 2 o 3)
+      fields_per_row: 2,           // Campos por fila (1, 2, 3 o 4)
+    });
+
+    // 2. Sobreescriure amb dades
+    Object.assign(this, data);
+  }
+}
+
+/**
+ * Define un contenedor visual
+ */
+class AWF_LayoutSection {
+  constructor(data = {}) {
+    Object.assign(this, {
+      id: utils.newId('sect'), // Id de la sección
+      title: "",               // Título a mostrar
+      
+      containerType: 'panel',  // Tipo de contenedor visual: 'panel' (simple), 'card' (con borde), 'tabs', 'accordion'
+      elements: [],
+    });
+
+    Object.assign(this, data);
+
+    this.elements = (data.elements || this.elements).map(e => new AWF_LayoutElement(e));
+  }
+}
+
+/**
+ * Elemento dentro de un contenedor visual
+ */
+class AWF_LayoutElement {
+  constructor(data = {}) {
+    Object.assign(this, {
+      id: utils.newId('el'),  // Id del elemento
+      
+      type: 'datablock',      // Tipo de elemento: 'datablock' (posibles ampliaciones: 'line', etc)
+      ref_id: '',             // ID de referencia (el ID del AWF_DataBlock)
+    });
+
+    Object.assign(this, data);
+  }
 }
 
 class AWF_Configuration {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      data_blocks: [],  // Los Bloques de Datos
-      flows: [],        // Los Flujos de Acciones
-      layout: [],       // Los Layouts
+      data_blocks: [],          // Los Bloques de Datos
+      flows: [],                // Los Flujos de Acciones
+      layout: new AWF_Layout(), // El Layout
     });
 
     // 2. Overwrite with provided data
@@ -743,7 +872,7 @@ class AWF_Configuration {
     // 3. Map sub-objects and arrays to their classes
     this.data_blocks = (data.data_blocks || this.data_blocks).map(d => new AWF_DataBlock(d));
     this.flows = (data.flows || this.flows).map(d => new AWF_Flow(d));
-    this.layout = (data.layout || this.layout).map(d => new AWF_Layout(d));
+    this.layout = new AWF_Layout(data.layout || {})
 
     // 4. Ensure default objects
     this._ensureDefaultDataBlocks();
@@ -938,8 +1067,13 @@ class AWF_Configuration {
     this.data_blocks.push(dataBlock);
 
     this._addSaveActionForDataBlock(dataBlock);
+    this.syncLayoutWithDataBlocks();
 
     return dataBlock;
+  }
+
+  syncLayoutWithDataBlocks() {
+    this.layout.syncWithDataBlocks(this.data_blocks);
   }
 
   _addSaveActionForDataBlock(dataBlock) {
@@ -1044,6 +1178,9 @@ class AWF_Configuration {
 
     // Remove SaveAction and its dependants
     this._deleteSaveActionForDataBlock(dataBlock);
+
+    // Sync Layout with DataBlocks
+    this.syncLayoutWithDataBlocks();
   }
 
   _deleteSaveActionForDataBlock(dataBlock) {

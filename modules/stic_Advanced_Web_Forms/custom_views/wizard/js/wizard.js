@@ -2,7 +2,7 @@ function wizardForm(readOnly) {
   return {
     navigation: {
       step: 1,
-      totalSteps: 4,
+      totalSteps: 5,
     },
 
     bean: STIC.record || {},
@@ -11,6 +11,69 @@ function wizardForm(readOnly) {
       this.$watch('bean.processing_mode', (newMode, oldMode) => {
         this.formConfig.prepareProcessingMode(newMode);
       });
+
+      // Initialize Quill
+      if (typeof Quill !== 'undefined') {
+        const Align = Quill.import('attributors/style/align');
+        const Background = Quill.import('attributors/style/background');
+        const Color = Quill.import('attributors/style/color');
+        const Font = Quill.import('attributors/style/font');
+        const Size = Quill.import('attributors/style/size');
+        
+        Quill.register(Align, true);
+        Quill.register(Background, true);
+        Quill.register(Color, true);
+        Quill.register(Font, true);
+        Quill.register(Size, true);
+      }
+
+      // Quill Component Editor
+      Alpine.data('quillEditor', (initialContent, onUpdate) => ({
+        editor: null,
+        content: initialContent,
+        
+        init() {
+          if (typeof Quill === 'undefined') {
+            console.error("Quill JS not loaded");
+            return;
+          }
+
+          const toolbarOptions = [
+            [{'header': [1, 2, 3, false] }], 
+                
+            ['bold', 'italic', 'underline', 'strike'],
+            [{'list': 'ordered'}, { 'list': 'bullet' }],
+            [{'align': [] }],
+            [{'color': [] }, { 'background': [] }],
+            ['link', 'image', 'clean'],
+          ];
+
+          this.editor = new Quill(this.$refs.editor, {
+            theme: 'snow',
+            modules: {
+              toolbar: {
+                container: toolbarOptions,
+              }
+            }
+          });
+
+          // Load initial content
+          if (this.content) {
+            this.editor.clipboard.dangerouslyPasteHTML(0, this.content);
+          }
+
+          // Save to Model
+          this.editor.on('text-change', () => {
+            let html = this.editor.root.innerHTML;
+            if (html === '<p><br></p>') html = '';
+            this.content = html;
+            
+            if (typeof onUpdate === 'function') {
+              onUpdate(html);
+            }
+          });
+        }
+      }));
     },
 
     async initWizard() {
@@ -22,7 +85,14 @@ function wizardForm(readOnly) {
       if (this.bean?.configuration) {
         jsonString = utils.decodeHTMLString(this.bean.configuration);
       }
-      this.formConfig = AWF_Configuration.fromJSON(jsonString);
+      try {
+        this.formConfig = AWF_Configuration.fromJSON(jsonString);
+      } catch (e) {
+        console.error("Error parsing JSON:", e);
+        console.log("Bad JSON String:", jsonString);
+        // Fallback a config vacía si falla
+        this.formConfig = new AWF_Configuration();
+      }
 
       // Load current Step
       WizardNavigation.loadStep();
@@ -130,6 +200,7 @@ class WizardNavigation {
   }
 
   static finish() {
+    window.alpineComponent.formConfig.syncLayoutWithDataBlocks();
     if (!this.isReadOnly) {
       fetch("index.php?module=stic_Advanced_Web_Forms&action=finalizeConfig", {
         method: "POST",
@@ -1423,6 +1494,11 @@ class WizardStep4 {
     return {
       get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
+
+      init() {
+        this.formConfig.syncLayoutWithDataBlocks();
+
+      },
     }
   }
 }

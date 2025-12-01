@@ -93,6 +93,9 @@ $mod_strings = array (
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
+  'LBL_HTML_BUTTON' => 'Ver/Editar HTML',
+  'LBL_SEND_BUTTON' => 'Enviar',
+  
   
   'LBL_WIZARD_PREVIOUS' => '<< Anterior',
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
@@ -105,7 +108,10 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_DESC_STEP3' => 'Definición de la lógica del formulario mediante las acciones que se ejecutarán cuando se reciba una respuesta del formulario. Las acciones permiten guardar o actualizar registros en el CRM, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
-  'LBL_WIZARD_DESC_STEP4' => 'Diseño de la apariencia visual final del formulario. Permite organizar los campos en secciones para facilitar su uso, personalizar la cabecera o pie del formulario, o modificar el código HTML completo del formulario.',
+  'LBL_WIZARD_DESC_STEP4' => 'Diseño de la apariencia visual final del formulario. Permite definir el estilo visual, organizar los campos en secciones para facilitar su uso, personalizar la cabecera o pie del formulario.',
+  'LBL_WIZARD_TITLE_STEP5' => 'Resumen y publicación',
+  'LBL_WIZARD_DESC_STEP5' => 'Revisión final y puesta en marcha del formulario. Permite activar la recepción de respuestas, obtener el enlace de acceso público o descargar el código HTML para integrarlo en una página web externa.',
+
   'LBL_WIZARD_SHOW_DEBUG_INFO' => 'Mostrar detalles',
 
   'LBL_MODULE' => 'Módulo',

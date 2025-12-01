@@ -20,8 +20,8 @@
                 <label class="form-label" for="debugFlowsTab">Flows</label>
             </div>
             <div class="stic-tab">
-                <input class="form-check-input" type="radio" id="debugLayoutsTab" x-model="debugTabSelected" value="layouts"/>
-                <label class="form-label" for="debugLayoutsTab">Layouts</label>
+                <input class="form-check-input" type="radio" id="debugLayoutTab" x-model="debugTabSelected" value="layout"/>
+                <label class="form-label" for="debugLayoutTab">Layout</label>
             </div>
         </div>
         <template x-if="debugTabSelected=='bean'">
@@ -48,10 +48,10 @@
                 <div class="overflow-auto" id="detailsFlows" data-objects="formConfig.flows" x-init="sticControls.elemTableObjects($el);"></div>
             </div>
         </template>
-        <template x-if="debugTabSelected=='layouts'">
+        <template x-if="debugTabSelected=='layout'">
             <div class="stic-tabcontent">
-                <h3 class="card-title">Layouts</h3>
-                <div class="overflow-auto" id="detailsLayouts" data-objects="formConfig.layouts" x-init="sticControls.elemTableObjects($el);"></div>
+                <h3 class="card-title">Layout</h3>
+                <div class="overflow-auto" id="detailsLayout" data-model="formConfig.layout" x-init="sticControls.elemTableObject($el);"></div>
             </div>
         </template>
     </div>
