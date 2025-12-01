@@ -718,7 +718,7 @@ class AWF_Layout {
       footer_html: '',             // Html con el pie del formulario
 
       // Texto del botón de enviar
-      submit_button_text: utils.translate('LBL_SEND_BUTTON'),
+      submit_button_text: utils.translate('LBL_LAYOUT_SEND_BUTTON'),
 
       custom_css: '',              // CSS personalizado
       custom_js: '',               // JS personalizado

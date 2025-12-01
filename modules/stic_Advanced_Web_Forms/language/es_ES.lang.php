@@ -93,9 +93,7 @@ $mod_strings = array (
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
-  'LBL_HTML_BUTTON' => 'Ver/Editar HTML',
-  'LBL_SEND_BUTTON' => 'Enviar',
-  
+    
   
   'LBL_WIZARD_PREVIOUS' => '<< Anterior',
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
@@ -108,7 +106,7 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_DESC_STEP3' => 'Definición de la lógica del formulario mediante las acciones que se ejecutarán cuando se reciba una respuesta del formulario. Las acciones permiten guardar o actualizar registros en el CRM, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
-  'LBL_WIZARD_DESC_STEP4' => 'Diseño de la apariencia visual final del formulario. Permite definir el estilo visual, organizar los campos en secciones para facilitar su uso, personalizar la cabecera o pie del formulario.',
+  'LBL_WIZARD_DESC_STEP4' => 'Diseño de la apariencia visual final del formulario. Permite definir el estilo visual, organizar los bloques de datos con sus campos en secciones para facilitar su uso, personalizar la cabecera o pie del formulario.',
   'LBL_WIZARD_TITLE_STEP5' => 'Resumen y publicación',
   'LBL_WIZARD_DESC_STEP5' => 'Revisión final y puesta en marcha del formulario. Permite activar la recepción de respuestas, obtener el enlace de acceso público o descargar el código HTML para integrarlo en una página web externa.',
 
@@ -226,6 +224,18 @@ $mod_strings = array (
   'LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION' => 'Opción',
   'LBL_ACTION_PARAM_MISSING_MESSAGE' => 'Hay parámetros obligados sin valor. Revise la configuración de la acción y asigne valores a los parámetros requeridos antes de guardar.',
   
+  'LBL_LAYOUT_SEND_BUTTON' => 'Enviar',
+  'LBL_LAYOUT_FORM_DESIGN' => 'Diseño del formulario',
+  'LBL_LAYOUT_HEADER' => 'Cabecera',
+  'LBL_LAYOUT_BODY' => 'Formulario',
+  'LBL_LAYOUT_FOOTER' => 'Pie',
+
+  'LBL_SECTIONS' => 'Secciones',
+  'LBL_SECTION_ADD' => 'Añadir Sección',
+  'LBL_SECTION_NEW' => 'Nueva Sección',
+  'LBL_SECTION_CONFIG' => 'Configuración',
+  'LBL_SECTION_CONTENT' => 'Contenido',
+
   'LBL_RESPONSE_SUMMARY_DATA' => 'Resumen de respuestas',
   
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',

@@ -1050,7 +1050,6 @@ class WizardStep3 {
              * @returns {void}
              */
             openEdit(flow, action) {
-              debugger;
               this.isEdit = true;
               this.flow = flow;
               this.original_id = action.id;
@@ -1330,7 +1329,6 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveUpAction(action) {
-        debugger;
         // No podemos mover una acción fija
         if (action.is_fixed_order) return false;
 
@@ -1368,7 +1366,6 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveDownAction(action) {
-        debugger;
         // No podemos mover una acción fija
         if (action.is_fixed_order) return false;
 
@@ -1494,11 +1491,58 @@ class WizardStep4 {
     return {
       get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
+      get sections() { return this.formConfig.layout.structure; },
 
       init() {
         this.formConfig.syncLayoutWithDataBlocks();
-
       },
+
+      createSection() {
+        this.sections.push(new AWF_LayoutSection({
+          title: utils.translate('LBL_SECTION_NEW'),
+        }));
+      },
+
+      canDeleteSection(section) {
+        return section.elements.length==0;
+      },
+
+      deleteSection(section) {
+        if (!this.canDeleteSection(section)) return;
+
+        this.formConfig.layout.structure = this.formConfig.layout.structure.filter(s => s.id != section.id);
+      },
+
+      canMoveUpSection(section) {
+        const index = this.sections.findIndex(s => s.id == section.id);
+        if (index <= 0) return false;
+
+        return true;
+      },
+      
+      moveUpSection(section) {
+        if (!this.canMoveUpSection(section)) return;
+
+        const index = this.sections.findIndex(s => s.id == section.id);
+        const sectionToMove = this.sections[index];
+        this.sections.splice(index, 1);
+        this.sections.splice(index - 1, 0, sectionToMove);
+      },
+
+      canMoveDownSection(section) {
+        const index = this.sections.findIndex(s => s.id == section.id);
+        if (index >= this.sections.length - 1) return false;
+      },
+
+      moveDownSection(section) {
+        if (!this.canMoveDownSection(section)) return;
+
+        const index = this.sections.findIndex(s => s.id == section.id);
+        const sectionToMove = this.sections[index];
+        this.sections.splice(index, 1);
+        this.sections.splice(index + 1, 0, sectionToMove);
+      },
+
     }
   }
 }
