@@ -64,10 +64,6 @@ $viewdefs['stic_Justification_Conditions']['EditView'] = array(
                 '',
             ),
             array(
-                'justified_percentage',
-                'justified_amount',
-            ),
-            array(
                 'description',
             ),
         ),

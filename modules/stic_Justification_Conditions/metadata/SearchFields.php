@@ -41,6 +41,31 @@ $searchFields[$module_name] = array(
     'assigned_user_id' => array('query_type' => 'default'),
 
     //Range Search Support
+    'range_max_allocable_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'start_range_max_allocable_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'end_range_max_allocable_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'range_max_allocable_percentage_grant' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'start_range_max_allocable_percentage_grant' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'end_range_max_allocable_percentage_grant' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+
     'range_max_allocable_amount_grant' => array('query_type' => 'default', 'enable_range_search' => true, 'is_numeric_field' => true),
     'start_range_max_allocable_amount_grant' => array(
         'query_type' => 'default',

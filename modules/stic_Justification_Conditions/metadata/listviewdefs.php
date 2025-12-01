@@ -33,6 +33,12 @@ $listViewDefs['stic_Justification_Conditions'] = array(
         'label' => 'LBL_ACTIVE',
         'default' => true,
     ),
+    'OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_NAME' => array(
+        'width' => '15%',
+        'label' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_OPPORTUNITIES_TITLE',
+        'link' => true,
+        'default' => true,
+    ),
     'ALLOCATION_TYPE' => array(
         'width' => '10%',
         'label' => 'LBL_ALLOCATION_TYPE',
@@ -46,6 +52,11 @@ $listViewDefs['stic_Justification_Conditions'] = array(
     'MAX_ALLOCABLE_PERCENTAGE_GRANT' => array(
         'width' => '10%',
         'label' => 'LBL_MAX_ALLOCABLE_PERCENTAGE_GRANT',
+        'default' => true,
+    ),
+    'JUSTIFIED_PERCENTAGE' => array(
+        'width' => '10%',
+        'label' => 'LBL_JUSTIFIED_PERCENTAGE',
         'default' => true,
     ),
     'JUSTIFIED_AMOUNT' => array(

@@ -63,12 +63,16 @@ $dictionary['stic_Justification_Conditions'] = array(
             'type' => 'int',
             'vname' => 'LBL_MAX_ALLOCABLE_PERCENTAGE',
             'required' => true,
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => 1,
         ),
         'max_allocable_percentage_grant' => array(
             'name' => 'max_allocable_percentage_grant',
             'type' => 'int',
             'vname' => 'LBL_MAX_ALLOCABLE_PERCENTAGE_GRANT',
             'required' => true,
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => 1,
         ),
         'max_allocable_amount_grant' => array(
             'name' => 'max_allocable_amount_grant',
@@ -76,6 +80,8 @@ $dictionary['stic_Justification_Conditions'] = array(
             'len' => 26,
             'precision' => 2,
             'vname' => 'LBL_MAX_ALLOCABLE_AMOUNT_GRANT',
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => 1,
         ),
         'justified_percentage' => array(
             'name' => 'justified_percentage',
@@ -83,6 +89,9 @@ $dictionary['stic_Justification_Conditions'] = array(
             'len' => 5,
             'precision' => 2,
             'vname' => 'LBL_JUSTIFIED_PERCENTAGE',
+            'inline_edit' => false,
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => 1,
         ),
         'justified_amount' => array(
             'name' => 'justified_amount',
@@ -90,6 +99,9 @@ $dictionary['stic_Justification_Conditions'] = array(
             'len' => 26,
             'precision' => 2,
             'vname' => 'LBL_JUSTIFIED_AMOUNT',
+            'inline_edit' => false,
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => 1,
         ),
         'stic_justification_conditions_stic_justifications' => array(
             'name' => 'stic_justification_conditions_stic_justifications',
@@ -134,6 +146,7 @@ $dictionary['stic_Justification_Conditions'] = array(
             'table' => 'opportunities',
             'module' => 'Opportunities',
             'rname' => 'name',
+            'required' => true,
         ),
     ),
     'relationships' => array(

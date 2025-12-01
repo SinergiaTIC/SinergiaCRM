@@ -40,6 +40,15 @@ $subpanel_layout = array(
             'width' => '10%',
             'default' => true,
         ),
+        'opportunities_stic_justification_conditions_name' => array(
+            'type' => 'relate',
+            'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_OPPORTUNITIES_TITLE',
+            'width' => '15%',
+            'default' => true,
+            'widget_class' => 'SubPanelDetailViewLink',
+            'target_module' => 'Opportunities',
+            'target_record_key' => 'opportunities_stic_justification_conditionsopportunities_ida',
+        ),
         'allocation_type' => array(
             'type' => 'enum',
             'vname' => 'LBL_ALLOCATION_TYPE',
@@ -51,26 +60,24 @@ $subpanel_layout = array(
             'width' => '10%',
             'default' => true,
         ),
-        'justified_amount' => array(
-            'vname' => 'LBL_JUSTIFIED_AMOUNT',
+        'max_allocable_percentage_grant' => array(
+            'vname' => 'LBL_MAX_ALLOCABLE_PERCENTAGE_GRANT',
             'width' => '10%',
             'default' => true,
         ),
-        'date_entered' => array(
-            'vname' => 'LBL_DATE_ENTERED',
+        'justified_percentage' => array(
+            'vname' => 'LBL_JUSTIFIED_PERCENTAGE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'justified_amount' => array(
+            'vname' => 'LBL_JUSTIFIED_AMOUNT',
             'width' => '10%',
             'default' => true,
         ),
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubPanelEditButton',
-            'module' => 'stic_Justification_Conditions',
-            'width' => '5%',
-            'default' => true,
-        ),
-        'remove_button' => array(
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
             'module' => 'stic_Justification_Conditions',
             'width' => '5%',
             'default' => true,

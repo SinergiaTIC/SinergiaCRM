@@ -33,12 +33,15 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      'allocation_type' => 
+      'opportunities_stic_justification_conditions_name' => 
       array (
-        'type' => 'enum',
-        'default' => true,
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_OPPORTUNITIES_TITLE',
+        'id' => 'OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONSOPPORTUNITIES_IDA',
         'width' => '10%',
-        'name' => 'allocation_type',
+        'default' => true,
+        'name' => 'opportunities_stic_justification_conditions_name',
       ),
       'active' => 
       array (
@@ -47,43 +50,71 @@ array (
         'width' => '10%',
         'name' => 'active',
       ),
-      'blocked' => 
+      'allocation_type' => 
       array (
-        'type' => 'bool',
-        'default' => true,
-        'width' => '10%',
-        'name' => 'blocked',
-      ),
-      'assigned_user_id' => 
-      array (
-        'name' => 'assigned_user_id',
-        'label' => 'LBL_ASSIGNED_TO',
         'type' => 'enum',
-        'function' => 
-        array (
-          'name' => 'get_user_array',
-          'params' => 
-          array (
-            0 => false,
-          ),
-        ),
         'default' => true,
         'width' => '10%',
+        'name' => 'allocation_type',
       ),
-      'current_user_only' => 
+      'max_allocable_percentage' => 
       array (
-        'name' => 'current_user_only',
-        'label' => 'LBL_CURRENT_USER_FILTER',
-        'type' => 'bool',
-        'default' => true,
+        'type' => 'decimal',
+        'label' => 'LBL_MAX_ALLOCABLE_PERCENTAGE',
         'width' => '10%',
+        'default' => true,
+        'name' => 'max_allocable_percentage',
+      ),
+      'max_allocable_percentage_grant' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_MAX_ALLOCABLE_PERCENTAGE_GRANT',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'max_allocable_percentage_grant',
+      ),
+      'justified_percentage' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_JUSTIFIED_PERCENTAGE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'justified_percentage',
+      ),
+      'justified_amount' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_JUSTIFIED_AMOUNT',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'justified_amount',
+      ),
+      'assigned_user_id' => array(
+          'name' => 'assigned_user_id',
+          'label' => 'LBL_ASSIGNED_TO',
+          'type' => 'enum',
+          'function' => array(
+              'name' => 'get_user_array',
+              'params' => array(
+                  0 => false,
+              ),
+          ),
+          'width' => '10%',
+          'default' => true,
+      ),
+      'current_user_only' => array(
+          'label' => 'LBL_CURRENT_USER_FILTER',
+          'type' => 'bool',
+          'default' => true,
+          'width' => '10%',
+          'name' => 'current_user_only',
       ),
       'favorites_only' => array(
-        'name' => 'favorites_only',
-        'label' => 'LBL_FAVORITES_FILTER',
-        'type' => 'bool',
-        'default' => true,
-        'width' => '10%',
+          'name' => 'favorites_only',
+          'label' => 'LBL_FAVORITES_FILTER',
+          'type' => 'bool',
+          'default' => true,
+          'width' => '10%',
       ),
     ),
     'advanced_search' => 
@@ -94,12 +125,15 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      'allocation_type' => 
+      'opportunities_stic_justification_conditions_name' => 
       array (
-        'type' => 'enum',
-        'default' => true,
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_OPPORTUNITIES_TITLE',
+        'id' => 'OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONSOPPORTUNITIES_IDA',
         'width' => '10%',
-        'name' => 'allocation_type',
+        'default' => true,
+        'name' => 'opportunities_stic_justification_conditions_name',
       ),
       'active' => 
       array (
@@ -108,11 +142,51 @@ array (
         'width' => '10%',
         'name' => 'active',
       ),
+      'allocation_type' => 
+      array (
+        'type' => 'enum',
+        'default' => true,
+        'width' => '10%',
+        'name' => 'allocation_type',
+      ),
+      'max_allocable_percentage' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_MAX_ALLOCABLE_PERCENTAGE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'max_allocable_percentage',
+      ),
+      'max_allocable_percentage_grant' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_MAX_ALLOCABLE_PERCENTAGE_GRANT',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'max_allocable_percentage_grant',
+      ),
+      'justified_percentage' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_JUSTIFIED_PERCENTAGE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'justified_percentage',
+      ),
+      'justified_amount' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_JUSTIFIED_AMOUNT',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'justified_amount',
+      ),
       'blocked' => 
       array (
         'type' => 'bool',
-        'default' => true,
+        'label' => 'LBL_BLOCKED',
         'width' => '10%',
+        'default' => true,
         'name' => 'blocked',
       ),
       'max_allocable_amount_grant' => 
@@ -123,70 +197,69 @@ array (
         'default' => true,
         'name' => 'max_allocable_amount_grant',
       ),
-      'justified_amount' => 
-      array (
-        'type' => 'decimal',
-        'label' => 'LBL_JUSTIFIED_AMOUNT',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'justified_amount',
-      ),
-      'assigned_user_id' => 
-      array (
-        'name' => 'assigned_user_id',
-        'label' => 'LBL_ASSIGNED_TO',
-        'type' => 'enum',
-        'function' => 
-        array (
-          'name' => 'get_user_array',
-          'params' => 
-          array (
-            0 => false,
-          ),
-        ),
-        'width' => '10%',
-      ),
-      'date_entered' => 
-      array (
-        'type' => 'datetime',
-        'label' => 'LBL_DATE_ENTERED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'date_entered',
-      ),
-      'date_modified' => 
-      array (
-        'type' => 'datetime',
-        'label' => 'LBL_DATE_MODIFIED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'date_modified',
-      ),
-      'created_by' => 
-      array (
-        'type' => 'assigned_user_name',
-        'label' => 'LBL_CREATED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'created_by',
-      ),
-      'modified_user_id' => 
-      array (
-        'type' => 'assigned_user_name',
-        'label' => 'LBL_MODIFIED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'modified_user_id',
-      ),
-      'description' => 
-      array (
-        'type' => 'text',
-        'label' => 'LBL_DESCRIPTION',
-        'sortable' => false,
-        'width' => '10%',
-        'default' => true,
-        'name' => 'description',
-      ),
+            'assigned_user_id' => array(
+                'name' => 'assigned_user_id',
+                'label' => 'LBL_ASSIGNED_TO',
+                'type' => 'enum',
+                'function' => array(
+                    'name' => 'get_user_array',
+                    'params' => array(
+                        0 => false,
+                    ),
+                ),
+                'width' => '10%',
+                'default' => true,
+            ),
+            'description' => array(
+                'type' => 'text',
+                'label' => 'LBL_DESCRIPTION',
+                'sortable' => false,
+                'width' => '10%',
+                'default' => true,
+                'name' => 'description',
+            ),
+            'date_modified' => array(
+                'type' => 'datetime',
+                'label' => 'LBL_DATE_MODIFIED',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'date_modified',
+            ),
+            'modified_user_id' => array(
+                'type' => 'assigned_user_name',
+                'label' => 'LBL_MODIFIED',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'modified_user_id',
+            ),
+            'created_by' => array(
+                'type' => 'assigned_user_name',
+                'label' => 'LBL_CREATED',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'created_by',
+            ),
+            'date_entered' => array(
+                'type' => 'datetime',
+                'label' => 'LBL_DATE_ENTERED',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'date_entered',
+            ),
+            'current_user_only' => array(
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+                'default' => true,
+                'width' => '10%',
+                'name' => 'current_user_only',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
+                'default' => true,
+                'width' => '10%',
+            ),
     ),
   ),
   'templateMeta' => 
