@@ -33,6 +33,20 @@ $listViewDefs['stic_Justifications'] = array(
         'label' => 'LBL_STATUS',
         'default' => true,
     ),
+    'stic_opportunities_stic_justifications_name' => array(
+        'width' => '20%',
+        'label' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE',
+        'id' => 'STIC_OPPORTUNITIES_STIC_JUSTIFICATIONSOCCURRENCES_IDA',
+        'module' => 'Opportunities',
+        'default' => true,
+    ),
+    'STIC_LEDGER_ACCOUNTS_NAME' => array(
+        'width' => '20%',
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'module' => 'stic_Ledger_Accounts',
+        'default' => true,
+    ),
     'ALLOCATION_TYPE' => array(
         'width' => '10%',
         'label' => 'LBL_ALLOCATION_TYPE',

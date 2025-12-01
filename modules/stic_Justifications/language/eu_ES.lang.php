@@ -54,5 +54,7 @@ $mod_strings = array(
     'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE' => 'Dirulaguntza',
     'LBL_OPPORTUNIT01EUNITIES_IDA' => 'Dirulaguntza (erlazionatutako dirulaguntzaren IDa)',
     'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_NAME' => 'Dirulaguntzaren Izena',
+    'LBL_STIC_LEDGER_ACCOUNTS' => 'Kontu Kontablea',
+    'LBL_STIC_LEDGER_ACCOUNTS_ID' => 'Kontu Kontablea ID',
 );
 ?>

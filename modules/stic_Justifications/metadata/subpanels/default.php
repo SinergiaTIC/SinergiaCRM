@@ -40,6 +40,19 @@ $subpanel_layout = array(
             'width' => '10%',
             'default' => true,
         ),
+        'opportunities_stic_justifications_name' => array(
+            'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'module' => 'Opportunities',
+            'width' => '20%',
+            'default' => true,
+        ),
+        'stic_ledger_accounts_name' => array(
+            'vname' => 'LBL_STIC_LEDGER_ACCOUNTS',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'module' => 'stic_Ledger_Accounts',
+            'width' => '20%',   
+        ),
         'allocation_type' => array(
             'type' => 'enum',
             'vname' => 'LBL_ALLOCATION_TYPE',

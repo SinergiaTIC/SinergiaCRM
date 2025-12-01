@@ -40,6 +40,24 @@ array (
         'width' => '10%',
         'name' => 'status',
       ),
+      'opportunities_stic_justifications_name' => 
+      array (
+        'type' => 'relate',
+        'label' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE',
+        'id' => 'STIC_OPPORTUNITIES_STIC_JUSTIFICATIONSOCCURRENCES_IDA',
+        'default' => true,
+        'width' => '10%',
+        'name' => 'opportunities_stic_justifications_name',
+      ),
+      'stic_ledger_accounts_name' => 
+      array (
+        'type' => 'relate',
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'default' => true,
+        'width' => '10%',
+        'name' => 'stic_ledger_accounts_name',
+      ),
       'allocation_type' => 
       array (
         'type' => 'enum',
@@ -47,43 +65,44 @@ array (
         'width' => '10%',
         'name' => 'allocation_type',
       ),
-      'blocked' => 
+      'amount' => 
       array (
-        'type' => 'bool',
-        'default' => true,
+        'type' => 'decimal',
+        'label' => 'LBL_AMOUNT',
         'width' => '10%',
-        'name' => 'blocked',
       ),
-      'assigned_user_id' => 
+      'justified_amount' => 
       array (
-        'name' => 'assigned_user_id',
-        'label' => 'LBL_ASSIGNED_TO',
-        'type' => 'enum',
-        'function' => 
-        array (
-          'name' => 'get_user_array',
-          'params' => 
-          array (
-            0 => false,
+        'type' => 'decimal',
+        'label' => 'LBL_JUSTIFIED_AMOUNT',
+        'width' => '10%',
+      ),
+      'assigned_user_id' => array(
+          'name' => 'assigned_user_id',
+          'label' => 'LBL_ASSIGNED_TO',
+          'type' => 'enum',
+          'function' => array(
+              'name' => 'get_user_array',
+              'params' => array(
+                  0 => false,
+              ),
           ),
-        ),
-        'default' => true,
-        'width' => '10%',
+          'width' => '10%',
+          'default' => true,
       ),
-      'current_user_only' => 
-      array (
-        'name' => 'current_user_only',
-        'label' => 'LBL_CURRENT_USER_FILTER',
-        'type' => 'bool',
-        'default' => true,
-        'width' => '10%',
+      'current_user_only' => array(
+          'label' => 'LBL_CURRENT_USER_FILTER',
+          'type' => 'bool',
+          'default' => true,
+          'width' => '10%',
+          'name' => 'current_user_only',
       ),
       'favorites_only' => array(
-        'name' => 'favorites_only',
-        'label' => 'LBL_FAVORITES_FILTER',
-        'type' => 'bool',
-        'default' => true,
-        'width' => '10%',
+          'name' => 'favorites_only',
+          'label' => 'LBL_FAVORITES_FILTER',
+          'type' => 'bool',
+          'default' => true,
+          'width' => '10%',
       ),
     ),
     'advanced_search' => 
@@ -101,12 +120,42 @@ array (
         'width' => '10%',
         'name' => 'status',
       ),
+      'opportunities_stic_justifications_name' => 
+      array (
+        'type' => 'relate',
+        'label' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE',
+        'id' => 'STIC_OPPORTUNITIES_STIC_JUSTIFICATIONSOCCURRENCES_IDA',
+        'default' => true,
+        'width' => '10%',
+        'name' => 'opportunities_stic_justifications_name',
+      ),
+      'stic_ledger_accounts_name' => 
+      array (
+        'type' => 'relate',
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'default' => true,
+        'width' => '10%',
+        'name' => 'stic_ledger_accounts_name',
+      ),
       'allocation_type' => 
       array (
         'type' => 'enum',
         'default' => true,
         'width' => '10%',
         'name' => 'allocation_type',
+      ),
+      'amount' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_AMOUNT',
+        'width' => '10%',
+      ),
+      'justified_amount' => 
+      array (
+        'type' => 'decimal',
+        'label' => 'LBL_JUSTIFIED_AMOUNT',
+        'width' => '10%',
       ),
       'blocked' => 
       array (
@@ -115,77 +164,74 @@ array (
         'width' => '10%',
         'name' => 'blocked',
       ),
-      'amount' => 
+      'max_allocable_percentage' => 
       array (
         'type' => 'decimal',
-        'label' => 'LBL_AMOUNT',
+        'label' => 'LBL_MAX_ALLOCABLE_PERCENTAGE',
         'width' => '10%',
-        'default' => true,
-        'name' => 'amount',
       ),
-      'justified_amount' => 
-      array (
-        'type' => 'decimal',
-        'label' => 'LBL_JUSTIFIED_AMOUNT',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'justified_amount',
-      ),
-      'assigned_user_id' => 
-      array (
-        'name' => 'assigned_user_id',
-        'label' => 'LBL_ASSIGNED_TO',
-        'type' => 'enum',
-        'function' => 
-        array (
-          'name' => 'get_user_array',
-          'params' => 
-          array (
-            0 => false,
+      'assigned_user_id' => array(
+          'name' => 'assigned_user_id',
+          'label' => 'LBL_ASSIGNED_TO',
+          'type' => 'enum',
+          'function' => array(
+              'name' => 'get_user_array',
+              'params' => array(
+                  0 => false,
+              ),
           ),
-        ),
-        'width' => '10%',
+          'width' => '10%',
+          'default' => true,
       ),
-      'date_entered' => 
-      array (
-        'type' => 'datetime',
-        'label' => 'LBL_DATE_ENTERED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'date_entered',
+      'description' => array(
+          'type' => 'text',
+          'label' => 'LBL_DESCRIPTION',
+          'sortable' => false,
+          'width' => '10%',
+          'default' => true,
+          'name' => 'description',
       ),
-      'date_modified' => 
-      array (
-        'type' => 'datetime',
-        'label' => 'LBL_DATE_MODIFIED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'date_modified',
+      'date_modified' => array(
+          'type' => 'datetime',
+          'label' => 'LBL_DATE_MODIFIED',
+          'width' => '10%',
+          'default' => true,
+          'name' => 'date_modified',
       ),
-      'created_by' => 
-      array (
-        'type' => 'assigned_user_name',
-        'label' => 'LBL_CREATED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'created_by',
+      'modified_user_id' => array(
+          'type' => 'assigned_user_name',
+          'label' => 'LBL_MODIFIED',
+          'width' => '10%',
+          'default' => true,
+          'name' => 'modified_user_id',
       ),
-      'modified_user_id' => 
-      array (
-        'type' => 'assigned_user_name',
-        'label' => 'LBL_MODIFIED',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'modified_user_id',
+      'created_by' => array(
+          'type' => 'assigned_user_name',
+          'label' => 'LBL_CREATED',
+          'width' => '10%',
+          'default' => true,
+          'name' => 'created_by',
       ),
-      'description' => 
-      array (
-        'type' => 'text',
-        'label' => 'LBL_DESCRIPTION',
-        'sortable' => false,
-        'width' => '10%',
-        'default' => true,
-        'name' => 'description',
+      'date_entered' => array(
+          'type' => 'datetime',
+          'label' => 'LBL_DATE_ENTERED',
+          'width' => '10%',
+          'default' => true,
+          'name' => 'date_entered',
+      ),
+      'current_user_only' => array(
+          'label' => 'LBL_CURRENT_USER_FILTER',
+          'type' => 'bool',
+          'default' => true,
+          'width' => '10%',
+          'name' => 'current_user_only',
+      ),
+      'favorites_only' => array(
+          'name' => 'favorites_only',
+          'label' => 'LBL_FAVORITES_FILTER',
+          'type' => 'bool',
+          'default' => true,
+          'width' => '10%',
       ),
     ),
   ),

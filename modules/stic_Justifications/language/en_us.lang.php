@@ -54,5 +54,7 @@ $mod_strings = array(
     'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE' => 'Opportunity',
     'LBL_OPPORTUNIT01EUNITIES_IDA' => 'Opportunity (related opportunity ID)',
     'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_NAME' => 'Opportunity Name',
+    'LBL_STIC_LEDGER_ACCOUNTS' => 'Ledger Account',
+    'LBL_STIC_LEDGER_ACCOUNTS_ID' => 'Ledger Account ID',
 );
 ?>
