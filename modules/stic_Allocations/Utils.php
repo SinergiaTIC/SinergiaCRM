@@ -48,9 +48,11 @@ class stic_AllocationsUtils {
                 SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'] . '</div>');
             }
             else {
-                // update allocation amount from payment field
-                $allocationBean->amount = $paymentBean->{$allocationBean->payment_amount_field} * $allocationBean->percentage / 100;
-                $allocationBean->save();
+                // update allocation amount from payment field if not blocked
+                if(!$allocationBean->blocked) {
+                    $allocationBean->amount = $paymentBean->{$allocationBean->payment_amount_field} * $allocationBean->percentage / 100;
+                    $allocationBean->save();
+                }
             }
 
         }

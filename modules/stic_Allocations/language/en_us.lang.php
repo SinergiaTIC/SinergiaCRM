@@ -82,4 +82,5 @@ $mod_strings = array(
     'LBL_STIC_LEDGER_ACCOUNTS_ID' => 'Ledger Account ID',
     'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_OPPORTUNITIES_TITLE' => 'Opportunity',
     'LBL_PROJECT_STIC_ALLOCATIONS_FROM_PROJECT_TITLE' => 'Project',
+    'LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED' => 'This allocation is blocked and cannot be modified.',
 );

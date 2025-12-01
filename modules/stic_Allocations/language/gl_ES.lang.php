@@ -82,4 +82,5 @@ $mod_strings = array(
     'LBL_STIC_LEDGER_ACCOUNTS_ID' => 'ID Conta Contable',
     'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_OPPORTUNITIES_TITLE' => 'Oportunidade',
     'LBL_PROJECT_STIC_ALLOCATIONS_FROM_PROJECT_TITLE' => 'Proxecto',
+    'LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED' => 'Esta imputación está bloqueada e non se pode modificar.',
 );

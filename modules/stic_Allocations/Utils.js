@@ -32,9 +32,23 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
     setAutofill(["name"]);
+
+    checkBlockedAllocation();
+    // add observer for blocked changes
+    $("form").on("change", "#blocked", function () {
+      checkBlockedAllocation();
+    });
+
     break;
 
   case "detail":
+    checkBlockedAllocationInDetailView();
+    // add observer for [field='blocked'] changes
+    const targetNode = document.querySelector('[field="blocked"]');
+    var observer = new MutationObserver(function(mutations) {
+      checkBlockedAllocationInDetailView();
+    });
+    observer.observe(targetNode, { childList: true, subtree: true});
     break;
 
   case "list":
@@ -45,3 +59,29 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+function checkBlockedAllocation() {
+  var blocked = $("#blocked").is(":checked");
+  if (blocked) {
+    $(".edit-view-row-item input").prop('disabled', true); // text, decimals, checks, etc.
+    $(".edit-view-row-item select").prop('disabled', true); // desplegables
+    $("button[type='button']:not(.saveAndContinue)").prop('disabled', true); // buttons except "Save and Continue Edit"
+    $("#blocked").prop('disabled', false); // keep blocked enabled
+  }
+  else {
+    $(".edit-view-row-item input").prop('disabled', false);
+    $(".edit-view-row-item select").prop('disabled', false);
+    $("button[type='button']").prop('disabled', false);
+  }
+}
+
+function checkBlockedAllocationInDetailView() {
+  var blocked = $("[field='blocked'] input").is(":checked")
+  if (blocked) {
+    $(".inlineEdit").css("pointer-events", "none");
+    $("[field='blocked']").css("pointer-events", "auto");
+  }
+  else {
+    $(".inlineEdit").css("pointer-events", "auto");
+
+  }
+}

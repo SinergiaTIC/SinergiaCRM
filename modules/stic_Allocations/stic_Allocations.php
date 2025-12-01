@@ -74,17 +74,40 @@ class stic_Allocations extends Basic
      */
     public function save($check_notify = false)
     {
+        global $current_language;
+        $allocationsModStrings = return_module_language($current_language, 'stic_Allocations'); // can not be $mod_strings because of different contexts (specially inline edition)
+
+
         $this->fillName();
 
-        // If payment_amount_field or percentage changed, recalculate amount and hours
-        // if ($this->fetched_row) {
-        //     $oldPaymentAmountField = $this->fetched_row['payment_amount_field'];
-        //     $oldPercentage = $this->fetched_row['percentage'];
-        // } else {
-        //     $oldPaymentAmountField = null;
-        //     $oldPercentage = null;
-        // }
-        
+        $tempFetchedRow = $this->fetched_row ?? null;
+
+        $isBlocked = filter_var($this->blocked, FILTER_VALIDATE_BOOLEAN);
+        // If record is blocked, no updates are allowed
+        if ($tempFetchedRow['blocked'] && $isBlocked) {
+            // TODOEPS
+            if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+                    // // This is an AJAX request
+                    // ob_clean();
+                    // header('HTTP/1.1 500 Internal Server Error');
+                    // echo "Save aborted: " . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
+                    // exit;
+                    // 1. Sanitize the message for JS
+                $errorMsg = $allocationsModStrings['LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED'];
+                $jsMsg = json_encode($errorMsg);
+
+                // 2. Output a script to alert the user
+                echo "<script>alert($jsMsg);</script>";
+                echo "<script>location.reload();</script>";
+
+                // 4. Stop execution
+                exit();
+                }
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED'] . '</div>');
+            return false;
+        }
+
+
         
         // Calculate amount 
         $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
