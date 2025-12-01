@@ -199,6 +199,7 @@ $dictionary['stic_Justifications'] = array(
             'table' => 'opportunities',
             'module' => 'Opportunities',
             'rname' => 'name',
+            'required' => true,
         ),
         'stic_ledger_accounts_name' => array(
             'required' => false,
@@ -226,6 +227,7 @@ $dictionary['stic_Justifications'] = array(
             'rname' => 'name',
             'quicksearch' => 'enabled',
             'studio' => 'visible',
+            'required' => true,
         ),
         'stic_ledger_accounts_ida' => array(
             'name' => 'stic_ledger_accounts_ida',
