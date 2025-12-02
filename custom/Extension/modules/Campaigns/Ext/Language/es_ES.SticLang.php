@@ -78,5 +78,5 @@ $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correo elec
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Cuenta de correo que se utilizará para enviar la notificación. Se puede configurar en el apartado 'Correo electrónico saliente' del área de Adminstración.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde recibir los mensajes de error que se puedan producir tras el envío. Se puede configurar en el apartado 'Correo electrónico entrante' del área de Administración.";
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.";
-$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Adjuntar un enlace en el cuerpo del correo electrónico para que el usuario pueda ver el contenido del correo electrónico en el navegador?';
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.';
+$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Incluir un enlace en el mensaje para ver el contenido en el navegador';
