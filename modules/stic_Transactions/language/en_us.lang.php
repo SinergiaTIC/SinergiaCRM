@@ -94,6 +94,7 @@ $mod_strings = array (
   'LBL_TOTAL_TRANSACTIONS' => 'Transactions in the file',
   'LBL_TOTAL_DUPLICATES' => 'Duplicated transactions to be skipped',
   'LBL_TOTAL_NEW_TRANSACTIONS' => 'Transactions to be imported',
+  'LBL_TOTAL_PRODUCTS' => 'Total associated products',
   'LBL_NEW_PRODUCT' => 'New',
   'LBL_EXISTING_PRODUCT' => 'existing',
   'LBL_DUPLICATE_NORMA_43' => 'These transactions will not be imported because they already exist or are duplicated in the file.',
@@ -103,5 +104,7 @@ $mod_strings = array (
   'LBL_ERROR_FILE_CANNOT_OPEN' => 'The file cannot be opened.',
   'LBL_ERROR_FILE_NOT_SELECTED' => 'No file has been selected.',
   'LBL_TRANSACTION_NO_DESCRIPTION' => 'Transaction without description',
+  'LBL_TRANSACTION_NO_DATE' => 'Transaction without date',
+  'LBL_TRANSACTION_NO_AMOUNT' => 'Transaction without valid amount',
   'LBL_TRANSACTION' => 'Transaction',
 );

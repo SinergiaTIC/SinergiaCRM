@@ -89,15 +89,10 @@ class Norma43
 
         // Summary of the import process
         $summary = [
-            'iban' => 0,
-            'financial_product' => '',
-            'existing_product' => 0,
-            'initial_balance' => 0,
             'total_movements' => 0,
-            'imported_movements' => 0,
-            'skipped_duplicates' => 0,
-            'new_movements' => [],
-            'duplicates' => [],
+            'total_imported_movements' => 0,
+            'total_skipped_duplicates' => 0,
+            'total_accounts' => 0,
             'warnings' => self::$warnings,
             'accounts' => []
         ];
@@ -116,27 +111,42 @@ class Norma43
             // Store productId in account so finalize can reuse it
             $account['product_id'] = $productId;
 
-            // Summary data for the first account
-            $summary['iban'] = $account["iban"];
-            $summary['financial_product'] = $account["account_name"];
-            $summary['existing_product'] = $account['exist'];
-            $summary['initial_balance'] = $account["initial_balance"];
-            $summary['type'] = $account["type"];
-            $summary['entity'] = self::parseEntity($account["entity_code"]);
+            // Create account summary
+            $accountSummary = [
+                'iban' => $account["iban"],
+                'financial_product' => $account["account_name"],
+                'existing_product' => $account['exist'],
+                'initial_balance' => self::formatAmountForDisplay($account["initial_balance"]),
+                'final_balance' => self::formatAmountForDisplay($account["final_balance"] ?? $account["initial_balance"]),
+                'type' => $account["type"],
+                'entity' => self::parseEntity($account["entity_code"]),
+                'new_movements' => [],
+                'duplicates' => [],
+                'account_warnings' => [],
+                'total_movements' => 0,
+                'imported_movements' => 0,
+                'skipped_duplicates' => 0
+            ];
 
             // Loop through movements
             foreach ($account['movements'] as $mov) {
                 $summary['total_movements']++;
+                $accountSummary['total_movements']++;
+                
                 // Map movement data to transaction fields
                 $mapped = self::mapMovementData($mov);
 
                 // Basic validation
                 if (empty($mapped['transaction_date'])) {
-                    $summary['warnings'][] = 'Movimiento sin fecha en cuenta ' . $account['iban'] . '. Se asigna la fecha de inicio de la cuenta.';
+                    $warning = $mod_strings['LBL_TRANSACTION_NO_DATE'] . ' ' . $account['iban'];
+                    $accountSummary['account_warnings'][] = $warning;
+                    $summary['warnings'][] = $warning;
                     $mapped['transaction_date'] = $account['start_date'];
                 }
                 if (empty($mapped['amount']) || !is_numeric($mapped['amount'])) {
-                    $summary['warnings'][] = 'Movimiento sin importe válido en cuenta ' . $account['iban'] . '. Se omite el movimiento.';
+                    $warning = $mod_strings['LBL_TRANSACTION_NO_AMOUNT'] . ' ' . $account['iban'];
+                    $accountSummary['account_warnings'][] = $warning;
+                    $summary['warnings'][] = $warning;
                     continue;
                 }
 
@@ -150,13 +160,21 @@ class Norma43
 
                 // Check for duplicates
                 if (self::isDuplicate($mapped, $productId, $importedHashes)) {
-                    $summary['skipped_duplicates']++;
-                    $summary['duplicates'][] = $mapped;
+                    $summary['total_skipped_duplicates']++;
+                    $accountSummary['skipped_duplicates']++;
+                    $accountSummary['duplicates'][] = $mapped;
                     continue;
                 }
 
-                $summary['new_movements'][] = $mapped;
+                $summary['total_imported_movements']++;
+                $accountSummary['imported_movements']++;
+                $accountSummary['new_movements'][] = $mapped;
             }
+            
+            // Add this account to the summary
+            $summary['accounts'][] = $accountSummary;
+            $summary['total_accounts']++;
+            
             // In preview mode, we do not insert movements or update balances
             if (!$preview) {
                 self::updateProductBalance($productId, $account);
@@ -197,10 +215,17 @@ class Norma43
             $parsedAccounts = $_SESSION['norma43_parsed_accounts'] ?? [];
             if (empty($parsedAccounts)) {
                 unset($_SESSION['norma43_importing']);
-                return [];
+                return ['success' => false, 'error' => 'No parsed accounts found in session'];
             }
 
-            $summary = $_SESSION['norma43_summary'] ?? ['imported_movements' => 0];
+            // Initialize summary with structure matching what we need
+            $summary = [
+                'total_accounts' => count($parsedAccounts),
+                'total_movements' => 0,
+                'total_imported_movements' => 0,
+                'total_skipped_duplicates' => 0,
+                'accounts' => []
+            ];
 
             // To avoid duplicates within the same file and DB
             $importedHashes = [];
@@ -208,11 +233,20 @@ class Norma43
             // Loop through accounts and movements to insert them
             foreach ($parsedAccounts as $account) {
                 // Find or create the financial product again
-                $productId = $account['product_id'] ?? self::findOrCreateProduct($account);
+                $productId = $account['product_id'] ?? self::findOrCreateProduct($account, false);
                 
-                // Insert movements
+                // Initialize account summary
+                $accountSummary = [
+                    'iban' => $account['iban'],
+                    'financial_product' => $account['account_name'],
+                    'imported_movements' => 0,
+                    'skipped_duplicates' => 0
+                ];
+
+                // Insert movements for this account
                 foreach ($account['movements'] as $mov) {
                     $mapped = self::mapMovementData($mov);
+                    $summary['total_movements']++;
                     
                     // Generate the hash using centralized function
                     $hash = self::generateTransactionHash(
@@ -224,12 +258,17 @@ class Norma43
 
                     // Avoiding duplicates in the database
                     if (self::isDuplicate($mapped, $productId, $importedHashes)) {
-                        $summary['skipped_duplicates']++;
+                        $summary['total_skipped_duplicates']++;
+                        $accountSummary['skipped_duplicates']++;
+                        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping duplicate for account {$account['iban']}: {$mapped['name']}");
                         continue;
                     }
 
+                    // Insert the transaction
                     self::insertTransaction($mapped, $productId);
-                    $summary['imported_movements']++;
+                    $summary['total_imported_movements']++;
+                    $accountSummary['imported_movements']++;
+                    $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Imported transaction for account {$account['iban']}: {$mapped['name']} ({$mapped['amount']})");
                 }
                 
                 // After inserting all movements for this account, update the product balance from file
@@ -238,55 +277,41 @@ class Norma43
                     current_balance = " . $db->quoted($newCurrentBalance) . "
                     WHERE id = " . $db->quoted($productId) . " AND deleted = 0";
                 $db->query($updateQuery);
-            }
-
-            // After all transactions are imported, verify balance discrepancies
-            foreach ($parsedAccounts as $account) {
-                // Get the product ID directly from database
-                $iban = trim($account['iban']);
-                $query = "SELECT id FROM stic_financial_products WHERE iban = " . $db->quoted($iban) . " AND deleted = 0 LIMIT 1";
-                $result = $db->query($query);
-                $row = $db->fetchByAssoc($result);
-                if (!$row) {
-                    $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> Product with IBAN {$iban} not found after creation");
-                    continue;
-                }
                 
-                $productId = $row['id'];
-                
-                // Calculate expected balance from transactions
-                $calculatedBalance = abs(self::calculateBalance($productId));
-                $finalBalance = $account['final_balance'] ?? $account['initial_balance'];
-                // Get the file balance rounded to 2 decimals
-                $fileBalance = abs((float)round($account['initial_balance'] - $finalBalance, 2));
-                
-                // Check for discrepancies
-                $difference = $fileBalance - $calculatedBalance;
+                // Verify balance discrepancies for this account
+                $calculatedBalance = self::calculateBalance($productId);
+                $fileBalance = $account['final_balance'] ?? $account['initial_balance'];
+                $difference = abs($calculatedBalance - $fileBalance);
                 $hasDiscrepancy = ($difference > 0.01) ? 1 : 0;
                 
-                // Update only the balance_error
-                global $db;
+                // Update balance_error flag
                 $updateErrorQuery = "UPDATE stic_financial_products SET 
                     balance_error = " . $db->quoted($hasDiscrepancy) . "
                     WHERE id = " . $db->quoted($productId) . " AND deleted = 0";
                 $db->query($updateErrorQuery);
                 
                 if ($hasDiscrepancy) {
-                    $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> Norma 43: Balance discrepancy detected for product {$productId}. " .
+                    $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> Norma 43: Balance discrepancy detected for account {$account['iban']} (Product ID: {$productId}). " .
                         "File balance: {$fileBalance}, Calculated from transactions: {$calculatedBalance}, Difference: {$difference}");
                 }
+                
+                // Add account summary
+                $summary['accounts'][] = $accountSummary;
             }
 
             unset($_SESSION['norma43_importing']);
             unset($_SESSION['norma43_parsed_accounts']);
-            unset($_SESSION['norma43_imported_hashes']);  // Clean up hashes
+            unset($_SESSION['norma43_summary']);
+            unset($_SESSION['norma43_imported_hashes']);
+            
+            $summary['success'] = true;
             return $summary;
             
         } catch (Exception $e) {
             // Clean up on error
             unset($_SESSION['norma43_importing']);
             $GLOBALS['log']->error("Error in finalizeImport: " . $e->getMessage());
-            throw $e;
+            return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 
@@ -1027,5 +1052,15 @@ class Norma43
 
         // Generate the hash
         return md5("{$productId}|{$date}|{$amount}|{$name}");
+    }
+
+    /**
+     * Format amount for display purposes
+     * @param float $amount The amount to format
+     * @return string The formatted amount
+     */
+    private static function formatAmountForDisplay($amount)
+    {
+        return number_format((float)$amount, 2, ',', '.');
     }
 }
