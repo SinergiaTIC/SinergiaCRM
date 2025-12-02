@@ -44,7 +44,7 @@ $viewdefs['stic_Allocations']['EditView'] = array(
                 '',
             ),
             array(
-                'justified',
+                'validated',
                 'blocked',
             ),
             array(

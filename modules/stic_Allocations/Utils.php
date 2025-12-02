@@ -145,13 +145,13 @@ class stic_AllocationsUtils {
     }
 
 
-    public static function paymentHasJustifiedAllocations($paymentBean)
+    public static function paymentHasValidatedAllocations($paymentBean)
     {
         // retrieve all allocations linked to the payment
         $allocationBeans = self::allocationsFromPayment($paymentBean);
         // check if any allocation is validated
         foreach ($allocationBeans as $allocationBean) {
-            if ($allocationBean->justified) {
+            if ($allocationBean->validated) {
                 return true;
             }
         }

@@ -63,7 +63,7 @@ $viewdefs['stic_Allocations']['DetailView'] = array(
                 '',
             ),
             array(
-                'justified',
+                'validated',
                 'blocked',
             ),
             array(

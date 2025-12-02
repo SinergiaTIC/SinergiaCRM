@@ -200,7 +200,7 @@ class stic_Payments extends Basic
         // // Amount has changed in an allocated payment, check if there were validated allocations
         // if(!empty($tempFetchedRow['allocated']) && $this->allocated == 1 && !empty($tempFetchedRow['amount'] && SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount']))) {
         //     include_once 'modules/stic_Allocations/Utils.php';
-        //     $hasValidatedAllocations = stic_AllocationsUtils::paymentHasJustifiedAllocations($this);
+        //     $hasValidatedAllocations = stic_AllocationsUtils::paymentHasValidatedAllocations($this);
         //     if ($hasValidatedAllocations) {
         //         // There are validated allocations, do not allow amount change
         //         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_CANNOT_CHANGE_AMOUNT_ALLOCATED_PAYMENT_VALIDATED_ALLOCATIONS'] . '</div>');
@@ -209,7 +209,7 @@ class stic_Payments extends Basic
         //     }
         // }
         if (!empty($tempFetchedRow['allocated']) && $isAllocated && $anyamountChanged) {
-            $hasValidatedAllocations = stic_AllocationsUtils::paymentHasJustifiedAllocations($this);
+            $hasValidatedAllocations = stic_AllocationsUtils::paymentHasValidatedAllocations($this);
             if ($hasValidatedAllocations) {
                 // There are validated allocations, do not allow amount change
                 SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_CANNOT_CHANGE_AMOUNT_ALLOCATED_PAYMENT_VALIDATED_ALLOCATIONS'] . '</div>');

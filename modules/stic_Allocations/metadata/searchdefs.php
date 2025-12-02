@@ -55,12 +55,12 @@ array(
                 'default' => true,
                 'name' => 'date',
             ),
-            'justified' => array(
+            'validated' => array(
                 'type' => 'bool',
-                'label' => 'LBL_JUSTIFIED',
+                'label' => 'LBL_VALIDATED',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'justified',
+                'name' => 'validated',
             ),
             'blocked' => array(
                 'type' => 'bool',
@@ -163,12 +163,12 @@ array(
                 'default' => true,
                 'name' => 'date',
             ),
-            'justified' => array(
+            'validated' => array(
                 'type' => 'bool',
-                'label' => 'LBL_JUSTIFIED',
+                'label' => 'LBL_VALIDATED',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'justified',
+                'name' => 'validated',
             ),
             'blocked' => array(
                 'type' => 'bool',

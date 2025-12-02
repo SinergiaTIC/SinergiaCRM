@@ -40,7 +40,7 @@ class stic_Allocations extends Basic
     public $deleted;
     public $assigned_user_id;
     
-    public $justified;
+    public $validated;
     public $blocked;
     public $type;
     public $date;

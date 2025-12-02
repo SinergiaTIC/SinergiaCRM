@@ -43,9 +43,9 @@ $listViewDefs['stic_Allocations'] = array(
         'label' => 'LBL_DATE',
         'default' => true,
     ),
-    'JUSTIFIED' => array(
+    'VALIDATED' => array(
         'width' => '8%',
-        'label' => 'LBL_JUSTIFIED',
+        'label' => 'LBL_VALIDATED',
         'default' => true,
     ),
     'BLOCKED' => array(

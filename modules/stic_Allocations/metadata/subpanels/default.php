@@ -47,8 +47,8 @@ $subpanel_layout['list_fields'] = array(
         'width' => '15%',
         'default' => true,
     ),
-    'justified' => array(
-        'vname' => 'LBL_JUSTIFIED',
+    'validated' => array(
+        'vname' => 'LBL_VALIDATED',
         'width' => '10%',
         'default' => true,
     ),
