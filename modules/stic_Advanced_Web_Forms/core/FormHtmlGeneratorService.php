@@ -174,8 +174,8 @@ class FormHtmlGeneratorService {
 
             // Elements
             foreach ($section->elements as $el) {
-                if ($el['type'] == 'datablock') {
-                    $blockId = $el['ref_id'];
+                if ($el->type == 'datablock') {
+                    $blockId = $el->ref_id;
                     $block = $config->data_blocks[$blockId] ?? null;
                     if ($block) {
                         $html .= $this->generateDataBlockHtml($block);

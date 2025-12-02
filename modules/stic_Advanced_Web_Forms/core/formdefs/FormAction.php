@@ -32,7 +32,6 @@ class FormAction {
     public string $name;             // Nombre de la acción
     public string $text;             // El texto a mostrar
     public string $description;      // La descripción de la acción
-    public string $data_block_id;    // Id del Bloque de datos al que pertenece
     /** @var string[] */
     public array $requisite_actions; // Array con los identificadores de las acciones previas a la actual
     /** @var FormActionParameter[] */
@@ -54,7 +53,6 @@ class FormAction {
         $dto->name = $data['name'];
         $dto->text = $data['text'];
         $dto->description = $data['description'];
-        $dto->data_block_id = $data['data_block_id'];
         $dto->requisite_actions = $data['requisite_actions'] ?? [];
 
         $dto->parameters = [];

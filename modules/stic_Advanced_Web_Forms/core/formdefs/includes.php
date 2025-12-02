@@ -35,3 +35,8 @@ include_once __DIR__."/FormDuplicateRule.php";
 include_once __DIR__."/FormFlow.php";
 include_once __DIR__."/FormAction.php";
 include_once __DIR__."/FormActionParameter.php";
+
+include_once __DIR__."/FormLayout.php";
+include_once __DIR__."/FormTheme.php";
+include_once __DIR__."/FormLayoutSection.php";
+include_once __DIR__."/FormLayoutElement.php";

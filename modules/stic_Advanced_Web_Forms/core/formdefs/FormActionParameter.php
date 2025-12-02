@@ -45,7 +45,12 @@ class FormActionParameter {
         
         $dto->name = $data['name'];
         $dto->text = $data['text'];
-        $dto->value = $data['value'];
+        if (is_array($data['value'])) {
+            $dto->value = implode(',', $data['value']);
+        } else {
+            $dto->value = $data['value'];
+        }
+        
         $dto->selectedOption = $data['selectedOption'] ?? '';
 
         return $dto;
