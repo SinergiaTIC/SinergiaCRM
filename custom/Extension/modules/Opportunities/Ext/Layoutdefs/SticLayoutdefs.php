@@ -121,11 +121,6 @@ $layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justificatio
       array (
         'widget_class' => 'SubPanelTopButtonQuickCreate',
       ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
     ),
 );
 
@@ -143,11 +138,6 @@ $layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justificatio
       0 => 
       array (
         'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
       ),
     ),
 );
@@ -167,11 +157,6 @@ $layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_allocation_p
       array (
         'widget_class' => 'SubPanelTopButtonQuickCreate',
       ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
     ),
 );
 
@@ -189,11 +174,6 @@ $layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_allocations'
       0 => 
       array (
         'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
       ),
     ),
 );

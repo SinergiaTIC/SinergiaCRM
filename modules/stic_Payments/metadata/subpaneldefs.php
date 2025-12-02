@@ -144,10 +144,6 @@ $layout_defs["stic_Payments"]["subpanel_setup"]['stic_allocations'] = array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
     ),
 );
 

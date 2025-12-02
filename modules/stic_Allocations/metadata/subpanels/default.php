@@ -110,11 +110,4 @@ $subpanel_layout['list_fields'] = array(
         'width' => '5%',
         'default' => true,
     ),
-    'remove_button' => array(
-        'vname' => 'LBL_REMOVE',
-        'widget_class' => 'SubPanelRemoveButton',
-        'module' => 'stic_Allocations',
-        'width' => '5%',
-        'default' => true,
-    ),
 );

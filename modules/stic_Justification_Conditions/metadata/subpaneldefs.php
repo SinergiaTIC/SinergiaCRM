@@ -34,10 +34,6 @@ $layout_defs[$module_name]['subpanel_setup']['stic_justification_conditions_stic
         0 => array(
             'widget_class' => 'SubPanelTopCreateButton',
         ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
     ),
 );
 

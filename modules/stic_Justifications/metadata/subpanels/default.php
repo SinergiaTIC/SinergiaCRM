@@ -81,12 +81,5 @@ $subpanel_layout = array(
             'width' => '5%',
             'default' => true,
         ),
-        'remove_button' => array(
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
-            'module' => 'stic_Justifications',
-            'width' => '5%',
-            'default' => true,
-        ),
     ),
 );
