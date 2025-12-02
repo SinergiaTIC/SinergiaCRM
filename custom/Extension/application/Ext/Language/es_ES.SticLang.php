@@ -3852,6 +3852,19 @@ $app_list_strings['stic_advanced_web_forms_date_relative_list']['first_day_of_ne
 $app_list_strings['stic_advanced_web_forms_date_relative_list']['custom'] = 'Personalizada...';
 
 // Tipos de secciones (UI) en los Formularios Web Avanzados
-$app_list_strings['stic_advanced_web_forms_sections_type_list']['panel'] = 'Panel';
-$app_list_strings['stic_advanced_web_forms_sections_type_list']['tab'] = 'Pestaña';
+$app_list_strings['stic_advanced_web_forms_sections_type_list']['panel'] = 'Panel (simple)';
+$app_list_strings['stic_advanced_web_forms_sections_type_list']['card'] = 'Tarjeta (con borde)';
+$app_list_strings['stic_advanced_web_forms_sections_type_list']['tabs'] = 'Pestañas';
 $app_list_strings['stic_advanced_web_forms_sections_type_list']['accordion'] = 'Acordeón';
+
+// Intensidad de sombreado en los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_shadow_intensity_list']['none'] = 'Sin sombreado (plano)';
+$app_list_strings['stic_advanced_web_forms_shadow_intensity_list']['sm'] = 'Sutil';
+$app_list_strings['stic_advanced_web_forms_shadow_intensity_list']['normal'] = 'Normal';
+$app_list_strings['stic_advanced_web_forms_shadow_intensity_list']['lg'] = 'Elevado (flotante)';
+
+// Ancho máximo de los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_form_width_list']['100%'] = 'Total (100%)';
+$app_list_strings['stic_advanced_web_forms_form_width_list']['1200px'] = 'Muy ancho (1200px)';
+$app_list_strings['stic_advanced_web_forms_form_width_list']['800px'] = 'Estándar (800px)';
+$app_list_strings['stic_advanced_web_forms_form_width_list']['600px'] = 'Estrecho / Móvil (600px)';

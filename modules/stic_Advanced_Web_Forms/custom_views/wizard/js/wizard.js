@@ -1493,6 +1493,11 @@ class WizardStep4 {
       get bean() { return window.alpineComponent.bean; },
       get sections() { return this.formConfig.layout.structure; },
 
+      get availableContainerTypes() {
+        const validCategories = ['panel', 'card'];
+        return AWF_LayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
+      },
+
       init() {
         this.formConfig.syncLayoutWithDataBlocks();
       },
@@ -1532,6 +1537,8 @@ class WizardStep4 {
       canMoveDownSection(section) {
         const index = this.sections.findIndex(s => s.id == section.id);
         if (index >= this.sections.length - 1) return false;
+
+        return true;
       },
 
       moveDownSection(section) {
@@ -1543,6 +1550,58 @@ class WizardStep4 {
         this.sections.splice(index + 1, 0, sectionToMove);
       },
 
+      getDataBlock(element) {
+        if (element.type == 'datablock') {
+          return this.formConfig.data_blocks.find(d => d.id == element.ref_id);
+        }
+        return null;
+      },
+
+      getFields(element) {
+        return this.getDataBlock(element)?.fields.filter(f => f.type_field != 'hidden');
+      },
+
+      getElementHeader(element) {
+        let header = element.type;
+        if (element.type == 'datablock') {
+          const dataBlock  = this.getDataBlock(element);
+          header = `${utils.translate('LBL_DATABLOCK')}: ${dataBlock.text}`;
+        }
+        return header;
+      },
+
+      moveElementUp(section, index) {
+        if (index <= 0) return;
+        const item = section.elements[index];
+        section.elements.splice(index, 1);
+        section.elements.splice(index - 1, 0, item);
+      },      
+
+      moveElementDown(section, index) {
+        if (index >= section.elements.length - 1) return;
+        const item = section.elements[index];
+        section.elements.splice(index, 1);
+        section.elements.splice(index + 1, 0, item);
+      },
+
+      moveElementToSection(element, fromSectionId, toSectionId) {
+        if (!toSectionId || fromSectionId === toSectionId) return;
+
+        const fromSection = this.formConfig.layout.structure.find(s => s.id == fromSectionId);
+        const toSection = this.formConfig.layout.structure.find(s => s.id == toSectionId);
+
+        if (fromSection && toSection) {
+          fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
+          toSection.elements.push(element);
+        }
+      },
+
+      resetTheme() {
+        this.formConfig.layout.theme = new AWF_Theme();
+        this.formConfig.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
+        this.formConfig.layout.custom_css = '';
+        this.formConfig.layout.custom_js = '';
+      }
     }
   }
 }

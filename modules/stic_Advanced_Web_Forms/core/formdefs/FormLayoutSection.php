@@ -31,6 +31,7 @@ class FormLayoutSection {
     public string $id;
     public string $title;
     public string $containerType;    // 'panel', 'card', 'tabs', 'accordion'
+    public bool $showTitle;
     /** @var FormLayoutElement[] */
     public array $elements = [];
 
@@ -41,6 +42,7 @@ class FormLayoutSection {
 
         $dto->id = $data['id'] ?? uniqid('sect');
         $dto->title = $data['title'] ?? '';
+        $dto->showTitle = $data['showTitle'];
         $dto->containerType = $data['containerType'] ?? 'panel';
         
         if (isset($data['elements']) && is_array($data['elements'])) {

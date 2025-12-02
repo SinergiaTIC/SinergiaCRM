@@ -3,180 +3,169 @@
     <div class="row h-100 g-0">
         <!-- Themes and configurations -->
          <div class="col-md-3 border-end bg-light overflow-auto p-3" style="max-height: calc(100vh - 200px);">
-            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_COLORS')"></h4>
-            <div class="row g-2 mb-3">
-                <div class="col-4">
-                    <label class="form-label small">Principal</label>
-                    <input type="color" 
-                           class="form-control form-control-color w-100" 
-                           x-model="formConfig.layout.theme.primary_color"
-                           :value="formConfig.layout.theme.primary_color" 
-                           :style="`background-color: ${formConfig.layout.theme.primary_color}`">
-                </div>
-                <div class="col-4">
-                    <label class="form-label small">Fons Pàgina</label>
-                    <input type="color" 
-                           class="form-control form-control-color w-100" 
-                           x-model="formConfig.layout.theme.page_bg_color"
-                           :value="formConfig.layout.theme.page_bg_color" 
-                           :style="`background-color: ${formConfig.layout.theme.page_bg_color}`">
-                </div>
-                <div class="col-4">
-                    <label class="form-label small">Fons Form.</label>
-                    <input type="color" 
-                           class="form-control form-control-color w-100" 
-                           x-model="formConfig.layout.theme.form_bg_color"
-                           :value="formConfig.layout.theme.form_bg_color" 
-                           :style="`background-color: ${formConfig.layout.theme.form_bg_color}`">
-                </div>
+            <h3 class="mb-3" x-text="utils.translate('LBL_LAYOUT_SETTINGS')"></h3>
+
+            <!-- submit_button_text -->
+            <div class="mb-3 row">
+                <label for="theme-submit_button_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_SUBMIT_BUTTON_TEXT')"></label>
+                <input id="theme-submit_button_text" type="text" x-model="formConfig.layout.submit_button_text">
             </div>
 
-            <hr class="text-muted opacity-25">
-
-            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_STRUCTURE')"></h4>
-            <div class="mb-2">
-                <label class="form-label small d-flex justify-content-between mb-1">
-                    <span>Columnes (Seccions)</span>
-                    <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.sections_per_row"></span>
-                </label>
-                <input type="range" class="form-range" min="1" max="3" step="1" 
-                       x-model.number="formConfig.layout.theme.sections_per_row">
-                <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
-                    <span>1</span><span>2</span><span>3</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label small d-flex justify-content-between mb-1">
-                    <span>Columnes (Camps)</span>
-                    <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.fields_per_row"></span>
-                </label>
-                <input type="range" class="form-range" min="1" max="4" step="1" 
-                       x-model.number="formConfig.layout.theme.fields_per_row">
-                <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
-                    <span>1</span><span>2</span><span>3</span><span>4</span>
-                </div>
-            </div>
-
-            <hr class="text-muted opacity-25">
-
-            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_STYLE')"></h4>
-            <div class="mb-3">
-                <label class="form-label small d-flex justify-content-between mb-1">
-                    <span>Arrodoniment</span>
-                    <span class="text-muted small" x-text="formConfig.layout.theme.border_radius + 'px'"></span>
-                </label>
-                <input type="range" class="form-range" min="0" max="30" step="1" 
-                       x-model.number="formConfig.layout.theme.border_radius">
-            </div>
-
-            <hr class="text-muted opacity-25">
-
-            <h4 class="h6 text-muted mb-2" x-text="utils.translate('LBL_THEME_STYLE')"></h4>
-            <div class="mb-3">
-                <label class="form-label small d-flex justify-content-between mb-1">
-                    Text del botó d'enviar                    
-                </label>
-                <input type="text" x-model="formConfig.layout.submit_button_text">
-            </div>
-
+            <!-- Main colors -->
             <details class="mb-3">
-                <summary class="small text-primary cursor-pointer user-select-none">Opcions Avançades</summary>
-                
-                <div class="card card-body bg-light mt-2 p-2 border-0">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_MAIN_COLORS')"></summary>
+                <div class="ps-4 g-2  mt-2">
+                    <!-- primary_color -->
                     <div class="mb-3">
-                        <label class="form-label small">Tipografia</label>
-                        <textarea rows="3" x-model="formConfig.layout.theme.font_family"></textarea>
+                        <label for="theme-primary_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PRIMARY_COLOR')"></label>
+                        <input id="theme-primary_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.primary_color"
+                               :value="formConfig.layout.theme.primary_color" :style="`background-color: ${formConfig.layout.theme.primary_color}`">
                     </div>
-
-                    <div class="mb-2 row align-items-center">
-                        <label class="col-8 col-form-label small">Color del Text</label>
-                        <div class="col-4">
-                            <input type="color" 
-                                class="form-control form-control-color w-100" 
-                                x-model="formConfig.layout.theme.text_color"
-                                :value="formConfig.layout.theme.text_color" 
-                                :style="`background-color: ${formConfig.layout.theme.text_color}`">
-                        </div>
-                    </div>
-
-                    <div class="mb-2 row align-items-center">
-                        <label class="col-8 col-form-label small">Color del Borde</label>
-                        <div class="col-4">
-                            <input type="color" 
-                                class="form-control form-control-color w-100" 
-                                x-model="formConfig.layout.theme.border_color"
-                                :value="formConfig.layout.theme.border_color" 
-                                :style="`background-color: ${formConfig.layout.theme.border_color}`">
-                        </div>
-                    </div>
-
-                    <div class="mb-0">
-                        <label class="form-label small d-flex justify-content-between">
-                            <span>Gruix Borde</span>
-                            <span class="text-muted" x-text="formConfig.layout.theme.border_width + 'px'"></span>
-                        </label>
-                        <input type="range" class="form-range" min="0" max="5" step="1" 
-                               x-model.number="formConfig.layout.theme.border_width">
-                    </div>
-
+                    <!-- page_bg_color -->
                     <div class="mb-3">
-                        <label class="form-label small">Amplada Màxima</label>
-                        <div class="input-group input-group-sm">
-                            <select class="form-select" x-model="formConfig.layout.theme.form_width">
-                                <option value="100%">Total (100%)</option>
-                                <option value="1200px">Molt Ample (1200px)</option>
-                                <option value="800px">Estàndard (800px)</option>
-                                <option value="600px">Estret / Mòbil (600px)</option>
-                                <option value="custom">Personalitzat...</option>
-                            </select>
-                            <input type="text" class="form-control" x-show="formConfig.layout.theme.form_width == 'custom'" placeholder="Ex: 50rem">
-                        </div>
+                        <label for="theme-page_bg_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PAGE_BG_COLOR')"></label>
+                        <input id="theme-page_bg_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.page_bg_color"
+                               :value="formConfig.layout.theme.page_bg_color" :style="`background-color: ${formConfig.layout.theme.page_bg_color}`">
                     </div>
-
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <label class="form-label small">Mida Lletra</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" class="form-control" min="12" max="24" step="1" 
-                                    x-model="formConfig.layout.theme.font_size">
-                                <span class="input-group-text">px</span>
-                            </div>
-                        </div>
-
-                        <div class="col-6">
-                            <label class="form-label small">Ombra (Shadow)</label>
-                            <select class="form-select form-select-sm" x-model="formConfig.layout.theme.shadow_intensity">
-                                <option value="none">Sense (Plana)</option>
-                                <option value="sm">Subtil</option>
-                                <option value="normal">Normal</option>
-                                <option value="lg">Elevada (Flotant)</option>
-                            </select>
-                        </div>
+                    <!-- form_bg_color -->
+                    <div class="mb-3">
+                        <label for="theme-form_bg_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FORM_BG_COLOR')"></label>
+                        <input id="theme-form_bg_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.form_bg_color"
+                               :value="formConfig.layout.theme.form_bg_color" :style="`background-color: ${formConfig.layout.theme.form_bg_color}`">
                     </div>
-                    <details class="mb-3">
-                        <summary class="fw-bold cursor-pointer">💻 Codi Personalitzat (Avançat)</summary>
-                        
-                        <div class="card card-body bg-light mt-2 border-0">
-                            <div class="mb-3">
-                                <label class="form-label small font-monospace">CSS Personalitzat</label>
-                                <textarea class="form-control font-monospace small" rows="4" 
-                                        x-model="formConfig.layout.custom_css" 
-                                        placeholder=".btn { background: red !important; }"></textarea>
-                                <div class="form-text text-muted extra-small">S'injectarà dins d'un bloc &lt;style&gt;.</div>
-                            </div>
-
-                            <div class="mb-0">
-                                <label class="form-label small font-monospace">JavaScript Personalitzat</label>
-                                <textarea class="form-control font-monospace small" rows="4" 
-                                        x-model="formConfig.layout.custom_js" 
-                                        placeholder="console.log('Form loaded');"></textarea>
-                                <div class="form-text text-muted extra-small">S'injectarà al final del formulari.</div>
-                            </div>
-                        </div>
-                    </details>                    
                 </div>
             </details>
+
+            <!-- Typography and text-->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_TYPOGRAPGY_TEXT')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- font_family -->
+                    <div class="mb-3">
+                        <label for="theme-font_family" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FONT_FAMILY')"></label>
+                        <textarea id="theme-font_family" rows="3" x-model="formConfig.layout.theme.font_family"></textarea>
+                    </div>
+                    <!-- font_size -->
+                    <div class="mb-3">
+                        <label for="theme-font_size" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_FONT_SIZE')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.font_size + 'px'"></span>
+                        </label>
+                        <input id="theme-font_size" type="range" class="form-range" min="8" max="26" step="1" 
+                               x-model.number="formConfig.layout.theme.font_size">
+                    </div>
+                    <!-- text_color -->
+                    <div class="mb-3">
+                        <label for="theme-text_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_TEXT_COLOR')"></label>
+                        <input id="theme-text_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.text_color"
+                               :value="formConfig.layout.theme.text_color" :style="`background-color: ${formConfig.layout.theme.text_color}`">
+                    </div>
+                </div>
+            </details>
+
+            <!-- Borders -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_BORDERS')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- border_radius -->
+                    <div class="mb-3">
+                        <label for="theme-border_radius" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_RADIUS')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_radius + 'px'"></span>
+                        </label>
+                        <input id="theme-border_radius" type="range" class="form-range" min="0" max="30" step="1" 
+                               x-model.number="formConfig.layout.theme.border_radius">
+                    </div>
+                    <!-- border_width -->
+                    <div class="mb-3">
+                        <label for="theme-border_width" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_WIDTH')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_width + 'px'"></span>
+                        </label>
+                        <input id="theme-border_width" type="range" class="form-range" min="0" max="5" step="1" 
+                               x-model.number="formConfig.layout.theme.border_width">
+                    </div>
+                    <!-- border_color -->
+                    <div class="mb-3">
+                        <label for="theme-border_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_COLOR')"></label>
+                        <input id="theme-border_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.border_color"
+                               :value="formConfig.layout.theme.border_color" :style="`background-color: ${formConfig.layout.theme.border_color}`">
+                    </div>
+                    <!-- shadow_intensity -->
+                    <div class="mb-3">
+                        <label for="theme-shadow_intensity" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_SHADOW_INTENSITY')"></label>
+                        <select id="theme-shadow_intensity" class="form-select" x-model="formConfig.layout.theme.shadow_intensity">
+                            <template x-for="item in AWF_Theme.shadow_intensity_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.shadow_intensity"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Structure -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_STRUCTURE')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- form_width -->
+                    <div class="mb-3">
+                        <label for="theme-form_width" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FORM_WIDTH')"></label>
+                        <select id="theme-form_width" class="form-select" x-model="formConfig.layout.theme.form_width">
+                            <template x-for="item in AWF_Theme.form_width_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.form_width"></option>
+                            </template>
+                        </select>
+                    </div>  
+                    <!-- sections_per_row -->
+                    <div class="mb-3">
+                        <label for="theme-sections_per_row" class="form-label small d-flex justify-content-between mb-1">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_SECTIONS_PER_ROW')"></span>
+                            <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.sections_per_row"></span>
+                        </label>
+                        <input id="theme-sections_per_row" type="range" class="form-range" min="1" max="3" step="1" 
+                               x-model.number="formConfig.layout.theme.sections_per_row">
+                        <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
+                            <span>1</span><span>2</span><span>3</span>
+                        </div>
+                    </div>
+                    <!-- fields_per_row -->
+                    <div class="mb-3">
+                        <label for="theme-fields_per_row" class="form-label small d-flex justify-content-between mb-1">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_FIELDS_PER_ROW')"></span>
+                            <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.fields_per_row"></span>
+                        </label>
+                        <input id="theme-fields_per_row" type="range" class="form-range" min="1" max="4" step="1" 
+                               x-model.number="formConfig.layout.theme.fields_per_row">
+                        <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
+                            <span>1</span><span>2</span><span>3</span><span>4</span>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Advanced -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_ADVANCED')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- custom_css -->
+                    <div class="mb-3">
+                        <label for="theme-custom_css" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_CSS')"></label>
+                        <textarea id="theme-custom_css" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.custom_css" 
+                                  placeholder=".btn { background: red !important; }"></textarea>
+                        <div class="form-text text-muted extra-small" x-text="utils.translate('LBL_THEME_CUSTOM_CSS_DESC')"></div>
+                    </div>
+                    <!-- custom_js -->
+                    <div class="mb-3">
+                       <label for="theme-custom_js" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_JS')"></label>
+                        <textarea id="theme-custom_js" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.custom_js" 
+                                  placeholder="console.log('Form loaded');"></textarea>
+                        <div class="form-text text-muted extra-small" x-text="utils.translate('LBL_THEME_CUSTOM_JS_DESC')"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Reset Button -->
+            <button type="button" class="btn w-auto" x-text="utils.translate('LBL_THEME_RESET_BUTTON')" @click="resetTheme()"></button>
         </div>
 
         <!-- Form design -->
@@ -240,13 +229,33 @@
                                                 <div class="accordion-item" x-data="{opened:false}">
                                                     <div :id="`sectionConfig${section.id}_Header`" class="accordion-header accordion-button" role="button" 
                                                         :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                                                        :data-bs-target="#`sectionConfig${section.id}_Content`" :aria-controls="`sectionConfig${section.id}_Content`"
+                                                        :data-bs-target="`#sectionConfig${section.id}_Content`" :aria-controls="`sectionConfig${section.id}_Content`"
                                                         x-text="utils.translate('LBL_SECTION_CONFIG')">
                                                     </div>
                                                     <div :id="`sectionConfig${section.id}_Content`" class="accordion-collapse collapse" 
                                                          :aria-labelledby="`sectionConfig${section.id}_Header`">
-                                                        <div :id="`sectionConfig${section.id}_Body`" class="accordion-body"> 
-                                                            <!-- TODO: Add Configuration-->
+                                                        <div :id="`sectionConfig${section.id}_Body`" class="accordion-body row"> 
+                                                            <!-- Configuration -->
+                                                            <!-- Title -->
+                                                            <div class="col-3">
+                                                                <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
+                                                                <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
+                                                            </div>
+                                                            <!-- Show Title -->
+                                                            <div class="col-3 form-check form-switch">
+                                                                <label :for="`section${section.id}_showTitle`" class="form-label" x-text="utils.translate('LBL_SECTION_SHOW_TITLE')"></label>
+                                                                <input :id="`section${section.id}_showTitle`" class="form-check-input form-switch" type="checkbox" role="switch" x-model="section.showTitle"/>
+                                                            </div>
+                                                            <!-- Container Type -->
+                                                            <div class="col-3">
+                                                                <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
+                                                                <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
+                                                                    <template x-for="type in availableContainerTypes" :key="type.id">
+                                                                        <option :value="type.id" x-text="type.text"></option>
+                                                                    </template>
+                                                                </select>
+                                                            </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -254,17 +263,50 @@
                                                 <div class="accordion-item" x-data="{opened:false}">
                                                     <div :id="`sectionContent${section.id}_Header`" class="accordion-header accordion-button" role="button" 
                                                         :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                                                        :data-bs-target="#`sectionContent${section.id}_Content`" :aria-controls="`sectionContent${section.id}_Content`"
+                                                        :data-bs-target="`#sectionContent${section.id}_Content`" :aria-controls="`sectionContent${section.id}_Content`"
                                                         x-text="utils.translate('LBL_SECTION_CONTENT')">
                                                     </div>
                                                     <div :id="`sectionContent${section.id}_Content`" class="accordion-collapse collapse" 
                                                          :aria-labelledby="`sectionContent${section.id}_Header`">
                                                         <div :id="`sectionContent${section.id}_Body`" class="accordion-body"> 
-                                                            <!-- TODO: Add Content -->
-                                                            <template x-for="element in section.elements" :key="element.id">
-                                                                <div class="form-check form-check-inline border rounded px-2 py-1 m-0" >
-                                                                    <span class="form-check-label small" x-text="element.ref_id"></span>
+                                                            <!-- Content -->
+                                                            <template x-for="(element, index) in section.elements" :key="element.id">
+                                                                <div class="card mb-2 border-secondary">
+                                                                    <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
+                                                                        <strong x-text="getElementHeader(element)"></strong>
+                                                                        <div class="d-inline-flex gap-2">
+                                                                            <select class="form-select small text-muted" @change="moveElementToSection(element, section.id, $event.target.value)">
+                                                                                <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
+                                                                                <template x-for="sec in formConfig.layout.structure" :key="sec.id">
+                                                                                    <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
+                                                                                            x-show="sec.id !== section.id"></option>
+                                                                                </template>
+                                                                            </select>
+
+                                                                            <div class="input-group" role="group">
+                                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                                        :disabled="index === 0" @click="moveElementUp(section, index);">
+                                                                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                                </button>
+                                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                                        :disabled="index === section.elements.length - 1" @click="moveElementDown(section, index)">                                                                                
+                                                                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                                </button>
+                                                                            </div> 
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="card-body">
+                                                                        <template x-if="element.type=='datablock'">
+                                                                            <template x-for="field in getFields(element)" :key="field.name">
+                                                                                <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
+                                                                            </template>
+                                                                        </template>
+                                                                    </div>
                                                                 </div>
+                                                            </template>
+                                                            <template x-if="section.elements.length === 0">
+                                                                <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
                                                             </template>
                                                         </div>
                                                     </div>

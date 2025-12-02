@@ -718,7 +718,7 @@ class AWF_Layout {
       footer_html: '',             // Html con el pie del formulario
 
       // Texto del botón de enviar
-      submit_button_text: utils.translate('LBL_LAYOUT_SEND_BUTTON'),
+      submit_button_text: utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE'),
 
       custom_css: '',              // CSS personalizado
       custom_js: '',               // JS personalizado
@@ -736,7 +736,10 @@ class AWF_Layout {
 
   /**
    * Sincroniza la estructura visual con los bloques de datos reales.
-   * Borra referencias a bloques eliminados y añade los nuevos bloques de datos al final.
+   *  - Borra referencias a bloques eliminados 
+   *  - Elimina bloques duplicados (solo mantiene la primera aparición)
+   *  - Elimina/Ignora los bloques que no tienen campos visibles
+   *  - Añade los nuevos bloques de datos al final.
    * @param {AWF_DataBlock[]} dataBlocks Lista actual de bloques de datos
    */
   syncWithDataBlocks(dataBlocks) {
@@ -746,25 +749,35 @@ class AWF_Layout {
     // Limpieza de los bloques de la estructura visual
     this.structure.forEach(section => {
       section.elements = section.elements.filter(el => {
-        if (el.type != 'datablock') return true; //No es un bloque, lo mantenemos
+        if (el.type != 'datablock') return true; // No es un bloque, lo mantenemos
 
         // Comprobamos que exista el bloque
-        const exists = dataBlocks.some(b => b.id === el.ref_id);
-        if (exists) {
-          // Marcamos el bloque como colocado
-          placedBlockIds.add(el.ref_id); 
-          return true;
-        }
-        // El bloque no existe
-        return false; 
+        const block = dataBlocks.find(b => b.id === el.ref_id);
+        
+        if (!block) return false; // El bloque ya no existe
+        if (placedBlockIds.has(el.ref_id)) return false; // Es un duplicado
+        
+        // Comprobamos visibilidad de campos
+        // (si no tiene campos visibles, no tiene que estar en la maquetación)
+        if (!block.fields.some(f => f.type_field !== 'hidden')) return false; // El bloque solo tiene campos ocultos
+          
+        // Marcamos el bloque como colocado
+        placedBlockIds.add(el.ref_id); 
+        return true;
       });
-
       cleanStructure.push(section);
     });
+
     this.structure = cleanStructure;
 
     // Añadimos los bloques que falten
-    const orphanBlocks = dataBlocks.filter(b => !placedBlockIds.has(b.id));
+    const orphanBlocks = dataBlocks.filter(b => {
+      if (placedBlockIds.has(b.id)) return false; // El bloque está colocado
+      if (!b.fields.some(f => f.type_field !== 'hidden')) return false; // Solo tiene campos ocultos
+
+      return true;
+    });
+
     if (orphanBlocks.length > 0) {
       // Creamos una sección para cada bloque
       orphanBlocks.forEach(block => {
@@ -820,6 +833,20 @@ class AWF_Theme {
     // 2. Sobreescriure amb dades
     Object.assign(this, data);
   }
+
+  static shadow_intensity_in_formList(asString = false){
+    return utils.getList("stic_advanced_web_forms_shadow_intensity_list", asString);
+  }
+  get shadow_intensity_in_formText(){
+    return AWF_Theme.shadow_intensity_in_formList().find(i => i.id == this.shadow_intensity)?.text;  
+  }
+
+  static form_width_in_formList(asString = false){
+    return utils.getList("stic_advanced_web_forms_form_width_list", asString);
+  }
+  get form_width_in_formText(){
+    return AWF_Theme.form_width_in_formList().find(i => i.id == this.form_width)?.text;  
+  }  
 }
 
 /**
@@ -830,14 +857,22 @@ class AWF_LayoutSection {
     Object.assign(this, {
       id: utils.newId('sect'), // Id de la sección
       title: "",               // Título a mostrar
+      showTitle: true,         // Indica si se mostrará el título
       
-      containerType: 'panel',  // Tipo de contenedor visual: 'panel' (simple), 'card' (con borde), 'tabs', 'accordion'
+      containerType: 'card',  // Tipo de contenedor visual: 'panel' (simple), 'card' (con borde), 'tabs', 'accordion'
       elements: [],
     });
 
     Object.assign(this, data);
 
     this.elements = (data.elements || this.elements).map(e => new AWF_LayoutElement(e));
+  }
+
+  static containerType_in_formList(asString = false){
+    return utils.getList("stic_advanced_web_forms_sections_type_list", asString);
+  }
+  get containerType_in_formText(){
+    return AWF_LayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;  
   }
 }
 
