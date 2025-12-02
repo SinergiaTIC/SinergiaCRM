@@ -84,19 +84,26 @@ class stic_Financial_Products extends Basic
         // During Norma 43 import, preserve the exact values from the file
         $isNorma43Import = !empty($_SESSION['norma43_importing']) && $_SESSION['norma43_importing'] === true;
 
-        // Normalize decimal values to prevent truncation (only if NOT during Norma 43 import)
+        // Only perform these actions if NOT during Norma 43 import
         if (!$isNorma43Import) {
+            // Normalize decimal values while preserving precision
             foreach (['initial_balance', 'current_balance'] as $field) {
                 if (isset($this->$field) && !empty($this->$field)) {
                     $value = $this->$field;
                     if (is_string($value)) {
-                        // Replace comma with point for decimal conversion
-                        $value = str_replace(',', '.', $value);
-                        // Convert to float to preserve precision
-                        $this->$field = (float)$value;
-                    } elseif (!is_float($this->$field) && !is_int($this->$field)) {
-                        // Ensure it's a numeric type
-                        $this->$field = (float)$value;
+                        // Remove spaces and normalize the format
+                        $value = trim($value);
+                        // If contains both . and , remove the . (thousands separator) and replace , with .
+                        if (strpos($value, '.') !== false && strpos($value, ',') !== false) {
+                            // European format: 3.598,65 -> 3598.65
+                            $value = str_replace('.', '', $value);
+                            $value = str_replace(',', '.', $value);
+                        } elseif (strpos($value, ',') !== false && strpos($value, '.') === false) {
+                            // Only comma: 3598,65 -> 3598.65
+                            $value = str_replace(',', '.', $value);
+                        }
+                        // Keep as numeric string to preserve precision
+                        $this->$field = $value;
                     }
                 }
             }
