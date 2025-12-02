@@ -1068,17 +1068,18 @@ class EmailMan extends SugarBean
 
             require_once __DIR__ . '/../EmailTemplates/EmailTemplateParser.php';
 
-            // STIC-Custom 20250811 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/770
-            // Create the href of the link that allows the user to view the email content in the browser
-            $targetId = $this->getTargetId();
             $template_data = (new EmailTemplateParser(
                 $this->current_emailtemplate,
                 $this->current_campaign,
                 $module,
                 $sugar_config['site_url'],
-                $targetId
+                $this->getTargetId()
             ))->parseVariables();
-            $renderTemplateLink = $sugar_config['site_url'] . '/index.php?entryPoint=renderEmailTemplate&emailMarketingId=' . $this->marketing_id . '&module=' . $module->module_dir . '&recordId=' . $module->id . '&targetId=' .  $targetId . '&trackingURL=' . $this->tracking_url;
+            // STIC-Custom 20250811 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/770
+            // If the option to display HTML in marketing emails is enabled, create the href of the link that allows the user to view the email content in the browser
+            if ($this->current_emailmarketing->stic_display_html_c) {
+                $renderTemplateLink = $sugar_config['site_url'] . '/index.php?entryPoint=renderEmailTemplate&emailMarketingId=' . $this->marketing_id . '&module=' . $module->module_dir . '&recordId=' . $module->id . '&targetId=' .  $this->getTargetId() . '&trackingURL=' . $this->tracking_url;
+            }
             // END STIC-Custom
 
             //add email address to this list.
@@ -1113,8 +1114,10 @@ class EmailMan extends SugarBean
                 $mail->IsHTML(false);
                 $mail->Body = $template_data['body'];
                 // STIC-Custom 20250811 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/770
-                // Add the text and link that allows the user to view the email content in the browser.
-                $mail->Body .= "\n\n{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1']} {$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2']} " . $renderTemplateLink;
+                // If the option to display HTML in marketing emails is enabled, add the text and link that allows the user to view the email content in the browser.
+                if ($this->current_emailmarketing->stic_display_html_c) {                
+                    $mail->Body .= "\n\n{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1']} {$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2']} " . $renderTemplateLink;
+                }
                 // END STIC-Custom       
             } else {
                 $mail->Body = wordwrap($template_data['body_html'], 900);
@@ -1149,8 +1152,10 @@ class EmailMan extends SugarBean
                     $mail->AltBody .= "\n\n\n{$mod_strings['TXT_REMOVE_ME_ALT']} " . $this->tracking_url . "index.php?entryPoint=removeme&identifier={$this->getTargetId()}";
                 }
                 // STIC-Custom 20250811 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/770
-                // Add the text and link that allows the user to view the email content in the browser.
-                $mail->Body .= "<br /><span style='font-size:0.8em'>{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1']} <a href='".$renderTemplateLink . "'>{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2']}</a></span>";
+                // If the option to display HTML in marketing emails is enabled, add the text and link that allows the user to view the email content in the browser.
+                if ($this->current_emailmarketing->stic_display_html_c) {                
+                    $mail->Body .= "<br /><span style='font-size:0.8em'>{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1']} <a href='".$renderTemplateLink . "'>{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2']}</a></span>";
+                }
                 // END STIC-Custom                 
             }
 
