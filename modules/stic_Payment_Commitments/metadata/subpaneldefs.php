@@ -74,6 +74,7 @@ $layout_defs["stic_Payment_Commitments"]["subpanel_setup"]['stic_allocation_prop
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
+    ),
 );
 
 $layout_defs['stic_Payment_Commitments']['subpanel_setup']['securitygroups'] = array(
