@@ -21,3 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings['LBL_SCHEDULE_MESSAGE_EMAILS'] = 'Seleccione as mensaxes que desexa programar para o seu envío. Recorde que nestes envíos aplicaranse todas as listas de público obxectivo de exclusión asociadas á campaña.';
+$mod_strings['LBL_STIC_DISPLAY_HTML'] = '¿Mostrar un enlace para que el usuario pueda ver el correo electrónico en el navegador?';

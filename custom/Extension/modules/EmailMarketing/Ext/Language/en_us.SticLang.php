@@ -21,3 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings['LBL_SCHEDULE_MESSAGE_EMAILS'] = 'Please select the messages to be sent. Remember that all suppression target lists related to the campaign will be applied to these messages.';
+$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Show a link so the user can view the email in the browser?';
