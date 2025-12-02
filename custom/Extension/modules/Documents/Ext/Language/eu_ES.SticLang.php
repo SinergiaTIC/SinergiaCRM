@@ -50,4 +50,4 @@ $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNI
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_DOCUMENTS_ACCOUNTS_NAME'] = 'Organización';
-$mod_strings['LBL_STIC_DOCUMENTS_CONTACTS_NAME'] = 'Persona';
+$mod_strings['LBL_STIC_DOCUMENTS_CONTACTS_NAME'] = 'Pertsona';

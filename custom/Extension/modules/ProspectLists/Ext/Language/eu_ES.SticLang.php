@@ -43,4 +43,4 @@ $mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Personas';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
 
 // Campos de filtro en relaciones muchos a muchos
-$mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Persona';
+$mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Pertsona';

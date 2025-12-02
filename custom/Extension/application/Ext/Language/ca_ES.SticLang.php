@@ -40,14 +40,22 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Aquest programa és progr
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres empreses i productes esmentats poden ser marques registrades de les empreses amb les quals s'associen.";
 
 // Creació de registre horari via capçalera
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Es crearà un registre horari amb la informació següent:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Es tancarà el darrer registre horari obert avui:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'amb la informació següent: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nom: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici: ";
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional):';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crea un registre';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Es crearà un registre horari amb la informació següent';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Tanca el registre';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'Es tancarà el darrer registre horari obert avui';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'amb la informació següent';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nom';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional)';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1'] = "Altres registres d'avui";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2'] = "Total d'hores treballades";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'No hi ha cap més registre.';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'] = 'En curs';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_HOURS'] = 'hores';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_MINUTES'] = 'minuts';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Accepta';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancel·la';
 
@@ -3631,6 +3639,8 @@ $app_list_strings['trackers_actions_list']['deleted'] = 'Registre esborrat';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuari connectat';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inici de sessió erroni';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
+$app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inici de suplantació';
+$app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fi de suplantació';
 
 // Modificacions del core de SuiteCRM
 
