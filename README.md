@@ -28,7 +28,7 @@
 
 #### Informar sobre vulnerabilidades
 
-En SinergiaCRM la seguridad es una prioridad. Si has identificado una vulnerabilidad o algún riesgo para la seguridad en nuestro código, te agredeceremos que nos informes de ello lo antes posible enviando un correo electrónico a [info@sinergiacrm.org](mailto:info@sinergiacrm.org). En tu informe incluye, por favor, la siguiente información:
+En SinergiaCRM la seguridad es una prioridad. Si has identificado una vulnerabilidad o algún riesgo para la seguridad en nuestro código, te agredeceremos que nos informes de ello lo antes posible enviando un correo electrónico a [info@sinergiatic.org](mailto:info@sinergiatic.org). En tu informe incluye, por favor, la siguiente información:
 
 - Descripción detallada del problema.
 - Pasos para reproducir la vulnerabilidad.
@@ -54,7 +54,7 @@ SinergiaCRM se distribuye bajo la [Licencia Pública General Affero de GNU (AGPL
 
 #### Informa'ns sobre vulnerabilitats
 
-A SinergiaCRM la seguretat és una prioritat. Si has identificat una vulnerabilitat o algun risc per a la seguretat al nostre codi, t'agrairem que ens n'informis tan aviat com puguis enviant-nos un correu electrònic a [info@sinergiacrm.org](mailto:info@sinergiacrm.org). Al teu informe inclou-hi, si us plau, la següent informació:
+A SinergiaCRM la seguretat és una prioritat. Si has identificat una vulnerabilitat o algun risc per a la seguretat al nostre codi, t'agrairem que ens n'informis tan aviat com puguis enviant-nos un correu electrònic a [info@sinergiatic.org](mailto:info@sinergiatic.org). Al teu informe inclou-hi, si us plau, la següent informació:
 
 - Descripció detallada del problema.
 - Passos per reproduir la vulnerabilitat.
@@ -80,7 +80,7 @@ SinergiaCRM es distribueix sota la [Llicència Pública General Affero de GNU (A
 
 #### Vulnerability report
 
-In SinergiaCRM security is a priority. If you have identified any vulnerability or security risk in our code, we would appreciate it if you report it as soon as possible by sending an email to [info@sinergiacrm.org](mailto:info@sinergiacrm.org). Please include the following information in your report:
+In SinergiaCRM security is a priority. If you have identified any vulnerability or security risk in our code, we would appreciate it if you report it as soon as possible by sending an email to [info@sinergiatic.org](mailto:info@sinergiatic.org). Please include the following information in your report:
 
 - Detailed description of the issue.
 - Steps to reproduce the vulnerability.
