@@ -71,6 +71,7 @@ class stic_Financial_Products extends Basic
     /**
      * Overriding SugarBean save function to insert additional logic:
      * Build the name of the financial product using the type, the iban and the bank
+     * Also extract the entity code from IBAN and resolve the bank name
      *
      * @param boolean $check_notify
      * @return void
@@ -96,6 +97,19 @@ class stic_Financial_Products extends Basic
                     } elseif (!is_float($this->$field) && !is_int($this->$field)) {
                         // Ensure it's a numeric type
                         $this->$field = (float)$value;
+                    }
+                }
+            }
+
+            // Extract entity code from IBAN
+            if (!empty($this->iban)) {
+                // Entity code is at positions 4-7 of the iban
+                if (strlen($this->iban) >= 8 && substr($this->iban, 0, 2) === 'ES') {
+                    $entityCode = substr($this->iban, 4, 4);
+                    require_once 'modules/stic_Transactions/importNorma43.php';
+                    $entityName = Norma43::parseEntity($entityCode);
+                    if ($entityName) {
+                        $this->entity = $entityName;
                     }
                 }
             }
