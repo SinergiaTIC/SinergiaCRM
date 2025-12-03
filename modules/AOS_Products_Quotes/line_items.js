@@ -94,6 +94,11 @@ function insertLineItems(product,group){
   }
 
   calculateLine(ln,type);
+  
+  // STIC CUSTOM - JCH - 20251203 Apply operation type logic after loading line
+  // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+  handleOperationTypeChange(ln, type);
+  // END STIC CUSTOM
 
 }
 
@@ -184,7 +189,7 @@ function insertProductLine(tableid, groupid) {
 
   x.insertCell().innerHTML = "<input type='text' name='product_product_total_price[" + prodln + "]' id='product_product_total_price" + prodln + "' maxlength='50' value='' title='' tabindex='116' readonly='readonly' class='product_total_price'><input type='hidden' name='product_group_number[" + prodln + "]' id='product_group_number" + prodln + "' value='"+groupid+"'>";
 
-  x.insertCell().innerHTML = "<select tabindex='116' name='product_verifactu_aeat_operation_type_c[" + prodln + "]' id='product_verifactu_aeat_operation_type_c" + prodln + "' class='product_operation_type_select'>" + operation_type_hidden + "</select>";
+  x.insertCell().innerHTML = "<select tabindex='116' name='product_verifactu_aeat_operation_type_c[" + prodln + "]' id='product_verifactu_aeat_operation_type_c" + prodln + "' onchange='handleOperationTypeChange(" + prodln + ",\"product_\");' class='product_operation_type_select'>" + operation_type_hidden + "</select>";
 
   x.insertCell().innerHTML = "<select tabindex='116' name='product_vat[" + prodln + "]' id='product_vat" + prodln + "' onchange='calculateLine(" + prodln + ",\"product_\");' class='product_vat_amt_select'>" + vat_hidden + "</select>" +
                              "<input type='text' name='product_vat_amt[" + prodln + "]' id='product_vat_amt" + prodln + "' maxlength='250' value='' title='' tabindex='116' readonly='readonly' class='product_vat_amt_text'>";
@@ -348,7 +353,7 @@ function insertServiceLine(tableid, groupid) {
 
   x.insertCell().innerHTML = "<input type='text' name='service_product_total_price[" + servln + "]' id='service_product_total_price" + servln + "' maxlength='50' value='' title='' tabindex='116' readonly='readonly' class='service_total_price'><input type='hidden' name='service_group_number[" + servln + "]' id='service_group_number" + servln + "' value='"+ groupid +"'>";
 
-  x.insertCell().innerHTML = "<select tabindex='116' name='service_verifactu_aeat_operation_type_c[" + servln + "]' id='service_verifactu_aeat_operation_type_c" + servln + "' class='service_operation_type_select'>" + operation_type_hidden + "</select>"; 
+  x.insertCell().innerHTML = "<select tabindex='116' name='service_verifactu_aeat_operation_type_c[" + servln + "]' id='service_verifactu_aeat_operation_type_c" + servln + "' onchange='handleOperationTypeChange(" + servln + ",\"service_\");' class='service_operation_type_select'>" + operation_type_hidden + "</select>"; 
 
   x.insertCell().innerHTML = "<select tabindex='116' name='service_vat[" + servln + "]' id='service_vat" + servln + "' onchange='calculateLine(" + servln + ",\"service_\");' class='service_vat_select'>" + vat_hidden + "</select>" + 
                              "<input type='text' name='service_vat_amt[" + servln + "]' id='service_vat_amt" + servln + "' maxlength='250' value='' title='' tabindex='116' readonly='readonly' class='service_vat_text'>";
@@ -1001,3 +1006,58 @@ function check_form(formname) {
     return false;
   return validate_form(formname, '');
 }
+
+// STIC CUSTOM - JCH - 20251203 Handle AEAT operation_type field change
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+/**
+ * Handle operation type change for VAT fields
+ * When operation type is not 'S' (Subject to tax), VAT rate and amount should be 0
+ * 
+ * @param {number} ln - Line number
+ * @param {string} type - Line type prefix ('product_' or 'service_')
+ */
+function handleOperationTypeChange(ln, type) {
+  var operationTypeSelect = document.getElementById(type + 'verifactu_aeat_operation_type_c' + ln);
+  var vatSelect = document.getElementById(type + 'vat' + ln);
+  var vatAmtInput = document.getElementById(type + 'vat_amt' + ln);
+  
+  if (!operationTypeSelect || !vatSelect || !vatAmtInput) {
+    return;
+  }
+  
+  var operationType = operationTypeSelect.value;
+  
+  // If operation type is NOT 'S' (Subject to tax), disable VAT and set to 0
+  if (operationType !== 'S') {
+    // Set VAT rate to 0
+    vatSelect.value = '0.00';
+    vatSelect.disabled = true;
+    
+    // Set VAT amount to 0
+    vatAmtInput.value = format2Number(0);
+    
+    // Add visual indicator that field is disabled
+    vatSelect.style.backgroundColor = '#f0f0f0';
+    vatSelect.style.cursor = 'not-allowed';
+  } else {
+    // Re-enable VAT fields when operation is Subject to tax
+    vatSelect.disabled = false;
+    vatSelect.style.backgroundColor = '';
+    vatSelect.style.cursor = '';
+    
+    // Set VAT to first option in the list (first non-empty option)
+    if (vatSelect.options && vatSelect.options.length > 0) {
+      // Find first option with a value
+      for (var i = 0; i < vatSelect.options.length; i++) {
+        if (vatSelect.options[i].value !== '') {
+          vatSelect.value = vatSelect.options[i].value;
+          break;
+        }
+      }
+    }
+  }
+  
+  // Recalculate the line totals
+  calculateLine(ln, type);
+}
+// END STIC CUSTOM
