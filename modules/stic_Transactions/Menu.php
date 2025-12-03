@@ -40,5 +40,5 @@ if (ACLController::checkAccess('stic_Transactions', 'import', true)) {
 
 // Add button for Norma 43
 if (ACLController::checkAccess('stic_Transactions', 'list', true)) {
-    $module_menu[] = array('index.php?module=stic_Transactions&action=uploadNorma43', $mod_strings['LBL_NORMA_43'], '', 'stic_Transactions');
+    $module_menu[] = array('index.php?module=stic_Transactions&action=uploadNorma43', $mod_strings['LBL_NORMA_43'], 'norma-43', 'stic_Transactions');
 }
