@@ -44,9 +44,14 @@ $subpanel_layout = array(
             'width' => '10%',
         ),
         'opportunities_stic_allocation_proposals_name' => array(
+            'type' => 'relate',
+            'link' => true,
+            'id' => 'OPPORTUNITIES_STIC_ALLOCATION_PROPOSALSOPPORTUNITIES_IDA',
             'vname' => 'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_OPPORTUNITIES_TITLE',
             'widget_class' => 'SubPanelDetailViewLink',
             'module' => 'Opportunities',
+            'target_module' => 'Opportunities',
+            'target_record_key' => 'opportunities_stic_allocation_proposalsopportunities_ida',
             'width' => '20%',
         ),
         'project_stic_allocation_proposals_name' => array(            

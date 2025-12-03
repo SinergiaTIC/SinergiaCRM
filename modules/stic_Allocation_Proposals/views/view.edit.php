@@ -29,8 +29,6 @@ class stic_Allocation_ProposalsViewEdit extends ViewEdit
     public function __construct()
     {
         parent::__construct();
-        $this->useForSubpanel = true;
-        $this->useModuleQuickCreateTemplate = true;
     }
 
     public function preDisplay()
@@ -49,6 +47,6 @@ class stic_Allocation_ProposalsViewEdit extends ViewEdit
         SticViews::display($this);
 
         // Custom JavaScript includes
-        echo getVersionedScript("modules/stic_Ledger_Accounts/Utils.js");
+        echo getVersionedScript("modules/stic_Allocation_Proposals/Utils.js");
     }
 }
