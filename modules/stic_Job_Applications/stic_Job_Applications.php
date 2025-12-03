@@ -123,6 +123,7 @@ class stic_Job_Applications extends Basic
                         $relationshipBean = BeanFactory::newBean('stic_Contacts_Relationships');
                         $relationshipBean->relationship_type = 'pre-volunteer';
                         $relationshipBean->stic_contacts_relationships_contactscontacts_ida = $contactBean->id;
+                        $relationshipBean->stic_contacts_relationships_projectproject_ida = $offerBean->project_stic_job_offersproject_ida;
                         $relationshipBean->assigned_user_id = $offerBean->assigned_user_id;
                         $relationshipBean->save();
                     }
