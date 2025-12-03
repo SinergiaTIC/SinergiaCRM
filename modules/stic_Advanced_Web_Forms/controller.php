@@ -131,4 +131,97 @@ class stic_Advanced_Web_FormsController extends SugarController
 
         sugar_cleanup(true);
     }
+    
+
+    public function action_generateFormHtml() 
+    {
+        require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
+
+        $recordId = $_REQUEST['record'];
+        $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $recordId);
+        
+        if (!$bean) die("Error: Formulari no trobat");
+
+        // 1. Parsejar Config
+        $configArray = json_decode($bean->configuration, true);
+        $formConfig = FormConfig::fromJsonArray($configArray);
+
+        // 2. Instanciar Generador
+        $generator = new FormHtmlGeneratorService();
+        
+        // 3. Definir URL de destí (on s'envia el form)
+        // Hauria de ser l'EntryPoint de processament
+        global $sugar_config;
+        $siteUrl = $sugar_config['site_url'];
+        $actionUrl = "{$siteUrl}/index.php?entryPoint=stic_AWF_response_handler&form_id={$bean->id}";
+
+        // 4. Generar i retornar
+        $html = $generator->generate($formConfig, $bean->id, $actionUrl);
+        
+        // Netejar qualsevol output previ (molt important per descarregar fitxers nets)
+        ob_clean();
+        echo $html;
+        sugar_cleanup(true);
+    }
+
+    /**
+     * Genera i mostra la previsualització del formulari.
+     * Obre el formulari en mode "aïllat" (sense la interfície de SuiteCRM al voltant).
+     */
+    public function action_preview()
+    {
+        // 1. Validació de seguretat bàsica
+        if (empty($_REQUEST['record'])) {
+            die("Error: Manca l'identificador del registre.");
+        }
+
+        // 2. Carregar el Bean del formulari
+        $recordId = $_REQUEST['record'];
+        $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $recordId);
+
+        if (!$bean || empty($bean->id)) {
+            die("Error: No s'ha trobat el formulari.");
+        }
+
+        // 3. Carregar dependències
+        // Assegura't de carregar les definicions de classes (FormConfig, etc.) i el Generador
+        require_once "modules/stic_Advanced_Web_Forms/core/includes.php"; 
+        require_once "modules/stic_Advanced_Web_Forms/core/FormHtmlGeneratorService.php";
+
+        // 4. Parsejar la configuració JSON
+        $jsonConfig = $bean->configuration;
+        
+        // Si el JSON està buit, inicialitzem un array buit per evitar errors
+        $configData = json_decode(html_entity_decode($jsonConfig), true) ?? [];
+
+        try {
+            // Convertim l'array a objectes tipats (DTOs)
+            $formConfig = FormConfig::fromJsonArray($configData);
+        } catch (\Throwable $e) {
+            die("Error en processar la configuració del formulari: " . $e->getMessage());
+        }
+
+        // 5. Definir la URL d'Acció (on s'envia el formulari)
+        // Per a la preview, apuntem al EntryPoint real perquè l'usuari pugui provar l'enviament.
+        // Si volguessis desactivar l'enviament a la preview, podries posar '#' o una url dummy.
+        global $sugar_config;
+        $siteUrl = rtrim($sugar_config['site_url'], '/');
+        $actionUrl = "{$siteUrl}/index.php?entryPoint=stic_AWF_response_handler&form_id={$bean->id}";
+
+        // 6. Generar l'HTML
+        $generator = new FormHtmlGeneratorService();
+        
+        // Passem el FormConfig i l'ID per al scoping CSS
+        $html = $generator->generate($formConfig, $bean->id, $actionUrl);
+
+        // 7. Netejar i Mostrar
+        // ob_clean() elimina qualsevol sortida prèvia de SuiteCRM (headers, espais en blanc)
+        // per assegurar que només servim l'HTML del formulari.
+        if (ob_get_length()) ob_clean();
+        
+        echo $html;
+
+        // Aturem l'execució de SuiteCRM aquí perquè no imprimeixi el footer del CRM
+        sugar_cleanup(true);
+    }
 }
