@@ -43,6 +43,16 @@ array (
         'default' => true,
         'name' => 'opportunities_stic_justification_conditions_name',
       ),
+      'stic_ledger_accounts_name' => 
+      array (
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'stic_ledger_accounts_name',
+      ),
       'active' => 
       array (
         'type' => 'bool',
@@ -134,6 +144,16 @@ array (
         'width' => '10%',
         'default' => true,
         'name' => 'opportunities_stic_justification_conditions_name',
+      ),
+      'stic_ledger_accounts_name' => 
+      array (
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'stic_ledger_accounts_name',
       ),
       'active' => 
       array (

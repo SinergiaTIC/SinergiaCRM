@@ -39,6 +39,12 @@ $listViewDefs['stic_Justification_Conditions'] = array(
         'link' => true,
         'default' => true,
     ),
+    'STIC_LEDGER_ACCOUNTS_NAME' => array(
+        'width' => '15%',
+        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
+        'link' => true,
+        'default' => true,
+    ),
     'ALLOCATION_TYPE' => array(
         'width' => '10%',
         'label' => 'LBL_ALLOCATION_TYPE',
