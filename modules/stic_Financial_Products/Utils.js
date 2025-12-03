@@ -75,28 +75,12 @@ function validateIBANFormat(ibanValue) {
 
 // Check if IBAN is required based on type
 function isIBANRequired() {
-    var productType = $("#type", "form").val();
+    var productType = $("#type").val();
     return productType === "current_account" || productType === "savings_account";
 }
 
 // Register IBAN validation
 $(document).ready(function() {    
-    // Function to update IBAN label based on requirement
-    function updateIBANLabel() {
-        var ibanRequired = isIBANRequired();
-        
-        if (ibanRequired) {
-            // Mark field as required
-            setRequiredStatus("iban", "varchar", SUGAR.language.get(module, "LBL_IBAN"));
-        } else {
-            //Remove required status
-            setUnrequiredStatus("iban");
-        }
-    }
-    
-    // Initialize label on page load
-    updateIBANLabel();
-    
     // Capture blur event on all IBAN inputs
     $(document).on("blur", "input[data-fieldname='iban'], input[name*='iban']", function(e) {
         var $field = $(this);
@@ -106,10 +90,10 @@ $(document).ready(function() {
         var cleanedValue = ibanValue.replace(/[^0-9a-zA-Z]/g, "").toUpperCase();
         $field.val(cleanedValue);
         
-        // Check if this is inline editing (list or detail view)
+        // Check if this is inline editing
         var isInlineEdit = $field.closest(".editable-cell, .inline-edit").length > 0;
         
-        // Get or create error message container only for inline editing
+        // Get or create error message container for inline editing
         var $errorContainer = null;
         if (isInlineEdit) {
             var $container = $field.closest(".field, .editable-cell, .inline-edit, [data-fieldname='iban']");
@@ -117,7 +101,6 @@ $(document).ready(function() {
             if (!$errorContainer.length) {
                 $errorContainer = $("<div class='inline-iban-error' style='position: absolute; color: red; font-size: 0.85em; margin-top: 2px; white-space: nowrap; z-index: 1000;'></div>");
                 $container.append($errorContainer);
-                // Make container position relative so absolute positioning works
                 if ($container.css("position") === "static") {
                     $container.css("position", "relative");
                 }
@@ -161,10 +144,8 @@ $(document).ready(function() {
         }, 10);
     });
     
-    // Handle type field changes to update IBAN requirement
+    // Handle type field changes to revalidate IBAN
     $("form").on("change", "#type", function() {
-        updateIBANLabel();
-        
         // Revalidate IBAN field when type changes
         var $ibanField = $("#iban", "form");
         if ($ibanField.length) {
