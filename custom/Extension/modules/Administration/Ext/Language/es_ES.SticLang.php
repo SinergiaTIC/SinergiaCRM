@@ -139,3 +139,22 @@ $mod_strings['LBL_STIC_CERT_TYPE_REPRESENTATIVE'] = 'Personal/Representante';
 $mod_strings['LBL_STIC_CERT_TYPE_UNKNOWN'] = 'No determinado';
 $mod_strings['LBL_STIC_CERT_NOT_FOUND'] = 'No encontrado';
 $mod_strings['LBL_STIC_CERT_EXTRACTED_INFO'] = 'Estos son los datos que se utilizarán automáticamente al enviar facturas a Verifactu (AEAT). Si no son correctos, verifique que el certificado sea válido.';
+
+// AOS Administration - Invoice Series
+$mod_strings['LBL_AOS_INVOICE_SERIES_TITLE'] = 'Series de facturación';
+$mod_strings['LBL_AOS_INVOICE_SERIES_DESCRIPTION'] = 'Configure las diferentes series de facturas que desea utilizar. El <strong>nombre</strong> identifica la serie (ej: "Ordinaria", "Rectificativa") y debe ser único. En el <strong>formato</strong> puede usar patrones como YYYY (año 4 dígitos), YY (año 2 dígitos), y 0000 para el número secuencial.';
+$mod_strings['LBL_AOS_INVOICE_SERIES_NAME'] = 'Nombre de Serie';
+$mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT'] = 'Formato de Serie (ej: YYYY-0000)';
+$mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL'] = 'Número Inicial';
+$mod_strings['LBL_AOS_INVOICE_SERIES_EXAMPLE'] = 'Ejemplo';
+$mod_strings['LBL_AOS_INVOICE_SERIES_ACTION'] = 'Acción';
+$mod_strings['LBL_AOS_INVOICE_SERIES_ADD'] = 'Añadir serie de facturación';
+$mod_strings['LBL_AOS_INVOICE_SERIES_REMOVE'] = 'Eliminar serie';
+$mod_strings['LBL_AOS_INVOICE_SERIES_NAME_PLACEHOLDER'] = 'Nombre de la serie';
+$mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT_PLACEHOLDER'] = 'YYYY-0000';
+$mod_strings['LBL_AOS_INVOICE_SERIES_NAME_REQUIRED'] = 'El nombre de la serie es obligatorio';
+$mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION'] = 'Solo letras, símbolos y ceros (0). No se permiten números del 1-9';
+$mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION'] = 'El número inicial debe ser 1 o superior';
+$mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT_ERROR'] = 'El formato \'{0}\' contiene números del 1-9. Solo se permiten letras, símbolos y el número 0.';
+$mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL_ERROR'] = 'El número inicial de la serie \'{0}\' debe ser 1 o superior.';
+$mod_strings['LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS'] = 'Se encontraron errores de validación en la configuración de series de facturación.';
