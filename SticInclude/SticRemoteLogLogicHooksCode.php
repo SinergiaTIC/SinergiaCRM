@@ -83,6 +83,10 @@ class SticRemoteLogLogicHooks
             $entryPoint = $entryPontParts[0];
         } else if(str_starts_with($request_uri, '/SticMonitor.php')) {
             $action = 'SticMonitor';
+        } else if(str_starts_with($request_uri, '/SticCron.php')) {
+            $action = 'SticCron';
+        } else if(str_starts_with($request_uri, '/SticCronMassEmailCampaigns.php')) {
+            $action = 'SticCronMassEmailCampaigns';
         } else if (!empty($_REQUEST['method'])) {
             $module = 'API';
             $action = $_REQUEST['method'];
