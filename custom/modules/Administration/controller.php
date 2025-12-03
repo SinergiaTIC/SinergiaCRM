@@ -173,20 +173,50 @@ class CustomAdministrationController extends AdministrationController
 
         if (isset($_FILES['certificate_file']) && $_FILES['certificate_file']['error'] === UPLOAD_ERR_OK) {
 
-            // 1. read file content
+            // 1. Read file content
             $fileContent = file_get_contents($_FILES['certificate_file']['tmp_name']);
+            
+            // 2. Get and validate certificate password
+            $password = $_POST['certificate_password'] ?? '';
+            
+            if (empty($password)) {
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_PASSWORD_REQUIRED');
+                return;
+            }
 
-            // 2. Prepare Blowfish encryption
+            // 3. Verify password and extract certificate information
+            $certInfo = array();
+            if (!openssl_pkcs12_read($fileContent, $certInfo, $password)) {
+                // Invalid password or corrupted certificate
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to read certificate. Invalid password or corrupted file.');
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_INVALID_PASSWORD');
+                return;
+            }
+
+            // 4. Extract certificate details
+            $certData = openssl_x509_parse($certInfo['cert']);
+            $certDetails = array(
+                'subject' => $certData['name'] ?? '',
+                'issuer' => $certData['issuer']['CN'] ?? '',
+                'valid_from' => isset($certData['validFrom_time_t']) ? date('Y-m-d H:i:s', $certData['validFrom_time_t']) : '',
+                'valid_to' => isset($certData['validTo_time_t']) ? date('Y-m-d H:i:s', $certData['validTo_time_t']) : '',
+                'serial_number' => $certData['serialNumberHex'] ?? $certData['serialNumber'] ?? '',
+            );
+
+            // 5. Prepare Blowfish encryption
             require_once 'include/utils/encryption_utils.php';
             global $sugar_config;
 
-            // use a specific key for certificates
+            // Use a specific key for certificates
             $key = $sugar_config['unique_key'];
 
-            // 3. Encrypt
+            // 6. Encrypt certificate file
             $encryptedContent = blowfishEncode($key, $fileContent);
+            
+            // 7. Encrypt password for future use
+            $encryptedPassword = blowfishEncode($key, $password);
 
-            // 4. Define secure path
+            // 8. Define secure path
             $uploadDir = 'custom/certificates/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
@@ -197,14 +227,16 @@ class CustomAdministrationController extends AdministrationController
             $targetFile = $uploadDir . 'cert_encrypted.bin';
             $metadataFile = $uploadDir . 'cert_metadata.json';
 
-            // 5. Save encrypted file
+            // 9. Save encrypted file
             if (file_put_contents($targetFile, $encryptedContent) !== false) {
-                // 6. Save certificate metadata
+                // 10. Save certificate metadata (including encrypted password and certificate details)
                 $metadata = array(
                     'original_filename' => $_FILES['certificate_file']['name'],
                     'upload_date' => date('Y-m-d H:i:s'),
                     'uploaded_by' => $current_user->id,
                     'uploaded_by_name' => $current_user->name,
+                    'encrypted_password' => $encryptedPassword,
+                    'cert_details' => $certDetails,
                 );
                 file_put_contents($metadataFile, json_encode($metadata, JSON_PRETTY_PRINT));
 

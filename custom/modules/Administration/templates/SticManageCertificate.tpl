@@ -41,9 +41,31 @@
             <span style="color: green; font-weight: bold;">{$MOD.LBL_STIC_CERT_EXISTS}</span>
             {if $CERT_METADATA}
                 <br><br>
-                <strong>{$MOD.LBL_STIC_CERT_FILENAME}:</strong> {$CERT_METADATA.original_filename}<br>
-                <strong>{$MOD.LBL_STIC_CERT_UPLOAD_DATE}:</strong> {$CERT_METADATA.upload_date_formatted}<br>
-                <strong>{$MOD.LBL_STIC_CERT_UPLOADED_BY}:</strong> {$CERT_METADATA.uploaded_by_name}
+                <div style="margin-left: 15px;">
+                    <strong>{$MOD.LBL_STIC_CERT_FILENAME}:</strong> {$CERT_METADATA.original_filename}<br>
+                    <strong>{$MOD.LBL_STIC_CERT_UPLOAD_DATE}:</strong> {$CERT_METADATA.upload_date_formatted}<br>
+                    <strong>{$MOD.LBL_STIC_CERT_UPLOADED_BY}:</strong> {$CERT_METADATA.uploaded_by_name}
+                    
+                    {if $CERT_METADATA.cert_details}
+                        <br><br>
+                        <strong style="text-decoration: underline;">{$MOD.LBL_STIC_CERT_UPLOAD_INFO}:</strong><br>
+                        {if $CERT_METADATA.cert_details.subject}
+                            <strong>{$MOD.LBL_STIC_CERT_SUBJECT}:</strong> {$CERT_METADATA.cert_details.subject}<br>
+                        {/if}
+                        {if $CERT_METADATA.cert_details.issuer}
+                            <strong>{$MOD.LBL_STIC_CERT_ISSUER}:</strong> {$CERT_METADATA.cert_details.issuer}<br>
+                        {/if}
+                        {if $CERT_METADATA.cert_details.valid_from}
+                            <strong>{$MOD.LBL_STIC_CERT_VALID_FROM}:</strong> {$CERT_METADATA.cert_details.valid_from}<br>
+                        {/if}
+                        {if $CERT_METADATA.cert_details.valid_to}
+                            <strong>{$MOD.LBL_STIC_CERT_VALID_TO}:</strong> {$CERT_METADATA.cert_details.valid_to}<br>
+                        {/if}
+                        {if $CERT_METADATA.cert_details.serial_number}
+                            <strong>{$MOD.LBL_STIC_CERT_SERIAL}:</strong> {$CERT_METADATA.cert_details.serial_number}<br>
+                        {/if}
+                    {/if}
+                </div>
             {/if}
         {else}
             <span style="color: red; font-weight: bold;">{$MOD.LBL_STIC_CERT_NOT_EXISTS}</span>
@@ -61,6 +83,16 @@
                 </td>
                 <td width="80%">
                     <input type="file" name="certificate_file" required>
+                    <br><span style="font-size: 0.9em; color: #666;">{$MOD.LBL_STIC_CERT_FILE_HELP}</span>
+                </td>
+            </tr>
+            <tr>
+                <td width="20%" scope="row" style="vertical-align: middle;">
+                    {$MOD.LBL_STIC_CERT_PASSWORD}<span style="color:red;">*</span>
+                </td>
+                <td width="80%">
+                    <input type="password" name="certificate_password" id="certificate_password" required autocomplete="off">
+                    <br><span style="font-size: 0.9em; color: #666;">{$MOD.LBL_STIC_CERT_PASSWORD_HELP}</span>
                 </td>
             </tr>
             <tr>
