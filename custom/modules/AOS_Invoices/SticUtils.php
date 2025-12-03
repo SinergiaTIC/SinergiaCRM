@@ -444,8 +444,12 @@ class AOS_InvoicesUtils
                         ];
                     }
                     
+                    // Calculate line total without tax (product_total_price might include tax in some cases)
+                    // Use product_list_price * product_qty to get the base amount
+                    $lineBaseAmount = (float)$quote->product_list_price * (float)$quote->product_qty;
+                    
                     // Add amounts
-                    $taxGroups[$groupKey]['baseAmount'] += (float)$quote->product_total_price;
+                    $taxGroups[$groupKey]['baseAmount'] += $lineBaseAmount;
                     $taxGroups[$groupKey]['taxAmount'] += (float)$quote->vat_amt;
                 }
             }
