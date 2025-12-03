@@ -91,6 +91,9 @@ class stic_Ledger_Accounts extends Basic
             if (!empty($this->subaccount) && isset($app_list_strings['stic_ledger_subaccounts_list'][$this->subaccount])) {
                 $nameParts[] = $app_list_strings['stic_ledger_subaccounts_list'][$this->subaccount];
             }
+            else {
+                $nameParts[] = $app_list_strings['stic_ledger_accounts_list'][$this->account];
+            }
             
             // Join with hyphens if we have parts, otherwise use a default name
             if (!empty($nameParts)) {
