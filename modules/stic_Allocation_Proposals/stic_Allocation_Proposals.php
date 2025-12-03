@@ -91,18 +91,18 @@ class stic_Allocation_Proposals extends Basic
 
             $nameParts = array();
             
-            $opportunityBean = BeanFactory::getBean('Opportunities', $this->opportunities_stic_allocation_proposalsopportunities_ida);
-            if ($opportunityBean){
-                $nameParts[] = $opportunityBean->name;
-            }
-
             $projectBean = BeanFactory::getBean('Project', $this->project_stic_allocation_proposalsproject_ida);
-            if ($projectBean){
+            if ($projectBean->id){
                 $nameParts[] = $projectBean->name;
             }
 
+            $opportunityBean = BeanFactory::getBean('Opportunities', $this->opportunities_stic_allocation_proposalsopportunities_ida);
+            if ($opportunityBean->id){
+                $nameParts[] = $opportunityBean->name;
+            }    
+
             $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $this->stic_ledger_accounts_ida);
-            if ($ledgerAccountBean){
+            if ($ledgerAccountBean->id){
                 $nameParts[] = $ledgerAccountBean->name;
             }
 
