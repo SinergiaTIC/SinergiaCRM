@@ -1040,13 +1040,17 @@ function handleOperationTypeChange(ln, type) {
     vatSelect.style.backgroundColor = '#f0f0f0';
     vatSelect.style.cursor = 'not-allowed';
   } else {
+    // Check if field was previously disabled (means we're changing FROM non-subject TO subject)
+    var wasDisabled = vatSelect.disabled;
+    
     // Re-enable VAT fields when operation is Subject to tax
     vatSelect.disabled = false;
     vatSelect.style.backgroundColor = '';
     vatSelect.style.cursor = '';
     
-    // Set VAT to first option in the list (first non-empty option)
-    if (vatSelect.options && vatSelect.options.length > 0) {
+    // Only set to first option if the field was previously disabled
+    // This prevents overwriting existing values when loading saved lines
+    if (wasDisabled && vatSelect.options && vatSelect.options.length > 0) {
       // Find first option with a value
       for (var i = 0; i < vatSelect.options.length; i++) {
         if (vatSelect.options[i].value !== '') {
