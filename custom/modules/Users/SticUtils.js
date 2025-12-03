@@ -42,14 +42,23 @@ switch (viewType()) {
             // Define button content
             var buttons = {
                 showWorkCalendarAssistant: {
-                id: "show_work_calendar_assistant",
-                title: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
-                onclick: "location.href='" + STIC.siteUrl + "/index.php?module=stic_Work_Calendar&action=showWorkCalendarAssistant&employeeId=" + STIC.record.id + "'",
+                    id: "show_work_calendar_assistant",
+                    title: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
+                    onclick: "location.href='" + STIC.siteUrl + "/index.php?module=stic_Work_Calendar&action=showWorkCalendarAssistant&employeeId=" + STIC.record.id + "'",
                 },
             };
+            createDetailViewButton(buttons.showWorkCalendarAssistant);
         }
+        // Define button content
+        var buttons = {
+            showImpersonateUser: {
+                id: "show_impersonate_user",
+                title: SUGAR.language.get(module, "LBL_IMPERSONATE_USER_BUTTON"),
+                onclick: "location.href='" + STIC.siteUrl + "/index.php?module=Users&action=startImpersonation&userId=" + STIC.record.id + "'",
+            },
+        };
+        createDetailViewButton(buttons.showImpersonateUser);
 
-        createDetailViewButton(buttons.showWorkCalendarAssistant);
         break;
 
     case "list":
