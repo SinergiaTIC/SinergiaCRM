@@ -248,4 +248,28 @@ class utils {
       }
     });
   }
+
+  /**
+   * Encodes a string in Base64 supporting UTF-8
+   * @param {string} str 
+   * @returns 
+   */
+  static toBase64(str) {
+    if (!str) return '';
+    return window.btoa(unescape(encodeURIComponent(str)));
+  }
+
+  /**
+   * Decode Base64 to string supporting UTF-8
+   */
+  static fromBase64(str) {
+    if (!str) return '';
+    try {
+      return decodeURIComponent(escape(window.atob(str)));
+    } catch (e) {
+      // If fails, return original text
+      return str;
+    }
+  }
+  
 }

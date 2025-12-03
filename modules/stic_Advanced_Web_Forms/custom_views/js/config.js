@@ -732,6 +732,12 @@ class AWF_Layout {
     // 3. Map sub-objects
     this.theme = new AWF_Theme(data.theme ?? {});
     this.structure = (data.structure || this.structure).map(s => new AWF_LayoutSection(s));
+
+    // Decode: If it comes from the DB (JSON), it will come in Base64. If it is new, it will be empty.
+    this.header_html = utils.fromBase64(this.header_html);
+    this.footer_html = utils.fromBase64(this.footer_html);
+    if (this.custom_css) this.custom_css = utils.fromBase64(this.custom_css);
+    if (this.custom_js) this.custom_js = utils.fromBase64(this.custom_js);
   }
 
   /**
@@ -918,7 +924,14 @@ class AWF_Configuration {
     return new AWF_Configuration(JSON.parse(jsonString));
   }
   toJSONString() {
-    return JSON.stringify(this);
+    const clone = JSON.parse(JSON.stringify(this));
+    if (clone.layout) {
+        clone.layout.header_html = utils.toBase64(clone.layout.header_html);
+        clone.layout.footer_html = utils.toBase64(clone.layout.footer_html);
+        if (clone.layout.custom_css) clone.layout.custom_css = utils.toBase64(clone.layout.custom_css);
+        if (clone.layout.custom_js) clone.layout.custom_js = utils.toBase64(clone.layout.custom_js);
+    }
+    return JSON.stringify(clone);
   }
 
   _ensureDefaultDataBlocks() {
