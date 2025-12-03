@@ -223,13 +223,11 @@ class AOS_InvoicesUtils
             // Load certificate utilities
             require_once 'custom/include/SticCertificateUtils.php';
             
-            // Get certificate and password
-            $certData = SticCertificateUtils::getCertificateAndPassword();
-            if (!$certData) {
-                throw new Exception("Certificate or password not found. Please upload a certificate in Administration > VeriFactu Certificate.");
+            // Get certificate components (NO PASSWORD NEEDED!)
+            $certComponents = SticCertificateUtils::getCertificateComponents();
+            if (!$certComponents) {
+                throw new Exception("Certificate not found or could not be decrypted. Please upload a certificate in Administration > Digital Certificate.");
             }
-            
-            $certificatePassword = $certData['password'];
             
             // Extract NIF and holder name from certificate
             $issuerNif = SticCertificateUtils::getCertificateNif();
@@ -287,68 +285,66 @@ class AOS_InvoicesUtils
             // Configure certificate type (Entity Seal vs Personal)
             $client->setEntitySeal((bool) $certificateType);
 
-            // Get certificate content (already decrypted by SticCertificateUtils)
-            $p12Content = $certData['cert_content'];
+            // Get certificate components (already extracted as PEM - NO PASSWORD NEEDED!)
+            $certificate = $certComponents['certificate'];
+            $privateKey = $certComponents['private_key'];
+            $caChain = $certComponents['ca_chain'];
             
             // Debug info
-            $GLOBALS['log']->debug("DEBUG VERIFACTU: Certificate content size: " . strlen($p12Content));
+            $GLOBALS['log']->debug("DEBUG VERIFACTU: Certificate PEM size: " . strlen($certificate));
+            $GLOBALS['log']->debug("DEBUG VERIFACTU: Private key PEM size: " . strlen($privateKey));
 
-            // --- SOLUCIÓN MEJORADA ERROR 401 ---
-            // 1. Leer P12
-            $certs = [];
-            if (!openssl_pkcs12_read($p12Content, $certs, $certificatePassword)) {
-                $sslError = "";
-                while ($msg = openssl_error_string()) {
-                    $sslError .= $msg . "; ";
-                }
-                $GLOBALS['log']->fatal("DEBUG VERIFACTU: OpenSSL Error: " . $sslError);
-                throw new Exception("Error leyendo el certificado P12. La contraseña es incorrecta o el fichero está dañado. Detalles OpenSSL: " . $sslError);
-            }
-
-            // 2. Depuración del Certificado (Verificar en sugarcrm.log)
-            $certData = openssl_x509_parse($certs['cert']);
+            // --- CERTIFICATE VALIDATION ---
+            // Parse and validate certificate details
+            $certData = openssl_x509_parse($certificate);
             if ($certData) {
                 $certSubject = json_encode($certData['subject']);
                 $certSerial = $certData['subject']['serialNumber'] ?? 'No encontrado';
                 $certValidTo = date('Y-m-d H:i:s', $certData['validTo_time_t']);
 
-                $GLOBALS['log']->fatal("--- DEBUG VERIFACTU CERT ---");
-                $GLOBALS['log']->fatal("Subject: " . $certSubject);
-                $GLOBALS['log']->fatal("Serial (NIF esperado): " . $certSerial);
-                $GLOBALS['log']->fatal("NIF Configurado: " . $issuerNif);
-                $GLOBALS['log']->fatal("Válido hasta: " . $certValidTo);
+                $GLOBALS['log']->info("--- DEBUG VERIFACTU CERT ---");
+                $GLOBALS['log']->info("Subject: " . $certSubject);
+                $GLOBALS['log']->info("Serial: " . $certSerial);
+                $GLOBALS['log']->info("NIF Configured: " . $issuerNif);
+                $GLOBALS['log']->info("Valid until: " . $certValidTo);
+                $GLOBALS['log']->info("Certificate Type: " . ($certificateType ? 'Entity Seal' : 'Representative'));
 
-                // Advertencia si el NIF no coincide (limpiando prefijos comunes como IDCES-)
-                $cleanCertNif = preg_replace('/^.*-/', '', $certSerial);
-                if (strtoupper($cleanCertNif) !== strtoupper($issuerNif)) {
-                    $GLOBALS['log']->fatal("¡ALERTA! El NIF del certificado ($cleanCertNif) NO COINCIDE con el NIF configurado ($issuerNif). Esto causará error 401/Rechazo.");
+                // Check expiration
+                if ($certData['validTo_time_t'] < time()) {
+                    $GLOBALS['log']->error("¡ALERT! Certificate has EXPIRED on " . $certValidTo);
+                    throw new Exception("The certificate has expired. Please upload a valid certificate.");
                 }
+            } else {
+                $GLOBALS['log']->error("Failed to parse certificate.");
+                throw new Exception("Failed to parse certificate. The certificate may be invalid.");
             }
 
-            // 3. Construcción limpia del PEM (Solo bloques válidos, sin Bag Attributes)
-            // Función auxiliar para limpiar cabeceras extrañas
+            // 4. Build PEM content (Certificate + Private Key + CA Chain)
+            // Helper function to ensure clean PEM blocks
             $cleanPemBlock = function ($str) {
-                if (preg_match('/(-----BEGIN (?:CERTIFICATE|PRIVATE KEY)-----.*?-----END (?:CERTIFICATE|PRIVATE KEY)-----)/s', $str, $matches)) {
-                    return $matches[1];
+                if (preg_match('/(-----BEGIN (?:CERTIFICATE|.*?PRIVATE KEY.*?)-----.*?-----END (?:CERTIFICATE|.*?PRIVATE KEY.*?)-----)/s', $str, $matches)) {
+                    return trim($matches[1]);
                 }
-                return $str;
+                return trim($str);
             };
 
-            // Orden: Certificado -> Clave Privada -> Intermedios
-            // Ponemos el certificado primero para facilitar el parseo en AeatClient::isEntitySealCertificate
-            $pemContent = $cleanPemBlock($certs['cert']) . "\n" . $cleanPemBlock($certs['pkey']);
+            // Order: Certificate -> Private Key -> CA Chain
+            // Certificate first to facilitate parsing in AeatClient::isEntitySealCertificate
+            $pemContent = $cleanPemBlock($certificate) . "\n" . $cleanPemBlock($privateKey);
 
-            if (isset($certs['extracerts']) && is_array($certs['extracerts'])) {
-                foreach ($certs['extracerts'] as $extraCert) {
-                    $pemContent .= "\n" . $cleanPemBlock($extraCert);
-                }
+            // Add CA chain if exists
+            if (!empty($caChain)) {
+                $pemContent .= "\n" . $cleanPemBlock($caChain);
             }
 
-            // Guardar en archivo temporal
-            $tempPemFile = tempnam(sys_get_temp_dir(), 'stic_cert_debug_');
+            // Save to temporary file (AEAT client requires file path)
+            $tempPemFile = tempnam(sys_get_temp_dir(), 'stic_verifactu_cert_');
             file_put_contents($tempPemFile, $pemContent);
 
-            // Usar el PEM temporal
+            $GLOBALS['log']->debug("DEBUG VERIFACTU: Temporary PEM file created: " . $tempPemFile);
+            $GLOBALS['log']->debug("DEBUG VERIFACTU: PEM content size: " . strlen($pemContent) . " bytes");
+
+            // Set certificate in AEAT client (NO PASSWORD NEEDED!)
             $client->setCertificate($tempPemFile, null);
             // ------------------------------------------------
 

@@ -31,9 +31,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class SticCertificateUtils
 {
     /**
-     * Path to the encrypted certificate file
+     * Base path for certificate files
      */
-    const CERT_FILE_PATH = 'custom/certificates/cert_encrypted.bin';
+    const CERT_DIR = 'custom/certificates/';
     
     /**
      * Path to the certificate metadata file
@@ -41,56 +41,90 @@ class SticCertificateUtils
     const METADATA_FILE_PATH = 'custom/certificates/cert_metadata.json';
 
     /**
-     * Retrieve the decrypted certificate content and password
+     * Get the certificate and private key components (decrypted and ready to use)
+     * NO PASSWORD NEEDED - components are extracted and stored separately at upload time
      *
-     * @return array|null Array with 'cert_content' and 'password', or null if certificate doesn't exist
+     * @return array|null Array with 'certificate', 'private_key', 'ca_chain' (all in PEM format), or null if not found
      */
-    public static function getCertificateAndPassword()
+    public static function getCertificateComponents()
     {
-        if (!file_exists(self::CERT_FILE_PATH) || !file_exists(self::METADATA_FILE_PATH)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate or metadata file not found.');
+        $privateKeyFile = self::CERT_DIR . 'private_key_encrypted.bin';
+        $certificateFile = self::CERT_DIR . 'certificate_encrypted.bin';
+        $caChainFile = self::CERT_DIR . 'ca_chain_encrypted.bin';
+
+        // Check if required files exist
+        if (!file_exists($privateKeyFile) || !file_exists($certificateFile)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate files not found.');
             return null;
         }
 
         try {
-            // 1. Load encrypted certificate
-            $encryptedContent = file_get_contents(self::CERT_FILE_PATH);
-            
-            // 2. Load metadata
-            $metadataJson = file_get_contents(self::METADATA_FILE_PATH);
-            $metadata = json_decode($metadataJson, true);
-            
-            if (empty($metadata['encrypted_password'])) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Encrypted password not found in metadata.');
-                return null;
-            }
+            // Read encrypted files
+            $encryptedPrivateKey = file_get_contents($privateKeyFile);
+            $encryptedCertificate = file_get_contents($certificateFile);
+            $encryptedCaChain = file_exists($caChainFile) ? file_get_contents($caChainFile) : '';
 
-            // 3. Decrypt certificate and password
-            require_once 'include/utils/encryption_utils.php';
+            // Decrypt using Blowfish
             require_once 'include/Pear/Crypt_Blowfish/Blowfish.php';
             global $sugar_config;
             $key = $sugar_config['unique_key'];
             
-            // Manual decryption for certificate to avoid trim() corrupting binary P12
-            // blowfishDecode() uses trim() which removes whitespace and nulls, damaging binary files
-            $data = base64_decode($encryptedContent);
             $bf = new Crypt_Blowfish($key);
-            $certContent = $bf->decrypt($data);
-            // DO NOT TRIM - OpenSSL handles the ASN.1 structure and ignores trailing padding
             
-            // Decrypt password (safe to use blowfishDecode for text)
-            $password = blowfishDecode($key, $metadata['encrypted_password']);
+            // Decrypt private key (do NOT trim - preserve exact PEM format)
+            $privateKeyData = base64_decode($encryptedPrivateKey);
+            $privateKey = $bf->decrypt($privateKeyData);
+            
+            // Decrypt certificate (do NOT trim - preserve exact PEM format)
+            $certificateData = base64_decode($encryptedCertificate);
+            $certificate = $bf->decrypt($certificateData);
+            
+            // Decrypt CA chain if exists
+            $caChain = '';
+            if (!empty($encryptedCaChain)) {
+                $caChainData = base64_decode($encryptedCaChain);
+                $caChain = $bf->decrypt($caChainData);
+            }
+
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components decrypted successfully.');
 
             return array(
-                'cert_content' => $certContent,
-                'password' => $password,
-                'metadata' => $metadata
+                'private_key' => $privateKey,
+                'certificate' => $certificate,
+                'ca_chain' => $caChain,
             );
 
         } catch (Exception $e) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error retrieving certificate: ' . $e->getMessage());
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error decrypting certificate components: ' . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * DEPRECATED: This method is kept for backward compatibility but should not be used
+     * Use getCertificateComponents() instead
+     *
+     * @deprecated Use getCertificateComponents() instead
+     * @return array|null
+     */
+    public static function getCertificateAndPassword()
+    {
+        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': This method is deprecated. Use getCertificateComponents() instead.');
+        
+        // For backward compatibility, return components without password
+        $components = self::getCertificateComponents();
+        if (!$components) {
+            return null;
+        }
+
+        // Return in old format but without password
+        return array(
+            'cert_content' => $components['certificate'],
+            'private_key' => $components['private_key'],
+            'ca_chain' => $components['ca_chain'],
+            'password' => null, // No longer needed
+            'metadata' => self::getCertificateMetadata()
+        );
     }
 
     /**
@@ -100,7 +134,9 @@ class SticCertificateUtils
      */
     public static function certificateExists()
     {
-        return file_exists(self::CERT_FILE_PATH) && file_exists(self::METADATA_FILE_PATH);
+        $privateKeyFile = self::CERT_DIR . 'private_key_encrypted.bin';
+        $certificateFile = self::CERT_DIR . 'certificate_encrypted.bin';
+        return file_exists($privateKeyFile) && file_exists($certificateFile) && file_exists(self::METADATA_FILE_PATH);
     }
 
     /**
@@ -119,27 +155,28 @@ class SticCertificateUtils
     }
 
     /**
-     * Get parsed certificate information from the PKCS12 file
-     * This method actually reads and parses the certificate
+     * Get parsed certificate information
+     * This method reads and parses the certificate from PEM format
      *
      * @return array|null Array with certificate details or null on error
      */
     public static function getParsedCertificateInfo()
     {
-        $certData = self::getCertificateAndPassword();
-        if (!$certData) {
+        $components = self::getCertificateComponents();
+        if (!$components) {
             return null;
         }
 
         try {
-            $certInfo = array();
-            if (openssl_pkcs12_read($certData['cert_content'], $certInfo, $certData['password'])) {
-                $certDetails = openssl_x509_parse($certInfo['cert']);
-                return $certDetails;
-            } else {
+            // Parse the certificate (PEM format)
+            $certDetails = openssl_x509_parse($components['certificate']);
+            
+            if ($certDetails === false) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to parse certificate.');
                 return null;
             }
+            
+            return $certDetails;
         } catch (Exception $e) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error parsing certificate: ' . $e->getMessage());
             return null;
@@ -154,20 +191,20 @@ class SticCertificateUtils
      */
     public static function getCertificateNif()
     {
-        $certData = self::getCertificateAndPassword();
-        if (!$certData) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data not available.');
+        $components = self::getCertificateComponents();
+        if (!$components) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components not available.');
             return null;
         }
 
         try {
-            $certInfo = array();
-            if (!openssl_pkcs12_read($certData['cert_content'], $certInfo, $certData['password'])) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to read certificate.');
+            // Parse the certificate (PEM format)
+            $certDetails = openssl_x509_parse($components['certificate']);
+            
+            if ($certDetails === false) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to parse certificate.');
                 return null;
             }
-
-            $certDetails = openssl_x509_parse($certInfo['cert']);
             
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate subject fields: ' . print_r($certDetails['subject'], true));
             
@@ -226,20 +263,20 @@ class SticCertificateUtils
      */
     public static function getCertificateHolderName()
     {
-        $certData = self::getCertificateAndPassword();
-        if (!$certData) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data not available.');
+        $components = self::getCertificateComponents();
+        if (!$components) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components not available.');
             return null;
         }
 
         try {
-            $certInfo = array();
-            if (!openssl_pkcs12_read($certData['cert_content'], $certInfo, $certData['password'])) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to read certificate.');
+            // Parse the certificate (PEM format)
+            $certDetails = openssl_x509_parse($components['certificate']);
+            
+            if ($certDetails === false) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to parse certificate.');
                 return null;
             }
-
-            $certDetails = openssl_x509_parse($certInfo['cert']);
             
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate subject fields: ' . print_r($certDetails['subject'], true));
             
@@ -294,20 +331,20 @@ class SticCertificateUtils
      */
     public static function isEntitySeal()
     {
-        $certData = self::getCertificateAndPassword();
-        if (!$certData) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data not available.');
+        $components = self::getCertificateComponents();
+        if (!$components) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components not available.');
             return null;
         }
 
         try {
-            $certInfo = array();
-            if (!openssl_pkcs12_read($certData['cert_content'], $certInfo, $certData['password'])) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to read certificate.');
+            // Parse the certificate (PEM format)
+            $certDetails = openssl_x509_parse($components['certificate']);
+            
+            if ($certDetails === false) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to parse certificate.');
                 return null;
             }
-
-            $certDetails = openssl_x509_parse($certInfo['cert']);
             
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Checking certificate type. Subject: ' . print_r($certDetails['subject'], true));
             
@@ -390,35 +427,30 @@ class SticCertificateUtils
 
     /**
      * Example usage for signing a document (to be implemented in your signing logic)
+     * NO PASSWORD NEEDED - certificate components are already extracted
      * 
      * @param string $documentPath Path to the document to sign
      * @return bool Success status
      */
     public static function signDocument($documentPath)
     {
-        // Get certificate and password
-        $certData = self::getCertificateAndPassword();
-        if (!$certData) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate not available.');
+        // Get certificate components (NO PASSWORD NEEDED!)
+        $components = self::getCertificateComponents();
+        if (!$components) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components not available.');
             return false;
         }
 
-        // Extract PKCS12 contents
-        $pkcs12Content = array();
-        if (!openssl_pkcs12_read($certData['cert_content'], $pkcs12Content, $certData['password'])) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to read PKCS12 certificate.');
-            return false;
-        }
-
-        // Now you have:
-        // - $pkcs12Content['cert'] : The certificate
-        // - $pkcs12Content['pkey'] : The private key
-        // - $pkcs12Content['extracerts'] : Extra certificates (CA chain)
+        // Now you have direct access to (all in PEM format):
+        // - $components['certificate'] : The X.509 certificate
+        // - $components['private_key'] : The private key
+        // - $components['ca_chain'] : CA chain certificates (if any)
 
         // TODO: Implement your signing logic here
         // Example: Use openssl_pkcs7_sign() or other signing methods
+        // openssl_pkcs7_sign($documentPath, $signedPath, $components['certificate'], $components['private_key'], array());
         
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate loaded successfully for signing.');
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components loaded successfully for signing.');
         return true;
     }
 }

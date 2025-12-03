@@ -40,20 +40,21 @@ class ViewSticManageCertificate extends SugarView
     {
         global $mod_strings, $app_strings, $timedate;
 
-        // Paths to certificate and metadata files
-        $certPath = 'custom/certificates/cert_encrypted.bin';
-        $metadataPath = 'custom/certificates/cert_metadata.json';
-        
-        $certExists = file_exists($certPath);
+        // Load certificate utilities
+        require_once 'custom/include/SticCertificateUtils.php';
+
+        // Check if certificate exists (using new format: separate PEM components)
+        $certExists = SticCertificateUtils::certificateExists();
         
         // Read metadata if certificate exists
         $metadata = null;
         $extractedNif = null;
         $extractedName = null;
+        $isEntitySeal = null;
         
-        if ($certExists && file_exists($metadataPath)) {
-            $metadataJson = file_get_contents($metadataPath);
-            $metadata = json_decode($metadataJson, true);
+        if ($certExists) {
+            // Get metadata using utility class
+            $metadata = SticCertificateUtils::getCertificateMetadata();
             
             // Format upload date for display
             if (!empty($metadata['upload_date'])) {
@@ -64,7 +65,6 @@ class ViewSticManageCertificate extends SugarView
             }
             
             // Extract NIF, holder name and certificate type from certificate for display
-            require_once 'custom/include/SticCertificateUtils.php';
             $extractedNif = SticCertificateUtils::getCertificateNif();
             $extractedName = SticCertificateUtils::getCertificateHolderName();
             $isEntitySeal = SticCertificateUtils::isEntitySeal();
