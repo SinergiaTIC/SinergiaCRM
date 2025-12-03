@@ -45,3 +45,6 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
+
+// Entry points used by Stic Advanced Web Forms
+$entry_point_registry['stic_AWF_response_handler'] = array('file' => 'modules/stic_Advanced_Web_Forms/EntryPoints/ResponseHandler.php', 'auth' => false);

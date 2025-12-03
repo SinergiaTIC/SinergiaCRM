@@ -132,96 +132,113 @@ class stic_Advanced_Web_FormsController extends SugarController
         sugar_cleanup(true);
     }
     
-
-    public function action_generateFormHtml() 
-    {
-        require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
-
-        $recordId = $_REQUEST['record'];
-        $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $recordId);
-        
-        if (!$bean) die("Error: Formulari no trobat");
-
-        // 1. Parsejar Config
-        $configArray = json_decode($bean->configuration, true);
-        $formConfig = FormConfig::fromJsonArray($configArray);
-
-        // 2. Instanciar Generador
-        $generator = new FormHtmlGeneratorService();
-        
-        // 3. Definir URL de destí (on s'envia el form)
-        // Hauria de ser l'EntryPoint de processament
-        global $sugar_config;
-        $siteUrl = $sugar_config['site_url'];
-        $actionUrl = "{$siteUrl}/index.php?entryPoint=stic_AWF_response_handler&form_id={$bean->id}";
-
-        // 4. Generar i retornar
-        $html = $generator->generate($formConfig, $bean->id, $actionUrl);
-        
-        // Netejar qualsevol output previ (molt important per descarregar fitxers nets)
-        ob_clean();
-        echo $html;
-        sugar_cleanup(true);
-    }
-
-    /**
-     * Genera i mostra la previsualització del formulari.
-     * Obre el formulari en mode "aïllat" (sense la interfície de SuiteCRM al voltant).
-     */
-    public function action_preview()
-    {
-        // 1. Validació de seguretat bàsica
-        if (empty($_REQUEST['record'])) {
-            die("Error: Manca l'identificador del registre.");
+    private function generateForm(string $recordId, bool $isPreview, mixed $configData=null) {
+        if (empty($recordId)) {
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Record missing");
+            die("record missing");
         }
 
-        // 2. Carregar el Bean del formulari
-        $recordId = $_REQUEST['record'];
-        $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $recordId);
+        if ($configData == null) {
+            // Generate Form from Bean
+            $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $recordId);
+            if (!$bean || empty($bean->id)) {
+                $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Form not found with id: {$recordId}");
+                die("Form not found");
+            }
 
-        if (!$bean || empty($bean->id)) {
-            die("Error: No s'ha trobat el formulari.");
+            $jsonConfig = $bean->configuration;
+            $configData = json_decode(html_entity_decode($jsonConfig), true) ?? [];
         }
 
-        // 3. Carregar dependències
-        // Assegura't de carregar les definicions de classes (FormConfig, etc.) i el Generador
         require_once "modules/stic_Advanced_Web_Forms/core/includes.php"; 
         require_once "modules/stic_Advanced_Web_Forms/core/FormHtmlGeneratorService.php";
 
-        // 4. Parsejar la configuració JSON
-        $jsonConfig = $bean->configuration;
-        
-        // Si el JSON està buit, inicialitzem un array buit per evitar errors
-        $configData = json_decode(html_entity_decode($jsonConfig), true) ?? [];
-
         try {
-            // Convertim l'array a objectes tipats (DTOs)
             $formConfig = FormConfig::fromJsonArray($configData);
         } catch (\Throwable $e) {
-            die("Error en processar la configuració del formulari: " . $e->getMessage());
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Processing config Form: {$e->getMessage()}");
+            die("Error en processing config Form: " . $e->getMessage());
         }
 
-        // 5. Definir la URL d'Acció (on s'envia el formulari)
-        // Per a la preview, apuntem al EntryPoint real perquè l'usuari pugui provar l'enviament.
-        // Si volguessis desactivar l'enviament a la preview, podries posar '#' o una url dummy.
-        global $sugar_config;
-        $siteUrl = rtrim($sugar_config['site_url'], '/');
-        $actionUrl = "{$siteUrl}/index.php?entryPoint=stic_AWF_response_handler&form_id={$bean->id}";
+        // $actionUrl = "javascript:void(0);";  // Dummy url
+        // if (!$isPreview) {
+            global $sugar_config;
+            $siteUrl = rtrim($sugar_config['site_url'], '/');
+            $actionUrl = "{$siteUrl}/index.php?entryPoint=stic_AWF_response_handler&form_id={$recordId}";
+        // }
 
-        // 6. Generar l'HTML
         $generator = new FormHtmlGeneratorService();
-        
-        // Passem el FormConfig i l'ID per al scoping CSS
-        $html = $generator->generate($formConfig, $bean->id, $actionUrl);
+        $html = $generator->generate($formConfig, $recordId, $actionUrl, $isPreview);
 
-        // 7. Netejar i Mostrar
-        // ob_clean() elimina qualsevol sortida prèvia de SuiteCRM (headers, espais en blanc)
-        // per assegurar que només servim l'HTML del formulari.
-        if (ob_get_length()) ob_clean();
-        
+        if (ob_get_length()) {
+            ob_clean();
+        }        
         echo $html;
 
-        // Aturem l'execució de SuiteCRM aquí perquè no imprimeixi el footer del CRM
+        sugar_cleanup(true);
+    }
+
+
+    /**
+     * Handles the 'renderForm' action to retrieve the form HTML
+     */
+    public function action_renderForm() 
+    {
+        $this->generateForm($_REQUEST['record'] ?? '', false);
+    }
+
+    /**
+     * Handles the 'renderPreviewForm' action to retrieve the form HTML in preview mode
+     */
+    public function action_renderPreviewForm()
+    {
+        $this->generateForm($_REQUEST['record'] ?? '', true);
+    }
+
+    /**
+     * Handles the 'renderPreview' action to retrieve the form HTML from JSON (for Live Preview)
+     */
+    public function action_renderPreview()
+    {
+        $input = file_get_contents('php://input');
+        $data = json_decode($input, true);
+        
+        if (!$data || !isset($data['config'])) {
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": No config data received");
+            die("Error: No config data received");
+        }
+
+        $formId = $data['id'] ?? 'preview'; 
+        try {
+            $configData = json_decode($data['config'], true);
+            $this->generateForm($formId, true, $configData);
+        } catch (\Throwable $e) {
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Generating Form preview: {$e->getMessage()}");
+            die("Generating Form preview: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Handles the 'checkStatus' action to check form status from remote js.
+     * Retorna JSON: { active: true/false, message: "..." }
+     */
+    public function action_checkStatus()
+    {
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *'); // Allow calls from remote webs
+        
+        $id = $_REQUEST['id'] ?? '';
+        
+        $db = DBManagerFactory::getInstance();
+        $status = $db->getOne("SELECT status FROM stic_advanced_web_forms WHERE id = " . $db->quote($id));
+
+        // Only 'public' is active
+        $isActive = ($status === 'public');
+        $message = ($status === 'closed') 
+            ? translate('LBL_FORM_CLOSED_MESSAGE', 'stic_Advanced_Web_Forms') 
+            : translate('LBL_FORM_UNAVAILABLE_MESSAGE', 'stic_Advanced_Web_Forms');
+
+        echo json_encode(['active' => $isActive, 'message' => $message]);
         sugar_cleanup(true);
     }
 }

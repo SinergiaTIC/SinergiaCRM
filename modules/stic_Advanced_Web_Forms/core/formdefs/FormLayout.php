@@ -33,6 +33,8 @@ class FormLayout {
     public string $footer_html = '';
 
     public string $submit_button_text = 'Send';
+    public string $closed_form_title = 'Form closed!';
+    public string $closed_form_text = 'This form is no longer accepting responses.';
 
     public string $custom_css = '';
     public string $custom_js = '';
@@ -49,6 +51,8 @@ class FormLayout {
         $dto->header_html = $data['header_html'] ?? '';
         $dto->footer_html = $data['footer_html'] ?? '';
         $dto->submit_button_text = $data['submit_button_text'] ?? 'Send';
+        $dto->closed_form_title = $data['closed_form_title'] ?? 'Form closed!';
+        $dto->closed_form_text = $data['closed_form_text'] ?? 'This form is no longer accepting responses.';
         $dto->custom_css = $data['custom_css'] ?? '';
         $dto->custom_js = $data['custom_js'] ?? '';
 

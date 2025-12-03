@@ -720,6 +720,10 @@ class AWF_Layout {
       // Texto del botón de enviar
       submit_button_text: utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE'),
 
+      // Texto en caso de formulario cerrado
+      closed_form_title: utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE'),
+      closed_form_text: utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE'),
+
       custom_css: '',              // CSS personalizado
       custom_js: '',               // JS personalizado
 
@@ -828,7 +832,7 @@ class AWF_Theme {
       font_family: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
 
       font_size: 16,               // Tamaño de letra en px. 
-      form_width: '1200px',        // Ancho máximo del formulario. String para permitir %, px, rem
+      form_width: '800px',         // Ancho máximo del formulario. String para permitir %, px, rem
       shadow_intensity: 'normal',  // Intensidad de la sombra: 'none', 'light', 'normal', 'heavy'
       
       // Estructura (Grid)

@@ -1493,6 +1493,11 @@ class WizardStep3 {
 class WizardStep4 {
   static mainStep4xData() {
     return {
+      layoutTabSelected: 'design',
+      isLoadingPreview: false,
+      generatedHtml: '',
+      previewTimeout: null,
+
       get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
       get sections() { return this.formConfig.layout.structure; },
@@ -1504,6 +1509,79 @@ class WizardStep4 {
 
       init() {
         this.formConfig.syncLayoutWithDataBlocks();
+        if (this.layoutTabSelected === 'preview') {
+            this.refreshPreview();
+        }
+
+        this.$watch('layoutTabSelected', (val) => {
+            if (val === 'preview') {
+                this.refreshPreview();
+            }
+        });
+        this.$watch('formConfig.layout', (val) => {
+            if (this.layoutTabSelected === 'preview') {
+                this.debouncedPreview();
+            }
+        });
+      },
+      debouncedPreview() {
+        if (this.previewTimeout) clearTimeout(this.previewTimeout);
+        
+        // Set next refresh in 500ms
+        this.previewTimeout = setTimeout(() => {
+            this.refreshPreview();
+        }, 500);
+      },
+
+      async refreshPreview() {
+        if (this.previewTimeout) clearTimeout(this.previewTimeout);
+        if (this.isLoadingPreview) return;
+
+        this.isLoadingPreview = true;
+        this.generatedHtml = utils.translate('LBL_PREVIEW_LOADING');
+
+        await this.$nextTick();
+        const iframe = this.$refs.previewFrame;
+          
+        if (!iframe) {
+          console.error("Iframe not found");
+          this.isLoadingPreview = false;
+          return;
+        }
+
+        try {
+          const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=renderPreview", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: this.bean.id || 'preview_id',
+              config: this.formConfig.toJSONString()
+            })
+          });
+
+          if (response.ok) {
+            this.generatedHtml = await response.text();
+            this.$nextTick(() => {
+              iframe.onload = function() {
+                  const height = iframe.contentWindow.document.body.scrollHeight;
+                  iframe.style.height = height + 'px';
+              };
+                          
+              // Inject HTML
+              const doc = iframe.contentWindow.document;
+              doc.open();
+              doc.write(this.generatedHtml);
+              doc.close();
+            });
+          } else {
+            console.error("Error generating preview");
+          }
+        } catch (e) {
+          this.generatedHtml = utils.translate('LBL_PREVIEW_LOAD_ERROR');
+          console.error("Connection error", e);
+        } finally {
+          this.isLoadingPreview = false;
+        }
       },
 
       createSection() {
@@ -1603,6 +1681,8 @@ class WizardStep4 {
       resetTheme() {
         this.formConfig.layout.theme = new AWF_Theme();
         this.formConfig.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
+        this.formConfig.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
+        this.formConfig.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
         this.formConfig.layout.custom_css = '';
         this.formConfig.layout.custom_js = '';
       }
@@ -1627,7 +1707,7 @@ class WizardStep5 {
 
       get previewUrl() {
           // Pot ser la mateixa o una acció específica de preview
-          return `index.php?module=stic_Advanced_Web_Forms&action=preview&record=${this.bean.id}`;
+          return `index.php?module=stic_Advanced_Web_Forms&action=renderPreviewForm&record=${this.bean.id}`;
       },
 
       get iframeCode() {
@@ -1658,7 +1738,7 @@ class WizardStep5 {
           this.generatedHtml = "Carregant...";
           
           try {
-              const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=generateFormHtml&record=" + this.bean.id);
+              const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=renderForm&record=" + this.bean.id);
               if (response.ok) {
                   this.generatedHtml = await response.text();
               } else {

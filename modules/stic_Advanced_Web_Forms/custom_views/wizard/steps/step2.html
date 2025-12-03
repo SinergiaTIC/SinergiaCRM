@@ -119,7 +119,7 @@
                       <th x-text="utils.translate('LBL_FIELD_VALUE_TYPE')" x-show="canShowFieldColumn('value_type')"></th>
                       <th x-text="utils.translate('LBL_FIELD_VALUE')" x-show="canShowFieldColumn('value_text')"></th>
                       <th x-text="utils.translate('LBL_FIELD_REQUIRED_IN_FORM')" x-show="canShowFieldColumn('required_in_form')"></th>
-                      <th x-text="utils.translate('LBL_FIELD_ACTIONS')"></th>
+                      <th x-text="utils.translate('LBL_FIELD_ACTIONS')" style="min-width: 160px;"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -259,7 +259,6 @@
                     <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
                     <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_ORIG')"></th>
                     <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_DEST')"></th>
-                    <th x-text="utils.translate('LBL_RELATIONSHIP_ACTIONS')"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -271,16 +270,6 @@
                       <td x-text="getDataBlockText(rel.datablock_orig)"></td>
                       <!-- DataBlock Dest -->
                       <td x-text="getDataBlockText(rel.datablock_dest)"></td>
-                      <!-- Buttons -->
-                      <td >
-                        <div class="d-inline-flex">
-                          <!-- <button type="button" class="btn ms-2" :disabled="field.required" 
-                                  @click="item.deleteField(field.name); $store.dataBlockRelationships.resetDataBlockRelationships();"
-                                  :title="utils.translate('LBL_BUTTON_DELETE')">
-                            <span class="suitepicon suitepicon-action-delete"></span>
-                          </button> -->
-                        </div>
-                      </td>
                     </tr>
                   </template>
                 </tbody>

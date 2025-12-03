@@ -140,6 +140,35 @@
                             <span>1</span><span>2</span><span>3</span><span>4</span>
                         </div>
                     </div>
+
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_PER_ROW_DESC')"></span>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Closed form -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_CLOSED_FORM')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- closed_form_title -->
+                    <div class="mb-3">
+                        <label for="theme-closed_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TITLE')"></label>
+                        <textarea id="theme-closed_form_title" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_title" 
+                                  placeholder=".btn { background: red !important; }"></textarea>
+                    </div>
+                    <!-- closed_form_text -->
+                    <div class="mb-3">
+                       <label for="theme-closed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TEXT')"></label>
+                        <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_text" 
+                                  placeholder="console.log('Form loaded');"></textarea>
+                    </div>
+                    
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_CLOSED_FORM_DESC')"></span>
+                    </div>
                 </div>
             </details>
 
@@ -168,178 +197,230 @@
             <button type="button" class="btn w-auto" x-text="utils.translate('LBL_THEME_RESET_BUTTON')" @click="resetTheme()"></button>
         </div>
 
-        <!-- Form design -->
-        <div class="col-md-9 p-4 bg-white overflow-auto" style="max-height: calc(100vh - 200px);">
-            <h2 x-text="utils.translate('LBL_LAYOUT_FORM_DESIGN')"></h2>
-            <div class="accordion">
-                <!-- Header -->
-                <div class="accordion-item" x-data="{opened:false}">
-                    <div id="LayoutHeader_Header" class="accordion-header accordion-button" role="button" 
-                         :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                         data-bs-target="#LayoutHeader_Content" aria-controls="LayoutHeader_Content">
-                        <h3 x-text="utils.translate('LBL_LAYOUT_HEADER')"></h3>
-                    </div>
-                    <div id="LayoutHeader_Content" class="accordion-collapse collapse" aria-labelledby="LayoutHeader_Header">
-                        <div id="LayoutHeader_Body" class="accordion-body"> 
-                            <div class="bg-white text-dark"> 
-                                <div x-data="quillEditor(formConfig.layout.header_html, (html) => formConfig.layout.header_html = html)">
-                                    <div class="bg-white border rounded overflow-hidden">
-                                        <div x-ref="editor" style="height: 175px;"></div>
+        <!-- Main content-->
+        <div class="col-md-9 p2-2 bg-white overflow-auto" style="max-height: calc(100vh - 200px);">
+
+            <!-- Tab Headers -->
+            <div class="stic-tabs">
+                <div class="stic-tab">
+                    <input class="form-check-input" type="radio" id="LayoutDesing_Tab" x-model="layoutTabSelected" value="design"/>
+                    <label class="form-label" for="LayoutDesing_Tab" x-text="utils.translate('LBL_LAYOUT_FORM_DESIGN')"></label>
+                </div>
+                <div class="stic-tab">
+                    <input class="form-check-input" type="radio" id="LayoutPreview_Tab" x-model="layoutTabSelected" value="preview"/>
+                    <label class="form-label" for="LayoutPreview_Tab" x-text="utils.translate('LBL_LAYOUT_PREVIEW')"></label>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="stic-tabcontent">
+                <!-- Form design -->
+                <template x-if="layoutTabSelected=='design'">
+                    <div>
+                        <h2 x-text="utils.translate('LBL_LAYOUT_FORM_DESIGN')"></h2>
+                        <div class="accordion">
+                            <!-- Header -->
+                            <div class="accordion-item" x-data="{opened:false}">
+                                <div id="LayoutHeader_Header" class="accordion-header accordion-button" role="button" 
+                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                    data-bs-target="#LayoutHeader_Content" aria-controls="LayoutHeader_Content">
+                                    <h3 x-text="utils.translate('LBL_LAYOUT_HEADER')"></h3>
+                                </div>
+                                <div id="LayoutHeader_Content" class="accordion-collapse collapse" aria-labelledby="LayoutHeader_Header">
+                                    <div id="LayoutHeader_Body" class="accordion-body"> 
+                                        <div class="bg-white text-dark"> 
+                                            <div x-data="quillEditor(formConfig.layout.header_html, (html) => formConfig.layout.header_html = html)">
+                                                <div class="bg-white border rounded overflow-hidden">
+                                                    <div x-ref="editor" style="height: 175px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Body -->
-                <div class="accordion-item">
-                    <div id="LayoutBody_Header" class="pt-3 ps-3 accordion-header card-header" aria-controls="LayoutBody_Content">
-                        <h3 x-text="utils.translate('LBL_LAYOUT_BODY')"></h3>
-                    </div>
-                    <div id="LayoutBody_Content" class="accordion-collapse show" aria-labelledby="LayoutBody_Header">
-                        <div id="LayoutBody_Body" class="accordion-body"> 
-                            <div class="flex-fill border rounded p-2 overflow-auto">
-                                <h4 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
-                                <template x-for="(section, index) in formConfig.layout.structure" :key="section.id">
-                                    <div class="card datablock">
-                                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                            <span :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></span>
-                                            <!-- Buttons -->
-                                            <div class="d-inline-flex">
-                                                <div class="d-inline-flex input-group" role="group">
-                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                            :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
-                                                        <span class="suitepicon suitepicon-action-move-up"></span>
-                                                    </button>
-                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                            :disabled="!canMoveDownSection(section);" @click="moveDownSection(section);">
-                                                        <span class="suitepicon suitepicon-action-move-down"></span>
-                                                    </button>
-                                                </div> 
-                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
-                                                        :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
-                                                    <span class="suitepicon suitepicon-action-delete"></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="card-body bg-white">
-                                            <div class="accordion">
-                                                <!-- Configuration -->
-                                                <div class="accordion-item" x-data="{opened:false}">
-                                                    <div :id="`sectionConfig${section.id}_Header`" class="accordion-header accordion-button" role="button" 
-                                                        :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                                                        :data-bs-target="`#sectionConfig${section.id}_Content`" :aria-controls="`sectionConfig${section.id}_Content`"
-                                                        x-text="utils.translate('LBL_SECTION_CONFIG')">
-                                                    </div>
-                                                    <div :id="`sectionConfig${section.id}_Content`" class="accordion-collapse collapse" 
-                                                         :aria-labelledby="`sectionConfig${section.id}_Header`">
-                                                        <div :id="`sectionConfig${section.id}_Body`" class="accordion-body row"> 
-                                                            <!-- Configuration -->
-                                                            <!-- Title -->
-                                                            <div class="col-3">
-                                                                <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
-                                                                <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
-                                                            </div>
-                                                            <!-- Show Title -->
-                                                            <div class="col-3 form-check form-switch">
-                                                                <label :for="`section${section.id}_showTitle`" class="form-label" x-text="utils.translate('LBL_SECTION_SHOW_TITLE')"></label>
-                                                                <input :id="`section${section.id}_showTitle`" class="form-check-input form-switch" type="checkbox" role="switch" x-model="section.showTitle"/>
-                                                            </div>
-                                                            <!-- Container Type -->
-                                                            <div class="col-3">
-                                                                <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
-                                                                <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
-                                                                    <template x-for="type in availableContainerTypes" :key="type.id">
-                                                                        <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
-                                                                    </template>
-                                                                </select>
-                                                            </div>
-
+                            <!-- Body -->
+                            <div class="accordion-item">
+                                <div id="LayoutBody_Header" class="pt-3 ps-3 accordion-header card-header" aria-controls="LayoutBody_Content">
+                                    <h3 x-text="utils.translate('LBL_LAYOUT_BODY')"></h3>
+                                </div>
+                                <div id="LayoutBody_Content" class="accordion-collapse show" aria-labelledby="LayoutBody_Header">
+                                    <div id="LayoutBody_Body" class="accordion-body"> 
+                                        <div class="flex-fill border rounded p-2 overflow-auto">
+                                            <h4 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
+                                            <template x-for="(section, index) in formConfig.layout.structure" :key="section.id">
+                                                <div class="card datablock">
+                                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                                        <span :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></span>
+                                                        <!-- Buttons -->
+                                                        <div class="d-inline-flex">
+                                                            <div class="d-inline-flex input-group" role="group">
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                        :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                </button>
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                        :disabled="!canMoveDownSection(section);" @click="moveDownSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                </button>
+                                                            </div> 
+                                                            <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                                    :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
+                                                                <span class="suitepicon suitepicon-action-delete"></span>
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <!-- Content -->
-                                                <div class="accordion-item" x-data="{opened:false}">
-                                                    <div :id="`sectionContent${section.id}_Header`" class="accordion-header accordion-button" role="button" 
-                                                        :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                                                        :data-bs-target="`#sectionContent${section.id}_Content`" :aria-controls="`sectionContent${section.id}_Content`"
-                                                        x-text="utils.translate('LBL_SECTION_CONTENT')">
-                                                    </div>
-                                                    <div :id="`sectionContent${section.id}_Content`" class="accordion-collapse collapse" 
-                                                         :aria-labelledby="`sectionContent${section.id}_Header`">
-                                                        <div :id="`sectionContent${section.id}_Body`" class="accordion-body"> 
-                                                            <!-- Content -->
-                                                            <template x-for="(element, index) in section.elements" :key="element.id">
-                                                                <div class="card mb-2 border-secondary">
-                                                                    <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
-                                                                        <strong x-text="getElementHeader(element)"></strong>
-                                                                        <div class="d-inline-flex gap-2">
-                                                                            <select class="form-select small text-muted" @change="moveElementToSection(element, section.id, $event.target.value)">
-                                                                                <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
-                                                                                <template x-for="sec in formConfig.layout.structure" :key="sec.id">
-                                                                                    <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
-                                                                                            x-show="sec.id !== section.id"></option>
+                                                    <div class="card-body bg-white">
+                                                        <div class="accordion">
+                                                            <!-- Configuration -->
+                                                            <div class="accordion-item" x-data="{opened:false}">
+                                                                <div :id="`sectionConfig${section.id}_Header`" class="accordion-header accordion-button" role="button" 
+                                                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                                                    :data-bs-target="`#sectionConfig${section.id}_Content`" :aria-controls="`sectionConfig${section.id}_Content`"
+                                                                    x-text="utils.translate('LBL_SECTION_CONFIG')">
+                                                                </div>
+                                                                <div :id="`sectionConfig${section.id}_Content`" class="accordion-collapse collapse" 
+                                                                    :aria-labelledby="`sectionConfig${section.id}_Header`">
+                                                                    <div :id="`sectionConfig${section.id}_Body`" class="accordion-body row"> 
+                                                                        <!-- Configuration -->
+                                                                        <!-- Title -->
+                                                                        <div class="col-3">
+                                                                            <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
+                                                                            <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
+                                                                        </div>
+                                                                        <!-- Show Title -->
+                                                                        <div class="col-3 form-check form-switch">
+                                                                            <label :for="`section${section.id}_showTitle`" class="form-label" x-text="utils.translate('LBL_SECTION_SHOW_TITLE')"></label>
+                                                                            <input :id="`section${section.id}_showTitle`" class="form-check-input form-switch" type="checkbox" role="switch" x-model="section.showTitle"/>
+                                                                        </div>
+                                                                        <!-- Container Type -->
+                                                                        <div class="col-3">
+                                                                            <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
+                                                                            <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
+                                                                                <template x-for="type in availableContainerTypes" :key="type.id">
+                                                                                    <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
                                                                                 </template>
                                                                             </select>
-
-                                                                            <div class="input-group" role="group">
-                                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                                        :disabled="index === 0" @click="moveElementUp(section, index);">
-                                                                                    <span class="suitepicon suitepicon-action-move-up"></span>
-                                                                                </button>
-                                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                                        :disabled="index === section.elements.length - 1" @click="moveElementDown(section, index)">                                                                                
-                                                                                    <span class="suitepicon suitepicon-action-move-down"></span>
-                                                                                </button>
-                                                                            </div> 
                                                                         </div>
-                                                                    </div>
 
-                                                                    <div class="card-body">
-                                                                        <template x-if="element.type=='datablock'">
-                                                                            <template x-for="field in getFields(element)" :key="field.name">
-                                                                                <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
-                                                                            </template>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Content -->
+                                                            <div class="accordion-item" x-data="{opened:false}">
+                                                                <div :id="`sectionContent${section.id}_Header`" class="accordion-header accordion-button" role="button" 
+                                                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                                                    :data-bs-target="`#sectionContent${section.id}_Content`" :aria-controls="`sectionContent${section.id}_Content`"
+                                                                    x-text="utils.translate('LBL_SECTION_CONTENT')">
+                                                                </div>
+                                                                <div :id="`sectionContent${section.id}_Content`" class="accordion-collapse collapse" 
+                                                                    :aria-labelledby="`sectionContent${section.id}_Header`">
+                                                                    <div :id="`sectionContent${section.id}_Body`" class="accordion-body"> 
+                                                                        <!-- Content -->
+                                                                        <template x-for="(element, index) in section.elements" :key="element.id">
+                                                                            <div class="card mb-2 border-secondary">
+                                                                                <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
+                                                                                    <strong x-text="getElementHeader(element)"></strong>
+                                                                                    <div class="d-inline-flex gap-2">
+                                                                                        <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
+                                                                                                style="min-width: 100px;">
+                                                                                            <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
+                                                                                            <template x-for="sec in formConfig.layout.structure" :key="sec.id">
+                                                                                                <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
+                                                                                                        x-show="sec.id !== section.id"></option>
+                                                                                            </template>
+                                                                                        </select>
+
+                                                                                        <div class="input-group flex-shrink-0" role="group">
+                                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                                                    :disabled="index === 0" @click="moveElementUp(section, index);">
+                                                                                                <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                                            </button>
+                                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                                                    :disabled="index === section.elements.length - 1" @click="moveElementDown(section, index)">                                                                                
+                                                                                                <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                                            </button>
+                                                                                        </div> 
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="card-body">
+                                                                                    <template x-if="element.type=='datablock'">
+                                                                                        <template x-for="field in getFields(element)" :key="field.name">
+                                                                                            <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
+                                                                                        </template>
+                                                                                    </template>
+                                                                                </div>
+                                                                            </div>
+                                                                        </template>
+                                                                        <template x-if="section.elements.length === 0">
+                                                                            <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                            </template>
-                                                            <template x-if="section.elements.length === 0">
-                                                                <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
-                                                            </template>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </template>
+                                            <button type="button" class="btn w-auto" x-text="utils.translate('LBL_SECTION_ADD')" @click="createSection"></button>
                                         </div>
                                     </div>
-                                </template>
-                                <button type="button" class="btn w-auto" x-text="utils.translate('LBL_SECTION_ADD')" @click="createSection"></button>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Footer -->
-                <div class="accordion-item" x-data="{opened:false}">
-                    <div id="LayoutFooter_Header" class="accordion-header accordion-button" role="button" 
-                         :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                         data-bs-target="#LayoutFooter_Content" aria-controls="LayoutFooter_Content">
-                        <h3 x-text="utils.translate('LBL_LAYOUT_FOOTER')"></h3>
-                    </div>
-                    <div id="LayoutFooter_Content" class="accordion-collapse collapse" aria-labelledby="LayoutFooter_Header">
-                        <div id="LayoutFooter_Body" class="accordion-body"> 
-                            <div class="bg-white text-dark"> 
-                                <div x-data="quillEditor(formConfig.layout.footer_html, (html) => formConfig.layout.footer_html = html)">
-                                    <div class="bg-white border rounded overflow-hidden">
-                                        <div x-ref="editor" style="height: 175px;"></div>
+                            <!-- Footer -->
+                            <div class="accordion-item" x-data="{opened:false}">
+                                <div id="LayoutFooter_Header" class="accordion-header accordion-button" role="button" 
+                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                    data-bs-target="#LayoutFooter_Content" aria-controls="LayoutFooter_Content">
+                                    <h3 x-text="utils.translate('LBL_LAYOUT_FOOTER')"></h3>
+                                </div>
+                                <div id="LayoutFooter_Content" class="accordion-collapse collapse" aria-labelledby="LayoutFooter_Header">
+                                    <div id="LayoutFooter_Body" class="accordion-body"> 
+                                        <div class="bg-white text-dark"> 
+                                            <div x-data="quillEditor(formConfig.layout.footer_html, (html) => formConfig.layout.footer_html = html)">
+                                                <div class="bg-white border rounded overflow-hidden">
+                                                    <div x-ref="editor" style="height: 175px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </template>
+
+                <!-- Preview -->
+                <template x-if="layoutTabSelected=='preview'">
+                    <div class="h-100 d-flex flex-column relative bg-light border rounded overflow-hidden">
+                        
+                        <!-- Spinner -->
+                        <template x-if="isLoadingPreview">
+                            <div class="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75" style="z-index: 10;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden" x-text="utils.translate('LBL_PREVIEW_LOADING')"></span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Information Bar -->
+                        <div class="bg-white border-bottom p-2 d-flex justify-content-between align-items-center">
+                             <div class="small text-muted ms-2">
+                                <i class="suitepicon suitepicon-action-info"></i>
+                                <span x-text="utils.translate('LBL_PREVIEW_DESC')"></span>
+                             </div>
+                             <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_RELOAD')" @click="refreshPreview();">
+                                <span class="suitepicon suitepicon-action-reload"></span>
+                            </button>
+                        </div>
+
+                        <!-- Preview -->
+                        <iframe x-ref="previewFrame" class="w-100 border-0"></iframe>
+
+                    </div>
+                </template>
             </div>
         </div>
     </div>

@@ -93,7 +93,10 @@ $mod_strings = array (
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
-    
+  'LBL_PREVIEW_LOADING' => 'Cargando...',
+  'LBL_PREVIEW_LOAD_ERROR' => 'Error cargando la previsualización',
+  'LBL_PREVIEW_DESC' => 'Visualización real generada por el servidor',
+  'LBL_PREVIEW_MODE_ALERT' => 'El formulario está en modo previsualización: No está activado el envío de datos.',
   
   'LBL_WIZARD_PREVIOUS' => '<< Anterior',
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
@@ -119,6 +122,7 @@ $mod_strings = array (
   'LBL_BUTTON_DELETE' => 'Eliminar',
   'LBL_BUTTON_MOVE_UP' => 'Mover arriba',
   'LBL_BUTTON_MOVE_DOWN' => 'Mover abajo',
+  'LBL_BUTTON_RELOAD' => 'Recargar',
 
   'LBL_DATABLOCK' => 'Bloque de datos',
   'LBL_DATABLOCKS' => 'Bloques de datos',
@@ -193,7 +197,6 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nuevo Bloque de datos',
   'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloque de datos Inicial',
   'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloque de datos Destino',
-  'LBL_RELATIONSHIP_ACTIONS' => 'Acciones',
 
   'LBL_FLOWS' => 'Flujos de acciones',
   'LBL_FLOW' => 'Flujo de acciones',
@@ -226,6 +229,7 @@ $mod_strings = array (
   
   'LBL_LAYOUT_SETTINGS' => 'Configuración',
   'LBL_LAYOUT_FORM_DESIGN' => 'Diseño del formulario',
+  'LBL_LAYOUT_PREVIEW' => 'Previsualización',
   'LBL_LAYOUT_HEADER' => 'Cabecera',
   'LBL_LAYOUT_BODY' => 'Formulario',
   'LBL_LAYOUT_FOOTER' => 'Pie',
@@ -249,13 +253,20 @@ $mod_strings = array (
   'LBL_THEME_FORM_WIDTH' => 'Ancho máximo',
   'LBL_THEME_SECTIONS_PER_ROW' => 'Columnas (Secciones)',
   'LBL_THEME_FIELDS_PER_ROW' => 'Columnas (Campos)',
+  'LBL_THEME_PER_ROW_DESC' => 'El número de columnas definidas se adaptará automáticamente al ancho de la pantalla',
   'LBL_THEME_ADVANCED' => 'Avanzado',
   'LBL_THEME_CUSTOM_CSS' => 'CSS personalizado',
   'LBL_THEME_CUSTOM_CSS_DESC' => 'Se inyectará en un bloque <style>.',
   'LBL_THEME_CUSTOM_JS' => 'JS Personalizado',
   'LBL_THEME_CUSTOM_JS_DESC' => 'Se procesará cuando todo el formulario se haya cargado.',
+  'LBL_THEME_CLOSED_FORM' => 'Formulario cerrado',
+  'LBL_THEME_CLOSED_FORM_DESC' => 'Mensaje que aparecerá por encima del formulario cuando ya no acepte respuestas.',
+  'LBL_THEME_CLOSED_FORM_TITLE' => 'Título de aviso',
+  'LBL_THEME_CLOSED_FORM_TITLE_VALUE' => '⛔ Formulario Cerrado',
+  'LBL_THEME_CLOSED_FORM_TEXT' => 'Texto de aviso',
+  'LBL_THEME_CLOSED_FORM_TEXT_VALUE' => 'Este formulario ya no acepta respuestas.',
   'LBL_THEME_RESET_BUTTON' => 'Configuración por defecto',
-  
+    
   'LBL_SECTIONS' => 'Secciones',
   'LBL_SECTION_ADD' => 'Añadir Sección',
   'LBL_SECTION_NEW' => 'Nueva Sección',
