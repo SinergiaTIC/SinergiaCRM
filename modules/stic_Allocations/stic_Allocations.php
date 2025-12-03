@@ -83,6 +83,7 @@ class stic_Allocations extends Basic
         $tempFetchedRow = $this->fetched_row ?? null;
 
         $isBlocked = filter_var($this->blocked, FILTER_VALIDATE_BOOLEAN);
+        $isValidated = filter_var($this->validated, FILTER_VALIDATE_BOOLEAN);
         // If record is blocked, no updates are allowed
         if ($tempFetchedRow['blocked'] && $isBlocked) {
             // TODOEPS
@@ -113,8 +114,8 @@ class stic_Allocations extends Basic
         $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
         $this->amount = $paymentBean->{$this->payment_amount_field} * $this->percentage / 100;
         
-        $oldAmount = $this->fetched_row['amount'] ?? null;
-        $amountChanged = ($oldAmount !== $this->amount);
+        $oldAmount = $this->fetched_row['amount'] ?? null; 
+        $amountChanged = ($oldAmount !== $this->amount); //TODOEPS: Revisar la comparació. Els formats no són iguals i salta quanno toca.
 
         // Save the bean
         parent::save($check_notify);
@@ -122,6 +123,13 @@ class stic_Allocations extends Basic
         if ($amountChanged) {
             stic_AllocationsUtils::updateJustificationsFromAllocation($this);
             stic_AllocationsUtils::updatePayment($this);
+        }
+
+
+        if ($isValidated && !$tempFetchedRow['validated']) {
+            // Allocation has been validated now
+            require_once 'modules/stic_Justification_Conditions/Utils.php';
+            stic_Justification_ConditionsUtils::createJustificationsFromAllocation($this); 
         }
     }
 
