@@ -47,7 +47,7 @@ $subpanel_layout = array(
             'default' => true,
             'widget_class' => 'SubPanelDetailViewLink',
             'target_module' => 'Opportunities',
-            'target_record_key' => 'opportunities_stic_justification_conditionsopportunities_ida',
+            'target_record_key' => 'opportunit378funities_ida',
         ),
         'allocation_type' => array(
             'type' => 'enum',
