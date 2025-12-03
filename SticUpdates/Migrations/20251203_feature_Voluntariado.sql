@@ -1,4 +1,4 @@
-INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
+REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsconfidentiality_agreement_c', 'Contacts', 'confidentiality_agreement_c'),
 ('Contactsconduct_code_c', 'Contacts', 'conduct_code_c'),
 ('Contactsoccupational_safety_c', 'Contacts', 'occupational_safety_c'),
