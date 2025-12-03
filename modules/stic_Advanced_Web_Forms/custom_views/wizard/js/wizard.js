@@ -12,21 +12,6 @@ function wizardForm(readOnly) {
         this.formConfig.prepareProcessingMode(newMode);
       });
 
-      // Initialize Quill
-      if (typeof Quill !== 'undefined') {
-        const Align = Quill.import('attributors/style/align');
-        const Background = Quill.import('attributors/style/background');
-        const Color = Quill.import('attributors/style/color');
-        const Font = Quill.import('attributors/style/font');
-        const Size = Quill.import('attributors/style/size');
-        
-        Quill.register(Align, true);
-        Quill.register(Background, true);
-        Quill.register(Color, true);
-        Quill.register(Font, true);
-        Quill.register(Size, true);
-      }
-
       // Quill Component Editor
       Alpine.data('quillEditor', (initialContent, onUpdate) => ({
         editor: null,
@@ -37,6 +22,19 @@ function wizardForm(readOnly) {
             console.error("Quill JS not loaded");
             return;
           }
+
+          // Initialize Quill to use inline styles
+          const Align = Quill.import('attributors/style/align');
+          const Background = Quill.import('attributors/style/background');
+          const Color = Quill.import('attributors/style/color');
+          const Font = Quill.import('attributors/style/font');
+          const Size = Quill.import('attributors/style/size');
+          
+          Quill.register(Align, true);
+          Quill.register(Background, true);
+          Quill.register(Color, true);
+          Quill.register(Font, true);
+          Quill.register(Size, true);
 
           const toolbarOptions = [
             [{'header': [1, 2, 3, false] }], 
@@ -59,7 +57,13 @@ function wizardForm(readOnly) {
 
           // Load initial content
           if (this.content) {
-            this.editor.clipboard.dangerouslyPasteHTML(0, this.content);
+            try {
+                this.editor.clipboard.dangerouslyPasteHTML(0, this.content);
+            } catch (e) {
+                console.warn("Error loading HTML in Quill:", e);
+                // Fallback: Plain text
+                this.editor.setText(this.content);
+            }
           }
 
           // Save to Model
@@ -1603,5 +1607,84 @@ class WizardStep4 {
         this.formConfig.layout.custom_js = '';
       }
     }
+  }
+}
+
+class WizardStep5 {
+  static mainStep5xData() {
+    return {
+      get bean() { return window.alpineComponent.bean; },
+      
+      tab: 'link', // Pestanya activa
+      generatedHtml: 'Generant codi...',
+      
+      // Càlcul de URLs (Assumint que tens l'ID del bean)
+      get publicUrl() {
+          // Construeix la URL del EntryPoint
+          const baseUrl = window.location.origin + window.location.pathname;
+          return `${baseUrl}?entryPoint=stic_AWF_form_viewer&id=${this.bean.id}`;
+      },
+
+      get previewUrl() {
+          // Pot ser la mateixa o una acció específica de preview
+          return `index.php?module=stic_Advanced_Web_Forms&action=preview&record=${this.bean.id}`;
+      },
+
+      get iframeCode() {
+          return `<iframe src="${this.publicUrl}" width="100%" height="800" frameborder="0" style="border:0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`;
+      },
+
+      init() {
+          this.loadGeneratedHtml();
+      },
+
+      /**
+       * Canvia l'estat (Borrador <-> Públic)
+       */
+      toggleStatus(isPublic) {
+          this.bean.status = isPublic ? 'public' : 'draft';
+          
+          // Forcem un autosave immediat per guardar el canvi d'estat a la BD
+          // (La funció autoSave del WizardNavigation ja guarda tot el bean)
+          WizardNavigation.autoSave().then(() => {
+              // Opcional: Mostrar toast de "Estat actualitzat"
+          });
+      },
+
+      /**
+       * Demana al servidor l'HTML generat pel FormHtmlGeneratorService
+       */
+      async loadGeneratedHtml() {
+          this.generatedHtml = "Carregant...";
+          
+          try {
+              const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=generateFormHtml&record=" + this.bean.id);
+              if (response.ok) {
+                  this.generatedHtml = await response.text();
+              } else {
+                  this.generatedHtml = "Error generant el codi.";
+              }
+          } catch (e) {
+              console.error(e);
+              this.generatedHtml = "Error de connexió.";
+          }
+      },
+
+      copyToClipboard(text) {
+          navigator.clipboard.writeText(text).then(() => {
+              alert("Copiat al porta-retalls!"); // O usar un toast millor
+          });
+      },
+
+      downloadHtml() {
+          const element = document.createElement('a');
+          const file = new Blob([this.generatedHtml], {type: 'text/html'});
+          element.href = URL.createObjectURL(file);
+          element.download = `formulari-${this.bean.id}.html`;
+          document.body.appendChild(element);
+          element.click();
+          document.body.removeChild(element);
+      }
+    };
   }
 }

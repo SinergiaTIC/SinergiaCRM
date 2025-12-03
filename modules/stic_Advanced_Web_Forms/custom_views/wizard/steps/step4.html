@@ -251,7 +251,7 @@
                                                                 <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
                                                                 <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
                                                                     <template x-for="type in availableContainerTypes" :key="type.id">
-                                                                        <option :value="type.id" x-text="type.text"></option>
+                                                                        <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
                                                                     </template>
                                                                 </select>
                                                             </div>
