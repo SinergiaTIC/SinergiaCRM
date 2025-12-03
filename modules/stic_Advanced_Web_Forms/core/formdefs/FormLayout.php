@@ -48,6 +48,7 @@ class FormLayout {
 
         $dto->header_html = $data['header_html'] ?? '';
         $dto->footer_html = $data['footer_html'] ?? '';
+        $dto->submit_button_text = $data['submit_button_text'] ?? 'Send';
         $dto->custom_css = $data['custom_css'] ?? '';
         $dto->custom_js = $data['custom_js'] ?? '';
 
