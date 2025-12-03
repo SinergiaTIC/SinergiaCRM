@@ -26,16 +26,21 @@ class AOS_InvoicesHook
 
     public function before_save($bean, $event, $arguments)
     {
+        global $sugar_config;
 
-        // If the serial format field is empty, set a default value
-        if (empty($bean->stic_serial_format_c)) {
-            $bean->stic_serial_format_c = '0';
+        // If the invoice type field is empty, set a default value (first series)
+        if (empty($bean->stic_invoice_type_c)) {
+            // Get first series from config
+            if (!empty($sugar_config['aos']['invoices']['series']) && is_array($sugar_config['aos']['invoices']['series'])) {
+                $seriesNames = array_keys($sugar_config['aos']['invoices']['series']);
+                $bean->stic_invoice_type_c = $seriesNames[0];
+            }
         }
 
-        // Generate the next invoice number based on the serial format
-        if (empty($bean->number) && !empty($bean->stic_serial_format_c)) {
+        // Generate the next invoice number based on the invoice type (series)
+        if (empty($bean->number) && !empty($bean->stic_invoice_type_c)) {
             require_once 'custom/modules/AOS_Invoices/SticUtils.php';
-            $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_serial_format_c, $bean);
+            $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_invoice_type_c, $bean);
         }
     }
 

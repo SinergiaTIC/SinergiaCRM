@@ -273,6 +273,11 @@ array(
         'label' => 'LBL_VERIFACTU_CANCEL_ID',
         'default' => false,
     ),
+    'STIC_INVOICE_TYPE' => array( 
+        'width' => '15%',
+        'label' => 'LBL_STIC_INVOICE_TYPE',
+        'default' => false,
+    ),
     'TOTAL_AMOUNT' => array(
         'width' => '10%',
         'label' => 'LBL_GRAND_TOTAL',

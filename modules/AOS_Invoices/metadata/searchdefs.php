@@ -127,6 +127,14 @@ array(
                 'default' => true,
                 'name' => 'verifactu_aeat_status_c',
             ),
+            'STIC_INVOICE_TYPE_C' => array( 
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_STIC_INVOICE_TYPE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'stic_invoice_type_c',
+            ),
             'total_amount' => array(
                 'type' => 'currency',
                 'label' => 'LBL_GRAND_TOTAL',

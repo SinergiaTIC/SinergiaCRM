@@ -278,10 +278,10 @@ $dictionary['AOS_Invoices']['fields']['verifactu_submitted_at_c'] = array(
     'popupHelp' => 'LBL_VERIFACTU_SUBMITTED_AT_HELP',
 );
 
-$dictionary["AOS_Invoices"]["fields"]["stic_serial_format_c"] = array(
-    'id' => 'AOS_Invoicesserial_format_c',
-    'name' => 'stic_serial_format_c',
-    'vname' => 'LBL_STIC_SERIAL_FORMAT',
+$dictionary["AOS_Invoices"]["fields"]["stic_invoice_type_c"] = array(
+    'id' => 'AOS_Invoicesstic_invoice_type_c',
+    'name' => 'stic_invoice_type_c',
+    'vname' => 'LBL_STIC_INVOICE_TYPE',
     'custom_module' => 'AOS_Invoices',
     'required' => false,
     'source' => 'custom_fields',
@@ -302,8 +302,8 @@ $dictionary["AOS_Invoices"]["fields"]["stic_serial_format_c"] = array(
     'merge_filter' => 'enabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_invoices_serial_format_list',
+    'options' => 'stic_invoices_types_list',
     'studio' => 'visible',
     'dependency' => NULL,
-    'popupHelp' => 'LBL_STIC_SERIAL_FORMAT_HELP',
+    'popupHelp' => 'LBL_STIC_INVOICE_TYPE_HELP',
 );

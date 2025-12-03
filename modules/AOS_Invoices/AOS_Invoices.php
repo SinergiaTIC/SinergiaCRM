@@ -34,6 +34,15 @@ class AOS_Invoices extends AOS_Invoices_sugar
     public function __construct()
     {
         parent::__construct();
+        
+        // STIC-Custom - JCH - 20251203 - Populate invoice types list from config (AOS settings)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+        global $app_list_strings, $sugar_config;        
+        foreach($sugar_config['aos']['invoices']['series'] as $invoiceType => $seriesConfig) {
+            $app_list_strings['stic_invoices_types_list'][$invoiceType] = "$invoiceType - ({$seriesConfig['format']})";
+        }
+        // END STIC-Custom
+
     }
 
 

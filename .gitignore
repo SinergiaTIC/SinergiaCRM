@@ -137,9 +137,8 @@ sdaRebuildError.txt
 /TEST
 
 # Ignore custom certificates
-custom/certificates/.htaccess
-custom/certificates/cert_encrypted.bin
-custom/certificates/cert_metadata.json
+custom/certificates/
+
 # Ignore STIC internal files
 SticRepair.php
 

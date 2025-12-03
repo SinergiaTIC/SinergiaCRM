@@ -383,8 +383,8 @@ array(
                 ),
                 1 => array(
                     0 => array(
-                        'name' => 'stic_serial_format_c',
-                        'label' => 'LBL_STIC_SERIAL_FORMAT',
+                        'name' => 'stic_invoice_type_c',
+                        'label' => 'LBL_STIC_INVOICE_TYPE',
                     ),
                     1 => array(
                         'name' => 'status',

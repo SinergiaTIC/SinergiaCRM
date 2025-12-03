@@ -95,9 +95,10 @@ $popupMeta = array(
         9 => 'due_date',
         10 => 'status',
         11 => 'verifactu_aeat_status_c',
-        12 => 'quote_date',
-        13 => 'invoice_date',
-        14 => 'assigned_user_id',
+        12 => 'stic_invoice_type_c',
+        13 => 'quote_date',
+        14 => 'invoice_date',
+        15 => 'assigned_user_id',
     ),
     'searchdefs' => array(
         'number' => array(

@@ -882,16 +882,26 @@ class AOS_InvoicesUtils
      * @param SugarBean $bean The invoice bean
      * @return string The generated invoice number
      */
-    public static function generateNextInvoiceNumber($format, $bean)
+    public static function generateNextInvoiceNumber($seriesName, $bean)
     {
-        global $db;
+        global $db, $sugar_config;
+
+        // Get series configuration from sugar_config
+        if (empty($sugar_config['aos']['invoices']['series'][$seriesName])) {
+            $GLOBALS['log']->error("generateNextInvoiceNumber - Series '$seriesName' not found in configuration");
+            return '';
+        }
+
+        $seriesConfig = $sugar_config['aos']['invoices']['series'][$seriesName];
+        $format = $seriesConfig['format'];
+        $initialNumber = isset($seriesConfig['initialNumber']) ? (int)$seriesConfig['initialNumber'] : 1;
 
         // Get the year from the invoice date or current date
         $invoiceDate = !empty($bean->invoice_date) ? $bean->invoice_date : date('Y-m-d');
         $year = date('Y', strtotime($invoiceDate));
         $yearTwoDigits = substr($year, -2);
 
-        $GLOBALS['log']->debug("generateNextInvoiceNumber - Format: $format, Year: $year");
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - Series: $seriesName, Format: $format, Initial: $initialNumber, Year: $year");
 
         // Build a pattern to search for invoices with the same format and year
         $searchPattern = self::buildInvoiceNumber($format, 0, $year, $yearTwoDigits);
@@ -904,12 +914,12 @@ class AOS_InvoicesUtils
             $searchPattern = str_replace($zeroPattern, str_repeat('_', $numericLength), $searchPattern);
         }
 
-        // Find all invoice numbers with the same format and year
-        // Note: stic_serial_format_c is in aos_invoices_cstm table
+        // Find all invoice numbers with the same series (invoice type) and year
+        // Note: stic_invoice_type_c is in aos_invoices_cstm table
         $query = "SELECT aos_invoices.number
                   FROM aos_invoices
                   INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
-                  WHERE aos_invoices_cstm.stic_serial_format_c = " . $db->quoted($format) . "
+                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
                   AND aos_invoices.deleted = 0
                   AND aos_invoices.number IS NOT NULL
                   AND aos_invoices.number != ''
@@ -920,7 +930,7 @@ class AOS_InvoicesUtils
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Query: $query");
 
         $lastNumber = $db->getOne($query);
-        $nextNumber = 1;
+        $nextNumber = $initialNumber; // Start with the configured initial number
 
         if (!empty($lastNumber)) {
             $numericPart = self::extractNumericPart($lastNumber, $format);
