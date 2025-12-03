@@ -47,7 +47,7 @@ class AOS_InvoicesHook
      */
     public function after_save($bean, $event, $arguments)
     {
-        return;
+        // return;
         // check if status is 'emitted'
         if ($bean->status !== 'emitted') {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} status is not 'emitted', skipping AEAT send.");

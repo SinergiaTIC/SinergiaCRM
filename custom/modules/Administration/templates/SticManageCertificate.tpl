@@ -46,6 +46,36 @@
                     <strong>{$MOD.LBL_STIC_CERT_UPLOAD_DATE}:</strong> {$CERT_METADATA.upload_date_formatted}<br>
                     <strong>{$MOD.LBL_STIC_CERT_UPLOADED_BY}:</strong> {$CERT_METADATA.uploaded_by_name}
                     
+                    {* Extracted NIF and Holder Name - This is what will be used for Verifactu *}
+                    <br><br>
+                    <div style="padding: 10px; background-color: #e8f5e9; border-left: 4px solid #4caf50;">
+                        <strong style="color: #2e7d32;">{$MOD.LBL_STIC_CERT_EXTRACTED_DATA}:</strong><br>
+                        {if $EXTRACTED_NIF}
+                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_NIF}:</strong> <span style="font-size: 1.1em; color: #1976d2; font-weight: bold;">{$EXTRACTED_NIF}</span><br>
+                        {else}
+                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_NIF}:</strong> <span style="color: red;">⚠ {$MOD.LBL_STIC_CERT_NOT_FOUND}</span><br>
+                        {/if}
+                        {if $EXTRACTED_NAME}
+                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_NAME}:</strong> <span style="font-size: 1.1em; color: #1976d2; font-weight: bold;">{$EXTRACTED_NAME}</span><br>
+                        {else}
+                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_NAME}:</strong> <span style="color: red;">⚠ {$MOD.LBL_STIC_CERT_NOT_FOUND}</span><br>
+                        {/if}
+                        {if $IS_ENTITY_SEAL !== null}
+                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_TYPE}:</strong> 
+                            {if $IS_ENTITY_SEAL == 1}
+                                <span style="font-size: 1.1em; color: #1976d2; font-weight: bold;">{$MOD.LBL_STIC_CERT_TYPE_ENTITY_SEAL}</span>
+                            {elseif $IS_ENTITY_SEAL == 0}
+                                <span style="font-size: 1.1em; color: #1976d2; font-weight: bold;">{$MOD.LBL_STIC_CERT_TYPE_REPRESENTATIVE}</span>
+                            {/if}
+                        {else}
+                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_TYPE}:</strong> <span style="color: #ff9800;">⚠ {$MOD.LBL_STIC_CERT_TYPE_UNKNOWN}</span>
+                        {/if}
+                        <br><br>
+                        <small style="color: #666;">
+                            <em>{$MOD.LBL_STIC_CERT_EXTRACTED_INFO}</em>
+                        </small>
+                    </div>
+                    
                     {if $CERT_METADATA.cert_details}
                         <br><br>
                         <strong style="text-decoration: underline;">{$MOD.LBL_STIC_CERT_UPLOAD_INFO}:</strong><br>

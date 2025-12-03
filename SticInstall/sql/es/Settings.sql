@@ -54,7 +54,7 @@ INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_us
 ('d9f0118c-b752-444d-9057-456b18f9f360', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_API_KEY', '', 'Clave para conectar con Seven. Se obtiene en su panel de control.'),
 ('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_SENDER', '', 'Nombre que aparecerá como remitente en los mensajes enviados.'),
 ('64b1554a-cf95-423b-ae78-7f75951f3976', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_LIMIT', '100', 'Número máximo de mensajes permitidos en un envío masivo.'),
-('f47ac10b-58cc-4372-a567-0e02b2c3d479', NOW(), NOW(), '1', '1', 0, '1', 'GENERAL', 'GENERAL_CERTIFICATE_PASSWORD', '', 'Contraseña del certificado digital.'),
+-- ('f47ac10b-58cc-4372-a567-0e02b2c3d479', NOW(), NOW(), '1', '1', 0, '1', 'GENERAL', 'GENERAL_CERTIFICATE_PASSWORD', '', 'Contraseña del certificado digital.'), -- DEPRECATED: Now stored encrypted with the certificate
 ('f47ac10b-58cc-4372-a567-0e02b2c3d480', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'VERIFACTU_TEST', 1, 'Indica el modo de trabajo (0 = Real, 1 = Test).'),
-('f47ac10b-58cc-4372-a567-0e02b2c3d481', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'GENERAL_CERTIFICATE_ENTITY_SEAL', 1, 'Indica si el certificado digital es de sello de entidad (1) o de representante (0).'),
+-- ('f47ac10b-58cc-4372-a567-0e02b2c3d481', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'GENERAL_CERTIFICATE_ENTITY_SEAL', 1, 'Indica si el certificado digital es de sello de entidad (1) o de representante (0).'), -- DEPRECATED: Now extracted automatically from certificate
 ('f47ac10b-58cc-4372-a567-0e02b2c3d482', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'VERIFACTU_TAX_TYPE', '01', 'Tipo de impuesto por defecto (01=IVA, 02=IPSI, 03=IGIC).');

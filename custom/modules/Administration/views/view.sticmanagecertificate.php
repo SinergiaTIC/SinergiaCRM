@@ -48,6 +48,9 @@ class ViewSticManageCertificate extends SugarView
         
         // Read metadata if certificate exists
         $metadata = null;
+        $extractedNif = null;
+        $extractedName = null;
+        
         if ($certExists && file_exists($metadataPath)) {
             $metadataJson = file_get_contents($metadataPath);
             $metadata = json_decode($metadataJson, true);
@@ -59,12 +62,26 @@ class ViewSticManageCertificate extends SugarView
                     $metadata['upload_date_formatted'] = $uploadDate->format('d/m/Y H:i:s');
                 }
             }
+            
+            // Extract NIF, holder name and certificate type from certificate for display
+            require_once 'custom/include/SticCertificateUtils.php';
+            $extractedNif = SticCertificateUtils::getCertificateNif();
+            $extractedName = SticCertificateUtils::getCertificateHolderName();
+            $isEntitySeal = SticCertificateUtils::isEntitySeal();
         }
 
+        // Debug: Log extracted values
+        $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NIF: ' . ($extractedNif ?? 'NULL'));
+        $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NAME: ' . ($extractedName ?? 'NULL'));
+        $GLOBALS['log']->debug('ViewSticManageCertificate - IS_ENTITY_SEAL: ' . ($isEntitySeal ?? 'NULL'));
+        
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('CERT_EXISTS', $certExists);
         $this->ss->assign('CERT_METADATA', $metadata);
+        $this->ss->assign('EXTRACTED_NIF', $extractedNif);
+        $this->ss->assign('EXTRACTED_NAME', $extractedName);
+        $this->ss->assign('IS_ENTITY_SEAL', $isEntitySeal);
         
         // Message handling
         if (isset($_REQUEST['msg'])) {

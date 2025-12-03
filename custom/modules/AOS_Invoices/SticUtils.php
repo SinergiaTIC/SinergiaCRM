@@ -220,13 +220,33 @@ class AOS_InvoicesUtils
         }
 
         try {
-            // Get needing settings from stic_Setting module
+            // Load certificate utilities
+            require_once 'custom/include/SticCertificateUtils.php';
+            
+            // Get certificate and password
+            $certData = SticCertificateUtils::getCertificateAndPassword();
+            if (!$certData) {
+                throw new Exception("Certificate or password not found. Please upload a certificate in Administration > VeriFactu Certificate.");
+            }
+            
+            $certificatePassword = $certData['password'];
+            
+            // Extract NIF and holder name from certificate
+            $issuerNif = SticCertificateUtils::getCertificateNif();
+            $issuerName = SticCertificateUtils::getCertificateHolderName();
+            
+            if (empty($issuerNif) || empty($issuerName)) {
+                throw new Exception("Could not extract NIF or holder name from certificate. Please verify the certificate is valid.");
+            }
+            
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data loaded - NIF: ' . $issuerNif . ', Name: ' . $issuerName);
+            
+            // Get certificate type (entity seal or representative) from certificate itself
+            $certificateType = SticCertificateUtils::isEntitySeal();
+            
+            // Get other settings from stic_Settings module
             require_once 'modules/stic_Settings/Utils.php';
-            $certificatePassword = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_PASSWORD');
-            $certificateType = stic_SettingsUtils::getSetting('GENERAL_CERTIFICATE_ENTITY_SEAL');
             $taxTypeSetting = stic_SettingsUtils::getSetting('VERIFACTU_TAX_TYPE');
-            $issuerNif = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_ID');
-            $issuerName = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME');
 
             // Determine Tax Type (IVA, IPSI, IGIC)
             $verifactuTaxType = TaxType::IVA; // Default to IVA (01)
@@ -236,8 +256,8 @@ class AOS_InvoicesUtils
                 $verifactuTaxType = TaxType::IGIC;
             }
 
-            if (empty($certificatePassword) || empty($issuerNif) || empty($issuerName) || $certificateType === null) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Missing required settings: certificate password, organization NIF or organization name.');
+            if ($certificateType === null) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Cannot determine certificate type (entity seal or representative).');
                 SugarApplication::appendErrorMessage("<div class=\"alert alert-danger\">{$mod_strings['LBL_MISSING_SETTINGS']}</div>");
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             }
@@ -267,30 +287,11 @@ class AOS_InvoicesUtils
             // Configure certificate type (Entity Seal vs Personal)
             $client->setEntitySeal((bool) $certificateType);
 
-            // Configure certificate
-            $encryptedCertPath = 'custom/certificates/cert_encrypted.bin';
-            if (!file_exists($encryptedCertPath)) {
-                throw new Exception("Encrypted certificate not found at: " . $encryptedCertPath . ". Please upload a certificate in Administration > VeriFactu Certificate.");
-            }
-
-            // Decrypt certificate
-            require_once 'include/utils/encryption_utils.php';
-            global $sugar_config;
-            $key = $sugar_config['unique_key'];
-            $encryptedContent = file_get_contents($encryptedCertPath);
-
-            // Manual decryption to avoid trim() corrupting binary P12
-            // blowfishDecode() uses trim() which removes whitespace and nulls, damaging binary files
-            $data = base64_decode($encryptedContent);
-            $bf = new Crypt_Blowfish($key);
-            $p12Content = $bf->decrypt($data);
-
-            // DO NOT TRIM. OpenSSL handles the ASN.1 structure and ignores trailing padding.
-            // rtrim($p12Content, "\0") can remove valid data if the file ends with null bytes.
-
+            // Get certificate content (already decrypted by SticCertificateUtils)
+            $p12Content = $certData['cert_content'];
+            
             // Debug info
-            $GLOBALS['log']->debug("DEBUG VERIFACTU: Encrypted size: " . strlen($encryptedContent));
-            $GLOBALS['log']->debug("DEBUG VERIFACTU: Decrypted size: " . strlen($p12Content));
+            $GLOBALS['log']->debug("DEBUG VERIFACTU: Certificate content size: " . strlen($p12Content));
 
             // --- SOLUCIÓN MEJORADA ERROR 401 ---
             // 1. Leer P12
