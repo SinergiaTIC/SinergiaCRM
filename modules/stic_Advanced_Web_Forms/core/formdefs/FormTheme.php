@@ -34,7 +34,8 @@ class FormTheme {
     public string $text_color = '#212529';
     public string $border_color = '#dee2e6';
     public int $border_width = 1;
-    public int $border_radius = 6;
+    public int $border_radius_container = 10;
+    public int $border_radius_controls = 4;
     public string $font_family = 'system-ui';
     public int $font_size = 16;
     public string $form_width = '800px';

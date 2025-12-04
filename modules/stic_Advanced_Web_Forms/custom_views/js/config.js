@@ -822,7 +822,8 @@ class AWF_Theme {
       primary_color: STIC.mainThemeColor ?? '#0d6efd',  // Color corporativo por defecto 
       page_bg_color: '#f8f9fa',  // Fondo de la página (gris muy suave)
       form_bg_color: '#ffffff',  // Fondo del formulario (blanco)
-      border_radius: 6,            // Redondeo en px (6px). Range: [0..30]
+      border_radius_container: 10, // Redondeo para los contenedores en px (6px). Range: [0..30]
+      border_radius_controls: 4,   // Redondeo para los contenedores en px (6px). Range: [0..30]
 
       text_color: '#212529',     // Color del texto (gris oscuro)
       border_color: '#dee2e6',   // Color del borde (gris claro)

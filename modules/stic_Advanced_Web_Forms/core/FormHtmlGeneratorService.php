@@ -102,9 +102,9 @@ class FormHtmlGeneratorService {
   --bs-body-bg: {$theme->form_bg_color};
   --bs-body-color: {$theme->text_color};
   --bs-border-color: {$theme->border_color};
-  --bs-border-radius: {$theme->border_radius}px;
+  --bs-border-radius: {$theme->border_radius_controls}px;
   --bs-body-font-family: {$theme->font_family};
-  --bs-btn-border-radius: {$theme->border_radius}px; /* Set Button radius */
+  --bs-btn-border-radius: {$theme->border_radius_controls}px;
 
   /* Stic Vars */
   --awf-page-bg: {$theme->page_bg_color};
@@ -115,6 +115,7 @@ class FormHtmlGeneratorService {
   --awf-sec-min-px: {$secMinPx};
   --awf-field-cols: {$fieldCols};
   --awf-field-min-px: {$fieldMinPx};
+  --awf-card-radius: {$theme->border_radius_container}px;
                 
   /* Base Styles */
   background-color: var(--awf-page-bg);
@@ -195,7 +196,7 @@ class FormHtmlGeneratorService {
   margin: 0 auto;
   background-color: var(--bs-body-bg);
   border: var(--awf-border-width) solid var(--bs-border-color);
-  border-radius: var(--bs-border-radius);
+  border-radius: var(--awf-card-radius);
   box-shadow: var(--awf-box-shadow);
 }
 
@@ -203,7 +204,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-section-card {
   background-color: var(--bs-body-bg);
   border: 1px solid var(--bs-border-color);
-  border-radius: calc(var(--bs-border-radius) - 2px);
+  border-radius: calc(var(--awf-card-radius) - 2px);
   box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
 }
 /* Header Sections */
@@ -212,6 +213,9 @@ class FormHtmlGeneratorService {
   color: var(--bs-body-color);
   font-weight: bold;
   border-bottom: 1px solid var(--bs-border-color);
+}
+#{$wrapperId} .awf-section-card .card-header:first-child {
+  border-radius: var(--awf-card-radius) var(--awf-card-radius) 0 0;
 }
 #{$wrapperId} .awf-section-panel {
   border: none;

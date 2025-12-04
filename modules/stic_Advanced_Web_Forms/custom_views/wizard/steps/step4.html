@@ -67,14 +67,23 @@
             <details class="mb-3">
                 <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_BORDERS')"></summary>
                 <div class="ps-4 g-2 mt-2">
-                    <!-- border_radius -->
+                    <!-- border_radius_container -->
                     <div class="mb-3">
-                        <label for="theme-border_radius" class="form-label small d-flex justify-content-between">
-                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_RADIUS')"></span>
-                            <span class="text-muted" x-text="formConfig.layout.theme.border_radius + 'px'"></span>
+                        <label for="theme-border_radius_container" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_RADIUS_CONTAINER')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_radius_container + 'px'"></span>
                         </label>
-                        <input id="theme-border_radius" type="range" class="form-range" min="0" max="30" step="1" 
-                               x-model.number="formConfig.layout.theme.border_radius">
+                        <input id="theme-border_radius_container" type="range" class="form-range" min="0" max="40" step="1" 
+                               x-model.number="formConfig.layout.theme.border_radius_container">
+                    </div>
+                    <!-- border_radius_controls -->
+                    <div class="mb-3">
+                        <label for="theme-border_radius_controls" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_RADIUS_CONTROLS')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_radius_controls + 'px'"></span>
+                        </label>
+                        <input id="theme-border_radius_controls" type="range" class="form-range" min="0" max="20" step="1" 
+                               x-model.number="formConfig.layout.theme.border_radius_controls">
                     </div>
                     <!-- border_width -->
                     <div class="mb-3">
@@ -82,7 +91,7 @@
                             <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_WIDTH')"></span>
                             <span class="text-muted" x-text="formConfig.layout.theme.border_width + 'px'"></span>
                         </label>
-                        <input id="theme-border_width" type="range" class="form-range" min="0" max="5" step="1" 
+                        <input id="theme-border_width" type="range" class="form-range" min="0" max="20" step="1" 
                                x-model.number="formConfig.layout.theme.border_width">
                     </div>
                     <!-- border_color -->
@@ -164,7 +173,7 @@
                         <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_text" 
                                   placeholder="console.log('Form loaded');"></textarea>
                     </div>
-                    
+
                     <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
                         <i class="suitepicon suitepicon-action-info me-1"></i>
                         <span x-text="utils.translate('LBL_THEME_CLOSED_FORM_DESC')"></span>
