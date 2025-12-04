@@ -120,6 +120,13 @@ class ViewConfiguretabs extends SugarView
                 continue;
             }
             $key = strtolower($key);
+            // STIC CUSTOM - JCH - 20251204 - Skip modules whithout labels
+            // http://
+            // Skip modules that don't have a valid label in moduleList
+            if (!isset($mod_list_strings_key_to_lower[$key])) {
+                continue;
+            }
+            // END STIC CUSTOM
             $enabled[] =  array("module" => $key, "label" => $mod_list_strings_key_to_lower[$key]);
         }
 
@@ -130,9 +137,15 @@ class ViewConfiguretabs extends SugarView
                 continue;
             }
             $key = strtolower($key);
+            // STIC CUSTOM - JCH - 20251204 - Skip modules whithout labels
+            // http://
+            // Skip modules that don't have a valid label in moduleList
+            if (!isset($mod_list_strings_key_to_lower[$key])) {
+                continue;
+            }
+            // END STIC CUSTOM
             $disabled[] =  array("module" => $key, "label" => $mod_list_strings_key_to_lower[$key]);
         }
-
         $this->ss->assign('enabled_panels', json_encode($enabled));
         $this->ss->assign('disabled_panels', json_encode($disabled));
 
