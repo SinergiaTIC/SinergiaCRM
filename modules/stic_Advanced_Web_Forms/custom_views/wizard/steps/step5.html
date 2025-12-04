@@ -1,0 +1,85 @@
+<!-- Main Panel -->
+<main class="wizard-main flex-fill d-flex flex-column" x-data="WizardStep5.mainStep5xData();">
+    <div class="flex-fill border rounded p-4 overflow-auto bg-light">
+        
+        <div class="container" style="max-width: 900px;">
+            
+            <h2 class="mb-4" x-text="utils.translate('LBL_WIZARD_STEP5_TITLE')">Publicació</h2>
+
+            <div class="card mb-4 shadow-sm border-primary">
+                <div class="card-body d-flex justify-content-between align-items-center p-4">
+                    <div>
+                        <h4 class="mb-1">Estat del Formulari</h4>
+                        <p class="mb-0 text-muted" x-show="bean.status == 'draft'">El formulari està en mode <strong>Esborrany</strong>. No accepta respostes.</p>
+                        <p class="mb-0 text-success" x-show="bean.status == 'public'">El formulari és <strong>Públic</strong> i està acceptant respostes.</p>
+                    </div>
+                    
+                    <div class="form-check form-switch custom-switch-lg">
+                        <input class="form-check-input" type="checkbox" role="switch" 
+                               id="formStatusSwitch" 
+                               :checked="bean.status == 'public'"
+                               @change="toggleStatus($event.target.checked)">
+                        <label class="form-check-label fw-bold" for="formStatusSwitch" 
+                               x-text="bean.status == 'public' ? 'ACTIVAT' : 'DESACTIVAT'"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-end mb-4">
+                <a :href="previewUrl" target="_blank" class="btn btn-outline-primary">
+                    <i class="suitepicon suitepicon-action-preview me-2"></i>
+                    Previsualitzar en pestanya nova
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <button class="nav-link" :class="{ 'active': tab === 'link' }" @click="tab = 'link'">Enllaç Públic</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" :class="{ 'active': tab === 'html' }" @click="tab = 'html'">Codi HTML</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" :class="{ 'active': tab === 'iframe' }" @click="tab = 'iframe'">Incrustar (Iframe)</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body bg-white">
+                    
+                    <div x-show="tab === 'link'">
+                        <p class="text-muted small">Comparteix aquest enllaç directament amb els teus usuaris.</p>
+                        <div class="input-group">
+                            <input type="text" class="form-control" :value="publicUrl" readonly>
+                            <button class="btn btn-outline-secondary" @click="copyToClipboard(publicUrl)">Copiar</button>
+                            <a :href="publicUrl" target="_blank" class="btn btn-outline-secondary">Obrir</a>
+                        </div>
+                    </div>
+
+                    <div x-show="tab === 'html'">
+                        <p class="text-muted small">Copia aquest codi i enganxa'l a la teva web. Inclou estils i scripts.</p>
+                        <div class="position-relative">
+                            <textarea class="form-control font-monospace small bg-light" rows="10" readonly x-model="generatedHtml"></textarea>
+                            <button class="btn btn-sm btn-primary position-absolute top-0 end-0 m-2" 
+                                    @click="copyToClipboard(generatedHtml)">Copiar Codi</button>
+                        </div>
+                        <div class="mt-2 text-end">
+                             <button class="btn btn-secondary btn-sm" @click="downloadHtml()">Descarregar .html</button>
+                        </div>
+                    </div>
+
+                    <div x-show="tab === 'iframe'">
+                        <p class="text-muted small">Utilitza aquest codi per incrustar el formulari sense conflictes d'estil.</p>
+                        <div class="input-group">
+                            <textarea class="form-control font-monospace small bg-light" rows="4" readonly x-model="iframeCode"></textarea>
+                            <button class="btn btn-outline-secondary" @click="copyToClipboard(iframeCode)">Copiar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
