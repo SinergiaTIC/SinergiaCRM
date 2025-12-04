@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array(
-    'NAME' => 'Unidades familiares - Cálculo de rexistro activo/inactivo', // Esta etiqueta é obrigatoria. Indica o nombre da función
-    'NO_ROWS' => 'Todas as familias teñen o estado activo/inactivo correcto.',
-    'UPDATED' => 'Actualizouse o campo Activo.',
+    'NAME' => 'Unidades familiares - Cálculo de registro activo/inactivo', // Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_ROWS' => 'Todas las familias tienen el estado activo/inactivo correcto.',
+    'UPDATED' => 'Se ha actualizado el campo Activo.',
 );

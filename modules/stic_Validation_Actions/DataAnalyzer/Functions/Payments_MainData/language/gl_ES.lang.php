@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Pagos - Revisión dos datos principais',		// Esta etiqueta é obrigatoria. Indica o nome da función
-    'UPDATED_IBAN' => ' actualizouse para eliminar caracteres non válidos.',
-    'UPDATED_IBAN' => ' cun valor incorrecto, actualizouse automaticamente.',
-    'UPDATED_MANDATE' => ' estaba baleiro ou non era válido, actualizouse automaticamente.',
-	'NOVALID_MANDATE' => ' está baleiro ou non válido e non se pode recuperar desde o compromiso de pago.',
-	'INHERIT_MANDATE' => ' estaba baleiro ou non era válido, herdouse desde o compromiso de pago.',
+    'NAME' => 'Pagos - Revisión de los datos principales',		// Esta etiqueta es obligatoria. Indica el nombre de la función
+    'UPDATED_IBAN' => ' se ha actualizado para eliminar caracteres no válidos.',
+    'UPDATED_IBAN' => ' con valor erróneo, se ha actualizado automáticamente.',
+    'UPDATED_MANDATE' => ' estaba vacío o no era válido, se ha actualizado automáticamente.',
+	'NOVALID_MANDATE' => ' está vacío o no es válido y no se puede recuperar desde el compromiso de pago.',
+	'INHERIT_MANDATE' => ' estaba vacío o no era válido, se ha heredado desde el compromiso de pago.',
 );
