@@ -36,16 +36,16 @@ class FormTheme {
     public int $border_width = 1;
     public int $border_radius_container = 10;
     public int $border_radius_controls = 4;
+    public bool $floating_labels = true;
     public string $font_family = 'system-ui';
     public int $font_size = 16;
     public string $form_width = '800px';
     public string $shadow_intensity = 'normal';
-    public string $sections_per_row = '1';
-    public string $fields_per_row = '1';
+    public int $sections_per_row = 1;
+    public int $fields_per_row = 2;
 
     public static function fromJsonArray(FormLayout $layout, array $data): self {
         $dto = new self();
-
         $dto->layout = $layout;
     
         foreach ($data as $key => $value) {

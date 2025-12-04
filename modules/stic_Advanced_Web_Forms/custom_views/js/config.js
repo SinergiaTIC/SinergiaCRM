@@ -238,6 +238,7 @@ class AWF_Field {
       name: '',                // Nombre del campo
       text_original: '',       // Texto original del campo
       label: '',               // Etiqueta que aparecerá con el campo
+      description: '',         // Descripción del campo
       required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
       type_field: 'form',      // Tipo de campo: unlinked, form, hidden
       required_in_form: false, // Indica si el campo será obligado en el formulario
@@ -485,6 +486,7 @@ class AWF_Field {
     }
     if (this.type == "bool" || this.type == "check") {
       list.push(base_subtypes.find(s => s.id == "select_checkbox"));
+      list.push(base_subtypes.find(s => s.id == "select_switch"));
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
       return list
@@ -505,7 +507,7 @@ class AWF_Field {
   }
 
   acceptValueOptions() {
-    return this.type_in_form == "select" && this.subtype_in_form != "select_checkbox";
+    return this.type_in_form == "select" && this.subtype_in_form != "select_checkbox" && this.subtype_in_form != "select_switch";
   }
 
   setValueOptions(originalOptions) {
@@ -822,12 +824,15 @@ class AWF_Theme {
       primary_color: STIC.mainThemeColor ?? '#0d6efd',  // Color corporativo por defecto 
       page_bg_color: '#f8f9fa',  // Fondo de la página (gris muy suave)
       form_bg_color: '#ffffff',  // Fondo del formulario (blanco)
-      border_radius_container: 10, // Redondeo para los contenedores en px (6px). Range: [0..30]
-      border_radius_controls: 4,   // Redondeo para los contenedores en px (6px). Range: [0..30]
+
+      border_radius_container: 10, // Redondeo para los contenedores en px (10px). Range: [0..40]
+      border_radius_controls: 4,   // Redondeo para los contenedores en px (4px). Range: [0..20]
 
       text_color: '#212529',     // Color del texto (gris oscuro)
       border_color: '#dee2e6',   // Color del borde (gris claro)
       border_width: 1,             // Ancho del borde en px
+
+      floating_labels: true,       // Inica si se usaran etiquetas flotantes en los controles (true)
       
       // Tipografía
       font_family: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",

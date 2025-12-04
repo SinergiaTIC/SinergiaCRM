@@ -184,8 +184,11 @@ class FormHtmlGeneratorService {
   font-size: 1em;
 }
 #{$wrapperId} .form-text,
-#{$wrapperId} .text-muted.small {
-  font-size: 0.875em;
+#{$wrapperId} .small {
+  font-size: 0.85em;
+}
+#{$wrapperId} .extra-small {
+  font-size: 0.75em;
 }
 
 /* Main Card */
@@ -198,6 +201,27 @@ class FormHtmlGeneratorService {
   border: var(--awf-border-width) solid var(--bs-border-color);
   border-radius: var(--awf-card-radius);
   box-shadow: var(--awf-box-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Preview ribbon */
+#{$wrapperId} .awf-preview-ribbon {
+  position: absolute;
+  top: 5px;
+  right: -95px;
+  transform: rotate(45deg);
+  background-color: #dc3545;
+  color: #ffffff;
+  padding: 5px 40px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 10px 5px rgba(0,0,0,0.3);
+  z-index: 1050;
+  pointer-events: none; 
+  user-select: none;
 }
 
 /* Sections */
@@ -272,20 +296,33 @@ class FormHtmlGeneratorService {
         $headerHtml = $this->decode($layout->header_html);
         $footerHtml = $this->decode($layout->footer_html);
 
-        $checkUrl = str_replace('entryPoint=stic_AWF_response_handler', 'action=checkStatus', $actionUrl);
-        // Alpine logic to check if Form is active
-        $alpineData = "{
+        $checkUrl = str_replace('entryPoint=stic_AWF_response_handler', 'module=stic_Advanced_Web_Forms&action=checkStatus', $actionUrl);
+        $closedFormTitle = htmlspecialchars($layout->closed_form_title);
+        $closedFormText = htmlspecialchars($layout->closed_form_text);
+
+        // Alpine logic to check if Form is active (in preview: skip it)
+        if ($isPreview) {
+            $alpineData = 
+"{ 
+  isActive: true, 
+  message: '{$closedFormText}', 
+  check() { console.log('Preview Mode: Status check skipped.'); } 
+}";
+        } else {
+            $alpineData = 
+"{
   isActive: true,
-  message: '',
+  message: '{$closedFormText}',
   check() {
     fetch('{$checkUrl}')
     .then(r => r.json())
     .then(d => {
       this.isActive = d.active;
-      this.message = d.message;
+      this.message = this.message == '' ? d.message : this.message;
     }).catch(e => console.error(e));
   }
 }";
+        }
         $html = "";
         // Begin awf-main-card (wrapper)
         $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$alpineData}\" x-init=\"check()\">" ."\r\n".str_repeat('  ', ++$this->indent);
@@ -293,9 +330,37 @@ class FormHtmlGeneratorService {
             // Begin awf-relative-wrapper (overlay Wrapper)
             $html .= "<div class='awf-relative-wrapper'>" ."\r\n".str_repeat('  ', ++$this->indent);
             {
+                if ($isPreview) {
+                    $ribbonText = translate('LBL_PREVIEW_RIBBON', 'stic_Advanced_Web_Forms');
+                    $html .= "<div class='awf-preview-ribbon'>{$ribbonText}</div>" ."\r\n".str_repeat('  ', $this->indent);
+
+                    // Floating ToolBar
+                    $html .= "<div style='position: fixed; top: 20px; left: 50%; transform: translateX(-50%);".
+                                         "background: #343a40; color: #fff; padding: 8px 16px; border-radius: 50px;".
+                                         "box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999;".
+                                         "display: flex; align-items: center; gap: 12px;". 
+                                         "font-family: system-ui, sans-serif; font-size: 14px;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    {
+                        $toolBarText = translate('LBL_PREVIEW_TOOLBAR', 'stic_Advanced_Web_Forms');
+                        $activeText = translate('LBL_PREVIEW_ACTIVE_TEXT', 'stic_Advanced_Web_Forms');
+                        $inactiveText = translate('LBL_PREVIEW_INACTIVE_TEXT', 'stic_Advanced_Web_Forms');
+                        $html .= "<span style='opacity: 0.8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;'>{$toolBarText}</span>" ."\r\n".str_repeat('  ', $this->indent);
+                        $html .= "<div style='width: 1px; height: 16px; background: rgba(255,255,255,0.2);'></div>" ."\r\n".str_repeat('  ', $this->indent);
+                        $html .= "<div class='form-check form-switch mb-0' style='min-height: auto;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                        {
+                            $html .= "<input class='form-check-input' type='checkbox' role='switch' id='simActiveSwitch' x-model='isActive' style='cursor: pointer;'>" ."\r\n".str_repeat('  ', $this->indent);
+                            $html .= "<label class='form-check-label text-white' for='simActiveSwitch' style='cursor: pointer;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                            {
+                                $html .= "<span x-text=\"isActive ? '🟢 {$activeText}' : '🔴 {$inactiveText}'\"></span>" ."\r\n".str_repeat('  ', $this->indent);
+                            }
+                            $html .= "</label>" ."\r\n".str_repeat('  ', --$this->indent);
+                        }
+                        $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                    }
+                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                }
+
                 // Overlay (Only if !isActive) ---
-                $closedFormTitle = htmlspecialchars($layout->closed_form_title);
-                $closedFormText = htmlspecialchars($layout->closed_form_text);
                 $html .= "<div class='awf-overlay' x-show='!isActive' style='display: none;' x-transition>" ."\r\n".str_repeat('  ', ++$this->indent);
                 {
                     $html .= "<div class='awf-overlay-content'>" ."\r\n".str_repeat('  ', ++$this->indent);
@@ -323,6 +388,14 @@ class FormHtmlGeneratorService {
                 $html .= "<form {$formAttributes} action='{$actionUrl}' method='POST' x-data='{ d: {}, submitting: false }' class='needs-validation' novalidate ".
                          "@submit.prevent=\"if (\$el.checkValidity()) { submitting = true; \$el.submit(); } else { \$el.classList.add('was-validated'); }\">" ."\r\n".str_repeat('  ', ++$this->indent);
                 {
+                    // Honeypot: Invisible anti-spam
+                    $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    {
+                        $html .= "<label for='awf_website'>Leave this field blank</label>" ."\r\n".str_repeat('  ', $this->indent);
+                        $html .= "<input type='text' id='awf_website' name='awf_honey_pot' value='' tabindex='-1' autocomplete='off'>" ."\r\n".str_repeat('  ', $this->indent);
+                    }
+                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+
                     // Sections Grid
                     $html .= "<div class='awf-grid-sections'>" ."\r\n".str_repeat('  ', ++$this->indent);
                     {
@@ -354,7 +427,7 @@ class FormHtmlGeneratorService {
                                             if ($element->type == 'datablock') {
                                                 $block = $config->data_blocks[$element->ref_id] ?? null;
                                                 if ($block) {
-                                                    $html .= $this->generateDataBlockHtml($block);
+                                                    $html .= $this->generateDataBlockHtml($block, $layout->theme);
                                                 }
                                             }
                                         }
@@ -399,59 +472,104 @@ class FormHtmlGeneratorService {
         return $html;
     }
 
-    private function generateDataBlockHtml(FormDataBlock $block): string {
+    private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme): string {
         $html = "";
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::HIDDEN) continue;
-            $html .= $this->renderField($block, $field);
+            $html .= $this->renderField($block, $field, $theme);
         }
         return $html;
     }
 
-    private function renderField(FormDataBlock $block, FormDataBlockField $field): string {
+    private function renderField(FormDataBlock $block, FormDataBlockField $field, FormTheme $theme): string {
         $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
-        $asterisk = $field->required_in_form ? ' <span class="text-danger">*</span>' : '';
+        $asterisk = $field->required_in_form ? ' *' : '';
+        $asterisk = $asterisk != '' ? " <span class='text-danger'>{$asterisk}</span>" : '';
+        $description = '';
+        if ($field->description != '') {
+            $description = "<div class='form-text text-muted extra-small fst-italic ps-1 mt-0'>{$field->description}</div>";
+        }
 
-        // Checkbox (label after)
-        if ($field->type_in_form === 'checkbox') {
-            $html = "<div class='mb-0'>" ."\r\n".str_repeat('  ', ++$this->indent);
+        // Checkbox has its own representation
+        if ($field->subtype_in_form === 'select_checkbox') {
+            $html = "<div class='form-check mb-3'>" ."\r\n".str_repeat('  ', ++$this->indent);
             {
-                $html .= "<div class='form-check mt-2'>" ."\r\n".str_repeat('  ', ++$this->indent);
-                {
-                    $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
-                    $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label}{$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
-                }
-                $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
+                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
+                $html .= $description ."\r\n".str_repeat('  ', $this->indent);
+            }
+            $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+            return $html;
+        }
+        // Switch has its own representation
+        if ($field->subtype_in_form === 'select_switch') {
+            $html = "<div class='form-check form-switch mb-3'>" ."\r\n".str_repeat('  ', ++$this->indent);
+            {
+                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
+                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
+                $html .= $description ."\r\n".str_repeat('  ', $this->indent);
             }
             $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
             return $html;
         }
 
-        $html = "<div class='mb-0'>" ."\r\n".str_repeat('  ', ++$this->indent);
-        {
-            $html .= "<label class='form-label'>{$label}{$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
+        $placeholder = htmlspecialchars($field->placeholder ?? '');
+        $isFloating = $theme->floating_labels && 
+                      $field->subtype_in_form !== 'select_checkbox' && 
+                      $field->subtype_in_form !== 'select_switch' &&
+                      $field->subtype_in_form !== 'select_checkbox_list' &&
+                      $field->subtype_in_form !== 'select_radio';
+        // Placeholder is required in Floating labels
+        $placeholder = $isFloating ? ($placeholder ?: '...') : $placeholder; 
 
-            if ($field->type_in_form === 'select') {
-                $html .= "<select name='{$inputName}' class='form-select' {$requiredAttr}>" ."\r\n".str_repeat('  ', ++$this->indent);
-                {
-                    $html .= "<option value='' selected disabled>-- Selecciona --</option>" ."\r\n".str_repeat('  ', $this->indent);
-                    foreach ($field->value_options as $opt) {
-                        if ($opt->is_visible) {
-                            $html .= "<option value='" . htmlspecialchars($opt->value) . "'>" . htmlspecialchars($opt->text) . "</option>" ."\r\n".str_repeat('  ', $this->indent);
-                        }
+        $wrapperClass = $isFloating ? 'form-floating mb-3' : 'mb-3';
+        $html = "<div class='{$wrapperClass}'>" ."\r\n".str_repeat('  ', ++$this->indent);
+        {
+            $controlHtml = "";
+            if ($field->type_in_form == 'textarea') {
+                $controlHtml .= "<textarea name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' style='height: 100px' {$requiredAttr}></textarea>";
+            } else if ($field->type_in_form == 'select') {
+                // TODO: Review select sub_types 
+                // $field->subtype_in_form: 'select', 'select_multiple', 'select_checkbox_list', 'select_radio', 'select_checkbox', 'select_switch'
+                $controlHtml .= "<select name='{$inputName}' class='form-select' id='f_{$inputName}' {$requiredAttr}>";
+                $controlHtml .= "<option value='' selected></option>";
+                foreach ($field->value_options as $opt) {
+                    if ($opt->is_visible) {
+                        $val = htmlspecialchars($opt->value);
+                        $txt = htmlspecialchars($opt->text);
+                        $controlHtml .= "<option value='{$val}'>{$txt}</option>";
                     }
                 }
-                $html .= "</select>" ."\r\n".str_repeat('  ', --$this->indent);
-            } else if ($field->type_in_form === 'textarea') {
-                $html .= "<textarea name='{$inputName}' class='form-control' rows='3' {$requiredAttr}></textarea>" ."\r\n".str_repeat('  ', $this->indent);
+                $controlHtml .= "</select>";
             } else {
-                $type = $field->type_in_form ?: 'text';
-                $html .= "<input type='{$type}' name='{$inputName}' class='form-control' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
+                $controlType = 'text';
+                switch ($field->subtype_in_form) {
+                    case 'text_email': $controlType = 'email'; break;
+                    case 'text_tel': $controlType = 'tel'; break;
+                    case 'text_password': $controlType = 'password'; break;
+                    case 'number': $controlType = 'number'; break;
+                    case 'date': $controlType = 'date'; break;
+                    case 'date_time': $controlType = 'time'; break;
+                    case 'date_datetime': $controlType = 'datetime-local'; break;
+                }
+                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' {$requiredAttr}>";
             }
+
+            if ($isFloating) {
+                // Floating order: Input, Label
+                $html .= $controlHtml ."\r\n".str_repeat('  ', $this->indent);
+                $html .= "<label for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
+            } else {
+                // Default order: Label, Input
+                $html .= "<label for='f_{$inputName}' class='form-label'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
+                $html .= $controlHtml ."\r\n".str_repeat('  ', $this->indent);
+            }
+            $html .= $description ."\r\n".str_repeat('  ', $this->indent);
         }
         $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+
         return $html;
     }
 

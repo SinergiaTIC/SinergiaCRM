@@ -60,6 +60,17 @@
                         <input id="theme-text_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.text_color"
                                :value="formConfig.layout.theme.text_color" :style="`background-color: ${formConfig.layout.theme.text_color}`">
                     </div>
+                    <!-- floating_labels -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-floating_labels" x-model="formConfig.layout.theme.floating_labels">
+                            <label class="form-check-label fw-bold small" for="theme-floating_labels" x-text="utils.translate('LBL_THEME_FLOATING_LABELS')"></label>
+                        </div>
+                        <div class="form-text text-muted extra-small fst-italic">
+                            <i class="suitepicon suitepicon-action-info me-1"></i>
+                            <span x-text="utils.translate('LBL_THEME_FLOATING_LABELS_DESC')"></span>
+                        </div>
+                    </div>
                 </div>
             </details>
 
@@ -149,7 +160,7 @@
                             <span>1</span><span>2</span><span>3</span><span>4</span>
                         </div>
                     </div>
-
+                    <!-- Per row description -->
                     <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
                         <i class="suitepicon suitepicon-action-info me-1"></i>
                         <span x-text="utils.translate('LBL_THEME_PER_ROW_DESC')"></span>
@@ -164,14 +175,12 @@
                     <!-- closed_form_title -->
                     <div class="mb-3">
                         <label for="theme-closed_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TITLE')"></label>
-                        <textarea id="theme-closed_form_title" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_title" 
-                                  placeholder=".btn { background: red !important; }"></textarea>
+                        <textarea id="theme-closed_form_title" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_title"></textarea>
                     </div>
                     <!-- closed_form_text -->
                     <div class="mb-3">
                        <label for="theme-closed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TEXT')"></label>
-                        <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_text" 
-                                  placeholder="console.log('Form loaded');"></textarea>
+                        <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_text"></textarea>
                     </div>
 
                     <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
@@ -190,14 +199,20 @@
                         <label for="theme-custom_css" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_CSS')"></label>
                         <textarea id="theme-custom_css" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.custom_css" 
                                   placeholder=".btn { background: red !important; }"></textarea>
-                        <div class="form-text text-muted extra-small" x-text="utils.translate('LBL_THEME_CUSTOM_CSS_DESC')"></div>
+                        <div class="form-text text-muted extra-small fst-italic">
+                            <i class="suitepicon suitepicon-action-info me-1"></i>
+                            <span x-text="utils.translate('LBL_THEME_CUSTOM_CSS_DESC')"></span>
+                        </div>
                     </div>
                     <!-- custom_js -->
                     <div class="mb-3">
                        <label for="theme-custom_js" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_JS')"></label>
                         <textarea id="theme-custom_js" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.custom_js" 
                                   placeholder="console.log('Form loaded');"></textarea>
-                        <div class="form-text text-muted extra-small" x-text="utils.translate('LBL_THEME_CUSTOM_JS_DESC')"></div>
+                        <div class="form-text text-muted extra-small fst-italic">
+                            <i class="suitepicon suitepicon-action-info me-1"></i>
+                            <span x-text="utils.translate('LBL_THEME_CUSTOM_JS_DESC')"></span>
+                        </div>
                     </div>
                 </div>
             </details>

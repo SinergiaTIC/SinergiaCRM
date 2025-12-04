@@ -3818,6 +3818,7 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_checkbox_list'] = '☑️ Selección múltiple';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_radio'] = '🔘 Selección de opción';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_checkbox'] = '◻️ Casilla de selección';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_switch'] = '🎚️ Interruptor';
 
 // Tipo de valor de un campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['editable'] = 'Editable';

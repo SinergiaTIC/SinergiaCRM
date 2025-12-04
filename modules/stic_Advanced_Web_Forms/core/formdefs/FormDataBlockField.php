@@ -43,6 +43,7 @@ class FormDataBlockField {
     public string $name;                         // Nombre del campo
     public string $text_original;                // Texto original del campo
     public string $label;                        // Etiqueta que aparecerá con el campo
+    public string $description;                  // Descripción del campo
     public DataBlockFieldType $type_field;       // Tipo de campo: unlinked, form, hidden
     public bool $required_in_form;               // Indica si el campo será obligado en el formulario
     public string $type_in_form;                 // Tipo de editor en el formulario: stic_advanced_web_forms_field_in_form_type_list
@@ -68,6 +69,7 @@ class FormDataBlockField {
         $dto->name = $data['name'];
         $dto->text_original = $data['text_original'];
         $dto->label = $data['label'];
+        $dto->description = $data['description'];
         $dto->type_field = DataBlockFieldType::from($data['type_field']);
         $dto->required_in_form = $data['required_in_form'];
         $dto->type_in_form = $data['type_in_form'];

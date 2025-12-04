@@ -319,6 +319,7 @@
                   <button type="button" class="btn" @click="convertFieldToType('hidden')" x-text="utils.translate('LBL_FIELD_CONVERT_TO_FIELD_HIDDEN')"></button>
                 </template>
               </div>
+              <!-- Definition -->
               <div class="card">
                 <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION')"></div>
                 <div class="card-body">
@@ -579,6 +580,7 @@
                   </div>
                 </div>
               </div>
+              <!-- In form representation -->
               <template x-if="field && field.isFieldInForm()">
                 <div class="card">
                   <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION_FORM')"></div>
@@ -597,6 +599,11 @@
                                  x-model="field.placeholder" />
                         </div>
                       </template>
+                      <!-- Description -->
+                      <div class="col-3">
+                        <label for="modalField_Description" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_DESCRIPTION')"></label>
+                        <input id="modalField_Description" class="form-control" x-model="field.description" />
+                      </div>
                     </div>
                   </div>
                 </div>

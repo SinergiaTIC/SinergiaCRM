@@ -234,9 +234,7 @@ class stic_Advanced_Web_FormsController extends SugarController
 
         // Only 'public' is active
         $isActive = ($status === 'public');
-        $message = ($status === 'closed') 
-            ? translate('LBL_FORM_CLOSED_MESSAGE', 'stic_Advanced_Web_Forms') 
-            : translate('LBL_FORM_UNAVAILABLE_MESSAGE', 'stic_Advanced_Web_Forms');
+        $message = !$isActive ? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms') : '';
 
         echo json_encode(['active' => $isActive, 'message' => $message]);
         sugar_cleanup(true);

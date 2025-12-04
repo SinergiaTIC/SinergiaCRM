@@ -1527,10 +1527,10 @@ class WizardStep4 {
       debouncedPreview() {
         if (this.previewTimeout) clearTimeout(this.previewTimeout);
         
-        // Set next refresh in 500ms
+        // Set next refresh in 1000ms
         this.previewTimeout = setTimeout(() => {
             this.refreshPreview();
-        }, 500);
+        }, 1000);
       },
 
       async refreshPreview() {

@@ -24,6 +24,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+// Simple prevent spam: If Honey pot is setted: Is spam
+if (!empty($_REQUEST['awf_honey_pot'])) {
+    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": SPAM response received for form ID: " . ($_REQUEST['form_id'] ?? ''));
+    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": SPAM received REQUEST:" . print_r($_REQUEST, true));
+    die('Unauthorized, check log.');
+}
+
+
 // Prevent spam or unknown web form calls to avoid false error notifications. Just checking that main $_REQUEST items are present.
 if (
     !isset($_REQUEST['defParams'])
