@@ -145,6 +145,17 @@ if (empty($GLOBALS["SticTabStructure"])) {
                         ),
                     ),
                 ),
+                5 => array(
+                    'id' => 'LBL_GROUPTAB_FINANCIAL_MANAGEMENT',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Financial_Products',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Transactions',
+                        ),
+                    ),
+                ),
             ),
         ),
         4 => array(
