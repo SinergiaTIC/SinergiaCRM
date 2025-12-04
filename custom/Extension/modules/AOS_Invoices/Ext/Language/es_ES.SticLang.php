@@ -42,20 +42,26 @@ $mod_strings['LBL_INVOICE_DATE_ERROR'] = 'La fecha de facturación debe ser igua
 // Verifactu labels
 $mod_strings['LBL_VERIFACTU_HASH'] = 'Hash de la factura';
 $mod_strings['LBL_VERIFACTU_HASH_HELP'] = 'Huella digital única que identifica este registro de factura en el sistema Verifactu. Este valor se genera automáticamente y garantiza la integridad de la información.';
-$mod_strings['LBL_VERIFACTU_PREVIOUS_HASH'] = 'Hash anterior de la factura';
+$mod_strings['LBL_VERIFACTU_PREVIOUS_HASH'] = 'Hash de la factura anterior';
 $mod_strings['LBL_VERIFACTU_PREVIOUS_HASH_HELP'] = 'Huella digital de la factura anterior en la secuencia. Este campo asegura el encadenamiento continuo de todas las facturas en el sistema Verifactu.';
-$mod_strings['LBL_VERIFACTU_QR_DATA'] = 'Datos QR de la factura';
-$mod_strings['LBL_VERIFACTU_QR_DATA_HELP'] = 'Información codificada que se mostrará en el código QR de la factura. Este código permite la verificación rápida de la factura en el sistema de la AEAT.';
+$mod_strings['LBL_VERIFACTU_CHECK_URL'] = 'Url de verificación de la factura';
+$mod_strings['LBL_VERIFACTU_CHECK_URL_HELP'] = 'Url de verificación de la factura, que se incluye en las facturas como un código QR . Esta url permite la verificación rápida de la factura en el sistema de la AEAT.';
 $mod_strings['LBL_VERIFACTU_AEAT_STATUS'] = 'Estado AEAT de la factura';
 $mod_strings['LBL_VERIFACTU_AEAT_STATUS_HELP'] = 'Estado actual del envío de esta factura a la Agencia Tributaria. Los valores posibles son: Pendiente de envío (aún no se ha comunicado), Enviado y Aceptado (la AEAT ha confirmado la recepción), o Error de envío (se produjo un problema en la comunicación).';
 $mod_strings['LBL_VERIFACTU_AEAT_RESPONSE'] = 'Respuesta AEAT de la factura';
 $mod_strings['LBL_VERIFACTU_AEAT_RESPONSE_HELP'] = 'Respuesta completa recibida de la AEAT tras el envío de la factura. Si hubo algún error, aquí se detallará la información del mismo para su revisión y corrección.';
 $mod_strings['LBL_VERIFACTU_CANCEL_ID'] = 'ID de la factura rectificada';
 $mod_strings['LBL_VERIFACTU_CANCEL_ID_HELP'] = 'En caso de facturas rectificativas o de anulación, este campo almacena el identificador de la factura original que está siendo anulada o corregida.';
+$mod_strings['LBL_VERIFACTU_CSV'] = 'Codigo seguro de verificación';
+$mod_strings['LBL_VERIFACTU_CSV_HELP'] = 'Código devuelto por AEAT tras el envío de la factura. Este código único permite verificar la autenticidad de la factura en el sistema de la AEAT.';
 $mod_strings['LBL_STIC_INVOICE_TYPE'] = 'Tipo de factura';
 $mod_strings['LBL_STIC_INVOICE_TYPE_HELP'] = 'Clasificación de la factura según su naturaleza. Deben ser configuradas en el apartado de Administración -> Ajustes AOP.';
+$mod_strings['LBL_VERIFACTU_SUBMITTED_AT'] = 'Fecha de envío a Verifactu';
+$mod_strings['LBL_VERIFACTU_SUBMITTED_AT_HELP'] = 'Fecha y hora en que esta factura fue enviada al sistema Verifactu para su validación y registro ante la AEAT.';
+
 
 $mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE'] = 'Tipo de operación';
+$mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE_HELP'] = 'Tipo de operación fiscal asociada a esta factura, según la clasificación establecida por la AEAT. Este campo ayuda a identificar la naturaleza de la transacción para fines tributarios.';
 
 $mod_strings['LBL_SIGNER_SEND_TO_AEAT'] = 'Enviar a AEAT';
 $mod_strings['LBL_AEAT_STATUS_PANEL'] = 'Estado de la factura en la AEAT';

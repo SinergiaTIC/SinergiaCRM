@@ -116,10 +116,10 @@ $dictionary['AOS_Invoices']['fields']['verifactu_previous_hash_c'] = array(
     'popupHelp' => 'LBL_VERIFACTU_PREVIOUS_HASH_HELP',
 );
 
-$dictionary["AOS_Invoices"]["fields"]["verifactu_qr_data_c"] = array(
+$dictionary["AOS_Invoices"]["fields"]["verifactu_check_url_c"] = array(
     'required' => false,
-    'name' => 'verifactu_qr_data_c',
-    'vname' => 'LBL_VERIFACTU_QR_DATA',
+    'name' => 'verifactu_check_url_c',
+    'vname' => 'LBL_VERIFACTU_CHECK_URL',
     'type' => 'text',
     'massupdate' => 0,
     'no_default' => false,
@@ -139,7 +139,7 @@ $dictionary["AOS_Invoices"]["fields"]["verifactu_qr_data_c"] = array(
     'border' => '',
     'width' => '120',
     'height' => '',
-    'popupHelp' => 'LBL_VERIFACTU_QR_DATA_HELP',
+    'popupHelp' => 'LBL_VERIFACTU_CHECK_URL_HELP',
 );
 
 $dictionary["AOS_Invoices"]["fields"]["verifactu_aeat_status_c"] = array(

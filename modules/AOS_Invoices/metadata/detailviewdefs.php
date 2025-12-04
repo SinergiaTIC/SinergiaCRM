@@ -445,8 +445,8 @@ array(
                         'label' => 'LBL_VERIFACTU_AEAT_STATUS',
                     ),
                     1 => array(
-                        'name' => 'verifactu_qr_data_c',
-                        'label' => 'LBL_VERIFACTU_QR_DATA',
+                        'name' => 'verifactu_check_url_c',
+                        'label' => 'LBL_VERIFACTU_CHECK_URL',
                     ),
                 ),
                 1 => array(
@@ -467,6 +467,16 @@ array(
                     1 => array(
                         'name' => 'verifactu_previous_hash_c',
                         'label' => 'LBL_VERIFACTU_PREVIOUS_HASH',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'verifactu_csv_c',
+                        'label' => 'LBL_VERIFACTU_CSV',
+                    ),
+                    1 => array(
+                        'name' => 'verifactu_submitted_at_c',
+                        'label' => 'LBL_VERIFACTU_SUBMITTED_AT',
                     ),
                 ),
             ),

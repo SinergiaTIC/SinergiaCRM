@@ -67,9 +67,9 @@ class templateParser
             if (isset($field_def['name']) && $field_def['name'] != '') {
                 $fieldName = $field_def['name'];
 
-                // STIC CUSTOM - JCH - 20251124 - Exception for verifactu_qr_data_c field to show QR in PDF
+                // STIC CUSTOM - JCH - 20251124 - Exception for verifactu_check_url_c field to show as QR in PDF
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
-                if ($fieldName === 'verifactu_qr_data_c' && !empty($focus->$fieldName)) {
+                if ($fieldName === 'verifactu_check_url_c' && !empty($focus->$fieldName)) {
                     // Generate QR code image using TCPDF library
                     require_once 'vendor/tecnickcom/tcpdf/tcpdf_barcodes_2d.php';
                     

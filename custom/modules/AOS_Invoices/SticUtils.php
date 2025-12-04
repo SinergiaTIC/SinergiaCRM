@@ -668,7 +668,7 @@ class AOS_InvoicesUtils
                     // Generate and save QR code URL only when invoice is accepted
                     if (isset($response->record)) {
                         $qrUrl = self::generateQrCodeUrl($response->record, false, true);
-                        $invoiceBean->verifactu_qr_data_c = $qrUrl;
+                        $invoiceBean->verifactu_check_url_c = $qrUrl;
                         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': QR URL generated: ' . $qrUrl);
                     }
                 } else {
