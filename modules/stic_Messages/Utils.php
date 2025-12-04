@@ -178,11 +178,13 @@ class stic_MessagesUtils {
         require_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
+        $active = 'false';
         if (!($currentTabs['stic_Messages'] ?? false)){
-            $active = 'false';
         }
         else {
-            $active = 'true';
+            if (ACLController::checkAccess('stic_Messages', 'edit', true)) {
+                $active = 'true';
+            }
         }
 
         $messagesLimit = stic_SettingsUtils::getSetting('MESSAGES_LIMIT');

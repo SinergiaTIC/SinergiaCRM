@@ -73,16 +73,19 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
 
     public function display($defines, $additionalFormFields = null, $nonbutton = false)
     {
-        require_once 'modules/MySettings/TabController.php';
-        $controller = new TabController();
-        $currentTabs = $controller->get_system_tabs();
-
-        if (!isset($currentTabs['stic_Messages']) || !$currentTabs['stic_Messages']){
-            return '';
+        if (ACLController::checkAccess('stic_Messages', 'edit', true)) {
+            require_once 'modules/MySettings/TabController.php';
+            $controller = new TabController();
+            $currentTabs = $controller->get_system_tabs();
+    
+            if (!isset($currentTabs['stic_Messages']) || !$currentTabs['stic_Messages']){
+                return '';
+            }
+    
+            $button = $this->_get_form($defines, $additionalFormFields);
+            
+            return $button;
         }
-
-        $button = $this->_get_form($defines, $additionalFormFields);
-        
-        return $button;
+        return '';
     }
 }

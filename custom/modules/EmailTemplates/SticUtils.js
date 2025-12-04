@@ -32,13 +32,13 @@ switch (viewType()) {
     
         $(document).ready(function() {
             function toggleHtmlVisibility() {
-                var selectedValue = $("[name=type");
+                var selectedValue = $("[name=type]");
                 
                 if (selectedValue.length === 2) {
-                  selectedValue = $("[name=type").eq(1).val();
+                  selectedValue = $("[name=type]").eq(1).val();
                 }
                 else {
-                  selectedValue = $("[name=type").val();
+                  selectedValue = $("[name=type]").val();
                 }
                 if (selectedValue === 'sms') {
                     // $('#myDiv').hide();
@@ -59,6 +59,10 @@ switch (viewType()) {
                     $("#toggle_textonly").attr("disabled", false);
                     $("#text_only").val(0);
                     toggle_text_only();
+                    $(".tox.tox-tinymce").show();
+                    const observer = new MutationObserver((mutationsList, observer) => {
+                      $(".tox.tox-tinymce").show();
+                    });
                 }
                 
 
@@ -68,7 +72,7 @@ switch (viewType()) {
             toggleHtmlVisibility();
 
             // Call the function when the select value changes
-            $("[name=type").change(toggleHtmlVisibility);
+            $("[name=type]").change(toggleHtmlVisibility);
         });
   
       break;
