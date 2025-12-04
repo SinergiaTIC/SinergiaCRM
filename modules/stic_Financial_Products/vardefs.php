@@ -212,6 +212,7 @@ $dictionary['stic_Financial_Products'] = array(
     'merge_filter' => 'disabled',
     'len' => '255',
     'size' => '20',
+    'popupHelp' => 'LBL_ENTITY_INFO',
   ),
   'holders' => 
   array (
@@ -330,3 +331,4 @@ $dictionary['stic_Financial_Products']['fields']['name']['inline_edit'] = false;
 $dictionary['stic_Financial_Products']['fields']['balance_error']['inline_edit'] = false; // Balance error can not edit inline in this module
 $dictionary['stic_Financial_Products']['fields']['initial_balance']['inline_edit'] = false; // Initial balance can not edit inline in this module
 $dictionary['stic_Financial_Products']['fields']['current_balance']['inline_edit'] = false; // Current balance can not edit inline in this module
+$dictionary['stic_Financial_Products']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

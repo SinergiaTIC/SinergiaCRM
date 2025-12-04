@@ -75,6 +75,7 @@ $mod_strings = array (
   'LBL_CURRENT_BALANCE_INFO' => 'The balance of the financial product is automatically updated when there are changes to the related transactions, either because new ones are added, because they are deleted or because their amount changes.',
   'LBL_BALANCE_ERROR_INFO' => 'This field indicates whether the balance obtained from the import does not coincide with the sum of the initial balance plus all linked transactions.',
   'LBL_WARDED_PERSON_INFO' => 'Person for whom the management of bank accounts and financial transactions is carried out.',
+  'LBL_ENTITY_INFO' => 'The financial entity will be auto-completed based on the entered IBAN. If the IBAN is not required, it can be entered manually.',
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transactions',
   'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Assisted person',
   'LBL_INVALID_IBAN_ERROR' => 'The IBAN entered is invalid.',

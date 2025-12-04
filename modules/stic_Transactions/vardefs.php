@@ -307,3 +307,4 @@ VardefManager::createVardef('stic_Transactions', 'stic_Transactions', array('bas
 $dictionary['stic_Transactions']['fields']['document_name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Transactions']['fields']['document_name']['importable'] = true; // Name is importable but not required in this module
 $dictionary['stic_Transactions']['fields']['document_name']['inline_edit'] = false; // Name can not edit inline in this module
+$dictionary['stic_Transactions']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

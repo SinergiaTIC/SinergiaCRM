@@ -91,7 +91,8 @@ array (
           ),
           1 => 
           array (
-            'name' => 'stic_financial_products_contacts_name',
+            'name' => 'start_date',
+            'label' => 'LBL_START_DATE',
           ),
         ),
         2 => 
@@ -104,11 +105,23 @@ array (
           ),
           1 => 
           array (
-            'name' => 'start_date',
-            'label' => 'LBL_START_DATE',
+            'name' => 'iban',
+            'label' => 'LBL_IBAN',
           ),
         ),
         3 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_financial_products_contacts_name',
+          ),
+          1 => 
+          array (
+            'name' => 'entity',
+            'label' => 'LBL_ENTITY',
+          ),
+        ),
+        4 => 
         array (
           0 => 
           array (
@@ -118,7 +131,7 @@ array (
           ),
           1 => '',
         ),
-        4 => 
+        5 => 
         array (
           0 => 
           array (
@@ -131,25 +144,12 @@ array (
             'label' => 'LBL_CURRENT_BALANCE',
           ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (
             'name' => 'holders',
             'label' => 'LBL_HOLDERS',
-          ),
-        ),
-        6 => 
-        array (
-          0 => 
-          array (
-            'name' => 'entity',
-            'label' => 'LBL_ENTITY',
-          ),
-          1 => 
-          array (
-            'name' => 'iban',
-            'label' => 'LBL_IBAN',
           ),
         ),
         7 => 
