@@ -49,4 +49,30 @@ class TemplateSectionLine extends TemplateSectionLine_sugar
     {
         parent::__construct();
     }
+
+    // STIC Custom 20250807 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+    // Assign the path of the uploaded image to the field that will be used to retrieve the image and display it in Mozaik
+    /**
+     * Override bean's save function to calculate the valor of the some fields
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = true)
+    {
+
+        // Save the HTML code of the description field in a wysiwyg field (htmlcode_c) so it can be displayed correctly in the detail view
+        // The description field, being a text field, the HTML code is sanitized and does not display correctly.
+        if (isset($this->description) && !empty($this->description)) {
+            $this->htmlcode_c = $this->description;
+        }
+
+        // Assign the path of the uploaded image to the field that will be used to retrieve the image and display it in Mozaik
+        if (isset($this->thumbnail_image_c) && !empty($this->thumbnail_image_c)) {
+            $this->thumbnail = "upload/{$this->id}_thumbnail_image_c";
+        }
+
+        parent::save();
+    }
+    // END STIC 
 }
