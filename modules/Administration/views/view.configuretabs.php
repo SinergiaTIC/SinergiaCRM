@@ -121,7 +121,7 @@ class ViewConfiguretabs extends SugarView
             }
             $key = strtolower($key);
             // STIC CUSTOM - JCH - 20251204 - Skip modules whithout labels
-            // http://
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/899
             // Skip modules that don't have a valid label in moduleList
             if (!isset($mod_list_strings_key_to_lower[$key])) {
                 continue;
@@ -138,7 +138,7 @@ class ViewConfiguretabs extends SugarView
             }
             $key = strtolower($key);
             // STIC CUSTOM - JCH - 20251204 - Skip modules whithout labels
-            // http://
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/899
             // Skip modules that don't have a valid label in moduleList
             if (!isset($mod_list_strings_key_to_lower[$key])) {
                 continue;
