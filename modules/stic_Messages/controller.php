@@ -150,7 +150,7 @@ class stic_MessagesController extends SugarController
         $where = '';
         if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
             require_once 'include/export_utils.php';
-            $retArray = generateSearchWhere($moduleTable, $_REQUEST['current_query_by_page']);
+            $retArray = generateSearchWhere('stic_Messages', $_REQUEST['current_query_by_page']);
             $where = '';
             if (!empty($retArray['where'])) {
                 $where = " AND " . $retArray['where'];
