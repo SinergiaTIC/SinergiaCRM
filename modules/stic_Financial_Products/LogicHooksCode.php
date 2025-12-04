@@ -121,6 +121,8 @@ class stic_Financial_ProductsLogicHooks {
 
         // Check if product has no start_date and if there are linked transactions
         if (empty($bean->start_date) || $bean->start_date === '0000-00-00' || $bean->start_date === null) {
+            global $db;
+            
             // Get the oldest transaction linked to this product
             $oldestQuery = "
                 SELECT t.id, t.transaction_date, t.amount
