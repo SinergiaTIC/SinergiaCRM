@@ -44,39 +44,18 @@ switch (viewType()) {
 }
 
 /* VALIDATION CALLBACKS */
-// Function to validate IBAN format when is not empty
-function validateIBANFormat(ibanValue) {
-    // Make a synchronous AJAX request to validate the IBAN
-    var res;
-    $.ajax({
-        // Call the checkIBAN action in the controller
-        url: "index.php?module=stic_Financial_Products&action=checkIBAN&iban=" + encodeURIComponent(ibanValue),
-        type: "POST",
-        async: false
-    })
-        // If the AJAX request succeeds, store the response
-        .done(function (data) {
-            res = data;
-        })
-        // If the AJAX request fails, set res to false
-        .fail(function (data) {
-            res = false;
-        });
-
-    // Parse the JSON response and return the boolean result
-    try {
-        // Convert the JSON string response ("true" or "false") to a JavaScript boolean
-        return JSON.parse(res);
-    } catch (e) {
-        // If JSON parsing fails, return false (invalid IBAN)
-        return false;
+// Check IBAN only when it has a value
+function checkProductIBAN() {
+    var iban = getFieldValue("iban");
+    
+    // If IBAN has value, validate it
+    if (iban && iban !== "") {
+        var res = checkIBAN(iban);
+        return res;
     }
-}
-
-// Check if IBAN is required based on type
-function isIBANRequired() {
-    var productType = $("#type").val();
-    return productType === "current_account" || productType === "savings_account";
+    
+    // If IBAN is empty, it's valid (not required)
+    return "true";
 }
 
 // Register IBAN validation
@@ -107,19 +86,10 @@ $(document).ready(function() {
             }
         }
         
-        // Check if IBAN is required for this product type
-        var ibanRequired = isIBANRequired();
+        // Validate using checkProductIBAN
+        var isValid = JSON.parse(checkProductIBAN());
         
-        // If is required but empty
-        if (ibanRequired && (!cleanedValue || cleanedValue === "")) {
-            if (isInlineEdit && $errorContainer) {
-                $field.addClass("error");
-                $errorContainer.text(SUGAR.language.get(module, "LBL_IBAN_REQUIRED")).show();
-            }
-        } 
-
-        // If has value but invalid format
-        else if (cleanedValue && cleanedValue !== "" && !validateIBANFormat(cleanedValue)) {
+        if (!isValid) {
             if (isInlineEdit && $errorContainer) {
                 $field.addClass("error");
                 $errorContainer.text(SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR")).show();
@@ -153,7 +123,7 @@ $(document).ready(function() {
         }
     });
     
-    // Also register callback for normal edit form if available
+    // Register callback for normal edit form
     if (typeof addToValidateCallback !== "undefined" && typeof getFormName !== "undefined") {
         try {
             var formName = getFormName();
@@ -165,37 +135,7 @@ $(document).ready(function() {
                     false, // not required by default
                     SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR"),
                     function() {
-                        var iban = getFieldValue("iban");
-                        var ibanRequired = isIBANRequired();
-                        
-                        // If it's required but empty, mark with special flag to show required message
-                        if (ibanRequired && (!iban || iban === "")) {
-                            // Change the error message for required field
-                            var validateFields = validate[getFormName()];
-                            for (i = 0; i < validateFields.length; i++) {
-                                if (validateFields[i][0] == "iban") {
-                                    validateFields[i][3] = SUGAR.language.get(module, "LBL_IBAN_REQUIRED");
-                                    break;
-                                }
-                            }
-                            return false;
-                        }
-                        
-                        // If it's not empty, validate format
-                        if (iban && iban !== "") {
-                            // Change the error message to invalid format
-                            var validateFields = validate[getFormName()];
-                            for (i = 0; i < validateFields.length; i++) {
-                                if (validateFields[i][0] == "iban") {
-                                    validateFields[i][3] = SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR");
-                                    break;
-                                }
-                            }
-                            return validateIBANFormat(iban);
-                        }
-                        
-                        // If it's not required and empty
-                        return true;
+                        return JSON.parse(checkProductIBAN());
                     }
                 );
             }
