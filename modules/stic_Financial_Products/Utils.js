@@ -47,6 +47,13 @@ switch (viewType()) {
 // Check IBAN only when it has a value
 function checkProductIBAN() {
     var iban = getFieldValue("iban");
+    var type = getFieldValue("type", "stic_financial_products_types_list") || getFieldValue("type");
+    var isRequired = type == "current_account" || type == "savings_account";
+    
+    // If IBAN is empty and required, return false
+    if (isRequired && (!iban || iban === "")) {
+        return "false";
+    }
     
     // If IBAN has value, validate it
     if (iban && iban !== "") {
@@ -54,7 +61,7 @@ function checkProductIBAN() {
         return res;
     }
     
-    // If IBAN is empty, it's valid (not required)
+    // If IBAN is empty and not required, it's valid
     return "true";
 }
 
@@ -92,7 +99,11 @@ $(document).ready(function() {
         if (!isValid) {
             if (isInlineEdit && $errorContainer) {
                 $field.addClass("error");
-                $errorContainer.text(SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR")).show();
+                // Determine which message to show based on field content
+                var errorMsg = (!ibanValue || ibanValue.trim() === "")
+                    ? SUGAR.language.get(module, "LBL_IBAN_REQUIRED")
+                    : SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR");
+                $errorContainer.text(errorMsg).show();
             }
         } 
         // Valid or not required and empty
@@ -114,8 +125,16 @@ $(document).ready(function() {
         }, 10);
     });
     
-    // Handle type field changes to revalidate IBAN
+    // Handle type field changes to revalidate IBAN and toggle required mark
     $("form").on("change", "#type", function() {
+        try {
+            var selectedType = getFieldValue("type", "stic_financial_products_types_list") || getFieldValue("type");
+            var needRequired = selectedType == "current_account" || selectedType == "savings_account";
+            // Re-register validation with correct required flag
+            registerIbanValidation(needRequired);
+        } catch (e) {
+            // ignore
+        }
         // Revalidate IBAN field when type changes
         var $ibanField = $("#iban", "form");
         if ($ibanField.length) {
@@ -124,23 +143,71 @@ $(document).ready(function() {
     });
     
     // Register callback for normal edit form
-    if (typeof addToValidateCallback !== "undefined" && typeof getFormName !== "undefined") {
+    // The IBAN field is required only when type == 'current_account' or 'savings_account'.
+    function registerIbanValidation(isRequired) {
+        if (typeof addToValidateCallback === "undefined" || typeof getFormName === "undefined") return;
         try {
             var formName = getFormName();
-            if (formName) {
-                addToValidateCallback(
-                    formName,
-                    "iban",
-                    "text",
-                    false, // not required by default
-                    SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR"),
-                    function() {
-                        return JSON.parse(checkProductIBAN());
+            if (!formName) return;
+
+            // Always remove previous validation for iban to avoid duplicates
+            try {
+                removeFromValidate(formName, "iban");
+            } catch (er) {}
+
+            // Determine which message to use based on field state
+            var errorMessage = isRequired 
+                ? SUGAR.language.get(module, "LBL_IBAN_REQUIRED")
+                : SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR");
+
+            // Register validation with callback
+            addToValidateCallback(
+                formName,
+                "iban",
+                "text",
+                !!isRequired,
+                errorMessage,
+                function() {
+                    var iban = getFieldValue("iban");
+                    var result = JSON.parse(checkProductIBAN());
+                    
+                    // Update error message dynamically based on whether field is empty or invalid
+                    if (!result) {
+                        var formName = getFormName();
+                        if (formName && validate[formName]) {
+                            for (var i = 0; i < validate[formName].length; i++) {
+                                if (validate[formName][i][nameIndex] == "iban") {
+                                    validate[formName][i][msgIndex] = (!iban || iban === "")
+                                        ? SUGAR.language.get(module, "LBL_IBAN_REQUIRED")
+                                        : SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR");
+                                    break;
+                                }
+                            }
+                        }
                     }
-                );
+                    
+                    return result;
+                }
+            );
+
+            // Add or remove the required mark
+            if (isRequired) {
+                addRequiredMark("iban");
+            } else {
+                removeRequiredMark("iban");
             }
         } catch (e) {
             console.log("IBAN validation callback not registered: " + e.message);
         }
+    }
+
+    // Decide initial required status based on current "type" value
+    try {
+        var currentType = getFieldValue("type", "stic_financial_products_types_list") || getFieldValue("type");
+        var needRequired = currentType == "current_account" || currentType == "savings_account";
+        registerIbanValidation(needRequired);
+    } catch (e) {
+        // fallback: register not required
+        registerIbanValidation(false);
     }
 });
