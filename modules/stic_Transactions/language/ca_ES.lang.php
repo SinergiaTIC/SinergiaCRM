@@ -78,6 +78,7 @@ $mod_strings = array (
   'LBL_CATEGORY_INFO' => 'Per poder indicar una categoria cal establir primer el tipus de transacció.',
   'LBL_SUBCATEGORY_INFO' => 'Per poder indicar una subcategoria cal establir primer la categoria.',
   'LBL_TRANSACTION_HASH_INFO' => "L'identificador únic de la transacció evita la importació de registres duplicats.",
+  'LBL_INVALID_IBAN_ERROR' => "L'IBAN introduït no és vàlid.",
 
   // Norma 43
   'LBL_NORMA_43' => 'Importa un fitxer Norma 43',

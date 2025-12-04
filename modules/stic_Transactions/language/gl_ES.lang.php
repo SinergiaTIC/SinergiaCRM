@@ -79,6 +79,7 @@ $mod_strings = array (
   'LBL_CATEGORY_INFO' => 'Para poder indicar una categoría es necesario establecer primero el tipo de transacción.', 
   'LBL_SUBCATEGORY_INFO' => 'Para poder indicar una subcategoría es necesario establecer primero la categoría.', 
   'LBL_TRANSACTION_HASH_INFO' => 'El identificador único de la transacción evita la importación de registros duplicados.',
+  'LBL_INVALID_IBAN_ERROR' => 'El IBAN introducido no es válido.',
   
   // Norma 43
   'LBL_NORMA_43' => 'Importar fichero Norma 43',

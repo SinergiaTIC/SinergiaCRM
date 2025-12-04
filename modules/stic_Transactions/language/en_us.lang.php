@@ -79,6 +79,7 @@ $mod_strings = array (
   'LBL_CATEGORY_INFO' => 'To be able to indicate a category, you must first set the transaction type.',
   'LBL_SUBCATEGORY_INFO' => 'To be able to indicate a subcategory, you must first set the category.',
   'LBL_TRANSACTION_HASH_INFO' => 'The unique transaction identifier prevents the import of duplicate records.',
+  'LBL_INVALID_IBAN_ERROR' => 'The IBAN entered is invalid.',
 
   // Norma 43
   'LBL_NORMA_43' => 'Import a Norma 43 file',

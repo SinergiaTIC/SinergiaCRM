@@ -49,7 +49,7 @@ class stic_TransactionsViewList extends ViewList
 
         SticViews::display($this);
         
-        // echo getVersionedScript("modules/stic_Transactions/Utils.js");
+        echo getVersionedScript("modules/stic_Transactions/Utils.js");
 
         // Write here you custom code
     }

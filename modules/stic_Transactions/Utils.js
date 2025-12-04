@@ -111,3 +111,96 @@ switch (viewType()) {
   default:
     break;
 }
+
+/* VALIDATION CALLBACKS */
+// Check destination_account IBAN only when it has a value
+function checkDestinationAccountIBAN() {
+    var iban = getFieldValue("destination_account");
+    
+    // If IBAN has value, validate it
+    if (iban && iban !== "") {
+        var res = checkIBAN(iban);
+        return res;
+    }
+    
+    // If IBAN is empty, it's valid (not required)
+    return "true";
+}
+
+// Register destination_account IBAN validation
+$(document).ready(function() {    
+    // Capture blur event on all destination_account inputs
+    $(document).on("blur", "input[data-fieldname='destination_account'], input[name*='destination_account']", function(e) {
+        var $field = $(this);
+        var ibanValue = $field.val();
+        
+        // Remove spaces and strange characters
+        var cleanedValue = ibanValue.replace(/[^0-9a-zA-Z]/g, "").toUpperCase();
+        $field.val(cleanedValue);
+        
+        // Check if this is inline editing
+        var isInlineEdit = $field.closest(".editable-cell, .inline-edit").length > 0;
+        
+        // Get or create error message container for inline editing
+        var $errorContainer = null;
+        if (isInlineEdit) {
+            var $container = $field.closest(".field, .editable-cell, .inline-edit, [data-fieldname='destination_account']");
+            $errorContainer = $container.find(".inline-destination-account-error");
+            if (!$errorContainer.length) {
+                $errorContainer = $("<div class='inline-destination-account-error' style='position: absolute; color: red; font-size: 0.85em; margin-top: 2px; white-space: nowrap; z-index: 1000;'></div>");
+                $container.append($errorContainer);
+                if ($container.css("position") === "static") {
+                    $container.css("position", "relative");
+                }
+            }
+        }
+        
+        // Validate using checkDestinationAccountIBAN
+        var isValid = JSON.parse(checkDestinationAccountIBAN());
+        
+        if (!isValid) {
+            if (isInlineEdit && $errorContainer) {
+                $field.addClass("error");
+                $errorContainer.text(SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR")).show();
+            }
+        } 
+        // Valid or empty
+        else {
+            $field.removeClass("error");
+            if (isInlineEdit && $errorContainer) {
+                $errorContainer.hide().text("");
+            }
+        }
+    });
+    
+    // Clean destination_account on paste
+    $(document).on("paste", "input[data-fieldname='destination_account'], input[name*='destination_account']", function(e) {
+        var $field = $(this);
+        setTimeout(function() {
+            var ibanValue = $field.val();
+            var cleanedValue = ibanValue.replace(/[^0-9a-zA-Z]/g, "").toUpperCase();
+            $field.val(cleanedValue);
+        }, 10);
+    });
+    
+    // Register callback for normal edit form (not required, only validation when filled)
+    if (typeof addToValidateCallback !== "undefined" && typeof getFormName !== "undefined") {
+        try {
+            var formName = getFormName();
+            if (formName) {
+                addToValidateCallback(
+                    formName,
+                    "destination_account",
+                    "text",
+                    false, // Not required
+                    SUGAR.language.get(module, "LBL_INVALID_IBAN_ERROR"),
+                    function() {
+                        return JSON.parse(checkDestinationAccountIBAN());
+                    }
+                );
+            }
+        } catch (e) {
+            console.log("destination_account IBAN validation callback not registered: " + e.message);
+        }
+    }
+});
