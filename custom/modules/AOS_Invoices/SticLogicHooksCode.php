@@ -28,6 +28,23 @@ class AOS_InvoicesHook
     {
         global $sugar_config;
 
+        // If duplicating a record, set status to 'draft' and clear Verifactu fields
+        if (
+            (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') // for mass duplicate
+            || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true') // for single duplicate
+            ) {
+            $bean->status = 'draft';
+            // Clear all Verifactu-related fields
+            $bean->verifactu_hash_c = null;
+            $bean->verifactu_previous_hash_c = null;
+            $bean->verifactu_check_url_c = null;
+            $bean->verifactu_aeat_status_c = 'pending';
+            $bean->verifactu_aeat_response_c = null;
+            $bean->verifactu_cancel_id_c = null;
+            $bean->verifactu_csv_c = null;
+            $bean->verifactu_submitted_at_c = null;
+        }
+
         // If the invoice type field is empty, set a default value (first series)
         if (empty($bean->stic_invoice_type_c)) {
             // Get first series from config
