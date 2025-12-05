@@ -142,11 +142,14 @@ $mod_strings['LBL_STIC_CERT_EXTRACTED_INFO'] = 'Estos son los datos que se utili
 
 // AOS Administration - Invoice Series
 $mod_strings['LBL_AOS_INVOICE_SERIES_TITLE'] = 'Series de facturación';
-$mod_strings['LBL_AOS_INVOICE_SERIES_DESCRIPTION'] = 'Configure las diferentes series de facturas que desea utilizar. El <strong>nombre</strong> identifica la serie (ej: "Ordinaria", "Rectificativa") y debe ser único. En el <strong>formato</strong> puede usar patrones como YYYY (año 4 dígitos), YY (año 2 dígitos), y 0000 para el número secuencial.';
+$mod_strings['LBL_AOS_INVOICE_SERIES_DESCRIPTION'] = 'Configure las diferentes series de facturas que desea utilizar. El <strong>nombre</strong> identifica la serie (ej: "Ordinaria", "Rectificativa") y debe ser único. En el <strong>formato</strong> puede usar patrones como YYYY (año 4 dígitos), YY (año 2 dígitos), y 0000 para el número secuencial. <strong>Importante:</strong> Debe marcar exactamente una serie como <strong>Rectificativa</strong>, que será la utilizada para facturas rectificativas.';
 $mod_strings['LBL_AOS_INVOICE_SERIES_NAME'] = 'Nombre de Serie';
 $mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT'] = 'Formato de Serie (ej: YYYY-0000)';
 $mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL'] = 'Número Inicial';
 $mod_strings['LBL_AOS_INVOICE_SERIES_EXAMPLE'] = 'Ejemplo';
+$mod_strings['LBL_AOS_INVOICE_SERIES_RECTIFIED'] = 'Rectificativa';
+$mod_strings['LBL_AOS_INVOICE_SERIES_RECTIFIED_HELP'] = 'Marque esta opción si esta serie se utilizará para facturas rectificativas. Solo una serie puede ser rectificativa.';
+$mod_strings['LBL_AOS_INVOICE_SERIES_RECTIFIED_REQUIRED'] = 'Debe marcar exactamente una serie como rectificativa. Por favor, seleccione cuál será la serie de facturas rectificativas.';
 $mod_strings['LBL_AOS_INVOICE_SERIES_ACTION'] = 'Acción';
 $mod_strings['LBL_AOS_INVOICE_SERIES_ADD'] = 'Añadir serie de facturación';
 $mod_strings['LBL_AOS_INVOICE_SERIES_REMOVE'] = 'Eliminar serie';

@@ -94,6 +94,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         // Build new series array from scratch
         $invoiceSeries = array();
         $validationErrors = array();
+        $rectifiedSeriesIndex = isset($_POST['invoice_series_rectified']) ? $_POST['invoice_series_rectified'] : null;
         
         foreach ($_POST['invoice_series_format'] as $index => $format) {
             $format = trim($format);
@@ -103,6 +104,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             $name = isset($_POST['invoice_series_name'][$index])
                   ? trim(substr($_POST['invoice_series_name'][$index], 0, 50))
                   : '';
+            $isRectified = ($rectifiedSeriesIndex !== null && $rectifiedSeriesIndex == $index);
             
             // Validate format: only letters, 0, and symbols (no digits 1-9)
             if (!empty($format) && preg_match('/[1-9]/', $format)) {
@@ -120,7 +122,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             if (!empty($format) && !empty($name)) {
                 $invoiceSeries[$name] = array(
                     'format' => $format,
-                    'initialNumber' => $initialNumber
+                    'initialNumber' => $initialNumber,
+                    'isRectified' => $isRectified
                 );
             }
         }
@@ -150,8 +153,10 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         foreach ($invoiceSeries as $seriesName => $seriesData) {
             $safeName = addslashes($seriesName);
             $safeFormat = addslashes($seriesData['format']);
+            $isRectified = $seriesData['isRectified'] ? 'true' : 'false';
             $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['format'] = '{$safeFormat}';\n";
             $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['initialNumber'] = {$seriesData['initialNumber']};\n";
+            $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['isRectified'] = {$isRectified};\n";
         }
         
         // Insert new lines before the closing /***CONFIGURATOR***/

@@ -37,10 +37,11 @@
                 <table id="invoice_series_table" width="100%" border="0" cellspacing="1" cellpadding="1" style="margin-top: 10px;">
                     <thead>
                         <tr style="background-color: #f0f0f0;">
-                            <th width="20%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_NAME}</th>
-                            <th width="30%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_FORMAT}</th>
-                            <th width="15%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_INITIAL}</th>
-                            <th width="25%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_EXAMPLE}</th>
+                            <th width="18%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_NAME}</th>
+                            <th width="10%" style="padding: 3px; text-align: center;">{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED}</th>
+                            <th width="27%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_FORMAT}</th>
+                            <th width="13%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_INITIAL}</th>
+                            <th width="22%" style="padding: 3px; text-align: left;">{$MOD.LBL_AOS_INVOICE_SERIES_EXAMPLE}</th>
                             <th width="80px" style="padding: 3px; text-align: center;">{$MOD.LBL_AOS_INVOICE_SERIES_ACTION}</th>
                         </tr>
                     </thead>
@@ -65,7 +66,7 @@
     
     {if isset($config.aos.invoices.series) && is_array($config.aos.invoices.series)}
         {foreach from=$config.aos.invoices.series key=name item=seriesData}
-    existingSeries.push({ldelim} format: "{$seriesData.format}", initialNumber: "{$seriesData.initialNumber}", name: "{$name|escape:'javascript'}" {rdelim});
+    existingSeries.push({ldelim} format: "{$seriesData.format}", initialNumber: "{$seriesData.initialNumber}", name: "{$name|escape:'javascript'}", isRectified: {if isset($seriesData.isRectified) && $seriesData.isRectified}true{else}false{/if} {rdelim});
         {/foreach}
     {/if}
     
@@ -78,10 +79,11 @@
     var MOD_LBL_AOS_INVOICE_SERIES_REMOVE = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE}";
     
     {literal}
-    function addInvoiceSeriesLine(format, initialNumber, name) {
+    function addInvoiceSeriesLine(format, initialNumber, name, isRectified) {
         format = format || '';
         initialNumber = initialNumber || '1';
         name = name || '';
+        isRectified = isRectified || false;
         
         var lineNum = invoiceSeriesLineNumber++;
         var tbody = document.getElementById('invoice_series_lines');
@@ -102,10 +104,21 @@
                          '<input type="hidden" name="invoice_series_original_name[' + lineNum + ']" ' +
                          'value="' + name + '">';
         
-        // Format cell
+        // Rectified series radio button cell
         var cell2 = row.insertCell(1);
+        cell2.style.textAlign = 'center';
         cell2.style.padding = '2px';
-        cell2.innerHTML = '<input type="text" name="invoice_series_format[' + lineNum + ']" ' +
+        var checkedAttr = isRectified ? 'checked' : '';
+        cell2.innerHTML = '<input type="radio" name="invoice_series_rectified" ' +
+                         'id="invoice_series_rectified_' + lineNum + '" ' +
+                         'value="' + lineNum + '" ' +
+                         checkedAttr + ' ' +
+                         'title="{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_HELP}{literal}">';
+        
+        // Format cell
+        var cell3 = row.insertCell(2);
+        cell3.style.padding = '2px';
+        cell3.innerHTML = '<input type="text" name="invoice_series_format[' + lineNum + ']" ' +
                          'id="invoice_series_format_' + lineNum + '" ' +
                          'value="' + format + '" ' +
                          'style="width: 95%;" ' +
@@ -116,9 +129,9 @@
                          'oninput="validateSeriesFormat(this)">';
         
         // Initial number cell
-        var cell3 = row.insertCell(2);
-        cell3.style.padding = '2px';
-        cell3.innerHTML = '<input type="number" name="invoice_series_initial[' + lineNum + ']" ' +
+        var cell4 = row.insertCell(3);
+        cell4.style.padding = '2px';
+        cell4.innerHTML = '<input type="number" name="invoice_series_initial[' + lineNum + ']" ' +
                          'id="invoice_series_initial_' + lineNum + '" ' +
                          'value="' + initialNumber + '" ' +
                          'style="width: 95%;" ' +
@@ -128,15 +141,15 @@
                          'onchange="updateInvoiceSeriesExample(' + lineNum + ')">';
         
         // Example cell
-        var cell4 = row.insertCell(3);
-        cell4.style.padding = '2px';
-        cell4.innerHTML = '<span id="invoice_series_example_' + lineNum + '" style="font-family: monospace; color: #666;"></span>';
+        var cell5 = row.insertCell(4);
+        cell5.style.padding = '2px';
+        cell5.innerHTML = '<span id="invoice_series_example_' + lineNum + '" style="font-family: monospace; color: #666;"></span>';
         
         // Action cell
-        var cell5 = row.insertCell(4);
-        cell5.style.textAlign = 'center';
-        cell5.style.padding = '2px';
-        cell5.innerHTML = '<button type="button" class="button suitepicon suitepicon-action-clear" onclick="removeInvoiceSeriesLine(' + lineNum + '); return false;" ' +
+        var cell6 = row.insertCell(5);
+        cell6.style.textAlign = 'center';
+        cell6.style.padding = '2px';
+        cell6.innerHTML = '<button type="button" class="button suitepicon suitepicon-action-clear" onclick="removeInvoiceSeriesLine(' + lineNum + '); return false;" ' +
                          'title="' + MOD_LBL_AOS_INVOICE_SERIES_REMOVE + '">' +
                          '</button>';
         
@@ -209,10 +222,47 @@
         }
     }
     
+    // Validate that exactly one series is marked as rectified
+    function validateRectifiedSeries() {
+        var tbody = document.getElementById('invoice_series_lines');
+        var rowCount = tbody.rows.length;
+        
+        // If there are no series, don't validate
+        if (rowCount === 0) {
+            return true;
+        }
+        
+        // Check if at least one radio button is selected
+        var radios = document.getElementsByName('invoice_series_rectified');
+        var isOneSelected = false;
+        
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                isOneSelected = true;
+                break;
+            }
+        }
+        
+        if (!isOneSelected) {
+            alert('{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_REQUIRED}{literal}');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Attach validation to form submit
+    document.getElementById('ConfigureSettings').addEventListener('submit', function(e) {
+        if (!validateRectifiedSeries()) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
     // Load existing series on page load
     if (existingSeries.length > 0) {
         existingSeries.forEach(function(series) {
-            addInvoiceSeriesLine(series.format, series.initialNumber, series.name);
+            addInvoiceSeriesLine(series.format, series.initialNumber, series.name, series.isRectified);
         });
     } else {
         // Add one empty line by default
