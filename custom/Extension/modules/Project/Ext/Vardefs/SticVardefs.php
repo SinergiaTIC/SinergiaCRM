@@ -169,4 +169,28 @@ $dictionary['Project']['fields']['priority']['massupdate'] = 1;
 $dictionary['Project']['fields']['override_business_hours']['massupdate'] = 1;
 $dictionary['Project']['fields']['assigned_user_id']['massupdate'] = 1;
 
+// Relationship with stic_Allocation_Proposals
+$dictionary["Project"]["fields"]["project_stic_allocation_proposals"] = array (
+    'name' => 'project_stic_allocation_proposals',
+    'type' => 'link',
+    'relationship' => 'project_stic_allocation_proposals',
+    'source' => 'non-db',
+    'module' => 'stic_Allocation_Proposals',
+    'bean_name' => 'stic_Allocation_Proposals',
+    'side' => 'left',
+    'vname' => 'LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE',
+);
+
+// Relationship with stic_Allocations
+$dictionary["Project"]["fields"]["project_stic_allocations"] = array (
+    'name' => 'project_stic_allocations',
+    'type' => 'link',
+    'relationship' => 'project_stic_allocations',
+    'source' => 'non-db',
+    'module' => 'stic_Allocations',
+    'bean_name' => 'stic_Allocations',
+    'side' => 'left',
+    'vname' => 'LBL_PROJECT_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+);
+
 $dictionary['Project']['unified_search_default_enabled'] = true;

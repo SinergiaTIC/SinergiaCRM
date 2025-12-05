@@ -60,3 +60,9 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = '¿Seguro que quere borrar esta tarefa
 // Cadeas Ayudas
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centros';
+
+// Cadeas para a relación con Propostas de Imputación
+$mod_strings['LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Propostas de Imputación';
+
+// Cadeas para a relación con Imputacións
+$mod_strings['LBL_PROJECT_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Imputacións';
