@@ -85,7 +85,7 @@ class stic_Allocations extends Basic
         $isBlocked = filter_var($this->blocked, FILTER_VALIDATE_BOOLEAN);
         $isValidated = filter_var($this->validated, FILTER_VALIDATE_BOOLEAN);
         // If record is blocked, no updates are allowed
-        if ($tempFetchedRow['blocked'] && $isBlocked) {
+        if ($tempFetchedRow && $tempFetchedRow['blocked'] && $isBlocked) {
             // TODOEPS
             if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
                     // // This is an AJAX request
@@ -112,7 +112,7 @@ class stic_Allocations extends Basic
         
         // Calculate amount 
         $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
-        $this->amount = $paymentBean->{$this->payment_amount_field} * $this->percentage / 100;
+        $this->amount = $paymentBean->{$this->payment_amount_field} * $this->percentage / 100; // TODOEPS: Hi ha hagut un warning per valor no numèric.... com protegir-ho?
         
         $oldAmount = $this->fetched_row['amount'] ?? null; 
         $amountChanged = ($oldAmount !== $this->amount); //TODOEPS: Revisar la comparació. Els formats no són iguals i salta quanno toca.
