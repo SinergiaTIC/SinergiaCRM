@@ -83,4 +83,5 @@ $mod_strings = array(
     'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_OPPORTUNITIES_TITLE' => 'Opportunity',
     'LBL_PROJECT_STIC_ALLOCATIONS_FROM_PROJECT_TITLE' => 'Project',
     'LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED' => 'This allocation is blocked and cannot be modified.',
+    'LBL_ALLOCATION_NOT_COMPATIBLE' => 'The payment has an allocation not compatible with the payment amount fields',
 );

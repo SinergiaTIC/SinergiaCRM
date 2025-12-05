@@ -47,11 +47,20 @@ class stic_Allocation_ProposalsUtils
                 $allocationsModStrings = return_module_language($current_language, 'stic_Allocation_Proposals');
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE']);
                 if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                    // This is an AJAX request
-                    ob_clean();
-                    header('HTTP/1.1 500 Internal Server Error');
-                    echo "Save aborted: " . $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE'];
-                    exit;
+                    // // This is an AJAX request
+                    // ob_clean();
+                    // header('HTTP/1.1 500 Internal Server Error');
+                    // echo "Save aborted: " . $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE'];
+                    // exit;
+                    $errorMsg = $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE'];
+                    $jsMsg = json_encode($errorMsg);
+
+                    // 2. Output a script to alert the user
+                    echo "<script>alert($jsMsg);</script>";
+                    echo "<script>location.reload();</script>";
+
+                    // 4. Stop execution
+                    exit();
                 }
                 SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE'] . '</div>');
                 // SugarApplication::redirect("index.php?module={$remittance->bean->module_dir}&action=DetailView&record={$remittance->bean->id}");

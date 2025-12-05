@@ -22,7 +22,7 @@
  */
 class stic_AllocationsUtils {
 
-    public static function updateAllocationsFromPayment($paymentBean) {
+    public static function updateAllocationsFromPayment($paymentBean, $dryrun= false) {
         global $current_user;
 
         global $current_language;
@@ -39,17 +39,26 @@ class stic_AllocationsUtils {
                 // validate payment field needed is filled
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE']);
                 if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                    // This is an AJAX request
-                    ob_clean();
-                    header('HTTP/1.1 500 Internal Server Error');
-                    echo "Save aborted: " . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'];
-                    exit;
+                    // // This is an AJAX request
+                    // ob_clean();
+                    // header('HTTP/1.1 500 Internal Server Error');
+                    // echo "Save aborted: " . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'];
+                    // exit;
+                    $errorMsg = $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'];
+                    $jsMsg = json_encode($errorMsg);
+
+                    // 2. Output a script to alert the user
+                    echo "<script>alert($jsMsg);</script>";
+                    echo "<script>location.reload();</script>";
+
+                    // 4. Stop execution
+                    exit();
                 }
                 SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'] . '</div>');
             }
             else {
                 // update allocation amount from payment field if not blocked
-                if(!$allocationBean->blocked) {
+                if(!$allocationBean->blocked && !$dryrun) {
                     $allocationBean->amount = $paymentBean->{$allocationBean->payment_amount_field} * $allocationBean->percentage / 100;
                     $allocationBean->save();
                 }

@@ -168,17 +168,14 @@ class stic_Payments extends Basic
             return false;
         }
 
-        // TODOEPS: Té sentit aquesta lògica?
-        // If record blocked, allocation status can not be changed to not allocated
-        if ($isBlocked) {
-            // This can not happen. A blocked payment can not change allocation status.
-            if (!empty($tempFetchedRow['allocated']) && !$isAllocated) {
-                $this->allocated = 1;
-                SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS'] . '</div>');
-            }
+        $anyamountChanged = $this->anyAmountChanged(); // Check must be done before involing parent:save()
+
+
+        // If payment is allocated and any amount field has changed, validate allocations from payment (dry run)
+        if ($isAllocated && $anyamountChanged) {
+            $this->updateAllocationsFromPayment(true);
         }
 
-        $anyamountChanged = $this->anyAmountChanged(); // Check must be done before involing parent:save()
         
         // Call the generic save() function from the SugarBean class
         parent::save();
@@ -194,27 +191,14 @@ class stic_Payments extends Basic
             stic_PaymentsUtils::updateAllocationPercentage($this);
         }
 
-        
-
-
-        // // Amount has changed in an allocated payment, check if there were validated allocations
-        // if(!empty($tempFetchedRow['allocated']) && $this->allocated == 1 && !empty($tempFetchedRow['amount'] && SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount']))) {
-        //     include_once 'modules/stic_Allocations/Utils.php';
-        //     $hasValidatedAllocations = stic_AllocationsUtils::paymentHasValidatedAllocations($this);
-        //     if ($hasValidatedAllocations) {
-        //         // There are validated allocations, do not allow amount change
-        //         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_CANNOT_CHANGE_AMOUNT_ALLOCATED_PAYMENT_VALIDATED_ALLOCATIONS'] . '</div>');
-        //         // // Revert amount to previous value
-        //         // $this->amount = $tempFetchedRow['amount'];
-        //     }
-        // }
+        // If payment is allocated and any amount field has changed, update allocations from payment
         if (!empty($tempFetchedRow['allocated']) && $isAllocated && $anyamountChanged) {
             $hasValidatedAllocations = stic_AllocationsUtils::paymentHasValidatedAllocations($this);
             if ($hasValidatedAllocations) {
                 // There are validated allocations, do not allow amount change
                 SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_CANNOT_CHANGE_AMOUNT_ALLOCATED_PAYMENT_VALIDATED_ALLOCATIONS'] . '</div>');
             }
-            $this->updateAllocationsFromPayment();
+            $this->updateAllocationsFromPayment(false);
             stic_PaymentsUtils::updateAllocationPercentage($this);
         }
 
@@ -234,21 +218,10 @@ class stic_Payments extends Basic
             }
         }
 
+        // If changing from allocated to not allocated, delete allocations from payment
         if (!empty($tempFetchedRow['allocated']) && $tempFetchedRow['allocated'] && !$isAllocated) {
             $this->deleteAllocationsFromPayment();
             stic_PaymentsUtils::updateAllocationPercentage($this);
-        }
-
-
-        // TODOEPS : Recalcula les allocations. Necessitem helper de Allocations
-        if(!empty($tempFetchedRow['allocated']) && $isAllocated && !empty($tempFetchedRow['amount'] && SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount']))) {
-            // Amount has changed in an allocated payment, so we need to update the allocations
-            // include_once 'modules/stic_Allocations/Utils.php';
-            // $allocationBeans = stic_AllocationsUtils::allocationsFromPayment($this);
-            // foreach ($allocationBeans as $allocationBean) {
-            //     $allocationBean->amount = SticUtils::unformatDecimal($this->amount);
-            //     $allocationBean->save();
-            // }
         }
     }
 
@@ -276,8 +249,8 @@ class stic_Payments extends Basic
         return stic_Allocation_ProposalsUtils::createAllocationsFromPayment($this);
     }
 
-    protected function updateAllocationsFromPayment() {
-        return stic_AllocationsUtils::updateAllocationsFromPayment($this);
+    protected function updateAllocationsFromPayment($dryrun = false) {
+        return stic_AllocationsUtils::updateAllocationsFromPayment($this, $dryrun);
     }
 
 
