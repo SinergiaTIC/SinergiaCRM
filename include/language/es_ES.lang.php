@@ -3210,6 +3210,11 @@ $app_list_strings['aos_invoices_type_dom']['Press'] = 'Prensa';
 $app_list_strings['aos_invoices_type_dom']['Prospect'] = 'Prospecto';
 $app_list_strings['aos_invoices_type_dom']['Reseller'] = 'Revendedor';
 $app_list_strings['aos_invoices_type_dom']['Other'] = 'Otro';
+// STIC-Custom 20251120 JCH - Add new invoice statuses
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+$app_list_strings['invoice_status_dom']['draft'] = 'Borrador';
+$app_list_strings['invoice_status_dom']['emitted'] = 'Emitida';
+// END STIC-CUSTOM
 $app_list_strings['invoice_status_dom']['Paid'] = 'Pagado';
 $app_list_strings['invoice_status_dom']['Unpaid'] = 'No Pagado';
 $app_list_strings['invoice_status_dom']['Cancelled'] = 'Cancelado';

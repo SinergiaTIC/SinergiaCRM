@@ -1,0 +1,148 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+class AOS_InvoicesHook
+{
+
+    public function before_save($bean, $event, $arguments)
+    {
+        global $sugar_config;
+
+        // If duplicating a record, set status to 'draft' and clear Verifactu fields
+        if (
+            (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') // for mass duplicate
+            || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true') // for single duplicate
+            ) {
+            $bean->status = 'draft';
+            // Clear all Verifactu-related fields
+            $bean->verifactu_hash_c = null;
+            $bean->verifactu_previous_hash_c = null;
+            $bean->verifactu_check_url_c = null;
+            $bean->verifactu_aeat_status_c = 'pending';
+            $bean->verifactu_aeat_response_c = null;
+            $bean->verifactu_cancel_id_c = null;
+            $bean->verifactu_csv_c = null;
+            $bean->verifactu_submitted_at_c = null;
+            // Also clear rectified invoice fields
+            $bean->verifactu_is_rectified_c = 0;
+            $bean->verifactu_rectified_type_c = null;
+            $bean->verifactu_rectified_base_c = null;
+            $bean->verifactu_cancel_id_c = null;
+            $bean->verifactu_rectified_date_c = null;
+        }
+
+        // Validate rectified invoice data
+        if (!empty($bean->verifactu_is_rectified_c)) {
+            global $mod_strings, $app_list_strings;
+            
+            // Set default values for rectified invoice fields
+            $bean->verifactu_rectified_type_c =  'S';
+            $bean->verifactu_rectified_base_c =  'R1';
+
+            // Load module strings if not loaded
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            
+            $errors = [];
+            
+            // Validate required fields for rectified invoices
+            if (empty($bean->verifactu_rectified_type_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_TYPE'];
+            }
+            if (empty($bean->verifactu_rectified_base_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_BASE'];
+            }
+            if (empty($bean->verifactu_cancel_id_c)) {
+                $errors[] = $mod_strings['LBL_VERIFACTU_CANCEL_NAME'];
+            }
+            if (empty($bean->verifactu_rectified_date_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_DATE'];
+            }
+            
+            // If there are validation errors, prevent save and show message
+            if (!empty($errors)) {
+                $errorMsg = $mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'];
+                $errorMsg .= '<br><strong>' . $mod_strings['LBL_MISSING_FIELDS'] . ':</strong> ' . implode(', ', $errors);
+                
+                SugarApplication::appendErrorMessage($errorMsg);
+                
+                // Redirect back to edit view
+                if (!empty($bean->id)) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                } else {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView');
+                }
+                die();
+            }
+        }
+
+        // If the invoice type field is empty, set a default value (first series)
+        if (empty($bean->stic_invoice_type_c)) {
+            // Get first series from config
+            if (!empty($sugar_config['aos']['invoices']['series']) && is_array($sugar_config['aos']['invoices']['series'])) {
+                $seriesNames = array_keys($sugar_config['aos']['invoices']['series']);
+                $bean->stic_invoice_type_c = $seriesNames[0];
+            }
+        }
+
+        // Generate the next invoice number based on the invoice type (series)
+        if (empty($bean->number) && !empty($bean->stic_invoice_type_c)) {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_invoice_type_c, $bean);
+        }
+    }
+
+    /**
+     *
+     * @param SugarBean $bean El bean de la factura
+     * @param string $event El evento que disparó el hook
+     * @param array $arguments Argumentos adicionales
+     */
+    public function after_save($bean, $event, $arguments)
+    {
+        // return;
+        // check if status is 'emitted'
+        if ($bean->status !== 'emitted') {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} status is not 'emitted', skipping AEAT send.");
+            return;
+        }
+
+        // check if already sent
+        if (!empty($bean->verifactu_aeat_status_c) && $bean->verifactu_aeat_status_c === 'sent') {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} has already been sent to AEAT, skipping resend.");
+            return;
+        }
+
+        // check if status changed to 'emitted' (only send on status change)
+        if (!empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'emitted') {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} was already in 'emitted' status, skipping send.");
+            return;
+        }
+
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Sending invoice with id {$bean->id} to AEAT via Verifactu...");
+
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        AOS_InvoicesUtils::sendToAeat($bean);
+    }
+}

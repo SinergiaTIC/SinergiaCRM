@@ -70,6 +70,13 @@ $errors = array();
 
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
     foreach ($_POST as $key => $value) {
+        // STIC CUSTOM - JCH - 20251203 - Process other POST fields normally
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+        // Skip our custom series fields
+        if (strpos($key, 'invoice_series_') === 0) {
+            continue;
+        }
+        // END STIC CUSTOM
         if (strcmp((string)$value, 'true') == 0) {
             $value = true;
         }
@@ -78,8 +85,92 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         }
         $_POST[$key] = $value;
     }
-
+    
     $cfg->saveConfig();
+
+    // STIC CUSTOM - JCH - 20251203 - Process invoice series configuration separately to ensure complete replacement
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+    if (isset($_POST['invoice_series_format']) && is_array($_POST['invoice_series_format'])) {
+        // Build new series array from scratch
+        $invoiceSeries = array();
+        $validationErrors = array();
+        $rectifiedSeriesIndex = isset($_POST['invoice_series_rectified']) ? $_POST['invoice_series_rectified'] : null;
+        
+        foreach ($_POST['invoice_series_format'] as $index => $format) {
+            $format = trim($format);
+            $initialNumber = isset($_POST['invoice_series_initial'][$index]) 
+                           ? (int)$_POST['invoice_series_initial'][$index] 
+                           : 1;
+            $name = isset($_POST['invoice_series_name'][$index])
+                  ? trim(substr($_POST['invoice_series_name'][$index], 0, 50))
+                  : '';
+            $isRectified = ($rectifiedSeriesIndex !== null && $rectifiedSeriesIndex == $index);
+            
+            // Validate format: only letters, 0, and symbols (no digits 1-9)
+            if (!empty($format) && preg_match('/[1-9]/', $format)) {
+                $validationErrors[] = "El formato '{$format}' contiene números del 1-9. Solo se permite usar el número 0.";
+                continue; // Skip this series
+            }
+            
+            // Validate initial number: must be 1 or greater
+            if ($initialNumber < 1) {
+                $validationErrors[] = "El número inicial de la serie '{$name}' debe ser 1 o superior.";
+                continue; // Skip this series
+            }
+            
+            // Only save non-empty formats and names that passed validation
+            if (!empty($format) && !empty($name)) {
+                $invoiceSeries[$name] = array(
+                    'format' => $format,
+                    'initialNumber' => $initialNumber,
+                    'isRectified' => $isRectified
+                );
+            }
+        }
+        
+        // If there are validation errors, show them and don't save
+        if (!empty($validationErrors)) {
+            foreach ($validationErrors as $error) {
+                SugarApplication::appendErrorMessage($error);
+            }
+            SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin');
+            exit();
+        }
+        
+        // Read current config_override.php
+        $configFile = 'config_override.php';
+        $configContent = file_get_contents($configFile);
+        
+        // Remove all existing aos.invoices.series lines
+        $configContent = preg_replace(
+            '/\$sugar_config\[\'aos\'\]\[\'invoices\'\]\[\'series\'\].*?;\n/s',
+            '',
+            $configContent
+        );
+        
+        // Build new series configuration lines
+        $newSeriesLines = '';
+        foreach ($invoiceSeries as $seriesName => $seriesData) {
+            $safeName = addslashes($seriesName);
+            $safeFormat = addslashes($seriesData['format']);
+            $isRectified = $seriesData['isRectified'] ? 'true' : 'false';
+            $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['format'] = '{$safeFormat}';\n";
+            $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['initialNumber'] = {$seriesData['initialNumber']};\n";
+            $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['isRectified'] = {$isRectified};\n";
+        }
+        
+        // Insert new lines before the closing /***CONFIGURATOR***/
+        $configContent = str_replace(
+            '/***CONFIGURATOR***/',
+            $newSeriesLines . '/***CONFIGURATOR***/',
+            $configContent
+        );
+        
+        // Write back to file
+        file_put_contents($configFile, $configContent);
+    }
+    // END STIC CUSTOM 
+
 
     SugarApplication::redirect('index.php?module=Administration&action=index');
     exit();
