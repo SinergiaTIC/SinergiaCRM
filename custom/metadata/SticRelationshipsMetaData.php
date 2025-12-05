@@ -7436,12 +7436,12 @@ $dictionary["stic_payments_stic_allocations"] = array(
             'rhs_table' => 'stic_allocations',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_payments_stic_al9aa0',
-            'join_key_lhs' => 'stic_payments_stic_aleb9a',
-            'join_key_rhs' => 'stic_payments_stic_aldaa6',
+            'join_table' => 'stic_payments_stic_allocations_c',
+            'join_key_lhs' => 'stic_payments_stic_allocationsstic_payments_ida',
+            'join_key_rhs' => 'stic_payments_stic_allocationsstic_allocations_idb',
         ),
     ),
-    'table' => 'stic_payments_stic_al9aa0',
+    'table' => 'stic_payments_stic_allocations_c',
     'fields' => array(
         0 => array(
             'name' => 'id',
@@ -7460,19 +7460,19 @@ $dictionary["stic_payments_stic_allocations"] = array(
             'required' => true,
         ),
         3 => array(
-            'name' => 'stic_payments_stic_aleb9a',
+            'name' => 'stic_payments_stic_allocationsstic_payments_ida',
             'type' => 'varchar',
             'len' => 36,
         ),
         4 => array(
-            'name' => 'stic_payments_stic_aldaa6',
+            'name' => 'stic_payments_stic_allocationsstic_allocations_idb',
             'type' => 'varchar',
             'len' => 36,
         ),
     ),
     'indices' => array(
         0 => array(
-            'name' => 'stic_payments_stic_ale431',
+            'name' => 'stic_payments_stic_allocations_pk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',

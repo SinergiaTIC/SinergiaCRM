@@ -62,7 +62,7 @@ $layout_defs["stic_Payment_Commitments"]["subpanel_setup"]['stic_payment_commitm
     ),
 );
 
-$layout_defs["stic_Payment_Commitments"]["subpanel_setup"]['stic_allocation_proposals'] = array(
+$layout_defs["stic_Payment_Commitments"]["subpanel_setup"]['stic_payment_commitments_stic_allocation_proposals'] = array(
     'order' => 100,
     'module' => 'stic_Allocation_Proposals',
     'subpanel_name' => 'default',

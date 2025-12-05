@@ -167,8 +167,8 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE',
         ),
-        'stic_allocations' => array(
-            'name' => 'stic_allocations',
+        'stic_allocation_proposals_stic_allocations' => array(
+            'name' => 'stic_allocation_proposals_stic_allocations',
             'type' => 'link',
             'relationship' => 'stic_allocation_proposals_stic_allocations',
             'source' => 'non-db',
