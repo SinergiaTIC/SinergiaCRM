@@ -7479,17 +7479,17 @@ $dictionary["stic_payments_stic_allocations"] = array(
             ),
         ),
         1 => array(
-            'name' => 'stic_payments_stic_alf1be',
+            'name' => 'stic_payments_stic_allocations_ida1',
             'type' => 'index',
             'fields' => array(
-                0 => 'stic_payments_stic_aleb9a',
+                0 => 'stic_payments_stic_allocationsstic_payments_ida',
             ),
         ),
         2 => array(
-            'name' => 'stic_payments_stic_al4596',
+            'name' => 'stic_payments_stic_allocations_idb',
             'type' => 'alternate_key',
             'fields' => array(
-                0 => 'stic_payments_stic_aldaa6',
+                0 => 'stic_payments_stic_allocationsstic_allocations_idb',
             ),
         ),
     ),
