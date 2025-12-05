@@ -73,6 +73,7 @@ $app_strings['LBL_GROUPTAB_EXPLOITATION'] = 'Exploitation';
 $app_strings['LBL_GROUPTAB_DC_PERSONALINFO'] = 'Personal information';
 $app_strings['LBL_GROUPTAB_DC_WORKPLAN'] = 'Work plan';
 $app_strings['LBL_GROUPTAB_DC_MEDICATION'] = 'Medication';
+$app_strings['LBL_GROUPTAB_ALLOCATIONS'] = 'Allocations and Justifications';
 
 // SinergiaCRM subtheme
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
