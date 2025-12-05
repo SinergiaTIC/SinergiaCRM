@@ -39,7 +39,7 @@ class AOS_Invoices extends AOS_Invoices_sugar
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
         global $app_list_strings, $sugar_config;        
         foreach($sugar_config['aos']['invoices']['series'] as $invoiceType => $seriesConfig) {
-            $app_list_strings['stic_invoices_types_list'][$invoiceType] = "$invoiceType - ({$seriesConfig['format']})";
+            $app_list_strings['stic_invoices_types_list'][$invoiceType] = "$invoiceType";
         }
         // END STIC-Custom
 

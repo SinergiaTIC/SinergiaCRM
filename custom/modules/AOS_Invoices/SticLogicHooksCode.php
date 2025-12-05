@@ -43,6 +43,58 @@ class AOS_InvoicesHook
             $bean->verifactu_cancel_id_c = null;
             $bean->verifactu_csv_c = null;
             $bean->verifactu_submitted_at_c = null;
+            // Also clear rectified invoice fields
+            $bean->verifactu_is_rectified_c = 0;
+            $bean->verifactu_rectified_type_c = null;
+            $bean->verifactu_rectified_base_c = null;
+            $bean->verifactu_cancel_id_c = null;
+            $bean->verifactu_rectified_date_c = null;
+        }
+
+        // Validate rectified invoice data
+        if (!empty($bean->verifactu_is_rectified_c)) {
+            global $mod_strings, $app_list_strings;
+            
+            // Set default values for rectified invoice fields
+            $bean->verifactu_rectified_type_c =  'S';
+            $bean->verifactu_rectified_base_c =  'R1';
+
+            // Load module strings if not loaded
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            
+            $errors = [];
+            
+            // Validate required fields for rectified invoices
+            if (empty($bean->verifactu_rectified_type_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_TYPE'];
+            }
+            if (empty($bean->verifactu_rectified_base_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_BASE'];
+            }
+            if (empty($bean->verifactu_cancel_id_c)) {
+                $errors[] = $mod_strings['LBL_VERIFACTU_CANCEL_NAME'];
+            }
+            if (empty($bean->verifactu_rectified_date_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_DATE'];
+            }
+            
+            // If there are validation errors, prevent save and show message
+            if (!empty($errors)) {
+                $errorMsg = $mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'];
+                $errorMsg .= '<br><strong>' . $mod_strings['LBL_MISSING_FIELDS'] . ':</strong> ' . implode(', ', $errors);
+                
+                SugarApplication::appendErrorMessage($errorMsg);
+                
+                // Redirect back to edit view
+                if (!empty($bean->id)) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                } else {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView');
+                }
+                die();
+            }
         }
 
         // If the invoice type field is empty, set a default value (first series)

@@ -61,6 +61,12 @@ class AOS_InvoicesUtils
      * @param string|null $previousHash Previous invoice hash for chaining
      * @param string|null $customerNif Customer's NIF/CIF
      * @param string|null $customerName Customer's name
+     * @param bool $isRectified Whether this is a rectified invoice
+     * @param string|null $rectifiedType Type of rectification ('S' = Substitution, 'I' = Differences)
+     * @param string|null $rectifiedBase Base code for rectification (R1, R2, R3, R4, R5)
+     * @param string|null $rectifiedSerie Serie of the rectified invoice
+     * @param string|null $rectifiedNumber Number of the rectified invoice
+     * @param DateTimeImmutable|null $rectifiedDate Date of the rectified invoice
      *
      * @return RegistrationRecord The created registration record
      */
@@ -76,7 +82,12 @@ class AOS_InvoicesUtils
         $previousInvoiceId = null,
         $previousHash = null,
         $customerNif = null,
-        $customerName = null
+        $customerName = null,
+        $isRectified = false,
+        $rectifiedType = null,
+        $rectifiedBase = null,
+        $rectifiedNumber = null,
+        $rectifiedDate = null
     ) {
         $record = new RegistrationRecord();
 
@@ -109,6 +120,25 @@ class AOS_InvoicesUtils
         // Chaining (previous invoice reference)
         $record->previousInvoiceId = $previousInvoiceId;
         $record->previousHash = $previousHash;
+
+        // Rectified invoice data (if applicable)
+        if ($isRectified && $rectifiedType && $rectifiedBase && $rectifiedNumber && $rectifiedDate) {
+            // Create identifier for the rectified invoice
+            $rectifiedInvoiceId = new InvoiceIdentifier();
+            $rectifiedInvoiceId->issuerId = $issuerNif;
+            $rectifiedInvoiceId->invoiceNumber = $rectifiedNumber;
+            $rectifiedInvoiceId->issueDate = $rectifiedDate;
+
+            // Set corrective type ('S' = Substitution, 'I' = Differences)
+            $record->correctiveType = ($rectifiedType === 'S') 
+                ? \josemmo\Verifactu\Models\Records\CorrectiveType::Substitution 
+                : \josemmo\Verifactu\Models\Records\CorrectiveType::Differences;
+
+            // Add the rectified invoice to the list
+            $record->correctedInvoices = [$rectifiedInvoiceId];
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Setting rectified invoice data - Type: ' . $rectifiedType . ', Base: ' . $rectifiedBase . ', Original: ' . $rectifiedNumber);
+        }
 
         // Generate hash
         $record->hashedAt = new DateTimeImmutable();
@@ -511,6 +541,29 @@ class AOS_InvoicesUtils
                 }
             }
 
+            // Prepare rectified invoice data (if applicable)
+            $isRectified = !empty($invoiceBean->verifactu_is_rectified_c);
+            $rectifiedType = $invoiceBean->verifactu_rectified_type_c ?? null;
+            $rectifiedBase = $invoiceBean->verifactu_rectified_base_c ?? null;
+            
+            // Get the rectified invoice number from the related invoice
+            $rectifiedNumber = null;
+            if (!empty($invoiceBean->verifactu_cancel_id_c)) {
+                $originalInvoice = BeanFactory::getBean('AOS_Invoices', $invoiceBean->verifactu_cancel_id_c);
+                if (!empty($originalInvoice->id)) {
+                    $rectifiedNumber = $originalInvoice->number;
+                }
+            }
+            
+            $rectifiedDate = null;
+            if (!empty($invoiceBean->verifactu_rectified_date_c)) {
+                try {
+                    $rectifiedDate = new DateTimeImmutable($invoiceBean->verifactu_rectified_date_c);
+                } catch (Exception $e) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid rectified date: ' . $invoiceBean->verifactu_rectified_date_c);
+                }
+            }
+
             // Create registration record
             $record = self::createRegistrationRecord(
                 $issuerNif,
@@ -524,7 +577,12 @@ class AOS_InvoicesUtils
                 $previousInvoiceId,
                 $previousHash,
                 $customerNif,
-                $customerName
+                $customerName,
+                $isRectified,
+                $rectifiedType,
+                $rectifiedBase,
+                $rectifiedNumber,
+                $rectifiedDate
             );
 
             // --- DEBUG MODE: volcado de datos antes de enviar ---
@@ -694,11 +752,11 @@ class AOS_InvoicesUtils
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': AEAT Response: ' . $formattedResponse);
 
             // Show success message with details
-            $successMessage = 'Factura enviada correctamente a la AEAT';
+            $successMessage = $mod_strings['LBL_AEAT_COMMUNICATION_SUCCESS'];
             if ($invoiceBean->verifactu_aeat_status_c === 'accepted') {
-                $successMessage .= ' y aceptada';
+                $successMessage .= $mod_strings['LBL_AEAT_COMMUNICATION_AND_ACCEPTED'];
             }
-            $successMessage .= '. <a href="#" onclick="document.getElementById(\'aeat-response-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">Ver detalles</a>';
+            $successMessage .= '. <a href="#" onclick="document.getElementById(\'aeat-response-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">' . $mod_strings['LBL_AEAT_SHOW_DETAILS'] . '</a>';
             $successMessage .= '<div id="aeat-response-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedResponse) . '</pre></div>';
 
             SugarApplication::appendSuccessMessage($successMessage);
@@ -712,7 +770,7 @@ class AOS_InvoicesUtils
             $formattedError = self::formatAeatError($e);
 
             // Show error message with details
-            $errorMessage = 'Error al enviar la factura a la AEAT. <a href="#" onclick="document.getElementById(\'aeat-error-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">Ver detalles</a>';
+            $errorMessage = $mod_strings['LBL_AEAT_SEND_ERROR'] . ' <a href="#" onclick="document.getElementById(\'aeat-error-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">' . $mod_strings['LBL_AEAT_SHOW_DETAILS'] . '</a>';
             $errorMessage .= '<div id="aeat-error-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedError) . '</pre></div>';
 
             SugarApplication::appendErrorMessage($errorMessage);

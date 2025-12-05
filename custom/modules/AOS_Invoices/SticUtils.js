@@ -48,6 +48,8 @@ switch (viewType()) {
   case "quickcreate":
     break;
 
+                        // 'customCode' => '{if !empty($fields.verifactu_submitted_at_c.value) && empty($fields.verifactu_is_rectified_c.value)}<input type="button" class="button" value="{$MOD.LBL_CREATE_RECTIFIED_INVOICE}" onclick="window.location.href=\'index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record={$fields.id.value}\';" />{/if}',
+
   case "detail":
     var buttons = {
       sendToAEAT: {
@@ -55,13 +57,25 @@ switch (viewType()) {
         title: SUGAR.language.get("AOS_Invoices", "LBL_SIGNER_SEND_TO_AEAT"),
         onclick: "window.location='index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=" + STIC.record.id + "'",        
       },
+      createRectifiedInvoice: {
+        id: "bt_create_rectified_invoice",
+        title: SUGAR.language.get("AOS_Invoices", "LBL_CREATE_RECTIFIED_INVOICE"),
+        onclick: "window.location='index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record=" + STIC.record.id + "'",
+      },
     };
+
+    if(STIC.record.status != 'emitted') {
+      buttons.createRectifiedInvoice.disabled = 'disabled';
+      buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";
+    }
+
     if(STIC.record.status === 'emitted' && STIC.record.verifactu_aeat_status_c === 'accepted') {
       buttons.sendToAEAT.disabled = 'disabled';
       buttons.sendToAEAT.style = "cursor: not-allowed; opacity: .5;";
     }
 
     createDetailViewButton(buttons.sendToAEAT);
+    createDetailViewButton(buttons.createRectifiedInvoice);
 
     break;
 
@@ -71,5 +85,14 @@ switch (viewType()) {
   default:
     break;
 }
+
+    
+    // Only show rectified invoice panel if the invoice is rectified
+    if(STIC?.record?.verifactu_is_rectified_c == '0')
+    {
+      $("[data-label=LBL_VERIFACTU_RECTIFIED_PANEL]").closest('.panel').hide();
+    }
+
+
 
 /* AUX FUNCTIONS */

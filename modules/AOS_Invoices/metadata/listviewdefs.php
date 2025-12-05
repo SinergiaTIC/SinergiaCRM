@@ -273,6 +273,22 @@ array(
         'label' => 'LBL_VERIFACTU_CANCEL_ID',
         'default' => false,
     ),
+    'VERIFACTU_IS_RECTIFIED_C' => array(
+        'type' => 'bool',
+        'default' => false,
+        'label' => 'LBL_VERIFACTU_IS_RECTIFIED',
+        'width' => '10%',
+    ),
+    'VERIFACTU_RECTIFIED_TYPE_C' => array(
+        'width' => '10%',
+        'label' => 'LBL_VERIFACTU_RECTIFIED_TYPE',
+        'default' => false,
+    ),
+    'VERIFACTU_RECTIFIED_BASE_C' => array(
+        'width' => '10%',
+        'label' => 'LBL_VERIFACTU_RECTIFIED_BASE',
+        'default' => false,
+    ),
     'STIC_INVOICE_TYPE' => array( 
         'width' => '15%',
         'label' => 'LBL_STIC_INVOICE_TYPE',
