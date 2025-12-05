@@ -3787,7 +3787,7 @@ $app_list_strings['stic_allocations_types_list']['direct'] = 'Zuzena';
 $app_list_strings['stic_allocations_types_list']['indirect'] = 'Zeharkakoa';
 
 $app_list_strings['stic_allocations_amount_fields_list'][''] = '';
-$app_list_strings['stic_allocations_amount_fields_list']['irpf'] = 'IRPF atxikipena';
+$app_list_strings['stic_allocations_amount_fields_list']['tax_withholding'] = 'IRPF atxikipena';
 $app_list_strings['stic_allocations_amount_fields_list']['social_security_employee'] = 'Giz. Seg. langilea';
 $app_list_strings['stic_allocations_amount_fields_list']['social_security_company'] = 'Giz. Seg. enpresa';
 $app_list_strings['stic_allocations_amount_fields_list']['liquid_amount'] = 'Jasoko den zenbateko likidoa';

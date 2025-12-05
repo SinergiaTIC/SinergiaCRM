@@ -112,7 +112,32 @@ class stic_Allocations extends Basic
         
         // Calculate amount 
         $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
-        $this->amount = $paymentBean->{$this->payment_amount_field} * $this->percentage / 100; // TODOEPS: Hi ha hagut un warning per valor no numèric.... com protegir-ho?
+        if (empty($paymentBean->{$this->payment_amount_field})) {
+            // validate payment field needed is filled
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE']);
+            if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+                $errorMsg = $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'];
+                $jsMsg = json_encode($errorMsg);
+                // 2. Output a script to alert the user
+                echo "<script>alert($jsMsg);</script>";
+                echo "<script>location.reload();</script>";
+                // 4. Stop execution
+                exit();
+            }
+            if (!empty($_REQUEST['relate_to'])) {
+                $errorMsg = $allocationsModStrings['LBL_PAYMENT_FIELD_NOT_FOUND'];
+                $jsMsg = json_encode($errorMsg);
+                // 2. Output a script to alert the user
+                echo "<script>alert($jsMsg);</script>";
+                exit();
+            }
+
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'] . '</div>');
+            return false;
+        }
+        else {
+            $this->amount = $paymentBean->{$this->payment_amount_field} * $this->percentage / 100; // TODOEPS: Hi ha hagut un warning per valor no numèric.... com protegir-ho?
+        }
         
         $oldAmount = $this->fetched_row['amount'] ?? null; 
         $amountChanged = ($oldAmount !== $this->amount); //TODOEPS: Revisar la comparació. Els formats no són iguals i salta quanno toca.

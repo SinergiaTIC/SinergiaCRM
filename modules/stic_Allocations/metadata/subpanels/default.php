@@ -95,7 +95,12 @@ $subpanel_layout['list_fields'] = array(
     ),
     'type' => array(
         'vname' => 'LBL_TYPE',
-        'width' => '15%',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'payment_amount_field' => array(
+        'vname' => 'LBL_PAYMENT_AMOUNT_FIELD',
+        'width' => '10%',
         'default' => true,
     ),
     'percentage' => array(

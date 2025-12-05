@@ -84,4 +84,5 @@ $mod_strings = array(
     'LBL_PROJECT_STIC_ALLOCATIONS_FROM_PROJECT_TITLE' => 'Projecte',
     'LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED' => 'Aquesta imputació està bloquejada i no es pot modificar.',
     'LBL_ALLOCATION_NOT_COMPATIBLE' => 'El pagament té una imputació incompatible amb els camps d\'import del pagament',
+    'LBL_PAYMENT_FIELD_NOT_FOUND' => 'El camp d\'import del pagament no està informat',
 );

@@ -3782,7 +3782,7 @@ $app_list_strings['stic_allocations_types_list']['direct'] = 'Directa';
 $app_list_strings['stic_allocations_types_list']['indirect'] = 'Indirecta';
 
 $app_list_strings['stic_allocations_amount_fields_list'][''] = '';
-$app_list_strings['stic_allocations_amount_fields_list']['irpf'] = 'Retención IRPF';
+$app_list_strings['stic_allocations_amount_fields_list']['tax_withholding'] = 'Retención IRPF';
 $app_list_strings['stic_allocations_amount_fields_list']['social_security_employee'] = 'Seg. Social empregado';
 $app_list_strings['stic_allocations_amount_fields_list']['social_security_company'] = 'Seg. Social empresa';
 $app_list_strings['stic_allocations_amount_fields_list']['liquid_amount'] = 'Importe líquido a percibir';

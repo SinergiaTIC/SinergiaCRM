@@ -3762,7 +3762,7 @@ $app_list_strings['stic_allocations_types_list']['direct'] = 'Direct';
 $app_list_strings['stic_allocations_types_list']['indirect'] = 'Indirect';
 
 $app_list_strings['stic_allocations_amount_fields_list'][''] = '';
-$app_list_strings['stic_allocations_amount_fields_list']['irpf'] = 'withholding';
+$app_list_strings['stic_allocations_amount_fields_list']['tax_withholding'] = 'withholding';
 $app_list_strings['stic_allocations_amount_fields_list']['social_security_employee'] = 'Soc. Segurity employee';
 $app_list_strings['stic_allocations_amount_fields_list']['social_security_company'] = 'Soc. Segurity company';
 $app_list_strings['stic_allocations_amount_fields_list']['liquid_amount'] = 'Liquid amount to receive';
