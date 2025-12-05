@@ -224,6 +224,12 @@ $OEStoredOptions = get_campaign_mailboxes_with_stored_options_outbound();
 $OEStoredOptionsJSON = (!empty($OEStoredOptions)) ? $json->encode($OEStoredOptions, false) : 'new Object()';
 $xtpl->assign("OEStoredOptions", $OEStoredOptionsJSON);
 // END STIC-Custom 
+
+// STIC-Custom 20251202 MHP - Add display HTML option to marketing email
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/770
+$xtpl->assign('displayHTML', ($focus->stic_display_html_c == 1) ? 'checked' : '');
+// END STIC-Custom
+
 function getOutboundEmailAccountOptions()
 {
     global $mod_strings;
