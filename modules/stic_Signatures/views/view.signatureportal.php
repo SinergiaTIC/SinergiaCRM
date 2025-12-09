@@ -98,6 +98,8 @@ class stic_SignaturePortal extends SugarView
         $authMode = $signatureBean->auth_method ?? 'unique_link';
 
         $this->ss->assign('AUTH_MODE', $authMode);
+        $this->ss->assign('NO_EMAIL_ALERT', empty($signerBean->email_address) ? "<i class='bi bi-exclamation-diamond' style='color:red;' title='{$mod_strings['LBL_PORTAL_OTP_NO_EMAIL_AVAILABLE']}'></i>" : '');
+        $this->ss->assign('NO_PHONE_ALERT', empty($signerBean->phone) ? "<i class='bi bi-exclamation-diamond' style='color:red;' title='{$mod_strings['LBL_PORTAL_OTP_NO_PHONE_AVAILABLE']}'></i>" : '');
 
         $passed = false;
         $errorMsg = '';

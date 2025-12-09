@@ -242,13 +242,13 @@
 
                         {if $AUTH_MODE == 'otp_email' || $AUTH_MODE == 'otp' }
                         <button id="resend-otp-btn-email" class="btn btn-link">
-                            <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL}
+                            <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL} {$NO_EMAIL_ALERT}
                             {$OTP_MASKED_EMAIL}
                         </button>
                         {/if}
                         {if $AUTH_MODE == 'otp_phone_message' || $AUTH_MODE == 'otp' }
                         <button id="resend-otp-btn-phone-message" class="btn btn-link">
-                            <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE}
+                            <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE} {$NO_PHONE_ALERT}
                             {$OTP_MASKED_PHONE}
                         </button>
                         {/if}

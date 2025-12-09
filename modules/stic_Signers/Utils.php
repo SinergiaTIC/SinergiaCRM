@@ -212,7 +212,7 @@ class stic_SignersUtils
         // Add recipient
         if (empty($destAddress)) {
             // If no destination address, return false
-            echo json_encode(false);
+            return false;
             die();
         }
         $mail->AddAddress($destAddress);

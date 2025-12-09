@@ -72,8 +72,12 @@ if (otpForm) {
             }
             return response.json();
         }).then(data => {
-            let messageKey = method === 'email' ? 'LBL_PORTAL_OTP_EMAIL_SENT' : 'LBL_PORTAL_OTP_PHONE_SENT';
-            showAlert('success', MODS.LBL_PORTAL_ATTENTION, MODS[messageKey]);
+            if (data.success === true) {
+                let messageKey = method === 'email' ? 'LBL_PORTAL_OTP_EMAIL_SENT' : 'LBL_PORTAL_OTP_PHONE_SENT';
+                showAlert('success', MODS.LBL_PORTAL_ATTENTION, MODS[messageKey]);
+            } else {
+                showAlert('error', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ERROR_REQUEST_OTP_ALERT);
+            }
         }).catch(error => {
             console.error('Error:', error);
             showAlert('error', MODS.LBL_PORTAL_ERROR, MODS.LBL_PORTAL_ERROR_REQUEST_OTP_ALERT);
