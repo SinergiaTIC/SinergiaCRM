@@ -81,8 +81,8 @@ $mod_strings = array(
     'LBL_REJECTION_REASON' => 'Motivo de rechazo',
     'LBL_ON_BEHALF_OF_ID' => 'Persona representada',
     'LBL_ON_BEHALF_OF_ID_CONTACT_ID' => 'Autorizado a firmar en nombre de',
-    'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Firmas',
-    'LBL_STIC_SIGNATURES_USERS_FROM_STIC_SIGNERS_TITLE' => 'Firmas',
+    'LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Firmas',
+    'LBL_STIC_SIGNERS_USERS_FROM_STIC_SIGNERS_TITLE' => 'Firmas',
 
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar firma por correo electrónico',
     'LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT' => 'Seleccione un máximo de 20 firmantes.',

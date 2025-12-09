@@ -448,13 +448,13 @@ $layout_defs['Contacts']['subpanel_setup']['history']['collection_list']['stic_M
 );
 
 // Signatures subpanel
-$layout_defs["Contacts"]["subpanel_setup"]['stic_signatures_contacts'] = array(
+$layout_defs["Contacts"]["subpanel_setup"]['stic_signers_contacts'] = array(
     'order' => 100,
     'module' => 'stic_Signers',
     'subpanel_name' => 'default',
     'sort_order' => 'desc',
     'sort_by' => 'date_modified',
-    'title_key' => 'LBL_STIC_SIGNATURES_CONTACTS_FROM_STIC_SIGNERS_TITLE',
+    'title_key' => 'LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE',
     'get_subpanel_data' => 'function:stic_SignersUtils::getSticSignersForContacts',
     'function_parameters' => array(
         'import_function_file' => 'modules/stic_Signers/Utils.php',
