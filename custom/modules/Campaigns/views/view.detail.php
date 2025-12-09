@@ -40,8 +40,15 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
         $this->dv->defs['templateMeta']['form']['buttons'][0] = self::editButton;
         $this->dv->defs['templateMeta']['form']['buttons'][1] = self::duplicateButton;
         $this->dv->defs['templateMeta']['form']['buttons'][2] = self::deleteButton;
-        $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
         // STIC Custom 20241105 EPS - Messages campaigns
+        // $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
+        if ($this->bean->campaign_type != 'Message' && $this->bean->campaign_type != 'NotifMsg'
+            && $this->bean->campaign_type != 'Notification') {
+                $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
+            }
+        else {
+            $this->dv->defs['templateMeta']['form']['buttons'][3] = array();
+        }
         // $this->dv->defs['templateMeta']['form']>['buttons'][4] = self::testSendButton;
         // $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
 
