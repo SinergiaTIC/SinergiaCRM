@@ -20,6 +20,9 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+require_once 'SticInclude/Utils.php';
+
 class stic_Allocation_ProposalsUtils
 {
     public static function createAllocationsFromPayment($paymentBean)
@@ -84,7 +87,7 @@ class stic_Allocation_ProposalsUtils
             $allocationBean->date = $paymentBean->justification_date;
             $allocationBean->payment_amount_field = $allocationProposalBean->payment_amount_field;
             // $allocationBean->amount = ($paymentBean->amount * $allocationProposalBean->percentage) / 100;
-            $allocationBean->amount = ($paymentBean->{$allocationProposalBean->payment_amount_field} * $allocationProposalBean->percentage) / 100;
+            $allocationBean->amount = SticUtils::unformatDecimal($paymentBean->{$allocationProposalBean->payment_amount_field}) * SticUtils::unformatDecimal($allocationProposalBean->percentage) / 100;
             $allocationBean->stic_ledger_accounts_ida = $allocationProposalBean->stic_ledger_accounts_ida;
             $allocationBean->opportunities_stic_allocationsopportunities_ida = $allocationProposalBean->opportunities_stic_allocation_proposalsopportunities_ida;
             $allocationBean->project_stic_allocationsproject_ida = $allocationProposalBean->project_stic_allocation_proposalsproject_ida;

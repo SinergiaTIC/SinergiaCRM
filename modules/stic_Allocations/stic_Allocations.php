@@ -22,7 +22,7 @@
  */
 
 require_once 'modules/stic_Allocations/Utils.php';
-
+require_once 'SticInclude/Utils.php';
 class stic_Allocations extends Basic
 {
     public $module_dir = 'stic_Allocations';
@@ -136,10 +136,10 @@ class stic_Allocations extends Basic
             return false;
         }
         else {
-            $this->amount = $paymentBean->{$this->payment_amount_field} * $this->percentage / 100; // TODOEPS: Hi ha hagut un warning per valor no numèric.... com protegir-ho?
+            $this->amount = SticUtils::unformatDecimal($paymentBean->{$this->payment_amount_field}) * SticUtils::unformatDecimal($this->percentage) / 100; // TODOEPS: Hi ha hagut un warning per valor no numèric.... com protegir-ho?
         }
         
-        $oldAmount = $this->fetched_row['amount'] ?? null; 
+        $oldAmount = SticUtils::unformatDecimal($this->fetched_row['amount'] ?? null); 
         $amountChanged = ($oldAmount !== $this->amount); //TODOEPS: Revisar la comparació. Els formats no són iguals i salta quanno toca.
 
         // Save the bean

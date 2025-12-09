@@ -20,6 +20,9 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+require_once 'SticInclude/Utils.php';
+
 class stic_AllocationsUtils {
 
     public static function updateAllocationsFromPayment($paymentBean, $dryrun= false) {
@@ -59,7 +62,7 @@ class stic_AllocationsUtils {
             else {
                 // update allocation amount from payment field if not blocked
                 if(!$allocationBean->blocked && !$dryrun) {
-                    $allocationBean->amount = $paymentBean->{$allocationBean->payment_amount_field} * $allocationBean->percentage / 100;
+                    $allocationBean->amount = SticUtils::unformatDecimal($paymentBean->{$allocationBean->payment_amount_field}) * SticUtils::unformatDecimal($allocationBean->percentage) / 100;
                     $allocationBean->save();
                 }
             }
