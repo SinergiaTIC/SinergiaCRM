@@ -100,6 +100,8 @@ if (isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter") {
     //     $smarty->assign("TRACK_DELETE_BUTTON", "<input title=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_TITLE']}\" class=\"button\" onclick=\"this.form.module.value='Campaigns'; this.form.action.value='Delete';this.form.return_module.value='Campaigns'; this.form.return_action.value='TrackDetailView';this.form.mode.value='Test';return confirm('{$mod_strings['LBL_TRACK_DELETE_CONFIRM']}');\" type=\"submit\" name=\"button\" value=\"  {$mod_strings['LBL_TRACK_DELETE_BUTTON_LABEL']}  \">");
     // }    
 // Customize buttons with Campaign_type
+// STIC Custom 20241105 EPS - Messages campaigns : Add NotifMsg and Message where needed
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/473
 if (isset($focus->campaign_type)) {
     if ($focus->campaign_type == "Email" || $focus->campaign_type == "NewsLetter" || $focus->campaign_type == "Notification" || $focus->campaign_type == "NotifMsg") {
         $smarty->assign("TRACK_DELETE_BUTTON", "<input title=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_TITLE']}\" class=\"button\" onclick=\"this.form.module.value='Campaigns'; this.form.action.value='Delete';this.form.return_module.value='Campaigns'; this.form.return_action.value='TrackDetailView';this.form.mode.value='Test';return confirm('{$mod_strings['LBL_TRACK_DELETE_CONFIRM']}');\" type=\"submit\" name=\"button\" value=\"  {$mod_strings['LBL_TRACK_DELETE_BUTTON_LABEL']}  \">");
