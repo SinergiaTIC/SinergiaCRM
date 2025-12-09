@@ -466,13 +466,12 @@ switch (viewType()) {
     setAutofill(["name"]);
     setAutofill(["total_amount"]);
     setAutofill(["copayment_amount"]);
-    document
-      .getElementById("place_booking")
-      .addEventListener("change", function () {
+    var placeBookingCheckbox = document.getElementById("place_booking");
+    if (placeBookingCheckbox) 
+      placeBookingCheckbox.addEventListener("change", function () {
         var currentCheckbox = this;
         var isChecked = currentCheckbox.checked;
-        var hasResources = getTotalResourceCount() > 0;
-
+          var hasResources = getTotalResourceCount() > 0;
         if (isChecked && hasResources) {
           if (!confirm(SUGAR.language.get(module, "LBL_CONFIRM_CHANGE_BOOKING_TYPE"))) {
             currentCheckbox.checked = false; 
