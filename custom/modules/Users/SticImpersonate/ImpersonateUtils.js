@@ -49,7 +49,6 @@ function showImpersonationMessage() {
     message.id = 'stic-impersonation-message';
     message.className = 'msg-fatal-lock';   
     message.innerHTML = `
-        ${modImpersonate.LBL_IMPERSONATE_MESSAGE_TITLE} 
         ${modImpersonate.LBL_IMPERSONATE_MESSAGE_DESCRIPTION}
         <strong>${impersonationData.target_user_name}</strong>
         ${modImpersonate.LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION}
