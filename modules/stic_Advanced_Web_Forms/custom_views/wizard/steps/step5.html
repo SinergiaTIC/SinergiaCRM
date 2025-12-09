@@ -1,85 +1,101 @@
 <!-- Main Panel -->
 <main class="wizard-main flex-fill d-flex flex-column" x-data="WizardStep5.mainStep5xData();">
-    <div class="flex-fill border rounded p-4 overflow-auto bg-light">
-        
-        <div class="container" style="max-width: 900px;">
-            
-            <h2 class="mb-4" x-text="utils.translate('LBL_WIZARD_STEP5_TITLE')">Publicació</h2>
+    <div class="container" style="max-width: 900px;">
+        <div class="row">
+            <!-- Status -->
+            <div class="col-6">
+                <label for="form_status" class="form-label" x-text="utils.translateForFieldLabel('LBL_STATUS')"></label>
+                <select id="form_status" class="form-select" x-model="bean.status">
+                    <template x-for="item in utils.getList('stic_advanced_web_forms_status_list')" :key="item.id">
+                        <option :value="item.id" x-text="item.text" :selected="item.id == bean.status"></option>
+                    </template>
+                </select>
+            </div>
 
-            <div class="card mb-4 shadow-sm border-primary">
-                <div class="card-body d-flex justify-content-between align-items-center p-4">
-                    <div>
-                        <h4 class="mb-1">Estat del Formulari</h4>
-                        <p class="mb-0 text-muted" x-show="bean.status == 'draft'">El formulari està en mode <strong>Esborrany</strong>. No accepta respostes.</p>
-                        <p class="mb-0 text-success" x-show="bean.status == 'public'">El formulari és <strong>Públic</strong> i està acceptant respostes.</p>
+            <!-- Preview -->
+            <div class="col-6 d-flex align-items-end">
+                <button type="button" class="button">
+                    <a :href="previewUrl" target="_blank" class="btn button" x-text="utils.translate('LBL_PREVIEW_IN_NEW_TAB')" ></a>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Publish Form -->
+        <div class="card p-2 mt-4" x-data="{ formPublishTabSelected:'link' }">
+            <div class="card-header" >
+                <h3 x-text="utils.translate('LBL_FORM_PUBLISH_OPTIONS')"></h3>
+            </div>
+            <div class="card-body">
+                <div class="accordion">
+                    <!-- Link -->
+                    <div class="accordion-item" x-data="{opened:true}">
+                        <div id="formLink_Header" class="accordion-header accordion-button" role="button" 
+                             :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                             data-bs-target="#formLink_Content" aria-controls="formLink_Content">
+                            <h4 x-text="utils.translate('LBL_FORM_PUBLISH_LINK')"></h4>
+                        </div>
+                        <div id="formLink_Content" class="accordion-collapse collapse show" aria-labelledby="formLink_Header">
+                            <div class="accordion-body">
+                                <div class="p-2 form-text text-muted small fst-italic">
+                                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                                    <span x-text="utils.translate('LBL_FORM_PUBLISH_LINK_DESC')"></span>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" :value="publicUrl" readonly>
+                                    <button type="button" class="btn" @click="copyToClipboard(publicUrl)" x-text="utils.translate('LBL_BUTTON_COPY')"></button>
+                                    <button type="button" class="btn">
+                                        <a :href="publicUrl" target="_blank" x-text="utils.translate('LBL_BUTTON_OPEN')"></a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="form-check form-switch custom-switch-lg">
-                        <input class="form-check-input" type="checkbox" role="switch" 
-                               id="formStatusSwitch" 
-                               :checked="bean.status == 'public'"
-                               @change="toggleStatus($event.target.checked)">
-                        <label class="form-check-label fw-bold" for="formStatusSwitch" 
-                               x-text="bean.status == 'public' ? 'ACTIVAT' : 'DESACTIVAT'"></label>
+                    <!-- Iframe -->
+                    <div class="accordion-item" x-data="{opened:false}">
+                        <div id="formIframe_Header" class="accordion-header accordion-button" role="button" 
+                             :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                             data-bs-target="#formIframe_Content" aria-controls="formIframe_Content">
+                            <h4 x-text="utils.translate('LBL_FORM_PUBLISH_IFRAME')"></h4>
+                        </div>
+                        <div id="formIframe_Content" class="accordion-collapse collapse" aria-labelledby="formIframe_Header">
+                            <div class="accordion-body">
+                                <div class="p-2 form-text text-muted small fst-italic">
+                                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                                    <span x-text="utils.translate('LBL_FORM_PUBLISH_IFRAME_DESC')"></span>
+                                </div>
+                                <div class="input-group">
+                                    <textarea class="form-control font-monospace small bg-light" rows="2" readonly x-model="iframeCode" 
+                                              style="width:70% !important; resize: none; height: 50px !important;"></textarea>
+                                    <button type="button" class="btn" @click="copyToClipboard(iframeCode)" x-text="utils.translate('LBL_BUTTON_COPY')"
+                                            style="height: 50px !important;"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Html -->
+                    <div class="accordion-item" x-data="{opened:false}">
+                        <div id="formHtml_Header" class="accordion-header accordion-button" role="button" 
+                             :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                             data-bs-target="#formHtml_Content" aria-controls="formHtml_Content">
+                            <h4 x-text="utils.translate('LBL_FORM_PUBLISH_HTML')"></h4>
+                        </div>
+                        <div id="formHtml_Content" class="accordion-collapse collapse" aria-labelledby="formHtml_Header">
+                            <div class="accordion-body">
+                                <div class="p-2 form-text text-muted small fst-italic">
+                                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                                    <span x-text="utils.translate('LBL_FORM_PUBLISH_HTML_DESC')"></span>
+                                </div>
+                                <textarea class="form-control font-monospace small bg-light" rows="10" readonly x-model="generatedHtml"></textarea>
+                                <div class="mt-2 text-end">
+                                    <button type="button" class="btn button" @click="copyToClipboard(generatedHtml)" x-text="utils.translate('LBL_BUTTON_COPY')"></button>
+                                    <button type="button" class="btn button" @click="downloadHtml()" x-text="utils.translate('LBL_BUTTON_DOWNLOAD')"></button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="text-end mb-4">
-                <a :href="previewUrl" target="_blank" class="btn btn-outline-primary">
-                    <i class="suitepicon suitepicon-action-preview me-2"></i>
-                    Previsualitzar en pestanya nova
-                </a>
-            </div>
-
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs">
-                        <li class="nav-item">
-                            <button class="nav-link" :class="{ 'active': tab === 'link' }" @click="tab = 'link'">Enllaç Públic</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" :class="{ 'active': tab === 'html' }" @click="tab = 'html'">Codi HTML</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" :class="{ 'active': tab === 'iframe' }" @click="tab = 'iframe'">Incrustar (Iframe)</button>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body bg-white">
-                    
-                    <div x-show="tab === 'link'">
-                        <p class="text-muted small">Comparteix aquest enllaç directament amb els teus usuaris.</p>
-                        <div class="input-group">
-                            <input type="text" class="form-control" :value="publicUrl" readonly>
-                            <button class="btn btn-outline-secondary" @click="copyToClipboard(publicUrl)">Copiar</button>
-                            <a :href="publicUrl" target="_blank" class="btn btn-outline-secondary">Obrir</a>
-                        </div>
-                    </div>
-
-                    <div x-show="tab === 'html'">
-                        <p class="text-muted small">Copia aquest codi i enganxa'l a la teva web. Inclou estils i scripts.</p>
-                        <div class="position-relative">
-                            <textarea class="form-control font-monospace small bg-light" rows="10" readonly x-model="generatedHtml"></textarea>
-                            <button class="btn btn-sm btn-primary position-absolute top-0 end-0 m-2" 
-                                    @click="copyToClipboard(generatedHtml)">Copiar Codi</button>
-                        </div>
-                        <div class="mt-2 text-end">
-                             <button class="btn btn-secondary btn-sm" @click="downloadHtml()">Descarregar .html</button>
-                        </div>
-                    </div>
-
-                    <div x-show="tab === 'iframe'">
-                        <p class="text-muted small">Utilitza aquest codi per incrustar el formulari sense conflictes d'estil.</p>
-                        <div class="input-group">
-                            <textarea class="form-control font-monospace small bg-light" rows="4" readonly x-model="iframeCode"></textarea>
-                            <button class="btn btn-outline-secondary" @click="copyToClipboard(iframeCode)">Copiar</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
     </div>
 </main>

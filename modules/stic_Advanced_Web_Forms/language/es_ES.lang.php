@@ -81,7 +81,6 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
-  'LBL_GENERATE_URL' => 'Generar URL',
   'LBL_STATUS' => 'Estado',
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Modo de procesamiento',
@@ -101,7 +100,15 @@ $mod_strings = array (
   'LBL_PREVIEW_TOOLBAR' => 'Previsualización',
   'LBL_PREVIEW_ACTIVE_TEXT' => 'Activo',
   'LBL_PREVIEW_INACTIVE_TEXT' => 'Inactivo',
-  
+  'LBL_PREVIEW_IN_NEW_TAB' => 'Previsualizar en pestaña nueva',
+  'LBL_FORM_PUBLISH_OPTIONS' => 'Opciones de publicación',
+  'LBL_FORM_PUBLISH_LINK' => 'Enlace público',
+  'LBL_FORM_PUBLISH_LINK_DESC' => 'Copia y comparte este enlace directamente para acceder al formulario',
+  'LBL_FORM_PUBLISH_IFRAME' => 'Incrustar (iframe)',
+  'LBL_FORM_PUBLISH_IFRAME_DESC' => 'Copia este código para incrustar el formulario web en una página externa, manteniéndolo alojado en el CRM',
+  'LBL_FORM_PUBLISH_HTML' => 'Código HTML',
+  'LBL_FORM_PUBLISH_HTML_DESC' => 'Utiliza este código para alojar el formulario web en una página externa',
+
   'LBL_WIZARD_PREVIOUS' => '<< Anterior',
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
   'LBL_WIZARD_FINISH' => 'Finalizar',
@@ -127,6 +134,16 @@ $mod_strings = array (
   'LBL_BUTTON_MOVE_UP' => 'Mover arriba',
   'LBL_BUTTON_MOVE_DOWN' => 'Mover abajo',
   'LBL_BUTTON_RELOAD' => 'Recargar',
+  'LBL_BUTTON_COPY' => 'Copiar',
+  'LBL_BUTTON_OPEN' => 'Abrir',
+  'LBL_BUTTON_DOWNLOAD' => 'Descargar',
+
+  'LBL_CODE_GENERATING' => 'Generando el código...',
+  'LBL_CODE_GENERATING_ERROR' => 'Error generando el código',
+  'LBL_CODE_LOADING' => 'Cargando el código...',
+  'LBL_CODE_LOADING_ERROR' => 'Error de conexión',
+
+  'LBL_COPY_TO_CLIPBOARD_DONE' => 'Copiado al portapapeles',
 
   'LBL_DATABLOCK' => 'Bloque de datos',
   'LBL_DATABLOCKS' => 'Bloques de datos',
@@ -320,9 +337,9 @@ $mod_strings = array (
 
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar email a usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Origen del Responsable',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => "Origen del 'Asignado a'",
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => "El registro del cual se obtendrá el 'Asignado a'",
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Responsable del Formulario',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Asignado al Formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RECORD_TEXT' => 'Registro Fijo',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RELATE_TEXT' => 'Campo Relacionado',

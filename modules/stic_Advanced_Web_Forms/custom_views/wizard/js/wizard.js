@@ -214,7 +214,15 @@ class WizardNavigation {
           config: window.alpineComponent.formConfig.toJSONString(),
           step: window.alpineComponent.navigation.step,
         }),
-      }).then(() => location.reload());
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = data.redirectUrl; 
+        } else {
+          console.error('Error saving form:', data.message);
+        }
+      });
     }
   }
 }
@@ -1695,75 +1703,56 @@ class WizardStep5 {
     return {
       get bean() { return window.alpineComponent.bean; },
       
-      tab: 'link', // Pestanya activa
-      generatedHtml: 'Generant codi...',
+      tab: 'link', // Active tab
+      generatedHtml: utils.translate('LBL_CODE_GENERATING'),
       
-      // Càlcul de URLs (Assumint que tens l'ID del bean)
       get publicUrl() {
-          // Construeix la URL del EntryPoint
-          const baseUrl = window.location.origin + window.location.pathname;
-          return `${baseUrl}?entryPoint=stic_AWF_form_viewer&id=${this.bean.id}`;
+        const baseUrl = window.location.origin + window.location.pathname;
+        return `${baseUrl}?entryPoint=stic_AWF_renderForm&id=${this.bean.id}`;
       },
 
       get previewUrl() {
-          // Pot ser la mateixa o una acció específica de preview
-          return `index.php?module=stic_Advanced_Web_Forms&action=renderPreviewForm&record=${this.bean.id}`;
+        return `index.php?module=stic_Advanced_Web_Forms&action=renderPreviewForm&record=${this.bean.id}`;
       },
 
       get iframeCode() {
-          return `<iframe src="${this.publicUrl}" width="100%" height="800" frameborder="0" style="border:0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`;
+        return `<iframe src="${this.publicUrl}" width="100%" height="800" frameborder="0" style="border:0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>`;
       },
 
       init() {
-          this.loadGeneratedHtml();
+        this.loadGeneratedHtml();
       },
 
-      /**
-       * Canvia l'estat (Borrador <-> Públic)
-       */
-      toggleStatus(isPublic) {
-          this.bean.status = isPublic ? 'public' : 'draft';
-          
-          // Forcem un autosave immediat per guardar el canvi d'estat a la BD
-          // (La funció autoSave del WizardNavigation ja guarda tot el bean)
-          WizardNavigation.autoSave().then(() => {
-              // Opcional: Mostrar toast de "Estat actualitzat"
-          });
-      },
-
-      /**
-       * Demana al servidor l'HTML generat pel FormHtmlGeneratorService
-       */
       async loadGeneratedHtml() {
-          this.generatedHtml = "Carregant...";
+        this.generatedHtml = utils.translate('LBL_CODE_LOADING');
           
-          try {
-              const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=renderForm&record=" + this.bean.id);
-              if (response.ok) {
-                  this.generatedHtml = await response.text();
-              } else {
-                  this.generatedHtml = "Error generant el codi.";
-              }
-          } catch (e) {
-              console.error(e);
-              this.generatedHtml = "Error de connexió.";
+        try {
+          const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=renderForm&record=" + this.bean.id);
+          if (response.ok) {
+            this.generatedHtml = await response.text();
+          } else {
+            this.generatedHtml = utils.translate('LBL_CODE_GENERATING_ERROR');
           }
+        } catch (e) {
+          console.error(e);
+          this.generatedHtml = utils.translate('LBL_CODE_LOADING_ERROR');
+        }
       },
 
       copyToClipboard(text) {
-          navigator.clipboard.writeText(text).then(() => {
-              alert("Copiat al porta-retalls!"); // O usar un toast millor
-          });
+        navigator.clipboard.writeText(text).then(() => {
+          alert(utils.translate('LBL_COPY_TO_CLIPBOARD_DONE')); 
+        });
       },
 
       downloadHtml() {
-          const element = document.createElement('a');
-          const file = new Blob([this.generatedHtml], {type: 'text/html'});
-          element.href = URL.createObjectURL(file);
-          element.download = `formulari-${this.bean.id}.html`;
-          document.body.appendChild(element);
-          element.click();
-          document.body.removeChild(element);
+        const element = document.createElement('a');
+        const file = new Blob([this.generatedHtml], {type: 'text/html'});
+        element.href = URL.createObjectURL(file);
+        element.download = `form-${this.bean.id}.html`;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
       }
     };
   }

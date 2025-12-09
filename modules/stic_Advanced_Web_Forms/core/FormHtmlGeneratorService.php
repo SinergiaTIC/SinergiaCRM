@@ -296,36 +296,46 @@ class FormHtmlGeneratorService {
         $headerHtml = $this->decode($layout->header_html);
         $footerHtml = $this->decode($layout->footer_html);
 
-        $checkUrl = str_replace('entryPoint=stic_AWF_response_handler', 'module=stic_Advanced_Web_Forms&action=checkStatus', $actionUrl);
+        $checkUrl = str_replace('entryPoint=stic_AWF_responseHandler', 'entryPoint=stic_AWF_checkStatus', $actionUrl);
         $closedFormTitle = htmlspecialchars($layout->closed_form_title);
         $closedFormText = htmlspecialchars($layout->closed_form_text);
 
-        // Alpine logic to check if Form is active (in preview: skip it)
-        if ($isPreview) {
-            $alpineData = 
-"{ 
-  isActive: true, 
-  message: '{$closedFormText}', 
-  check() { console.log('Preview Mode: Status check skipped.'); } 
-}";
-        } else {
-            $alpineData = 
-"{
-  isActive: true,
-  message: '{$closedFormText}',
-  check() {
-    fetch('{$checkUrl}')
-    .then(r => r.json())
-    .then(d => {
-      this.isActive = d.active;
-      this.message = this.message == '' ? d.message : this.message;
-    }).catch(e => console.error(e));
-  }
-}";
+        // Alpine logic: Combine status, initial check if Form is active and sending form data in a single object
+
+        $jsCheckStatus = "";
+        if (!$isPreview) {
+            $jsCheckStatus = "
+                fetch('{$checkUrl}')
+                .then(r => r.json())
+                .then(d => {
+                    this.isActive = d.active;
+                    this.message = this.message == '' ? d.message : this.message;
+                }).catch(e => console.error(e));
+            ";
         }
+
+        $safeMessage = json_encode($closedFormText);
+        $alpineData = "{
+            isActive: true,
+            message: '{$safeMessage}',
+            submitting: false,
+            init() {
+                {$jsCheckStatus}
+            },
+            submitForm(formElement) {
+                // Browser native validation
+                if (formElement.checkValidity() === false) {
+                    formElement.reportValidity();
+                    return;
+                }
+                this.submitting = true;
+                formElement.submit(); 
+            }
+        }";
+
         $html = "";
         // Begin awf-main-card (wrapper)
-        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$alpineData}\" x-init=\"check()\">" ."\r\n".str_repeat('  ', ++$this->indent);
+        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$alpineData}\">" ."\r\n".str_repeat('  ', ++$this->indent);
         {
             // Begin awf-relative-wrapper (overlay Wrapper)
             $html .= "<div class='awf-relative-wrapper'>" ."\r\n".str_repeat('  ', ++$this->indent);
@@ -380,13 +390,14 @@ class FormHtmlGeneratorService {
                 if ($isPreview) {
                     // In preview: deactivate submit action and show alert
                     $formAttributes = 'action="#" onsubmit="event.preventDefault(); alert(\''.translate('LBL_PREVIEW_MODE_ALERT', 'stic_Advanced_Web_Forms').'\'); return false;"';
+                    $alpineSubmit = "";
                 } else {
                     $formAttributes = "action='{$actionUrl}' method='POST'";
+                    $alpineSubmit = "@submit.prevent='submitForm(\$el)'";
                 }
 
                 // Begin Form
-                $html .= "<form {$formAttributes} action='{$actionUrl}' method='POST' x-data='{ d: {}, submitting: false }' class='needs-validation' novalidate ".
-                         "@submit.prevent=\"if (\$el.checkValidity()) { submitting = true; \$el.submit(); } else { \$el.classList.add('was-validated'); }\">" ."\r\n".str_repeat('  ', ++$this->indent);
+                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation'>" ."\r\n".str_repeat('  ', ++$this->indent);
                 {
                     // Honeypot: Invisible anti-spam
                     $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" ."\r\n".str_repeat('  ', ++$this->indent);
@@ -533,16 +544,16 @@ class FormHtmlGeneratorService {
             } else if ($field->type_in_form == 'select') {
                 // TODO: Review select sub_types 
                 // $field->subtype_in_form: 'select', 'select_multiple', 'select_checkbox_list', 'select_radio', 'select_checkbox', 'select_switch'
-                $controlHtml .= "<select name='{$inputName}' class='form-select' id='f_{$inputName}' {$requiredAttr}>";
-                $controlHtml .= "<option value='' selected></option>";
+                $controlHtml .= "<select name='{$inputName}' class='form-select' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', ++$this->indent);
+                $controlHtml .= "<option value='' selected></option>" ."\r\n".str_repeat('  ', $this->indent);
                 foreach ($field->value_options as $opt) {
                     if ($opt->is_visible) {
                         $val = htmlspecialchars($opt->value);
                         $txt = htmlspecialchars($opt->text);
-                        $controlHtml .= "<option value='{$val}'>{$txt}</option>";
+                        $controlHtml .= "<option value='{$val}'>{$txt}</option>" ."\r\n".str_repeat('  ', $this->indent);
                     }
                 }
-                $controlHtml .= "</select>";
+                $controlHtml .= "</select>" ."\r\n".str_repeat('  ', --$this->indent);
             } else {
                 $controlType = 'text';
                 switch ($field->subtype_in_form) {
@@ -554,7 +565,7 @@ class FormHtmlGeneratorService {
                     case 'date_time': $controlType = 'time'; break;
                     case 'date_datetime': $controlType = 'datetime-local'; break;
                 }
-                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' {$requiredAttr}>";
+                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
             }
 
             if ($isFloating) {

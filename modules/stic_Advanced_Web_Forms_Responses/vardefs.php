@@ -178,7 +178,7 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_advanced_web_forms_status_list',
+    'options' => 'stic_advanced_web_forms_response_status_list',
     'studio' => 'visible',
     'dependency' => false,
   ),

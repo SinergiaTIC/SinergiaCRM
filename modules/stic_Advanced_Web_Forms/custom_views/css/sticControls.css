@@ -169,6 +169,10 @@ label.field-required::after {
   height: 32px !important;
   min-width: 32px !important;
 }
+.stic_panel .btn a {
+    text-decoration: none;
+    color: inherit;
+}
 .stic_panel .input-group .btn {
   margin-right: inherit !important;
   display: flex;

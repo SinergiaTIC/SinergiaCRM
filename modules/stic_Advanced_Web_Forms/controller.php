@@ -25,33 +25,16 @@ require_once('include/MVC/Controller/SugarController.php');
 #[\AllowDynamicProperties]
 class stic_Advanced_Web_FormsController extends SugarController
 {
-    /**
-     * Handles the 'saveDraft' action to Save current configuration in bean
-     */
-    public function action_saveDraft()
+    private function _saveBeanFromData($data)
     {
-        // Ensure return json 
-        header('Content-Type: application/json');
-
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!$data) {
-            echo json_encode(['success' => false, 'message' => 'Missing or invalid data']);
-            sugar_cleanup(true);
-        }
-
-        $bean = null;
         if (empty($data['bean']['id'])) {
-            // Create the bean
             $bean = BeanFactory::newBean('stic_Advanced_Web_Forms');
-            $bean->id = $data['bean']['id'];
         } else {
-            // Load the bean
             $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $data['bean']['id']);
         }
 
         if (!$bean) {
-            echo json_encode(['success' => false, 'message' => 'Record not found']);
-            sugar_cleanup(true);
+            throw new Exception("Record not found or could not be created");
         }
 
         // Update all fields in vardef
@@ -66,11 +49,48 @@ class stic_Advanced_Web_FormsController extends SugarController
         }
 
         // Update config_json with new config
-        $bean->configuration = $data['config'];
-        // $bean->status = 'draft';
+        if (isset($data['config'])) {
+             $bean->configuration = $data['config'];
+        }
+        
         $bean->save();
+        return $bean;
+    }
 
-        echo json_encode(['success' => true, 'id' => $bean->id, 'step' => $data['step'] ?? null]);
+    /**
+     * Handles the 'saveDraft' action to Save current configuration in bean
+     */
+    public function action_saveDraft()
+    {
+        header('Content-Type: application/json');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        try {
+            $bean = $this->_saveBeanFromData($data);
+            echo json_encode(['success' => true, 'id' => $bean->id]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+
+        sugar_cleanup(true);
+    }
+
+    /**
+     * Handles the 'finalizeConfig' action to Finish bean edition
+     */
+    public function action_finalizeConfig()
+    {
+        header('Content-Type: application/json');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        try {
+            $bean = $this->_saveBeanFromData($data);
+            $redirectUrl = 'index.php?module=stic_Advanced_Web_Forms&action=index';
+            echo json_encode(['success' => true, 'id' => $bean->id, 'redirectUrl' => $redirectUrl]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        
         sugar_cleanup(true);
     }
 
@@ -132,59 +152,31 @@ class stic_Advanced_Web_FormsController extends SugarController
         sugar_cleanup(true);
     }
     
-    private function generateForm(string $recordId, bool $isPreview, mixed $configData=null) {
-        if (empty($recordId)) {
-            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Record missing");
-            die("record missing");
+    private function renderOutput(string $recordId, bool $isPreview, ?array $configData = null)
+    {
+        require_once 'modules/stic_Advanced_Web_Forms/core/FormRenderService.php';
+
+        if (ob_get_length()) { 
+            ob_clean(); 
         }
-
-        if ($configData == null) {
-            // Generate Form from Bean
-            $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $recordId);
-            if (!$bean || empty($bean->id)) {
-                $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Form not found with id: {$recordId}");
-                die("Form not found");
-            }
-
-            $jsonConfig = $bean->configuration;
-            $configData = json_decode(html_entity_decode($jsonConfig), true) ?? [];
-        }
-
-        require_once "modules/stic_Advanced_Web_Forms/core/includes.php"; 
-        require_once "modules/stic_Advanced_Web_Forms/core/FormHtmlGeneratorService.php";
-
+        
         try {
-            $formConfig = FormConfig::fromJsonArray($configData);
-        } catch (\Throwable $e) {
-            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Processing config Form: {$e->getMessage()}");
-            die("Error en processing config Form: " . $e->getMessage());
+            $service = new FormRenderService();
+            echo $service->render($recordId, $isPreview, $configData);
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__. "Error rendering form: ". $e->getMessage());
+            die($e->getMessage());
         }
-
-        // $actionUrl = "javascript:void(0);";  // Dummy url
-        // if (!$isPreview) {
-            global $sugar_config;
-            $siteUrl = rtrim($sugar_config['site_url'], '/');
-            $actionUrl = "{$siteUrl}/index.php?entryPoint=stic_AWF_response_handler&form_id={$recordId}";
-        // }
-
-        $generator = new FormHtmlGeneratorService();
-        $html = $generator->generate($formConfig, $recordId, $actionUrl, $isPreview);
-
-        if (ob_get_length()) {
-            ob_clean();
-        }        
-        echo $html;
 
         sugar_cleanup(true);
     }
-
 
     /**
      * Handles the 'renderForm' action to retrieve the form HTML
      */
     public function action_renderForm() 
     {
-        $this->generateForm($_REQUEST['record'] ?? '', false);
+        $this->renderOutput($_REQUEST['record'] ?? '', false);
     }
 
     /**
@@ -192,7 +184,7 @@ class stic_Advanced_Web_FormsController extends SugarController
      */
     public function action_renderPreviewForm()
     {
-        $this->generateForm($_REQUEST['record'] ?? '', true);
+        $this->renderOutput($_REQUEST['record'] ?? '', true);
     }
 
     /**
@@ -200,43 +192,17 @@ class stic_Advanced_Web_FormsController extends SugarController
      */
     public function action_renderPreview()
     {
+        // Live Preview from sent JSON
         $input = file_get_contents('php://input');
         $data = json_decode($input, true);
         
         if (!$data || !isset($data['config'])) {
-            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": No config data received");
             die("Error: No config data received");
         }
 
         $formId = $data['id'] ?? 'preview'; 
-        try {
-            $configData = json_decode($data['config'], true);
-            $this->generateForm($formId, true, $configData);
-        } catch (\Throwable $e) {
-            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Generating Form preview: {$e->getMessage()}");
-            die("Generating Form preview: " . $e->getMessage());
-        }
-    }
+        $configData = json_decode($data['config'], true);
 
-    /**
-     * Handles the 'checkStatus' action to check form status from remote js.
-     * Retorna JSON: { active: true/false, message: "..." }
-     */
-    public function action_checkStatus()
-    {
-        header('Content-Type: application/json');
-        header('Access-Control-Allow-Origin: *'); // Allow calls from remote webs
-        
-        $id = $_REQUEST['id'] ?? '';
-        
-        $db = DBManagerFactory::getInstance();
-        $status = $db->getOne("SELECT status FROM stic_advanced_web_forms WHERE id = " . $db->quote($id));
-
-        // Only 'public' is active
-        $isActive = ($status === 'public');
-        $message = !$isActive ? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms') : '';
-
-        echo json_encode(['active' => $isActive, 'message' => $message]);
-        sugar_cleanup(true);
+        $this->renderOutput($formId, true, $configData);
     }
 }

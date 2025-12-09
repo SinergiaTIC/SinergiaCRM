@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 // Simple prevent spam: If Honey pot is setted: Is spam
 if (!empty($_REQUEST['awf_honey_pot'])) {
-    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": SPAM response received for form ID: " . ($_REQUEST['form_id'] ?? ''));
+    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": SPAM response received for form ID: " . ($_REQUEST['id'] ?? ''));
     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": SPAM received REQUEST:" . print_r($_REQUEST, true));
     die('Unauthorized, check log.');
 }

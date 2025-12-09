@@ -3774,10 +3774,10 @@ $app_list_strings['stic_advanced_web_forms_processing_mode_list']['sync'] = 'Sí
 $app_list_strings['stic_advanced_web_forms_processing_mode_list']['async'] = 'Asíncrono';
 
 // Estado del proceso de respuestas a los Formularios Web Avanzados
-$app_list_strings['stic_advanced_web_forms_status_list']['pending'] = 'Pendiente';
-$app_list_strings['stic_advanced_web_forms_status_list']['processing'] = 'Procesando';
-$app_list_strings['stic_advanced_web_forms_status_list']['processed'] = 'Procesada';
-$app_list_strings['stic_advanced_web_forms_status_list']['error'] = 'Error';
+$app_list_strings['stic_advanced_web_forms_response_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_advanced_web_forms_response_status_list']['processing'] = 'Procesando';
+$app_list_strings['stic_advanced_web_forms_response_status_list']['processed'] = 'Procesada';
+$app_list_strings['stic_advanced_web_forms_response_status_list']['error'] = 'Error';
 
 // Acción realizada con un registro por una respuestas a un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_links_record_action_list']['created'] = 'Creado';
@@ -3869,3 +3869,8 @@ $app_list_strings['stic_advanced_web_forms_form_width_list']['100%'] = 'Total (1
 $app_list_strings['stic_advanced_web_forms_form_width_list']['1200px'] = 'Muy ancho (1200px)';
 $app_list_strings['stic_advanced_web_forms_form_width_list']['800px'] = 'Estándar (800px)';
 $app_list_strings['stic_advanced_web_forms_form_width_list']['600px'] = 'Estrecho / Móvil (600px)';
+
+// Estado de los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_status_list']['draft'] = 'Borrador';
+$app_list_strings['stic_advanced_web_forms_status_list']['public'] = 'Público';
+$app_list_strings['stic_advanced_web_forms_status_list']['closed'] = 'Cerrado';

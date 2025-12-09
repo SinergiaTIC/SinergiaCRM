@@ -45,7 +45,6 @@ class stic_Advanced_Web_Forms extends Basic
     public $assigned_user_name;
     public $assigned_user_link;
     public $SecurityGroups;
-    public $generate_url;
     public $status;
     public $public_url;
     public $processing_mode;
@@ -54,7 +53,6 @@ class stic_Advanced_Web_Forms extends Basic
     public $custom_js;
     public $custom_header_html;
     public $custom_footer_html;
-    public $html;
     public $additional_info;
 	
     public function bean_implements($interface)
