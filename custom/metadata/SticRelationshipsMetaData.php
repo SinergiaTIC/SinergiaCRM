@@ -7296,12 +7296,12 @@ $dictionary["stic_payment_commitments_stic_allocation_proposals"] = array(
             'rhs_table' => 'stic_allocation_proposals',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_paymec6a0proposals_c',
+            'join_table' => 'stic_payment_commitments_stic_allocation_proposals_c',
             'join_key_lhs' => 'stic_payme4a62itments_ida',
             'join_key_rhs' => 'stic_paymef676oposals_idb',
         ),
     ),
-    'table' => 'stic_paymec6a0proposals_c',
+    'table' => 'stic_payment_commitments_stic_allocation_proposals_c',
     'fields' => array(
         0 => array(
             'name' => 'id',
@@ -7332,21 +7332,21 @@ $dictionary["stic_payment_commitments_stic_allocation_proposals"] = array(
     ),
     'indices' => array(
         0 => array(
-            'name' => 'stic_payme223croposalsspk',
+            'name' => 'stic_payment_commitments_stic_allocation_proposals_cspk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',
             ),
         ),
         1 => array(
-            'name' => 'stic_paymea3e2posals_ida1',
+            'name' => 'stic_payme41bbtments_ida1',
             'type' => 'index',
             'fields' => array(
                 0 => 'stic_payme4a62itments_ida',
             ),
         ),
         2 => array(
-            'name' => 'stic_payme9cfeoposals_alt',
+            'name' => 'stic_payme0d11sals_idbalt',
             'type' => 'alternate_key',
             'fields' => array(
                 0 => 'stic_paymef676oposals_idb',
@@ -7366,12 +7366,12 @@ $dictionary["stic_allocation_proposals_stic_allocations"] = array(
             'rhs_table' => 'stic_allocations',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_allocation_propoe0ab',
-            'join_key_lhs' => 'stic_allocation_propo424d',
-            'join_key_rhs' => 'stic_allocation_propo6796',
+            'join_table' => 'stic_allocation_proposals_stic_allocations_c',
+            'join_key_lhs' => 'stic_alloc1a89oposals_ida',
+            'join_key_rhs' => 'stic_alloc97a0cations_idb',
         ),
     ),
-    'table' => 'stic_allocation_propoe0ab',
+    'table' => 'stic_allocation_proposals_stic_allocations_c',
     'fields' => array(
         0 => array(
             'name' => 'id',
@@ -7390,36 +7390,36 @@ $dictionary["stic_allocation_proposals_stic_allocations"] = array(
             'required' => true,
         ),
         3 => array(
-            'name' => 'stic_allocation_propo424d',
+            'name' => 'stic_alloc1a89oposals_ida',
             'type' => 'varchar',
             'len' => 36,
         ),
         4 => array(
-            'name' => 'stic_allocation_propo6796',
+            'name' => 'stic_alloc97a0cations_idb',
             'type' => 'varchar',
             'len' => 36,
         ),
     ),
     'indices' => array(
         0 => array(
-            'name' => 'stic_allocation_propobd86',
+            'name' => 'stic_allocation_proposals_stic_allocations_cspk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',
             ),
         ),
         1 => array(
-            'name' => 'stic_allocation_propo6b08',
+            'name' => 'stic_alloc4531posals_ida1',
             'type' => 'index',
             'fields' => array(
-                0 => 'stic_allocation_propo424d',
+                0 => 'stic_alloc1a89oposals_ida',
             ),
         ),
         2 => array(
-            'name' => 'stic_allocation_propob739',
+            'name' => 'stic_alloc633fions_idbalt',
             'type' => 'alternate_key',
             'fields' => array(
-                0 => 'stic_allocation_propo6796',
+                0 => 'stic_alloc97a0cations_idb',
             ),
         ),
     ),
@@ -7472,21 +7472,21 @@ $dictionary["stic_payments_stic_allocations"] = array(
     ),
     'indices' => array(
         0 => array(
-            'name' => 'stic_payments_stic_allocations_pk',
+            'name' => 'stic_payments_stic_allocations_cspk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',
             ),
         ),
         1 => array(
-            'name' => 'stic_payments_stic_allocations_ida1',
+            'name' => 'stic_paymecf98yments_ida1',
             'type' => 'index',
             'fields' => array(
                 0 => 'stic_payments_stic_allocationsstic_payments_ida',
             ),
         ),
         2 => array(
-            'name' => 'stic_payments_stic_allocations_idb',
+            'name' => 'stic_paymec865ions_idbalt',
             'type' => 'alternate_key',
             'fields' => array(
                 0 => 'stic_payments_stic_allocationsstic_allocations_idb',
@@ -7822,21 +7822,21 @@ $dictionary["opportunities_stic_allocation_proposals"] = array(
     ),
     'indices' => array(
         0 => array(
-            'name' => 'opportunities_stic_allocation_proposalsspk',
+            'name' => 'opportunities_stic_allocation_proposals_cspk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',
             ),
         ),
         1 => array(
-            'name' => 'opportunities_stic_allocation_proposals_ida1',
+            'name' => 'opportunitb256nities_ida1',
             'type' => 'index',
             'fields' => array(
                 0 => 'opportunities_stic_allocation_proposalsopportunities_ida',
             ),
         ),
         2 => array(
-            'name' => 'opportunities_stic_allocation_proposals_alt',
+            'name' => 'opportunitd6b1sals_idbalt',
             'type' => 'alternate_key',
             'fields' => array(
                 0 => 'opportunit83c4oposals_idb',
@@ -7892,21 +7892,21 @@ $dictionary["opportunities_stic_allocations"] = array(
     ),
     'indices' => array(
         0 => array(
-            'name' => 'opportunities_stic_allocationsspk',
+            'name' => 'opportunities_stic_allocations_cspk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',
             ),
         ),
         1 => array(
-            'name' => 'opportunities_stic_allocations_ida1',
+            'name' => 'opportunit6fa8nities_ida1',
             'type' => 'index',
             'fields' => array(
                 0 => 'opportunities_stic_allocationsopportunities_ida',
             ),
         ),
         2 => array(
-            'name' => 'opportunities_stic_allocations_alt',
+            'name' => 'opportunit29feions_idbalt',
             'type' => 'alternate_key',
             'fields' => array(
                 0 => 'opportunities_stic_allocationsstic_allocations_idb',
@@ -7962,21 +7962,21 @@ $dictionary["project_stic_allocation_proposals"] = array(
     ),
     'indices' => array(
         0 => array(
-            'name' => 'project_stic_allocation_proposalsspk',
+            'name' => 'project_stic_allocation_proposals_cspk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',
             ),
         ),
         1 => array(
-            'name' => 'project_stic_allocation_proposals_ida1',
+            'name' => 'project_st99beroject_ida1',
             'type' => 'index',
             'fields' => array(
                 0 => 'project_stic_allocation_proposalsproject_ida',
             ),
         ),
         2 => array(
-            'name' => 'project_stic_allocation_proposals_alt',
+            'name' => 'project_st725csals_idbalt',
             'type' => 'alternate_key',
             'fields' => array(
                 0 => 'project_st2413oposals_idb',
@@ -8032,21 +8032,21 @@ $dictionary["project_stic_allocations"] = array(
     ),
     'indices' => array(
         0 => array(
-            'name' => 'project_stic_allocationsspk',
+            'name' => 'project_stic_allocations_cspk',
             'type' => 'primary',
             'fields' => array(
                 0 => 'id',
             ),
         ),
         1 => array(
-            'name' => 'project_stic_allocations_ida1',
+            'name' => 'project_st4b9croject_ida1',
             'type' => 'index',
             'fields' => array(
                 0 => 'project_stic_allocationsproject_ida',
             ),
         ),
         2 => array(
-            'name' => 'project_stic_allocations_alt',
+            'name' => 'project_stc1f9ions_idbalt',
             'type' => 'alternate_key',
             'fields' => array(
                 0 => 'project_stic_allocationsstic_allocations_idb',
