@@ -105,7 +105,7 @@ class DetailView2 extends EditView
             // STIC#620
             // OAuths modules are excluded because when adding the option to print PDF the Edit, Duplicate and Delete options are lost
             // STIC#800
-            $excludedModules = ['AOS_Contracts', 'AOS_Quotes', 'AOS_Invoices', 'Schedulers', 'OAuth2Clients', 'OAuthKeys'];
+            $excludedModules = ['AOS_Contracts', 'AOS_Quotes', 'AOS_Invoices', 'Schedulers', 'OAuth2Clients', 'OAuthKeys', 'stic_Signatures', 'stic_Signers', 'stic_Signature_Log'];
             if (!in_array($this->module, $excludedModules)){
                 $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['AOS_GENLET'] = array ('customCode' => '<input type="button" class="button" onClick="showPopup(\'pdf\');" value="{$APP.LBL_PRINT_AS_PDF}">');
                 require_once('modules/AOS_PDF_Templates/formLetter.php');
@@ -115,13 +115,14 @@ class DetailView2 extends EditView
             
             // STIC-Custom 20250716 JCH - Show the Add Signature button and popupHTML in detail view
             // // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+            if (!in_array($this->module, $excludedModules)){
             $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showPopupSignature(\'popup-div-signature\');" value="{$APP.LBL_ADD_TO_SIGNATURE_PROCESS}">');
-            require_once('modules/stic_Signatures/SignaturePopup.php');
-            SelectSignatureTemplate::DVPopupHtml($this->module);
-            $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SHOW_RELATED_SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showRelatedSignatures(\'popup-div-related-signature\');" value="{$APP.LBL_SHOW_RELATED_SIGNATURES}">');
-            SelectSignatureTemplate::DVPopupRelatedSignaturesHtml($this->module, $this->focus->id);
+                require_once('modules/stic_Signatures/SignaturePopup.php');
+                SelectSignatureTemplate::DVPopupHtml($this->module);
+                $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SHOW_RELATED_SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showRelatedSignatures(\'popup-div-related-signature\');" value="{$APP.LBL_SHOW_RELATED_SIGNATURES}">');
+                SelectSignatureTemplate::DVPopupRelatedSignaturesHtml($this->module, $this->focus->id);
+            }
             // END STIC-Custom
-
         } else {
             //If file doesn't exist we create a best guess
             if (!file_exists("modules/$this->module/metadata/$metadataFileName.php") &&
