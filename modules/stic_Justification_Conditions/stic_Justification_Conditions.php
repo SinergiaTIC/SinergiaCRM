@@ -73,10 +73,14 @@ class stic_Justification_Conditions extends Basic
                 $nameParts[] = $opportunityBean->name;
             }
 
-            // Add related ledger account name if available
-            $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $this->stic_ledger_accounts_ida);
-            if ($ledgerAccountBean){
-                $nameParts[] = $ledgerAccountBean->name;
+            // Add ledger group if available
+            if (!empty($this->ledger_group) && isset($app_list_strings['stic_ledger_groups_list'][$this->ledger_group])) {
+                $nameParts[] = $app_list_strings['stic_ledger_groups_list'][$this->ledger_group];
+            }
+
+            // Add subgroup if available
+            if (!empty($this->subgroup) && isset($app_list_strings['stic_ledger_subgroups_list'][$this->subgroup])) {
+                $nameParts[] = $app_list_strings['stic_ledger_subgroups_list'][$this->subgroup];
             }
 
             // Add allocation type if available
