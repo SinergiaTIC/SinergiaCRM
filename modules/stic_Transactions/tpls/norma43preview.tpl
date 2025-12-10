@@ -34,11 +34,18 @@
 <div class="listViewBody">
     <form name="executeFinalImport" id="executeFinalImport" method="POST"
         action="index.php?module=stic_Transactions&action=executeFinalImport">
+        <input type="hidden" id="allow_file_duplicates" name="allow_file_duplicates" value="0"/>
 
         <div class="form-actions">
             <input type="button" class="button" value="{$APP['LBL_BACK']}"
                 onclick="if(confirm('{$MOD['LBL_BACK_TO_STEP_1']}')) location.href='index.php?module=stic_Transactions&action=uploadNorma43';" />
-            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}"/>
+            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}"
+                title="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43_HELP']}" />
+            {if $DATA.total_skipped_duplicates > 0}
+                <input type="button" class="button" value="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES']}" 
+                    onclick="document.getElementById('allow_file_duplicates').value='1'; document.getElementById('executeFinalImport').submit();" 
+                    title="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES_HELP']}"/>
+            {/if}
             <input type="button" class="button" value="{$APP['LBL_CANCEL']}"
                 onclick="location.href='index.php?module=stic_Transactions&action=index';" />
         </div>
@@ -202,10 +209,11 @@
                                 <table class="list view duplicate table-responsive" width="100%">
                                     <thead>
                                         <tr>
-                                            <th width="15%">{$MOD['LBL_TRANSACTION_DATE']}</th>
-                                            <th width="50%">{$MOD['LBL_NAME']}</th>
-                                            <th width="15%">{$MOD['LBL_PAYMENT_METHOD']}</th>
-                                            <th width="20%">{$MOD['LBL_AMOUNT']}</th>
+                                            <th width="13%">{$MOD['LBL_TRANSACTION_DATE']}</th>
+                                            <th width="42%">{$MOD['LBL_NAME']}</th>
+                                            <th width="13%">{$MOD['LBL_PAYMENT_METHOD']}</th>
+                                            <th width="17%">{$MOD['LBL_AMOUNT']}</th>
+                                            <th width="15%">{$MOD['LBL_DUPLICATE_LOCATION']}</th>
                                         </tr>
                                     </thead>
                                     <tbody id="duplicates_body_account_{$account_index}">
@@ -220,13 +228,20 @@
                                                         {$dup.amount_formatted}
                                                     </span>
                                                 </td>
+                                                <td class="duplicate-location-cell">
+                                                    {if $dup.duplicate_type == 'file'}
+                                                        <span class="duplicate-badge duplicate-file">{$MOD['LBL_DUPLICATE_LOCATION_FILE']}</span>
+                                                    {else}
+                                                        <span class="duplicate-badge duplicate-crm">{$MOD['LBL_DUPLICATE_LOCATION_CRM']}</span>
+                                                    {/if}
+                                                </td>
                                             </tr>
                                         {/foreach}
                                     </tbody>
                                     {* PAGINATION FOR DUPLICATES *}
                                     {if $account.duplicates|@count > $RECORDS_PER_PAGE}
                                         <tr id='pagination' class="pagination-unique pagination-bottom" role='presentation'>
-                                            <td colspan='4'>
+                                            <td colspan='5'>
                                                 <table border='0' cellpadding='0' cellspacing='0' width='100%' class='paginationTable'>
                                                     <tr>
                                                         <td nowrap="nowrap" class='paginationActionButtons'>
@@ -267,7 +282,12 @@
         <div class="form-actions">
             <input type="button" class="button" value="{$APP['LBL_BACK']}"
                 onclick="if(confirm('{$MOD['LBL_BACK_TO_STEP_1']}')) location.href='index.php?module=stic_Transactions&action=uploadNorma43';" />
-            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}"/>
+            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}"
+                title="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43_HELP']}" />
+            {if $DATA.total_skipped_duplicates > 0}
+                <input type="button" class="button" value="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES']}" 
+                    onclick="document.getElementById('allow_file_duplicates').value='1'; document.getElementById('executeFinalImport').submit();" title="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES_HELP']}"/>
+            {/if}
             <input type="button" class="button" value="{$APP['LBL_CANCEL']}"
                 onclick="location.href='index.php?module=stic_Transactions&action=index';" />
         </div>
@@ -602,6 +622,33 @@
 
         .list-view-pagination-button:disabled span {
             color: #999;
+        }
+
+        /* Duplicate location badges */
+        .duplicate-location-cell {
+            text-align: center;
+        }
+
+        .duplicate-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .duplicate-file {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #90caf9;
+        }
+
+        .duplicate-crm {
+            background-color: #fff3e0;
+            color: #f57c00;
+            border: 1px solid #ffb74d;
         }
 
     {/literal}

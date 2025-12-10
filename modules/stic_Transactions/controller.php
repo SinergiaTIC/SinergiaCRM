@@ -67,7 +67,17 @@ class stic_TransactionsController extends SugarController
     public function action_executeFinalImport()
     {
         require_once 'modules/stic_Transactions/importNorma43.php';
-        Norma43::finalizeImport([]);
+        
+        // Check if we should allow file duplicates, skip only crm duplicates
+        $allowFileDuplicates = !empty($_POST['allow_file_duplicates']) && $_POST['allow_file_duplicates'] === '1';
+        
+        if ($allowFileDuplicates) {
+            // Import all transactions except crm duplicates, file duplicates will be imported
+            Norma43::finalizeImportSkipCRMDuplicates();
+        } else {
+            // Standard import: skip ALL duplicates (both file and crm)
+            Norma43::finalizeImport([]);
+        }
 
         SugarApplication::redirect('index.php?module=stic_Transactions&action=index&import_status=completed');
     }

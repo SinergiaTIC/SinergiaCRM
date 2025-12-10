@@ -159,9 +159,12 @@ class Norma43
                 );
 
                 // Check for duplicates
-                if (self::isDuplicate($mapped, $productId, $importedHashes)) {
+                $duplicateCheck = self::isDuplicate($mapped, $productId, $importedHashes, $mov['raw_lines'] ?? []);
+                if ($duplicateCheck !== false) {
                     $summary['total_skipped_duplicates']++;
                     $accountSummary['skipped_duplicates']++;
+                    // Add duplicate_type to the mapped data for display in preview
+                    $mapped['duplicate_type'] = $duplicateCheck['type']; // 'file' or 'crm'
                     $accountSummary['duplicates'][] = $mapped;
                     continue;
                 }
@@ -198,11 +201,31 @@ class Norma43
     }
 
     /**
-     * Finalize the import of parsed Norma 43 data
+     * Finalize the import of parsed Norma 43 data, skipping ALL duplicates
      * @param array $forceImports List of movement hashes to force import even if they are duplicates
      * @return array Summary of the import process
      */
     public static function finalizeImport($forceImports = [])
+    {
+        return self::finalizeImportInternal($forceImports, false);
+    }
+
+    /**
+     * Finalize the import skipping ONLY crm duplicates, allows file duplicates
+     * @return array Summary of the import process
+     */
+    public static function finalizeImportSkipCRMDuplicates()
+    {
+        return self::finalizeImportInternal([], true);
+    }
+
+    /**
+     * Internal finalize import method
+     * @param array $forceImports List of movement hashes to force import
+     * @param bool $allowFileDuplicates If true, only skip crm duplicates (allow file duplicates)
+     * @return array Summary of the import process
+     */
+    private static function finalizeImportInternal($forceImports = [], $allowFileDuplicates = false)
     {
         global $db;
         self::$db = $db;
@@ -256,12 +279,17 @@ class Norma43
                         $mapped['name']
                     );
 
-                    // Avoiding duplicates in the database
-                    if (self::isDuplicate($mapped, $productId, $importedHashes)) {
-                        $summary['total_skipped_duplicates']++;
-                        $accountSummary['skipped_duplicates']++;
-                        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping duplicate for account {$account['iban']}: {$mapped['name']}");
-                        continue;
+                    // Avoiding duplicates
+                    $skipFileDuplicates = !$allowFileDuplicates; // If we allow file duplicates, don't skip them
+                    $duplicateCheck = self::isDuplicate($mapped, $productId, $importedHashes, $mov['raw_lines'] ?? [], $skipFileDuplicates);
+                    if ($duplicateCheck !== false) {
+                        // Only skip if it's a crm duplicate, OR if we're skipping file duplicates too
+                        if ($duplicateCheck['type'] === 'crm' || $skipFileDuplicates) {
+                            $summary['total_skipped_duplicates']++;
+                            $accountSummary['skipped_duplicates']++;
+                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping duplicate ({$duplicateCheck['type']}) for account {$account['iban']}: {$mapped['name']}");
+                            continue;
+                        }
                     }
 
                     // Insert the transaction
@@ -341,8 +369,12 @@ class Norma43
                     break;
                 case '22':
                     // Case 22 - Movement Record
-                    // Add movement to the current account
-                    if ($currentAccount) $currentAccount['movements'][] = self::parseMovement($line);
+                    // Add movement to the current account with raw line for duplicate detection
+                    if ($currentAccount) {
+                        $movement = self::parseMovement($line);
+                        $movement['raw_lines'] = [$line]; // Store the raw line 22
+                        $currentAccount['movements'][] = $movement;
+                    }
                     break;
                 case '23':
                     // Case 23 - Complementary Information
@@ -350,6 +382,8 @@ class Norma43
                     if ($currentAccount && !empty($currentAccount['movements'])) {
                         $lastIndex = count($currentAccount['movements']) - 1;
                         $currentAccount['movements'][$lastIndex]['complementary'][] = self::parseComplementary($line);
+                        // Also store the raw line for exact comparison
+                        $currentAccount['movements'][$lastIndex]['raw_lines'][] = $line;
                     }
                     break;
                 case '33':
@@ -727,9 +761,11 @@ class Norma43
      * @param array $mapped_data The mapped transaction data
      * @param string $productId The ID of the associated financial product
      * @param array $importedHashes Reference to the array of already imported hashes in the current session
-     * @return bool True if the transaction is a duplicate, false otherwise
+     * @param array $rawLines The raw Norma43 lines (22 + 23s) for exact comparison within file
+     * @param bool $skipFileDuplicates If false, file duplicates are NOT checked 
+     * @return array|bool Returns array with duplicate info ['is_duplicate' => bool, 'type' => 'file'|'crm'] or false if not duplicate
      */
-    private static function isDuplicate($mapped_data, $productId, &$importedHashes = [])
+    private static function isDuplicate($mapped_data, $productId, &$importedHashes = [], $rawLines = [], $skipFileDuplicates = true)
     {
         global $db;
 
@@ -741,10 +777,30 @@ class Norma43
             $mapped_data['name'] ?? ''
         );
 
-        // Internal check (duplicate within the same file)
-        if (in_array($hash, $importedHashes)) {
-            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> [DUPLICATE_SESSION] Hash found in current session: {$hash}");
-            return true; // It already exists in the imported hashes
+        // Internal check, duplicate within the same file, only if skipFileDuplicates is true
+        if ($skipFileDuplicates && isset($importedHashes[$hash])) {
+            // Hash collision detected, verify if it's a true duplicate by comparing raw lines
+            $previousRawLines = $importedHashes[$hash]['raw_lines'] ?? [];
+            
+            if (!empty($rawLines) && !empty($previousRawLines)) {
+                $currentRaw = implode('|', $rawLines);
+                $previousRaw = implode('|', $previousRawLines);
+                
+                if ($currentRaw === $previousRaw) {
+                    // True duplicate: identical raw lines
+                    $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Exact duplicate confirmed by raw line comparison. Hash={$hash}");
+                    return ['is_duplicate' => true, 'type' => 'file'];
+                } else {
+                    // Hash collision: same hash but different transactions
+                    $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> Different transactions with same hash={$hash}! " .
+                        "Current hash: " . substr($currentRaw, 0, 100) . "... / Previous hash: " . substr($previousRaw, 0, 100) . "...");
+                    // Not a duplicate, allow import with a unique identifier
+                }
+            } else {
+                // No raw lines available (shouldn't happen), fallback to hash-only check
+                $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Hash found in current session (no raw lines for verification): {$hash}");
+                return ['is_duplicate' => true, 'type' => 'file'];
+            }
         }
 
         // Searching for duplicates in the database
@@ -759,8 +815,8 @@ class Norma43
         $existsInDb = $db->fetchByAssoc($result);
 
         if ($existsInDb) {
-            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> [DUPLICATE_DB] Duplicate found in database! Hash={$hash}, DB_hash={$existsInDb['transaction_hash']}, DB_amount={$existsInDb['amount']}, DB_date={$existsInDb['transaction_date']}, DB_name={$existsInDb['document_name']}");
-            return true;
+            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Duplicate found in database! Hash={$hash}, DB_hash={$existsInDb['transaction_hash']}, DB_amount={$existsInDb['amount']}, DB_date={$existsInDb['transaction_date']}, DB_name={$existsInDb['document_name']}");
+            return ['is_duplicate' => true, 'type' => 'crm'];
         }
 
         // If not found in DB by hash, do a manual check by all fields
@@ -783,8 +839,13 @@ class Norma43
             $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> [HASH_MISMATCH] Found transaction with same date/amount/product, but DIFFERENT hash! Expected hash={$hash}, DB_hash={$manualMatch['transaction_hash']}, DB_name={$manualMatch['document_name']}. This indicates hash generation is inconsistent!");
         }
 
-        // Not a duplicate, add it to the imported list for this session
-        $importedHashes[] = $hash;
+        // Not a duplicate, add it to the imported list for this session, store hash with raw lines
+        $importedHashes[$hash] = [
+            'raw_lines' => $rawLines,
+            'date' => $mapped_data['transaction_date'] ?? '',
+            'amount' => $mapped_data['amount'] ?? 0,
+            'name' => $mapped_data['name'] ?? ''
+        ];
         $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> NEW transaction: {$hash} (date={$mapped_data['transaction_date']}, amount={$mapped_data['amount']}, name={$mapped_data['name']})");
         return false;
     }
