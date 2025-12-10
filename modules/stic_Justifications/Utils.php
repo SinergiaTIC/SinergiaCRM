@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -23,8 +22,8 @@
  */
 
 
-class stic_Justification_ConditionsUtils
-{
+class stic_JustificationsUtils {
+
     public static function createJustificationsFromAllocation($allocation)
     {
         // Retrieve all justification conditions linked to the project (and Opportunity) of the allocation
@@ -87,20 +86,6 @@ class stic_Justification_ConditionsUtils
         return true;
     }
 
-    public static function removeJustificationsFromAllocation($allocation)
-    {
-        // retrieve all allocations linked to the payment
-        $justificationBeans = array();
-        $linkName = 'stic_allocations_stic_justifications';
-        if ($allocation->load_relationship($linkName)) {
-            $justificationBeans = $allocation->$linkName->getBeans();
-        }
-        // delete each allocation
-        foreach ($justificationBeans as $justificationBean) {
-            $justificationBean->mark_deleted($justificationBean->id);
-        }
-    }
-
     public static function getConditionsForProjectAndOpportunity($projectId, $opportunityId)
     {
 
@@ -145,44 +130,19 @@ class stic_Justification_ConditionsUtils
         return $conditions;
     }
 
-/**
- * 
- * Tindria sentit que una condició de justificació estigués lligada a un Projecte també?
- * 
- * 
- * Si la imputació té Subvenció lligada, agafem condicions d'aquella subvenció
- * 
- * Si la imputació no té Subvenció lligada, agafem les subvencions lligades al projecte i les seves condicions
- * 
- * 
- */
-
-
-
-
-        // $conditionBean = BeanFactory::newBean('stic_Justification_Conditions');
-        // $query = new SugarQuery();
-        // $query->from($conditionBean);
-        // $query->where()->equals('deleted', 0);
-
-        // $projectCondition = $query->where()->queryOr();
-        // if (!empty($projectId)) {
-        //     $projectCondition->equals('project_stic_justification_conditionsproject_ida', $projectId);
-        // }
-        // if (!empty($opportunityId)) {
-        //     $projectCondition->equals('opportunities_stic_justification_conditionsopportunities_ida', $opportunityId);
-        // }
-
-        // $results = $query->execute();
-
-        // foreach ($results as $row) {
-        //     $condition = BeanFactory::getBean('stic_Justification_Conditions', $row['id']);
-        //     if ($condition) {
-        //         $conditions[] = $condition;
-        //     }
-        // }
-
-
+    public static function removeJustificationsFromAllocation($allocation)
+    {
+        // retrieve all allocations linked to the payment
+        $justificationBeans = array();
+        $linkName = 'stic_allocations_stic_justifications';
+        if ($allocation->load_relationship($linkName)) {
+            $justificationBeans = $allocation->$linkName->getBeans();
+        }
+        // delete each allocation
+        foreach ($justificationBeans as $justificationBean) {
+            $justificationBean->mark_deleted($justificationBean->id);
+        }
+    }
 
     protected static function getOpportunitiesFromProject($projectId)
     {
@@ -207,4 +167,5 @@ class stic_Justification_ConditionsUtils
 
         return $result;
     }
-}   
+
+}

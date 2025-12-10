@@ -246,7 +246,7 @@ class stic_Payments extends Basic
     }
 
     protected function generateAllocationsFromPayment() {
-        return stic_Allocation_ProposalsUtils::createAllocationsFromPayment($this);
+        return stic_AllocationsUtils::createAllocationsFromPayment($this);
     }
 
     protected function updateAllocationsFromPayment($dryrun = false) {

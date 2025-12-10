@@ -154,12 +154,12 @@ class stic_Allocations extends Basic
         if ($isValidated && !$tempFetchedRow['validated']) {
             // Allocation has been validated now
             require_once 'modules/stic_Justification_Conditions/Utils.php';
-            stic_Justification_ConditionsUtils::createJustificationsFromAllocation($this); 
+            stic_JustificationsUtils::createJustificationsFromAllocation($this); 
         }
         if ($tempFetchedRow['validated'] && !$isValidated) {
             // Allocation has been un-validated now
             require_once 'modules/stic_Justification_Conditions/Utils.php';
-            stic_Justification_ConditionsUtils::removeJustificationsFromAllocation($this); 
+            stic_JustificationsUtils::removeJustificationsFromAllocation($this); 
         }
     }
 
