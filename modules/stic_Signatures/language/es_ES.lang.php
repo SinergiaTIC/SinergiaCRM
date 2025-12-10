@@ -97,6 +97,7 @@ $mod_strings = array(
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Se ha creado una campaña de notificación para la firma: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ya existe una campaña de notificación para la firma: ',
+    'LBL_NO_SIGNATURE_EXISTS_FOR_MODULE' => 'No existe ningun proceso de firma creado para el módulo ',
 
     // Portal messages
     'LBL_PORTAL_TITLE_PAGE' => 'SinergiaCRM - Portal de firma electrónica',

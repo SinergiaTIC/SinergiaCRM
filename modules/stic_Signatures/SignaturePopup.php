@@ -82,7 +82,9 @@ class SelectSignatureTemplate
      */
     public static function LVPopupHtml($module)
     {
-        global $app_strings;
+        global $app_strings, $app_list_strings ;
+
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Signatures');
 
         $signatures = self::getModuleTemplates($module);
 
@@ -143,9 +145,10 @@ class SelectSignatureTemplate
                 }    
             </script>';
         } else {
+            $moduleName = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
             echo '<script>
                 function showPopupSignatures(){
-                alert(\'' . $app_strings['LBL_NO_TEMPLATE'] . '\');        
+                alert(\'' . $mod_strings['LBL_NO_SIGNATURE_EXISTS_FOR_MODULE'] . ' ' . $moduleName . '\');
                 }
             </script>';
         }
@@ -163,7 +166,8 @@ class SelectSignatureTemplate
      */
     public static function DVPopupHtml($module)
     {
-        global $app_strings;
+        global $app_strings, $app_list_strings;
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Signatures');
 
         $signatures = self::getModuleTemplates($module);
 
@@ -218,9 +222,10 @@ class SelectSignatureTemplate
                 }
             </script>';
         } else {
+            $moduleName = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
             echo '<script>
                 function showPopupSignature(){
-                alert(\'' . $app_strings['LBL_NO_TEMPLATE'] . '\');        
+                alert(\'' . $mod_strings['LBL_NO_SIGNATURE_EXISTS_FOR_MODULE'] . ' ' . $moduleName . '\');
                 }
             </script>';
         }

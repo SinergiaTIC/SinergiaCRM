@@ -97,6 +97,7 @@ $mod_strings = array(
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'The following record will be skipped because no signers were found.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'A notification campaign already exists for the signature: ',
+    'LBL_NO_SIGNATURE_EXISTS_FOR_MODULE' => 'No signature process exists for module ',
 
     // Portal messages
     'LBL_PORTAL_TITLE_PAGE' => 'SinergiaCRM - Electronic signature portal',
