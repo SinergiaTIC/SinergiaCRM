@@ -62,11 +62,29 @@ class stic_Justification_ConditionsUtils
 
     public static function conditionMet($condition, $allocation)
     {
-        if ($condition->stic_ledger_accounts_ida == $allocation->stic_ledger_accounts_ida &&
-            $condition->allocation_type == $allocation->type) {
-            return true;
+
+        // get the ledger_account from allocation
+        $ledgerAccountId = $allocation->stic_ledger_accounts_ida;
+        $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $ledgerAccountId);
+
+        // Check if condition matches allocation's ledger account and type
+        if ($condition->allocation_type != $allocation->type) {
+            return false;
         }
-        return false;
+        if ($condition->ledger_group != $ledgerAccountBean->ledger_group) {
+            return false;
+        }
+        if (!empty($condition->subgroup) && $condition->subgroup != $ledgerAccountBean->subgroup) {
+            return false;
+        }
+        if (!empty($condition->account) && $condition->account != $ledgerAccountBean->account) {
+            return false;
+        }
+        if (!empty($condition->stic_ledger_accounts_ida) && $condition->stic_ledger_accounts_ida != $allocation->stic_ledger_accounts_ida) {
+            return false;
+        }
+
+        return true;
     }
 
     public static function getConditionsForProjectAndOpportunity($projectId, $opportunityId)
