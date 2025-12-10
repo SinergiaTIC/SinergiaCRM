@@ -74,6 +74,7 @@ $dictionary['stic_Signatures'] = array(
             'options' => 'moduleList',
             'studio' => 'visible',
             'dependency' => false,
+            'popupHelp' => 'LBL_MAIN_MODULE_HELP',
         ),
         'signer_path' => array(
             'required' => false,
@@ -339,6 +340,7 @@ $dictionary['stic_Signatures'] = array(
             'quicksearch' => 'enabled',
             'studio' => 'visible',
             'resetFieldInStudio' => 'true',
+            'popupHelp' => 'LBL_PDF_TEMPLATE_HELP',
         ),
         'emailtemplate_id_c' => array(
             'required' => false,
