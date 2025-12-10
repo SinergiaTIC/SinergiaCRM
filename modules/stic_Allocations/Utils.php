@@ -81,26 +81,19 @@ class stic_AllocationsUtils {
     }
 
     public static function updateJustificationsFromAllocation($allocationBean) {
-        // TODOEPS
-        // global $current_user;
+        // Retrieve justifications linked to the allocation 
+        $justificationBeans = array();
+        $linkName = 'stic_allocations_stic_justifications';
+        if ($allocationBean->load_relationship($linkName)) {
+            $justificationBeans = $allocationBean->$linkName->getBeans();
+        }
 
-        // global $current_language;
-        // $allocationsModStrings = return_module_language($current_language, 'stic_Allocations');
+        foreach ($justificationBeans as $justificationBean) {
+            // update justification amount from allocation if needed
+            $justificationBean->amount = $allocationBean->amount;
+            $justificationBean->save();
+        }
 
-        // // retrieve all justifications linked to the allocation
-        // $justificationBeans = array();
-        // $linkName = 'stic_allocations_stic_justifications';
-        // if ($allocationBean->load_relationship($linkName)) {
-        //     $justificationBeans = $allocationBean->$linkName->getBeans();
-        // }
-        // foreach ($justificationBeans as $justificationBean) {
-        //     if (empty($justificationBean->amount) || $justificationBean->amount > $allocationBean->amount) {
-        //         // update justification amount from allocation
-        //         $justificationBean->amount = $allocationBean->amount;
-        //         $justificationBean->save();
-        //     }
-
-        // }
         return true;
     }
 
@@ -117,7 +110,7 @@ class stic_AllocationsUtils {
         return $row['total_allocated'] ?? 0;
     }
 
-        public static function deleteAllocationsFromPayment($paymentBean)
+    public static function deleteAllocationsFromPayment($paymentBean)
     {
         // retrieve all allocations linked to the payment
         $allocationBeans = array();

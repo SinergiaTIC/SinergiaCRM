@@ -87,6 +87,20 @@ class stic_Justification_ConditionsUtils
         return true;
     }
 
+    public static function removeJustificationsFromAllocation($allocation)
+    {
+        // retrieve all allocations linked to the payment
+        $justificationBeans = array();
+        $linkName = 'stic_allocations_stic_justifications';
+        if ($allocation->load_relationship($linkName)) {
+            $justificationBeans = $allocation->$linkName->getBeans();
+        }
+        // delete each allocation
+        foreach ($justificationBeans as $justificationBean) {
+            $justificationBean->mark_deleted($justificationBean->id);
+        }
+    }
+
     public static function getConditionsForProjectAndOpportunity($projectId, $opportunityId)
     {
 
