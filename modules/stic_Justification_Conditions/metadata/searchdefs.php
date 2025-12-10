@@ -43,15 +43,29 @@ array (
         'default' => true,
         'name' => 'opportunities_stic_justification_conditions_name',
       ),
-      'stic_ledger_accounts_name' => 
+      'ledger_group' =>
       array (
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
-        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'type' => 'enum',
+        'label' => 'LBL_GROUP',
         'width' => '10%',
         'default' => true,
-        'name' => 'stic_ledger_accounts_name',
+        'name' => 'ledger_group',
+      ),
+      'subgroup' =>
+      array (
+        'type' => 'enum',
+        'label' => 'LBL_SUBGROUP',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'subgroup',
+      ),
+      'account' =>
+      array (
+        'type' => 'enum',
+        'label' => 'LBL_ACCOUNT',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'account',
       ),
       'active' => 
       array (
@@ -145,15 +159,29 @@ array (
         'default' => true,
         'name' => 'opportunities_stic_justification_conditions_name',
       ),
-      'stic_ledger_accounts_name' => 
+      'ledger_group' =>
       array (
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
-        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
+        'type' => 'enum',
+        'label' => 'LBL_GROUP',
         'width' => '10%',
         'default' => true,
-        'name' => 'stic_ledger_accounts_name',
+        'name' => 'ledger_group',
+      ),
+      'subgroup' =>
+      array (
+        'type' => 'enum',
+        'label' => 'LBL_SUBGROUP',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'subgroup',
+      ),
+      'account' =>
+      array (
+        'type' => 'enum',
+        'label' => 'LBL_ACCOUNT',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'account',
       ),
       'active' => 
       array (

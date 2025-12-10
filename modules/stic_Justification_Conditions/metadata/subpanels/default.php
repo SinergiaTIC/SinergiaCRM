@@ -51,16 +51,20 @@ $subpanel_layout = array(
             'target_module' => 'Opportunities',
             'target_record_key' => 'opportunit378funities_ida',
         ),
-        'stic_ledger_accounts_name' => array(
-            'type' => 'relate',
-            'link' => true,
-            'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
-            'vname' => 'LBL_STIC_LEDGER_ACCOUNTS',
-            'widget_class' => 'SubPanelDetailViewLink',
-            'module' => 'stic_Ledger_Accounts',
-            'target_module' => 'stic_Ledger_Accounts',
-            'target_record_key' => 'stic_ledger_accounts_ida',
-            'width' => '20%',   
+        'ledger_group' => array(
+            'vname' => 'LBL_GROUP',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'subgroup' => array(
+            'vname' => 'LBL_SUBGROUP',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'account' => array(
+            'vname' => 'LBL_ACCOUNT',
+            'width' => '10%',
+            'default' => true,
         ),
         'allocation_type' => array(
             'type' => 'enum',

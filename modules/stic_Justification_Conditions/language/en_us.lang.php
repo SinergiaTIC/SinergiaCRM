@@ -52,5 +52,9 @@ $mod_strings = array(
     'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_NAME' => 'Opportunity Name',
     'LBL_STIC_LEDGER_ACCOUNTS' => 'Ledger Account',
     'LBL_STIC_LEDGER_ACCOUNTS_ID' => 'Ledger Account ID',
+    'LBL_GROUP' => 'Group',
+    'LBL_SUBGROUP' => 'Subgroup',
+    'LBL_ACCOUNT' => 'Account',
+    'LBL_SUBACCOUNT' => 'Subaccount',
 );
 ?>

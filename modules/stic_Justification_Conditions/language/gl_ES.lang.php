@@ -52,5 +52,9 @@ $mod_strings = array(
     'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_NAME' => 'Nome de Subvención',
     'LBL_STIC_LEDGER_ACCOUNTS' => 'Conta Contable',
     'LBL_STIC_LEDGER_ACCOUNTS_ID' => 'ID Conta Contable',
+    'LBL_GROUP' => 'Grupo',
+    'LBL_SUBGROUP' => 'Subgrupo',
+    'LBL_ACCOUNT' => 'Conta',
+    'LBL_SUBACCOUNT' => 'Subconta',
 );
 ?>

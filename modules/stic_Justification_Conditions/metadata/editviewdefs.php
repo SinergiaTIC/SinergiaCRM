@@ -45,7 +45,15 @@ $viewdefs['stic_Justification_Conditions']['EditView'] = array(
             ),
             array(
                 'opportunities_stic_justification_conditions_name',
-                'stic_ledger_accounts_name',
+                '',
+            ),
+            array(
+                'ledger_group',
+                'subgroup',
+            ),
+            array(
+                'account',
+                'subaccount',
             ),
             array(
                 'active',
