@@ -71,7 +71,7 @@ class AWF_Utils {
                 $parsedTime = @strtotime($valueToCast, $baseTimestamp);
                 
                 if ($parsedTime === false) {
-                    $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Can not parse date '{$valueToCast}'.");
+                    $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Can not parse date '{$valueToCast}'.");
                     return null;
                 }
                 try {

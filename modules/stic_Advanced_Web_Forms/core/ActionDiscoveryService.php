@@ -72,7 +72,7 @@ class ActionDiscoveryService {
                 }
                 $reflection = new \ReflectionClass($actionName);
                 if ($reflection->isAbstract() || !$reflection->isSubclassOf(ActionDefinition::class)) { 
-                    $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Class {$actionName} is abstract or not a subclass of ActionDefinition.");
+                    $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Class {$actionName} is abstract or not a subclass of ActionDefinition.");
                     continue; 
                 }
                 /** @var ActionDefinition $actionInstance */

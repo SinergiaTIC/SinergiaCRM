@@ -69,7 +69,7 @@ class FormHtmlGeneratorService {
         }     
         $htmlRaw .= "</html>" ."\r\n".str_repeat('  ', --$this->indent);
 
-        return $this->formatHtml($htmlRaw);
+        return $htmlRaw;
     }
 
     private function generateCss(FormLayout $layout, string $wrapperId): string {
@@ -298,7 +298,7 @@ class FormHtmlGeneratorService {
 
         $checkUrl = str_replace('entryPoint=stic_AWF_responseHandler', 'entryPoint=stic_AWF_checkStatus', $actionUrl);
         $closedFormTitle = htmlspecialchars($layout->closed_form_title);
-        $closedFormText = htmlspecialchars($layout->closed_form_text);
+        $closedFormText = $layout->closed_form_text;
 
         // Alpine logic: Combine status, initial check if Form is active and sending form data in a single object
 
@@ -332,10 +332,11 @@ class FormHtmlGeneratorService {
                 formElement.submit(); 
             }
         }";
+        $safeAlpineData = htmlspecialchars($alpineData, ENT_QUOTES, 'UTF-8');
 
         $html = "";
         // Begin awf-main-card (wrapper)
-        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$alpineData}\">" ."\r\n".str_repeat('  ', ++$this->indent);
+        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$safeAlpineData}\">" ."\r\n".str_repeat('  ', ++$this->indent);
         {
             // Begin awf-relative-wrapper (overlay Wrapper)
             $html .= "<div class='awf-relative-wrapper'>" ."\r\n".str_repeat('  ', ++$this->indent);
@@ -397,7 +398,7 @@ class FormHtmlGeneratorService {
                 }
 
                 // Begin Form
-                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation' novalidate>" ."\r\n".str_repeat('  ', ++$this->indent);
                 {
                     // Honeypot: Invisible anti-spam
                     $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" ."\r\n".str_repeat('  ', ++$this->indent);
@@ -591,30 +592,6 @@ class FormHtmlGeneratorService {
             $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});\n</script>" ."\r\n".str_repeat('  ', $this->indent);
         }
         return $js;
-    }
-
-    /**
-     * Formata l'HTML per fer-lo llegible (Beautify).
-     */
-    private function formatHtml(string $html): string {
-        // Use DOMDocument to clean
-        $dom = new DOMDocument();
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-
-        // Supress parsin HTML5 errors
-        libxml_use_internal_errors(true);
-        
-        // Hack for UTF-8
-        $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        
-        libxml_clear_errors();
-
-        if (strpos($html, '<html') !== false) {
-            $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
-            return $dom->saveHTML();
-        }
-        return $dom->saveHTML();
     }
 
     /**

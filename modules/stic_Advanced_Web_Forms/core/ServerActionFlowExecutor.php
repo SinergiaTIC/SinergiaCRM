@@ -40,9 +40,9 @@ class ServerActionFlowExecutor {
      * Ejecuta el flujo principal y gestiona los errores cambiando al flujo de error si es necesario.
      * @param FormFlow $flowConfig La definición del flujo a ejecutar.
      * @param ?FormFlow $errorFlowConfig La definición del flujo de error (null si no hay flujo de error).
-     * @return ExecutionContext El contexto de ejecución actualizado.
+     * @return ?FormAction La configuración de la acción Terminal pendiente de ejecutar, o null si ha acabado.
      */
-    public function executeFlow(FormFlow $flowConfig, ?FormFlow $errorFlowConfig = null): ExecutionContext {
+    public function executeFlow(FormFlow $flowConfig, ?FormFlow $errorFlowConfig = null): ?FormAction {
         $lastActionConfig = null;
         try {
             foreach ($flowConfig->actions as $actionConfig) {
@@ -53,6 +53,11 @@ class ServerActionFlowExecutor {
 
                 // TODO: Verificación de Condiciones (si existen)
                 // if (!$this->checkConditions($actionConfig->conditions, $this->context)) { continue; }
+
+                // Si es Terminal no la ejecutamos: paramos el buble y la retornamos
+                if ($actionExecutor instanceof ITerminalAction) {
+                    return $actionConfig;
+                }
 
                 // Resolución de Parámetros 
                 $paramDefinitions  = $actionExecutor->getParameters();
@@ -72,13 +77,8 @@ class ServerActionFlowExecutor {
                     if ($errorFlowConfig !== null) {
                         return $this->executeFlow($errorFlowConfig);
                     }
-                    // Si no hay flujo de error, retorno del contexto actual
-                    return $this->context; 
-                }
-            
-                // Control Terminal
-                if ($actionExecutor instanceof ITerminalAction) {
-                    return $this->context; // Retorno immediato, finalizando el flujo
+                    // Si no hay flujo de error, finalizamos
+                    return null; 
                 }
             }
         } catch (\Exception $e) {
@@ -89,11 +89,11 @@ class ServerActionFlowExecutor {
             if ($errorFlowConfig !== null) {
                 return $this->executeFlow($errorFlowConfig);
             }
-            // Si no hay flujo de error, retorno del contexto actual
-            return $this->context; 
+            // Si no hay flujo de error, finalizamos
+            return null; 
         }
         
-        return $this->context;
+        return null;
     }
 
 }

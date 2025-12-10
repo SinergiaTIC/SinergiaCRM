@@ -64,7 +64,7 @@ class ExecutionContext {
         $key = $result->actionConfig?->id;
         if ($key === null) {
             $key = 'unknown_' . count($this->actionResults);
-            $GLOBALS['log']->warning("Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
+            $GLOBALS['log']->warn("Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
         }
         $this->actionResults[$key] = $result;
         if($result->isError()) {

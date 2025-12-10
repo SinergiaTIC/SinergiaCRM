@@ -88,6 +88,14 @@ $mod_strings = array (
   'LBL_RESPONSE_HASH' => 'Hash de la respuesta',
   'LBL_STATUS' => 'Estado',
 
+  'LBL_RESPONSE_PREFIX_NAME' => 'Respuesta',
+  'LBL_RESPONSE_NO_PUBLIC_STATUS' => 'Respuesta recibida con el formulario no público',
+  'LBL_ERROR_FORM_CONFIG' => 'Error en la configuración del formulario',
+  'LBL_RECEIPT_GENERIC_TITLE' => 'Recibido',
+  'LBL_RECEIPT_GENERIC_MSG' => 'Se ha recibido correctamente su respuesta y será procesada en la mayor brevedad posible.',
+  'LBL_MAIN_GENERIC_TITLE' => 'Procesado',
+  'LBL_MAIN_GENERIC_MSG' => 'Su respuesta ha estado procesada correctamente.',
+
   'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE' => 'Vínculos de Formularios',
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE' => 'Formularios Web Avanzados',
 );

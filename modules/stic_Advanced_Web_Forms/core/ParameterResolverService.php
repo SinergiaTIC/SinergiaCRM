@@ -93,7 +93,7 @@ class ParameterResolverService {
         }
 
         // No se ha retornado ninguna resolución
-        $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Parameter {$def->name} not informed in form configuration.");
+        $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Parameter {$def->name} not informed in form configuration.");
         return null;
     }
 
@@ -124,7 +124,7 @@ class ParameterResolverService {
                 // strtotime gestiona fechas fijas ("2025-10-31") y relativas ("today", "+1 day")
                 $parsedTime = @strtotime($valueToCast, $baseTimestamp);
                 if ($parsedTime === false) {
-                    $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Can not parse date '{$valueToCast}' with base timestamp '{$baseTimestamp}'.");
+                    $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Can not parse date '{$valueToCast}' with base timestamp '{$baseTimestamp}'.");
                     return null;
                 }
                 try {
@@ -154,7 +154,7 @@ class ParameterResolverService {
 
         $dataBlockConfig = $context->formConfig->data_blocks[$dataBlockId] ?? null;
         if ($dataBlockConfig === null) {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": DataBlock config not found with Id: '{$dataBlockId}'.");
+            $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": DataBlock config not found with Id: '{$dataBlockId}'.");
             return null;
         }
 
@@ -170,7 +170,7 @@ class ParameterResolverService {
         // recordString: 'module|id'
         $parts = explode('|', $recordString, 2);
         if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1])) {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Format error. Expected 'Module|id', but received '{$recordString}'.");
+            $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Format error. Expected 'Module|id', but received '{$recordString}'.");
             return null;
         }
 
@@ -180,7 +180,7 @@ class ParameterResolverService {
     private function resolveFormField(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?DataBlockFieldResolved {
         $formKey = $value !== null ? $value : $def->defaultValue;
         if ($formKey === null || $formKey == '') {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Field name is null or empty.");
+            $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Field name is null or empty.");
             return null;
         }
 
@@ -215,7 +215,7 @@ class ParameterResolverService {
                 $fieldDefinition = $dataBlockConfig->fields[$fieldName] ?? null;
             }
         } else {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": The field name '{$formKey}' has an invalid format.");
+            $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": The field name '{$formKey}' has an invalid format.");
         }
 
         $finalValue = null;
@@ -234,7 +234,7 @@ class ParameterResolverService {
 
     private function resolveOptionSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?OptionSelectorResolved {
         if ($selectedOption === null) {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Selected option is null");
+            $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Selected option is null");
             return null;
         }
         
@@ -248,7 +248,7 @@ class ParameterResolverService {
         }
         
         if ($optionDef === null) {
-            $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Option '{$selectedOption}' not found.");
+            $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Option '{$selectedOption}' not found.");
             return null;
         }
 
@@ -276,7 +276,7 @@ class ParameterResolverService {
                 break;
 
             default:
-                $GLOBALS['log']->warning("Line ".__LINE__.": ".__METHOD__.": Unknown ResolvedType '{$optionDef->resolvedType->value}'.");
+                $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Unknown ResolvedType '{$optionDef->resolvedType->value}'.");
                 return null;
         }
         

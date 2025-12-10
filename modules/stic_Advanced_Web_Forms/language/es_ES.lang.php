@@ -92,6 +92,7 @@ $mod_strings = array (
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
+
   'LBL_PREVIEW_RIBBON' => 'Previsualización',
   'LBL_PREVIEW_LOADING' => 'Cargando...',
   'LBL_PREVIEW_LOAD_ERROR' => 'Error cargando la previsualización',
@@ -101,6 +102,7 @@ $mod_strings = array (
   'LBL_PREVIEW_ACTIVE_TEXT' => 'Activo',
   'LBL_PREVIEW_INACTIVE_TEXT' => 'Inactivo',
   'LBL_PREVIEW_IN_NEW_TAB' => 'Previsualizar en pestaña nueva',
+
   'LBL_FORM_PUBLISH_OPTIONS' => 'Opciones de publicación',
   'LBL_FORM_PUBLISH_LINK' => 'Enlace público',
   'LBL_FORM_PUBLISH_LINK_DESC' => 'Copia y comparte este enlace directamente para acceder al formulario',
