@@ -40,11 +40,19 @@ $listViewDefs['stic_Justifications'] = array(
         'module' => 'Opportunities',
         'default' => true,
     ),
-    'STIC_LEDGER_ACCOUNTS_NAME' => array(
-        'width' => '20%',
-        'label' => 'LBL_STIC_LEDGER_ACCOUNTS',
-        'id' => 'STIC_LEDGER_ACCOUNTS_IDA',
-        'module' => 'stic_Ledger_Accounts',
+    'LEDGER_GROUP' => array(
+        'width' => '10%',
+        'label' => 'LBL_GROUP',
+        'default' => true,
+    ),
+    'SUBGROUP' => array(
+        'width' => '10%',
+        'label' => 'LBL_SUBGROUP',
+        'default' => true,
+    ),
+    'ACCOUNT' => array(
+        'width' => '10%',
+        'label' => 'LBL_ACCOUNT',
         'default' => true,
     ),
     'ALLOCATION_TYPE' => array(
