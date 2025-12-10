@@ -280,15 +280,24 @@ class Norma43
                     );
 
                     // Avoiding duplicates
-                    $skipFileDuplicates = !$allowFileDuplicates; // If we allow file duplicates, don't skip them
-                    $duplicateCheck = self::isDuplicate($mapped, $productId, $importedHashes, $mov['raw_lines'] ?? [], $skipFileDuplicates);
+                    // Always check for duplicates (both file and CRM)
+                    $duplicateCheck = self::isDuplicate($mapped, $productId, $importedHashes, $mov['raw_lines'] ?? [], true);
                     if ($duplicateCheck !== false) {
-                        // Only skip if it's a crm duplicate, OR if we're skipping file duplicates too
-                        if ($duplicateCheck['type'] === 'crm' || $skipFileDuplicates) {
+                        if ($duplicateCheck['type'] === 'crm') {
+                            // Always skip CRM duplicates
                             $summary['total_skipped_duplicates']++;
                             $accountSummary['skipped_duplicates']++;
-                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping duplicate ({$duplicateCheck['type']}) for account {$account['iban']}: {$mapped['name']}");
+                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping CRM duplicate for product {$account['iban']}: {$mapped['name']}");
                             continue;
+                        } elseif ($duplicateCheck['type'] === 'file' && !$allowFileDuplicates) {
+                            // Skip file duplicates only if not allowing them
+                            $summary['total_skipped_duplicates']++;
+                            $accountSummary['skipped_duplicates']++;
+                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping file duplicate for product {$account['iban']}: {$mapped['name']}");
+                            continue;
+                        } elseif ($duplicateCheck['type'] === 'file' && $allowFileDuplicates) {
+                            // Allow file duplicates when requested
+                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Allowing file duplicate for product {$account['iban']}: {$mapped['name']}");
                         }
                     }
 
