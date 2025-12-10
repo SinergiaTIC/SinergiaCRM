@@ -55,30 +55,41 @@ array (
     array (
       'lbl_default_panel' => 
       array (
-        0 => 
-        array (
-          0 => 'name',
-          1 => 'assigned_user_name',
-        ),
-        1 => 
-        array (
-          0 => 'active',
-          1 => 'blocked',
-        ),
-        2 => 
-        array (
-          0 => 'allocation_type',
-          1 => '',
-        ),
-        3 => 
-        array (
-          0 => 'max_allocable_percentage',
-          1 => 'max_allocable_percentage_grant',
-        ),
-        4 => 
-        array (
-          0 => 'description',
-        ),
+            array(
+                'name',
+                'assigned_user_name',
+            ),
+            array(
+                'opportunities_stic_justification_conditions_name',
+                '',
+            ),
+            array(
+                'ledger_group',
+                'subgroup',
+            ),
+            array(
+                'account',
+                'subaccount',
+            ),
+            array(
+                'active',
+                'blocked',
+            ),
+            array(
+                'allocation_type',
+                '',
+            ),
+            array(
+                'max_allocable_percentage',
+                'max_allocable_percentage_grant',
+            ),
+            array(
+                'max_allocable_amount_grant',
+                '',
+            ),
+            array(
+                'description',
+            ),
       ),
     ),
   ),
