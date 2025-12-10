@@ -102,7 +102,8 @@ class stic_Signatures extends Basic
         // Create name if empty
         if (empty($this->name)) {
             $moduleName = $app_list_strings['moduleListSingular'][$this->object_name];
-            $this->name = "{$moduleName} - {$this->pdf_template}";
+            $dateCreated = (new TimeDate())->to_display_date_time((new TimeDate())->nowDb(), false);
+            $this->name = "{$moduleName} - {$this->pdf_template} - {$dateCreated}h";
         }
 
         // If a PDF template is linked, set the main_module based on the PDF template's type
@@ -111,6 +112,11 @@ class stic_Signatures extends Basic
             if ($PDFBean) {
                 $this->main_module = $PDFBean->type;
             }
+        }
+
+        // If assigned_user_id is empty, set it to the current user
+        if(empty($this->assigned_user_id) && empty($this->fetched_row)) {
+            $this->assigned_user_id = $GLOBALS['current_user']->id;
         }
 
         // Call the generic save() function from the the parent (SugarBean) class

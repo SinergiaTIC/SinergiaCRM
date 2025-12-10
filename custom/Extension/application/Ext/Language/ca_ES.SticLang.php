@@ -3669,10 +3669,11 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fi de suplanta
 $app_list_strings['stic_signatures_status_list'][''] = '';
 $app_list_strings['stic_signatures_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_signatures_status_list']['open'] = 'Oberta';
-$app_list_strings['stic_signatures_status_list']['complete'] = 'Completada';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancel·lada';
 $app_list_strings['stic_signatures_status_list']['expired'] = 'Caducada';
 
 // Firmes: Mètodes d'autenticació
+$app_list_strings['stic_signatures_auth_methods_list'][''] = '';
 $app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enllaç únic';
 $app_list_strings['stic_signatures_auth_methods_list']['otp'] = "Codi d'un sol ús (per SMS o correu electrònic)";
 $app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = "Codi d'un sol ús (per correu electrònic)";
@@ -3688,6 +3689,7 @@ $app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
 // $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
 
 // Firmes: Modes
+$app_list_strings['stic_signatures_modes_list'][''] = '';
 $app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
 $app_list_strings['stic_signatures_modes_list']['button'] = 'Botó';
 

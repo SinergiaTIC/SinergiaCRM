@@ -3668,10 +3668,11 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Impersonation 
 $app_list_strings['stic_signatures_status_list'][''] = '';
 $app_list_strings['stic_signatures_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_signatures_status_list']['open'] = 'Open';
-$app_list_strings['stic_signatures_status_list']['complete'] = 'Complete';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelled';
 $app_list_strings['stic_signatures_status_list']['expired'] = 'Expired';
 
 // Signatures: Auth methods
+$app_list_strings['stic_signatures_auth_methods_list'][''] = '';
 $app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Unique link';
 $app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'One time password (by SMS or email)';
 $app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'One time password (by email)';
@@ -3687,6 +3688,7 @@ $app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
 // $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternative';
 
 // Signatures: Modes
+$app_list_strings['stic_signatures_modes_list'][''] = '';
 $app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Handwritten';
 $app_list_strings['stic_signatures_modes_list']['button'] = 'Button';
 

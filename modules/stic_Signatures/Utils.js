@@ -69,15 +69,26 @@ switch (viewType()) {
     setDisabledStatus('main_module', false);
     setAutofill(["name"]);
 
-    // // Initially hide step 2 and step 3 panels
+    // Initially hide step 2 and step 3 panels
     if (typeof STIC.record.name == 'undefined') {
-      $('[data-id=LBL_STEP2_PANEL]').parent('.panel').hide()
-      $('[data-id=LBL_STEP3_PANEL]').parent('.panel').hide()
+      $('[data-id=LBL_STEP2_PANEL]').parent('.panel').remove()
+      $('[data-id=LBL_STEP3_PANEL]').parent('.panel').remove()
     }
+    
     if (STIC.record.signer_path == '') {
-      //$('[data-id=LBL_STEP2_PANEL]').parent('.panel').hide()
-      $('[data-id=LBL_STEP3_PANEL]').parent('.panel').hide()
+      $('[data-id=LBL_STEP3_PANEL]').parent('.panel').remove()
     }
+
+    if(STIC.record.pdf_template != undefined) {
+      setDisabledStatus('pdf_template', false);
+    }
+   
+    if(STIC.record.signer_path != '') {
+      setDisabledStatus('signer_path', false);
+    }
+
+
+
 
     break;
   case "detail":
