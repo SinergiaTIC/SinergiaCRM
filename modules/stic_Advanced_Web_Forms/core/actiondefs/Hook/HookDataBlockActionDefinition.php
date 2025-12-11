@@ -97,7 +97,7 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not resolve DataBlock parameter '{$this->getDataBlockParameterName()}'.");
         }
 
-        // Llamar al nuevo método que se implementará en la acción
+        // Llamar al método que se implementará en la acción
         return $this->executeWithBlock($context, $actionConfig, $block);
     }
 

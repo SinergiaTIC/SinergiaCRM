@@ -6,7 +6,7 @@
 {$title}
 <div class="clear"></div>
 
-<div id="stic_panel" class="stic_panel" x-data="wizardForm(null,null,{$readOnly})" x-init="initWizard()">
+<div id="stic_panel" class="stic_panel" x-data="wizardForm()" x-init="initWizard()">
     <div class="wizard-nav">
         <button type="button" class="button" @click="WizardNavigation.prev()" x-bind:disabled="!WizardNavigation.enabled('prev')" x-text="utils.translate('LBL_WIZARD_PREVIOUS')"></button>
         <button type="button" class="button" @click="WizardNavigation.next()" x-bind:disabled="!WizardNavigation.enabled('next')" x-text="utils.translate('LBL_WIZARD_NEXT')"></button>

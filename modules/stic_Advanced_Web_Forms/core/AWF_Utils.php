@@ -103,13 +103,46 @@ class AWF_Utils {
      */
     public static function generateSummaryHtml(ExecutionContext $context): string
     {
-        $html = "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
+        $theme = $context->formConfig->layout->theme;
+        $formData = $context->formData;
+
+        $fontFamily = $theme->font_family ?? 'system-ui, -apple-system, sans-serif';
+        $fontSize = $theme->font_size ?? 16;
+        $primaryColor = $theme->primary_color ?? '#0d6efd';
+        $textColor = $theme->text_color ?? '#212529';
+        $borderColor = $theme->border_color ?? '#dee2e6';
+        $formWidth = $theme->form_width ?? '800px';
+        $css = "
+        <style>
+            .awf-summary-container {font-family: {$fontFamily};font-size: {$fontSize}px;color: {$textColor};max-width: {$formWidth};margin: 0 auto;line-height: 1.5;}
+            .awf-summary-title {color: {$primaryColor};border-bottom: 2px solid {$primaryColor};padding-bottom: 10px;margin-bottom: 20px;font-size: 1.5em;}
+            .awf-summary-block-title {color: {$theme->text_color};background-color: {$theme->page_bg_color};padding: 8px 12px;margin-top: 25px;margin-bottom: 10px;font-size: 1.2em;font-weight: bold;border-radius: {$theme->border_radius_controls}px;border: 1px solid {$borderColor};}
+            .awf-summary-table {width: 100%;border-collapse: collapse;margin-bottom: 15px;}
+            .awf-summary-table td {padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;}
+            .awf-summary-label {width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);}
+            .awf-summary-value {width: 65%;}
+        </style>";
+
+        $html = $css;
+        $html .= "<div class='awf-summary-container'>";
+        $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
         $formData = $context->formData; 
         
         foreach ($context->formConfig->data_blocks as $block) {
-            $html .= "<h2>{$block->text}</h2>";
-            $html .= "<table border='1' cellpadding='5' style='border-collapse: collapse; width: 100%;'>";
-            
+            // Saltamos los Bloques de datos sin campos
+            $hasVisibleFields = false;
+            foreach ($block->fields as $f) {
+                if ($f->type_field !== DataBlockFieldType::HIDDEN) { 
+                    $hasVisibleFields = true; 
+                    break; 
+                }
+            }
+            if (!$hasVisibleFields) {
+                continue;
+            }
+
+            $html .= "<div class='awf-summary-block-title'>{$block->text}</div>";
+            $html .= "<table class='awf-summary-table'>";
             foreach ($block->fields as $fieldDef) {
                 if (empty($fieldDef->label) || $fieldDef->type_field === DataBlockFieldType::HIDDEN) {
                     continue;
@@ -119,15 +152,22 @@ class AWF_Utils {
                 if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
                     $formKey = "_detached.{$formKey}";
                 }
+                $formKey = str_replace('.', '_', $formKey);
                 $value = $formData[$formKey] ?? '';
                 
+                if (is_array($value)) {
+                    $value = implode(', ', $value);
+                }
+                $displayValue = nl2br(htmlspecialchars((string)$value));
+
                 $html .= "<tr>";
-                $html .= "<td style='width: 30%;'><strong>" . htmlspecialchars($fieldDef->label) . "</strong></td>";
-                $html .= "<td>" . htmlspecialchars($value) . "</td>";
+                $html .= "<td class='awf-summary-label'>" . htmlspecialchars($fieldDef->label) . "</td>";
+                $html .= "<td class='awf-summary-value'>" . $displayValue . "</td>";
                 $html .= "</tr>";
             }
             $html .= "</table>";
         }
+        $html .= "</div>";
         
         return $html;
     }

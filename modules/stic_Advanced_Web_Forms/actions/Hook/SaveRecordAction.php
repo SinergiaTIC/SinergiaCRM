@@ -139,9 +139,29 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
      */
     private function populateBean(SugarBean $bean, DataBlockResolved $block): void
     {
+        global $timedate;
+
         foreach ($block->formData as $fieldName => $field) {
-            // Asignamos el valor ya procesado y con casting
-            $bean->{$fieldName} = $field->value;
+            // Tenemos el valor ya procesado y con casting
+            $value = $field->value;
+            if ($value instanceof \DateTime) {
+               $def = $bean->field_defs[$fieldName] ?? [];
+               $type = $def['type'] ?? '';
+
+                if ($type === 'date') {
+                    // Format: Y-m-d
+                    $bean->{$fieldName} = $timedate->asDbDate($value);
+                } elseif ($type === 'time') {
+                    // Format: H:i:s
+                    $bean->{$fieldName} = $value->format('H:i:s');
+                } else {
+                    // datetime, datetimecombo. Format: Y-m-d H:i:s (en UTC)
+                    $bean->{$fieldName} = $timedate->asDb($value);
+                }
+            }
+            else {
+                $bean->{$fieldName} = $field->value;
+            }
         }
     }
 

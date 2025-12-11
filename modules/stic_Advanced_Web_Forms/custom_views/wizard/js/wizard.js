@@ -1,4 +1,4 @@
-function wizardForm(readOnly) {
+function wizardForm() {
   return {
     navigation: {
       step: 1,

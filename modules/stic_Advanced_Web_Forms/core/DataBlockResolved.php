@@ -66,8 +66,10 @@ class DataBlockResolved {
         //   dataBlockName.fieldName            ->  Field to crm
         //   _detached.dataBlockName.fieldName  ->  Field detached
         $namePrefix = $config->name . '.';
+        $namePrefix = str_replace('.', '_', $namePrefix);
         $namePrefixLen = strlen($namePrefix);
         $detachedPrefix = '_detached.' . $config->name . '.';
+        $detachedPrefix = str_replace('.', '_', $detachedPrefix);
         $detachedPrefixLen = strlen($detachedPrefix);
 
         // Iteramos sobre todos los campos definidos: 
@@ -82,15 +84,19 @@ class DataBlockResolved {
                 $crmFieldType = $definition?->type;
                 $castedValue = AWF_Utils::castCrmValue($value, $crmFieldType, $context);
 
-                $this->formData[$fieldName] = new DataBlockFieldResolved($formKey, $fieldName, $definition, $castedValue);
+                // Reconstruimos la clave lógica original para trazabilidad
+                $logicalKey = $config->name . '.' . $fieldName;
+                $this->formData[$fieldName] = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $castedValue);
             
             // Campo NO enlazado al crm (Ex: _detached.persona_menor.accept_photos)
             } else if (str_starts_with($formKey, $detachedPrefix)) {
                 $fieldName = substr($formKey, $detachedPrefixLen);
                 $definition = $config->fields[$fieldName] ?? null; // Puede ser un campo no definido en la configuración
 
+                // Reconstruimos la clave lógica original para trazabilidad
+                $logicalKey = '_detached.' . $config->name . '.' . $fieldName;
                 // Los campos no enlazados al crm los tratamos como strings (no hay tipo a mapear)
-                $this->detachedData[$fieldName] = new DataBlockFieldResolved($formKey, $fieldName, $definition, $value);
+                $this->detachedData[$fieldName] = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $value);
             }
         }
     }

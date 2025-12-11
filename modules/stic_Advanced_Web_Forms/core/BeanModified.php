@@ -26,10 +26,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 enum BeanModificationType: string {
-    case CREATED  = 'create';
-    case UPDATED  = 'update';
-    case ENRICHED = 'enrich';
-    case SKIPPED  = 'skip';
+    case CREATED  = 'created';
+    case UPDATED  = 'updated';
+    case ENRICHED = 'enriched';
+    case SKIPPED  = 'skipped';
 }
 
 /**

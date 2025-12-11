@@ -38,11 +38,21 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
 
         SticViews::preDisplay($this);
 
-        // echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
-        
+        // Bootstrap (modified with scoped classes: do not crash current layout!)
+        echo "<link rel='stylesheet' href='". getVersionedPath("SticInclude/vendor/bootstrap/css/bootstrap.scoped.min.css"). "'>";
+        echo getVersionedScript("SticInclude/vendor/bootstrap/js/bootstrap.bundle.min.js");
+
         // Alpinejs
         // echo '<script src="//unpkg.com/alpinejs" defer></script>';
-        echo '<script src="SticInclude/vendor/alpine/alpine.min.js" defer></script>';
+        echo '<script src="' . getVersionedPath('SticInclude/vendor/alpine/alpine.min.js') . '" defer></script>';
+
+        // AWF 
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/config.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/utils.js");
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/css/sticControls.css"). "'>";
+
+        // Details
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/details/js/details.js");
     }
 
     public function display()
@@ -51,14 +61,8 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
 
         SticViews::display($this);
 
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/common/wizard.js");
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/wizard/common/wizard.css") ."'>";
-
-        // DetailView: Same as EditView, but readOnly
-        $this->ss->assign('readOnly', true); 
-        $this->ss->assign('title', $this->getModuleTitle(false));
-
-        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');
+        // DetailView: Custom Details 
+        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/details/tpl/details.tpl');
     }
 
 }

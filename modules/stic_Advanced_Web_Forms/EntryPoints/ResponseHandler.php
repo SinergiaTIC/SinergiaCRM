@@ -34,6 +34,11 @@ class AWF_ResponseHandler
 {
     public function run()
     {
+        // Usuario administrador
+        global $current_user;
+        $current_user = BeanFactory::newBean('Users');
+        $current_user->getSystemUser();
+
         // Obtención de datos y saneamiento
         $formId = $_REQUEST['id'] ?? null;
         $rawPostData = $_POST;
@@ -87,7 +92,7 @@ class AWF_ResponseHandler
 
         // Guardamos la respuesta
         $responseBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Responses');
-        $responseBean->name = translate('LBL_RESPONSE_PREFIX_NAME', 'stic_Advanced_Web_Forms_Responses'). " ". date('Y-m-d H:i:s');
+        $responseBean->name = $formBean->name . " - " . translate('LBL_RESPONSE_PREFIX_NAME', 'stic_Advanced_Web_Forms_Responses'). " - ". date('Y-m-d H:i:s');
         $responseBean->status = $responseStatus;
         $responseBean->raw_payload = $payloadJson;
         $responseBean->response_hash = $responseHash;
@@ -95,6 +100,7 @@ class AWF_ResponseHandler
         $responseBean->form_url = $formUrl;
         $responseBean->user_agent = $userAgent;
         $responseBean->description = $responseDescription;
+        $responseBean->assigned_user_id = $formBean->assigned_user_id;
         $responseBean->save();
 
         // Vinculamos la respuesta con el formulario
@@ -190,7 +196,9 @@ class AWF_ResponseHandler
                 } else {
                     $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Main flow in form. ID: $formId");
                     if ($hasErrors) {
-                        $this->renderGenericResponse($formConfig, "Error", "An error occurred while processing your request.");
+                        $this->renderGenericResponse($formConfig, 
+                            translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
+                            translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
                     } else {
                         $this->renderGenericResponse($formConfig, 
                             translate('LBL_MAIN_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
@@ -335,16 +343,23 @@ class AWF_ResponseHandler
             return;
         }
 
+        global $app_list_strings;
         $sequence = 1;
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modifiedBean) {
                 $linkBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Links');
 
+                $targetBean = BeanFactory::getBean($modifiedBean->moduleName, $modifiedBean->beanId);
+                $targetBeanName = $targetBean ? $targetBean->get_summary_text() : $modifiedBean->beanId;
+                $actionValue = $modifiedBean->modificationType->value;
+                $recordActionName = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionValue];
+                
+                $linkBean->name = $responseBean->name . " - " . $recordActionName . " - " . $targetBeanName;
                 $linkBean->sequence_number = $sequence++;
-                $linkBean->related_module = $modifiedBean->moduleName;
-                $linkBean->related_id = $modifiedBean->beanId; 
+                $linkBean->parent_id = $modifiedBean->beanId; 
                 $linkBean->parent_type = $modifiedBean->moduleName; 
-                $linkBean->record_action = $modifiedBean->modificationType->value;
+                $linkBean->record_action = $actionValue;
+                $linkBean->assigned_user_id = $responseBean->assigned_user_id;
 
                 if (!empty($modifiedBean->submittedData)) {
                     $linkBean->submitted_data = json_encode($modifiedBean->submittedData, JSON_UNESCAPED_UNICODE);

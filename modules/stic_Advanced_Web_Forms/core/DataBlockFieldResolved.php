@@ -43,6 +43,6 @@ class DataBlockFieldResolved {
     }
 
     public function isDetached(): bool {
-        return str_starts_with($this->formKey, '_detached.');
+        return str_starts_with($this->formKey, '_detached.') || str_starts_with($this->formKey, '_detached_');
     }
 }

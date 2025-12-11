@@ -184,45 +184,38 @@ class ParameterResolverService {
             return null;
         }
 
+        $phpKey = str_replace('.', '_', $formKey);
+        $fieldDefinition = null;
+        $fieldName = $formKey;
+
         // Parse formKey to find the dataBlock and dataBlockField definitions
         $isDetached = str_starts_with($formKey, '_detached.');
-        $keyToParse = $isDetached ? substr($formKey, strlen('_detached.')) : $formKey;
-        $parts = explode('.', $keyToParse, 2);
-        
-        $blockName = null;
-        $fieldName = $formKey;
-        if ($isDetached) {
-            // Ex: _detached.PersonaTutor.accept_photos
-            $parts = explode('.', $formKey, 3);
-            if (count($parts) === 3) {
-                $blockName = $parts[1]; // "PersonaTutor"
-                $fieldName = $parts[2]; // "accept_photos"
+        $keyToParse = $isDetached ? substr($formKey, 10) : $formKey; // 10 = strlen('_detached.')
+        $foundBlock = null;
+        foreach ($context->formConfig->data_blocks as $block) {
+            $prefix = $block->name . '.';
+            if (str_starts_with($keyToParse, $prefix)) {
+                $foundBlock = $block;
+                // El nom del camp és la resta de la cadena
+                $fieldName = substr($keyToParse, strlen($prefix));
+                $fieldDefinition = $block->fields[$fieldName] ?? null;
+                break;
             }
-        } else {
-            // Ex: PersonaTutor.email1
-            $parts = explode('.', $formKey, 2);
-            if (count($parts) === 2) {
-                $blockName = $parts[0]; // "PersonaTutor"
-                $fieldName = $parts[1]; // "email1"
+        }
+        if (!$foundBlock) {
+            $lastDot = strrpos($keyToParse, '.');
+            if ($lastDot !== false) {
+                $fieldName = substr($keyToParse, $lastDot + 1);
+            } else {
+                $fieldName = $keyToParse;
             }
         }
 
-        $fieldDefinition = null;
-        if ($blockName !== null) {
-            // Find the Field definition
-            $dataBlockConfig = $context->getDataBlockByName($blockName);
-            if ($dataBlockConfig !== null) {
-                $fieldDefinition = $dataBlockConfig->fields[$fieldName] ?? null;
-            }
-        } else {
-            $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": The field name '{$formKey}' has an invalid format.");
-        }
-
-        $finalValue = null;
         $crmFieldType = $fieldDefinition?->type ?? 'text';
-        if (array_key_exists($formKey, $context->formData)) {
+        $finalValue = null;
+        if (array_key_exists($phpKey, $context->formData)) {
             // Fill value from form data
-            $finalValue = AWF_Utils::castCrmValue($context->formData[$formKey], $crmFieldType, $context);
+            $finalValue = AWF_Utils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
         } else {
             // If not set in form data, then find if is a field with fixed value in DataBlock
             if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
