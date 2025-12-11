@@ -84,6 +84,7 @@ if (!empty($_REQUEST['signatureAction'])) {
                     'message' => 'No data provided',
                 ];
             }
+            ob_clean();
             echo json_encode($result);
             die();
             break;
@@ -94,6 +95,7 @@ if (!empty($_REQUEST['signatureAction'])) {
             $signerId = $_REQUEST['signerId'] ?? '';
             $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
             $result = stic_SignaturePortalUtils::sendOtpToSigner($signerBean, $method, true);
+            ob_clean();
             echo json_encode($result);
             die();
             break;
@@ -101,6 +103,7 @@ if (!empty($_REQUEST['signatureAction'])) {
             // Send the signed PDF to the signer via email
             $signerId = $_REQUEST['signerId'] ?? '';
             $result = stic_SignaturePortalUtils::sendSignedPdfByEmail($signerId);
+            ob_clean();
             echo json_encode($result);
             die();
             break;
@@ -114,6 +117,7 @@ if (!empty($_REQUEST['signatureAction'])) {
                     'message' => 'No data provided',
                 ];
             }
+            ob_clean();
             echo json_encode($result);
             die();
             break;

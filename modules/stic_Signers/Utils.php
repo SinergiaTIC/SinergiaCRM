@@ -93,6 +93,7 @@ class stic_SignersUtils
         // Add recipient
         if (empty($destAddress)) {
             // If no destination address, return false (or handle error appropriately)
+            ob_clean();
             echo json_encode(false);
             die();
         }

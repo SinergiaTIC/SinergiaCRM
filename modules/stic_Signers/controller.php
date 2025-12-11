@@ -91,6 +91,7 @@ class stic_SignersController extends SugarController
                 'message' => 'No data provided',
             ];
         }
+        ob_clean();
         echo json_encode($result);
         die();
     }
