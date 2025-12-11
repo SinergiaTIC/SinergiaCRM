@@ -35,7 +35,7 @@ class AWF_ResponseHandler
     public function run()
     {
         // Obtención de datos y saneamiento
-        $formId = $_POST['id'] ?? null;
+        $formId = $_REQUEST['id'] ?? null;
         $rawPostData = $_POST;
 
         unset($rawPostData['module']);
@@ -88,7 +88,6 @@ class AWF_ResponseHandler
         // Guardamos la respuesta
         $responseBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Responses');
         $responseBean->name = translate('LBL_RESPONSE_PREFIX_NAME', 'stic_Advanced_Web_Forms_Responses'). " ". date('Y-m-d H:i:s');
-        $responseBean->form_id = $formBean->id;
         $responseBean->status = $responseStatus;
         $responseBean->raw_payload = $payloadJson;
         $responseBean->response_hash = $responseHash;
@@ -97,6 +96,14 @@ class AWF_ResponseHandler
         $responseBean->user_agent = $userAgent;
         $responseBean->description = $responseDescription;
         $responseBean->save();
+
+        // Vinculamos la respuesta con el formulario
+        if ($formBean->load_relationship('stic_69c1s_responses')) {
+            $formBean->stic_69c1s_responses->add($responseBean->id);
+        } else {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship form-responses for Form ID {$formId}");
+            $this->terminateRawError("Form relationship not found.");
+        }
 
         // Cargamos la configuración (con los flujos de acciones)
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
@@ -143,7 +150,7 @@ class AWF_ResponseHandler
                 
                 // Ejecutamos la acción terminal
                 if ($pendingTerminalAction) {
-                    $this->executeTerminalAction($pendingTerminalAction, $context);
+                    $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
                 } else {
                     $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Receipt flow in form. ID: $formId");
                     $this->renderGenericResponse($formConfig, 
@@ -179,7 +186,7 @@ class AWF_ResponseHandler
 
                 // Ejecutamos la acción terminal
                 if ($pendingTerminalAction) {
-                    $this->executeTerminalAction($pendingTerminalAction, $context);
+                    $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
                 } else {
                     $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Main flow in form. ID: $formId");
                     if ($hasErrors) {
@@ -187,8 +194,7 @@ class AWF_ResponseHandler
                     } else {
                         $this->renderGenericResponse($formConfig, 
                             translate('LBL_MAIN_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                            translate('LBL_MAIN_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses')
-                        );
+                            translate('LBL_MAIN_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
                     }
                 }
             } else {
@@ -199,56 +205,92 @@ class AWF_ResponseHandler
         }
     }
 
-    // IEPA!!!
     /**
-     * Executa l'acció terminal pendent.
-     * Aquí es resolen els paràmetres (ja que no s'han resolt al executeFlow) i s'executa.
-     * L'acció terminal pot fer 'echo' i 'exit' lliurement.
+     * Ejecuta la acción terminal pendiente
+     * @param FormAction $actionConfig Configuración de la acción a ejecutar
+     * @param ExecutionContext $context Contexto de ejecución
+     * @param ?FormFlow $errorFlow Flujo de error que se ejecutará si falla la acción
      */
-    private function executeTerminalAction(FormAction $actionConfig, ExecutionContext $context) {
+    private function executeTerminalAction(FormAction $actionConfig, ExecutionContext $context, ?FormFlow $errorFlow = null) {
         $factory = new ServerActionFactory();
         $resolver = new ParameterResolverService();
         
         try {
             $actionExecutor = $factory->createAction($actionConfig);
             
-            // Resolem paràmetres ara
+            // Resolución de parámetros
             $paramDefinitions = $actionExecutor->getParameters();
             $resolvedParameters = $resolver->resolveAll($actionConfig, $paramDefinitions, $actionConfig->parameters, $context);
             $actionConfig->setResolvedParameters($resolvedParameters);
             
-            // Executem. Aquest mètode probablement no retornarà perquè farà exit/redirect.
+            // Ejecutamos. Seguramente no retornará porque tendrá un exit/redirect
             $actionExecutor->execute($context, $actionConfig);
-            
         } catch (\Exception $e) {
-            $GLOBALS['log']->fatal("Terminal Action Failed: " . $e->getMessage());
-            // Si falla l'acció terminal (ex: error PHP al generar el resum), intentem mostrar un error genèric
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal Action Failed: " . $e->getMessage());
+
+            // Si ha fallado y tenemos un flujo de error definido lo ejecutamos si no se han enviado las cabeceras aún
+            if ($errorFlow && !headers_sent()) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Attempting to execute Error Flow after Terminal Action failure.");
+                
+                try {
+                    $executor = new ServerActionFlowExecutor($context);
+                    $errorTerminalAction = $executor->executeFlow($errorFlow, null);
+                    if ($errorTerminalAction) {
+                        $this->executeTerminalAction($errorTerminalAction, $context, null);
+                        return;
+                    }
+                } catch (\Exception $ex) {
+                    $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error Flow execution failed also: " . $e->getMessage());
+                }
+            }
+            // Si todo falla mostramos error genérico
             if (!headers_sent()) {
-                $this->renderGenericResponse($context->formConfig, "Error", "Error generating response page.");
+                $this->renderGenericResponse($context->formConfig, "Error", "Error processing terminal action.");
             }
         }
     }
 
     /**
-     * Renderitza una pàgina HTML senzilla utilitzant l'estil definit al Layout.
+     * Renderiza una página HTML básica usando los estilos del formulario
      */
     private function renderGenericResponse(FormConfig $config, string $title, string $message)
     {
-        if (ob_get_length()) ob_clean();
+        if (ob_get_length()) {
+            ob_clean();
+        }
         $theme = $config->layout->theme;
+        $fontFamily = $theme->font_family ?? 'sans-serif';
+        $bgColor = $theme->page_bg_color ?? '#f8f9fa';
+        $textColor = $theme->text_color ?? '#212529';
+        $formBg = $theme->form_bg_color ?? '#ffffff';
+        $primaryColor = $theme->primary_color ?? '#0d6efd';
+        $customCss = $config->layout->custom_css ?? '';
+        $customJs = $config->layout->custom_js ?? '';
         
-        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>";
-        echo "<title>" . htmlspecialchars($title) . "</title>";
-        echo "<style>
-            body { font-family: {$theme->font_family}; background-color: {$theme->page_bg_color}; color: {$theme->text_color}; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-            .message-card { background-color: {$theme->form_bg_color}; padding: 40px; border-radius: {$theme->border_radius_container}px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; width: 90%; text-align: center; border: {$theme->border_width}px solid {$theme->border_color}; }
-            h1 { color: {$theme->primary_color}; margin-bottom: 20px; }
-            " . $config->layout->custom_css . "
-        </style>";
-        echo "</head><body>";
-        echo "<div class='message-card'><h1>" . htmlspecialchars($title) . "</h1><div>" . nl2br(htmlspecialchars($message)) . "</div></div>";
-        if (!empty($config->layout->custom_js)) { echo "<script>" . $config->layout->custom_js . "</script>"; }
-        echo "</body></html>";
+        echo "
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>" . htmlspecialchars($title) . "</title>
+        <style>
+            body { font-family: {$fontFamily}; background-color: {$bgColor}; color: {$textColor}; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+            .message-card { background-color: {$formBg}; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; width: 90%; text-align: center; }
+            h1 { color: {$primaryColor}; margin-bottom: 20px; }
+            {$customCss}
+        </style>
+    </head>
+    <body>
+        <div class='message-card'>
+            <h1>" . htmlspecialchars($title) . "</h1>
+            <div>" . nl2br(htmlspecialchars($message)) . "</div>
+        </div>";
+        if (!empty($config->layout->custom_js)) { 
+            echo "<script>" . $config->layout->custom_js . "</script>"; 
+        }
+        echo "
+    </body>
+</html>";
         
         sugar_cleanup(true);
     }
@@ -259,38 +301,59 @@ class AWF_ResponseHandler
     }
 
     private function checkDuplicateSubmission($formId, $hash) {
-        $sq = new SugarQuery();
-        $sq->select(['id']);
-        $sq->from(BeanFactory::newBean('stic_Advanced_Web_Forms_Responses'));
-        $sq->where()->equals('form_id', $formId)->equals('response_hash', $hash);
-        return !empty($sq->execute());
+        global $db;
+        $query = "SELECT count(response.id) as count FROM stic_advanced_web_forms_responses response
+                    INNER JOIN stic_f193responses_c form_response
+                        ON form_response.stic_21b0sponses_idb = response.id
+                  WHERE
+                    form_response.stic_aa0eb_forms_ida = '{$formId}'
+                    AND form_response.deleted = 0
+                    AND response.response_hash = '{$hash}'
+                    AND response.deleted = 0";
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
+        $result = $db->query($query);
+        $data = $db->fetchByAssoc($result);
+        return $data['count'] > 0;
     }
 
     private function handleDuplicateError($formBean) {
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
-            $this->renderGenericResponse($formConfig, "Error", "This response has already been submitted.");
+            $this->renderGenericResponse($formConfig, 
+                                         translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_Advanced_Web_Forms_Responses'),
+                                         translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_Advanced_Web_Forms_Responses'));
         } else {
             $this->terminateRawError("This response has already been submitted.");
         }
     }
 
     private function saveLinks(SugarBean $responseBean, ExecutionContext $context) {
+        if (!$responseBean->load_relationship('stic_1c31forms_links')) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship responses-links for Response ID {$responseBean->id}");
+            return;
+        }
+
         $sequence = 1;
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modifiedBean) {
                 $linkBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Links');
-                $linkBean->response_id = $responseBean->id;
+
                 $linkBean->sequence_number = $sequence++;
                 $linkBean->related_module = $modifiedBean->moduleName;
                 $linkBean->related_id = $modifiedBean->beanId; 
                 $linkBean->parent_type = $modifiedBean->moduleName; 
                 $linkBean->record_action = $modifiedBean->modificationType->value;
+
                 if (!empty($modifiedBean->submittedData)) {
                     $linkBean->submitted_data = json_encode($modifiedBean->submittedData, JSON_UNESCAPED_UNICODE);
                 }
+
                 $linkBean->save();
+
+                // Vinculamos el Link a la Response
+                $responseBean->stic_1c31forms_links->add($linkBean->id);
             }
         }
     }

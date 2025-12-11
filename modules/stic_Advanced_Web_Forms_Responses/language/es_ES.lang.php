@@ -95,6 +95,8 @@ $mod_strings = array (
   'LBL_RECEIPT_GENERIC_MSG' => 'Se ha recibido correctamente su respuesta y será procesada en la mayor brevedad posible.',
   'LBL_MAIN_GENERIC_TITLE' => 'Procesado',
   'LBL_MAIN_GENERIC_MSG' => 'Su respuesta ha estado procesada correctamente.',
+  'LBL_DUPLICATE_RESPONSE_TITLE' => 'Aviso',
+  'LBL_DUPLICATE_RESPONSE_MSG' => 'Esta respuesta ya ha sido enviada y se ha procesado',
 
   'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE' => 'Vínculos de Formularios',
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE' => 'Formularios Web Avanzados',
