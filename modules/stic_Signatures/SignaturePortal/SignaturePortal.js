@@ -457,7 +457,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             }).then(data => {
                 console.log('Request to send signed PDF by email was successful:', data);
-                showAlert('success', MODS.LBL_PORTAL_EMAIL_SENT, MODS.LBL_PORTAL_PDF_SENT_SUCCESSFULLY);
+                showAlert('success', MODS.LBL_PORTAL_EMAIL_SENT, MODS.LBL_PORTAL_PDF_SENT_SUCCESSFULLY, () => {
+                    sendEmailBtn.disabled = true;
+                });
 
             }).catch(error => {
                 console.error('Error sending request to send signed PDF by email:', error);
