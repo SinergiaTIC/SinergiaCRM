@@ -46,14 +46,27 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    // No specific custom logic for edit, quickcreate, or popup views in this section.
+
+    // disable all fields except description, assigned_user_name, phone and email_address 
+    $("form#EditView [data-field]").each(function () {
+      var field = $(this).data("field");  
+      if (field !== "description" && field !== "assigned_user_name" && field !== "phone" && field !== "email_address") {
+        // $("[data-field='" + field + "'] input, [data-field='" + field + "'] select, [data-field='" + field + "'] textarea").prop("disabled", true);
+        // $("[data-field='" + field + "'] button").hide(); // Hide buttons/icons associated with the field
+        setDisabledStatus(field, false);
+      }
+    })
+
+
+
+
     break;
   case "detail":
     // CReate buttons for the detail view of the stic_Signers module.
     var buttons = {
       sendToSign: {
         id: "bt_send_to_sign",
-        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL"), 
+        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL"),
         onclick: "window.location='index.php?module=stic_Signers&action=sendToSign&signerId=" + STIC.record.id + "'"
       },
       rediretToSingPortal: {
@@ -71,12 +84,6 @@ switch (viewType()) {
     createDetailViewButton(buttons.sendToSign);
     createDetailViewButton(buttons.rediretToSingPortal);
     createDetailViewButton(buttons.copyPortalUrl);
-
-    // Hide on_behalf_of fields if is same as signer
-    if (STIC.record.contact_id_c == STIC.record.parent_id ) {
-      $("[data-field='on_behalf_of_id']").hide();
-    }
-
 
 
     break;
@@ -96,6 +103,16 @@ switch (viewType()) {
     // Default case for any other view types not explicitly handled.
     break;
 }
+
+
+// Hide on_behalf_of fields if is same as signer
+if (STIC.record.contact_id_c == STIC.record.parent_id) {
+  $("[data-field='on_behalf_of_id']").hide();
+}
+
+
+
+
 
 /* AUX. FUNCTIONS */
 
@@ -138,12 +155,12 @@ function sendToSign() {
     return false;
   }
 
-  if(sugarListView.get_checks_count() > 20){
-    alert( SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT") );
+  if (sugarListView.get_checks_count() > 20) {
+    alert(SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT"));
     return false;
   }
-  document.MassUpdate.action.value='sendToSign';
-  document.MassUpdate.module.value='stic_Signers';
+  document.MassUpdate.action.value = 'sendToSign';
+  document.MassUpdate.module.value = 'stic_Signers';
   document.MassUpdate.submit();
 
 }

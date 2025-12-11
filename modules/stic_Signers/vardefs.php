@@ -261,7 +261,7 @@ $dictionary['stic_Signers'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => true,
+            'inline_edit' => false,
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
@@ -437,6 +437,7 @@ $dictionary['stic_Signers'] = array(
             'table' => 'stic_signatures',
             'module' => 'stic_Signatures',
             'rname' => 'name',
+            'inline_edit' => false,
         ),
         'stic_signatures_stic_signersstic_signatures_ida' => array(
             'name' => 'stic_signatures_stic_signersstic_signatures_ida',
@@ -458,3 +459,8 @@ if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('stic_Signers', 'stic_Signers', array('basic', 'assignable', 'security_groups'));
+
+
+
+$dictionary['stic_Signers']['fields']['description']['rows'] = '2';
+$dictionary['stic_Signers']['fields']['name']['inline_edit'] = false;
