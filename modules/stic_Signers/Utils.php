@@ -70,7 +70,7 @@ class stic_SignersUtils
         // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
 
-        if(empty($destAddress)) {
+        if (empty($destAddress)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No email address available for signer ID {$signerId}.");
             SugarApplication::appendErrorMessage("<p class='label label-warning'>{$mod_strings['LBL_SIGNER_NO_EMAIL']} ({$signerBean->name}) </p>");
             return;
@@ -344,6 +344,8 @@ class stic_SignersUtils
      */
     public static function getSticSignersForContacts()
     {
+        global $app_list_strings;
+
         $contact_id = $_REQUEST['record'];
         if (empty($contact_id)) {
             return '';
@@ -365,6 +367,9 @@ class stic_SignersUtils
                     stic_signers.signature_date,
                     stic_signers.parent_type,
                     stic_signers.parent_id,
+                    stic_signers.record_name,
+                    stic_signers.record_type,
+                    stic_signers.record_id,
                     if(stic_signers.parent_id = stic_signers.contact_id_c, '', CONCAT_WS(' ', c1.first_name, c1.last_name)) as on_behalf_of_id
                 FROM stic_signers
                 LEFT JOIN contacts c1 ON c1.id = stic_signers.contact_id_c -- to get on_behalf_of_id
@@ -405,7 +410,10 @@ class stic_SignersUtils
                     stic_signers.status,
                     stic_signers.signature_date,
                     stic_signers.parent_type,
-                    stic_signers.parent_id
+                    stic_signers.parent_id,
+                    stic_signers.record_name,
+                    stic_signers.record_type,
+                    stic_signers.record_id
                 FROM stic_signers
                 WHERE parent_type = 'Users'
                     AND parent_id = '{$user_id}'
@@ -414,6 +422,48 @@ class stic_SignersUtils
                 ORDER BY date_modified DESC
         ";
 
+        return $query;
+    }
+
+    /**
+     * Retrieves the stic_Signers records associated with a specific Signature for use in a subpanel.
+     *
+     * @return string The SQL query string to fetch the required stic_Signers records.
+     */
+    public static function getSticSignersForSignature()
+    {
+        $signature_id = $_REQUEST['record'];
+        if (empty($signature_id)) {
+            return '';
+        }
+
+        // Construct the SQL query
+        $query = "
+            SELECT
+                    stic_signers.id,
+                    stic_signers.name,
+                    stic_signers.date_entered,
+                    stic_signers.date_modified,
+                    stic_signers.modified_user_id,
+                    stic_signers.created_by,
+                    stic_signers.description,
+                    stic_signers.deleted,
+                    stic_signers.assigned_user_id,
+                    stic_signers.status,
+                    stic_signers.signature_date,
+                    stic_signers.parent_type,
+                    stic_signers.parent_id,
+                    stic_signers.record_name,
+                    stic_signers.record_type,
+                    stic_signers.record_id
+                FROM stic_signers
+                JOIN stic_signatures_stic_signers_c rel
+                    ON rel.stic_signatures_stic_signersstic_signers_idb = stic_signers.id
+                WHERE rel.stic_signatures_stic_signersstic_signatures_ida = '{$signature_id}'
+                    AND stic_signers.deleted = 0
+                    AND rel.deleted = 0
+                ORDER BY date_modified DESC
+        ";
         return $query;
     }
 

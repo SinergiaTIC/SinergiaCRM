@@ -1,25 +1,25 @@
 <?php
 /**
-* This file is part of SinergiaCRM.
-* SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
-* Copyright (C) 2013 - 2023 SinergiaTIC Association
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Affero General Public License version 3 as published by the
-* Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Affero General Public License along with
-* this program; if not, see http://www.gnu.org/licenses or write to the Free
-* Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-* 02110-1301 USA.
-*
-* You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
-*/
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 $module_name = 'stic_Signatures';
 $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
@@ -60,18 +60,20 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signers'] = a
     'sort_order' => 'asc',
     'sort_by' => 'id',
     'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNERS_FROM_STIC_SIGNERS_TITLE',
-    'get_subpanel_data' => 'stic_signatures_stic_signers',
+    'get_subpanel_data' => 'function:stic_SignersUtils::getSticSignersForSignature',
+    'function_parameters' => array(
+        'import_function_file' => 'modules/stic_Signers/Utils.php',
+    ),
     'top_buttons' => array(
-        // 0 => array(
-        //     'widget_class' => 'SubPanelTopButtonQuickCreate',
-        // ),
-        // 1 => array(
-        //     'widget_class' => 'SubPanelTopSelectButton',
-        //     'mode' => 'MultiSelect',
-        // ),
+    // 0 => array(
+    //     'widget_class' => 'SubPanelTopButtonQuickCreate',
+    // ),
+    // 1 => array(
+    //     'widget_class' => 'SubPanelTopSelectButton',
+    //     'mode' => 'MultiSelect',
+    // ),
     ),
 );
-
 
 // Notifications subpanel
 $layout_defs['stic_Signatures']['subpanel_setup']['stic_campaigns_notification'] = array(
@@ -90,7 +92,7 @@ $layout_defs['stic_Signatures']['subpanel_setup']['stic_campaigns_notification']
     'title_key' => 'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE',
     'top_buttons' => array(
         0 => array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate', 
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
             'title' => 'LBL_NEW_BUTTON_TITLE',
         ),
     ),
