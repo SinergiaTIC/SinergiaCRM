@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             }).catch(error => {
                 console.error('Error sending signature data:', error);
-                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR);
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR, null, true);
             });
         }
 
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }).catch(error => {
             console.error('Error sending acceptation data:', error);
-            showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ACCEPTANCE_ERROR);
+            showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ACCEPTANCE_ERROR, null, true);
         });
         // }
     }
