@@ -242,32 +242,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                const drawText = () => {
+                    ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                // Ya no es necesario esperar por document.fonts.ready, se aplica directamente
-                const canvasNativeWidth = signatureCanvas.width;
-                const canvasNativeHeight = signatureCanvas.height;
-                let fontSize = canvasNativeHeight * 0.8;
-                ctx.font = `${fontSize}px "${selectedFont}", sans-serif`; // Fallback font in case of loading issues
-                let textMetrics = ctx.measureText(signatureText);
-                const targetWidth = canvasNativeWidth * 0.9;
-                if (textMetrics.width > targetWidth) {
-                    fontSize = (targetWidth / textMetrics.width) * fontSize;
+                    const canvasNativeWidth = signatureCanvas.width;
+                    const canvasNativeHeight = signatureCanvas.height;
+                    let fontSize = canvasNativeHeight * 0.8;
+                    ctx.font = `${fontSize}px "${selectedFont}", sans-serif`; 
+                    let textMetrics = ctx.measureText(signatureText);
+                    const targetWidth = canvasNativeWidth * 0.9;
+                    if (textMetrics.width > targetWidth) {
+                        fontSize = (targetWidth / textMetrics.width) * fontSize;
+                        ctx.font = `${fontSize}px "${selectedFont}", sans-serif`;
+                    }
+                    const estimatedTextHeight = fontSize * 1.2;
+                    const targetHeight = canvasNativeHeight * 0.9;
+                    if (estimatedTextHeight > targetHeight) {
+                        fontSize = (targetHeight / estimatedTextHeight) * fontSize;
+                    }
                     ctx.font = `${fontSize}px "${selectedFont}", sans-serif`;
-                }
-                const estimatedTextHeight = fontSize * 1.2;
-                const targetHeight = canvasNativeHeight * 0.9;
-                if (estimatedTextHeight > targetHeight) {
-                    fontSize = (targetHeight / estimatedTextHeight) * fontSize;
-                }
-                ctx.font = `${fontSize}px "${selectedFont}", sans-serif`;
-                ctx.fillStyle = '#333';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                const x = canvasNativeWidth / 2;
-                const y = canvasNativeHeight / 2;
-                ctx.fillText(signatureText, x, y);
+                    ctx.fillStyle = '#333';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const x = canvasNativeWidth / 2;
+                    const y = canvasNativeHeight / 2;
+                    ctx.fillText(signatureText, x, y);
+                };
+
+                // Ensure font is loaded before drawing
+                document.fonts.load(`10px "${selectedFont}"`).then(() => {
+                    drawText();
+                });
 
             });
         }
