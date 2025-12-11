@@ -220,9 +220,10 @@
                                 <strong>{$logEntry.date}</strong> - {$logEntry.action}
                                 { if !empty($logEntry.description) }
 
-                                <div class="text-secondary small ">
+                                <!-- Disable description detail -->
+                                <!-- <div class="text-secondary small ">
                                     {$logEntry.description}
-                                </div>
+                                </div> -->
                                 {/if}
                             </li>
                             { /foreach }
