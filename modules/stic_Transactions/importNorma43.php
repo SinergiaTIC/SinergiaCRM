@@ -150,14 +150,6 @@ class Norma43
                     continue;
                 }
 
-                // Generate the hash of the movement using centralized function
-                $hash = self::generateTransactionHash(
-                    $productId,
-                    $mapped['transaction_date'],
-                    $mapped['amount'],
-                    $mapped['name']
-                );
-
                 // Check for duplicates
                 $duplicateCheck = self::isDuplicate($mapped, $productId, $importedHashes, $mov['raw_lines'] ?? []);
                 if ($duplicateCheck !== false) {
@@ -270,14 +262,6 @@ class Norma43
                 foreach ($account['movements'] as $mov) {
                     $mapped = self::mapMovementData($mov);
                     $summary['total_movements']++;
-                    
-                    // Generate the hash using centralized function
-                    $hash = self::generateTransactionHash(
-                        $productId,
-                        $mapped['transaction_date'],
-                        $mapped['amount'],
-                        $mapped['name']
-                    );
 
                     // Avoiding duplicates
                     // Always check for duplicates (both file and database)
@@ -287,25 +271,42 @@ class Norma43
                             // Always skip database duplicates
                             $summary['total_skipped_duplicates']++;
                             $accountSummary['skipped_duplicates']++;
-                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping database duplicate for product {$account['iban']}: {$mapped['name']}");
                             continue;
                         } elseif ($duplicateCheck['type'] === 'file' && !$allowFileDuplicates) {
                             // Skip file duplicates only if not allowing them
                             $summary['total_skipped_duplicates']++;
                             $accountSummary['skipped_duplicates']++;
-                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping file duplicate for product {$account['iban']}: {$mapped['name']}");
                             continue;
-                        } elseif ($duplicateCheck['type'] === 'file' && $allowFileDuplicates) {
-                            // Allow file duplicates when requested
-                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Allowing file duplicate for product {$account['iban']}: {$mapped['name']}");
                         }
+                        // Allow file duplicates when requested (don't add to hash array yet, will be added after insert)
                     }
 
                     // Insert the transaction
                     self::insertTransaction($mapped, $productId);
                     $summary['total_imported_movements']++;
                     $accountSummary['imported_movements']++;
-                    $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Imported transaction for account {$account['iban']}: {$mapped['name']} ({$mapped['amount']})");
+                    
+                    // Add the hash to the tracking array after successful import
+                    // This ensures that when allowing file duplicates, each imported duplicate is also tracked
+                    if ($duplicateCheck !== false && $duplicateCheck['type'] === 'file' && $allowFileDuplicates) {
+                        // Manually add this duplicate to the hash array for subsequent comparisons
+                        $baseKey = implode('|', [
+                            trim(strtolower($productId ?? '')),
+                            trim($mapped['transaction_date'] ?? ''),
+                            number_format((float)($mapped['amount'] ?? 0), 2, '.', ''),
+                            mb_strtolower(trim($mapped['name'] ?? ''), 'UTF-8')
+                        ]);
+                        if (!isset($importedHashes[$baseKey])) {
+                            $importedHashes[$baseKey] = [];
+                        }
+                        $importedHashes[$baseKey][] = [
+                            'raw_lines' => $mov['raw_lines'] ?? [],
+                            'date' => $mapped['transaction_date'] ?? '',
+                            'amount' => $mapped['amount'] ?? 0,
+                            'name' => $mapped['name'] ?? ''
+                        ];
+                    }
+                    
                 }
                 
                 // After inserting all movements for this account, update the product balance from file
@@ -778,6 +779,52 @@ class Norma43
     {
         global $db;
 
+        // Create a base key for grouping identical transactions
+        $baseKey = implode('|', [
+            trim(strtolower($productId ?? '')),
+            trim($mapped_data['transaction_date'] ?? ''),
+            number_format((float)($mapped_data['amount'] ?? 0), 2, '.', ''),
+            mb_strtolower(trim($mapped_data['name'] ?? ''), 'UTF-8')
+        ]);
+
+        // Internal check, duplicate within the same file, only if skipFileDuplicates is true
+        if ($skipFileDuplicates && isset($importedHashes[$baseKey])) {
+            // Hash exists, check all transactions with this hash
+            if (!empty($rawLines)) {
+                $currentRaw = implode('|', $rawLines);
+                
+                // Check each previously imported transaction with this hash
+                foreach ($importedHashes[$baseKey] as $previousTransaction) {
+                    $previousRawLines = $previousTransaction['raw_lines'] ?? [];
+                    
+                    if (!empty($previousRawLines)) {
+                        $previousRaw = implode('|', $previousRawLines);
+                        
+                        if ($currentRaw === $previousRaw) {
+                            // True duplicate: identical raw lines
+                            return ['is_duplicate' => true, 'type' => 'file'];
+                        }
+                    }
+                }
+                
+                // Different raw lines - it's a new identical transaction, not a duplicate
+                // Add this transaction to the hash array and return false (not a duplicate)
+                if (!isset($importedHashes[$baseKey])) {
+                    $importedHashes[$baseKey] = [];
+                }
+                $importedHashes[$baseKey][] = [
+                    'raw_lines' => $rawLines,
+                    'date' => $mapped_data['transaction_date'] ?? '',
+                    'amount' => $mapped_data['amount'] ?? 0,
+                    'name' => $mapped_data['name'] ?? ''
+                ];
+                return false;
+            } else {
+                // No raw lines available for current transaction
+                return ['is_duplicate' => true, 'type' => 'file'];
+            }
+        }
+
         // Generate the transaction hash
         $hash = self::generateTransactionHash(
             $productId,
@@ -785,32 +832,6 @@ class Norma43
             $mapped_data['amount'] ?? 0,
             $mapped_data['name'] ?? ''
         );
-
-        // Internal check, duplicate within the same file, only if skipFileDuplicates is true
-        if ($skipFileDuplicates && isset($importedHashes[$hash])) {
-            // Hash collision detected, verify if it's a true duplicate by comparing raw lines
-            $previousRawLines = $importedHashes[$hash]['raw_lines'] ?? [];
-            
-            if (!empty($rawLines) && !empty($previousRawLines)) {
-                $currentRaw = implode('|', $rawLines);
-                $previousRaw = implode('|', $previousRawLines);
-                
-                if ($currentRaw === $previousRaw) {
-                    // True duplicate: identical raw lines
-                    $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Exact duplicate confirmed by raw line comparison. Hash={$hash}");
-                    return ['is_duplicate' => true, 'type' => 'file'];
-                } else {
-                    // Hash collision: same hash but different transactions
-                    $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> Different transactions with same hash={$hash}! " .
-                        "Current hash: " . substr($currentRaw, 0, 100) . "... / Previous hash: " . substr($previousRaw, 0, 100) . "...");
-                    // Not a duplicate, allow import with a unique identifier
-                }
-            } else {
-                // No raw lines available (shouldn't happen), fallback to hash-only check
-                $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Hash found in current session (no raw lines for verification): {$hash}");
-                return ['is_duplicate' => true, 'type' => 'file'];
-            }
-        }
 
         // Searching for duplicates in the database
         $query = "
@@ -824,38 +845,20 @@ class Norma43
         $existsInDb = $db->fetchByAssoc($result);
 
         if ($existsInDb) {
-            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Duplicate found in database! Hash={$hash}, DB_hash={$existsInDb['transaction_hash']}, DB_amount={$existsInDb['amount']}, DB_date={$existsInDb['transaction_date']}, DB_name={$existsInDb['document_name']}");
             return ['is_duplicate' => true, 'type' => 'database'];
         }
 
-        // If not found in DB by hash, do a manual check by all fields
-        $manualCheckQuery = "
-            SELECT t.id, t.transaction_hash, t.document_name, t.amount
-            FROM stic_transactions t
-            INNER JOIN stic_transactions_stic_financial_products_c rel
-                ON rel.stic_transactions_stic_financial_productsstic_transactions_idb = t.id
-                AND rel.deleted = 0
-            WHERE t.deleted = 0
-            AND rel.stic_trans4a5broducts_ida = " . $db->quoted($productId) . "
-            AND ABS(CAST(t.amount AS DECIMAL(19,4)) - " . $db->quoted($mapped_data['amount'] ?? 0) . ") < 0.01
-            AND t.transaction_date = " . $db->quoted($mapped_data['transaction_date']) . "
-            LIMIT 1
-        ";
-        $manualResult = $db->query($manualCheckQuery);
-        $manualMatch = $db->fetchByAssoc($manualResult);
-        
-        if ($manualMatch) {
-            $GLOBALS['log']->warn(__METHOD__ . '(' . __LINE__ . ") >> [HASH_MISMATCH] Found transaction with same date/amount/product, but DIFFERENT hash! Expected hash={$hash}, DB_hash={$manualMatch['transaction_hash']}, DB_name={$manualMatch['document_name']}. This indicates hash generation is inconsistent!");
-        }
-
         // Not a duplicate, add it to the imported list for this session, store hash with raw lines
-        $importedHashes[$hash] = [
+        // Use array of transactions per hash to support multiple identical transactions
+        if (!isset($importedHashes[$baseKey])) {
+            $importedHashes[$baseKey] = [];
+        }
+        $importedHashes[$baseKey][] = [
             'raw_lines' => $rawLines,
             'date' => $mapped_data['transaction_date'] ?? '',
             'amount' => $mapped_data['amount'] ?? 0,
             'name' => $mapped_data['name'] ?? ''
         ];
-        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> NEW transaction: {$hash} (date={$mapped_data['transaction_date']}, amount={$mapped_data['amount']}, name={$mapped_data['name']})");
         return false;
     }
 
@@ -895,8 +898,6 @@ class Norma43
         );
 
         $tx->save();
-        
-        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Transaction saved: {$tx->id} with amount {$data['amount']} for product {$productId}, payment_method: {$data['payment_method']}");
         
         return $tx->id;
     }
@@ -950,7 +951,6 @@ class Norma43
             if ($isNewProduct) {
                 $product->initial_balance = $account['initial_balance'];
                 $product->current_balance = $account['final_balance'] ?? $account['initial_balance'];
-                $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Norma 43 NEW Product IBAN: {$iban} - initial_balance: {$product->initial_balance}, current_balance: {$product->current_balance} (from file)");
                 $product->save();
             } else {
                 // For existing products: don't update balance here, will be done in finalizeImport
@@ -971,7 +971,6 @@ class Norma43
     {
         // Recalculate the balance based on transactions
         if (!empty($_SESSION['norma43_importing']) && $_SESSION['norma43_importing'] === true) {
-            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping balance update during Norma 43 import - balances already set from file");
             return;
         }
 
