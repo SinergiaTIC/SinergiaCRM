@@ -39,7 +39,7 @@ class stic_SignersUtils
      */
     public static function sendToSign($signerId)
     {
-        global $sugar_config, $current_user, $mod_strings;
+        global $current_user, $mod_strings, $app_strings;
 
         // Validate signer ID
         if (empty($signerId)) {
@@ -134,6 +134,9 @@ class stic_SignersUtils
         if (!$mail->Send()) {
             $msg = "There was an error sending the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo;
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $msg);
+            SugarApplication::appendErrorMessage("<p class='label label-warning'>Error: {$app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']} </p>");
+            SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerId);
+
             throw new Exception($msg);
         } else {
             // On success: display message, log debug, and log the action
