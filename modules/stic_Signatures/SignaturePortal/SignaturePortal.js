@@ -45,6 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
         saveSignatureBtn = document.getElementById('saveSignatureBtn');
         textSignatureInput = document.getElementById('textSignatureInput');
         fontSelector = document.getElementById('fontSelector');
+        if (fontSelector) {
+            const updateFontSelectStyle = () => {
+                fontSelector.style.fontFamily = `"${fontSelector.value}", cursive`;
+            };
+            // Set initial font
+            updateFontSelectStyle();
+            // Update on change
+            fontSelector.addEventListener('change', updateFontSelectStyle);
+        }
         renderTextSignatureBtn = document.getElementById('renderTextSignatureBtn');
         imageSignatureInput = document.getElementById('imageSignatureInput');
     }

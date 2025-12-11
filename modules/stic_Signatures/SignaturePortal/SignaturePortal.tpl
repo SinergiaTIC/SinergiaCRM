@@ -122,11 +122,14 @@
                                         <label for="fontSelector"
                                             class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FONT_STYLE}:</label>
                                         <select id="fontSelector" class="form-select text-dark">
-                                            <option value="Dancing Script">Dancing Script</option>
-                                            <option value="Pacifico">Pacifico</option>
-                                            <option value="Great Vibes">Great Vibes</option>
-                                            <option value="Caveat">Caveat</option>
-                                            <option value="Indie Flower">Indie Flower</option>
+                                            <option value="Dancing Script" style="font-family: 'Dancing Script', cursive;">Dancing Script</option>
+                                            <option value="Pacifico" style="font-family: 'Pacifico', cursive;">Pacifico</option>
+                                            <option value="Great Vibes" style="font-family: 'Great Vibes', cursive;">Great Vibes</option>
+                                            <option value="Caveat" style="font-family: 'Caveat', cursive;">Caveat</option>
+                                            <option value="Indie Flower" style="font-family: 'Indie Flower', cursive;">Indie Flower</option>
+                                            <option value="Sacramento" style="font-family: 'Sacramento', cursive;">Sacramento</option>
+                                            <option value="Shadows Into Light" style="font-family: 'Shadows Into Light', cursive;">Shadows Into Light</option>
+                                            <option value="Satisfy" style="font-family: 'Satisfy', cursive;">Satisfy</option>
                                         </select>
                                     </div>
                                     <button id="renderTextSignatureBtn"
