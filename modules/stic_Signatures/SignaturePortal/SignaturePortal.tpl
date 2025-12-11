@@ -101,41 +101,50 @@
                             {$MODS.LBL_PORTAL_ALTERNATIVE_OPTIONS}
                         </h3>
 
-                        <div class="text-signature-option mb-3 p-3 border border-secondary rounded bg-light">
-                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">
-                                {$MODS.LBL_PORTAL_TEXT_SIGNATURE_TITLE}</h4>
-                            <div class="mb-3">
-                                <label for="textSignatureInput"
-                                    class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FULL_NAME}:</label>
-                                <input type="text" id="textSignatureInput" placeholder="{$MODS.LBL_PORTAL_NAME_EXAMPLE}"
-                                    class="form-control text-dark" value="{$SIGNER_NAME}">
+                        <ul class="nav nav-tabs nav-justified" id="signatureTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link border" id="text-signature-tab" data-bs-toggle="tab" data-bs-target="#text-signature" type="button" role="tab" aria-controls="text-signature" aria-selected="false">{$MODS.LBL_PORTAL_TEXT_SIGNATURE_TITLE}</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link border" id="image-signature-tab" data-bs-toggle="tab" data-bs-target="#image-signature" type="button" role="tab" aria-controls="image-signature" aria-selected="false">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_TITLE}</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="signatureTabsContent">
+                            <div class="tab-pane fade" id="text-signature" role="tabpanel" aria-labelledby="text-signature-tab">
+                                <div class="text-signature-option p-3 border border-top-0 rounded-bottom bg-light">
+                                    <div class="mb-3">
+                                        <label for="textSignatureInput"
+                                            class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FULL_NAME}:</label>
+                                        <input type="text" id="textSignatureInput" placeholder="{$MODS.LBL_PORTAL_NAME_EXAMPLE}"
+                                            class="form-control text-dark" value="{$SIGNER_NAME}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fontSelector"
+                                            class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FONT_STYLE}:</label>
+                                        <select id="fontSelector" class="form-select text-dark">
+                                            <option value="Dancing Script">Dancing Script</option>
+                                            <option value="Pacifico">Pacifico</option>
+                                            <option value="Great Vibes">Great Vibes</option>
+                                            <option value="Caveat">Caveat</option>
+                                            <option value="Indie Flower">Indie Flower</option>
+                                        </select>
+                                    </div>
+                                    <button id="renderTextSignatureBtn"
+                                        class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_RENDER_TEXT_SIGNATURE}</button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="fontSelector"
-                                    class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FONT_STYLE}:</label>
-                                <select id="fontSelector" class="form-select text-dark">
-                                    <option value="Dancing Script">Dancing Script</option>
-                                    <option value="Pacifico">Pacifico</option>
-                                    <option value="Great Vibes">Great Vibes</option>
-                                    <option value="Caveat">Caveat</option>
-                                    <option value="Indie Flower">Indie Flower</option>
-                                </select>
+                            <div class="tab-pane fade" id="image-signature" role="tabpanel" aria-labelledby="image-signature-tab">
+                                <div class="image-signature-option p-3 border border-top-0 rounded-bottom bg-light">
+                                    <div class="mb-3">
+                                        <label for="imageSignatureInput"
+                                            class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_IMAGE_FILE_SELECTION}:</label>
+                                        <input type="file" id="imageSignatureInput" accept="image/png, image/jpeg"
+                                            class="form-control text-dark">
+                                    </div>
+                                    <button id="uploadImageSignatureBtn"
+                                        class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_SIGNATURE}</button>
+                                </div>
                             </div>
-                            <button id="renderTextSignatureBtn"
-                                class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_RENDER_TEXT_SIGNATURE}</button>
-                        </div>
-
-                        <div class="image-signature-option p-3 border border-secondary rounded bg-light">
-                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">
-                                {$MODS.LBL_PORTAL_UPLOAD_IMAGE_TITLE}</h4>
-                            <div class="mb-3">
-                                <label for="imageSignatureInput"
-                                    class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_IMAGE_FILE_SELECTION}:</label>
-                                <input type="file" id="imageSignatureInput" accept="image/png, image/jpeg"
-                                    class="form-control text-dark">
-                            </div>
-                            <button id="uploadImageSignatureBtn"
-                                class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_SIGNATURE}</button>
                         </div>
                     </div>
                 </section>
