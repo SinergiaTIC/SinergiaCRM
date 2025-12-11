@@ -72,6 +72,13 @@ switch (viewType()) {
     createDetailViewButton(buttons.rediretToSingPortal);
     createDetailViewButton(buttons.copyPortalUrl);
 
+    // Hide on_behalf_of fields if is same as signer
+    if (STIC.record.contact_id_c == STIC.record.parent_id ) {
+      $("[data-field='on_behalf_of_id']").hide();
+    }
+
+
+
     break;
   case "list":
     // selectRemittanceAlert = SUGAR.language.get("stic_Payments", "LBL_ADD_PAYMENTS_TO_REMITTANCE_INFO_ALERT");
