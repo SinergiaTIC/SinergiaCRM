@@ -72,8 +72,8 @@ class stic_TransactionsController extends SugarController
         $allowFileDuplicates = !empty($_POST['allow_file_duplicates']) && $_POST['allow_file_duplicates'] === '1';
         
         if ($allowFileDuplicates) {
-            // Import all transactions except crm duplicates, file duplicates will be imported
-            Norma43::finalizeImportSkipCRMDuplicates();
+            // Import all transactions except database duplicates, file duplicates will be imported
+            Norma43::finalizeImportSkipDatabaseDuplicates();
         } else {
             // Standard import: skip ALL duplicates (both file and crm)
             Norma43::finalizeImport([]);

@@ -39,12 +39,10 @@
         <div class="form-actions">
             <input type="button" class="button" value="{$APP['LBL_BACK']}"
                 onclick="if(confirm('{$MOD['LBL_BACK_TO_STEP_1']}')) location.href='index.php?module=stic_Transactions&action=uploadNorma43';" />
-            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}"
-                title="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43_HELP']}" />
+            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}" />
             {if $DATA.total_skipped_duplicates > 0}
                 <input type="button" class="button" value="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES']}" 
-                    onclick="document.getElementById('allow_file_duplicates').value='1'; document.getElementById('executeFinalImport').submit();" 
-                    title="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES_HELP']}"/>
+                    onclick="document.getElementById('allow_file_duplicates').value='1'; document.getElementById('executeFinalImport').submit();" />
             {/if}
             <input type="button" class="button" value="{$APP['LBL_CANCEL']}"
                 onclick="location.href='index.php?module=stic_Transactions&action=index';" />
@@ -232,7 +230,7 @@
                                                     {if $dup.duplicate_type == 'file'}
                                                         <span class="duplicate-badge duplicate-file">{$MOD['LBL_DUPLICATE_LOCATION_FILE']}</span>
                                                     {else}
-                                                        <span class="duplicate-badge duplicate-crm">{$MOD['LBL_DUPLICATE_LOCATION_CRM']}</span>
+                                                        <span class="duplicate-badge duplicate-database">{$MOD['LBL_DUPLICATE_LOCATION_DATABASE']}</span>
                                                     {/if}
                                                 </td>
                                             </tr>
@@ -282,11 +280,10 @@
         <div class="form-actions">
             <input type="button" class="button" value="{$APP['LBL_BACK']}"
                 onclick="if(confirm('{$MOD['LBL_BACK_TO_STEP_1']}')) location.href='index.php?module=stic_Transactions&action=uploadNorma43';" />
-            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}"
-                title="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43_HELP']}" />
+            <input type="submit" class="button primary" value="{$MOD['LBL_COMPLETE_IMPORT_NORMA_43']}" />
             {if $DATA.total_skipped_duplicates > 0}
                 <input type="button" class="button" value="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES']}" 
-                    onclick="document.getElementById('allow_file_duplicates').value='1'; document.getElementById('executeFinalImport').submit();" title="{$MOD['LBL_IMPORT_INCLUDING_FILE_DUPLICATES_HELP']}"/>
+                    onclick="document.getElementById('allow_file_duplicates').value='1'; document.getElementById('executeFinalImport').submit();" />
             {/if}
             <input type="button" class="button" value="{$APP['LBL_CANCEL']}"
                 onclick="location.href='index.php?module=stic_Transactions&action=index';" />
@@ -645,7 +642,7 @@
             border: 1px solid #90caf9;
         }
 
-        .duplicate-crm {
+        .duplicate-database {
             background-color: #fff3e0;
             color: #f57c00;
             border: 1px solid #ffb74d;

@@ -164,7 +164,7 @@ class Norma43
                     $summary['total_skipped_duplicates']++;
                     $accountSummary['skipped_duplicates']++;
                     // Add duplicate_type to the mapped data for display in preview
-                    $mapped['duplicate_type'] = $duplicateCheck['type']; // 'file' or 'crm'
+                    $mapped['duplicate_type'] = $duplicateCheck['type']; // 'file' or 'database'
                     $accountSummary['duplicates'][] = $mapped;
                     continue;
                 }
@@ -211,10 +211,10 @@ class Norma43
     }
 
     /**
-     * Finalize the import skipping ONLY crm duplicates, allows file duplicates
+     * Finalize the import skipping ONLY database duplicates, allows file duplicates
      * @return array Summary of the import process
      */
-    public static function finalizeImportSkipCRMDuplicates()
+    public static function finalizeImportSkipDatabaseDuplicates()
     {
         return self::finalizeImportInternal([], true);
     }
@@ -280,14 +280,14 @@ class Norma43
                     );
 
                     // Avoiding duplicates
-                    // Always check for duplicates (both file and CRM)
+                    // Always check for duplicates (both file and database)
                     $duplicateCheck = self::isDuplicate($mapped, $productId, $importedHashes, $mov['raw_lines'] ?? [], true);
                     if ($duplicateCheck !== false) {
-                        if ($duplicateCheck['type'] === 'crm') {
-                            // Always skip CRM duplicates
+                        if ($duplicateCheck['type'] === 'database') {
+                            // Always skip database duplicates
                             $summary['total_skipped_duplicates']++;
                             $accountSummary['skipped_duplicates']++;
-                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping CRM duplicate for product {$account['iban']}: {$mapped['name']}");
+                            $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Skipping database duplicate for product {$account['iban']}: {$mapped['name']}");
                             continue;
                         } elseif ($duplicateCheck['type'] === 'file' && !$allowFileDuplicates) {
                             // Skip file duplicates only if not allowing them
@@ -772,7 +772,7 @@ class Norma43
      * @param array $importedHashes Reference to the array of already imported hashes in the current session
      * @param array $rawLines The raw Norma43 lines (22 + 23s) for exact comparison within file
      * @param bool $skipFileDuplicates If false, file duplicates are NOT checked 
-     * @return array|bool Returns array with duplicate info ['is_duplicate' => bool, 'type' => 'file'|'crm'] or false if not duplicate
+     * @return array|bool Returns array with duplicate info ['is_duplicate' => bool, 'type' => 'file'|'database'] or false if not duplicate
      */
     private static function isDuplicate($mapped_data, $productId, &$importedHashes = [], $rawLines = [], $skipFileDuplicates = true)
     {
@@ -825,7 +825,7 @@ class Norma43
 
         if ($existsInDb) {
             $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Duplicate found in database! Hash={$hash}, DB_hash={$existsInDb['transaction_hash']}, DB_amount={$existsInDb['amount']}, DB_date={$existsInDb['transaction_date']}, DB_name={$existsInDb['document_name']}");
-            return ['is_duplicate' => true, 'type' => 'crm'];
+            return ['is_duplicate' => true, 'type' => 'database'];
         }
 
         // If not found in DB by hash, do a manual check by all fields
