@@ -1013,7 +1013,7 @@ class AWF_Configuration {
   }
 
   /**
-   * Gets a new string cleaned to be used as internal name of any element
+   * Gets a new string cleaned to be used as internal name of fields
    * @param {string} name 
    * @returns {string}
    */
@@ -1035,17 +1035,31 @@ class AWF_Configuration {
     return nameClean;
   }
 
+  /**
+   * Gets a safe name for a DataBlock using PascalCase of the moduleName.
+   * Ex: "stic_Advanced_Web_Forms" -> "SticAdvancedWebForms"
+   * Ex: "Contacts" -> "Contacts"
+   */
+  static getSafeNameFromModule(moduleName) {
+    if (!moduleName) 
+      return "Module";
+
+    return moduleName
+      .split(/[^a-zA-Z0-9]/)                                     // Split by "_" or non alphanumeric chars
+      .filter(part => part.length > 0)                           // Remove empty parts
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize every part
+      .join('');                                                 // Join without separators
+  }
+
   updateDataBlockText(dataBlock, newText) {
     const oldName = dataBlock.name;
     let text = newText;
-    let name = AWF_Configuration.cleanName(text);
+    let baseText = text.trim();
     let index = 0;
-    while(this.data_blocks.some((b) => b.id != dataBlock.id && (b.text === text || b.name === name))) {
+    while(this.data_blocks.some((b) => b.id != dataBlock.id && (b.text === text))) {
       index++;
-      text = `${newText.trim()} ${index}`;
-      name = AWF_Configuration.cleanName(text);
+      text = `${baseText} ${index}`;
     }
-    dataBlock.name = name;
     dataBlock.text = text;
 
     // Update all actions and parameters pointing to this DataBlock
@@ -1086,6 +1100,7 @@ class AWF_Configuration {
    */
   addDataBlockModule(moduleName, force = false, text = "") {
     let module = utils.getModuleInformation(moduleName);
+    if (text == "") text = module.textSingular;
 
     // Find DataBlock for module
     let dataBlock = null;
@@ -1097,15 +1112,22 @@ class AWF_Configuration {
     }
 
     // Create DataBlock for module
-    if (text =="") {
-      text = module.textSingular;
-    }
-    let name = AWF_Configuration.cleanName(text);
+
+    // Set unique text
+    let baseText = text;
     let index = 0;
-    while(this.data_blocks.some((b) => b.text === text || b.name === name)) {
+    while(this.data_blocks.some((b) => b.text === text)) {
       index++;
-      text = `${module.textSingular} ${index}`;
-      name = AWF_Configuration.cleanName(text);
+      text = `${baseText} ${index}`;
+    }
+
+    // Set unique name with Module name
+    let baseName = AWF_Configuration.getSafeNameFromModule(moduleName);
+    index = 0;
+    let name = `${baseName}${index}`; // Ex: SticAdvancedWebForms0
+    while(this.data_blocks.some((b) => b.name === name)) {
+      index++;
+      name = `${baseName}${index}`;
     }
 
     dataBlock = new AWF_DataBlock({

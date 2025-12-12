@@ -92,6 +92,7 @@ $mod_strings = array (
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
+  'LBL_HONEYPOT_LABEL' => 'Mantenga este campo vacío',
 
   'LBL_PREVIEW_RIBBON' => 'Previsualización',
   'LBL_PREVIEW_LOADING' => 'Cargando...',

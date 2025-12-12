@@ -39,14 +39,19 @@ class AWF_ResponseHandler
         $current_user = BeanFactory::newBean('Users');
         $current_user->getSystemUser();
 
-        // Obtención de datos y saneamiento
+        // Obtención de datos
         $formId = $_REQUEST['id'] ?? null;
         $rawPostData = $_POST;
 
+        // Detección Anti-Spam (Honeypot)
+        $isSpam = !empty($rawPostData['awf_honey_pot']);
+
+        // Saneamiento de datos
         unset($rawPostData['module']);
         unset($rawPostData['action']);
         unset($rawPostData['entryPoint']);
         unset($rawPostData['id']);
+        unset($rawPostData['awf_honey_pot']);
 
         // Validaciones iniciales
         if (empty($formId)) {
@@ -78,7 +83,10 @@ class AWF_ResponseHandler
 
         // Buscamos el estado de la respuesta
         $isPublic = ($formBean->status === 'public');
-        if ($isPublic) {
+        if ($isSpam) {
+            $responseStatus = 'spam';
+            $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_Advanced_Web_Forms_Responses');
+        } elseif ($isPublic) {
             $responseStatus = 'pending';
             $responseDescription = '';
         } else {
@@ -125,6 +133,17 @@ class AWF_ResponseHandler
             $this->terminateRawError("Invalid Form Configuration.");
         }
         $formConfig = FormConfig::fromJsonArray($configData);
+
+        // Paramos si es SPAM (Fake success)
+        if ($isSpam) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected and saved for Form ID: $formId");
+            
+            // Mostramos éxito genérico para engañar al bot
+            $this->renderGenericResponse($formConfig, 
+                                         translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
+                                         translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+            return; // Paramos: no procesamos más
+        }
 
         // Solo los formularios 'public' procesan las respuestas
         if (!$isPublic) {

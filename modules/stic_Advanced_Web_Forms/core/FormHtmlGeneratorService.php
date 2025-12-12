@@ -403,7 +403,7 @@ class FormHtmlGeneratorService {
                     // Honeypot: Invisible anti-spam
                     $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" ."\r\n".str_repeat('  ', ++$this->indent);
                     {
-                        $html .= "<label for='awf_website'>Leave this field blank</label>" ."\r\n".str_repeat('  ', $this->indent);
+                        $html .= "<label for='awf_website'>".translate('LBL_HONEYPOT_LABEL', 'stic_Advanced_Web_Forms')."</label>" ."\r\n".str_repeat('  ', $this->indent);
                         $html .= "<input type='text' id='awf_website' name='awf_honey_pot' value='' tabindex='-1' autocomplete='off'>" ."\r\n".str_repeat('  ', $this->indent);
                     }
                     $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);

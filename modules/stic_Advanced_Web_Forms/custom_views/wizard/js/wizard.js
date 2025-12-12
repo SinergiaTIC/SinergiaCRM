@@ -693,7 +693,7 @@ class WizardStep2 {
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
           if (this.field.type_field == 'unlinked') {
-            this.field.name = AWF_Configuration.cleanName(newText); 
+            this.field.name = AWF_Configuration.cleanName(newText);
             this.field.label = utils.toFieldLabelText(newText);
           }
         });

@@ -62,23 +62,22 @@ class DataBlockResolved {
             }
         }
 
+        // Warning: PHP POST replaces all '.' to '_'
+        // DataBlock names are in PascalCase, without '_'
         // Form field names:
-        //   dataBlockName.fieldName            ->  Field to crm
-        //   _detached.dataBlockName.fieldName  ->  Field detached
-        $namePrefix = $config->name . '.';
-        $namePrefix = str_replace('.', '_', $namePrefix);
-        $namePrefixLen = strlen($namePrefix);
-        $detachedPrefix = '_detached.' . $config->name . '.';
-        $detachedPrefix = str_replace('.', '_', $detachedPrefix);
-        $detachedPrefixLen = strlen($detachedPrefix);
+        //   DataBlockName0_field_name              ->  "field_name" from DataBlockName0 TO CRM
+        //   _detached_DataBlockName0_field_name    ->  "field_name" from DataBlockName0 DETACHED
+
+        $blockPrefix = $config->name . '_'; 
+        $detachedPrefix = '_detached_' . $blockPrefix;
 
         // Iteramos sobre todos los campos definidos: 
         //   Permitimos campos no definidos en la configuración
         foreach ($fullFormData as $formKey => $value) {
-            // Campo enlazado al crm (Ex: persona_tutor.first_name)
-            if (str_starts_with($formKey, $namePrefix)) {
-                $fieldName = substr($formKey, $namePrefixLen);
-                $definition = $config->fields[$fieldName] ?? null; // Puede ser un campo no definido en la configuración
+            // Campo enlazado al crm (Ex: SticBookings0_first_name)
+            if (str_starts_with($formKey, $blockPrefix)) {
+                $fieldName = substr($formKey, strlen($blockPrefix)); // La parte derecha del prefijo del bloque es el nombre del campo
+                $definition = $config->fields[$fieldName] ?? null;   // Puede ser un campo no definido en la configuración
 
                 // Obtenemos el tipo de campo en el crm para hacer su casting
                 $crmFieldType = $definition?->type;
@@ -88,14 +87,15 @@ class DataBlockResolved {
                 $logicalKey = $config->name . '.' . $fieldName;
                 $this->formData[$fieldName] = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $castedValue);
             
-            // Campo NO enlazado al crm (Ex: _detached.persona_menor.accept_photos)
+            // Campo NO enlazado al crm (Ex: _detached_SticBookings0_accept_photos)
             } else if (str_starts_with($formKey, $detachedPrefix)) {
-                $fieldName = substr($formKey, $detachedPrefixLen);
-                $definition = $config->fields[$fieldName] ?? null; // Puede ser un campo no definido en la configuración
+                $fieldName = substr($formKey, strlen($detachedPrefix)); // La parte derecha del prefijo del bloque es el nombre del campo
+                $definition = $config->fields[$fieldName] ?? null;      // Puede ser un campo no definido en la configuración
+
+                // Los campos no enlazados al crm los tratamos como strings (no hay tipo a mapear)
 
                 // Reconstruimos la clave lógica original para trazabilidad
                 $logicalKey = '_detached.' . $config->name . '.' . $fieldName;
-                // Los campos no enlazados al crm los tratamos como strings (no hay tipo a mapear)
                 $this->detachedData[$fieldName] = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $value);
             }
         }
