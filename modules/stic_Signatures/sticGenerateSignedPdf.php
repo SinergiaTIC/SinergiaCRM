@@ -199,6 +199,12 @@ class sticGenerateSignedPdf
             $sugar_smarty->assign('SIGNER_USER_TIME', $userTime);
             $sugar_smarty->assign('SIGNER_MODE', $app_list_strings['stic_signatures_modes_list'][$signedMode]);
             $sugar_smarty->assign('SIGNER_STATUS', $app_list_strings['stic_signers_status_list'][$signerBean->status]);
+            
+            // If signing on behalf of someone else, include that information
+            if($signerBean->parent_id != $signerBean->contact_id_c){
+                $behalfName = BeanFactory::getBean('Contacts', $signerBean->contact_id_c)->full_name;
+                $sugar_smarty->assign('SIGNER_ON_BEHALF_OF', $behalfName);
+            } 
 
             $sugar_smarty->assign('BROWSER', $signerBean->browser || '');
             $sugar_smarty->assign('MOD_STRINGS', return_module_language($GLOBALS['current_language'], 'stic_Signatures'));
@@ -209,7 +215,6 @@ class sticGenerateSignedPdf
             // Construct the audit HTML content
             $auditHtml = '<p style="page-break-before: always;">&nbsp;</p>';
             $auditHtml .= $sugar_smarty->fetch('modules/stic_Signatures/AuditPageTemplate.tpl');
-            $auditHtml .= file_get_contents('modules/stic_Signatures/AuditPageTemplate.html');
 
             // Append the audit page HTML (encoded) to the template description
             $templateBean->description .= htmlspecialchars($auditHtml);

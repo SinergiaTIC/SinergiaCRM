@@ -15,7 +15,9 @@
 
     <ul style="font-size: 8pt; line-height: .75;">
         <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_SIGNER_NAME}:</strong>&nbsp;<span>{$SIGNER_NAME}</span></li>
-        <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_REPRESENTING}:</strong>&nbsp;<span>[propio|nombre representado]</span></li>
+        {if $SIGNER_ON_BEHALF_OF}
+        <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_REPRESENTING}:</strong>&nbsp;<span>{$SIGNER_ON_BEHALF_OF}</span></li>
+        {/if}
         <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_EMAIL}:</strong>&nbsp;<span>{$SIGNER_EMAIL}</span></li>
         <li><strong>{$MOD_STRINGS.LBL_AUDIT_PAGE_PHONE}:</strong>&nbsp;<span>{$SIGNER_PHONE}</span></li>
     </ul>
@@ -24,7 +26,7 @@
 
     <ul style="font-size: 8pt; line-height: .75;">
         {foreach from=$SIGNER_LOG item=event}
-            <li><strong>{$event.name}:</strong>&nbsp;<span>{$event.description}</span></li>
+            <li><strong>{$event.name}:</strong></li>
         {/foreach}
     </ul>
 </div>
