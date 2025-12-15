@@ -58,5 +58,6 @@ $mod_strings = array(
     'LBL_SUBGROUP' => 'Subgrupo',
     'LBL_ACCOUNT' => 'Conta',
     'LBL_SUBACCOUNT' => 'Subconta',
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'La justificación está en estado "Enviada" y no se puede modificar.'
 );
 ?>

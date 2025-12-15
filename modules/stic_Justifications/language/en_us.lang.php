@@ -58,5 +58,6 @@ $mod_strings = array(
     'LBL_SUBGROUP' => 'Subgroup',
     'LBL_ACCOUNT' => 'Account',
     'LBL_SUBACCOUNT' => 'Subaccount',
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'The justification is in "Submitted" status and cannot be modified.',
 );
 ?>

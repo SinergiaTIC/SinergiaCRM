@@ -32,9 +32,22 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
     setAutofill(["name"]);
+
+    checkBlockedJustification();
+    // add observer for blocked changes
+    $("form").on("change", "#status", function () {
+      checkBlockedJustification();
+    });
     break;
 
   case "detail":
+    checkBlockedJustificationInDetailView();
+    // add observer for [field='blocked'] changes
+    const targetNode = document.querySelector('[field="blocked"]');
+    var observer = new MutationObserver(function(mutations) {
+      checkBlockedJustificationInDetailView();
+    });
+    observer.observe(targetNode, { childList: true, subtree: true});
     break;
 
   case "list":
@@ -45,3 +58,42 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+function checkBlockedJustification() {
+  var blocked = $("#status").val() === 'submitted';
+  if (blocked) {
+    $(".edit-view-row-item input").prop('disabled', true); // text, decimals, checks, etc.
+    $(".edit-view-row-item select").prop('disabled', true); // desplegables
+    $("button[type='button']:not(.saveAndContinue)").prop('disabled', true); // buttons except "Save and Continue Edit"
+    $("#status").prop('disabled', false); // keep status enabled
+  }
+  else {
+    $(".edit-view-row-item input").prop('disabled', false);
+    $(".edit-view-row-item select").prop('disabled', false);
+    $("button[type='button']").prop('disabled', false);
+  }
+}
+
+function checkBlockedJustificationInDetailView() {
+  // To block the inline edit on double click, we add/remove event listeners to the parent element of inlineEdit fields
+  var blocked = $("#status").val() === 'submitted';
+  if (blocked) {
+    $(".inlineEdit").each(function() {
+      if ($(this).attr('field') !== 'status') {
+        $(this).parent()[0].addEventListener('dblclick', blockDblClick, true);
+      }
+    });
+  }
+  else {
+    // $(".inlineEdit").css("pointer-events", "auto");
+    $(".inlineEdit").each(function() {
+      if ($(this).attr('field') !== 'blocked') {
+        $(this).parent()[0].removeEventListener('dblclick', blockDblClick, true);
+      }
+    });
+  }
+}
+
+function blockDblClick(event) {
+  event.stopPropagation();
+  event.preventDefault(); 
+}

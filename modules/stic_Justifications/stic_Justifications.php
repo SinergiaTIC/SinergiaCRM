@@ -48,6 +48,32 @@ class stic_Justifications extends Basic
         global $current_language;
         $justificationsModStrings = return_module_language($current_language, 'stic_Justifications'); // can not be $mod_strings because of different contexts (specially inline edition)     
 
+        $tempFetchedRow = $this->fetched_row ?? null;
+        $isBlocked = $this->status === 'submitted';
+
+        if ($tempFetchedRow && $tempFetchedRow['status'] == 'submitted' && $isBlocked) {
+            // TODOEPS
+            if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+                    // // This is an AJAX request
+                    // ob_clean();
+                    // header('HTTP/1.1 500 Internal Server Error');
+                    // echo "Save aborted: " . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
+                    // exit;
+                    // 1. Sanitize the message for JS
+                $errorMsg = $justificationsModStrings['LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED'];
+                $jsMsg = json_encode($errorMsg);
+
+                // 2. Output a script to alert the user
+                echo "<script>alert($jsMsg);</script>";
+                echo "<script>location.reload();</script>";
+
+                // 4. Stop execution
+                exit();
+                }
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $justificationsModStrings['LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED'] . '</div>');
+            return false;
+        }
+
         $this->fillName();
 
         // Save the bean
