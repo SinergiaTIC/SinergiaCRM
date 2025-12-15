@@ -75,13 +75,26 @@ function checkBlockedAllocation() {
 }
 
 function checkBlockedAllocationInDetailView() {
+  // To block the inline edit on double click, we add/remove event listeners to the parent element of inlineEdit fields
   var blocked = $("[field='blocked'] input").is(":checked")
   if (blocked) {
-    $(".inlineEdit").css("pointer-events", "none");
-    $("[field='blocked']").css("pointer-events", "auto");
+    $(".inlineEdit").each(function() {
+      if ($(this).attr('field') !== 'blocked') {
+        $(this).parent()[0].addEventListener('dblclick', blockDblClick, true);
+      }
+    });
   }
   else {
-    $(".inlineEdit").css("pointer-events", "auto");
-
+    // $(".inlineEdit").css("pointer-events", "auto");
+    $(".inlineEdit").each(function() {
+      if ($(this).attr('field') !== 'blocked') {
+        $(this).parent()[0].removeEventListener('dblclick', blockDblClick, true);
+      }
+    });
   }
+}
+
+function blockDblClick(event) {
+  event.stopPropagation();
+  event.preventDefault(); 
 }
