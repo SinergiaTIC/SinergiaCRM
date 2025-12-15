@@ -22,7 +22,6 @@
  */
 
 require_once 'modules/stic_Justifications/Utils.php';
-require_once 'modules/stic_Justification_Conditions/Utils.php';
 
 class stic_Justification_Conditions extends Basic
 {
