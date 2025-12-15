@@ -377,18 +377,7 @@ $dictionary['stic_Allocations'] = array(
     'indices' => array(
     ),
     'relationships' => array(
-        'stic_allocations_stic_justifications' => array(
-            'lhs_module' => 'stic_Allocations',
-            'lhs_table' => 'stic_allocations',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Justifications',
-            'rhs_table' => 'stic_justifications',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_allocations_stic_justifications_c',
-            'join_key_lhs' => 'stic_alloc8c71cations_ida',
-            'join_key_rhs' => 'stic_alloc9375cations_idb',
-        ),
+
     ),
     'optimistic_locking' => 1,
     'unified_search' => true,
