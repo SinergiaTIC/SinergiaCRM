@@ -33,13 +33,33 @@ class DataBlockFieldResolved {
 
     public string $formKey;         // El nombre completo del campo en el formulario
     public string $fieldName;       // El nombre del campo (después del prefijo) (ex: email1, first_name)
-    public mixed $value;            // El valor enviado desde el formulario
+    public mixed $value;            // El valor enviado desde el formulario en formato de Base de Datos
+    public mixed $originalValue;    // El valor original en objeto complejo (por ejemplo: DateTime)
 
     public function __construct(string $formKey, string $fieldName, ?FormDataBlockField $config, mixed $value) {
         $this->formKey = $formKey;
         $this->fieldName = $fieldName;
         $this->dataBlockField = $config;
-        $this->value = $value;
+        $this->originalValue = $value;
+
+        // Normalizamos el valor para poder ser mapeado en la Base de Datos
+        if ($value instanceof \DateTime) {
+            global $timedate;
+            $type = $config->type ?? 'datetime'; 
+            if ($type === 'date') {
+                $this->value = $timedate->asDbDate($value);
+            } elseif ($type === 'time') {
+                $this->value = $value->format('H:i:s');
+            } else {
+                $this->value = $timedate->asDb($value);
+            }
+        } else {
+            $this->value = $value;
+        }
+    }
+
+    public function getDateTime(): ?\DateTime {
+        return ($this->originalValue instanceof \DateTime) ? $this->originalValue : null;
     }
 
     public function isDetached(): bool {

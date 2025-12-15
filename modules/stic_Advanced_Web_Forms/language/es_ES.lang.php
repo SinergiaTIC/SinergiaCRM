@@ -321,8 +321,8 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros del CRM',
   'LBL_RELATE_RECORDS_ACTION_TARGET_BLOCK_TEXT' => 'Bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_TARGET_BLOCK_DESC' => 'El bloque de datos destino de la relación a guardar',
-  'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_TEXT' => 'Campo a actualizar',
-  'LBL_RELATE_RECORDS_ACTION_FIELD_TO_UPDATE_DESC' => 'El nombre del campo que enlaza con el bloque de datos destino',
+  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
+  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino',
 
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Añadir a Lista de Público Objetivo',
   'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Añade el registro procesado (Persona, Interesado, Usuario o Organización) a una Lista de Público Objetivo (ProspectList) existente',

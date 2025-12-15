@@ -1140,7 +1140,9 @@ class AWF_Configuration {
     for (const [key, value] of Object.entries(module.fields)) {
       if (value.required) {
         dataBlock.addFieldFromModuleField(value);
-        dataBlock.addDuplicateDetectionFromModuleField(value);
+        if (value.type != 'relate') {
+          dataBlock.addDuplicateDetectionFromModuleField(value);
+        }
       }
     }
 
@@ -1401,7 +1403,7 @@ class AWF_Configuration {
     const params = {
       'data_block_id': {value: dataBlock_orig.id, valueText: dataBlock_orig.text, selectedOption: ''},
       'target_data_block': {value: dataBlock_dest.id, valueText: dataBlock_dest.text, selectedOption: ''},
-      'field_to_update': {value: `${dataBlock_orig.name}.${dataField_orig.name}`, valueText: dataField_orig.text_original, selectedOption: ''}
+      'relationship_name': {value: rel.name, valueText: rel.text, selectedOption: ''}
     };
     const newAction = this.addAction(relateActionDef, params);
     newAction.text = `${newAction.title}: ${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;

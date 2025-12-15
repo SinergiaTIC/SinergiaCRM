@@ -56,16 +56,16 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $paramTargetBlock->type = ActionParameterType::DATA_BLOCK; 
         $paramTargetBlock->required = true;
 
-        // El Campo a Actualizar (que apunta al Bloque de datos destino)
-        $paramFieldName = new ActionParameterDefinition();
-        $paramFieldName->name = 'field_to_update';
-        $paramFieldName->text = $this->translate('FIELD_TO_UPDATE_TEXT');
-        $paramFieldName->description = $this->translate('FIELD_TO_UPDATE_DESC');
-        $paramFieldName->type = ActionParameterType::FIELD; 
-        $paramFieldName->dataType = ActionDataType::TEXT; 
-        $paramFieldName->required = true;
+        // El Nombre de la relación (que apunta al Bloque de datos destino)
+        $paramRelName = new ActionParameterDefinition();
+        $paramRelName->name = 'relationship_name';
+        $paramRelName->text = $this->translate('RELATIONSHIP_TEXT');
+        $paramRelName->description = $this->translate('RELATIONSHIP_DESC');
+        $paramRelName->type = ActionParameterType::VALUE; 
+        $paramRelName->dataType = ActionDataType::TEXT; 
+        $paramRelName->required = true;
 
-        return [$paramTargetBlock, $paramFieldName];
+        return [$paramTargetBlock, $paramRelName];
     }
 
 
@@ -73,39 +73,68 @@ class RelateRecordsAction extends HookBeanActionDefinition {
     {
         // Obtención de los parámetros adicionales (ParameterResolver asegura que no sean nulos porque son obligatorios)
 
-        /** @var DataBlockFieldResolved $fieldResolved */
-        $fieldResolved = $actionConfig->getResolvedParameter('field_to_update');
-
         /** @var DataBlockResolved $targetBlock */
         $targetBlock = $actionConfig->getResolvedParameter('target_data_block');
+        $linkName = $actionConfig->getResolvedParameter('relationship_name');
 
-        // Validación del campo a actualizar
-        $fieldName = $fieldResolved->fieldName;
-        if (empty($fieldName)) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Field to update is not specified.");
+        // Validación del nombre de la relación
+        if (empty($linkName)) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Relationship name is not specified.");
         }
 
-        // Obtención de la referencia al Bean destino
+        // Obtención del Id del Bean destino
         $targetBeanRef = $targetBlock->dataBlock->getBeanReference();
         if ($targetBeanRef === null) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetBlock->dataBlock->name}' not saved in database.");
         }
-
-        // Asignación (lógica principal)
         $targetBeanId = $targetBeanRef->beanId;
-        if ($bean->{$fieldName} !== $targetBeanId) {
-            $bean->{$fieldName} = $targetBeanId;
+
+        // Cargar la relación en el Bean origen
+        if (!$bean->load_relationship($linkName)) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Could not load relationship '{$linkName}' in module '{$bean->module_name}'. Check vardefs.");
+        }
+
+        // Establecer la relación
+        // El método add() gestiona internamente si es 1:M o M:M y actualiza las tablas correspondientes.
+        try {
+            $bean->$linkName->add($targetBeanId);
+        } catch (\Exception $e) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error linking records: " . $e->getMessage());
+        }
+
+        // Recalculamos el nombre (si es necesario)
+        $nameFieldInBlock = $block->getFieldValue('name');
+        $nameIsUserDefined = $nameFieldInBlock && !empty($nameFieldInBlock->value);
+        $beanWasCreatedHere = $this->wasBeanCreatedInThisContext($bean->id, $context);
+
+        // El nombre no se ha indicado explícitamente, se ha creado el bean y tiene un nombre (calculado)
+        if (!$nameIsUserDefined && $beanWasCreatedHere && !empty($bean->name)) {
+            // Reseteamos el nombre
+            $bean->name = '';
             $bean->save();
-            $modificationType = BeanModificationType::UPDATED;
-        } else {
-            $modificationType = BeanModificationType::SKIPPED;
+        }
+
+        if (!isset($block->dataBlock->fields['name']) && $bean->name!='') {
+            // Verificar que el bean se ha creado 
         }
 
         // Notificación del resultado
-        $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Relationship saved: {$bean->module_name}.{$fieldName} = {$targetBeanId}");
-        $dataToLog = [$fieldName => $targetBeanId];
-        $actionResult->registerBeanModificationFromBlock($bean, $block, $modificationType, $dataToLog);
+        $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via '{$linkName}' to ID {$targetBeanId}");
+        $dataToLog = ['_link_name' => $linkName, '_related_id' => $targetBeanId];
+        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED, $dataToLog);
 
         return $actionResult;
+    }
+
+    private function wasBeanCreatedInThisContext(string $beanId, ExecutionContext $context): bool 
+    {
+        foreach ($context->actionResults as $result) {
+            foreach ($result->modifiedBeans as $modBean) {
+                if ($modBean->beanId === $beanId && $modBean->modificationType === BeanModificationType::CREATED) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

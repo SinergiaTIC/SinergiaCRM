@@ -217,7 +217,7 @@
                             </button>
                             <div x-show="opened" x-transition @click.away="opened = false" class="bg-white border shadow p-3 mt-1 position-absolute" 
                                  style="max-height: 200px; overflow-y: auto; width: 100%; z-index: 1052; top: 100%; left: 0;">
-                              <template x-for="field in item.fields.filter(f => f.type_field!='unlinked')" :key="field.name">
+                              <template x-for="field in fieldsToDuplicate" :key="field.name">
                                 <div class="form-check">
                                   <input type="checkbox" class="form-check-input"  :value="field.name" x-model="dupli.fields" :id="`check_${field.name}_${index}`">
                                   <label class="form-check-label" :for="`check_${field.name}_${index}`" x-text="field.text_original"></label>
@@ -513,7 +513,7 @@
                       </div>
                     </template>
                     <!-- Value (fixed value of enum) -->
-                    <template x-if="isFixedValueOfEnum">
+                    <template x-if="field && isFixedValueOfEnum">
                       <div class="col-3">
                         <label for="modalField_ValFixOptions" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
                         <select id="modalField_ValFixOptions" x-bind:disabled="field.value_options.length<=1;" class="form-select" x-model="field.value">
@@ -524,7 +524,7 @@
                       </div>
                     </template>
                     <!-- Value (fixed value of related) -->
-                    <template x-if="isFixedValueOfRelated">
+                    <template x-if="field && isFixedValueOfRelated">
                       <div class="col-3">
                         <label for="modalField_ValFixRel_name" class="form-label" x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')" ></label>
                         <div class="input-group">
@@ -540,7 +540,7 @@
                       </div>
                     </template>
                     <!-- Value (fixed value of date) -->
-                    <template x-if="isFixedValueOfDate">
+                    <template x-if="field && isFixedValueOfDate">
                       <div class="col-3">
                         <label for="modalField_ValFixDate" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')" ></label>
                         <div class="form-switch form-check text-muted small" x-init="utils.setInlineHelpQtip()">
@@ -561,7 +561,7 @@
                         </div>
                       </div>
                     </template>
-                    <template x-if="isFixedValueOfDate && showRelativeDateSelector && relativeDateSelected == 'custom'">
+                    <template x-if="field && isFixedValueOfDate && showRelativeDateSelector && relativeDateSelected == 'custom'">
                       <!-- Relative date text -->
                       <div class="col-3" x-init="utils.setInlineHelpQtip()">
                         <label for="modalField_ValFixDateCustom" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM')" ></label>
@@ -571,7 +571,7 @@
                       </div>
                     </template>
                     <!-- Value (fixed value of default) -->
-                    <template x-if="isFixedValueOfDefault">
+                    <template x-if="field && isFixedValueOfDefault">
                       <div class="col-3">
                         <label for="modalField_ValFixText" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
                         <input id="modalField_ValFixText" type="text" class="form-control" autocomplete="off" x-model="field.value"/>

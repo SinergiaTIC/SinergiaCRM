@@ -932,6 +932,10 @@ class WizardStep2 {
                : utils.translate('LBL_DUPLICATE_FIELDS_SEL_FIELDS');
       },
 
+      get fieldsToDuplicate() {
+        return this.dataBlock.fields.filter(f => f.type_field!='unlinked' && f.type!='relate');
+      },
+
     }
   }
 
