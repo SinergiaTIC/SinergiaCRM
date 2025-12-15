@@ -24,6 +24,91 @@
 
 class stic_JustificationsUtils {
 
+
+    public static function reviewJustificationsFromAllocation($allocation) {
+
+        // get actual justifications and check if they still met conditions
+        $justificationBeans = array();
+        $linkName = 'stic_allocations_stic_justifications';
+        if ($allocation->load_relationship($linkName)) {
+            $justificationBeans = $allocation->$linkName->getBeans();
+        }
+        foreach ($justificationBeans as $justificationBean) {
+            $condition = BeanFactory::getBean('stic_Justification_Conditions', $justificationBean->stic_justi13ccditions_ida);
+            if (!self::conditionMet($condition, $allocation)) {
+                // condition no longer met, delete justification
+                $justificationBean->mark_deleted($justificationBean->id);
+            }
+            else {
+                // condition still met, update justification
+                stic_JustificationsUtils::updateJustificationFromAllocation($justificationBean, $allocation);
+            }
+        }
+
+        // check if new justifications must be added
+        // Retrieve all justification conditions linked to the project (and Opportunity) of the allocation
+        $projectId = $allocation->project_stic_allocationsproject_ida;
+        $opportunityId = $allocation->opportunities_stic_allocationsopportunities_ida;
+        $conditions = self::getConditionsForProjectAndOpportunity($projectId, $opportunityId);
+
+        foreach($conditions as $condition) {
+            // Evaluate if condition is met based on allocation details
+            if (self::conditionMet($condition, $allocation) && !in_array($condition->id, array_map(function($j) { return $j->stic_justi13ccditions_ida; }, $justificationBeans))) {
+                self::createJustificationRecord($condition, $allocation);
+            }
+        }
+
+
+        // If allocation has changed, we need to check justifications
+    }
+
+    public static function updateJustificationFromAllocation($justification, $allocation) {
+        $justification->amount = $allocation->amount;
+        $justification->hours = $allocation->hours;
+        $justification->allocation_type = $allocation->type;
+        $justification->max_allocable_percentage = $allocation->percentage;
+        $justification->justified_amount = $allocation->amount * $justification->max_allocable_percentage / 100;
+        $justification->justified_hours = $allocation->hours;
+        $justification->save();
+    }
+
+
+    public static function createNewJustificationsFromJustificationCondition($condition) {
+        // get actual justifications from condition
+        $justificationBeans = array();
+        $linkName = 'stic_justification_conditions_stic_justifications';
+        if ($condition->load_relationship($linkName)) {
+            $justificationBeans = $condition->$linkName->getBeans();
+        }
+        $allocationIds = array_map(function($j) { return $j->stic_alloc8c71cations_ida; }, $justificationBeans);
+        
+        $opportunityId = $condition->opportunit378funities_ida;
+        
+        // get all alocations to evaluate
+        $db = DBManagerFactory::getInstance();
+        $query = "
+        select psac.project_stic_allocationsstic_allocations_idb as allocationId, osac.opportunities_stic_allocationsopportunities_ida as opportunityId
+        from projects_opportunities po 
+        join project_stic_allocations_c psac on psac.project_stic_allocationsproject_ida = po.project_id and psac.deleted = 0
+        left join opportunities_stic_allocations_c osac on osac.opportunities_stic_allocationsstic_allocations_idb = psac.project_stic_allocationsstic_allocations_idb and osac.deleted = 0
+        where po.deleted = 0
+        and po.opportunity_id = '$opportunityId'
+        ";
+        
+        $result = $db->query($query);
+        while ($row = $db->fetchByAssoc($result)) {
+            if ($row['opportunityId'] == $opportunityId || empty($row['opportunityId'])) {
+                if (!in_array($row['allocationId'], $allocationIds)) {
+                    $allocationBean = BeanFactory::getBean('stic_Allocations', $row['allocationId']);
+                    if (self::conditionMet($condition, $allocationBean)) {
+                        self::createJustificationRecord($condition, $allocationBean);
+                    }
+                }
+            }
+        }
+    }
+
+
     public static function createJustificationsFromAllocation($allocation)
     {
         // Retrieve all justification conditions linked to the project (and Opportunity) of the allocation
@@ -34,29 +119,32 @@ class stic_JustificationsUtils {
         foreach($conditions as $condition) {
             // Evaluate if condition is met based on allocation details
             if (self::conditionMet($condition, $allocation)) {
-                //create Justification record
-                $justification = BeanFactory::newBean('stic_Justifications');
-                $justification->status = 'Pending';
-                $justification->blocked = false;
-                $justification->reference = '';
-                $justification->amount = $allocation->amount;
-                $justification->hours = $allocation->hours;
-                $justification->allocation_type = $allocation->type;
-                $justification->assigned_user_id = $allocation->assigned_user_id; // TODOEPS : revisar si cal canviar l'assignatari
-                $justification->max_allocable_percentage = $allocation->percentage;
-                $justification->justified_amount = $allocation->amount * $justification->max_allocable_percentage / 100;
-                $justification->justified_hours = $allocation->hours;
-
-                $justification->stic_justi13ccditions_ida = $condition->id;
-                $justification->stic_alloc8c71cations_ida = $allocation->id;
-                $justification->stic_ledger_accounts_ida = $allocation->stic_ledger_accounts_ida;
-                $justification->opportunit01eunities_ida = $condition->opportunit378funities_ida;
-                
-                // TODOEPS: Si posem projecte, copiar-lo aquí
-
-                $justification->save();
+                self::createJustificationRecord($condition, $allocation);
             }
         }
+    }
+
+    public static function createJustificationRecord($condition, $allocation) {
+        $justification = BeanFactory::newBean('stic_Justifications');
+        $justification->status = 'Pending';
+        $justification->blocked = false;
+        $justification->reference = '';
+        $justification->amount = $allocation->amount;
+        $justification->hours = $allocation->hours;
+        $justification->allocation_type = $allocation->type;
+        $justification->assigned_user_id = $allocation->assigned_user_id; // TODOEPS : revisar si cal canviar l'assignatari
+        $justification->max_allocable_percentage = $allocation->percentage;
+        $justification->justified_amount = $allocation->amount * $justification->max_allocable_percentage / 100;
+        $justification->justified_hours = $allocation->hours;
+        $justification->stic_justi13ccditions_ida = $condition->id;
+        $justification->stic_alloc8c71cations_ida = $allocation->id;
+        $justification->ledger_group = $condition->ledger_group;
+        $justification->subgroup = $condition->subgroup;
+        $justification->account = $condition->account;
+        $justification->subaccount = $condition->subaccount;
+        $justification->opportunit01eunities_ida = $condition->opportunit378funities_ida;
+        // TODOEPS: Si posem projecte, copiar-lo aquí
+        $justification->save();
     }
 
     public static function conditionMet($condition, $allocation)

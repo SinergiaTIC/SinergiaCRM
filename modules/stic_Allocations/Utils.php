@@ -25,6 +25,14 @@ require_once 'SticInclude/Utils.php';
 
 class stic_AllocationsUtils {
 
+
+    public static function recalculateAllocation($allocationBean, $allocationProposalBean) {
+        require_once 'modules/stic_Payments/Utils.php';
+        $paymentBean = BeanFactory::getBean('stic_Payments', $allocationBean->stic_payments_stic_aleb9a);
+        self::updateAllocation($allocationBean, $paymentBean, $allocationProposalBean);
+        self::updateJustificationsFromAllocation($allocationBean);
+    }
+
     public static function updateAllocationsFromPayment($paymentBean, $dryrun= false) {
         global $current_user;
 
@@ -163,13 +171,13 @@ class stic_AllocationsUtils {
         return false;
     }
 
-        public static function createAllocationsFromPayment($paymentBean)
+    public static function createAllocationsFromPayment($paymentBean)
     {
         global $current_user;
 
         global $current_language;
 
-            // get Payment Commitment Bean
+        // get Payment Commitment Bean
         include_once 'modules/stic_Payment_Commitments/stic_Payment_Commitments.php';
         $pcBean = new stic_Payment_Commitments();
         $pcBean->retrieve($paymentBean->stic_paymebfe2itments_ida);
@@ -216,6 +224,14 @@ class stic_AllocationsUtils {
             include_once 'modules/stic_Allocations/stic_Allocations.php';
             $allocationBean = new stic_Allocations();
             // $allocationBean->name = 'Allocation from Payment ' . $paymentBean->name . ' to Proposal ' . $allocationProposalBean->name;
+            self::updateAllocation($allocationBean, $paymentBean, $allocationProposalBean);
+        }
+
+        return true;
+    }
+    public static function updateAllocation($allocationBean, $paymentBean, $allocationProposalBean) {
+            global $current_user;
+
             $allocationBean->stic_payments_stic_aleb9a = $paymentBean->id;
             $allocationBean->stic_allocation_propo424d = $allocationProposalBean->id;
             $allocationBean->allocation_date = $paymentBean->payment_date;
@@ -231,8 +247,5 @@ class stic_AllocationsUtils {
             $allocationBean->project_stic_allocationsproject_ida = $allocationProposalBean->project_stic_allocation_proposalsproject_ida;
             $allocationBean->assigned_user_id = $current_user->id;
             $allocationBean->save();
-        }
-
-        return true;
     }
 }

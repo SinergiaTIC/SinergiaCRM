@@ -21,6 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+require_once 'modules/stic_Allocation_Proposals/Utils.php';
+
 #[\AllowDynamicProperties]
 class stic_Allocation_Proposals extends Basic
 {
@@ -79,6 +81,8 @@ class stic_Allocation_Proposals extends Basic
 
         // Save the bean
         parent::save($check_notify);
+
+        stic_Allocation_ProposalsUtils::recalculateAllocations($this);
     }
 
     /**

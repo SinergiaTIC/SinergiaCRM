@@ -22,6 +22,7 @@
  */
 
 require_once 'modules/stic_Allocations/Utils.php';
+require_once 'modules/stic_Justifications/Utils.php';
 require_once 'SticInclude/Utils.php';
 class stic_Allocations extends Basic
 {
@@ -145,21 +146,25 @@ class stic_Allocations extends Basic
         // Save the bean
         parent::save($check_notify);
 
-        if ($amountChanged) {
-            stic_AllocationsUtils::updateJustificationsFromAllocation($this);
-            stic_AllocationsUtils::updatePayment($this);
-        }
-
+        // if ($amountChanged) {
+        //     stic_AllocationsUtils::updateJustificationsFromAllocation($this);
+        //     stic_AllocationsUtils::updatePayment($this);
+        // }
 
         if ($isValidated && !$tempFetchedRow['validated']) {
             // Allocation has been validated now
-            require_once 'modules/stic_Justification_Conditions/Utils.php';
             stic_JustificationsUtils::createJustificationsFromAllocation($this); 
+            stic_AllocationsUtils::updatePayment($this);
         }
-        if ($tempFetchedRow['validated'] && !$isValidated) {
+        else if ($tempFetchedRow['validated'] && !$isValidated) {
             // Allocation has been un-validated now
-            require_once 'modules/stic_Justification_Conditions/Utils.php';
             stic_JustificationsUtils::removeJustificationsFromAllocation($this); 
+        }
+        else if($tempFetchedRow) {
+            stic_JustificationsUtils::reviewJustificationsFromAllocation($this);
+        }
+        if ($amountChanged) {
+            stic_AllocationsUtils::updatePayment($this);
         }
     }
 

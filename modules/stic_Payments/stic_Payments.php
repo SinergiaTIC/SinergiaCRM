@@ -22,8 +22,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 include_once 'modules/stic_Allocations/Utils.php';
-include_once 'modules/stic_Allocation_Proposals/Utils.php';
-
 
 #[\AllowDynamicProperties]
 class stic_Payments extends Basic

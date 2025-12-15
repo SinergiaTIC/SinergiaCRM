@@ -21,6 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+require_once 'modules/stic_Justifications/Utils.php';
+require_once 'modules/stic_Justification_Conditions/Utils.php';
+
 class stic_Justification_Conditions extends Basic
 {
     public $module_dir = 'stic_Justification_Conditions';
@@ -55,6 +58,38 @@ class stic_Justification_Conditions extends Basic
 
         // Save the bean
         parent::save($check_notify);
+
+        if ($this->matchingFieldsChanged()) {
+            $this->deleteJustifications();
+            $this->createNewJustifications();
+        }
+    }
+
+    protected function matchingFieldsChanged() {
+        $tempFetchedRow = $this->fetched_row ?? null;
+        if (!$tempFetchedRow) {
+            return true; // New record, so fields are considered changed
+        }
+        $fieldsToCheck = ['ledger_group', 'subgroup', 'account', 'subaccount', 'allocation_type', 'opportunities_stic_justification_conditions_ida'];
+        foreach ($fieldsToCheck as $field) {
+            if ($this->$field !== $tempFetchedRow[$field]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function deleteJustifications() {
+        $link = $this->get_linked_beans('stic_justification_conditions_stic_justifications', 'stic_Justifications');
+        foreach ($link as $justification) {
+            if ($justification->status != 'submitted') {
+                $justification->mark_deleted($justification->id);
+            }
+        }
+    }
+
+    protected function createNewJustifications() {
+        stic_JustificationsUtils::createNewJustificationsFromJustificationCondition($this);
     }
 
         /**
