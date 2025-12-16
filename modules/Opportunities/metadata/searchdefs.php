@@ -360,6 +360,20 @@ $searchdefs['Opportunities'] = array(
               'name' => 'stic_documentation_to_deliver_c',
           ),
           15 => array(
+            'name' => 'start_date_c',
+            'label' => 'LBL_START_DATE',
+            'type' => 'date',
+            'width' => '10%',
+            'default' => true,
+          ),
+          16 => array(
+                'name' => 'end_date_c',
+                'label' => 'LBL_END_DATE',
+                'type' => 'date',
+                'width' => '10%',
+                'default' => true,
+          ),
+          17 => array(
               'name' => 'assigned_user_id',
               'label' => 'LBL_ASSIGNED_TO',
               'type' => 'enum',
@@ -372,42 +386,42 @@ $searchdefs['Opportunities'] = array(
               'width' => '10%',
               'default' => true,
           ),
-          16 => array(
+          18 => array(
               'type' => 'assigned_user_name',
               'label' => 'LBL_CREATED',
               'width' => '10%',
               'default' => true,
               'name' => 'created_by',
           ),
-          17 => array(
+          19 => array(
               'type' => 'datetime',
               'label' => 'LBL_DATE_ENTERED',
               'width' => '10%',
               'default' => true,
               'name' => 'date_entered',
           ),
-          18 => array(
+          20 => array(
               'type' => 'assigned_user_name',
               'label' => 'LBL_MODIFIED',
               'width' => '10%',
               'default' => true,
               'name' => 'modified_user_id',
           ),
-          19 => array(
+          21 => array(
               'type' => 'datetime',
               'label' => 'LBL_DATE_MODIFIED',
               'width' => '10%',
               'default' => true,
               'name' => 'date_modified',
           ),
-          20 => array(
+          22 => array(
               'label' => 'LBL_CURRENT_USER_FILTER',
               'type' => 'bool',
               'default' => true,
               'width' => '10%',
               'name' => 'current_user_only',
           ),
-          21 => array(
+          23 => array(
               'label' => 'LBL_FAVORITES_FILTER',
               'type' => 'bool',
               'default' => true,

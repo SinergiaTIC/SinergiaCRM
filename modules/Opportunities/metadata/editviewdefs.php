@@ -263,29 +263,15 @@ $viewdefs['Opportunities']['EditView'] = array (
     // TODOEPS - Justification tab
     'LBL_JUSTIFICATION' => 
     array (
-      0 => 
       array (
         0 => 
         array (
-          'name' => 'justified_amount',
-          'label' => 'LBL_JUSTIFIED_AMOUNT',
-        ),
-        1 => 
-        array (
-          'name' => 'justified_percentage',
-          'label' => 'LBL_JUSTIFIED_PERCENTAGE',
-        ),
-      ),
-      1 => 
-      array (
-        0 => 
-        array (
-          'name' => 'start_date',
+          'name' => 'start_date_c',
           'label' => 'LBL_START_DATE',
         ),
         1 => 
         array (
-          'name' => 'end_date',
+          'name' => 'end_date_c',
           'label' => 'LBL_END_DATE',
         ),
       ),

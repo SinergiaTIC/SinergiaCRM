@@ -357,12 +357,12 @@ $viewdefs['Opportunities']['DetailView'] = array (
       array (
         0 => 
         array (
-          'name' => 'justified_amount',
+          'name' => 'justified_amount_c',
           'label' => 'LBL_JUSTIFIED_AMOUNT',
         ),
         1 => 
         array (
-          'name' => 'justified_percentage',
+          'name' => 'justified_percentage_c',
           'label' => 'LBL_JUSTIFIED_PERCENTAGE',
         ),
       ),
@@ -370,12 +370,12 @@ $viewdefs['Opportunities']['DetailView'] = array (
       array (
         0 => 
         array (
-          'name' => 'start_date',
+          'name' => 'start_date_c',
           'label' => 'LBL_START_DATE',
         ),
         1 => 
         array (
-          'name' => 'end_date',
+          'name' => 'end_date_c',
           'label' => 'LBL_END_DATE',
         ),
       ),
