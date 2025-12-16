@@ -89,7 +89,6 @@ $mod_strings = array (
   'LBL_RESPONSE_HASH' => 'Hash de la respuesta',
   'LBL_STATUS' => 'Estado',
 
-  'LBL_RESPONSE_PREFIX_NAME' => 'Respuesta',
   'LBL_RESPONSE_NO_PUBLIC_STATUS' => 'Respuesta recibida con el formulario no público',
   'LBL_RESPONSE_HONEYPOT_SPAM' => "Spam detectado: Se ha rellenado el campo 'Honeypot' oculto",
   'LBL_ERROR_FORM_CONFIG' => 'Error en la configuración del formulario',

@@ -100,7 +100,7 @@ class AWF_ResponseHandler
 
         // Guardamos la respuesta
         $responseBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Responses');
-        $responseBean->name = $formBean->name . " - " . translate('LBL_RESPONSE_PREFIX_NAME', 'stic_Advanced_Web_Forms_Responses'). " - ". date('Y-m-d H:i:s');
+        $responseBean->name = $formBean->name ." - ". date('Y-m-d H:i:s');
         $responseBean->status = $responseStatus;
         $responseBean->raw_payload = $payloadJson;
         $responseBean->response_hash = $responseHash;
@@ -372,8 +372,9 @@ class AWF_ResponseHandler
                 $targetBeanName = $targetBean ? $targetBean->get_summary_text() : $modifiedBean->beanId;
                 $actionValue = $modifiedBean->modificationType->value;
                 $recordActionName = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionValue];
-                
-                $linkBean->name = $responseBean->name . " - " . $recordActionName . " - " . $targetBeanName;
+                $moduleSingular = $app_list_strings['moduleListSingular'][$modifiedBean->moduleName];
+
+                $linkBean->name = $responseBean->name ." - ". $moduleSingular .": ". $targetBeanName ." (". $recordActionName .")";
                 $linkBean->sequence_number = $sequence++;
                 $linkBean->parent_id = $modifiedBean->beanId; 
                 $linkBean->parent_type = $modifiedBean->moduleName; 

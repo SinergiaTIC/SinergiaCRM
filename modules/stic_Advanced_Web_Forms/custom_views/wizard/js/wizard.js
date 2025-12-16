@@ -673,9 +673,17 @@ class WizardStep2 {
       init() {
         this.$watch('field.name', (newName, oldName) => {
           this.configValueOptions = false;
+          this.showRelativeDateSelector = false;
 
           if (!this.field) return;
-          if (this.isEdit) return;
+          if (this.isEdit) {
+            if (this.isFixedValueOfDate) {
+              if (this.availableRelativeDates.find(v => v.id == this.field.value)) {
+                this.showRelativeDateSelector = true;
+              }
+            }
+            return;
+          }
           if (newName != oldName) {
             this.field.updateWithFieldInformation(this.selectedFieldInfo);
             if (this.field.type_field == 'hidden' || this.isInFormSelectableValues) {
@@ -778,9 +786,11 @@ class WizardStep2 {
         });
         this.$watch('showRelativeDateSelector', (newValue, oldValue) => {
           if (!this.field) return;
-          if (newValue == true && this.field.value == '') {
-            this.field.value = 'today';
-            this.relativeDateSelected = 'today';
+          if (newValue == true) {
+            if (!this.availableRelativeDates.find(v => v.id == this.field.value)) {
+              this.field.value = 'today';
+            }
+            this.relativeDateSelected = this.field.value;
           }
           if (newValue !== true) {
             this.field.value = '';
