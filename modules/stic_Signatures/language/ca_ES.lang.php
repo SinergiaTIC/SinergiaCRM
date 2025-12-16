@@ -194,7 +194,15 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (valor per defecte):</strong> El firmant actua en el seu propi nom. <li><strong>Sí, només un representant:</strong> Només cal que firmi un representant del titular de la firma. <li><strong>Sí, tots els representants</strong> Han de firmar tots els representants del titular.</ul>',
     'LBL_ACTIVATION_DATE_HELP' => "Data a partir de la qual es podrà firmar. Abans d'aquesta data el portal de firmes no ho permetrà.",
     'LBL_EXPIRATION_DATE_HELP' => "Data límit per firmar. Després d'aquesta data el portal de firmes no ho permetrà, però sí que es podrà consultar si el document està firmat.",
-    'LBL_STATUS_HELP' => "<ul><li><strong>Obert:</strong> El procés de firma està llest per seleccionar els firmants i sol·licitar-los la firma. <li><strong>Tancat:</strong> El procés de firmas està tancat i no és possible afegir firmants ni firmar documents. Si ja hi ha documents signats aquests seguiran disponibles per als firmants.</ul>",
+    'LBL_STATUS_HELP' => "<ul>
+                            <li><b>Esborrany</b>: Estat inicial del procés de firma. En aquest estat no es permeten les signatures a través del Portal de firmes.</li>
+                            <li><b>Obert</b>: En aquest estat es permeten les signatures a través del Portal de firmes. S'ha de passar a aquest estat un cop s'han afegit els firmants i la plantilla PDF està llesta, sempre que no es tracti d'un procés de firmes Permanent.</li>
+                            <li><b>Permanents</b>: Estat adequat per a processos de firma de durada indeterminada, sense una data de finalització preestablerta. Les signatures a través del Portal es mantindran habilitades fins que l'estat es modifiqui manualment.</li>
+                            <li><b>Pausada</b>: S'utilitza per pausar temporalment un procés de firmes que es trobi en estat Obert o Permanent per qualsevol motiu.</li>
+                            <li><b>Completada</b>: Aquest estat s'estableix automàticament en el procés de firmes quan tots els firmants han completat la seva firma.</li>
+                            <li><b>Cancel·lada</b>: S'utilitza per cancel·lar un procés de firmes que es trobi en estat Obert o Permanent.</li>
+                        </ul>", 
+
     'LBL_PDF_AUDIT_PAGE_HELP' => "Permet indicar si cal incloure una pàgina d'auditoria al final del document firmat. La pàgina d'auditoria conté informació detallada sobre el procés de firma, incloent-hi dades dels firmants, dates i hores de les firmes i un registre d'esdeveniments relacionats amb el procés.",
     'LBL_TYPE_HELP' => "Tipus de firma a configurar. Actualment només hi ha disponible l'opció Individual.",
     'LBL_PDF_TEMPLATE_HELP' => "Plantilla PDF que es farà servir com a document per firmar. La plantilla ha d'estar dissenyada prèviament al mòdul de Plantilles PDF i contenir els camps de firma necessaris.",

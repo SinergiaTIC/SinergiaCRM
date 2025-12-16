@@ -194,7 +194,14 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (default value):</strong> The signer acts in his own name. <li><strong>Yes, only one representative:</strong> Only one representative of the signature holder needs to sign. <li><strong>Yes, all representatives</strong> All representatives of the holder must sign.</ul>',
     'LBL_ACTIVATION_DATE_HELP' => 'Date from which signing will be possible. Before this date, the signature portal will not allow it.',
     'LBL_EXPIRATION_DATE_HELP' => 'Deadline to sign. After this date, the signature portal will not allow it, but signers will be able to check wether the document is signed.',
-    'LBL_STATUS_HELP' => '<ul><li><strong>Open:</strong> The signing process is ready to select signers and request their signature. <li><strong>Closed:</strong> The signing process is closed and it is not possible to add signers or sign documents. If there are already signed documents, these will remain available to the signers.</ul>',
+    'LBL_STATUS_HELP' => '<ul>
+                            <li><b>Draft</b>: Initial state of the signing process. In this state, you can configure the process, add signers, and make changes to the PDF template. No signatures are allowed through the Signature Portal.</li>
+                            <li><b>Open</b>: In this state, signatures through the Signature Portal are allowed. You must switch to this state once the signers have been added and the PDF template is ready, as long as it is not a Permanent signing process.</li>
+                            <li><b>Permanent</b>: Suitable state for signing processes of indefinite duration, without a pre-established end date. Signatures through the Portal will remain enabled until the state is manually changed.</li>
+                            <li><b>Paused</b>: Used to temporarily pause a signing process that is in Open or Permanent state for any reason.</li>
+                            <li><b>Completed</b>: This state is automatically set in the signing process when all signers have completed their signature.</li>
+                            <li><b>Cancelled</b>: Used to cancel a signing process that is in Open or Permanent state.</li>
+                        </ul>',
     'LBL_PDF_AUDIT_PAGE_HELP' => 'Allows you to indicate whether to include an audit page at the end of the signed document. The audit page contains detailed information about the signing process, including signer data, signature dates and times, and a log of events related to the process.',
     'LBL_TYPE_HELP' => 'Signature type to configure. Currently only the Individual option is available.',
     'LBL_PDF_TEMPLATE_HELP' => 'PDF template to use as the document to sign. The template must be designed in advance in the PDF Templates module and contain the necessary signature fields.',

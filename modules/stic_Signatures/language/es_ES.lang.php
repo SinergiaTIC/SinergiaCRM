@@ -194,7 +194,14 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (valor por defecto):</strong> El firmante actúa en su propio nombre. <li><strong>Sí, sólo un representante:</strong> Sólo tiene que firmar un representante del titular de la firma. <li><strong>Sí, todos los representantes</strong> Deben firmar todos los representantes del titular.</ul>', 
     'LBL_ACTIVATION_DATE_HELP' => 'Fecha a partir de la cual se podrá firmar. Antes de esa fecha el portal de firmas no lo permitirá.', 
     'LBL_EXPIRATION_DATE_HELP' => 'Fecha límite para firmar. Después de esta fecha el portal de firmas no lo permitirá, pero sí se podrá consultar si el documento está firmado.', 
-    'LBL_STATUS_HELP' => '<ul><li><strong>Abierto:</strong> El proceso de firma esta listo para seleccionar a los firmantes y solicitarles la firma. <li><strong>Cerrado:</strong> El proceso de firmas está cerrado y no es posible añadir firmantes ni firmar documentos. Si ya hay documentos firmados estos seguirán disponibles para los firmantes.</ul>', 
+    'LBL_STATUS_HELP' => '<ul>
+                            <li><b>Borrador</b>: Es el estado inicial del proceso de firmas. En este estado, se puede configurar el proceso, añadir firmantes y realizar modificaciones en la plantilla PDF. No se permite ninguna firma en el Portal de firmas.</li>
+                            <li><b>Abierta</b>: En este estado se permiten las firmas a través del Portal de firmas. Se debe pasar a este estado una vez que los firmantes han sido añadidos y la plantilla PDF está lista, siempre y cuando no se trate de un proceso de firmas Permanente.</li>
+                            <li><b>Permanente</b>: Estado adecuado para procesos de firma de duración indeterminada, sin una fecha de finalización preestablecida. Las firmas a través del Portal se mantendrán habilitadas hasta que el estado se modifique manualmente.</li>
+                            <li><b>Pausada</b>: Se utiliza para pausar temporalmente un proceso de firmas que se encuentre en estado Abierta o Permanente por cualquier motivo.</li>
+                            <li><b>Completada</b>: Este estado se establece automáticamente en el proceso de firmas cuando todos los firmantes han completado su firma.</li>
+                            <li><b>Cancelada</b>: Se utiliza para cancelar un proceso de firmas que se encuentre en estado Abierta o Permanente.</li>
+                        </ul>', 
     'LBL_PDF_AUDIT_PAGE_HELP' => 'Permite indicar si es necesario incluir una página de auditoría al final del documento firmado. La página de auditoría contiene información detallada sobre el proceso de firma, incluyendo datos de los firmantes, fechas y horas de las firmas y un registro de eventos relacionados con el proceso.', 
     'LBL_TYPE_HELP' => 'Tipo de firma a configurar. Actualmente sólo está disponible la opción Individual.', 
     'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que se utilizará como documento para firmar. La plantilla debe estar diseñada previamente en el módulo de Plantillas PDF y contener los campos de firma necesarios.', 

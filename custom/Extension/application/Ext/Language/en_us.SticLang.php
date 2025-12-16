@@ -3666,8 +3666,12 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Impersonation 
 
 // Signatures: Status
 $app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_signatures_status_list']['open'] = 'Open';
-$app_list_strings['stic_signatures_status_list']['closed'] = 'Closed';
+$app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanent';
+$app_list_strings['stic_signatures_status_list']['completed'] = 'Completed';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelled';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Paused';
 
 // Signatures: Auth methods
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
