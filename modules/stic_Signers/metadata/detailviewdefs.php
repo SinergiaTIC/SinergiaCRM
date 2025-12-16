@@ -61,7 +61,7 @@ array(
                         'name' => 'record_name',
                         'studio' => 'visible',
                         'label' => 'LBL_RECORD_NAME',
-                        'customCode' => '{if $fields.record_id.value != "" && $fields.record_type.value != ""}{$RECORD_TYPE}<br><a href="index.php?module={$fields.record_type.value}&action=DetailView&record={$fields.record_id.value}">{$fields.record_name.value}</a>{else}<span>{$fields.record_name.value}</span>{/if}',
+                        
                     ),
                     1 => array(
                         'name' => 'stic_signatures_stic_signers_name',
@@ -81,8 +81,6 @@ array(
                 4 => array(
                     0 => array(
                         'name' => 'pdf_document',
-                        'customCode' => '{if $fields.pdf_document.value != \'\'}<a href="index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$fields.id.value}" >{$MOD.LBL_DOWNLOAD_PDF_SIGNATURE}</a>{else}<span>{$MOD.LBL_NO_PDF_SIGNATURE}</span>{/if}',
-                        'studio' => 'visible',
                         'label' => 'LBL_PDF_DOCUMENT',
                     ),
 

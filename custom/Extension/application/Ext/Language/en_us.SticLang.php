@@ -3666,10 +3666,8 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Impersonation 
 
 // Signatures: Status
 $app_list_strings['stic_signatures_status_list'][''] = '';
-$app_list_strings['stic_signatures_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_signatures_status_list']['open'] = 'Open';
-$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelled';
-$app_list_strings['stic_signatures_status_list']['expired'] = 'Expired';
+$app_list_strings['stic_signatures_status_list']['closed'] = 'Closed';
 
 // Signatures: Auth methods
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
@@ -3701,7 +3699,6 @@ $app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Yes, all representa
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Signed';
-$app_list_strings['stic_signers_status_list']['expired'] = 'Expired';
 $app_list_strings['stic_signers_status_list']['unnecessary'] = 'Unnecessary';
 
 // Signature logs: Actions

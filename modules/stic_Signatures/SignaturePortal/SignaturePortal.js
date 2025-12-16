@@ -362,9 +362,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return response.json();
             }).then(data => {
-                console.log('Signature data sent successfully:', data);
-                showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_SIGNATURE_SAVED_SUCCESSFULLY, null, true);
-
+                if (data.success === true) {
+                    console.log('Signature data sent successfully:', data);
+                    showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_SIGNATURE_SAVED_SUCCESSFULLY, null, true);
+                } else {
+                    console.error('Signature data not saved:', data);
+                    showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR, null, true);
+                }
             }).catch(error => {
                 console.error('Error sending signature data:', error);
                 showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR, null, true);
@@ -403,9 +407,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Network or server error');
             return response.json();
         }).then(data => {
-            console.log('Signature data sent successfully:', data);
-            showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_ACCEPTANCE_REGISTERED_SUCCESSFULLY, null, true);
-
+            if (data.success === true) {
+                console.log('Signature data sent successfully:', data);
+                showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_ACCEPTANCE_REGISTERED_SUCCESSFULLY, null, true);
+            } else {
+                console.error('Signature data not saved:', data);
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ACCEPTANCE_ERROR, null, true);
+            }
         }).catch(error => {
             console.error('Error sending acceptation data:', error);
             showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ACCEPTANCE_ERROR, null, true);

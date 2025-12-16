@@ -13,7 +13,7 @@
     <link rel="manifest" href="modules/stic_Signatures/SignaturePortal/favicon/site.webmanifest">
     <script type="text/javascript">
         // load module language strings
-        var MODS = {$MODS|@json_encode};
+        var MODS = { $MODS|@json_encode};
     </script>
     <title>{$MODS.LBL_PORTAL_TITLE_PAGE}</title>
     {$BOOTSTRAP_CSS}
@@ -29,11 +29,12 @@
             <div class="w-40 w-sm-100 text-center mb-2 mb-sm-0" style="max-height: 50%;">
                 { if isset($LOGO_URL) && !empty($LOGO_URL) }
                 <div class="logo-container">
-                    <img src="{$LOGO_URL}" alt="{$MODS.LBL_PORTAL_ORG_LOGO_ALT}" class="w-auto" style="max-height: 80px;">
+                    <img src="{$LOGO_URL}" alt="{$MODS.LBL_PORTAL_ORG_LOGO_ALT}" class="w-auto"
+                        style="max-height: 80px;">
                 </div>
                 {/if}
             </div>
-            <div class="w-100 w-sm-50 d-flex flex-column align-items-sm-start text-center ps-4 py-2" >
+            <div class="w-100 w-sm-50 d-flex flex-column align-items-sm-start text-center ps-4 py-2">
                 <h2 class="text-white fs-2 text-base font-weight-bold tracking-tight mb-0">{$MODS.LBL_PORTAL_SIGNATURES}
                 </h2>
                 { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
@@ -47,9 +48,9 @@
     <main class="flex-grow">
         { if isset($ERROR_MSG) && !empty($ERROR_MSG) }
         <div class="stic-container container mt-4 mx-auto">
-           
-           
-           
+
+
+
             <section class="error-area">
                 <h1 class="text-3xl font-weight-bold mb-4 text-center text-danger">{$MODS.LBL_PORTAL_ERROR}</h1>
                 <div class="alert alert-danger" role="alert">
@@ -66,6 +67,7 @@
             <div class="stic-container container pt-3 mt-4 max-w-md mx-auto d-flex align-items-center">
                 { if $SHOW_PORTAL === true }
                 { if $STATUS === 'pending' }
+                { if $IS_CLOSED === false }
                 <section class="document-area">
                     <h1 class="text-3xl font-weight-bold mb-4 text-center text-primary">{$MODS.LBL_PORTAL_DOC_SIGNATURE}
                     </h1>
@@ -73,7 +75,7 @@
                         {$DOCUMENT_HTML_CONTENT}
                     </div>
                     <div id="scrollInstructionMessage"
-                        class="scroll-instruction-message alert alert-info mt-3 text-center">
+                        class="scroll-instruction-message alert alert-danger mt-3 text-center">
                         <span class="d-block d-sm-inline">{$MODS.LBL_PORTAL_SCROLL_INFO}</span>
                     </div>
                 </section>
@@ -103,40 +105,58 @@
 
                         <ul class="nav nav-tabs nav-justified" id="signatureTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link border" id="text-signature-tab" data-bs-toggle="tab" data-bs-target="#text-signature" type="button" role="tab" aria-controls="text-signature" aria-selected="false">{$MODS.LBL_PORTAL_TEXT_SIGNATURE_TITLE}</button>
+                                <button class="nav-link border" id="text-signature-tab" data-bs-toggle="tab"
+                                    data-bs-target="#text-signature" type="button" role="tab"
+                                    aria-controls="text-signature"
+                                    aria-selected="false">{$MODS.LBL_PORTAL_TEXT_SIGNATURE_TITLE}</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link border" id="image-signature-tab" data-bs-toggle="tab" data-bs-target="#image-signature" type="button" role="tab" aria-controls="image-signature" aria-selected="false">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_TITLE}</button>
+                                <button class="nav-link border" id="image-signature-tab" data-bs-toggle="tab"
+                                    data-bs-target="#image-signature" type="button" role="tab"
+                                    aria-controls="image-signature"
+                                    aria-selected="false">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_TITLE}</button>
                             </li>
                         </ul>
                         <div class="tab-content" id="signatureTabsContent">
-                            <div class="tab-pane fade" id="text-signature" role="tabpanel" aria-labelledby="text-signature-tab">
+                            <div class="tab-pane fade" id="text-signature" role="tabpanel"
+                                aria-labelledby="text-signature-tab">
                                 <div class="text-signature-option p-3 border border-top-0 rounded-bottom bg-light">
                                     <div class="mb-3">
                                         <label for="textSignatureInput"
                                             class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FULL_NAME}:</label>
-                                        <input type="text" id="textSignatureInput" placeholder="{$MODS.LBL_PORTAL_NAME_EXAMPLE}"
-                                            class="form-control text-dark" value="{$SIGNER_NAME}">
+                                        <input type="text" id="textSignatureInput"
+                                            placeholder="{$MODS.LBL_PORTAL_NAME_EXAMPLE}" class="form-control text-dark"
+                                            value="{$SIGNER_NAME}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="fontSelector"
                                             class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FONT_STYLE}:</label>
                                         <select id="fontSelector" class="form-select text-dark">
-                                            <option value="Dancing Script" style="font-family: 'Dancing Script', cursive;">Dancing Script</option>
-                                            <option value="Pacifico" style="font-family: 'Pacifico', cursive;">Pacifico</option>
-                                            <option value="Great Vibes" style="font-family: 'Great Vibes', cursive;">Great Vibes</option>
-                                            <option value="Caveat" style="font-family: 'Caveat', cursive;">Caveat</option>
-                                            <option value="Indie Flower" style="font-family: 'Indie Flower', cursive;">Indie Flower</option>
-                                            <option value="Sacramento" style="font-family: 'Sacramento', cursive;">Sacramento</option>
-                                            <option value="Shadows Into Light" style="font-family: 'Shadows Into Light', cursive;">Shadows Into Light</option>
-                                            <option value="Satisfy" style="font-family: 'Satisfy', cursive;">Satisfy</option>
+                                            <option value="Dancing Script"
+                                                style="font-family: 'Dancing Script', cursive;">Dancing Script</option>
+                                            <option value="Pacifico" style="font-family: 'Pacifico', cursive;">Pacifico
+                                            </option>
+                                            <option value="Great Vibes" style="font-family: 'Great Vibes', cursive;">
+                                                Great Vibes</option>
+                                            <option value="Caveat" style="font-family: 'Caveat', cursive;">Caveat
+                                            </option>
+                                            <option value="Indie Flower" style="font-family: 'Indie Flower', cursive;">
+                                                Indie Flower</option>
+                                            <option value="Sacramento" style="font-family: 'Sacramento', cursive;">
+                                                Sacramento</option>
+                                            <option value="Shadows Into Light"
+                                                style="font-family: 'Shadows Into Light', cursive;">Shadows Into Light
+                                            </option>
+                                            <option value="Satisfy" style="font-family: 'Satisfy', cursive;">Satisfy
+                                            </option>
                                         </select>
                                     </div>
                                     <button id="renderTextSignatureBtn"
                                         class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_RENDER_TEXT_SIGNATURE}</button>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="image-signature" role="tabpanel" aria-labelledby="image-signature-tab">
+                            <div class="tab-pane fade" id="image-signature" role="tabpanel"
+                                aria-labelledby="image-signature-tab">
                                 <div class="image-signature-option p-3 border border-top-0 rounded-bottom bg-light">
                                     <div class="mb-3">
                                         <label for="imageSignatureInput"
@@ -168,7 +188,7 @@
                 </section>
                 { /if }
                 { /if }
-
+                { /if }
 
                 { if $STATUS === 'signed' }
                 <section class="signed-area text-center mt-4">
@@ -176,8 +196,9 @@
                     </h1>
                     <div class="text-center mb-4"><i class="bi bi-check-circle-fill text-success text-center"
                             style="font-size: 4rem;"></i></div>
-                    <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}&from_portal=1" target="_blank" rel="noopener noreferrer"><i
-                            class="bi bi-cloud-download-fill"></i> {$MODS.LBL_PORTAL_DOWNLOAD_SIGNED_DOC}</a>
+                    <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}&from_portal=1" target="_blank"
+                        rel="noopener noreferrer"><i class="bi bi-cloud-download-fill"></i>
+                        {$MODS.LBL_PORTAL_DOWNLOAD_SIGNED_DOC}</a>
                     <button id="send-signed-pdf-by-email" class="btn btn-primary mt-3"><i
                             class="bi bi-envelope-at-fill"></i> {$MODS.LBL_PORTAL_SEND_COPY_EMAIL}</button>
                     <p class="text-sm text-secondary mt-3">
@@ -203,9 +224,17 @@
                 </section>
 
                 { /if }
-                
 
 
+                { if $IS_CLOSED === true && $STATUS == 'pending' }
+                <div class="alert alert-warning mt-4 text-center" role="alert">
+                    <div>
+                        <i class="bi bi-calendar-x h1"></i>
+                        <br>
+                        <strong>{$MODS.LBL_PORTAL_ATTENTION}:</strong> {$CLOSED_MSG}
+                    </div>
+                </div>
+                {/if}
 
                 { if $SHOW_LOGS === true }
                 <section class="logs-area mt-5">
@@ -255,13 +284,15 @@
 
                         {if $AUTH_MODE == 'otp_email' || $AUTH_MODE == 'otp' }
                         <button id="resend-otp-btn-email" class="btn btn-link">
-                            <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL} {$NO_EMAIL_ALERT}
+                            <i class="bi bi-envelope-at"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_EMAIL}
+                            {$NO_EMAIL_ALERT}
                             {$OTP_MASKED_EMAIL}
                         </button>
                         {/if}
                         {if $AUTH_MODE == 'otp_phone_message' || $AUTH_MODE == 'otp' }
                         <button id="resend-otp-btn-phone-message" class="btn btn-link">
-                            <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE} {$NO_PHONE_ALERT}
+                            <i class="bi bi-telephone"></i> {$MODS.LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE}
+                            {$NO_PHONE_ALERT}
                             {$OTP_MASKED_PHONE}
                         </button>
                         {/if}
@@ -366,6 +397,7 @@
                     </div>
                 </div>
                 {/if}
+
             </div>
             {/if}
     </main>

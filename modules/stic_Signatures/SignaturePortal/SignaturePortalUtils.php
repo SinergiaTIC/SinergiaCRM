@@ -218,7 +218,7 @@ class stic_SignaturePortalUtils
     {
         $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
 
-        if ($signerBean && !empty($signerBean->id)) {
+        if ($signerBean && !empty($signerBean->id) && $signerBean->status === 'pending') {
             $currentDate = gmdate("Y-m-d H:i:s");
             $signerBean->signature_image = $data['signatureData'];
             $signerBean->status = 'signed';
@@ -227,7 +227,7 @@ class stic_SignaturePortalUtils
 
             // Reopen the signer bean to verify saved data
             $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
-            if ($signerBean->signature_date != $currentDate || $signerBean->status != 'signed') {
+            if ($signerBean->status != 'signed' || empty($signerBean->signature_image)) {
                 return ['success' => false, 'message' => 'Failed to save signature data.'];
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to save signature data for Signer ID: {$signerBean->id}");
             } else {
@@ -393,7 +393,7 @@ class stic_SignaturePortalUtils
     {
         $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
 
-        if ($signerBean && !empty($signerBean->id)) {
+        if ($signerBean && !empty($signerBean->id) && $signerBean->status === 'pending') {
             $signerBean->status = 'signed';
             $signerBean->signature_image = ''; // No signature image in button mode
             $signerBean->signature_date = gmdate("Y-m-d H:i:s");

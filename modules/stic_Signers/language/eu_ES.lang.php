@@ -96,7 +96,7 @@ $mod_strings = array(
 
     'LBL_EMAIL_ADDRESS_HELP' => 'Dirección de correo electrónico del firmante a la que se enviarán los mensajes que corresponda durante el proceso de firma.', 
     'LBL_PHONE_HELP' => 'Número de teléfono del firmante al que se enviarán los mensajes que corresponda durante el proceso de firma.', 
-    'LBL_STATUS_HELP' => 'Estado del proceso de firma:<ul><li><strong>Pendiente:</strong> El firmante aún no ha firmado el documento.</li> <li><strong>Firmado:</strong> El firmante ha firmado el documento.</li> <li><strong>Caducado:</strong> El proceso ha finalizado sin que el firmante haya firmado.</li><li><strong>Innecesario:</strong> El firmante no tiene por qué firmar porque otra persona autorizada ya lo ha hecho.</li></ul>', 
+    'LBL_STATUS_HELP' => 'Estado del proceso de firma:<ul><li><strong>Pendiente:</strong> El firmante aún no ha firmado el documento.</li> <li><strong>Firmado:</strong> El firmante ha firmado el documento.</li> <li><strong>Innecesario:</strong> El firmante no tiene por qué firmar porque otra persona autorizada ya lo ha hecho.</li></ul>', 
     'LBL_PDF_DOCUMENT_HELP' => 'Permite descargar el documento una vez firmado.', 
     'LBL_SIGNATURE_DATE_HELP' => 'Fecha en la que se ha firmado el documento.', 
     'LBL_VERIFICATION_CODE_HELP' => 'Código de verificación generado después de la firma del documento.', 

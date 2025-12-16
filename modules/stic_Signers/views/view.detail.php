@@ -35,11 +35,22 @@ class stic_SignersViewDetail extends ViewDetail
 
     public function preDisplay()
     {
-        global $app_list_strings;
+        global $app_list_strings, $mod_strings;
 
         parent::preDisplay();
 
-        $this->dv->ss->assign('RECORD_TYPE', $app_list_strings['moduleList'][$this->bean->record_type]);
+        // Set record name for display if record ID is present
+        if ($this->bean->record_id != "") {
+            $this->bean->record_name = "{$app_list_strings['moduleList'][$this->bean->record_type]}<br><a href=\"index.php?module={$this->bean->record_type}&action=DetailView&record={$this->bean->record_id}\">{$this->bean->record_name}</a>";
+        }
+        
+
+        // Set pdf_document field for display
+        if ($this->bean->pdf_document != '') {
+            $this->bean->pdf_document = "<a href=\"index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$this->bean->id}\">" . $mod_strings['LBL_DOWNLOAD_PDF_SIGNATURE'] . " <span class='glyphicon glyphicon-download'></span></a>";
+        } else {
+            $this->bean->pdf_document = "<span>" . $mod_strings['LBL_NO_PDF_SIGNATURE'] . "</span>";
+        }
 
         SticViews::preDisplay($this);
 

@@ -96,7 +96,7 @@ $mod_strings = array(
 
     'LBL_EMAIL_ADDRESS_HELP' => "Adreça de correu electrònic del firmant a la qual s'enviaran els missatges que correspongui durant el procés de firma.",
     'LBL_PHONE_HELP' => "Número de telèfon del firmant al qual s'enviaran els missatges que correspongui durant el procés de firma.",
-    'LBL_STATUS_HELP' => 'Estat del procés de firma:<ul><li><strong>Pendent:</strong> El firmant encara no ha firmat el document.</li> <li><strong>Firmat:</strong> El firmant ha firmat el document.</li>  <li><strong>Caducat:</strong> El procés ha finalitzat sense que el firmant hagi firmat.</li><li><strong>Innecessari:</strong> El firmant no cal que firmi perquè una altra persona autoritzada ja ho ha fet.</li></ul>',
+    'LBL_STATUS_HELP' => 'Estat del procés de firma:<ul><li><strong>Pendent:</strong> El firmant encara no ha firmat el document.</li> <li><strong>Firmat:</strong> El firmant ha firmat el document.</li> <li><strong>Innecessari:</strong> El firmant no cal que firmi perquè una altra persona autoritzada ja ho ha fet.</li></ul>',
     'LBL_PDF_DOCUMENT_HELP' => 'Permet descarregar el document un cop firmat.',
     'LBL_SIGNATURE_DATE_HELP' => "Data en què s'ha firmat el document.",
     'LBL_VERIFICATION_CODE_HELP' => 'Codi de verificació generat després de la firma del document.',

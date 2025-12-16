@@ -233,7 +233,7 @@ class SelectSignatureTemplate
     public static function DVPopupRelatedSignaturesHtml($module, $recordId)
     {
         global $app_strings, $app_list_strings, $db, $timedate, $current_user; 
-        $mod_strings = return_module_language($current_user->preferred_language, 'stic_Signers');
+        $mod_strings = return_module_language($current_user->preferred_language ?? '', 'stic_Signers');
 
         $signaturesQuery = 
             "SELECT * FROM stic_signers s

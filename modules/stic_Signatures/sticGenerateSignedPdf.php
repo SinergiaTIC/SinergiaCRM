@@ -206,7 +206,6 @@ class sticGenerateSignedPdf
                 $sugar_smarty->assign('SIGNER_ON_BEHALF_OF', $behalfName);
             } 
 
-            $sugar_smarty->assign('BROWSER', $signerBean->browser || '');
             $sugar_smarty->assign('MOD_STRINGS', return_module_language($GLOBALS['current_language'], 'stic_Signatures'));
             $sugar_smarty->assign('APP_STRINGS', $app_strings);
 
@@ -357,6 +356,7 @@ class sticGenerateSignedPdf
             // Generate the PDF and save it to the file system
             $pdf->writeHeader($header);
             $pdf->writeFooter($footer);
+            ob_clean(); // avoid debug messages breaking the PDF
             $pdf->writeHTML($printable);
             $pdf->outputPDF($filePath, 'F'); // 'F' parameter saves to a local file
 

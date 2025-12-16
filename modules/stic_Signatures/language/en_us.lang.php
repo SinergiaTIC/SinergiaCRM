@@ -172,6 +172,7 @@ $mod_strings = array(
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'It is not necessary for you to sign this document, it has already been signed by another authorized person.',
     'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'The period to sign this document has expired. Expiration date:',
     'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'The period to sign this document has not yet started. Signing will be available from:',
+    'LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE' => 'The signing process for this document is closed and it is not possible to sign it.',
 
     // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Digital signature audit page',
@@ -193,7 +194,7 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (default value):</strong> The signer acts in his own name. <li><strong>Yes, only one representative:</strong> Only one representative of the signature holder needs to sign. <li><strong>Yes, all representatives</strong> All representatives of the holder must sign.</ul>',
     'LBL_ACTIVATION_DATE_HELP' => 'Date from which signing will be possible. Before this date, the signature portal will not allow it.',
     'LBL_EXPIRATION_DATE_HELP' => 'Deadline to sign. After this date, the signature portal will not allow it, but signers will be able to check wether the document is signed.',
-    'LBL_STATUS_HELP' => '<ul><li><strong>Draft:</strong> The signing process is being configured, it is not yet possible to add signers to the process. <li><strong>Open:</strong> The signing process is ready to select signers and request their signature. <li><strong>Expired:</strong> The period for signing the document has ended. <li><strong>Cancelled:</strong> The signing process has been cancelled.</ul>',
+    'LBL_STATUS_HELP' => '<ul><li><strong>Open:</strong> The signing process is ready to select signers and request their signature. <li><strong>Closed:</strong> The signing process is closed and it is not possible to add signers or sign documents. If there are already signed documents, these will remain available to the signers.</ul>',
     'LBL_PDF_AUDIT_PAGE_HELP' => 'Allows you to indicate whether to include an audit page at the end of the signed document. The audit page contains detailed information about the signing process, including signer data, signature dates and times, and a log of events related to the process.',
     'LBL_TYPE_HELP' => 'Signature type to configure. Currently only the Individual option is available.',
     'LBL_PDF_TEMPLATE_HELP' => 'PDF template to use as the document to sign. The template must be designed in advance in the PDF Templates module and contain the necessary signature fields.',

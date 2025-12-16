@@ -172,6 +172,7 @@ $mod_strings = array(
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'No cal que firmeu aquest document, ja ha estat firmat per una altra persona autoritzada.',
     'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'El període per firmar aquest document ha finalitzat. Data de caducitat:',
     'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'El període per firmar aquest document encara no ha començat. La firma estarà disponible a partir de:',
+    'LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE' => "El procés de firma d'aquest document està tancat i no és possible firmar-lo.",
 
     // Audit page
     'LBL_AUDIT_PAGE_TITLE' => "Pàgina d'auditoria de la firma",
@@ -193,7 +194,7 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (valor per defecte):</strong> El firmant actua en el seu propi nom. <li><strong>Sí, només un representant:</strong> Només cal que firmi un representant del titular de la firma. <li><strong>Sí, tots els representants</strong> Han de firmar tots els representants del titular.</ul>',
     'LBL_ACTIVATION_DATE_HELP' => "Data a partir de la qual es podrà firmar. Abans d'aquesta data el portal de firmes no ho permetrà.",
     'LBL_EXPIRATION_DATE_HELP' => "Data límit per firmar. Després d'aquesta data el portal de firmes no ho permetrà, però sí que es podrà consultar si el document està firmat.",
-    'LBL_STATUS_HELP' => "<ul><li><strong>Borrador:</strong> El procés de firma s'està configurant, encara no és possible afegir firmants al procés. <li><strong>Obert:</strong> El procés de firma està llest per seleccionar els firmants i sol·licitar-los la firma. <li><strong>Caducat:</strong> El període per firmar el document ha finalitzat. <li><strong>Cancel·lat:</strong> El procés de firma ha estat cancel·lat.</ul>",
+    'LBL_STATUS_HELP' => "<ul><li><strong>Obert:</strong> El procés de firma està llest per seleccionar els firmants i sol·licitar-los la firma. <li><strong>Tancat:</strong> El procés de firmas està tancat i no és possible afegir firmants ni firmar documents. Si ja hi ha documents signats aquests seguiran disponibles per als firmants.</ul>",
     'LBL_PDF_AUDIT_PAGE_HELP' => "Permet indicar si cal incloure una pàgina d'auditoria al final del document firmat. La pàgina d'auditoria conté informació detallada sobre el procés de firma, incloent-hi dades dels firmants, dates i hores de les firmes i un registre d'esdeveniments relacionats amb el procés.",
     'LBL_TYPE_HELP' => "Tipus de firma a configurar. Actualment només hi ha disponible l'opció Individual.",
     'LBL_PDF_TEMPLATE_HELP' => "Plantilla PDF que es farà servir com a document per firmar. La plantilla ha d'estar dissenyada prèviament al mòdul de Plantilles PDF i contenir els camps de firma necessaris.",

@@ -172,6 +172,8 @@ $mod_strings = array(
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'Non é necesario que asine este documento, xa foi asinado por outra persoa autorizada.',
     'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'O período para asinar este documento expirou. Data de caducidad:',
     'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'O período para asinar este documento aínda non comezou. A sinatura estará dispoñible a partir de:',
+    'LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE' => 'El proceso de firma de este documento está cerrado y no es posible firmarlo.',
+    
 
     //Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de auditoría da sinatura',
@@ -193,7 +195,7 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (valor por defecto):</strong> El firmante actúa en su propio nombre. <li><strong>Sí, sólo un representante:</strong> Sólo tiene que firmar un representante del titular de la firma. <li><strong>Sí, todos los representantes</strong> Deben firmar todos los representantes del titular.</ul>', 
     'LBL_ACTIVATION_DATE_HELP' => 'Fecha a partir de la cual se podrá firmar. Antes de esa fecha el portal de firmas no lo permitirá.', 
     'LBL_EXPIRATION_DATE_HELP' => 'Fecha límite para firmar. Después de esta fecha el portal de firmas no lo permitirá, pero sí se podrá consultar si el documento está firmado.', 
-    'LBL_STATUS_HELP' => '<ul><li><strong>Borrador:</strong> El proceso de firma se está configurando, todavía no es posible añadir firmante al proceso. <li><strong>Abierto:</strong> El proceso de firma esta listo para seleccionar a los firmantes y solicitarles la firma . <li><strong>Caducado:</strong> El período para firmar el documento ha finalizado. <li><strong>Cancelado:</strong> El proceso de firma ha sido cancelado.</ul>', 
+    'LBL_STATUS_HELP' => '<ul><li><strong>Abierto:</strong> El proceso de firma esta listo para seleccionar a los firmantes y solicitarles la firma. <li><strong>Cerrado:</strong> El proceso de firmas está cerrado y no es posible añadir firmantes ni firmar documentos. Si ya hay documentos firmados estos seguirán disponibles para los firmantes.</ul>', 
     'LBL_PDF_AUDIT_PAGE_HELP' => 'Permite indicar si es necesario incluir una página de auditoría al final del documento firmado. La página de auditoría contiene información detallada sobre el proceso de firma, incluyendo datos de los firmantes, fechas y horas de las firmas y un registro de eventos relacionados con el proceso.', 
     'LBL_TYPE_HELP' => 'Tipo de firma a configurar. Actualmente sólo está disponible la opción Individual.', 
     'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF para usar como documento a firmar. La plantilla debe estar diseñada previamente en el módulo de Plantillas PDF y contener los campos de firma necesarios.',

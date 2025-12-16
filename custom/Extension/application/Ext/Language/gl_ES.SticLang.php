@@ -3665,10 +3665,8 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fin de suplant
 
 // Firmas: Estados
 $app_list_strings['stic_signatures_status_list'][''] = '';
-$app_list_strings['stic_signatures_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_signatures_status_list']['open'] = 'Abierta';
-$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelada';
-$app_list_strings['stic_signatures_status_list']['expired'] = 'Caducada';
+$app_list_strings['stic_signatures_status_list']['closed'] = 'Cerrada';
 
 // Firmas: Métodos de autenticación
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
@@ -3700,7 +3698,6 @@ $app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, todos los repr
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
-$app_list_strings['stic_signers_status_list']['expired'] = 'Caducado';
 $app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecesario';
 
 // Registro de firmas: Acciones

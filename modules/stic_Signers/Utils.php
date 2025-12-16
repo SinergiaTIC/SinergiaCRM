@@ -374,7 +374,7 @@ class stic_SignersUtils
                     stic_signers.record_name,
                     stic_signers.record_type,
                     stic_signers.record_id,
-                    if(stic_signers.parent_id = stic_signers.contact_id_c, '', CONCAT_WS(' ', c1.first_name, c1.last_name)) as on_behalf_of_id
+                    CONCAT_WS(' ', c1.first_name, c1.last_name) as on_behalf_of_id
                 FROM stic_signers
                 LEFT JOIN contacts c1 ON c1.id = stic_signers.contact_id_c -- to get on_behalf_of_id
                 WHERE parent_type = 'Contacts'
@@ -459,10 +459,12 @@ class stic_SignersUtils
                     stic_signers.parent_id,
                     stic_signers.record_name,
                     stic_signers.record_type,
-                    stic_signers.record_id
+                    stic_signers.record_id,
+                    CONCAT_WS(' ', c1.first_name, c1.last_name) as on_behalf_of_id
                 FROM stic_signers
                 JOIN stic_signatures_stic_signers_c rel
                     ON rel.stic_signatures_stic_signersstic_signers_idb = stic_signers.id
+                LEFT JOIN contacts c1 ON c1.id = stic_signers.contact_id_c -- to get on_behalf_of_id
                 WHERE rel.stic_signatures_stic_signersstic_signatures_ida = '{$signature_id}'
                     AND stic_signers.deleted = 0
                     AND rel.deleted = 0
@@ -501,7 +503,7 @@ class stic_SignersUtils
                 0,
                 0,
                 0,
-                " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.on_behalf_of_id = '{$signerBean->on_behalf_of_id}'"
+                " stic_signers.id <> '{$signerBean->id}' AND stic_signers.status = 'pending' AND stic_signers.contact_id_c = '{$signerBean->contact_id_c}' "
             );
 
             // Deactivate and log

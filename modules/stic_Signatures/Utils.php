@@ -593,7 +593,7 @@ class stic_SignaturesUtils
                     $x_pos = 5;
 
                     // Render the text on the image
-                    imagettftext($image, $font_size, $angle, $x_pos, $y_pos, $text_color, $font_path, $line);
+                    imagettftext($image, $font_size, $angle, (int)$x_pos, (int)$y_pos, $text_color, $font_path, $line);
 
                     // Move the Y position for the next line
                     $y_pos += $line_height;
@@ -602,6 +602,7 @@ class stic_SignaturesUtils
         }
 
         // Output the image as PNG to the output buffer
+        ob_clean(); // Avoid any previous output
         imagepng($image);
         // Get the image data from the output buffer
         $imgData = ob_get_clean();

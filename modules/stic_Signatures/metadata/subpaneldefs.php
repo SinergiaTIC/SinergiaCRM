@@ -90,10 +90,5 @@ $layout_defs['stic_Signatures']['subpanel_setup']['stic_campaigns_notification']
         'return_as_array' => false,
     ),
     'title_key' => 'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE',
-    'top_buttons' => array(
-        0 => array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
-            'title' => 'LBL_NEW_BUTTON_TITLE',
-        ),
-    ),
+    'top_buttons' => [], // must be defined
 );

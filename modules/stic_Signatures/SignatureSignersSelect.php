@@ -124,7 +124,7 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean->email_address = $destSigner['email'];
     $stic_SignerBean->phone = $destSigner['phone'];
     $stic_SignerBean->status = 'pending';
-    $stic_SignerBean->contact_id_c = $destSigner['onBehalfOfId'] ?? null;
+    $stic_SignerBean->contact_id_c = $destSigner['onBehalfOfId'] != $stic_SignerBean->parent_id ? $destSigner['onBehalfOfId'] : null;
     
     $newId = $stic_SignerBean->save();
     if ($newId) {

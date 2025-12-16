@@ -459,6 +459,7 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_signers_contacts'] = array(
     'function_parameters' => array(
         'import_function_file' => 'modules/stic_Signers/Utils.php',
     ),
+    'top_buttons' => [], // must be defined
 );
 
 

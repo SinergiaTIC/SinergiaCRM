@@ -129,8 +129,15 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('ACTIVATION_MSG', $activationMsg);
         }
 
+        $isClosed = $signatureBean->status === 'closed' ? true : false;
+        $this->ss->assign('IS_CLOSED', $isClosed);
+        if ($isClosed === true) {
+            $this->ss->assign('CLOSED_MSG', $mod_strings['LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE']);
+        }
+
+
         // Proceed with authentication only if not expired and activated
-        if ($isExpired === false && $isActivated === true) {            
+        if ($isExpired === false && $isActivated === true ) {            
             // Validate authentication mode
             switch ($authMode) {
                 case 'unique_link':

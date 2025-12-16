@@ -47,19 +47,6 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
 
-    // disable all fields except description, assigned_user_name, phone and email_address 
-    $("form#EditView [data-field]").each(function () {
-      var field = $(this).data("field");  
-      if (field !== "description" && field !== "assigned_user_name" && field !== "phone" && field !== "email_address") {
-        // $("[data-field='" + field + "'] input, [data-field='" + field + "'] select, [data-field='" + field + "'] textarea").prop("disabled", true);
-        // $("[data-field='" + field + "'] button").hide(); // Hide buttons/icons associated with the field
-        setDisabledStatus(field, false);
-      }
-    })
-
-
-
-
     break;
   case "detail":
     // CReate buttons for the detail view of the stic_Signers module.
@@ -106,9 +93,9 @@ switch (viewType()) {
 
 
 // Hide on_behalf_of fields if is same as signer
-if (STIC.record.contact_id_c == STIC.record.parent_id) {
-  $("[data-field='on_behalf_of_id']").hide();
-}
+// if (STIC.record.contact_id_c == STIC.record.parent_id) {
+//   $("[data-field='on_behalf_of_id']").hide();
+// }
 
 
 

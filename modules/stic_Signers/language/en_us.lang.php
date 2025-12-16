@@ -96,7 +96,7 @@ $mod_strings = array(
 
     'LBL_EMAIL_ADDRESS_HELP' => "Signer's email address to which the corresponding messages will be sent during the signing process.",
     'LBL_PHONE_HELP' => "Signer's phone number to which the corresponding messages will be sent during the signing process.",
-    'LBL_STATUS_HELP' => 'Signing process status:<ul><li><strong>Pending:</strong> The signer has not yet signed the document.</li> <li><strong>Signed:</strong> The signer has signed the document.</li> <li><strong>Expired:</strong> The process has ended without the signer having signed.</li><li><strong>Unnecessary:</strong> The signer does not need to sign because another authorized person has already done so.</li></ul>',
+    'LBL_STATUS_HELP' => 'Signing process status:<ul><li><strong>Pending:</strong> The signer has not yet signed the document.</li> <li><strong>Signed:</strong> The signer has signed the document.</li><li><strong>Unnecessary:</strong> The signer does not need to sign because another authorized person has already done so.</li></ul>',
     'LBL_PDF_DOCUMENT_HELP' => 'Allows you to download the document once signed.',
     'LBL_SIGNATURE_DATE_HELP' => 'Date on which the document was signed.',
     'LBL_VERIFICATION_CODE_HELP' => 'Verification code generated after the document was signed.',

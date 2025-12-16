@@ -63,7 +63,6 @@ class stic_Signers extends Basic
     public $on_behalf_of_id;
     public $contact_id_c;
 
-
     public function bean_implements($interface)
     {
         switch ($interface) {
