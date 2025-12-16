@@ -49,7 +49,7 @@ class stic_JustificationsUtils {
         // Retrieve all justification conditions linked to the project (and Opportunity) of the allocation
         $projectId = $allocation->project_stic_allocationsproject_ida;
         $opportunityId = $allocation->opportunities_stic_allocationsopportunities_ida;
-        $conditions = self::getConditionsForProjectAndOpportunity($projectId, $opportunityId);
+        $conditions = self::getConditionsForProjectAndOpportunity($projectId, $opportunityId, $allocation->date);
 
         foreach($conditions as $condition) {
             // Evaluate if condition is met based on allocation details
@@ -90,9 +90,13 @@ class stic_JustificationsUtils {
         select psac.project_stic_allocationsstic_allocations_idb as allocationId, osac.opportunities_stic_allocationsopportunities_ida as opportunityId
         from projects_opportunities po 
         join project_stic_allocations_c psac on psac.project_stic_allocationsproject_ida = po.project_id and psac.deleted = 0
+        join opportunities_cstm oc on oc.id_c = po.opportunity_id 
+        join stic_allocations sa on sa.id = psac.project_stic_allocationsstic_allocations_idb and sa.deleted = 0
         left join opportunities_stic_allocations_c osac on osac.opportunities_stic_allocationsstic_allocations_idb = psac.project_stic_allocationsstic_allocations_idb and osac.deleted = 0
         where po.deleted = 0
         and po.opportunity_id = '$opportunityId'
+        and oc.start_date_c <= sa.date
+        and (oc.end_date_c is null or oc.end_date_c >= sa.date)
         ";
         
         $result = $db->query($query);
@@ -114,7 +118,8 @@ class stic_JustificationsUtils {
         // Retrieve all justification conditions linked to the project (and Opportunity) of the allocation
         $projectId = $allocation->project_stic_allocationsproject_ida;
         $opportunityId = $allocation->opportunities_stic_allocationsopportunities_ida;
-        $conditions = self::getConditionsForProjectAndOpportunity($projectId, $opportunityId);
+        $allocationDate = $allocation->date;
+        $conditions = self::getConditionsForProjectAndOpportunity($projectId, $opportunityId, $allocationDate);
 
         foreach($conditions as $condition) {
             // Evaluate if condition is met based on allocation details
@@ -174,11 +179,8 @@ class stic_JustificationsUtils {
         return true;
     }
 
-    public static function getConditionsForProjectAndOpportunity($projectId, $opportunityId)
+    public static function getConditionsForProjectAndOpportunity($projectId, $opportunityId, $allocationDate)
     {
-
-        // TODOEPS: revisar si es millor fer-ho amb SugarQuery
-
         // TODOEPS: Si incorporem Projecte a les condicions, caldrà revisar aquesta funció
 
         $conditions = array();
@@ -196,10 +198,15 @@ class stic_JustificationsUtils {
             SELECT sjc.id
             FROM stic_justification_conditions sjc 
             JOIN opportunities_stic_justification_conditions_c osjcc ON sjc.id = osjcc.opportunita6e5ditions_idb
+            join opportunities o on o.id = osjcc.opportunit378funities_ida 
+            join opportunities_cstm oc on oc.id_c = o.id
             WHERE osjcc.opportunit378funities_ida IN ({$opportunities})
+            AND oc.start_date_c <= " . $db->quoted($allocationDate) . "
+            AND (oc.end_date_c IS NULL OR oc.end_date_c >= " . $db->quoted($allocationDate) . ")
             AND sjc.active = 1
             AND sjc.deleted = 0
             AND osjcc.deleted = 0
+            AND o.deleted = 0
         ";
 
         $result = $db->query($sql);
