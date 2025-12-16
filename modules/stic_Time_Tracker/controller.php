@@ -140,15 +140,30 @@ class stic_Time_TrackerController extends SugarController {
      *
      * @return void 
      */
-    public function action_getTodayTimeTrackerRecords()
+    public function action_get12HoursPreviousTimeTrackerRecords()
     {
         // Check if the user has started any time registration today
-        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
-        global $current_user;
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Get the TimeTracker records from the previous 12 hours.');
+        global $current_user, $app_strings; 
         
         // Check if there is a time tracker record for the employee in today
-        $data = stic_Time_Tracker::getTodayTimeTrackerRecords($current_user->id) ?? [];
+        $records = stic_Time_Tracker::get12HoursPreviousTimeTrackerRecords($current_user->id) ?? [];
+        $data = array();
+        foreach ($records as $row)
+        {
+            if (empty($row['end_date']) && !empty($row['start_date'])) 
+            {
+                // Add now to name
+                $row['name'] .= " - " . $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'];
 
+                // Set end date and duration
+                $row['end_date'] = TimeDate::getInstance()->nowDb(); // Set end_date as NOW
+                $duration = strtotime($row['end_date']) - strtotime($row['start_date']);       
+                $row['duration'] = (float) number_format($duration / 3600, 2);
+            }
+            $data[] = $row;
+        }
+        
         // return the json result
         ob_clean();
         $json = json_encode($data);

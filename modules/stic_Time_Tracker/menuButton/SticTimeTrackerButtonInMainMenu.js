@@ -104,7 +104,7 @@ function drawTimeTrackerConfimrBox(data)
                 </ul>
             </div>`;
 
-        const url = 'index.php?module=stic_Time_Tracker&action=getTodayTimeTrackerRecords';
+        const url = 'index.php?module=stic_Time_Tracker&action=get12HoursPreviousTimeTrackerRecords';
         fetch(url)
             .then(response => response.json())
             .then(data => 
@@ -118,26 +118,22 @@ function drawTimeTrackerConfimrBox(data)
                 const list = document.getElementById('time-tracker-dynamic-list');
                 if (data.length > 1) 
                 {
-                    let suma = 0;
-                    data.forEach((record, index) => 
+                    let todayDuration = 0;
+                    data.forEach((record) => 
                     {
                         const li = document.createElement('li');
-
                         let name = record.name;
-                        if (!record.end_date) 
-                            name +=` - ${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS')}`;
-
                         let duration = parseFloat(record.duration);
-                        suma += duration;
                         
                         href= window.location.origin + window.location.pathname + `?module=stic_Time_Tracker&action=DetailView&record=${record.id}`;
                         li.innerHTML = `<a href='${href}' target='_blank'>${name}</a>`;
                         if (record.end_date) 
                             li.innerHTML += `&nbsp&nbsp&nbsp&nbsp&nbsp (${formatHoursMinutes(duration)})`;
 
+                        todayDuration += duration;
                         list.appendChild(li);
                     });
-                    list.insertAdjacentHTML('beforebegin', `<span style='padding-left:4px;padding-top:3%;padding-bottom:3%;'><span style='font-weight:bold'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2')}: </span> ${formatHoursMinutes(suma)}</span>`);
+                    list.insertAdjacentHTML('beforebegin', `<span style='padding-left:4px;padding-top:3%;padding-bottom:3%;'><span style='font-weight:bold'>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2')}: </span> ${formatHoursMinutes(todayDuration)}</span>`);
                 } else {
                     const li = document.createElement('li');
                     li.innerHTML = `${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3')}`;
