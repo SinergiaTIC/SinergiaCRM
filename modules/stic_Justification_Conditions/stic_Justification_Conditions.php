@@ -22,6 +22,7 @@
  */
 
 require_once 'modules/stic_Justifications/Utils.php';
+require_once 'modules/stic_Justification_Conditions/Utils.php';
 
 class stic_Justification_Conditions extends Basic
 {
@@ -59,8 +60,8 @@ class stic_Justification_Conditions extends Basic
         parent::save($check_notify);
 
         if ($this->matchingFieldsChanged()) {
-            $this->deleteJustifications();
-            $this->createNewJustifications();
+            stic_Justification_ConditionsUtils::deleteJustifications($this);
+            stic_JustificationsUtils::createNewJustificationsFromJustificationCondition($this);
         }
     }
 
@@ -78,20 +79,7 @@ class stic_Justification_Conditions extends Basic
         return false;
     }
 
-    protected function deleteJustifications() {
-        $link = $this->get_linked_beans('stic_justification_conditions_stic_justifications', 'stic_Justifications');
-        foreach ($link as $justification) {
-            if ($justification->status != 'submitted') {
-                $justification->mark_deleted($justification->id);
-            }
-        }
-    }
-
-    protected function createNewJustifications() {
-        stic_JustificationsUtils::createNewJustificationsFromJustificationCondition($this);
-    }
-
-        /**
+    /**
      * Auto-generate the name field based on allocation type and date
      */
     protected function fillName() {

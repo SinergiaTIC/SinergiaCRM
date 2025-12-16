@@ -369,9 +369,33 @@ class Opportunity extends SugarBean
 
         require_once('modules/Opportunities/SaveOverload.php');
 
+        $tempFetchedRow = $this->fetched_row ?? null;
+
         perform_save($this);
-        return parent::save($check_notify);
+        // TODOEPS (add STIC)
+        // return parent::save($check_notify);
+        parent::save($check_notify);
+
+        if ($this->justificationDatesChanged($tempFetchedRow)) {
+            // Update linked justification conditions
+            require_once 'modules/stic_Justification_Conditions/Utils.php';
+            stic_Justification_ConditionsUtils::updateJustificationsForOpportunity($this);
+        }
+
+        return true;
+        // END TODOEPS
     }
+
+    // TODOEPS (STIC)
+    protected function justificationDatesChanged($tempFetchedRow) {
+        if (!$tempFetchedRow) {
+            return false; // New record, so dates are considered unchanged
+        }
+        $startDateChanged = $this->start_date_c !== $tempFetchedRow['start_date_c'];
+        $endDateChanged = $this->end_date_c !== $tempFetchedRow['end_date_c'];
+        return $startDateChanged || $endDateChanged;
+    }
+    // END TODOEPS
 
     public function save_relationship_changes($is_update, $exclude = array())
     {
