@@ -93,7 +93,7 @@ $mod_strings = array(
     'LBL_ACTIVATION_DATE_ERROR' => 'The activation date must be before the expiration date.',
     'LBL_EXPIRATION_DATE_ERROR' => 'The expiration date must be after the activation date.',
     'LBL_SIGNERS_ADDED_MSG' => 'Signers added successfully',
-    'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Notice: New signers will not be able to sign the document because the signature is in a state that does not allow it. Please remember to change its state to Open or Permanent if you want the new signers to be able to sign the document.',
+    'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'New signers will not be able to sign the document because the signature status that does not allow it. Please remember to change the status to Open or Permanent if you want the new signers to be able to sign the document.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Signers not added, already exist or an error occurred.',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'The following record will be skipped because no signers were found.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
@@ -195,21 +195,22 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (default value):</strong> The signer acts in his own name. <li><strong>Yes, only one representative:</strong> Only one representative of the signature holder needs to sign. <li><strong>Yes, all representatives</strong> All representatives of the holder must sign.</ul>',
     'LBL_ACTIVATION_DATE_HELP' => 'Date from which signing will be possible. Before this date, the signature portal will not allow it.',
     'LBL_EXPIRATION_DATE_HELP' => 'Deadline to sign. After this date, the signature portal will not allow it, but signers will be able to check wether the document is signed.',
-    'LBL_STATUS_HELP' => '<ul>
-                            <li><b>Draft</b>: Initial state of the signing process. In this state, you can configure the process, add signers, and make changes to the PDF template. No signatures are allowed through the Signature Portal.</li>
-                            <li><b>Open</b>: In this state, signatures through the Signature Portal are allowed. You must switch to this state once the signers have been added and the PDF template is ready, as long as it is not a Permanent signing process.</li>
-                            <li><b>Permanent</b>: Suitable state for signing processes of indefinite duration, without a pre-established end date. Signatures through the Portal will remain enabled until the state is manually changed.</li>
-                            <li><b>Paused</b>: Used to temporarily pause a signing process that is in Open or Permanent state for any reason.</li>
-                            <li><b>Completed</b>: This state is automatically set in the signing process when all signers have completed their signature.</li>
-                            <li><b>Cancelled</b>: Used to cancel a signing process that is in Open or Permanent state.</li>
+    'LBL_STATUS_HELP' => 'The process accepts signatures through the signature portal when it is in the Open or Permanent status. Any other status will not allow signing even if it is within the enabled period.
+                        <ul>
+                            <li><b>Draft</b>: The signature process is in preparation.</li>
+                            <li><b>Open</b>: The process accepts signatures through the portal.</li>
+                            <li><b>Permanent</b>: Similar to Open, it applies to signature processes without an end date. It will be possible to sign through the portal until the state is changed.</li>
+                            <li><b>Paused</b>: Temporarily stops collecting signatures through the portal.</li>
+                            <li><b>Completed</b>: Automatically set in Open processes when all signers have signed.</li>
+                            <li><b>Cancelled</b>: Permanently stops the signature process.</li>
                         </ul>',
     'LBL_PDF_AUDIT_PAGE_HELP' => 'Allows you to indicate whether to include an audit page at the end of the signed document. The audit page contains detailed information about the signing process, including signer data, signature dates and times, and a log of events related to the process.',
     'LBL_TYPE_HELP' => 'Signature type to configure. Currently only the Individual option is available.',
     'LBL_PDF_TEMPLATE_HELP' => 'PDF template to use as the document to sign. The template must be designed in advance in the PDF Templates module and contain the necessary signature fields.',
     'LBL_MAIN_MODULE_HELP' => 'SinergiaCRM module to which the signing process will be associated. It is automatically extracted from the main module of the selected PDF template.',
     'LBL_SIGNER_PATH_HELP' => 'Allows you to choose the path to follow from the main signature module to the signers module (Contacts or Users).',
-    'LBL_EMAIL_TEMPLATE_HELP' => 'Email template to notify signers about the signing process. It must include the necessary information so that the signer can access the signature portal and complete the process. If not modified, the <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">default template</a> will be used.',
-    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Email template to send the signed document to signers. If not modified, the <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">default template</a> will be used.',
-    'LBL_EMAIL_TEMPLATE_OTP_HELP' => "Email template to send the one time code to the signers' email. If not modified, the <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView'>default template</a> will be used.",
-    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => "SMS message template to send the one time code to the signers' phone. If not modified, the <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView'>default template</a> will be used.",
+    'LBL_EMAIL_TEMPLATE_HELP' => 'Email template to notify signers about the signing process. It must include the necessary information so that the signer can access the signature portal and complete the process. Unless otherwise indicated, the <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">default template</a> will be used.',
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Email template to send the signed document to signers. Unless otherwise indicated, the <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">default template</a> will be used.',
+    'LBL_EMAIL_TEMPLATE_OTP_HELP' => "Email template to send the one time code to the signers' email. Unless otherwise indicated, the <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView'>default template</a> will be used.",
+    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => "SMS message template to send the one time code to the signers' phone. Unless otherwise indicated, the <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView'>default template</a> will be used.",
 );
