@@ -88,8 +88,8 @@ class stic_Assessments extends Basic
                     $contactBean->save();
                 }
 
-                $utcTimezone = new DateTimeZone('UTC');
-                $utcNow = ($timedate->fromUser($timedate->now(), $current_user))->setTimezone($utcTimezone);
+                $userTimezone = $current_user->getPreference('timezone');
+                $userDateNow = ($timedate->fromUser($timedate->now(), $current_user))->setTimezone(new DateTimeZone($userTimezone));
 
                 // If the assessment is volunteering, completed and closing
                 if ((!empty($this->status) && $this->status == 'completed') && 
@@ -98,19 +98,19 @@ class stic_Assessments extends Basic
                     if ($contactBean->load_relationship('stic_contacts_relationships_contacts')) 
                     {            
                         $contactRelationshipBeans = $contactBean->stic_contacts_relationships_contacts->getBeans();
-                        if ($contactRelationshipBeans->load_relationship('stic_contacts_relationships_project'))
-                        {
+                        // if ($contactRelationshipBeans->load_relationship('stic_contacts_relationships_project'))
+                        // {
                             foreach ($contactRelationshipBeans as $contactRelationshipBean) {
                                 // Deactivate the relationship if it is of a voluntary type and it has the same project as the assessment
                                 if ($contactRelationshipBean->relationship_type == 'volunteer' && $contactRelationshipBean->active 
-                                    && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->stic_assessments_stic_projectsstic_projects_ida) 
+                                    && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->project_stic_assessmentsproject_ida) 
                                 {
-                                    $contactRelationshipBean->end_date = $utcNow;
+                                    $contactRelationshipBean->end_date = $userDateNow->format('Y-m-d');
                                     $contactRelationshipBean->active = false;
                                     $contactRelationshipBean->save();
                                 }
                             }
-                        }
+                        // }
                     }
                 } else {
                     // If the assessment is volunteering, completed and initial
@@ -118,7 +118,7 @@ class stic_Assessments extends Basic
                         (!empty($this->moment) && $this->moment == 'initial')) 
                     {
                         // If the related contact there is no 'volunteer' relationship, a new one is created
-                        // Furthermore, it deactivates those active, pre-voluntary relationships that are related to contact
+                        // Furthermore, it deactivates those active and pre-voluntary relationships that are related to contact
                         if ($contactBean->load_relationship('stic_contacts_relationships_contacts'))
                         {
                             $contactRelationshipBeans = $contactBean->stic_contacts_relationships_contacts->getBeans();
@@ -126,16 +126,16 @@ class stic_Assessments extends Basic
                             foreach ($contactRelationshipBeans as $contactRelationshipBean) {
                                 // Check if a volunteer relationship already exists
                                 if ($contactRelationshipBean->relationship_type == 'volunteer' && $contactRelationshipBean->active
-                                    && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->stic_assessments_stic_projectsstic_projects_ida) 
+                                    && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->project_stic_assessmentsproject_ida) 
                                 {
                                     $volunteerCount++;
                                 }
 
                                 // Deactivate the relationship if it is of a pre-voluntary type and it has the same project as the assessment
                                 if ($contactRelationshipBean->relationship_type == 'pre-volunteer' && $contactRelationshipBean->active
-                                    && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->stic_assessments_stic_projectsstic_projects_ida)  
+                                    && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->project_stic_assessmentsproject_ida)  
                                 {
-                                    $contactRelationshipBean->end_date = $utcNow;
+                                    $contactRelationshipBean->end_date = $userDateNow->format('Y-m-d');
                                     $contactRelationshipBean->active = false;
                                     $contactRelationshipBean->save();
                                 }
@@ -146,7 +146,7 @@ class stic_Assessments extends Basic
                                 $relationshipBean->relationship_type = 'volunteer';
                                 $relationshipBean->start_date = $this->assessment_date;
                                 $relationshipBean->stic_contacts_relationships_contactscontacts_ida = $contactBean->id;
-                                $relationshipBean->stic_contacts_relationships_projectproject_ida = $offerBean->project_stic_job_offersproject_ida;
+                                $relationshipBean->stic_contacts_relationships_projectproject_ida = $this->project_stic_assessmentsproject_ida;
                                 $relationshipBean->assigned_user_id = $this->assigned_user_id;
                                 $relationshipBean->save();
                             }
