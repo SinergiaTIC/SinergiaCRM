@@ -204,7 +204,6 @@ $mod_strings = array(
                             <li><b>Completat</b>: S'estableix automàticament en processos oberts quan tots els firmants han firmat.</li>
                             <li><b>Cancel·lat</b>: Interromp definitivament el procés de firma.</li>
                         </ul>", 
-
     'LBL_PDF_AUDIT_PAGE_HELP' => "Permet indicar si cal incloure una pàgina d'auditoria al final del document firmat. La pàgina d'auditoria conté informació detallada sobre el procés de firma, incloent-hi dades dels firmants, dates i hores de les firmes i un registre d'esdeveniments relacionats amb el procés.",
     'LBL_TYPE_HELP' => "Tipus de firma a configurar. Actualment només hi ha disponible l'opció Individual.",
     'LBL_PDF_TEMPLATE_HELP' => "Plantilla PDF que es farà servir com a document per firmar. La plantilla ha d'estar dissenyada prèviament al mòdul de Plantilles PDF i contenir els camps de firma necessaris.",
