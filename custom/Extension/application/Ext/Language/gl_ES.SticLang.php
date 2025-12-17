@@ -3668,9 +3668,9 @@ $app_list_strings['stic_signatures_status_list'][''] = '';
 $app_list_strings['stic_signatures_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_signatures_status_list']['open'] = 'Abierta';
 $app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanente';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausada';
 $app_list_strings['stic_signatures_status_list']['completed'] = 'Completada';
 $app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelada';
-$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausada';
 
 // Firmas: Métodos de autenticación
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
