@@ -3668,11 +3668,11 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fi de suplanta
 // Firmes: Estat
 $app_list_strings['stic_signatures_status_list'][''] = '';
 $app_list_strings['stic_signatures_status_list']['draft'] = 'Esborrany';
-$app_list_strings['stic_signatures_status_list']['open'] = 'Oberta';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Obert';
 $app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanent';
-$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausada';
-$app_list_strings['stic_signatures_status_list']['completed'] = 'Completada';
-$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancel·lada';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausat';
+$app_list_strings['stic_signatures_status_list']['completed'] = 'Completat';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancel·lat';
 
 // Firmes: Mètodes d'autenticació
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
