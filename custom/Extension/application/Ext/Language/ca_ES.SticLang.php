@@ -3670,9 +3670,9 @@ $app_list_strings['stic_signatures_status_list'][''] = '';
 $app_list_strings['stic_signatures_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_signatures_status_list']['open'] = 'Oberta';
 $app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanent';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausada';
 $app_list_strings['stic_signatures_status_list']['completed'] = 'Completada';
 $app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancel·lada';
-$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausada';
 
 // Firmes: Mètodes d'autenticació
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
@@ -3695,7 +3695,7 @@ $app_list_strings['stic_signatures_modes_list'][''] = '';
 $app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
 $app_list_strings['stic_signatures_modes_list']['button'] = 'Botó';
 
-// Firmas: En nom de...
+// Firmes: En nom de...
 $app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
 $app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, un sol representant';
 $app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, tots els representants';
