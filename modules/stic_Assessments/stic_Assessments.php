@@ -98,19 +98,16 @@ class stic_Assessments extends Basic
                     if ($contactBean->load_relationship('stic_contacts_relationships_contacts')) 
                     {            
                         $contactRelationshipBeans = $contactBean->stic_contacts_relationships_contacts->getBeans();
-                        // if ($contactRelationshipBeans->load_relationship('stic_contacts_relationships_project'))
-                        // {
-                            foreach ($contactRelationshipBeans as $contactRelationshipBean) {
-                                // Deactivate the relationship if it is of a voluntary type and it has the same project as the assessment
-                                if ($contactRelationshipBean->relationship_type == 'volunteer' && $contactRelationshipBean->active 
-                                    && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->project_stic_assessmentsproject_ida) 
-                                {
-                                    $contactRelationshipBean->end_date = $userDateNow->format('Y-m-d');
-                                    $contactRelationshipBean->active = false;
-                                    $contactRelationshipBean->save();
-                                }
+                        foreach ($contactRelationshipBeans as $contactRelationshipBean) {
+                            // Deactivate the relationship if it is of a voluntary type and it has the same project as the assessment
+                            if ($contactRelationshipBean->relationship_type == 'volunteer' && $contactRelationshipBean->active 
+                                && $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->project_stic_assessmentsproject_ida) 
+                            {
+                                $contactRelationshipBean->end_date = $userDateNow->format('Y-m-d');
+                                $contactRelationshipBean->active = false;
+                                $contactRelationshipBean->save();
                             }
-                        // }
+                        }
                     }
                 } else {
                     // If the assessment is volunteering, completed and initial
