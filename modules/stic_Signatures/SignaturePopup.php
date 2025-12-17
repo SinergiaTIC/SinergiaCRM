@@ -65,10 +65,10 @@ class SelectSignatureTemplate
         $db = DBManagerFactory::getInstance();
         $signatures = array();
 
-        $sql = "SELECT id,name FROM stic_signatures WHERE main_module = '" . $module . "' AND deleted = 0 AND status='open' ORDER BY name";
+        $sql = "SELECT id,name, status FROM stic_signatures WHERE main_module = '" . $module . "' AND deleted = 0 ORDER BY date_modified DESC";
         $result = $db->query($sql);
         while ($row = $db->fetchByAssoc($result)) {
-            $signatures[$row['id']] = $row['name'];
+            $signatures[$row['id']] = ['name' => $row['name'], 'status' => $row['status']];
         }
 
         return $signatures;
@@ -96,8 +96,7 @@ class SelectSignatureTemplate
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>('.
-                        $app_strings['LBL_SELECT_SIGNATURE_INFO'].')
+                        <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>
 
                      </div>
                      <div class="modal-body">
@@ -114,7 +113,8 @@ class SelectSignatureTemplate
                                             <td width="17" valign="center"><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
                     '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
                                             <td scope="row" align="left"><b><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
-                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');">' . $signature . '</a></b></td></tr>';
+                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');">' . $signature['name'] . '</a></b></td>
+                    <td>'.$app_list_strings['stic_signatures_status_list'][$signature['status']].'</td></tr>';
                 $iOddEven++;
             }
             echo '</tbody></table>
@@ -178,8 +178,7 @@ class SelectSignatureTemplate
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>('.
-                        $app_strings['LBL_SELECT_SIGNATURE_INFO'].')
+                        <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>
                         
                      </div>
                      <div class="modal-body">
@@ -196,7 +195,8 @@ class SelectSignatureTemplate
                 $js = "$('#popup-div-signature').modal('hide');var form=document.getElementById('signatureForm');if(form!=null){console.log(form);form['signature-id'].value='" . $signatureId . "';form.submit();}else{alert('Error!');}";
                 echo '<tr height="20" class="' . $iOddEvenCls . '">
                                         <td width="17" valign="center"><a href="#" onclick="' . $js . '"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
-                                        <td scope="row" align="left"><b><a href="#" onclick="' . $js . '">' . $signature . '</a></b></td></tr>';
+                                        <td scope="row" align="left"><b><a href="#" onclick="' . $js . '">' . $signature['name'] . '</a></b></td>
+                                        <td>' . $app_list_strings['stic_signatures_status_list'][$signature['status']] . '</td></tr>';
                 $iOddEven++;
             }
             echo '</tbody></table>

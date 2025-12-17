@@ -79,6 +79,7 @@ class stic_SignaturePortal extends SugarView
         $this->ss->assign('SIGNER_ID', $signerBean->id);
 
         $this->ss->assign('STATUS', $signerBean->status);
+        $this->ss->assign('SIGNATURE_STATUS', $signatureBean->status);
 
         // Assign signed PDF URL and download URL if signed
         if ($signerBean->status === 'signed') {
@@ -129,7 +130,7 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('ACTIVATION_MSG', $activationMsg);
         }
 
-        $isClosed = $signatureBean->status === 'closed' ? true : false;
+        $isClosed = in_array($signatureBean->status, ['open', 'permanent']) ? false : true;
         $this->ss->assign('IS_CLOSED', $isClosed);
         if ($isClosed === true) {
             $this->ss->assign('CLOSED_MSG', $mod_strings['LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE']);
@@ -137,7 +138,7 @@ class stic_SignaturePortal extends SugarView
 
 
         // Proceed with authentication only if not expired and activated
-        if ($isExpired === false && $isActivated === true ) {            
+        if ($isExpired === false && $isActivated === true) {
             // Validate authentication mode
             switch ($authMode) {
                 case 'unique_link':
@@ -196,7 +197,7 @@ class stic_SignaturePortal extends SugarView
                     break;
             }
         }
-        
+
         // If authentication passed, get document HTML content
         if ($passed === true) {
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
@@ -204,24 +205,30 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('SIGNER_NAME', $signerBean->parent_name);
 
             $this->ss->assign('SIGNER_VERIFICATION_CODE', $signerBean->verification_code);
-            
 
             // Log the portal opening action
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OPEN_PORTAL_BEFORE_SIGN', $signerBean->id, 'SIGNER');
 
-            // Fetch and assign logs related to the signer
-            $signerLog = stic_SignatureLogUtils::getSignatureLogActions($signerBean->id, 'SIGNER', ['OPEN_PORTAL_BEFORE_SIGN']);
-            if (!empty($signerLog)) {
-                foreach ($signerLog as $index => $logEntry) {
-                    $signerLog[$index]['action'] = $app_list_strings['stic_signature_log_actions'][$logEntry['action']] ?? $logEntry['action'];
-                    $signerLog[$index]['date'] = (new DateTime($logEntry['date'], new DateTimeZone('UTC')))->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('d/m/Y H:i:s');
+            // Show logs only if signature is not closed or if signer has signed
+            if (
+                (
+                    $isClosed === false
+                    || ($isClosed === true && $signerBean->status === 'signed')
+                )
+            ) {
+                // Retrieve and format signer logs
+                $signerLog = stic_SignatureLogUtils::getSignatureLogActions($signerBean->id, 'SIGNER', ['OPEN_PORTAL_BEFORE_SIGN']);
+                if (!empty($signerLog)) {
+                    foreach ($signerLog as $index => $logEntry) {
+                        $signerLog[$index]['action'] = $app_list_strings['stic_signature_log_actions'][$logEntry['action']] ?? $logEntry['action'];
+                        $signerLog[$index]['date'] = (new DateTime($logEntry['date'], new DateTimeZone('UTC')))->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('d/m/Y H:i:s');
+                    }
+                    $this->ss->assign('SHOW_LOGS', true);
+                    $this->ss->assign('SIGNER_LOG', $signerLog);
                 }
-                $this->ss->assign('SIGNER_LOG', $signerLog);
-                $this->ss->assign('SHOW_LOGS', true);
             }
-        }
-        // Customizations for header
+        }        // Customizations for header
         $color = stic_SettingsUtils::getSetting('GENERAL_CUSTOM_THEME_COLOR') ?? '#b5bc31';
         $nameTitle = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME') ?? 'SinergiaCRM';
         $this->ss->assign('HEADER_COLOR', $color);

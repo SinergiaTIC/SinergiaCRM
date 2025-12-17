@@ -232,6 +232,10 @@
                         <i class="bi bi-calendar-x h1"></i>
                         <br>
                         <strong>{$MODS.LBL_PORTAL_ATTENTION}:</strong> {$CLOSED_MSG}
+                        <br>
+                        <small class="text-muted mt-2 d-block">
+                            {$MODS.LBL_STATUS}: {$APP_LIST_STRINGS.stic_signatures_status_list[$SIGNATURE_STATUS]}
+                        </span>
                     </div>
                 </div>
                 {/if}
