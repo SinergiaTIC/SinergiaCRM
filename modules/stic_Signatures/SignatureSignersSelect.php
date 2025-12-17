@@ -143,6 +143,9 @@ foreach ($destSigners as $destSignerId => $destSigner) {
 // Display success or error messages to the user
 if ($okCounter !== 0) {
     SugarApplication::appendSuccessMessage("<p class='label label-success'><strong>{$okCounter}</strong> " . translate('LBL_SIGNERS_ADDED_MSG', 'stic_Signatures') . ".</p>");
+    if(in_array($stic_SignatureBean->status, ['completed', 'cancelled', 'paused'])) {
+        SugarApplication::appendSuccessMessage("<br><p class='label label-warning'>" . translate('LBL_SIGNERS_ADDED_CLOSED_MSG', 'stic_Signatures') . "</p>");
+    }
     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$okCounter} signers added successfully.");
 }
 

@@ -93,6 +93,7 @@ $mod_strings = array(
     'LBL_ACTIVATION_DATE_ERROR' => 'La fecha de activación debe ser anterior a la fecha de caducidad.',
     'LBL_EXPIRATION_DATE_ERROR' => 'La fecha de caducidad debe ser posterior a la fecha de activación.',
     'LBL_SIGNERS_ADDED_MSG' => 'Firmantes añadidos correctamente',
+    'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Aviso: Los nuevos firmantes no podrán firmar el documento porque la firma está en un estado que no lo permite. Por favor, recuerde cambiar su estado a Abierta o Permanente.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos, ya existen o se ha producido un error',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Se ha creado una campaña de notificación para la firma: ',

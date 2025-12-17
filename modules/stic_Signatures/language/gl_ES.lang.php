@@ -93,6 +93,7 @@ $mod_strings = array(
     'LBL_ACTIVATION_DATE_ERROR' => "A data de activación debe ser anterior á data de caducidad.",
     'LBL_EXPIRATION_DATE_ERROR' => "A data de caducidad debe ser posterior á data de activación.",
     'LBL_SIGNERS_ADDED_MSG' => 'Asinantes engadidos correctamente',
+    'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Aviso: Os novos asinantes non poderán asinar o documento porque a sinatura está nun estado que non o permite. Por favor, lembre cambiar o seu estado a Aberta ou Permanente.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Asinantes non engadidos, xa existen ou ocorreu un erro',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Omítese o seguinte rexistro porque non se atoparon asinantes',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Creouse unha campaña de notificación para a sinatura: ',

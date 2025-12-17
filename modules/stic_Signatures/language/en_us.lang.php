@@ -93,6 +93,7 @@ $mod_strings = array(
     'LBL_ACTIVATION_DATE_ERROR' => 'The activation date must be before the expiration date.',
     'LBL_EXPIRATION_DATE_ERROR' => 'The expiration date must be after the activation date.',
     'LBL_SIGNERS_ADDED_MSG' => 'Signers added successfully',
+    'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Notice: New signers will not be able to sign the document because the signature is in a state that does not allow it. Please remember to change its state to Open or Permanent if you want the new signers to be able to sign the document.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Signers not added, already exist or an error occurred.',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'The following record will be skipped because no signers were found.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
