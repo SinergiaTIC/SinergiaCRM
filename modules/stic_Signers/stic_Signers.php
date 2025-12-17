@@ -81,6 +81,10 @@ class stic_Signers extends Basic
 
         // Deactivate other signers for the same signature if needed
         stic_SignersUtils::deactivateOtherSignersForSameSignature($this);
-
+        
+        // Set Signature as completed if there is not any pending signer
+        if ($this->status == 'signed' && $this->fetched_row['status'] == 'pending') {
+            stic_SignersUtils::setSignatureCompletedIfNoPendingSigners($this);
+        }
     }
 }

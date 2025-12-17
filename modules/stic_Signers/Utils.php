@@ -474,6 +474,43 @@ class stic_SignersUtils
     }
 
     /**
+     * Checks if there are any pending signers for the signature associated with the given signer.
+     * If no pending signers are found and the signature is currently 'open',
+     * it updates the signature status to 'completed'.
+     *
+     * @param object $signerBean The bean object of the signer to check.
+     * @return void
+     */
+    public static function setSignatureCompletedIfNoPendingSigners($signerBean)
+    {
+        require_once 'SticInclude/Utils.php';
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+
+        // Only proceed if the signature is currently 'open'
+        if ($signatureBean->status != 'open') {
+            return;
+        }
+
+        // Check if there are any pending signers for this signature
+        $pendingSigners = $signatureBean->get_linked_beans(
+            'stic_signatures_stic_signers',
+            'stic_Signers',
+            '',
+            0,
+            0,
+            0,
+            " stic_signers.status = 'pending' "
+        );
+
+        // If no pending signers, set signature status to 'completed'
+        if (empty($pendingSigners)) {
+            $signatureBean->status = 'completed';
+            $signatureBean->save();
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signature {$signatureBean->id} marked as completed as there are no pending signers.");
+        }
+    }
+
+    /**
      * Deactivates other 'pending' signers for the same signature when one signer
      * has successfully completed the signature process (status changed to 'signed'),
      * specifically for signatures with the 'on behalf of' flag enabled.
