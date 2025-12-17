@@ -3866,11 +3866,22 @@ $app_list_strings['stic_advanced_web_forms_shadow_intensity_list']['sm'] = 'Suti
 $app_list_strings['stic_advanced_web_forms_shadow_intensity_list']['normal'] = 'Normal';
 $app_list_strings['stic_advanced_web_forms_shadow_intensity_list']['lg'] = 'Elevado (flotante)';
 
+// Estilos de campos soportados en los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_input_style_list']['standard'] = 'Estándar (Borde)';
+$app_list_strings['stic_advanced_web_forms_input_style_list']['flat'] = 'Plano (Solo línea)';
+$app_list_strings['stic_advanced_web_forms_input_style_list']['filled'] = 'Relleno (Material)';
+
 // Ancho máximo de los Formularios Web Avanzados
 $app_list_strings['stic_advanced_web_forms_form_width_list']['100%'] = 'Total (100%)';
 $app_list_strings['stic_advanced_web_forms_form_width_list']['1200px'] = 'Muy ancho (1200px)';
 $app_list_strings['stic_advanced_web_forms_form_width_list']['800px'] = 'Estándar (800px)';
 $app_list_strings['stic_advanced_web_forms_form_width_list']['600px'] = 'Estrecho / Móvil (600px)';
+
+// Espaciado entre campos en los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_field_spacing_list']['0rem'] = 'Muy compacto';
+$app_list_strings['stic_advanced_web_forms_field_spacing_list']['0.5rem'] = 'Compacto';
+$app_list_strings['stic_advanced_web_forms_field_spacing_list']['1rem'] = 'Normal';
+$app_list_strings['stic_advanced_web_forms_field_spacing_list']['1.5rem'] = 'Espacioso';
 
 // Estado de los Formularios Web Avanzados
 $app_list_strings['stic_advanced_web_forms_status_list']['draft'] = 'Borrador';

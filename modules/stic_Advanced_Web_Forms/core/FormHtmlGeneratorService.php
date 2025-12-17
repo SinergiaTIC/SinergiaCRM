@@ -94,6 +94,46 @@ class FormHtmlGeneratorService {
         ];
         $shadowVal = $shadows[$theme->shadow_intensity] ?? $shadows['normal'];
 
+        // Spacing and Height
+        $fieldSpacing = $theme->field_spacing ?? '1rem';
+        $sectionHeight = ($theme->equal_height_sections ?? true) ? '100%' : 'auto';
+
+        // Label Weight Bold
+        $labelWeightVal = ($theme->label_weight_bold ?? false) ? '700' : '400';
+
+        // Submit Full Width
+        $submitWidthVal = ($theme->submit_full_width ?? false) ? '100%' : 'auto';
+
+        // Input Style: 'standard', 'flat', 'filled'
+        $inputStyle = $theme->input_style ?? 'standard';
+        $inputCssProps = "";
+        $inputFocusCssProps = "";
+
+        switch ($inputStyle) {
+            case 'flat':
+                $inputCssProps = "
+                    border-width: 0 0 1px 0;
+                    border-radius: 0;
+                    background-color: transparent;
+                    padding-left: 0;
+                ";
+                $inputFocusCssProps = "box-shadow: none; border-bottom-width: 2px;";
+                break;
+            case 'filled':
+                $inputCssProps = "
+                    border-width: 0 0 1px 0;
+                    border-radius: 4px 4px 0 0;
+                    background-color: rgba(0,0,0, 0.04);
+                ";
+                $inputFocusCssProps = "box-shadow: none; background-color: rgba(0,0,0, 0.06); border-bottom-width: 2px;";
+                break;
+            case 'standard':
+            default:
+                $inputCssProps = "";
+                $inputFocusCssProps = "";
+                break;
+        }
+
         return "<style>
 #{$wrapperId} {
   /* Bootstrap Vars */
@@ -116,7 +156,11 @@ class FormHtmlGeneratorService {
   --awf-field-cols: {$fieldCols};
   --awf-field-min-px: {$fieldMinPx};
   --awf-card-radius: {$theme->border_radius_container}px;
-                
+  --awf-field-spacing: {$fieldSpacing};
+  --awf-section-height: {$sectionHeight};
+  --awf-label-weight: {$labelWeightVal};
+  --awf-submit-width: {$submitWidthVal};
+
   /* Base Styles */
   background-color: var(--awf-page-bg);
   font-family: var(--bs-body-font-family);
@@ -284,7 +328,87 @@ class FormHtmlGeneratorService {
   position: relative;
   min-height: 300px;
 }
-            
+
+/* Form Fields */
+#{$wrapperId} .awf-field {
+  margin-bottom: var(--awf-field-spacing);
+}
+
+/* Help Text */
+#{$wrapperId} .awf-help-text {
+  font-size: 0.85em;   /* small */
+  color: #6c757d;    /* text-muted */
+  font-style: italic;  /* fst-italic */
+  margin-top: 0.25rem;
+}
+
+/* Sections */
+#{$wrapperId} .awf-section-card,
+#{$wrapperId} .awf-section-panel {
+  height: var(--awf-section-height);
+}
+
+/* Section Title: Panel */
+#{$wrapperId} .awf-section-title-panel {
+  font-size: 1.25em;      /* h5 */
+  margin-bottom: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+/* Section Title: Card */
+#{$wrapperId} .awf-section-title-card {
+  font-weight: 700;      /* fw-bold */
+  margin: 0;
+}
+
+/* Form Footer */
+#{$wrapperId} .awf-footer {
+  margin-top: 3rem;       /* mt-5 */
+  padding-top: 1rem;      /* pt-3 */
+  border-top: 1px solid var(--bs-border-color);
+  font-size: 0.875em;     /* small */
+  color: #6c757d;       /* text-muted */
+  text-align: center;
+}
+
+/* Required Asterisc */
+#{$wrapperId} .awf-required {
+  color: #dc3545;       /* text-danger */
+  font-weight: bold;
+}
+
+/* Labels */
+#{$wrapperId} label, 
+#{$wrapperId} .form-label, 
+#{$wrapperId} .form-check-label {
+  font-weight: var(--awf-label-weight);
+}
+
+/* Text fields: Inputs / Selects / Textarea */
+#{$wrapperId} .form-control,
+#{$wrapperId} .form-select {
+  {$inputCssProps}
+}
+#{$wrapperId} .form-control:focus,
+#{$wrapperId} .form-select:focus {
+  border-color: var(--bs-primary);
+  {$inputFocusCssProps}
+}
+
+#{$wrapperId} .form-select {
+    " . ($inputStyle !== 'standard' ? "background-position: right 0.75rem center;" : "") . "
+}
+
+/* Submit Button */
+#{$wrapperId} .awf-submit-btn {
+  width: var(--awf-submit-width);
+}
+#{$wrapperId} .awf-submit-container {
+  width: 100%;
+  text-align: " . ($submitWidthVal === '100%' ? 'center' : 'right') . ";
+}
+
 /* User-provided custom CSS */
   {$customCss}
 </style>" ."\r\n".str_repeat('  ', $this->indent);
@@ -376,7 +500,7 @@ class FormHtmlGeneratorService {
                 {
                     $html .= "<div class='awf-overlay-content'>" ."\r\n".str_repeat('  ', ++$this->indent);
                     {
-                        $html .= "<h3 class='h4 text-danger mb-3'>{$closedFormTitle}</h3>" ."\r\n".str_repeat('  ', $this->indent);
+                        $html .= "<h3 class='h4 text-danger awf-field'>{$closedFormTitle}</h3>" ."\r\n".str_repeat('  ', $this->indent);
                         $html .= "<p class='mb-0 lead' x-text='message'>{$closedFormText}</p>" ."\r\n".str_repeat('  ', $this->indent);
                     }
                     $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
@@ -413,17 +537,17 @@ class FormHtmlGeneratorService {
                     {
                         foreach ($layout->structure as $section) {
                             $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
-                            $html .= "<div class='card h-100 {$containerClass}'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                            $html .= "<div class='card {$containerClass}'>" ."\r\n".str_repeat('  ', ++$this->indent);
                             {
                                 if (!empty($section->title)) {
                                     if ($section->containerType === 'panel') {
-                                        $html .= "<div class='p-3 pb-0'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                        $html .= "<div class='awf-section-header-panel'>" ."\r\n".str_repeat('  ', ++$this->indent);
                                         {
-                                            $html .= "<h4 class='h5 mb-0 pb-1 border-bottom'>".htmlspecialchars($section->title)."</h4>" ."\r\n".str_repeat('  ', $this->indent);
+                                            $html .= "<h4 class='awf-section-title-panel'>".htmlspecialchars($section->title)."</h4>" ."\r\n".str_repeat('  ', $this->indent);
                                         }
                                         $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
                                     } else if ($section->containerType === 'card') {
-                                        $html .= "<div class='card-header fw-bold'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                        $html .= "<div class='card-header awf-section-title-card'>" ."\r\n".str_repeat('  ', ++$this->indent);
                                         {
                                             $html .= htmlspecialchars($section->title) ."\r\n".str_repeat('  ', $this->indent);
                                         }
@@ -454,19 +578,15 @@ class FormHtmlGeneratorService {
                     $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent); // End awf-grid-sections
 
                     // Send Button
-                    $html .= "<div class='mt-4 text-end'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    $html .= "<div class='mt-4 awf-submit-container'>" ."\r\n".str_repeat('  ', ++$this->indent);
                     {
                         $btnText = htmlspecialchars($layout->submit_button_text);
-                        $html .= "<div class='mt-4 text-end'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                        $html .= "<button type='submit' class='btn btn-primary px-4 py-2 awf-submit-btn' :disabled='submitting' :class=\"{'disabled': submitting}\">" ."\r\n".str_repeat('  ', ++$this->indent);
                         {
-                            $html .= "<button type='submit' class='btn btn-primary px-4 py-2' :disabled='submitting' :class=\"{'disabled': submitting}\">" ."\r\n".str_repeat('  ', ++$this->indent);
-                            {
-                                $html .= "<span x-show='submitting' class='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' style='display: none;'></span>" ."\r\n".str_repeat('  ', $this->indent);
-                                $html .= "<span>{$btnText}</span>" ."\r\n".str_repeat('  ', $this->indent);
-                            }
-                            $html .= "</button>" ."\r\n".str_repeat('  ', --$this->indent);
+                            $html .= "<span x-show='submitting' class='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' style='display: none;'></span>" ."\r\n".str_repeat('  ', $this->indent);
+                            $html .= "<span>{$btnText}</span>" ."\r\n".str_repeat('  ', $this->indent);
                         }
-                        $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                        $html .= "</button>" ."\r\n".str_repeat('  ', --$this->indent);
                     }
                     $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
                 }
@@ -497,16 +617,15 @@ class FormHtmlGeneratorService {
         $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
-        $asterisk = $field->required_in_form ? ' *' : '';
-        $asterisk = $asterisk != '' ? " <span class='text-danger'>{$asterisk}</span>" : '';
+        $asterisk = $field->required_in_form ? " <span class='awf-required'>*</span>" : '';
         $description = '';
         if ($field->description != '') {
-            $description = "<div class='form-text text-muted extra-small fst-italic ps-1 mt-0'>{$field->description}</div>";
+            $description = "<div class='awf-help-text'>{$field->description}</div>";
         }
 
         // Checkbox has its own representation
         if ($field->subtype_in_form === 'select_checkbox') {
-            $html = "<div class='form-check mb-3'>" ."\r\n".str_repeat('  ', ++$this->indent);
+            $html = "<div class='form-check awf-field'>" ."\r\n".str_repeat('  ', ++$this->indent);
             {
                 $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
                 $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
@@ -517,7 +636,7 @@ class FormHtmlGeneratorService {
         }
         // Switch has its own representation
         if ($field->subtype_in_form === 'select_switch') {
-            $html = "<div class='form-check form-switch mb-3'>" ."\r\n".str_repeat('  ', ++$this->indent);
+            $html = "<div class='form-check form-switch awf-field'>" ."\r\n".str_repeat('  ', ++$this->indent);
             {
                 $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
                 $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
@@ -536,7 +655,7 @@ class FormHtmlGeneratorService {
         // Placeholder is required in Floating labels
         $placeholder = $isFloating ? ($placeholder ?: '...') : $placeholder; 
 
-        $wrapperClass = $isFloating ? 'form-floating mb-3' : 'mb-3';
+        $wrapperClass = $isFloating ? 'form-floating awf-field' : 'awf-field';
         $html = "<div class='{$wrapperClass}'>" ."\r\n".str_repeat('  ', ++$this->indent);
         {
             $controlHtml = "";

@@ -43,6 +43,11 @@ class FormTheme {
     public string $shadow_intensity = 'normal';
     public int $sections_per_row = 1;
     public int $fields_per_row = 2;
+    public string $field_spacing = '1rem';
+    public bool $equal_height_sections = true;
+    public bool $label_weight_bold = false;
+    public bool $submit_full_width = false;
+    public string $input_style = 'standard'; // 'standard', 'flat', 'filled'
 
     public static function fromJsonArray(FormLayout $layout, array $data): self {
         $dto = new self();

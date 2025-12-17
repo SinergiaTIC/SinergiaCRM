@@ -60,6 +60,13 @@
                         <input id="theme-text_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.text_color"
                                :value="formConfig.layout.theme.text_color" :style="`background-color: ${formConfig.layout.theme.text_color}`">
                     </div>
+                    <!-- label_weight_bold -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-label_weight_bold" x-model="formConfig.layout.theme.label_weight_bold">
+                            <label class="form-check-label small" for="theme-label_weight_bold" x-text="utils.translate('LBL_THEME_LABEL_WEIGHT_BOLD')"></label>
+                        </div>
+                    </div>
                     <!-- floating_labels -->
                     <div class="mb-3">
                         <div class="form-check form-switch">
@@ -120,6 +127,15 @@
                             </template>
                         </select>
                     </div>
+                    <!-- input_style -->
+                    <div class="mb-3">
+                        <label for="theme-input_style" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_INPUT_STYLE')"></label>
+                        <select id="theme-input_style" class="form-select" x-model="formConfig.layout.theme.input_style">
+                            <template x-for="item in AWF_Theme.input_style_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.input_style"></option>
+                            </template>
+                        </select>
+                    </div>   
                 </div>
             </details>
 
@@ -135,7 +151,7 @@
                                 <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.form_width"></option>
                             </template>
                         </select>
-                    </div>  
+                    </div>
                     <!-- sections_per_row -->
                     <div class="mb-3">
                         <label for="theme-sections_per_row" class="form-label small d-flex justify-content-between mb-1">
@@ -164,6 +180,32 @@
                     <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
                         <i class="suitepicon suitepicon-action-info me-1"></i>
                         <span x-text="utils.translate('LBL_THEME_PER_ROW_DESC')"></span>
+                    </div>
+                    <!-- Separator -->
+                    <hr class="text-muted">
+                    <!-- field_spacing -->
+                    <div class="mb-3">
+                        <label for="theme-field_spacing" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FIELD_SPACING')"></label>
+                        <select id="theme-form_width" class="form-select" x-model="formConfig.layout.theme.field_spacing">
+                            <template x-for="item in AWF_Theme.field_spacing_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.field_spacing"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <!-- equal_height_sections -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-equal_height_sections" x-model="formConfig.layout.theme.equal_height_sections">
+                            <label class="form-check-label small" for="theme-equal_height_sections" x-text="utils.translate('LBL_THEME_EQUAL_HEIGHT_SECTIONS')"></label>
+                        </div>
+                    </div>
+                    <!-- submit_full_width -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-submit_full_width" x-model="formConfig.layout.theme.submit_full_width"
+                                   :true-value="'full'" :false-value="'auto'">
+                            <label class="form-check-label small" for="theme-submit_full_width" x-text="utils.translate('LBL_THEME_SUBMIT_FULL_WIDTH')"></label>
+                        </div>
                     </div>
                 </div>
             </details>

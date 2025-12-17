@@ -844,6 +844,12 @@ class AWF_Theme {
       // Estructura (Grid)
       sections_per_row: 1,         // Secciones por fila (1, 2 o 3)
       fields_per_row: 2,           // Campos por fila (1, 2, 3 o 4)
+
+      field_spacing: '1rem',       // Espaciado entre campos
+      equal_height_sections: true, // Indica si las secciones tendrán el mismo alto
+      label_weight_bold: false,    // Negrita en las etiquetas
+      submit_full_width: false,    // Ancho total del botón de enviar
+      input_style: 'standard',     // Estilo de los campos: 'standard', 'flat', 'filled'
     });
 
     // 2. Sobreescriure amb dades
@@ -857,12 +863,26 @@ class AWF_Theme {
     return AWF_Theme.shadow_intensity_in_formList().find(i => i.id == this.shadow_intensity)?.text;  
   }
 
+  static input_style_in_formList(asString = false){
+    return utils.getList("stic_advanced_web_forms_input_style_list", asString);
+  }
+  get input_style_in_formText(){
+    return AWF_Theme.input_style_in_formList().find(i => i.id == this.input_style)?.text;  
+  }
+
   static form_width_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_form_width_list", asString);
   }
   get form_width_in_formText(){
     return AWF_Theme.form_width_in_formList().find(i => i.id == this.form_width)?.text;  
-  }  
+  }
+
+  static field_spacing_in_formList(asString = false){
+    return utils.getList("stic_advanced_web_forms_field_spacing_list", asString);
+  }
+  get field_spacing_in_formText(){
+    return AWF_Theme.field_spacing_in_formList().find(i => i.id == this.field_spacing)?.text;  
+  }
 }
 
 /**
@@ -1136,12 +1156,22 @@ class AWF_Configuration {
       module: moduleName,
     });
 
-    // Set initial fields
-    for (const [key, value] of Object.entries(module.fields)) {
-      if (value.required) {
-        dataBlock.addFieldFromModuleField(value);
-        if (value.type != 'relate') {
-          dataBlock.addDuplicateDetectionFromModuleField(value);
+    // Set initial fields 
+    let hasRequiredRelate = false;
+    for (const field of Object.values(module.fields)) {
+      if (field.required && field.type === 'relate') {
+        hasRequiredRelate = true;
+      }
+      if (field.required) {
+        dataBlock.addFieldFromModuleField(field);
+      }
+    }
+
+    // Add Duplicate detection (only if there are not relate required)
+    if (!hasRequiredRelate) {
+      for (const field of Object.values(module.fields)) {
+        if (field.required) {
+          dataBlock.addDuplicateDetectionFromModuleField(field);
         }
       }
     }
