@@ -41,6 +41,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
+require_once 'SticInclude/Utils.php';
+
 // Opportunity is used to store customer information.
 #[\AllowDynamicProperties]
 class Opportunity extends SugarBean
@@ -374,6 +376,12 @@ class Opportunity extends SugarBean
         perform_save($this);
         // TODOEPS (add STIC)
         // return parent::save($check_notify);
+        $oldAmount = SticUtils::unformatDecimal($tempFetchedRow['stic_amount_awarded_c'] ?? null);
+        $newAmount = SticUtils::unformatDecimal($this->stic_amount_awarded_c);
+        if ($oldAmount !== null && $newAmount !== $oldAmount) {
+            $this->justified_percentage_c = formatDecimalInConfigSettings(($this->stic_amount_awarded_c > 0) ? (SticUtils::unformatDecimal($this->justified_amount_c) / $newAmount) * 100 : 0, true);
+        }
+
         parent::save($check_notify);
 
         if ($this->justificationDatesChanged($tempFetchedRow)) {

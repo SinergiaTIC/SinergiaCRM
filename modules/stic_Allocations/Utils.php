@@ -79,9 +79,9 @@ class stic_AllocationsUtils {
         return true;
     }
 
-    public static function updatePayment($allocationBean) {
+    public static function updatePayment($paymentId) {
         // retrieve payment linked to the allocation
-        $paymentBean = BeanFactory::getBean('stic_Payments', $allocationBean->stic_payments_stic_aleb9a);
+        $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
         if ($paymentBean) {
             require_once 'modules/stic_Payments/Utils.php';
             stic_PaymentsUtils::updateAllocationPercentage($paymentBean);

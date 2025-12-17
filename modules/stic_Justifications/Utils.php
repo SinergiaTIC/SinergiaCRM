@@ -21,9 +21,29 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+require_once 'SticInclude/Utils.php';
 
 class stic_JustificationsUtils {
 
+    public static function updateRelatedOpportunity($opportunityId) {
+        $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
+        if ($opportunity) {
+            $db = DBManagerFactory::getInstance();
+            $sql = "
+                SELECT sum(justified_amount) as amount
+                FROM stic_justifications sj 
+                JOIN opportunities_stic_justifications_c osjc on osjc.opportunit46ecations_idb = sj.id
+                WHERE sj.deleted = 0
+                AND osjc.deleted = 0
+                AND osjc.opportunit01eunities_ida = '{$opportunity->id}'
+            ";
+
+            $amount = $db->getOne($sql);
+            $opportunity->justified_amount_c = formatDecimalInConfigSettings($amount, true);
+            $opportunity->justified_percentage_c = formatDecimalInConfigSettings(($opportunity->stic_amount_awarded_c > 0) ? ($amount / SticUtils::unformatDecimal($opportunity->stic_amount_awarded_c)) * 100 : 0, true);
+            $opportunity->save();
+        }
+    }
 
     public static function reviewJustificationsFromAllocation($allocation) {
 

@@ -154,7 +154,7 @@ class stic_Allocations extends Basic
         if ($isValidated && !$tempFetchedRow['validated']) {
             // Allocation has been validated now
             stic_JustificationsUtils::createJustificationsFromAllocation($this); 
-            stic_AllocationsUtils::updatePayment($this);
+            stic_AllocationsUtils::updatePayment($this->stic_payments_stic_aleb9a);
         }
         else if ($tempFetchedRow['validated'] && !$isValidated) {
             // Allocation has been un-validated now
@@ -164,7 +164,7 @@ class stic_Allocations extends Basic
             stic_JustificationsUtils::reviewJustificationsFromAllocation($this);
         }
         if ($amountChanged) {
-            stic_AllocationsUtils::updatePayment($this);
+            stic_AllocationsUtils::updatePayment($this->stic_payments_stic_aleb9a);
         }
     }
 
@@ -213,5 +213,14 @@ class stic_Allocations extends Basic
             // Set the name by joining parts with a hyphen
             $this->name = implode(' - ', $nameParts);
         }
+    }
+
+    public function mark_deleted($id) {
+        $paymentId = $this->stic_payments_stic_aleb9a;
+
+        parent::mark_deleted($id);
+
+        stic_AllocationsUtils::updatePayment($paymentId);
+
     }
 }

@@ -79,6 +79,11 @@ class stic_Justifications extends Basic
         // Save the bean
         parent::save($check_notify);
 
+        if (!$tempFetchedRow || $tempFetchedRow['justified_amount'] !== $this->justified_amount) {
+            // If amount changed, update related allocations
+            stic_JustificationsUtils::updateRelatedOpportunity($this->opportunit01eunities_ida);
+        }
+
     }
 
         /**
@@ -95,5 +100,12 @@ class stic_Justifications extends Basic
         }
     }
 
+    public function mark_deleted($id) {
+        $opportunityId = $this->opportunit01eunities_ida;
+
+        parent::mark_deleted($id);
+
+        stic_JustificationsUtils::updateRelatedOpportunity($opportunityId);
+    }
 
 }
