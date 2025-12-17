@@ -646,6 +646,10 @@ $sugar_config = array(
     'stic_remote_monitor_memory_threshold' => null,
     // END STIC
 
+    // STIC-Custom 20251216 AAM - Add new parameter for update process
+    'stic_update_maintenance_mode' => false,
+    // END STIC
+
     // STIC Custom 20241016 ART - Tracker prune interval for the Scheduler
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
     // Delete from the tracker table the records of the days prior to the ones configured in config

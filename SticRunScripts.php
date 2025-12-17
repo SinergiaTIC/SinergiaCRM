@@ -96,8 +96,6 @@ function executeSQLFile($connection, $file)
     }
 }
 
-
-
 // ******* SCRIPT *******
 // This script runs either the script indicated in the request 
 // or all scripts and migrations in the SticUpdates/Scripts/ and SticUpdates/Migrations/ folders.
@@ -106,6 +104,11 @@ include ('include/MVC/preDispatch.php');
 $startTime = microtime(true);
 require_once('include/entryPoint.php');
 ob_start();
+
+// Preventing script from running if maitenance mode for updates is disabled in config.php
+if (isset($sugar_config['stic_update_maintenance_mode']) && $sugar_config['stic_update_maintenance_mode'] === false) {
+    die("The script cannot be run because the parameter stic_update_maintenance_mode is set to false in config.php");
+}
 
 // Checks if a file has been indicated in the request, if it exists in the file system and executes it
 if (isset($_REQUEST['file'])) {
