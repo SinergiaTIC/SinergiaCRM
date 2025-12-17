@@ -107,32 +107,91 @@ class FormHtmlGeneratorService {
         // Input Style: 'standard', 'flat', 'filled'
         $inputStyle = $theme->input_style ?? 'standard';
         $inputCssProps = "";
+        $selectCssProps = "";
         $inputFocusCssProps = "";
+        $floatingLabelFix = "";
 
         switch ($inputStyle) {
             case 'flat':
                 $inputCssProps = "
-                    border-width: 0 0 1px 0;
-                    border-radius: 0;
-                    background-color: transparent;
-                    padding-left: 0;
+  border-width: 0 0 1px 0;
+  border-radius: 0;
+  background-color: transparent;
+  padding-left: 0;
                 ";
                 $inputFocusCssProps = "box-shadow: none; border-bottom-width: 2px;";
+                $floatingLabelFix = "background-color: transparent !important;";
+                $selectCssProps = "background-position: right 0.75rem center;";
                 break;
             case 'filled':
                 $inputCssProps = "
-                    border-width: 0 0 1px 0;
-                    border-radius: 4px 4px 0 0;
-                    background-color: rgba(0,0,0, 0.04);
+  border-width: 0 0 1px 0;
+  border-radius: 4px 4px 0 0;
+  background-color: rgba(0,0,0, 0.04);
                 ";
                 $inputFocusCssProps = "box-shadow: none; background-color: rgba(0,0,0, 0.06); border-bottom-width: 2px;";
+                $floatingLabelFix = "background-color: transparent !important;";
+                $selectCssProps = "background-position: right 0.75rem center;";
                 break;
             case 'standard':
             default:
                 $inputCssProps = "";
                 $inputFocusCssProps = "";
+                $floatingLabelFix = "";
                 break;
         }
+
+        if ($inputCssProps!="") {
+            $inputCssProps = "/* Text fields: Inputs / Selects / Textarea */
+#{$wrapperId} .form-control,
+#{$wrapperId} .form-select {
+{$inputCssProps}
+}
+            ";
+        }
+        if ($selectCssProps!="") {
+            $selectCssProps = "#{$wrapperId} .form-select { 
+  {$selectCssProps}
+}
+            ";
+        }
+        if ($floatingLabelFix!="") {
+            $floatingLabelFix = "#{$wrapperId} .form-floating > .form-control:focus ~ label::after,
+#{$wrapperId} .form-floating > .form-control:not(:placeholder-shown) ~ label::after,
+#{$wrapperId} .form-floating > .form-select ~ label::after {
+{$floatingLabelFix}
+}
+            ";
+        }
+
+        // Icons
+        $iconRules = $this->getSvgIconsData();
+        $iconCss = implode("\n", $iconRules);
+        $iconCss = str_replace('%WRAPPER_ID%', $wrapperId, $iconCss);
+        $browserIconFix = "
+/* Hide native Webkit icons (Chrome/Edge/Safari) */
+#{$wrapperId} .awf-icon-date::-webkit-calendar-picker-indicator,
+#{$wrapperId} .awf-icon-date-time::-webkit-calendar-picker-indicator,
+#{$wrapperId} .awf-icon-date-datetime::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 75%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+  z-index: 10;
+}
+        
+#{$wrapperId} .awf-icon-date, 
+#{$wrapperId} .awf-icon-date-time, 
+#{$wrapperId} .awf-icon-date-datetime {
+  position: relative; 
+}
+";
 
         return "<style>
 #{$wrapperId} {
@@ -178,7 +237,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .input-group-text, 
 #{$wrapperId} .form-check-input,
 #{$wrapperId} .form-check-label {
-  font-size: 1em; /* 100% de la mida configurada al wrapper */
+  font-size: 1em;
 }
 #{$wrapperId} .form-control:focus,
 #{$wrapperId} .form-select:focus,
@@ -201,9 +260,7 @@ class FormHtmlGeneratorService {
   --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
   color: var(--bs-btn-color);
 }
-#{$wrapperId} .btn-primary:hover { 
-  filter: brightness(0.9); 
-}
+#{$wrapperId} .btn-primary:hover { filter: brightness(0.9); }
 #{$wrapperId} .btn-primary:active, 
 #{$wrapperId} .btn-primary.active { 
   filter: brightness(0.85);
@@ -218,22 +275,11 @@ class FormHtmlGeneratorService {
 #{$wrapperId} h6, #{$wrapperId} .h6 { font-size: 1em; }
             
 /* Specific settings */
-#{$wrapperId} .form-label {
-  margin-bottom: 0;
-}
-#{$wrapperId} .btn {
-  border-radius: var(--bs-border-radius);
-}
-#{$wrapperId} .card-header {
-  font-size: 1em;
-}
-#{$wrapperId} .form-text,
-#{$wrapperId} .small {
-  font-size: 0.85em;
-}
-#{$wrapperId} .extra-small {
-  font-size: 0.75em;
-}
+#{$wrapperId} .form-label { margin-bottom: 0; }
+#{$wrapperId} .btn { border-radius: var(--bs-border-radius); }
+#{$wrapperId} .card-header { font-size: 1em; }
+#{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; }
+#{$wrapperId} .extra-small { font-size: 0.75em; }
 
 /* Main Card */
 #{$wrapperId} .awf-main-card {
@@ -266,29 +312,6 @@ class FormHtmlGeneratorService {
   z-index: 1050;
   pointer-events: none; 
   user-select: none;
-}
-
-/* Sections */
-#{$wrapperId} .awf-section-card {
-  background-color: var(--bs-body-bg);
-  border: 1px solid var(--bs-border-color);
-  border-radius: calc(var(--awf-card-radius) - 2px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-}
-/* Header Sections */
-#{$wrapperId} .awf-section-card .card-header {
-  background-color: rgba(0, 0, 0, 0.03);
-  color: var(--bs-body-color);
-  font-weight: bold;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-#{$wrapperId} .awf-section-card .card-header:first-child {
-  border-radius: var(--awf-card-radius) var(--awf-card-radius) 0 0;
-}
-#{$wrapperId} .awf-section-panel {
-  border: none;
-  background: transparent;
-  box-shadow: none;
 }
 
 /* Grids */
@@ -343,8 +366,27 @@ class FormHtmlGeneratorService {
 }
 
 /* Sections */
-#{$wrapperId} .awf-section-card,
+#{$wrapperId} .awf-section-card {
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: calc(var(--awf-card-radius) - 2px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  height: var(--awf-section-height);
+}
+/* Header Sections */
+#{$wrapperId} .awf-section-card .card-header {
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--bs-body-color);
+  font-weight: bold;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+#{$wrapperId} .awf-section-card .card-header:first-child {
+  border-radius: var(--awf-card-radius) var(--awf-card-radius) 0 0;
+}
 #{$wrapperId} .awf-section-panel {
+  border: none;
+  background: transparent;
+  box-shadow: none;
   height: var(--awf-section-height);
 }
 
@@ -385,20 +427,14 @@ class FormHtmlGeneratorService {
   font-weight: var(--awf-label-weight);
 }
 
-/* Text fields: Inputs / Selects / Textarea */
-#{$wrapperId} .form-control,
-#{$wrapperId} .form-select {
-  {$inputCssProps}
-}
+{$inputCssProps}
 #{$wrapperId} .form-control:focus,
 #{$wrapperId} .form-select:focus {
   border-color: var(--bs-primary);
-  {$inputFocusCssProps}
+{$inputFocusCssProps}
 }
-
-#{$wrapperId} .form-select {
-    " . ($inputStyle !== 'standard' ? "background-position: right 0.75rem center;" : "") . "
-}
+{$selectCssProps}
+{$floatingLabelFix}
 
 /* Submit Button */
 #{$wrapperId} .awf-submit-btn {
@@ -410,7 +446,11 @@ class FormHtmlGeneratorService {
 }
 
 /* User-provided custom CSS */
-  {$customCss}
+{$customCss}
+
+/* Icons */
+{$iconCss}
+{$browserIconFix}
 </style>" ."\r\n".str_repeat('  ', $this->indent);
     }
 
@@ -514,10 +554,10 @@ class FormHtmlGeneratorService {
 
                 if ($isPreview) {
                     // In preview: deactivate submit action and show alert
-                    $formAttributes = 'action="#" onsubmit="event.preventDefault(); alert(\''.translate('LBL_PREVIEW_MODE_ALERT', 'stic_Advanced_Web_Forms').'\'); return false;"';
+                    $formAttributes = 'action="#" autocomplete="off" onsubmit="event.preventDefault(); alert(\''.translate('LBL_PREVIEW_MODE_ALERT', 'stic_Advanced_Web_Forms').'\'); return false;"';
                     $alpineSubmit = "";
                 } else {
-                    $formAttributes = "action='{$actionUrl}' method='POST'";
+                    $formAttributes = "action='{$actionUrl}' method='POST' autocomplete='off'";
                     $alpineSubmit = "@submit.prevent='submitForm(\$el)'";
                 }
 
@@ -618,12 +658,15 @@ class FormHtmlGeneratorService {
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
         $asterisk = $field->required_in_form ? " <span class='awf-required'>*</span>" : '';
+
         $description = '';
         if ($field->description != '') {
             $description = "<div class='awf-help-text'>{$field->description}</div>";
         }
 
-        // Checkbox has its own representation
+        // --- SPECIAL CASES (Single Checkbox / Switch) with own representation ---
+
+        // Single Checkbox 
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field'>" ."\r\n".str_repeat('  ', ++$this->indent);
             {
@@ -634,7 +677,7 @@ class FormHtmlGeneratorService {
             $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
             return $html;
         }
-        // Switch has its own representation
+        // Single Switch
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field'>" ."\r\n".str_repeat('  ', ++$this->indent);
             {
@@ -646,46 +689,96 @@ class FormHtmlGeneratorService {
             return $html;
         }
 
+        // --- COMMON CASES ---
+
         $placeholder = htmlspecialchars($field->placeholder ?? '');
         $isFloating = $theme->floating_labels && 
-                      $field->subtype_in_form !== 'select_checkbox' && 
-                      $field->subtype_in_form !== 'select_switch' &&
-                      $field->subtype_in_form !== 'select_checkbox_list' &&
-                      $field->subtype_in_form !== 'select_radio';
+                      $field->subtype_in_form !== 'select_checkbox_list' && 
+                      $field->subtype_in_form !== 'select_radio' &&
+                      $field->subtype_in_form !== 'select_multiple';
+
         // Placeholder is required in Floating labels
         $placeholder = $isFloating ? ($placeholder ?: '...') : $placeholder; 
-
         $wrapperClass = $isFloating ? 'form-floating awf-field' : 'awf-field';
+
         $html = "<div class='{$wrapperClass}'>" ."\r\n".str_repeat('  ', ++$this->indent);
         {
             $controlHtml = "";
+
+            // Text Areas
             if ($field->type_in_form == 'textarea') {
                 $controlHtml .= "<textarea name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' style='height: 100px' {$requiredAttr}></textarea>";
+
+            // Selects & Lists
             } else if ($field->type_in_form == 'select') {
-                // TODO: Review select sub_types 
-                // $field->subtype_in_form: 'select', 'select_multiple', 'select_checkbox_list', 'select_radio', 'select_checkbox', 'select_switch'
-                $controlHtml .= "<select name='{$inputName}' class='form-select' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', ++$this->indent);
-                $controlHtml .= "<option value='' selected></option>" ."\r\n".str_repeat('  ', $this->indent);
-                foreach ($field->value_options as $opt) {
-                    if ($opt->is_visible) {
-                        $val = htmlspecialchars($opt->value);
-                        $txt = htmlspecialchars($opt->text);
-                        $controlHtml .= "<option value='{$val}'>{$txt}</option>" ."\r\n".str_repeat('  ', $this->indent);
+                // Radio & Checkbox lists
+                if ($field->subtype_in_form === 'select_radio' || $field->subtype_in_form === 'select_checkbox_list') {
+                    $inputType = ($field->subtype_in_form === 'select_radio') ? 'radio' : 'checkbox';
+                    $isMulti = ($inputType === 'checkbox');
+                    $finalName = $inputName . ($isMulti ? '[]' : ''); // If multiple, name is array (ex: names[])
+
+                    $controlHtml .= "<div class='awf-option-group pt-1'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    {
+                        foreach ($field->value_options as $opt) {
+                            if ($opt->is_visible) {
+                                $val = htmlspecialchars($opt->value);
+                                $txt = htmlspecialchars($opt->text);
+                                $optId = "f_{$inputName}_" . preg_replace('/[^a-zA-Z0-9]/', '', $val); 
+                                $req = ($requiredAttr && !$isMulti) ? 'required' : '';  // Note: 'required' in checkboxes groups is complex in pure HTML5. 
+
+                                $controlHtml .= "<div class='form-check'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                {
+                                    $controlHtml .= "<input type='{$inputType}' name='{$finalName}' id='{$optId}' value='{$val}' class='form-check-input' {$req}>" ."\r\n".str_repeat('  ', $this->indent);
+                                    $controlHtml .= "<label class='form-check-label' for='{$optId}'>{$txt}</label>" ."\r\n".str_repeat('  ', $this->indent);
+                                }
+                                $controlHtml .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                            }
+                        }
                     }
+                    $controlHtml .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+
+                } 
+                // Select && Select muliple
+                else {
+                    $isMultipleSelect = ($field->subtype_in_form === 'select_multiple');
+                    $finalName = $inputName . ($isMultipleSelect ? '[]' : '');
+                    $multipleAttr = $isMultipleSelect ? 'multiple' : '';
+                    
+                    $controlHtml .= "<select name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$requiredAttr}>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    {
+                        // Empty option only if not muliple
+                        if (!$isMultipleSelect) {
+                            $controlHtml .= "<option value='' selected></option>" ."\r\n".str_repeat('  ', $this->indent);
+                        }
+                        // Other options
+                        foreach ($field->value_options as $opt) {
+                            if ($opt->is_visible) {
+                                $val = htmlspecialchars($opt->value);
+                                $txt = htmlspecialchars($opt->text);
+                                $controlHtml .= "<option value='{$val}'>{$txt}</option>" ."\r\n".str_repeat('  ', $this->indent);
+                            }
+                        }
+                    }
+                    $controlHtml .= "</select>" ."\r\n".str_repeat('  ', --$this->indent);
                 }
-                $controlHtml .= "</select>" ."\r\n".str_repeat('  ', --$this->indent);
+
+            // Inputs
             } else {
                 $controlType = 'text';
+                $autocomplete = 'off';
+
                 switch ($field->subtype_in_form) {
                     case 'text_email': $controlType = 'email'; break;
                     case 'text_tel': $controlType = 'tel'; break;
-                    case 'text_password': $controlType = 'password'; break;
+                    case 'text_password': $controlType = 'password'; $autocomplete = 'new-password'; break;
                     case 'number': $controlType = 'number'; break;
                     case 'date': $controlType = 'date'; break;
                     case 'date_time': $controlType = 'time'; break;
                     case 'date_datetime': $controlType = 'datetime-local'; break;
                 }
-                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
+                $iconClass = $this->getIconClass($field->subtype_in_form);
+                $cssClasses = 'form-control ' . ($iconClass ?? '');
+                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
             }
 
             if ($isFloating) {
@@ -763,4 +856,52 @@ class FormHtmlGeneratorService {
         // If it is fosc (<128), white text. If it is clear, black text.
         return ($yiq >= 128) ? '#000000' : '#ffffff';
     }
+
+    /**
+     * Gets the css class name for the control
+     */
+    private function getIconClass(string $subtype): ?string {
+        $icons = ['text_email', 'text_tel', 'text_password', 'number', 'date', 'date_time', 'date_datetime'];
+        if (in_array($subtype, $icons)) {
+            return 'awf-icon-' . str_replace('_', '-', $subtype);
+        }
+        return null;
+    }
+
+    private function getSvgIconsData(): array {
+        // Icon color
+        $hexColor = '#adb5bd'; 
+        $hexColor = '#6c757d';
+        
+        $definitions = [
+            'text_email' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/></svg>',
+            'text_tel' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/></svg>',
+            'text_password' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5v-5a2.5 2.5 0 0 1 2-2.45V4a4 4 0 0 1 4-4M4.5 7A1.5 1.5 0 0 0 3 8.5v5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 11.5 7zM8 1a3 3 0 0 0-3 3v2h6V4a3 3 0 0 0-3-3"/></svg>',
+            'number' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hash" viewBox="0 0 16 16"><path d="M8.39 12.648a1 1 0 0 0-.015.18c0 .305.21.508.5.508.266 0 .492-.172.555-.477l.554-2.703h1.204c.421 0 .617-.234.617-.547 0-.312-.188-.53-.617-.53h-.985l.516-2.524h1.265c.43 0 .618-.227.618-.547 0-.313-.188-.524-.618-.524h-1.046l.476-2.304a1 1 0 0 0 .016-.164.51.51 0 0 0-.516-.516.54.54 0 0 0-.539.43l-.523 2.554H7.617l.477-2.304c.008-.04.015-.118.015-.164a.51.51 0 0 0-.523-.516.54.54 0 0 0-.531.43L6.53 5.484H5.414c-.43 0-.617.22-.617.532s.187.539.617.539h.906l-.515 2.523H4.609c-.421 0-.609.219-.609.531s.188.547.61.547h.976l-.516 2.492c-.008.04-.015.125-.015.18 0 .305.21.508.5.508.265 0 .492-.172.554-.477l.555-2.703h2.242zm-1-6.109h2.266l-.515 2.563H6.859l.532-2.563z"/></svg>',
+            'date' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>',
+            'date_time' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg>',
+        ];
+        $definitions['date_datetime'] = $definitions['date'];
+
+        $cssRules = [];
+        foreach ($definitions as $type => $svg) {
+            $svgColored = str_replace('currentColor', $hexColor, $svg);
+            $encoded = base64_encode($svgColored);
+            $className = 'awf-icon-' . str_replace('_', '-', $type);
+            $dataUri = "data:image/svg+xml;base64,{$encoded}";
+            
+            // CSS definition
+            $cssRules[] = "
+#%WRAPPER_ID% .{$className} {
+  background-image: url(\"{$dataUri}\");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem 1rem;
+  padding-right: 2.5rem !important;
+}";
+        }
+
+        return $cssRules;
+    }
+
 }

@@ -60,6 +60,22 @@
                         <input id="theme-text_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.text_color"
                                :value="formConfig.layout.theme.text_color" :style="`background-color: ${formConfig.layout.theme.text_color}`">
                     </div>
+                </div>
+            </details>
+
+            <!-- Fields and labels -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_FIELDS_LABELS')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- input_style -->
+                    <div class="mb-3">
+                        <label for="theme-input_style" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_INPUT_STYLE')"></label>
+                        <select id="theme-input_style" class="form-select" x-model="formConfig.layout.theme.input_style">
+                            <template x-for="item in AWF_Theme.input_style_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.input_style"></option>
+                            </template>
+                        </select>
+                    </div>
                     <!-- label_weight_bold -->
                     <div class="mb-3">
                         <div class="form-check form-switch">
@@ -127,15 +143,6 @@
                             </template>
                         </select>
                     </div>
-                    <!-- input_style -->
-                    <div class="mb-3">
-                        <label for="theme-input_style" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_INPUT_STYLE')"></label>
-                        <select id="theme-input_style" class="form-select" x-model="formConfig.layout.theme.input_style">
-                            <template x-for="item in AWF_Theme.input_style_in_formList()" :key="item.id">
-                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.input_style"></option>
-                            </template>
-                        </select>
-                    </div>   
                 </div>
             </details>
 

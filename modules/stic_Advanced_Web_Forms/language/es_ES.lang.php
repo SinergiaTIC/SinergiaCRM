@@ -269,6 +269,7 @@ $mod_strings = array (
   'LBL_THEME_FONT_FAMILY' => 'Fuente',
   'LBL_THEME_FONT_SIZE' => 'Tamaño',
   'LBL_THEME_TEXT_COLOR' => 'Color',
+  'LBL_THEME_FIELDS_LABELS' => 'Campos y etiquetas',
   'LBL_THEME_BORDERS' => 'Bordes y sombras',
   'LBL_THEME_BORDER_RADIUS_CONTAINER' => 'Redondeo (Cajas)',
   'LBL_THEME_BORDER_RADIUS_CONTROLS' => 'Redondeo (Botones/controles)',
