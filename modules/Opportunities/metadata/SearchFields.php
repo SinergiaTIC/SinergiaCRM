@@ -536,4 +536,3 @@ $searchFields['Opportunities'] = array (
       'is_date_field' => true,
     ),
 );
-// END STIC-Custom
