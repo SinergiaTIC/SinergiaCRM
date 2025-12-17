@@ -3668,11 +3668,11 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fin de suplant
 // Firmas: Estados
 $app_list_strings['stic_signatures_status_list'][''] = '';
 $app_list_strings['stic_signatures_status_list']['draft'] = 'Borrador';
-$app_list_strings['stic_signatures_status_list']['open'] = 'Abierta';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Abierto';
 $app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanente';
-$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausada';
-$app_list_strings['stic_signatures_status_list']['completed'] = 'Completada';
-$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelada';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausado';
+$app_list_strings['stic_signatures_status_list']['completed'] = 'Completado';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelado';
 
 // Firmas: Métodos de autenticación
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
