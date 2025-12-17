@@ -3750,7 +3750,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Targets';
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Leads';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Accounts';
 
-// Workflows: customized lists
+// Workflows: Customized lists
 $app_list_strings['aow_date_options']['now'] = 'Now';
 $app_list_strings['aow_date_options']['today'] = 'Today';
 $app_list_strings['aow_date_options']['field'] = 'This field';
