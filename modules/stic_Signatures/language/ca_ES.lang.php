@@ -92,13 +92,13 @@ $mod_strings = array(
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "La data d'activació ha de ser anterior a la data de caducitat.",
     'LBL_EXPIRATION_DATE_ERROR' => "La data de caducitat ha de ser posterior a la data d'activació.",
-    'LBL_SIGNERS_ADDED_MSG' => 'Firmants afegits correctament',
-    'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Avis: Els nous firmants no podran signar el document perquè la firma està en un estat que no ho permet. Si voleu que els nous firmants puguin signar el document, recordeu canviar el seu estat a Obert o Permanent.',
-    'LBL_SIGNERS_NOT_ADDED_MSG' => "Firmants no afegits, ja existeixen o s'ha produït un error.",
+    'LBL_SIGNERS_ADDED_MSG' => "Els firmants s'han afegit correctament.",
+    'LBL_SIGNERS_ADDED_CLOSED_MSG' => "Els nous firmants no podran firmar el document perquè la firma té un estat que no ho permet. Si voleu que els nous firmants puguin firmar el document, recordeu canviar l'estat de la firma a Obert o Permanent.",
+    'LBL_SIGNERS_NOT_ADDED_MSG' => "Els firmants no s'han afegit: ja existeixen o s'ha produït un error.",
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => "S'omet el següent registre perquè no s'han trobat firmants.",
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => "S'ha creat una campanya de notificació per a la firma: ",
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ja existeix una campanya de notificació per a la firma: ',
-    'LBL_NO_SIGNATURE_EXISTS_FOR_MODULE' => 'No existeix cap procés de firma creat per al mòdul ',
+    'LBL_NO_SIGNATURE_EXISTS_FOR_MODULE' => 'No existeix cap firma creada per al mòdul ',
 
     // Portal messages
     'LBL_PORTAL_TITLE_PAGE' => 'SinergiaCRM - Portal de firma electrònica',
@@ -195,13 +195,14 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (valor per defecte):</strong> El firmant actua en el seu propi nom. <li><strong>Sí, només un representant:</strong> Només cal que firmi un representant del titular de la firma. <li><strong>Sí, tots els representants</strong> Han de firmar tots els representants del titular.</ul>',
     'LBL_ACTIVATION_DATE_HELP' => "Data a partir de la qual es podrà firmar. Abans d'aquesta data el portal de firmes no ho permetrà.",
     'LBL_EXPIRATION_DATE_HELP' => "Data límit per firmar. Després d'aquesta data el portal de firmes no ho permetrà, però sí que es podrà consultar si el document està firmat.",
-    'LBL_STATUS_HELP' => "<ul>
-                            <li><b>Esborrany</b>: Estat inicial del procés de firma. En aquest estat no es permeten les signatures a través del Portal de firmes.</li>
-                            <li><b>Obert</b>: En aquest estat es permeten les signatures a través del Portal de firmes. S'ha de passar a aquest estat un cop s'han afegit els firmants i la plantilla PDF està llesta, sempre que no es tracti d'un procés de firmes Permanent.</li>
-                            <li><b>Permanents</b>: Estat adequat per a processos de firma de durada indeterminada, sense una data de finalització preestablerta. Les signatures a través del Portal es mantindran habilitades fins que l'estat es modifiqui manualment.</li>
-                            <li><b>Pausada</b>: S'utilitza per pausar temporalment un procés de firmes que es trobi en estat Obert o Permanent per qualsevol motiu.</li>
-                            <li><b>Completada</b>: Aquest estat s'estableix automàticament en el procés de firmes quan tots els firmants han completat la seva firma.</li>
-                            <li><b>Cancel·lada</b>: S'utilitza per cancel·lar un procés de firmes que es trobi en estat Obert o Permanent.</li>
+    'LBL_STATUS_HELP' => "El procés admet firmes a través del portal de firmes quan està en estat Obert o Permanent. Qualsevol altre estat no permetrà firmar encara que s'estigui dins del període habilitat. 
+                         <ul>
+                            <li><b>Esborrany</b>: El procés de firma està en preparació.</li>
+                            <li><b>Obert</b>: El procés admet firmes a través del portal.</li>
+                            <li><b>Permanent</b>: Similar a Obert, s'aplica a processos de firma sense data de finalització. Es podrà firmar a través del portal mentre no es canviï l'estat.</li>
+                            <li><b>Pausat</b>: Interromp temporalment la recollida de firmes a través del portal.</li>
+                            <li><b>Completat</b>: S'estableix automàticament en processos oberts quan tots els firmants han firmat.</li>
+                            <li><b>Cancel·lat</b>: Interromp definitivament el procés de firma.</li>
                         </ul>", 
 
     'LBL_PDF_AUDIT_PAGE_HELP' => "Permet indicar si cal incloure una pàgina d'auditoria al final del document firmat. La pàgina d'auditoria conté informació detallada sobre el procés de firma, incloent-hi dades dels firmants, dates i hores de les firmes i un registre d'esdeveniments relacionats amb el procés.",
@@ -209,8 +210,8 @@ $mod_strings = array(
     'LBL_PDF_TEMPLATE_HELP' => "Plantilla PDF que es farà servir com a document per firmar. La plantilla ha d'estar dissenyada prèviament al mòdul de Plantilles PDF i contenir els camps de firma necessaris.",
     'LBL_MAIN_MODULE_HELP' => "Mòdul de SinergiaCRM al qual s'associarà el procés de firma. S'extreu automàticament del mòdul principal de la plantilla PDF seleccionada.",
     'LBL_SIGNER_PATH_HELP' => 'Permet triar la ruta a seguir des del mòdul principal de la firma fins al mòdul dels firmants (Persones o Usuaris).',
-    'LBL_EMAIL_TEMPLATE_HELP' => "Plantilla de correu per notificar als firmants sobre el procés de firma. Ha d'incloure la informació necessària perquè el firmant pugui accedir al portal de firma i completar el procés. Si no se modifica,  se utiliza  la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView'>plantilla por defecto.</a>",
-    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correu per enviar el document firmat als firmants. Si no se modifica,  se utiliza  la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">plantilla por defecto.</a>',
-    'LBL_EMAIL_TEMPLATE_OTP_HELP' => "Plantilla de correu per enviar el codi d'un sol ús al correu electrònic dels firmants. Si no se modifica,  se utiliza  la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView'>plantilla por defecto.</a>",
-    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => "Plantilla de missatge SMS per enviar el codi d'un sol ús al telèfon dels firmants. Si no se modifica,  se utiliza  la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView'>plantilla por defecto.</a>",
+    'LBL_EMAIL_TEMPLATE_HELP' => "Plantilla de correu per notificar als firmants sobre el procés de firma. Ha d'incloure la informació necessària perquè el firmant pugui accedir al portal de firma i completar el procés. Si no s'indica el contrari es fa servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView'>plantilla per defecte</a>.",
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => "Plantilla de correu per enviar el document firmat als firmants. Si no s'indica el contrari es fa servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView'>plantilla per defecte</a>.",
+    'LBL_EMAIL_TEMPLATE_OTP_HELP' => "Plantilla de correu per enviar el codi d'un sol ús al correu electrònic dels firmants. Si no s'indica el contrari es fa servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView'>plantilla per defecte.</a>",
+    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => "Plantilla de missatge SMS per enviar el codi d'un sol ús al telèfon dels firmants. Si no s'indica el contrari es fa servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView'>plantilla per defecte.</a>",
 );
