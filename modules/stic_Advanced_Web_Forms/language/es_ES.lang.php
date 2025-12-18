@@ -310,6 +310,8 @@ $mod_strings = array (
   'LBL_SECTION_NO_TITLE' => '< Sin título >',
   'LBL_SECTION_SHOW_TITLE' => 'Mostrar título',
   'LBL_SECTION_CONTAINER' => 'Contenedor visual',
+  'LBL_SECTION_IS_COLLAPSIBLE' => 'Colapsable',
+  'LBL_SECTION_ISCOLLAPSED' => 'Colapsado inicialmente',
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mover a...',
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está vacía. Mueve bloques aquí desde otras secciones.',
 

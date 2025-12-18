@@ -39,35 +39,35 @@ class FormHtmlGeneratorService {
         $wrapperId = 'stic-awf-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $formId);
 
         $this->indent = 0;
-        $htmlRaw = "<!DOCTYPE html>" ."\r\n".str_repeat('  ', $this->indent);
-        $htmlRaw .= "<html lang='es'>" ."\r\n".str_repeat('  ', ++$this->indent);
+        $htmlRaw = "<!DOCTYPE html>" .$this->newLine();
+        $htmlRaw .= "<html lang='es'>" .$this->newLine('+');
         {
-            $htmlRaw .= "<head>" ."\r\n".str_repeat('  ', ++$this->indent);
+            $htmlRaw .= "<head>" .$this->newLine('+');
             {
-                $htmlRaw .= "<meta charset='UTF-8'>" ."\r\n".str_repeat('  ', $this->indent);
-                $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" ."\r\n".str_repeat('  ', $this->indent);
-                $htmlRaw .= "<title>Advanced Web Form</title>" ."\r\n".str_repeat('  ', $this->indent);
+                $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
+                $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
+                $htmlRaw .= "<title>Advanced Web Form</title>" .$this->newLine();
         
                 // (Bootstrap + Alpine)
-                $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' ."\r\n".str_repeat('  ', $this->indent);
-                $htmlRaw .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>' ."\r\n".str_repeat('  ', $this->indent);
+                $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
+                $htmlRaw .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>' .$this->newLine();
             }
-            $htmlRaw .= "</head>" ."\r\n".str_repeat('  ', --$this->indent);
-            $htmlRaw .= "<body class='bg-light'>" ."\r\n".str_repeat('  ', ++$this->indent);
+            $htmlRaw .= "</head>" .$this->newLine('-');
+            $htmlRaw .= "<body class='bg-light'>" .$this->newLine('+');
             {
                 // Wrapper 
-                $htmlRaw .= "<div id='{$wrapperId}'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                $htmlRaw .= "<div id='{$wrapperId}'>" .$this->newLine('+');
                 {
                     // Styles and Content
                     $htmlRaw .= $this->generateCss($layout, $wrapperId);
                     $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
                     $htmlRaw .= $this->generateJs($layout);
                 }
-                $htmlRaw .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                $htmlRaw .= "</div>" .$this->newLine('-');
             }
-            $htmlRaw .= "</body>" ."\r\n".str_repeat('  ', --$this->indent);
+            $htmlRaw .= "</body>" .$this->newLine('-');
         }     
-        $htmlRaw .= "</html>" ."\r\n".str_repeat('  ', --$this->indent);
+        $htmlRaw .= "</html>" .$this->newLine('-');
 
         return $htmlRaw;
     }
@@ -164,10 +164,29 @@ class FormHtmlGeneratorService {
             ";
         }
 
+        // Adapt Bootstrap validation marks
+        $validationFix = "
+/* Remove Bootstrap positive validation */
+#{$wrapperId} .was-validated .form-control:valid,
+#{$wrapperId} .was-validated .form-select:valid,
+#{$wrapperId} .was-validated .form-check-input:valid {
+  border-color: var(--bs-border-color);
+  background-image: none;
+  box-shadow: none;
+}
+/* Adjust Bootstrap negative validation mark */
+#{$wrapperId} .was-validated .form-control:invalid,
+#{$wrapperId} .was-validated .form-select:invalid {
+  background-image: none !important;
+  border-color: #dc3545;
+}";
+
         // Icons
         $iconRules = $this->getSvgIconsData();
         $iconCss = implode("\n", $iconRules);
         $iconCss = str_replace('%WRAPPER_ID%', $wrapperId, $iconCss);
+        $chevronCss = $this->getChevronCss($wrapperId);
+
         $browserIconFix = "
 /* Hide native Webkit icons (Chrome/Edge/Safari) */
 #{$wrapperId} .awf-icon-date::-webkit-calendar-picker-indicator,
@@ -450,8 +469,10 @@ class FormHtmlGeneratorService {
 
 /* Icons */
 {$iconCss}
+{$chevronCss}
 {$browserIconFix}
-</style>" ."\r\n".str_repeat('  ', $this->indent);
+{$validationFix}
+</style>" .$this->newLine();
     }
 
     private function generateBody(FormConfig $config, string $wrapperId, string $actionUrl, bool $isPreview): string {
@@ -487,11 +508,6 @@ class FormHtmlGeneratorService {
                 {$jsCheckStatus}
             },
             submitForm(formElement) {
-                // Browser native validation
-                if (formElement.checkValidity() === false) {
-                    formElement.reportValidity();
-                    return;
-                }
                 this.submitting = true;
                 formElement.submit(); 
             }
@@ -500,56 +516,56 @@ class FormHtmlGeneratorService {
 
         $html = "";
         // Begin awf-main-card (wrapper)
-        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$safeAlpineData}\">" ."\r\n".str_repeat('  ', ++$this->indent);
+        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$safeAlpineData}\">" .$this->newLine('+');
         {
             // Begin awf-relative-wrapper (overlay Wrapper)
-            $html .= "<div class='awf-relative-wrapper'>" ."\r\n".str_repeat('  ', ++$this->indent);
+            $html .= "<div class='awf-relative-wrapper'>" .$this->newLine('+');
             {
                 if ($isPreview) {
                     $ribbonText = translate('LBL_PREVIEW_RIBBON', 'stic_Advanced_Web_Forms');
-                    $html .= "<div class='awf-preview-ribbon'>{$ribbonText}</div>" ."\r\n".str_repeat('  ', $this->indent);
+                    $html .= "<div class='awf-preview-ribbon'>{$ribbonText}</div>" .$this->newLine();
 
                     // Floating ToolBar
                     $html .= "<div style='position: fixed; top: 20px; left: 50%; transform: translateX(-50%);".
                                          "background: #343a40; color: #fff; padding: 8px 16px; border-radius: 50px;".
                                          "box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999;".
                                          "display: flex; align-items: center; gap: 12px;". 
-                                         "font-family: system-ui, sans-serif; font-size: 14px;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                         "font-family: system-ui, sans-serif; font-size: 14px;'>" .$this->newLine('+');
                     {
                         $toolBarText = translate('LBL_PREVIEW_TOOLBAR', 'stic_Advanced_Web_Forms');
                         $activeText = translate('LBL_PREVIEW_ACTIVE_TEXT', 'stic_Advanced_Web_Forms');
                         $inactiveText = translate('LBL_PREVIEW_INACTIVE_TEXT', 'stic_Advanced_Web_Forms');
-                        $html .= "<span style='opacity: 0.8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;'>{$toolBarText}</span>" ."\r\n".str_repeat('  ', $this->indent);
-                        $html .= "<div style='width: 1px; height: 16px; background: rgba(255,255,255,0.2);'></div>" ."\r\n".str_repeat('  ', $this->indent);
-                        $html .= "<div class='form-check form-switch mb-0' style='min-height: auto;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                        $html .= "<span style='opacity: 0.8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;'>{$toolBarText}</span>" .$this->newLine();
+                        $html .= "<div style='width: 1px; height: 16px; background: rgba(255,255,255,0.2);'></div>" .$this->newLine();
+                        $html .= "<div class='form-check form-switch mb-0' style='min-height: auto;'>" .$this->newLine('+');
                         {
-                            $html .= "<input class='form-check-input' type='checkbox' role='switch' id='simActiveSwitch' x-model='isActive' style='cursor: pointer;'>" ."\r\n".str_repeat('  ', $this->indent);
-                            $html .= "<label class='form-check-label text-white' for='simActiveSwitch' style='cursor: pointer;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                            $html .= "<input class='form-check-input' type='checkbox' role='switch' id='simActiveSwitch' x-model='isActive' style='cursor: pointer;'>" .$this->newLine();
+                            $html .= "<label class='form-check-label text-white' for='simActiveSwitch' style='cursor: pointer;'>" .$this->newLine('+');
                             {
-                                $html .= "<span x-text=\"isActive ? '🟢 {$activeText}' : '🔴 {$inactiveText}'\"></span>" ."\r\n".str_repeat('  ', $this->indent);
+                                $html .= "<span x-text=\"isActive ? '🟢 {$activeText}' : '🔴 {$inactiveText}'\"></span>" .$this->newLine();
                             }
-                            $html .= "</label>" ."\r\n".str_repeat('  ', --$this->indent);
+                            $html .= "</label>" .$this->newLine('-');
                         }
-                        $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                        $html .= "</div>" .$this->newLine('-');
                     }
-                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                    $html .= "</div>" .$this->newLine('-');
                 }
 
                 // Overlay (Only if !isActive) ---
-                $html .= "<div class='awf-overlay' x-show='!isActive' style='display: none;' x-transition>" ."\r\n".str_repeat('  ', ++$this->indent);
+                $html .= "<div class='awf-overlay' x-show='!isActive' style='display: none;' x-transition>" .$this->newLine('+');
                 {
-                    $html .= "<div class='awf-overlay-content'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    $html .= "<div class='awf-overlay-content'>" .$this->newLine('+');
                     {
-                        $html .= "<h3 class='h4 text-danger awf-field'>{$closedFormTitle}</h3>" ."\r\n".str_repeat('  ', $this->indent);
-                        $html .= "<p class='mb-0 lead' x-text='message'>{$closedFormText}</p>" ."\r\n".str_repeat('  ', $this->indent);
+                        $html .= "<h3 class='h4 text-danger awf-field'>{$closedFormTitle}</h3>" .$this->newLine();
+                        $html .= "<p class='mb-0 lead' x-text='message'>{$closedFormText}</p>" .$this->newLine();
                     }
-                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                    $html .= "</div>" .$this->newLine('-');
                 }
-                $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                $html .= "</div>" .$this->newLine('-');
 
                 // Header
                 if (!empty($headerHtml)) {
-                    $html .= "<div class='mb-4'>{$headerHtml}</div>" ."\r\n".str_repeat('  ', $this->indent);
+                    $html .= "<div class='mb-4'>{$headerHtml}</div>" .$this->newLine();
                 }
 
                 if ($isPreview) {
@@ -562,42 +578,71 @@ class FormHtmlGeneratorService {
                 }
 
                 // Begin Form
-                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation' novalidate>" ."\r\n".str_repeat('  ', ++$this->indent);
+                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation' @invalid.capture=\"\$el.classList.add('was-validated')\">" .$this->newLine('+');
                 {
                     // Honeypot: Invisible anti-spam
-                    $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" .$this->newLine('+');
                     {
-                        $html .= "<label for='awf_website'>".translate('LBL_HONEYPOT_LABEL', 'stic_Advanced_Web_Forms')."</label>" ."\r\n".str_repeat('  ', $this->indent);
-                        $html .= "<input type='text' id='awf_website' name='awf_honey_pot' value='' tabindex='-1' autocomplete='off'>" ."\r\n".str_repeat('  ', $this->indent);
+                        $html .= "<label for='awf_website'>".translate('LBL_HONEYPOT_LABEL', 'stic_Advanced_Web_Forms')."</label>" .$this->newLine();
+                        $html .= "<input type='text' id='awf_website' name='awf_honey_pot' value='' tabindex='-1' autocomplete='off'>" .$this->newLine();
                     }
-                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                    $html .= "</div>" .$this->newLine('-');
 
                     // Sections Grid
-                    $html .= "<div class='awf-grid-sections'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    $html .= "<div class='awf-grid-sections'>" .$this->newLine('+');
                     {
                         foreach ($layout->structure as $section) {
                             $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
-                            $html .= "<div class='card {$containerClass}'>" ."\r\n".str_repeat('  ', ++$this->indent);
+
+                            // Collapsible logic
+                            $isCollapsible = !empty($section->isCollapsible);
+                            $startOpen = empty($section->isCollapsed) ? 'true' : 'false';
+                            $xDataAttr = $isCollapsible ? "x-data=\"{ open: {$startOpen} }\" @invalid.capture=\"open = true\"" : "";
+                            $styleAttr = $isCollapsible ? "style='height: auto !important;'" : "";
+
+                            $html .= "<div class='card {$containerClass}' {$xDataAttr} {$styleAttr}>" .$this->newLine('+');
                             {
-                                if (!empty($section->title)) {
+                                // Header
+                                if ($section->showTitle && !empty($section->title)) {
+                                    $toggleBtn = "";
+                                    $cursorStyle = "";
+
+                                    if ($isCollapsible) {
+                                        $cursorStyle = "cursor: pointer;"; 
+                                        $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click='open = !open'>" .$this->newLine('+');
+                                        {
+                                            $toggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" .$this->newLine();
+                                        }
+                                        $toggleBtn .= "</button>" .$this->newLine('-');
+                                    }
+
                                     if ($section->containerType === 'panel') {
-                                        $html .= "<div class='awf-section-header-panel'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                        $clickAction = $isCollapsible ? "@click='open = !open'" : "";
+
+                                        $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
                                         {
-                                            $html .= "<h4 class='awf-section-title-panel'>".htmlspecialchars($section->title)."</h4>" ."\r\n".str_repeat('  ', $this->indent);
+                                            $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
+                                            $html .= $toggleBtn .$this->newLine();
                                         }
-                                        $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                                        $html .= "</div>" .$this->newLine('-');
+                                        $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" .$this->newLine();
+
                                     } else if ($section->containerType === 'card') {
-                                        $html .= "<div class='card-header awf-section-title-card'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                        $clickAction = $isCollapsible ? "@click='open = !open'" : "";
+
+                                        $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
                                         {
-                                            $html .= htmlspecialchars($section->title) ."\r\n".str_repeat('  ', $this->indent);
+                                            $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
+                                            $html .= $toggleBtn .$this->newLine();
                                         }
-                                        $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                                        $html .= "</div>" .$this->newLine('-');
                                     }
                                 }
                                 
-                                $html .= "<div class='card-body'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                $showAttr = $isCollapsible ? "x-show='open' x-transition" : "";
+                                $html .= "<div class='card-body' {$showAttr}>" .$this->newLine('+');
                                 {
-                                    $html .= "<div class='awf-grid-fields'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                    $html .= "<div class='awf-grid-fields'>" .$this->newLine('+');
                                     {
                                         foreach ($section->elements as $element) {
                                             if ($element->type == 'datablock') {
@@ -608,38 +653,38 @@ class FormHtmlGeneratorService {
                                             }
                                         }
                                     }
-                                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent); // End awf-grid-fields
+                                    $html .= "</div>" .$this->newLine('-');
                                 }
-                                $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent); // End card-body
+                                $html .= "</div>" .$this->newLine('-');
                             }
-                            $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent); // End card
+                            $html .= "</div>" .$this->newLine('-');
                         }
                     }
-                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent); // End awf-grid-sections
+                    $html .= "</div>" .$this->newLine('-');
 
                     // Send Button
-                    $html .= "<div class='mt-4 awf-submit-container'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    $html .= "<div class='mt-4 awf-submit-container'>" .$this->newLine('+');
                     {
                         $btnText = htmlspecialchars($layout->submit_button_text);
-                        $html .= "<button type='submit' class='btn btn-primary px-4 py-2 awf-submit-btn' :disabled='submitting' :class=\"{'disabled': submitting}\">" ."\r\n".str_repeat('  ', ++$this->indent);
+                        $html .= "<button type='submit' class='btn btn-primary px-4 py-2 awf-submit-btn' :disabled='submitting' :class=\"{'disabled': submitting}\">" .$this->newLine('+');
                         {
-                            $html .= "<span x-show='submitting' class='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' style='display: none;'></span>" ."\r\n".str_repeat('  ', $this->indent);
-                            $html .= "<span>{$btnText}</span>" ."\r\n".str_repeat('  ', $this->indent);
+                            $html .= "<span x-show='submitting' class='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' style='display: none;'></span>" .$this->newLine();
+                            $html .= "<span>{$btnText}</span>" .$this->newLine();
                         }
-                        $html .= "</button>" ."\r\n".str_repeat('  ', --$this->indent);
+                        $html .= "</button>" .$this->newLine('-');
                     }
-                    $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                    $html .= "</div>" .$this->newLine('-');
                 }
-                $html .= "</form>" ."\r\n".str_repeat('  ', --$this->indent); // End Form
+                $html .= "</form>" .$this->newLine('-');
 
                 // Footer
                 if (!empty($footerHtml)) {
-                    $html .= "<div class='mt-5 pt-3 border-top text-muted small text-center'>{$footerHtml}</div>" ."\r\n".str_repeat('  ', $this->indent);
+                    $html .= "<div class='mt-5 pt-3 border-top text-muted small text-center'>{$footerHtml}</div>" .$this->newLine();
                 }
             }
-            $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent); // End awf-relative-wrapper
+            $html .= "</div>" .$this->newLine('-');
         }
-        $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent); // End awf-main-card
+        $html .= "</div>" .$this->newLine('-');
 
         return $html;
     }
@@ -668,24 +713,24 @@ class FormHtmlGeneratorService {
 
         // Single Checkbox 
         if ($field->subtype_in_form === 'select_checkbox') {
-            $html = "<div class='form-check awf-field'>" ."\r\n".str_repeat('  ', ++$this->indent);
+            $html = "<div class='form-check awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
-                $html .= $description ."\r\n".str_repeat('  ', $this->indent);
+                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" .$this->newLine();
+                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
+                $html .= $description .$this->newLine();
             }
-            $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+            $html .= "</div>" .$this->newLine('-');
             return $html;
         }
         // Single Switch
         if ($field->subtype_in_form === 'select_switch') {
-            $html = "<div class='form-check form-switch awf-field'>" ."\r\n".str_repeat('  ', ++$this->indent);
+            $html = "<div class='form-check form-switch awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
-                $html .= $description ."\r\n".str_repeat('  ', $this->indent);
+                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" .$this->newLine();
+                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
+                $html .= $description .$this->newLine();
             }
-            $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+            $html .= "</div>" .$this->newLine('-');
             return $html;
         }
 
@@ -701,7 +746,7 @@ class FormHtmlGeneratorService {
         $placeholder = $isFloating ? ($placeholder ?: '...') : $placeholder; 
         $wrapperClass = $isFloating ? 'form-floating awf-field' : 'awf-field';
 
-        $html = "<div class='{$wrapperClass}'>" ."\r\n".str_repeat('  ', ++$this->indent);
+        $html = "<div class='{$wrapperClass}'>" .$this->newLine('+');
         {
             $controlHtml = "";
 
@@ -717,7 +762,7 @@ class FormHtmlGeneratorService {
                     $isMulti = ($inputType === 'checkbox');
                     $finalName = $inputName . ($isMulti ? '[]' : ''); // If multiple, name is array (ex: names[])
 
-                    $controlHtml .= "<div class='awf-option-group pt-1'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    $controlHtml .= "<div class='awf-option-group pt-1'>" .$this->newLine('+');
                     {
                         foreach ($field->value_options as $opt) {
                             if ($opt->is_visible) {
@@ -726,16 +771,16 @@ class FormHtmlGeneratorService {
                                 $optId = "f_{$inputName}_" . preg_replace('/[^a-zA-Z0-9]/', '', $val); 
                                 $req = ($requiredAttr && !$isMulti) ? 'required' : '';  // Note: 'required' in checkboxes groups is complex in pure HTML5. 
 
-                                $controlHtml .= "<div class='form-check'>" ."\r\n".str_repeat('  ', ++$this->indent);
+                                $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $controlHtml .= "<input type='{$inputType}' name='{$finalName}' id='{$optId}' value='{$val}' class='form-check-input' {$req}>" ."\r\n".str_repeat('  ', $this->indent);
-                                    $controlHtml .= "<label class='form-check-label' for='{$optId}'>{$txt}</label>" ."\r\n".str_repeat('  ', $this->indent);
+                                    $controlHtml .= "<input type='{$inputType}' name='{$finalName}' id='{$optId}' value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
+                                    $controlHtml .= "<label class='form-check-label' for='{$optId}'>{$txt}</label>" .$this->newLine();
                                 }
-                                $controlHtml .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                                $controlHtml .= "</div>" .$this->newLine('-');
                             }
                         }
                     }
-                    $controlHtml .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+                    $controlHtml .= "</div>" .$this->newLine('-');
 
                 } 
                 // Select && Select muliple
@@ -744,22 +789,22 @@ class FormHtmlGeneratorService {
                     $finalName = $inputName . ($isMultipleSelect ? '[]' : '');
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$requiredAttr}>" ."\r\n".str_repeat('  ', ++$this->indent);
+                    $controlHtml .= "<select name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$requiredAttr}>" .$this->newLine('+');
                     {
                         // Empty option only if not muliple
                         if (!$isMultipleSelect) {
-                            $controlHtml .= "<option value='' selected></option>" ."\r\n".str_repeat('  ', $this->indent);
+                            $controlHtml .= "<option value='' selected></option>" .$this->newLine();
                         }
                         // Other options
                         foreach ($field->value_options as $opt) {
                             if ($opt->is_visible) {
                                 $val = htmlspecialchars($opt->value);
                                 $txt = htmlspecialchars($opt->text);
-                                $controlHtml .= "<option value='{$val}'>{$txt}</option>" ."\r\n".str_repeat('  ', $this->indent);
+                                $controlHtml .= "<option value='{$val}'>{$txt}</option>" .$this->newLine();
                             }
                         }
                     }
-                    $controlHtml .= "</select>" ."\r\n".str_repeat('  ', --$this->indent);
+                    $controlHtml .= "</select>" .$this->newLine('-');
                 }
 
             // Inputs
@@ -778,21 +823,21 @@ class FormHtmlGeneratorService {
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" ."\r\n".str_repeat('  ', $this->indent);
+                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" .$this->newLine();
             }
 
             if ($isFloating) {
                 // Floating order: Input, Label
-                $html .= $controlHtml ."\r\n".str_repeat('  ', $this->indent);
-                $html .= "<label for='f_{$inputName}'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
+                $html .= $controlHtml .$this->newLine();
+                $html .= "<label for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
             } else {
                 // Default order: Label, Input
-                $html .= "<label for='f_{$inputName}' class='form-label'>{$label} {$asterisk}</label>" ."\r\n".str_repeat('  ', $this->indent);
-                $html .= $controlHtml ."\r\n".str_repeat('  ', $this->indent);
+                $html .= "<label for='f_{$inputName}' class='form-label'>{$label} {$asterisk}</label>" .$this->newLine();
+                $html .= $controlHtml .$this->newLine();
             }
-            $html .= $description ."\r\n".str_repeat('  ', $this->indent);
+            $html .= $description .$this->newLine();
         }
-        $html .= "</div>" ."\r\n".str_repeat('  ', --$this->indent);
+        $html .= "</div>" .$this->newLine('-');
 
         return $html;
     }
@@ -801,7 +846,7 @@ class FormHtmlGeneratorService {
         $js = "";
         $customJs = $this->decode($layout->custom_js);
         if (!empty($customJs)) {
-            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});\n</script>" ."\r\n".str_repeat('  ', $this->indent);
+            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});\n</script>" .$this->newLine();
         }
         return $js;
     }
@@ -857,6 +902,16 @@ class FormHtmlGeneratorService {
         return ($yiq >= 128) ? '#000000' : '#ffffff';
     }
 
+    private function newLine(?string $inc = ''){
+        if ($inc=='+') 
+            return "\r\n".str_repeat('  ', ++$this->indent);;
+
+        if ($inc=='-') 
+            return "\r\n".str_repeat('  ', --$this->indent);;
+
+        return "\r\n".str_repeat('  ', $this->indent);;
+    }
+
     /**
      * Gets the css class name for the control
      */
@@ -870,7 +925,6 @@ class FormHtmlGeneratorService {
 
     private function getSvgIconsData(): array {
         // Icon color
-        $hexColor = '#adb5bd'; 
         $hexColor = '#6c757d';
         
         $definitions = [
@@ -902,6 +956,32 @@ class FormHtmlGeneratorService {
         }
 
         return $cssRules;
+    }
+
+    private function getChevronCss(string $wrapperId): string {
+        $color = '#6c757d';
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/></svg>';
+        $svgColored = str_replace('currentColor', $color, $svg);
+        $encoded = base64_encode($svgColored);
+        $dataUri = "data:image/svg+xml;base64,{$encoded}";
+
+        return "
+/* Chevron Toggle Icon */
+#{$wrapperId} .awf-icon-toggle {
+  display: inline-block;
+  width: 1.25em;
+  height: 1.25em;
+  background-image: url(\"{$dataUri}\");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: transform 0.2s ease-in-out;
+  vertical-align: middle;
+}
+/* Rotation state managed by class */
+#{$wrapperId} .awf-icon-toggle.open {
+  transform: rotate(180deg);
+}";
     }
 
 }

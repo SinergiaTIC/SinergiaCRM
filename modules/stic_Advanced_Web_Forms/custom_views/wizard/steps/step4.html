@@ -362,7 +362,7 @@
                                                                             <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
                                                                         </div>
                                                                         <!-- Show Title -->
-                                                                        <div class="col-3 form-check form-switch">
+                                                                        <div class="col-2 form-check form-switch">
                                                                             <label :for="`section${section.id}_showTitle`" class="form-label" x-text="utils.translate('LBL_SECTION_SHOW_TITLE')"></label>
                                                                             <input :id="`section${section.id}_showTitle`" class="form-check-input form-switch" type="checkbox" role="switch" x-model="section.showTitle"/>
                                                                         </div>
@@ -375,7 +375,20 @@
                                                                                 </template>
                                                                             </select>
                                                                         </div>
-
+                                                                        <!-- Collapsible -->
+                                                                        <div class="col-2 form-check form-switch">
+                                                                            <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" 
+                                                                                x-model="section.isCollapsible"/>
+                                                                            <label :for="`section${section.id}_isCollapsible`" class="form-label small" 
+                                                                                x-text="utils.translate('LBL_SECTION_IS_COLLAPSIBLE')"></label>
+                                                                        </div>
+                                                                        <!-- Collaped -->
+                                                                        <div class="col-2 form-check form-switch" x-show="section.isCollapsible" x-transition>
+                                                                            <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" 
+                                                                                x-model="section.isCollapsed"/>
+                                                                            <label :for="`section${section.id}_isCollapsed`" class="form-label small" 
+                                                                                x-text="utils.translate('LBL_SECTION_ISCOLLAPSED')"></label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>

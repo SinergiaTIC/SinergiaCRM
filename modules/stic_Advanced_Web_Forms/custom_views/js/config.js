@@ -894,6 +894,8 @@ class AWF_LayoutSection {
       id: utils.newId('sect'), // Id de la sección
       title: "",               // Título a mostrar
       showTitle: true,         // Indica si se mostrará el título
+      isCollapsible: false,    // Indica si la sección se puede colapsar
+      isCollapsed: false,      // Indica si la sección aparecerá inicialmente colapsada
       
       containerType: 'card',  // Tipo de contenedor visual: 'panel' (simple), 'card' (con borde), 'tabs', 'accordion'
       elements: [],
