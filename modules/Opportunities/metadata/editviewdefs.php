@@ -266,12 +266,12 @@ $viewdefs['Opportunities']['EditView'] = array (
       array (
         0 => 
         array (
-          'name' => 'start_date_c',
+          'name' => 'stic_start_date_c',
           'label' => 'LBL_START_DATE',
         ),
         1 => 
         array (
-          'name' => 'end_date_c',
+          'name' => 'stic_end_date_c',
           'label' => 'LBL_END_DATE',
         ),
       ),

@@ -361,10 +361,10 @@ $dictionary['Opportunity']['fields']['stic_additional_information_c'] = array(
 );
 
 // Justification tab fields
-$dictionary["Opportunity"]["fields"]['justified_amount_c'] = array(
-     'id' => 'Opportunitiesjustified_amount_c',
+$dictionary["Opportunity"]["fields"]['stic_justified_amount_c'] = array(
+     'id' => 'Opportunitiesstic_justified_amount_c',
 //      'custom_module' => 'Opportunities', -- if custom_module is set, reapir does not create the fields
-     'name' => 'justified_amount_c',
+     'name' => 'stic_justified_amount_c',
      'vname' => 'LBL_JUSTIFIED_AMOUNT',
      'source' => 'custom_fields',
      'type' => 'decimal',
@@ -384,10 +384,10 @@ $dictionary["Opportunity"]["fields"]['justified_amount_c'] = array(
      'enable_range_search' => true,
      'studio' => 'visible',
 );
-$dictionary["Opportunity"]["fields"]['justified_percentage_c'] = array(
-    'id' => 'Opportunitiesjustified_percentage_c',
+$dictionary["Opportunity"]["fields"]['stic_justified_percentage_c'] = array(
+    'id' => 'Opportunitiesstic_justified_percentage_c',
 //     'custom_module' => 'Opportunities',
-    'name' => 'justified_percentage_c',
+    'name' => 'stic_justified_percentage_c',
     'vname' => 'LBL_JUSTIFIED_PERCENTAGE',
     'source' => 'custom_fields',
     'type' => 'decimal',
@@ -407,10 +407,10 @@ $dictionary["Opportunity"]["fields"]['justified_percentage_c'] = array(
     'enable_range_search' => true,
     'studio' => 'visible',
 );
-$dictionary["Opportunity"]["fields"]['start_date_c'] = array(
-    'id' => 'Opportunitiesstart_date_c',
+$dictionary["Opportunity"]["fields"]['stic_start_date_c'] = array(
+    'id' => 'Opportunitiesstic_start_date_c',
 //     'custom_module' => 'Opportunities',
-    'name' => 'start_date_c',
+    'name' => 'stic_start_date_c',
     'vname' => 'LBL_START_DATE',
     'source' => 'custom_fields',
     'type' => 'date',
@@ -427,10 +427,10 @@ $dictionary["Opportunity"]["fields"]['start_date_c'] = array(
     'enable_range_search' => true,
     'studio' => 'visible',
 );
-$dictionary["Opportunity"]["fields"]['end_date_c'] = array(
-    'id' => 'Opportunitiesend_date_c',
+$dictionary["Opportunity"]["fields"]['stic_end_date_c'] = array(
+    'id' => 'Opportunitiesstic_end_date_c',
 //     'custom_module' => 'Opportunities',
-    'name' => 'end_date_c',
+    'name' => 'stic_end_date_c',
     'vname' => 'LBL_END_DATE',
     'source' => 'custom_fields',
     'type' => 'date',

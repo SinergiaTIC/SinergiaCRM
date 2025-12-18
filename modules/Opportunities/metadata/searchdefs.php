@@ -360,14 +360,14 @@ $searchdefs['Opportunities'] = array(
               'name' => 'stic_documentation_to_deliver_c',
           ),
           15 => array(
-              'name' => 'start_date_c',
+              'name' => 'stic_start_date_c',
               'label' => 'LBL_START_DATE',
               'type' => 'date',
               'width' => '10%',
               'default' => true,
           ),
           16 => array(
-              'name' => 'end_date_c',
+              'name' => 'stic_end_date_c',
               'label' => 'LBL_END_DATE',
               'type' => 'date',
               'width' => '10%',

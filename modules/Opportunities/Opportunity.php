@@ -399,8 +399,8 @@ class Opportunity extends SugarBean
         if (!$tempFetchedRow) {
             return false; // New record, so dates are considered unchanged
         }
-        $startDateChanged = $this->start_date_c !== $tempFetchedRow['start_date_c'];
-        $endDateChanged = $this->end_date_c !== $tempFetchedRow['end_date_c'];
+        $startDateChanged = $this->stic_start_date_c !== $tempFetchedRow['stic_start_date_c'];
+        $endDateChanged = $this->stic_end_date_c !== $tempFetchedRow['stic_end_date_c'];
         return $startDateChanged || $endDateChanged;
     }
     // END TODOEPS

@@ -115,8 +115,8 @@ class stic_JustificationsUtils {
         left join opportunities_stic_allocations_c osac on osac.opportunities_stic_allocationsstic_allocations_idb = psac.project_stic_allocationsstic_allocations_idb and osac.deleted = 0
         where po.deleted = 0
         and po.opportunity_id = '$opportunityId'
-        and oc.start_date_c <= sa.date
-        and (oc.end_date_c is null or oc.end_date_c >= sa.date)
+        and oc.stic_start_date_c <= sa.date
+        and (oc.stic_end_date_c is null or oc.stic_end_date_c >= sa.date)
         ";
         
         $result = $db->query($query);
@@ -221,8 +221,8 @@ class stic_JustificationsUtils {
             join opportunities o on o.id = osjcc.opportunit378funities_ida 
             join opportunities_cstm oc on oc.id_c = o.id
             WHERE osjcc.opportunit378funities_ida IN ({$opportunities})
-            AND oc.start_date_c <= " . $db->quoted($allocationDate) . "
-            AND (oc.end_date_c IS NULL OR oc.end_date_c >= " . $db->quoted($allocationDate) . ")
+            AND oc.stic_start_date_c <= " . $db->quoted($allocationDate) . "
+            AND (oc.stic_end_date_c IS NULL OR oc.stic_end_date_c >= " . $db->quoted($allocationDate) . ")
             AND sjc.active = 1
             AND sjc.deleted = 0
             AND osjcc.deleted = 0
@@ -261,9 +261,10 @@ class stic_JustificationsUtils {
 
     protected static function getOpportunitiesFromProject($projectId)
     {
-
+        $endResult = '';
         $db = DBManagerFactory::getInstance();
 
+        // explore relationship M:N projects_opportunities
         $sql = "
             SELECT group_concat(opportunity_id separator \"','\") as opportunitiesList
             FROM projects_opportunities po 
@@ -275,7 +276,21 @@ class stic_JustificationsUtils {
         $result = $db->getOne($sql);
 
         if(!empty($result)) {
-            return "'" . $result . "'";
+            $endResult =  "'" . $result . "'";
+        }
+        $sql = "
+            SELECT group_concat(project_opportunities_1opportunities_idb separator \"','\") as opportunitiesList
+            FROM projects_opportunities_1_c po 
+            WHERE project_opportunities_1project_ida = " . $db->quoted($projectId) . " 
+            AND deleted = 0
+            GROUP BY project_opportunities_1project_ida 
+        ";
+
+        $result = $db->getOne($sql);
+
+        if(!empty($result)) {
+            $result1N =  "'" . $result . "'";
+            $endResult = empty($endResult) ? $result1N : $endResult . "," . $result1N;
         }
         // TODOEPS
         // Check if result is false?

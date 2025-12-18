@@ -499,37 +499,37 @@ $searchFields['Opportunities'] = array (
       'enable_range_search' => true,
       'is_date_field' => true,
     ),
-    'range_start_date_c' => 
+    'range_stic_start_date_c' => 
     array (
       'query_type' => 'default',
       'enable_range_search' => true,
       'is_date_field' => true,
     ),
-    'start_range_start_date_c' => 
+    'start_range_stic_start_date_c' => 
     array (
       'query_type' => 'default',
       'enable_range_search' => true,
       'is_date_field' => true,
     ),
-    'end_range_start_date_c' => 
+    'end_range_stic_start_date_c' => 
     array (
       'query_type' => 'default',
       'enable_range_search' => true,
       'is_date_field' => true,
     ),
-    'range_end_date_c' => 
+    'range_stic_end_date_c' => 
     array (
       'query_type' => 'default',
       'enable_range_search' => true,
       'is_date_field' => true,
     ),
-    'start_range_end_date_c' => 
+    'start_range_stic_end_date_c' => 
     array (
       'query_type' => 'default',
       'enable_range_search' => true,
       'is_date_field' => true,
     ),
-    'end_range_end_date_c' => 
+    'end_range_stic_end_date_c' => 
     array (
       'query_type' => 'default',
       'enable_range_search' => true,
