@@ -448,9 +448,9 @@ class stic_SignaturesUtils
         $footer = templateParser::parse_template($footer, $beanArray);
 
         // Replace $authorized_ marks with $contacts_, to re-parse later with authorized contact data
-        $converted = str_replace('$authorized_', '$contacts_', $converted);
-        $header = str_replace('$authorized_', '$contacts_', $header);
-        $footer = str_replace('$authorized_', '$contacts_', $footer);
+        $converted = str_replace('$authorized_signer_', '$contacts_', $converted);
+        $header = str_replace('$authorized_signer_', '$contacts_', $header);
+        $footer = str_replace('$authorized_signer_', '$contacts_', $footer);
 
         // Second parse: using authorized contact data (if available)
         $converted = templateParser::parse_template($converted, $authorizedSourceModuleArray);

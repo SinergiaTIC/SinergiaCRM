@@ -43,8 +43,8 @@ function showVariable(fld){
 
     // STIC CUSTOM - JCH - 20250916 - Populate with Contacts values if authorized
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
-    if ($('#module_name').find('option:selected').hasClass('authorized')) {
-        fld = fld.replace('$contacts_', '$authorized_');
+    if ($('#module_name').find('option:selected').hasClass('authorized-signer')) {
+        fld = fld.replace('$contacts_', '$authorized_signer_');
     }
     // END STIC CUSTOM
 
@@ -60,7 +60,7 @@ function populateVariables(type){
 
     // STIC CUSTOM - JCH - 20250916 - Populate with Contacts valuesyif authorized
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
-    if($('#module_name').find('option:selected').hasClass('authorized')){
+    if($('#module_name').find('option:selected').hasClass('authorized-signer')){
         type = 'Contacts';
     }
     // END STIC CUSTOM
@@ -106,9 +106,9 @@ function populateModuleVariables(type){
     // If items were found, create and append the new option group.
     if (authorizedItems.length > 0) {
         const authorizedGroup = authorizedItems.reduce((acc, item) => {
-            // Add the "autorized" class to identify these new options.
-            return acc + `<option class="authorized" value="${item.value}">${item.text} (Autorizado)</option>`;
-        }, '<optgroup label="Autorizados">') + '</optgroup>';
+            // Add the "authorized-signer" class to identify these new options.
+            return acc + `<option class="authorized-signer" value="${item.value}">${item.text} (${SUGAR.language.get('AOS_PDF_Templates', 'LBL_AUTHORIZED_SIGNER')})</option>`;
+        }, `<optgroup label="${SUGAR.language.get('AOS_PDF_Templates', 'LBL_AUTHORIZED_SIGNERS')}">`) + '</optgroup>';
         
         $('#module_name').append(authorizedGroup);
     }
