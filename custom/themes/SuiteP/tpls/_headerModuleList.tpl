@@ -542,6 +542,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         {* STIC-Custom 2021 - Updated comment 20241218 - Custom Create links*}
+                        {* STIC-Custom - JCH - 20251218 - https://github.com/SinergiaTIC/SinergiaCRM/pull/911 - Enable Custom Create links customization*}
                         {if file_exists('custom/themes/SuiteP/tpls/CustomCreateMenu.tpl')}
                             {include file='custom/themes/SuiteP/tpls/CustomCreateMenu.tpl'}
                         {else}
@@ -669,6 +670,7 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             {* STIC-Custom 2021 - Updated comment 20241218 - Custom Create links*}
+                            {* STIC-Custom - JCH - 20251218 - https://github.com/SinergiaTIC/SinergiaCRM/pull/911 - Enable Custom Create links customization*}
                             {if file_exists('custom/themes/SuiteP/tpls/CustomCreateMenu.tpl')}
                                 {include file='custom/themes/SuiteP/tpls/CustomCreateMenu.tpl'}
                             {else}
@@ -796,6 +798,7 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 {* STIC-Custom 2021 - Updated comment 20241218 - Custom Create links*}
+                                {* STIC-Custom - JCH - 20251218 - https://github.com/SinergiaTIC/SinergiaCRM/pull/911 - Enable Custom Create links customization*}
                                 {if file_exists('custom/themes/SuiteP/tpls/CustomCreateMenu.tpl')}
                                     {include file='custom/themes/SuiteP/tpls/CustomCreateMenu.tpl'}
                                 {else}
