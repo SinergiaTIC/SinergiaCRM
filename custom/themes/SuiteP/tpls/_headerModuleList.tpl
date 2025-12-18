@@ -541,41 +541,45 @@
                         {$APP.LBL_CREATE_BUTTON_LABEL}<span class="suitepicon suitepicon-action-caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        {* STIC-Custom 2021 - Updated comment 20220222 - Custom Create links*}
-                        {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Documents&action=EditView&return_module=Documents&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Documents" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Calls" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Tasks" label="LBL_MODULE_NAME"}</a></li> *}
-                        <li><a
-                                href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=stic_Events&action=EditView&return_module=stic_Events&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="stic_Events" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Campaigns" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Project" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Meetings" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=KReports&action=EditView&return_module=KReports&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="KReports" label="LBL_MODULE_NAME"}</a>
-                        </li>
-                        <li><a
-                                href="index.php?module=AOW_WorkFlow&action=EditView&return_module=AOW_WorkFlow&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="AOW_WorkFlow" label="LBL_MODULE_NAME"}</a>
-                        </li>
+                        {* STIC-Custom 2021 - Updated comment 20241218 - Custom Create links*}
+                        {if file_exists('custom/themes/SuiteP/tpls/CustomCreateMenu.tpl')}
+                            {include file='custom/themes/SuiteP/tpls/CustomCreateMenu.tpl'}
+                        {else}
+                            {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Documents&action=EditView&return_module=Documents&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Documents" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Calls" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Tasks" label="LBL_MODULE_NAME"}</a></li> *}
+                            <li><a
+                                    href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=stic_Events&action=EditView&return_module=stic_Events&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="stic_Events" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Campaigns" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Project" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Meetings" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=KReports&action=EditView&return_module=KReports&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="KReports" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                            <li><a
+                                    href="index.php?module=AOW_WorkFlow&action=EditView&return_module=AOW_WorkFlow&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="AOW_WorkFlow" label="LBL_MODULE_NAME"}</a>
+                            </li>
+                        {/if}
                         {* END STIC *}
                     </ul>
                 </li>
@@ -664,41 +668,45 @@
                             {$APP.LBL_CREATE_BUTTON_LABEL}<span class="suitepicon suitepicon-action-caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            {* STIC-Custom 2021 - Updated comment 20220222 - Custom Create links*}
-                            {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Documents&action=EditView&return_module=Documents&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Documents" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Calls" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Tasks" label="LBL_MODULE_NAME"}</a></li> *}
-                            <li><a
-                                    href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=stic_Events&action=EditView&return_module=stic_Events&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="stic_Events" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Campaigns" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Project" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Meetings" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=KReports&action=EditView&return_module=KReports&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="KReports" label="LBL_MODULE_NAME"}</a>
-                            </li>
-                            <li><a
-                                    href="index.php?module=AOW_WorkFlow&action=EditView&return_module=AOW_WorkFlow&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="AOW_WorkFlow" label="LBL_MODULE_NAME"}</a>
-                            </li>
+                            {* STIC-Custom 2021 - Updated comment 20241218 - Custom Create links*}
+                            {if file_exists('custom/themes/SuiteP/tpls/CustomCreateMenu.tpl')}
+                                {include file='custom/themes/SuiteP/tpls/CustomCreateMenu.tpl'}
+                            {else}
+                                {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Documents&action=EditView&return_module=Documents&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Documents" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Calls" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Tasks" label="LBL_MODULE_NAME"}</a></li> *}
+                                <li><a
+                                        href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=stic_Events&action=EditView&return_module=stic_Events&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="stic_Events" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Campaigns" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Project" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Meetings" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=KReports&action=EditView&return_module=KReports&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="KReports" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                                <li><a
+                                        href="index.php?module=AOW_WorkFlow&action=EditView&return_module=AOW_WorkFlow&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="AOW_WorkFlow" label="LBL_MODULE_NAME"}</a>
+                                </li>
+                            {/if}
                             {* END STIC *}
                         </ul>
                     </li>
@@ -787,41 +795,45 @@
                                 {$APP.LBL_CREATE_BUTTON_LABEL}<span class="suitepicon suitepicon-action-caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                {* STIC-Custom 2021 - Updated comment 20220222 - Custom Create links*}
-                                {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Documents&action=EditView&return_module=Documents&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Documents" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Calls" label="LBL_MODULE_NAME"}</a></li>
-                        <li><a href="index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Tasks" label="LBL_MODULE_NAME"}</a></li> *}
-                                <li><a
-                                        href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=stic_Events&action=EditView&return_module=stic_Events&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="stic_Events" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Campaigns" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Project" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Meetings" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=KReports&action=EditView&return_module=KReports&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="KReports" label="LBL_MODULE_NAME"}</a>
-                                </li>
-                                <li><a
-                                        href="index.php?module=AOW_WorkFlow&action=EditView&return_module=AOW_WorkFlow&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="AOW_WorkFlow" label="LBL_MODULE_NAME"}</a>
-                                </li>
+                                {* STIC-Custom 2021 - Updated comment 20241218 - Custom Create links*}
+                                {if file_exists('custom/themes/SuiteP/tpls/CustomCreateMenu.tpl')}
+                                    {include file='custom/themes/SuiteP/tpls/CustomCreateMenu.tpl'}
+                                {else}
+                                    {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Documents&action=EditView&return_module=Documents&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Documents" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Calls" label="LBL_MODULE_NAME"}</a></li>
+                            <li><a href="index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Tasks" label="LBL_MODULE_NAME"}</a></li> *}
+                                    <li><a
+                                            href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=Leads&action=EditView&return_module=Leads&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Leads" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=stic_Events&action=EditView&return_module=stic_Events&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="stic_Events" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Campaigns" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Project" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Meetings" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=KReports&action=EditView&return_module=KReports&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="KReports" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                    <li><a
+                                            href="index.php?module=AOW_WorkFlow&action=EditView&return_module=AOW_WorkFlow&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="AOW_WorkFlow" label="LBL_MODULE_NAME"}</a>
+                                    </li>
+                                {/if}
                                 {* END STIC *}
                             </ul>
                         </li>
