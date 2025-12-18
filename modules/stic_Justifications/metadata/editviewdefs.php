@@ -73,10 +73,6 @@ $viewdefs['stic_Justifications']['EditView'] = array(
             ),
             array(
                 'max_allocable_percentage',
-                '',
-            ),
-            array(
-                'justified_amount',
                 'justified_hours',
             ),
             array(

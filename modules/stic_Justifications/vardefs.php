@@ -90,11 +90,13 @@ $dictionary['stic_Justifications'] = array(
             'len' => 26,
             'precision' => 2,
             'vname' => 'LBL_JUSTIFIED_AMOUNT',
+            'inline_edit' => false,
         ),
         'justified_hours' => array(
             'name' => 'justified_hours',
             'type' => 'int',
             'vname' => 'LBL_JUSTIFIED_HOURS',
+            'inline_edit' => false,
         ),
         'stic_justification_conditions_stic_justifications' => array(
             'name' => 'stic_justification_conditions_stic_justifications',

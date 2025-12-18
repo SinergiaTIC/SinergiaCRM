@@ -76,10 +76,19 @@ class stic_Justifications extends Basic
 
         $this->fillName();
 
+        $allocatedAmount = SticUtils::unformatDecimal($this->amount);
+        $percentage = $this->max_allocable_percentage;
+        $justifiedAmount = $percentage ? ($allocatedAmount * $percentage) / 100 : null;
+        $this->justified_amount = SticUtils::formatDecimalInConfigSettings($justifiedAmount);
+
         // Save the bean
         parent::save($check_notify);
 
-        if (!$tempFetchedRow || $tempFetchedRow['justified_amount'] !== $this->justified_amount) {
+
+        $oldAmount = SticUtils::unformatDecimal($tempFetchedRow['justified_amount'] ?? 0);
+
+
+        if (!$tempFetchedRow || $oldAmount !== $justifiedAmount) {
             // If amount changed, update related allocations
             stic_JustificationsUtils::updateRelatedOpportunity($this->opportunit01eunities_ida);
         }
