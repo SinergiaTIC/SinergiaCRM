@@ -48,6 +48,30 @@ class RelateRecordsAction extends HookBeanActionDefinition {
      */
     protected function getCustomParameters(): array
     {
+        // Destino de la relación (Obligatorio)
+        $paramTarget = new ActionParameterDefinition();
+        $paramTarget->name = 'target_object';
+        $paramTarget->text = $this->translate('TARGET_OBJECT_TEXT');
+        $paramTarget->description = $this->translate('TARGET_OBJECT_DESC');
+        $paramTarget->type = ActionParameterType::OPTION_SELECTOR; 
+        $paramTarget->required = true;
+
+        // El Bloque de Datos Destino
+        $optTargetBlock = new ActionSelectorOptionDefinition();
+        $optTargetBlock->name = 'datablock';
+        $optTargetBlock->text = $this->translate('TARGET_BLOCK_TEXT');
+        $optTargetBlock->resolvedType = ActionParameterType::DATA_BLOCK;
+
+        // El Id del registro Destino
+        $optRecordId = new ActionSelectorOptionDefinition();
+        $optRecordId->name = 'record_id';
+        $optRecordId->text = $this->translate('TARGET_RECORD_ID_TEXT');
+        $optRecordId->resolvedType = ActionParameterType::FIELD;
+
+        // Opciones del Destino
+        $paramTarget->selectorOptions = [$optTargetBlock, $optRecordId];
+        $paramTarget->defaultValue = 'datablock';
+
         // El Bloque de Datos Destino (Obligatorio)
         $paramTargetBlock = new ActionParameterDefinition();
         $paramTargetBlock->name = 'target_data_block';
@@ -73,8 +97,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
     {
         // Obtención de los parámetros adicionales (ParameterResolver asegura que no sean nulos porque son obligatorios)
 
-        /** @var DataBlockResolved $targetBlock */
-        $targetBlock = $actionConfig->getResolvedParameter('target_data_block');
+        $targetObject = $actionConfig->getResolvedParameter('target_object');
         $linkName = $actionConfig->getResolvedParameter('relationship_name');
 
         // Validación del nombre de la relación
@@ -83,11 +106,24 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         }
 
         // Obtención del Id del Bean destino
-        $targetBeanRef = $targetBlock->dataBlock->getBeanReference();
-        if ($targetBeanRef === null) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetBlock->dataBlock->name}' not saved in database.");
+        $targetBeanId = null;
+        if ($targetObject instanceof DataBlockResolved) {
+            $targetBeanRef = $targetObject->dataBlock->getBeanReference();
+            if ($targetBeanRef === null) {
+                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetObject->dataBlock->name}' not saved in database.");
+            }
+            $targetBeanId = $targetBeanRef->beanId;
+
+        } elseif ($targetObject instanceof DataBlockFieldResolved) {
+            $targetBeanId = $targetObject->value;
+
+        } else {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Target object is missing or invalid.");
         }
-        $targetBeanId = $targetBeanRef->beanId;
+
+        if (empty($targetBeanId)) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Relationship not saved: No target record ID specified.");
+        }
 
         // Cargar la relación en el Bean origen
         if (!$bean->load_relationship($linkName)) {

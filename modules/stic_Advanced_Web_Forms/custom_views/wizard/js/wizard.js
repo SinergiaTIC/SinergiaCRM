@@ -412,11 +412,11 @@ class WizardStep2 {
              */
             saveChanges() {
               if (this.isNewField) {
-                this.dataBlock.addField(this.field);
+                this.formConfig.addDataBlockField(this.dataBlock, this.field);
               } else {
                 if (this.needDeleteOld) {
                   this.dataBlock.deleteField(this.field.name);
-                  this.dataBlock.addField(this.field);
+                  this.formConfig.addDataBlockField(this.dataBlock, this.field);
                 } else {
                   this.dataBlock.updateField(this.original_name, this.field);
                 }

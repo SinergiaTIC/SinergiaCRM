@@ -1160,12 +1160,21 @@ class AWF_Configuration {
 
     // Set initial fields 
     let hasRequiredRelate = false;
-    for (const field of Object.values(module.fields)) {
-      if (field.required && field.type === 'relate') {
+    for (const fieldDef of Object.values(module.fields)) {
+      if (fieldDef.required && fieldDef.type === 'relate') {
         hasRequiredRelate = true;
       }
-      if (field.required) {
-        dataBlock.addFieldFromModuleField(field);
+      if (fieldDef.required) {
+        let newField = new AWF_Field();
+        let type_field = 'form';
+        if (fieldDef.required && fieldDef.default != null && fieldDef.default != '') {
+            type_field = 'hidden';
+        }
+        newField.updateWithFieldInformation(fieldDef, type_field);
+        newField.setValueOptions(utils.getFieldOptions(fieldDef));
+
+        newField.required = fieldDef.required;
+        this.addDataBlockField(dataBlock, newField);
       }
     }
 
@@ -1184,6 +1193,37 @@ class AWF_Configuration {
     this.syncLayoutWithDataBlocks();
 
     return dataBlock;
+  }
+
+  /**
+   * 
+   * @param {AWF_DataBlock} dataBlock 
+   * @param {AWF_Field} field 
+   * @returns {AWF_Field}
+   */
+  addDataBlockField(dataBlock, field) {
+    const newField = dataBlock.addField(field);
+
+    if (newField.type === 'relate') {
+        debugger;
+
+        const moduleInfo = dataBlock.getModuleInformation();
+        const rel = Object.values(moduleInfo.relationships).find(r => r.module_orig==dataBlock.module && r.field_orig==field.name);
+
+        // Add Action to save Relationship
+        const relateActionDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
+        const fieldReference = `${dataBlock.name}.${newField.name}`;
+        const fieldText = `${dataBlock.text} - ${newField.text}`;
+        const params = {
+          'data_block_id': {value: dataBlock.id, valueText: dataBlock.text, selectedOption: ''},
+          'target_object': {value: fieldReference, valueText: fieldText, selectedOption: 'record_id'},
+          'relationship_name': {value: rel.name, valueText: rel.text, selectedOption: ''}
+        };
+        const newAction = this.addAction(relateActionDef, params);
+        newAction.text = `${newAction.title}: ${dataBlock.text} ⟶ ${rel.module_dest}`;
+    }
+
+    return newField;
   }
 
   syncLayoutWithDataBlocks() {
@@ -1341,10 +1381,11 @@ class AWF_Configuration {
 
     if (field.type == 'relate' && field.value_type == 'dataBlock') {
       // Remove Relationship Action
+      // TODO: Review Remove Relationship Action: Parameters: data_block_id, target_object, relationship_name
       const relateAction = this.flows.flatMap(f => f.actions).find(a => {
         if (a.name == 'RelateRecordsAction') {
           return a.parameters.find(p => p.name == 'data_block_id' && p.value == dataBlock.id) &&
-                 a.parameters.find(p => p.name == 'target_data_block' && p.value == field.value) &&
+                 a.parameters.find(p => p.name == 'target_object' && p.value == field.value) &&
                  a.parameters.find(p => p.name == 'field_to_update' && p.value == `${dataBlock.name}.${field.name}`);
         }
         return false;
@@ -1434,7 +1475,7 @@ class AWF_Configuration {
     const relateActionDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
     const params = {
       'data_block_id': {value: dataBlock_orig.id, valueText: dataBlock_orig.text, selectedOption: ''},
-      'target_data_block': {value: dataBlock_dest.id, valueText: dataBlock_dest.text, selectedOption: ''},
+      'target_object': {value: dataBlock_dest.id, valueText: dataBlock_dest.text, selectedOption: 'datablock'},
       'relationship_name': {value: rel.name, valueText: rel.text, selectedOption: ''}
     };
     const newAction = this.addAction(relateActionDef, params);
@@ -1442,6 +1483,7 @@ class AWF_Configuration {
 
     return dataBlock;
   }
+
 
   /**
    * Get all defined Relationships in all modules represented in data_blocks array
