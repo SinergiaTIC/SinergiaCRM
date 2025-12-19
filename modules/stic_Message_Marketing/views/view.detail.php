@@ -23,6 +23,7 @@
 
 require_once 'include/MVC/View/views/view.detail.php';
 require_once 'SticInclude/Views.php';
+require_once 'modules/stic_Messages/Utils.php';
 
 class stic_Message_MarketingViewDetail extends ViewDetail
 {
@@ -45,6 +46,8 @@ class stic_Message_MarketingViewDetail extends ViewDetail
 
     public function display()
     {
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
+
         parent::display();
 
         SticViews::display($this);
