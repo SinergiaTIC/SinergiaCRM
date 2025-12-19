@@ -23,6 +23,7 @@
 /* HEADER */
 // Set module name
 var module = "Campaigns";
+var activeSection = null;
 
 /* INCLUDES */
 
@@ -490,6 +491,7 @@ function addEditCreateTemplateLinks() {
     var createText = SUGAR.language.translate("app_strings", "LNK_CREATE");
     var $createLink = $('<a href="#" id="notification_template_id_create_link" style="margin-left:10px;">'+createText+'</a>').on("click", function(e) {
       e.preventDefault();
+      activeSection = 'notification';
       open_email_template_form('notification');
     });
     $div.append($createLink);
@@ -510,6 +512,7 @@ function addEditCreateTemplateLinks() {
     var createText = SUGAR.language.translate("app_strings", "LNK_CREATE");
     var $createLink = $('<a href="#" id="msg_notification_template_id_create_link" style="margin-left:10px;">'+createText+'</a>').on("click", function(e) {
       e.preventDefault();
+      activeSection = 'sms';
       open_email_template_form('sms');
     });
     $div.append($createLink);
@@ -569,7 +572,11 @@ function edit_email_template_form(type) {
 }
 
 function refresh_email_template_list(template_id, template_name) {
-  var field = document.getElementById('notification_template_id');
+  if (activeSection != 'sms') {
+    var field = document.getElementById('notification_template_id');
+  } else {
+    var field = document.getElementById('msg_notification_template_id');
+  }  
   var bfound = 0;
   for (var i = 0; i < field.options.length; i++) {
       if (field.options[i].value == template_id) {
