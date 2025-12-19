@@ -69,6 +69,7 @@ $layout_defs["Campaigns"]["subpanel_setup"]['campaigns_stic_message_marketing'] 
     'sort_by' => 'id',
     'title_key' => 'LBL_MESSAGE_MARKETING_SUBPANEL_TITLE',
     'get_subpanel_data' => 'campaigns_stic_message_marketing',
+    'show_SubPanelTopButtonListView' => false,
     'top_buttons' => 
     array (
       0 => 
