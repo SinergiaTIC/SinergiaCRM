@@ -65,13 +65,13 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signers'] = a
         'import_function_file' => 'modules/stic_Signers/Utils.php',
     ),
     'top_buttons' => array(
-    // 0 => array(
-    //     'widget_class' => 'SubPanelTopButtonQuickCreate',
-    // ),
-    // 1 => array(
-    //     'widget_class' => 'SubPanelTopSelectButton',
-    //     'mode' => 'MultiSelect',
-    // ),
+        // 0 => array(
+        //     'widget_class' => 'SubPanelTopButtonQuickCreate',
+        // ),
+        // 1 => array(
+        //     'widget_class' => 'SubPanelTopSelectButton',
+        //     'mode' => 'MultiSelect',
+        // ),
     ),
 );
 
@@ -90,5 +90,9 @@ $layout_defs['stic_Signatures']['subpanel_setup']['stic_campaigns_notification']
         'return_as_array' => false,
     ),
     'title_key' => 'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE',
-    'top_buttons' => [], // must be defined
+    'top_buttons' => [
+        0 => [
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ],
+    ],
 );
