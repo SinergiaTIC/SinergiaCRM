@@ -141,14 +141,14 @@ class stic_RemittancesUtils
      *    - GENERAL_ORGANIZATION_NAME: Default organization
      *    - GENERAL_ORGANIZATION_NAME_XXXX: Organization XXXX
      */
-    public static function fillDynamicListForIssuingOrganizations()
+    public static function fillDynamicListForIssuingOrganizations($firstEmpty = false)
     {
         include_once 'modules/stic_Settings/Utils.php';
         // Load GENERAL Settings
         $generalSettings = stic_SettingsUtils::getSettingsByType('GENERAL');
 
         // Default Organization name
-        $dynamic_issuing_organization_list = array("" => $generalSettings['GENERAL_ORGANIZATION_NAME']);
+        $dynamic_issuing_organization_list = array("" => $firstEmpty ? '' : $generalSettings['GENERAL_ORGANIZATION_NAME']);
 
         // Other Organization names
         foreach ($generalSettings as $key => $value) {

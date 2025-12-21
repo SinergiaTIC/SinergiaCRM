@@ -142,7 +142,7 @@ $paymentTypeArray = $_REQUEST['payment_type'];
 // Although this is redundant, since javascript validation has been included, it will provide extra security.
 if ($paymentTypeArray == '') {
     SugarApplication::appendErrorMessage('<div class="msg-fatal-lock"> Es necesario seleccionar un tipo de pago</div>');
-    SugarApplication::redirect("index.php?module=stic_Payments&action=model182Wizard");
+    SugarApplication::redirect("index.php?module=stic_Payments&action=selectM182IssuingOrganization");
     sugar_die('');
 }
 $paymentTypes = "p.payment_type = '" . implode("' OR p.payment_type = '", $paymentTypeArray) . "'";

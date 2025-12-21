@@ -210,3 +210,4 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Userssda_allowed_c', 'Users', 'sda_allowed_c'),
 ('Usersstic_work_calendar_c', 'Users', 'stic_work_calendar_c'),
 ('Usersstic_clock_c', 'Users', 'stic_clock_c');
+('Usersstic_m182_issuing_organization_c', 'Users', 'stic_m182_issuing_organization_c');

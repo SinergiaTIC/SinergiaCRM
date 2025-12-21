@@ -24,14 +24,41 @@
 class stic_PaymentsController extends SugarController
 {
 
+    public function action_selectM182IssuingOrganization()
+    {
+        // Checking if user has m182 issuing organization assigned then using the key to get the parameters.
+        require_once 'modules/stic_Payments/Utils.php';
+        $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
+        if (count($orgKeyArray) > 0 && empty($_REQUEST['issuing_organization_selected'])) {
+            global $app_list_strings;
+            // If user has organizations assigned and no issuing organization selectred, we redirect to select one
+            include_once "modules/stic_Remittances/Utils.php";
+            stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);
+            $orgLabelArray = array();
+            foreach ($orgKeyArray as $value) {
+                $orgKeyClean = str_replace('_', '', $value);
+                $orgLabelArray[] = $app_list_strings['dynamic_issuing_organization_list'][$orgKeyClean];
+            }
+            $this->view = "selectM182IssuingOrganization";
+            $this->view_object_map['ISSUING_ORGANIZATIONS_ID'] = $orgKeyArray ?? array();
+            $this->view_object_map['ISSUING_ORGANIZATIONS_LABELS'] = $orgLabelArray ?? array();
+        } else {
+            // If user has no organization assigned or has selected one, we go to the wizard
+            $this->action_model182Wizard();
+        }
+    }
+
     /**
      * Show the M182 wizard
      *
      * @return void
      */
-    public function action_model182Wizard()
-    {
+    public function action_model182Wizard() {
         global $app_list_strings;
+
+        // Checking if user has m182 issuing organization assigned then using the key to get the parameters.
+        require_once 'modules/stic_Payments/Utils.php';
+        $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
 
         // Check settings needing for m182
         require_once 'modules/stic_Settings/Utils.php';
@@ -48,18 +75,31 @@ class stic_PaymentsController extends SugarController
             'M182_PERSONA_CONTACTO_TELEFONO',
             'M182_NUMERO_JUSTIFICANTE',
         );
-        foreach ($neededSettings as $key) {
-            if (stic_SettingsUtils::getSetting($key) == '') {
-                $missingSettings[] = $key;
-            }
-        }
 
         // We read the drop-down list of payment types
         $movementClassList = $app_list_strings['stic_payments_types_list'];
 
+        // Checking missing setting and filtering payment types
+        foreach ($orgKeyArray as $orgKey) {
+            foreach ($neededSettings as $key) {
+                if (stic_SettingsUtils::getSetting($key.$orgKey) == '') {
+                    $missingSettings[] = $key.$orgKey;
+                }
+            }
+            // We filter payment types according if payment type ends with organization key
+            // Not mayuscule/lowercule problem because settings keys are case sensitive
+            $minusOrgKey = strtolower($orgKey);
+            foreach ($movementClassList as $x => $xValue) {
+                if ($orgKey != '' && substr($x, -strlen($minusOrgKey)) != $minusOrgKey) {
+                    unset($movementClassList[$x]);
+                }  
+            }  
+        }
+
         // We divide the associative array into two arrays, one that contains the labels and another that contains the internal value
         $i = '0';
         foreach ($movementClassList as $x => $xValue) {
+            // We only add non empty valuese
             if ($x != '') {
                 $listLabel[$i] = $x;
                 $listIntern[$i] = $xValue;
@@ -70,8 +110,8 @@ class stic_PaymentsController extends SugarController
         // Call to the smarty template
         $this->view = "m182wizard";
         $this->view_object_map['MISSING_SETTINGS'] = $missingSettings;
-        $this->view_object_map['PAYMENT_TYPE_VALUES'] = $listLabel;
-        $this->view_object_map['PAYMENT_TYPE_OUTPUT'] = $listIntern;
+        $this->view_object_map['PAYMENT_TYPE_VALUES'] = $listLabel ?? array();
+        $this->view_object_map['PAYMENT_TYPE_OUTPUT'] = $listIntern ?? array();
     }
 
     /**
@@ -82,10 +122,8 @@ class stic_PaymentsController extends SugarController
      */
     public function action_createModel182()
     {
-
         // All generation code is in include file
         require_once 'modules/stic_Payments/GenerateModel182.php';
-
     }
 
     /**

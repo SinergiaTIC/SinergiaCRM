@@ -212,4 +212,21 @@ class stic_PaymentsUtils
         }
         return true;
     }
+
+    public static function getM182IssuingOrganizationKeyForCurrentUser() {
+        global $current_user;
+        $orgKeyArray = array();
+
+        if (!empty($current_user->stic_m182_issuing_organization_c)) {
+            $orgValuesArray = unencodeMultienum($current_user->stic_m182_issuing_organization_c);
+            // Adding underscore to values for settings retrieval
+            foreach ($orgValuesArray as $value) {
+                if ($value == '') {
+                    continue;
+                }
+                $orgKeyArray[] = '_' . $value;
+            }
+        }
+        return $orgKeyArray;
+    }
 }
