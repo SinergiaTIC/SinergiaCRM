@@ -33,7 +33,6 @@ $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Incorpora synchronization';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Send PDF by email';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Add to signature process';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Select a signature process';
-$app_strings['LBL_SELECT_SIGNATURE_INFO'] = 'Only Open signature processes are shown';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Show related signatures';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Related signatures';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Signatures related to this module record are shown';

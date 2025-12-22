@@ -33,7 +33,6 @@ $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
-$app_strings['LBL_SELECT_SIGNATURE_INFO'] = 'Només es mostren els processos de firma amb estat Obert';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra les firmes relacionades';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Firmes relacionades';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Es mostren les firmes relacionades amb aquest registre del mòdul';

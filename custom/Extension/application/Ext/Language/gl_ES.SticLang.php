@@ -33,7 +33,6 @@ $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronización Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Enviar PDF por correo';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Añadir al proceso de firma';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccione un proceso de firma';
-$app_strings['LBL_SELECT_SIGNATURE_INFO'] = 'Solamente se muestran los procesos de firma con estado Abierto';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Ver firmas relacionadas';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Firmas relacionadas';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Se muestran las firmas relacionadas con este registro del módulo';
