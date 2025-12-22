@@ -125,12 +125,12 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean->phone = $destSigner['phone'];
     $stic_SignerBean->status = 'pending';
     $stic_SignerBean->contact_id_c = $destSigner['onBehalfOfId'] != $stic_SignerBean->parent_id ? $destSigner['onBehalfOfId'] : null;
-    
-    $newId = $stic_SignerBean->save();
-    if ($newId) {
+
+    $stic_SignerBean->save();
+    if (!empty($stic_SignerBean->id)) {
         require_once 'modules/stic_Signature_Log/Utils.php';
-        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $newId, 'SIGNER', $stic_SignatureBean->name);
-        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $stic_SignatureBean, 'SIGNATURE', $stic_SignerBean->name);
+        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $stic_SignerBean->id, 'SIGNER', $stic_SignatureBean->name);
+        stic_SignatureLogUtils::logSignatureAction('ADD_SIGNER_TO_SIGNATURE', $stic_SignatureBean->id, 'SIGNATURE', $stic_SignerBean->name);
     }
 
     // Add relationships between stic_Signers and stic_Signatures records
@@ -143,7 +143,7 @@ foreach ($destSigners as $destSignerId => $destSigner) {
 // Display success or error messages to the user
 if ($okCounter !== 0) {
     SugarApplication::appendSuccessMessage("<p class='label label-success'><strong>{$okCounter}</strong> " . translate('LBL_SIGNERS_ADDED_MSG', 'stic_Signatures') . ".</p>");
-    if(in_array($stic_SignatureBean->status, ['completed', 'cancelled', 'paused'])) {
+    if (in_array($stic_SignatureBean->status, ['completed', 'cancelled', 'paused'])) {
         SugarApplication::appendSuccessMessage("<br><p class='label label-warning'>" . translate('LBL_SIGNERS_ADDED_CLOSED_MSG', 'stic_Signatures') . "</p>");
     }
     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$okCounter} signers added successfully.");
