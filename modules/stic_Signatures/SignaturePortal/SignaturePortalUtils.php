@@ -236,7 +236,7 @@ class stic_SignaturePortalUtils
 
                 require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
                 // Generate the signed PDF after saving the signature
-                $savedFile = sticGenerateSignedPdf::generateSignedPdf('handwritten');
+                $savedFile = sticGenerateSignedPdf::generateSignaturePdf('handwritten');
                 $signerBean->verification_code = stic_SignaturesUtils::getVerificationCodeForSignedPdf($savedFile);
                 $signerBean->save();
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
@@ -407,7 +407,7 @@ class stic_SignaturePortalUtils
 
                 // Generate the signed PDF after saving the signature
                 require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
-                $savedFile = sticGenerateSignedPdf::generateSignedPdf('button');
+                $savedFile = sticGenerateSignedPdf::generateSignaturePdf('button');
 
                 $signerBean->verification_code = stic_SignaturesUtils::getVerificationCodeForSignedPdf($savedFile);
                 $signerBean->save();

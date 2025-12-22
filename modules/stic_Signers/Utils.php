@@ -604,4 +604,59 @@ class stic_SignersUtils
             return true;
         }
     }
+
+
+    /**
+     * Generates and initiates the download of a document draft PDF for a given signer.
+     * The draft is generated as an unsigned PDF and sent to the browser for download.
+     *
+     * @param string $signerId The ID of the signer for whom the document draft should be generated.
+     * @return void
+     */
+    public static function downloadDocumentDraft($signerId)
+    {
+        global $app_list_strings, $mod_strings, $current_user;
+
+        $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+
+        if (!$signerBean) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer with ID {$signerId} not found.");
+            return;
+        }
+
+        $_REQUEST['signerId'] = $signerId;
+
+        // Generate the document draft PDF
+        require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
+        $documentDraftPath = sticGenerateSignedPdf::generateSignaturePdf('unsigned');
+        
+        // Define the prefix for the downloaded file
+        $prefix = "[{$app_list_strings['stic_signatures_status_list']['draft']}]" . ' ';
+        
+        if (!file_exists($documentDraftPath)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Document draft file not found at path {$documentDraftPath} for signer ID {$signerBean->id}.");
+            return;
+        }
+
+        // Send the file to the browser for download and then remove it from the server
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $prefix . $signerBean->name . '.pdf"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($documentDraftPath));
+        readfile($documentDraftPath);
+
+        // Remove the temporary file from the server
+        if (file_exists($documentDraftPath)) {
+            unlink($documentDraftPath);
+        }
+
+        // Log the download action
+        require_once 'modules/stic_Signature_Log/Utils.php';
+        stic_SignatureLogUtils::logSignatureAction('DOCUMENT_DRAFT_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
+
+        exit;
+    }
 }

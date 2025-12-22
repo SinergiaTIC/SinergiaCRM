@@ -55,7 +55,7 @@ class sticGenerateSignedPdf
      * Defaults to 'handwritten'.
      * @return string The file path of the generated PDF document.
      */
-    public static function generateSignedPdf($signedMode = 'handwritten')
+    public static function generateSignaturePdf($signedMode = 'handwritten')
     {
         global $sugar_config, $app_list_strings, $app_strings;
 
@@ -183,7 +183,7 @@ class sticGenerateSignedPdf
         $templateBean->description = str_replace($stringToreplace, $replaceWith, (string) $templateBean->description);
 
         // If 'pdf_audit_page' is enabled, append an audit page to the PDF content
-        if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page) {
+        if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page && $signedMode != 'unsigned') {
 
             // Get logs related to the signer
             require_once 'modules/stic_Signature_Log/Utils.php';
@@ -199,12 +199,12 @@ class sticGenerateSignedPdf
             $sugar_smarty->assign('SIGNER_USER_TIME', $userTime);
             $sugar_smarty->assign('SIGNER_MODE', $app_list_strings['stic_signatures_modes_list'][$signedMode]);
             $sugar_smarty->assign('SIGNER_STATUS', $app_list_strings['stic_signers_status_list'][$signerBean->status]);
-            
+
             // If signing on behalf of someone else, include that information
-            if($signerBean->parent_id != $signerBean->contact_id_c){
+            if ($signerBean->parent_id != $signerBean->contact_id_c) {
                 $behalfName = BeanFactory::getBean('Contacts', $signerBean->contact_id_c)->full_name;
                 $sugar_smarty->assign('SIGNER_ON_BEHALF_OF', $behalfName);
-            } 
+            }
 
             $sugar_smarty->assign('MOD_STRINGS', return_module_language($GLOBALS['current_language'], 'stic_Signatures'));
             $sugar_smarty->assign('APP_STRINGS', $app_strings);
@@ -349,8 +349,14 @@ class sticGenerateSignedPdf
         $printable = str_replace("\n", "<br />", (string) $converted);
 
         try {
-            // Generate a unique file name using the signer's GUID
-            $fileName = "{$signerBean->id}_signed.pdf";
+
+            // Define the file name and path for the generated PDF
+            if ($signedMode == 'unsigned') {
+                $fileName = "{$signerBean->id}_draft.pdf";
+            } else {
+                $fileName = "draft{$signerBean->id}_signed.pdf";
+            }
+
             $filePath = $sugar_config['upload_dir'] . $fileName;
 
             // Generate the PDF and save it to the file system
@@ -361,14 +367,16 @@ class sticGenerateSignedPdf
             $pdf->outputPDF($filePath, 'F'); // 'F' parameter saves to a local file
 
             // Store the file reference in the signer bean's 'pdf_document' field
-            $signerBean->pdf_document = $fileName;
-            $signerBean->save();
+            if ($signedMode != 'unsigned') {
+                $signerBean->pdf_document = $fileName;
+                $signerBean->save();
+            }
 
             return $filePath;
 
         } catch (PDFException $e) {
-            
-            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. " PDF generation failed for Signer ID: {$signerBean->id} - " . $e->getMessage());
+
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " PDF generation failed for Signer ID: {$signerBean->id} - " . $e->getMessage());
             sugar_die('PDF generation failed. Please contact the system administrator.');
         }
     }

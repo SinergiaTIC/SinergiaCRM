@@ -65,12 +65,18 @@ switch (viewType()) {
         id: "bt_copy_portal_url",
         title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_COPY_PORTAL_URL"), // Localized button title with clipboard emoji
         onclick: "navigator.clipboard.writeText('" + window.location.origin + window.location.pathname + "?entryPoint=sticSign&signerId=" + STIC.record.id + "'); alert(SUGAR.language.get('stic_Signers', 'LBL_SIGNER_PORTAL_URL_COPIED'));"
+      },
+      downloadDocumentDraft: {
+        id: "bt_download_document_draft",
+        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_DOWNLOAD_DOCUMENT_DRAFT"),
+        onclick: "window.location='index.php?module=stic_Signers&action=downloadDocumentDraft&signerId=" + STIC.record.id + "'"
       }
     };
     // Add the defined button to the detail view.
     createDetailViewButton(buttons.sendToSign);
     createDetailViewButton(buttons.rediretToSingPortal);
     createDetailViewButton(buttons.copyPortalUrl);
+    createDetailViewButton(buttons.downloadDocumentDraft);
 
 
     break;
