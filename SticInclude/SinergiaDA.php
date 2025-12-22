@@ -2364,6 +2364,10 @@ class ExternalReporting
             // Define SinergiaDA relationships for the new fields in the view
             global $app_list_strings;
 
+
+            // set all campaign log fields as visible
+            $campaignLogQueries['set_fields_visible'] = "UPDATE sda_def_columns SET sda_hidden =0  WHERE `table` = 'sda_campaign_log'";
+
             //Drop original campaign_log->campaigns relationship
             $campaignLogQueries['drop_original_relationships'] = "DELETE FROM sda_def_relationships
             WHERE source_table = 'sda_campaign_log' AND source_column = 'campaign_id' AND target_table = 'sda_campaigns' AND id='campaign';";
