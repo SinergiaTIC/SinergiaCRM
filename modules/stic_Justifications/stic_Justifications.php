@@ -49,17 +49,18 @@ class stic_Justifications extends Basic
         $justificationsModStrings = return_module_language($current_language, 'stic_Justifications'); // can not be $mod_strings because of different contexts (specially inline edition)     
 
         $tempFetchedRow = $this->fetched_row ?? null;
-        $isBlocked = $this->status === 'submitted';
+        
+        $previousState = $tempFetchedRow ? $tempFetchedRow['status'] : null;
+        $currentState = $this->status;
+        $previouslyBlocked = $tempFetchedRow ? filter_var($tempFetchedRow['blocked'], FILTER_VALIDATE_BOOLEAN) : null;
+        if ($previousState !== 'submitted' && $currentState === 'submitted') {
+            $this->blocked = true;
+        }
+        $isBlocked = filter_var($this->blocked, FILTER_VALIDATE_BOOLEAN);
 
-        if ($tempFetchedRow && $tempFetchedRow['status'] == 'submitted' && $isBlocked) {
-            // TODOEPS
+        if ($previouslyBlocked && $isBlocked) {
             if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                    // // This is an AJAX request
-                    // ob_clean();
-                    // header('HTTP/1.1 500 Internal Server Error');
-                    // echo "Save aborted: " . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
-                    // exit;
-                    // 1. Sanitize the message for JS
+                // This is an AJAX request
                 $errorMsg = $justificationsModStrings['LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED'];
                 $jsMsg = json_encode($errorMsg);
 
@@ -81,10 +82,13 @@ class stic_Justifications extends Basic
         $justifiedAmount = $percentage ? ($allocatedAmount * $percentage) / 100 : null;
         $this->justified_amount = SticUtils::formatDecimalInConfigSettings($justifiedAmount);
 
+
         // Save the bean
         parent::save($check_notify);
 
-
+        if ($previousState !== 'submitted' && $currentState === 'submitted') {
+            stic_JustificationsUtils::blockRelatedAllocation($this);
+        }
         $oldAmount = SticUtils::unformatDecimal($tempFetchedRow['justified_amount'] ?? 0);
 
 

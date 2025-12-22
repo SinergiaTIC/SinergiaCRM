@@ -87,14 +87,8 @@ class stic_Allocations extends Basic
         $isValidated = filter_var($this->validated, FILTER_VALIDATE_BOOLEAN);
         // If record is blocked, no updates are allowed
         if ($tempFetchedRow && $tempFetchedRow['blocked'] && $isBlocked) {
-            // TODOEPS
             if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                    // // This is an AJAX request
-                    // ob_clean();
-                    // header('HTTP/1.1 500 Internal Server Error');
-                    // echo "Save aborted: " . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
-                    // exit;
-                    // 1. Sanitize the message for JS
+                // This is an AJAX request
                 $errorMsg = $allocationsModStrings['LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED'];
                 $jsMsg = json_encode($errorMsg);
 
@@ -137,11 +131,12 @@ class stic_Allocations extends Basic
             return false;
         }
         else {
-            $this->amount = SticUtils::unformatDecimal($paymentBean->{$this->payment_amount_field}) * SticUtils::unformatDecimal($this->percentage) / 100; // TODOEPS: Hi ha hagut un warning per valor no numèric.... com protegir-ho?
+            $this->amount = SticUtils::unformatDecimal($paymentBean->{$this->payment_amount_field}) * SticUtils::unformatDecimal($this->percentage) / 100; 
         }
         
         $oldAmount = SticUtils::unformatDecimal($this->fetched_row['amount'] ?? null); 
-        $amountChanged = ($oldAmount !== $this->amount); //TODOEPS: Revisar la comparació. Els formats no són iguals i salta quanno toca.
+        $newAmount = SticUtils::unformatDecimal($this->amount);
+        $amountChanged = ($oldAmount !== $newAmount); 
 
         // Save the bean
         parent::save($check_notify);
@@ -151,12 +146,13 @@ class stic_Allocations extends Basic
         //     stic_AllocationsUtils::updatePayment($this);
         // }
 
-        if ($isValidated && !$tempFetchedRow['validated']) {
+        $validatedBeforeSave = $tempFetchedRow['validated'] ?? false;
+        if ($isValidated && !$validatedBeforeSave) {
             // Allocation has been validated now
             stic_JustificationsUtils::createJustificationsFromAllocation($this); 
             stic_AllocationsUtils::updatePayment($this->stic_payments_stic_aleb9a);
         }
-        else if ($tempFetchedRow['validated'] && !$isValidated) {
+        else if ($validatedBeforeSave && !$isValidated) {
             // Allocation has been un-validated now
             stic_JustificationsUtils::removeJustificationsFromAllocation($this); 
         }

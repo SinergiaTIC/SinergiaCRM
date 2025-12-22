@@ -25,6 +25,13 @@ require_once 'SticInclude/Utils.php';
 
 class stic_JustificationsUtils {
 
+    public static function blockRelatedAllocation($justification) {
+        // get related allocation
+        $allocationBean = BeanFactory::getBean('stic_Allocations', $justification->stic_alloc8c71cations_ida);
+        if ($allocationBean) {
+            stic_AllocationsUtils::blockAllocation($allocationBean);
+        }
+    }
     public static function updateRelatedOpportunity($opportunityId) {
         $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
         if ($opportunity) {
@@ -157,7 +164,7 @@ class stic_JustificationsUtils {
         $justification->amount = $allocation->amount;
         $justification->hours = $allocation->hours;
         $justification->allocation_type = $allocation->type;
-        $justification->assigned_user_id = $allocation->assigned_user_id; // TODOEPS : revisar si cal canviar l'assignatari
+        $justification->assigned_user_id = $allocation->assigned_user_id; 
         $justification->max_allocable_percentage = $allocation->percentage;
         $justification->justified_amount = $allocation->amount * $justification->max_allocable_percentage / 100;
         $justification->justified_hours = $allocation->hours;
@@ -292,10 +299,8 @@ class stic_JustificationsUtils {
             $result1N =  "'" . $result . "'";
             $endResult = empty($endResult) ? $result1N : $endResult . "," . $result1N;
         }
-        // TODOEPS
-        // Check if result is false?
 
-        return $result;
+        return $endResult;
     }
 
 }

@@ -106,3 +106,10 @@ $mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_P
 
 // Esleipenekin erlazioarentzako stringak
 $mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Esleipenak';
+
+// Panel de Justificación
+$mod_strings['LBL_JUSTIFICATION'] = 'Justificación';
+$mod_strings['LBL_JUSTIFIED_AMOUNT'] = 'Importe Justificado';
+$mod_strings['LBL_JUSTIFIED_PERCENTAGE'] = 'Porcentaje Justificado';
+$mod_strings['LBL_START_DATE'] = 'Fecha de Inicio';
+$mod_strings['LBL_END_DATE'] = 'Fecha de Fin';

@@ -374,7 +374,8 @@ class Opportunity extends SugarBean
         $tempFetchedRow = $this->fetched_row ?? null;
 
         perform_save($this);
-        // TODOEPS (add STIC)
+        // STIC-Custom 20251222 EPS - Imputación y Justificación
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/869
         // return parent::save($check_notify);
         $oldAmount = SticUtils::unformatDecimal($tempFetchedRow['stic_amount_awarded_c'] ?? null);
         $newAmount = SticUtils::unformatDecimal($this->stic_amount_awarded_c);
@@ -391,10 +392,11 @@ class Opportunity extends SugarBean
         }
 
         return true;
-        // END TODOEPS
+        // END STIC
     }
 
-    // TODOEPS (STIC)
+    // STIC-Custom 20251222 EPS - Imputación y Justificación
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/869
     protected function justificationDatesChanged($tempFetchedRow) {
         if (!$tempFetchedRow) {
             return false; // New record, so dates are considered unchanged
@@ -403,7 +405,7 @@ class Opportunity extends SugarBean
         $endDateChanged = $this->stic_end_date_c !== $tempFetchedRow['stic_end_date_c'];
         return $startDateChanged || $endDateChanged;
     }
-    // END TODOEPS
+    // END STIC
 
     public function save_relationship_changes($is_update, $exclude = array())
     {

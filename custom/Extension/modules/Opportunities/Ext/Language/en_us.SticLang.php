@@ -79,3 +79,10 @@ $mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_P
 
 // Strings for Allocations relationship
 $mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Allocations';
+    
+// Justification tab labels
+$mod_strings['LBL_JUSTIFICATION'] = 'Justification';
+$mod_strings['LBL_JUSTIFIED_AMOUNT'] = 'Justified Amount';
+$mod_strings['LBL_JUSTIFIED_PERCENTAGE'] = 'Justified Percentage';
+$mod_strings['LBL_START_DATE'] = 'Start Date';
+$mod_strings['LBL_END_DATE'] = 'End Date';

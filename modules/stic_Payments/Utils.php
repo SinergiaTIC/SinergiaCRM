@@ -213,6 +213,13 @@ class stic_PaymentsUtils
         return true;
     }
 
+    public static function blockPayment($paymentBean) {
+        if (!$paymentBean->blocked) {
+            $paymentBean->blocked = 1;
+            $paymentBean->save();
+        }
+    }
+
     public static function updateAllocationPercentage(&$paymentBean)
     {
         $db = DBManagerFactory::getInstance();

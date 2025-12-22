@@ -350,7 +350,8 @@ $viewdefs['Opportunities']['DetailView'] = array (
       ),
       // END STIC-Custom JBL
     ),
-    // TODOEPS - Justification tab
+    // STIC-Custom 20251222 EPS - Imputación y Justificación
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/869
     'LBL_JUSTIFICATION' => 
     array (
       0 => 
@@ -380,7 +381,7 @@ $viewdefs['Opportunities']['DetailView'] = array (
         ),
       ),
     ),
-    // END TODOEPS
+    // END STIC
     'LBL_STIC_PANEL_RECORD_DETAILS' => 
     array (
       0 => 

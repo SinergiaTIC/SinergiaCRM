@@ -109,12 +109,4 @@ $mod_strings = array(
 
     'LBL_AOS_CONTRACTS' => 'Contratos',
     'LBL_AOS_QUOTES' => 'Presupuestos',
-    
-    // TODOEPS - Justification tab labels
-    'LBL_JUSTIFICATION' => 'Justifikazioa',
-    'LBL_JUSTIFIED_AMOUNT' => 'Justifikatutako Zenbatekoa',
-    'LBL_JUSTIFIED_PERCENTAGE' => 'Justifikatutako Ehunekoa',
-    'LBL_START_DATE' => 'Hasiera Data',
-    'LBL_END_DATE' => 'Bukaera Data',
-    // END TODOEPS
 );

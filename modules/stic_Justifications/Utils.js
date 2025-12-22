@@ -59,12 +59,12 @@ switch (viewType()) {
 
 /* AUX FUNCTIONS */
 function checkBlockedJustification() {
-  var blocked = $("#status").val() === 'submitted';
+  var blocked = $("#blocked").is(":checked");
   if (blocked) {
     $(".edit-view-row-item input").prop('disabled', true); // text, decimals, checks, etc.
     $(".edit-view-row-item select").prop('disabled', true); // desplegables
     $("button[type='button']:not(.saveAndContinue)").prop('disabled', true); // buttons except "Save and Continue Edit"
-    $("#status").prop('disabled', false); // keep status enabled
+    $("#blocked").prop('disabled', false); // keep blocked enabled
   }
   else {
     $(".edit-view-row-item input").prop('disabled', false);
@@ -75,10 +75,10 @@ function checkBlockedJustification() {
 
 function checkBlockedJustificationInDetailView() {
   // To block the inline edit on double click, we add/remove event listeners to the parent element of inlineEdit fields
-  var blocked = $("#status").val() === 'submitted';
+  var blocked = $("#blocked").is(":checked");
   if (blocked) {
     $(".inlineEdit").each(function() {
-      if ($(this).attr('field') !== 'status') {
+      if ($(this).attr('field') !== 'blocked') {
         $(this).parent()[0].addEventListener('dblclick', blockDblClick, true);
       }
     });

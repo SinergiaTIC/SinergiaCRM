@@ -25,6 +25,12 @@ require_once 'SticInclude/Utils.php';
 
 class stic_AllocationsUtils {
 
+    public static function blockAllocation($allocationBean) {
+        if (!$allocationBean->blocked) {
+            $allocationBean->blocked = 1;
+            $allocationBean->save();
+        }
+    }
 
     public static function recalculateAllocation($allocationBean, $allocationProposalBean) {
         require_once 'modules/stic_Payments/Utils.php';
@@ -85,6 +91,7 @@ class stic_AllocationsUtils {
         if ($paymentBean) {
             require_once 'modules/stic_Payments/Utils.php';
             stic_PaymentsUtils::updateAllocationPercentage($paymentBean);
+            stic_PaymentsUtils::blockPayment($paymentBean);
         }
     }
 

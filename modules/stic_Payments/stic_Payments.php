@@ -144,14 +144,8 @@ class stic_Payments extends Basic
         $isAllocated = filter_var($this->allocated, FILTER_VALIDATE_BOOLEAN);
         // If record is blocked, no updates are allowed
         if ($tempFetchedRow && $tempFetchedRow['blocked'] && $isBlocked) {
-            // TODOEPS
             if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                    // // This is an AJAX request
-                    // ob_clean();
-                    // header('HTTP/1.1 500 Internal Server Error');
-                    // echo "Save aborted: " . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
-                    // exit;
-                    // 1. Sanitize the message for JS
+                // // This is an AJAX request
                 $errorMsg = $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
                 $jsMsg = json_encode($errorMsg);
 
