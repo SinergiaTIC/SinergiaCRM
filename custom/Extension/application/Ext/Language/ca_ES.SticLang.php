@@ -359,9 +359,6 @@ $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Fir
 
 // Creació dinàmica de Llistes de públic objectiu
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
-$app_list_strings['notification_auto_prospect_list_name_list']['stic_Signatures__exampleFilter'] = "Filtre d'exemple de Firmes";
-$app_list_strings['notification_auto_prospect_list_name_list']['stic_Events__exampleFilter'] = "Filtre d'exemple d'Esdeveniments";
-$app_list_strings['notification_auto_prospect_list_name_list']['Opportunities__exampleFilter'] = "Filtre d'exemple de Subvencions";
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';

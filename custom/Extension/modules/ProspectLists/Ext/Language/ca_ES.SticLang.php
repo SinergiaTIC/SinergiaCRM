@@ -46,7 +46,6 @@ $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interessats';
 $mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Persona';
 
 // Filtres per a creació dinàmica de llistes de públic objectiu (LPO)
-$mod_strings['LBL_LPO_STIC_SIGNATURES_RANDOM_SIGNERS'] = 'Signants aleatoris';
 $mod_strings['LBL_LPO_STIC_SIGNATURES_ALL_SIGNERS']    = 'Tots els signants'; 
 $mod_strings['LBL_LPO_STIC_SIGNATURES_PENDING_SIGNERS'] = 'Signants pendents';
 $mod_strings['LBL_LPO_STIC_EVENTS_CONFIRMED_REGISTRATIONS'] = 'Inscripcions confirmades';

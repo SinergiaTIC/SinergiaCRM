@@ -48,7 +48,6 @@ class CustomProspectListsController extends SugarController
     {
         global $mod_strings;
         $types = [
-            'stic_Signatures__random_signers' => $mod_strings['LBL_LPO_STIC_SIGNATURES_RANDOM_SIGNERS'],
             'stic_Signatures__all_signers' => $mod_strings['LBL_LPO_STIC_SIGNATURES_ALL_SIGNERS'],
             'stic_Signatures__signers_pending' => $mod_strings['LBL_LPO_STIC_SIGNATURES_PENDING_SIGNERS'],
             'stic_Events__registrations_confirmed' => $mod_strings['LBL_LPO_STIC_EVENTS_CONFIRMED_REGISTRATIONS'],
