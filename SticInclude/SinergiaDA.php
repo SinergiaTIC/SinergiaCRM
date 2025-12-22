@@ -451,7 +451,7 @@ class ExternalReporting
                                 if (($fieldV['module'] ?? null) == $moduleName) {
 
                                     // Check if the autorelationship is excluded & skip it if it is
-                                    if(in_array("{$fieldV['module']}:{$fieldV['link']}", $this->evenExcludedAutoRelationships)){
+                                    if (in_array("{$fieldV['module']}:{$fieldV['link']}", $this->evenExcludedAutoRelationships)) {
                                         continue 2;
                                     }
 
@@ -999,7 +999,7 @@ class ExternalReporting
                     } else {
                         $mode = 'VIEW';
                     }
-                    $objectName = $this->truncateStringMiddle($viewName.'_'.$key, 64);
+                    $objectName = $this->truncateStringMiddle($viewName . '_' . $key, 64);
                     // Create the SQL instruction with some modifications for each autorelationship view
                     $createViewQuery[] = "CREATE OR REPLACE {$mode} {$objectName} AS
                     SELECT   {$createViewQueryFields} {$value['parentIdfieldSrc']}
@@ -1033,9 +1033,9 @@ class ExternalReporting
             if ($tableMode == 'table') {
                 foreach ($indexesToCreate as $indexColumn) {
                     $indexName = $this->truncateStringMiddle($this->sanitizeText("idx_{$viewName}_{$indexColumn}"), 64);
-                    if($indexColumn == 'id'){
+                    if ($indexColumn == 'id') {
                         $indexSql = "ALTER TABLE {$viewName} ADD UNIQUE {$indexName}  ({$indexColumn}) USING BTREE";
-                    }else{
+                    } else {
                         $indexSql = "ALTER TABLE {$viewName} ADD INDEX  {$indexName} ({$indexColumn}) USING BTREE";
                     }
 
@@ -2234,8 +2234,6 @@ class ExternalReporting
 
     }
 
-
-
     /**
      * Clones permission records for auto-relationships.
      *
@@ -2259,7 +2257,6 @@ class ExternalReporting
             }
         }
     }
-
 
     /**
      * Truncates a string from the middle if it exceeds a maximum length,
@@ -2311,7 +2308,6 @@ class ExternalReporting
         return $string;
     }
 
-
     /**
      * Function to run post-rebuild SQL scripts.
      */
@@ -2326,7 +2322,7 @@ class ExternalReporting
         if (in_array('Campaigns', $modulesList)) {
             $this->info .= "<h2>Rebuilding SinergiaDA campaign_log view and relationships</h2>";
 
-            $campaignLogQuerys['view'] = "CREATE OR REPLACE VIEW sda_campaign_log AS
+            $campaignLogQueries['view'] = "CREATE OR REPLACE VIEW sda_campaign_log AS
             SELECT
                 m.id AS id,
                 IFNULL(t.tracker_name, '') AS target_tracker_key,
@@ -2368,18 +2364,25 @@ class ExternalReporting
             // Define SinergiaDA relationships for the new fields in the view
             global $app_list_strings;
 
-            $campaignLogQuerys['relationships'] = "INSERT INTO sda_def_relationships
+            //Drop original campaign_log->campaigns relationship
+            $campaignLogQueries['drop_original_relationships'] = "DELETE FROM sda_def_relationships
+            WHERE source_table = 'sda_campaign_log' AND source_column = 'campaign_id' AND target_table = 'sda_campaigns' AND id='campaign';";
+
+            // Insert relationships
+            $campaignLogQueries['relationships'] = "INSERT INTO sda_def_relationships
                 (id, source_table, source_column, target_table, target_column, label, info)
             VALUES
-                ('campaign_log_contacts', 'sda_campaign_log', 'contact_id', 'sda_contacts', 'id', '{$app_list_strings['moduleList']['Contacts']}', 'Direct SQL relationship'),
-                ('campaign_log_users', 'sda_campaign_log', 'user_id', 'sda_users', 'id', '{$app_list_strings['moduleList']['Users']}', 'Direct SQL relationship'),
-                ('campaign_log_leads', 'sda_campaign_log', 'lead_id', 'sda_leads', 'id', '{$app_list_strings['moduleList']['Leads']}', 'Direct SQL relationship'),
-                ('campaign_log_accounts', 'sda_campaign_log', 'account_id', 'sda_accounts', 'id', '{$app_list_strings['moduleList']['Accounts']}', 'Direct SQL relationship');";
+                ('campaign_log_contacts', 'sda_campaign_log', 'contact_id', 'sda_contacts', 'id', '{$app_list_strings['moduleList']['Contacts']}|{$app_list_strings['moduleList']['CampaignLog']}', 'Direct SQL relationship'),
+                ('campaign_log_users', 'sda_campaign_log', 'user_id', 'sda_users', 'id', '{$app_list_strings['moduleList']['Users']}|{$app_list_strings['moduleList']['CampaignLog']}', 'Direct SQL relationship'),
+                ('campaign_log_leads', 'sda_campaign_log', 'lead_id', 'sda_leads', 'id', '{$app_list_strings['moduleList']['Leads']}|{$app_list_strings['moduleList']['CampaignLog']}', 'Direct SQL relationship'),
+                ('campaign_log_accounts', 'sda_campaign_log', 'account_id', 'sda_accounts', 'id', '{$app_list_strings['moduleList']['Accounts']}|{$app_list_strings['moduleList']['CampaignLog']}', 'Direct SQL relationship'),
+                ('campaign_log_campaigns', 'sda_campaign_log', 'campaign_id', 'sda_campaigns', 'id', '{$app_list_strings['moduleList']['Campaigns']}|{$app_list_strings['moduleList']['CampaignLog']}', 'Direct SQL relationship');
+                ";
 
-            foreach ($campaignLogQuerys as $key => $value) {
+            foreach ($campaignLogQueries as $key => $value) {
                 if (!$db->query($value)) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Error creating SinergiaDA campaign_log view or relationships: ' . $db->lastError());
-                    $this->info .= '[FATAL: Error rehaciendo ' . $key . '  sda_campaign_log..]';
+                    $this->info .= '[FATAL: Error rebuilding  ' . $key . '  sda_campaign_log..]';
                 } else {
                     $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'SinergiaDA campaign_log view or relationships created successfully.');
                     $this->info .= ' - OK: SinergiaDA  ' . $key . ' sda_campaign_log creadas correctamente.<br>';
