@@ -82,12 +82,12 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbits de l'aplicació 
 
 // Emulació d'usuaris - Usuari que emula
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emula aquest usuari';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Accés emulat';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'Ara mateix esteu emulant aquest usuari: ';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Per tornar al vostre usuari feu clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = "Emulació d'usuari";
+$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = "Atenció! Esteu emulant l'usuari: ";
+$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Per tornar al vostre usuari feu clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí</a>.';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuari original';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuari emulat';
-$mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = "Finalitza l'accés";
+$mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = "Finalitza l'emulació";
 
 // Emulació d'usuaris - Usuari emulat
 $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = "Emulació d'usuari";
@@ -96,5 +96,5 @@ $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = "Un administrad
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuari emulador: ';
 
 // Emulació d'usuaris - Monitorització
-$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulació del usuari ';
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = "Emulació de l'usuari ";
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' amb ID ';
