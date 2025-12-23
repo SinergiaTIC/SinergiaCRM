@@ -20,4 +20,4 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_SORT_ORDER'] = 'Orde';
+$mod_strings['LBL_SORT_ORDER'] = 'Orden';
