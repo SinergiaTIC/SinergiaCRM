@@ -2,7 +2,7 @@
 INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('TemplateSectionLinehtmlcode_c', 'TemplateSectionLine', 'htmlcode_c'),
 ('TemplateSectionLinethumbnail_image_c', 'TemplateSectionLine', 'thumbnail_image_c'),
-('TemplateSectionLinethumbnail_name_c', 'TemplateSectionLine', 'thumbnail_name_c'),
+('TemplateSectionLinethumbnail_name_c', 'TemplateSectionLine', 'thumbnail_name_c');
 
 -- Update the order of existing thumbnails so they appear after SinergiaTIC's
 UPDATE `templatesectionline` SET `ord` = '101' WHERE name = 'Headline';
