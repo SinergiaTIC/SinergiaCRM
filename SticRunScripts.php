@@ -136,7 +136,7 @@ if (stripos($normalizedNoLeading, 'SticUpdates/Languages/') === 0) {
     $crmLang = strtolower(strtok(str_replace('-', '_', $sugar_config['default_language'] ?? ''), '_')) ?: '';
 
     if ($fileLang !== $crmLang) {
-        http_response_code(403);
+        http_response_code(204);
         echo "Requested language file ($fileLang) doesn't match CRM language ($crmLang). Skipping execution.";
         exit;
     }
