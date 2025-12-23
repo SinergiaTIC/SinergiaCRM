@@ -43,26 +43,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_EDIT_LAYOUT' => 'Editar Deseño',
+    'LBL_EDIT_LAYOUT' => 'Editar Diseño',
     'LBL_EDIT_FIELDS' => 'Editar Campos Personalizados',
-    'LBL_SELECT_FILE' => 'Seleccionar Arquivo',
+    'LBL_SELECT_FILE' => 'Seleccionar Archivo',
     'LBL_MODULE_TITLE' => 'Estudio',
-    'LBL_TOOLBOX' => 'Caixa de Ferramentas',
-    'LBL_SUITE_FIELDS_STAGE' => 'Campos SuiteCRM (faga clic nos elementos para agregalos á área de deseño)',
+    'LBL_TOOLBOX' => 'Caja de Herramientas',
+    'LBL_SUITE_FIELDS_STAGE' => 'Campos SuiteCRM (haga clic en los elementos para agregarlos al área de diseño)',
     'LBL_VIEW_SUITE_FIELDS' => 'Ver Campos SuiteCRM',
-    'LBL_FAILED_TO_SAVE' => 'Erro ao Gardar',
-    'LBL_CONFIRM_UNSAVE' => 'Os cambios non se gardaron e perderanse. ¿Está seguro de que desexa continuar?',
+    'LBL_FAILED_TO_SAVE' => 'Error al Guardar',
+    'LBL_CONFIRM_UNSAVE' => 'Los cambios no se han guardado y se perderán. ¿Está seguro de que desea continuar?',
     'LBL_PUBLISHING' => 'Publicando ...',
     'LBL_PUBLISHED' => 'Publicado',
-    'LBL_FAILED_PUBLISHED' => 'Erro ao Publicar',
+    'LBL_FAILED_PUBLISHED' => 'Error al Publicar',
     'LBL_DROP_HERE' => '[Soltar Aquí]',
 
 //CUSTOM FIELDS
-    'LBL_NAME' => 'Nome',
+    'LBL_NAME' => 'Nombre',
     'LBL_LABEL' => 'Etiqueta',
     'LBL_MASS_UPDATE' => 'Actualización Masiva',
     'LBL_DEFAULT_VALUE' => 'Valor por Defecto',
-    'LBL_REQUIRED' => 'Requirido',
+    'LBL_REQUIRED' => 'Requerido',
     'LBL_DATA_TYPE' => 'Tipo',
 
 
@@ -71,12 +71,12 @@ $mod_strings = array(
 //WIZARDS
 
 //STUDIO WIZARD
-    'LBL_SW_WELCOME' => '<h2>¡Benvido ao Estudio!</h2><br> ¿Que desexa facer hoxe?<br><b> Por favor, seleccione unha das seguintes opcións.</b>',
+    'LBL_SW_WELCOME' => '<h2>¡Bienvenido al Estudio!</h2><br> ¿Qué desea hacer hoy?<br><b> Por favor, seleccione una de las siguientes opciones.</b>',
     'LBL_SW_EDIT_MODULE' => 'Editar un Módulo',
-    'LBL_SW_EDIT_DROPDOWNS' => 'Editar Listas Despregables',
-    'LBL_SW_EDIT_TABS' => 'Configurar Pestanas',
-    'LBL_SW_RENAME_TABS' => 'Renomear Pestanas',
-    'LBL_SW_EDIT_GROUPTABS' => 'Configurar Grupos de Pestanas',
+    'LBL_SW_EDIT_DROPDOWNS' => 'Editar Listas Desplegables',
+    'LBL_SW_EDIT_TABS' => 'Configurar Pestañas',
+    'LBL_SW_RENAME_TABS' => 'Renombrar Pestañas',
+    'LBL_SW_EDIT_GROUPTABS' => 'Configurar Grupos de Pestañas',
     'LBL_SW_EDIT_PORTAL' => 'Editar Portal',
     'LBL_SW_REPAIR_CUSTOMFIELDS' => 'Reparar Campos Personalizados',
     'LBL_SW_MIGRATE_CUSTOMFIELDS' => 'Migrar Campos Personalizados',
@@ -85,9 +85,9 @@ $mod_strings = array(
     'LBL_MB_DELETE' => 'Eliminar',
 
 //EDIT DROP DOWNS
-    'LBL_ED_CREATE_DROPDOWN' => 'Crea unha Lista Despregable',
-    'LBL_DROPDOWN_NAME' => 'Nome de Lista Despregable:',
-    'LBL_DROPDOWN_LANGUAGE' => 'Idioma de Lista Despregable:',
+    'LBL_ED_CREATE_DROPDOWN' => 'Crea una Lista Desplegable',
+    'LBL_DROPDOWN_NAME' => 'Nombre de Lista Desplegable:',
+    'LBL_DROPDOWN_LANGUAGE' => 'Idioma de Lista Desplegable:',
     'LBL_TABGROUP_LANGUAGE' => 'Idioma:',
 
 //END WIZARDS
@@ -98,36 +98,36 @@ $mod_strings = array(
     'LBL_DD_ALL' => 'Todo',
 
 //BUTTONS
-    'LBL_BTN_SAVE' => 'Gardar',
+    'LBL_BTN_SAVE' => 'Guardar',
     'LBL_BTN_CANCEL' => 'Cancelar',
-    'LBL_BTN_SAVEPUBLISH' => 'Gardar e Publicar',
+    'LBL_BTN_SAVEPUBLISH' => 'Guardar y Publicar',
     'LBL_BTN_HISTORY' => 'Historial',
     'LBL_BTN_ADDROWS' => 'Agregar Filas',
-    'LBL_BTN_UNDO' => 'Desfacer',
+    'LBL_BTN_UNDO' => 'Deshacer',
     'LBL_BTN_REDO' => 'Repetir',
     'LBL_BTN_ADDCUSTOMFIELD' => 'Agregar Campo Personalizado',
-    'LBL_BTN_TABINDEX' => 'Editar Orde de Pestanas',
+    'LBL_BTN_TABINDEX' => 'Editar Orden de Pestañas',
 
 //TABS
     'LBL_MODULES' => 'Módulos',
     'LBL_MODULE_NAME' => 'Administración',
     'LBL_CONFIGURE_GROUP_TABS' => 'Configurar filtros de agrupación de módulos',
-    'LBL_GROUP_TAB_WELCOME' => 'Os seguintes grupos mostraranse na barra de navegación aos usuarios que escollan ver Módulos Agrupados. Arrastre e solte módulos desde os Grupos para configurar que módulos aparecen baixo os grupos. Nota: os grupos baleiros non serán mostrados na barra de navegación.',
-    'LBL_RENAME_TAB_WELCOME' => 'Faga clic no Valor de Visualización de calquera pestana da seguinte táboa para renomear a pestana.',
-    'LBL_DELETE_MODULE' => 'Quitar&nbsp;módulo<br />do&nbsp;filtro',
-    'LBL_TAB_GROUP_LANGUAGE_HELP' => 'Seleccione un dos idiomas dispoñibles, edite as etiquetas do Grupo e faga clic en Gardar e Despregar para aplicar as etiquetas no idioma desexado.',
+    'LBL_GROUP_TAB_WELCOME' => 'Los siguientes grupos se mostrarán en la barra de navegación a los usuarios que elijan ver Módulos Agrupados. Arrastre y suele módulos a y desde los Grupos para configurar qué módulos aparecen bajo los grupos. Nota: Los grupos vacíos no serán mostrados en la barra de navegación.',
+    'LBL_RENAME_TAB_WELCOME' => 'Haga clic en el Valor de Visualización de cualquier pestaña de la siguiente tabla para renombrar la pestaña.',
+    'LBL_DELETE_MODULE' => 'Quitar&nbsp;módulo<br />del&nbsp;filtro',
+    'LBL_TAB_GROUP_LANGUAGE_HELP' => 'Seleccione uno de los idiomas disponibles, edite las etiquetas del Grupo y haga clic en Guardar y Desplegar para aplicar las etiquetas en el idioma deseado.',
     'LBL_ADD_GROUP' => 'Agregar filtro',
-    'LBL_NEW_GROUP' => 'Novo Grupo',
-    'LBL_RENAME_TABS' => 'Renomear Pestanas',
+    'LBL_NEW_GROUP' => 'Nuevo Grupo',
+    'LBL_RENAME_TABS' => 'Renombrar Pestañas',
 
 //ERRORS
-    'ERROR_INVALID_KEY_VALUE' => "Erro: Valor de Clave non válido: [&#39;]",
+    'ERROR_INVALID_KEY_VALUE' => "Error: Valor de Clave No válido: [&#39;]",
 
 //SUGAR PORTAL
-    'LBL_SAVE' => 'Gardar' /*for 508 compliance fix*/,
-    'LBL_UNDO' => 'Desfacer' /*for 508 compliance fix*/,
+    'LBL_SAVE' => 'Guardar' /*for 508 compliance fix*/,
+    'LBL_UNDO' => 'Deshacer' /*for 508 compliance fix*/,
     'LBL_REDO' => 'Repetir' /*for 508 compliance fix*/,
-    'LBL_INLINE' => 'En liña' /*for 508 compliance fix*/,
+    'LBL_INLINE' => 'En línea' /*for 508 compliance fix*/,
     'LBL_DELETE' => 'Eliminar' /*for 508 compliance fix*/,
     'LBL_ADD_FIELD' => 'Agregar Campo:' /*for 508 compliance fix*/,
     'LBL_MAXIMIZE' => 'Maximizar' /*for 508 compliance fix*/,
@@ -137,9 +137,9 @@ $mod_strings = array(
     'LBL_ADDFIELD' => 'Agregar Campo:' /*for 508 compliance fix*/,
     'LBL_EDIT' => 'Editar' /*for 508 compliance fix*/,
 
-    'LBL_LANGUAGE_TOOLTIP' => 'Seleccione o idioma que desexa editar.',
+    'LBL_LANGUAGE_TOOLTIP' => 'Seleccione el idioma que desea editar.',
     'LBL_SINGULAR' => 'Etiqueta en Singular',
     'LBL_PLURAL' => 'Etiqueta en Plural',
-    'LBL_RENAME_MOD_SAVE_HELP' => 'Pulse en Gardar para aplicar os cambios.'
+    'LBL_RENAME_MOD_SAVE_HELP' => 'Pulse en Guardar para aplicar los cambios.'
 
 );
