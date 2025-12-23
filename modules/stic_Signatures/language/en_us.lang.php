@@ -99,6 +99,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'A notification campaign already exists for the signature: ',
     'LBL_NO_SIGNATURE_EXISTS_FOR_MODULE' => 'No signature process exists for module ',
+    'LBL_NO_SIGNATURE_FOR_SIGNER' => 'No signature process exists for the selected signer.',
 
     // Portal messages
     'LBL_PORTAL_TITLE_PAGE' => 'SinergiaCRM - Electronic signature portal',

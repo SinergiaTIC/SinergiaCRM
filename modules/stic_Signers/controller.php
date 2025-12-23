@@ -97,17 +97,34 @@ class stic_SignersController extends SugarController
     }
 
     /**
-     * Action to download the draft document for a signer.
-     * It checks for the presence of the signer ID in the request and calls
-     * the utility function to handle the download.
+     * Action to download the signature document for one or more signers.
+     * It checks for the presence of signer IDs in the request and calls
+     * the utility function to handle the document download.
      *
      * @return void
      */
-    public function action_downloadDocumentDraft()
+    public function action_downloadDocument()
     {
+        // Determine the signer IDs to process
+        if ($_REQUEST['signerId'] === null) {
+            if (empty($_REQUEST['uid'])) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'No signer ID provided in request.');
+            }
+            $signersIds = explode(',', $_REQUEST['uid']);
+        } else {
+            if (!is_string($_REQUEST['signerId'])) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Invalid signer ID type. Expected string.');
+            }
+            $signersIds = [$_REQUEST['signerId']];
+        }
+
+        // Get the number of signers to determine redirection logic
+        $lenght = count($signersIds);
+        
+        
         require_once 'modules/stic_Signers/Utils.php';
-        if (!empty($_REQUEST['signerId'])) {
-            stic_SignersUtils::downloadDocumentDraft($_REQUEST['signerId']);
+        if (!empty($signersIds)) {
+            stic_SignersUtils::downloadDocuments($signersIds);
         } else {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'No signer ID provided in request.');
             sugar_die("No signer ID provided.");

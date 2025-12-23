@@ -99,6 +99,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => "S'ha creat una campanya de notificació per a la firma: ",
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ja existeix una campanya de notificació per a la firma: ',
     'LBL_NO_SIGNATURE_EXISTS_FOR_MODULE' => 'No existeix cap firma creada per al mòdul ',
+    'LBL_NO_SIGNATURE_FOR_SIGNER' => "No existeix cap procés de firma per al firmant seleccionat.",
 
     // Portal messages
     'LBL_PORTAL_TITLE_PAGE' => 'SinergiaCRM - Portal de firma electrònica',

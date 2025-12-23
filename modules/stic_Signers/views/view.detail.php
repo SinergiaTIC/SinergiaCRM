@@ -46,7 +46,7 @@ class stic_SignersViewDetail extends ViewDetail
         
 
         // Set pdf_document field for display
-        if ($this->bean->pdf_document != '') {
+        if ($this->bean->status =='signed') {
             $this->bean->pdf_document = "<a href=\"index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$this->bean->id}\">" . $mod_strings['LBL_DOWNLOAD_PDF_SIGNATURE'] . " <span class='glyphicon glyphicon-download'></span></a>";
         } else {
             $this->bean->pdf_document = "<span>" . $mod_strings['LBL_NO_PDF_SIGNATURE'] . "</span>";

@@ -66,30 +66,39 @@ switch (viewType()) {
         title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_COPY_PORTAL_URL"), // Localized button title with clipboard emoji
         onclick: "navigator.clipboard.writeText('" + window.location.origin + window.location.pathname + "?entryPoint=sticSign&signerId=" + STIC.record.id + "'); alert(SUGAR.language.get('stic_Signers', 'LBL_SIGNER_PORTAL_URL_COPIED'));"
       },
-      downloadDocumentDraft: {
+      downloadDocument: {
         id: "bt_download_document_draft",
-        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_DOWNLOAD_DOCUMENT_DRAFT"),
-        onclick: "window.location='index.php?module=stic_Signers&action=downloadDocumentDraft&signerId=" + STIC.record.id + "'"
+        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_DOWNLOAD_DOCUMENT"),
+        onclick: "if(confirm('" + SUGAR.language.get("stic_Signers", "LBL_SIGNER_DOWNLOAD_DOCUMENT_INFO") + "')){window.location='index.php?module=stic_Signers&action=downloadDocument&signerId=" + STIC.record.id + "'}"
       }
     };
     // Add the defined button to the detail view.
     createDetailViewButton(buttons.sendToSign);
     createDetailViewButton(buttons.rediretToSingPortal);
     createDetailViewButton(buttons.copyPortalUrl);
-    createDetailViewButton(buttons.downloadDocumentDraft);
+    createDetailViewButton(buttons.downloadDocument);
 
 
     break;
   case "list":
     // selectRemittanceAlert = SUGAR.language.get("stic_Payments", "LBL_ADD_PAYMENTS_TO_REMITTANCE_INFO_ALERT");
     sendMailMassive = SUGAR.language.languages.app_strings.LBL_LISTVIEW_NO_SELECTED;
-    button = {
-      id: "send-to-sign-massive",
-      text: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL"),
-      onclick: "sendToSign()"
-    };
+    buttons = {
+      sendToSign: {
+        id: "send-to-sign-massive",
+        text: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL"),
+        onclick: "sendToSign()"
+      },
+      downloadDocument: {
+        id: "download-document-draft-massive",
+        text: SUGAR.language.get("stic_Signers", "LBL_SIGNER_DOWNLOAD_DOCUMENT"),
+        onclick: "downloadDocument()"
+      }
+    }
+      ;
 
-    createListViewButton(button);
+    createListViewButton(buttons.sendToSign);
+    createListViewButton(buttons.downloadDocument);
 
     break;
   default:
@@ -156,4 +165,22 @@ function sendToSign() {
   document.MassUpdate.module.value = 'stic_Signers';
   document.MassUpdate.submit();
 
+}
+
+function downloadDocument() {
+
+  if(confirm(SUGAR.language.get("stic_Signers", "LBL_SIGNER_DOWNLOAD_DOCUMENT_INFO"))===false){
+    return false;
+  }
+
+  sugarListView.get_checks();
+  if (sugarListView.get_checks_count() < 1) {
+    alert(alertListView);
+    return false;
+  }
+
+
+  document.MassUpdate.action.value = 'downloadDocument';
+  document.MassUpdate.module.value = 'stic_Signers';
+  document.MassUpdate.submit();
 }

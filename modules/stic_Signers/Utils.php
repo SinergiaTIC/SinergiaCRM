@@ -605,58 +605,203 @@ class stic_SignersUtils
         }
     }
 
+    /**
+     * Generates a sanitized document name for a signer with the appropriate prefix.
+     *
+     * @param object $signerBean The signer bean object.
+     * @param string $prefix Optional prefix to add to the filename (e.g., "[BORRADOR]").
+     * @return string The sanitized document name with .pdf extension.
+     */
+    public static function getDocumentName($signerBean)
+    {
+        global $app_list_strings;
+        
+        // Calculate prefix based on signer status
+        $prefix = '';
+        if (!empty($signerBean->status) && isset($app_list_strings['stic_signers_status_list'][$signerBean->status])) {
+            $prefix = '[' . $app_list_strings['stic_signers_status_list'][$signerBean->status] . '] ';
+        }
+        
+        // Sanitize filename: remove problematic characters but keep accented characters
+        // Remove only: / \ : * ? " < > | and other control characters
+        $sanitizedName = preg_replace('/[\/\\\:*?"<>|\x00-\x1F\x7F]/', '_', $signerBean->name);
+        $sanitizedName = preg_replace('/\s+/', ' ', $sanitizedName);
+        $sanitizedName = trim($sanitizedName);
+        
+        return $prefix . $sanitizedName . '.pdf';
+    }
 
     /**
-     * Generates and initiates the download of a document draft PDF for a given signer.
-     * The draft is generated as an unsigned PDF and sent to the browser for download.
+     * Generates and initiates the download of document PDFs for one or multiple signers.
+     * For a single signer, the PDF is sent directly to the browser.
+     * For multiple signers, all PDFs are packaged into a ZIP file.
+     * Uses existing signed documents when available (status='signed'), otherwise generates drafts.
      *
-     * @param string $signerId The ID of the signer for whom the document draft should be generated.
+     * @param string|array $signerIds The ID of the signer (or array of IDs) for whom documents should be downloaded.
      * @return void
      */
-    public static function downloadDocumentDraft($signerId)
+    public static function downloadDocuments($signerIds)
     {
-        global $app_list_strings, $mod_strings, $current_user;
+        global $mod_strings, $current_user;
 
-        $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
-
-        if (!$signerBean) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer with ID {$signerId} not found.");
-            return;
-        }
-
-        $_REQUEST['signerId'] = $signerId;
-
-        // Generate the document draft PDF
         require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
-        $documentDraftPath = sticGenerateSignedPdf::generateSignaturePdf('unsigned');
-        
-        // Define the prefix for the downloaded file
-        $prefix = "[{$app_list_strings['stic_signatures_status_list']['draft']}]" . ' ';
-        
-        if (!file_exists($documentDraftPath)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Document draft file not found at path {$documentDraftPath} for signer ID {$signerBean->id}.");
+        require_once 'modules/stic_Signature_Log/Utils.php';
+
+        // Normalize to array for uniform processing
+        $isArray = is_array($signerIds);
+        $signerIdsArray = $isArray ? $signerIds : [$signerIds];
+
+        // Handle single signer - direct download
+        if (count($signerIdsArray) === 1) {
+            $signerId = $signerIdsArray[0];
+            $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+
+            if (!$signerBean) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer with ID {$signerId} not found.");
+                return;
+            }
+
+            $_REQUEST['signerId'] = $signerId;
+
+            // Check if signed document exists
+            $signedDocPath = "upload/{$signerId}_signed.pdf";
+            $documentPath = '';
+            $shouldRemoveTemp = false;
+
+            if ($signerBean->status === 'signed' && file_exists($signedDocPath)) {
+                $documentPath = $signedDocPath;
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Using existing signed document at {$documentPath} for signer ID {$signerBean->id}.");
+            } else {
+                $documentPath = sticGenerateSignedPdf::generateSignaturePdf('unsigned');
+                $shouldRemoveTemp = true;
+            }
+
+            if (!file_exists($documentPath)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Document file not found at path {$documentPath} for signer ID {$signerBean->id}.");
+                return;
+            }
+
+            // Send file to browser for download
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . self::getDocumentName($signerBean) . '"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($documentPath));
+            readfile($documentPath);
+
+            // Remove temporary file if it was generated
+            if ($shouldRemoveTemp && file_exists($documentPath)) {
+                unlink($documentPath);
+            }
+
+            // Log the download action
+            stic_SignatureLogUtils::logSignatureAction('DOCUMENT_DRAFT_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
+
+            exit;
+        }
+
+        // Handle multiple signers - ZIP download
+        $tempFiles = [];
+        $zipFileName = "PDF_{$mod_strings['LBL_MODULE_NAME']}_" . date('YmdHis') . '.zip';
+        $zipPath = sys_get_temp_dir() . '/' . $zipFileName;
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Failed to create ZIP archive at {$zipPath}.");
             return;
         }
 
-        // Send the file to the browser for download and then remove it from the server
+        $successCount = 0;
+        foreach ($signerIdsArray as $signerId) {
+            $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+
+            if (!$signerBean) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer with ID {$signerId} not found.");
+                continue;
+            }
+
+            $_REQUEST['signerId'] = $signerId;
+
+            // Check if signed document exists
+            $signedDocPath = "upload/{$signerId}_signed.pdf";
+            $documentPath = '';
+            $shouldRemoveTemp = false;
+
+            if ($signerBean->status === 'signed' && file_exists($signedDocPath)) {
+                $documentPath = $signedDocPath;
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Using existing signed document at {$documentPath} for signer ID {$signerBean->id}.");
+            } else {
+                $documentPath = sticGenerateSignedPdf::generateSignaturePdf('unsigned');
+                $shouldRemoveTemp = true;
+            }
+
+            if (!file_exists($documentPath)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Document file not found at path {$documentPath} for signer ID {$signerBean->id}.");
+                continue;
+            }
+
+            // Add file to ZIP with unique name
+            $pdfFileName = self::getDocumentName($signerBean);
+            $counter = 1;
+            $uniqueFileName = $pdfFileName;
+            $baseFileName = pathinfo($pdfFileName, PATHINFO_FILENAME);
+            $extension = pathinfo($pdfFileName, PATHINFO_EXTENSION);
+
+            while ($zip->locateName($uniqueFileName) !== false) {
+                $uniqueFileName = $baseFileName . '_' . $counter . '.' . $extension;
+                $counter++;
+            }
+
+            $zip->addFile($documentPath, $uniqueFileName);
+
+            if ($shouldRemoveTemp) {
+                $tempFiles[] = $documentPath;
+            }
+
+            // Log the download action
+            stic_SignatureLogUtils::logSignatureAction('DOCUMENT_DRAFT_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
+
+            $successCount++;
+        }
+
+        $zip->close();
+
+        // Clean up temporary PDF files
+        foreach ($tempFiles as $tempFile) {
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
+        }
+
+        if ($successCount === 0) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "No valid documents were generated.");
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
+            }
+            return;
+        }
+
+        // Send ZIP file to browser for download
         header('Content-Description: File Transfer');
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="' . $prefix . $signerBean->name . '.pdf"');
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
-        header('Content-Length: ' . filesize($documentDraftPath));
-        readfile($documentDraftPath);
+        header('Content-Length: ' . filesize($zipPath));
+        readfile($zipPath);
 
-        // Remove the temporary file from the server
-        if (file_exists($documentDraftPath)) {
-            unlink($documentDraftPath);
+        // Remove the ZIP file from the server
+        if (file_exists($zipPath)) {
+            unlink($zipPath);
         }
-
-        // Log the download action
-        require_once 'modules/stic_Signature_Log/Utils.php';
-        stic_SignatureLogUtils::logSignatureAction('DOCUMENT_DRAFT_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
 
         exit;
     }
+
+    
+
+
 }

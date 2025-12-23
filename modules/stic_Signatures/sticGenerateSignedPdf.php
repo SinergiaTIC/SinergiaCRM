@@ -57,7 +57,7 @@ class sticGenerateSignedPdf
      */
     public static function generateSignaturePdf($signedMode = 'handwritten')
     {
-        global $sugar_config, $app_list_strings, $app_strings;
+        global $sugar_config, $app_list_strings, $app_strings, $mod_strings;
 
         // Required utility and function files
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
@@ -89,6 +89,9 @@ class sticGenerateSignedPdf
         // Check that the signature has an associated record
         if (empty($sourceModule) || empty($sourceId)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature ID: {$signatureBean->id} has no associated record");
+            $errMsg = translate('LBL_NO_SIGNATURE_FOR_SIGNER', 'stic_Signatures');
+            SugarApplication::appendErrorMessage("<p class='label label-warning'>{$errMsg}</p>");
+            SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerBean->id);
             sugar_die("Signature has no associated record");
         }
 
@@ -354,7 +357,7 @@ class sticGenerateSignedPdf
             if ($signedMode == 'unsigned') {
                 $fileName = "{$signerBean->id}_draft.pdf";
             } else {
-                $fileName = "draft{$signerBean->id}_signed.pdf";
+                $fileName = "{$signerBean->id}_signed.pdf";
             }
 
             $filePath = $sugar_config['upload_dir'] . $fileName;

@@ -147,10 +147,13 @@ if (!empty($_REQUEST['signatureAction'])) {
                 stic_SignatureLogUtils::logSignatureAction('SIGNED_PDF_DOWNLOADED', $signerBean->id, 'SIGNER', "Signed PDF downloaded for signer {$signerBean->name} (ID: {$signerBean->name})");
             }
 
+            require_once 'modules/stic_Signers/Utils.php';
+            $nameForDownload = Stic_SignersUtils::getDocumentName($signerBean);
+
             // Set headers for file download
             header('Content-Description: File Transfer');
             header('Content-Type: application/pdf');
-            header('Content-Disposition: attachment; filename="' . $signerBean->name . '.pdf"');
+            header('Content-Disposition: attachment; filename="' . $nameForDownload . '"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
