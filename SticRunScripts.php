@@ -115,9 +115,9 @@ $file = $_REQUEST['file'];
 $normalizedFile = str_replace('\\', '/', $file);
 $normalizedNoLeading = ltrim($normalizedFile, '/');
 
-if (!file_exists($normalizedNoLeading)) {
+if (!file_exists($normalizedNoLeading) || !is_file($normalizedNoLeading)) {
     http_response_code(404);
-    echo "File $normalizedNoLeading doesn't exist on server";
+    echo "File $normalizedNoLeading doesn't exist on server or not it is a file";
     exit;
 }
 
@@ -142,16 +142,16 @@ if (stripos($normalizedNoLeading, 'SticUpdates/Languages/') === 0) {
     }
 }
 
-$ext = substr($file, -3);
+$ext = substr($normalizedNoLeading, -3);
 if ($ext === "php") {
-    echo "$file <br>";
-    require($file);
+    echo "$normalizedNoLeading <br>";
+    require($normalizedNoLeading);
     // Indicate successful execution of the script
     http_response_code(200);
     echo "Script executed correctly.";
 } else if ($ext === "sql") {
     $connection = connectToDBWithPDO();
-        $ok = executeSQLFile($connection,$file);
+        $ok = executeSQLFile($connection,$normalizedNoLeading);
         // Close the PDO connection by unsetting the reference so it can be freed
         $connection = null;
         if ($ok === false) {
@@ -163,6 +163,6 @@ if ($ext === "php") {
         echo "Script executed correctly.";
 } else {
     http_response_code(400);
-    echo "File: $file. The file extension must be php or sql";
+    echo "File: $normalizedNoLeading. The file extension must be php or sql";
     exit;
 }
