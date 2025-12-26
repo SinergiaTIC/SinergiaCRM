@@ -51,7 +51,7 @@ class stic_SignaturesViewDetail extends ViewDetail
         // Redirect to EditView if any of panel 3 required fields are empty
         $fieldsToCheck = ['signature_mode', 'auth_method', 'pdf_audit_page', 'status', 'type',  'email_template', 'email_template_send_document', 'email_template_otp', 'email_template_otp_sms'];
         foreach ($fieldsToCheck as $field) {
-            if (empty($this->bean->$field)) {
+            if (empty($this->bean->$field) && $this->bean->$field !== '0') {
                 SugarApplication::redirect(
                     "index.php?module=stic_Signatures&action=EditView&return_module=stic_Signatures&return_action=DetailView&record={$this->bean->id}"
                 );
