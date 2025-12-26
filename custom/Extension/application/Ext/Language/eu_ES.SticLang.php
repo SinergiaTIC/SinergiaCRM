@@ -3717,6 +3717,7 @@ $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Documento 
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma caducada';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por otra persona autorizada';
 $app_list_strings['stic_signature_log_actions']['DOCUMENT_DRAFT_DOWNLOADED'] = 'Borrador del documento descargado';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos los firmantes han completado el proceso de firma';
 
 // Modificaciones del core de SuiteCRM
 

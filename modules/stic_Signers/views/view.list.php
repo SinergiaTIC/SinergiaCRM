@@ -37,11 +37,6 @@ class stic_SignersViewList extends ViewList
     {
         parent::preDisplay();
 
-//  if (empty($userPreferenceOrder['orderBy'])) {
-            $_REQUEST['orderBy'] = 'date_modified';
-            $_REQUEST['sortOrder'] = 'DESC';
-        // }
-
         SticViews::preDisplay($this);
 
         // Write here you custom code

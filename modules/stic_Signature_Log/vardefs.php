@@ -67,7 +67,8 @@ $dictionary['stic_Signature_Log'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
             'dbType' => 'datetime',
         ),
         'ip_address' => array(

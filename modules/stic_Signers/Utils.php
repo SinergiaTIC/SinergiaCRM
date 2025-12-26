@@ -507,6 +507,9 @@ class stic_SignersUtils
             $signatureBean->status = 'completed';
             $signatureBean->save();
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signature {$signatureBean->id} marked as completed as there are no pending signers.");
+
+            require_once 'modules/stic_Signature_Log/Utils.php';
+            stic_SignatureLogUtils::logSignatureAction('SIGNATURE_COMPLETED', $signatureBean->id, 'SIGNATURE', '');
         }
     }
 

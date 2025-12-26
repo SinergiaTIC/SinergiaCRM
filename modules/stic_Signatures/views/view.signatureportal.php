@@ -61,9 +61,7 @@ class stic_SignaturePortal extends SugarView
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
         require_once 'modules/stic_Signers/Utils.php';
 
-        $documentHtmlContent = '
-            <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Acuerdo de Confidencialidad</h2>
-        ';
+        $documentHtmlContent = '';
 
         // Create an instance of the utility class
         $stic_SignaturePortalUtils = new stic_SignaturePortalUtils();
@@ -158,7 +156,7 @@ class stic_SignaturePortal extends SugarView
                         $passed = true;
                     } else {
                         if (isset($_REQUEST['otp-code'])) {
-                            $errorMsg = 'El código OTP proporcionado no es válido. Por favor, inténtalo de nuevo.';
+                            $errorMsg = $mod_strings['LBL_PORTAL_INVALID_OTP_CODE'];
                             $this->ss->assign('OTP_ERROR_MSG', $errorMsg);
                         }
                         $this->ss->assign('OTP_REQUIRED', ($isExpired === false && $isActivated === true) ? true : false);
@@ -169,13 +167,13 @@ class stic_SignaturePortal extends SugarView
                 case 'identification_number':
                 case 'birthdate':
                     $this->ss->assign('FIELD_VALIDATION_REQUIRED', true);
-                    if (stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_POST['validation_field_value'] ?? '')) {
+                    if (isset($_POST['validation_field_value']) && $stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_POST['validation_field_value'])) {
                         $passed = true;
                     } else {
-                        if (isset($_REQUEST['field-value'])) {
-                            $errorMsg = 'El valor pDroporcionado no es válido. Por favor, inténtalo de nuevo.';
-                            $this->ss->assign('FIEL_ERROR_MSG', $errorMsg);
-                            $this->ss->assign('PREVIOUS_FIELD_VALUE', $_REQUEST['field-value']);
+                        if (isset($_POST['validation_field_value'])) {
+                            $errorMsg = $mod_strings['LBL_PORTAL_INVALID_FIELD_VALUE'];
+                            $this->ss->assign('FIELD_ERROR_MSG', $errorMsg);
+                            $this->ss->assign('PREVIOUS_FIELD_VALUE', $_POST['validation_field_value']);
                         }
                         $this->ss->assign('FIELD_VALIDATION_LABEL', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_' . strtoupper($signatureBean->auth_method)]);
                         $this->ss->assign('FIELD_VALIDATION_LABEL_FORMAT', $mod_strings['LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_' . strtoupper($signatureBean->auth_method)]);
@@ -192,7 +190,7 @@ class stic_SignaturePortal extends SugarView
                     break;
 
                 default:
-                    $errorMsg = 'El modo de autenticación no es válido.';
+                    $errorMsg = $mod_strings['LBL_PORTAL_UNKNOWN_AUTHENTICATION_MODE'];
                     $this->ss->assign('ERROR_MSG', $errorMsg);
                     break;
             }
