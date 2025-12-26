@@ -184,3 +184,7 @@ $mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Formació
 // Cadenes Experiència laboral
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiència laboral';
 
+// Cadenes Àrea Privada
+$mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'Àrea Privada";
+$mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'Àrea Privada";
+$mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'Àrea Privada";

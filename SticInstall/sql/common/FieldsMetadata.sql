@@ -74,6 +74,9 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsinc_state_c', 'Accounts', 'inc_state_c'),
 ('Accountsinc_municipality_c', 'Accounts', 'inc_municipality_c'),
 ('Accountsinc_town_c', 'Accounts', 'inc_town_c'),
+('Accountsstic_pa_password_c', 'Accounts', 'stic_pa_password_c'),
+('Accountsstic_pa_username_c', 'Accounts', 'stic_pa_username_c'),
+('Accountsstic_pa_enable_c', 'Accounts', 'stic_pa_enable_c'),
 -- Campaigns
 ('Campaignsparent_id', 'Campaigns', 'parent_id'),
 ('Campaignsparent_name', 'Campaigns', 'parent_name'),
@@ -163,6 +166,9 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsinc_state_c', 'Contacts', 'inc_state_c'),
 ('Contactsinc_municipality_c', 'Contacts', 'inc_municipality_c'),
 ('Contactsinc_town_c', 'Contacts', 'inc_town_c'),
+('Contactsstic_pa_password_c', 'Contacts', 'stic_pa_password_c'),
+('Contactsstic_pa_username_c', 'Contacts', 'stic_pa_username_c'),
+('Contactsstic_pa_enable_c', 'Contacts', 'stic_pa_enable_c'),
 -- Leads
 ('Leadsstic_acquisition_channel_c','Leads','stic_acquisition_channel_c'),
 ('Leadsstic_alt_address_county_c','Leads','stic_alt_address_county_c'),
