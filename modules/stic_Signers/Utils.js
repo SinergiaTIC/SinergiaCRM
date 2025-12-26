@@ -107,47 +107,12 @@ switch (viewType()) {
 }
 
 
-// Hide on_behalf_of fields if is same as signer
-// if (STIC.record.contact_id_c == STIC.record.parent_id) {
-//   $("[data-field='on_behalf_of_id']").hide();
-// }
 
 
 
 
 
 /* AUX. FUNCTIONS */
-
-/**
- * Initiates an AJAX request to fetch and display a preview of the signature document.
- * The preview is based on the current signer's ID and is rendered within a designated container.
- */
-function previewSignature() {
-  // Get the signer ID from the global STIC object, which holds current record details.
-  var signerId = STIC.record.id;
-
-  // Perform an AJAX call to the 'getPreview' action of the 'stic_Signatures' module.
-  $.ajax({
-    // Dynamically determines the base URL of the SugarCRM instance.
-    url: location.href.slice(0, location.href.indexOf(location.search)),
-    type: "POST", // Use POST method for sending data
-    data: {
-      module: "stic_Signatures", // Target module for the AJAX request
-      action: "getPreview",      // Specific action to call within the controller
-      signerId: signerId,        // Pass the current signer's ID
-    },
-    success: function (response) {
-      // On successful response, inject the received HTML content into the '#preview-container' element.
-      $("#preview-container").html(response);
-    },
-    error: function (xhr, status, error) {
-      // Log any errors that occur during the AJAX request.
-      console.error("Request error:", status, error);
-    }
-  });
-}
-
-
 
 function sendToSign() {
 

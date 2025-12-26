@@ -1,5 +1,5 @@
 REPLACE INTO email_templates (id,date_entered,date_modified,modified_user_id,created_by,published,name,description,subject,body,body_html,deleted,assigned_user_id,text_only,`type`) VALUES
-      ('000005f1-2e4e-3b11-051f-68e3c9e70330','2025-11-04 16:01:43','2025-11-04 15:09:27','2','1','off','Exemple - Sol·licitud de firma','Plantilla per notificar al firmant que s''ha sol·licitat la seva firma en un document.','[Firma de document] Sol·licitud de firma: $stic_signatures_pdf_template','Sol·licitud de firma
+      ('000005f1-2e4e-3b11-051f-68e3c9e70330',NOW(),NOW(),'1','1','off','Exemple - Sol·licitud de firma','Plantilla per notificar al firmant que s''ha sol·licitat la seva firma en un document.','[Firma de document] Sol·licitud de firma: $stic_signatures_pdf_template','Sol·licitud de firma
 
 S''ha sol·licitat la vostra firma al següent document:
 
@@ -38,7 +38,7 @@ $sugarurl/index.php?entryPoint=sticSign&signatureId=$stic_signatures_id&targetId
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-      ('000005f1-2e4e-3b11-051f-68e3c9e70331','2025-11-04 16:01:43','2025-11-04 15:12:34','2','1','off','Exemple - Document firmat','Plantilla per enviar al firmant el document firmat.','[Firma de document] Document firmat: $stic_signatures_pdf_template','Document firmat
+      ('000005f1-2e4e-3b11-051f-68e3c9e70331',NOW(),NOW(),'1','1','off','Exemple - Document firmat','Plantilla per enviar al firmant el document firmat.','[Firma de document] Document firmat: $stic_signatures_pdf_template','Document firmat
 
 Adjunt a aquest correu trobareu la versió final del document que heu firmat:
 
@@ -72,7 +72,7 @@ Ves al portal de firma: $sugarurl/index.php?entryPoint=sticSign&signerId=$stic_s
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-      ('000005f1-2e4e-3b11-051f-68e3c9e70332','2025-11-04 16:01:43','2025-11-04 15:18:28','2','1','off','Exemple - Codi d''un sol ús per firmar','Plantilla per enviar el codi d''un sol ús al firmant abans de poder firmar.','[Firma de document] Codi de verificació per firmar','Verificació de firma
+      ('000005f1-2e4e-3b11-051f-68e3c9e70332',NOW(),NOW(),'1','1','off','Exemple - Codi d''un sol ús per firmar','Plantilla per enviar el codi d''un sol ús al firmant abans de poder firmar.','[Firma de document] Codi de verificació per firmar','Verificació de firma
 
 Per garantir la seguretat i autenticitat de la vostra firma, feu servir el codi de verificació que es mostra a continuació:
 
@@ -101,7 +101,7 @@ Introduïu aquest codi al portal de firma per continuar el procés. El codi és 
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-      ('000005f1-2e4e-3b11-051f-68e3c9e70333','2025-11-03 11:16:29','2025-11-04 15:20:51','2','2','off','Exemple - Codi d''un sol ús per firmar (SMS)','Plantilla per enviar via SMS el codi d''un sol ús al firmant abans de poder firmar.','[Firma de document] Codi de verificació per firmar'','$contact_first_name$contact_user_first_name, aquest és el vostre codi per firmar: $stic_signers_otp. És vàlid durant 10 minuts.','<!DOCTYPE html>
+      ('000005f1-2e4e-3b11-051f-68e3c9e70333',NOW(),NOW(),'1','1','off','Exemple - Codi d''un sol ús per firmar (SMS)','Plantilla per enviar via SMS el codi d''un sol ús al firmant abans de poder firmar.','[Firma de document] Codi de verificació per firmar'','$contact_first_name$contact_user_first_name, aquest és el vostre codi per firmar: $stic_signers_otp. És vàlid durant 10 minuts.','<!DOCTYPE html>
 <html>
 <head>
 </head>

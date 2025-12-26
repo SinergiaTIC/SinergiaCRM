@@ -70,7 +70,6 @@ class stic_SignaturesUtils
         // Add the main module to the options array
         $mod_options_array[$module->module_dir] = translate('LBL_MODULE_NAME', $module->module_dir);
 
-        $firstOptions = $options;
 
         $fmod_options_array = [];
 
@@ -177,7 +176,7 @@ class stic_SignaturesUtils
             }
             
             // Exclude Users module except for assigned_user_id field when main module is also Users
-            if ($moduleName != 'Users' &&$module == 'Users' && $moduleField != 'assigned_user_id') {
+            if ($moduleName != 'Users' && $module == 'Users' && $moduleField != 'assigned_user_id') {
                 continue;
             }
            

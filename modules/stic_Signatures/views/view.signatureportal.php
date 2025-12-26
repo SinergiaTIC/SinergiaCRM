@@ -104,10 +104,14 @@ class stic_SignaturePortal extends SugarView
         $errorMsg = '';
 
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
-        $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
 
-        global $timedate, $current_user;
-        $user = BeanFactory::getBean('Users', '1');
+        global $timedate;
+        
+        
+        // Get first admin active user
+        $adminUser = BeanFactory::getBean('Users');
+        $adminUser->retrieve_by_string_fields(array('is_admin' => 1, 'status' => 'Active'));
+        $user = $adminUser;
 
         // Check if signature is expired
         $isExpired = stic_SignersUtils::checkExpiredStatus($signatureBean) && $signerBean->status === 'pending' ? true : false;

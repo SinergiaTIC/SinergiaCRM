@@ -123,7 +123,7 @@ class stic_SignersUtils
 
         $mailBodyHtml = $body_html;
         // Use parsed subject, falling back to template subject or module string
-        $mailSubject = $subject_parsed ?: ($templateBean->subject);
+        $mailSubject = $subject_parsed ?? '';
 
         // Assign subject and body to the mailer
         $mail->Subject = $mailSubject;
