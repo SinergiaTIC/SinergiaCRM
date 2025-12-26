@@ -336,6 +336,7 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborais';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -1142,6 +1143,7 @@ $app_list_strings['stic_job_offers_status_list']['closed_covered'] = 'Cerrada (c
 $app_list_strings['stic_job_offers_status_list']['closed_partially_covered'] = 'Cerrada (cuberta parcialmente)';
 $app_list_strings['stic_job_offers_status_list']['closed_not_covered'] = 'Cerrada (sen cubrir)';
 $app_list_strings['stic_job_offers_status_list']['reopened'] = 'Reaberta';
+$app_list_strings['stic_job_offers_status_list']['review'] = 'En revisión';
 
 // Ofertas laborales: Orígenes
 $app_list_strings['stic_job_offer_origin_list'][''] = '';
@@ -1159,6 +1161,7 @@ $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'P
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Entrevistada';
 $app_list_strings['stic_job_applications_status_list']['accepted'] = 'Aceptada';
 $app_list_strings['stic_job_applications_status_list']['rejected_closed'] = 'Rexeitada ou cerrada';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'En revisión';
 
 // Candidaturas: Motivos de rechazo
 $app_list_strings['stic_job_applications_rejection_reasons_list'][''] = '';

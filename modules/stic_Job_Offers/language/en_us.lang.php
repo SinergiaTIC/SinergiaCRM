@@ -147,6 +147,7 @@ $mod_strings = array(
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_NOTES_FROM_NOTES_TITLE' => 'Job offers',
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_TASKS_FROM_TASKS_TITLE' => 'Job offers',
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_EMAILS_FROM_EMAILS_TITLE' => 'Job offers',
+    'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_JOB_OFFERS_TITLE' => 'Notifications',
     'LBL_SEPE_ACTIVATION_DATE_ERROR' => "Activation date (SEPE) can't be empty and it must be before or equal to the Covered date (SEPE) (if exists).",
     'LBL_SEPE_COVERED_DATE_ERROR' => "Covered date (SEPE) must be equal or after to the Activation date (SEPE) (if exists).",
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "This field exists in Contacts and Job Offers and is used to match records from both modules. The types of profiles can be managed by editing 'stic_professional_profile_list' in the Dropdown list editor.",

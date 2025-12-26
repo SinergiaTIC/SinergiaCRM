@@ -147,6 +147,7 @@ $mod_strings = array(
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_NOTES_FROM_NOTES_TITLE' => 'Notas',
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_TASKS_FROM_TASKS_TITLE' => 'Tareas',
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_EMAILS_FROM_EMAILS_TITLE' => 'Correos',
+    'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_JOB_OFFERS_TITLE' => 'Notificaciones',
     'LBL_SEPE_ACTIVATION_DATE_ERROR' => 'La Fecha activación (SEPE) no puede estar vacía y debe ser anterior o igual a la Fecha oferta cubierta (SEPE).',
     'LBL_SEPE_COVERED_DATE_ERROR' => 'La Fecha oferta cubierta (SEPE) debe ser igual o posterior a la Fecha activación (SEPE).',
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "Este campo existe tanto en el módulo de Personas como en el de Ofertas y se utiliza para enlazar unas y otras. Las tipologías de perfiles se pueden gestionar en la lista 'stic_professional_profile_list' del Editor de listas desplegables.",
