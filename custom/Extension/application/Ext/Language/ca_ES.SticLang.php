@@ -3706,20 +3706,18 @@ $app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecessari';
 $app_list_strings['stic_signature_log_actions'][''] = '';    
 $app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] =  'Document firmat amb botó';
 $app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document firmat amb firma manuscrita';
-$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] =  'Firmant afegit a la firma';
-$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = "Codi d'un sol ús enviat al correu electrònic del firmant";
-$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = "Codi d'un sol ús enviat al telèfon del firmant";
-$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = "Codi d'un sol ús verificat pel firmant";
-$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correu electrònic enviat al firmant';
-$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Portal de firma obert pel firmant';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Document firmat descarregat pel firmant';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Document firmat enviat al firmant';  
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma caducada';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document firmat per una altra persona autoritzada';
-$app_list_strings['stic_signature_log_actions']['DOCUMENT_DRAFT_DOWNLOADED'] = 'Borrador del document descarregat';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Tots els firmants han completat el procés de signatura';
-
-
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] =  "S'ha afegit un firmant a la firma";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = "S'ha enviat un codi d'un sol ús al correu electrònic del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = "S'ha enviat un codi d'un sol ús al telèfon del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = "El firmant ha verificat el codi d'un sol ús";
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = "S'ha enviat un correu electrònic al firmant";
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'El firmant ha accedit al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'El firmant ha descarregat el document firmat';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = "S'ha enviat el document firmat al firmant";  
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma ha caducat';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Una altra persona autoritzada ha firmat el document';
+$app_list_strings['stic_signature_log_actions']['UNSIGNED_PDF_DOWNLOADED'] = 'El firmant ha descarregat el document per signar';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Tots els firmants han firmat';
 
 // Modificacions del core de SuiteCRM
 
