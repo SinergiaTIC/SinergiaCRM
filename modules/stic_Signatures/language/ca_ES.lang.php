@@ -99,7 +99,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => "S'ha creat una campanya de notificació per a la firma: ",
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ja existeix una campanya de notificació per a la firma: ',
     'LBL_NO_SIGNATURE_EXISTS_FOR_MODULE' => 'No existeix cap firma creada per al mòdul ',
-    'LBL_NO_SIGNATURE_FOR_SIGNER' => "No existeix cap procés de firma per al firmant seleccionat.",
+    'LBL_NO_SIGNATURE_FOR_SIGNER' => 'No existeix cap procés de firma per al firmant seleccionat.',
 
     // Portal messages
     'LBL_PORTAL_TITLE_PAGE' => 'SinergiaCRM - Portal de firma electrònica',
@@ -143,7 +143,7 @@ $mod_strings = array(
     'LBL_PORTAL_OTP_NO_EMAIL_AVAILABLE' => 'No hi ha cap adreça electrònica on poder enviar el codi.',
     'LBL_PORTAL_OTP_SEND_CODE_BY_PHONE_MESSAGE' => 'Enviar-lo per missatge al telèfon',
     'LBL_PORTAL_OTP_NO_PHONE_AVAILABLE' => 'No hi ha cap número de telèfon on poder enviar el codi.',
-    'LBL_PORTAL_INVALID_OTP_CODE' => "El codi d'un sol ús proporcionat no és vàlid. Si us plau, torneu-ho a provar.",
+    'LBL_PORTAL_INVALID_OTP_CODE' => "El codi d'un sol ús que heu indicat no és correcte. Torneu-ho a provar.",
     'LBL_PORTAL_UNKNOWN_AUTHENTICATION_MODE' => "El mode d'autenticació no és vàlid.",
     'LBL_PORTAL_FOOTER' => 'Portal de firma electrònica de',
     'LBL_PORTAL_ATTENTION' => 'Atenció',
@@ -168,7 +168,7 @@ $mod_strings = array(
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_IDENTIFICATION_NUMBER' => 'Lletres i números, sense espais ni guions',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_BIRTHDATE' => 'La vostra data de naixement',
     'LBL_PORTAL_FIELD_VALIDATION_LABEL_FORMAT_BIRTHDATE' => 'Format DD/MM/AAAA (ex: 31/12/1990)',
-    'LBL_PORTAL_INVALID_FIELD_VALUE' => "El valor introduït no és vàlid. Si us plau, torneu-ho a provar.",
+    'LBL_PORTAL_INVALID_FIELD_VALUE' => 'El valor introduït no és vàlid. Torneu-ho a provar.',
     'LBL_PORTAL_NETWORK_ERROR' => 'Error de xarxa o del servidor',
     'LBL_PORTAL_OTP_EMAIL_SENT' => "S'ha enviat un nou codi d'un sol ús. Reviseu la vostra safata d'entrada.",
     'LBL_PORTAL_OTP_PHONE_SENT' => "S'ha enviat un nou codi d'un sol ús. Reviseu el vostre dispositiu.",
