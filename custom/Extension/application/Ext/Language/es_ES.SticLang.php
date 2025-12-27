@@ -3709,16 +3709,15 @@ $app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Do
 $app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Firmante añadido a la firma';
 $app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Código de un solo uso enviado al correo electrónico del firmante';
 $app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Código de un solo uso enviado al teléfono del firmante';
-$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código de un solo uso verificado por el firmante';
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'El firmante ha verificado el código de un solo uso';
 $app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado al firmante';
-$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Acceso al portal de firma';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Documento firmado descargado por el firmante';
-$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Documento firmado enviado al firmante';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Firma caducada';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por otra persona autorizada';
-$app_list_strings['stic_signature_log_actions']['DOCUMENT_DRAFT_DOWNLOADED'] = 'Borrador del documento descargado';
-$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos los firmantes han completado el proceso de firma';
-
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'El firmante ha accedido al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'El firmante ha descargado el documento firmado';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'El documento firmado ha sido enviado al firmante';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma ha caducado';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Otra persona autorizada ha firmado el documento';
+$app_list_strings['stic_signature_log_actions']['UNSIGNED_PDF_DOWNLOADED'] = 'El firmante ha descargado el documento por firmar';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos los firmantes han firmado';
 
 // Modificaciones del core de SuiteCRM
 
