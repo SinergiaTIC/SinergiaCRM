@@ -37,6 +37,9 @@ class stic_PaymentsController extends SugarController
             $orgLabelArray = array();
             foreach ($orgKeyArray as $value) {
                 $orgKeyClean = str_replace('_', '', $value);
+                if (isset($app_list_strings['dynamic_issuing_organization_list'][$orgKeyClean]) == false) {
+                    continue;
+                }
                 $orgLabelArray[] = $app_list_strings['dynamic_issuing_organization_list'][$orgKeyClean];
             }
             $this->view = "m182selectissuingorganization";

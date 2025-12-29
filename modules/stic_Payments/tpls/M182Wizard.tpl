@@ -58,8 +58,6 @@
 <br>
 <p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_ISSUING_ORGANIZATION_SELECTED}: <strong>{$ISSUING_ORGANIZATION_LABEL}</strong></p>
 <br>
-<input type="hidden" id="issuing_organization_key" name="issuing_organization_key" value="{$ISSUING_ORGANIZATION_KEY}">
-
 {/if}
 
 {if $VAL.MISSING_SETTINGS|@count gt 0 || $VAL.MISSING_FIELDS|@count gt 0 }
@@ -98,6 +96,10 @@
 
 <br>
 <form name="stic_Payments" method="POST">
+    {*ISSUING ORGANIZATION SELECTED*}
+    {if $ISSUING_ORGANIZATION_KEY ne ''}
+    <input type="hidden" id="issuing_organization_key" name="issuing_organization_key" value="{$ISSUING_ORGANIZATION_KEY}">
+    {/if}
     <input type="hidden" id="module" name="module" value="stic_Payments">
     <input type="hidden" id="action" name="action" value="createModel182">
 

@@ -153,6 +153,16 @@ $twoYearsAgo = date("Y") - 2;   // Year before $lastyear
 $threeYearsAgo = date("Y") - 3;   // Year before $twoYearsAgo
 $fourYearsAgo = date("Y") - 4; // Year before $threeYearsAgo
 
+// Check if an issuing organization has been selected and set custom annual donations fields
+$issuingOrganizationKey = $_REQUEST['issuing_organization_key'] ?? '';
+$sufixSetting = '';
+if ($issuingOrganizationKey != '') {
+    $total_annual_donations_field = 'stic_m182_amount_' . strtolower($issuingOrganizationKey) . '_c';
+    $sufixSetting = '_' . strtoupper($issuingOrganizationKey);
+} else {
+    $total_annual_donations_field = 'stic_total_annual_donations_c';
+}
+
 // Load M182 settings
 $m182SettingsTemp = stic_SettingsUtils::getSettingsByType('M182');
 
@@ -172,15 +182,7 @@ $m182FixedValuesTemp = array(
 
 $m182Vars = array_merge($m182SettingsTemp, $generalSettingsTemp, $m182FixedValuesTemp);
 
-$declarantType = $m182Vars["M182_NATURALEZA_DECLARANTE"];
-
-// Check if an issuing organization has been selected and set custom annual donations fields
-$issuingOrganizationKey = $_REQUEST['issuing_organization_key'] ?? '';
-if ($issuingOrganizationKey != '') {
-    $total_annual_donations_field = 'stic_m182_amount_' . strtolower($issuingOrganizationKey) . '_c';
-} else {
-    $total_annual_donations_field = 'stic_total_annual_donations_c';
-}
+$declarantType = $m182Vars["M182_NATURALEZA_DECLARANTE".$sufixSetting];
 
 // 1.5 Reset the fields $total_annual_donations_field and 'stic_182_error_c' in accounts and contacts to delate previous data (from the same year or from previous ones).
 $db->query("UPDATE accounts_cstm SET $total_annual_donations_field = 0, stic_182_error_c = 0");
@@ -428,8 +430,8 @@ foreach ($accounts as $id) {
 }
 
 // 5. M182 generation
-$declarantIdentification = $m182Vars["GENERAL_ORGANIZATION_ID"];
-$donationKey = $m182Vars["M182_CLAVE_DONATIVO"];
+$declarantIdentification = $m182Vars["GENERAL_ORGANIZATION_ID".$sufixSetting];
+$donationKey = $m182Vars["M182_CLAVE_DONATIVO".$sufixSetting];
 $year = $lastyear;
 
 // Create an array to save records formatted according to the regulations
@@ -748,19 +750,19 @@ foreach ($accounts as $id) {
 $m182 = array();
 $m182['ejercicio'] = $year;
 $m182['nif_declarante'] = $declarantIdentification;
-$m182['declarante'] = $m182Vars["GENERAL_ORGANIZATION_NAME"];
+$m182['declarante'] = $m182Vars["GENERAL_ORGANIZATION_NAME".$sufixSetting];
 $m182['tipo_soporte'] = 'T';
-$m182['relacionarse_telefono'] = $m182Vars["M182_PERSONA_CONTACTO_TELEFONO"];
-$m182['relacionarse_apellido_1'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_1"];
-$m182['relacionarse_apellido_2'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_2"];
-$m182['relacionarse_nombre'] = $m182Vars["M182_PERSONA_CONTACTO_NOMBRE"];
-$m182['num_justificante'] = $m182Vars["M182_NUMERO_JUSTIFICANTE"];
+$m182['relacionarse_telefono'] = $m182Vars["M182_PERSONA_CONTACTO_TELEFONO".$sufixSetting];
+$m182['relacionarse_apellido_1'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_1".$sufixSetting];
+$m182['relacionarse_apellido_2'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_2".$sufixSetting];
+$m182['relacionarse_nombre'] = $m182Vars["M182_PERSONA_CONTACTO_NOMBRE".$sufixSetting];
+$m182['num_justificante'] = $m182Vars["M182_NUMERO_JUSTIFICANTE".$sufixSetting];
 $m182['decl_complementaria'] = ' ';
 $m182['decl_sustitutiva'] = ' ';
 $m182['num_justificante_anterior'] = '';
 $m182['num_total_registros_declarados'] = count($model182T2);
 $m182['importe_donacion'] = $total ?? null;
-$m182['naturaleza_decl'] = $m182Vars["M182_NATURALEZA_DECLARANTE"];
+$m182['naturaleza_decl'] = $m182Vars["M182_NATURALEZA_DECLARANTE".$sufixSetting];
 $m182['nif_patrimonio_protegido'] = '';
 $m182['patrimonio_protegido_apellido_1'] = '';
 $m182['patrimonio_protegido_apellido_2'] = '';
