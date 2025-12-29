@@ -24,12 +24,12 @@
 class stic_PaymentsController extends SugarController
 {
 
-    public function action_selectM182IssuingOrganization()
+    public function action_m182SelectIssuingOrganization()
     {
         // Checking if user has m182 issuing organization assigned then using the key to get the parameters.
         require_once 'modules/stic_Payments/Utils.php';
         $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
-        if (count($orgKeyArray) > 0 && empty($_REQUEST['issuing_organization_selected'])) {
+        if (count($orgKeyArray) > 1 && empty($_REQUEST['issuing_organization_selected'])) {
             global $app_list_strings;
             // If user has organizations assigned and no issuing organization selectred, we redirect to select one
             include_once "modules/stic_Remittances/Utils.php";
@@ -39,10 +39,14 @@ class stic_PaymentsController extends SugarController
                 $orgKeyClean = str_replace('_', '', $value);
                 $orgLabelArray[] = $app_list_strings['dynamic_issuing_organization_list'][$orgKeyClean];
             }
-            $this->view = "selectM182IssuingOrganization";
-            $this->view_object_map['ISSUING_ORGANIZATIONS_ID'] = $orgKeyArray ?? array();
+            $this->view = "m182selectissuingorganization";
+            $this->view_object_map['ISSUING_ORGANIZATIONS_IDS'] = $orgKeyArray ?? array();
             $this->view_object_map['ISSUING_ORGANIZATIONS_LABELS'] = $orgLabelArray ?? array();
         } else {
+            // if $orgKeyArray has exactly one element, we use it
+            if (count($orgKeyArray) == 1 && empty($_REQUEST['issuing_organization_selected'])) {
+                $_REQUEST['issuing_organization_selected'] = $orgKeyArray[0];
+            }
             // If user has no organization assigned or has selected one, we go to the wizard
             $this->action_model182Wizard();
         }
@@ -54,15 +58,12 @@ class stic_PaymentsController extends SugarController
      * @return void
      */
     public function action_model182Wizard() {
-        global $app_list_strings;
-
-        // Checking if user has m182 issuing organization assigned then using the key to get the parameters.
-        require_once 'modules/stic_Payments/Utils.php';
-        $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
+        global $app_list_strings, $mod_strings;
 
         // Check settings needing for m182
         require_once 'modules/stic_Settings/Utils.php';
         $missingSettings = array();
+        $missingFields = array();
         $neededSettings = array(
             'GENERAL_ORGANIZATION_NAME',
             'GENERAL_ORGANIZATION_ID',
@@ -76,42 +77,103 @@ class stic_PaymentsController extends SugarController
             'M182_NUMERO_JUSTIFICANTE',
         );
 
+        // Use only the issuing organization explicitly selected in the request for filtering
+        $selectedOrgKey = '';
+        if (!empty($_REQUEST['issuing_organization_selected'])) {
+            $selectedOrgKey = (string) $_REQUEST['issuing_organization_selected'];
+        }
         // We read the drop-down list of payment types
         $movementClassList = $app_list_strings['stic_payments_types_list'];
 
-        // Checking missing setting and filtering payment types
-        foreach ($orgKeyArray as $orgKey) {
+        // If an issuing organization is explicitly selected, check its settings and filter payment types by that suffix
+        if ($selectedOrgKey !== '') {
             foreach ($neededSettings as $key) {
-                if (stic_SettingsUtils::getSetting($key.$orgKey) == '') {
-                    $missingSettings[] = $key.$orgKey;
+                if (stic_SettingsUtils::getSetting($key . $selectedOrgKey) == '') {
+                    $missingSettings[] = $key . $selectedOrgKey;
                 }
             }
-            // We filter payment types according if payment type ends with organization key
-            // Not mayuscule/lowercule problem because settings keys are case sensitive
-            $minusOrgKey = strtolower($orgKey);
+
+            $suf = strtolower($selectedOrgKey);
+            $filteredMovementClassList = array();
             foreach ($movementClassList as $x => $xValue) {
-                if ($orgKey != '' && substr($x, -strlen($minusOrgKey)) != $minusOrgKey) {
-                    unset($movementClassList[$x]);
-                }  
-            }  
+                if ($x === '') {
+                    continue;
+                }
+                $xLower = strtolower($x);
+                $sufLen = strlen($suf);
+                if ($sufLen > 0 && $sufLen <= strlen($xLower) && substr($xLower, -$sufLen) === $suf) {
+                    $filteredMovementClassList[$x] = $xValue;
+                }
+            }
+            $movementClassList = $filteredMovementClassList;
+
+            // Check dynamic field exists in Contacts and Accounts: stic_m182_amount_{lower(orgKey)}_c and is decimal
+            $dynamicField = 'stic_m182_amount' . strtolower($selectedOrgKey) . '_c';
+
+            // Contacts
+            $contactBean = BeanFactory::newBean('Contacts');
+            $contactsLabel = translate('LBL_MODULE_NAME', 'Contacts');
+            if (!isset($contactBean->field_defs[$dynamicField])) {
+                $missingFields[] = $contactsLabel . ': ' . $dynamicField;
+            } else {
+                $def = $contactBean->field_defs[$dynamicField];
+                $type = isset($def['type']) ? $def['type'] : '';
+                if ($type !== 'decimal') {
+                    $missingFields[] = $contactsLabel . ': ' . $dynamicField . ' ' .$mod_strings['LBL_M182_MISSING_FIELDS_WRONG_TYPE'];
+                }
+            }
+
+            // Accounts
+            $accountBean = BeanFactory::newBean('Accounts');
+            $accountsLabel = translate('LBL_MODULE_NAME', 'Accounts');
+            if (!isset($accountBean->field_defs[$dynamicField])) {
+                $missingFields[] = $accountsLabel . ': ' . $dynamicField;
+            } else {
+                $def = $accountBean->field_defs[$dynamicField];
+                $type = isset($def['type']) ? $def['type'] : '';
+                if ($type !== 'decimal') {
+                    $missingFields[] = $accountsLabel . ': ' . $dynamicField . ' ' .$mod_strings['LBL_M182_MISSING_FIELDS_WRONG_TYPE'];
+                }
+            }
+        } else {
+            // No org selected: check base settings
+            foreach ($neededSettings as $key) {
+                if (stic_SettingsUtils::getSetting($key) == '') {
+                    $missingSettings[] = $key;
+                }
+            }
         }
 
-        // We divide the associative array into two arrays, one that contains the labels and another that contains the internal value
-        $i = '0';
+        // Build label and internal arrays for the template
+        $i = 0;
+        $listLabel = array();
+        $listIntern = array();
         foreach ($movementClassList as $x => $xValue) {
-            // We only add non empty valuese
             if ($x != '') {
                 $listLabel[$i] = $x;
                 $listIntern[$i] = $xValue;
                 $i++;
             }
         }
+        // We get the Organization label of the issuing organization selected
+        include_once "modules/stic_Remittances/Utils.php";
+        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);
+        $orgLabel = '';
+        $orgKeyClean = '';
+        if ($selectedOrgKey !== '') {
+            $orgKeyClean = str_replace('_', '', $selectedOrgKey);
+            global $app_list_strings;
+            $orgLabel = $app_list_strings['dynamic_issuing_organization_list'][$orgKeyClean] ?? '';
+        }
+        $this->view_object_map['ISSUING_ORGANIZATION_LABEL'] = $orgLabel;
+        $this->view_object_map['ISSUING_ORGANIZATION_KEY'] = $orgKeyClean;
 
         // Call to the smarty template
         $this->view = "m182wizard";
         $this->view_object_map['MISSING_SETTINGS'] = $missingSettings;
-        $this->view_object_map['PAYMENT_TYPE_VALUES'] = $listLabel ?? array();
-        $this->view_object_map['PAYMENT_TYPE_OUTPUT'] = $listIntern ?? array();
+        $this->view_object_map['MISSING_FIELDS'] = $missingFields;
+        $this->view_object_map['PAYMENT_TYPE_VALUES'] = $listLabel;
+        $this->view_object_map['PAYMENT_TYPE_OUTPUT'] = $listIntern;
     }
 
     /**

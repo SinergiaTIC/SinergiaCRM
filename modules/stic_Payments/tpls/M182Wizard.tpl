@@ -53,15 +53,41 @@
     </tr>
 </table>
 
+{*ISSUING ORGANIZATION SELECTED*}
+{if $ISSUING_ORGANIZATION_LABEL ne ''}
+<br>
+<p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_ISSUING_ORGANIZATION_SELECTED}: <strong>{$ISSUING_ORGANIZATION_LABEL}</strong></p>
+<br>
+<input type="hidden" id="issuing_organization_key" name="issuing_organization_key" value="{$ISSUING_ORGANIZATION_KEY}">
 
-{if $VAL.MISSING_SETTINGS|@count gt 0 }
-<p style="text-align:left;color:#d5061e;font-weight:bold;">{$MOD.LBL_M182_MISSING_SETTINGS}:
+{/if}
+
+{if $VAL.MISSING_SETTINGS|@count gt 0 || $VAL.MISSING_FIELDS|@count gt 0 }
+
+    {if $VAL.MISSING_SETTINGS|@count gt 0}
+    <p style="text-align:left;color:#d5061e;font-weight:bold;">
+    {$MOD.LBL_M182_MISSING_SETTINGS}:
     <br>
-<ul>
-    {foreach from=$VAL.MISSING_SETTINGS item=it}
-    <li>{$it}</li>
-    {/foreach}
-</ul>
+    <ul>
+        {foreach from=$VAL.MISSING_SETTINGS item=it}
+        <li>{$it}</li>
+        {/foreach}
+    </ul>
+    {/if}
+    {if $VAL.MISSING_SETTINGS|@count gt 0 && $VAL.MISSING_FIELDS|@count gt 0 }
+        <br>
+    {/if}
+    {if $VAL.MISSING_FIELDS|@count gt 0}
+    <p style="text-align:left;color:#d5061e;font-weight:bold;">
+    {$MOD.LBL_M182_MISSING_FIELDS}:
+    <br>
+    <ul>
+        {foreach from=$VAL.MISSING_FIELDS item=it}
+        <li>{$it}</li>
+        {/foreach}
+    </ul>
+    {/if}
+</p>
 {else}
 
 <br>

@@ -39,7 +39,7 @@ if (ACLController::checkAccess('stic_Payments', 'import', true)) {
 
 // Add custom menu item for M182
 if (ACLController::checkAccess('stic_Payments', 'list', true)) {
-    $module_menu[] = array('index.php?module=stic_Payments&action=selectM182IssuingOrganization', $mod_strings['LBL_M182_TITLE'], 'm182', 'stic_Payments');
+    $module_menu[] = array('index.php?module=stic_Payments&action=M182selectissuingorganization', $mod_strings['LBL_M182_TITLE'], 'm182', 'stic_Payments');
 }
 
 // Add custom menu item for Aggegated payments

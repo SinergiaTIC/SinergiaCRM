@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-class stic_PaymentsViewselectM182IssuingOrganization extends SugarView {
+class stic_PaymentsViewM182selectissuingorganization extends SugarView {
 
     public function __construct() {
         parent::__construct();
@@ -33,9 +33,9 @@ class stic_PaymentsViewselectM182IssuingOrganization extends SugarView {
 
     public function display() {
         parent::display();
-        $this->ss->assign("ORGS_KEYS", $this->view_object_map['ISSUING_ORGANIZATIONS_ID'] ?? null);
+        $this->ss->assign("ORGS_KEYS", $this->view_object_map['ISSUING_ORGANIZATIONS_IDS'] ?? null);
         $this->ss->assign("ORGS_LABELS", $this->view_object_map['ISSUING_ORGANIZATIONS_LABELS'] ?? null);
-        $this->ss->display('modules/stic_Payments/tpls/selectM182IssuingOrganization.tpl');
+        $this->ss->display('modules/stic_Payments/tpls/M182SelectIssuingOrganization.tpl');
     }
 
 }

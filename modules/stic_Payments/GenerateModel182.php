@@ -174,9 +174,17 @@ $m182Vars = array_merge($m182SettingsTemp, $generalSettingsTemp, $m182FixedValue
 
 $declarantType = $m182Vars["M182_NATURALEZA_DECLARANTE"];
 
-// 1.5 Reset the fields 'stic_total_annual_donations_c' and 'stic_182_error_c' in accounts and contacts to delate previous data (from the same year or from previous ones).
-$db->query("UPDATE accounts_cstm SET stic_total_annual_donations_c = 0, stic_182_error_c = 0");
-$db->query("UPDATE contacts_cstm SET stic_total_annual_donations_c = 0, stic_182_error_c = 0");
+// Check if an issuing organization has been selected and set custom annual donations fields
+$issuingOrganizationKey = $_REQUEST['issuing_organization_key'] ?? '';
+if ($issuingOrganizationKey != '') {
+    $total_annual_donations_field = 'stic_m182_amount_' . strtolower($issuingOrganizationKey) . '_c';
+} else {
+    $total_annual_donations_field = 'stic_total_annual_donations_c';
+}
+
+// 1.5 Reset the fields $total_annual_donations_field and 'stic_182_error_c' in accounts and contacts to delate previous data (from the same year or from previous ones).
+$db->query("UPDATE accounts_cstm SET $total_annual_donations_field = 0, stic_182_error_c = 0");
+$db->query("UPDATE contacts_cstm SET $total_annual_donations_field = 0, stic_182_error_c = 0");
 
 // 2. Select all payments with payment_date in the last year, with "paid" status, that are of the selected types and that are not excluded
 $sqlCurrentPayments = "SELECT p.id
@@ -631,7 +639,7 @@ foreach ($contacts as $id) {
         // Update the total donation in the contact record
         // Important! Membership fees to political parties are excluded from this total. If political parties 
         // want to generate deduction certificates for both fees and donations, this field only covers the latest.
-        $db->query("UPDATE contacts_cstm SET stic_total_annual_donations_c = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
+        $db->query("UPDATE contacts_cstm SET $total_annual_donations_field = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
 
     }
 }
@@ -731,7 +739,7 @@ foreach ($accounts as $id) {
         }
 
         // Update the total donation in the account record
-        $db->query("UPDATE accounts_cstm SET stic_total_annual_donations_c = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
+        $db->query("UPDATE accounts_cstm SET $total_annual_donations_field = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
 
     }
 }

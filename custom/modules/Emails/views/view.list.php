@@ -35,19 +35,9 @@ class CustomEmailsViewList extends EmailsViewList
     {
         parent::preDisplay();
 
-        // SticViews::preDisplay($this);
+        SticViews::preDisplay($this);
 
         // Write here you custom code
-
-        // Set original view list parameters.
-        // $_REQUEST['orderBy'] = 'date_sent_received';
-        // $_REQUEST['sortOrder'] = 'DESC';
-        // $this->params['orderBy'] = 'date_sent_received';
-        // $this->params['sortOrder'] = 'DESC';
-        // $this->params['overrideOrder'] = true;
-
-        // $this->lv = new ListViewSmartyEmails();
-        // $this->lv->displayEmptyDataMessages = false;
     }
 
     public function display()
