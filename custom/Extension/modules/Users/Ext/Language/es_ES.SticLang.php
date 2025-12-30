@@ -44,8 +44,8 @@ $mod_strings['LBL_STIC_CLOCK'] = 'Registro horario';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indica si la funcionalidad de Registro horario está activada para el usuario.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'Acceso a SinergiaDA';
 $mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica si el usuario dispone de acceso a Sinergia Data Analytics';
-$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Organización emisora de M182';
-$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indica la organización emisora de los M182. Lista generada dinámicamente con los parámetos de configuración.';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Emisión del Modelo 182';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indica para qué organizaciones podrá el usuario generar el Modelo 182. La lista se genera dinámicamente a partir de los <a href="index.php?module=stic_Settings">parámetos de configuración</a>.';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';
