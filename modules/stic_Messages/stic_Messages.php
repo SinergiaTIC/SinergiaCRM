@@ -117,6 +117,13 @@ class stic_Messages extends Basic
 
         // If Message is being created or status changed to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
+            // If type is WhatsAppWeb we don't have a server-side sender: mark as sent and skip helper
+            if ($this->type === 'WhatsAppWeb') {
+                // mark as sent because user/client will open WhatsApp Web
+                $this->status = 'sent';
+                $this->response = 'Sent via WhatsApp Web (client)';
+                $this->sent_date = $GLOBALS['timedate']->nowDb();
+            } else {
             if (!empty($this->phone)){
                 $response = $this->sendMessage();
                 if ($response['code'] === self::OK) {
@@ -132,6 +139,7 @@ class stic_Messages extends Basic
             else {
                 $this->status = 'error';
                 $this->response = 'No phone number';
+            }
             }
         }
 

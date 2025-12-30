@@ -144,6 +144,18 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           // $("#EditView .dcQuickEdit td.buttons").append("<input type='hidden' name='mass_ids' id='mass_ids' value='{$idsList}'>");
           panelBody.find('.dcQuickEdit td.buttons').append("<input type='hidden' name='mass_ids' id='mass_ids' value='"+idsList+"'>");
           // panelBody.find('#mass_ids').val(idsList);
+          // If this is a mass send with more than one target, disable WhatsAppWeb option and force SMS
+            if (targetCount > 1) {
+              var $typeSelect = panelBody.find('select[name="type"]');
+              if ($typeSelect.length) {
+                // Disable WhatsApp option and change to SMS if WhatsAppWeb is selected
+                $typeSelect.find('option[value="WhatsAppWeb"]').prop('disabled', true);
+                if ($typeSelect.val() === 'WhatsAppWeb') {
+                  const smsOption = $typeSelect.find('option[value="SevenSmsHelper"]');
+                  $typeSelect.val(smsOption.length ? 'SevenSmsHelper' : $typeSelect.find('option:not(:disabled)').first().val());
+                }
+              }
+            }
         }
           SUGAR.ajaxUI.hideLoadingPanel();
 
