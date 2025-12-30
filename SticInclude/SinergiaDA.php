@@ -1439,7 +1439,7 @@ class ExternalReporting
 
         // All values to be inserted in MySQL escape to avoid syntax errors
         foreach ($values as $key => $value) {
-            $values[$key] = addslashes($value);
+            $values[$key] = addslashes(trim($value));
         }
 
         $columnKeys = '`' . implode('`,`', array_keys($values)) . '`';
