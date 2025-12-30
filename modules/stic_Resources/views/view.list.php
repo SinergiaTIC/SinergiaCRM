@@ -54,8 +54,7 @@ class stic_ResourcesViewList extends ViewList
     }
     function listViewProcess() {
         $this->processSearchForm();
-        $this->params['custom_where'] = ' AND stic_resources.type <> "place"  OR stic_resources.type IS NULL ';
-      
+        $this->params['custom_where'] = ' AND (stic_resources.type <> "place" OR stic_resources.type IS NULL)';
         if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
             $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
             echo $this->lv->display();
