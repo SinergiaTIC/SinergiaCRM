@@ -43,12 +43,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_DESCRIPTION' => 'Descripción',
-    'LBL_NAME' => 'Nombre',
-    'LBL_LIST_NAME' => 'Nombre',
-    'LBL_EDIT_BUTTON' => 'Editar',
-    'LBL_REMOVE' => 'Quitar',
-    'LBL_GRP' => 'Grupo',
-    'LBL_ORD' => 'Orden',
-    'LBL_THUMBNAIL' => 'Miniatura',
+    'LBL_DESCRIPTION' => '',
+    'LBL_NAME' => '',
+    'LBL_LIST_NAME' => '',
+    'LBL_EDIT_BUTTON' => '',
+    'LBL_REMOVE' => '',
+    'LBL_GRP' => '',
+    'LBL_ORD' => '',
+    'LBL_THUMBNAIL' => '',
 );
