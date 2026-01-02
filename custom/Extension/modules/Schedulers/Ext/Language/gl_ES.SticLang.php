@@ -20,23 +20,23 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO'] = '';
-$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = '';
-$mod_strings['LBL_LIST_ASSIGNED_USER'] = '';
-$mod_strings['LBL_CREATED'] = '';
-$mod_strings['LBL_CREATED_USER'] = '';
-$mod_strings['LBL_CREATED_ID'] = '';
-$mod_strings['LBL_MODIFIED'] = '';
-$mod_strings['LBL_MODIFIED_NAME'] = '';
-$mod_strings['LBL_MODIFIED_USER'] = '';
-$mod_strings['LBL_MODIFIED_ID'] = '';
-$mod_strings['LBL_SCHEDULERS_INFORMATION'] = '';
-$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = '';
-$mod_strings['LBL_STICCLEANCONFIG'] = '';
-$mod_strings['LBL_CREATEATTENDANCES'] = '';
-$mod_strings['LBL_CALCULATECONTACTSAGE'] = '';
-$mod_strings['LBL_CREATECURRENTMONTHRECURRINGPAYMENTS'] = '';
-$mod_strings['LBL_OPPORTUNITIESREMINDER'] = '';
-$mod_strings['LBL_VALIDATIONACTIONS'] = '';
-$mod_strings['LBL_STIC_VALIDATION_ACTIONS_SCHEDULERS_FROM_STIC_VALIDATION_ACTIONS_TITLE'] = '';
-$mod_strings['LBL_CREATEMEDICATIONLOGS'] = '';
+$mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
+$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
+$mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
+$mod_strings['LBL_CREATED'] = 'Creado por';
+$mod_strings['LBL_CREATED_USER'] = 'Creado por';
+$mod_strings['LBL_CREATED_ID'] = 'Creado por (ID)';
+$mod_strings['LBL_MODIFIED'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
+$mod_strings['LBL_SCHEDULERS_INFORMATION'] = 'Datos generals';
+$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
+$mod_strings['LBL_STICCLEANCONFIG'] = 'Resetear las opciones de configuración';
+$mod_strings['LBL_CREATEATTENDANCES'] = 'Crear asistencias';
+$mod_strings['LBL_CALCULATECONTACTSAGE'] = 'Calcular la edad de las personas';
+$mod_strings['LBL_CREATECURRENTMONTHRECURRINGPAYMENTS'] = 'Crear los pagos recurrentes de este mes';
+$mod_strings['LBL_OPPORTUNITIESREMINDER'] = 'Recordatorio de subvenciones';
+$mod_strings['LBL_VALIDATIONACTIONS'] = 'Acciones de validación';
+$mod_strings['LBL_STIC_VALIDATION_ACTIONS_SCHEDULERS_FROM_STIC_VALIDATION_ACTIONS_TITLE'] = 'Acciones de Validación';
+$mod_strings['LBL_CREATEMEDICATIONLOGS'] = 'Crear registros de medicación';
