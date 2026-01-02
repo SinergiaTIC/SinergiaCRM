@@ -20,31 +20,31 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_SHAREDDAY'] = '';
-$mod_strings['LBL_FILTERS_TITLE'] = '';
-$mod_strings['LBL_FILTERS_CROSS_REMOVE_FILTERS_TOOLTIP'] = '';
+$mod_strings['LBL_SHAREDDAY'] = 'Día compartido';
+$mod_strings['LBL_FILTERS_TITLE'] = 'Filtros';
+$mod_strings['LBL_FILTERS_CROSS_REMOVE_FILTERS_TOOLTIP'] = 'Quitar filtros';
 
-$mod_strings['LBL_FILTERS_SESSIONS_TITLE'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS_TYPE'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_ACTIVITY_TYPE'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_COLOR'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_RESPONSIBLE'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_CONTACTS'] = '';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_PROJECTS'] = '';
+$mod_strings['LBL_FILTERS_SESSIONS_TITLE'] = 'Sesiones';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS'] = 'Evento';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS'] = 'Centro vinculado al evento';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS_TYPE'] = 'Tipo de evento';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_ACTIVITY_TYPE'] = 'Tipo de actividad';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_COLOR'] = 'Color';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_RESPONSIBLE'] = 'Responsable';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_CONTACTS'] = 'Persona inscrita';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_PROJECTS'] = 'Proyecto vinculado al evento';
 
-$mod_strings['LBL_FILTERS_FOLLOWUPS_TITLE'] = '';
-$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_COLOR'] = '';
-$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_TYPE'] = '';
-$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = '';
-$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = '';
+$mod_strings['LBL_FILTERS_FOLLOWUPS_TITLE'] = 'Seguimientos';
+$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_COLOR'] = 'Color';
+$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_TYPE'] = 'Tipo';
+$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = 'Persona en seguimiento';
+$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Proyecto relacionado';
 
-$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = '';
-$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = '';
-$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = '';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Calendario laboral';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Tipo';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Departamento';
 
-$mod_strings['LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO'] = '';
-$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = '';
-$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = '';
-$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = '';
+$mod_strings['LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO'] = 'Con la opción activada los calendarios laborales de los diferentes usuarios pueden solaparse. Para optimizar su visualización se recomienda mostrarlos por separado.';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Ver registros de Calendario laboral';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = 'Calendario laboral - Disponible';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Calendario laboral - No disponible';
