@@ -20,27 +20,27 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO_ID'] = '';
-$mod_strings['LBL_ASSIGNED_TO_NAME'] = '';
-$mod_strings['LBL_ASSIGNED_TO'] = '';
-$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = '';
-$mod_strings['LBL_LIST_ASSIGNED_USER'] = '';
-$mod_strings['LBL_ASSIGNED_USER_NAME'] = '';
-$mod_strings['LBL_LIST_ASSIGNED_USER_ID'] = '';
-$mod_strings['LBL_CREATED'] = '';
-$mod_strings['LBL_CREATED_USER'] = '';
-$mod_strings['LBL_CREATED_ID'] = '';
-$mod_strings['LBL_MODIFIED'] = '';
-$mod_strings['LBL_MODIFIED_NAME'] = '';
-$mod_strings['LBL_MODIFIED_USER'] = '';
-$mod_strings['LBL_MODIFIED_ID'] = '';
-$mod_strings['LBL_NAME'] = '';
-$mod_strings['LBL_LIST_PROSPECT_LIST_NAME'] = '';
-$mod_strings['LBL_OVERVIEW_PANEL'] = '';
-$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = '';
-$mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = '';
-$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = '';
-$mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = '';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a (ID)';
+$mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
+$mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
+$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
+$mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
+$mod_strings['LBL_ASSIGNED_USER_NAME'] = 'Asignado a';
+$mod_strings['LBL_LIST_ASSIGNED_USER_ID'] = 'Asignado a (ID)';
+$mod_strings['LBL_CREATED'] = 'Creado por';
+$mod_strings['LBL_CREATED_USER'] = 'Creado por';
+$mod_strings['LBL_CREATED_ID'] = 'Creado por (ID)';
+$mod_strings['LBL_MODIFIED'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
+$mod_strings['LBL_NAME'] = 'Nombre';
+$mod_strings['LBL_LIST_PROSPECT_LIST_NAME'] = 'Nombre';
+$mod_strings['LBL_OVERVIEW_PANEL'] = 'Datos generales';
+$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
+$mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizaciones';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Personas';
+$mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Pertsona';
