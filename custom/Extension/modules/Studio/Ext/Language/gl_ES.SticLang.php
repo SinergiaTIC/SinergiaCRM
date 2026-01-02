@@ -22,5 +22,5 @@
  */
 
 // Agrupación de subpaneles
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = '';
-$mod_strings['LBL_GROUP_TAB_WELCOME'] = '';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupación de subpaneles';
+$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Cree los grupos y arrastre los módulos que corresponda para definir las agrupaciones de subpaneles que se mostrarán a los usuarios que elijan ver los módulos agrupados en las vistas de detalle. Si desea cambiar el menú principal, puede hacerlo <a href="index.php?module=Administration&action=SticManageMainMenu">aquí</a>.';
