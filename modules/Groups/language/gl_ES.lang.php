@@ -43,14 +43,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_MODULE_NAME' => 'Grupos',
-    'LBL_GROUP_NAME' => 'Nome do Grupo:',
-    'LBL_DESCRIPTION' => 'Descrición:',
-    'LBL_TEAM' => 'Equipo:',
+    'LBL_MODULE_NAME' => '',
+    'LBL_GROUP_NAME' => '',
+    'LBL_DESCRIPTION' => '',
+    'LBL_TEAM' => '',
     // ListView
-    'LBL_LIST_TITLE' => 'Grupos',
+    'LBL_LIST_TITLE' => '',
     // Links
-    'LNK_ALL_GROUPS' => 'Todos os Grupos',
-    'LNK_NEW_GROUP' => 'Novo Grupo',
-    'LNK_CONVERT_USER' => 'Convertir Usuario en Grupo',
+    'LNK_ALL_GROUPS' => '',
+    'LNK_NEW_GROUP' => '',
+    'LNK_CONVERT_USER' => '',
 );
