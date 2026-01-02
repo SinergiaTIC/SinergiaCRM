@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ANSWER'] = 'Resposta';
-$mod_strings['LBL_ANSWER_BOOL'] = 'Resposta booleana';
-$mod_strings['LBL_ANSWER_DATETIME'] = 'Resposta data e hora';
-$mod_strings['LBL_KREPORTER_ANSWER_UNIFIED'] = 'Resposta unificada';
+$mod_strings['LBL_ANSWER'] = '';
+$mod_strings['LBL_ANSWER_BOOL'] = '';
+$mod_strings['LBL_ANSWER_DATETIME'] = '';
+$mod_strings['LBL_KREPORTER_ANSWER_UNIFIED'] = '';
