@@ -43,11 +43,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['ModuleActivityDashlet'] = array(
-    'LBL_TITLE' => 'Actividad del módulo',
-    'LBL_DESCRIPTION' => 'Gráfica de barra horizontal de creación de registro de usuarios por módulo',
-    'LBL_MODULES' => 'Módulos',
-    'LBL_REFRESH' => 'Actualizar Gráfico',
-    'LBL_TOTAL_ACTIVITY' => 'Actividad total por período es',
-    'LBL_ACTIVITY_UNITS' => 'registros creados',
-    'LBL_ACTIVITY_SCALE' => 'Escala de actividad en',
+    'LBL_TITLE' => '',
+    'LBL_DESCRIPTION' => '',
+    'LBL_MODULES' => '',
+    'LBL_REFRESH' => '',
+    'LBL_TOTAL_ACTIVITY' => '',
+    'LBL_ACTIVITY_UNITS' => '',
+    'LBL_ACTIVITY_SCALE' => '',
 );
