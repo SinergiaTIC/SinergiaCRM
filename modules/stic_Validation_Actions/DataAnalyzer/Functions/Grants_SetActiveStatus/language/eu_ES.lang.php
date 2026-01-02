@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array(
-    'NAME' => 'Ayudas - Cálculo de registro activo/inactivo', // Esta etiqueta es obligatoria. Indica el nombre de la función
-    'NO_ROWS' => 'Todas las ayudas tienen el estado activo/inactivo correcto.',
-    'UPDATED' => 'Se ha actualizado el campo Activo.',
+    'NAME' => '', // Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_ROWS' => '',
+    'UPDATED' => '',
 );
