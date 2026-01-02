@@ -43,34 +43,34 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_MODULE_NAME' => 'Combinación de Rexistros',
-    'LBL_MODULE_TITLE' => 'Combinación de Rexistros: Inicio',
-    'LBL_SEARCH_FORM_TITLE' => 'Busca de Combinacións',
-    'LBL_LIST_FORM_TITLE' => 'Lista de Combinacións',
+    'LBL_MODULE_NAME' => '',
+    'LBL_MODULE_TITLE' => '',
+    'LBL_SEARCH_FORM_TITLE' => '',
+    'LBL_LIST_FORM_TITLE' => '',
 
-    'LBL_LBL_MERGE_RECORDS_STEP_1' => 'Busca de Rexistros cos que Combinar',
-    'LBL_AVAIL_FIELDS' => 'Campos Dispoñibles',
-    'LBL_FILTER_COND' => 'Condición de Filtrado',
-    'LBL_MERGE_VALUE_OVER' => 'Combinar valores sobre',
+    'LBL_LBL_MERGE_RECORDS_STEP_1' => '',
+    'LBL_AVAIL_FIELDS' => '',
+    'LBL_FILTER_COND' => '',
+    'LBL_MERGE_VALUE_OVER' => '',
 
-    'LBL_NEXT_STEP_TITLE' => 'Ir ao Seguinte Paso',
-    'LBL_NEXT_STEP_BUTTON_LABEL' => 'Seguinte Paso >',
+    'LBL_NEXT_STEP_TITLE' => '',
+    'LBL_NEXT_STEP_BUTTON_LABEL' => '',
 
-    'LBL_PERFORM_MERGE_BUTTON_TITLE' => 'Realizar Combinación',
-    'LBL_PERFORM_MERGE_BUTTON_KEY' => 'P',
-    'LBL_PERFORM_MERGE_BUTTON_LABEL' => 'Realizar Combinación',
+    'LBL_PERFORM_MERGE_BUTTON_TITLE' => '',
+    'LBL_PERFORM_MERGE_BUTTON_KEY' => '',
+    'LBL_PERFORM_MERGE_BUTTON_LABEL' => '',
 
-    'LBL_SAVE_MERGED_RECORD_BUTTON_TITLE' => 'Gardar Combinación',
-    'LBL_SAVE_MERGED_RECORD_BUTTON_LABEL' => 'Gardar Combinación',
+    'LBL_SAVE_MERGED_RECORD_BUTTON_TITLE' => '',
+    'LBL_SAVE_MERGED_RECORD_BUTTON_LABEL' => '',
 
-    'LBL_STEP2_FORM_TITLE' => 'Rexistros Encontrados cos que Combinar',
-    'LBL_SELECT_ERROR' => 'Debe realizar unha selección antes de continuar.',
-    'LBL_CHANGE_PARENT' => 'Establecer como principal',
-    'LBL_REMOVE_FROM_MERGE' => 'Quitar',
-    'LBL_DIFF_COL_VALUES' => 'Columnas cuxo valor na fila principal difiere do valor nas filas de combinación:',
-    'LBL_SAME_COL_VALUES' => 'Columnas cuxo valor é similar en todas as filas:',
-    'LBL_DELETE_MESSAGE' => 'Esta acción eliminará os seguintes rexistros:',
-    'LBL_PROCEED' => '¿Continuar?',
-    'LBL_STEP1_DIRECTIONS' => 'Encontráronse rexistros con posibles duplicados. Cando se encontran posibles duplicados, pode seleccionar aqueles rexistros que desexa combinar co rexistro actual.',
+    'LBL_STEP2_FORM_TITLE' => '',
+    'LBL_SELECT_ERROR' => '',
+    'LBL_CHANGE_PARENT' => '',
+    'LBL_REMOVE_FROM_MERGE' => '',
+    'LBL_DIFF_COL_VALUES' => '',
+    'LBL_SAME_COL_VALUES' => '',
+    'LBL_DELETE_MESSAGE' => '',
+    'LBL_PROCEED' => '',
+    'LBL_STEP1_DIRECTIONS' => '',
 );
 
