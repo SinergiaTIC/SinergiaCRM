@@ -43,21 +43,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_MODULE_TITLE' => '',
-    'LBL_SEARCH_FORM_TITLE' => '',
-    'LBL_LIST_FORM_TITLE' => '',
-    'LBL_DELETE_CONFIRM' => '',
-    'LBL_DELETE_BUTTON_TITLE' => '',
-    'LBL_SAVE_BUTTON_TITLE' => '',
-    'LBL_LIST_NAME' => '',
-    'LBL_LIST_MODULE' => '',
-    'LBL_ORDER_BY_COLUMNS' => '',
-    'LBL_DIRECTION' => '',
-    'LBL_SAVE_SEARCH_AS' => '',
-    'LBL_ASCENDING' => '',
-    'LBL_DESCENDING' => '',
-    'LBL_MODIFY_CURRENT_FILTER' => '',
+    'LBL_MODULE_TITLE' => 'Mis filtros guardados',
+    'LBL_SEARCH_FORM_TITLE' => 'Mi filtros guardados: filtro',
+    'LBL_LIST_FORM_TITLE' => 'Mi lista de filtros guardados',
+    'LBL_DELETE_CONFIRM' => '¿Está seguro de que desea eliminar el Filtro Guardado Seleccionado?',
+    'LBL_DELETE_BUTTON_TITLE' => 'Eliminar este filtro guardado',
+    'LBL_SAVE_BUTTON_TITLE' => 'Guardar el filtro actual',
+    'LBL_LIST_NAME' => 'Nombre',
+    'LBL_LIST_MODULE' => 'Módulo',
+    'LBL_ORDER_BY_COLUMNS' => 'Ordenar por columna:',
+    'LBL_DIRECTION' => 'Dirección:',
+    'LBL_SAVE_SEARCH_AS' => 'Guardar el filtro como:',
+    'LBL_ASCENDING' => 'Ascendente',
+    'LBL_DESCENDING' => 'Descendente',
+    'LBL_MODIFY_CURRENT_FILTER' => 'Modificar filtro actual',
 
-    'LBL_CREATED_BY' => '',
+    'LBL_CREATED_BY' => 'Creado Por',
 
 );
