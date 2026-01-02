@@ -21,5 +21,5 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Inscricións - Revisión dos datos principais',		// Esta etiqueta é obrigatoria. Indica o nome da función
+    'NAME' => '',		// Esta etiqueta es obligatoria. Indica el nombre de la función
 );
