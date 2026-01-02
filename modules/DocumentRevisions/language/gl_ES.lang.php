@@ -44,46 +44,46 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $mod_strings = array(
     //module
-    'LBL_MODULE_NAME' => 'Versión do Documento',
+    'LBL_MODULE_NAME' => '',
 
-    'LNK_NEW_DOCUMENT' => 'Novo Documento',
-    'LNK_DOCUMENT_LIST' => 'Ver Documentos',
+    'LNK_NEW_DOCUMENT' => '',
+    'LNK_DOCUMENT_LIST' => '',
 
     //vardef labels
-    'LBL_REVISION_NAME' => 'Número de Versión',
-    'LBL_FILENAME' => 'Arquivo:',
-    'LBL_MIME' => 'Tipo MIME',
-    'LBL_REVISION' => 'Versión',
-    'LBL_DOCUMENT' => 'Documento Relacionado',
-    'LBL_LATEST_REVISION' => 'Última Versión',
-    'LBL_CHANGE_LOG' => 'Rexistro de Cambios:',
-    'LBL_ACTIVE_DATE' => 'Data de Publicación',
-    'LBL_EXPIRATION_DATE' => 'Data de Caducidade',
-    'LBL_FILE_EXTENSION' => 'Extensión de Arquivo',
+    'LBL_REVISION_NAME' => '',
+    'LBL_FILENAME' => '',
+    'LBL_MIME' => '',
+    'LBL_REVISION' => '',
+    'LBL_DOCUMENT' => '',
+    'LBL_LATEST_REVISION' => '',
+    'LBL_CHANGE_LOG' => '',
+    'LBL_ACTIVE_DATE' => '',
+    'LBL_EXPIRATION_DATE' => '',
+    'LBL_FILE_EXTENSION' => '',
 
-    'LBL_DOC_NAME' => 'Nome de Documento:',
-    'LBL_DOC_VERSION' => 'Versión:',
+    'LBL_DOC_NAME' => '',
+    'LBL_DOC_VERSION' => '',
 
     //document revisions.
-    'LBL_REV_LIST_REVISION' => 'Versión',
-    'LBL_REV_LIST_ENTERED' => 'Data de Creación',
-    'LBL_REV_LIST_CREATED' => 'Creado por',
-    'LBL_REV_LIST_LOG' => 'Rexistro de Cambios',
-    'LBL_REV_LIST_FILENAME' => 'Arquivo',
+    'LBL_REV_LIST_REVISION' => '',
+    'LBL_REV_LIST_ENTERED' => '',
+    'LBL_REV_LIST_CREATED' => '',
+    'LBL_REV_LIST_LOG' => '',
+    'LBL_REV_LIST_FILENAME' => '',
 
-    'LBL_CURRENT_DOC_VERSION' => 'Última Versión:',
-    'LBL_SEARCH_FORM_TITLE' => 'Busca de Documentos',
-    'LBL_REVISIONS' => 'Revisións',
+    'LBL_CURRENT_DOC_VERSION' => '',
+    'LBL_SEARCH_FORM_TITLE' => '',
+    'LBL_REVISIONS' => '',
 
-    //erro messages
-    'ERR_FILENAME' => 'Nome de Arquivo',
-    'ERR_DOC_VERSION' => 'Versión de Documento',
-    'ERR_DELETE_CONFIRM' => '¿Desexa eliminar esta versión do documento?',
-    'ERR_DELETE_LATEST_VERSION' => 'Non ten permisos para eliminar a última versión dun documento.',
-    'LNK_NEW_MAIL_MERGE' => 'Combinar Correspondencia',
-    'LBL_DOC_ID' => 'ID do documento',
-    'LBL_DOC_TYPE' => 'Fonte',
-    'LBL_DOC_URL' => 'URL do documento',
+    //error messages
+    'ERR_FILENAME' => '',
+    'ERR_DOC_VERSION' => '',
+    'ERR_DELETE_CONFIRM' => '',
+    'ERR_DELETE_LATEST_VERSION' => '',
+    'LNK_NEW_MAIL_MERGE' => '',
+    'LBL_DOC_ID' => '',
+    'LBL_DOC_TYPE' => '',
+    'LBL_DOC_URL' => '',
 
-    'LBL_CREATED_BY_NAME' => 'Creado por nome',
+    'LBL_CREATED_BY_NAME' => '',
 );
