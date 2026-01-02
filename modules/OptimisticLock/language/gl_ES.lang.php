@@ -43,12 +43,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_YOURS' => 'Suyo',
-    'LBL_IN_DATABASE' => 'En Base de datos',
-    'LBL_CONFLICT_EXISTS' => 'Hai un Conflito Para - ',
-    'LBL_ACCEPT_DATABASE' => 'Aceptar Base de datos',
-    'LBL_ACCEPT_YOURS' => 'Aceptar Suyo',
-    'LBL_RECORDS_MATCH' => 'Os Rexistros Coinciden',
-    'LBL_NO_LOCKED_OBJECTS' => 'Non hai Obxectos Bloqueados',
+    'LBL_YOURS' => '',
+    'LBL_IN_DATABASE' => '',
+    'LBL_CONFLICT_EXISTS' => '',
+    'LBL_ACCEPT_DATABASE' => '',
+    'LBL_ACCEPT_YOURS' => '',
+    'LBL_RECORDS_MATCH' => '',
+    'LBL_NO_LOCKED_OBJECTS' => '',
 
 );
