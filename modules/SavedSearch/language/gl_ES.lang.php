@@ -43,21 +43,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_MODULE_TITLE' => 'Os Meus filtros gardados',
-    'LBL_SEARCH_FORM_TITLE' => 'Os Meu filtros gardados: filtro',
-    'LBL_LIST_FORM_TITLE' => 'A Miña lista de filtros gardados',
-    'LBL_DELETE_CONFIRM' => '¿Está seguro de que desexa eliminar o Filtro Gardado Seleccionado?',
-    'LBL_DELETE_BUTTON_TITLE' => 'Eliminar este filtro gardado',
-    'LBL_SAVE_BUTTON_TITLE' => 'Gardar o filtro actual',
-    'LBL_LIST_NAME' => 'Nome',
-    'LBL_LIST_MODULE' => 'Módulo',
-    'LBL_ORDER_BY_COLUMNS' => 'Ordear por columna:',
-    'LBL_DIRECTION' => 'Enderezo:',
-    'LBL_SAVE_SEARCH_AS' => 'Gardar o filtro como:',
-    'LBL_ASCENDING' => 'Ascendente',
-    'LBL_DESCENDING' => 'Descendente',
-    'LBL_MODIFY_CURRENT_FILTER' => 'Modificar filtro actual',
+    'LBL_MODULE_TITLE' => '',
+    'LBL_SEARCH_FORM_TITLE' => '',
+    'LBL_LIST_FORM_TITLE' => '',
+    'LBL_DELETE_CONFIRM' => '',
+    'LBL_DELETE_BUTTON_TITLE' => '',
+    'LBL_SAVE_BUTTON_TITLE' => '',
+    'LBL_LIST_NAME' => '',
+    'LBL_LIST_MODULE' => '',
+    'LBL_ORDER_BY_COLUMNS' => '',
+    'LBL_DIRECTION' => '',
+    'LBL_SAVE_SEARCH_AS' => '',
+    'LBL_ASCENDING' => '',
+    'LBL_DESCENDING' => '',
+    'LBL_MODIFY_CURRENT_FILTER' => '',
 
-    'LBL_CREATED_BY' => 'Creado Por',
+    'LBL_CREATED_BY' => '',
 
 );
