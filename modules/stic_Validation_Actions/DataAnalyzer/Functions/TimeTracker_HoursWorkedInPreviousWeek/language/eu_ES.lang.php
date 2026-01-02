@@ -21,9 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Registro horario - Revisión de las horas trabajadas durante la semana anterior.', // Esta etiqueta es obligatoria. Indica el nombre de la función
-    'HOURS_NOT_MATCH' => 'Las horas registradas durante la semana pasada no coinciden con las horas laborales teóricas indicadas en el calendario laboral del usuario: ',
-    'EMAIL_SUBJECT' => 'Revisión de las horas trabajadas durante la semana anterior',
-    'STIC_TIME_TRACKER_LIST_VIEW' => 'Registro horario del usuario',
-    'STIC_WORK_CALENDAR_LIST_VIEW' => 'Calendario laboral del usuario',    
+    'NAME' => '', // Esta etiqueta es obligatoria. Indica el nombre de la función
+    'HOURS_NOT_MATCH' => '',
+    'EMAIL_SUBJECT' => '',
+    'STIC_TIME_TRACKER_LIST_VIEW' => '',
+    'STIC_WORK_CALENDAR_LIST_VIEW' => '',    
 );
