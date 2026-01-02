@@ -20,5 +20,5 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_DEFAULT_PANEL'] = 'Datos xerais';
-$mod_strings['LBL_PANEL_RECORD_DETAILS'] = 'Detalles do rexistro';
+$mod_strings['LBL_DEFAULT_PANEL'] = '';
+$mod_strings['LBL_PANEL_RECORD_DETAILS'] = '';
