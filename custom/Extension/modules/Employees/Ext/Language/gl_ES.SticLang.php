@@ -20,35 +20,35 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a (ID)';
-$mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
-$mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
-$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
-$mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
-$mod_strings['LBL_CREATED'] = 'Creado por';
-$mod_strings['LBL_CREATED_USER'] = 'Creado por';
-$mod_strings['LBL_CREATED_ID'] = 'Creado por (ID)';
-$mod_strings['LBL_MODIFIED'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
-$mod_strings['LBL_SECURITYGROUPS'] = 'Grupos de seguridade';
-$mod_strings['LBL_SECURITYGROUPS_SUBPANEL_TITLE'] = 'Grupos de seguridade';
-$mod_strings['LBL_ID'] = 'ID';
-$mod_strings['LBL_DATE_ENTERED'] = 'Data de Creación';
-$mod_strings['LBL_DATE_MODIFIED'] = 'Data de Modificación';
-$mod_strings['LBL_DESCRIPTION'] = 'Descrición';
-$mod_strings['LBL_DELETED'] = 'Eliminado';
-$mod_strings['LBL_NAME'] = 'Nome';
-$mod_strings['LBL_LIST_NAME'] = 'Nome';
-$mod_strings['LBL_EDIT_BUTTON'] = 'Editar';
-$mod_strings['LBL_REMOVE'] = 'Desvincular';
-$mod_strings['LBL_ASCENDING'] = 'Ascendente';
-$mod_strings['LBL_DESCENDING'] = 'Descendente';
-$mod_strings['LBL_OPT_IN'] = 'Alta voluntaria';
-$mod_strings['LBL_OPT_IN_PENDING_EMAIL_NOT_SENT'] = 'Alta voluntaria pendente de confirmación. Correo de confirmación non enviado.';
-$mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] = 'Alta voluntaria pendente de confirmación. Correo de confirmación enviado.';
-$mod_strings['LBL_OPT_IN_CONFIRMED'] = 'Alta voluntaria confirmada';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = '';
+$mod_strings['LBL_ASSIGNED_TO_NAME'] = '';
+$mod_strings['LBL_ASSIGNED_TO'] = '';
+$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = '';
+$mod_strings['LBL_LIST_ASSIGNED_USER'] = '';
+$mod_strings['LBL_CREATED'] = '';
+$mod_strings['LBL_CREATED_USER'] = '';
+$mod_strings['LBL_CREATED_ID'] = '';
+$mod_strings['LBL_MODIFIED'] = '';
+$mod_strings['LBL_MODIFIED_NAME'] = '';
+$mod_strings['LBL_MODIFIED_USER'] = '';
+$mod_strings['LBL_MODIFIED_ID'] = '';
+$mod_strings['LBL_SECURITYGROUPS'] = '';
+$mod_strings['LBL_SECURITYGROUPS_SUBPANEL_TITLE'] = '';
+$mod_strings['LBL_ID'] = '';
+$mod_strings['LBL_DATE_ENTERED'] = '';
+$mod_strings['LBL_DATE_MODIFIED'] = '';
+$mod_strings['LBL_DESCRIPTION'] = '';
+$mod_strings['LBL_DELETED'] = '';
+$mod_strings['LBL_NAME'] = '';
+$mod_strings['LBL_LIST_NAME'] = '';
+$mod_strings['LBL_EDIT_BUTTON'] = '';
+$mod_strings['LBL_REMOVE'] = '';
+$mod_strings['LBL_ASCENDING'] = '';
+$mod_strings['LBL_DESCENDING'] = '';
+$mod_strings['LBL_OPT_IN'] = '';
+$mod_strings['LBL_OPT_IN_PENDING_EMAIL_NOT_SENT'] = '';
+$mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] = '';
+$mod_strings['LBL_OPT_IN_CONFIRMED'] = '';
 
 // Asistente de creación de registros de Calendario laboral
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Xerar Calendario laboral';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = '';
