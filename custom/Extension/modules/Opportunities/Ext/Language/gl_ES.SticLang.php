@@ -20,77 +20,77 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a';
-$mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
-$mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
-$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
-$mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
-$mod_strings['LBL_CREATED'] = 'Creado por';
-$mod_strings['LBL_CREATED_USER'] = 'Creado por';
-$mod_strings['LBL_CREATED_ID'] = 'Creado por';
-$mod_strings['LBL_MODIFIED'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por';
-$mod_strings['LBL_STIC_ADVANCE_DATE'] = 'Data de anticipo';
-$mod_strings['LBL_STIC_AMOUNT_AWARDED'] = 'Importe concedido';
-$mod_strings['LBL_STIC_AMOUNT_RECEIVED'] = 'Importe recibido';
-$mod_strings['LBL_STIC_TARGET'] = 'Destino';
-$mod_strings['LBL_STIC_DOCUMENTATION_TO_DELIVER'] = 'Documentación a presentar';
-$mod_strings['LBL_STIC_JUSTIFICATION_DATE'] = 'Data de xustificación';
-$mod_strings['LBL_STIC_PAYMENT_DATE'] = 'Data de pago';
-$mod_strings['LBL_STIC_PRESENTATION_DATE'] = 'Data de presentación';
-$mod_strings['LBL_STIC_RESOLUTION_DATE'] = 'Data de resolución';
-$mod_strings['LBL_STIC_STATUS'] = 'Estado';
-$mod_strings['LBL_STIC_TYPE'] = 'Tipo';
-$mod_strings['LBL_ACCOUNT_NAME'] = 'Organización';
-$mod_strings['LBL_AMOUNT'] = 'Importe solicitado';
-$mod_strings['LBL_PROJECT_OPPORTUNITIES_1_FROM_PROJECT_TITLE'] = 'Proxecto destino';
-$mod_strings['LBL_OPPORTUNITIES_INFORMATION'] = 'Datos xerais';
-$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles do rexistro';
-$mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
-$mod_strings['LBL_PROJECTS_SUBPANEL_TITLE'] = 'Proxectos';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = '';
+$mod_strings['LBL_ASSIGNED_TO_NAME'] = '';
+$mod_strings['LBL_ASSIGNED_TO'] = '';
+$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = '';
+$mod_strings['LBL_LIST_ASSIGNED_USER'] = '';
+$mod_strings['LBL_CREATED'] = '';
+$mod_strings['LBL_CREATED_USER'] = '';
+$mod_strings['LBL_CREATED_ID'] = '';
+$mod_strings['LBL_MODIFIED'] = '';
+$mod_strings['LBL_MODIFIED_NAME'] = '';
+$mod_strings['LBL_MODIFIED_USER'] = '';
+$mod_strings['LBL_MODIFIED_ID'] = '';
+$mod_strings['LBL_STIC_ADVANCE_DATE'] = '';
+$mod_strings['LBL_STIC_AMOUNT_AWARDED'] = '';
+$mod_strings['LBL_STIC_AMOUNT_RECEIVED'] = '';
+$mod_strings['LBL_STIC_TARGET'] = '';
+$mod_strings['LBL_STIC_DOCUMENTATION_TO_DELIVER'] = '';
+$mod_strings['LBL_STIC_JUSTIFICATION_DATE'] = '';
+$mod_strings['LBL_STIC_PAYMENT_DATE'] = '';
+$mod_strings['LBL_STIC_PRESENTATION_DATE'] = '';
+$mod_strings['LBL_STIC_RESOLUTION_DATE'] = '';
+$mod_strings['LBL_STIC_STATUS'] = '';
+$mod_strings['LBL_STIC_TYPE'] = '';
+$mod_strings['LBL_ACCOUNT_NAME'] = '';
+$mod_strings['LBL_AMOUNT'] = '';
+$mod_strings['LBL_PROJECT_OPPORTUNITIES_1_FROM_PROJECT_TITLE'] = '';
+$mod_strings['LBL_OPPORTUNITIES_INFORMATION'] = '';
+$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = '';
+$mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = '';
+$mod_strings['LBL_PROJECTS_SUBPANEL_TITLE'] = '';
 
-// Cadeas para a tarefa programada de recordatorio de subvencións
-$mod_strings['LBL_EMAIL_OPPORTUNITIES_SUBJECT'] = '[Recordatorio do CRM] Data relevante para a subvención: ';
-$mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_1'] = 'Aproxímase unha data relevante para a seguinte subvención: ';
-$mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = 'Faga clic no enlace para revisala.';
+// Cadenas para la tarea programada de recordatorio de subvenciones
+$mod_strings['LBL_EMAIL_OPPORTUNITIES_SUBJECT'] = '';
+$mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_1'] = '';
+$mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = '';
 
 // Cadenas Organizaciones subvencionadas
-$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organizacións subvencionadas';
-$mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Carga de participantes';
+$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = '';
+$mod_strings['LBL_LOAD_PARTICIPANTS'] = "";
 
-// Cadeas adaptadas de Oportunidades a Subvencións
-$mod_strings['LBL_MODULE_NAME'] = 'Subvencións';
-$mod_strings['LBL_MODULE_TITLE'] = 'Subvencións: Inicio';
-$mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Buscar Subvencións';
-$mod_strings['LBL_LIST_FORM_TITLE'] = 'Lista de Subvencións';
-$mod_strings['LBL_OPPORTUNITY_NAME'] = 'Nome da Subvención:';
-$mod_strings['LBL_OPPORTUNITY'] = 'Subvención:';
-$mod_strings['LBL_NAME'] = 'Nome da Subvención';
-$mod_strings['LBL_INVITEE'] = 'Persoas';
-$mod_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organización';
-$mod_strings['LBL_ACCOUNT_ID'] = 'ID Organización';
-$mod_strings['LBL_ACCOUNT_NAME'] = 'Organización convocante:';
-$mod_strings['LBL_DUPLICATE'] = 'Posible subvención duplicada';
-$mod_strings['MSG_DUPLICATE'] = 'O rexistro que está a punto de crear podería ser un duplicado doutra subvención existente. Os rexistros de subvención con nomes similares lístanse a continuación. Para confirmar a creación desta subvención faga clic en Gardar. En caso contrario, pulse Cancelar.';
-$mod_strings['LBL_NEW_FORM_TITLE'] = 'Nova Organización';
-$mod_strings['LNK_NEW_OPPORTUNITY'] = 'Nova Subvención';
-$mod_strings['LNK_OPPORTUNITY_LIST'] = 'Ver Subvencións';
-$mod_strings['LBL_TOP_OPPORTUNITIES'] = 'As miñas principais Subvencións';
-$mod_strings['OPPORTUNITY_REMOVE_PROJECT_CONFIRM'] = '¿Desexa sacar esta subvención do proxecto?';
-$mod_strings['LBL_DEFAULT_SUBPANEL_TITLE'] = 'Subvencións';
-$mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
-$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Interlocutores';
-$mod_strings['LBL_MY_CLOSED_OPPORTUNITIES'] = 'As miñas Subvencións cerradas';
-$mod_strings['LBL_TOTAL_OPPORTUNITIES'] = 'Total de Subvencións';
-$mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = 'Subvencións gañadas';
-$mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importar Subvencións';
+// Cadenas adaptadas de Oportunidades a Subvenciones
+$mod_strings['LBL_MODULE_NAME'] = '';
+$mod_strings['LBL_MODULE_TITLE'] = '';
+$mod_strings['LBL_SEARCH_FORM_TITLE'] = '';
+$mod_strings['LBL_LIST_FORM_TITLE'] = '';
+$mod_strings['LBL_OPPORTUNITY_NAME'] = '';
+$mod_strings['LBL_OPPORTUNITY'] = '';
+$mod_strings['LBL_NAME'] = '';
+$mod_strings['LBL_INVITEE'] = '';
+$mod_strings['LBL_LIST_ACCOUNT_NAME'] = '';
+$mod_strings['LBL_ACCOUNT_ID'] = '';
+$mod_strings['LBL_ACCOUNT_NAME'] = '';
+$mod_strings['LBL_DUPLICATE'] = '';
+$mod_strings['MSG_DUPLICATE'] = '';
+$mod_strings['LBL_NEW_FORM_TITLE'] = '';
+$mod_strings['LNK_NEW_OPPORTUNITY'] = '';
+$mod_strings['LNK_OPPORTUNITY_LIST'] = '';
+$mod_strings['LBL_TOP_OPPORTUNITIES'] = '';
+$mod_strings['OPPORTUNITY_REMOVE_PROJECT_CONFIRM'] = '';
+$mod_strings['LBL_DEFAULT_SUBPANEL_TITLE'] = '';
+$mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = '';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = '';
+$mod_strings['LBL_MY_CLOSED_OPPORTUNITIES'] = '';
+$mod_strings['LBL_TOTAL_OPPORTUNITIES'] = '';
+$mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = '';
+$mod_strings['LNK_IMPORT_OPPORTUNITIES'] = '';
 
-// Cadeas de notificación de novas subvencións
-$mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL da convocatoria';
-$mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Información adicional';
-$mod_strings['LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE'] = 'Notificacións';
+// Cadenas para la notificación de nuevas subvenciones
+$mod_strings['LBL_STIC_OPPORTUNITY_URL'] = '';
+$mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = '';
+$mod_strings['LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE'] = '';
 
-// Cadeas Ayudas
-$mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
+// Cadenas Ayudas
+$mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = '';
