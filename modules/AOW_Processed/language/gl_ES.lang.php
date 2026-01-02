@@ -12,7 +12,7 @@
  * Free Software Foundation with the addition of the following permission added
  * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
  * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OFINFRINGEMENT OF THIRD PARTY RIGHTS.
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -43,34 +43,34 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
-    'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
-    'LBL_ID' => 'ID',
-    'LBL_DATE_ENTERED' => 'Data de Creación',
-    'LBL_DATE_MODIFIED' => 'Data de Modificación',
-    'LBL_MODIFIED' => 'Modificado por',
-    'LBL_MODIFIED_NAME' => 'Modificado por Nome',
-    'LBL_CREATED' => 'Creado por',
-    'LBL_DESCRIPTION' => 'Descrición',
-    'LBL_DELETED' => 'Eliminado',
-    'LBL_NAME' => 'Nome',
-    'LBL_CREATED_USER' => 'Creado polo Usuario',
-    'LBL_MODIFIED_USER' => 'Modificado polo Usuario',
-    'LBL_LIST_NAME' => 'Nome',
-    'LBL_LIST_FORM_TITLE' => 'Lista de Auditoría de Procesos',
-    'LBL_MODULE_NAME' => 'Auditoría de Procesos',
-    'LBL_MODULE_TITLE' => 'Auditoría de Procesos',
-    'LBL_HOMEPAGE_TITLE' => 'A Miña Auditoría de Procesos',
-    'LNK_NEW_RECORD' => 'Crear Auditoría de Procesos',
-    'LNK_LIST' => 'Ver Auditoría de Procesos',
-    'LBL_SEARCH_FORM_TITLE' => 'Buscar Auditoría de Procesos',
-    'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
-    'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-    'LBL_NEW_FORM_TITLE' => 'Nova Auditoría de Procesos',
-    'LBL_MODULE' => 'Módulo',
-    'LBL_BEAN' => 'Rexistro',
-    'LBL_STATUS' => 'Estado',
-    'LBL_AOW_WORKFLOW' => 'Fluxo de traballo',
-    'LNK_NEW_WORKFLOW' => 'Crear Fluxo de Traballo',
-    'LNK_WORKFLOW_LIST' => 'Ver Fluxo de Traballo',
+    'LBL_ASSIGNED_TO_ID' => '',
+    'LBL_ASSIGNED_TO_NAME' => '',
+    'LBL_ID' => '',
+    'LBL_DATE_ENTERED' => '',
+    'LBL_DATE_MODIFIED' => '',
+    'LBL_MODIFIED' => '',
+    'LBL_MODIFIED_NAME' => '',
+    'LBL_CREATED' => '',
+    'LBL_DESCRIPTION' => '',
+    'LBL_DELETED' => '',
+    'LBL_NAME' => '',
+    'LBL_CREATED_USER' => '',
+    'LBL_MODIFIED_USER' => '',
+    'LBL_LIST_NAME' => '',
+    'LBL_LIST_FORM_TITLE' => '',
+    'LBL_MODULE_NAME' => '',
+    'LBL_MODULE_TITLE' => '',
+    'LBL_HOMEPAGE_TITLE' => '',
+    'LNK_NEW_RECORD' => '',
+    'LNK_LIST' => '',
+    'LBL_SEARCH_FORM_TITLE' => '',
+    'LBL_HISTORY_SUBPANEL_TITLE' => '',
+    'LBL_ACTIVITIES_SUBPANEL_TITLE' => '',
+    'LBL_NEW_FORM_TITLE' => '',
+    'LBL_MODULE' => '',
+    'LBL_BEAN' => '',
+    'LBL_STATUS' => '',
+    'LBL_AOW_WORKFLOW' => '',
+    'LNK_NEW_WORKFLOW' => '',
+    'LNK_WORKFLOW_LIST' => '',
 );
