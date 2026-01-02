@@ -20,4 +20,4 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['fieldTypes']['ColorPicker'] = 'Selector de color';
+$mod_strings['fieldTypes']['ColorPicker'] = '';
