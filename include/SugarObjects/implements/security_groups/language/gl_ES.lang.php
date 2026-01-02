@@ -43,6 +43,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_SECURITYGROUPS' => "Grupos de Seguridade",
-    'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => "Grupos de Seguridade"
+    'LBL_SECURITYGROUPS' => "",
+    'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => ""
 );
