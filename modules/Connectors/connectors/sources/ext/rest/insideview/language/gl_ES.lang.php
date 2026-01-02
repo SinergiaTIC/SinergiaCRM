@@ -43,14 +43,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $connector_strings = array(
-    'LBL_GET_STARTED' => '',
-    'LBL_TOS1' => '',
-    'LBL_TOS3' => '',
-    'iv_description0' => '',
-    'LBL_OPP' => '',
-    'LBL_OPP_SUB' => '',
-    'LBL_REFERRAL' => '',
-    'LBL_REFERRAL_SUB' => '',
-    'LBL_ENGAGE' => '',
-    'LBL_ENGAGE_SUB' => '',
+    'LBL_GET_STARTED' => 'Comenzar!',
+    'LBL_TOS1' => 'Terminos of Use',
+    'LBL_TOS3' => 'Política de Privacidad',
+    'iv_description0' => 'Al hacer click en "Comenzar!" usted está de acuerdo con InsideView\'s',
+    'LBL_OPP' => 'Encontrar Oportunidades',
+    'LBL_OPP_SUB' => 'para alcanzar a los clientes',
+    'LBL_REFERRAL' => 'Obtener Referencias',
+    'LBL_REFERRAL_SUB' => 'para decisores clave',
+    'LBL_ENGAGE' => 'Captar Clientes',
+    'LBL_ENGAGE_SUB' => 'con iniciadores de conversaciones',
 );
