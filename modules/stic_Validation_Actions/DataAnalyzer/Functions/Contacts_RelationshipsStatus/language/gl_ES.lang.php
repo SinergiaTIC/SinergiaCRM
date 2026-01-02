@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => '',		// Esta etiqueta es obligatoria. Indica el nombre de la función
-    'NO_ROWS' => '',
-    'UPDATED' => '',
+    'NAME' => 'Personas - Revisión del tipo de relación',		// Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_ROWS' => 'Todas las personas tienen el tipo de relación correcto.',
+    'UPDATED' => 'Se ha actualizado el tipo de relación.',
 );
