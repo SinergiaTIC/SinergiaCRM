@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_MODULE_NAME' => 'Editor de Etiquetas',
-    'LBL_KEY' => 'Clave:',
-    'LBL_VALUE' => 'Valor:',
+    'LBL_MODULE_NAME' => '',
+    'LBL_KEY' => '',
+    'LBL_VALUE' => '',
 );
