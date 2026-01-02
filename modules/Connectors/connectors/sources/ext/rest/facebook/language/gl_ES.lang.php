@@ -44,9 +44,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $connector_strings = array(
     //Vardef labels
-    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"> <tr><th valign="top" width="35%" class="dataLabel"> Información da aplicación de Facebook</th></tr> <tr><td width="35%" class="dataLabel"> que terá que crear unha aplicación de facebook, conseguir un <a href=https://developers.facebook.com/?ref=pf"> aquí</a></td></tr></table>',
+    'LBL_LICENSING_INFO' => '',
 
     //Configuration labels
-    'appid' => 'Facebook App ID ',
-    'secret' => 'Segredo da aplicación de Facebook ',
+    'appid' => '',
+    'secret' => '',
 );
