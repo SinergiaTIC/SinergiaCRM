@@ -44,12 +44,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $defaultText = "";
 $dashletStrings['JotPadDashlet'] = array(
-    'LBL_TITLE' => 'Notas Rápidas',
-    'LBL_DESCRIPTION' => 'Un dashlet para tomar notas',
-    'LBL_SAVING' => 'Guardando nota...',
-    'LBL_SAVED' => 'Guardado',
-    'LBL_CONFIGURE_TITLE' => 'Título',
-    'LBL_CONFIGURE_HEIGHT' => 'Altura (1 - 300)',
-    'LBL_DBLCLICK_HELP' => 'Haga doble clic abajo para Editar.',
+    'LBL_TITLE' => '',
+    'LBL_DESCRIPTION' => '',
+    'LBL_SAVING' => '',
+    'LBL_SAVED' => '',
+    'LBL_CONFIGURE_TITLE' => '',
+    'LBL_CONFIGURE_HEIGHT' => '',
+    'LBL_DBLCLICK_HELP' => '',
     'LBL_DEFAULT_TEXT' => $defaultText,
 );
