@@ -43,30 +43,30 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_ID' => 'ID',
-    'LBL_DATE_ENTERED' => 'Data de Creación',
-    'LBL_DATE_MODIFIED' => 'Data de Modificación',
-    'LBL_MODIFIED' => 'Modificado Por',
-    'LBL_MODIFIED_NAME' => 'Modificado Por Nome',
-    'LBL_CREATED' => 'Creado por',
-    'LBL_DESCRIPTION' => 'Descrición',
-    'LBL_DELETED' => 'Eliminado',
-    'LBL_NAME' => 'Nome',
-    'LBL_CREATED_USER' => 'Creado polo Usuario',
-    'LBL_MODIFIED_USER' => 'Modificado polo Usuario',
-    'LBL_LIST_NAME' => 'Nome',
-    'LBL_EDIT_BUTTON' => 'Editar',
+    'LBL_ID' => '',
+    'LBL_DATE_ENTERED' => '',
+    'LBL_DATE_MODIFIED' => '',
+    'LBL_MODIFIED' => '',
+    'LBL_MODIFIED_NAME' => '',
+    'LBL_CREATED' => '',
+    'LBL_DESCRIPTION' => '',
+    'LBL_DELETED' => '',
+    'LBL_NAME' => '',
+    'LBL_CREATED_USER' => '',
+    'LBL_MODIFIED_USER' => '',
+    'LBL_LIST_NAME' => '',
+    'LBL_EDIT_BUTTON' => '',
     // STIC-Custom 20240214 JBL - QuickEdit view
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
-    'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
+    'LBL_QUICKEDIT_BUTTON' => '',
     // END STIC-Custom
-    'LBL_REMOVE' => 'Quitar',
+    'LBL_REMOVE' => '',
 
-    'LBL_ASCENDING' => 'Ascendente',
-    'LBL_DESCENDING' => 'Descendente',
+    'LBL_ASCENDING' => '',
+    'LBL_DESCENDING' => '',
     // Emails
-    'LBL_OPT_IN' => 'Autorizar',
-    'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmación de Autorización pendente, Confirmación de Autorización non enviada',
-    'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmación de Autorización pendente, Confirmación de Autorización enviada',
-    'LBL_OPT_IN_CONFIRMED' => 'Autorizado',
+    'LBL_OPT_IN' => '',
+    'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => '',
+    'LBL_OPT_IN_PENDING_EMAIL_SENT' => '',
+    'LBL_OPT_IN_CONFIRMED' => '',
 );
