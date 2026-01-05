@@ -32,7 +32,8 @@ class stic_Payment_CommitmentsViewEdit extends ViewEdit
     {
         global $app_list_strings;
 
-        $app_list_strings['stic_payments_types_list'] = self::generatePaymentTypeOptionsFromUser();
+        require_once 'modules/stic_Payments/Utils.php';
+        $app_list_strings['stic_payments_types_list'] = stic_PaymentsUtils::generatePaymentTypeOptionsFromUser();
         parent::__construct();
         $this->useForSubpanel = true;
         $this->useModuleQuickCreateTemplate = true;
@@ -60,28 +61,5 @@ class stic_Payment_CommitmentsViewEdit extends ViewEdit
         echo getVersionedScript("modules/stic_Payment_Commitments/Utils.js");
     }
 
-    private static function generatePaymentTypeOptionsFromUser() {
-        global $app_list_strings;
-        require_once 'modules/stic_Payments/Utils.php';
-        $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
-        if (count($orgKeyArray) == 0 || (count($orgKeyArray) == 1 && $orgKeyArray[0] === '')) {
-            return $app_list_strings['stic_payments_types_list'];
-        }
-            
-        include_once "modules/stic_Remittances/Utils.php";
-        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);   
-        $movementClassList = $app_list_strings['stic_payments_types_list'];
-        require_once 'modules/stic_Payments/Utils.php';
-        $filteredMovementClassList = array("" => "");
-        foreach ($orgKeyArray as $orgKey) {
-            if ($orgKey === '__default__') {
-                $filteredMovementClassList = array_merge($filteredMovementClassList, stic_PaymentsUtils::filterMovementClassListForDefaultOrg($movementClassList, $app_list_strings['dynamic_issuing_organization_list']));
-                continue;
-            }
-            $filteredMovementClassList = array_merge($filteredMovementClassList, stic_PaymentsUtils::filterMovementClassListForSelectedOrg($movementClassList, $orgKey));
-        }
-
-        return $filteredMovementClassList;
-    }
-
+    
 }
