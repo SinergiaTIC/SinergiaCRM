@@ -233,4 +233,65 @@ class stic_PaymentsUtils
         }
         return $orgKeyArray;
     }
+
+
+    /**
+     * Filter movement class list for default issuing organization selection.
+     *
+     * @param array $movementClassList
+     * @param array $app_list_strings
+     * @return array
+     */
+    public static function filterMovementClassListForDefaultOrg($movementClassList, $dynamicIssuingOrganizationList)
+    {
+        $suffixes = array();
+        foreach ($dynamicIssuingOrganizationList as $key => $value) {
+            if ($key !== '__default__' && $key !== "") {
+                $suffixes[] = '_' . strtolower($key);
+            }
+        }
+
+        if (empty($suffixes)) {
+            return $movementClassList;
+        }
+
+        $filteredMovementClassList = array();
+        foreach ($movementClassList as $x => $xValue) {
+            if ($x === '') {
+                continue;
+            }
+            $xLower = strtolower($x);
+            $skip = false;
+            foreach ($suffixes as $suf) {
+                $sufLen = strlen($suf);
+                if ($sufLen > 0 && $sufLen <= strlen($xLower) && substr($xLower, -$sufLen) === $suf) {
+                    $skip = true;
+                    break;
+                }
+            }
+            if ($skip) {
+                continue;
+            }
+            $filteredMovementClassList[$x] = $xValue;
+        }
+        return $filteredMovementClassList;
+    }
+
+    public static function filterMovementClassListForSelectedOrg($movementClassList, $selectedOrgKey)
+    {
+        $suf = strtolower($selectedOrgKey);
+        // Keep only movement types that end with the organization's suffix (case-insensitive)
+        $filteredMovementClassList = array();
+        foreach ($movementClassList as $x => $xValue) {
+            if ($x === '') {
+                continue;
+            }
+            $xLower = strtolower($x);
+            $sufLen = strlen($suf);
+            if ($sufLen > 0 && $sufLen <= strlen($xLower) && substr($xLower, -$sufLen) === $suf) {
+                $filteredMovementClassList[$x] = $xValue;
+            }
+        }
+        return $filteredMovementClassList;
+    }
 }

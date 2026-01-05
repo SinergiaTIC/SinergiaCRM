@@ -109,9 +109,9 @@ class stic_PaymentsController extends SugarController
         // Treat '__default__' as no specific organization (use global settings and remove org-specific payment types)
         if ($selectedOrgKey === '__default__') {
             $selectedOrgKey = '';
-            $movementClassList = $this->filterMovementClassListForDefaultOrg($movementClassList, $app_list_strings);
+            require_once 'modules/stic_Payments/Utils.php';
+            $movementClassList = stic_PaymentsUtils::filterMovementClassListForDefaultOrg($movementClassList, $app_list_strings['dynamic_issuing_organization_list']);
         }
-
         // If a specific issuing organization is selected, validate its settings and filter payment types by suffix
         if ($selectedOrgKey !== '') {
             // Apply selected organization filters: modifies movement list and records missing settings/fields, returns key with leading underscore
@@ -157,118 +157,6 @@ class stic_PaymentsController extends SugarController
         $this->view_object_map['PAYMENT_TYPE_OUTPUT'] = $listIntern;
     }
 
-    /**
-     * Filter movement class list for default issuing organization selection.
-     *
-     * @param array $movementClassList
-     * @param array $app_list_strings
-     * @return array
-     */
-    private function filterMovementClassListForDefaultOrg($movementClassList, $app_list_strings)
-    {
-        $suffixes = array();
-        foreach ($app_list_strings['dynamic_issuing_organization_list'] as $key => $value) {
-            if ($key !== '__default__' && $key !== "") {
-                $suffixes[] = '_' . strtolower($key);
-            }
-        }
-
-        if (empty($suffixes)) {
-            return $movementClassList;
-        }
-
-        $filteredMovementClassList = array();
-        foreach ($movementClassList as $x => $xValue) {
-            if ($x === '') {
-                continue;
-            }
-            $xLower = strtolower($x);
-            $skip = false;
-            foreach ($suffixes as $suf) {
-                $sufLen = strlen($suf);
-                if ($sufLen > 0 && $sufLen <= strlen($xLower) && substr($xLower, -$sufLen) === $suf) {
-                    $skip = true;
-                    break;
-                }
-            }
-            if ($skip) {
-                continue;
-            }
-            $filteredMovementClassList[$x] = $xValue;
-        }
-        return $filteredMovementClassList;
-    }
-
-    /**
-     * Apply selected organization filters and checks.
-     *
-     * Modifies $movementClassList, $missingSettings and $missingFields by reference.
-     * Returns the selected organization key prefixed with an underscore.
-     *
-     * @param string $selectedOrgKey
-     * @param array  &$movementClassList
-     * @param array  $neededSettings
-     * @param array  &$missingSettings
-     * @param array  &$missingFields
-     * @param array  $mod_strings
-     * @return string
-     */
-    private function applySelectedOrganizationFilters($selectedOrgKey, &$movementClassList, $neededSettings, &$missingSettings, &$missingFields, $mod_strings)
-    {
-        $selectedOrgKey = '_' . $selectedOrgKey;
-        // Validate organization-specific settings and record any that are missing
-        foreach ($neededSettings as $key) {
-            if (stic_SettingsUtils::getSetting($key . $selectedOrgKey) == '') {
-                $missingSettings[] = $key . $selectedOrgKey;
-            }
-        }
-
-        $suf = strtolower($selectedOrgKey);
-        // Keep only movement types that end with the organization's suffix (case-insensitive)
-        $filteredMovementClassList = array();
-        foreach ($movementClassList as $x => $xValue) {
-            if ($x === '') {
-                continue;
-            }
-            $xLower = strtolower($x);
-            $sufLen = strlen($suf);
-            if ($sufLen > 0 && $sufLen <= strlen($xLower) && substr($xLower, -$sufLen) === $suf) {
-                $filteredMovementClassList[$x] = $xValue;
-            }
-        }
-        $movementClassList = $filteredMovementClassList;
-
-        // Check that dynamic field 'stic_m182_amount{lower(orgKey)}_c' exists and is decimal in Contacts and Accounts
-        $dynamicField = 'stic_m182_amount' . strtolower($selectedOrgKey) . '_c';
-
-        // Contacts
-        $contactBean = BeanFactory::newBean('Contacts');
-        $contactsLabel = translate('LBL_MODULE_NAME', 'Contacts');
-        if (!isset($contactBean->field_defs[$dynamicField])) {
-            $missingFields[] = $contactsLabel . ': ' . $dynamicField;
-        } else {
-            $def = $contactBean->field_defs[$dynamicField];
-            $type = isset($def['type']) ? $def['type'] : '';
-            if ($type !== 'decimal') {
-                $missingFields[] = $contactsLabel . ': ' . $dynamicField . ' ' . $mod_strings['LBL_M182_MISSING_FIELDS_WRONG_TYPE'];
-            }
-        }
-
-        // Accounts
-        $accountBean = BeanFactory::newBean('Accounts');
-        $accountsLabel = translate('LBL_MODULE_NAME', 'Accounts');
-        if (!isset($accountBean->field_defs[$dynamicField])) {
-            $missingFields[] = $accountsLabel . ': ' . $dynamicField;
-        } else {
-            $def = $accountBean->field_defs[$dynamicField];
-            $type = isset($def['type']) ? $def['type'] : '';
-            if ($type !== 'decimal') {
-                $missingFields[] = $accountsLabel . ': ' . $dynamicField . ' ' . $mod_strings['LBL_M182_MISSING_FIELDS_WRONG_TYPE'];
-            }
-        }
-
-        return $selectedOrgKey;
-    }
 
     /**
      * Create the model 182 spanish AEAT report
@@ -392,5 +280,67 @@ class stic_PaymentsController extends SugarController
         echo json_encode(true);
         die();
     }
+
+
+    /**
+     * Apply selected organization filters and checks.
+     *
+     * Modifies $movementClassList, $missingSettings and $missingFields by reference.
+     * Returns the selected organization key prefixed with an underscore.
+     *
+     * @param string $selectedOrgKey
+     * @param array  &$movementClassList
+     * @param array  $neededSettings
+     * @param array  &$missingSettings
+     * @param array  &$missingFields
+     * @param array  $mod_strings
+     * @return string
+     */
+    private function applySelectedOrganizationFilters($selectedOrgKey, &$movementClassList, $neededSettings, &$missingSettings, &$missingFields, $mod_strings)
+    {
+        
+
+        require_once 'modules/stic_Payments/Utils.php';
+        $movementClassList = stic_PaymentsUtils::filterMovementClassListForSelectedOrg($movementClassList, $selectedOrgKey, $orgKeyArray);
+
+        $selectedOrgKey = '_' . $selectedOrgKey;
+        // Validate organization-specific settings and record any that are missing
+        foreach ($neededSettings as $key) {
+            if (stic_SettingsUtils::getSetting($key . $selectedOrgKey) == '') {
+                $missingSettings[] = $key . $selectedOrgKey;
+            }
+        }
+        // Check that dynamic field 'stic_m182_amount{lower(orgKey)}_c' exists and is decimal in Contacts and Accounts
+        $dynamicField = 'stic_m182_amount' . strtolower($selectedOrgKey) . '_c';
+
+        // Contacts
+        $contactBean = BeanFactory::newBean('Contacts');
+        $contactsLabel = translate('LBL_MODULE_NAME', 'Contacts');
+        if (!isset($contactBean->field_defs[$dynamicField])) {
+            $missingFields[] = $contactsLabel . ': ' . $dynamicField;
+        } else {
+            $def = $contactBean->field_defs[$dynamicField];
+            $type = isset($def['type']) ? $def['type'] : '';
+            if ($type !== 'decimal') {
+                $missingFields[] = $contactsLabel . ': ' . $dynamicField . ' ' . $mod_strings['LBL_M182_MISSING_FIELDS_WRONG_TYPE'];
+            }
+        }
+
+        // Accounts
+        $accountBean = BeanFactory::newBean('Accounts');
+        $accountsLabel = translate('LBL_MODULE_NAME', 'Accounts');
+        if (!isset($accountBean->field_defs[$dynamicField])) {
+            $missingFields[] = $accountsLabel . ': ' . $dynamicField;
+        } else {
+            $def = $accountBean->field_defs[$dynamicField];
+            $type = isset($def['type']) ? $def['type'] : '';
+            if ($type !== 'decimal') {
+                $missingFields[] = $accountsLabel . ': ' . $dynamicField . ' ' . $mod_strings['LBL_M182_MISSING_FIELDS_WRONG_TYPE'];
+            }
+        }
+
+        return $selectedOrgKey;
+    }
+
 
 }
