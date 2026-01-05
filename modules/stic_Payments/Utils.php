@@ -212,7 +212,11 @@ class stic_PaymentsUtils
         }
         return true;
     }
-
+    /**
+     * Get the M182 Issuing Organization keys for the current user
+     *
+     * @return array Array of issuing organization keys with underscore prefix
+     */
     public static function getM182IssuingOrganizationKeyForCurrentUser() {
         global $current_user;
         $orgKeyArray = array();
