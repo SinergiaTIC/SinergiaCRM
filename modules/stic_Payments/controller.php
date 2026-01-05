@@ -23,7 +23,11 @@
 
 class stic_PaymentsController extends SugarController
 {
-
+    /**
+     * Select the issuing organization for M182 report
+     *
+     * @return void
+     */
     public function action_m182SelectIssuingOrganization()
     {
         // Checking if user has m182 issuing organization assigned then using the key to get the parameters.
