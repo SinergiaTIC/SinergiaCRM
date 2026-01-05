@@ -301,7 +301,7 @@ class stic_PaymentsController extends SugarController
         
 
         require_once 'modules/stic_Payments/Utils.php';
-        $movementClassList = stic_PaymentsUtils::filterMovementClassListForSelectedOrg($movementClassList, $selectedOrgKey, $orgKeyArray);
+        $movementClassList = stic_PaymentsUtils::filterMovementClassListForSelectedOrg($movementClassList, $selectedOrgKey);
 
         $selectedOrgKey = '_' . $selectedOrgKey;
         // Validate organization-specific settings and record any that are missing
