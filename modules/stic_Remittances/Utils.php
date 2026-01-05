@@ -140,6 +140,8 @@ class stic_RemittancesUtils
      * Organizations are defined in GENERAL Settings: 
      *    - GENERAL_ORGANIZATION_NAME: Default organization
      *    - GENERAL_ORGANIZATION_NAME_XXXX: Organization XXXX
+     * @param boolean $firstEmpty If true, the first option of the list will be empty
+     * @return void
      */
     public static function fillDynamicListForIssuingOrganizations($firstEmpty = false)
     {
@@ -148,7 +150,14 @@ class stic_RemittancesUtils
         $generalSettings = stic_SettingsUtils::getSettingsByType('GENERAL');
 
         // Default Organization name
-        $dynamic_issuing_organization_list = array("" => $firstEmpty ? '' : $generalSettings['GENERAL_ORGANIZATION_NAME']);
+        if ($firstEmpty) {
+            $dynamic_issuing_organization_list = array(
+                "" => "",
+                "__default__" => $generalSettings['GENERAL_ORGANIZATION_NAME']
+            );
+        } else {
+            $dynamic_issuing_organization_list = array("" => $generalSettings['GENERAL_ORGANIZATION_NAME']);
+        }
 
         // Other Organization names
         foreach ($generalSettings as $key => $value) {

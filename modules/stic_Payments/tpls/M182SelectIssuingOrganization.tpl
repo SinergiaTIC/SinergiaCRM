@@ -26,10 +26,12 @@
 <table width="100%">
     <tr>
         {*TITLE*} <th style="text-align:left">
-            <h2>{$MOD.LBL_M182_SELECT_ISSUING_ORGANIZATION_TITLE}</h2>
+            <h2>{$MOD.LBL_M182_TITLE}</h2>
         </th>
     </tr>
 </table>
+
+<p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_SELECT_ISSUING_ORGANIZATION}</p>
 
 <br>
 <form name="stic_Payments" method="POST">

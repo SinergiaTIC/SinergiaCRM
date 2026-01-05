@@ -228,7 +228,7 @@ class stic_PaymentsUtils
                 if ($value == '') {
                     continue;
                 }
-                $orgKeyArray[] = '_' . $value;
+                $orgKeyArray[] = $value;
             }
         }
         return $orgKeyArray;
