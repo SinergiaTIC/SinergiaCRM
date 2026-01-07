@@ -61,4 +61,19 @@ $searchFields['stic_Signatures'] = array(
         'enable_range_search' => true,
         'is_date_field' => true,
     ),
+    'range_expiration_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
+    'start_range_expiration_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
+    'end_range_expiration_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),     
 );
