@@ -45,7 +45,8 @@ class ServerActionFlowExecutor {
     public function executeFlow(FormFlow $flowConfig, ?FormFlow $errorFlowConfig = null): ?FormAction {
         $lastActionConfig = null;
         try {
-            foreach ($flowConfig->actions as $actionConfig) {
+            $actions = $flowConfig->actions ?? [];
+            foreach ($actions as $actionConfig) {
                 $lastActionConfig = $actionConfig;
 
                 // Buscamos la acción a ejecutar (excepción si no existe)
@@ -81,13 +82,18 @@ class ServerActionFlowExecutor {
                     return null; 
                 }
             }
-        } catch (\Exception $e) {
-            // Captura Cualquier Excepción de PHP y la convierte en un error del contexto
-            $this->context->addError($e, $lastActionConfig);
+        } catch (\Throwable $t) {
+            // Captura cualquier Excepción y Fatal Error de PHP y lo convierte en un error del contexto
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': '."CRITICAL ERROR in ServerActionFlowExecutor: " . $t->getMessage());
+            $this->context->addError($t, $lastActionConfig);
             
             // Si hay flujo de error: cambio inmediato al flujo de error
             if ($errorFlowConfig !== null) {
-                return $this->executeFlow($errorFlowConfig);
+                try {
+                    return $this->executeFlow($errorFlowConfig);
+                } catch (\Throwable $t2) {
+                    $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': '."Double Fault: Error flow failed too: " . $t2->getMessage());
+                }
             }
             // Si no hay flujo de error, finalizamos
             return null; 

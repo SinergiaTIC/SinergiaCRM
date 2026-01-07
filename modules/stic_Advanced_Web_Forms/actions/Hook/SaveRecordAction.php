@@ -36,6 +36,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     public function __construct() {
         $this->isActive = true;
         $this->isUserSelectable = false;
+        $this->isAutomatic = true;
         $this->isCommon = true;
         $this->category = 'data';
         $this->baseLabel = 'LBL_SAVE_RECORD_ACTION';
@@ -56,7 +57,8 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         $onDuplicateAction = null;
 
         // Lógica de Detección de Duplicados
-        foreach ($block->dataBlock->duplicate_detections as $rule) {
+        $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
+        foreach ($duplicateRules as $rule) {
             $queryFields = [];
             $canSearch = true;
 

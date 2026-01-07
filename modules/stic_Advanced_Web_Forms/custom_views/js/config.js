@@ -663,6 +663,7 @@ class AWF_Action {
       category: 'data',         // Categoría de la acción
       parameters: [],           // Los parámetros de la acción
       is_user_selectable: true, // Indica si la acción es seleccionable por el usuario
+      is_automatic: false,      // Indica si la acción es automática
       is_terminal: false,       // Indica si la acción es terminal
       order: 0,                 // El orden de ejecución de la acción
     });
@@ -937,6 +938,8 @@ class AWF_Configuration {
       data_blocks: [],          // Los Bloques de Datos
       flows: [],                // Los Flujos de Acciones
       layout: new AWF_Layout(), // El Layout
+
+      _lastDataBlocksHash: "",  // Hash interno para controlar cambios en los bloques de datos
     });
 
     // 2. Overwrite with provided data
@@ -953,10 +956,46 @@ class AWF_Configuration {
     this._ensureDefaultLayout();
   }
   static fromJSON(jsonString){
-    return new AWF_Configuration(JSON.parse(jsonString));
+    const config = new AWF_Configuration(JSON.parse(jsonString));
+    config._lastDataBlocksHash = config._computeDataBlocksHash();
+    
+    return config;
   }
+
+  /**
+   * Generates a simple hash/string representation of the DataBlocks.
+   * Used to detect changes in structure that require Action regeneration.
+   */
+  _computeDataBlocksHash() {
+    return JSON.stringify(this.data_blocks);
+  }
+
+  /**
+   * Ensures internal consistency before saving.
+   * Checks if DataBlocks have changed before triggering regeneration.
+   */
+  prepareForSave() {
+    const currentHash = this._computeDataBlocksHash();
+
+    // Only regenerate actions if the hash has changed since last time
+    if (currentHash !== this._lastDataBlocksHash) {
+      console.log("AWF: DataBlocks structure changed. Regenerating automatic actions...");
+      this.regenerateAutomaticActions();
+        
+      // Update the known hash
+      this._lastDataBlocksHash = currentHash;
+    }
+  }
+
   toJSONString() {
+    // Check for changes and regenerate if needed
+    this.prepareForSave();
+
     const clone = JSON.parse(JSON.stringify(this));
+
+    // Delete internal properties
+    delete clone._lastDataBlocksHash;
+
     if (clone.layout) {
         clone.layout.header_html = utils.toBase64(clone.layout.header_html);
         clone.layout.footer_html = utils.toBase64(clone.layout.footer_html);
@@ -1084,7 +1123,7 @@ class AWF_Configuration {
     }
     dataBlock.text = text;
 
-    // Update all actions and parameters pointing to this DataBlock
+    // Update references in Actions
     this.flows.forEach(flow => {
       flow.actions.forEach(action => {
         action.parameters.forEach(param => {
@@ -1096,10 +1135,10 @@ class AWF_Configuration {
           //Update references to fields ("OldBlockName.Field" -> "NewBlockName.Field")
           if (typeof param.value === 'string') {
             const prefixOld = `${oldName}.`;
-            const prefixNew = `${name}.`;
+            const prefixNew = `${dataBlock.name}.`;
             
             const prefixDetachedOld = `_detached.${oldName}.`;
-            const prefixDetachedNew = `_detached.${name}.`;
+            const prefixDetachedNew = `_detached.${dataBlock.name}.`;
 
             if (param.value.startsWith(prefixOld)) {
               param.value = param.value.replace(prefixOld, prefixNew);
@@ -1189,7 +1228,6 @@ class AWF_Configuration {
 
     this.data_blocks.push(dataBlock);
 
-    this._addSaveActionForDataBlock(dataBlock);
     this.syncLayoutWithDataBlocks();
 
     return dataBlock;
@@ -1202,44 +1240,13 @@ class AWF_Configuration {
    * @returns {AWF_Field}
    */
   addDataBlockField(dataBlock, field) {
-    const newField = dataBlock.addField(field);
-
-    if (newField.type === 'relate') {
-        debugger;
-
-        const moduleInfo = dataBlock.getModuleInformation();
-        const rel = Object.values(moduleInfo.relationships).find(r => r.module_orig==dataBlock.module && r.field_orig==field.name);
-
-        // Add Action to save Relationship
-        const relateActionDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
-        const fieldReference = `${dataBlock.name}.${newField.name}`;
-        const fieldText = `${dataBlock.text} - ${newField.text}`;
-        const params = {
-          'data_block_id': {value: dataBlock.id, valueText: dataBlock.text, selectedOption: ''},
-          'target_object': {value: fieldReference, valueText: fieldText, selectedOption: 'record_id'},
-          'relationship_name': {value: rel.name, valueText: rel.text, selectedOption: ''}
-        };
-        const newAction = this.addAction(relateActionDef, params);
-        newAction.text = `${newAction.title}: ${dataBlock.text} ⟶ ${rel.module_dest}`;
-    }
-
-    return newField;
+    return dataBlock.addField(field);
   }
 
   syncLayoutWithDataBlocks() {
     this.layout.syncWithDataBlocks(this.data_blocks);
   }
 
-  _addSaveActionForDataBlock(dataBlock) {
-    const saveActionDef = utils.getServerActions().find(a => a.name == 'SaveRecordAction');
-    const params = {
-      'data_block_id': {value: dataBlock.id, valueText: dataBlock.text, selectedOption: ''} 
-    };
-    const newAction = this.addAction(saveActionDef, params);
-    newAction.text = `${newAction.title}: ${dataBlock.text}`;
-    dataBlock.save_action_id = newAction.id;
-  }
-  
   /**
    * Add new action to flow
    *
@@ -1265,6 +1272,7 @@ class AWF_Configuration {
       description: actionDef.description,
       category: actionDef.category,
       is_user_selectable: actionDef.isUserSelectable,
+      is_automatic: actionDef.isAutomatic,
       is_terminal: actionDef.isTerminal,
       order: defaultOrder,
     });
@@ -1330,50 +1338,8 @@ class AWF_Configuration {
     // Remove DataBlock
     this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
 
-    // Remove SaveAction and its dependants
-    this._deleteSaveActionForDataBlock(dataBlock);
-
     // Sync Layout with DataBlocks
     this.syncLayoutWithDataBlocks();
-  }
-
-  _deleteSaveActionForDataBlock(dataBlock) {
-    const targetActionId = dataBlock.save_action_id;
-    
-    if (!targetActionId) {
-      return; // No save action to delete
-    }
-
-    // 1. Identify all actions to delete
-    const idsToDelete = new Set([targetActionId]);
-    let newDependentsFound = true;
-
-    // To find multilevel dependences (A -> B -> C)
-    while (newDependentsFound) {
-      newDependentsFound = false;
-
-      this.flows.forEach(flow => {
-        flow.actions.forEach(action => {
-          if (!idsToDelete.has(action.id)) {
-            
-            // Check if any requisite must be deleted
-            const dependsOnDeleted = (action.requisite_actions || []).some(reqId => idsToDelete.has(reqId));
-            if (dependsOnDeleted) {
-              idsToDelete.add(action.id);
-              newDependentsFound = true;
-            }
-          }
-        });
-      });
-    }
-
-    // 2. Remove actions in every flow
-    this.flows.forEach(flow => {
-      flow.actions = flow.actions.filter(action => !idsToDelete.has(action.id));
-    });
-
-    // 3. Clean save action in dataBlock
-    dataBlock.save_action_id = "";
   }
 
   deleteDataBlockField(dataBlock, field) {
@@ -1471,16 +1437,6 @@ class AWF_Configuration {
     dataField_orig.value_type = "dataBlock";
     dataField_orig.value = dataBlock_dest.id;
 
-    // Add Action to save Relationship
-    const relateActionDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
-    const params = {
-      'data_block_id': {value: dataBlock_orig.id, valueText: dataBlock_orig.text, selectedOption: ''},
-      'target_object': {value: dataBlock_dest.id, valueText: dataBlock_dest.text, selectedOption: 'datablock'},
-      'relationship_name': {value: rel.name, valueText: rel.text, selectedOption: ''}
-    };
-    const newAction = this.addAction(relateActionDef, params);
-    newAction.text = `${newAction.title}: ${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
-
     return dataBlock;
   }
 
@@ -1570,4 +1526,125 @@ class AWF_Configuration {
 
     return dataBlocks;
   }
+
+  /**
+   * Regenerates automatic actions (Save and Relate) based on current Data Blocks.
+   * It should be called before entering action configuration (Step 3).
+   */
+  regenerateAutomaticActions() {
+    const mainFlow = this.flows.find(f => f.id == '0');
+    if (!mainFlow) return;
+
+    // Clean: Remove existing automatic actions from the main flow
+    mainFlow.actions = mainFlow.actions.filter(a => !a.is_automatic);
+    
+    // Reset saved action IDs on blocks before regenerating
+    this.data_blocks.forEach(b => b.save_action_id = "");
+
+    // Define the standard order for automatic actions
+    // Using -1 ensures they will be inserted before default manual actions (0)
+    const AUTO_ACTION_ORDER = -1;
+
+    // Generate SAVE actions for each DataBlock
+    this.data_blocks.forEach(block => {
+      const originalDef = utils.getServerActions().find(a => a.name == 'SaveRecordAction');
+      if (originalDef) {
+        // Prepare definition override
+        const actionDef = { 
+          ...originalDef, 
+          isAutomatic: true, 
+          order: AUTO_ACTION_ORDER 
+        };
+
+        const params = {
+          'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' }
+        };
+        
+        const newAction = this.addAction(actionDef, params, '0');
+        if (newAction) {
+            // Store the ID so subsequent Relate actions can depend on it
+            block.save_action_id = newAction.id;
+            
+            // Override text for clarity
+            newAction.text = `${utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')}: ${block.text}`;
+        }
+      }
+    });
+
+    // Generate RELATE actions for FiXED fields
+    this.data_blocks.forEach(block => {
+      const moduleInfo = block.getModuleInformation(); 
+        
+      block.fields.forEach(field => {
+        if (field.type === 'relate' && field.value_type === 'fixed' && field.value) {
+          let relationshipName = '';
+          const moduleFieldInfo = moduleInfo.fields[field.name];
+          
+          // Use 'options' property which contains the link name
+          if (moduleFieldInfo && moduleFieldInfo.type === 'relate' && moduleFieldInfo.options) {
+            relationshipName = moduleFieldInfo.options;
+          }
+          
+          if (relationshipName) {
+            const originalDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
+            if (originalDef) {
+              const actionDef = { 
+                ...originalDef, 
+                isAutomatic: true, 
+                order: AUTO_ACTION_ORDER 
+              };
+              
+              const params = {
+                'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' },
+                'target_object': { value: field.value, valueText: field.value_text || field.value, selectedOption: 'value' }, // target_object is a fixed ID value
+                'relationship_name': { value: relationshipName, valueText: relationshipName, selectedOption: '' }
+              };
+              
+              const newAction = this.addAction(actionDef, params, '0');
+              if (newAction) {
+                newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${block.text}.${field.text_original || field.name} = ${field.value_text || field.value}`;
+              }
+            }
+          }
+        }
+      });
+    });
+
+    // Generate RELATE actions for Block-to-Block relationships
+    const allRels = this.getAllDataBlockRelationships();
+    Object.keys(allRels).forEach(blockId => {
+      const blockRels = allRels[blockId];
+      const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
+      
+      activeRels.forEach(rel => {
+        if (rel.datablock_orig === blockId) {
+          const originalDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
+          if (originalDef) {
+            const blockOrig = this.data_blocks.find(b => b.id == rel.datablock_orig);
+            const blockDest = this.data_blocks.find(b => b.id == rel.datablock_dest);
+            
+            if (blockOrig && blockDest) {
+              const actionDef = { 
+                ...originalDef, 
+                isAutomatic: true, 
+                order: AUTO_ACTION_ORDER 
+              };
+              
+              const params = {
+                'data_block_id': { value: blockOrig.id, valueText: blockOrig.text, selectedOption: '' },
+                'target_object': { value: blockDest.id, valueText: blockDest.text, selectedOption: 'datablock' },
+                'relationship_name': { value: rel.name, valueText: rel.text, selectedOption: '' }
+              };
+              
+              const newAction = this.addAction(actionDef, params, '0');
+              if (newAction) {
+                newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${blockOrig.text} ⟶ ${blockDest.text}`;
+              }
+            }
+          }
+        }
+      });
+    });
+  }
+
 }

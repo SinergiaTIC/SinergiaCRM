@@ -73,15 +73,17 @@ class ExecutionContext {
     }
 
     /**
-     * Agrega un error al contexto de ejecución.
-     * @param \Exception $e Excepción que representa el error
-     * @param ?FormAction $actionConfig Configuración de la acción donde ocurrió el error (null si no aplica)
+     * Adds an error to the execution context.
+     * Accept \Throwable to handle both Exceptions and PHP 8 Errors.
+     * @param \Throwable $e The exception or error thrown
+     * @param ?FormAction $actionConfig Configuration of the action where the error occurred
      */
-    public function addError(\Exception $e, ?FormAction $actionConfig): void {
+    public function addError(\Throwable $e, ?FormAction $actionConfig): void {
+        // Create an ActionResult with ERROR status
         $errorResult = new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         $this->addActionResult($errorResult);
 
-        $GLOBALS['log']->error("Exception: " . $e->getMessage());
+        $GLOBALS['log']->error("AWF Execution Exception: " . $e->getMessage());
         $GLOBALS['log']->error($e->getTraceAsString());
     }
 

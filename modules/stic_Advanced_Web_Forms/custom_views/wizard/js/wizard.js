@@ -324,6 +324,8 @@ class WizardStep2 {
              */
             get isNewField() { return this.original_name === ''; },
 
+            get formConfig() { return window.alpineComponent.formConfig; },
+
             /**
              * Retorna el título del modal
              */
@@ -475,7 +477,6 @@ class WizardStep2 {
             close() {
               this.isOpen = false;
               this.dataBlock = null;
-              this.formConfig = null;
               this.availableRels = [];
               this.selectedRelName = '';
             },

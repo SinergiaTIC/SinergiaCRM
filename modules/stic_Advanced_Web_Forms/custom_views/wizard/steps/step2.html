@@ -124,7 +124,7 @@
                   </thead>
                   <tbody>
                     <template x-for="(field, index) in item.fields">
-                      <template x-if="canShowField(field)">
+                      <template x-if="field && canShowField(field)">
                         <tr :class="{'has-errors':!field.isValid()}">
                           <!-- Field -->
                           <td x-show="canShowFieldColumn('text_original')">
@@ -155,7 +155,8 @@
                           <!-- Buttons -->
                           <td >
                             <div class="d-inline-flex">
-                              <button type="button" class="btn" @click="$store.fieldEditor.openEdit(item, field);" 
+                              <button type="button" class="btn" :disabled="field.value_type == 'dataBlock'" 
+                                      @click="$store.fieldEditor.openEdit(item, field);" 
                                       :title="utils.translate('LBL_BUTTON_EDIT')">
                                 <span class="suitepicon suitepicon-action-edit"></span>
                               </button>
