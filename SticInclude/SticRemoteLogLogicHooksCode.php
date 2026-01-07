@@ -127,8 +127,8 @@ class SticRemoteLogLogicHooks
                         'user_admin' => is_admin($current_user),
                     ],
                     'curl_options' => [
-                        CURLOPT_CONNECTTIMEOUT_MS => 20,
-                        CURLOPT_TIMEOUT_MS => 25,
+                        CURLOPT_CONNECTTIMEOUT_MS => $sugar_config['stic_remote_monitor_curlopt_connecttimeout'] ?? 20,
+                        CURLOPT_TIMEOUT_MS => $sugar_config['stic_remote_monitor_curlopt_timeout'] ?? 25,
                     ]
                 ])
             ])

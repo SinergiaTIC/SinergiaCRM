@@ -644,6 +644,8 @@ $sugar_config = array(
     'stic_remote_monitor_url' => '', 
     'stic_remote_monitor_duration_threshold' => null,
     'stic_remote_monitor_memory_threshold' => null,
+    'stic_remote_monitor_curlopt_connecttimeout' => null,
+    'stic_remote_monitor_curlopt_timeout' => null,
     // END STIC
 
     // STIC Custom 20241016 ART - Tracker prune interval for the Scheduler
