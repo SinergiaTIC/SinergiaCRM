@@ -59,4 +59,34 @@ $dashletData['stic_Signature_LogDashlet']['columns'] = array(
         'width' => '8',
         'label' => 'LBL_LIST_ASSIGNED_USER'
     ),
+    'action' => array(
+        'width' => '10',
+        'label' => 'LBL_ACTION',
+        'default' => true
+    ),
+    'date' => array(
+        'width' => '15',
+        'label' => 'LBL_DATE',
+        'default' => true
+    ),
+    'ip_address' => array(
+        'width' => '15',
+        'label' => 'LBL_IP_ADDRESS',
+        'default' => true
+    ),
+    'user_agent' => array(
+        'width' => '20',
+        'label' => 'LBL_USER_AGENT',
+        'default' => true
+    ),
+    'stic_signers_stic_signature_log_name' => array(
+        'width' => '20',
+        'label' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNERS_TITLE',
+        'default' => true
+    ),
+    'stic_signatures_stic_signature_log_name' => array(
+        'width' => '20',
+        'label' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURES_TITLE',
+        'default' => true
+    ),       
 );
