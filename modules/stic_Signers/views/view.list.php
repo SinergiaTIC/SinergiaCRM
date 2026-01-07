@@ -35,11 +35,17 @@ class stic_SignersViewList extends ViewList
 
     public function preDisplay()
     {
+        global $current_user;
         parent::preDisplay();
-
+        $userPreferenceOrder = $current_user->getPreference('listviewOrder', 'stic_Signers2_STIC_SIGNERS');
+        
         SticViews::preDisplay($this);
-
-        // Write here you custom code
+        
+        // Force default order by date_modified DESC if no order is set
+        if (empty($userPreferenceOrder['orderBy'])) {
+            $_REQUEST['orderBy'] = 'date_modified';
+            $_REQUEST['sortOrder'] = 'DESC';
+        }
 
     }
 
