@@ -192,8 +192,22 @@ class stic_SignaturePortalUtils
                 $expectedValue = strtoupper(str_replace([' ', '-'], '', $userOrContactsBean->stic_identification_number_c));
                 break;
             case 'birthdate':
-                // Format the birthdate to match the expected format (DD/MM/YYYY)
-                $expectedValue = date('d/m/Y', strtotime($userOrContactsBean->birthdate));
+                global $timedate, $current_user;
+                
+                // Convert birthdate from user format to DD/MM/YYYY format
+                $birthdateFromUser = $userOrContactsBean->birthdate;
+                if (!empty($birthdateFromUser)) {
+                    // Parse the date using the user's date format preference
+                    $birthdateObj = $timedate->fromUserDate($birthdateFromUser, false, $current_user);
+                    if ($birthdateObj !== null && is_object($birthdateObj)) {
+                        // Convert to DD/MM/YYYY format
+                        $expectedValue = $birthdateObj->format('d/m/Y');
+                    } else {
+                        $expectedValue = '';
+                    }
+                } else {
+                    $expectedValue = '';
+                }
                 break;
             default:
                 break;
