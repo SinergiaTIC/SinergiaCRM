@@ -3716,7 +3716,7 @@ $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'El f
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = "S'ha enviat el document firmat al firmant";  
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma ha caducat';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Una altra persona autoritzada ha firmat el document';
-$app_list_strings['stic_signature_log_actions']['UNSIGNED_PDF_DOWNLOADED'] = 'El firmant ha descarregat el document per signar';
+$app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'El document ha estat descarregat internament';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Tots els firmants han firmat';
 
 // Modificacions del core de SuiteCRM

@@ -3715,7 +3715,7 @@ $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Sign
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Signed document sent to signer by email';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signature process expired';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document signed by another authorized person';
-$app_list_strings['stic_signature_log_actions']['UNSIGNED_PDF_DOWNLOADED'] = 'Unsigned document downloaded by signer';
+$app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'The document has been downloaded internally';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'All signers have signed';
 
 // SuiteCRM Core modifications

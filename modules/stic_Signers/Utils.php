@@ -700,7 +700,7 @@ class stic_SignersUtils
             }
 
             // Log the download action
-            stic_SignatureLogUtils::logSignatureAction('DOCUMENT_DRAFT_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
+            stic_SignatureLogUtils::logSignatureAction('CRM_PDF_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
 
             exit;
         }
@@ -764,7 +764,7 @@ class stic_SignersUtils
             }
 
             // Log the download action
-            stic_SignatureLogUtils::logSignatureAction('DOCUMENT_DRAFT_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
+            stic_SignatureLogUtils::logSignatureAction('CRM_PDF_DOWNLOADED', $signerBean->id, 'SIGNER', $mod_strings['LBL_SIGNER_DOWNLOADED_BY'] . ' ' . $current_user->full_name);
 
             $successCount++;
         }

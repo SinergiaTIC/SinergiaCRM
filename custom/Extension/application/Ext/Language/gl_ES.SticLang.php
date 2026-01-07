@@ -3713,7 +3713,7 @@ $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF 
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF asinado enviado por correo electrónico';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Sinatura caducada';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por outra persoa autorizada';
-$app_list_strings['stic_signature_log_actions']['UNSIGNED_PDF_DOWNLOADED'] = 'El firmante ha descargado el documento por firmar';
+$app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'O documento foi descargado internamente';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos os asinantes completaron a sinatura do documento';
 
 // Modificaciones del core de SuiteCRM
