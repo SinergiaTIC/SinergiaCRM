@@ -3767,6 +3767,7 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Enviado y aceptado';
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rechazado';
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['cancelled'] = 'Anulada';
 
 // Tipos de operacion admitidas por AEAT para facturas
 $app_list_strings['stic_products_quotes_operation_type_list']['S'] = 'Sujeta a impuestos';

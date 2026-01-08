@@ -320,4 +320,62 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         // Redirect to EditView of the new rectified invoice
         SugarApplication::redirect("index.php?module=AOS_Invoices&action=EditView&record={$rectifiedInvoice->id}");
     }
+
+    /**
+     * Action to cancel an invoice in AEAT Verifactu system.
+     * 
+     * This action sends a cancellation record (RegistroAnulacion) to AEAT,
+     * which removes the invoice from the Verifactu system.
+     * 
+     * Requirements:
+     * - Invoice must be accepted by AEAT
+     * - Invoice must not be a rectified invoice
+     * - Invoice must have verifactu hash and previous hash
+     */
+    public function action_CancelInvoice()
+    {
+        global $mod_strings;
+
+        // Get invoice ID from request
+        $invoiceId = $_REQUEST['record'] ?? '';
+        
+        if (empty($invoiceId)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': No invoice ID specified');
+            SugarApplication::appendErrorMessage($mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED']);
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+            return;
+        }
+
+        // Load the invoice
+        $invoiceBean = BeanFactory::getBean('AOS_Invoices', $invoiceId);
+        
+        if (empty($invoiceBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice not found with ID: ' . $invoiceId);
+            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_NOT_FOUND']);
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+            return;
+        }
+
+        // Validate invoice can be cancelled
+        if ($invoiceBean->verifactu_aeat_status_c !== 'accepted') {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice not accepted by AEAT: ' . $invoiceId);
+            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_NOT_ACCEPTED_BY_AEAT']);
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+            return;
+        }
+
+        // Send cancellation to AEAT
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        $result = AOS_InvoicesUtils::sendCancellationToAeat($invoiceBean);
+
+        // Show result message
+        if ($result['success']) {
+            SugarApplication::appendSuccessMessage($mod_strings['LBL_INVOICE_CANCELLED_SUCCESS'] . ' - CSV: ' . $result['csv']);
+        } else {
+            SugarApplication::appendErrorMessage($result['message']);
+        }
+
+        // Redirect back to invoice
+        SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+    }
 }

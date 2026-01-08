@@ -62,20 +62,34 @@ switch (viewType()) {
         title: SUGAR.language.get("AOS_Invoices", "LBL_CREATE_RECTIFIED_INVOICE"),
         onclick: "window.location='index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record=" + STIC.record.id + "'",
       },
+      cancelInvoice: {
+        id: "bt_cancel_invoice",
+        title: SUGAR.language.get("AOS_Invoices", "LBL_CANCEL_INVOICE"),
+        onclick: "if(confirm('" + SUGAR.language.get("AOS_Invoices", "LBL_CANCEL_INVOICE_CONFIRM") + "')) { window.location='index.php?module=AOS_Invoices&action=CancelInvoice&record=" + STIC.record.id + "'; }",
+      },
     };
 
+    // Rectified invoice button: only enabled if invoice is emitted
     if(STIC.record.status != 'emitted') {
       buttons.createRectifiedInvoice.disabled = 'disabled';
       buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";
     }
 
+    // Send to AEAT button: disabled if already accepted
     if(STIC.record.status === 'emitted' && STIC.record.verifactu_aeat_status_c === 'accepted') {
       buttons.sendToAEAT.disabled = 'disabled';
       buttons.sendToAEAT.style = "cursor: not-allowed; opacity: .5;";
     }
 
+    // Cancel invoice button: only enabled if invoice is accepted by AEAT (not rectified)
+    if(STIC.record.verifactu_aeat_status_c !== 'accepted' ) {
+      buttons.cancelInvoice.disabled = 'disabled';
+      buttons.cancelInvoice.style = "cursor: not-allowed; opacity: .5;";
+    }
+
     createDetailViewButton(buttons.sendToAEAT);
     createDetailViewButton(buttons.createRectifiedInvoice);
+    createDetailViewButton(buttons.cancelInvoice);
 
     break;
 

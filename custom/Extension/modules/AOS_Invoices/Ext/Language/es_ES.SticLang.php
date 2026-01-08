@@ -85,6 +85,12 @@ $mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'] = 'Para facturas rectific
 $mod_strings['LBL_RECTIFIED'] = 'Rectificativa';
 $mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY'] = 'Esta factura ha sido rectificada por la factura ';
 
+// Cancellation labels
+$mod_strings['LBL_CANCEL_INVOICE'] = 'Anular factura';
+$mod_strings['LBL_CANCEL_INVOICE_CONFIRM'] = '¿Está seguro de que desea anular esta factura en AEAT?\n\nAl anular esta factura, se enviará un registro de invalidación a la AEAT bajo el sistema Verifactu.\nEsta operación es irreversible y mantiene la trazabilidad del documento original.';
+$mod_strings['LBL_INVOICE_CANCELLED_SUCCESS'] = 'Factura anulada correctamente en AEAT';
+$mod_strings['LBL_INVOICE_NOT_ACCEPTED_BY_AEAT'] = 'La factura debe estar aceptada por AEAT para poder anularla.';
+
 
 // Controller messages
 $mod_strings['LBL_INVOICE_NOT_FOUND'] = 'Factura no encontrada';

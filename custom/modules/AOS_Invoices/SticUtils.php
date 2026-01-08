@@ -31,6 +31,7 @@ if ($loader instanceof \Composer\Autoload\ClassLoader) {
 use DateTimeImmutable;
 use josemmo\Verifactu\Models\ComputerSystem;
 use josemmo\Verifactu\Models\Records\BreakdownDetails;
+use josemmo\Verifactu\Models\Records\CancellationRecord;
 use josemmo\Verifactu\Models\Records\FiscalIdentifier;
 use josemmo\Verifactu\Models\Records\InvoiceIdentifier;
 use josemmo\Verifactu\Models\Records\InvoiceType;
@@ -1144,4 +1145,196 @@ class AOS_InvoicesUtils
         return $result;
     }
 
+    /**
+     * Send cancellation record to AEAT
+     *
+     * @param AOS_Invoices $invoiceBean Invoice to cancel
+     * @return array Response from AEAT with status and message
+     */
+    public static function sendCancellationToAeat($invoiceBean)
+    {
+        global $sugar_config;
+
+        try {
+            // --- Validate invoice can be cancelled ---
+            if (empty($invoiceBean->id)) {
+                throw new Exception('Invoice ID is required');
+            }
+
+            // Check invoice is accepted by AEAT
+            if ($invoiceBean->verifactu_aeat_status_c !== 'accepted') {
+                throw new Exception('Invoice must be accepted by AEAT before cancellation');
+            }
+
+            // Check invoice has required verifactu fields
+            if (empty($invoiceBean->verifactu_hash_c) || empty($invoiceBean->verifactu_previous_hash_c)) {
+                throw new Exception('Invoice must have verifactu hash and previous hash');
+            }
+
+            // --- Get configuration ---
+            // Load certificate utilities
+            require_once 'custom/include/SticCertificateUtils.php';
+            
+            // Get certificate components
+            $certComponents = SticCertificateUtils::getCertificateComponents();
+            if (!$certComponents) {
+                throw new Exception("Certificate not found or could not be decrypted. Please upload a certificate in Administration > Digital Certificate.");
+            }
+            
+            // Extract NIF and holder name from certificate
+            $issuerNif = SticCertificateUtils::getCertificateNif();
+            $issuerName = SticCertificateUtils::getCertificateHolderName();
+            
+            if (empty($issuerNif) || empty($issuerName)) {
+                throw new Exception("Could not extract NIF or holder name from certificate. Please verify the certificate is valid.");
+            }
+            
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data loaded - NIF: ' . $issuerNif . ', Name: ' . $issuerName);
+            
+            // Get certificate type (entity seal or representative) from certificate itself
+            $certificateType = SticCertificateUtils::isEntitySeal();
+            
+            // Get other settings from stic_Settings module
+            require_once 'modules/stic_Settings/Utils.php';
+            $useProduction = (stic_SettingsUtils::getSetting('VERIFACTU_ENVIRONMENT') === 'production');
+
+            // --- System information (SIF) ---
+            $systemName = 'SinergiaCRM';
+            $systemId = 'SCRM';
+            $systemVersion = '1.0';
+            $installationNumber = stic_SettingsUtils::getSetting('VERIFACTU_INSTALLATION_NUMBER') ?? '00001';
+
+            // --- Create Computer System ---
+            $system = self::configureComputerSystem(
+                $issuerNif,
+                $issuerName,
+                $systemName,
+                $systemId,
+                $systemVersion,
+                $installationNumber
+            );
+
+            // --- Create Taxpayer ---
+            $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
+
+            // --- Get previous invoice info (for chaining) ---
+            $db = DBManagerFactory::getInstance();
+            $previousInvoiceQuery = "SELECT id, number, invoice_date, verifactu_hash_c 
+                                     FROM aos_invoices 
+                                     WHERE deleted = 0 
+                                     AND id != " . $db->quoted($invoiceBean->id) . "
+                                     AND date_entered < " . $db->quoted($invoiceBean->date_entered) . "
+                                     ORDER BY date_entered DESC 
+                                     LIMIT 1";
+            $previousInvoiceResult = $db->query($previousInvoiceQuery);
+            $previousInvoiceRow = $db->fetchByAssoc($previousInvoiceResult);
+
+            $previousInvoiceId = null;
+            $previousHash = null;
+
+            if ($previousInvoiceRow) {
+                $previousInvoiceId = new InvoiceIdentifier();
+                $previousInvoiceId->issuerId = $issuerNif;
+                $previousInvoiceId->invoiceNumber = $previousInvoiceRow['number'];
+                $previousInvoiceId->issueDate = new DateTimeImmutable($previousInvoiceRow['invoice_date']);
+                $previousHash = $previousInvoiceRow['verifactu_hash_c'];
+            }
+
+            // --- Create Cancellation Record ---
+            $cancellationRecord = new CancellationRecord();
+
+            // Set invoice identifier (invoice to cancel)
+            $cancellationRecord->invoiceId = new InvoiceIdentifier();
+            $cancellationRecord->invoiceId->issuerId = $issuerNif;
+            $cancellationRecord->invoiceId->invoiceNumber = $invoiceBean->number;
+            $cancellationRecord->invoiceId->issueDate = new DateTimeImmutable($invoiceBean->invoice_date);
+
+            // Set chaining info (previous invoice in the chain)
+            $cancellationRecord->previousInvoiceId = $previousInvoiceId;
+            $cancellationRecord->previousHash = $previousHash;
+
+            // Generate hash
+            $cancellationRecord->hashedAt = new DateTimeImmutable();
+            $cancellationRecord->hash = $cancellationRecord->calculateHash();
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cancellation record created for invoice: ' . $invoiceBean->number);
+
+            // --- Send to AEAT ---
+            $client = new AeatClient($system, $taxpayer);
+            
+            // Configure certificate type (Entity Seal vs Personal)
+            $client->setEntitySeal((bool) $certificateType);
+            
+            // Get certificate components (already extracted as PEM - NO PASSWORD NEEDED!)
+            $certificate = $certComponents['certificate'];
+            $privateKey = $certComponents['private_key'];
+            $caChain = $certComponents['ca_chain'];
+
+            // Build PEM content (Certificate + Private Key + CA Chain)
+            $cleanPemBlock = function ($str) {
+                if (preg_match('/(-----BEGIN (?:CERTIFICATE|.*?PRIVATE KEY.*?)-----.*?-----END (?:CERTIFICATE|.*?PRIVATE KEY.*?)-----)/s', $str, $matches)) {
+                    return trim($matches[1]);
+                }
+                return trim($str);
+            };
+
+            // Order: Certificate -> Private Key -> CA Chain
+            $pemContent = $cleanPemBlock($certificate) . "\n" . $cleanPemBlock($privateKey);
+
+            // Add CA chain if exists
+            if (!empty($caChain)) {
+                $pemContent .= "\n" . $cleanPemBlock($caChain);
+            }
+
+            // Save to temporary file (AEAT client requires file path)
+            $tempPemFile = tempnam(sys_get_temp_dir(), 'stic_verifactu_cancel_');
+            file_put_contents($tempPemFile, $pemContent);
+
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Temporary PEM file created: ' . $tempPemFile);
+
+            // Set certificate in AEAT client (NO PASSWORD NEEDED!)
+            $client->setCertificate($tempPemFile, null);
+
+            // Configure environment (pre-production or production)
+            $client->setProduction($useProduction);
+
+            $response = $client->send([$cancellationRecord])->wait();
+
+            // Clean up temporary file
+            if (file_exists($tempPemFile)) {
+                unlink($tempPemFile);
+            }
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cancellation sent to AEAT. CSV: ' . $response->csv);
+
+            // --- Update invoice with cancellation info ---
+            $invoiceBean->verifactu_aeat_status_c = 'cancelled';
+            $invoiceBean->verifactu_aeat_response_c = 'Factura anulada en AEAT. CSV: ' . $response->csv;
+            $invoiceBean->verifactu_csv_c = $response->csv;
+            $invoiceBean->save();
+
+            return [
+                'success' => true,
+                'csv' => $response->csv,
+                'message' => 'Factura anulada correctamente en AEAT'
+            ];
+
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error sending cancellation to AEAT: ' . $e->getMessage());
+            
+            // Update invoice with error
+            if (!empty($invoiceBean->id)) {
+                $invoiceBean->verifactu_aeat_status_c = 'error';
+                $invoiceBean->verifactu_aeat_response_c = 'Error al anular: ' . $e->getMessage();
+                $invoiceBean->save();
+            }
+
+            return [
+                'success' => false,
+                'message' => 'Error al anular la factura: ' . $e->getMessage()
+            ];
+        }
+    }
+
 }
+
