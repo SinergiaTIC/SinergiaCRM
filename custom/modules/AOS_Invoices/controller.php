@@ -78,13 +78,6 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             return;
         }
 
-        // Verify it's not already a rectified invoice
-        if (!empty($originalInvoice->verifactu_is_rectified_c)) {
-            SugarApplication::appendErrorMessage($mod_strings['LBL_CANNOT_RECTIFY_RECTIFIED_INVOICE']);
-            SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
-            return;
-        }
-
         // Create a new invoice (rectified)
         $rectifiedInvoice = BeanFactory::newBean('AOS_Invoices');
 
@@ -119,14 +112,24 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                 $rectifiedInvoice->$field = $originalInvoice->$field;
             }
         }
+        
+        // Log customer information for debugging
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Copied customer info - billing_account_id: ' . ($rectifiedInvoice->billing_account_id ?? 'empty') . ', billing_contact_id: ' . ($rectifiedInvoice->billing_contact_id ?? 'empty'));
 
         // Set the rectified invoice flag and related fields
+        // IMPORTANT: Always set these fields to the correct values for THIS rectification
+        // Never copy verifactu_cancel_id_c, verifactu_rectified_date_c, verifactu_rectified_type_c from original
         $rectifiedInvoice->verifactu_is_rectified_c = true;
-        $rectifiedInvoice->verifactu_cancel_id_c = $originalInvoice->id;
+        $rectifiedInvoice->verifactu_cancel_id_c = $originalInvoice->id;  // ID of the invoice we're rectifying
         $rectifiedInvoice->verifactu_rectified_date_c = $originalInvoice->invoice_date ?? '';
-
+        
         // Set default rectification type to Substitution
         $rectifiedInvoice->verifactu_rectified_type_c = 'S';
+        
+        // Set default rectification base if not already set
+        if (empty($rectifiedInvoice->verifactu_rectified_base_c)) {
+            $rectifiedInvoice->verifactu_rectified_base_c = 'R1';
+        }
 
         // Set the rectified invoice series from configuration
         global $sugar_config;
@@ -144,6 +147,25 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
 
         // Save the rectified invoice first to get an ID
         $rectifiedInvoice->save();
+        
+        // Re-establish customer relationship explicitly after save to ensure it persists
+        // This is necessary because SuiteCRM may not save relationship IDs correctly during initial save
+        if (!empty($originalInvoice->billing_account_id)) {
+            $rectifiedInvoice->billing_account_id = $originalInvoice->billing_account_id;
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Re-setting billing_account_id: ' . $originalInvoice->billing_account_id);
+        }
+        if (!empty($originalInvoice->billing_contact_id)) {
+            $rectifiedInvoice->billing_contact_id = $originalInvoice->billing_contact_id;
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Re-setting billing_contact_id: ' . $originalInvoice->billing_contact_id);
+        }
+        if (!empty($originalInvoice->shipping_contact_id)) {
+            $rectifiedInvoice->shipping_contact_id = $originalInvoice->shipping_contact_id;
+        }
+        // Save again to persist relationship IDs
+        if (!empty($originalInvoice->billing_account_id) || !empty($originalInvoice->billing_contact_id)) {
+            $rectifiedInvoice->save();
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saved invoice again to persist customer relationship');
+        }
         
         // Copy totals directly in database to avoid formatting issues
         $totalFields = [

@@ -87,7 +87,9 @@ class AOS_InvoicesUtils
         $rectifiedType = null,
         $rectifiedBase = null,
         $rectifiedNumber = null,
-        $rectifiedDate = null
+        $rectifiedDate = null,
+        $correctedBaseAmount = null,
+        $correctedTaxAmount = null
     ) {
         $record = new RegistrationRecord();
 
@@ -102,7 +104,35 @@ class AOS_InvoicesUtils
         $record->description = $description;
 
         // Determine invoice type and recipients
-        if (!empty($customerNif) && !empty($customerName)) {
+        if ($isRectified && $rectifiedBase) {
+            // For rectified invoices, use the rectified base type (R1, R2, R3, R4, R5)
+            switch ($rectifiedBase) {
+                case 'R1':
+                    $record->invoiceType = InvoiceType::R1; // Art 80.1 y 80.2
+                    break;
+                case 'R2':
+                    $record->invoiceType = InvoiceType::R2; // Art. 80.3
+                    break;
+                case 'R3':
+                    $record->invoiceType = InvoiceType::R3; // Art. 80.4
+                    break;
+                case 'R4':
+                    $record->invoiceType = InvoiceType::R4; // Resto
+                    break;
+                case 'R5':
+                    $record->invoiceType = InvoiceType::R5; // Simplificada rectificativa
+                    break;
+                default:
+                    // Fallback to R1 if unknown type
+                    $record->invoiceType = InvoiceType::R1;
+                    $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Unknown rectified base type: ' . $rectifiedBase . ', using R1 as default');
+            }
+            // For rectified invoices with customer info, still set recipients
+            if (!empty($customerNif) && !empty($customerName)) {
+                $recipient = new FiscalIdentifier($customerName, $customerNif);
+                $record->recipients = [$recipient];
+            }
+        } elseif (!empty($customerNif) && !empty($customerName)) {
             $record->invoiceType = InvoiceType::Factura; // F1 - Completa
             $recipient = new FiscalIdentifier($customerName, $customerNif);
             $record->recipients = [$recipient];
@@ -136,6 +166,13 @@ class AOS_InvoicesUtils
 
             // Add the rectified invoice to the list
             $record->correctedInvoices = [$rectifiedInvoiceId];
+
+            // For substitution type ('S'), set corrected amounts
+            if ($rectifiedType === 'S' && $correctedBaseAmount !== null && $correctedTaxAmount !== null) {
+                $record->correctedBaseAmount = $correctedBaseAmount;
+                $record->correctedTaxAmount = $correctedTaxAmount;
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Setting corrected amounts - Base: ' . $correctedBaseAmount . ', Tax: ' . $correctedTaxAmount);
+            }
 
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Setting rectified invoice data - Type: ' . $rectifiedType . ', Base: ' . $rectifiedBase . ', Original: ' . $rectifiedNumber);
         }
@@ -527,18 +564,26 @@ class AOS_InvoicesUtils
             // Get customer info
             $customerNif = null;
             $customerName = null;
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Getting customer info - billing_account_id: ' . ($invoiceBean->billing_account_id ?? 'empty') . ', billing_contact_id: ' . ($invoiceBean->billing_contact_id ?? 'empty'));
+            
             if (!empty($invoiceBean->billing_account_id)) {
                 $account = BeanFactory::getBean('Accounts', $invoiceBean->billing_account_id);
-                if ($account) {
+                if ($account && !empty($account->id)) {
                     $customerName = $account->name;
                     $customerNif = $account->stic_identification_number_c;
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Customer from Account - Name: ' . $customerName . ', NIF: ' . ($customerNif ?? 'empty'));
                 }
             } elseif (!empty($invoiceBean->billing_contact_id)) {
                 $contact = BeanFactory::getBean('Contacts', $invoiceBean->billing_contact_id);
-                if ($contact) {
+                if ($contact && !empty($contact->id)) {
                     $customerName = trim($contact->first_name . ' ' . $contact->last_name);
                     $customerNif = $contact->stic_identification_number_c;
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Customer from Contact - Name: ' . $customerName . ', NIF: ' . ($customerNif ?? 'empty'));
                 }
+            }
+            
+            if (empty($customerNif) || empty($customerName)) {
+                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': No customer info found for invoice - this will cause error 1189 for R1 invoices');
             }
 
             // Prepare rectified invoice data (if applicable)
@@ -564,6 +609,22 @@ class AOS_InvoicesUtils
                 }
             }
 
+            // For substitution rectified invoices, get the corrected amounts
+            $correctedBaseAmount = null;
+            $correctedTaxAmount = null;
+            if ($isRectified && $rectifiedType === 'S') {
+                // Get subtotal (base amount) from the current invoice
+                $subtotal = isset($invoiceBean->subtotal_amount) ? floatval($invoiceBean->subtotal_amount) : 0.0;
+                // Get tax amount from the current invoice
+                $taxAmount = isset($invoiceBean->tax_amount) ? floatval($invoiceBean->tax_amount) : 0.0;
+                
+                // Format as string with 2 decimals (required by AEAT)
+                $correctedBaseAmount = number_format($subtotal, 2, '.', '');
+                $correctedTaxAmount = number_format($taxAmount, 2, '.', '');
+                
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Corrected amounts for substitution - Base: ' . $correctedBaseAmount . ', Tax: ' . $correctedTaxAmount);
+            }
+
             // Create registration record
             $record = self::createRegistrationRecord(
                 $issuerNif,
@@ -582,7 +643,9 @@ class AOS_InvoicesUtils
                 $rectifiedType,
                 $rectifiedBase,
                 $rectifiedNumber,
-                $rectifiedDate
+                $rectifiedDate,
+                $correctedBaseAmount,
+                $correctedTaxAmount
             );
 
             // --- DEBUG MODE: volcado de datos antes de enviar ---
