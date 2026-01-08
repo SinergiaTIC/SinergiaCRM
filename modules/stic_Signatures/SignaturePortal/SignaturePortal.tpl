@@ -360,14 +360,14 @@
                     </p>
                     {/if}
                     <form id="fieldValidationForm" method="POST" action="">
-                        <div class="mb-3">
+                        <div class="mb-3 d-flex flex-column align-items-center">
                             <label for="validationFieldInput"
-                                class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}<strong>
-                                    {$FIELD_VALIDATION_LABEL}</strong><span class="text-muted">
+                                class="text-center text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FIELD_VALIDATION_INSTRUCTION}<strong>
+                                    {$FIELD_VALIDATION_LABEL}</strong><br><span class="text-muted">
                                     ({$FIELD_VALIDATION_LABEL_FORMAT}):</span></label>
                             <input type="text" id="validationFieldInput" name="validation_field_value" required
                                 pattern="{$FIELD_VALIDATION_REGEXP}"
-                                class="form-control text-center text-xl font-weight-bold"
+                                class="form-control text-center text-xl font-weight-bold w-50"
                                 value="{$PREVIOUS_FIELD_VALUE}">
                             <span class="text-danger">{$FIELD_ERROR_MSG}</span>
                         </div>

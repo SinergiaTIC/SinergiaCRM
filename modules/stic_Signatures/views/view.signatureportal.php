@@ -171,7 +171,7 @@ class stic_SignaturePortal extends SugarView
                 case 'identification_number':
                 case 'birthdate':
                     $this->ss->assign('FIELD_VALIDATION_REQUIRED', true);
-                    if (isset($_POST['validation_field_value']) && $stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_POST['validation_field_value'])) {
+                    if (($_SESSION['stic_authenticated_signers'][$signerBean->id] ?? false) === true || $stic_SignaturePortalUtils::verifyFieldValidation($signerBean, $_POST['validation_field_value'] ?? '')) {
                         $passed = true;
                     } else {
                         if (isset($_POST['validation_field_value'])) {
