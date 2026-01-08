@@ -249,6 +249,12 @@ class stic_RegistrationsUtils {
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $startDay . '|' . $endDay);
 
+        // Validate dates to prevent SQL injection
+        if (empty($startDay) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDay)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid start date format');
+            return;
+        }
+
         // Instead of iterating through every day, query for actual session dates
         // This prevents system collapse when importing registrations with old dates
         $querySessionDates =
