@@ -100,6 +100,7 @@ class AWF_ResponseHandler
 
         // Guardamos la respuesta
         $responseBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Responses');
+        $responseBean->is_automated_save = true;
         $responseBean->name = $formBean->name ." - ". date('Y-m-d H:i:s');
         $responseBean->status = $responseStatus;
         $responseBean->raw_payload = $payloadJson;
@@ -389,6 +390,7 @@ class AWF_ResponseHandler
                 $recordActionName = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionValue];
                 $moduleSingular = $app_list_strings['moduleListSingular'][$modifiedBean->moduleName];
 
+                $linkBean->is_automated_save = true;
                 $linkBean->name = $responseBean->name ." - ". $moduleSingular .": ". $targetBeanName ." (". $recordActionName .")";
                 $linkBean->sequence_number = $sequence++;
                 $linkBean->parent_id = $modifiedBean->beanId; 

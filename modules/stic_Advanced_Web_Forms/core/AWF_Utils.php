@@ -96,7 +96,7 @@ class AWF_Utils {
     }
 
     /**
-     * Genera un resumen en HTML con todos los datos del forumlario.
+     * Genera un resumen en HTML con todos los datos del formulario basándose en el Layout.
      *
      * @param ExecutionContext $context El contexto que contiene los datos.
      * @return string Un string HTML con la tabla resumen.
@@ -104,6 +104,7 @@ class AWF_Utils {
     public static function generateSummaryHtml(ExecutionContext $context): string
     {
         $theme = $context->formConfig->layout->theme;
+        $layout = $context->formConfig->layout;
         $formData = $context->formData;
 
         $fontFamily = $theme->font_family ?? 'system-ui, -apple-system, sans-serif';
@@ -112,11 +113,12 @@ class AWF_Utils {
         $textColor = $theme->text_color ?? '#212529';
         $borderColor = $theme->border_color ?? '#dee2e6';
         $formWidth = $theme->form_width ?? '800px';
+        
         $css = "
         <style>
             .awf-summary-container {font-family: {$fontFamily};font-size: {$fontSize}px;color: {$textColor};max-width: {$formWidth};margin: 0 auto;line-height: 1.5;}
             .awf-summary-title {color: {$primaryColor};border-bottom: 2px solid {$primaryColor};padding-bottom: 10px;margin-bottom: 20px;font-size: 1.5em;}
-            .awf-summary-block-title {color: {$theme->text_color};background-color: {$theme->page_bg_color};padding: 8px 12px;margin-top: 25px;margin-bottom: 10px;font-size: 1.2em;font-weight: bold;border-radius: {$theme->border_radius_controls}px;border: 1px solid {$borderColor};}
+            .awf-summary-section-title {color: {$theme->text_color};background-color: {$theme->page_bg_color};padding: 8px 12px;margin-top: 25px;margin-bottom: 5px;font-size: 1.2em;font-weight: bold;border-bottom: 2px solid {$borderColor};}
             .awf-summary-table {width: 100%;border-collapse: collapse;margin-bottom: 15px;}
             .awf-summary-table td {padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;}
             .awf-summary-label {width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);}
@@ -126,54 +128,89 @@ class AWF_Utils {
         $html = $css;
         $html .= "<div class='awf-summary-container'>";
         $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
-        $formData = $context->formData; 
         
-        foreach ($context->formConfig->data_blocks as $block) {
-            // Saltamos los Bloques de datos sin campos
-            $hasVisibleFields = false;
-            foreach ($block->fields as $f) {
-                if ($f->type_field !== DataBlockFieldType::HIDDEN) { 
-                    $hasVisibleFields = true; 
-                    break; 
-                }
-            }
-            if (!$hasVisibleFields) {
-                continue;
+        // Iteración por secciones (layout)
+        foreach ($layout->structure as $section) {
+            
+            // Si la sección tiene título y tiene que mostrarse
+            if ($section->showTitle && !empty($section->title)) {
+                $html .= "<div class='awf-summary-section-title'>" . htmlspecialchars($section->title) . "</div>";
             }
 
-            $html .= "<div class='awf-summary-block-title'>{$block->text}</div>";
             $html .= "<table class='awf-summary-table'>";
-            foreach ($block->fields as $fieldDef) {
-                if (empty($fieldDef->label) || $fieldDef->type_field === DataBlockFieldType::HIDDEN) {
-                    continue;
-                }
+            $hasFields = false;
 
-                $formKey = "{$block->name}.{$fieldDef->name}";
-                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                    $formKey = "_detached.{$formKey}";
-                }
-                $formKey = str_replace('.', '_', $formKey);
-                $value = $formData[$formKey] ?? '';
-                
-                if (is_array($value)) {
-                    $value = implode(', ', $value);
-                }
-                $displayValue = nl2br(htmlspecialchars((string)$value));
+            // Los elementos de la sección (bloques de datos)
+            foreach ($section->elements as $element) {
+                if ($element->type !== 'datablock') continue;
 
-                $html .= "<tr>";
-                $html .= "<td class='awf-summary-label'>" . htmlspecialchars($fieldDef->label) . "</td>";
-                $html .= "<td class='awf-summary-value'>" . $displayValue . "</td>";
-                $html .= "</tr>";
+                $block = $context->getDataBlockById($element->ref_id);
+                if (!$block) continue;
+
+                foreach ($block->fields as $fieldDef) {
+                    // Sólo mostramos los campos visibles en el formulario
+                    if ($fieldDef->type_field === DataBlockFieldType::HIDDEN) {
+                        continue;
+                    }
+                    // Si no tiene etiqueta, no se muestra
+                    if (empty($fieldDef->label)) {
+                        continue;
+                    }
+
+                    $formKey = "{$block->name}.{$fieldDef->name}";
+                    if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                        $formKey = "_detached.{$formKey}";
+                    }
+                    $formKey = str_replace('.', '_', $formKey);
+                    
+                    // Valor a mostrar
+                    $value = $formData[$formKey] ?? '';
+
+                    if (!empty($fieldDef->value_options)) {
+                        // Función helper para encontrar el texto de un valor
+                        $findLabel = function($val) use ($fieldDef) {
+                            foreach ($fieldDef->value_options as $opt) {
+                                if ($opt->value == $val) return $opt->text;
+                            }
+                            return $val; 
+                        };
+    
+                        if (is_array($value)) {
+                            $labels = array_map($findLabel, $value);
+                            $displayValue = implode(', ', $labels);
+                        } else {
+                            $displayValue = $findLabel($value);
+                        }
+                    } else {
+                        if (is_array($value)) {
+                            $value = implode(', ', $value);
+                        }
+                        $displayValue = $value;
+                    }
+                    
+                    $displayValue = nl2br(htmlspecialchars((string)$displayValue));
+
+                    $html .= "<tr>";
+                    $html .= "<td class='awf-summary-label'>" . htmlspecialchars($fieldDef->label) . "</td>";
+                    $html .= "<td class='awf-summary-value'>" . $displayValue . "</td>";
+                    $html .= "</tr>";
+                    $hasFields = true;
+                }
+            }
+
+            if (!$hasFields) {
+                // Si la sección no tenía campos visibles, cerramos la tabla y seguimos (el CSS la hará invisible o mínima)
             }
             $html .= "</table>";
         }
+        
         $html .= "</div>";
         
         return $html;
     }
 
     /**
-     * Genera un resumen en texto plano con todos los datos del forumlario.
+     * Genera un resumen en texto plano con todos los datos del formulario basándose en el Layout.
      *
      * @param ExecutionContext $context El contexto que contiene los datos.
      * @return string Un string de texto plano con el resumen.
@@ -184,27 +221,64 @@ class AWF_Utils {
         $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms');
         $text = $title . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
         
+        $layout = $context->formConfig->layout;
         $formData = $context->formData; 
         
-        foreach ($context->formConfig->data_blocks as $block) {
-            // Título del bloque
-            $blockTitle = mb_strtoupper($block->text);
-            $text .= $blockTitle . "\n";
-            $text .= str_repeat('-', mb_strlen($blockTitle)) . "\n";
+        foreach ($layout->structure as $section) {
             
-            foreach ($block->fields as $fieldDef) {
-                if (empty($fieldDef->label) || $fieldDef->type_field === DataBlockFieldType::HIDDEN) {
-                    continue;
-                }
+            // Título de Sección
+            if ($section->showTitle && !empty($section->title)) {
+                $sectionTitle = mb_strtoupper($section->title);
+                $text .= $sectionTitle . "\n";
+                $text .= str_repeat('-', mb_strlen($sectionTitle)) . "\n";
+            } else {
+                // Separador visual si no hay título
+                $text .= "--------------------\n";
+            }
 
-                $formKey = "{$block->name}.{$fieldDef->name}";
-                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                    $formKey = "_detached.{$formKey}";
+            foreach ($section->elements as $element) {
+                if ($element->type !== 'datablock') continue;
+
+                $block = $context->getDataBlockById($element->ref_id);
+                if (!$block) continue;
+
+                foreach ($block->fields as $fieldDef) {
+                    if ($fieldDef->type_field === DataBlockFieldType::HIDDEN) continue;
+                    if (empty($fieldDef->label)) continue;
+
+                    $formKey = "{$block->name}.{$fieldDef->name}";
+                    if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                        $formKey = "_detached.{$formKey}";
+                    }
+                    $formKey = str_replace('.', '_', $formKey);
+
+                    // Valor a mostrar
+                    $value = $formData[$formKey] ?? '';
+
+                    if (!empty($fieldDef->value_options)) {
+                         $findLabel = function($val) use ($fieldDef) {
+                            foreach ($fieldDef->value_options as $opt) {
+                                if ($opt->value == $val) return $opt->text;
+                            }
+                            return $val; 
+                        };
+    
+                        if (is_array($value)) {
+                            $labels = array_map($findLabel, $value);
+                            $displayValue = implode(', ', $labels);
+                        } else {
+                            $displayValue = $findLabel($value);
+                        }
+                    } else {
+                        if (is_array($value)) {
+                            $value = implode(', ', $value);
+                        }
+                        $displayValue = $value;
+                    }
+                    
+                    // Formato: "Etiqueta: Valor"
+                    $text .= "{$fieldDef->label} {$displayValue}\n";
                 }
-                $value = $formData[$formKey] ?? '';
-                
-                // Formato: "Etiqueta: Valor"
-                $text .= "{$fieldDef->label}: {$value}\n";
             }
             $text .= "\n";
         }

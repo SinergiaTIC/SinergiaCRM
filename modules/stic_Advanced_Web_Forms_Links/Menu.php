@@ -44,9 +44,6 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Links', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Advanced_Web_Forms_Links&action=EditView&return_module=stic_Advanced_Web_Forms_Links&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Advanced_Web_Forms_Links');
-}
 if(ACLController::checkAccess('stic_Advanced_Web_Forms_Links', 'list', true)){
     $module_menu[]=array('index.php?module=stic_Advanced_Web_Forms_Links&action=index&return_module=stic_Advanced_Web_Forms_Links&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Advanced_Web_Forms_Links');
 }

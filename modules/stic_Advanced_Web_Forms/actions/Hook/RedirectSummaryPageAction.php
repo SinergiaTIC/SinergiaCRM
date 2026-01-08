@@ -57,6 +57,13 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
+        if (!defined('sugarEntry') || !sugarEntry) 
+            define('sugarEntry', true);
+
+        // Evitar mostrar errores en la página de resumen
+        ini_set('display_errors', 0);
+        error_reporting(0);
+
         $summaryHtml = AWF_Utils::generateSummaryHtml($context);
 
         echo $summaryHtml;

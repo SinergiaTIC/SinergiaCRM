@@ -347,14 +347,14 @@
                                                                 <template x-if="activeOpt && activeOpt.resolvedType === 'value'">
                                                                     <div>
                                                                         <!-- Resolved DataType: Input: text, date, datetime-local, time, email, tel, url... -->
-                                                                        <template x-if="$store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) != '' 
+                                                                        <template x-if="activeOpt && $store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) != '' 
                                                                                         && $store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) != 'checkbox'">
                                                                             <input :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" :type="$store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType)" class="form-control" 
                                                                                    x-model="param.value" :required="paramDef.required">
                                                                         </template>
 
                                                                         <!-- Resolved DataType: boolean -->
-                                                                        <template x-if="$store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) == 'checkbox'">
+                                                                        <template x-if="activeOpt && $store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) == 'checkbox'">
                                                                             <div class="form-check form-switch">
                                                                                 <input :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" type="checkbox" class="form-check-input" 
                                                                                        x-model="param.value" :required="paramDef.required">
@@ -362,7 +362,7 @@
                                                                         </template>
 
                                                                         <!-- Resolved DataType: textarea -->
-                                                                        <template x-if="activeOpt.resolvedDataType == 'textarea'">
+                                                                        <template x-if="activeOpt && activeOpt.resolvedDataType == 'textarea'">
                                                                             <textarea :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-control" rows="2" 
                                                                                       x-model="param.value" :required="paramDef.required"></textarea>
                                                                         </template>
@@ -370,7 +370,7 @@
                                                                 </template>
 
                                                                 <!-- Resolved Type: field, field_list-->
-                                                                <template x-if="['field', 'field_list'].includes(activeOpt.resolvedType)">
+                                                                <template x-if="activeOpt && ['field', 'field_list'].includes(activeOpt.resolvedType)">
                                                                     <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" 
                                                                             :multiple="activeOpt.resolvedType=='field_list'" :required="paramDef.required">
                                                                         <template x-if="activeOpt.resolvedType=='field'">
@@ -383,7 +383,7 @@
                                                                 </template>
 
                                                                 <!-- Resolved Type: dataBlock -->
-                                                                <template x-if="activeOpt.resolvedType === 'dataBlock'">
+                                                                <template x-if="activeOpt && activeOpt.resolvedType === 'dataBlock'">
                                                                     <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" 
                                                                             @change="param.value_text = $event.target.options[$event.target.selectedIndex].text"
                                                                             :required="paramDef.required">
@@ -395,7 +395,7 @@
                                                                 </template>
 
                                                                 <!-- Resolved Type: crmRecord -->
-                                                                <template x-if="activeOpt.resolvedType === 'crmRecord'">
+                                                                <template x-if="activeOpt && activeOpt.resolvedType === 'crmRecord'">
                                                                     <div x-data="WizardStep3.editCrmRecordParamxData(paramDef.name, activeOpt.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
                                                                         <template x-if="allowedModules.length > 1">
                                                                             <div>

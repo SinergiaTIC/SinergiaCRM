@@ -676,6 +676,7 @@ class AWF_Action {
   }
 
   get is_fixed_order() {
+    if (this.is_automatic && this.order == -1) return false;
     return this.order != 0;
   }
 

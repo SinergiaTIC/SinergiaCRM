@@ -67,6 +67,8 @@ class stic_Advanced_Web_Forms_Responses extends Basic
     public $response_hash;
     public $status;
     public $execution_log;
+
+    public $is_automated_save = false;
 	
     public function bean_implements($interface)
     {
@@ -79,4 +81,20 @@ class stic_Advanced_Web_Forms_Responses extends Basic
         return false;
     }
 	
+    /**
+     * Enable "edit" only in automated saving.
+     * @param string $view
+     * @param string $is_owner
+     * @param string $in_group
+     */
+    public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
+    {
+        if ($view == 'edit' || $view == 'editview' || $view == 'save') {
+            if ($this->is_automated_save) {
+                return true;
+            }
+            return false;
+        }
+        return parent::ACLAccess($view, $is_owner, $in_group);
+    }
 }
