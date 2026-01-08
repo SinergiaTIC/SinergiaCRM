@@ -48,7 +48,49 @@ switch (viewType()) {
   case "quickcreate":
     break;
 
+                        // 'customCode' => '{if !empty($fields.verifactu_submitted_at_c.value) && empty($fields.verifactu_is_rectified_c.value)}<input type="button" class="button" value="{$MOD.LBL_CREATE_RECTIFIED_INVOICE}" onclick="window.location.href=\'index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record={$fields.id.value}\';" />{/if}',
+
   case "detail":
+    var buttons = {
+      sendToAEAT: {
+        id: "bt_send_to_aeat",
+        title: SUGAR.language.get("AOS_Invoices", "LBL_SIGNER_SEND_TO_AEAT"),
+        onclick: "window.location='index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=" + STIC.record.id + "'",        
+      },
+      createRectifiedInvoice: {
+        id: "bt_create_rectified_invoice",
+        title: SUGAR.language.get("AOS_Invoices", "LBL_CREATE_RECTIFIED_INVOICE"),
+        onclick: "window.location='index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record=" + STIC.record.id + "'",
+      },
+      cancelInvoice: {
+        id: "bt_cancel_invoice",
+        title: SUGAR.language.get("AOS_Invoices", "LBL_CANCEL_INVOICE"),
+        onclick: "if(confirm('" + SUGAR.language.get("AOS_Invoices", "LBL_CANCEL_INVOICE_CONFIRM") + "')) { window.location='index.php?module=AOS_Invoices&action=CancelInvoice&record=" + STIC.record.id + "'; }",
+      },
+    };
+
+    // Rectified invoice button: only enabled if invoice is emitted
+    if(STIC.record.status != 'emitted') {
+      buttons.createRectifiedInvoice.disabled = 'disabled';
+      buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";
+    }
+
+    // Send to AEAT button: disabled if already accepted
+    if(STIC.record.status === 'emitted' && STIC.record.verifactu_aeat_status_c === 'accepted') {
+      buttons.sendToAEAT.disabled = 'disabled';
+      buttons.sendToAEAT.style = "cursor: not-allowed; opacity: .5;";
+    }
+
+    // Cancel invoice button: only enabled if invoice is accepted by AEAT (not rectified)
+    if(STIC.record.verifactu_aeat_status_c !== 'accepted' ) {
+      buttons.cancelInvoice.disabled = 'disabled';
+      buttons.cancelInvoice.style = "cursor: not-allowed; opacity: .5;";
+    }
+
+    createDetailViewButton(buttons.sendToAEAT);
+    createDetailViewButton(buttons.createRectifiedInvoice);
+    createDetailViewButton(buttons.cancelInvoice);
+
     break;
 
   case "list":
@@ -57,5 +99,14 @@ switch (viewType()) {
   default:
     break;
 }
+
+    
+    // Only show rectified invoice panel if the invoice is rectified
+    if(STIC?.record?.verifactu_is_rectified_c == '0')
+    {
+      $("[data-label=LBL_VERIFACTU_RECTIFIED_PANEL]").closest('.panel').hide();
+    }
+
+
 
 /* AUX FUNCTIONS */

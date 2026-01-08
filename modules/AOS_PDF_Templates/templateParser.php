@@ -67,6 +67,39 @@ class templateParser
             if (isset($field_def['name']) && $field_def['name'] != '') {
                 $fieldName = $field_def['name'];
 
+                // STIC CUSTOM - JCH - 20251124 - Exception for verifactu_check_url_c field to show as QR in PDF
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+                if ($fieldName === 'verifactu_check_url_c' && !empty($focus->$fieldName)) {
+                    // Generate QR code image using TCPDF library
+                    require_once 'vendor/tecnickcom/tcpdf/tcpdf_barcodes_2d.php';
+                    
+                    try {
+                        // Decode HTML entities (&amp; -> &) to get proper URL
+                        $qrUrl = html_entity_decode($focus->$fieldName, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        
+                        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Generating QR code for URL: ' . $qrUrl);
+                        
+                        // Create QR code object with decoded URL
+                        $qrcode = new TCPDF2DBarcode($qrUrl, 'QRCODE,M');
+                        
+                        // Generate PNG image in base64
+                        $qrImage = $qrcode->getBarcodePngData(4, 4, array(0,0,0));
+                        $qrBase64 = 'data:image/png;base64,' . base64_encode($qrImage);
+                        
+                        // Return as HTML img tag with appropriate size
+                        $repl_arr[$key . '_' . $fieldName] = '<img src="' . $qrBase64 . '" width="120" height="120" />';
+                        
+                        
+                        $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '."QR code generated successfully.");
+                    } catch (Exception $e) {
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error generating QR code: ' . $e->getMessage());
+                        $repl_arr[$key . '_' . $fieldName] = '<p style="font-size: 8pt; color: #999;">[QR no disponible]</p>';
+                    }
+                    
+                    continue;
+                }
+                // END CUSTOM
+
                 // STIC Custom - JCH - 202210006 - Check if field is really empty
                 // STIC#880
                 // if (empty($focus->$fieldName)) {

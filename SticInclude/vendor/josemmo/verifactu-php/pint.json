@@ -1,0 +1,21 @@
+{
+    "preset": "psr12",
+    "rules": {
+        "blank_line_after_opening_tag": false,
+        "blank_lines_before_namespace": {
+            "min_line_breaks": 1,
+            "max_line_breaks": 1
+        },
+        "concat_space": {
+            "spacing": "one"
+        },
+        "curly_braces_position": {
+            "functions_opening_brace": "same_line",
+            "classes_opening_brace": "same_line",
+            "control_structures_opening_brace": "same_line"
+        },
+        "ordered_imports": true,
+        "phpdoc_align": true,
+        "phpdoc_separation": true
+    }
+}

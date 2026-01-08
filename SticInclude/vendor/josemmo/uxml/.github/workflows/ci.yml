@@ -1,0 +1,40 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      matrix:
+        php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
+        include:
+          - php-version: '8.2'
+            experimental: true
+    steps:
+      # Download code from repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Setup PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+          extensions: ast-stable
+
+      # Setup Composer
+      - name: Setup Composer
+        run: composer validate --strict && composer install
+
+      # Run static analyzer
+      - name: Run static analyzer
+        if: ${{ success() && matrix.php-version != '7.1' }}
+        run: vendor/bin/phan --color --no-progress-bar
+
+      # Run tests
+      - name: Run tests
+        run: vendor/bin/simple-phpunit --testdox

@@ -1,0 +1,32 @@
+{
+    "name": "josemmo/uxml",
+    "description": "Uncomplicated XML manipulation library with a clean and concise syntax",
+    "keywords": ["xml"],
+    "license": "MIT",
+    "homepage": "https://github.com/josemmo/uxml",
+    "authors": [
+        {
+            "name": "José Miguel Moreno",
+            "email": "josemmo@pm.me",
+            "homepage": "https://github.com/josemmo"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "UXML\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.1",
+        "lib-libxml": "*"
+    },
+    "require-dev": {
+        "phan/phan": "*",
+        "symfony/phpunit-bridge": "*"
+    }
+}

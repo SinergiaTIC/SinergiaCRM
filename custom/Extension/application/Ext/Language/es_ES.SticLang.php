@@ -3762,3 +3762,28 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
+
+// Tipos de estado de las facturas Verifactu
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Enviado y aceptado';
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rechazado';
+$app_list_strings['stic_invoices_verifactu_aeat_status_list']['cancelled'] = 'Anulada';
+
+// Tipos de operacion admitidas por AEAT para facturas
+$app_list_strings['stic_products_quotes_operation_type_list']['S'] = 'Sujeta a impuestos';
+$app_list_strings['stic_products_quotes_operation_type_list']['N'] = 'No sujeta a impuestos';
+$app_list_strings['stic_products_quotes_operation_type_list']['E'] = 'Exenta de impuestos';
+$app_list_strings['stic_products_quotes_operation_type_list']['NL'] = 'No sujeta por localización';
+
+// Tipos de facturas rectificativas
+$app_list_strings['verifactu_rectified_type_list'][''] = '';
+$app_list_strings['verifactu_rectified_type_list']['S'] = 'Por sustitución (anula y reemplaza)';
+$app_list_strings['verifactu_rectified_type_list']['I'] = 'Por diferencias (solo ajustes)';
+
+// Bases de rectificación según LIVA
+$app_list_strings['verifactu_rectified_base_list'][''] = '';
+$app_list_strings['verifactu_rectified_base_list']['R1'] = 'R1 - Error fundado en derecho (Art. 80.1, 80.2 y 80.6 LIVA)';
+$app_list_strings['verifactu_rectified_base_list']['R2'] = 'R2 - Concurso de acreedores (Art. 80.3 LIVA)';
+$app_list_strings['verifactu_rectified_base_list']['R3'] = 'R3 - Crédito incobrable (Art. 80.4 LIVA)';
+$app_list_strings['verifactu_rectified_base_list']['R4'] = 'R4 - Otros casos (Art. 80 resto de supuestos LIVA)';
+$app_list_strings['verifactu_rectified_base_list']['R5'] = 'R5 - Factura rectificativa simplificada';

@@ -82,7 +82,10 @@ function insertLineItems(product,group){
 
   for(var p in product){
     if(document.getElementById(type + p + ln) !== null){
-      if (product[p] !== '' && isNumeric(product[p]) && p !== 'vat' && p !== 'product_id' && p !== 'name' && p !== "part_number" && p !== "description" && p !== "item_description") {
+      // STIC CUSTOM - JCH - 2025-12-01 Enable AEAT operation_type field
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+      if (product[p] !== '' && isNumeric(product[p]) && p !== 'vat' && p !== 'product_id' && p !== 'name' && p !== "part_number" && p !== "description" && p !== "item_description" && p !== "verifactu_aeat_operation_type_c") {
+      // END STIC CUSTOM
         document.getElementById(type + p + ln).value = format2Number(product[p]);
       } else {
         document.getElementById(type + p + ln).value = product[p];
@@ -91,6 +94,11 @@ function insertLineItems(product,group){
   }
 
   calculateLine(ln,type);
+  
+  // STIC CUSTOM - JCH - 20251203 Apply operation type logic after loading line
+  // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+  handleOperationTypeChange(ln, type);
+  // END STIC CUSTOM
 
 }
 
@@ -111,6 +119,10 @@ function insertProductLine(tableid, groupid) {
 
   var vat_hidden = document.getElementById("vathidden").value;
   var discount_hidden = document.getElementById("discounthidden").value;
+  // STIC CUSTOM - JCH - 2025-12-01 Enable AEAT operation_type field
+  // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+  var operation_type_hidden = document.getElementById("operation_type_hidden").value;
+  // END STIC CUSTOM
 
   sqs_objects["product_name[" + prodln + "]"] = {
     "form": "EditView",
@@ -160,6 +172,7 @@ function insertProductLine(tableid, groupid) {
   x.id = 'product_line' + prodln;
 
   // STIC Custom 20230420 JBL - Rearrangement of product line fields
+  //             20251201 JCH - Enable AEAT operation_type field   https://github.com/SinergiaTIC/SinergiaCRM/pull/870
   // STIC#1044
   x.insertCell().innerHTML = "<input class='sqsEnabled product_name' autocomplete='off' type='text' name='product_name[" + prodln + "]' id='product_name" + prodln + "' maxlength='50' value='' title='' tabindex='116' value=''><input type='hidden' name='product_product_id[" + prodln + "]' id='product_product_id" + prodln + "'  maxlength='50' value=''>";
   x.insertCell().innerHTML = "<input class='sqsEnabled product_part_number' autocomplete='off' type='text' name='product_part_number[" + prodln + "]' id='product_part_number" + prodln + "' maxlength='50' value='' title='' tabindex='116' value=''>";
@@ -175,6 +188,8 @@ function insertProductLine(tableid, groupid) {
   x.insertCell().innerHTML = "<input type='text' name='product_product_qty[" + prodln + "]' id='product_product_qty" + prodln + "'  value='' title='' tabindex='116' onblur='Quantity_format2Number(" + prodln + ");calculateLine(" + prodln + ",\"product_\");' class='product_qty'>";
 
   x.insertCell().innerHTML = "<input type='text' name='product_product_total_price[" + prodln + "]' id='product_product_total_price" + prodln + "' maxlength='50' value='' title='' tabindex='116' readonly='readonly' class='product_total_price'><input type='hidden' name='product_group_number[" + prodln + "]' id='product_group_number" + prodln + "' value='"+groupid+"'>";
+
+  x.insertCell().innerHTML = "<select tabindex='116' name='product_verifactu_aeat_operation_type_c[" + prodln + "]' id='product_verifactu_aeat_operation_type_c" + prodln + "' onchange='handleOperationTypeChange(" + prodln + ",\"product_\");' class='product_operation_type_select'>" + operation_type_hidden + "</select>";
 
   x.insertCell().innerHTML = "<select tabindex='116' name='product_vat[" + prodln + "]' id='product_vat" + prodln + "' onchange='calculateLine(" + prodln + ",\"product_\");' class='product_vat_amt_select'>" + vat_hidden + "</select>" +
                              "<input type='text' name='product_vat_amt[" + prodln + "]' id='product_vat_amt" + prodln + "' maxlength='250' value='' title='' tabindex='116' readonly='readonly' class='product_vat_amt_text'>";
@@ -309,6 +324,10 @@ function insertServiceLine(tableid, groupid) {
 
   var vat_hidden = document.getElementById("vathidden").value;
   var discount_hidden = document.getElementById("discounthidden").value;
+  // STIC CUSTOM - JCH - 2025-12-01 Enable AEAT operation_type field
+  // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+  var operation_type_hidden = document.getElementById("operation_type_hidden").value;
+  // END STIC CUSTOM
 
   tablebody = document.createElement("tbody");
   tablebody.id = "service_body" + servln;
@@ -319,6 +338,7 @@ function insertServiceLine(tableid, groupid) {
 
   // STIC Custom 20230420 JBL - Rearrangement of service line fields
   //             20230421 JBL - Calculate Service Line when edit Service Name
+  //             20251201 JCH - Enable AEAT operation_type field https://github.com/SinergiaTIC/SinergiaCRM/pull/870
   // STIC#1044
   var cell = x.insertCell();
   cell.colSpan = "4";
@@ -332,6 +352,8 @@ function insertServiceLine(tableid, groupid) {
   x.insertCell().innerHTML = "<input type='text' name='service_product_unit_price[" + servln + "]' id='service_product_unit_price" + servln + "' maxlength='50' value='' title='' tabindex='116'   onblur='calculateLine(" + servln + ",\"service_\");' class='service_unit_price'>";
 
   x.insertCell().innerHTML = "<input type='text' name='service_product_total_price[" + servln + "]' id='service_product_total_price" + servln + "' maxlength='50' value='' title='' tabindex='116' readonly='readonly' class='service_total_price'><input type='hidden' name='service_group_number[" + servln + "]' id='service_group_number" + servln + "' value='"+ groupid +"'>";
+
+  x.insertCell().innerHTML = "<select tabindex='116' name='service_verifactu_aeat_operation_type_c[" + servln + "]' id='service_verifactu_aeat_operation_type_c" + servln + "' onchange='handleOperationTypeChange(" + servln + ",\"service_\");' class='service_operation_type_select'>" + operation_type_hidden + "</select>"; 
 
   x.insertCell().innerHTML = "<select tabindex='116' name='service_vat[" + servln + "]' id='service_vat" + servln + "' onchange='calculateLine(" + servln + ",\"service_\");' class='service_vat_select'>" + vat_hidden + "</select>" + 
                              "<input type='text' name='service_vat_amt[" + servln + "]' id='service_vat_amt" + servln + "' maxlength='250' value='' title='' tabindex='116' readonly='readonly' class='service_vat_text'>";
@@ -368,6 +390,7 @@ function insertProductHeader(tableid){
   x.id='product_head';
 
   // STIC Custom 20230420 JBL - Rearrangement of product line fields
+  //             20251201 JCH - Enable AEAT operation_type field https://github.com/SinergiaTIC/SinergiaCRM/pull/870
   // STIC#1044
   var cell = x.insertCell();
   cell.style.color="rgb(68,68,68)";
@@ -402,6 +425,10 @@ function insertProductHeader(tableid){
 
   cell = x.insertCell();
   cell.style.color="rgb(68,68,68)";
+  cell.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_VERIFACTU_AEAT_OPERATION_TYPE');
+
+  cell = x.insertCell();
+  cell.style.color="rgb(68,68,68)";
   cell.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_VAT_AMT');
 
   cell = x.insertCell();
@@ -425,6 +452,7 @@ function insertServiceHeader(tableid){
   x.id='service_head';
 
   // STIC Custom 20230420 JBL - Rearrangement of service line fields
+  //             20251201 JCH - Enable AEAT operation_type field https://github.com/SinergiaTIC/SinergiaCRM/pull/870
   // STIC#1044
   var cell = x.insertCell();
   cell.colSpan = "4";
@@ -447,6 +475,10 @@ function insertServiceHeader(tableid){
   cell.style.color="rgb(68,68,68)";
   cell.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_TOTAL_PRICE');
   
+  cell = x.insertCell();
+  cell.style.color="rgb(68,68,68)";
+  cell.innerHTML= SUGAR.language.get(module_sugar_grp1, 'LBL_VERIFACTU_AEAT_OPERATION_TYPE');
+
   cell = x.insertCell();
   cell.style.color="rgb(68,68,68)";
   cell.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_VAT_AMT');
@@ -974,3 +1006,62 @@ function check_form(formname) {
     return false;
   return validate_form(formname, '');
 }
+
+// STIC CUSTOM - JCH - 20251203 Handle AEAT operation_type field change
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+/**
+ * Handle operation type change for VAT fields
+ * When operation type is not 'S' (Subject to tax), VAT rate and amount should be 0
+ * 
+ * @param {number} ln - Line number
+ * @param {string} type - Line type prefix ('product_' or 'service_')
+ */
+function handleOperationTypeChange(ln, type) {
+  var operationTypeSelect = document.getElementById(type + 'verifactu_aeat_operation_type_c' + ln);
+  var vatSelect = document.getElementById(type + 'vat' + ln);
+  var vatAmtInput = document.getElementById(type + 'vat_amt' + ln);
+  
+  if (!operationTypeSelect || !vatSelect || !vatAmtInput) {
+    return;
+  }
+  
+  var operationType = operationTypeSelect.value;
+  
+  // If operation type is NOT 'S' (Subject to tax), disable VAT and set to 0
+  if (operationType !== 'S') {
+    // Set VAT rate to 0
+    vatSelect.value = '0.00';
+    vatSelect.disabled = true;
+    
+    // Set VAT amount to 0
+    vatAmtInput.value = format2Number(0);
+    
+    // Add visual indicator that field is disabled
+    vatSelect.style.backgroundColor = '#f0f0f0';
+    vatSelect.style.cursor = 'not-allowed';
+  } else {
+    // Check if field was previously disabled (means we're changing FROM non-subject TO subject)
+    var wasDisabled = vatSelect.disabled;
+    
+    // Re-enable VAT fields when operation is Subject to tax
+    vatSelect.disabled = false;
+    vatSelect.style.backgroundColor = '';
+    vatSelect.style.cursor = '';
+    
+    // Only set to first option if the field was previously disabled
+    // This prevents overwriting existing values when loading saved lines
+    if (wasDisabled && vatSelect.options && vatSelect.options.length > 0) {
+      // Find first option with a value
+      for (var i = 0; i < vatSelect.options.length; i++) {
+        if (vatSelect.options[i].value !== '') {
+          vatSelect.value = vatSelect.options[i].value;
+          break;
+        }
+      }
+    }
+  }
+  
+  // Recalculate the line totals
+  calculateLine(ln, type);
+}
+// END STIC CUSTOM

@@ -151,11 +151,169 @@ class CustomAdministrationController extends AdministrationController
 
     }
 
-
-    public function action_configureMainMenu(){
+    public function action_configureMainMenu()
+    {
         // Add specific logic for manage main menu
-        require_once('custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php');
+        require_once 'custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php';
 
-    } 
+    }
+
+    /**
+     * Handle the upload, encryption, and storage of the digital certificate.
+     *
+     * @return void
+     */
+    public function action_SticSaveCertificate()
+    {
+        global $current_user;
+
+        if (!is_admin($current_user)) {
+            sugar_die("Not authorized access.");
+        }
+
+        if (isset($_FILES['certificate_file']) && $_FILES['certificate_file']['error'] === UPLOAD_ERR_OK) {
+
+            // 1. Read file content
+            $fileContent = file_get_contents($_FILES['certificate_file']['tmp_name']);
+            
+            // 2. Get and validate certificate password
+            $password = $_POST['certificate_password'] ?? '';
+            
+            if (empty($password)) {
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_PASSWORD_REQUIRED');
+                return;
+            }
+
+            // 3. Verify password and extract certificate information
+            $certInfo = array();
+            if (!openssl_pkcs12_read($fileContent, $certInfo, $password)) {
+                // Invalid password or corrupted certificate
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to read certificate. Invalid password or corrupted file.');
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_INVALID_PASSWORD');
+                return;
+            }
+
+            // 4. Extract certificate details for metadata
+            $certData = openssl_x509_parse($certInfo['cert']);
+            $certDetails = array(
+                'subject' => $certData['name'] ?? '',
+                'issuer' => $certData['issuer']['CN'] ?? '',
+                'valid_from' => isset($certData['validFrom_time_t']) ? date('Y-m-d H:i:s', $certData['validFrom_time_t']) : '',
+                'valid_to' => isset($certData['validTo_time_t']) ? date('Y-m-d H:i:s', $certData['validTo_time_t']) : '',
+                'serial_number' => $certData['serialNumberHex'] ?? $certData['serialNumber'] ?? '',
+            );
+
+            // 5. Extract components from PKCS12 (certificate and private key in PEM format)
+            $certificate = $certInfo['cert'];      // X.509 certificate (PEM format)
+            $privateKey = $certInfo['pkey'];       // Private key (PEM format)
+            $caChain = $certInfo['extracerts'] ?? array(); // CA chain certificates
+
+            // Validate extracted components
+            if (empty($certificate) || empty($privateKey)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to extract certificate or private key from PKCS12.');
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_INVALID_PASSWORD');
+                return;
+            }
+
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Extracted certificate: ' . strlen($certificate) . ' bytes, private key: ' . strlen($privateKey) . ' bytes');
+
+            // 6. Prepare Blowfish encryption
+            require_once 'include/utils/encryption_utils.php';
+            global $sugar_config;
+            $key = $sugar_config['unique_key'];
+
+            // 7. Encrypt ONLY the certificate components (NO password storage needed!)
+            // The private key is the most sensitive part
+            $encryptedPrivateKey = blowfishEncode($key, $privateKey);
+            $encryptedCertificate = blowfishEncode($key, $certificate);
+            
+            // Validate encryption
+            if (empty($encryptedPrivateKey) || empty($encryptedCertificate)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to encrypt certificate components.');
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_WRITE');
+                return;
+            }
+            
+            // Encrypt CA chain if exists
+            $encryptedCaChain = '';
+            if (!empty($caChain)) {
+                $caChainPem = '';
+                foreach ($caChain as $caCert) {
+                    $caChainPem .= $caCert . "\n";
+                }
+                $encryptedCaChain = blowfishEncode($key, $caChainPem);
+            }
+
+            // 8. Define secure path
+            $uploadDir = 'custom/certificates/';
+            if (!is_dir($uploadDir)) {
+                if (!mkdir($uploadDir, 0755, true)) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to create certificate directory: ' . $uploadDir);
+                    SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_WRITE');
+                    return;
+                }
+                // Create .htaccess to prevent web access
+                file_put_contents($uploadDir . '.htaccess', "Order Deny,Allow\nDeny from all");
+            }
+
+            // Verify directory is writable
+            if (!is_writable($uploadDir)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate directory is not writable: ' . $uploadDir);
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_WRITE');
+                return;
+            }
+
+            // 9. Save encrypted components separately (NO password needed for future use!)
+            $privateKeyFile = $uploadDir . 'private_key_encrypted.bin';
+            $certificateFile = $uploadDir . 'certificate_encrypted.bin';
+            $caChainFile = $uploadDir . 'ca_chain_encrypted.bin';
+            $metadataFile = $uploadDir . 'cert_metadata.json';
+
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saving private key to: ' . $privateKeyFile);
+
+            // Save private key
+            $bytesWritten = file_put_contents($privateKeyFile, $encryptedPrivateKey);
+            if ($bytesWritten === false) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to write private key file: ' . $privateKeyFile);
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_WRITE');
+                return;
+            }
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Private key saved: ' . $bytesWritten . ' bytes');
+
+            // Save certificate
+            $bytesWritten = file_put_contents($certificateFile, $encryptedCertificate);
+            if ($bytesWritten === false) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to write certificate file: ' . $certificateFile);
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_WRITE');
+                return;
+            }
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate saved: ' . $bytesWritten . ' bytes');
+
+            // Save CA chain if exists
+            if (!empty($encryptedCaChain)) {
+                file_put_contents($caChainFile, $encryptedCaChain);
+            }
+
+            // 10. Save metadata (WITHOUT password - no longer needed!)
+            $metadata = array(
+                'original_filename' => $_FILES['certificate_file']['name'],
+                'upload_date' => date('Y-m-d H:i:s'),
+                'uploaded_by' => $current_user->id,
+                'uploaded_by_name' => $current_user->name,
+                'cert_details' => $certDetails,
+                'has_ca_chain' => !empty($caChain),
+            );
+            file_put_contents($metadataFile, json_encode($metadata, JSON_PRETTY_PRINT));
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate uploaded successfully. Components stored separately (no password needed for future use).');
+
+            // Redirect successfully to the view
+            SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_SUCCESS');
+
+        } else {
+            // Error uploading
+            SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_UPLOAD');
+        }
+    }
 
 }
