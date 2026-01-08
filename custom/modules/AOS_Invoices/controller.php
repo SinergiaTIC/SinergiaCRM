@@ -88,13 +88,15 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         // Create a new invoice (rectified)
         $rectifiedInvoice = BeanFactory::newBean('AOS_Invoices');
 
-        // Copy basic information from original invoice
+        // Copy basic information from original invoice (excluding numeric totals)
         $fieldsToCopy = [
             'name',
             'billing_account_id',
             'billing_account',
             'billing_contact_id',
             'billing_contact',
+            'shipping_contact_id',
+            'shipping_contact',
             'billing_address_street',
             'billing_address_city',
             'billing_address_state',
@@ -142,39 +144,153 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
 
         // Save the rectified invoice first to get an ID
         $rectifiedInvoice->save();
+        
+        // Copy totals directly in database to avoid formatting issues
+        $totalFields = [
+            'total_amt',
+            'discount_amount', 
+            'subtotal_amount',
+            'tax_amount',
+            'shipping_amount',
+            'shipping_tax',
+            'shipping_tax_amt',
+            'total_amount',
+            'subtotal_tax_amount',
+        ];
+        
+        $updateParts = [];
+        foreach ($totalFields as $field) {
+            if (isset($originalInvoice->$field) && $originalInvoice->$field !== null && $originalInvoice->$field !== '') {
+                $value = $rectifiedInvoice->db->quote($originalInvoice->$field);
+                $updateParts[] = "$field = $value";
+            }
+        }
+        
+        if (!empty($updateParts)) {
+            $updateQuery = "UPDATE aos_invoices SET " . implode(', ', $updateParts) . " WHERE id = '".$rectifiedInvoice->id."'";
+            $rectifiedInvoice->db->query($updateQuery);
+            $GLOBALS['log']->debug("Updated totals directly in database for invoice {$rectifiedInvoice->id}");
+        }
 
         // Add text to original invoice description to reference rectification
         $originalInvoice->description .= "\n {$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']} {$rectifiedInvoice->number}";
         $originalInvoice->save();
 
-        // Copy line items from original invoice
+        // Copy line item groups from original invoice
+        $originalToRectifiedGroupIds = [];
         if (!empty($originalInvoice->id)) {
-            $query = "SELECT * FROM aos_products_quotes WHERE parent_type = 'AOS_Invoices' AND parent_id = ? AND deleted = 0 ORDER BY number";
-            $result = $rectifiedInvoice->db->pquery($query, [$originalInvoice->id]);
+            $query = "SELECT * FROM aos_line_item_groups WHERE parent_type = 'AOS_Invoices' AND parent_id = '".$originalInvoice->id."' AND deleted = 0";
+            $result = $rectifiedInvoice->db->query($query);
             
             while ($row = $rectifiedInvoice->db->fetchByAssoc($result)) {
-                $newLineItem = BeanFactory::newBean('AOS_Products_Quotes');
+                $originalGroupId = $row['id'];
                 
-                // Copy all fields except id, parent_id, and audit fields
-                $excludeFields = ['id', 'parent_id', 'date_entered', 'date_modified', 'created_by', 'modified_user_id'];
+                // Modify row for new group
+                $row['id'] = '';
+                $row['parent_id'] = $rectifiedInvoice->id;
+                $row['parent_type'] = 'AOS_Invoices';
                 
-                foreach ($row as $field => $value) {
-                    if (!in_array($field, $excludeFields) && isset($newLineItem->$field)) {
-                        $newLineItem->$field = $value;
-                    }
+                // Format number fields
+                if ($row['total_amt'] != null) {
+                    $row['total_amt'] = format_number($row['total_amt']);
+                }
+                if ($row['discount_amount'] != null) {
+                    $row['discount_amount'] = format_number($row['discount_amount']);
+                }
+                if ($row['subtotal_amount'] != null) {
+                    $row['subtotal_amount'] = format_number($row['subtotal_amount']);
+                }
+                if ($row['tax_amount'] != null) {
+                    $row['tax_amount'] = format_number($row['tax_amount']);
+                }
+                if ($row['subtotal_tax_amount'] != null) {
+                    $row['subtotal_tax_amount'] = format_number($row['subtotal_tax_amount']);
+                }
+                if ($row['total_amount'] != null) {
+                    $row['total_amount'] = format_number($row['total_amount']);
                 }
                 
-                // Set the new parent
-                $newLineItem->parent_type = 'AOS_Invoices';
-                $newLineItem->parent_id = $rectifiedInvoice->id;
+                $newLineItemGroup = BeanFactory::newBean('AOS_Line_Item_Groups');
+                $newLineItemGroup->populateFromRow($row);
+                $newLineItemGroup->save();
                 
-                $newLineItem->save();
+                $originalToRectifiedGroupIds[$originalGroupId] = $newLineItemGroup->id;
+                $GLOBALS['log']->debug("Copied line item group: Original ID={$originalGroupId}, New ID={$newLineItemGroup->id}");
             }
         }
 
-        // Recalculate totals
-        require_once('modules/AOS_Invoices/AOS_Invoices.php');
-        $tempInvoice = BeanFactory::getBean('AOS_Invoices', $rectifiedInvoice->id);
+        // Copy line items from original invoice
+        if (!empty($originalInvoice->id)) {
+            $query = "SELECT * FROM aos_products_quotes WHERE parent_type = 'AOS_Invoices' AND parent_id = '".$originalInvoice->id."' AND deleted = 0 ORDER BY number";
+            $result = $rectifiedInvoice->db->query($query);
+            
+            $lineCount = 0;
+            while ($row = $rectifiedInvoice->db->fetchByAssoc($result)) {
+                $lineCount++;
+                
+                // Store original ID for logging and custom fields lookup
+                $originalLineId = $row['id'];
+                
+                // Generate new UUID for the line item
+                $newId = create_guid();
+                
+                // Prepare values for insert
+                $row['id'] = $newId;
+                $row['parent_id'] = $rectifiedInvoice->id;
+                $row['parent_type'] = 'AOS_Invoices';
+                $row['date_entered'] = date('Y-m-d H:i:s');
+                $row['date_modified'] = date('Y-m-d H:i:s');
+                $row['modified_user_id'] = $GLOBALS['current_user']->id;
+                $row['created_by'] = $GLOBALS['current_user']->id;
+                
+                // Update group_id if it was mapped
+                if (!empty($row['group_id']) && isset($originalToRectifiedGroupIds[$row['group_id']])) {
+                    $row['group_id'] = $originalToRectifiedGroupIds[$row['group_id']];
+                }
+                
+                // Build INSERT query with all fields from the row
+                $fields = [];
+                $values = [];
+                foreach ($row as $field => $value) {
+                    $fields[] = $field;
+                    if ($value === null) {
+                        $values[] = 'NULL';
+                    } else {
+                        $values[] = "'" . $rectifiedInvoice->db->quote($value) . "'";
+                    }
+                }
+                
+                $insertQuery = "INSERT INTO aos_products_quotes (" . implode(', ', $fields) . ") VALUES (" . implode(', ', $values) . ")";
+                $rectifiedInvoice->db->query($insertQuery);
+                
+                // Copy custom fields from aos_products_quotes_cstm table
+                $customQuery = "SELECT * FROM aos_products_quotes_cstm WHERE id_c = '".$originalLineId."'";
+                $customResult = $rectifiedInvoice->db->query($customQuery);
+                if ($customRow = $rectifiedInvoice->db->fetchByAssoc($customResult)) {
+                    $customRow['id_c'] = $newId;
+                    
+                    $customFields = [];
+                    $customValues = [];
+                    foreach ($customRow as $field => $value) {
+                        $customFields[] = $field;
+                        if ($value === null) {
+                            $customValues[] = 'NULL';
+                        } else {
+                            $customValues[] = "'" . $rectifiedInvoice->db->quote($value) . "'";
+                        }
+                    }
+                    
+                    $insertCustomQuery = "INSERT INTO aos_products_quotes_cstm (" . implode(', ', $customFields) . ") VALUES (" . implode(', ', $customValues) . ")";
+                    $rectifiedInvoice->db->query($insertCustomQuery);
+                    
+                    $GLOBALS['log']->debug("Copied custom fields for line item {$lineCount}: Operation Type={$customRow['verifactu_aeat_operation_type_c']}");
+                }
+                
+                $GLOBALS['log']->debug("Copied line item {$lineCount}: Original ID={$originalLineId}, New ID={$newId}, Product={$row['product_id']}, Name={$row['name']}");
+            }
+            
+            $GLOBALS['log']->debug("Total line items copied: {$lineCount} for invoice {$rectifiedInvoice->id}");
+        }
         
         // Add success message
         SugarApplication::appendSuccessMessage($mod_strings['LBL_RECTIFIED_INVOICE_CREATED_SUCCESS']);
