@@ -5,10 +5,7 @@ $viewdefs [$module_name] = array (
     'templateMeta' => array (
       'form' => array (
         'buttons' => array (
-          0 => 'EDIT',
-          1 => 'DUPLICATE',
-          2 => 'DELETE',
-          3 => 'FIND_DUPLICATES',
+          0 => 'DELETE',
         ),
       ),
       'maxColumns' => '2',
@@ -78,7 +75,10 @@ $viewdefs [$module_name] = array (
           ),
         ),
         6 => array (
-          0 => 'description',
+          0 => array (
+            'name' => 'execution_log',
+            'label' => 'LBL_EXECUTION_LOG',
+          ),
         ),
       ),
       'lbl_panel_record_details' => array(

@@ -20,16 +20,5 @@ $layout_defs["stic_Advanced_Web_Forms"]["subpanel_setup"]['stic_69c1s_responses'
   'sort_by' => 'id',
   'title_key' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE',
   'get_subpanel_data' => 'stic_69c1s_responses',
-  'top_buttons' => 
-  array (
-    0 => 
-    array (
-      'widget_class' => 'SubPanelTopButtonQuickCreate',
-    ),
-    1 => 
-    array (
-      'widget_class' => 'SubPanelTopSelectButton',
-      'mode' => 'MultiSelect',
-    ),
-  ),
+  'top_buttons' => array (),
 );  

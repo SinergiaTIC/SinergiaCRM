@@ -40,33 +40,10 @@
 
 $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'table' => 'stic_advanced_web_forms_responses',
-    'audited' => true,
-    'inline_edit' => true,
-    'duplicate_merge' => true,
-    'fields' => array (
-  'remote_ip' => 
-  array (
-    'required' => false,
-    'name' => 'remote_ip',
-    'vname' => 'LBL_REMOTE_IP',
-    'type' => 'text',
-    'massupdate' => 0,
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'size' => '20',
-    'studio' => 'visible',
-    'rows' => '4',
-    'cols' => '20',
-  ),
+    'inline_edit' => false,
+    'duplicate_merge' => false,
+    'fields' => array (
   'form_url' => 
   array (
     'required' => false,
@@ -81,7 +58,7 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => false,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -104,7 +81,7 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => false,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -127,7 +104,7 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => false,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -150,7 +127,7 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => false,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -173,7 +150,7 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => false,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -195,7 +172,7 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => false,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -204,6 +181,28 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'options' => 'stic_advanced_web_forms_response_status_list',
     'studio' => 'visible',
     'dependency' => false,
+  ),
+  'execution_log' => 
+  array (
+    'required' => false,
+    'name' => 'execution_log',
+    'vname' => 'LBL_EXECUTION_LOG',
+    'type' => 'text',
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'rows' => '6',
+    'cols' => '80',
   ),
 ),
     'relationships' => array (
@@ -237,6 +236,7 @@ $dictionary["stic_Advanced_Web_Forms_Responses"]["fields"]["stic_1bb8ponses_name
   'name' => 'stic_1bb8ponses_name',
   'type' => 'relate',
   'source' => 'non-db',
+  'inline_edit' => false,
   'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE',
   'save' => true,
   'id_name' => 'stic_aa0eb_forms_ida',
@@ -263,3 +263,9 @@ VardefManager::createVardef('stic_Advanced_Web_Forms_Responses', 'stic_Advanced_
 
 // Set special values for SuiteCRM base fields
 $dictionary['stic_Advanced_Web_Forms_Responses']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
+
+$dictionary['stic_Advanced_Web_Forms_Responses']['fields']['name']['massupdate'] = false;
+$dictionary['stic_Advanced_Web_Forms_Responses']['fields']['name']['inline_edit'] = false;
+
+$dictionary['stic_Advanced_Web_Forms_Responses']['fields']['assigned_user_name']['massupdate'] = false;
+$dictionary['stic_Advanced_Web_Forms_Responses']['fields']['assigned_user_name']['inline_edit'] = false;

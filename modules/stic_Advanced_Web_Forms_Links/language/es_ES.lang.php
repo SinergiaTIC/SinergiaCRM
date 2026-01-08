@@ -83,9 +83,11 @@ $mod_strings = array (
 
   'LBL_SEQUENCE_NUMBER' => 'Número de secuencia',
   'LBL_RELATED_MODULE' => 'Módulo relacionado',
+  'LBL_PARENT_TYPE' => 'Tipo de registro relacionado',
+  'LBL_PARENT_ID' => 'ID de registro relacionado',
   'LBL_FLEX_RELATE' => 'Relacionado con',
   'LBL_RECORD_ACTION' => 'Acción',
   'LBL_SUBMITTED_DATA' => 'Datos aplicados',
 
-  'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
+  'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuesta a formulario',
 );

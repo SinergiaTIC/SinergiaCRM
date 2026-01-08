@@ -66,6 +66,7 @@ class stic_Advanced_Web_Forms_Responses extends Basic
     public $raw_payload;
     public $response_hash;
     public $status;
+    public $execution_log;
 	
     public function bean_implements($interface)
     {

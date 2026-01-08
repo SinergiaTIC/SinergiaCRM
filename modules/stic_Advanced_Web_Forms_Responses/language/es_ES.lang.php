@@ -81,13 +81,13 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
-  'LBL_REMOTE_IP' => 'IP remota',
   'LBL_FORM_URL' => 'Url del formulario',
   'LBL_USER_AGENT' => 'Navegador y Sistema Operativo',
   'LBL_REMOTE_IP' => 'Dirección IP',
   'LBL_RAW_PAYLOAD' => 'Respuesta recibida',
   'LBL_RESPONSE_HASH' => 'Hash de la respuesta',
   'LBL_STATUS' => 'Estado',
+  'LBL_EXECUTION_LOG' => 'Registro de ejecución',
 
   'LBL_RESPONSE_NO_PUBLIC_STATUS' => 'Respuesta recibida con el formulario no público',
   'LBL_RESPONSE_HONEYPOT_SPAM' => "Spam detectado: Se ha rellenado el campo 'Honeypot' oculto",
@@ -100,7 +100,7 @@ $mod_strings = array (
   'LBL_DUPLICATE_RESPONSE_MSG' => 'Esta respuesta ya ha sido enviada y ya se ha procesado',
   'LBL_ERROR_GENERIC_TITLE' => 'Error',
   'LBL_ERROR_GENERIC_MSG' => 'Se ha producido un error al procesar su respuesta.',
-
+  
   'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE' => 'Vínculos de Formularios',
-  'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE' => 'Formularios Web Avanzados',
+  'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE' => 'Formulario Web Avanzado',
 );

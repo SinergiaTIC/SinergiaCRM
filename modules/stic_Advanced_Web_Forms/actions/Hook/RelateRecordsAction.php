@@ -92,37 +92,57 @@ class RelateRecordsAction extends HookBeanActionDefinition {
     {
         // Obtención de los parámetros adicionales (ParameterResolver asegura que no sean nulos porque son obligatorios)
 
-        $targetObject = $actionConfig->getResolvedParameter('target_object');
+        /** @var OptionSelectorResolved $targetObjectSelector */
+        $targetObjectSelector = $actionConfig->getResolvedParameter('target_object');
         $linkName = $actionConfig->getResolvedParameter('relationship_name');
+
+        // Validación del parámetro selector
+        if (!$targetObjectSelector || !($targetObjectSelector instanceof OptionSelectorResolved)) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid target_object parameter type.");
+        }
 
         // Validación del nombre de la relación
         if (empty($linkName)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Relationship name is not specified.");
-        }
+        }        
 
         // Obtención del Id del Bean destino
         $targetBeanId = null;
-        if ($targetObject instanceof DataBlockResolved) {
-            $targetBeanRef = $targetObject->dataBlock->getBeanReference();
+        // Opción seleccionada en el selector: puede ser un Bloque de Datos o un Id directo
+        if ($targetObjectSelector->selectedOptionName == 'datablock') {
+            /** @var DataBlockResolved $targetDataBlock */
+            $targetDataBlock = $targetObjectSelector->resolvedValue;
+            if (!$targetDataBlock || !($targetDataBlock instanceof DataBlockResolved)) {
+                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid value in target_object parameter as datablock: is not a valid DataBlockResolved.");
+            }
+            $targetBeanRef = $targetDataBlock->dataBlock->getBeanReference();
             if ($targetBeanRef === null || empty($targetBeanRef->beanId)) {
-                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetObject->dataBlock->name}' has no ID. Check Action Order.");
+                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetDataBlock->dataBlock->name}' has no ID. Check Action Order.");
             }
             $targetBeanId = $targetBeanRef->beanId;
-
-        } elseif (is_string($targetObject) && !empty($targetObject)) {
-            $targetBeanId = $targetObject;
-
-        } elseif ($targetObject instanceof DataBlockFieldResolved) {
-            $targetBeanId = $targetObject->value;
+        } else if ($targetObjectSelector->selectedOptionName == 'value') {
+            /** @var string $targetValue */
+            $targetValue = $targetObjectSelector->resolvedValue;
+            if (!is_string($targetValue) || empty($targetValue)) {
+                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid value in target_object parameter as value: must be a non-empty string.");
+            }
+            $targetBeanId = $targetValue;
+        } else {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid option selected in target_object parameter.");
         }
-
+        
         if (empty($targetBeanId)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Relationship '{$linkName}' failed: No target ID found.");
         }
 
         // Cargar la relación en el Bean origen
-        if (!isset($bean->$linkName) && !$bean->load_relationship($linkName)) {
+        if (!$bean->load_relationship($linkName)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Could not load relationship '{$linkName}' in module '{$bean->module_name}'. Check vardefs link name.");
+        }
+        // Verificar que es un Link2
+        if (!($bean->$linkName instanceof Link2)) {
+            $type = gettype($bean->$linkName);
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error: '{$linkName}' acts as a '{$type}', not a Relationship Link. Please check if you are using the Field Name instead of the Link Name in the configuration.");
         }
 
         // Establecer la relación
@@ -142,11 +162,8 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         if (!$nameIsUserDefined && $beanWasCreatedHere && !empty($bean->name)) {
             // Reseteamos el nombre
             $bean->name = '';
+            // Guardamos de nuevo para que se recalcule el nombre
             $bean->save();
-        }
-
-        if (!isset($block->dataBlock->fields['name']) && $bean->name!='') {
-            // Verificar que el bean se ha creado 
         }
 
         // Notificación del resultado

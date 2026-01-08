@@ -55,7 +55,7 @@ class ServerActionFlowExecutor {
                 // TODO: Verificación de Condiciones (si existen)
                 // if (!$this->checkConditions($actionConfig->conditions, $this->context)) { continue; }
 
-                // Si es Terminal no la ejecutamos: paramos el bucle y la retornamos
+                // Si es Terminal no la ejecutamos: paramos el bucle y la retornamos para que se ejecute después
                 if ($actionExecutor instanceof ITerminalAction) {
                     return $actionConfig;
                 }

@@ -201,11 +201,26 @@ class AWF_ResponseHandler
                 // Guardamos los vínculos de trazabilidad (registros creados/modificados)                
                 $this->saveLinks($responseBean, $context);
 
-                // Actualizamos el estado
+                // Actualizamos el estado y generamos el log de ejecución
                 $hasErrors = false;
+                $logSummary = ">> " . date('Y-m-d H:i:s') . "\n";
                 foreach ($context->actionResults as $result) {
-                    if ($result->isError()) $hasErrors = true;
+                    if ($result->isError()) {
+                        $hasErrors = true;
+                        $icon = "❌";
+                    }elseif ($result->isSkipped()) {
+                        $icon = "⏭️";
+                    } else {
+                        $icon = "✅";
+                    }
+                    $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
+                    $logSummary .= "{$icon} {$actionName}";
+                    if (!empty($result->message)) {
+                        $logSummary .= ": " . $result->message;
+                    }
+                    $logSummary .= "\n";
                 }
+                $responseBean->execution_log = $logSummary;
                 $responseBean->status = $hasErrors ? 'error' : 'processed';
                 $responseBean->save();
 

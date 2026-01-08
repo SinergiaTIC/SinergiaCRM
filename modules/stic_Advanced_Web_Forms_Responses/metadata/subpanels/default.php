@@ -45,8 +45,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $module_name = 'stic_Advanced_Web_Forms_Responses';
 $subpanel_layout = array(
     'top_buttons' => array(
-        array('widget_class' => 'SubPanelTopCreateButton'),
-        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
     ),
 
     'where' => '',
@@ -55,32 +53,19 @@ $subpanel_layout = array(
         'name' => array(
             'vname' => 'LBL_NAME',
             'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '45%',
+            'width' => '40%',
+        ),
+        'status' => array(
+            'vname' => 'LBL_STATUS',
+            'width' => '20%',
+        ),
+        'form_url' => array(
+            'vname' => 'LBL_FORM_URL',
+            'width' => '40%',
         ),
         'date_modified' => array(
             'vname' => 'LBL_DATE_MODIFIED',
-            'width' => '45%',
-        ),
-        'edit_button' => array(
-            'vname' => 'LBL_EDIT_BUTTON',
-            'widget_class' => 'SubPanelEditButton',
-            'module' => $module_name,
-            'width' => '4%',
-        ),
-        // STIC-Custom 20240214 JBL - QuickEdit view
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
-        'quickedit_button' => array(
-            'vname' => 'LBL_QUICKEDIT_BUTTON',
-            'widget_class' => 'SubPanelQuickEditButton',
-            'module' => $module_name,
-            'width' => '4%',
-        ),
-        // END STIC-Custom
-        'remove_button' => array(
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
-            'module' => $module_name,
-            'width' => '5%',
+            'width' => '20%',
         ),
     ),
 );
