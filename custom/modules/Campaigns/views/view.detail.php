@@ -32,6 +32,19 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
     }
 
     public function preDisplay() {
+        // STIC Custom 20241105 EPS - Messages campaigns - Clear cache to avoid problems with buttons display
+        // 1. Clear the Module Metadata Cache for this specific module
+        $cache_file = "cache/themes/SuiteP/modules/{$this->module}/DetailView.tpl";
+        if (file_exists($cache_file)) {
+            unlink($cache_file);
+        }
+
+        // 2. Clear Smarty's compiled template cache
+        // This targets the PHP-compiled version of your .tpl file
+        if (isset($this->ss)) {
+            $this->ss->clear_compiled_tpl();
+        }
+        // END STIC Custom
 
         parent::preDisplay();
 
@@ -69,6 +82,7 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
             $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
         }
         // END STIC Custom
+        
         $this->dv->defs['templateMeta']['form']['buttons'][6] = self::markAsSentButton;
         $this->dv->defs['templateMeta']['form']['buttons'][7] = self::viewChangesButton;
 
