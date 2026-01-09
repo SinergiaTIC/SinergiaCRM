@@ -158,9 +158,9 @@ class SendEmailToAssignedAction extends HookActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Assigned user '{$user->user_name}' does not have a valid 'email1' field.");
         }
 
-        // Enviamos el email
+        // Enviamos el email usando la plantilla y $sourceBean como contexto
         try {
-            AWF_Utils::sendTemplateEmail($emailAddress, $templateRef->beanId, $user, $context, $sourceBean);
+            AWF_Utils::sendTemplateEmail($emailAddress, $templateRef->beanId, $sourceBean, $context, $sourceBean);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         }

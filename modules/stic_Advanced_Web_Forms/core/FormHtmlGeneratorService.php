@@ -502,7 +502,7 @@ class FormHtmlGeneratorService {
         $safeMessage = json_encode($closedFormText);
         $alpineData = "{
             isActive: true,
-            message: '{$safeMessage}',
+            message: {$safeMessage},
             submitting: false,
             init() {
                 {$jsCheckStatus}
