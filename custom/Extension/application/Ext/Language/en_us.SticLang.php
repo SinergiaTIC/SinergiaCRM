@@ -162,6 +162,9 @@ $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Responses'] = 'Respuestas a formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Links'] = 'Vínculos de Formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -209,6 +212,9 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condit
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Granted account';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Places';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Responses'] = 'Respuesta a formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Links'] = 'Vínculo de Formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms'] = 'Formulario Web Avanzado';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -3728,3 +3734,5 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
+
+
