@@ -55,32 +55,7 @@ class stic_Contacts_RelationshipsLogicHooks
             else {
                 $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': ' . 'The related Contact bean is empty');
             }
-        }
-
-        // If a person ceases to be a volunteer, cancel the person's documents related to the insurance policy and criminal record certificate.
-        if (!empty($bean->relationship_type) && $bean->relationship_type == 'volunteer' && !stic_Contacts_RelationshipsUtils::isActive($bean)) {
-            include_once 'SticInclude/Utils.php';
-            $contactBean = SticUtils::getRelatedBeanObject($bean, 'stic_contacts_relationships_contacts');
-            if (!empty($contactBean)) 
-            {
-                SticUtils::getRelatedBeanObject($contactBean, 'documents');
-                if (!empty($contactBean->documents)) 
-                {
-                    $relatedDocumentBeans = $contactBean->documents->getBeans();
-                    foreach ($relatedDocumentBeans as $documentBean) 
-                    {
-                        if ((!empty($documentBean->stic_category_c) && !empty($documentBean->stic_subcategory_c))
-                           && (  ($documentBean->stic_category_c == 'insurance' && $documentBean->stic_subcategory_c == 'insurance_liability')
-                              || ($documentBean->stic_category_c == 'certificate' && $documentBean->stic_subcategory_c == 'certificate_sexual_offences'))
-                           && (empty($documentBean->status_id) || $documentBean->status_id != 'Expired')
-                        ) {
-                            $documentBean->status_id = 'Expired';
-                            $documentBean->save();
-                        }                 
-                    }
-                }
-            }
-        }
+        }              
     }
 
     public function manage_relationships(&$bean, $event, $arguments)

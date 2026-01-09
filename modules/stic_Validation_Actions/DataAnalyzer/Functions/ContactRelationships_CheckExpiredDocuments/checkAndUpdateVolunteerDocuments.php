@@ -80,19 +80,22 @@ class checkAndUpdateVolunteerDocuments extends DataCheckFunction
             // If the Contact bean is not empty and has not been checked yet
             if (!empty($contactBean) && !array_key_exists($contactBean->id, $contactChecked)) 
             {
-                if ($contactBean->load_relationship('stic_contacts_relationships_contacts')) 
-                {
+                // Get the active and volunteer contact relationships related to the contact
+                $query = "stic_contacts_relationships.active = 1 AND stic_contacts_relationships.relationship_type = 'volunteer'";
+                $contactRelationshipBeans = $contactBean->get_linked_beans(
+                    'stic_contacts_relationships_contacts',
+                    '',
+                    '',
+                    0,
+                    0,
+                    0,
+                    $query,
+                );
+
+                if (!empty($contactRelationshipBeans)) {
+                    $contactChecked[$contactBean->id] = 'VOLUNTARY';
+                } else {
                     $contactChecked[$contactBean->id] = 'NOT_VOLUNTARY';
-                    // Check if the Contact has any active volunteer relationship
-                    $contactRelationshipBeans = $contactBean->stic_contacts_relationships_contacts->getBeans();
-                    foreach ($contactRelationshipBeans as $contactRelationshipBean) 
-                    {
-                        if ($contactRelationshipBean->relationship_type == 'volunteer' && $contactRelationshipBean->active) 
-                        {
-                            $contactChecked[$contactBean->id] = 'VOLUNTARY';
-                            break;
-                        }
-                    }
                 }
             }
             if ($contactChecked[$contactBean->id] == 'NOT_VOLUNTARY') {

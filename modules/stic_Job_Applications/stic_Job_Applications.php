@@ -102,28 +102,35 @@ class stic_Job_Applications extends Basic
                 $contactBean->save();
             }
 
-            // Check if there is already a pre-volunteering or volunteering contact relationship for this contact and project
-            if ($contactBean->load_relationship('stic_contacts_relationships_contacts')) 
-            {
-                $relationsCount = 0;
-                $contactRelationshipBeans = $contactBean->stic_contacts_relationships_contacts->getBeans();
-                foreach ($contactRelationshipBeans as $contactRelationshipBean) {
-                    if ($contactRelationshipBean->active &&
-                        ($contactRelationshipBean->relationship_type == 'pre-volunteer' || $contactRelationshipBean->relationship_type == 'volunteer') &&
-                        $contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $offerBean->project_stic_job_offersproject_ida) {
-                        $relationsCount++;
-                        break;  
-                    }
+            // Get the active contact relationships, whether pre-voluntary or voluntary, related to the contact
+            $query = "stic_contacts_relationships.active = 1 AND (stic_contacts_relationships.relationship_type = 'pre-volunteer' OR stic_contacts_relationships.relationship_type = 'volunteer')";
+            $contactRelationshipBeans = $contactBean->get_linked_beans(
+                'stic_contacts_relationships_contacts',
+                '',
+                '',
+                0,
+                0,
+                0,
+                $query,
+            );
+
+            // Check if there is any relationship for the same project as the offer
+            $relationsCount = 0;
+            foreach ($contactRelationshipBeans as $contactRelationshipBean) {
+                if ($contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $offerBean->project_stic_job_offersproject_ida) {
+                    $relationsCount++;
+                    break;  
                 }
-                // If there is no pre-voluntary and voluntary contact relationship, create a new pre-volunteer relationship
-                if ($relationsCount == 0) {
-                    $relationshipBean = BeanFactory::newBean('stic_Contacts_Relationships');
-                    $relationshipBean->relationship_type = 'pre-volunteer';
-                    $relationshipBean->stic_contacts_relationships_contactscontacts_ida = $contactBean->id;
-                    $relationshipBean->stic_contacts_relationships_projectproject_ida = $offerBean->project_stic_job_offersproject_ida;
-                    $relationshipBean->assigned_user_id = $offerBean->assigned_user_id;
-                    $relationshipBean->save();
-                }
+            }
+
+            // If there is no pre-voluntary and voluntary contact relationship, create a new pre-volunteer relationship
+            if ($relationsCount == 0) {
+                $relationshipBean = BeanFactory::newBean('stic_Contacts_Relationships');
+                $relationshipBean->relationship_type = 'pre-volunteer';
+                $relationshipBean->stic_contacts_relationships_contactscontacts_ida = $contactBean->id;
+                $relationshipBean->stic_contacts_relationships_projectproject_ida = $offerBean->project_stic_job_offersproject_ida;
+                $relationshipBean->assigned_user_id = $offerBean->assigned_user_id;
+                $relationshipBean->save();
             }
         }
     }
