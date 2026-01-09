@@ -472,6 +472,29 @@ function initilizeDetailView() {
     $("#viewRoiButtonId").hide();
     $("#mark_as_sent_button").parent().hide();
   }
+
+  // Manipulate action links
+  if (typeValue == "Message" || typeValue == "NotifMsg") {
+    // Remove "Send Email" action
+    $("#send_emails_button").parent().hide();
+    $("#send_test_button").parent().hide();
+    recordId = $("#formDetailView input[type=hidden][name=record]").val();
+    var buttons = {
+      testMessagesSendButton: {
+        id: "bt_testMessagesSendButton_detailview",
+        title: SUGAR.language.get("Campaigns", "LBL_SEND_MESSAGES_TEST"),
+        onclick: "window.location='index.php?module=stic_Message_Marketing&action=selectMessageMarketing&record=" + recordId + "&return_module="+ module +"&return_action=TrackDetailView&test=true'"
+      },
+      queueMessagesSendButton: {
+        id: "bt_queueMessagesSendButton_detailview",
+        title: SUGAR.language.get("Campaigns", "LBL_SEND_MESSAGES"),
+        onclick: "window.location='index.php?module=stic_Message_Marketing&action=selectMessageMarketing&record=" + recordId + "&return_module="+ module +"&return_action=TrackDetailView'"
+      }
+    };
+    createDetailViewButton(buttons.testMessagesSendButton);
+    createDetailViewButton(buttons.queueMessagesSendButton);
+  }
+
 }
 
 function addEditCreateTemplateLinks() {

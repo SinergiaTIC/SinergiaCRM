@@ -32,19 +32,6 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
     }
 
     public function preDisplay() {
-        // STIC Custom 20241105 EPS - Messages campaigns - Clear cache to avoid problems with buttons display
-        // 1. Clear the Module Metadata Cache for this specific module
-        $cache_file = "cache/themes/SuiteP/modules/{$this->module}/DetailView.tpl";
-        if (file_exists($cache_file)) {
-            unlink($cache_file);
-        }
-
-        // 2. Clear Smarty's compiled template cache
-        // This targets the PHP-compiled version of your .tpl file
-        if (isset($this->ss)) {
-            $this->ss->clear_compiled_tpl();
-        }
-        // END STIC Custom
 
         parent::preDisplay();
 
@@ -53,36 +40,9 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
         $this->dv->defs['templateMeta']['form']['buttons'][0] = self::editButton;
         $this->dv->defs['templateMeta']['form']['buttons'][1] = self::duplicateButton;
         $this->dv->defs['templateMeta']['form']['buttons'][2] = self::deleteButton;
-        // STIC Custom 20241105 EPS - Messages campaigns
-        // $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
-        if ($this->bean->campaign_type != 'Message' && $this->bean->campaign_type != 'NotifMsg'
-            && $this->bean->campaign_type != 'Notification') {
-                $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
-            }
-        else {
-            $this->dv->defs['templateMeta']['form']['buttons'][3] = array();
-        }
-        // $this->dv->defs['templateMeta']['form']>['buttons'][4] = self::testSendButton;
-        // $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
-
-        if ($this->bean->campaign_type == 'Message') {
-            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testMessagesSendButton;
-            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueMessagesSendButton;
-        }
-        else if ($this->bean->campaign_type == 'NotifMsg') {
-            $this->dv->defs['templateMeta']['form']['buttons'][4] = array();
-            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueMessagesSendButton;
-        }
-        else if ($this->bean->campaign_type == 'Notification') {
-            $this->dv->defs['templateMeta']['form']['buttons'][4] = array();
-            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
-        }
-        else {
-            $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testSendButton;
-            $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
-        }
-        // END STIC Custom
-        
+        $this->dv->defs['templateMeta']['form']['buttons'][3] = self::wizardButton;
+        $this->dv->defs['templateMeta']['form']['buttons'][4] = self::testSendButton;
+        $this->dv->defs['templateMeta']['form']['buttons'][5] = self::queueSendButton;
         $this->dv->defs['templateMeta']['form']['buttons'][6] = self::markAsSentButton;
         $this->dv->defs['templateMeta']['form']['buttons'][7] = self::viewChangesButton;
 
@@ -146,43 +106,6 @@ class CustomCampaignsViewDetail extends CampaignsViewDetail {
             ),
         )
     );
-    // STIC Custom 20241105 EPS - Messages campaigns
-    private const testMessagesSendButton = array(
-        'customCode' => '<input title="{$MOD.LBL_SEND_MESSAGES_TEST}"  class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_test_button" value="{$MOD.LBL_SEND_MESSAGES_TEST}">',
-        'sugar_html' => 
-        array (
-          'type' => 'input',
-          'value' => '{$MOD.LBL_SEND_MESSAGES_TEST}',
-          'htmlOptions' => 
-          array (
-            'type' => '{$ADD_BUTTON_STATE}',
-            'title' => '{$MOD.LBL_SEND_MESSAGES_TEST}',
-            'class' => 'button',
-            'onclick' => 'this.form = document.getElementById(\'formDetailView\'); this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);',
-            'name' => 'button',
-            'id' => 'send_test_button',
-          ),
-        )
-    );
-    private const queueMessagesSendButton = array(
-
-        'customCode' => '<input title="{$MOD.LBL_SEND_MESSAGES}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_emails_button" value="{$MOD.LBL_SEND_MESSAGES}">',
-        'sugar_html' => 
-        array (
-            'type' => 'input',
-            'value' => '{$MOD.LBL_SEND_MESSAGES}',
-            'htmlOptions' => 
-            array (
-            'type' => '{$ADD_BUTTON_STATE}',
-            'title' => '{$MOD.LBL_SEND_MESSAGES}',
-            'class' => 'button',
-            'onclick' => 'this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.module.value=\'stic_Message_Marketing\';this.form.action.value=\'selectMessageMarketing\';SUGAR.ajaxUI.submitForm(this.form);',
-            'name' => 'button',
-            'id' => 'send_emails_button',
-            ),
-        )
-    );
-    // END STIC Custom
     private const markAsSentButton = array(
         'customCode' => '<input title="{$MOD.LBL_MARK_AS_SENT}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'DetailView\';this.form.mode.value=\'set_target\';SUGAR.ajaxUI.submitForm(this.form);" type="{$TARGET_BUTTON_STATE}" name="button" id="mark_as_sent_button" value="{$MOD.LBL_MARK_AS_SENT}">',
         'sugar_html' => 
