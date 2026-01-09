@@ -129,8 +129,6 @@ $mod_strings = array (
 
   'LBL_WIZARD_SHOW_DEBUG_INFO' => 'Mostrar detalles',
 
-  'LBL_MODULE' => 'Módulo',
-  
   'LBL_BUTTON_ADD' => 'Añadir',
   'LBL_BUTTON_EDIT' => 'Editar',
   'LBL_BUTTON_DELETE' => 'Eliminar',
@@ -153,6 +151,9 @@ $mod_strings = array (
   'LBL_DATABLOCK_DETACHED' => 'Datos no enlazados',
   'LBL_DATABLOCK_ADD' => 'Añadir Bloque de datos',
   'LBL_DATABLOCK_NEW' => 'Nuevo Bloque de datos',
+  'LBL_DATABLOCK_MODULE' => 'Módulo',
+  'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
+
 
   'LBL_FIELDS' => 'Campos',
   'LBL_FIELD_FORM' => 'Campo en el formulario',
@@ -372,6 +373,11 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionando...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Apriete aquí para continuar',
 
+  'LBL_SHOW_MESSAGE_ACTION_TITLE' => 'Mostrar mensaje',
+  'LBL_SHOW_MESSAGE_ACTION_DESC' => 'Redirige el navegador del cliente a una página con un mensaje, manteniendo el estilo del forumulario',
+  'LBL_SHOW_MESSAGE_ACTION_TITLE_TEXT' => 'Título',
+  'LBL_SHOW_MESSAGE_ACTION_MESSAGE_TEXT' => 'Mensaje',
+    
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de respuestas',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página con el resumen de todas sus respuestas al formulario',
   

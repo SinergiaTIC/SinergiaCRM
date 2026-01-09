@@ -64,10 +64,7 @@ class ExampleAction extends HookActionDefinition
         $this->isActive = true;
 
         // Indicamos si el usuario puede seleccionar esta acción en el wizard al crear un formulario.
-        $this->isUserSelectable = true;
-
-        // Indicamos si la acción es una acción común (true) o avanzada (false).
-        $this->isCommon = true;
+        $this->isUserSelectable = false;
 
         // Indicamos la categoría de la acción (del listado stic_advanced_web_forms_action_category_list)
         $this->category = 'data';

@@ -36,7 +36,6 @@ class AddToTargetListAction extends HookBeanActionDefinition {
     public function __construct() {
         $this->isActive = true;
         $this->isUserSelectable = true;
-        $this->isCommon = true;
         $this->category = 'data';
         $this->baseLabel = 'LBL_ADD_TO_TARGET_LIST_ACTION';
     }

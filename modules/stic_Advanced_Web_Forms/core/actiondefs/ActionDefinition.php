@@ -43,7 +43,6 @@ abstract class ActionDefinition {
     public bool $isActive = false;
     public bool $isUserSelectable = true;
     public bool $isAutomatic = false;
-    public bool $isCommon = false;
    
     public string $category;
     public ActionScope $scope = ActionScope::FORM;

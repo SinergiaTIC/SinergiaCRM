@@ -37,7 +37,6 @@ class ActionDefinitionDTO {
     public bool $isActive;
     public bool $isUserSelectable;
     public bool $isAutomatic;
-    public bool $isCommon;
     public bool $isTerminal;
 
     public string $category;
@@ -63,7 +62,6 @@ class ActionDefinitionDTO {
         $this->isActive = $def->isActive;
         $this->isUserSelectable = $def->isUserSelectable;
         $this->isAutomatic = $def->isAutomatic;
-        $this->isCommon = $def->isCommon;
         $this->isTerminal = $def instanceof ITerminalAction;
 
         $this->category = $def->category;

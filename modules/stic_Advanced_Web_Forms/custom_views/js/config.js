@@ -51,14 +51,25 @@ class AWF_DataBlock {
   }
 
   /**
+   * Gets the complete field name in HTML for a given field
+   * Ex: "MyBlock.my_field" or "_detached.MyBlock.my_field"
+   * @param {AWF_Field} field
+   * @returns {string}
+   */
+  getFieldInputName(field) {
+    const prefix = field.type_field === 'unlinked' ? '_detached.' : '';
+    return `${prefix}${this.name}.${field.name}`;
+  }
+
+  /**
    * Gets the text to show in the description of this DataBlock
    * @returns {string}
    */
   getTextDescription() {
     if (this.module) {
-      return `${utils.translateForFieldLabel('LBL_MODULE')} ${this.getModuleInformation().text}`;
+      return `${utils.translateForFieldLabel('LBL_DATABLOCK_MODULE')} ${this.getModuleInformation().text} - ${utils.translateForFieldLabel('LBL_DATABLOCK_INTERNAL_NAME')} ${this.name}`;
     }
-    return utils.translate('LBL_RELATIONSHIP_NO_MODULE_RELATED');
+    return `${utils.translate('LBL_RELATIONSHIP_NO_MODULE_RELATED')} - ${utils.translateForFieldLabel('LBL_DATABLOCK_INTERNAL_NAME')} ${this.name}`;
   }
 
   getModuleText() {

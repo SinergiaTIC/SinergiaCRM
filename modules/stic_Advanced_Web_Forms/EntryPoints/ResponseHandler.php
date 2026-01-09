@@ -140,7 +140,7 @@ class AWF_ResponseHandler
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected and saved for Form ID: $formId");
             
             // Mostramos éxito genérico para engañar al bot
-            $this->renderGenericResponse($formConfig, 
+            AWF_Utils::renderGenericResponse($formConfig, 
                                          translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
                                          translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
             return; // Paramos: no procesamos más
@@ -150,7 +150,7 @@ class AWF_ResponseHandler
         if (!$isPublic) {
             $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
             $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-            $this->renderGenericResponse($formConfig, $title, $msg);
+            AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
 
@@ -179,16 +179,16 @@ class AWF_ResponseHandler
                     $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
                 } else {
                     $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Receipt flow in form. ID: $formId");
-                    $this->renderGenericResponse($formConfig, 
-                                                 translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'), 
-                                                 translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                    AWF_Utils::renderGenericResponse($formConfig, 
+                                                     translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'), 
+                                                     translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
                 }
             } else {
                 // Si no hay flujo de recibido, mostramos mensaje genérico
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
-                $this->renderGenericResponse($formConfig, 
-                                             translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'), 
-                                             translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                AWF_Utils::renderGenericResponse($formConfig, 
+                                                 translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'), 
+                                                 translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
             }
         } else {
             // Modo sync - Ejecutamos Flow 0: 'mainFlow' inmediatamente
@@ -231,19 +231,19 @@ class AWF_ResponseHandler
                 } else {
                     $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Main flow in form. ID: $formId");
                     if ($hasErrors) {
-                        $this->renderGenericResponse($formConfig, 
-                            translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                            translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                        AWF_Utils::renderGenericResponse($formConfig, 
+                                                         translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
+                                                         translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
                     } else {
-                        $this->renderGenericResponse($formConfig, 
-                            translate('LBL_MAIN_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                            translate('LBL_MAIN_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                        AWF_Utils::renderGenericResponse($formConfig, 
+                                                         translate('LBL_MAIN_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
+                                                         translate('LBL_MAIN_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
                     }
                 }
             } else {
                 // Si no hay flujo principal, mostramos mensaje genérico
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
-                $this->renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
+                AWF_Utils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
             }
         }
     }
@@ -288,54 +288,9 @@ class AWF_ResponseHandler
             }
             // Si todo falla mostramos error genérico
             if (!headers_sent()) {
-                $this->renderGenericResponse($context->formConfig, "Error", "Error processing terminal action.");
+                AWF_Utils::renderGenericResponse($context->formConfig, "Error", "Error processing terminal action.");
             }
         }
-    }
-
-    /**
-     * Renderiza una página HTML básica usando los estilos del formulario
-     */
-    private function renderGenericResponse(FormConfig $config, string $title, string $message)
-    {
-        if (ob_get_length()) {
-            ob_clean();
-        }
-        $theme = $config->layout->theme;
-        $fontFamily = $theme->font_family ?? 'sans-serif';
-        $bgColor = $theme->page_bg_color ?? '#f8f9fa';
-        $textColor = $theme->text_color ?? '#212529';
-        $formBg = $theme->form_bg_color ?? '#ffffff';
-        $primaryColor = $theme->primary_color ?? '#0d6efd';
-        $customCss = $config->layout->custom_css ?? '';
-        $customJs = $config->layout->custom_js ?? '';
-        
-        echo "
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>" . htmlspecialchars($title) . "</title>
-        <style>
-            body { font-family: {$fontFamily}; background-color: {$bgColor}; color: {$textColor}; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-            .message-card { background-color: {$formBg}; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; width: 90%; text-align: center; }
-            h1 { color: {$primaryColor}; margin-bottom: 20px; }
-            {$customCss}
-        </style>
-    </head>
-    <body>
-        <div class='message-card'>
-            <h1>" . htmlspecialchars($title) . "</h1>
-            <div>" . nl2br(htmlspecialchars($message)) . "</div>
-        </div>";
-        if (!empty($config->layout->custom_js)) { 
-            echo "<script>" . $config->layout->custom_js . "</script>"; 
-        }
-        echo "
-    </body>
-</html>";
-        
-        sugar_cleanup(true);
     }
 
     private function terminateRawError($msg) {
@@ -364,9 +319,9 @@ class AWF_ResponseHandler
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
-            $this->renderGenericResponse($formConfig, 
-                                         translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                                         translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_Advanced_Web_Forms_Responses'));
+            AWF_Utils::renderGenericResponse($formConfig, 
+                                             translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_Advanced_Web_Forms_Responses'),
+                                             translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_Advanced_Web_Forms_Responses'));
         } else {
             $this->terminateRawError("This response has already been submitted.");
         }

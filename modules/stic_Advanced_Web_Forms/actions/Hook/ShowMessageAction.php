@@ -28,20 +28,20 @@ if (!defined('sugarEntry') || !sugarEntry) {
 include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 
 /**
- * RedirectSummaryPageAction
+ * ShowMessageAction
  *
- * Acción terminal que redirige el navegador del usuario a una página con el resumen de los datos del forumulario
+ * Acción terminal que redirige el navegador del usuario a una página con un mensaje, manteniendo el estilo del forumulario
  *
  * Implementa ITerminalAction para parar la ejecución el flujo
  */
-class RedirectSummaryPageAction extends HookActionDefinition implements ITerminalAction
+class ShowMessageAction extends HookActionDefinition implements ITerminalAction
 {
     public function __construct()
     {
         $this->isActive = true;
         $this->isUserSelectable = true;
         $this->category = 'navigation';
-        $this->baseLabel = 'LBL_REDIRECT_SUMMARY_PAGE_ACTION';
+        $this->baseLabel = 'LBL_SHOW_MESSAGE_ACTION';
     }
 
     /**
@@ -49,11 +49,27 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
      */
     public function getParameters(): array
     {
-        return [];
+        $paramTitle = new ActionParameterDefinition();
+        $paramTitle->name = 'title';
+        $paramTitle->text = $this->translate('TITLE_TEXT');
+        $paramTitle->defaultValue = translate('LBL_MAIN_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
+        $paramTitle->type = ActionParameterType::VALUE;
+        $paramTitle->dataType = ActionDataType::TEXT;
+        $paramTitle->required = true;
+
+        $paramBody = new ActionParameterDefinition();
+        $paramBody->name = 'message';
+        $paramBody->text = $this->translate('MESSAGE_TEXT');
+        $paramBody->defaultValue = translate('LBL_MAIN_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses');                                                     
+        $paramBody->type = ActionParameterType::VALUE;
+        $paramBody->dataType = ActionDataType::TEXTAREA; 
+        $paramBody->required = true;
+
+        return [$paramTitle, $paramBody];
     }
 
     /**
-     * Ejecuta la lógica de la redirección.
+     * Ejecuta la lógica de la redirección a página con el mensaje.
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
@@ -69,6 +85,9 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
         // Evitar mostrar nuevos errores o warnings
         ini_set('display_errors', 0);
         error_reporting(0);
+
+        $title = $actionConfig->getResolvedParameter('title');
+        $message = $actionConfig->getResolvedParameter('message');
 
         $summaryHtml = AWF_Utils::generateSummaryHtml($context);
 

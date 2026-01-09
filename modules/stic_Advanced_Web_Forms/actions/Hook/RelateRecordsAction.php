@@ -37,7 +37,6 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $this->isActive = true;
         $this->isUserSelectable = false; // El usuario no puede seleccionar esta acción manualmente
         $this->isAutomatic = true;       // La acción se genera automáticamente por el sistema
-        $this->isCommon = true;
         $this->category = 'data';
         $this->baseLabel = 'LBL_RELATE_RECORDS_ACTION';
     }

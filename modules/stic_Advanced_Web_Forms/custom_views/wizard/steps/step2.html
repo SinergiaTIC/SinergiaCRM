@@ -17,7 +17,7 @@
             <form id="newDataBlockModalForm">
               <div class="row align-items-end">
                 <!-- Module -->
-                <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
+                <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_DATABLOCK_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
                 <!-- Data Block name -->
                 <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_DATABLOCK_NEW" 
                                  x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
@@ -130,6 +130,7 @@
                           <td x-show="canShowFieldColumn('text_original')">
                             <i x-show="field?.type_field == 'unlinked'" x-text="'[ ' + field.text_original +' ]'"></i>
                             <div x-show="field?.type_field != 'unlinked'" x-text="field?.text_original"></div>
+                            <div class="text-muted small" x-text="item.getFieldInputName(field)"></div>
                           </td>
                           <!-- Label -->
                           <td x-show="canShowFieldColumn('label')">

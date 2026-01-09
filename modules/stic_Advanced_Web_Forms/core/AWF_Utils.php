@@ -287,6 +287,58 @@ class AWF_Utils {
     }
 
     /**
+     * Renderiza una página HTML básica usando los estilos del formulario
+     */
+    public static function renderGenericResponse(FormConfig $config, string $title, string $message)
+    {
+        // Limpiar el buffer de salida para eliminar warnings o errores previos
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        // Evitar mostrar nuevos errores o warnings
+        ini_set('display_errors', 0);
+        error_reporting(0);
+        
+        $theme = $config->layout->theme;
+        $fontFamily = $theme->font_family ?? 'sans-serif';
+        $bgColor = $theme->page_bg_color ?? '#f8f9fa';
+        $textColor = $theme->text_color ?? '#212529';
+        $formBg = $theme->form_bg_color ?? '#ffffff';
+        $primaryColor = $theme->primary_color ?? '#0d6efd';
+        $customCss = $config->layout->custom_css ?? '';
+        $customJs = $config->layout->custom_js ?? '';
+        
+        echo "
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>" . htmlspecialchars($title) . "</title>
+        <style>
+            body { font-family: {$fontFamily}; background-color: {$bgColor}; color: {$textColor}; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+            .message-card { background-color: {$formBg}; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; width: 90%; text-align: center; }
+            h1 { color: {$primaryColor}; margin-bottom: 20px; }
+            {$customCss}
+        </style>
+    </head>
+    <body>
+        <div class='message-card'>
+            <h1>" . htmlspecialchars($title) . "</h1>
+            <div>" . nl2br(htmlspecialchars($message)) . "</div>
+        </div>";
+        if (!empty($config->layout->custom_js)) { 
+            echo "<script>" . $config->layout->custom_js . "</script>"; 
+        }
+        echo "
+    </body>
+</html>";
+        
+        sugar_cleanup(true);
+    }
+    
+    
+    /**
      * Método para enviar un correo basado en una plantilla
      *
      * @param string $toAddress Dirección de correo del destinatario.

@@ -894,7 +894,7 @@ class WizardStep2 {
       },
 
       canShowFieldColumn(column) {
-        if (column == 'label' || column == 'type_in_form' || column == 'subtype_in_form' ||
+        if (column == 'label' || column == 'type_in_form' || column == 'subtype_in_form' || 
             column == 'value_options' || column == 'required_in_form') {
           return this.fieldTabSelected != 'hidden';
         } 
