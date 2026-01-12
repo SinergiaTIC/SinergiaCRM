@@ -652,6 +652,10 @@ $sugar_config = array(
     'stic_maintenance_mode_enabled' => false,
     // END STIC
 
+    // STIC-Custom 20251222 AAM - Adding maintenance mode
+    'stic_maintenance_mode_enabled' => false,
+    // END STIC
+
     // STIC Custom 20241016 ART - Tracker prune interval for the Scheduler
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
     // Delete from the tracker table the records of the days prior to the ones configured in config
