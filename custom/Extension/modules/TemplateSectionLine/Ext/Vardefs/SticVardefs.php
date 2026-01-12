@@ -163,5 +163,3 @@ $dictionary["TemplateSectionLine"]['relationships']['templateSectionLine_assigne
 );
 
 $dictionary["TemplateSectionLine"]['fields']['description']['editor'] = 'html';
-$dictionary["TemplateSectionLine"]['fields']['thumbnail']['default'] = 'upload/';
-

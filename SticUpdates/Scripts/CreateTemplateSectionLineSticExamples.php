@@ -368,9 +368,9 @@ if ($db instanceof DBManager)
     while ($row = $db->fetchByAssoc($res)) {
         $insertQuery = 'REPLACE INTO templatesectionline_cstm (id_c, htmlcode_c) VALUES("' . $row['id'] . '", "' . $row['description'] . '")';
         if ($db->query($insertQuery)) {
-            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $rows['id'] . "' has been copied in the htmlcode_c field.");
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has been copied in the htmlcode_c field.");
         } else {
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $rows['id'] . "' has not been copied in the htmlcode_c field.");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has not been copied in the htmlcode_c field.");
         }        
     }
 } else {
