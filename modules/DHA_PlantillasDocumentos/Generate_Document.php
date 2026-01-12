@@ -932,11 +932,11 @@ class Generate_Document {
             if (empty($valor_sin_formatear)) {
                $valor_formateado = ''; 
             } else if(true === $valor_sin_formatear || 1 == $valor_sin_formatear) {
-               $valor_formateado = $this->idiomaBool_1; //$app_strings['LBL_YES'];
+               $valor_formateado = $this->idiomaBool_1;
             } else if(in_array(strval($valor_sin_formatear), $boolean_false_values)) {
-               $valor_formateado = $this->idiomaBool_0; //$app_strings['LBL_NO'];
+               $valor_formateado = $this->idiomaBool_0;
             } else {
-               $valor_formateado = $this->idiomaBool_1;  //$app_strings['LBL_YES'];
+               $valor_formateado = $this->idiomaBool_1;
             }
             break;
             
