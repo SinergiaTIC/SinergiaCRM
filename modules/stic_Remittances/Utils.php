@@ -167,6 +167,12 @@ class stic_RemittancesUtils
             }
         }
 
+        // Leave empty if no other organizations defined
+        if (count($dynamic_issuing_organization_list) == 2 && $firstEmpty) {
+            $dynamic_issuing_organization_list = array();
+        }
+
+
         // Set Organization names to dynamic list
         $GLOBALS['app_list_strings']['dynamic_issuing_organization_list'] = $dynamic_issuing_organization_list;
     }

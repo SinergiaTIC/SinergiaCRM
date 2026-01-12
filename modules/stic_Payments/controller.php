@@ -36,9 +36,12 @@ class stic_PaymentsController extends SugarController
         $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
         include_once "modules/stic_Remittances/Utils.php";
         stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);
-        if (!empty($_REQUEST['issuing_organization_selected']) || (count($orgKeyArray) == 1 && $orgKeyArray[0] != '')) {
+        if (count($app_list_strings['dynamic_issuing_organization_list']) < 2 
+            || !empty($_REQUEST['issuing_organization_selected']) 
+            || (count($orgKeyArray) == 1 && $orgKeyArray[0] != '')
+        ){
             // If an issuing organization is already selected or the user has only one, proceed to the wizard
-            $_REQUEST['issuing_organization_selected'] = !empty($_REQUEST['issuing_organization_selected']) ? $_REQUEST['issuing_organization_selected'] : $orgKeyArray[0];
+            $_REQUEST['issuing_organization_selected'] = !empty($_REQUEST['issuing_organization_selected']) ? $_REQUEST['issuing_organization_selected'] : ($orgKeyArray[0] ?? '');
             $this->action_model182Wizard();
         } else {
             // The user has multiple organizations and no selection; show the organization selection view
