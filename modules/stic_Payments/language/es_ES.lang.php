@@ -98,6 +98,7 @@ $mod_strings = array(
     'LBL_RETURN_PANEL' => 'Devolución',
     'LBL_CALL_SUBJECT' => 'Gestión del impago',
     'LBL_M182_SELECT_ISSUING_ORGANIZATION' => 'Seleccione la organización para la que desea generar el Modelo 182',
+    'LBL_M182_ISSUING_ORGANIZATIONS_EMPTY_FOR_USER' => 'No se han encontrado organizaciones emisoras asignadas a su usuario. Por favor, contacte con el administrador del sistema.',
     'LBL_M182_ISSUING_ORGANIZATION_SELECTED' => 'Organización emisora seleccionada',
     'LBL_M182_SELECT_ISSUING_ORGANIZATION_NEXT' => 'Siguiente',
     'LBL_M182_TITLE' => 'Modelo 182',

@@ -31,6 +31,10 @@
     </tr>
 </table>
 
+{if $ISSUING_ORGANIZATIONS_EMPTY_FOR_USER == 1} <p style="text-align:left;color:#d5061e;" class="wizard_info letter13">{$MOD.LBL_M182_ISSUING_ORGANIZATIONS_EMPTY_FOR_USER}</p>
+{else} 
+
+
 <p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_SELECT_ISSUING_ORGANIZATION}</p>
 
 <br>
@@ -53,3 +57,4 @@
         </tr>
     </table>
 </form>
+{/if}

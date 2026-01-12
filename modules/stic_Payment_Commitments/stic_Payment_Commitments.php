@@ -64,6 +64,14 @@ class stic_Payment_Commitments extends Basic
     public $banking_concept;
     public $destination;
 	
+    public function __construct()
+    {
+        global $app_list_strings;
+        parent::__construct();
+        require_once 'modules/stic_Payments/Utils.php';
+        $app_list_strings['stic_payments_types_list'] = stic_PaymentsUtils::generatePaymentTypeOptionsFromUser();
+    }
+    
     public function bean_implements($interface)
     {
         switch($interface)

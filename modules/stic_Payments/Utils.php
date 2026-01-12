@@ -299,10 +299,10 @@ class stic_PaymentsUtils
      * Generate payment type options based on the current user's issuing organization settings
      */
     public static function generatePaymentTypeOptionsFromUser() {
-        global $app_list_strings;
+        global $app_list_strings, $current_user;
         require_once 'modules/stic_Payments/Utils.php';
         $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
-        if (count($orgKeyArray) == 0 || (count($orgKeyArray) == 1 && $orgKeyArray[0] === '')) {
+        if (count($orgKeyArray) == 0 || (count($orgKeyArray) == 1 && $orgKeyArray[0] === '') || $current_user->is_admin) {
             return $app_list_strings['stic_payments_types_list'];
         }
             

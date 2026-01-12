@@ -35,6 +35,7 @@ class stic_PaymentsViewM182selectissuingorganization extends SugarView {
         parent::display();
         $this->ss->assign("ORGS_KEYS", $this->view_object_map['ISSUING_ORGANIZATIONS_IDS'] ?? null);
         $this->ss->assign("ORGS_LABELS", $this->view_object_map['ISSUING_ORGANIZATIONS_LABELS'] ?? null);
+        $this->ss->assign("ISSUING_ORGANIZATIONS_EMPTY_FOR_USER", $this->view_object_map['ISSUING_ORGANIZATIONS_EMPTY_FOR_USER'] ?? null);
         $this->ss->display('modules/stic_Payments/tpls/M182SelectIssuingOrganization.tpl');
     }
 

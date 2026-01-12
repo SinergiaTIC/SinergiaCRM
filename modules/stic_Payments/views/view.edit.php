@@ -30,11 +30,7 @@ class stic_PaymentsViewEdit extends ViewEdit
 
     public function __construct()
     {
-        global $app_list_strings;
-        require_once 'modules/stic_Payments/Utils.php';
-        $app_list_strings['stic_payments_types_list'] = stic_PaymentsUtils::generatePaymentTypeOptionsFromUser();
         parent::__construct();
-
         $this->useForSubpanel = true;
         $this->useModuleQuickCreateTemplate = true;
     }

@@ -30,13 +30,13 @@ class stic_PaymentsController extends SugarController
      */
     public function action_m182SelectIssuingOrganization()
     {
-        global $app_list_strings;
+        global $app_list_strings, $mod_strings;
         // Determine issuing organizations available to the current user and populate the dynamic list
         require_once 'modules/stic_Payments/Utils.php';
         $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
         include_once "modules/stic_Remittances/Utils.php";
         stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);
-        if (!empty($_REQUEST['issuing_organization_selected']) || count($orgKeyArray) == 1) {
+        if (!empty($_REQUEST['issuing_organization_selected']) || (count($orgKeyArray) == 1 && $orgKeyArray[0] != '')) {
             // If an issuing organization is already selected or the user has only one, proceed to the wizard
             $_REQUEST['issuing_organization_selected'] = !empty($_REQUEST['issuing_organization_selected']) ? $_REQUEST['issuing_organization_selected'] : $orgKeyArray[0];
             $this->action_model182Wizard();
@@ -44,15 +44,10 @@ class stic_PaymentsController extends SugarController
             // The user has multiple organizations and no selection; show the organization selection view
             $orgLabelArray = array();
             // If the user has no assigned organizations but the system provides multiple dynamic organizations,
-            // present all available issuing organizations to choose from. 
-            if (count($orgKeyArray) == 0 && count($app_list_strings['dynamic_issuing_organization_list']) > 2) {
-                foreach ($app_list_strings['dynamic_issuing_organization_list'] as $key => $value) {
-                    if ($key === '') {
-                        continue;
-                    }
-                    $orgLabelArray[] = $value;
-                    $orgKeyArray[] = $key;
-                }
+            // display error. 
+            if ((count($orgKeyArray) == 0 || (count($orgKeyArray) == 1 && $orgKeyArray[0] != '')) && count($app_list_strings['dynamic_issuing_organization_list']) > 2) {
+                $this->view = "m182selectissuingorganization";
+                $this->view_object_map['ISSUING_ORGANIZATIONS_EMPTY_FOR_USER'] = true;
             } else {
                 foreach ($orgKeyArray as $value) {
                     // $orgKeyClean = str_replace('_', '', $value);
