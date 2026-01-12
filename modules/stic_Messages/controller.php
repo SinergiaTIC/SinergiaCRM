@@ -92,13 +92,52 @@ class stic_MessagesController extends SugarController
                 $this->bean->phone = $phone;
                 $this->bean->save(!empty($this->bean->notify_on_save));  
             }, $idsArray, $phonesArray);
-            header('Content-Type: application/json');
-            echo json_encode(array('success' =>  true, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
-            exit;
+                // If mass send and type is WhatsAppWeb, return an open_url built from the phones/message
+                if (isset($_REQUEST['type']) && $_REQUEST['type'] === 'WhatsAppWeb') {
+                    $phonesRaw = isset($_REQUEST['phone']) ? $_REQUEST['phone'] : '';
+                    $phonesList = $phonesRaw !== '' ? explode(',', $phonesRaw) : array();
+                    $openUrls = array();
+                    $text = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
+                    foreach ($phonesList as $p) {
+                        $p = trim($p);
+                        if ($p === '') continue;
+                        $phoneClean = preg_replace('/\D+/', '', $p);
+                        if ($phoneClean === '') continue;
+                        $openUrls[] = 'https://wa.me/' . $phoneClean . '?text=' . rawurlencode($text);
+                    }
+
+                    // Clear accidental output and return JSON with open_urls (one per phone)
+                    while (ob_get_level()) { ob_end_clean(); }
+                    header('Content-Type: application/json');
+                    echo json_encode(array('success' =>  true, 'open_urls' => $openUrls, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_WHATSAPP_WEB_SENT']));
+                    exit;
+                }
+
+                // Clear any accidental output (warnings, HTML, etc.) so the response is pure JSON
+                while (ob_get_level()) { ob_end_clean(); }
+                header('Content-Type: application/json');
+                echo json_encode(array('success' =>  true, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
+                exit;
         }
         else {
             $oldStatus = $this->bean->fetched_row['status']??'';
             $id = $this->bean->save(!empty($this->bean->notify_on_save));
+
+            // Si es WhatsApp Web devolvemos la URL para que el cliente la abra
+            if (isset($this->bean->type) && $this->bean->type === 'WhatsAppWeb') {
+                // Normalizar teléfono a solo dígitos (wa.me espera números en formato internacional sin signos)
+                $phone = isset($this->bean->phone) ? preg_replace('/\D+/', '', $this->bean->phone) : '';
+                $text = isset($this->bean->message) ? $this->bean->message : '';
+                $waUrl = 'https://wa.me/' . $phone . '?text=' . rawurlencode($text);
+                // Clear output buffer before returning JSON to avoid malformed responses
+                while (ob_get_level()) { ob_end_clean(); }
+                header('Content-Type: application/json');
+                echo json_encode(array('success' => true, 'open_url' => $waUrl, 'id' => $id));
+                exit;
+            }
+
+            // Ensure response is clean JSON
+            while (ob_get_level()) { ob_end_clean(); }
             header('Content-Type: application/json');
             switch ($this->bean->status) {
                 case 'sent':
