@@ -172,7 +172,6 @@ class stic_RemittancesUtils
             $dynamic_issuing_organization_list = array();
         }
 
-
         // Set Organization names to dynamic list
         $GLOBALS['app_list_strings']['dynamic_issuing_organization_list'] = $dynamic_issuing_organization_list;
     }
