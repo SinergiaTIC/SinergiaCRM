@@ -60,3 +60,9 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = 'Are you sure you want to delete this 
 // Strings Grants
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Grants';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centers';
+
+// Strings for Allocation Proposals relationship
+$mod_strings['LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Allocation Proposals';
+
+// Strings for Allocations relationship
+$mod_strings['LBL_PROJECT_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Allocations';

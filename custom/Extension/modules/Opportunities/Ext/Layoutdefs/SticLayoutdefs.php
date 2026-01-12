@@ -105,4 +105,76 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_campaigns_notification'] =
         ),
     ),
 );
+
+// Justification Conditions subpanel
+$layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justification_conditions'] = array (
+    'order' => 100,
+    'module' => 'stic_Justification_Conditions',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'title_key' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE',
+    'get_subpanel_data' => 'opportunities_stic_justification_conditions',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+    ),
+);
+
+// Justifications subpanel
+$layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justifications'] = array (
+    'order' => 100,
+    'module' => 'stic_Justifications',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'title_key' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE',
+    'get_subpanel_data' => 'opportunities_stic_justifications',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+    ),
+);
+
+// Allocation Proposals subpanel
+$layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_allocation_proposals'] = array (
+    'order' => 100,
+    'module' => 'stic_Allocation_Proposals',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_entered',
+    'title_key' => 'LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE',
+    'get_subpanel_data' => 'opportunities_stic_allocation_proposals',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+    ),
+);
+
+// Allocations subpanel
+$layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_allocations'] = array (
+    'order' => 100,
+    'module' => 'stic_Allocations',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_entered',
+    'title_key' => 'LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+    'get_subpanel_data' => 'opportunities_stic_allocations',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+    ),
+);
   

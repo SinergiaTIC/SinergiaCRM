@@ -41,6 +41,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
+require_once 'SticInclude/Utils.php';
+
 // Opportunity is used to store customer information.
 #[\AllowDynamicProperties]
 class Opportunity extends SugarBean
@@ -369,9 +371,41 @@ class Opportunity extends SugarBean
 
         require_once('modules/Opportunities/SaveOverload.php');
 
+        $tempFetchedRow = $this->fetched_row ?? null;
+
         perform_save($this);
-        return parent::save($check_notify);
+        // STIC-Custom 20251222 EPS - Imputación y Justificación
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/869
+        // return parent::save($check_notify);
+        $oldAmount = SticUtils::unformatDecimal($tempFetchedRow['stic_amount_awarded_c'] ?? null);
+        $newAmount = SticUtils::unformatDecimal($this->stic_amount_awarded_c);
+        if ($oldAmount !== null && $newAmount !== $oldAmount) {
+            $this->justified_percentage_c = formatDecimalInConfigSettings(($this->stic_amount_awarded_c > 0) ? (SticUtils::unformatDecimal($this->justified_amount_c) / $newAmount) * 100 : 0, true);
+        }
+
+        parent::save($check_notify);
+
+        if ($this->justificationDatesChanged($tempFetchedRow)) {
+            // Update linked justification conditions
+            require_once 'modules/stic_Justification_Conditions/Utils.php';
+            stic_Justification_ConditionsUtils::updateJustificationsForOpportunity($this);
+        }
+
+        return true;
+        // END STIC
     }
+
+    // STIC-Custom 20251222 EPS - Imputación y Justificación
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/869
+    protected function justificationDatesChanged($tempFetchedRow) {
+        if (!$tempFetchedRow) {
+            return false; // New record, so dates are considered unchanged
+        }
+        $startDateChanged = $this->stic_start_date_c !== $tempFetchedRow['stic_start_date_c'];
+        $endDateChanged = $this->stic_end_date_c !== $tempFetchedRow['stic_end_date_c'];
+        return $startDateChanged || $endDateChanged;
+    }
+    // END STIC
 
     public function save_relationship_changes($is_update, $exclude = array())
     {

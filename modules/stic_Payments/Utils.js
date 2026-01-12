@@ -94,8 +94,31 @@ switch (viewType()) {
 
     setAutofill(["name", "mandate"]);
 
+    checkBlockedPayment();
+    // add observer for blocked changes
+    $("form").on("change", "#blocked", function () {
+      checkBlockedPayment();
+    });
+
+    checkAmountInEditView();
+
     break;
   case "detail":
+    checkPercentagesInDetailView();    
+  
+    checkBlockedPaymentInDetailView();
+    // add observer for [field='blocked'] changes
+    const targetNode = document.querySelector('[field="blocked"]');
+    var observer = new MutationObserver(function(mutations) {
+      checkBlockedPaymentInDetailView();
+    });
+    observer.observe(targetNode, { childList: true, subtree: true});
+
+    checkAmountInDetailView();
+      $("#allocated").on("change", function() {
+        checkAmountInDetailView();
+    });    
+
     break;
 
   case "list":
@@ -114,6 +137,110 @@ switch (viewType()) {
   default:
     break;
 }
+
+function checkAmountInEditView() {
+  $("#amount").on('change', function() {
+    var allocated = $("#allocated").is(":checked");
+    if(allocated) {
+      let alertMessage = SUGAR.language.get("stic_Payments", "LBL_ALLOCATED_AMOUNT_ALERT");
+      alert(alertMessage);
+    }
+  });
+  
+}
+
+function addAmountInEditViewAlert() {
+  let amount =  $("#amount").val().replace(/\n/g, "");
+  let alertMessage = SUGAR.language.get("stic_Payments", "LBL_ALLOCATED_AMOUNT_ALERT").replace("{amount}", amount);
+  let alertDiv = `<div class="alert alert-info" role="alert" id="allocatedAmountAlertEditView" style="margin-top:10px;">${alertMessage}</div>`;
+console.log('pppppp');
+
+
+}
+
+function checkAmountInDetailView() {
+  let amount =  $("#amount").text().replace(/\n/g, "");
+
+  var allocated = $("[field='allocated'] input").is(":checked");
+  if (allocated) {
+    addAmountInDetailViewAlert();
+  }
+}
+
+function addAmountInDetailViewAlert() {
+  let alertMessage = SUGAR.language.get("stic_Payments", "LBL_ALLOCATED_AMOUNT_ALERT");
+  let alertDiv = `<div class="alert alert-info" role="alert" id="allocatedAmountAlertDetailView" style="margin-top:10px;">${alertMessage}</div>`;
+  // if ($("#allocatedAmountAlertDetailView").length == 0) {
+  //   $("#detail_header").after(alertDiv);
+  // }
+  const targetNode = document.querySelector('[field="amount"]');
+  var observer = new MutationObserver(function(mutations) {
+    debugger;
+    // check if any added node is a form
+    mutations.forEach(function(mutation) {
+      mutation.addedNodes.forEach(function(addedNode) {
+        if (addedNode.nodeName === 'FORM') { // Check if it's an element node
+          alert(alertMessage);
+        }
+      });
+    });
+  });
+  observer.observe(targetNode, { childList: true, subtree: true});
+}
+
+function checkPercentagesInDetailView() {
+  let allocatedPercentage =  $("#allocated_percentage").text().replace(/\n/g, "");
+  let justifiedPercentage =  $("#justified_percentage").text().replace(/\n/g, "");
+
+  if (allocatedPercentage > 100) {
+    $("#allocated_percentage").css("color", "red");
+    var iconUrl = "https://cdn-icons-png.flaticon.com/512/3253/3253156.png";
+
+    // Create the image HTML with inline styles for size and spacing
+    var iconHtml = '<img src="' + iconUrl + '" style="width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" />';
+
+    // Append it to the span
+    $('#allocated_percentage').prepend(iconHtml);
+  }
+  if (justifiedPercentage > 100) {
+    $("#justified_percentage").css("color", "red");
+    var iconUrl = "https://cdn-icons-png.flaticon.com/512/3253/3253156.png";
+
+    // Create the image HTML with inline styles for size and spacing
+    var iconHtml = '<img src="' + iconUrl + '" style="width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" />';
+
+    // Append it to the span
+    $('#justified_percentage').prepend(iconHtml);
+  }
+}
+
+
+function checkBlockedPaymentInDetailView() {
+  var blocked = $("[field='blocked'] input").is(":checked")
+  if (blocked) {
+    $(".inlineEdit").css("pointer-events", "none");
+    $("[field='blocked']").css("pointer-events", "auto");
+  }
+  else {
+    $(".inlineEdit").css("pointer-events", "auto");
+
+  }
+}
+function checkBlockedPayment() {
+  var blocked = $("#blocked").is(":checked");
+  if (blocked) {
+    $(".edit-view-row-item input").prop('disabled', true); // text, decimals, checks, etc.
+    $(".edit-view-row-item select").prop('disabled', true); // desplegables
+    $("button[type='button']:not(.saveAndContinue)").prop('disabled', true); // buttons except "Save and Continue Edit"
+    $("#blocked").prop('disabled', false); // keep blocked enabled
+  }
+  else {
+    $(".edit-view-row-item input").prop('disabled', false);
+    $(".edit-view-row-item select").prop('disabled', false);
+    $("button[type='button']").prop('disabled', false);
+  }
+}
+
 
 function setReturnAddPaymentsToRemittance(popupReplyData) {
   SUGAR.ajaxUI.loadingPanel.hide();

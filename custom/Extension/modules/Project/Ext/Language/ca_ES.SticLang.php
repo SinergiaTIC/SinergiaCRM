@@ -60,3 +60,9 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = 'Segur que voleu esborrar aquesta tasc
 // Cadenes adaptades Ajuts
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centres';
+
+// Cadenes per a la relació amb Propostes d'Imputació
+$mod_strings['LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Propostes d\'Imputació';
+
+// Cadenes per a la relació amb Imputacions
+$mod_strings['LBL_PROJECT_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Imputacions';

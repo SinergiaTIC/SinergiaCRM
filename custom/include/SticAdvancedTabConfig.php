@@ -292,5 +292,25 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 ),
             ),
         ),
+        8 => array(
+            'id' => 'LBL_GROUPTAB_ALLOCATIONS',
+            'children' => array(
+                0 => array(
+                    'id' => 'stic_Ledger_Accounts',
+                ),
+                1 => array(
+                    'id' => 'stic_Allocation_Proposals',
+                ),
+                2 => array(
+                    'id' => 'stic_Allocations',
+                ),
+                3 => array(
+                    'id' => 'stic_Justification_Conditions',
+                ),
+                4 => array(
+                    'id' => 'stic_Justifications',
+                ),
+            ),
+        )
     );
 }

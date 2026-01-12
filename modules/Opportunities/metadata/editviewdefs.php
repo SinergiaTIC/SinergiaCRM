@@ -121,6 +121,11 @@ $viewdefs['Opportunities']['EditView'] = array (
         'newTab' => true,
         'panelDefault' => 'expanded',
       ),
+      'LBL_JUSTIFICATION' => 
+      array (
+        'newTab' => true,
+        'panelDefault' => 'expanded',
+      ),
     ),
   ),
   'panels' => 
@@ -255,6 +260,24 @@ $viewdefs['Opportunities']['EditView'] = array (
       ),      
       // END STIC-Custom JBL
     ),
+    // STIC-Custom 20251222 EPS - Imputación y Justificación
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/869
+    'LBL_JUSTIFICATION' => 
+    array (
+      array (
+        0 => 
+        array (
+          'name' => 'stic_start_date_c',
+          'label' => 'LBL_START_DATE',
+        ),
+        1 => 
+        array (
+          'name' => 'stic_end_date_c',
+          'label' => 'LBL_END_DATE',
+        ),
+      ),
+    ),
+    // END STIC
   ),
 );
 // END STIC-Custom
