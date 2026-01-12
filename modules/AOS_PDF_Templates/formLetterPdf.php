@@ -60,7 +60,26 @@ if (isset($_REQUEST['current_post']) && $_REQUEST['current_post'] != '') {
     $mass = new MassUpdate();
     $mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_post']);
     $ret_array = create_export_query_relate_link_patch($_REQUEST['module'], $mass->searchFields, $mass->where_clauses);
-    $query = $bean->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
+
+    // STIC-Custom 20260112 EPS - Adding SG check as in export_utils.php
+    // $query = $bean->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
+    $where = $ret_array['where'];
+
+    if ($bean->bean_implements('ACL')) {
+        if (!ACLController::checkAccess($bean->module_dir, 'export', true)) {
+            ACLController::displayNoAccess();
+            sugar_die('');
+        }
+
+        $accessWhere = $bean->buildAccessWhere('export');
+        if (!empty($accessWhere)) {
+            $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
+        }
+    }
+    
+    
+    $query = $bean->create_export_query($order_by, $where, $ret_array['join']);
+    // END STIC
     $result = DBManagerFactory::getInstance()->query($query, true);
     $uids = array();
     while ($val = DBManagerFactory::getInstance()->fetchByAssoc($result, false)) {
