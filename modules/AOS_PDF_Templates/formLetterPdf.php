@@ -62,6 +62,7 @@ if (isset($_REQUEST['current_post']) && $_REQUEST['current_post'] != '') {
     $ret_array = create_export_query_relate_link_patch($_REQUEST['module'], $mass->searchFields, $mass->where_clauses);
 
     // STIC-Custom 20260112 EPS - Adding SG check as in export_utils.php
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/928
     // $query = $bean->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
     $where = $ret_array['where'];
 
