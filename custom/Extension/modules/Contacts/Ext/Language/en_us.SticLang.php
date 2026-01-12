@@ -181,3 +181,7 @@ $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Skills';
 $mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Prospect List';
 $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Current project';
 
+// Private Area strings
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Private Area User';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private Area Password';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable Private Area';
