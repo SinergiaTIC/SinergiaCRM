@@ -63,9 +63,7 @@
 {if $VAL.MISSING_SETTINGS|@count gt 0 || $VAL.MISSING_FIELDS|@count gt 0 }
 
     {if $VAL.MISSING_SETTINGS|@count gt 0}
-    <p style="text-align:left;color:#d5061e;font-weight:bold;">
-    {$MOD.LBL_M182_MISSING_SETTINGS}:
-    <br>
+    <p style="text-align:left;color:#d5061e;font-weight:bold;" class="wizard_info letter13">{$MOD.LBL_M182_MISSING_SETTINGS}:</p>
     <ul>
         {foreach from=$VAL.MISSING_SETTINGS item=it}
         <li>{$it}</li>
@@ -76,9 +74,7 @@
         <br>
     {/if}
     {if $VAL.MISSING_FIELDS|@count gt 0}
-    <p style="text-align:left;color:#d5061e;font-weight:bold;">
-    {$MOD.LBL_M182_MISSING_FIELDS}:
-    <br>
+    <p style="text-align:left;color:#d5061e;font-weight:bold;">{$MOD.LBL_M182_MISSING_FIELDS}:</p>
     <ul>
         {foreach from=$VAL.MISSING_FIELDS item=it}
         <li>{$it}</li>
