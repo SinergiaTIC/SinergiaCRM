@@ -40,8 +40,8 @@
     <input type="hidden" id="action" name="action" value="M182selectissuingorganization">
 
     <table border="0" cellspacing="5">
-        <br>
         <p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_SELECT_ISSUING_ORGANIZATION}</p>
+        <br>
         <select required id="issuing_organization_selected" name="issuing_organization_selected">
             {html_options values=$ORGS_KEYS output=$ORGS_LABELS}
         </select>
