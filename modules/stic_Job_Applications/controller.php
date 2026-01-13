@@ -41,6 +41,17 @@ class stic_Job_ApplicationsController extends SugarController
             if (!empty($retArray['where'])) {
                 $where = " AND " . $retArray['where'];
             }
+
+            $focus = BeanFactory::newBean('Contacts');
+            if ($focus->bean_implements('ACL')) {
+                if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
+                    ACLController::displayNoAccess();
+                    sugar_die('');
+                }
+
+                $accessWhere = $focus->buildAccessWhere('export');
+                $where .= ' AND ' . $accessWhere;
+            }
             $sql .= $where;
             $resultsQuery = $db->query($sql);
             while ($contactRow = $db->fetchByAssoc($resultsQuery)) {
