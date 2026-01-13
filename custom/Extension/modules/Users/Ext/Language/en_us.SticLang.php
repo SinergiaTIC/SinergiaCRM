@@ -99,6 +99,7 @@ $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'User who impersonates: ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Impersonation of user ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' with ID ';
 
-$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Issuing of Model 182';
-$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indicates for which organizations the user will be able to generate Model 182. The list is dynamically generated from the <a href="index.php?module=stic_Settings" target="_blank">configuration parameters</a>.';
+// Modelo 182
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Issuing of Modelo 182';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indicates for which organizations the user will be able to generate the Modelo 182. The list is dynamically generated from the <a href="index.php?module=stic_Settings" target="_blank">configuration parameters</a>.';
 
