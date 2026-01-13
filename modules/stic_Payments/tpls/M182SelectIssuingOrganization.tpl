@@ -34,9 +34,6 @@
 {if $ISSUING_ORGANIZATIONS_EMPTY_FOR_USER == 1} <p style="text-align:left;color:#d5061e;" class="wizard_info letter13">{$MOD.LBL_M182_ISSUING_ORGANIZATIONS_EMPTY_FOR_USER}</p>
 {else} 
 
-
-<p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_SELECT_ISSUING_ORGANIZATION}</p>
-
 <br>
 <form name="stic_Payments" method="POST">
     <input type="hidden" id="module" name="module" value="stic_Payments">
@@ -44,6 +41,7 @@
 
     <table border="0" cellspacing="5">
         <br>
+        <p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_SELECT_ISSUING_ORGANIZATION}</p>
         <select required id="issuing_organization_selected" name="issuing_organization_selected">
             {html_options values=$ORGS_KEYS output=$ORGS_LABELS}
         </select>
