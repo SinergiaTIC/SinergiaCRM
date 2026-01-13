@@ -20,36 +20,23 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+class stic_PaymentsViewM182selectissuingorganization extends SugarView {
 
-require_once 'modules/Users/views/view.detail.php';
-require_once 'SticInclude/Views.php';
-
-class CustomUsersViewDetail extends UsersViewDetail
-{
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
-    public function preDisplay()
-    {
+    public function preDisplay() {
         parent::preDisplay();
 
-        SticViews::preDisplay($this);
-
-        // Write here the SinergiaCRM code that must be executed for this module and view
-        include_once "modules/stic_Remittances/Utils.php";
-        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);
     }
 
-    public function display()
-    {
-        echo '<script> editACL = '. ACLController::checkAccess('stic_Work_Calendar', 'edit', true) .' </script>';            
+    public function display() {
         parent::display();
-
-        SticViews::display($this);
-
-        // Write here the SinergiaCRM code that must be executed for this module and view
-        echo getVersionedScript("custom/modules/Users/SticUtils.js");
+        $this->ss->assign("ORGS_KEYS", $this->view_object_map['ISSUING_ORGANIZATIONS_IDS'] ?? null);
+        $this->ss->assign("ORGS_LABELS", $this->view_object_map['ISSUING_ORGANIZATIONS_LABELS'] ?? null);
+        $this->ss->assign("ISSUING_ORGANIZATIONS_EMPTY_FOR_USER", $this->view_object_map['ISSUING_ORGANIZATIONS_EMPTY_FOR_USER'] ?? null);
+        $this->ss->display('modules/stic_Payments/tpls/M182SelectIssuingOrganization.tpl');
     }
+
 }
