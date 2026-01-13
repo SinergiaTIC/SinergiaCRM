@@ -7369,3 +7369,173 @@ $dictionary["stic_resources_stic_centers"] = array (
       ),
     ),
   );
+
+  $dictionary["stic_financial_products_contacts"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_financial_products_contacts' => 
+      array (
+        'lhs_module' => 'Contacts',
+        'lhs_table' => 'contacts',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Financial_Products',
+        'rhs_table' => 'stic_financial_products',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_financial_products_contacts_c',
+        'join_key_lhs' => 'stic_financial_products_contactscontacts_ida',
+        'join_key_rhs' => 'stic_financial_products_contactsstic_financial_products_idb',
+      ),
+    ),
+    'table' => 'stic_financial_products_contacts_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_financial_products_contactscontacts_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_financial_products_contactsstic_financial_products_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_financial_products_contactsspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_financial_products_contacts_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_financial_products_contactscontacts_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_financial_products_contacts_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_financial_products_contactsstic_financial_products_idb',
+        ),
+      ),
+    ),
+  );
+
+  $dictionary["stic_transactions_stic_financial_products"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_transactions_stic_financial_products' => 
+      array (
+        'lhs_module' => 'stic_Financial_Products',
+        'lhs_table' => 'stic_financial_products',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Transactions',
+        'rhs_table' => 'stic_transactions',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_transactions_stic_financial_products_c',
+        'join_key_lhs' => 'stic_trans4a5broducts_ida',
+        'join_key_rhs' => 'stic_transactions_stic_financial_productsstic_transactions_idb',
+      ),
+    ),
+    'table' => 'stic_transactions_stic_financial_products_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_trans4a5broducts_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_transactions_stic_financial_productsstic_transactions_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_transactions_stic_financial_productsspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_transactions_stic_financial_products_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_trans4a5broducts_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_transactions_stic_financial_products_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_transactions_stic_financial_productsstic_transactions_idb',
+        ),
+      ),
+    ),
+  );

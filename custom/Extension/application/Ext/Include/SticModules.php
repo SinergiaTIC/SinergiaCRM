@@ -67,6 +67,8 @@ $moduleList[] = 'stic_Places';
 $moduleList[] = 'stic_Group_Opportunities';
 // $moduleList[] = 'stic_Message_Marketing'; -- Do not want to show them at module list
 // $moduleList[] = 'stic_MessagesMan';
+$moduleList[] = 'stic_Transactions';
+$moduleList[] = 'stic_Financial_Products';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -119,6 +121,8 @@ $beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
 $beanList['stic_MessagesMan'] = 'stic_MessagesMan';
 $beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
 $beanList['stic_Places'] = 'stic_Places';
+$beanList['stic_Transactions'] = 'stic_Transactions';
+$beanList['stic_Financial_Products'] = 'stic_Financial_Products';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -170,6 +174,8 @@ $beanFiles['stic_Message_Marketing'] = 'modules/stic_Message_Marketing/stic_Mess
 $beanFiles['stic_MessagesMan'] = 'modules/stic_MessagesMan/stic_MessagesMan.php';
 $beanFiles['stic_Bookings_Places_Calendar'] = 'modules/stic_Bookings_Places_Calendar/stic_Bookings_Places_Calendar.php';
 $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
+$beanFiles['stic_Transactions'] = 'modules/stic_Transactions/stic_Transactions.php';
+$beanFiles['stic_Financial_Products'] = 'modules/stic_Financial_Products/stic_Financial_Products.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
