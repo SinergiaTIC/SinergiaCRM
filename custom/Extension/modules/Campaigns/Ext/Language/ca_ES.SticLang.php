@@ -79,3 +79,9 @@ $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Compte de correu que 
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Bústia de correu on rebre els missatges d'error que es puguin produir en l'enviament. Es pot configurar a l'apartat 'Correu electrònic entrant' de l'àrea d'Administració.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
+
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nova secció de plantilla';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Mostra les seccions de plantilla';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Converteix els enllaços del missatge en URL de seguiment';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = " URL de seguiment han estat creades i s'ha actualitzat el contingut de la plantilla.";
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = "No s'ha creat cap URL de seguiment.";
