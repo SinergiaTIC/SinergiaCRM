@@ -3615,8 +3615,11 @@ $app_strings['LBL_RESCHEDULE_COUNT'] = 'Intentos de Llamada';
 //SecurityGroups
 $app_list_strings['moduleList']['SecurityGroups'] = 'Grupos de Seguridad';
 $app_strings['LBL_SECURITYGROUP'] = 'Grupo de Seguridad';
+$app_strings['LBL_ROLE'] = 'Rol';
 
 $app_list_strings['moduleList']['OutboundEmailAccounts'] = 'Cuentas de correo electrónico saliente';
+$app_list_strings['moduleList']['ExternalOAuthConnection'] = 'Conexiones OAuth externas';
+$app_list_strings['moduleList']['ExternalOAuthProvider'] = 'Proveedores OAuth externos';
 
 //social
 $app_strings['FACEBOOK_USER_C'] = 'Facebook';
