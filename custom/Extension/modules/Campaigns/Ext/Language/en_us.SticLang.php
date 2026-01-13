@@ -79,3 +79,5 @@ $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving the notification the em
 $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'New template section';
 $mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'View template sections';
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convert message links to trackers';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = 'tracking URLs have been created and the template content has been updated.';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'No tracking URLs have been created.';

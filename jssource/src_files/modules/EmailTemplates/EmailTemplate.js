@@ -500,51 +500,110 @@ function EmailTrackerController(action, campaignId) {
 	}
 
 	switch (action) {
-		// STIC-Custom 20250423 MHP - 
+		// STIC-Custom 20250423 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/714
 		// Create tracking URLs from the links in the HTML editor content and replace each href with the corresponding tracking URL
 		case "convertLinksInTrackingUrls":
-			// Get the content of the HTML editor
-			fullHtml = tinymce.activeEditor.getContent();
-			
-			// Create an HTML document with the editor code and get the links
-			const doc = document.implementation.createHTMLDocument('temp');
-			doc.documentElement.innerHTML = fullHtml;
-			const links = doc.querySelectorAll('a');
-
-			if (links.length > 0) 
-			{
-				// Simulate the tracking URL creation form
-				$('body').append(`
-					<input type="text" id="url_text">
-					<input type="text" id="tracker_url_add">
-					<input type="checkbox" id="is_optout">
-				`);
+			// Call to get existing tracking URLs for this campaign
+			const url = 'index.php?module=Campaigns&action=getCampaignTrackerURLs';
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+				},
+				body: new URLSearchParams({
+					campaignID: campaignId
+				})
+			})
+			.then(response => response.json())
+			.then(data => {
+				// Set where to store existing tracking URLs and those created by this automation
+				seenUrls = new Set();
+				if (data) {
+					data.map(item => seenUrls.add(item.url));
+				}
 				
-				const seenUrls = new Set(); // Set where to save already processed links
-				links.forEach((link) => 
-				{
-					const url = link.getAttribute('href');
-					if (url && !seenUrls.has(url) && !url.includes('mailto')) 
-					{
-						// Mark this URL as already seen
-						seenUrls.add(url); 
-							
-						// Fill the values and create the tracking URL
-						linkName = 'Link_' + seenUrls.size;
-						$('#url_text').val(linkName);
-						$('#tracker_url_add').val(url);
-						$('#is_optout').prop('checked', false); 
-						create();
+				// Get the content of the HTML editor
+				fullHtml = tinymce.activeEditor.getContent();
+				
+				// Create an HTML document with the editor code and get the links
+				const doc = document.implementation.createHTMLDocument('temp');
+				doc.documentElement.innerHTML = fullHtml;
+				const links = doc.querySelectorAll('a');
 
-						// Change the link href in the message text
-						fullHtml = fullHtml.replaceAll(url, "{" + linkName + "}");
+				if (links.length > 0) 
+				{
+					// Simulate the tracking URL creation form
+					$('body').append(`
+						<input type="text" id="url_text">
+						<input type="text" id="tracker_url_add">
+						<input type="checkbox" id="is_optout">
+					`);
+					
+					let trackerURLsCreated= 0;
+					links.forEach((link) => 
+					{
+						const url = link.getAttribute('href');
+						if (url && !url.startsWith('{') && !seenUrls.has(url) && !url.includes('mailto')) 
+						{
+							// Mark this URL as already seen
+							seenUrls.add(url); 
+								
+							// Fill the values and create the tracking URL
+							linkName = 'Link_' + seenUrls.size;
+							$('#url_text').val(linkName);
+							$('#tracker_url_add').val(url);
+							$('#is_optout').prop('checked', false); 
+
+							create();
+							trackerURLsCreated++;
+
+							// Change the link href in the message text
+							fullHtml = fullHtml.replaceAll(url, "{" + linkName + "}");
+						}
+					});
+					// Save the content with the modified links in the HTML editor
+					tinymce.activeEditor.setContent(fullHtml);
+					
+					// Show message with the result of the operation
+					const btn = document.getElementById('convertLinksInTrackingUrlsButton');
+					if (btn) 
+					{
+						// Create message to report the result
+						const msgEl = document.createElement('div');
+						msgEl.id = 'convertLinksMsg'; 
+						if (trackerURLsCreated != 0) {
+							msgEl.textContent = trackerURLsCreated + SUGAR.language.translate('Campaigns', 'LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS');
+						} else {
+							msgEl.textContent = SUGAR.language.translate('Campaigns', 'LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS');
+						}
+						msgEl.style.textAlign = 'center';
+						msgEl.style.margin = '1rem';
+						msgEl.style.fontSize = '1.2rem';
+						msgEl.style.border = '2px solid #b5bc31';
+
+						// Insert message after the button
+						btn.insertAdjacentElement('afterend', msgEl);
+
+						// Disable the button for 5 seconds to avoid multiple clicks and hide the message after that
+						btn.disabled = true;
+						setTimeout(() => {
+							// Enable the button
+							btn.disabled = false;
+
+							// Delete the previous message.
+							const oldMsg = document.getElementById('convertLinksMsg');
+							if (oldMsg) {
+								oldMsg.remove();
+							}							
+						}, 5000);						
 					}
-				});
-				// Save the content with the modified links in the HTML editor
-				tinymce.activeEditor.setContent(fullHtml);
-			}
+				}
+			})
+			.catch(error => {
+				console.error('Failed to get URLs tracker for the campaign with id = ' + campaignId, error);
+			});
 			break;
-		// END STIC-Custom			
+		// END STIC-Custom
 		case "create":
 			$('#url_text').val('');
 			$('#tracker_name').val('');
