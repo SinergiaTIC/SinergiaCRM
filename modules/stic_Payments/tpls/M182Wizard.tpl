@@ -90,7 +90,6 @@
 <p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_INSTRUCT}</p> {/if}
 {if $ERR.ERROR_TYPE== 1} <p style="text-align:left;color:#d5061e;" class="wizard_info letter13">{$MOD.LBL_M182_INSTRUCT}</p> {/if}
 
-<br>
 <form name="stic_Payments" method="POST">
     {*ISSUING ORGANIZATION SELECTED*}
     {if $ISSUING_ORGANIZATION_KEY ne ''}
@@ -100,7 +99,6 @@
     <input type="hidden" id="action" name="action" value="createModel182">
 
     <table border="0" cellspacing="5">
-        <br>
         {*TYPE OF PAYMENTS*}
         <select required id="payment_type" name="payment_type[]" multiple="multiple">
             {html_options values=$LAB.PAYMENT_TYPE_VALUES output=$INT.PAYMENT_TYPE_OUTPUT}
