@@ -99,6 +99,7 @@
     <input type="hidden" id="action" name="action" value="createModel182">
 
     <table border="0" cellspacing="5">
+        <br>
         {*TYPE OF PAYMENTS*}
         <select required id="payment_type" name="payment_type[]" multiple="multiple">
             {html_options values=$LAB.PAYMENT_TYPE_VALUES output=$INT.PAYMENT_TYPE_OUTPUT}
