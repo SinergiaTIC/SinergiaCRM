@@ -176,7 +176,7 @@ class ExternalReporting
                                                         u.is_admin = 0
                                                         AND u.deleted = 0
                                                         AND u.status = 'Active'
-                                                        AND uc.sda_allowed_c=1;"
+                                                        AND uc.sda_allowed_c > 0;"
             );
             // If the number of non-admin users enabled is greater than the limit allowed, the operation is aborted
             // to protect the system from possible performance problems
@@ -1504,6 +1504,7 @@ class ExternalReporting
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
                                   SELECT CONCAT('SCRM_',name) as name FROM securitygroups WHERE deleted=0
                                   UNION SELECT 'EDA_ADMIN'
+                                  UNION SELECT 'EDA_RO'
                                   ;";
         // 3) eda_def_users_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS
@@ -1521,7 +1522,7 @@ class ExternalReporting
                                     AND u.deleted = 0
                                     AND su.deleted=0
                                     AND s.deleted=0
-                                    AND uc.sda_allowed_c = 1
+                                    AND uc.sda_allowed_c > 0
                                     AND u.status = 'Active'
                                     AND u.user_hash IS NOT NULL
                                     -- Select 2: Administrator users should always belong to the EDA_ADMIN group.
@@ -1536,7 +1537,20 @@ class ExternalReporting
                                     AND u.deleted = 0
                                     AND u.status = 'Active'
                                     AND u.user_hash IS NOT NULL
-                                AND uc.sda_allowed_c =1;";
+                                AND uc.sda_allowed_c > 0
+                                    -- Select 3: Readonly users should always belong to the EDA_RO group.
+                            UNION SELECT
+                                    user_name,
+                                    'EDA_RO'
+                                FROM
+                                    users u
+                                JOIN users_cstm uc ON uc.id_c = u.id
+                                WHERE
+                                    u.is_admin = 0
+                                    AND u.deleted = 0
+                                    AND u.status = 'Active'
+                                    AND u.user_hash IS NOT NULL
+                                AND uc.sda_allowed_c =2;";
 
         // 4) eda_def_security_group_records
 
@@ -1912,7 +1926,7 @@ class ExternalReporting
         $userGroups = [];
         if ($sugar_config['stic_sinergiada']['group_permissions_enabled']) {
             $groupsQuery = "SELECT user_name, name as 'group'
-                       FROM sda_def_user_groups";
+                       FROM sda_def_user_groups WHERE `name` != 'EDA_ADMIN' AND `name` != 'EDA_RO'";
             $groupsResult = $db->query($groupsQuery);
             while ($group = $db->fetchByAssoc($groupsResult)) {
                 $userGroups[$group['user_name']][] = $group['group'];
@@ -1925,7 +1939,7 @@ class ExternalReporting
                      FROM users
                      JOIN users_cstm ON users.id = users_cstm.id_c
                      WHERE status='Active' AND deleted=0
-                     AND sda_allowed_c=1 AND is_admin=0";
+                     AND sda_allowed_c > 0 AND is_admin=0";
 
         $nonAdminUsers = $db->query($nonAdminQuery);
         $userQueries = [$nonAdminUsers];
