@@ -3651,6 +3651,11 @@ $app_list_strings['trackers_actions_list']['logout'] = 'User logout';
 $app_list_strings['trackers_actions_list']['impersonate_start'] = 'Impersonation start';
 $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Impersonation end';
 
+// SinergiaDA: Users access levels
+$app_list_strings['sda_users_access_list']['0'] = 'No access';
+$app_list_strings['sda_users_access_list']['1'] = 'Full access';
+$app_list_strings['sda_users_access_list']['2'] = 'Read-only access';
+
 // Financial Products: Product types
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Current account';
 $app_list_strings['stic_financial_products_types_list']['savings_account'] = 'Savings account';
