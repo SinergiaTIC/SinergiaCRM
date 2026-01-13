@@ -144,14 +144,14 @@ class stic_MessagesController extends SugarController
     }
     public function action_Retry(){
 
+        $where = '';
+
         $db = DBManagerFactory::getInstance();
         // only messages not sent and with direction outbound can be retried
         $sql = "SELECT id,name,`type`,direction,phone,sender,message,status  FROM stic_messages WHERE deleted = 0 and status <> 'sent' and direction = 'outbound'";
-        $where = '';
         if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
             require_once 'include/export_utils.php';
             $retArray = generateSearchWhere('stic_Messages', $_REQUEST['current_query_by_page']);
-            $where = '';
             if (!empty($retArray['where'])) {
                 $where = " AND " . $retArray['where'];
             }
@@ -160,6 +160,20 @@ class stic_MessagesController extends SugarController
             $idList = implode("','", $ids);
             $where = " AND id in ('{$idList}')";
         }
+
+        $focus = BeanFactory::newBean('stic_Messages');
+        if ($focus->bean_implements('ACL')) {
+            if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
+                ACLController::displayNoAccess();
+                sugar_die('');
+            }
+
+            $accessWhere = $focus->buildAccessWhere('export');
+            if (!empty($accessWhere)) {
+                $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
+            }
+        }
+
         $sql .= $where;
         $result = $db->query($sql);
 
