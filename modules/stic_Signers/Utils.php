@@ -357,7 +357,8 @@ class stic_SignersUtils
 
         // Construct the SQL query
         $query = "
-            SELECT
+            SELECT * FROM (
+                SELECT
                     stic_signers.id,
                     stic_signers.name,
                     stic_signers.date_entered,
@@ -381,7 +382,7 @@ class stic_SignersUtils
                     AND (stic_signers.parent_id = '{$contact_id}' OR stic_signers.contact_id_c = '{$contact_id}')
                     AND stic_signers.status in ('pending','signed')
                     AND stic_signers.deleted = 0
-                ORDER BY stic_signers.date_modified DESC
+                ) AS stic_signers
         ";
         return $query;
     }
@@ -401,7 +402,8 @@ class stic_SignersUtils
 
         // Construct the SQL query
         $query = "
-            SELECT
+            SELECT * FROM (
+                SELECT
                     stic_signers.id,
                     stic_signers.name,
                     stic_signers.date_entered,
@@ -423,7 +425,7 @@ class stic_SignersUtils
                     AND parent_id = '{$user_id}'
                     AND status in ('pending','signed')
                     AND deleted = 0
-                ORDER BY date_modified DESC
+                ) AS stic_signers
         ";
 
         return $query;
@@ -443,7 +445,8 @@ class stic_SignersUtils
 
         // Construct the SQL query
         $query = "
-            SELECT
+            SELECT * FROM (
+                SELECT
                     stic_signers.id,
                     stic_signers.name,
                     stic_signers.date_entered,
@@ -468,7 +471,7 @@ class stic_SignersUtils
                 WHERE rel.stic_signatures_stic_signersstic_signatures_ida = '{$signature_id}'
                     AND stic_signers.deleted = 0
                     AND rel.deleted = 0
-                ORDER BY date_modified DESC
+                ) AS stic_signers
         ";
         return $query;
     }
