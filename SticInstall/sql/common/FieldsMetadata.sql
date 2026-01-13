@@ -79,6 +79,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Campaignsparent_name', 'Campaigns', 'parent_name'),
 ('Campaignsparent_type', 'Campaigns', 'parent_type'),
 ('Campaignsstic_notification_prospect_list_names_c', 'Campaigns', 'stic_notification_prospect_list_names_c'),
+-- TemplateSectionLine
+('TemplateSectionLinehtmlcode_c', 'TemplateSectionLine', 'htmlcode_c'),
+('TemplateSectionLinethumbnail_image_c', 'TemplateSectionLine', 'thumbnail_image_c'),
+('TemplateSectionLinethumbnail_name_c', 'TemplateSectionLine', 'thumbnail_name_c'),
 -- Contacts
 ('Contactsstic_acquisition_channel_c', 'Contacts', 'stic_acquisition_channel_c'),
 ('Contactsstic_age_c', 'Contacts', 'stic_age_c'),
