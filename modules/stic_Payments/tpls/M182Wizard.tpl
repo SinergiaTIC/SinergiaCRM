@@ -116,7 +116,7 @@
         <tr>
             <br><br>
             <td align="left" style="padding-bottom: 2px;">
-                <input title="{$MOD.LBL_M182_BACK}" class="button" type="reset" value="{$MOD.LBL_M182_BACK}">
+                <input title="{$MOD.LBL_M182_BACK}" class="button" type="button" id="reset_wizard" onclick="location.reload();" value="{$MOD.LBL_M182_BACK}">
                 <input id="send_wizard" title="{$MOD.LBL_M182_NEXT}" class="button" type="submit" value="{$MOD.LBL_M182_NEXT}">
             </td>
         </tr>
@@ -131,6 +131,22 @@
             $('.wizard_info').css('color', 'red').fadeOut(300).fadeIn(300).fadeOut(300).fadeIn(300);
             return false;
         }
+    });
+
+    // Clear issuing organization selection and go back to selector before reloading
+    $('#reset_wizard').on('click', function() {
+        // If the issuing organization select exists on the page, clear it
+        if ($('#issuing_organization_selected').length) {
+            $('#issuing_organization_selected').val('');
+            $('#issuing_organization_selected').prop('selectedIndex', -1);
+            $('#issuing_organization_selected').trigger('change');
+        }
+        // Clear the hidden key on this form if present
+        if ($('#issuing_organization_key').length) {
+            $('#issuing_organization_key').val('');
+        }
+        // Redirect to the issuing organization selection action so server-side state is cleared
+        window.location.href = 'index.php?module=stic_Payments&action=m182SelectIssuingOrganization';
     });
 
                 {/literal}

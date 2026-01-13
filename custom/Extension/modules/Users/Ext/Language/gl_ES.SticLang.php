@@ -98,3 +98,7 @@ $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
 // Emulación de usuarios - Monitorización
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
+
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Emisión do Modelo 182';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indica para que organizacións poderá o usuario xerar o Modelo 182. A lista xérase dinámicamente a partir dos <a href="index.php?module=stic_Settings" target="_blank">parámetros de configuración</a>.';
+

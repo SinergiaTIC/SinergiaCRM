@@ -143,6 +143,8 @@ class stic_PaymentsController extends SugarController
             $orgKeyClean = str_replace('_', '', $selectedOrgKey);
             global $app_list_strings;
             $orgLabel = $app_list_strings['dynamic_issuing_organization_list'][$orgKeyClean] ?? '';
+        } else {
+            $orgLabel = $app_list_strings['dynamic_issuing_organization_list']['__default__'] ?? '';
         }
         $this->view_object_map['ISSUING_ORGANIZATION_LABEL'] = $orgLabel;
         $this->view_object_map['ISSUING_ORGANIZATION_KEY'] = $orgKeyClean;
