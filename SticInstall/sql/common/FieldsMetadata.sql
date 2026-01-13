@@ -74,6 +74,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsinc_state_c', 'Accounts', 'inc_state_c'),
 ('Accountsinc_municipality_c', 'Accounts', 'inc_municipality_c'),
 ('Accountsinc_town_c', 'Accounts', 'inc_town_c'),
+-- Emails Marketing
+('EmailMarketingstic_display_html_c', 'EmailMarketing', 'stic_display_html_c'),
 -- Campaigns
 ('Campaignsparent_id', 'Campaigns', 'parent_id'),
 ('Campaignsparent_name', 'Campaigns', 'parent_name'),
