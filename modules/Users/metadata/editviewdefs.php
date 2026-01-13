@@ -182,24 +182,25 @@ array(
                       'studio' => 'visible',
                       'label' => 'LBL_STIC_WORK_CALENDAR',
                     ),
-                ),
+                  ),
                 4 => array (
                     0 => array (
-                      'name' => 'factor_auth',
-                      'label' => 'LBL_FACTOR_AUTH',
+                        'name' => 'factor_auth',
+                        'label' => 'LBL_FACTOR_AUTH',
                     ),
                     1 => array (
-                      'name' => 'stic_clock_c',
-                      'studio' => 'visible',
-                      'label' => 'LBL_STIC_CLOCK',
+                        'name' => 'stic_clock_c',
+                        'studio' => 'visible',
+                        'label' => 'LBL_STIC_CLOCK',
                     ),
-                  ),
-                5 => array (
-                    0 => array (
-                      'name' => 'factor_auth',
-                      'label' => 'LBL_FACTOR_AUTH',
+                ),
+                5 => array(
+                    0 => array(
+                        'name' => 'stic_m182_issuing_organization_c',
+                        'studio' => 'visible',
+                        'label' => 'LBL_STIC_M182_ISSUING_ORGANIZATION',
                     ),
-                    1 => array ()
+                    1 => '',
                 ),
               ),
             'LBL_EMPLOYEE_INFORMATION' => array(
