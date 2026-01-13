@@ -83,5 +83,5 @@ $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los cor
 $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nueva sección de plantilla';
 $mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Ver secciones de plantilla';
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convertir enlaces del mensaje en URL de seguimiento';
-$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' URLs de seguimiento han sido creadas y se ha actualizado el contenido de la plantilla.';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' URL de seguimiento han sido creadas y se ha actualizado el contenido de la plantilla.';
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'No se ha creado ninguna URL de seguimiento.';
