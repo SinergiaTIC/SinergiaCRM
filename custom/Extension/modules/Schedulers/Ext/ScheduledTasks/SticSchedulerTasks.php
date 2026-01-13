@@ -178,5 +178,5 @@ $job_strings[] = 'sticSendPhoneMessages';
 function sticSendPhoneMessages() {
     require_once('modules/stic_MessagesMan/Utils.php');
 
-    return stic_MessagesManUtils::sendQueuedMessages(true);
+    return stic_MessagesManUtils::sendQueuedMessages(false);
 }
