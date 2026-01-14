@@ -31,11 +31,11 @@ class stic_MessagesUtils {
      * If new modules must be included, this list can be modified from a custom file
      */
     public static $messageableModules = array(
-        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts' ),
-        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts'),
-        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'leads'),
-        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
-        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
+        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts', 'nameFields' => array('first_name', 'last_name') ),
+        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts', 'nameFields' => array('name')),
+        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'leads', 'nameFields' => array('first_name', 'last_name')),
+        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users', 'nameFields' => array('first_name', 'last_name')),
+        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users', 'nameFields' => array('first_name', 'last_name')),
     );
 
     /** 
@@ -124,12 +124,47 @@ class stic_MessagesUtils {
         return $fieldName;
     }
 
+    /**
+     * Return the default phone field to be used to send messages to the module indicated
+     * @param string Module name
+     * @return string The field name
+     */
+    public static function getPhoneFieldForSql($moduleName, $prefix= '') {
+        $db = DBManagerFactory::getInstance();
+
+        $prefix = empty($prefix) ? self::$messageableModules[$moduleName]['dbTable'] : $prefix;
+        // $fieldName = self::$messageableModules[$moduleName]['phoneField'];
+        $fieldName = $db->concat($prefix, array(self::$messageableModules[$moduleName]['phoneField']), '&nbsp;');
+
+        return $fieldName;
+    }
+
     /** 
      * Gets the field to be used on a SQL query to retrieve the name, depending on the module 
      * @param string Module name
      * @return string The filed or function to be used in a SQL query
      */
     public static function getNameFieldNameForMessage($moduleName) {
+    
+        $fieldName = self::$messageableModules[$moduleName]['name'];
+
+        return $fieldName;
+    }
+    /** 
+     * Gets the field to be used on a SQL query to retrieve the name, depending on the module 
+     * @param string Module name
+     * @return string The filed or function to be used in a SQL query
+     */
+    public static function getNameFieldForSql($moduleName, $prefix='') {
+        $db = DBManagerFactory::getInstance();
+
+        $prefix = empty($prefix) ? self::$messageableModules[$moduleName]['dbTable'] : $prefix;
+        // $fieldName = self::$messageableModules[$moduleName]['phoneField'];
+        $fieldName = $db->concat($prefix, self::$messageableModules[$moduleName]['nameFields'], '&nbsp;');
+
+        return $fieldName;
+
+
     
         $fieldName = self::$messageableModules[$moduleName]['name'];
 
@@ -178,11 +213,13 @@ class stic_MessagesUtils {
         require_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
+        $active = 'false';
         if (!($currentTabs['stic_Messages'] ?? false)){
-            $active = 'false';
         }
         else {
-            $active = 'true';
+            if (ACLController::checkAccess('stic_Messages', 'edit', true)) {
+                $active = 'true';
+            }
         }
 
         $messagesLimit = stic_SettingsUtils::getSetting('MESSAGES_LIMIT');

@@ -170,7 +170,7 @@
         ),
         'sda_allowed_c' => 
         array (
-          'type' => 'bool',
+          'type' => 'enum',
           'default' => true,
           'studio' => 'visible',
           'label' => 'LBL_SDA_ALLOWED',
