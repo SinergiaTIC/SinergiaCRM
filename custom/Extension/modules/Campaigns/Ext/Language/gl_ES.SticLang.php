@@ -69,8 +69,12 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'Remitente (nombre)';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitente (dirección)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Responder a (nombre)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
+$mod_strings['LBL_MSG_TYPE'] = 'Tipo';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = 'A plantilla debe ser do tipo SMS e póde incluir campos do rexistro asociado á notificación (o evento ou a subvención).';
 
-$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
+$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacións por correo electrónico';
+$mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacións por mensaje';
 
 $mod_strings['LBL_FLEX_RELATE_HELP'] = 'Registro del que se desea realizar la notificación. Puede ser un evento o una subvención.';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificación se enviará a los miembros de las listas de público objetivo seleccionadas, que deben ser del tipo 'Por defecto'.";
@@ -79,6 +83,14 @@ $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Cuenta de correo que 
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde recibir los mensajes de error que se puedan producir tras el envío. Se puede configurar en el apartado 'Correo electrónico entrante' del área de Administración.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.';
+$mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los mensajes a enviar se añadirán automáticamente a la cola de envío.';
+
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Envíos de mensajes';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Enviar mensajes';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Enviar mensajes de prueba';
+
+$mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cola de correo electrónico';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de mensajes';
 
 $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nueva sección de plantilla';
 $mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Ver secciones de plantilla';
