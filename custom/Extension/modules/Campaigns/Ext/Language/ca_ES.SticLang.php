@@ -69,8 +69,12 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'Remitent (nom)';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitent (adreça)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Respondre a (nom)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
+$mod_strings['LBL_MSG_TYPE'] = 'Tipus';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla ha de ser de tipus SMS i pot incloure camps del registre associat a la notificació (l'esdeveniment o la subvenció).";
 
-$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
+$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions per correu electrònic';
+$mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions per missatge';
 
 $mod_strings['LBL_FLEX_RELATE_HELP'] = 'Registre del qual es vol realitzar la notificació. Pot ser un esdeveniment o una subvenció.';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificació s'enviarà als membres de les llistes de públic objectiu seleccionades, que han de ser del tipus 'Per defecte'.";
@@ -79,6 +83,14 @@ $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Compte de correu que 
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Bústia de correu on rebre els missatges d'error que es puguin produir en l'enviament. Es pot configurar a l'apartat 'Correu electrònic entrant' de l'àrea d'Administració.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
+$mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = "En desar la notificació els missatges a enviar s'afegiran automàticament a la cua d'enviament.";
+
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Enviaments de missatges';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Envia els missatges';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Envia els missatges de prova';
+
+$mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cua de correu electrònic';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cua de missatges';
 
 $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nova secció de plantilla';
 $mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Mostra les seccions de plantilla';

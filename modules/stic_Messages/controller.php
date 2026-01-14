@@ -245,6 +245,7 @@ class stic_MessagesController extends SugarController
         $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($parentType);
         $tableName = stic_MessagesUtils::gettableNameForMessage($parentType);
 
+        $response = array();
         $response['code'] = 'No data';
         $db = DBManagerFactory::getInstance();
 

@@ -28,31 +28,49 @@
  * @param array $params An array of parameters used to generate the query.
  * @return array|string The SQL query as an array if 'return_as_array' is true, or as a string otherwise.
  */
+
+require_once 'modules/Campaigns/utils.php';
+
 function getNotificationsFromParent($params)
 {
     $args = func_get_args();
     $return_as_array = isset($args[0]['return_as_array']) ? $args[0]['return_as_array'] : false;
     $parentId = $args[0]['parent_id'] ?? $_REQUEST['record'];
     $parentType = $args[0]['parent_type'];
-    $campaignType = "Notification";
+    $campaignTypes = "('Notification', 'NotifMsg')";
 
     $return_array['select'] =
         " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date" .
         ", cc.stic_notification_prospect_list_names_c as stic_notification_prospect_list_names_c" .
-        ", et.name as notification_email_template_name";
+        ", TT.name as notification_email_template_name";
 
     $return_array['from'] = " FROM campaigns ";
 
     $return_array['where'] =
         " WHERE campaigns.deleted = '0'" .
-        " AND campaigns.campaign_type = '$campaignType'" .
+        " AND campaigns.campaign_type IN $campaignTypes " .
         " AND cc.parent_type = '$parentType'" .
         " AND cc.parent_id = '$parentId'";
 
-    $return_array['join'] =
-        " LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id" .
-        " LEFT JOIN email_marketing em on em.campaign_id = campaigns.id and em.deleted = '0'" .
-        " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'";
+    // $return_array['join'] =
+    //     " LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id" .
+    //     " LEFT JOIN email_marketing em on em.campaign_id = campaigns.id and em.deleted = '0'" .
+    //     " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'";
+
+    $return_array['join'] = 
+    "
+        LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id
+        left join (select et.name, em.campaign_id as campaign_id
+        from email_marketing em -- on em.campaign_id = campaigns.id and em.deleted = '0'
+        LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'
+        union
+        select et.name, csmmc.campaigns_stic_message_marketingcampaign_ida as campaign_id
+        from campaigns_stic_message_marketing_c csmmc -- on csmmc.campaigns_stic_message_marketingcampaign_ida = campaigns.id and em.deleted = '0'
+        left join stic_message_marketing smm on smm.id = csmmc.campaigns_stic_message_marketingmessage_idb
+        left join email_templates et on et.id = smm.template_id and et.deleted = '0'
+        ) TT on TT.campaign_id = campaigns.id";
+
+
 
     $return_array['join_tables'] = '';
 
@@ -118,6 +136,54 @@ class CampaignsUtils
         }
         $beanCampaign->notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
     }
+    /**
+     * Function populates custom 'non-db' fields for a Campaign record of the type 'Notification by message'.
+     * It retrieves and sets values related to email marketing and prospect lists associated with the campaign.
+     *
+     * @param $beanCampaign: The campaign bean (object) which represents the current campaign record being processed.
+     */
+    public static function fillCampaignMessageNotificationFields($beanCampaign)
+    {
+        global $db;
+
+        // Find email_marketing information
+        $query =
+            " SELECT c.id as campaigns_id" .
+            ", et.id as template_id" .
+            ", mm.sender as message_marketing_from_name" .
+            ", mm.type as type" .
+            " FROM campaigns c" .
+            " LEFT JOIN campaigns_stic_message_marketing_c csmmc on csmmc.campaigns_stic_message_marketingcampaign_ida = c.id and csmmc.deleted = '0'" .
+            " LEFT JOIN stic_message_marketing mm on mm.id = csmmc.campaigns_stic_message_marketingmessage_idb and mm.deleted = '0'" .
+            " LEFT JOIN email_templates et on et.id = mm.template_id and et.deleted = '0'" .
+            " WHERE c.id = '{$beanCampaign->id}'" .
+            " LIMIT 1";
+
+        // Fill Notification fields related to email_marketing
+        $result = $db->query($query);
+        if ($row = $db->fetchByAssoc($result)) {
+            $beanCampaign->msg_notification_template_id = $row['template_id'];
+            $beanCampaign->sender = $row['message_marketing_from_name'];
+            $beanCampaign->notification_message_type = $row['type'];
+        }
+
+        // Find prospect_lists information
+        $query =
+            " SELECT c.id as campaigns_id" .
+            ", pl.id as prospect_lists_id" .
+            " FROM campaigns c" .
+            " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
+            " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
+            " WHERE c.id = '{$beanCampaign->id}'";
+
+        // Fill Notification prospect_lists field (multienum)
+        $result = $db->query($query);
+        $plArray = array();
+        while ($row = $db->fetchByAssoc($result)) {
+            $plArray[] = $row['prospect_lists_id'];
+        }
+        $beanCampaign->msg_notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
+    }
 
 /**
  * Populates custom dynamic lists used in 'non-db' enum and multienum fields for a Campaigns records of type 'Notification'
@@ -128,6 +194,9 @@ class CampaignsUtils
         self::fillDynamicListEmailTemplate();
         self::fillDynamicOutboundEmailAccounts();
         self::fillDynamicInboundEmailAccounts();
+
+        require_once 'modules/stic_Messages/Utils.php';
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
     }
 
     /**

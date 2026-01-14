@@ -90,17 +90,18 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 
 // SinergiaCRM global links
-$app_strings['LBL_STIC_FORUMS_LINK'] = 'SinergiaCRM forums';
-$app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaCRM wiki';
+$app_strings['LBL_STIC_FORUMS_LINK'] = 'SinergiaTIC forums';
+$app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaTIC wiki';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
-// Messages: subpanel actions
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New message';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New message';
+// Messages: actions in recipient modules
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Compose Message';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content. Do you want to continue?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'The limit of messages that can be sent simultaneously has been exceeded.';
-$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Compose Message';
+$app_strings['LBL_NEW_NOTIFICATION'] = 'New notification by email';
+$app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'New notification by message';
 
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
@@ -161,6 +162,8 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
+$app_list_strings['moduleList']['stic_Message_Marketing'] = 'Message Sendings';
+$app_list_strings['moduleList']['stic_MessagesMan'] = 'Messages Queue';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transactions';
@@ -210,6 +213,8 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condition';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Granted account';
+$app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Message Sendings';
+$app_list_strings['moduleListSingular']['stic_MessagesMan'] = 'Messages Queue';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Places';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transaction';
@@ -253,6 +258,7 @@ $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Work experie
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Skills';
 $app_list_strings['parent_type_display']['stic_Messages'] = 'Messages';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
+$app_list_strings['parent_type_display']['stic_Message_Marketing'] = 'Message Sendings';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transactions';
@@ -297,6 +303,7 @@ $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Work experie
 $app_list_strings['record_type_display']['stic_Skills'] = 'Skills';
 $app_list_strings['record_type_display']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
+$app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Message Sendings';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transactions';
@@ -341,6 +348,7 @@ $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work e
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
 $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Granted accounts';
+$app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Message Sendings';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transactions';
@@ -3773,7 +3781,9 @@ $app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
 $app_list_strings['campaign_type_dom']['Television'] = 'Television';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Newsletter';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Survey';
-$app_list_strings['campaign_type_dom']['Notification'] = 'Notification';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notification by email';
+$app_list_strings['campaign_type_dom']['Message'] = 'Phone message';
+$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notification by phone message';
 
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
@@ -3799,3 +3809,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
+
+// Dynamic list
+include 'modules/stic_Message_Marketing/dynamicLPOs.php';

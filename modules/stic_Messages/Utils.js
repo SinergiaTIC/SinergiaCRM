@@ -100,6 +100,15 @@ switch (sticViewType) {
       } else {
         $("#template_id_edit_link").show();
       }
+
+      // Find element with data-label = LBL_INFO
+      var infoElement = $('div[data-label="LBL_INFO"]');
+      // Clear div content from infoElement
+      infoElement.html('');
+      // Supress bottom margin
+      infoElement.parent().css('margin-bottom', '0px');
+
+
     });
 
     break;
@@ -381,5 +390,4 @@ function updateMessageBox (args) {
       mb.remove();
     });
   }
-
 
