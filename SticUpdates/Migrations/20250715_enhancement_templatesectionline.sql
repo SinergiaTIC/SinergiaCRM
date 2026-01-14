@@ -1,5 +1,5 @@
 -- Create new fields in Template Section Line in field_meta_data table
-INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
+REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('TemplateSectionLinehtmlcode_c', 'TemplateSectionLine', 'htmlcode_c'),
 ('TemplateSectionLinethumbnail_image_c', 'TemplateSectionLine', 'thumbnail_image_c'),
 ('TemplateSectionLinethumbnail_name_c', 'TemplateSectionLine', 'thumbnail_name_c');
