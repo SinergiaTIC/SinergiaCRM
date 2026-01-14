@@ -12,7 +12,8 @@ if ($db instanceof DBManager)
     // Comprobar si ya existen plantillas personalizadas. En dicho caso, no se ejecutará el scrip
     $query = "SELECT count(id) FROM templatesectionline WHERE deleted = 0";
     if ($db->getOne($query) > 10) {
-        $GLOBALS['log']->debug("Se detiene la ejecución del script por que la entidad ya ha creado sus propias secciones de plantilla. Ejecutar el script de forma manual atentiendo a lo realizado por la entidad.");
+        $GLOBALS['log']->fatal("The script execution stops because the entity has already created its own template sections. Run the script manually, taking into account what the entity has already done.");
+        echo "The script execution stops because the entity has already created its own template sections. Run the script manually, taking into account what the entity has already done.";
         die();
     } 
 
@@ -60,7 +61,7 @@ if ($db instanceof DBManager)
                 'Exemple 05 - Text', 
                 'Exemple 06 - Comentari', 
                 'Exemple 07 - Avís', 
-                "Exemple 08 - Imatge a l'esquerra", 
+                "Exemple 08 - Imatge a l\'esquerra", 
                 'Exemple 09 - Imatge a la dreta', 
                 'Exemple 10 - Dues columnes amb imatge', 
                 'Exemple 11 - Tres columnes amb imatge',                
@@ -355,9 +356,9 @@ if ($db instanceof DBManager)
     // Create the records in templatesectionline
     foreach($insertQueries as $key => $insertQuery) {
         if ($db->query($insertQuery)) {
-            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has been insert or created in the TemplateSectionLine module.");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has been insert or created in the TemplateSectionLine module.");
         } else {
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has not been insert or created in the TemplateSectionLine module.");
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has not been insert or created in the TemplateSectionLine module.");
         }
     }
 
@@ -366,13 +367,14 @@ if ($db instanceof DBManager)
     $res = $db->query($query);
     
     while ($row = $db->fetchByAssoc($res)) {
-        $insertQuery = 'REPLACE INTO templatesectionline_cstm (id_c, htmlcode_c) VALUES("' . $row['id'] . '", "' . $row['description'] . '")';
+        $insertQuery = 'REPLACE INTO templatesectionline_cstm (id_c, htmlcode_c) VALUES ("' . $row['id'] . '", "' . $row['description'] . '")';
         if ($db->query($insertQuery)) {
-            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has been copied in the htmlcode_c field.");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has been copied in the htmlcode_c field.");
         } else {
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has not been copied in the htmlcode_c field.");
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has not been copied in the htmlcode_c field.");
         }        
     }
 } else {
     $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': DBManager is not set');
+    die();
 }
