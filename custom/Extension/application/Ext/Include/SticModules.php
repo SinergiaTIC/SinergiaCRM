@@ -65,6 +65,8 @@ $moduleList[] = 'stic_Messages';
 $moduleList[] = 'stic_Bookings_Places_Calendar';
 $moduleList[] = 'stic_Places';
 $moduleList[] = 'stic_Group_Opportunities';
+// $moduleList[] = 'stic_Message_Marketing'; -- Do not want to show them at module list
+// $moduleList[] = 'stic_MessagesMan';
 $moduleList[] = 'stic_Transactions';
 $moduleList[] = 'stic_Financial_Products';
 $moduleList[] = 'stic_Advanced_Web_Forms';
@@ -118,6 +120,8 @@ $beanList['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations'
 $beanList['stic_Custom_View_Conditions'] = 'stic_Custom_View_Conditions';
 $beanList['stic_Custom_View_Actions'] = 'stic_Custom_View_Actions';
 $beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
+$beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
+$beanList['stic_MessagesMan'] = 'stic_MessagesMan';
 $beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
 $beanList['stic_Places'] = 'stic_Places';
 $beanList['stic_Transactions'] = 'stic_Transactions';
@@ -172,6 +176,8 @@ $beanFiles['stic_Custom_View_Customizations'] = 'modules/stic_Custom_View_Custom
 $beanFiles['stic_Custom_View_Conditions'] = 'modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php';
 $beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
 $beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
+$beanFiles['stic_Message_Marketing'] = 'modules/stic_Message_Marketing/stic_Message_Marketing.php';
+$beanFiles['stic_MessagesMan'] = 'modules/stic_MessagesMan/stic_MessagesMan.php';
 $beanFiles['stic_Bookings_Places_Calendar'] = 'modules/stic_Bookings_Places_Calendar/stic_Bookings_Places_Calendar.php';
 $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
 $beanFiles['stic_Transactions'] = 'modules/stic_Transactions/stic_Transactions.php';
@@ -179,7 +185,6 @@ $beanFiles['stic_Financial_Products'] = 'modules/stic_Financial_Products/stic_Fi
 $beanFiles['stic_Advanced_Web_Forms'] = 'modules/stic_Advanced_Web_Forms/stic_Advanced_Web_Forms.php';
 $beanFiles['stic_Advanced_Web_Forms_Responses'] = 'modules/stic_Advanced_Web_Forms_Responses/stic_Advanced_Web_Forms_Responses.php';
 $beanFiles['stic_Advanced_Web_Forms_Links'] = 'modules/stic_Advanced_Web_Forms_Links/stic_Advanced_Web_Forms_Links.php';
-
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -193,6 +198,7 @@ $modInvisList[] = 'stic_Custom_Views';
 $modInvisList[] = 'stic_Custom_View_Customizations';
 $modInvisList[] = 'stic_Custom_View_Conditions';
 $modInvisList[] = 'stic_Custom_View_Actions';
+$modInvisList[] = 'stic_MessagesMan';
 $modInvisList[] = 'stic_Advanced_Web_Forms_Responses';
 $modInvisList[] = 'stic_Advanced_Web_Forms_Links';
 
@@ -211,6 +217,7 @@ $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
 $adminOnlyList['stic_Custom_Views'] = array('all' => 1);
+$adminOnlyList['stic_MessagesMan'] = array('all' => 1);
 $adminOnlyList['Trackers'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events

@@ -133,6 +133,10 @@ class CampaignsViewDetail extends ViewDetail
                 /* BEGIN - SECURITY GROUPS */
                     && $name != 'securitygroups'
                 /* END - SECURITY GROUPS */
+                // STIC-Custom EPS 20241105 Message Marketing
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/473
+                    && $name != 'campaigns_stic_message_marketing'
+                //END STIC-Custom
                 ) {
                     //exclude subpanels that are not prospectlists, emailmarketing, or tracked urls
                     $subpanel->subpanel_definitions->exclude_tab($name);
@@ -159,6 +163,14 @@ class CampaignsViewDetail extends ViewDetail
                 $subpanel->subpanel_definitions->exclude_tab('tracked_urls');
             }
             // END STIC-Custom
+
+            // STIC-Custom EPS 20241105 Message Marketing
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/473
+            if ($this->bean->campaign_type != 'Message' && $this->bean->campaign_type != 'NotifMsg') {
+                // Bug #49893  - 20120120 - Captivea (ybi) - Remove trackers subpanels if not on an email/newsletter campaign (useless subpannl)
+                $subpanel->subpanel_definitions->exclude_tab('campaigns_stic_message_marketing');
+            }
+            //END STIC-Custom
         }
         //show filtered subpanel list
         echo $subpanel->display();

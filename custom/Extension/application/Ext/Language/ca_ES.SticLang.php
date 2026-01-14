@@ -94,12 +94,13 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
-// Missatges: accions subpanell
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nou missatge';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou missatge';
+// Missatges: accions en mòduls de destinataris
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Envia un missatge telefònic';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge. Segur que voleu continuar?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = "S'ha sobrepassat el límit de missatges que es poden enviar simultàniament.";
-$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Envia un missatge telefònic';
+$app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificació per correu';
+$app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificació per missatge telefònic';
 
 // Enviament massiu de correus
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
@@ -160,6 +161,8 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['moduleList']['stic_Message_Marketing'] = 'Enviaments de missatges';
+$app_list_strings['moduleList']['stic_MessagesMan'] = 'Cua de missatges';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transaccions';
@@ -214,6 +217,8 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acció';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalització';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condició';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organització subvencionada';
+$app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Enviament de missatges';
+$app_list_strings['moduleListSingular']['stic_MessagesMan'] = 'Cua de missatges';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaça';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacció';
@@ -260,6 +265,7 @@ $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiència
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['parent_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['parent_type_display']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transaccions';
@@ -304,6 +310,7 @@ $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiència
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccions';
@@ -348,6 +355,7 @@ $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experi
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transaccions';
@@ -3813,7 +3821,9 @@ $app_list_strings['campaign_type_dom']['Radio'] = 'Ràdio';
 $app_list_strings['campaign_type_dom']['Television'] = 'Televisió';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Butlletí de notícies';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Enquesta';
-$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació per correu electrònic';
+$app_list_strings['campaign_type_dom']['Message'] = 'Missatge telefònic';
+$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notificació per missatge telefònic';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
@@ -3839,3 +3849,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
+
+// Llista dinàmica
+include 'modules/stic_Message_Marketing/dynamicLPOs.php';

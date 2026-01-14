@@ -64,9 +64,12 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'From name';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'From address';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Reply to name';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
+$mod_strings['LBL_MSG_TYPE'] = 'Type';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Template';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = 'The template must be of SMS type and may include fields from the record related to the notification (the event or the opportunity).';
 
-$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
-
+$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications by email';
+$mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications by message';
 
 $mod_strings['LBL_FLEX_RELATE_HELP'] = 'Record for which the notification is to be made. It can be an event or an opportunity.';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "Notification will be sent to members of selected target lists, which must be of type 'Default'.";
@@ -74,6 +77,15 @@ $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "The email template must be 
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Email account that will be used to send the notification. It can be configured in the 'Outbound email' section of the Administration area.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive error messages that may occur after sending. It can be configured in the 'Inbound email' section of the Administration area.";
 
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving the notification the emails to be sent will be automatically added to the sending queue.";
+$mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = "When saving the notification the messages to be sent will be automatically added to the sending queue.";
+
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Message sendings';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Send messages';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Send test messages';
+
+$mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Email Queue';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Messages Queue';
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving the notification the emails to be sent will be automatically added to the sending queue.';
 
 $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'New template section';
