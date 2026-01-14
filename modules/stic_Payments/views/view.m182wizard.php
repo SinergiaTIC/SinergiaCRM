@@ -33,10 +33,13 @@ class stic_PaymentsViewm182wizard extends SugarView {
 
     public function display() {
         parent::display();
+        $this->ss->assign("ISSUING_ORGANIZATION_LABEL", $this->view_object_map['ISSUING_ORGANIZATION_LABEL'] ?? null);
+        $this->ss->assign("ISSUING_ORGANIZATION_KEY", $this->view_object_map['ISSUING_ORGANIZATION_KEY'] ?? null);
         $this->ss->assign("LAB", $this->view_object_map, $list_label ?? null);
         $this->ss->assign("INT", $this->view_object_map, $list_intern ?? null);
         $this->ss->assign("ERR", $this->view_object_map, $error ?? null);
         $this->ss->assign("VAL", $this->view_object_map, $missingSettings ?? null);
+        $this->ss->assign("FIELD", $this->view_object_map, $missingFields ?? null);
         $this->ss->display('modules/stic_Payments/tpls/M182Wizard.tpl');
     }
 

@@ -168,6 +168,8 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 }
 
 $(function() {
+  $.fn.qtip.zindex = 26000;
+
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 
     const attr = 'sms-button'

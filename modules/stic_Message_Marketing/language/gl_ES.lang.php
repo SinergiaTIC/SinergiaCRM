@@ -68,7 +68,7 @@ $mod_strings = array (
     'LBL_SELECT_ALL' => 'Seleccionar todas las listas de público objetivo de la campaña',
     'LBL_PROSPECT_LISTS_TITLE' => 'Listas de público objetivo',
     'LBL_TYPE' => 'Tipo',
-
+    
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
     'LBL_CAMPAIGNS_TITLE' => 'Campaña',
     'LBL_STIC_MESSAGE_MARKETING_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoa',
