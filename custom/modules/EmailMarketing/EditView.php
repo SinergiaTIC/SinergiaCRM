@@ -239,7 +239,7 @@ function getOutboundEmailAccountOptions()
     //	$ret = array(
     //		0 => $mod_strings['LBL_OUTBOUND_EMAIL_ACCOUNT_DEFAULT'],
     //	);
-    $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+    $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list("", "type != 'user'");
     foreach ($oeaList as $oea) {
         $ret[$oea->id] = $oea->name;
     }

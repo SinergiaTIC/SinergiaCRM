@@ -91,3 +91,9 @@ $mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Enviar mensajes de prueba';
 
 $mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cola de correo electrónico';
 $mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de mensajes';
+
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nueva sección de plantilla';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Ver secciones de plantilla';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convertir enlaces del mensaje en URL de seguimiento';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' URL de seguimiento han sido creadas y se ha actualizado el contenido de la plantilla.';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'No se ha creado ninguna URL de seguimiento.';

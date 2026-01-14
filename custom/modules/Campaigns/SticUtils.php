@@ -238,9 +238,9 @@ class CampaignsUtils
     public static function fillDynamicOutboundEmailAccounts()
     {
         $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
-        $outboundEmails = $outboundEmailsFocus->get_list("name", "", 0, -99, -99);
+        $outboundEmails = $outboundEmailsFocus->get_full_list("", "type != 'user'");
 
-        foreach ($outboundEmails['list'] as $outboundEmail) {
+        foreach ($outboundEmails as $outboundEmail) {
             $dynamic_outbound_email_list[$outboundEmail->id] = "{$outboundEmail->name} ({$outboundEmail->smtp_from_addr})";
         }
         if (empty($dynamic_outbound_email_list)) {

@@ -86,3 +86,10 @@ $mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Send test messages';
 
 $mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Email Queue';
 $mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Messages Queue';
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving the notification the emails to be sent will be automatically added to the sending queue.';
+
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'New template section';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'View template sections';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convert message links to trackers';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' tracking URLs have been created and the template content has been updated.';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'No tracking URLs have been created.';
