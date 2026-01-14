@@ -3818,4 +3818,3 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
-
