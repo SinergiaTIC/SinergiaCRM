@@ -78,6 +78,11 @@ class TemplateSectionLine extends TemplateSectionLine_sugar
         $filename = "{$this->id}_thumbnail_image_c";
         $source = "upload/{$filename}";
         $dir = "custom/modules/TemplateSectionLine/custom_thumbnails/";
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        
         rename($source, $dir . $filename);
     }
     // END STIC 
