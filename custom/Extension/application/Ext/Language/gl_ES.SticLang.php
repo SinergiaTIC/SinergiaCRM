@@ -3670,7 +3670,7 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fin de suplant
 // SinergiaDA: Niveis de acceso dos usuarios
 $app_list_strings['sda_users_access_list']['0'] = 'Sen acceso';
 $app_list_strings['sda_users_access_list']['1'] = 'Acceso completo';
-$app_list_strings['sda_users_access_list']['2'] = 'Acceso de só lectura';
+// $app_list_strings['sda_users_access_list']['2'] = 'Acceso de só lectura';
 
 // Productos financieros: Tipos de productos
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';

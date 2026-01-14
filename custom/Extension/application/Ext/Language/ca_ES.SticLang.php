@@ -3669,7 +3669,7 @@ $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fi de suplanta
 // SinergiaDA: Nivells d'accés dels usuaris
 $app_list_strings['sda_users_access_list']['0'] = 'Sense accés';
 $app_list_strings['sda_users_access_list']['1'] = 'Accés complet';
-$app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura';
+// $app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura'; 
 
 // Productes financers: Tipus de productes
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Compte corrent';
