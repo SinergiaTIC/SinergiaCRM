@@ -69,7 +69,7 @@ class TemplateSectionLine extends TemplateSectionLine_sugar
 
         // Assign the path of the uploaded image to the field that will be used to retrieve the image and display it in Mozaik
         if (isset($this->thumbnail_image_c) && !empty($this->thumbnail_image_c)) {
-            $this->thumbnail = "custom/modules/TemplateSectionLine/custom_thumbnails/{$this->id}_thumbnail_image_c";
+            $this->thumbnail = "custom/modules/TemplateSectionLine/customThumbnails/{$this->id}_thumbnail_image_c";
         }
 
         parent::save();
@@ -77,12 +77,12 @@ class TemplateSectionLine extends TemplateSectionLine_sugar
         // Move from upload to the custom thumbnails folder
         $filename = "{$this->id}_thumbnail_image_c";
         $source = "upload/{$filename}";
-        $dir = "custom/modules/TemplateSectionLine/custom_thumbnails/";
+        $dir = "custom/modules/TemplateSectionLine/customThumbnails/";
 
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
-        
+
         rename($source, $dir . $filename);
     }
     // END STIC 

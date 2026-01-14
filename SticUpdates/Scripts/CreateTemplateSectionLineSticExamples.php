@@ -116,11 +116,11 @@ if ($db instanceof DBManager)
         <table style="background-color:#ffffff;" width="100%">
             <tbody>
                 <tr>
-                    <td style="padding:10px;" align="center"><img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/cabecera_500px.png" /></td>
+                    <td style="padding:10px;" align="center"><img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/cabecera_500px.png" /></td>
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/01_ImagenDeCabecera_225px.png', '', 1, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/01_ImagenDeCabecera_225px.png', '', 1, '1');
         SQL
         ,
         <<<SQL
@@ -128,11 +128,11 @@ if ($db instanceof DBManager)
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
-                    <td style="padding:10px;" align="center"><img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" /></td>
+                    <td style="padding:10px;" align="center"><img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/logo_200px.png" /></td>
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/02_Logo_225px.png', '', 2, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/02_Logo_225px.png', '', 2, '1');
         SQL
         ,
         <<<SQL
@@ -146,7 +146,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/03_Encabezado_H1_225px.png', '', 3, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/03_Encabezado_H1_225px.png', '', 3, '1');
         SQL
         ,
         <<<SQL
@@ -158,7 +158,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/04_Encabezado_H3_225px.png', '', 4, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/04_Encabezado_H3_225px.png', '', 4, '1');
         SQL
         ,
         <<<SQL
@@ -172,7 +172,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/05_Texto.png', '', 5, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/05_Texto.png', '', 5, '1');
         SQL
         ,
         <<<SQL
@@ -186,7 +186,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/06_Commentario_225px.png', '', 6, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/06_Commentario_225px.png', '', 6, '1');
         SQL
         ,
         <<<SQL
@@ -198,7 +198,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/07_Aviso_225px.png', '', 7, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/07_Aviso_225px.png', '', 7, '1');
         SQL
         ,
         <<<SQL
@@ -207,7 +207,7 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/stic_image_350px.png" />
                     </td>
                     <td align="center" style="padding:10px;">
                         <h2>Lorem ipsum</h2>                    
@@ -216,7 +216,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/08_ImagenALaIzquierda_225px.png', '', 8, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/08_ImagenALaIzquierda_225px.png', '', 8, '1');
         SQL
         ,
         <<<SQL
@@ -229,12 +229,12 @@ if ($db instanceof DBManager)
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/stic_image_350px.png" />
                     </td>
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/09_ImagenALaDerecha_225px.png', '', 9, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/09_ImagenALaDerecha_225px.png', '', 9, '1');
         SQL
         ,
         <<<SQL
@@ -243,19 +243,19 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/stic_image_350px.png" />
                         <h3>Lorem ipsum 1</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/stic_image_350px.png" />
                         <h3>Lorem ipsum 2</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/10_DosColumnasConImagen_225px.png', '', 10, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/10_DosColumnasConImagen_225px.png', '', 10, '1');
         SQL
         ,
         <<<SQL
@@ -264,24 +264,24 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_250px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/stic_image_250px.png" />
                         <h3>Lorem ipsum 1</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_250px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/stic_image_250px.png" />
                         <h3>Lorem ipsum 2</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_250px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/stic_image_250px.png" />
                         <h3>Lorem ipsum 3</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>                
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/11_TresColumnasConImagen_225px.png', '', 11, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/11_TresColumnasConImagen_225px.png', '', 11, '1');
         SQL
         ,
         <<<SQL
@@ -289,11 +289,11 @@ if ($db instanceof DBManager)
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
-                    <td style="padding:10px;" align="center"><a href="https://tuservidor.com/video.mp4"> <img style="border:0;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/video_player.png" /> </a></td>
+                    <td style="padding:10px;" align="center"><a href="https://tuservidor.com/video.mp4"> <img style="border:0;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/video_player.png" /> </a></td>
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/12_Video_225px.png', '', 12, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/12_Video_225px.png', '', 12, '1');
         SQL
         ,
         <<<SQL
@@ -309,7 +309,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/13_Boton_225px.png', '', 13, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/13_Boton_225px.png', '', 13, '1');
         SQL
         ,
         <<<SQL
@@ -317,7 +317,7 @@ if ($db instanceof DBManager)
         <br /><br />
             <hr />
         <br /><br />
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/14_Separador_225px.png', '', 14, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/14_Separador_225px.png', '', 14, '1');
         SQL
         ,
         <<<SQL
@@ -326,17 +326,17 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;" align="center">
-                        <a href="https://www.youtube.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/youtube_64px.png" alt="YouTube" width="24" /></a> 
-                        <a href="https://www.facebook.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/facebook_64px.png" alt="Facebook" width="24" /></a> 
-                        <a href="https://www.instagram.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/instagram_64px.png" alt="Instagram" width="24" /></a> 
-                        <a href="https://www.x.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/twitter_64px.png" alt="Twitter" width="24" /></a> 
-                        <a href="https://es.linkedin.com/company/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/linkedin_64px.png" alt="Linkedin" width="24" /></a> 
-                        <a href="https://tu_web.org/"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/web_64px.png" alt="Web" width="24" /></a> 
-                        <a href="mailto:info@entidad.org"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/email_64px.png" alt="Correo electrónico" width="24" /></a></td>
+                        <a href="https://www.youtube.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/youtube_64px.png" alt="YouTube" width="24" /></a> 
+                        <a href="https://www.facebook.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/facebook_64px.png" alt="Facebook" width="24" /></a> 
+                        <a href="https://www.instagram.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/instagram_64px.png" alt="Instagram" width="24" /></a> 
+                        <a href="https://www.x.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/twitter_64px.png" alt="Twitter" width="24" /></a> 
+                        <a href="https://es.linkedin.com/company/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/linkedin_64px.png" alt="Linkedin" width="24" /></a> 
+                        <a href="https://tu_web.org/"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/web_64px.png" alt="Web" width="24" /></a> 
+                        <a href="mailto:info@entidad.org"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/sticImagesFiles/Images/email_64px.png" alt="Correo electrónico" width="24" /></a></td>
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/15_Pie_Redes_Sociales_225px.png', '', 15, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/15_Pie_Redes_Sociales_225px.png', '', 15, '1');
         SQL
         ,
         <<<SQL
@@ -348,7 +348,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/16_Pie_Texto_Baja_225px.png', '', 16, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/sticImagesFiles/Thumbnails/16_Pie_Texto_Baja_225px.png', '', 16, '1');
         SQL
     );
 
