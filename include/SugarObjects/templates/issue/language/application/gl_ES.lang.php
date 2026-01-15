@@ -47,21 +47,21 @@ $app_list_strings = array(
 
     $object_name . '_type_dom' => array(
         'Administration' => 'Administración',
-        'Product' => 'Producto',
+        'Product' => 'Produto',
         'User' => 'Usuario',
     ),
     $object_name . '_status_dom' => array(
-        'New' => 'Nuevo',
+        'New' => 'Novo',
         'Assigned' => 'Asignado',
         'Closed' => 'Cerrado',
-        'Pending Input' => 'Pendiente de Información',
-        'Rejected' => 'Rechazado',
+        'Pending Input' => 'Pendente de Información',
+        'Rejected' => 'Rexeitado',
         'Duplicate' => 'Duplicado',
     ),
     $object_name . '_priority_dom' => array(
         'P1' => 'Alta',
         'P2' => 'Media',
-        'P3' => 'Baja',
+        'P3' => 'Baixa',
     ),
     $object_name . '_resolution_dom' => array(
         '' => '',
@@ -69,6 +69,6 @@ $app_list_strings = array(
         'Duplicate' => 'Duplicado',
         'Closed' => 'Cerrado',
         'Out of Date' => 'Caducado',
-        'Invalid' => 'No Válido',
+        'Invalid' => 'Non Válido',
     ),
 );
