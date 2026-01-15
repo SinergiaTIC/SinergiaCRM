@@ -20,36 +20,36 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a (ID)';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
 $mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
 $mod_strings['LBL_CREATED'] = 'Creado por';
 $mod_strings['LBL_CREATED_USER'] = 'Creado por';
-$mod_strings['LBL_CREATED_ID'] = 'Creado por (ID)';
+$mod_strings['LBL_CREATED_ID'] = 'Creado por';
 $mod_strings['LBL_MODIFIED'] = 'Modificado por';
 $mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
 $mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
-$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
-$mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Listas de Público Objetivo';
+$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por';
+$mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Listas de Público Obxectivo';
 $mod_strings['LBL_INC_REFERENCE_GROUP'] = 'Grupo de referencia (Incorpora)';
-$mod_strings['LBL_INC_REFERENCE_ENTITY'] = 'Entidad de referencia (Incorpora)';
+$mod_strings['LBL_INC_REFERENCE_ENTITY'] = 'Entidade de referencia (Incorpora)';
 $mod_strings['LBL_INC_REFERENCE_OFFICER'] = 'Técnico de referencia (Incorpora)';
 $mod_strings['LBL_INC_INCORPORA_USER'] = 'Identificador (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Parámetros de conexión con Incorpora';
 $mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Calendario laboral';
-$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Indica si la funcionalidad de Calendario laboral está activada para el usuario.';
-$mod_strings['LBL_STIC_CLOCK'] = 'Registro horario';
-$mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indica si la funcionalidad de Registro horario está activada para el usuario.';
+$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Indica se a funcionalidade de Calendario laboral está activada para o usuario.';
+$mod_strings['LBL_STIC_CLOCK'] = 'Rexistro horario';
+$mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indica se a funcionalidade de Rexistro horario está activada para o usuario.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'Acceso a SinergiaDA';
 $mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica o nivel de acceso do usuario en Sinergia Data Analytics.<ul><li><b>Sen acceso:</b> o usuario non poderá acceder.</li><li><b>Acceso completo:</b> o usuario poderá crear, modificar e executar informes.</li><li><b>Acceso de só lectura:</b> o usuario poderá executar informes e ver os seus resultados pero non poderá crear informes novos nin modificar os existentes. Esta opción só se aplica a usuarios normais; os administradores con acceso a SinergiaDA sempre terán acceso completo.</li></ul>';
 
 // Virtual Field Kreporter
-$mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';
+$mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direccións de correo';
 
 // Asistente de creación de registros de Calendario laboral
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generar Calendario laboral';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Xerar Calendario laboral';
 
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Inicio de sesión alternativo</h3>';
