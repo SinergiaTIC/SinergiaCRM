@@ -1,21 +1,53 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-$GLOBALS['log']->debug("Executing SticUpdates/Scripts/CreateTemplateSectionLineSticExamples.php.");
+$GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "Executing SticUpdates/Scripts/CreateTemplateSectionLineSticExamples.php.");
+echo "Executing SticUpdates/Scripts/CreateTemplateSectionLineSticExamples.php. <br />";
 
 global $db, $current_user, $config;
-
 $db = DBManagerFactory::getInstance();
 
 if ($db instanceof DBManager) 
 {
-    // Comprobar si ya existen plantillas personalizadas. En dicho caso, no se ejecutará el scrip
+    // Check if any custom template section lines already exist. If so, the script will not run.
     $query = "SELECT count(id) FROM templatesectionline WHERE deleted = 0";
-    if ($db->getOne($query) > 10) {
-        $GLOBALS['log']->fatal("The script execution stops because the entity has already created its own template sections. Run the script manually, taking into account what the entity has already done.");
-        echo "The script execution stops because the entity has already created its own template sections. Run the script manually, taking into account what the entity has already done.";
-        die();
-    } 
+    $res = $db->getOne($query);
+    if ($res === false) {
+        $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "Database error checking the number of records in the table templatesectionline.");
+        http_response_code(500);
+        die("Database error checking the number of records in the table templatesectionline.");
+    }
+    // if ($res > 10) {
+    //     $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "The script execution stops because the entity has already created its own template sections. Run the script manually taking into account what the entity has already done.");
+    //     http_response_code(200);
+    //     die("The script execution stops because the entity has already created its own template sections. Run the script manually taking into account what the entity has already done.");
+    // } 
+
+    // Check if the assigned_user_id column exists in the templatesectionline table
+    $query = "SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '{$sugar_config['dbconfig']['db_name']}' AND TABLE_NAME = 'templatesectionline' and COLUMN_NAME = 'assigned_user_id'";
+    $res = $db->getOne($query);
+    if ($res === false) {
+        $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "Database error checking if the assigned_user_id column exists in the templatesectionline table.");
+        http_response_code(500);
+        die("Database error checking if the assigned_user_id column exists in the templatesectionline table.");
+    }
+    if ($res == 0) {
+        // Create the assigned_user_id column
+        $query = "ALTER TABLE templatesectionline add COLUMN assigned_user_id char(36) NULL";
+        if ($db->query($query) === false) {
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "Error creating assigned_user_id column in templatesectionline table.");
+            http_response_code(500);
+            die("Database error creating assigned_user_id column in templatesectionline table.");
+        }
+    }
+
+    // Create the table templatesectionline_cstm and its columns
+    $query = "CREATE TABLE IF NOT EXISTS templatesectionline_cstm (id_c char(36) NOT NULL, htmlcode_c text DEFAULT NULL, thumbnail_image_c varchar(255) DEFAULT NULL, thumbnail_name_c varchar(40) DEFAULT NULL) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+    if ($db->query($query) === false) {
+        $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "Error creating templatesectionline_cstm table.");
+        http_response_code(500);
+        die("Database error creating templatesectionline_cstm table.");
+    }
 
     $site_url = $sugar_config['site_url'];
     $default_language = $sugar_config['default_language'];
@@ -355,10 +387,12 @@ if ($db instanceof DBManager)
 
     // Create the records in templatesectionline
     foreach($insertQueries as $key => $insertQuery) {
-        if ($db->query($insertQuery)) {
+        if ($db->query($insertQuery) !== false) {
             $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has been insert or created in the TemplateSectionLine module.");
         } else {
             $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has not been insert or created in the TemplateSectionLine module.");
+            http_response_code(500);
+            die("Database error - The example record 'Example " . $key + 1 . "' has not been insert or created in the TemplateSectionLine module.");
         }
     }
 
@@ -366,15 +400,29 @@ if ($db instanceof DBManager)
     $query = "SELECT id, description FROM templatesectionline WHERE deleted = 0;";
     $res = $db->query($query);
     
+    if ($res === false) {
+        $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "Error copying the description field into htmlcode_c field.");
+        http_response_code(500);
+        die("Database error copying the description field into htmlcode_c field.");
+    }
+
     while ($row = $db->fetchByAssoc($res)) {
         $insertQuery = 'REPLACE INTO templatesectionline_cstm (id_c, htmlcode_c) VALUES ("' . $row['id'] . '", "' . $row['description'] . '")';
-        if ($db->query($insertQuery)) {
+        if ($db->query($insertQuery) !== false) {
             $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has been copied in the htmlcode_c field.");
         } else {
             $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $row['id'] . "' has not been copied in the htmlcode_c field.");
+            http_response_code(500);
+            die("Database error - The description of example record with ID = " . $row['id'] . "' has not been copied in the htmlcode_c field.");
         }        
     }
 } else {
-    $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': DBManager is not set');
-    die();
+    $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': Error accessing the database: DBManager is not set');
+    http_response_code(500);
+    die("Database error accessing the database.");
 }
+
+// Generate a successful response
+http_response_code(200);
+echo "<br />Script executed correctly.<br />";
+die();
