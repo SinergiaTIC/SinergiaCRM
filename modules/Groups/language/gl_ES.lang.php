@@ -44,13 +44,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $mod_strings = array(
     'LBL_MODULE_NAME' => 'Grupos',
-    'LBL_GROUP_NAME' => 'Nombre del Grupo:',
-    'LBL_DESCRIPTION' => 'Descripción:',
+    'LBL_GROUP_NAME' => 'Nome do Grupo:',
+    'LBL_DESCRIPTION' => 'Descrición:',
     'LBL_TEAM' => 'Equipo:',
     // ListView
     'LBL_LIST_TITLE' => 'Grupos',
     // Links
-    'LNK_ALL_GROUPS' => 'Todos los Grupos',
-    'LNK_NEW_GROUP' => 'Nuevo Grupo',
+    'LNK_ALL_GROUPS' => 'Todos os Grupos',
+    'LNK_NEW_GROUP' => 'Novo Grupo',
     'LNK_CONVERT_USER' => 'Convertir Usuario en Grupo',
 );
