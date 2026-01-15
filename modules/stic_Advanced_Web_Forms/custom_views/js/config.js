@@ -354,6 +354,18 @@ class AWF_Field {
     }
   }
 
+  isSelectCustomOptions() {
+    if (this.type_field == 'unlinked' && this.type_in_form == "select") {
+      return true;
+    }
+    if (this.type_in_form == "select" && 
+        this.type != "relate" && 
+        this.type != "enum" && this.type != "radioenum" && this.type != "multienum" && this.type != "bool" && this.type != "checkbox") {
+      return true;
+    }
+    return false;
+  }
+
   getAvailableValueTypes() {
     if (this.name == "") {
       return [];
@@ -383,7 +395,7 @@ class AWF_Field {
     if (this.type_field == 'unlinked') {
       return AWF_Field.type_in_formList();
     }
-    
+
     // text, textarea, number, date, select
     if (this.type == "enum" || this.type == "radioenum" || this.type == "multienum" || this.type == "bool" || this.type == "checkbox") {
       return AWF_Field.type_in_formList().filter(t => t.id == "select");
@@ -395,16 +407,16 @@ class AWF_Field {
       return AWF_Field.type_in_formList().filter(t => t.id == "date");
     }
     if (this.type == "int" || this.type == "float" || this.type == "double" || this.type == "decimal") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "number");
+      return AWF_Field.type_in_formList().filter(t => t.id == "number" || t.id == "select");
     }
     if (this.type == "json") {
       return AWF_Field.type_in_formList().filter(t => t.id == "textarea");
     }
     if (this.type == "name" || this.type == "phone" || this.type == "email" || this.type == "url" || 
         this.type == "password" || this.type == "encrypt") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "text");
+      return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "select");
     }
-    return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number");
+    return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number" || t.id == "select");
   }
 
   getTypeInActions() {
@@ -460,6 +472,11 @@ class AWF_Field {
     }
 
     let list = [];
+    if (this.isSelectCustomOptions()) {
+      list.push(base_subtypes.find(s => s.id == "select"));
+      list.push(base_subtypes.find(s => s.id == "select_radio"));
+      return list
+    }
     if (this.type == "phone") {
       list.push(base_subtypes.find(s => s.id == "text_tel"));
       list.push(base_subtypes.find(s => s.id == "text"));
@@ -522,7 +539,7 @@ class AWF_Field {
   }
 
   setValueOptions(originalOptions) {
-    if (this.type_field == 'unlinked' && this.acceptValueOptions()) {
+    if (this.isSelectCustomOptions() && this.acceptValueOptions()) {
       if ((this.value_options?.length ?? 0) == 0) {
         this.value_options = [new AWF_ValueOption()];
       }

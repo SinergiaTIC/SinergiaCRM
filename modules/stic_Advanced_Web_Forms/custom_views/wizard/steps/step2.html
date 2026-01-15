@@ -390,7 +390,7 @@
                       </div>
                     </template>
                     <!-- Value options list name -->
-                    <template x-if="field && isInFormSelectableValues && field.type_field != 'unlinked'">
+                    <template x-if="field && isInFormSelectableValues && field.type_field != 'unlinked' && optionValuesListName != ''">
                       <div class="col-3">
                         <label for="modalField_ValueOptionsDesc" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
                         <!-- Value options configuration Check -->
@@ -437,10 +437,10 @@
                             <thead>
                               <tr>
                                 <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></th>
-                                <template x-if="field.type_field != 'unlinked'">
+                                <template x-if="!field.isSelectCustomOptions()">
                                   <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL')"></th>
                                 </template>
-                                <template x-if="field.type_field != 'unlinked'">
+                                <template x-if="!field.isSelectCustomOptions()">
                                   <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></th>
                                 </template>
                                 <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_LABEL')"></th>
@@ -451,20 +451,20 @@
                               <template x-for="(element, index) in field.value_options">
                                 <tr>
                                   <!-- Value -->
-                                  <template x-if="field.type_field != 'unlinked'">
+                                  <template x-if="!field.isSelectCustomOptions()">
                                     <td x-text="element.value"></td>
                                   </template>
-                                  <template x-if="field.type_field == 'unlinked'">
+                                  <template x-if="field.isSelectCustomOptions()">
                                     <td>
                                       <input class="form-control" type="text" x-model="element.value" :id="`modalField_ValueOptionsValue${index}`"/>
                                     </td>
                                   </template>
                                   <!-- Text original -->
-                                  <template x-if="field.type_field != 'unlinked'">
+                                  <template x-if="!field.isSelectCustomOptions()">
                                     <td x-text="element.text_original"></td>
                                   </template>
                                   <!-- Is Visible -->
-                                  <template x-if="field.type_field != 'unlinked'">
+                                  <template x-if="!field.isSelectCustomOptions()">
                                     <td>
                                       <div class="form-switch">
                                         <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="element.is_visible" :id="`modalField_ValueOptionsInclude${index}`"/>
@@ -485,7 +485,7 @@
                                         <span class="suitepicon suitepicon-action-move-down"></span>
                                       </button>
                                     </div>
-                                    <template x-if="field.type_field == 'unlinked'">
+                                    <template x-if="field.isSelectCustomOptions()">
                                       <button type="button" class="btn ms-2" @click="field.value_options.splice(index, 1)" :title="utils.translate('LBL_BUTTON_DELETE')">
                                         <span class="suitepicon suitepicon-action-delete"></span>
                                       </button>
@@ -495,7 +495,7 @@
                               </template>
                             </tbody>
                           </table>
-                          <template x-if="field.type_field == 'unlinked'">
+                          <template x-if="field.isSelectCustomOptions()">
                             <button type="button" class="btn" @click="field.value_options.push(new AWF_ValueOption());" :title="utils.translate('LBL_BUTTON_ADD')">
                               <span class="suitepicon suitepicon-action-plus"></span>
                             </button>

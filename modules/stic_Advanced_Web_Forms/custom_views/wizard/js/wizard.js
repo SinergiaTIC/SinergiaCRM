@@ -762,7 +762,7 @@ class WizardStep2 {
           if (!this.field) return;
           if (this.isEdit) return;
           this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
-          if (this.field.type_field == 'unlinked') {
+          if (this.field.type_field == 'unlinked' || this.field.isSelectCustomOptions()) {
             this.configValueOptions = this.isInFormSelectableValues;
           }
         });
