@@ -738,7 +738,7 @@ $app_list_strings['stic_contacts_relationships_end_reasons_list'][''] = '';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['decease'] = 'Defunción';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['disagreement'] = 'Desacordo';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['economy'] = 'Razóns económicas';
-$app_list_strings['stic_contacts_relationships_end_reasons_list']['personal'] = 'Razones personales';
+$app_list_strings['stic_contacts_relationships_end_reasons_list']['personal'] = 'Razóns personais';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['other'] = 'Outros';
 
 // Oportunidades: Tipos
@@ -943,13 +943,13 @@ $app_list_strings['stic_registrations_participation_types_list']['vip'] = 'VIP';
 
 // Inscripciones: Motivos de rechazo
 $app_list_strings['stic_registrations_rejection_reasons_list'][''] = '';
-$app_list_strings['stic_registrations_rejection_reasons_list']['agenda'] = 'Agenda';
+$app_list_strings['stic_registrations_rejection_reasons_list']['agenda'] = 'Axenda';
 $app_list_strings['stic_registrations_rejection_reasons_list']['not_interested'] = 'Non interesa';
 $app_list_strings['stic_registrations_rejection_reasons_list']['price'] = 'Prezo';
 
 // Inscripciones: Motivos de no participación
 $app_list_strings['stic_registrations_not_participating_reasons_list'][''] = '';
-$app_list_strings['stic_registrations_not_participating_reasons_list']['agenda'] = 'Agenda';
+$app_list_strings['stic_registrations_not_participating_reasons_list']['agenda'] = 'Axenda';
 $app_list_strings['stic_registrations_not_participating_reasons_list']['sickness'] = 'Enfermidade';
 $app_list_strings['stic_registrations_not_participating_reasons_list']['forgotten'] = 'Esquezemento';
 
@@ -1250,7 +1250,7 @@ $app_list_strings['stic_sepe_file_types_list']['annual_accd'] = 'ACCD anual';
 $app_list_strings['stic_incorpora_activity_sector_list'][''] = '';
 $app_list_strings['stic_incorpora_activity_sector_list']['AGRICULT'] = 'Agricultura';
 $app_list_strings['stic_incorpora_activity_sector_list']['INDUSTRIA'] = 'Industria';
-$app_list_strings['stic_incorpora_activity_sector_list']['SERVICIOS'] = 'Servicios';
+$app_list_strings['stic_incorpora_activity_sector_list']['SERVICIOS'] = 'Servizos';
 $app_list_strings['stic_incorpora_activity_sector_list']['COMEERCIO'] = 'Comercio (Obsoleto)';
 $app_list_strings['stic_incorpora_addr_street_type_list'][''] = '';
 $app_list_strings['stic_incorpora_addr_street_type_list']['1'] = 'Rúa';
@@ -2449,10 +2449,10 @@ $app_list_strings['stic_incorpora_economic_benefit_list']['SEG_SOCIAL'] = 'Prest
 $app_list_strings['stic_incorpora_economic_benefit_list']['PRES_IMV'] = 'Ingreso Mínimo Vital';
 $app_list_strings['stic_incorpora_economic_benefit_list']['AU_IMV'] = 'Autonómica asimilable al Ingreso Mínimo Vital';
 $app_list_strings['stic_incorpora_economic_benefit_list']['CONTRIB'] = 'Contributiva (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desempleo (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desemprego (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['GRAN_INVAL'] = 'Gran invalidez (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['INVALIDEZ'] = 'Invalidez (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'No (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['NO_CONTRIB'] = 'Non contributiva (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['OTROS'] = 'Outras (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['P_PROF_HAB'] = 'Incapacidade permanente parcial para a profesión habitual (Obsoleto)';
