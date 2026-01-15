@@ -46,14 +46,14 @@ $app_list_strings = array(
     strtolower($object_name) . '_category_dom' => array(
         '' => '',
         'Marketing' => 'Marketing',
-        'Knowledege Base' => 'Base de Conocimiento',
-        'Sales' => 'Ventas',
+        'Knowledege Base' => 'Base de Coñecemento',
+        'Sales' => 'Vendas',
     ),
 
     strtolower($object_name) . '_subcategory_dom' => array(
         '' => '',
         'Marketing Collateral' => 'Impresos de Marketing',
-        'Product Brochures' => 'Folletos de Producto',
+        'Product Brochures' => 'Folletos de Produto',
         'FAQ' => 'FAQ',
     ),
 
@@ -63,6 +63,6 @@ $app_list_strings = array(
         'FAQ' => 'FAQ',
         'Expired' => 'Caducado',
         'Under Review' => 'En Revisión',
-        'Pending' => 'Pendiente',
+        'Pending' => 'Pendente',
     ),
 );
