@@ -116,7 +116,7 @@ $mod_strings = array (
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
   'LBL_WIZARD_FINISH' => 'Finalizar',
 
-  'LBL_WIZARD_FORM_EDIT_WARNING_TITLE' => '⚠️ Precaución al editar!',
+  'LBL_WIZARD_FORM_EDIT_WARNING_TITLE' => '⚠️ ¡Precaución al editar!',
   'LBL_WIZARD_FORM_EDIT_WARNING_PUBLIC' => 'Este formulario es público: Alguien podría estar rellenándolo en este mismo momento.',
   'LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES' => 'Hay %s respuestas registradas: Cambiar los campos podría romper su visualización histórica.',
   'LBL_WIZARD_FORM_EDIT_WARNING_PROCEED' => 'Se recomienda cerrar el formulario o duplicarlo antes de realizar cambios estructurales mayores',

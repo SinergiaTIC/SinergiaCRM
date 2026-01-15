@@ -14,7 +14,7 @@
         <button type="button" class="button" @click="WizardNavigation.finish()" x-text="utils.translate('LBL_WIZARD_FINISH')"></button>
     </div>
 
-    <div x-show="STIC.formMsgWarnings!=''" class="alert alert-warning m-2 p-4" x-text="STIC.formMsgWarnings" style="white-space: pre-wrap;"></div> 
+    <div x-show="STIC.formMsgWarnings!=''" class="alert alert-warning m-2 p-3" x-text="STIC.formMsgWarnings" style="white-space: pre-wrap;"></div> 
 
     <h2 id='wizard-section-title'></h2>
     <div class="col-11 ms-3 mb-3 p-2 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center">
