@@ -24,27 +24,27 @@ $mod_strings['LBL_SHAREDDAY'] = 'Día compartido';
 $mod_strings['LBL_FILTERS_TITLE'] = 'Filtros';
 $mod_strings['LBL_FILTERS_CROSS_REMOVE_FILTERS_TOOLTIP'] = 'Quitar filtros';
 
-$mod_strings['LBL_FILTERS_SESSIONS_TITLE'] = 'Sesiones';
+$mod_strings['LBL_FILTERS_SESSIONS_TITLE'] = 'Sesións';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS'] = 'Evento';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS'] = 'Centro vinculado al evento';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS'] = 'Centro vinculado ao evento';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS_TYPE'] = 'Tipo de evento';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_ACTIVITY_TYPE'] = 'Tipo de actividad';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_ACTIVITY_TYPE'] = 'Tipo de actividade';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_COLOR'] = 'Color';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_RESPONSIBLE'] = 'Responsable';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_CONTACTS'] = 'Persona inscrita';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_PROJECTS'] = 'Proyecto vinculado al evento';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_CONTACTS'] = 'Persoa inscrita';
+$mod_strings['LBL_FILTERS_STIC_SESSIONS_PROJECTS'] = 'Proxecto vinculado ao evento';
 
-$mod_strings['LBL_FILTERS_FOLLOWUPS_TITLE'] = 'Seguimientos';
+$mod_strings['LBL_FILTERS_FOLLOWUPS_TITLE'] = 'Seguementos';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_COLOR'] = 'Color';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_TYPE'] = 'Tipo';
-$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = 'Persona en seguimiento';
-$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Proyecto relacionado';
+$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = 'Persoa en seguemento';
+$mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Proxecto relacionado';
 
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Calendario laboral';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Tipo';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Departamento';
 
-$mod_strings['LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO'] = 'Con la opción activada los calendarios laborales de los diferentes usuarios pueden solaparse. Para optimizar su visualización se recomienda mostrarlos por separado.';
-$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Ver registros de Calendario laboral';
+$mod_strings['LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO'] = 'Coa opción activada, os calendarios laborais dos diferentes usuarios poden solaparse. Para optimizar a súa visualización recoméndase amosalos por separado.';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Ver rexistros de Calendario laboral';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = 'Calendario laboral - Disponible';
-$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Calendario laboral - No disponible';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Calendario laboral - Non disponible';
