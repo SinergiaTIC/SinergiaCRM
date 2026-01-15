@@ -20,6 +20,9 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+use Symfony\Component\Validator\Constraints\Length;
+
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 
@@ -70,11 +73,39 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
 
         SticViews::display($this);
 
+        $responseCount = 0;
+        if (!empty($this->bean->id)) {
+            $db = DBManagerFactory::getInstance();
+            $formId = $db->quote($this->bean->id);
+
+            $query = "SELECT count(*) FROM stic_f193responses_c 
+                      WHERE stic_aa0eb_forms_ida = '$formId' 
+                      AND deleted = 0";
+
+            $responseCount = $db->getOne($query) ?? 0;
+        }
+        $warnings = [];
+        $msgWarnings = "";
+        if ($this->bean->status === 'public') {
+            $warnings[] = "\t· " . translate('LBL_WIZARD_FORM_EDIT_WARNING_PUBLIC', 'stic_Advanced_Web_Forms');
+        }
+        if ($responseCount > 0) {
+            $warnings[] = "\t· " . sprintf(translate('LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES', 'stic_Advanced_Web_Forms'), $responseCount);
+        }
+        if (count($warnings) > 0) {
+        $msgWarnings = translate('LBL_WIZARD_FORM_EDIT_WARNING_TITLE', 'stic_Advanced_Web_Forms') . "\n" .
+                       implode("\n", $warnings) . "\n" .
+                       translate('LBL_WIZARD_FORM_EDIT_WARNING_PROCEED', 'stic_Advanced_Web_Forms');
+        }
+
+
         $this->ss->assign('title', $this->getModuleTitle(false));
 
         require_once "modules/stic_Advanced_Web_Forms/Utils.php";
         $this->ss->assign('enabledModules', json_encode(getEnabledModules()));
         $this->ss->assign('mainThemeColor', getCustomBaseColor());
+        $this->ss->assign('msgWarnings', $msgWarnings);
+
 
         echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');
     }
