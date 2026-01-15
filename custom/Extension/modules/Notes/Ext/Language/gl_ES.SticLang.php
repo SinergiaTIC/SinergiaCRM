@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a (ID)';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
 $mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
