@@ -55,7 +55,7 @@ $app_list_strings = array(
         'Press' => 'Prensa',
         'Prospect' => 'Prospecto',
         'Reseller' => 'Revendedor',
-        'Other' => 'Otro',
+        'Other' => 'Outro',
     ),
 
 );
