@@ -17,11 +17,11 @@ if ($db instanceof DBManager)
         http_response_code(500);
         die("Database error checking the number of records in the table templatesectionline.");
     }
-    // if ($res > 10) {
-    //     $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "The script execution stops because the entity has already created its own template sections. Run the script manually taking into account what the entity has already done.");
-    //     http_response_code(200);
-    //     die("The script execution stops because the entity has already created its own template sections. Run the script manually taking into account what the entity has already done.");
-    // } 
+    if ($res > 10) {
+        $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': ' . "The script execution stops because the entity has already created its own template sections. Run the script manually taking into account what the entity has already done.");
+        http_response_code(200);
+        die("The script execution stops because the entity has already created its own template sections. Run the script manually taking into account what the entity has already done.");
+    } 
 
     // Check if the assigned_user_id column exists in the templatesectionline table
     $query = "SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '{$sugar_config['dbconfig']['db_name']}' AND TABLE_NAME = 'templatesectionline' and COLUMN_NAME = 'assigned_user_id'";
