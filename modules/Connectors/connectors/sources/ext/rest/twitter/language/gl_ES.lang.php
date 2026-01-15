@@ -44,8 +44,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $connector_strings = array(
     //Vardef labels
-    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"> <tr><th valign="top" width="35%" class="dataLabel"> Información de la aplicación de Twitter</th></tr> <tr><td width="35%" class="dataLabel">, necesitará crear una cuenta de desarrolladores de Twitter y aplicación Para registrarse</td></tr></table>',
+    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"> <tr><th valign="top" width="35%" class="dataLabel"> Información da aplicación de Twitter</th></tr> <tr><td width="35%" class="dataLabel">, necesitará crear unha conta de desarrolladores de Twitter e aplicación Para rexgistrarse</td></tr></table>',
     //Configuration labels
-    'consumer_key' => 'Clave del Consumidor',
-    'consumer_secret' => 'Secreto del Consumidor',
+    'consumer_key' => 'Clave do Consumidor',
+    'consumer_secret' => 'Segredo do Consumidor',
 );
