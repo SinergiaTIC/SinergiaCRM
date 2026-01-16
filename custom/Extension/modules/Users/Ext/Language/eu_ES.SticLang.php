@@ -52,7 +52,7 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generar Calendario laboral';
 
 // Autenticación OAuth
-$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '';
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Inicio de sesión alternativo</h3>';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'La dirección de correo electrónico ';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' no pertenece a ningún usuario de SinergiaCRM. Si considera que se trata de un error, contacte con un administrador.';
 

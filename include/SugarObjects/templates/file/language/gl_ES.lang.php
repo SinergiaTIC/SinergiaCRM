@@ -103,7 +103,7 @@ $mod_strings = array(
 
     'DEF_CREATE_LOG' => 'Documento Creado',
 
-    //error messages
+    //erro messages
     'ERR_DOC_NAME' => 'Nome de Documento',
     'ERR_DOC_ACTIVE_DATE' => 'Data de Publicación',
     'ERR_FILENAME' => 'Nome de Arquivo',
