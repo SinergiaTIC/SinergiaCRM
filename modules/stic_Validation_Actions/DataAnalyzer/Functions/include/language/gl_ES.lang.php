@@ -21,11 +21,11 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NO_ROWS' => 'No se han encontrado registros a revisar.',
-    'NO_ERRORS' => 'No se ha detectado ningún error en los registros revisados.',
-    'ERR_FIELD' => ' con valor no válido.',
-    'WARN_FIELD' => ' con valor menor o igual a cero.',    
-    'EMPTY_REL' => 'Sin relación activa',
+    'NO_ROWS' => 'Non se atopou rexistros a revisar.',
+    'NO_ERRORS' => 'Non se detectou ningún erro nos rexistros revisados.',
+    'ERR_FIELD' => ' con valor non válido.',
+    'WARN_FIELD' => ' cun valor menor ou igual a cero.',    
+    'EMPTY_REL' => 'Sen relación activa',
     'INVALID_VALUE' => 'Valor erróneo',
     'LIST_VIEW' => 'Vista de lista',
 );
