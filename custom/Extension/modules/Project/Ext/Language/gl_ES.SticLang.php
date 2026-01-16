@@ -57,6 +57,6 @@ $mod_strings['LBL_VALIDATE_COMPLETE_NUMBER'] =  'Indique un número.';
 $mod_strings['LBL_VALIDATE_COMPLETE_MAX'] = 'O valor máximo posible é 100.';
 $mod_strings['LBL_DELETE_TASK_CONFIRM'] = '¿Seguro que quere borrar esta tarefa?';
 
-// Cadeas Ayudas
+// Cadenas Ayudas
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centros';
