@@ -78,7 +78,7 @@ $mod_strings['LBL_FP_EVENTS_LEADS_1_FROM_FP_EVENTS_TITLE '] = 'Eventos-FP'; // T
 $mod_strings['LBL_STIC_INVALID_IDENTIFICATION_NUMBER_OR_TYPE'] = 'Se se indica un tipo de identificación, é necesario indicar tamén un número de identificación e viceversa. Se o tipo é NIF ou NIE, o número de identificación deberá ter o formato adecuado.';
 $mod_strings['LBL_ATTACHMENT_DESCRIPTION'] = 'Ficheiro recibido desde un formulario web relacionado coa campaña: ';
 
-// Cadeas adaptadas de Clientes Potenciais a Interesados
+// Cadenas adaptadas de Clientes Potenciales a Interesados
 $mod_strings['LBL_ACCOUNT_DESCRIPTION'] = 'Descrición da Organización';
 $mod_strings['LBL_ACCOUNT_ID'] = 'ID da Organización';
 $mod_strings['LBL_ACCOUNT_NAME'] = 'Nome da Organización:';

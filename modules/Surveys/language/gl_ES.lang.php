@@ -104,7 +104,7 @@ $mod_strings = array(
     'LBL_SUBMIT'                                             => 'Enviar',
     'LBL_STARS'                                              => 'Estrelas',
     'LBL_SURVEY_CLOSE_RESPONSE'                              => 'Gracias por tu interés, pero esta encuesta ya está cerrada.',
-
+    
     // STIC-Custom 20240814 ART - Thank you message in surveys
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/339
     'LBL_SURVEY_THANKS' => 'Grazas por completar esta enquisa.',
