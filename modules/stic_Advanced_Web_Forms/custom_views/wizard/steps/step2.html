@@ -303,10 +303,10 @@
         <div class="custom-modal-content" x-data="WizardStep2.editionFieldxData($store.fieldEditor, formConfig);">
           <div class="custom-modal-header">
             <div>
-              <h3 class="modal-title" id="modalEditFieldTitle" x-text="$store.fieldEditor.title"></h3>
-              <span class="text-muted small ms-3" x-text="$store.fieldEditor.subtitle"></span>
+              <h3 class="modal-title" id="modalEditFieldTitle" x-text="store.title"></h3>
+              <span class="text-muted small ms-3" x-text="store.subtitle"></span>
             </div>
-            <button type="button" class="btn-close" @click="$store.fieldEditor.close()"></button>
+            <button type="button" class="btn-close" @click="store.close()"></button>
           </div>
           <div class="custom-modal-body">
             <form id="dataBlockFieldModalForm">
@@ -620,7 +620,10 @@
                         <label for="modalField_ReqForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
                         <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ReqForm" x-model="field.required_in_form"/>
                       </div>
-                    </div>                  
+                    </div>
+                    <!-- Add Validation Button -->
+                    <button type="button" class="btn" @click="$store.fieldValidationEditor.openCreate(store.dataBlock, field)" x-text="utils.translate('LBL_FIELD_VALIDATION_ADD')"></button>
+                    <!-- Validations -->
                   </div>
                 </div>
               </template>
@@ -629,8 +632,128 @@
 
           <!-- Accept / Cancel Buttons -->
           <div class="custom-modal-footer">
-            <button type="button" class="col-2 btn btn-secondary" @click="$store.fieldEditor.close()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
-            <button type="button" class="col-2 btn btn-primary" @click="$store.fieldEditor.saveChanges()" 
+            <button type="button" class="col-2 btn btn-secondary" @click="store.close()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" @click="store.saveChanges()" 
+                    x-bind:disabled="!isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Create/Edit Field Validation -->
+    <div x-show="$store.fieldValidationEditor.isOpen" x-cloak class="custom-modal-wrapper">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalEditValidationTitle">
+        <div class="custom-modal-content" x-data="WizardStep2.editionValidationFieldxData($store.fieldValidationEditor, formConfig);">
+          <div class="custom-modal-header">
+            <div>
+              <h3 class="modal-title" id="modalEditValidationTitle" x-text="store.title"></h3>
+              <span class="text-muted small ms-3" x-text="store.subtitle"></span>
+            </div>
+            <button type="button" class="btn-close" @click="store.close()"></button>
+          </div>
+          <div class="custom-modal-body">
+            <form id="validationFieldModalForm">
+              <!-- Condition -->
+              <div class="card">
+                <div class="card-header" x-text="utils.translate('LBL_FIELD_VALIDATION_CONDITION')"></div>
+                <div class="card-body">
+                  <div class="row align-items-end">
+                      <!-- Required in form -->
+                      <div class="col-3 form-switch">
+                        <label for="validation_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_APPLY_CONDITION')"></label>
+                        <input class="form-check-input form-switch" type="checkbox" role="switch" id="validation_ApplyCondition" x-model="applyCondition"/>
+                      </div>
+                      <!-- Condition field -->
+                      <template x-if="applyCondition">
+                        <div class="col-3">
+                          <label for="validation_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_FIELD')"></label>
+                          <select id="validation_ConditionField" x-bind:disabled="availableFieldsInForm.length<=1;" class="form-select" x-model="validation.condition_field">
+                            <template x-for="field in availableFieldsInForm" :key="field.name">
+                              <option :value="field.name" x-text="field.text"></option>
+                            </template>
+                          </select>
+                        </div>
+                      </template>
+                      <!-- Condition value -->
+                      <template x-if="applyCondition && validation.condition_field != '' ">
+                        <div class="col-3">
+                          <label for="validation_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_VALUE')"></label>
+                          <!-- Select -->
+                          <template x-if="activeConditionFieldDef?.type_in_form == 'select'">
+                            <select id="validation_ConditionValue" class="form-select" x-model="validation.condition_value">
+                              <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                              <template x-for="opt in activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
+                                <option :value="opt.value" x-text="opt.text"></option>
+                              </template>
+                            </select>
+                          </template>
+                          <!-- Text -->
+                          <template x-if="activeConditionFieldDef?.type_in_form != 'select' && !['select_checkbox', 'select_switch'].includes(activeConditionFieldDef?.subtype_in_form)">
+                            <input id="validation_ConditionValue" type="text" class="form-control" x-model="validation.condition_value">
+                          </template>
+                        </div>
+                      </template>
+                  </div>
+                </div>
+              </div>
+              <!-- Validation -->
+              <div class="card">
+                <div class="card-header" x-text="utils.translate('LBL_FIELD_VALIDATION')"></div>
+                <div class="card-body">
+                  <!-- Validator -->
+                  <div class="row align-items-end">
+                    <div class="col-3">
+                      <label for="validation_Validator" class="form-label" x-text="utils.translateForFieldLabel('LBL_ACTION')"></label>
+                      <select id="validation_Validator" class="form-select" x-model="validation.validator" @change="validation.params = {}">
+                        <template x-for="valDef in availableValidators" :key="valDef.name">
+                          <option :value="valDef.name" x-text="valDef.title"></option>
+                        </template>
+                      </select>
+                    </div>
+                    <template x-if="selectedValidatorDefinition">
+                      <div class="col-9 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center" style="height:35px !important;">
+                        <i class="suitepicon suitepicon-action-info me-2 flex-shrink-0"></i>
+                        <span id="wizard-section-desc" x-text="selectedValidatorDefinition.description"></span>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="row">
+                    <!-- Parameters -->
+                    <template x-if="selectedValidatorDefinition && selectedValidatorDefinition.parameters.length > 0">
+                      <template x-for="param in selectedValidatorDefinition.parameters" :key="param.name">
+                        <div class="col-3">
+                          <label :for="'val_param_' + param.name" class="form-label" x-text="utils.toFieldLabelText(param.text)"></label>
+                          <template x-if="utils.getParameterInputType(param.dataType) === 'checkbox'">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" :id="'val_param_' + param.name" x-model="validation.params[param.name]">
+                            </div>
+                          </template>
+                          <template x-if="utils.getParameterInputType(param.dataType) !== 'checkbox'">
+                            <input class="form-control form-control-sm" :type="utils.getParameterInputType(param.dataType)" 
+                                    :id="'val_param_' + param.name" :placeholder="param.defaultValue || ''" :required="param.required"
+                                    x-model="validation.params[param.name]">
+                          </template>
+                          <div x-show="param.description" class="form-text extra-small text-muted" x-text="param.description"></div>
+                        </div>
+                      </template>
+                    </template>
+                    <!-- Error Message -->
+                    <template x-if="selectedValidatorDefinition">
+                      <div class="col-3">
+                        <label for="validation_Message" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_ERROR_MESSAGE')"></label>
+                        <input type="text" id="validation_Message" class="form-control" x-model="validation.message" />
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- Accept / Cancel Buttons -->
+          <div class="custom-modal-footer">
+            <button type="button" class="col-2 btn btn-secondary" @click="store.close()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" @click="store.saveChanges()" 
                     x-bind:disabled="!isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
           </div>
         </div>

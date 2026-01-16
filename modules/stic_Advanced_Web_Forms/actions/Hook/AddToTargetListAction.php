@@ -65,7 +65,7 @@ class AddToTargetListAction extends HookBeanActionDefinition {
 
     /**
      * getCustomParameters()
-     * Definición de los parámetroes ADICIONALES que son necesarios para la acción
+     * Definición de los parámetros ADICIONALES que son necesarios para la acción
      * El parámtreo del Bloque de Datos principal lo pide la clase padre.
      */
     protected function getCustomParameters(): array

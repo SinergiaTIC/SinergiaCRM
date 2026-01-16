@@ -127,15 +127,15 @@ class stic_Advanced_Web_FormsController extends SugarController
 
 
     /**
-     * Handles the 'getServerActions' action to retrieve all server actions (HOOK and DEFERRED)
+     * Handles the 'getDefinedActions' action to retrieve all actions defined in the Advanced Web Forms system
      */
-    public function action_getServerActions()
+    public function action_getDefinedActions()
     {
         // Ensure return json 
         header('Content-Type: application/json');
 
         require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
-        $serverActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::DEFERRED]);
+        $serverActions = ActionDiscoveryService::discoverActions();
 
         $actionDTOs = [];
         foreach ($serverActions as $actionDef) {

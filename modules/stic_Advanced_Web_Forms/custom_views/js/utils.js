@@ -149,7 +149,7 @@ class utils {
 
   static _cachedActions = [];
   /**
-   * Retrieves defined Serve actions
+   * Retrieves defined actions
    * @returns Server action array
    * Result: [Action]
    *   Action: {
@@ -165,7 +165,7 @@ class utils {
    *     name, text, resolvedType, supportedModules, supportedDataTypes, resolvedDataType
    *   }
    */
-  static getServerActions() {
+  static getDefinedActions() {
     if (utils._cachedActions.length == 0) {
       $.ajax({
         url: "index.php",
@@ -174,13 +174,13 @@ class utils {
         dataType: "json",
         data: {
           module: "stic_Advanced_Web_Forms",
-          action: "getServerActions",
+          action: "getDefinedActions",
         },
         success: function (response) {
           utils._cachedActions = response;
         },
         error: function (xhr, status, error) {
-          console.error("Error retrieving Server Actions", status, error, xhr.responseText);
+          console.error("Error retrieving Defined Actions", status, error, xhr.responseText);
         },
       });
     }
@@ -189,6 +189,19 @@ class utils {
 
   static newId(prefix = "") {
     return prefix + Date.now().toString(36) + Math.random().toString(36).substring(2);
+  }
+
+  /**
+   * Helper para los parámetros de las acciones de validación
+   * @param {string} paramDataType 
+   * @returns {string} input type for parameter
+   */
+  static getParameterInputType(paramDataType) {
+    const dataType = (!paramDataType || paramDataType == '') ? 'text' : paramDataType;
+    if (['text', 'date', 'datetime-local', 'time', 'email', 'tel', 'url'].includes(dataType)) return dataType;
+    if (['integer', 'float'].includes(dataType)) return 'number';
+    if (dataType == 'boolean') return 'checkbox';
+    return 'text';
   }
 
   /**

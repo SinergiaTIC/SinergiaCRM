@@ -33,6 +33,7 @@ enum ActionScope: string {
 
 enum ActionType: string {
     case UI            = 'UI';
+    case VALIDATOR     = 'Validator';
     case DATAPROVIDER  = 'DataProvider';
     case HOOK          = 'Hook';
     case DEFERRED      = 'Deferred';

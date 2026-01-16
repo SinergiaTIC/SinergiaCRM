@@ -25,28 +25,33 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/ActionParameterOption.php";
-include_once __DIR__."/ActionParameterDefinition.php";
-include_once __DIR__."/ActionSelectorOptionDefinition.php";
-include_once __DIR__."/ActionDefinition.php";
+abstract class ValidatorActionDefinition extends ActionDefinition
+{
+    final public function getType(): ActionType {
+        return ActionType::VALIDATOR;
+    }
 
-include_once __DIR__."/ActionParameterDefinitionDTO.php";
-include_once __DIR__."/ActionSelectorOptionDefinitionDTO.php";
-include_once __DIR__."/ActionDefinitionDTO.php";
+    public string $category = 'validation';
 
-include_once __DIR__."/ServerActionDefinition.php";
-include_once __DIR__."/ITerminalAction.php";
+    // Las validaciones son a nivel de campo (por defecto)
+    public ActionScope $scope = ActionScope::FIELD;
 
-include_once __DIR__."/UI/UIActionDefinition.php";
+    /** @var ActionDataType[] */
+    public array $supportedDataTypes = [];
 
-include_once __DIR__."/Validator/ValidatorActionDefinition.php";
+    /**
+     * Retorna la función JS. 
+     * Firma JS: (value, params, formElement) => boolean
+     *   value: valor del campo a validar
+     *   params: parámetros de la acción de validación
+     *   formElement: elemento HTML del formulario (para validaciones más complejas)
+     * @return string Código JS de la función de validación
+     */
+    abstract public function getValidationJS(): string;
 
-include_once __DIR__."/DataProvider/DataProviderActionDefinition.php";
-
-include_once __DIR__."/Hook/HookActionDefinition.php";
-include_once __DIR__."/Hook/HookDataBlockActionDefinition.php";
-include_once __DIR__."/Hook/HookBeanActionDefinition.php";
-
-include_once __DIR__."/Deferred/DeferredActionDefinition.php";
-
-include_once __DIR__."/Group/GroupActionDefinition.php";
+    /**
+     * Retorna el mensaje de error por defecto de la validación
+     * @return string Mensaje de error por defecto 
+     */
+    abstract public function getDefaultErrorMessage(): string;
+}   

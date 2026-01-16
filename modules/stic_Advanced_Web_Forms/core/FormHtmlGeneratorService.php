@@ -500,18 +500,62 @@ class FormHtmlGeneratorService {
         }
 
         $safeMessage = json_encode($closedFormText);
-        $alpineData = "{
-            isActive: true,
-            message: {$safeMessage},
-            submitting: false,
-            init() {
-                {$jsCheckStatus}
-            },
-            submitForm(formElement) {
-                this.submitting = true;
-                formElement.submit(); 
+        $alpineData = <<<JS
+{
+  isActive: true,
+  message: {$safeMessage},
+  submitting: false,
+  init() {
+    {$jsCheckStatus}
+  },
+  submitForm(formElement) {
+    if (this.submitting) return;
+    // Custom validations
+    let customValid = true;
+    const inputs = formElement.querySelectorAll('[data-awf-validations]');
+    
+    inputs.forEach(input => {
+      input.setCustomValidity('');
+      try {
+        const rules = JSON.parse(input.dataset.awfValidations);
+        for (const rule of rules) {
+          // Conditional validation
+          if (rule.condition_field && rule.condition_field !== '') {
+            const condInputId = 'f_' + rule.condition_field;
+            const condInput = formElement.querySelector('[id="' + condInputId + '"]');
+            if (condInput && condInput.value != rule.condition_value) {
+              continue; // Skip this validation rule
             }
-        }";
+          }
+          // Execute validator
+          const validatorFn = AWF_Validators[rule.validator];
+          if (validatorFn) {
+            const isValid = validatorFn(input.value, rule.params, formElement);
+            if (!isValid) {
+              input.setCustomValidity(rule.message || 'Validation error');
+              customValid = false;
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Error parsing validation rules', e);
+      }
+    });
+
+    if (!formElement.checkValidity()) {
+      formElement.classList.add('was-validated');
+      // Scroll to first invalid input
+      const invalid = formElement.querySelector(':invalid');
+      if(invalid) invalid.scrollIntoView({behavior: 'smooth', block: 'center'});
+      return;
+    }
+    this.submitting = true;
+    formElement.submit();
+  }
+}
+JS;
+
         $safeAlpineData = htmlspecialchars($alpineData, ENT_QUOTES, 'UTF-8');
 
         $html = "";
@@ -704,6 +748,25 @@ class FormHtmlGeneratorService {
         $requiredAttr = $field->required_in_form ? 'required' : '';
         $asterisk = $field->required_in_form ? " <span class='awf-required'>*</span>" : '';
 
+        $validationsAttr = "";
+        if (!empty($field->validations)) {
+            $rules = [];
+            foreach ($field->validations as $val) {
+                $rules[] = [
+                    'name' => $val->name,
+                    'validator' => $val->validator,
+                    'message' => $val->message,
+                    'params' => $val->params,
+                    'condition_field' => $val->condition_field ?? '',
+                    'condition_value' => $val->condition_value ?? ''
+                ];
+            }
+            if (!empty($rules)) {
+                $jsonRules = htmlspecialchars(json_encode($rules), ENT_QUOTES, 'UTF-8');
+                $validationsAttr = "data-awf-validations='{$jsonRules}'";
+            }
+        }
+
         $description = '';
         if ($field->description != '') {
             $description = "<div class='awf-help-text'>{$field->description}</div>";
@@ -752,7 +815,7 @@ class FormHtmlGeneratorService {
 
             // Text Areas
             if ($field->type_in_form == 'textarea') {
-                $controlHtml .= "<textarea name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' style='height: 100px' {$requiredAttr}></textarea>";
+                $controlHtml .= "<textarea {$validationsAttr} name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' style='height: 100px' {$requiredAttr}></textarea>";
 
             // Selects & Lists
             } else if ($field->type_in_form == 'select') {
@@ -773,7 +836,7 @@ class FormHtmlGeneratorService {
 
                                 $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $controlHtml .= "<input type='{$inputType}' name='{$finalName}' id='{$optId}' value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
+                                    $controlHtml .= "<input {$validationsAttr} type='{$inputType}' name='{$finalName}' id='{$optId}' value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
                                     $controlHtml .= "<label class='form-check-label' for='{$optId}'>{$txt}</label>" .$this->newLine();
                                 }
                                 $controlHtml .= "</div>" .$this->newLine('-');
@@ -789,7 +852,7 @@ class FormHtmlGeneratorService {
                     $finalName = $inputName . ($isMultipleSelect ? '[]' : '');
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$requiredAttr}>" .$this->newLine('+');
+                    $controlHtml .= "<select {$validationsAttr} name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$requiredAttr}>" .$this->newLine('+');
                     {
                         // Empty option only if not muliple
                         if (!$isMultipleSelect) {
@@ -823,7 +886,7 @@ class FormHtmlGeneratorService {
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $controlHtml .= "<input type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" .$this->newLine();
+                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" .$this->newLine();
             }
 
             if ($isFloating) {
@@ -844,6 +907,17 @@ class FormHtmlGeneratorService {
 
     private function generateJs(FormLayout $layout): string {
         $js = "";
+
+        $validatorActions = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
+        $jsValidators = "const AWF_Validators = {\n";
+        foreach ($validatorActions as $action) {
+            if ($action instanceof ValidatorActionDefinition) {
+                $jsValidators .= "  '{$action->getName()}': " . $action->getValidationJS() . ",\n";
+            }
+        }
+        $jsValidators .= "};\n";
+        $js .= "<script>\n{$jsValidators}\n</script>" . $this->newLine();
+
         $customJs = $this->decode($layout->custom_js);
         if (!empty($customJs)) {
             $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});\n</script>" .$this->newLine();

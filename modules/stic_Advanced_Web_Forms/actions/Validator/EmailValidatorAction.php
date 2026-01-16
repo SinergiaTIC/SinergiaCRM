@@ -25,28 +25,39 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/ActionParameterOption.php";
-include_once __DIR__."/ActionParameterDefinition.php";
-include_once __DIR__."/ActionSelectorOptionDefinition.php";
-include_once __DIR__."/ActionDefinition.php";
+include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 
-include_once __DIR__."/ActionParameterDefinitionDTO.php";
-include_once __DIR__."/ActionSelectorOptionDefinitionDTO.php";
-include_once __DIR__."/ActionDefinitionDTO.php";
+/**
+ * EmailValidatorAction
+ *
+ * Acción que valida un email
+ */
+class EmailValidatorAction extends ValidatorActionDefinition {
+    public function __construct() {
+        $this->isActive = true;
+        $this->baseLabel = 'LBL_EMAIL_VALIDATOR_ACTION';
+        $this->supportedDataTypes = [ActionDataType::EMAIL, ActionDataType::TEXT];
+    }
 
-include_once __DIR__."/ServerActionDefinition.php";
-include_once __DIR__."/ITerminalAction.php";
+    public function getParameters(): array {
+        return [];
+    }
 
-include_once __DIR__."/UI/UIActionDefinition.php";
 
-include_once __DIR__."/Validator/ValidatorActionDefinition.php";
+    public function getDefaultErrorMessage(): string {
+        return $this->translate('ERROR_MESSAGE_TEXT');
+    }
 
-include_once __DIR__."/DataProvider/DataProviderActionDefinition.php";
-
-include_once __DIR__."/Hook/HookActionDefinition.php";
-include_once __DIR__."/Hook/HookDataBlockActionDefinition.php";
-include_once __DIR__."/Hook/HookBeanActionDefinition.php";
-
-include_once __DIR__."/Deferred/DeferredActionDefinition.php";
-
-include_once __DIR__."/Group/GroupActionDefinition.php";
+    public function getValidationJS(): string {
+        return <<<JS
+(value, params, formElement) => {
+    if (!value) return true;
+    value = value.trim();
+    
+    // Standard regex for emails
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    return emailRegex.test(value);
+}
+JS;
+    }
+}

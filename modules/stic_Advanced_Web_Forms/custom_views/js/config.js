@@ -262,7 +262,8 @@ class AWF_Field {
       placeholder: '',         // El placeholder o texto de fondo en el editor
       value: '',               // El valor del campo
       value_text: '',          // El texto a mostrar para el valor del campo
-      related_module: ''       // Módulo relacionado (si aplica)
+      related_module: '',      // Módulo relacionado (si aplica)
+      validations: [],         // Validaciones del campo
     });
 
     // 2. Overwrite with provided data
@@ -270,6 +271,7 @@ class AWF_Field {
 
     // 3. Map sub-objects and arrays to their classes
     this.value_options = (data.value_options || this.value_options).map(d => new AWF_ValueOption(d));
+    this.validations = (data.validations || this.validations).map(v => new AWF_FieldValidation(v));
 
     if (!data.in_form) {
       this.in_form = this.type_field != 'hidden';
@@ -567,6 +569,18 @@ class AWF_Field {
     return this.value_options.some(o => !o.is_visible || o.text_original !== o.text);
   }
 
+  addOrUpdateValidation(validation) {
+    let newValidation = new AWF_FieldValidation(validation);
+
+    const index = this.validations.findIndex(v => v.name === validation.name);
+    if (index == -1) {
+      this.validations.push(newValidation);
+    } else {
+      this.validations[index] = newValidation;
+    }
+    return newValidation;
+  }
+
   static type_fieldList(asString = false) {
     return utils.getList("stic_advanced_web_forms_field_type_list", asString);
   }
@@ -593,6 +607,29 @@ class AWF_Field {
   }
   get value_typeText(){
     return AWF_Field.value_typeList().find(i => i.id == this.value_type)?.text;  
+  }
+}
+
+class AWF_FieldValidation {
+  constructor(data = {}) {
+    Object.assign(this, {
+      name: '',         // Nombre de la validación
+      validator: '',    // Nombre de la acción de validación (ex: RegexValidatorAction)
+      message: '',      // Mensaje de error personalizado
+      params: {},       // Parámetros (ex: { pattern: '...' })
+      
+      // Condición simple para ejecutar la validación (el campo contiene este valor)
+      condition_field: '',
+      condition_value: '',
+    });
+    Object.assign(this, data);
+  }
+
+  isValid() {
+    if ((this.name??"").trim()=='') return false;
+    if ((this.validator??"").trim()=='') return false;
+
+    return true;
   }
 }
 
@@ -1263,13 +1300,23 @@ class AWF_Configuration {
   }
 
   /**
-   * 
+   * Adds a field to a DataBlock
    * @param {AWF_DataBlock} dataBlock 
    * @param {AWF_Field} field 
    * @returns {AWF_Field}
    */
   addDataBlockField(dataBlock, field) {
     return dataBlock.addField(field);
+  }
+
+  /**
+   * Adds or Updates a validation to a field
+   * @param {AWF_Field} field 
+   * @param {AWF_FieldValidation} validation 
+   * @returns {AWF_FieldValidation}
+   */
+  addOrUpdateFieldValidation(field, validation) {
+    return field.addOrUpdateValidation(validation);
   }
 
   syncLayoutWithDataBlocks() {
@@ -1407,6 +1454,52 @@ class AWF_Configuration {
         });
       });
     });
+  }
+
+  /**
+   * Returns a flat list of all fields in the form to be used in selectors (conditions, parameters, etc.)
+   * @param {string} excludeField (Optional) The field name to exclude from the list (to avoid circular references)
+   * @returns {Array} [{name: 'Block.Field', text: 'BlockName » Field label'}]
+   */
+  getAllFieldsInForm(excludeName = null) {
+    let allFields = [];
+
+    this.data_blocks.forEach(block => {
+      block.fields.forEach(field => {
+        if (field.type_field === 'hidden') return;
+        let fullName = block.getFieldInputName(field);
+        if (excludeName && fullName === excludeName) return;
+
+        // Get display text: "Block Text » Field Label"
+        let label = field.label || field.text_original;
+        let displayText = `${block.text} » ${utils.fromFieldLabelText(label)}`;
+
+        allFields.push({
+          name: fullName,
+          text: displayText
+        });
+      });
+    });
+
+    return allFields;
+  }
+
+  /**
+   * Gets the field definition by its full HTML name
+   * @param {string} fullName The full HTML name of the field (BlockName.FieldName)
+   * @returns {AWF_Field|null} The field definition or null if not found
+   */
+  getFieldDefinitionByHtmlName(fullName) {
+    if (!fullName) return null;
+
+    for (const block of this.data_blocks) {
+      for (const field of block.fields) {
+        if (block.getFieldInputName(field) === fullName) {
+          return field;
+        }
+      }
+    }
+    return null;
   }
 
   /**
@@ -1576,7 +1669,7 @@ class AWF_Configuration {
 
     // Generate SAVE actions for each DataBlock
     this.data_blocks.forEach(block => {
-      const originalDef = utils.getServerActions().find(a => a.name == 'SaveRecordAction');
+      const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
       if (originalDef) {
         // Prepare definition override
         const actionDef = { 
@@ -1615,7 +1708,7 @@ class AWF_Configuration {
           }
           
           if (relationshipName) {
-            const originalDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
+            const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
             if (originalDef) {
               const actionDef = { 
                 ...originalDef, 
@@ -1647,7 +1740,7 @@ class AWF_Configuration {
       
       activeRels.forEach(rel => {
         if (rel.datablock_orig === blockId) {
-          const originalDef = utils.getServerActions().find(a => a.name == 'RelateRecordsAction');
+          const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
           if (originalDef) {
             const blockOrig = this.data_blocks.find(b => b.id == rel.datablock_orig);
             const blockDest = this.data_blocks.find(b => b.id == rel.datablock_dest);

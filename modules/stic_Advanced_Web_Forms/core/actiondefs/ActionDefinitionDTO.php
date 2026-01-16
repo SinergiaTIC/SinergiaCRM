@@ -40,6 +40,9 @@ class ActionDefinitionDTO {
     public bool $isTerminal;
 
     public string $category;
+    public string $type;
+
+    public ?string $defaultErrorMessage = null;
     
     public string $scope; // 'form', 'field'
     
@@ -48,6 +51,9 @@ class ActionDefinitionDTO {
     
     /** @var string[] */
     public array $supportedFieldSubTypes;
+
+    /** @var string[] */
+    public array $supportedDataTypes = [];
     
     public int $order;
     
@@ -58,6 +64,11 @@ class ActionDefinitionDTO {
         $this->name = $def->getName();
         $this->title = $def->getTitle();
         $this->description = $def->getDescription();
+        $this->type = $def->getType()->value;
+        
+        if ($def instanceof ValidatorActionDefinition) {
+            $this->defaultErrorMessage = $def->getDefaultErrorMessage();
+        }
 
         $this->isActive = $def->isActive;
         $this->isUserSelectable = $def->isUserSelectable;
@@ -68,6 +79,14 @@ class ActionDefinitionDTO {
         $this->scope = $def->scope->value; // Convert enum to string
         $this->supportedModules = $def->supportedModules;
         $this->supportedFieldSubTypes = $def->supportedFieldSubTypes;
+
+        if ($def instanceof ValidatorActionDefinition) {
+            $this->supportedDataTypes = array_map(
+                fn($dt) => $dt->value, 
+                $def->supportedDataTypes
+            );
+        }
+        
         $this->order = $def->order;
         
         $this->parameters = array_map(

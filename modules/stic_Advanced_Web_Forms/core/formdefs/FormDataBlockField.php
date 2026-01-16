@@ -55,6 +55,8 @@ class FormDataBlockField {
     public ?string $related_module = null;       // Módulo relacionado (si aplica)
     /** @var FormValueOption[] */
     public array $value_options = [];            // Opciones del campo
+    /** @var FormFieldValidation[] */
+    public array $validations = [];              // Validaciones del campo
 
     /**
      * Crea una instancia de FormDataBlockField a partir de un array JSON.
@@ -83,6 +85,12 @@ class FormDataBlockField {
         if (isset($data['value_options'])) {
             foreach ($data['value_options'] as $optionData) {
                 $dto->value_options[] = FormValueOption::fromJsonArray($optionData);
+            }
+        }
+
+        if (isset($data['validations']) && is_array($data['validations'])) {
+            foreach ($data['validations'] as $valData) {
+                $dto->validations[] = FormFieldValidation::fromJsonArray($dto, $valData);
             }
         }
         

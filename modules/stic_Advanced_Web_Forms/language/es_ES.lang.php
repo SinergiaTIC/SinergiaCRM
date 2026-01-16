@@ -181,7 +181,16 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION' => 'Definición',
   'LBL_FIELD_DEFINITION_FORM' => 'Representación en el formulario',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Validación de datos introducidos',
-
+  'LBL_FIELD_VALIDATION' => 'Validación',
+  'LBL_FIELD_VALIDATION_ADD' => 'Añadir validación',
+  'LBL_FIELD_VALIDATION_NEW' => 'Nueva validación',
+  'LBL_FIELD_VALIDATION_EDIT' => 'Editar validación',
+  'LBL_FIELD_VALIDATION_CONDITION' => 'Condición para la validación',
+  'LBL_FIELD_VALIDATION_APPLY_CONDITION' => 'Condicionar al valor de otro campo',
+  'LBL_FIELD_VALIDATION_CONDITION_FIELD' => 'Campo',
+  'LBL_FIELD_VALIDATION_CONDITION_VALUE' => 'Valor',
+  'LBL_FIELD_VALIDATION_ERROR_MESSAGE' => 'Mensaje de error',
+  
   'LBL_FIELD' => 'Campo',
   'LBL_FIELD_NAME' => 'Nombre',
   'LBL_FIELD_INTERNAL_NAME' => 'Nombre interno',
@@ -385,5 +394,23 @@ $mod_strings = array (
     
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de respuestas',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página con el resumen de todas sus respuestas al formulario',
-  
-);  
+
+  'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
+  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo según una expresión regular',
+  'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Expresión regular',
+  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El formato del campo no es válido',
+
+  'LBL_EMAIL_VALIDATOR_ACTION_TITLE' => 'Validador de correo electrónico',
+  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un correo electrónico válido',
+  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La dirección de correo electrónico no es válida',
+
+  'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI y CIF',
+  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI o un CIF español válido',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI o CIF no es válido',
+
+  'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador Numérico',
+  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un valor numérico en un rango opcional',
+  'LBL_NUMERIC_VALIDATOR_ACTION_MIN_TEXT' => 'Valor mínimo (opcional)',
+  'LBL_NUMERIC_VALIDATOR_ACTION_MAX_TEXT' => 'Valor máximo (opcional)',
+  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El valor debe ser numérico y estar entre los valores permitidos',
+ );  

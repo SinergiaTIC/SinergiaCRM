@@ -377,7 +377,7 @@ class WizardStep2 {
             /**
              * Abre el Modal para Editar un campo
              * @param {AWF_DataBlock} dataBlock El Bloque de datos
-             * @param {AWF_Field} fieldData El campo
+             * @param {AWF_Field} field El campo
              */
             openEdit(dataBlock, field) {
               this.isEdit = true;
@@ -423,6 +423,82 @@ class WizardStep2 {
                   this.dataBlock.updateField(this.original_name, this.field);
                 }
               }
+              this.close();
+            },
+          });
+        }
+
+        // Store for the Field Validation Editor management
+        if (!Alpine.store('fieldValidationEditor')) {
+          Alpine.store('fieldValidationEditor', {
+            isOpen: false,                          // Indica si está abierto el editor de validaciones
+            isEdit: false,                          // Indica si es modo edición (false: modo creación)
+            validation: new AWF_FieldValidation(),  // Copia de los datos de la validación
+            field: null,                            // El campo al que pertenece la validación
+            dataBlock: null,                        // El bloque de datos del campo
+
+            get formConfig() { return window.alpineComponent.formConfig; },
+
+            /**
+             * Retorna el título del modal
+             */
+            get title() {
+              if (!this.validation) return '';
+
+              if (this.isEdit) {
+                return utils.translate('LBL_FIELD_VALIDATION_EDIT');
+              } else {
+                return utils.translate('LBL_FIELD_VALIDATION_NEW');
+              }
+            },
+            get fieldLabel() { return utils.fromFieldLabelText((this.field?.label ?? "") || (this.field?.text_original ?? "")); },
+            get subtitle() { return `${this.dataBlock?.text} » ${this.fieldLabel}`; },
+
+            /**
+             * Abre el Modal para Crear una validación
+             * @param {AWF_Field} field El campo al que pertenece la validación
+             */
+            openCreate(dataBlock, field) {
+              this.isEdit = false;
+              this._open(dataBlock, field, null);
+            },
+
+            /**
+             * Abre el Modal para Editar una validación
+             * @param {AWF_Field} field El campo al que pertenece la validación
+             * @param {AWF_FieldValidation} validation La validación
+             */
+            openEdit(dataBlock, field, validation) {
+              this.isEdit = true;
+              this._open(dataBlock, field, validation);
+            },
+
+            /**
+             * Abre el Modal para editar o crear una validación de campo
+             * @param {AWF_Field} fiel El campo
+             * @param {AWF_FieldValidation} validation La validación
+             */
+            _open(dataBlock, field, validation) {
+              this.dataBlock = dataBlock;
+              this.field = field;
+              this.validation = new AWF_FieldValidation(validation || {name:`${utils.newId('validation_')}` });
+              this.isOpen = true;
+            },
+
+            /**
+             * Cierra el modal de edición de una validación de campo
+             */
+            close() {
+              this.isOpen = false;
+              this.field = null;
+              this.validation = null;
+            },
+
+            /**
+             * Guarda los cambios de la edición (o creación) de una validación de campo
+             */
+            saveChanges() {
+              this.formConfig.addOrUpdateFieldValidation(this.field, this.validation);
               this.close();
             },
           });
@@ -862,6 +938,70 @@ class WizardStep2 {
     };
   }
 
+  static editionValidationFieldxData(validationStore, config) {
+    return {
+      formConfig: config,
+      store: validationStore,
+      applyCondition: false,
+
+      get validation() { return this.store?.validation; },
+      get field() { return this.store?.field; },
+      get dataBlock() { return this.store?.dataBlock; },
+      get fieldName() { return this.dataBlock?.getFieldInputName(this.field); },
+      get isEdit() { return this.store?.isEdit; },
+
+      get isValid() { return this.validation?.isValid() == true; },
+
+      get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm(this.fieldName) ?? []; },
+      get activeConditionFieldDef() {
+        if (!this.validation.condition_field) return null;
+        return this.formConfig.getFieldDefinitionByHtmlName(this.validation.condition_field);
+      },
+
+      get availableValidators() {
+        if (!this.field) return [];
+
+        // Obtenemos el tipo de acción del campo (ej: un campo 'int' del CRM retorna 'integer')
+        const fieldType = this.field.getTypeInActions(); 
+
+        // Filtramos las acciones del servidor
+        return utils.getDefinedActions().filter(a => 
+            a.type === 'Validator' &&
+            (
+                a.supportedDataTypes.length === 0 || // Si está vacío, es que soporta todos los tipos
+                a.supportedDataTypes.includes(fieldType) // O si incluye el tipo del campo
+            )
+        );
+      },
+      get selectedValidatorDefinition() {
+        if (!this.validation.validator) return null;
+        return utils.getDefinedActions().find(a => a.name === this.validation.validator);
+      },
+
+      init() {
+        if (this.validation.condition_field && this.validation.condition_field !== '') {
+          this.applyCondition = true;
+        }
+
+        this.$watch('applyCondition', (newValue, oldValue) => {
+          if (!newValue) {
+            this.validation.condition_field = '';
+            this.validation.condition_value = '';
+          }
+        });
+        this.$watch('validation.condition_field', (newValue, oldValue) => {
+          if (newValue !== oldValue) {
+            this.validation.condition_value = '';
+          }
+        });
+        this.$watch('validation.validator', (newName, oldName) => {
+          if (!newName) return;
+          this.validation.message = this.selectedValidatorDefinition?.defaultErrorMessage ?? '';
+        });
+      },
+    };
+  }
+
   static fieldsSummaryxData(dataBlock, config) {
     return {
       formConfig: config,
@@ -949,7 +1089,6 @@ class WizardStep2 {
 
     }
   }
-
 }
 
 class WizardStep3 {
@@ -994,7 +1133,8 @@ class WizardStep3 {
 
             init() {
               // Cargar todas las definiciones de acciones seleccionables por el usuario
-              this.allDefinitions = utils.getServerActions().filter(a => a.isUserSelectable && a.isActive);
+              this.allDefinitions = utils.getDefinedActions().filter(a => a.isUserSelectable && a.isActive && 
+                                                                     (a.type == 'Hook' || a.type == 'Deferred'));
             },
 
             /**
