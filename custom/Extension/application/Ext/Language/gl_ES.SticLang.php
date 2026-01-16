@@ -959,7 +959,7 @@ $app_list_strings['stic_sessions_activity_types_list']['sample_value_1'] = 'Valo
 $app_list_strings['stic_sessions_activity_types_list']['sample_value_2'] = 'Valor de exemplo 2';
 $app_list_strings['stic_sessions_activity_types_list']['sample_value_3'] = 'Valor de exemplo 3';
 
-// Sesións: Días das semana
+// Sesións: Días da semana
 $app_list_strings['stic_weekdays_list'][''] = '';
 $app_list_strings['stic_weekdays_list']['1'] = 'Luns';
 $app_list_strings['stic_weekdays_list']['2'] = 'Martes';
