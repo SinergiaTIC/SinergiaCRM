@@ -182,6 +182,7 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION_FORM' => 'Representación en el formulario',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Validación de datos introducidos',
   'LBL_FIELD_VALIDATION' => 'Validación',
+  'LBL_FIELD_VALIDATOR' => 'Acción de validación',
   'LBL_FIELD_VALIDATION_ADD' => 'Añadir validación',
   'LBL_FIELD_VALIDATION_NEW' => 'Nueva validación',
   'LBL_FIELD_VALIDATION_EDIT' => 'Editar validación',
@@ -413,4 +414,30 @@ $mod_strings = array (
   'LBL_NUMERIC_VALIDATOR_ACTION_MIN_TEXT' => 'Valor mínimo (opcional)',
   'LBL_NUMERIC_VALIDATOR_ACTION_MAX_TEXT' => 'Valor máximo (opcional)',
   'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El valor debe ser numérico y estar entre los valores permitidos',
- );  
+
+  'LBL_IBAN_VALIDATOR_ACTION_TITLE' => 'Validador de IBAN',
+  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un IBAN válido',
+  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El formato del IBAN no es válido',
+
+  'LBL_PHONE_VALIDATOR_ACTION_TITLE' => 'Validador de Teléfono',
+  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un número de teléfono válido (al menos 9 dígitos numéricos)',
+  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El teléfono no es válido',
+
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_TITLE' => 'Validador de Código Postal',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un código postal español válido (5 dígitos numéricos)',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El Código Postal no es válido',
+
+  'LBL_TRUE_VALIDATOR_ACTION_TITLE' => 'Selección obligada',
+  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Asegura que una casilla (como la aceptación de condiciones) esté marcada',
+  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Es necesario aceptar este campo para continuar',
+
+  'LBL_AGE_VALIDATOR_ACTION_TITLE' => 'Validador de edad',
+  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calcula la edad a partir de la fecha de nacimiento y verifica que se está entre la edad mínima y máxima permitida',
+  'LBL_AGE_VALIDATOR_ACTION_MIN_YEARS_TEXT' => 'Edad mínima (opcional)',
+  'LBL_AGE_VALIDATOR_ACTION_MAX_YEARS_TEXT' => 'Edad máxima (opcional)',
+  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La edad no está en el rango permitido.',
+
+  'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de enlace URL',
+  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Verifica que el campo contiene un enlace web (URL) válido',
+  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El enlace web no es válido',
+ );

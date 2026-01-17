@@ -43,6 +43,9 @@ enum ActionDataType: string {
     case FLOAT         = 'float';
     case BOOLEAN       = 'boolean';
 
+    // File type
+    case FILE          = 'file';
+
     // Date types
     case DATE          = 'date';
     case DATETIME      = 'datetime-local';

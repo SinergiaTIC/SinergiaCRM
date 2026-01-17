@@ -704,8 +704,9 @@
                   <!-- Validator -->
                   <div class="row align-items-end">
                     <div class="col-3">
-                      <label for="validation_Validator" class="form-label" x-text="utils.translateForFieldLabel('LBL_ACTION')"></label>
+                      <label for="validation_Validator" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATOR')"></label>
                       <select id="validation_Validator" class="form-select" x-model="validation.validator" @change="validation.params = {}">
+                        <option value="" x-text=""></option>
                         <template x-for="valDef in availableValidators" :key="valDef.name">
                           <option :value="valDef.name" x-text="valDef.title"></option>
                         </template>
