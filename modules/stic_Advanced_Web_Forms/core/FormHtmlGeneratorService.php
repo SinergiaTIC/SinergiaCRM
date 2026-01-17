@@ -501,59 +501,106 @@ class FormHtmlGeneratorService {
 
         $safeMessage = json_encode($closedFormText);
         $alpineData = <<<JS
-{
-  isActive: true,
-  message: {$safeMessage},
-  submitting: false,
-  init() {
-    {$jsCheckStatus}
-  },
-  submitForm(formElement) {
-    if (this.submitting) return;
-    // Custom validations
-    let customValid = true;
-    const inputs = formElement.querySelectorAll('[data-awf-validations]');
-    
-    inputs.forEach(input => {
-      input.setCustomValidity('');
-      try {
-        const rules = JSON.parse(input.dataset.awfValidations);
-        for (const rule of rules) {
-          // Conditional validation
-          if (rule.condition_field && rule.condition_field !== '') {
-            const condInputId = 'f_' + rule.condition_field;
-            const condInput = formElement.querySelector('[id="' + condInputId + '"]');
-            if (condInput && condInput.value != rule.condition_value) {
-              continue; // Skip this validation rule
-            }
-          }
-          // Execute validator
-          const validatorFn = AWF_Validators[rule.validator];
-          if (validatorFn) {
-            const isValid = validatorFn(input.value, rule.params, formElement);
-            if (!isValid) {
-              input.setCustomValidity(rule.message || 'Validation error');
-              customValid = false;
-              break;
-            }
-          }
-        }
-      } catch (e) {
-        console.error('Error parsing validation rules', e);
-      }
-    });
+        {
+            isActive: true,
+            message: {$safeMessage},
+            submitting: false,
+            
+            init() {
+                {$jsCheckStatus}
+            },
 
-    if (!formElement.checkValidity()) {
-      formElement.classList.add('was-validated');
-      // Scroll to first invalid input
-      const invalid = formElement.querySelector(':invalid');
-      if(invalid) invalid.scrollIntoView({behavior: 'smooth', block: 'center'});
-      return;
-    }
-    this.submitting = true;
-    formElement.submit();
-  }
-}
+            // Validate single input
+            validateInput(input) {
+                // Clear previous errors
+                input.setCustomValidity(''); 
+                input.classList.remove('is-invalid');
+
+                let customErrorMessage = '';
+                const form = input.closest('form');
+
+                // Custom validation rules from data-awf-validations
+                if (input.dataset.awfValidations) {
+                    try {
+                        const rules = JSON.parse(input.dataset.awfValidations);
+                        
+                        for (const rule of rules) {
+                            // Check condition
+                            if (rule.condition_field && rule.condition_field !== '') {
+                                // Find the condition input within the same form
+                                const condInputId = 'f_' + rule.condition_field;
+                                const condInput = form.querySelector('[id="' + condInputId + '"]');
+                                
+                                // If condition not met, skip this rule
+                                if (condInput && condInput.value != rule.condition_value) {
+                                    continue;
+                                }
+                            }
+
+                            // Execute validator
+                            const validatorFn = AWF_Validators[rule.validator];
+                            if (validatorFn) {
+                                if (!validatorFn(input.value, rule.params, form)) {
+                                    // Mark input as invalid
+                                    customErrorMessage = rule.message || 'Validation error';
+                                    input.setCustomValidity(customErrorMessage);
+                                    break; 
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Validation error parsing rules', e);
+                    }
+                }
+
+                // Check native and custom validity (custom via setCustomValidity)
+                if (!input.checkValidity()) {
+                    input.classList.add('is-invalid');
+
+                    // Error message: if custom error, use it; else use native browser message
+                    const finalMessage = customErrorMessage || input.validationMessage;
+
+                    // Show error message in invalid-feedback div
+                    let feedback = input.nextElementSibling;
+                    if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                        feedback = document.createElement('div');
+                        feedback.className = 'invalid-feedback';
+                        input.parentNode.appendChild(feedback);
+                    }
+                    feedback.textContent = finalMessage;
+
+                    return false;
+                }
+
+                return true;
+            },
+
+            submitForm(formElement) {
+                if (this.submitting) return;
+                
+                let formValid = true;
+
+                // Validate all inputs with data-awf-validations
+                const inputs = formElement.querySelectorAll('[data-awf-validations]');
+                inputs.forEach(input => {
+                    if (!this.validateInput(input)) {
+                        formValid = false;
+                    }
+                });
+
+                if (!formElement.checkValidity() || !formValid) {
+                    formElement.classList.add('was-validated');
+                    
+                    // Scroll to first invalid field
+                    const invalid = formElement.querySelector(':invalid, .is-invalid');
+                    if(invalid) invalid.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    return;
+                }
+                
+                this.submitting = true;
+                formElement.submit(); 
+            }
+        }
 JS;
 
         $safeAlpineData = htmlspecialchars($alpineData, ENT_QUOTES, 'UTF-8');
@@ -748,7 +795,7 @@ JS;
         $requiredAttr = $field->required_in_form ? 'required' : '';
         $asterisk = $field->required_in_form ? " <span class='awf-required'>*</span>" : '';
 
-        $validationsAttr = "";
+        $validationsAttr = " @blur='validateInput(\$el)'";;
         if (!empty($field->validations)) {
             $rules = [];
             foreach ($field->validations as $val) {
@@ -763,7 +810,7 @@ JS;
             }
             if (!empty($rules)) {
                 $jsonRules = htmlspecialchars(json_encode($rules), ENT_QUOTES, 'UTF-8');
-                $validationsAttr = "data-awf-validations='{$jsonRules}'";
+                $validationsAttr .= " data-awf-validations='{$jsonRules}'";
             }
         }
 
