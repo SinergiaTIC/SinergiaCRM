@@ -561,11 +561,12 @@ class FormHtmlGeneratorService {
                     const finalMessage = customErrorMessage || input.validationMessage;
 
                     // Show error message in invalid-feedback div
-                    let feedback = input.nextElementSibling;
-                    if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                    const parent = input.parentElement;
+                    let feedback = parent.querySelector('.invalid-feedback');
+                    if (!feedback) {
                         feedback = document.createElement('div');
                         feedback.className = 'invalid-feedback';
-                        input.parentNode.appendChild(feedback);
+                        parent.appendChild(feedback);
                     }
                     feedback.textContent = finalMessage;
 
@@ -580,25 +581,27 @@ class FormHtmlGeneratorService {
                 
                 let formValid = true;
 
-                // Validate all inputs with data-awf-validations
-                const inputs = formElement.querySelectorAll('[data-awf-validations]');
+                const inputs = formElement.querySelectorAll('input, select, textarea');
                 inputs.forEach(input => {
-                    if (!this.validateInput(input)) {
+                    if (input.willValidate && !this.validateInput(input)) {
                         formValid = false;
                     }
                 });
 
-                if (!formElement.checkValidity() || !formValid) {
+                if (!formValid) {
                     formElement.classList.add('was-validated');
                     
                     // Scroll to first invalid field
-                    const invalid = formElement.querySelector(':invalid, .is-invalid');
-                    if(invalid) invalid.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    const firstError = formElement.querySelector('.is-invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstError.focus({ preventScroll: true });
+                    }
                     return;
                 }
                 
                 this.submitting = true;
-                formElement.submit(); 
+                formElement.submit();
             }
         }
 JS;
@@ -664,12 +667,12 @@ JS;
                     $formAttributes = 'action="#" autocomplete="off" onsubmit="event.preventDefault(); alert(\''.translate('LBL_PREVIEW_MODE_ALERT', 'stic_Advanced_Web_Forms').'\'); return false;"';
                     $alpineSubmit = "";
                 } else {
-                    $formAttributes = "action='{$actionUrl}' method='POST' autocomplete='off'";
+                    $formAttributes = "action='{$actionUrl}' method='POST' autocomplete='off' novalidate";
                     $alpineSubmit = "@submit.prevent='submitForm(\$el)'";
                 }
 
                 // Begin Form
-                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation' @invalid.capture=\"\$el.classList.add('was-validated')\">" .$this->newLine('+');
+                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation'>" .$this->newLine('+');
                 {
                     // Honeypot: Invisible anti-spam
                     $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" .$this->newLine('+');
