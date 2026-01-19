@@ -1035,6 +1035,12 @@ $app_list_strings['stic_assessments_status_list']['completed'] = 'Complete';
 $app_list_strings['stic_assessments_status_list']['referred'] = 'Referred';
 $app_list_strings['stic_assessments_status_list']['discarded'] = 'Discarded';
 
+// Assessments: Types
+$app_list_strings['stic_assesments_types_list'][''] = '';
+$app_list_strings['stic_assesments_types_list']['service_user'] = 'Services user';
+$app_list_strings['stic_assesments_types_list']['volunteering'] = 'Volunteering';
+$app_list_strings['stic_assesments_types_list']['other'] = 'Other';
+
 // Goals: Origins
 $app_list_strings['stic_goals_origins_list'][''] = '';
 $app_list_strings['stic_goals_origins_list']['assessment'] = 'Assessment';
@@ -3880,12 +3886,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
-
-// Assesment: Assesment type
-$app_list_strings['stic_assesments_types_list'][''] = '';
-$app_list_strings['stic_assesments_types_list']['service_user'] = 'Service user';
-$app_list_strings['stic_assesments_types_list']['volunteering'] = 'Volunteering';
-$app_list_strings['stic_assesments_types_list']['other'] = 'Other';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
