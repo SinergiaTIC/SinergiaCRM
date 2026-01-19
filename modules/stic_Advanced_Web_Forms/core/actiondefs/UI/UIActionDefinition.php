@@ -25,17 +25,18 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class UIActionDefinition extends ActionDefinition
+abstract class UIActionDefinition extends ActionDefinition implements IFrontendAction
 {
     final public function getType(): ActionType {
         return ActionType::UI;
     }
 
     /**
-     * Retorna los cambios en la UI a aplicar.
-     * Ex: ['script' => ['https://recaptcha.js'], 'html' => ['<div class="..."></div>']]
-     * @param array $config Configuración específica de la acción
-     * @return string[] Los cambios a aplicar
+     * Devuelve los assets (CSS/JS) que deben inyectarse en el frontend para esta acción.
+     * @param array $params Parámetros de la acción (sin resolver)
+     * @param FormConfig|null $formConfig Configuración del formulario (si aplica)
+     * @param string $formId ID del formulario (si aplica)
+     * @return array array Estructura: ['script' => ['console.log("hi")'], 'css' => [], 'html' => []]
      */
-    abstract public function getFrontendAssets(array $config): array;
+    abstract public function getFrontendAssets(array $params, ?FormConfig $formConfig = null, string $formId = ''): array;
 }   

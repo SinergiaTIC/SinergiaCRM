@@ -399,6 +399,15 @@ $mod_strings = array (
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de respuestas',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del cliente a una página con el resumen de todas sus respuestas al formulario',
 
+  'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa y permisos',
+  'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea el procesamiento del formulario si no hay una sesión activa del CRM o el usuario no tiene permisos para crear los registros asociados al formulario',
+  'LBL_CHECK_SESSION_ACTION_ERROR_MSG_TEXT' => 'Mensaje de error',
+  'LBL_CHECK_SESSION_ACTION_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. Por favor, inicie sesión para continuar.',
+  'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso y permisos...',
+  'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Acceso denegado',
+  'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Iniciar sesión',
+  
+
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
   'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo según una expresión regular',
   'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Expresión regular',

@@ -61,7 +61,7 @@ class FormHtmlGeneratorService {
                     // Styles and Content
                     $htmlRaw .= $this->generateCss($layout, $wrapperId);
                     $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
-                    $htmlRaw .= $this->generateJs($config);
+                    $htmlRaw .= $this->generateJs($config, $formId);
                 }
                 $htmlRaw .= "</div>" .$this->newLine('-');
             }
@@ -955,9 +955,10 @@ JS;
         return $html;
     }
 
-    private function generateJs(FormConfig $config): string {
+    private function generateJs(FormConfig $config, string $formId): string {
         $js = "";
 
+        // == VALIDATORS ==
         // Get used validators
         $usedValidators = [];
         foreach ($config->data_blocks as $block) {
@@ -969,7 +970,6 @@ JS;
                 }
             }
         }
-
         if (!empty($usedValidators)) {
             // Discover all validator actions
             $validatorActions = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
@@ -989,6 +989,31 @@ JS;
             }
         }
 
+        // == FRONTEND ACTIONS ==
+        if (isset($config->flows['0'])) {
+            // Load Hook and UI actions to check for IFrontendAction
+            $possibleActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::UI]);
+            $actionMap = [];
+            foreach ($possibleActions as $a) {
+                $actionMap[$a->getName()] = $a;
+            }
+
+            foreach ($config->flows['0']->actions as $formAction) {
+                if (isset($actionMap[$formAction->name])) {
+                    $def = $actionMap[$formAction->name];
+                    if ($def instanceof IFrontendAction) {
+                        $assets = $def->getFrontendAssets($formAction->parameters, $config, $formId);
+                        if (!empty($assets['script'])) {
+                            foreach ($assets['script'] as $scriptContent) {
+                                $js .= "<script>\n{$scriptContent}\n</script>" . $this->newLine();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // == CUSTOM JS ==
         // Add custom JS from layout
         $customJs = $this->decode($config->layout->custom_js);
         if (!empty($customJs)) {

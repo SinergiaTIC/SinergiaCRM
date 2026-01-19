@@ -25,29 +25,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/ActionParameterOption.php";
-include_once __DIR__."/ActionParameterDefinition.php";
-include_once __DIR__."/ActionSelectorOptionDefinition.php";
-include_once __DIR__."/ActionDefinition.php";
+/**
+ * Interface IFrontendAction para acciones que requieren inyectar código en el frontend (CSS/JS)
+ */
+interface IFrontendAction {
 
-include_once __DIR__."/ActionParameterDefinitionDTO.php";
-include_once __DIR__."/ActionSelectorOptionDefinitionDTO.php";
-include_once __DIR__."/ActionDefinitionDTO.php";
-
-include_once __DIR__."/ServerActionDefinition.php";
-include_once __DIR__."/ITerminalAction.php";
-include_once __DIR__."/IFrontendAction.php";
-
-include_once __DIR__."/UI/UIActionDefinition.php";
-
-include_once __DIR__."/Validator/ValidatorActionDefinition.php";
-
-include_once __DIR__."/DataProvider/DataProviderActionDefinition.php";
-
-include_once __DIR__."/Hook/HookActionDefinition.php";
-include_once __DIR__."/Hook/HookDataBlockActionDefinition.php";
-include_once __DIR__."/Hook/HookBeanActionDefinition.php";
-
-include_once __DIR__."/Deferred/DeferredActionDefinition.php";
-
-include_once __DIR__."/Group/GroupActionDefinition.php";
+    /**
+     * Devuelve los assets (CSS/JS) que deben inyectarse en el frontend para esta acción.
+     * @param array $params Parámetros de la acción (sin resolver)
+     * @param FormConfig|null $formConfig Configuración del formulario (si aplica)
+     * @param string $formId ID del formulario (si aplica)
+     * @return array array Estructura: ['script' => ['console.log("hi")'], 'css' => [], 'html' => []]
+     */
+    public function getFrontendAssets(array $params, ?FormConfig $formConfig = null, string $formId = ''): array;
+}

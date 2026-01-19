@@ -50,3 +50,4 @@ $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/Co
 $entry_point_registry['stic_AWF_checkStatus'] = array('file' => 'modules/stic_Advanced_Web_Forms/EntryPoints/CheckStatus.php', 'auth' => false);
 $entry_point_registry['stic_AWF_renderForm'] = array('file' => 'modules/stic_Advanced_Web_Forms/EntryPoints/RenderForm.php', 'auth' => false);
 $entry_point_registry['stic_AWF_responseHandler'] = array('file' => 'modules/stic_Advanced_Web_Forms/EntryPoints/ResponseHandler.php', 'auth' => false);
+$entry_point_registry['stic_AWF_CheckSession'] = array('file' => 'modules/stic_Advanced_Web_Forms/EntryPoints/CheckSession.php', 'auth' => false);
