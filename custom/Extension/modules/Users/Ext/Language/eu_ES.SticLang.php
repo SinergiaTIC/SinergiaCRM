@@ -43,7 +43,7 @@ $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Indica si la funcionalidad de Cal
 $mod_strings['LBL_STIC_CLOCK'] = 'Registro horario';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indica si la funcionalidad de Registro horario está activada para el usuario.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'Acceso a SinergiaDA';
-$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica si el usuario dispone de acceso a Sinergia Data Analytics';
+$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica el nivel de acceso del usuario a Sinergia Data Analytics.<ul><li><b>Sin acceso:</b> el usuario no podrá acceder.</li><li><b>Acceso completo:</b> el usuario podrá crear, modificar y ejecutar informes.</li><li><b>Acceso de solo lectura:</b> el usuario podrá ejecutar informes y ver sus resultados pero no podrá crear otros nuevos ni modificar los existentes. Esta opción solo aplica en usuarios normales, los administradores con acceso a SinergiaDA siempre tendrán acceso completo.</li></ul>';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';
@@ -98,3 +98,7 @@ $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
 // Emulación de usuarios - Monitorización
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
+
+// Modelo 182
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = '182 Ereduaren jaulkipena';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Erabiltzaileak 182 Eredua zein erakunderentzat sor dezakeen adierazten du. Zerrenda dinamikoki sortzen da <a href="index.php?module=stic_Settings" target="_blank">konfigurazio parametroetatik</a>.';

@@ -23,6 +23,7 @@
 /* HEADER */
 // Set module name
 var module = "Campaigns";
+var activeSection = null;
 
 /* INCLUDES */
 
@@ -72,6 +73,7 @@ switch (viewType()) {
     break;
 
   case "detail":
+    $recordId = $("#formDetailView input[type=hidden][name=record]").val();
     $(document).ready(function() {
       initilizeDetailView();
     });
@@ -87,7 +89,7 @@ switch (viewType()) {
 $(document).ready(function() {
   if (viewType() != "list") {
     $("#notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
-
+    $("#msg_notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
     if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
       $(
         "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
@@ -97,6 +99,15 @@ $(document).ready(function() {
 
       $("#notification_outbound_email_id").on("change paste keyup", mail_change);
       $("#notification_template_id").on("change paste keyup", template_change);
+    }
+    if ($("#LBL_MSG_NOTIFICATION_NEW_INFO").length == 0) {
+      $(
+        "<div id='LBL_MSG_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
+          SUGAR.language.get("Campaigns", "LBL_MSG_NOTIFICATION_NEW_INFO") +
+          "</div>"
+      ).prependTo("[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] .tab-content .row");
+
+      $("#msg_notification_template_id").on("change paste keyup", template_change);
     }
 
     // Check Notification panel exists
@@ -115,10 +126,66 @@ $(document).ready(function() {
         console.log("Notification panel does not exists in DOM.");
     }
 
+    // As no 2 flex relate fields can coexist, we wil use only one, moving it from section to section on demand
+    // --- Get references to all the elements we need to control ---
+    const campaignTypeDropdown = $('#campaign_type');
+
+    // Panels (SuiteCRM creates DIVs with IDs based on the panel's label)
+    const emailPanel = $('#LBL_NOTIFICATION_INFORMATION_PANEL');
+    const messagePanel = $('#LBL_MSG_NOTIFICATION_INFORMATION_PANEL');
+
+    // The actual field elements to move. SuiteCRM wraps the input/select/button in a SPAN.
+    // We select the SPAN to move everything at once.
+    const parentFieldElements = $('#parent_name').parent();
+
+    // The original and target containers for the field
+    const originalContainer = parentFieldElements.parent(); // The original <td>
+    const targetContainer = $('#parent_field_placeholder').parent().parent();
+
+    $("[field='parent_field_placeholder']").remove();
+
+    // --- This is the main function that controls the display ---
+    function toggleCampaignView() {
+      // This is the specific text input field for the typeahead
+      // const parentNameInput = 'parent_name';
+      
+      const currentType = campaignTypeDropdown.val();
+      // IMPORTANT: Replace 'Email' and 'Message' with your actual values
+      if (currentType === 'Notification') {
+          // Show the email panel and hide the message panel
+          emailPanel.show();
+          messagePanel.hide();
+          // Move the field elements back to their original location
+          parentFieldElements.appendTo(originalContainer);
+          // ** Re-initialize the typeahead on the input field **
+          // SUGAR.AutoComplete.enable(parentNameInput);
+      } else if (currentType === 'NotifMsg') {
+          // Show the message panel and hide the email panel
+          emailPanel.hide();
+          messagePanel.show();
+          // Move the field elements to our placeholder target
+          parentFieldElements.appendTo(targetContainer);
+          // ** Re-initialize the typeahead on the input field **
+          // SUGAR.AutoComplete.enable(parentNameInput);
+      } else {
+          // Optional: Hide both if no relevant type is selected
+          emailPanel.hide();
+          messagePanel.hide();
+      }
+    }
+    // --- Attach the function to the dropdown's 'change' event ---
+    campaignTypeDropdown.on('change', toggleCampaignView);
+
+    // --- Run the function once on page load to set the initial state ---
+    toggleCampaignView();
+
     type_change();
     template_change();
   }
 });
+
+
+
 
 function getCampaingType() {
   var typeValue = $('[name="campaign_type"]').val();
@@ -130,9 +197,11 @@ function getCampaingType() {
 
 function type_change() {
   var typeValue = getCampaingType();
-
   updateViewNewsLetterType(typeValue == "NewsLetter");
+  updateViewAnyNotificationType(typeValue);
   updateViewNotificationType(typeValue == "Notification");
+  updateViewNotificationMsgType(typeValue == "NotifMsg");
+  updateViewSurveyType(typeValue == "Survey");
   mail_change();
 }
 
@@ -152,6 +221,11 @@ function template_change() {
     $("#notification_template_id_edit_link").hide();
   } else {
     $("#notification_template_id_edit_link").show();
+  }
+  if ($("#msg_notification_template_id").val() == "") {
+    $("#msg_notification_template_id_edit_link").hide();
+  } else {
+    $("#msg_notification_template_id_edit_link").show();
   }
 }
 
@@ -198,6 +272,14 @@ function updateViewNewsLetterType(isNewsLetter) {
   }
 }
 
+function updateViewSurveyType(isSurvey) {
+  if (isSurvey) {
+    $('[data-field="survey_name"]').show();
+  } else {
+    $('[data-field="survey_name"]').hide();
+  }
+}
+
 function setRequired(require, field) {
   var $form = $("form#" + getFormName());
 
@@ -226,12 +308,43 @@ function setAutofillMark(autofill, field) {
   }
 }
 
-function updateViewNotificationType(isNotification) {
-  setRequired(!isNotification, "name");
-  setAutofillMark(isNotification, "name");
+function updateViewAnyNotificationType(type) {
+  var isAnyNotification = (type == "Notification" || type == 'NotifMsg');
 
-  setRequired(isNotification, "start_date");
-  setRequired(isNotification, "parent_name");
+  setRequired(!isAnyNotification, "name");
+  setAutofillMark(isAnyNotification, "name");
+
+  setRequired(isAnyNotification, "start_date");
+  setRequired(isAnyNotification, "parent_name");
+
+  var $form = $("form#" + getFormName());
+
+  if (isAnyNotification) {
+    $form.find("#status").val("Active");
+    $form.find('[data-field="status"]').hide();
+    $form.find('[data-field="end_date"]').hide();
+    $form.find('[data-field="parent_name"]').show();
+
+    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
+  }
+  else {
+      $form.find("#parent_type").val("");
+      $form.find("#parent_name").val("");
+      $form.find("#parent_id").val("");
+
+    $form.find('[data-field="status"]').show();
+    $form.find('[data-field="end_date"]').show();
+    $form.find('[data-field="parent_name"]').hide();
+    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
+  }
+}
+
+function updateViewNotificationType(isNotification) {
+  // setRequired(!isNotification, "name");
+  // setAutofillMark(isNotification, "name");
+
+  // setRequired(isNotification, "start_date");
+  // setRequired(isNotification, "parent_name");
   setRequired(isNotification, "notification_outbound_email_id");
   setRequired(isNotification, "notification_inbound_email_id");
   setRequired(isNotification, "notification_prospect_list_ids");
@@ -243,12 +356,7 @@ function updateViewNotificationType(isNotification) {
   var $form = $("form#" + getFormName());
 
   if (isNotification) {
-    $form.find("#status").val("Active");
-    $form.find('[data-field="status"]').hide();
-    $form.find('[data-field="end_date"]').hide();
-    $form.find('[data-field="parent_name"]').show();
     $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().show();
-    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
     if ($form.find("#start_date").val() == "") {
       var formatDate = $form.find("#start_date").parent().children(".dateFormat").text().toUpperCase();
       if (formatDate == "") {
@@ -276,16 +384,36 @@ function updateViewNotificationType(isNotification) {
       );
     }
   } else {
-    $form.find("#parent_type").val("");
-    $form.find("#parent_name").val("");
-    $form.find("#parent_id").val("");
-    $form.find('[data-field="status"]').show();
-    $form.find('[data-field="end_date"]').show();
-    $form.find('[data-field="parent_name"]').hide();
     $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
-    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
     removeFromValidate(getFormName(), 'notification_from_addr');
     removeFromValidate(getFormName(), 'notification_reply_to_addr');
+  }
+}
+function updateViewNotificationMsgType(isNotification) {
+  setRequired(isNotification, "msg_parent_name");
+  setRequired(isNotification, "msg_notification_prospect_list_ids");
+  setRequired(isNotification, "msg_notification_template_id");
+  setRequired(isNotification, "sender");
+  addRequiredMark("sender");
+  
+
+  var $form = $("form#" + getFormName());
+
+  if (isNotification) {
+    $form.find("#status").val("Active");
+    $form.find('[data-field="msg_parent_name"]').show();
+    $form.find(".panel-body[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL']").parent().show();
+    if ($form.find("#start_date").val() == "") {
+      var formatDate = $form.find("#start_date").parent().children(".dateFormat").text().toUpperCase();
+      if (formatDate == "") {
+        formatDate = STIC.userDateFormat.toUpperCase();
+      }
+      if (formatDate != "") {
+        $form.find("#start_date").val(moment().format(formatDate));
+      }
+    }
+  } else {
+    $form.find(".panel-body[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
   }
 }
 
@@ -296,7 +424,6 @@ function initializeQuickCreate() {
 
     var $form = $("form#" + formName);
     $form.find("[data-field='campaign_type']").hide();
-    $form.find("#campaign_type").val("Notification");
 
     $form.find("#status").val("Active");
     addEditCreateTemplateLinks();
@@ -322,6 +449,19 @@ function initilizeEditView() {
     $("#notification_reply_to_name").parent().children().prop("disabled", true);
     $("#notification_reply_to_addr").parent().children().prop("disabled", true);
     $("#notification_prospect_list_ids")[0].selectize.disable();
+  } else if (isEdition && getCampaingType() == "NotifMsg") {
+    // Disable editions
+    // TODO: Haurem d etenir un missatge d'avís semblant per notificacionsper missatge
+    $("#LBL_NOTIFICATION_NEW_INFO").hide();
+    $("#campaign_type").prop("disabled", true);
+    $("#start_date").parent().children().prop("disabled", true);
+    $("#parent_id").parent().children().prop("disabled", true);
+    $("#parent_id").parent().find("span").hide();
+    $("#msg_notification_template_id").prop("disabled", true);
+    $("#notification_message_type").prop("disabled", true);
+    $("#sender").parent().children().prop("disabled", true);
+    // TODOEPS: Hauré de fer una llista diferent
+    $("#msg_notification_prospect_list_ids")[0].selectize.disable();
   } else {
     addEditCreateTemplateLinks();
   }
@@ -330,7 +470,7 @@ function initilizeEditView() {
 function initilizeDetailView() {
   var typeValue = getCampaingType();
 
-  if (typeValue == "Notification") {
+  if (typeValue == "Notification" || typeValue == "NotifMsg") {
     // Disable all editable actions
 
     // Action menu buttons
@@ -338,7 +478,32 @@ function initilizeDetailView() {
 
     // All Subpanels buttons
     $(".clickMenu").hide();
+    $("#viewRoiButtonId").hide();
+    $("#mark_as_sent_button").parent().hide();
   }
+
+  // Manipulate action links
+  if (typeValue == "Message" || typeValue == "NotifMsg") {
+    // Remove "Send Email" action
+    $("#send_emails_button").parent().hide();
+    $("#send_test_button").parent().hide();
+    recordId = $("#formDetailView input[type=hidden][name=record]").val();
+    var buttons = {
+      testMessagesSendButton: {
+        id: "bt_testMessagesSendButton_detailview",
+        title: SUGAR.language.get("Campaigns", "LBL_SEND_MESSAGES_TEST"),
+        onclick: "window.location='index.php?module=stic_Message_Marketing&action=selectMessageMarketing&record=" + recordId + "&return_module="+ module +"&return_action=TrackDetailView&test=true'"
+      },
+      queueMessagesSendButton: {
+        id: "bt_queueMessagesSendButton_detailview",
+        title: SUGAR.language.get("Campaigns", "LBL_SEND_MESSAGES"),
+        onclick: "window.location='index.php?module=stic_Message_Marketing&action=selectMessageMarketing&record=" + recordId + "&return_module="+ module +"&return_action=TrackDetailView'"
+      }
+    };
+    createDetailViewButton(buttons.testMessagesSendButton);
+    createDetailViewButton(buttons.queueMessagesSendButton);
+  }
+
 }
 
 function addEditCreateTemplateLinks() {
@@ -351,20 +516,42 @@ function addEditCreateTemplateLinks() {
     var editText = SUGAR.language.translate("app_strings", "LNK_EDIT");
     var $editLink = $('<a href="#" id="notification_template_id_edit_link" style="margin-left:10px;">'+editText+'</a>').on("click", function(e) {
       e.preventDefault();
-      edit_email_template_form();
+      edit_email_template_form('notification');
     });
     $div.append($editLink);
 
     var createText = SUGAR.language.translate("app_strings", "LNK_CREATE");
     var $createLink = $('<a href="#" id="notification_template_id_create_link" style="margin-left:10px;">'+createText+'</a>').on("click", function(e) {
       e.preventDefault();
-      open_email_template_form();
+      activeSection = 'notification';
+      open_email_template_form('notification');
+    });
+    $div.append($createLink);
+  }
+  if ($("#msg_notification_template_id_edit_link").length == 0) {
+    var $select = $("#msg_notification_template_id");
+    var $div = $select.parent();
+
+    $select.css("width","50%");
+
+    var editText = SUGAR.language.translate("app_strings", "LNK_EDIT");
+    var $editLink = $('<a href="#" id="msg_notification_template_id_edit_link" style="margin-left:10px;">'+editText+'</a>').on("click", function(e) {
+      e.preventDefault();
+      edit_email_template_form('sms');
+    });
+    $div.append($editLink);
+
+    var createText = SUGAR.language.translate("app_strings", "LNK_CREATE");
+    var $createLink = $('<a href="#" id="msg_notification_template_id_create_link" style="margin-left:10px;">'+createText+'</a>').on("click", function(e) {
+      e.preventDefault();
+      activeSection = 'sms';
+      open_email_template_form('sms');
     });
     $div.append($createLink);
   }
 }
 
-function open_email_template_form() {
+function open_email_template_form(type) {
   var inboundId = $("#notification_outbound_email_id").val();
   var parent_type = "";
   if ($("#parent_type").length>0) {
@@ -372,7 +559,7 @@ function open_email_template_form() {
   } else if(typeof currentModule !== 'undefined') {
     parent_type = currentModule;
   } 
-  URL = "index.php?module=EmailTemplates&action=EditView&type=notification&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
+  URL = "index.php?module=EmailTemplates&action=EditView&type="+type+"&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
   URL += "&show_js=1";
 
   windowName = 'email_template';
@@ -385,7 +572,7 @@ function open_email_template_form() {
   }
 }
 
-function edit_email_template_form() {
+function edit_email_template_form(type) {
   var inboundId = $("#notification_outbound_email_id").val();
   var parent_type = "";
   if ($("#parent_type").length>0) {
@@ -393,9 +580,14 @@ function edit_email_template_form() {
   } else if(typeof currentModule !== 'undefined') {
     parent_type = currentModule;
   } 
-  URL = "index.php?module=EmailTemplates&action=EditView&type=notification&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
+  URL = "index.php?module=EmailTemplates&action=EditView&type="+type+"&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
 
-  var field = document.getElementById('notification_template_id');
+  if (type == 'sms') {
+    var field = document.getElementById('msg_notification_template_id');
+  }
+  else {
+    var field = document.getElementById('notification_template_id');
+  }
   if (field.options[field.selectedIndex].value != 'undefined') {
       URL += "&record=" + field.options[field.selectedIndex].value;
   }
@@ -412,7 +604,11 @@ function edit_email_template_form() {
 }
 
 function refresh_email_template_list(template_id, template_name) {
-  var field = document.getElementById('notification_template_id');
+  if (activeSection != 'sms') {
+    var field = document.getElementById('notification_template_id');
+  } else {
+    var field = document.getElementById('msg_notification_template_id');
+  }  
   var bfound = 0;
   for (var i = 0; i < field.options.length; i++) {
       if (field.options[i].value == template_id) {

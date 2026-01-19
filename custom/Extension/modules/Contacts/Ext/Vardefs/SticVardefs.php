@@ -2601,6 +2601,17 @@ $dictionary['Contact']['fields']['time_availability_c'] = array(
     'duplicate_merge_dom_value' => 0,
     'merge_filter' => 'disabled',
 );
+// Financial Products Relationships
+$dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array (
+    'name' => 'stic_financial_products_contacts',
+    'type' => 'link',
+    'relationship' => 'stic_financial_products_contacts',
+    'source' => 'non-db',
+    'module' => 'stic_Financial_Products',
+    'bean_name' => false,
+    'side' => 'right',
+    'vname' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE',
+  );
 
 // Modified properties in native fields
 $dictionary['Contact']['fields']['first_name']['massupdate'] = 0;
