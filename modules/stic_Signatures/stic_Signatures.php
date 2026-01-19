@@ -69,6 +69,8 @@ class stic_Signatures extends Basic
     public $pdf_template;
     public $on_behalf_of;
     public $pdf_document;
+    public $show_SubPanelTopButtonListView = false;
+
 
     /**
      * Checks if the bean implements a specific interface.
@@ -121,5 +123,50 @@ class stic_Signatures extends Basic
 
         // Call the generic save() function from the the parent (SugarBean) class
         parent::save($check_notify);
+    }
+
+        /**
+     * Retrieves the stic_Signers records associated with a specific Signature for use in a subpanel.
+     *
+     * @return string The SQL query string to fetch the required stic_Signers records.
+     */
+    public function getSticSignersForSignature()
+    {
+        $signature_id = $_REQUEST['record'];
+        if (empty($signature_id)) {
+            return '';
+        }
+
+        // Construct the SQL query
+        $query = "
+            SELECT * FROM (
+                SELECT
+                    stic_signers.id,
+                    stic_signers.name,
+                    stic_signers.date_entered,
+                    stic_signers.date_modified,
+                    stic_signers.modified_user_id,
+                    stic_signers.created_by,
+                    stic_signers.description,
+                    stic_signers.deleted,
+                    stic_signers.assigned_user_id,
+                    stic_signers.status,
+                    stic_signers.signature_date,
+                    stic_signers.parent_type,
+                    stic_signers.parent_id,
+                    stic_signers.record_name,
+                    stic_signers.record_type,
+                    stic_signers.record_id,
+                    CONCAT_WS(' ', c1.first_name, c1.last_name) as on_behalf_of_id
+                FROM stic_signers
+                JOIN stic_signatures_stic_signers_c rel
+                    ON rel.stic_signatures_stic_signersstic_signers_idb = stic_signers.id
+                LEFT JOIN contacts c1 ON c1.id = stic_signers.contact_id_c -- to get on_behalf_of_id
+                WHERE rel.stic_signatures_stic_signersstic_signatures_ida = '{$signature_id}'
+                    AND stic_signers.deleted = 0
+                    AND rel.deleted = 0
+                ) AS stic_signers
+        ";
+        return $query;
     }
 }

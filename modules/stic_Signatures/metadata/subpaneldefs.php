@@ -60,10 +60,10 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signers'] = a
     'sort_order' => 'asc',
     'sort_by' => 'id',
     'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNERS_FROM_STIC_SIGNERS_TITLE',
-    'get_subpanel_data' => 'function:stic_SignersUtils::getSticSignersForSignature',
-    'function_parameters' => array(
-        'import_function_file' => 'modules/stic_Signers/Utils.php',
-    ),
+    'get_subpanel_data' => 'function:getSticSignersForSignature',
+    // 'function_parameters' => array(
+    //     'import_function_file' => 'modules/stic_Signers/Utils.php',
+    // ),
     'top_buttons' => array(
         // 0 => array(
         //     'widget_class' => 'SubPanelTopButtonQuickCreate',
