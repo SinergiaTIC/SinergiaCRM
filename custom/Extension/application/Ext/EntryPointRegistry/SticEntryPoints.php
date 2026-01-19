@@ -45,3 +45,6 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
+
+// These entry points are used by the Stic Messages module
+$entry_point_registry['stic_Messages_twilio_response'] = array('file' => 'modules/stic_Messages/WhatsAppWebhookEntryPoint.php', 'auth' => false);
