@@ -382,7 +382,10 @@ function trimTracker()
     $trackerConfig = $tracker_config;
 
     require_once('include/utils/db_utils.php');
-    $prune_interval = !empty($admin->settings['tracker_prune_interval']) ? $admin->settings['tracker_prune_interval'] : 30;
+    // STIC-Custom AAM 20251216 - Use sugar_config instead of admin settings
+    // $prune_interval = !empty($admin->settings['tracker_prune_interval']) ? $admin->settings['tracker_prune_interval'] : 30;
+    $prune_interval = !empty($sugar_config['tracker_prune_interval']) ? $sugar_config['tracker_prune_interval'] : 30;
+    // END STIC-Custom
     foreach ($trackerConfig as $tableName => $tableConfig) {
 
         //Skip if table does not exist

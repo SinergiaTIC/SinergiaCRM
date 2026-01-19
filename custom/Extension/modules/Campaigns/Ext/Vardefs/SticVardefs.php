@@ -184,6 +184,96 @@ $dictionary["Campaign"]["fields"]['notification_reply_to_addr'] = array(
     'len' => '100',
 );
 
+$dictionary["Campaign"]["fields"]["parent_field_placeholder"] = array(
+    'name' => 'parent_field_placeholder',
+    'vname' => 'LBL_FLEX_RELATE', // Re-use the same label
+    'type' => 'varchar',             // 'html' type is perfect for placeholders
+    'source' => 'non-db',         // Crucial: ensures it's not added to the database
+    'studio' => 'hidden',         // Hide it from Studio to prevent confusion
+    'reportable' => false,
+    'popupHelp' => 'LBL_FLEX_RELATE_HELP',
+);
+
+$dictionary["Campaign"]["fields"]['msg_notification_prospect_list_ids'] = array(
+    'name' => 'msg_notification_prospect_list_ids',
+    'vname' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
+    'type' => 'multienum',
+    'massupdate' => 0,
+    'no_default' => false,
+    'module' => 'ProspectLists',
+    'source' => 'non-db',
+    'comments' => '',
+    'help' => '',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'dynamic_prospect_list_list',
+    'dependency' => false,
+    'popupHelp' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP',
+);
+
+$dictionary["Campaign"]["fields"]['msg_notification_template_id'] = array(
+    'name' => 'msg_notification_template_id',
+    'vname' => 'LBL_MSG_NOTIFICATION_TEMPLATE_ID',
+    'type' => 'enum',
+    'massupdate' => 0,
+    'no_default' => false,
+    'source' => 'non-db',
+    'comments' => '',
+    'help' => '',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'dynamic_message_template_list',
+    'dependency' => false,
+    'popupHelp' => 'LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP',
+);
+
+$dictionary["Campaign"]["fields"]['notification_message_type'] = array(
+    'name' => 'notification_message_type',
+    'vname' => 'LBL_MSG_TYPE',
+    'type' => 'enum',
+    'massupdate' => 0,
+    'no_default' => false,
+    'source' => 'non-db',
+    'comments' => '',
+    'help' => '',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'stic_messages_type_list',
+    'dependency' => false,
+);
+
+$dictionary["Campaign"]["fields"]['sender'] = array(
+    'name' => 'sender',
+    'vname' => 'LBL_NOTIFICATION_FROM_NAME',
+    'type' => 'varchar',
+    'len' => '100',
+    'source' => 'non-db',
+);
+
+
+
+
 $dictionary['Campaign']['fields']['campaign_type']['inline_edit'] = false;
 
 $dictionary['Campaign']['fields']['end_date']['required'] = false;
@@ -207,3 +297,18 @@ $dictionary['Campaign']['fields']['campaign_type']['massupdate'] = 1;
 $dictionary['Campaign']['fields']['frequency']['massupdate'] = 1;
 
 $dictionary['Campaign']['unified_search_default_enabled'] = true;
+
+
+
+
+
+$dictionary['Campaign']['fields']['campaigns_stic_message_marketing'] = array (
+    'name' => 'campaigns_stic_message_marketing',
+    'type' => 'link',
+    'relationship' => 'campaigns_stic_message_marketing',
+    'source' => 'non-db',
+    'module' => 'stic_Message_Marketing',
+    'bean_name' => 'stic_Message_Marketing',
+    'side' => 'right',
+    'vname' => 'LBL_CAMPAIGNS_STIC_MESSAGE_MARKETING_FROM_CAMPAIGN_TITLE',
+  );

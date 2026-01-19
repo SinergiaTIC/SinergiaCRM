@@ -241,7 +241,6 @@ $(function () {
         async: false,
         data: formData,
         success: function (res) {
-          console.log('Message saved', res);
           var _openedWhatsAppByClient = false;
           if (res.open_url) {
             window.open(res.open_url, '_blank');
@@ -274,8 +273,14 @@ $(function () {
               "&action=" +
               encodeURIComponent(returnAction) +
               (returnId ? "&record=" + encodeURIComponent(returnId) : "");
+          if($("#status").val() == 'draft') {
             window.location.href = newUrl;
-          });
+          }
+          else {
+            showMessageBox(res.title, res.detail, function () {
+              window.location.href = newUrl;
+            });
+          }
         },
         error: function () {
           showMessageBox(
@@ -306,7 +311,4 @@ $(function () {
   // var _form = document.getElementById('EditView'); _form.action.value='Save'; if(check_form('EditView'))SUGAR.ajaxUI.submitForm(_form);return false;
   myButtons.removeAttr("onclick");
   myButtons.on("click", saveMessage);
-
-
-
 });
