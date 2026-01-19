@@ -70,8 +70,12 @@ $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitente (dirección)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Responder a (nombre)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Enviar notificación a:';
+$mod_strings['LBL_MSG_TYPE'] = 'Tipo';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla';
+$mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = 'La plantilla debe ser del tipo SMS y puede incluir campos del registro asociado a la notificación (el evento o la subvención).';
 
-$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
+$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones por correo electrónico';
+$mod_strings['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones por mensaje';
 
 $mod_strings['LBL_FLEX_RELATE_HELP'] = 'Registro del que se desea realizar la notificación. Puede ser un evento o una subvención.';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificación se enviará a los miembros de las listas de público objetivo seleccionadas, que deben ser del tipo 'Por defecto'.";
@@ -83,3 +87,19 @@ $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = 'Se ha producido un 
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = 'Se ha creado la siguiente lista de público objetivo: ';
  
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.';
+
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.';
+$mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los mensajes a enviar se añadirán automáticamente a la cola de envío.';
+
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Envíos de mensajes';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Enviar mensajes';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Enviar mensajes de prueba';
+
+$mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cola de correo electrónico';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de mensajes';
+
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nueva sección de plantilla';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Ver secciones de plantilla';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convertir enlaces del mensaje en URL de seguimiento';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' URL de seguimiento han sido creadas y se ha actualizado el contenido de la plantilla.';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'No se ha creado ninguna URL de seguimiento.';

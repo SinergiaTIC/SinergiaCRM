@@ -183,6 +183,10 @@ class stic_Messages extends Basic
 
         // Get the timezone from the user's preferences
         $timezone = $userPreferences->getPreference('timezone');
+        if ($timezone === null) {
+            require_once('include/TimeDate.php');
+            $timezone =  TimeDate::guessTimezone();;
+        }
 
         $date = $date->setTimezone(new DateTimeZone($timezone));
         $formatedDate = $date->format($timedate->get_date_time_format($current_user));

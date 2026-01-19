@@ -68,6 +68,10 @@ $moduleList[] = 'stic_Group_Opportunities';
 $moduleList[] = 'stic_Signatures';
 $moduleList[] = 'stic_Signers';
 $moduleList[] = 'stic_Signature_Log';
+// $moduleList[] = 'stic_Message_Marketing'; -- Do not want to show them at module list
+// $moduleList[] = 'stic_MessagesMan';
+$moduleList[] = 'stic_Transactions';
+$moduleList[] = 'stic_Financial_Products';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -119,8 +123,12 @@ $beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
 $beanList['stic_Signatures'] = 'stic_Signatures';
 $beanList['stic_Signers'] = 'stic_Signers';
 $beanList['stic_Signature_Log'] = 'stic_Signature_Log';
+$beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
+$beanList['stic_MessagesMan'] = 'stic_MessagesMan';
 $beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
 $beanList['stic_Places'] = 'stic_Places';
+$beanList['stic_Transactions'] = 'stic_Transactions';
+$beanList['stic_Financial_Products'] = 'stic_Financial_Products';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -171,9 +179,12 @@ $beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_
 $beanFiles['stic_Signatures'] = 'modules/stic_Signatures/stic_Signatures.php';
 $beanFiles['stic_Signers'] = 'modules/stic_Signers/stic_Signers.php';
 $beanFiles['stic_Signature_Log'] = 'modules/stic_Signature_Log/stic_Signature_Log.php';  
+$beanFiles['stic_Message_Marketing'] = 'modules/stic_Message_Marketing/stic_Message_Marketing.php';
+$beanFiles['stic_MessagesMan'] = 'modules/stic_MessagesMan/stic_MessagesMan.php';
 $beanFiles['stic_Bookings_Places_Calendar'] = 'modules/stic_Bookings_Places_Calendar/stic_Bookings_Places_Calendar.php';
 $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
-
+$beanFiles['stic_Transactions'] = 'modules/stic_Transactions/stic_Transactions.php';
+$beanFiles['stic_Financial_Products'] = 'modules/stic_Financial_Products/stic_Financial_Products.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -187,6 +198,7 @@ $modInvisList[] = 'stic_Custom_Views';
 $modInvisList[] = 'stic_Custom_View_Customizations';
 $modInvisList[] = 'stic_Custom_View_Conditions';
 $modInvisList[] = 'stic_Custom_View_Actions';
+$modInvisList[] = 'stic_MessagesMan';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
@@ -201,6 +213,7 @@ $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
 $adminOnlyList['stic_Custom_Views'] = array('all' => 1);
+$adminOnlyList['stic_MessagesMan'] = array('all' => 1);
 $adminOnlyList['Trackers'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events

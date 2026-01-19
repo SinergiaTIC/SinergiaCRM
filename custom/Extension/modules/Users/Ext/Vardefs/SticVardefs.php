@@ -135,11 +135,11 @@ $dictionary['User']['fields']['sda_allowed_c'] = array(
     'id' => 'Userssda_allowed_c',
     'name' => 'sda_allowed_c',
     'vname' => 'LBL_SDA_ALLOWED',
-    'custom_module Data Analytics' => 'Users',
+    'custom_module' => 'Users',
     'source' => 'custom_fields',
     'comments' => '',
     'help' => '',
-    'type' => 'bool',
+    'type' => 'enum',
     'required' => 0,
     'audited' => 0,
     'unified_search' => 0,
@@ -148,6 +148,7 @@ $dictionary['User']['fields']['sda_allowed_c'] = array(
     'inline_edit' => 1,
     'importable' => 1,
     'massupdate' => 1,
+    'options' => 'sda_users_access_list',
     'reportable' => 1,
     'duplicate_merge' => 'enabled',
     'duplicate_merge_dom_value' => 1,
@@ -206,6 +207,32 @@ $dictionary['User']['fields']['stic_clock_c'] = array(
     'popupHelp' => 'LBL_STIC_CLOCK_INFO',
 );
 
+$dictionary['User']['fields']['stic_m182_issuing_organization_c'] = array(
+    'id' => 'Usersstic_m182_issuing_organization_c',
+    'name' => 'stic_m182_issuing_organization_c',
+    'vname' => 'LBL_STIC_M182_ISSUING_ORGANIZATION',
+    'custom_module' => 'Users',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'multienum',
+    'required' => false,
+    'massupdate' => 1,
+    'no_default' => false,
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'size' => '20',
+    'options' => 'dynamic_issuing_organization_list',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_STIC_M182_ISSUING_ORGANIZATION_INFO',
+);
+
 // There is an error editing this field inline
 // STIC#291
 $dictionary['User']['fields']['UserType']['inline_edit'] = 0; 
@@ -236,6 +263,8 @@ $dictionary['User']['fields']['emails_list'] = array(
         ),
     ),
 );
+
+
 
 $dictionary['User']['fields']['status']['massupdate'] = 1;
 $dictionary['User']['fields']['reports_to_name']['massupdate'] = 1;

@@ -155,6 +155,28 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
       ),
 
     ),
+    'lbl_msg_notification_information_panel' =>
+    array (
+      0 => array(
+        0 => array(
+          'name' => 'msg_notification_prospect_list_ids',
+          'label' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
+        ),
+        1 => array(
+          'name' => 'msg_notification_template_id',
+          'label' => 'LBL_NOTIFICATION_TEMPLATE_ID',
+        ),
+      ),
+      1 => array(
+        0 => array(
+          'name' => 'sender',
+          'label' => 'LBL_NOTIFICATION_FROM_NAME',
+        ),
+        1 => array(
+          'name' => 'notification_message_type',
+        ),
+      ),
+    ),
   ),
 );
 // END STIC-Custom
