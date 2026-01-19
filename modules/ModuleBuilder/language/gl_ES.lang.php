@@ -612,7 +612,7 @@ $mod_strings = array(
     'LBL_POPHELP_IMAGE_WIDTH' => 'Introduza un número para a Anchura, como medida en píxeles.<br> A imaxe subida será escalada a esta Anchura.',
     'LBL_POPHELP_IMAGE_HEIGHT' => 'Introduzca un número para la Altura, como medida en píxeles.<br> A imaxe subida será escalada a esta Altura.',
     'LBL_POPHELP_DUPLICATE_MERGE' => '<b>Habilitado</b>: O campo aparecerá na característica de Combinar Duplicados, pero non estará dispoñible para ser utilizado nas condicións de filtrado da característica Busca de Duplicados.<br><b>Deshabilitado</b>: O campo non aparecerá na característica Combinar Duplicados, e tampouco estará dispoñible para ser utilizado como condición de filtrado na característica de Busca de Duplicados.<br><b>En Filtro</b>: O campo aparecerá na característica de Combinar Duplicados, e tamén estará dispoñible na característica de Busca de Duplicados.<br><b>Filtro Seleccionado por Defecto</b>: O campo será utilizado na condición de filtrado por defecto da páxina de Busca de Duplicados, e tamén aparecerá na característica de Combinar Duplicados.<br><b>Só en Filtro</b>: O campo non aparecerá na característica Combinar Duplicados, pero estará dispoñible na característica de Busca de Duplicados.',
-    'LBL_POPHELP_FIELD_DATA_TYPE' => 'Seleccione el tipo de datos apropiado acorde con el tipo de datos que será introducido en el campo.',
+    'LBL_POPHELP_FIELD_DATA_TYPE' => 'Seleccione o tipo de datos apropiado acorde co tipo de datos que será introducido no campo.',
 
 //Revert Module labels
     'LBL_RESET' => 'Restablecer',
