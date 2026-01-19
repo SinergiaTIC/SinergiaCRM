@@ -3724,7 +3724,7 @@ $app_list_strings['aow_condition_type_list']['Any_Change'] = 'Calquera cambio';
 $app_list_strings['aow_condition_type_list']['SecurityGroup'] = 'En SecurityGroup';
 $app_list_strings['aow_condition_type_list']['currentUser'] = 'Usuario logueado como';
 $app_list_strings['aow_condition_type_list']['Date'] = 'Data';
-$app_list_strings['aow_condition_type_list']['Multi'] = 'Un de';
+$app_list_strings['aow_condition_type_list']['Multi'] = 'Multiple';
 
 
 $app_list_strings['moduleList']['SurveyResponses'] = 'Respostas á enquisa';
