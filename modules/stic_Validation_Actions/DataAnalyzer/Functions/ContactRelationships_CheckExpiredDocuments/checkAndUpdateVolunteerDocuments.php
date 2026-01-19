@@ -110,7 +110,7 @@ class checkAndUpdateVolunteerDocuments extends DataCheckFunction
         foreach ($documentsToUpdate as $documentBean) 
         {
             // Update document status to expired
-            $documentBean->status_id = 'Expired';
+            $documentBean->status_id = 'Draft';
             $documentBean->save();
     
             // Create the validation results
