@@ -234,24 +234,6 @@ $(function () {
       var formData = getFormDataAsObject($("#EditView"));
       formData.action='SavePopUp';
 
-      var _openedWhatsAppByClient = false;
-        if (formData.type === 'WhatsAppWeb' && formData.phone) {
-          var phones = [];
-          if (Array.isArray(formData.phone)) phones = formData.phone;
-          else phones = (''+formData.phone).split(',');
-          var textToSend = formData.message || '';
-          phones = phones.map(function(p){ return (p||'').trim(); }).filter(Boolean);
-          if (phones.length > 0) {
-            _openedWhatsAppByClient = true;
-            for (var i = 0; i < phones.length; i++) {
-              var pc = phones[i].replace(/\D+/g, '');
-              if (!pc) continue;
-              var url = 'https://wa.me/' + pc + '?text=' + encodeURIComponent(textToSend);
-              window.open(url, '_blank');
-            }
-          }
-        }
-
       $.ajax({
         url: "index.php?module=stic_Messages&action=savePopUp",
         type: "post",
@@ -259,34 +241,25 @@ $(function () {
         async: false,
         data: formData,
         success: function (res) {
-    if (_openedWhatsAppByClient) {
-                //   var waTitle = res.title || SUGAR.language.get('app_strings', 'LBL_EMAIL_SUCCESS') || SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_SENT');
-          //   var waDetail = res.detail || SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_SENT');
-          var waTitle = res.title || SUGAR.language.get('app_strings', 'LBL_EMAIL_SUCCESS') || SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_SENT');
-          var waDetail = res.detail || SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_SENT');  
-      console.log('WhatsApp Web links opened', waTitle, waDetail);
-      // Show WhatsApp Web-specific message
-      showMessageBox(waTitle, waDetail, function () {
-        var baseUrl = window.location.href.split("?")[0];
-        var returnModule = $('#EditView [name="return_module"]').val();
-        var returnAction = $('#EditView [name="return_action"]').val();
-        var returnId = $('#EditView [name="return_id"]').val();
-        if (!returnId && res.id) {
-          returnId = res.id;
-        }
-        var newUrl =
-          baseUrl +
-          "?module=" +
-          encodeURIComponent(returnModule) +
-          "&action=" +
-          encodeURIComponent(returnAction) +
-          (returnId ? "&record=" + encodeURIComponent(returnId) : "");
-        window.location.href = newUrl;
-      });
-      return;
-    }
           console.log('Message saved', res);
-          showMessageBox(res.title, res.detail, function () {
+          var _openedWhatsAppByClient = false;
+          if (res.open_url) {
+            window.open(res.open_url, '_blank');
+            _openedWhatsAppByClient = true;
+          }
+          if (res.open_urls && Array.isArray(res.open_urls)) {
+            res.open_urls.forEach(function(url) {
+              window.open(url, '_blank');
+            });
+            _openedWhatsAppByClient = true;
+          }
+          var displayTitle = res.title;
+          var displayDetail = res.detail;
+          if (_openedWhatsAppByClient) {
+            displayTitle = res.title || SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_SENT');
+            displayDetail = SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_SENT');
+          }
+          showMessageBox(displayTitle, displayDetail, function () {            
             var baseUrl = window.location.href.split("?")[0];
             var returnModule = $('#EditView [name="return_module"]').val();
             var returnAction = $('#EditView [name="return_action"]').val();
@@ -306,8 +279,6 @@ $(function () {
         },
         error: function () {
           showMessageBox(
-            // $("#errorMessage").val(),
-            // $("#errorMessageText").val(),
             SUGAR.language.get('stic_Messages', 'LBL_ERROR'),
             SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'),
             function () {
