@@ -61,7 +61,7 @@ class FormHtmlGeneratorService {
                     // Styles and Content
                     $htmlRaw .= $this->generateCss($layout, $wrapperId);
                     $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
-                    $htmlRaw .= $this->generateJs($layout);
+                    $htmlRaw .= $this->generateJs($config);
                 }
                 $htmlRaw .= "</div>" .$this->newLine('-');
             }
@@ -955,20 +955,42 @@ JS;
         return $html;
     }
 
-    private function generateJs(FormLayout $layout): string {
+    private function generateJs(FormConfig $config): string {
         $js = "";
 
-        $validatorActions = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
-        $jsValidators = "const AWF_Validators = {\n";
-        foreach ($validatorActions as $action) {
-            if ($action instanceof ValidatorActionDefinition) {
-                $jsValidators .= "  '{$action->getName()}': " . $action->getValidationJS() . ",\n";
+        // Get used validators
+        $usedValidators = [];
+        foreach ($config->data_blocks as $block) {
+            foreach ($block->fields as $field) {
+                if (!empty($field->validations)) {
+                    foreach ($field->validations as $val) {
+                        $usedValidators[$val->validator] = true;
+                    }
+                }
             }
         }
-        $jsValidators .= "};\n";
-        $js .= "<script>\n{$jsValidators}\n</script>" . $this->newLine();
 
-        $customJs = $this->decode($layout->custom_js);
+        if (!empty($usedValidators)) {
+            // Discover all validator actions
+            $validatorActions = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
+
+            // Generate JS for used validators only
+            $jsValidators = "const AWF_Validators = {\n";
+            $hasDefinitions = false;
+            foreach ($validatorActions as $action) {
+                if ($action instanceof ValidatorActionDefinition && isset($usedValidators[$action->getName()])) {
+                    $jsValidators .= "  '{$action->getName()}': " . $action->getValidationJS() . ",\n";
+                    $hasDefinitions = true;
+                }
+            }
+            $jsValidators .= "};\n";
+            if ($hasDefinitions) {
+                $js .= "<script>\n{$jsValidators}\n</script>" . $this->newLine();
+            }
+        }
+
+        // Add custom JS from layout
+        $customJs = $this->decode($config->layout->custom_js);
         if (!empty($customJs)) {
             $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});\n</script>" .$this->newLine();
         }
