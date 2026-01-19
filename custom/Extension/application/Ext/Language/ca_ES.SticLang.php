@@ -1056,7 +1056,7 @@ $app_list_strings['stic_assessments_status_list']['completed'] = 'Completada';
 $app_list_strings['stic_assessments_status_list']['referred'] = 'Derivada';
 $app_list_strings['stic_assessments_status_list']['discarded'] = 'Descartada';
 
-// Valoracions: Tipus de valoració
+// Valoracions: Tipus
 $app_list_strings['stic_assesments_types_list'][''] = '';
 $app_list_strings['stic_assesments_types_list']['service_user'] = 'Usuari/a de serveis';
 $app_list_strings['stic_assesments_types_list']['volunteering'] = 'Voluntariat';
