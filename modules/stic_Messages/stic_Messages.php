@@ -220,7 +220,7 @@ class stic_Messages extends Basic
 
     }
 
-    public function replaceTemplateVariables($screenText, $bean)
+    public static function replaceTemplateVariables($screenText, $bean)
     {
             $macro_nv = array();
     
@@ -252,8 +252,7 @@ class stic_Messages extends Basic
                 );
     
             }
-    
-        return $templateData['body'];
+        return html_entity_decode($templateData['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
     
 

@@ -241,24 +241,25 @@ $(function () {
         async: false,
         data: formData,
         success: function (res) {
-          var _openedWhatsAppByClient = false;
-          if (res.open_url) {
-            window.open(res.open_url, '_blank');
-            _openedWhatsAppByClient = true;
-          }
-          if (res.open_urls && Array.isArray(res.open_urls)) {
-            res.open_urls.forEach(function(url) {
-              window.open(url, '_blank');
-            });
-            _openedWhatsAppByClient = true;
-          }
-          var displayTitle = res.title;
-          var displayDetail = res.detail;
-          if (_openedWhatsAppByClient) {
-            displayTitle = res.title || SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_SENT');
-            displayDetail = SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_SENT');
-          }
-          showMessageBox(displayTitle, displayDetail, function () {            
+            var decodeHTML = function (html) {
+                var txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value;
+            };
+            if (res.phone && res.text) {
+              var cleanText = decodeHTML(res.text);
+              var waUrl = 'https://wa.me/' + res.phone + '?text=' + encodeURIComponent(cleanText);
+              console.log('Opening WhatsApp URL:', waUrl);
+              window.open(waUrl, '_blank');
+            }
+
+            if (res.open_data && Array.isArray(res.open_data)) {
+                res.open_data.forEach(function(item) {
+                    var cleanItemText = decodeHTML(item.text);
+                    var waUrl = 'https://wa.me/' + item.phone + '?text=' + encodeURIComponent(cleanItemText);
+                    window.open(waUrl, '_blank');
+                });
+            }              
             var baseUrl = window.location.href.split("?")[0];
             var returnModule = $('#EditView [name="return_module"]').val();
             var returnAction = $('#EditView [name="return_action"]').val();
@@ -267,21 +268,30 @@ $(function () {
               returnId = res.id;
             }
             var newUrl =
-              baseUrl +
-              "?module=" +
-              encodeURIComponent(returnModule) +
-              "&action=" +
-              encodeURIComponent(returnAction) +
-              (returnId ? "&record=" + encodeURIComponent(returnId) : "");
-          if($("#status").val() == 'draft') {
-            window.location.href = newUrl;
-          }
-          else {
-            showMessageBox(res.title, res.detail, function () {
+                baseUrl +
+                "?module=" +
+                encodeURIComponent(returnModule) +
+                "&action=" +
+                encodeURIComponent(returnAction) +
+                (returnId ? "&record=" + encodeURIComponent(returnId) : "");
+            
+            if($("#status").val() == 'draft') {
               window.location.href = newUrl;
-            });
-          }
-        },
+            }
+            else {
+              var isWhatsAppWeb = $('#type').val() === 'WhatsAppWeb';
+              var title = isWhatsAppWeb ? 
+                (res.title || SUGAR.language.get('app_strings', 'LBL_EMAIL_SUCCESS')) : 
+                res.title;
+              var detail = isWhatsAppWeb ? 
+                SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_SENT') : 
+                res.detail;
+              
+              showMessageBox(title, detail, function () {
+                window.location.href = newUrl;
+              });
+            }
+          },
         error: function () {
           showMessageBox(
             SUGAR.language.get('stic_Messages', 'LBL_ERROR'),
