@@ -878,8 +878,9 @@ class WizardStep2 {
         });
         this.$watch('field.subtype_in_form', (newType, oldType) => {
           if (!this.field) return;
-          if (this.isEdit) return;
-          this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
+          if (!this.isEdit) {
+            this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
+          }
           if (this.field.type_field == 'unlinked' || this.field.isSelectCustomOptions()) {
             this.configValueOptions = this.isInFormSelectableValues;
           }

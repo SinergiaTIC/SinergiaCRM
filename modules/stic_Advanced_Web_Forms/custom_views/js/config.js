@@ -477,6 +477,13 @@ class AWF_Field {
     if (this.isSelectCustomOptions()) {
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
+      
+      if (this.type_field == 'unlinked') {
+        list.push(base_subtypes.find(s => s.id == "select_checkbox"));
+        list.push(base_subtypes.find(s => s.id == "select_switch"));
+        list.push(base_subtypes.find(s => s.id == "select_multiple"));
+        list.push(base_subtypes.find(s => s.id == "select_checkbox_list"));
+      }
       return list
     }
     if (this.type == "phone") {
