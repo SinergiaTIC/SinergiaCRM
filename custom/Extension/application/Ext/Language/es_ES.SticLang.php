@@ -3924,6 +3924,7 @@ $app_list_strings['stic_advanced_web_forms_action_category_list']['communication
 $app_list_strings['stic_advanced_web_forms_action_category_list']['navigation'] = '➡️ Navegación';
 $app_list_strings['stic_advanced_web_forms_action_category_list']['integration'] = '🧩 Integración';
 $app_list_strings['stic_advanced_web_forms_action_category_list']['files'] = '📁 Ficheros';
+$app_list_strings['stic_advanced_web_forms_action_category_list']['validation'] = '🛡️ Validación';
 
 // Fechas relativas para los Formularios Web Avanzados
 $app_list_strings['stic_advanced_web_forms_date_relative_list']['today'] = 'Hoy (fecha actual)';

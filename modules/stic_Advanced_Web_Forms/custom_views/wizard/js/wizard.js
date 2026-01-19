@@ -365,6 +365,48 @@ class WizardStep2 {
             },
 
             /**
+             * Retorna el título traducido de un validador
+             */
+            getValidatorTitle(validatorName) {
+                const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                return def ? def.title : validatorName;
+            },
+
+            /**
+             * Retorna un array de objetos {label, value} para mostrar en la tabla de parámetros
+             */
+            getValidationParamsForTable(validation) {
+              if (!validation || !validation.validator || !validation.params) return [];
+              
+              const def = utils.getDefinedActions().find(a => a.name === validation.validator);
+              if (!def) return [];
+              
+              return Object.entries(validation.params).map(([key, value]) => {
+                const paramDef = def.parameters.find(p => p.name === key);
+                
+                // Si és un checkbox (boolean)
+                let displayValue = value;
+                if (paramDef && utils.getParameterInputType(paramDef.dataType) === 'checkbox') {
+                  displayValue = value ? '☑' : '☐';
+                }
+                
+                return {
+                  label: paramDef ? utils.fromFieldLabelText(paramDef.text) : key, 
+                  value: displayValue
+                };
+              });
+            },
+
+            /**
+             * Elimina una validación
+             */
+            deleteValidation(index) {
+                if (this.field && this.field.validations) {
+                    this.field.validations.splice(index, 1);
+                }
+            },
+
+            /**
              * Abre el Modal para Crear un campo
              * @param {AWF_DataBlock} dataBlock El Bloque de datos
              * @param {string} type Tipo de campo: unlinked, form, hidden
@@ -942,21 +984,18 @@ class WizardStep2 {
     return {
       formConfig: config,
       store: validationStore,
+
       applyCondition: false,
+      _activeDef: null,
 
       get validation() { return this.store?.validation; },
       get field() { return this.store?.field; },
       get dataBlock() { return this.store?.dataBlock; },
       get fieldName() { return this.dataBlock?.getFieldInputName(this.field); },
       get isEdit() { return this.store?.isEdit; },
-
       get isValid() { return this.validation?.isValid() == true; },
 
       get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm(this.fieldName) ?? []; },
-      get activeConditionFieldDef() {
-        if (!this.validation.condition_field) return null;
-        return this.formConfig.getFieldDefinitionByHtmlName(this.validation.condition_field);
-      },
 
       get availableValidators() {
         if (!this.field) return [];
@@ -977,27 +1016,61 @@ class WizardStep2 {
         if (!this.validation.validator) return null;
         return utils.getDefinedActions().find(a => a.name === this.validation.validator);
       },
+      get activeConditionFieldDef() { return this._activeDef;},
+      get conditionInputType() {
+        const def = this._activeDef;
+        if (!def) return 'text';
+        if (def.type_in_form === 'number') return 'number';
+        if (def.type_in_form === 'date') {
+          if (def.subtype_in_form === 'date_time') return 'time';
+          if (def.subtype_in_form === 'date_datetime') return 'datetime-local';
+          return 'date';
+        }
+        return 'text';
+      },
 
       init() {
-        if (this.validation.condition_field && this.validation.condition_field !== '') {
-          this.applyCondition = true;
-        }
-
+        this.$watch('store.validation', (newVal) => {
+          if (newVal) this.syncState();
+        });
+        this.$watch('validation.condition_field', (newVal) => {
+          this.updateActiveDef(newVal);
+        });        
         this.$watch('applyCondition', (newValue, oldValue) => {
           if (!newValue) {
             this.validation.condition_field = '';
             this.validation.condition_value = '';
+            this._activeDef = null;
           }
         });
-        this.$watch('validation.condition_field', (newValue, oldValue) => {
-          if (newValue !== oldValue) {
-            this.validation.condition_value = '';
-          }
-        });
-        this.$watch('validation.validator', (newName, oldName) => {
+        this.$watch('validation.validator', (newName) => {
           if (!newName) return;
-          this.validation.message = this.selectedValidatorDefinition?.defaultErrorMessage ?? '';
+          if (!this.validation.message) {
+            this.validation.message = this.selectedValidatorDefinition?.defaultErrorMessage ?? '';
+          }
         });
+
+        // Carga inicial
+        if (this.validation) this.syncState();
+      },
+      syncState() {
+        const hasCondition = !!(this.validation.condition_field && this.validation.condition_field !== '');
+        this.applyCondition = hasCondition;
+        this.updateActiveDef(this.validation.condition_field);
+      },
+      updateActiveDef(fieldName) {
+        if (!fieldName) {
+          this._activeDef = null;
+        } else {
+          this._activeDef = this.formConfig.getFieldDefinitionByHtmlName(fieldName);
+          if (this._activeDef && this._activeDef.type_in_form === 'select') {
+            const currentValue = this.validation.condition_value;
+            if (currentValue) {
+              // Pequeña espera para forzar reactividad (damos tiempo a que se renderice el select)
+              setTimeout(() => { this.validation.condition_value = currentValue; }, 50);
+            }
+          }
+        }
       },
     };
   }
@@ -1066,7 +1139,20 @@ class WizardStep2 {
           return this.formConfig.data_blocks.find(d => d.id == field.value)?.text;
         }
         return field.value_text;
-      }
+      },
+
+      getValidationsTooltip(field) {
+        if (!field || !field.validations || field.validations.length == 0) return '';
+
+        let tooltip = utils.translateForFieldLabel('LBL_FIELD_ACTIVE_VALIDATIONS') + "\n";
+        const lines = field.validations.map(val => {
+            const def = utils.getDefinedActions().find(a => a.name === val.validator);
+            const name = def ? def.title : val.validator;
+            return `- ${name}`;
+        });
+
+        return tooltip + lines.join('\n');
+      },
     }
   }
 
@@ -1232,6 +1318,16 @@ class WizardStep3 {
 
               // Clonamos la acción para editarla
               this.action = new AWF_Action(action);
+
+              // Adaptamos los valores de los parámetros tipo textarea para mostrar saltos de línea correctamente
+              if (this.action.parameters && this.definition.parameters) {
+                this.action.parameters.forEach(param => {
+                  const paramDef = this.definition.parameters.find(p => p.name === param.name);
+                  if (paramDef && paramDef.dataType === 'textarea' && typeof param.value === 'string') {
+                    param.value = param.value.replace(/\\n/g, '\n');
+                  }
+                });
+              }
 
               this.isOpen = true;
             },

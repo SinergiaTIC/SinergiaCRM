@@ -159,7 +159,6 @@ $mod_strings = array (
   'LBL_DATABLOCK_MODULE' => 'Módulo',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
 
-
   'LBL_FIELDS' => 'Campos',
   'LBL_FIELD_FORM' => 'Campo en el formulario',
   'LBL_FIELDS_FORM' => 'En el formulario',
@@ -187,10 +186,14 @@ $mod_strings = array (
   'LBL_FIELD_VALIDATION_NEW' => 'Nueva validación',
   'LBL_FIELD_VALIDATION_EDIT' => 'Editar validación',
   'LBL_FIELD_VALIDATION_CONDITION' => 'Condición para la validación',
+  'LBL_FIELD_VALIDATION_CONDITION_SUMMARY' => 'Condición',
   'LBL_FIELD_VALIDATION_APPLY_CONDITION' => 'Condicionar al valor de otro campo',
   'LBL_FIELD_VALIDATION_CONDITION_FIELD' => 'Campo',
   'LBL_FIELD_VALIDATION_CONDITION_VALUE' => 'Valor',
+  'LBL_FIELD_VALIDATION_PARAMETERS' => 'Parámetros',
   'LBL_FIELD_VALIDATION_ERROR_MESSAGE' => 'Mensaje de error',
+  'LBL_FIELD_VALIDATION_ACTIONS' => 'Acciones',
+  'LBL_FIELD_ACTIVE_VALIDATIONS' => 'Validaciones activas',
   
   'LBL_FIELD' => 'Campo',
   'LBL_FIELD_NAME' => 'Nombre',

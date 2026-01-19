@@ -132,10 +132,20 @@
                             <div x-show="field?.type_field != 'unlinked'" x-text="field?.text_original"></div>
                             <div class="text-muted small" x-text="item.getFieldInputName(field)"></div>
                           </td>
-                          <!-- Label -->
+                          <!-- Label & Validations -->
                           <td x-show="canShowFieldColumn('label')">
-                            <div class="mb-0 me-3" :id="`dataBlockFieldLabel-${item.id}-${field.name}`" 
-                                 data-model="field.label" x-init="sticControls.editableText($el);">
+                            <div class="d-flex align-items-center justify-content-between">
+                              <!-- Label -->
+                              <div class="mb-0 me-3" :id="`dataBlockFieldLabel-${item.id}-${field.name}`" 
+                                  data-model="field.label" x-init="sticControls.editableText($el);">
+                              </div>
+                              <!-- Validations Badge -->
+                              <template x-if="field.validations && field.validations.length > 0">
+                                <span class="badge rounded-pill bg-info text-dark" :title="getValidationsTooltip(field)">
+                                  <i class="suitepicon suitepicon-module-accounts"></i>
+                                  <span x-text="field.validations.length"></span>
+                                </span>
+                              </template>                              
                             </div>
                           </td>
                           <!-- Type in form -->
@@ -623,7 +633,62 @@
                     </div>
                     <!-- Add Validation Button -->
                     <button type="button" class="btn" @click="$store.fieldValidationEditor.openCreate(store.dataBlock, field)" x-text="utils.translate('LBL_FIELD_VALIDATION_ADD')"></button>
-                    <!-- Validations -->
+                    <!-- Validations Table -->
+                    <template x-if="field.validations.length > 0">
+                      <table class="mt-3 table table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th style="width: 25%;" x-text="utils.translate('LBL_FIELD_VALIDATOR')"></th>
+                            <th style="width: 35%;" x-text="utils.translate('LBL_FIELD_VALIDATION_PARAMETERS')"></th>
+                            <th style="width: 30%;" x-text="utils.translate('LBL_FIELD_VALIDATION_ERROR_MESSAGE')"></th>
+                            <th style="width: 10%;" x-text="utils.translate('LBL_FIELD_VALIDATION_ACTIONS')"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <template x-for="(val, index) in field.validations" :key="val.name">
+                            <tr>
+                              <!-- Validator + Condition -->
+                              <td>
+                                <span x-text="store.getValidatorTitle(val.validator)"></span>
+                                <template x-if="val.condition_field">
+                                  <div class="small text-muted fst-italic mt-1">
+                                    <span x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_SUMMARY') + ' ' + val.condition_field + ' = ' + val.condition_value""></span>
+                                  </div>
+                                </template>
+                              </td>
+                              <!-- Parameters -->
+                              <td class="p-0">
+                                <template x-if="Object.keys(val.params).length > 0">
+                                  <table class="table table-sm mb-0">
+                                    <tbody>
+                                      <template x-for="p in store.getValidationParamsForTable(val)" :key="p.label">
+                                        <tr>
+                                          <th class="w-25" x-text="p.label"></th>
+                                          <td x-text="p.value"></td>
+                                        </tr>
+                                      </template>
+                                    </tbody>
+                                  </table>
+                                </template>
+                              </td>
+                              <!-- Error Message -->
+                              <td x-text="val.message"></td>
+                              <!-- Buttons -->
+                              <td class="text-end">
+                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')"
+                                        @click="$store.fieldValidationEditor.openEdit(store.dataBlock, field, val)">
+                                    <span class="suitepicon suitepicon-action-edit"></span>
+                                </button>
+                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                        @click="store.deleteValidation(index)">
+                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                </button>
+                              </td>
+                            </tr>
+                          </template>
+                        </tbody>
+                      </table>
+                    </template>
                   </div>
                 </div>
               </template>
@@ -668,7 +733,9 @@
                       <template x-if="applyCondition">
                         <div class="col-3">
                           <label for="validation_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_FIELD')"></label>
-                          <select id="validation_ConditionField" x-bind:disabled="availableFieldsInForm.length<=1;" class="form-select" x-model="validation.condition_field">
+                          <select id="validation_ConditionField" x-bind:disabled="availableFieldsInForm.length<=1" class="form-select" 
+                                  x-model="validation.condition_field" @change="validation.condition_value = ''">
+                            <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                             <template x-for="field in availableFieldsInForm" :key="field.name">
                               <option :value="field.name" x-text="field.text"></option>
                             </template>
@@ -676,7 +743,7 @@
                         </div>
                       </template>
                       <!-- Condition value -->
-                      <template x-if="applyCondition && validation.condition_field != '' ">
+                      <template x-if="applyCondition && validation.condition_field != '' && activeConditionFieldDef">
                         <div class="col-3">
                           <label for="validation_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_VALUE')"></label>
                           <!-- Select -->
@@ -689,8 +756,8 @@
                             </select>
                           </template>
                           <!-- Text -->
-                          <template x-if="activeConditionFieldDef?.type_in_form != 'select' && !['select_checkbox', 'select_switch'].includes(activeConditionFieldDef?.subtype_in_form)">
-                            <input id="validation_ConditionValue" type="text" class="form-control" x-model="validation.condition_value">
+                          <template x-if="activeConditionFieldDef?.type_in_form != 'select'">
+                            <input id="validation_ConditionValue" :type="conditionInputType" class="form-control" x-model="validation.condition_value">
                           </template>
                         </div>
                       </template>
@@ -715,7 +782,7 @@
                     <template x-if="selectedValidatorDefinition">
                       <div class="col-9 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center" style="height:35px !important;">
                         <i class="suitepicon suitepicon-action-info me-2 flex-shrink-0"></i>
-                        <span id="wizard-section-desc" x-text="selectedValidatorDefinition.description"></span>
+                        <span id="wizard-section-desc" x-text="selectedValidatorDefinition?.description??''"></span>
                       </div>
                     </template>
                   </div>
