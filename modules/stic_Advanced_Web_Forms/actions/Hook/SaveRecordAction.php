@@ -92,6 +92,10 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         if ($bean === null) {
             // No hay duplicado, creamos uno nuevo
             $bean = BeanFactory::newBean($module);
+            // Asignar usuario si se ha definido uno por defecto
+            if (!empty($context->defaultAssignedUserId)) {
+                $bean->assigned_user_id = $context->defaultAssignedUserId;
+            }
             // Llenar todos los campos del bean
             $this->populateBean($bean, $block); 
             $bean->save();

@@ -34,8 +34,15 @@ class AWF_ResponseHandler
 {
     public function run()
     {
-        // Usuario administrador
         global $current_user;
+
+        // Usuario real (antes de cambiar a admin)
+        $realUserId = null;
+        if (!empty($current_user) && !empty($current_user->id)) {
+            $realUserId = $current_user->id;
+        }
+
+        // Usuario administrador
         $current_user = BeanFactory::newBean('Users');
         $current_user->getSystemUser();
 
@@ -155,7 +162,8 @@ class AWF_ResponseHandler
         }
 
         // Contexto de ejecución
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $rawPostData, $formConfig);
+        $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $rawPostData, $formConfig, null, $defaultAssignedUserId);
         $executor = new ServerActionFlowExecutor($context);
         
         // Preparación de los Flujos de acciones

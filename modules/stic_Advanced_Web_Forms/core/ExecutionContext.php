@@ -38,6 +38,8 @@ class ExecutionContext {
 
     public float $submissionTimestamp;
 
+    public string $defaultAssignedUserId;
+
     /**
      * Constructor de la clase ExecutionContext.
      * @param string $formId ID del formulario que se está procesando
@@ -45,14 +47,16 @@ class ExecutionContext {
      * @param array $formData Datos RAW del formulario recibido
      * @param FormConfig $formConfig Configuración del formulario
      * @param ?float $timestamp El timestamp del envío de datos del formulario (opcional)
+     * @param string $defaultAssignedUserId ID del usuario asignado por defecto (opcional)
      */
-    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null) {
+    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '') {
         $this->formId = $formId;
         $this->responseId = $responseId;
         $this->formData = $formData;
         $this->formConfig = $formConfig;
         $this->actionResults = [];
         $this->submissionTimestamp = $timestamp ?? microtime(true);
+        $this->defaultAssignedUserId = $defaultAssignedUserId;
     }
 
     /**
