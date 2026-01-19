@@ -64,6 +64,15 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":    
+
+      // Depending on the type of assessment, add or remove validations in other fields
+    type = document.getElementById('offer_type');
+    addValidateIfVolunteering(type.value);
+    type.addEventListener("change", function () {
+        clear_all_errors();
+        addValidateIfVolunteering(type.value);
+    });
+
     // Definition of the behavior of fields that are conditionally enabled or disabled
     sepeActivationDate = {
       true: {
@@ -144,4 +153,20 @@ function onClickIncorporaSyncButton() {
   document.MassUpdate.action.value='fromMassUpdate';
   document.MassUpdate.module.value='stic_Incorpora';
   document.MassUpdate.submit();
+}
+
+
+/**
+ * Depending on the type of offer, add or remove validations in project field
+ */
+function addValidateIfVolunteering(type) 
+{
+    if (type == 'volunteering') {
+      addToValidateCallback(getFormName(), "project_stic_job_offers_name", "varchar", true, SUGAR.language.get(module, "LBL_AVAILABLE_TIME"));
+      addRequiredMark('project_stic_job_offers_name');
+    } else {
+      removeFromValidate('EditView', 'project_stic_job_offers_name');
+      removeRequiredMark('project_stic_job_offers_name');
+    }
+    return true;
 }

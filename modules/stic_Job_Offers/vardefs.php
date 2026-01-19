@@ -1971,6 +1971,7 @@ $dictionary['stic_Job_Offers'] = array(
             'table' => 'project',
             'module' => 'Project',
             'rname' => 'name',
+            'inline_edit' => false,            
         ),
             "project_stic_job_offersproject_ida" => array (
             'name' => 'project_stic_job_offersproject_ida',

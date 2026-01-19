@@ -132,12 +132,16 @@ function addValidateIfVolunteering(type)
       addToValidateCallback(getFormName(), "available_days", "multienum", true, SUGAR.language.get(module, "LBL_AVAILABLE_DAYS"));
       addRequiredMark('available_days');     
       addToValidateCallback(getFormName(), "available_time", "varchar", true, SUGAR.language.get(module, "LBL_AVAILABLE_TIME"));
-      addRequiredMark('available_time');    
+      addRequiredMark('available_time');
+      addToValidateCallback(getFormName(), "project_stic_assessments_name", "varchar", true, SUGAR.language.get(module, "LBL_AVAILABLE_TIME"));
+      addRequiredMark('project_stic_assessments_name');
     } else {
       removeFromValidate('EditView', 'available_days');
       removeRequiredMark('available_days');
       removeFromValidate('EditView', 'available_time');
       removeRequiredMark('available_time');
+      removeFromValidate('EditView', 'project_stic_assessments_name');
+      removeRequiredMark('project_stic_assessments_name');
     }
     return true;
 }
