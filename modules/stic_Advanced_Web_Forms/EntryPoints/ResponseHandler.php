@@ -50,8 +50,16 @@ class AWF_ResponseHandler
         $formId = $_REQUEST['id'] ?? null;
         $rawPostData = $_POST;
 
-        // Detección Anti-Spam (Honeypot)
+        // Detección Anti-Spam (Honeypot): Campo oculto que los bots suelen rellenar
         $isSpam = !empty($rawPostData['awf_honey_pot']);
+
+        // Detección Anti-Spam (TimeTrap): Normalmente los bots envían el formulario inmediatamente y/o sin ejecutar JS
+        $submissionTs = (int)($_POST['awf_submission_ts'] ?? 0);
+        $currentTs = time();
+        $duration = $currentTs - $submissionTs;
+        if ($submissionTs === 0 || $duration < 3) {
+            $isSpam = true;
+        }
 
         // Saneamiento de datos
         unset($rawPostData['module']);

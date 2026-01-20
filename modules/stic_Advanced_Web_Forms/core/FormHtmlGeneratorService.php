@@ -503,10 +503,12 @@ class FormHtmlGeneratorService {
         $alpineData = <<<JS
         {
             isActive: true,
+            loadTime: 0,
             message: {$safeMessage},
             submitting: false,
             
             init() {
+                this.loadTime = Math.floor(Date.now() / 1000);
                 {$jsCheckStatus}
             },
 
@@ -681,6 +683,9 @@ JS;
                         $html .= "<input type='text' id='awf_website' name='awf_honey_pot' value='' tabindex='-1' autocomplete='off'>" .$this->newLine();
                     }
                     $html .= "</div>" .$this->newLine('-');
+
+                    // TimeTrap: Hidden field to track time spent on form
+                    $html .= "<input type='hidden' name='awf_submission_ts' x-model='loadTime'>";
 
                     // Sections Grid
                     $html .= "<div class='awf-grid-sections'>" .$this->newLine('+');
