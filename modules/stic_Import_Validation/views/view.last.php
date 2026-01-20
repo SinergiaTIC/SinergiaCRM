@@ -110,7 +110,7 @@ class stic_Import_ValidationViewLast extends stic_Import_ValidationView
         $this->ss->assign("errorrecordsFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
         $this->ss->assign("dupeFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getDuplicateFileName()));
 
-        // STIC-Code MHP - Check if there are duplicate values in the columns corresponding to the selected search filters within the file
+        // STIC-Code MHP - Check if there are duplicate values within the file, in the columns corresponding to the selected search filters 
         $duplicatesValues = [];
         if (isset($_SESSION["stic_ImporValidation"]['duplicateFilters'])){
             $duplicateFilters = $_SESSION["stic_ImporValidation"]['duplicateFilters'];

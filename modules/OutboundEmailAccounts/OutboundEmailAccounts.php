@@ -318,7 +318,11 @@ class OutboundEmailAccounts extends OutboundEmailAccounts_sugar
      */
     public function getFromAddress(): string {
         $fromAddress = $this->smtp_from_addr ?? '';
-        if (empty($fromAddress) || isValidEmailAddress($this->mail_smtpuser, '', false, '')) {
+        // STIC-Custom 20251107 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/803
+        // Change OR to AND to change the sender when From Name is empty and the smtp user is a valid email address
+        // if (empty($fromAddress) || isValidEmailAddress($this->mail_smtpuser, '', false, '')) {
+        if (empty($fromAddress) && isValidEmailAddress($this->mail_smtpuser, '', false, '')) {
+        // END STIC-Custom 
             $fromAddress = $this->mail_smtpuser;
         }
 
