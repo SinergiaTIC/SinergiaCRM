@@ -34,9 +34,13 @@ class AWF_Utils {
      * @return mixed El valor convertido
      */
     public static function castCrmValue(mixed $valueToCast, ?string $crmFieldType, ExecutionContext $context): mixed {
-        // Si no es un string (ej: un array de un multiselect), lo retornamos tal cual.
-        if (!is_string($valueToCast)) {
-            return $valueToCast;
+        // Si es un array de un multiselect: Array -> String ^A^,^B^
+        if (is_array($valueToCast)) {
+            if ($crmFieldType === 'multienum') {
+                return encodeMultienumValue($valueToCast);
+            }
+            // Si es otro tipo de campo que no es multienum, lo convertimos a string con comas
+            return implode(',', $valueToCast);
         }
 
         // Si no hay tipo definido, lo tratamos como texto

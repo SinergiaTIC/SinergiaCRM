@@ -444,6 +444,19 @@ class AWF_ResponseHandler
                             $errors[] = "Field value '{$field->label}' is not a valid email.";
                         }
                     }
+                    if (!empty($field->value_options) && $field->value_type === DataBlockFieldValueType::SELECTABLE) {
+                        $validValues = array_map(fn($opt) => $opt->value, $field->value_options);
+                        $submittedValues = is_array($value) ? $value : [$value];
+                        foreach ($submittedValues as $subVal) {
+                            if ($subVal === '' || $subVal === null) {
+                                continue;
+                            }
+                            if (!in_array($subVal, $validValues)) {
+                                $errors[] = "The value '{$subVal}' is not valid for field '{$field->label}'.";
+                                break; 
+                            }
+                        }
+                    }
                 }
             }
         }
