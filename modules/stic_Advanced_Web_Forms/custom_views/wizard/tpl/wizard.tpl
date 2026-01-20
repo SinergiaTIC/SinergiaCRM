@@ -2,6 +2,7 @@
     STIC.enabledModules = {$enabledModules};
     STIC.mainThemeColor = '{$mainThemeColor}';
     STIC.formMsgWarnings = {$msgWarnings|json_encode};
+    STIC.isAdmin = {$isAdminUser|json_encode};
 </script>
 
 {$title}

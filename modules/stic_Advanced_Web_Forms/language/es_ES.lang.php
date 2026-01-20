@@ -308,6 +308,7 @@ $mod_strings = array (
   'LBL_THEME_FIELDS_PER_ROW' => 'Columnas (Campos)',
   'LBL_THEME_PER_ROW_DESC' => 'El número de columnas definidas se adaptará automáticamente al ancho de la pantalla',
   'LBL_THEME_ADVANCED' => 'Avanzado',
+  'LBL_THEME_ADVANCED_NO_ADMIN_DESC' => 'La configuración avanzada (CSS y JS) está restringida a Administradores.',
   'LBL_THEME_CUSTOM_CSS' => 'CSS personalizado',
   'LBL_THEME_CUSTOM_CSS_DESC' => 'Se inyectará en un bloque <style>.',
   'LBL_THEME_CUSTOM_JS' => 'JS Personalizado',

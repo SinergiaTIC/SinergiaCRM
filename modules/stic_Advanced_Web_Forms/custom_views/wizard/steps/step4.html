@@ -242,7 +242,7 @@
             <!-- Advanced -->
             <details class="mb-3">
                 <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_ADVANCED')"></summary>
-                <div class="ps-4 g-2 mt-2">
+                <div class="ps-4 g-2 mt-2" x-show="STIC.isAdmin">
                     <!-- custom_css -->
                     <div class="mb-3">
                         <label for="theme-custom_css" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_CSS')"></label>
@@ -263,6 +263,10 @@
                             <span x-text="utils.translate('LBL_THEME_CUSTOM_JS_DESC')"></span>
                         </div>
                     </div>
+                </div>
+                <div class="mb-3 p-3 bg-light border rounded small text-muted fst-italic" x-show="!STIC.isAdmin">
+                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                    <span x-text="utils.translateForFieldLabel('LBL_THEME_ADVANCED_NO_ADMIN_DESC')"></span>
                 </div>
             </details>
 

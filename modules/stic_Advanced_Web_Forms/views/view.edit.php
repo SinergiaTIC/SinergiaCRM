@@ -105,7 +105,7 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         $this->ss->assign('enabledModules', json_encode(getEnabledModules()));
         $this->ss->assign('mainThemeColor', getCustomBaseColor());
         $this->ss->assign('msgWarnings', $msgWarnings);
-
+        $this->ss->assign('isAdminUser', $GLOBALS['current_user']->is_admin ? true : false);
 
         echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');
     }
