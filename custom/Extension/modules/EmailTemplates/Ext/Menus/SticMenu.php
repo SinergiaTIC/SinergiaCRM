@@ -24,6 +24,10 @@
 
 global $mod_strings;
        
+if (ACLController::checkAccess('Campaigns', 'list', true)) {
+    $module_menu[]=	array("index.php?module=Campaigns&action=index&return_module=Campaigns&return_action=index",$mod_strings['LNK_CAMPAIGN_LIST'],"List", 'Campaigns');
+}
+
 if (ACLController::checkAccess('TemplateSectionLine', 'edit', true)) {
     $module_menu[]=array("index.php?module=TemplateSectionLine&action=EditView&return_module=TemplateSectionLine&return_action=index", $mod_strings['LNK_NEW_RECORD'],"Create", 'TemplateSectionLine');
 }
@@ -32,17 +36,3 @@ if (ACLController::checkAccess('TemplateSectionLine', 'list', true)) {
     $module_menu[]=array("index.php?module=TemplateSectionLine&action=index&return_module=TemplateSectionLine&return_action=DetailView", $mod_strings['LNK_LIST'],"List", 'TemplateSectionLine');
 }
 
-if (ACLController::checkAccess('Campaigns', 'list', true)) {
-    $module_menu[]=	array(
-        "index.php?module=Campaigns&action=index&return_module=Campaigns&return_action=index",
-        $mod_strings['LNK_CAMPAIGN_LIST'],"List", 'Campaigns'
-    );
-}
-
-if (ACLController::checkAccess('EmailTemplates', 'edit', true)) {
-    $module_menu[] = array("index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView",$mod_strings['LNK_NEW_EMAIL_TEMPLATE'],"View_Create_Email_Templates","Emails");
-}
-
-if (ACLController::checkAccess('EmailTemplates', 'list', true)) {
-    $module_menu[] = array("index.php?module=EmailTemplates&action=index",$mod_strings['LNK_EMAIL_TEMPLATE_LIST'],"View_Email_Templates", 'Emails');
-}
