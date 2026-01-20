@@ -196,6 +196,32 @@ $searchFields['Documents'] = array(
       'enable_range_search' => true,
       'is_date_field' => true,
   ),
+  // Filter field for many to many relationship
+  'stic_documents_accounts_name' => array (
+      'query_type' => 'format',
+      'operator' => 'subquery',
+      'subquery' => 'SELECT da.document_id 
+          FROM documents_accounts da 
+          INNER JOIN accounts acc ON acc.id = da.account_id AND acc.deleted = 0
+          WHERE da.deleted = 0 AND acc.name LIKE \'{0}\'',
+      'db_field' => array (
+          0 => 'id',
+      ),
+  ),
+  'stic_documents_contacts_name' => array (
+      'query_type' => 'format',
+      'operator' => 'subquery',
+      'subquery' => 'SELECT da.document_id 
+          FROM documents_contacts da 
+          INNER JOIN contacts cc ON cc.id = da.contact_id AND cc.deleted = 0
+          WHERE da.deleted = 0 AND (
+            CONCAT_WS(" ", cc.first_name, cc.last_name) LIKE \'%{0}%\'
+            OR CONCAT_WS(" ", cc.last_name, cc.first_name) LIKE \'%{0}%\'
+          )',
+      'db_field' => array (
+          0 => 'id',
+      ),
+  ),
   'favorites_only' => array(
       'query_type' => 'format',
       'operator' => 'subquery',

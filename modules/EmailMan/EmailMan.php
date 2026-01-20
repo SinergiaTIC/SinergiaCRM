@@ -949,16 +949,20 @@ class EmailMan extends SugarBean
                 return true;
             }
 
-            //test for duplicate email address by marketing id.
-            $dup_query = "select id from campaign_log where more_information='" . $this->db->quote($module->email1) . "' and marketing_id='" . $this->marketing_id . "'";
-            $dup = $this->db->query($dup_query);
-            $dup_row = $this->db->fetchByAssoc($dup);
-            if (!empty($dup_row)) {
-                //we have seen this email address before
-                $this->set_as_sent($module->email1, true, null, null, 'blocked');
-                return true;
+            // STIC-Custom 20250728 MHP - Do not block test sending even if a real marketing email has been sent.
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/714/
+            if (!$testmode) {
+                //test for duplicate email address by marketing id.
+                $dup_query = "select id from campaign_log where more_information='" . $this->db->quote($module->email1) . "' and marketing_id='" . $this->marketing_id . "'";
+                $dup = $this->db->query($dup_query);
+                $dup_row = $this->db->fetchByAssoc($dup);
+                if (!empty($dup_row)) {
+                    //we have seen this email address before
+                    $this->set_as_sent($module->email1, true, null, null, 'blocked');
+                    return true;
+                }
             }
-
+            // END STIC-Custom 
 
             //fetch email marketing.
             if (empty($this->current_emailmarketing) || ! isset($this->current_emailmarketing)) {
@@ -1047,6 +1051,14 @@ class EmailMan extends SugarBean
 
             $mail->ClearCustomHeaders();
             $mail->AddCustomHeader('X-CampTrackID:' . $this->getTargetId());
+
+            // STIC-Custom 20250710 MHP - Add unsubscribe headers to emails sent by a campaign
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/724
+            $site_url = rtrim($sugar_config['site_url'], "/");
+            $mail->AddCustomHeader("List-Unsubscribe: <{$site_url}/index.php?entryPoint=removemeConfirmed&identifier=" . $this->getTargetId() . ">");
+            $mail->AddCustomHeader("List-Unsubscribe-Post: List-Unsubscribe=One-Click");
+            // END STIC-Custom
+
             //CL - Bug 25256 Check if we have a reply_to_name/reply_to_addr value from the email marketing table.  If so use email marketing entry; otherwise current mailbox (inbound email) entry
             $replyToName = empty($this->current_emailmarketing->reply_to_name) ? $this->current_mailbox->get_stored_options('reply_to_name', $mail->FromName, null) : $this->current_emailmarketing->reply_to_name;
             $replyToAddr = empty($this->current_emailmarketing->reply_to_addr) ? $this->current_mailbox->get_stored_options('reply_to_addr', $mail->From, null) : $this->current_emailmarketing->reply_to_addr;

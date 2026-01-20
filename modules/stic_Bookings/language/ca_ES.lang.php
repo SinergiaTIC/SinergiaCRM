@@ -20,7 +20,6 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
 $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
@@ -64,17 +63,25 @@ $mod_strings = array(
     'LBL_MODULE_NAME_SINGULAR' => 'Reserva',
 
     'LBL_CODE' => 'Codi',
+    'LBL_PERIODIC_CODE' => 'Codi de reserva periòdica',
     'LBL_STATUS' => 'Estat',
     'LBL_ALL_DAY' => 'Tot el dia',
+    'LBL_PLACE_BOOKING' => 'Reserva de places',
+    'LBL_PERIODIC_BOOKING' => 'Reserva periòdica',
     'LBL_START_DATE' => "Data d&#39;inici",
     'LBL_END_DATE' => 'Data de finalització',
+    'LBL_PLANNED_START_DATE' => "Data prevista d&#39;inici",
+    'LBL_PLANNED_END_DATE' => 'Data prevista de finalització',
     'LBL_FLEX_RELATE' => 'Relacionat amb',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organització que reserva',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona que reserva',
+    'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unitat familiar que reserva',
+    'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromís de pagament',
 
-    // Adding resources section
+    // Recursos de la reserva
     'LBL_RESOURCES' => 'Recursos',
+    'LBL_PLACES' => 'Places',
     'LBL_RESOURCES_NAME' => 'Nom',
     'LBL_RESOURCES_STATUS' => 'Estat',
     'LBL_RESOURCES_TYPE' => 'Tipus',
@@ -82,20 +89,77 @@ $mod_strings = array(
     'LBL_RESOURCES_COLOR' => 'Color',
     'LBL_RESOURCES_HOURLY_RATE' => 'Tarifa horària',
     'LBL_RESOURCES_DAILY_RATE' => 'Tarifa diària',
+    'LBL_RESOURCES_CENTER' => 'Centre',
+    'LBL_RESOURCES_GENDER' => 'Gènere de la plaça',
+    'LBL_RESOURCES_PLACE_TYPE' => 'Tipus de plaça',
+    'LBL_RESOURCES_USER_TYPE' => "Tipus d'usuari",
+    'LBL_RESOURCES_AMOUNT_DAY_OCCUPIED' => 'Import per plaça ocupada',
+    'LBL_RESOURCES_AMOUNT_DAY_UNOCCUPIED' => 'Import per plaça desocupada',
+    'LBL_RESOURCES_AMOUNT_COPAYMENT' => 'Import del copagament',
     'LBL_RESOURCES_ADD' => 'Afegeix un recurs',
+    'LBL_RESOURCES_PLACES_ADD' => 'Afegeix places',
     'LBL_RESOURCES_ERROR' => 'Recurs en conflicte amb una altra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hi ha recursos que no estan disponibles en aquesta data.',
     'LBL_RESOURCES_STATUS_ERROR' => 'No es pot activar la reserva en aquestes dates, hi ha recursos que no estan disponibles.',
     'LBL_RESOURCES_END_DATE_ERROR' => "La data de finalització ha de ser posterior a la data d'inici.",
     'LBL_RESOURCES_START_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",
-    'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'Aquesta reserva no té cap recurs assignat.',
+    'LBL_RESOURCES_PLANNED_END_DATE_ERROR' => "La data prevista de finalització ha de ser posterior a la data prevista d'inici.",
+    'LBL_RESOURCES_PLANNED_START_DATE_ERROR' => "La data prevista d'inici ha de ser anterior a la data prevista de finalització.",
+    'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'Revisar els recursos seleccionats.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'Aquesta reserva no te cap recurs assignat. Voleu desar-la igualment?',
+    'LBL_RESOURCES_TYPE_MIX_ERROR' => 'La reserva no es pot desar: reviseu-ne el tipus i els recursos seleccionats.',
+    'LBL_CONFIRM_CHANGE_BOOKING_TYPE' => "Si canvieu el tipus de reserva s'esborraran tots els recursos actualment seleccionats. Segur que voleu continuar?",
+    'LBL_NO_NEW_RESOURCES' => 'No hi ha places per afegir.',
+    'LBL_CONFIRM_DELETE_ALL_RESOURCES' => 'Segur que voleu esborrar totes les places incloses a la reserva?',
+    'LBL_NO_GROUPS_TO_DELETE' => 'No hi ha places per eliminar.',
+    'LBL_CONFIRM_DELETE_LAST_GROUP' => 'Voleu esborrar les últimes places afegides a la reserva?',
+    'LBL_RESOURCES_REMOVED_FROM_CENTER' => "S'eliminaran les places del centre eliminat.",
+    'LBL_CLOSE_RESOURCE_CONFIRM' => "Segur que voleu finalitzar la reserva d'aquest recurs?",
+    'LBL_CLOSE_RESOURCE_BEFORE_START_ERROR' => "No es pot finalitzar la reserva d'un recurs concret si la reserva encara no ha començat. Editeu la reserva per modificar-la.",
+    'LBL_CENTER_RESOURCE_ERROR' => "S'ha produït un error al carregar les places del centre: ",
+    'LBL_CENTERS_MESSAGE' => 'Nombre de places trobades: ',
+    'LBL_UNDO_BUTTON' => 'Desfés',
+    'LBL_ADD_BUTTON' => 'Afegeix',
+    'LBL_CENTERS_BUTTON' => 'Carrega els centres',
+    'LBL_CENTER_ALREADY_SELECTED' => 'Aquest centre ja ha estat seleccionat',
+    'LBL_NUMBER_OF_PLACES' => 'Nombre de places: ',
+    'LBL_TOTAL_AMOUNT' => 'Tarifa total',
+    'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa de copagament',
 
-    // Additional details
+    // Reserves periòdiques
+    'LBL_CREATE_PERIODIC_RECORDS' => 'Crea la reserva periòdica',
+    'LBL_CANCEL_BUTTON' => 'Cancel·la',
+    'LBL_REPEAT_DOW' => 'Dia de la setmana',
+    'LBL_REPEAT_END_AFTER' => 'Després de',
+    'LBL_REPEAT_END_BY' => 'Fins',
+    'LBL_REPEAT_END' => 'Fi',
+    'LBL_REPEAT_INTERVAL' => 'Interval',
+    'LBL_REPEAT_OCCURRENCES' => 'reserves',
+    'LBL_REPEAT_TYPE' => 'Repeteix',
+    'LBL_REPEAT_UNTIL' => 'Repeteix fins',
+    'LBL_SAVE_BUTTON' => 'Desa',
+    'LBL_UNAVAILABLE_RESOURCES' => 'Recursos no disponibles',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Resum:',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Registres processats',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Registres que es crearan',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT' => 'No hi ha incompatibilitats amb reserves ja existents, es crearan tots els registres sol·licitats.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Registres que no es crearan',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT' => 'Els registres següents no es crearan per incompatibilitat amb altres reserves ja existents.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Ves al Calendari de Reserves',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => "Ves al Calendari d'Espais",
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Ves a les Reserves',
+    'LBL_PERIODIC_BOOKING_ERROR' => 'Indiqueu la periodicitat de la reserva.',
+    'LBL_PERIODIC_BOOKING_COUNT_REQUIRED' => 'El nombre de reserves és obligatori.',
+    'LBL_PERIODIC_BOOKING_UNTIL_REQUIRED' => 'La data de finalització és obligatòria.',
+
+    // Detalls addicionals
     'LBL_RESOURCE_NAME' => 'Recurs',
     'LBL_RESOURCE_COUNT' => 'Recursos totals',
     'LBL_RESOURCES_LIST' => 'Llista de recursos',
 
-    // Tooltips help
+    // Ajuda
     'LBL_ALL_DAY_HELP' => 'Si la casella està marcada la reserva es fa en dies complets. Si està desmarcada poden indicar-se les hores inicial i final.',
+
+    // Camps de filtre en relacions molts a molts
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Recurs',
 );

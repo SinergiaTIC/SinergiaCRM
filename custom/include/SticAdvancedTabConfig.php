@@ -86,6 +86,9 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 8 => array(
                     'id' => 'stic_Time_Tracker',
                 ),
+                9 => array(
+                    'id' => 'stic_Messages',
+                ),
             ),
         ),
         2 => array(
@@ -139,6 +142,17 @@ if (empty($GLOBALS["SticTabStructure"])) {
                         ),
                         4 => array(
                             'id' => 'AOS_Contracts',
+                        ),
+                    ),
+                ),
+                5 => array(
+                    'id' => 'LBL_GROUPTAB_FINANCIAL_MANAGEMENT',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Financial_Products',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Transactions',
                         ),
                     ),
                 ),
@@ -259,6 +273,12 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 ),
                 2 => array(
                     'id' => 'stic_Bookings_Calendar',
+                ),
+                3 => array(
+                    'id' => 'stic_Places',
+                ),
+                4 => array(
+                    'id' => 'stic_Bookings_Places_Calendar',
                 ),
             ),
         ),

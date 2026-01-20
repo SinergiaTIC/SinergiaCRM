@@ -217,7 +217,7 @@ $mod_strings['LNK_IMPORT_CONTACTS'] = 'Importa Persones';
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 
-// Medication
+// Medicació
 $mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Registre de medicació";
 $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescripcions";
 
@@ -235,3 +235,10 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 
 // Competències
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competències';
+
+// Camps de filtre en relacions molts a molts
+$mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Llista de públic objectiu';
+$mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Projecte actual';
+
+// Productes financers
+$mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productes financers';

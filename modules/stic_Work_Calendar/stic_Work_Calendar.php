@@ -1,7 +1,5 @@
 <?php
 
-use function GuzzleHttp\default_user_agent;
-
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -77,36 +75,61 @@ class stic_Work_Calendar extends Basic
     public function save($check_notify = true)
     {
         global $app_list_strings, $current_user, $timedate;
-        if ($_REQUEST["action"] && $_REQUEST["action"] != "saveHTMLField") // Inline Edit
+        // $_REQUEST['action'] is not set in API method calls and "saveHTMLField" is the value for inline editing
+        if (!isset($_REQUEST['action']) || $_REQUEST["action"] != "saveHTMLField") 
         {
             $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
             $typeLabel = $app_list_strings['stic_work_calendar_types_list'][$this->type];
-            $startDateInTZ = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
-            
-            if ($_REQUEST["action"] && $_REQUEST["action"] != "Save") // MassUpdate, API, Import..
+            $startDateInUTC = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
+            $startDateInUserFormat = clone $startDateInUTC;
+            $disableDateFormat = $GLOBALS['disable_date_format'];
+            if (!isset($_REQUEST['action']) || $_REQUEST["action"] != "Save")
             {
-                // Disable disable date_format so that $timedate object calculates start and end dates in user format when the action does not come from the user interface
+                // Disable disable_date_format so that $timedate object calculates start and end dates in user format when the action does not come from the edit form in user interface: MassUpdate, API, Import..
                 $GLOBALS['disable_date_format'] = false;
-                $startDate = $timedate->asUser($startDateInTZ, $current_user);
+                $startDateInUserFormat = $timedate->asUser($startDateInUserFormat, $current_user);
             } else {
-                $startDate = $timedate->asUser($startDateInTZ, $current_user);
+                $startDateInUserFormat = $timedate->asUser($startDateInUserFormat, $current_user);
             }
 
             if (!in_array($this->type, self::ALL_DAY_TYPES)) {
                 $endDate = $timedate->fromDbFormat($this->end_date, TimeDate::DB_DATETIME_FORMAT);
                 $endDate = $timedate->asUser($endDate, $current_user);                
-                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . $startDate . " - " . substr($endDate, -5);
+                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . $startDateInUserFormat . " - " . substr($endDate, -5);
             } else {
-                $endDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
-                $endDate = $endDate->modify("next day");
-                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDate, 0, 10);            
-                $this->end_date = $timedate->asDb($endDate, $current_user);                         
+                // If it is a new record or the type before the modification was not an all-day one
+                if (!isset($this->fetched_row['type']) || !in_array($this->fetched_row['type'], self::ALL_DAY_TYPES)) 
+                {
+                    $auxStartDate = clone $startDateInUTC;
+                    if ($_REQUEST["action"] != "Save")
+                    {
+                        // Convert $auxStartDate to UTC
+                        $userTZ = $current_user->getPreference('timezone');
+                        $auxStartDate->setTimezone(new DateTimeZone($userTZ));
+
+                        // Set the time to 00:00:00 of the start date and time
+                        $auxStartDate = date('Y-m-d 00:00:00', strtotime($auxStartDate->format(TimeDate::DB_DATETIME_FORMAT)));
+
+                        // Convert $auxStartDate to UTC
+                        $dateInUserTZ = new DateTime($auxStartDate, new DateTimeZone($userTZ));
+                        $auxStartDate = $dateInUserTZ->setTimezone(new DateTimeZone('UTC'));
+                    }
+
+                    // Update the start date and time, the end date and time after adding one day, and the record name
+                    $this->start_date = $timedate->asDb($auxStartDate, $current_user);  
+                    $this->end_date = $timedate->asDb($auxStartDate->modify("next day"), $current_user);                         
+                } else {
+                    $endDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
+                    $endDate = $endDate->modify("next day");
+                    $this->end_date = $timedate->asDb($endDate, $current_user);  
+                }
+                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDateInUserFormat, 0, 10);       
             }
 
-            if ($_REQUEST["action"] != "Save" && $_REQUEST["action"] != "runMassUpdateDates") // MassUpdate, API, Import..
+            if (!isset($_REQUEST['action']) || $_REQUEST["action"] != "Save") // MassUpdate, API, Import..
             {
-                // Reactivate disable date_format to work with the rest of the date type fields
-                $GLOBALS['disable_date_format'] = true;
+                // Restore the previous value of the disable_date_format
+                $GLOBALS['disable_date_format'] = $disableDateFormat;
             }
 
             // Set duration field
@@ -120,8 +143,8 @@ class stic_Work_Calendar extends Basic
             }      
 
             // Set weekday field
-            if (isset($this->fetched_row['start_date']) && $this->start_date != $this->fetched_row['start_date']) {
-                $this->weekday = date('w', strtotime($startDateInTZ));
+            if (!isset($this->fetched_row['start_date']) || $this->start_date != $this->fetched_row['start_date']) {
+                $this->weekday = date('w', strtotime($startDateInUTC));
             }
         }
 
