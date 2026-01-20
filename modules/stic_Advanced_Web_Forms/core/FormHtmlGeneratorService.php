@@ -75,7 +75,7 @@ class FormHtmlGeneratorService {
     private function generateCss(FormLayout $layout, string $wrapperId): string {
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
-        $primaryRgb = $this->hex2rgb($theme->primary_color);
+        $primaryRgb = AWF_Utils::hex2rgb($theme->primary_color);
         $btnTextColor = $this->getContrastColor($theme->primary_color);
 
         // Grid
@@ -1034,20 +1034,6 @@ JS;
         if (!mb_detect_encoding($decoded, 'UTF-8', true)) return $data;
         
         return $decoded;
-    }
-
-    private function hex2rgb($hex) {
-        $hex = str_replace("#", "", $hex);
-        if(strlen($hex) == 3) {
-            $r = hexdec(substr($hex,0,1).substr($hex,0,1));
-            $g = hexdec(substr($hex,1,1).substr($hex,1,1));
-            $b = hexdec(substr($hex,2,1).substr($hex,2,1));
-        } else {
-            $r = hexdec(substr($hex,0,2));
-            $g = hexdec(substr($hex,2,2));
-            $b = hexdec(substr($hex,4,2));
-        }
-        return "{$r}, {$g}, {$b}";
     }
 
     /**

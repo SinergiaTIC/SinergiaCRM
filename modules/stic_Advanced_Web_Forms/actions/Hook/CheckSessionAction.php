@@ -88,9 +88,10 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
         foreach($params as $p) {
             if ($p->name == 'error_message') $errorMsg = $p->value;
         }
-        $checkingMsg = $this->translate('LBL_CHECK_SESSION_ACTION_CHECKING');
-        $deniedTitle = $this->translate('LBL_CHECK_SESSION_ACTION_DENIED_TITLE');
-        $loginMsg = $this->translate('LBL_CHECK_SESSION_ACTION_LOGIN');
+        $jsErrorMsg = json_encode($errorMsg);
+        $jsCheckingMsg = json_encode($this->translate('CHECKING'));
+        $jsDeniedTitle = json_encode($this->translate('DENIED_TITLE'));
+        $jsLoginMsg = $this->translate('ACTION_LOGIN');
 
         $script = <<<JS
         document.addEventListener('DOMContentLoaded', function() {
@@ -100,7 +101,7 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
                 wrapper.style.visibility = 'hidden'; 
                 const loader = document.createElement('div');
                 loader.id = 'awf-session-loader';
-                loader.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary mb-2"></div><div>{$checkingMsg}</div><div>';
+                loader.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary mb-2"></div><div>' + {$jsCheckingMsg} + '</div><div>';
                 wrapper.parentNode.insertBefore(loader, wrapper);
             }
 
@@ -116,8 +117,9 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
                     } else {
                         if(wrapper) wrapper.remove();
                         const errorDiv = document.createElement('div');
+                        let finalMsg = {$jsErrorMsg};
                         errorDiv.className = 'alert alert-danger m-5 text-center shadow';
-                        errorDiv.innerHTML = '<h4>{$deniedTitle}</h4><p>{$errorMsg}</p><p><a href="index.php" class="btn btn-outline-danger btn-sm">{$loginMsg}</a></p>';
+                        errorDiv.innerHTML = '<h4>' + {$jsDeniedTitle} + '</h4><p>' + finalMsg + '</p><p><a href="index.php" class="btn btn-outline-danger btn-sm">{$jsLoginMsg}</a></p>';
                         document.body.appendChild(errorDiv);
                     }
                 })

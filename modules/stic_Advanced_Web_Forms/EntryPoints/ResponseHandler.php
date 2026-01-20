@@ -163,6 +163,9 @@ class AWF_ResponseHandler
 
         // Contexto de ejecución
         $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
+        if (empty($defaultAssignedUserId)) {
+            $defaultAssignedUserId = $current_user->id;
+        }
         $context = new ExecutionContext($formBean->id, $responseBean->id, $rawPostData, $formConfig, null, $defaultAssignedUserId);
         $executor = new ServerActionFlowExecutor($context);
         

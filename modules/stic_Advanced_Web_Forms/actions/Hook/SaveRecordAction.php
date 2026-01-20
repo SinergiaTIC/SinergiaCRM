@@ -145,7 +145,9 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     private function populateBean(SugarBean $bean, DataBlockResolved $block): void
     {
         foreach ($block->formData as $fieldName => $field) {
-            $bean->{$fieldName} = $field->value;
+            if ($field != null) {
+                $bean->{$fieldName} = $field->value;
+            }
         }
     }
 
