@@ -30,15 +30,19 @@ if (otpForm) {
 
     // OTP Resend button (Email)
     const resendButtonOtpMail = document.getElementById('resend-otp-btn-email');
-    resendButtonOtpMail.addEventListener('click', () => {
-        resendOtp('email');
-    });
+    if (resendButtonOtpMail) {
+        resendButtonOtpMail.addEventListener('click', () => {
+            resendOtp('email');
+        });
+    }
 
     // OTP Resend button (Phone)
     const resendButtonOtpPhone = document.getElementById('resend-otp-btn-phone-message');
-    resendButtonOtpPhone.addEventListener('click', () => {
-        resendOtp('phone');
-    });
+    if (resendButtonOtpPhone) {
+        resendButtonOtpPhone.addEventListener('click', () => {
+            resendOtp('phone');
+        });
+    }
 
     /**
      * Sends a request to resend the OTP code via the specified method.
