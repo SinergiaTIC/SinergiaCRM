@@ -2442,8 +2442,8 @@ $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_33_les
 $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_65'] = '>=65%';
 $app_list_strings['stic_incorpora_disability_degree_list']['less_33'] = '<33%';
 $app_list_strings['stic_incorpora_economic_benefit_list'][''] = '';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desemprego (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non';
+$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Prestaciones y subsidios por desocupación';
 $app_list_strings['stic_incorpora_economic_benefit_list']['CESE_ACT'] = 'Prestación por cese de actividad de trabajadores autónomos';
 $app_list_strings['stic_incorpora_economic_benefit_list']['SEG_SOCIAL'] = 'Prestaciones económicas de la Seguridad Social';
 $app_list_strings['stic_incorpora_economic_benefit_list']['PRES_IMV'] = 'Ingreso Mínimo Vital';
