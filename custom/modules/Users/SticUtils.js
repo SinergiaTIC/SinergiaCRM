@@ -23,17 +23,28 @@
 // Set module name
 var module = "Users";
 
+// Ensure editACL is defined (default to false when missing)
+if (typeof editACL === 'undefined') {
+    editACL = false;
+}
 /* VIEWS CUSTOM CODE */
-switch (viewType()) {
+switch (viewTypeUsers()) {
     case "edit":
     case "quickcreate":
     case "popup":
         // Disable fields if the user is not admin
         if (isAdminCurrentUser == '0') {
-            let element = document.getElementById('stic_work_calendar_c');
-            element.style.setProperty('display', 'none', 'important');
-            element = document.getElementById('stic_clock_c');
-            element.style.setProperty('display', 'none', 'important');
+            adminOnlyFields = {
+                "": {
+                    enabled: [],
+                    disabled: ["stic_work_calendar_c", "stic_clock_c", "sda_allowed_c", "stic_m182_issuing_organization_c"]
+                },
+                default: {
+                    enabled: ["stic_work_calendar_c", "stic_clock_c", "sda_allowed_c", "stic_m182_issuing_organization_c"],
+                    disabled: []
+                }
+            };
+            setCustomStatus(adminOnlyFields, "");
         }
         break;
     
@@ -42,14 +53,23 @@ switch (viewType()) {
             // Define button content
             var buttons = {
                 showWorkCalendarAssistant: {
-                id: "show_work_calendar_assistant",
-                title: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
-                onclick: "location.href='" + STIC.siteUrl + "/index.php?module=stic_Work_Calendar&action=showWorkCalendarAssistant&employeeId=" + STIC.record.id + "'",
+                    id: "show_work_calendar_assistant",
+                    title: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
+                    onclick: "location.href='" + STIC.siteUrl + "/index.php?module=stic_Work_Calendar&action=showWorkCalendarAssistant&employeeId=" + STIC.record.id + "'",
                 },
             };
+            createDetailViewButton(buttons.showWorkCalendarAssistant);
         }
+        // Define button content
+        var buttons = {
+            showImpersonateUser: {
+                id: "show_impersonate_user",
+                title: SUGAR.language.get(module, "LBL_IMPERSONATE_USER_BUTTON"),
+                onclick: "location.href='" + STIC.siteUrl + "/index.php?module=Users&action=startImpersonation&userId=" + STIC.record.id + "'",
+            },
+        };
+        createDetailViewButton(buttons.showImpersonateUser);
 
-        createDetailViewButton(buttons.showWorkCalendarAssistant);
         break;
 
     case "list":
@@ -80,3 +100,23 @@ function onClickWorkCalendarPeriodicCreationButton() {
     document.MassUpdate.module.value='stic_Work_Calendar';
     document.MassUpdate.submit();
   }
+
+/**
+ * This function is a helper to determine the current view type
+ * It is a clone of viewType() in SticInclude/Utils.js but adapted to work in Users modules
+ * where the DetailView form exists alongside the EditView form.
+ * @returns 
+ */
+function viewTypeUsers() {
+  if ($(".listViewBody").length == 1) {
+    return "list";
+  } else if ($(".sub-panel .quickcreate form").length == 1) {
+    return "quickcreate";
+  } else if ($(".detail-view").length == 1 || ($("form[name=DetailView]").length == 1 && $("form[name=EditView]").length != 1)) {
+    return "detail";
+  } else if ($("form[name=EditView]").length == 1) {
+    return "edit";
+  } else if ($("#popup_query_form").length == 1) {
+    return "popup";
+  }
+}
