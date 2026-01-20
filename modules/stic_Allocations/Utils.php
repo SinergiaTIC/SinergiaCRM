@@ -34,7 +34,7 @@ class stic_AllocationsUtils {
 
     public static function recalculateAllocation($allocationBean, $allocationProposalBean) {
         require_once 'modules/stic_Payments/Utils.php';
-        $paymentBean = BeanFactory::getBean('stic_Payments', $allocationBean->stic_payments_stic_aleb9a);
+        $paymentBean = BeanFactory::getBean('stic_Payments', $allocationBean->stic_payments_stic_allocations);
         self::updateAllocation($allocationBean, $paymentBean, $allocationProposalBean);
         self::updateJustificationsFromAllocation($allocationBean);
     }
@@ -91,7 +91,6 @@ class stic_AllocationsUtils {
         if ($paymentBean) {
             require_once 'modules/stic_Payments/Utils.php';
             stic_PaymentsUtils::updateAllocationPercentage($paymentBean);
-            stic_PaymentsUtils::blockPayment($paymentBean);
         }
     }
 
@@ -178,7 +177,7 @@ class stic_AllocationsUtils {
         return false;
     }
 
-    public static function createAllocationsFromPayment($paymentBean)
+    public static function createAllocationsFromPayment($paymentBean, $dryrun = false)
     {
         global $current_user;
 
@@ -226,12 +225,14 @@ class stic_AllocationsUtils {
             }
         }
 
-        // create allocations for each allocation proposal
-        foreach ($allocationProposalBeans as $allocationProposalBean) {
-            include_once 'modules/stic_Allocations/stic_Allocations.php';
-            $allocationBean = new stic_Allocations();
-            // $allocationBean->name = 'Allocation from Payment ' . $paymentBean->name . ' to Proposal ' . $allocationProposalBean->name;
-            self::updateAllocation($allocationBean, $paymentBean, $allocationProposalBean);
+        if(!$dryrun){ 
+            // create allocations for each allocation proposal
+            foreach ($allocationProposalBeans as $allocationProposalBean) {
+                include_once 'modules/stic_Allocations/stic_Allocations.php';
+                $allocationBean = new stic_Allocations();
+                // $allocationBean->name = 'Allocation from Payment ' . $paymentBean->name . ' to Proposal ' . $allocationProposalBean->name;
+                self::updateAllocation($allocationBean, $paymentBean, $allocationProposalBean);
+            }
         }
 
         return true;
@@ -239,7 +240,7 @@ class stic_AllocationsUtils {
     public static function updateAllocation($allocationBean, $paymentBean, $allocationProposalBean) {
             global $current_user;
 
-            $allocationBean->stic_payments_stic_aleb9a = $paymentBean->id;
+            $allocationBean->stic_payments_stic_allocations = $paymentBean->id;
             $allocationBean->stic_allocation_propo424d = $allocationProposalBean->id;
             $allocationBean->allocation_date = $paymentBean->payment_date;
             $allocationBean->percentage = format_number($allocationProposalBean->percentage, 2, 2);

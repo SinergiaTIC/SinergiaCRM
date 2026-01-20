@@ -230,13 +230,11 @@ class stic_PaymentsUtils
             ROUND((SUM(stic_allocations.amount) / stic_payments.amount) * 100, 2) as allocated_percentage
             FROM
             stic_allocations
-            JOIN
-            stic_payments_stic_al9aa0 ON stic_allocations.id = stic_payments_stic_aldaa6
-            JOIN stic_payments on stic_payments.id = stic_payments_stic_aleb9a
-            WHERE
-            stic_payments_stic_al9aa0.deleted = 0
+            JOIN stic_payments_stic_allocations_c ON stic_allocations.id = stic_payments_stic_allocationsstic_allocations_idb
+            JOIN stic_payments on stic_payments.id = stic_payments_stic_allocationsstic_payments_ida
+            WHERE stic_payments_stic_allocations_c.deleted = 0
             AND stic_allocations.deleted = 0
-            AND stic_payments_stic_aleb9a = {$db->quoted($paymentBean->id)}";
+            AND stic_payments_stic_allocationsstic_payments_ida = {$db->quoted($paymentBean->id)}";
         
         $selectResult = $db->query($selectSql);
         if ($selectResult === false) {

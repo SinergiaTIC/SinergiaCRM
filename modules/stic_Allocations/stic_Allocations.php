@@ -106,7 +106,7 @@ class stic_Allocations extends Basic
 
         
         // Calculate amount 
-        $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
+        $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_allocations);
         if (empty($paymentBean->{$this->payment_amount_field})) {
             // validate payment field needed is filled
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE']);
@@ -150,7 +150,7 @@ class stic_Allocations extends Basic
         if ($isValidated && !$validatedBeforeSave) {
             // Allocation has been validated now
             stic_JustificationsUtils::createJustificationsFromAllocation($this); 
-            stic_AllocationsUtils::updatePayment($this->stic_payments_stic_aleb9a);
+            stic_AllocationsUtils::updatePayment($this->stic_payments_stic_allocations);
         }
         else if ($validatedBeforeSave && !$isValidated) {
             // Allocation has been un-validated now
@@ -159,8 +159,18 @@ class stic_Allocations extends Basic
         else if($tempFetchedRow) {
             stic_JustificationsUtils::reviewJustificationsFromAllocation($this);
         }
-        if ($amountChanged) {
-            stic_AllocationsUtils::updatePayment($this->stic_payments_stic_aleb9a);
+
+        // Payment is only updated if amount has changed and we are not in stic_Payments module to avoid recursion
+        if ($amountChanged && ($_REQUEST['current_module'] ?? false) != 'stic_Payments') {
+            if (isset($this->stic_payments_stic_allocations)) {
+                if ($this->stic_payments_stic_allocations instanceof Link2) {
+                    $paymentBean = SticUtils::getRelatedBeanObject($this, 'stic_payments_stic_allocations');
+                    $idPayment = $paymentBean->id;
+                } else {
+                    $idPayment = $this->stic_payments_stic_allocations;
+                }
+            }
+            stic_AllocationsUtils::updatePayment($idPayment);
         }
     }
 
@@ -175,7 +185,7 @@ class stic_Allocations extends Basic
             $nameParts = array();
             
             // Add related payment name if available
-            $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_aleb9a);
+            $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_allocations);
             if ($paymentBean){
                 $nameParts[] = $paymentBean->name;
             }
@@ -212,7 +222,7 @@ class stic_Allocations extends Basic
     }
 
     public function mark_deleted($id) {
-        $paymentId = $this->stic_payments_stic_aleb9a;
+        $paymentId = $this->stic_payments_stic_allocations;
 
         parent::mark_deleted($id);
 

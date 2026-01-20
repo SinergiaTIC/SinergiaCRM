@@ -162,6 +162,10 @@ class stic_Payments extends Basic
 
         $anyamountChanged = $this->anyAmountChanged(); // Check must be done before involing parent:save()
 
+        if ($isAllocated && $tempFetchedRow && !$tempFetchedRow['allocated']) {
+            // If changing from not allocated to allocated, validate allocations from payment (dry run)
+            $this->generateAllocationsFromPayment(true);
+        }
 
         // If payment is allocated and any amount field has changed, validate allocations from payment (dry run)
         if ($isAllocated && $anyamountChanged) {
@@ -174,12 +178,7 @@ class stic_Payments extends Basic
 
         // If changing from not allocated to allocated, generate allocations from payment
         if (empty($tempFetchedRow['allocated']) && $isAllocated) {
-            $return = $this->generateAllocationsFromPayment();
-            if ($return === false) {
-                // Allocation generation failed, do not save the payment
-                // return;
-                $this->allocated = 0;
-            }
+            $this->generateAllocationsFromPayment();
             stic_PaymentsUtils::updateAllocationPercentage($this);
         }
 
@@ -237,8 +236,8 @@ class stic_Payments extends Basic
         stic_AllocationsUtils::deleteAllocationsFromPayment($this);
     }
 
-    protected function generateAllocationsFromPayment() {
-        return stic_AllocationsUtils::createAllocationsFromPayment($this);
+    protected function generateAllocationsFromPayment($dryrun = false) {
+        return stic_AllocationsUtils::createAllocationsFromPayment($this, $dryrun);
     }
 
     protected function updateAllocationsFromPayment($dryrun = false) {

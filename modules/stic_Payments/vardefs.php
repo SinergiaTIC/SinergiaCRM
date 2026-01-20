@@ -663,7 +663,7 @@ $dictionary['stic_Payments'] = array(
             'module' => 'stic_Allocations',
             'bean_name' => 'stic_Allocations',
             'vname' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE',
-            'id_name' => 'stic_payments_stic_aleb9a',
+            'id_name' => 'stic_payments_stic_allocations',
         ),
         // Allocation tab fields
         'justification_date' => array(
