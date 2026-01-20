@@ -77,6 +77,15 @@ $xtpl->assign("THEME", (string)SugarThemeRegistry::current());
 $xtpl->assign("CALENDAR_LANG", "en");
 $xtpl->assign("USER_DATEFORMAT", '('. $timedate->get_user_date_format().')');
 $xtpl->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
+
+// STIC-Custom 20251124 MHP - Manage the time format with meridiem and a space
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/834
+if (empty($focus->time_start) && (str_contains(strtolower($focus->date_start), ' am') || str_contains(strtolower($focus->date_start), ' pm'))) {
+    $focus->time_start = substr($focus->date_start, 11);
+    $focus->date_start = substr($focus->date_start, 0, 10);
+}
+// END STIC-Custom
+
 $time_ampm = $timedate->AMPMMenu('', $focus->time_start);
 $xtpl->assign("TIME_MERIDIEM", $time_ampm);
 
@@ -236,7 +245,7 @@ function getOutboundEmailAccountOptions()
     //	$ret = array(
     //		0 => $mod_strings['LBL_OUTBOUND_EMAIL_ACCOUNT_DEFAULT'],
     //	);
-    $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+    $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list("", "type != 'user'");
     foreach ($oeaList as $oea) {
         $ret[$oea->id] = $oea->name;
     }

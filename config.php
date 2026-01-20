@@ -611,8 +611,8 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '2.4.2', 
-    'js_custom_version' => 23,
+    'sinergiacrm_version' => '2.5.0', 
+    'js_custom_version' => 26,
     'stic_show_update_alert' => 1,
     // END STIC
 
@@ -644,6 +644,12 @@ $sugar_config = array(
     'stic_remote_monitor_url' => '', 
     'stic_remote_monitor_duration_threshold' => null,
     'stic_remote_monitor_memory_threshold' => null,
+    'stic_remote_monitor_curlopt_connecttimeout' => null,
+    'stic_remote_monitor_curlopt_timeout' => null,
+    // END STIC
+
+    // STIC-Custom 20251222 AAM - Adding maintenance mode
+    'stic_maintenance_mode_enabled' => false,
     // END STIC
 
     // STIC Custom 20241016 ART - Tracker prune interval for the Scheduler

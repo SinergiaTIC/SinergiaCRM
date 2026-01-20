@@ -81,6 +81,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Campaignsparent_name', 'Campaigns', 'parent_name'),
 ('Campaignsparent_type', 'Campaigns', 'parent_type'),
 ('Campaignsstic_notification_prospect_list_names_c', 'Campaigns', 'stic_notification_prospect_list_names_c'),
+-- TemplateSectionLine
+('TemplateSectionLinehtmlcode_c', 'TemplateSectionLine', 'htmlcode_c'),
+('TemplateSectionLinethumbnail_image_c', 'TemplateSectionLine', 'thumbnail_image_c'),
+('TemplateSectionLinethumbnail_name_c', 'TemplateSectionLine', 'thumbnail_name_c'),
 -- Contacts
 ('Contactsstic_acquisition_channel_c', 'Contacts', 'stic_acquisition_channel_c'),
 ('Contactsstic_age_c', 'Contacts', 'stic_age_c'),
@@ -211,4 +215,5 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Usersinc_incorpora_user_c', 'Users', 'inc_incorpora_user_c'),
 ('Userssda_allowed_c', 'Users', 'sda_allowed_c'),
 ('Usersstic_work_calendar_c', 'Users', 'stic_work_calendar_c'),
-('Usersstic_clock_c', 'Users', 'stic_clock_c');
+('Usersstic_clock_c', 'Users', 'stic_clock_c'),
+('Usersstic_m182_issuing_organization_c', 'Users', 'stic_m182_issuing_organization_c');

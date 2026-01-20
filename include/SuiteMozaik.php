@@ -67,7 +67,10 @@ class SuiteMozaik
         $this->vendorPath = 'vendor/';
         if ($this->autoInsertThumbnails) {
             if ((is_countable($this->getThumbs()) ? count($this->getThumbs()) : 0)==0 || self::$devMode) {
-                $ord = 0;
+                // STIC-Custom 20250922 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+                // Change the order of template section lines that are created by default and displayed after the STIC section lines
+                $ord = 100;
+                // END STIC-Custom
                 foreach (self::$defaultThumbnails as $thumbName => $thumbData) {
                     $templateSectionLine = BeanFactory::newBean('TemplateSectionLine');
                     $templateSectionLine->name = $thumbData['label'];
@@ -117,7 +120,18 @@ HTML;
 
     public function getIncludeHTML()
     {
+        // STIC-Custom 20250918 MHP - Load the language of the logged-in user
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+        // $html = <<<HTML
+        global $current_user, $sugar_config;
+        $userLang = $current_user->getPreference('language');
+        if (empty($userLang)) {
+            $userLang = $sugar_config['default_language'];
+        }  
+        $userLang = explode("_", $userLang)[0];
         $html = <<<HTML
+<script>var userLang = "{$userLang}";</script>
+<!-- END STIC-Custom -->        
 <link rel="stylesheet" href="{$this->mozaikPath}/jquery.mozaik.css">
 <script src='{$this->mozaikPath}/jquery.mozaik.js'></script>
 HTML;
