@@ -47,6 +47,18 @@ class stic_Payment_CommitmentsController extends SugarController
             $idList = implode("','", $ids);
             $where = " AND id in ('{$idList}')";
         }
+        $focus = $this->bean;
+        if ($focus->bean_implements('ACL')) {
+            if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
+                ACLController::displayNoAccess();
+                sugar_die('');
+            }
+
+            $accessWhere = $focus->buildAccessWhere('export');
+            if (!empty($accessWhere)) {
+                $where .=  ' AND ' . $accessWhere;
+            }
+        }
 
         $sql .= $where;
         $result = $db->query($sql);
