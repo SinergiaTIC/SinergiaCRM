@@ -240,23 +240,29 @@ $(function () {
         async: false,
         data: formData,
         success: function (res) {
-          showMessageBox(res.title, res.detail, function () {
-            var baseUrl = window.location.href.split("?")[0];
-            var returnModule = $('#EditView [name="return_module"]').val();
-            var returnAction = $('#EditView [name="return_action"]').val();
-            var returnId = $('#EditView [name="return_id"]').val();
-            if (!returnId && res.id) {
-              returnId = res.id;
-            }
-            var newUrl =
+          debugger;
+          var baseUrl = window.location.href.split("?")[0];
+          var returnModule = $('#EditView [name="return_module"]').val();
+          var returnAction = $('#EditView [name="return_action"]').val();
+          var returnId = $('#EditView [name="return_id"]').val();
+          if (!returnId && res.id) {
+            returnId = res.id;
+          }
+          var newUrl =
               baseUrl +
               "?module=" +
               encodeURIComponent(returnModule) +
               "&action=" +
               encodeURIComponent(returnAction) +
               (returnId ? "&record=" + encodeURIComponent(returnId) : "");
+          if($("#status").val() == 'draft') {
             window.location.href = newUrl;
-          });
+          }
+          else {
+            showMessageBox(res.title, res.detail, function () {
+              window.location.href = newUrl;
+            });
+          }
         },
         error: function () {
           showMessageBox(
@@ -289,7 +295,4 @@ $(function () {
   // var _form = document.getElementById('EditView'); _form.action.value='Save'; if(check_form('EditView'))SUGAR.ajaxUI.submitForm(_form);return false;
   myButtons.removeAttr("onclick");
   myButtons.on("click", saveMessage);
-
-
-
 });
