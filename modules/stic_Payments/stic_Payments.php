@@ -140,8 +140,8 @@ class stic_Payments extends Basic
             $this->justification_date = $this->payment_date;
         }
 
-        $isBlocked = filter_var($this->blocked, FILTER_VALIDATE_BOOLEAN);
-        $isAllocated = filter_var($this->allocated, FILTER_VALIDATE_BOOLEAN);
+        $isBlocked = filter_var(($this->blocked ?? false), FILTER_VALIDATE_BOOLEAN);
+        $isAllocated = filter_var(($this->allocated ?? false), FILTER_VALIDATE_BOOLEAN);
         // If record is blocked, no updates are allowed
         if ($tempFetchedRow && $tempFetchedRow['blocked'] && $isBlocked) {
             if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
