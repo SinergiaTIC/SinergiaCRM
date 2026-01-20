@@ -90,9 +90,23 @@ $layout_defs['stic_Signatures']['subpanel_setup']['stic_campaigns_notification']
         'return_as_array' => false,
     ),
     'title_key' => 'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE',
-    'top_buttons' => [
-        0 => [
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ],
-    ],
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
+            'title' => 'LBL_NEW_NOTIFICATION',
+            'id'=> 'NEW_NOTIFICATION',
+            'additional_form_fields' => array(
+                'campaign_type' => 'Notification', // This will pre-populate the 'type' field
+            ),
+        ),
+        // 1 => array(
+        //     'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
+        //     'id' => 'NEW_MSG_NOTIFICATION',
+        //     'title' => 'LBL_NEW_MSG_NOTIFICATION',
+        //     'additional_form_fields' => array(
+        //         'campaign_type' => 'NotifMsg', // This will pre-populate the 'type' field
+        //         // 'another_field' => 'another_value', // You can add more here
+        //     ),
+        // ),
+    ),
 );
