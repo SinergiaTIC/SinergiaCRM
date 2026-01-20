@@ -83,7 +83,15 @@ class SticRemoteLogLogicHooks
             $entryPoint = $entryPontParts[0];
         } else if(str_starts_with($request_uri, '/SticMonitor.php')) {
             $action = 'SticMonitor';
-        } else {
+        } else if(str_starts_with($request_uri, '/SticCron.php')) {
+            $action = 'SticCron';
+        } else if(str_starts_with($request_uri, '/SticCronMassEmailCampaigns.php')) {
+            $action = 'SticCronMassEmailCampaigns';
+        } else if (!empty($_REQUEST['method'])) {
+            $module = 'API';
+            $action = $_REQUEST['method'];
+        }
+        else {
             $module = $_REQUEST['module'] ?? 'N/A';
             $action = $_REQUEST['action'] ?? 'N/A';
         }
@@ -119,8 +127,8 @@ class SticRemoteLogLogicHooks
                         'user_admin' => is_admin($current_user),
                     ],
                     'curl_options' => [
-                        CURLOPT_CONNECTTIMEOUT_MS => 10,
-                        CURLOPT_TIMEOUT_MS => 20,
+                        CURLOPT_CONNECTTIMEOUT_MS => $sugar_config['stic_remote_monitor_curlopt_connecttimeout'] ?? 20,
+                        CURLOPT_TIMEOUT_MS => $sugar_config['stic_remote_monitor_curlopt_timeout'] ?? 25,
                     ]
                 ])
             ])
