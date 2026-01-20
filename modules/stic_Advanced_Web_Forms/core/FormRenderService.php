@@ -51,7 +51,18 @@ class FormRenderService {
             }
 
             $jsonConfig = $bean->configuration;
-            $configData = json_decode(html_entity_decode($jsonConfig), true) ?? [];
+            $decodedJson = html_entity_decode($jsonConfig);
+            $configData = json_decode($decodedJson, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $errorMsg = json_last_error_msg();
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Invalid JSON: (ID: $recordId): $errorMsg");
+                throw new Exception("Form Configuration is corrupted: $errorMsg");
+            }
+            
+            if (!is_array($configData)) {
+                $configData = [];
+            }
         }
 
         // Process ConfigData
