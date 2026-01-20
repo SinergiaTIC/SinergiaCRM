@@ -32,8 +32,7 @@ require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
  */
 class AWF_ResponseHandler
 {
-    public function run()
-    {
+    public function run(): void {
         global $current_user;
 
         // Usuario real (antes de cambiar a admin)
@@ -169,6 +168,23 @@ class AWF_ResponseHandler
             return;
         }
 
+        // Validación de datos
+        $validationErrors = $this->validateSubmission($formConfig, $rawPostData);
+        if ($validationErrors) {
+            $errorString = implode(", ", $validationErrors);
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Data Validation errors for Form ID {$formId}:" . $errorString);
+
+            $responseBean->status = 'error';
+            $responseBean->description = translate('LBL_ERROR_FORM_VALIDATION', 'stic_Advanced_Web_Forms_Responses') . ": " . $errorString;
+            $responseBean->save();
+
+            $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
+            $htmlErrors = "<ul><li>" . implode("</li><li>", $validationErrors) . "</li></ul>";
+            $msg = translate('LBL_ERROR_FORM_VALIDATION_MSG', 'stic_Advanced_Web_Forms_Responses') . ":<br>" .$htmlErrors;
+            AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
+            return;
+        }
+
         // Contexto de ejecución
         $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
         if (empty($defaultAssignedUserId)) {
@@ -273,7 +289,7 @@ class AWF_ResponseHandler
      * @param ExecutionContext $context Contexto de ejecución
      * @param ?FormFlow $errorFlow Flujo de error que se ejecutará si falla la acción
      */
-    private function executeTerminalAction(FormAction $actionConfig, ExecutionContext $context, ?FormFlow $errorFlow = null) {
+    private function executeTerminalAction(FormAction $actionConfig, ExecutionContext $context, ?FormFlow $errorFlow = null): void {
         $factory = new ServerActionFactory();
         $resolver = new ParameterResolverService();
         
@@ -312,12 +328,12 @@ class AWF_ResponseHandler
         }
     }
 
-    private function terminateRawError($msg) {
+    private function terminateRawError($msg): void {
         http_response_code(400);
         die("System Error: " . htmlspecialchars($msg));
     }
 
-    private function checkDuplicateSubmission($formId, $hash) {
+    private function checkDuplicateSubmission($formId, $hash): bool {
         global $db;
         $query = "SELECT count(response.id) as count FROM stic_advanced_web_forms_responses response
                     INNER JOIN stic_f193responses_c form_response
@@ -334,7 +350,7 @@ class AWF_ResponseHandler
         return $data['count'] > 0;
     }
 
-    private function handleDuplicateError($formBean) {
+    private function handleDuplicateError($formBean): void {
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
@@ -346,7 +362,7 @@ class AWF_ResponseHandler
         }
     }
 
-    private function saveLinks(SugarBean $responseBean, ExecutionContext $context) {
+    private function saveLinks(SugarBean $responseBean, ExecutionContext $context): void {
         if (!$responseBean->load_relationship('stic_1c31forms_links')) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship responses-links for Response ID {$responseBean->id}");
             return;
@@ -382,6 +398,57 @@ class AWF_ResponseHandler
                 $responseBean->stic_1c31forms_links->add($linkBean->id);
             }
         }
+    }
+
+    /**
+     * Valida los datos de la sumisión contra la configuración del formulario.
+     * @param FormConfig $config Configuración del formulario
+     * @param array $data Datos recibidos en la sumisión
+     * @return ?array Lista de errores o null si no hay errores
+     */
+    private function validateSubmission(FormConfig $config, array $data): ?array {
+        $errors = [];
+
+        foreach ($config->data_blocks as $block) {
+            foreach ($block->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::HIDDEN) {
+                    continue;
+                }
+
+                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached_' : '';
+                $inputKey = $prefix . $block->name . '_' . $field->name;
+                $value = $data[$inputKey] ?? null;
+
+                // Validación de campo obligado (Required)
+                if ($field->required_in_form) {
+                    if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+                        $errors[] = "Field '{$field->label}' is required.";
+                        continue;
+                    }
+                }
+
+                // Validación de tipo de datos (Sanity Check)
+                if ($value !== null && $value !== '') {
+                    if ($field->type_in_form === 'number') {
+                        if (!is_numeric($value)) {
+                            $errors[] = "Field value '{$field->label}' is not a valid number.";
+                        }
+                    }
+                    if ($field->type_in_form === 'date') {
+                        if (!strtotime($value)) {
+                            $errors[] = "Field value '{$field->label}' is not a valid date.";
+                        }
+                    }
+                    if ($field->subtype_in_form === 'text_email') {
+                        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                            $errors[] = "Field value '{$field->label}' is not a valid email.";
+                        }
+                    }
+                }
+            }
+        }
+
+        return empty($errors) ? null : $errors;
     }
 }
 

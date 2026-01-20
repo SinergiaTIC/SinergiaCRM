@@ -100,6 +100,8 @@ $mod_strings = array (
   'LBL_DUPLICATE_RESPONSE_MSG' => 'Esta respuesta ya ha sido enviada y ya se ha procesado',
   'LBL_ERROR_GENERIC_TITLE' => 'Error',
   'LBL_ERROR_GENERIC_MSG' => 'Se ha producido un error al procesar su respuesta.',
+  'LBL_ERROR_FORM_VALIDATION' => 'Error en la validación de datos del formulario',
+  'LBL_ERROR_FORM_VALIDATION_MSG' => 'Se han detectado errores en los datos enviados',
   
   'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE' => 'Vínculos de Formularios',
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE' => 'Formulario Web Avanzado',
