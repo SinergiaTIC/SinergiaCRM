@@ -30,14 +30,10 @@ class FormHtmlGeneratorService {
     private $indent = 0;
 
     /**
-     * Genera el codi HTML complet, indentat i llest.
+     * Genera el documento HTML completo (con doctype, head, body).
+     * Para visualizaciones standalone o iframes.
      */
     public function generate(FormConfig $config, string $formId, string $actionUrl, bool $isPreview = false): string {
-        $layout = $config->layout;
-       
-        // Ensure Id is valid for CSS
-        $wrapperId = 'stic-awf-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $formId);
-
         $this->indent = 0;
         $htmlRaw = "<!DOCTYPE html>" .$this->newLine();
         $htmlRaw .= "<html lang='es'>" .$this->newLine('+');
@@ -48,26 +44,43 @@ class FormHtmlGeneratorService {
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
                 $htmlRaw .= "<title>Advanced Web Form</title>" .$this->newLine();
         
-                // (Bootstrap + Alpine)
+                // Librerías externas (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
                 $htmlRaw .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>' .$this->newLine();
             }
             $htmlRaw .= "</head>" .$this->newLine('-');
             $htmlRaw .= "<body class='bg-light'>" .$this->newLine('+');
             {
-                // Wrapper 
-                $htmlRaw .= "<div id='{$wrapperId}'>" .$this->newLine('+');
-                {
-                    // Styles and Content
-                    $htmlRaw .= $this->generateCss($layout, $wrapperId);
-                    $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
-                    $htmlRaw .= $this->generateJs($config, $formId);
-                }
-                $htmlRaw .= "</div>" .$this->newLine('-');
+                // Inyectamos el HTML del formulario
+                $htmlRaw .= $this->generateFormHtml($config, $formId, $actionUrl, $isPreview);
             }
             $htmlRaw .= "</body>" .$this->newLine('-');
         }     
         $htmlRaw .= "</html>" .$this->newLine('-');
+
+        return $htmlRaw;
+    }
+
+
+    /**
+     * Genera sólo el HTML del formulario (el div wrapper y su contenido, sin head ni body).
+     * Para incrustar en otras páginas.
+     */
+    public function generateFormHtml(FormConfig $config, string $formId, string $actionUrl, bool $isPreview): string {
+        $layout = $config->layout;
+       
+        // Ensure Id is valid for CSS
+        $wrapperId = 'stic-awf-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $formId);
+
+        // Wrapper 
+        $htmlRaw = "<div id='{$wrapperId}'>" .$this->newLine('+');
+        {
+            // Styles and Content
+            $htmlRaw .= $this->generateCss($layout, $wrapperId);
+            $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
+            $htmlRaw .= $this->generateJs($config, $formId);
+        }
+        $htmlRaw .= "</div>" .$this->newLine('-');
 
         return $htmlRaw;
     }
