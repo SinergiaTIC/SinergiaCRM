@@ -368,7 +368,6 @@ $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] 
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
 $app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmas';
 $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
-
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productos financieros';
 
@@ -2463,8 +2462,8 @@ $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_33_les
 $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_65'] = '>=65%';
 $app_list_strings['stic_incorpora_disability_degree_list']['less_33'] = '<33%';
 $app_list_strings['stic_incorpora_economic_benefit_list'][''] = '';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non';
-$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Prestaciones y subsidios por desocupación';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desemprego (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['CESE_ACT'] = 'Prestación por cese de actividad de trabajadores autónomos';
 $app_list_strings['stic_incorpora_economic_benefit_list']['SEG_SOCIAL'] = 'Prestaciones económicas de la Seguridad Social';
 $app_list_strings['stic_incorpora_economic_benefit_list']['PRES_IMV'] = 'Ingreso Mínimo Vital';
@@ -3722,8 +3721,8 @@ $app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
 $app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecesario';
 
-// Registro de firmas: Acciones
-$app_list_strings['stic_signature_log_actions'][''] = '';
+// Registo de Firmas: Acciones
+$app_list_strings['stic_signature_log_actions'][''] = '';    
 $app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Documento aceptado mediante botón de aceptación';
 $app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Documento asinado con sinatura manuscrita';
 $app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Asinante engadido á sinatura';
@@ -3731,14 +3730,14 @@ $app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Código dun
 $app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Código dun só uso enviado por teléfono ao asinante';
 $app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código dun só uso verificado polo asinante';
 $app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado ao asinante';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'El firmante ha accedido al portal de firma';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF asinado descargado';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF asinado enviado por correo electrónico';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Sinatura caducada';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por outra persoa autorizada';
 $app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'O documento foi descargado internamente';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos os asinantes completaron a sinatura do documento';
-
-// SinergiaDA: Niveis de acceso dos usuarios
+// SinergiaDA: Niveles de acceso de los usuarios
 $app_list_strings['sda_users_access_list']['0'] = 'Sen acceso';
 $app_list_strings['sda_users_access_list']['1'] = 'Acceso completo';
 // $app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; // Disabled for the moment
