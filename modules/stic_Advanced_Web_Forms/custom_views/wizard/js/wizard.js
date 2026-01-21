@@ -1360,7 +1360,8 @@ class WizardStep3 {
                 this.action.parameters.forEach(param => {
                   const paramDef = this.definition.parameters.find(p => p.name === param.name);
                   if (paramDef && paramDef.dataType === 'textarea' && typeof param.value === 'string') {
-                    param.value = param.value.replace(/\\n/g, '\n');
+                    // Reemplazamos los '\n' guardados por saltos de línea reales
+                    param.value = param.value.replace(/\\+n/g, '\n');
                   }
                 });
               }

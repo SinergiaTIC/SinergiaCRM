@@ -89,9 +89,9 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
         $title = $actionConfig->getResolvedParameter('title');
         $message = $actionConfig->getResolvedParameter('message');
 
-        $summaryHtml = AWF_Utils::generateSummaryHtml($context);
+        AWF_Utils::renderGenericResponse($context->formConfig, $title, $message);
 
-        echo $summaryHtml;
+        // Acción terminal: detenemos la ejecución del script
         exit;
 
         // Este código no se ejecutará, se introduce para evitar que haya execute sin return
