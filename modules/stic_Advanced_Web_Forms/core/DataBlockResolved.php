@@ -38,67 +38,96 @@ class DataBlockResolved {
     public array $detachedData = [];     // Los datos no mapeados [detached_field_name => DataBlockFieldResolved]
 
     public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context) {
-        $this->dataBlock = $config;
-
-        // Procesamos los valores fijos (hidden) del Bloque de datos: 
-        //  los consideramos valores por defecto, se sobreescriben por los valores del formulario
-        foreach ($config->fields as $fieldName => $fieldDef) {
-            if ($fieldDef->value_type !== DataBlockFieldValueType::FIXED) { 
-                continue;
-            }
-
-            // Obtenemos el tipo de campo en el crm para hacer su casting
-            $castedValue = AWF_Utils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
-            $formKey = ""; // El campo no está en el formulario
-
-            // Creamos el campo resuelto
-            $fieldResolved = new DataBlockFieldResolved($formKey, $fieldName, $fieldDef, $castedValue);
-
-            // Comprobamos si el campo hidden es 'unlinked'
-            if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                 $this->detachedData[$fieldName] = $fieldResolved;
-            } else {
-                 $this->formData[$fieldName] = $fieldResolved;
-            }
-        }
-
         // Warning: PHP POST replaces all '.' to '_'
         // DataBlock names are in PascalCase, without '_'
         // Form field names:
         //   DataBlockName0_field_name              ->  "field_name" from DataBlockName0 TO CRM
         //   _detached_DataBlockName0_field_name    ->  "field_name" from DataBlockName0 DETACHED
 
-        $blockPrefix = $config->name . '_'; 
-        $detachedPrefix = '_detached_' . $blockPrefix;
+        $this->dataBlock = $config;
 
-        // Iteramos sobre todos los campos definidos: 
-        //   Permitimos campos no definidos en la configuración
-        foreach ($fullFormData as $formKey => $value) {
-            // Campo enlazado al crm (Ex: SticBookings0_first_name)
-            if (str_starts_with($formKey, $blockPrefix)) {
-                $fieldName = substr($formKey, strlen($blockPrefix)); // La parte derecha del prefijo del bloque es el nombre del campo
-                $definition = $config->fields[$fieldName] ?? null;   // Puede ser un campo no definido en la configuración
-
+        // Cargar los valores por defecto (fijos/ocultos) de la configuración
+        // Estos valores se pueden sobreescribir por los valores del formulario
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->value_type === DataBlockFieldValueType::FIXED) {
                 // Obtenemos el tipo de campo en el crm para hacer su casting
-                $crmFieldType = $definition?->type;
-                $castedValue = AWF_Utils::castCrmValue($value, $crmFieldType, $context);
+                $castedValue = AWF_Utils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
 
-                // Reconstruimos la clave lógica original para trazabilidad
-                $logicalKey = $config->name . '.' . $fieldName;
-                $this->formData[$fieldName] = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $castedValue);
-            
-            // Campo NO enlazado al crm (Ex: _detached_SticBookings0_accept_photos)
-            } else if (str_starts_with($formKey, $detachedPrefix)) {
-                $fieldName = substr($formKey, strlen($detachedPrefix)); // La parte derecha del prefijo del bloque es el nombre del campo
-                $definition = $config->fields[$fieldName] ?? null;      // Puede ser un campo no definido en la configuración
+                // El campo no está en el formulario, buscamos la clave lógica que tendría
+                $formKey = ""; 
+                $logicalKey = ($fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $config->name . '.' . $fieldName;
+                $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
 
-                // Los campos no enlazados al crm los tratamos como strings (no hay tipo a mapear)
-
-                // Reconstruimos la clave lógica original para trazabilidad
-                $logicalKey = '_detached.' . $config->name . '.' . $fieldName;
-                $this->detachedData[$fieldName] = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $value);
+                // Guardamos el campo en el array correspondiente
+                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                     $this->detachedData[$fieldName] = $fieldResolved;
+                } else {
+                     $this->formData[$fieldName] = $fieldResolved;
+                }
             }
         }
+
+        // Procesar los datos del formulario
+        // Lo que venga del formulario siempre tiene prioridad sobre los valores fijos/ocultos
+        $blockPrefix = $config->name . '_'; 
+        $detachedPrefix = '_detached_' . $blockPrefix;
+        foreach ($fullFormData as $formKey => $value) {
+            $fieldName = null;
+            $isUnlinked = false;
+
+            // Identificamos si el campo pertenece al bloque o es detached
+            if (str_starts_with($formKey, $blockPrefix)) {
+                $fieldName = substr($formKey, strlen($blockPrefix));
+            } else if (str_starts_with($formKey, $detachedPrefix)) {
+                $fieldName = substr($formKey, strlen($detachedPrefix));
+                $isUnlinked = true;
+            }
+
+            // Si hemos encontrado un campo para este bloque:
+            if ($fieldName) {
+                // Buscamos la configuración del campo para su tipo, sino asumimos texto
+                $definition = $config->fields[$fieldName] ?? null;
+                $crmFieldType = $definition?->type;
+                
+                // Hacemos el casting del valor al tipo adecuado
+                $castedValue = AWF_Utils::castCrmValue($value, $crmFieldType, $context);
+
+                // Reconstruimos la clave lógica original
+                $logicalKey = ($isUnlinked ? '_detached.' : '') . $config->name . '.' . $fieldName;
+                $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $castedValue);
+
+                // Guardamos el campo en el array correspondiente
+                if ($isUnlinked) {
+                    $this->detachedData[$fieldName] = $fieldResolved;
+                } else {
+                    $this->formData[$fieldName] = $fieldResolved;
+                }
+            }
+        }
+
+        // Gestión de Checkboxes Desmarcados: HTML no envia los checkboxes desmarcados, no se actualizarían en el CRM si se desmarcan.
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->type_field === DataBlockFieldType::HIDDEN) continue;
+
+            $isUnlinked = ($fieldDef->type_field === DataBlockFieldType::UNLINKED);
+            if ($isUnlinked && isset($this->detachedData[$fieldName])) continue;
+            if (!$isUnlinked && isset($this->formData[$fieldName])) continue;
+
+            // El campo se esperaba pero NO ha llegado en el POST.
+            if ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox') {
+                // Reconstruimos la clave lógica original
+                $logicalKey = ($isUnlinked ? '_detached.' : '') . $config->name . '.' . $fieldName;
+                $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, 0); // 0 = False en DB
+                
+                // Guardamos el campo en el array correspondiente
+                if ($isUnlinked) {
+                    $this->detachedData[$fieldName] = $fieldResolved;
+                } else {
+                    $this->formData[$fieldName] = $fieldResolved;
+                }
+            }
+        }
+
     }
 
     public function getFieldValue($fieldName): ?DataBlockFieldResolved {
