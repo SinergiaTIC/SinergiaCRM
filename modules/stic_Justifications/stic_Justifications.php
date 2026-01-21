@@ -95,6 +95,7 @@ class stic_Justifications extends Basic
         if (!$tempFetchedRow || $oldAmount !== $justifiedAmount) {
             // If amount changed, update related allocations
             stic_JustificationsUtils::updateRelatedOpportunity($this->opportunit01eunities_ida);
+            stic_JustificationsUtils::updateRelatedConditions($this);
         }
 
     }

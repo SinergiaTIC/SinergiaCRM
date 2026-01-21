@@ -46,9 +46,29 @@ class stic_JustificationsUtils {
             ";
 
             $amount = $db->getOne($sql);
-            $opportunity->justified_amount_c = formatDecimalInConfigSettings($amount, true);
-            $opportunity->justified_percentage_c = formatDecimalInConfigSettings(($opportunity->stic_amount_awarded_c > 0) ? ($amount / SticUtils::unformatDecimal($opportunity->stic_amount_awarded_c)) * 100 : 0, true);
+            $opportunity->stic_justified_amount_c = formatDecimalInConfigSettings($amount, true);
+            $opportunity->stic_justified_percentage_c = formatDecimalInConfigSettings(($opportunity->stic_amount_awarded_c > 0) ? ($amount / SticUtils::unformatDecimal($opportunity->stic_amount_awarded_c)) * 100 : 0, true);
             $opportunity->save();
+        }
+    }
+
+    public static function updateRelatedConditions($justification) {
+        // get related condition
+        $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $justification->stic_justi13ccditions_ida);
+        if ($conditionBean) {
+            $db = DBManagerFactory::getInstance();
+            $sql = "
+                select sum(sj.justified_amount) as amount
+                from stic_justifications sj 
+                join stic_justification_conditions_stic_justifications_c sjcsjc on sjcsjc.stic_justi2c00cations_idb = sj.id
+                where sj.deleted = 0
+                and sjcsjc.deleted = 0
+                and sjcsjc.stic_justi13ccditions_ida = '{$conditionBean->id}'
+            ";
+            $amount = $db->getOne($sql);
+            $conditionBean->justified_amount = formatDecimalInConfigSettings($amount, true);
+            $conditionBean->justified_percentage = ($conditionBean->max_allocable_amount_grant > 0) ? formatDecimalInConfigSettings(($amount / SticUtils::unformatDecimal($conditionBean->max_allocable_amount_grant)) * 100, true) : null;
+            $conditionBean->save();
         }
     }
 
@@ -93,7 +113,7 @@ class stic_JustificationsUtils {
         $justification->amount = $allocation->amount;
         $justification->hours = $allocation->hours;
         $justification->allocation_type = $allocation->type;
-        $justification->max_allocable_percentage = $allocation->percentage;
+        $justification->max_allocable_percentage = SticUtils::unformatDecimal($allocation->percentage);
         $justification->justified_amount = $allocation->amount * $justification->max_allocable_percentage / 100;
         $justification->justified_hours = $allocation->hours;
         $justification->save();
@@ -165,7 +185,7 @@ class stic_JustificationsUtils {
         $justification->hours = $allocation->hours;
         $justification->allocation_type = $allocation->type;
         $justification->assigned_user_id = $allocation->assigned_user_id; 
-        $justification->max_allocable_percentage = $allocation->percentage;
+        $justification->max_allocable_percentage = SticUtils::unformatDecimal($allocation->percentage);
         $justification->justified_amount = $allocation->amount * $justification->max_allocable_percentage / 100;
         $justification->justified_hours = $allocation->hours;
         $justification->stic_justi13ccditions_ida = $condition->id;
