@@ -1,4 +1,6 @@
 files:
+  - source: '*Dashlet.es_ES.lang.php*'
+    translation: /%original_path%/%original_file_name%.%locale_with_underscore%.lang.php
   - source: '*es_ES.lang.php*'
     translation: /%original_path%/%locale_with_underscore%.lang.php
   - source: '*es_ES.SticLang.php*'
@@ -7,5 +9,3 @@ files:
     translation: /%original_path%/%locale_with_underscore%.KReporterCore.php
   - source: '*es_ES.MailMergeReports.php*'
     translation: /%original_path%/%locale_with_underscore%.MailMergeReports.php
-  - source: '*Dashlet.es_ES.lang.php*'
-    translation: /%original_path%/%original_file_name%.%locale_with_underscore%.lang.php
