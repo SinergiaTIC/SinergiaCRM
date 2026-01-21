@@ -147,6 +147,7 @@ $mod_strings = array(
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_TASKS_FROM_TASKS_TITLE' => 'Tasques',
     'LBL_STIC_JOB_OFFERS_ACTIVITIES_EMAILS_FROM_EMAILS_TITLE' => 'Correus',
     'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE' => 'Candidatures',
+    'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_JOB_OFFERS_TITLE' => 'Notificacions',
     'LBL_SEPE_ACTIVATION_DATE_ERROR' => 'La Data activació (SEPE) no pot estar buida i ha de ser anterior o igual a la Data oferta coberta (SEPE).',
     'LBL_SEPE_COVERED_DATE_ERROR' => 'La Data oferta coberta (SEPE) ha de ser igual o posterior a la Data activació (SEPE).',
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "Aquest camp existeix tant als mòduls Persones i Ofertes i s'utilitza per poder fer l'enllaç entre registres dels dos mòduls. Les tipologies de perfils es poden gestionar a la llista 'stic_professional_profile_list' de l'Editor de llistes desplegables.",

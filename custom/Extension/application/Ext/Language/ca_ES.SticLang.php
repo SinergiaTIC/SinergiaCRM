@@ -1183,6 +1183,7 @@ $app_list_strings['stic_job_offers_status_list']['closed_covered'] = 'Tancada (c
 $app_list_strings['stic_job_offers_status_list']['closed_partially_covered'] = 'Tancada (coberta parcialment)';
 $app_list_strings['stic_job_offers_status_list']['closed_not_covered'] = 'Tancada (no coberta)';
 $app_list_strings['stic_job_offers_status_list']['reopened'] = 'Reoberta';
+$app_list_strings['stic_job_offers_status_list']['review'] = 'En revisió';
 
 // Ofertes laborals: Orígens
 $app_list_strings['stic_job_offer_origin_list'][''] = '';
@@ -1200,6 +1201,7 @@ $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'P
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Entrevistada';
 $app_list_strings['stic_job_applications_status_list']['accepted'] = 'Acceptada';
 $app_list_strings['stic_job_applications_status_list']['rejected_closed'] = 'Rebutjada o tancada';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'En revisió';
 
 // Candidatures: Raons de rebuig de la candidatura
 $app_list_strings['stic_job_applications_rejection_reasons_list'][''] = '';
