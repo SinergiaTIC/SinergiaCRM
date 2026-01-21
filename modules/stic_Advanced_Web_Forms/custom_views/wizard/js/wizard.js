@@ -1216,12 +1216,46 @@ class WizardStep3 {
             selectedCategory: '',      // Para guardar la categoría seleccionada 
             selectedActionDefName: '', // Para guardar la acción seleccionada en modo creación
 
+            // Condición
+            applyCondition: false,
+            _activeConditionFieldDef: null,
+
             get formConfig() { return window.alpineComponent.formConfig; },
+
+            get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm() ?? []; },
+            
+            get activeConditionFieldDef() { return this._activeConditionFieldDef; },
+            
+            get conditionInputType() {
+                const def = this._activeConditionFieldDef;
+                if (!def) return 'text';
+                if (def.type_in_form === 'number') return 'number';
+                if (def.type_in_form === 'date') {
+                  if (def.subtype_in_form === 'date_time') return 'time';
+                  if (def.subtype_in_form === 'date_datetime') return 'datetime-local';
+                  return 'date';
+                }
+                return 'text';
+            },
 
             init() {
               // Cargar todas las definiciones de acciones seleccionables por el usuario
               this.allDefinitions = utils.getDefinedActions().filter(a => a.isUserSelectable && a.isActive && 
                                                                      (a.type == 'Hook' || a.type == 'Deferred'));
+              
+              Alpine.effect(() => {
+                const fieldName = this.action?.condition_field;
+                this.updateActiveConditionFieldDef(fieldName);
+              });
+              Alpine.effect(() => {
+                if (this.applyCondition === false && this.action) {
+                  if (this.action.condition_field !== '' || this.action.condition_value !== '') {
+                    this.action.condition_field = '';
+                    this.action.condition_value = '';
+                    this._activeConditionFieldDef = null;
+                  }
+                }
+              });
             },
 
             /**
@@ -1295,6 +1329,7 @@ class WizardStep3 {
               if (cats.length > 0) this.selectedCategory = cats[0].id;
 
               this.isOpen = true;
+              this.syncConditionState();
             },
 
             /**
@@ -1331,6 +1366,7 @@ class WizardStep3 {
               }
 
               this.isOpen = true;
+              this.syncConditionState();
             },
 
             goToStep2() {
@@ -1380,6 +1416,8 @@ class WizardStep3 {
                     value: pDef.defaultValue,
                     selectedOption: ''
                 }));
+
+                this.syncConditionState();
             },
 
             /**
@@ -1555,6 +1593,44 @@ class WizardStep3 {
               // 3. Actualizamos la acción
               action.parameters = newParams;
               action.requisite_actions = Array.from(requisiteActions); //
+            },
+
+            /**
+             * Actualiza la definición del campo activo para la condición
+             * @param {string} fieldName Nombre HTML del campo
+             */
+            updateActiveConditionFieldDef(fieldName) {
+              if (!fieldName) {
+                this._activeConditionFieldDef = null;
+              } else {
+                // Solo actualizamos si ha cambiado
+                const newDef = this.formConfig.getFieldDefinitionByHtmlName(fieldName);
+                if (this._activeConditionFieldDef !== newDef) {
+                  this._activeConditionFieldDef = newDef;
+                  // Si es un select, forzamos reactividad para que coja el valor correcto
+                  if (this._activeConditionFieldDef && this._activeConditionFieldDef.type_in_form === 'select') {
+                    const currentValue = this.action.condition_value;
+                    if (currentValue) {
+                      setTimeout(() => { 
+                        if(this.action) this.action.condition_value = currentValue; 
+                      }, 50);
+                    }
+                  }
+                }
+              }
+            },
+
+            /**
+             * Sincroniza el estado de la condición según los datos de la acción
+             */
+            syncConditionState() {
+              if (this.action && this.action.condition_field) {
+                this.applyCondition = true;
+                this.updateActiveConditionFieldDef(this.action.condition_field);
+              } else {
+                this.applyCondition = false;
+                this._activeConditionFieldDef = null;
+              }
             },
           });
         }

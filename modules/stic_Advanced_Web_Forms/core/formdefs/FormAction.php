@@ -39,6 +39,9 @@ class FormAction {
 
     private array $resolvedParameters = []; // Parámetros resueltos, con el valor final
 
+    public string $condition_field = '';    // El campo que condiciona la ejecución
+    public string $condition_value = '';    // El valor necessario para ejecutar la acción
+
     /**
      * Crea una instancia de FormAction a partir de un array JSON.
      * @param FormFlow $flow El Flujo de acciones al que pertenece 
@@ -54,6 +57,10 @@ class FormAction {
         $dto->text = $data['text'];
         $dto->description = $data['description'];
         $dto->requisite_actions = $data['requisite_actions'] ?? [];
+
+        // Condiciones
+        $dto->condition_field = $data['condition_field'] ?? '';
+        $dto->condition_value = $data['condition_value'] ?? '';
 
         $dto->parameters = [];
         if (isset($data['parameters'])) {

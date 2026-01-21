@@ -652,7 +652,7 @@
                                 <span x-text="store.getValidatorTitle(val.validator)"></span>
                                 <template x-if="val.condition_field">
                                   <div class="small text-muted fst-italic mt-1">
-                                    <span x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_SUMMARY') + ' ' + val.condition_field + ' = ' + val.condition_value""></span>
+                                    <span x-text="utils.translateForFieldLabel('LBL_CONDITION_SUMMARY') + ' ' + val.condition_field + ' = ' + val.condition_value""></span>
                                   </div>
                                 </template>
                               </td>
@@ -721,18 +721,18 @@
             <form id="validationFieldModalForm">
               <!-- Condition -->
               <div class="card">
-                <div class="card-header" x-text="utils.translate('LBL_FIELD_VALIDATION_CONDITION')"></div>
+                <div class="card-header" x-text="utils.translate('LBL_CONDITION')"></div>
                 <div class="card-body">
                   <div class="row align-items-end">
-                      <!-- Required in form -->
+                      <!-- Apply condition -->
                       <div class="col-3 form-switch">
-                        <label for="validation_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_APPLY_CONDITION')"></label>
+                        <label for="validation_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_APPLY_CONDITION')"></label>
                         <input class="form-check-input form-switch" type="checkbox" role="switch" id="validation_ApplyCondition" x-model="applyCondition"/>
                       </div>
                       <!-- Condition field -->
                       <template x-if="applyCondition">
-                        <div class="col-3">
-                          <label for="validation_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_FIELD')"></label>
+                        <div class="col-4">
+                          <label for="validation_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD')"></label>
                           <select id="validation_ConditionField" x-bind:disabled="availableFieldsInForm.length<=1" class="form-select" 
                                   x-model="validation.condition_field" @change="validation.condition_value = ''">
                             <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
@@ -745,7 +745,7 @@
                       <!-- Condition value -->
                       <template x-if="applyCondition && validation.condition_field != '' && activeConditionFieldDef">
                         <div class="col-3">
-                          <label for="validation_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATION_CONDITION_VALUE')"></label>
+                          <label for="validation_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_VALUE')"></label>
                           <!-- Select -->
                           <template x-if="activeConditionFieldDef?.type_in_form == 'select'">
                             <select id="validation_ConditionValue" class="form-select" x-model="validation.condition_value">

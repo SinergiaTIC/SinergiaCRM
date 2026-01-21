@@ -738,6 +738,8 @@ class AWF_Action {
       is_automatic: false,      // Indica si la acción es automática
       is_terminal: false,       // Indica si la acción es terminal
       order: 0,                 // El orden de ejecución de la acción
+      condition_field: '',      // El campo para la condición de ejecución
+      condition_value: '',      // El valor para la condición de ejecución
     });
 
     // 2. Overwrite with provided data

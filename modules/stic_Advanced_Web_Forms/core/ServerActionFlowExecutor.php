@@ -49,12 +49,21 @@ class ServerActionFlowExecutor {
             foreach ($actions as $actionConfig) {
                 $lastActionConfig = $actionConfig;
 
+                // Verificación de la Condición (si existe)
+                if (!empty($actionConfig->condition_field)) {
+                    if (!$this->checkCondition($actionConfig, $this->context)) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Skipping action '{$actionConfig->text}' because condition failed.");
+                        
+                        // Registramos la acción como saltada
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
+                        $this->context->addActionResult($skippedResult);
+                        continue; 
+                    }
+                }
+
                 // Buscamos la acción a ejecutar (excepción si no existe)
                 $actionExecutor = $this->factory->createAction($actionConfig);
-
-                // TODO: Verificación de Condiciones (si existen)
-                // if (!$this->checkConditions($actionConfig->conditions, $this->context)) { continue; }
-
+                
                 // Si es Terminal no la ejecutamos: paramos el bucle y la retornamos para que se ejecute después
                 if ($actionExecutor instanceof ITerminalAction) {
                     return $actionConfig;
@@ -102,4 +111,30 @@ class ServerActionFlowExecutor {
         return null;
     }
 
+    /**
+     * Verifica si se cumple la condición para ejecutar una acción.
+     * @param FormAction $action La acción a verificar
+     * @param ExecutionContext $context El contexto de ejecución
+     * @return bool True si se cumple la condición o no hay condición, false en caso contrario
+     */
+    private function checkCondition(FormAction $action, ExecutionContext $context): bool {
+        $fieldKey = $action->condition_field; // Ex: "Contact0.newsletter"
+        $expectedValue = $action->condition_value;
+
+        // Convertimos la clave lógica a clave PHP (reemplazando '.' por '_')
+        $phpKey = str_replace('.', '_', $fieldKey);
+
+        // Buscamos el valor enviado en el formulario
+        if (!isset($context->formData[$phpKey])) {
+            $submittedValue = $context->formData[$phpKey];
+        } else {
+            $submittedValue = '0'; // Assumimos false si no ha llegado del formulario
+        }
+
+        // Comprobamos si el valor enviado coincide con el esperado
+        if (is_array($submittedValue)) {
+            return in_array($expectedValue, $submittedValue);
+        }
+        return $submittedValue == $expectedValue;
+    }
 }

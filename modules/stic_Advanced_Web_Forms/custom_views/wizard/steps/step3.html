@@ -218,6 +218,51 @@
                                     <span class="ms-3 small" x-text="$store.actionEditor.definition.description"></span>
                                 </div>
                             </div>
+                            <!-- Condition -->
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header" x-text="utils.translate('LBL_CONDITION')"></div>
+                                <div class="card-body">
+                                    <div class="row align-items-end">
+                                        <!-- Apply condition -->
+                                        <div class="col-3 form-switch">
+                                            <label for="action_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_APPLY_CONDITION')"></label>
+                                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="action_ApplyCondition" x-model="$store.actionEditor.applyCondition"/>
+                                        </div>
+                                        <!-- Condition field -->
+                                        <template x-if="$store.actionEditor.applyCondition">
+                                            <div class="col-4">
+                                                <label for="action_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD')"></label>
+                                                <select id="action_ConditionField" x-bind:disabled="$store.actionEditor.availableFieldsInForm.length<=1" class="form-select" 
+                                                        x-model="$store.actionEditor.action.condition_field" @change="$store.actionEditor.action.condition_value = ''">
+                                                    <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                    <template x-for="field in $store.actionEditor.availableFieldsInForm" :key="field.name">
+                                                        <option :value="field.name" x-text="field.text"></option>
+                                                    </template>
+                                                </select>
+                                            </div>
+                                        </template>
+                                        <!-- Condition value -->
+                                        <template x-if="$store.actionEditor.applyCondition && $store.actionEditor.action.condition_field != '' && $store.actionEditor.activeConditionFieldDef">
+                                            <div class="col-3">
+                                            <label for="action_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_VALUE')"></label>
+                                            <!-- Select -->
+                                            <template x-if="$store.actionEditor.activeConditionFieldDef?.type_in_form == 'select'">
+                                                <select id="action_ConditionValue" class="form-select" x-model="$store.actionEditor.action.condition_value">
+                                                <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                <template x-for="opt in $store.actionEditor.activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
+                                                    <option :value="opt.value" x-text="opt.text"></option>
+                                                </template>
+                                                </select>
+                                            </template>
+                                            <!-- Text -->
+                                            <template x-if="$store.actionEditor.activeConditionFieldDef?.type_in_form != 'select'">
+                                                <input id="action_ConditionValue" :type="conditionInputType" class="form-control" x-model="$store.actionEditor.action.condition_value">
+                                            </template>
+                                            </div>
+                                        </template>                                         
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Action Parameters -->
                             <div class="card shadow-sm">
                                 <div class="card-header" x-text="utils.translate('LBL_ACTION_PARAMETERS')"></div>
