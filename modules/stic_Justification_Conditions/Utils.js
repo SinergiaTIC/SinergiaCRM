@@ -32,9 +32,12 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
     setAutofill(["name"]);
+
+    blockEditOpportunityinEditView();
     break;
 
   case "detail":
+    checkBlockedJustificationInDetailView();
     break;
 
   case "list":
@@ -45,3 +48,30 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+function blockEditOpportunityinEditView() {
+  debugger;
+    var justificationConditionId = $('[name="record"]').val() ? $('[name="record"]').val() : $(".listview-checkbox", $(".inlineEditActive").closest("tr")).val();
+
+    if (justificationConditionId) {
+      // $(".edit-view-row-item input").prop('disabled', true); // text, decimals, checks, etc.
+      $("#opportunities_stic_justification_conditions_name").prop('disabled', true); // text, decimals, checks, etc.
+      // $(".edit-view-row-item select").prop('disabled', true); // desplegables
+      // $("button[type='button']:not(.saveAndContinue)").prop('disabled', true); // buttons except "Save and Continue Edit"
+      $("[name='btn_opportunities_stic_justification_conditions_name']").prop('disabled', true); // buttons except "Save and Continue Edit"
+      $("[name='btn_clr_opportunities_stic_justification_conditions_name']").prop('disabled', true); // buttons except "Save and Continue Edit"
+    }
+}
+
+function checkBlockedJustificationInDetailView() {
+      // $(".inlineEdit").each(function() {
+      $("[field='opportunities_stic_justification_conditions_name']").each(function() {
+      if ($(this).attr('field') !== 'blocked') {
+        $(this).parent()[0].addEventListener('dblclick', blockDblClick, true);
+      }
+    });
+}
+
+function blockDblClick(event) {
+  event.stopPropagation();
+  event.preventDefault(); 
+}
