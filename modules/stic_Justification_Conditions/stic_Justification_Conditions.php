@@ -56,8 +56,16 @@ class stic_Justification_Conditions extends Basic
 
         $tempFetchedRow = $this->fetched_row ?? null;
 
+        $previousmax_allocable_amount_grant = $tempFetchedRow ? SticUtils::unformatDecimal($tempFetchedRow['max_allocable_amount_grant']) : null;
+        $currentmax_allocable_amount_grant = SticUtils::unformatDecimal($this->max_allocable_amount_grant);
+        if ($previousmax_allocable_amount_grant !== $currentmax_allocable_amount_grant) {
+            $this->justified_percentage = ($currentmax_allocable_amount_grant > 0) ? formatDecimalInConfigSettings((SticUtils::unformatDecimal($this->justified_amount) / $currentmax_allocable_amount_grant) * 100, true) : 0;
+        }
+        
+
         // Save the bean
         parent::save($check_notify);
+
 
         if ($this->matchingFieldsChanged()) {
             stic_Justification_ConditionsUtils::deleteJustifications($this);
@@ -70,9 +78,9 @@ class stic_Justification_Conditions extends Basic
         if (!$tempFetchedRow) {
             return true; // New record, so fields are considered changed
         }
-        $fieldsToCheck = ['ledger_group', 'subgroup', 'account', 'subaccount', 'allocation_type', 'opportunities_stic_justification_conditions_ida'];
+        $fieldsToCheck = ['ledger_group', 'subgroup', 'account', 'subaccount', 'allocation_type'];
         foreach ($fieldsToCheck as $field) {
-            if ($this->$field !== $tempFetchedRow[$field]) {
+            if ($this->$field !== $tempFetchedRow[$field] && (!empty($this->$field) || !empty($tempFetchedRow[$field]))) {
                 return true;
             }
         }
