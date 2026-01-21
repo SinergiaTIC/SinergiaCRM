@@ -101,7 +101,7 @@ Introduïu aquest codi al portal de firma per continuar el procés. El codi és 
 </div>
 </body>
 </html>',0,'1',0,'notification'),
-      ('000005f1-2e4e-3b11-051f-68e3c9e70333',NOW(),NOW(),'1','1','off','Exemple - Codi d''un sol ús per firmar (SMS)','Plantilla per enviar via SMS el codi d''un sol ús al firmant abans de poder firmar.','[Firma de document] Codi de verificació per firmar'','$contact_first_name$contact_user_first_name, aquest és el vostre codi per firmar: $stic_signers_otp. És vàlid durant 10 minuts.','<!DOCTYPE html>
+      ('000005f1-2e4e-3b11-051f-68e3c9e70333',NOW(),NOW(),'1','1','off','Exemple - Codi d''un sol ús per firmar (SMS)','Plantilla per enviar via SMS el codi d''un sol ús al firmant abans de poder firmar.','[Firma de document] Codi de verificació per firmar','$contact_first_name$contact_user_first_name, aquest és el vostre codi per firmar: $stic_signers_otp. És vàlid durant 10 minuts.','<!DOCTYPE html>
 <html>
 <head>
 </head>
