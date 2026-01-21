@@ -1022,16 +1022,24 @@ class User extends Person implements EmailInterface
                 $this->setPreference('timezone', $timezone, 0, 'global');
                 // END STIC Custom
             }
-            if (isset($_POST['ut'])) {
-                $this->setPreference('ut', '0', 0, 'global');
+            // STIC Custom 20251024 JBL - Fix Reset User Preferences 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/848
+            // if (isset($_POST['ut'])) {
+            //     $this->setPreference('ut', '0', 0, 'global');
+            // } else {
+            //     $this->setPreference('ut', '1', 0, 'global');
+            // }
+            $ut = $_POST['ut'] ?? '0';
+
+            if (isset($ut)) {
+                $value = $_POST['ut'] === 'on' ? '0' : '1';
+                $this->setPreference('ut', $value, 0, 'global');
             } else {
-                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
-                // $this->setPreference('ut', '1', 0, 'global');
                 $ut = $this->getCurrentPreference('ut');
                 $this->setPreference('ut', $ut ?? '1', 0, 'global');
-                // END STIC Custom
             }
+            // End STIC Custom 20251024 JBL
+
             if (isset($_POST['currency'])) {
                 $this->setPreference('currency', $_POST['currency'], 0, 'global');
             }
@@ -1160,7 +1168,12 @@ class User extends Person implements EmailInterface
             if (isset($_REQUEST['email_show_counts'])) {
                 $this->setPreference('email_show_counts', $_REQUEST['email_show_counts'], 0, 'global');
             } else {
-                $this->setPreference('email_show_counts', 0, 0, 'global');
+                // STIC Custom 20251024 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/848
+                // $this->setPreference('email_show_counts', 0, 0, 'global');
+                $emailShowCounts = $this->getCurrentPreference('email_show_counts');
+                $this->setPreference('email_show_counts', $emailShowCounts ?? 0, 0, 'global');
+                // END STIC Custom
             }
             if (isset($_REQUEST['email_editor_option'])) {
                 $this->setPreference('email_editor_option', $_REQUEST['email_editor_option'], 0, 'global');
