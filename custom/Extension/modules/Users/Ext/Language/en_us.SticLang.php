@@ -43,7 +43,7 @@ $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Indicates whether the Work calend
 $mod_strings['LBL_STIC_CLOCK'] = 'Time tracker';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indicates whether the Time tracker is enabled for the user.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'SinergiaDA access';
-$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Sets user access to Sinergia Data Analytics';
+$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indicates the level of user access to Sinergia Data Analytics.<ul><li><b>No access:</b> the user will not be able to login into the application.</li><li><b>Full access:</b> the user will be able to create, modify and execute reports.</li><li><b>Read only access:</b> the user will be able to execute reports and see their results but will not be able to create new ones or modify the existing ones. This option only applies to normal users, administrators with access to SinergiaDA will always have full access.</li></ul>';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
@@ -98,3 +98,8 @@ $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'User who impersonates: ';
 // Impersonating users - Monitoring
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Impersonation of user ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' with ID ';
+
+// Modelo 182
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Issuing of Modelo 182';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indicates for which organizations the user will be able to generate the Modelo 182. The list is dynamically generated from the <a href="index.php?module=stic_Settings" target="_blank">configuration parameters</a>.';
+

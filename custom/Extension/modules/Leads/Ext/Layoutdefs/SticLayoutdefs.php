@@ -80,7 +80,6 @@ $layout_defs["Leads"]["subpanel_setup"]['leads_documents_1'] = array(
 
 // New collection in activities/history
 $layout_defs['Leads']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
-$layout_defs['Leads']['subpanel_setup']['history']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
 $layout_defs['Leads']['subpanel_setup']['activities']['collection_list']['stic_Messages'] = array(
     'module' => 'stic_Messages',
     'subpanel_name' => 'ForHistory',

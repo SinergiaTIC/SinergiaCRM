@@ -31,6 +31,12 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "La validació d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Afegeix Organitzacions i Persones a una llista de públic objectiu';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
+$app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
+$app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra les firmes relacionades';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Firmes relacionades';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Es mostren les firmes relacionades amb aquest registre del mòdul';
+$app_strings['LBL_NO_SIGNATURES_FOUND'] = "No s'han trobat firmes relacionades";
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Valida la importació';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = "S'ha produït un error";
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Mostra-ho a la vista de llista';
@@ -80,6 +86,7 @@ $app_strings['LBL_GROUPTAB_EXPLOITATION'] = 'Explotació';
 $app_strings['LBL_GROUPTAB_DC_PERSONALINFO'] = 'Informació personal';
 $app_strings['LBL_GROUPTAB_DC_WORKPLAN'] = 'Pla de treball';
 $app_strings['LBL_GROUPTAB_DC_MEDICATION'] = 'Medicació';
+$app_strings['LBL_GROUPTAB_FINANCIAL_MANAGEMENT'] = 'Finances de tercers';
 
 // Subtema propi de SinergiaCRM
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
@@ -93,12 +100,13 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
-// Missatges: accions subpanell
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nou missatge';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou missatge';
+// Missatges: accions en mòduls de destinataris
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Envia un missatge telefònic';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge. Segur que voleu continuar?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = "S'ha sobrepassat el límit de missatges que es poden enviar simultàniament.";
-$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Envia un missatge telefònic';
+$app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificació per correu';
+$app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificació per missatge telefònic';
 
 // Enviament massiu de correus
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
@@ -159,8 +167,15 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['moduleList']['stic_Message_Marketing'] = 'Enviaments de missatges';
+$app_list_strings['moduleList']['stic_MessagesMan'] = 'Cua de missatges';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
+$app_list_strings['moduleList']['stic_Signature_Log'] = 'Registre de firmes';
+$app_list_strings['moduleList']['stic_Signatures'] = 'Firmes';
+$app_list_strings['moduleList']['stic_Signers'] = 'Firmants';
+$app_list_strings['moduleList']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['moduleList']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -208,8 +223,15 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acció';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalització';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condició';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organització subvencionada';
+$app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Enviament de missatges';
+$app_list_strings['moduleListSingular']['stic_MessagesMan'] = 'Cua de missatges';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaça';
+$app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Registre de firmes';
+$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
+$app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmant';
+$app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacció';
+$app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producte financer';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -249,8 +271,11 @@ $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiència
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['parent_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['parent_type_display']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
+$app_list_strings['parent_type_display']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productes financers';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -291,8 +316,13 @@ $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiència
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display']['stic_Signatures'] = 'Firmes';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Firmants';
+$app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productes financers';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -333,12 +363,20 @@ $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experi
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmes';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmants';
+$app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productes financers';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
-$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertes laborals';
+$app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmes';
+
+// Creació dinàmica de Llistes de públic objectiu
+$app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3644,6 +3682,123 @@ $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
 $app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inici de suplantació';
 $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fi de suplantació';
 
+// Firmes: Estat
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Obert';
+$app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanent';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausat';
+$app_list_strings['stic_signatures_status_list']['completed'] = 'Completat';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancel·lat';
+
+// Firmes: Mètodes d'autenticació
+$app_list_strings['stic_signatures_auth_methods_list'][''] = '';
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enllaç únic';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = "Codi d'un sol ús (per SMS o correu electrònic)";
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = "Codi d'un sol ús (per correu electrònic)";
+$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = "Codi d'un sol ús (per SMS)";
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Telèfon';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = "Número d'identificació";
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Data de naixement';
+
+// Firmes: Tipus
+// $app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+// $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (personalitzada)';
+// $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
+
+// Firmes: Modes
+$app_list_strings['stic_signatures_modes_list'][''] = '';
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Botó';
+
+// Firmes: En nom de...
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, un sol representant';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, tots els representants';
+
+// Firmants: Estat
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Firmat';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecessari';
+
+// Registre de Firmes: Accions
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] =  'Document firmat amb botó';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document firmat amb firma manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] =  "S'ha afegit un firmant a la firma";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = "S'ha enviat un codi d'un sol ús al correu electrònic del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = "S'ha enviat un codi d'un sol ús al telèfon del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = "El firmant ha verificat el codi d'un sol ús";
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = "S'ha enviat un correu electrònic al firmant";
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'El firmant ha accedit al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'El firmant ha descarregat el document firmat';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = "S'ha enviat el document firmat al firmant";  
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma ha caducat';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Una altra persona autoritzada ha firmat el document';
+$app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'El document ha estat descarregat internament';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Tots els firmants han firmat';
+// SinergiaDA: Nivells d'accés dels usuaris
+$app_list_strings['sda_users_access_list']['0'] = 'Sense accés';
+$app_list_strings['sda_users_access_list']['1'] = 'Accés complet';
+// $app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura'; 
+
+// Productes financers: Tipus de productes
+$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Compte corrent';
+$app_list_strings['stic_financial_products_types_list']['savings_account'] = "Compte d'estalvi";
+$app_list_strings['stic_financial_products_types_list']['investment_fund'] = "Fons d'inversió";
+$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Assegurança';
+$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Targeta de prepagament';
+$app_list_strings['stic_financial_products_types_list']['shares'] = 'Accions';
+$app_list_strings['stic_financial_products_types_list']['other'] = 'Altres';
+
+// Transaccions: Estat
+$app_list_strings['stic_transactions_status_list']['completed'] = 'Completat';
+$app_list_strings['stic_transactions_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_transactions_status_list']['failed'] = 'Fallit';
+$app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputat';
+
+// Transaccions: Categoria
+$app_list_strings['stic_transactions_categories_list'][''] = '';
+$app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sou';
+$app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversions';
+$app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regals';
+$app_list_strings['stic_transactions_categories_list']['income_sales'] = 'Vendes';
+$app_list_strings['stic_transactions_categories_list']['income_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['expense_housing'] = 'Habitatge';
+$app_list_strings['stic_transactions_categories_list']['expense_transportation'] = 'Transport';
+$app_list_strings['stic_transactions_categories_list']['expense_food'] = 'Alimentació';
+$app_list_strings['stic_transactions_categories_list']['expense_services'] = 'Serveis';
+$app_list_strings['stic_transactions_categories_list']['expense_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_withdrawal'] = 'Retirada';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['deposit_deposit'] = 'Dipòsit';
+$app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Altres';
+
+// Transaccions: Subcategoria
+$app_list_strings['stic_transactions_subcategories_list'][''] = '';
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sou';
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bons';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividends';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_interest'] = 'Interessos';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_products'] = 'Productes';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_services'] = 'Serveis';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_gifts'] = 'Regals';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_refunds'] = 'Reemborsaments';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_rent_mortgage'] = 'Lloguer/Hipoteca';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_utilities'] = 'Serveis públics';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_fuel'] = 'Combustible';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_transportation_public_transportation'] = 'Transport/Transport públic';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_telephone'] = 'Telefonia';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_subscriptions'] = 'Subscripcions';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_groceries'] = 'Supermercat';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_restaurants_bars'] = 'Restaurant/Bar';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_atm'] = 'Caixer automàtic';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'A finestreta';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectiu';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferència';
+
 // Modificacions del core de SuiteCRM
 
 // Cadenes generals (procedents d'include)
@@ -3739,7 +3894,9 @@ $app_list_strings['campaign_type_dom']['Radio'] = 'Ràdio';
 $app_list_strings['campaign_type_dom']['Television'] = 'Televisió';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Butlletí de notícies';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Enquesta';
-$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació per correu electrònic';
+$app_list_strings['campaign_type_dom']['Message'] = 'Missatge telefònic';
+$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notificació per missatge telefònic';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
@@ -3748,7 +3905,6 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
-$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -3765,3 +3921,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
+
+// Llista dinàmica
+include 'modules/stic_Message_Marketing/dynamicLPOs.php';

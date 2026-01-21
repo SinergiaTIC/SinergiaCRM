@@ -70,7 +70,7 @@ $mod_strings = array (
   'LBL_SENDER' => 'Sender',
   'LBL_LIST_RELATED_TO' => 'Related to',
   'LBL_LIST_RELATED_TO_ID' => 'Related to ID',
-  'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Send the message',
+  'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Send',
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Send a group message',
   'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => 'This action will send a message for each selected record. Do you want to proceed?',
   'LBL_MESSAGE_SENT' => 'Message sent',
@@ -84,4 +84,5 @@ $mod_strings = array (
   'LBL_LIST_DATE_MODIFIED' => 'Date Modified',
   'LBL_LIST_STATUS' => 'Status',
   'LBL_LIST_SUBJECT' => 'Subject',
+  'LBL_INFO_TXT' => 'If the message exceeds 160 characters, it will be divided into as many parts as necessary, with the effects that this may have on the number of messages sent and, therefore, billable.',
 );

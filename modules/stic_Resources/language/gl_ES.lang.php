@@ -82,7 +82,7 @@ $mod_strings = array(
     'LBL_AMOUNT_DAY_OCCUPIED' => 'Importe diario por plaza ocupada',
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Importe diario por plaza desocupada',
     'LBL_AMOUNT_COPAYMENT' => 'Importe diario de copago',
- 
+
     'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No se puede cambiar el tipo de recurso porque tiene reservas asociadas.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
     'LBL_PLACES' => 'Plazas',
