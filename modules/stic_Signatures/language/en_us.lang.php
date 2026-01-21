@@ -127,6 +127,7 @@ $mod_strings = array(
     'LBL_PORTAL_ACCEPTANCE_AREA' => 'Signature area',
     'LBL_PORTAL_ACCEPTANCE_INSTRUCTION' => 'To accept the document, click the button below.',
     'LBL_PORTAL_ACCEPT_AND_SIGN_BTN' => 'Accept and sign the document',
+    'LBL_PORTAL_DOCUMENT_ACCEPTED_BY' => 'Document accepted by:',
     'LBL_PORTAL_DOCUMENT_SIGNED' => 'Document signed',
     'LBL_PORTAL_DOWNLOAD_SIGNED_DOC' => 'Download signed document',
     'LBL_PORTAL_SEND_COPY_EMAIL' => 'Send me a copy by email',
