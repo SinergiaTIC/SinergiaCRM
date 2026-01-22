@@ -25,3 +25,4 @@ $mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Utilice este enlace para descarg
 $mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Firmante autorizado';
 $mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Firmantes autorizados';
 
+
