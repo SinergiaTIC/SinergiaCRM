@@ -2539,11 +2539,11 @@ class SugarBean
                 // STIC-Custom 20241218 EPS - Avoid using property "key" if it is not setted
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/470
                 // if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
-                // STIC-Custom 20260121 PCS - 
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // STIC-Custom 20260122 PCS - 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/957
                 // if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !empty($this->$key)) {
                 if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !empty($this->$key) && empty($this->in_workflow)) {
-                // END STIC-Custom (PCS 20260121)
+                // END STIC-Custom (PCS 20260122)
                 // END STIC-Custom (EPS 20241218)
                     $this->$key = trim($this->$key);
                 }
