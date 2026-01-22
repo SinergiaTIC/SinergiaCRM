@@ -812,6 +812,13 @@ JS;
 
     private function renderField(FormDataBlock $block, FormDataBlockField $field, FormTheme $theme): string {
         $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+
+        // Render hidden fields differently: only input without label or wrapper
+        if ($field->type_in_form === 'hidden') {
+            $val = htmlspecialchars($field->value ?? '', ENT_QUOTES, 'UTF-8');
+            return "<input type='hidden' name='{$inputName}' id='f_{$inputName}' value='{$val}'>" . $this->newLine();
+        }
+
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
         $asterisk = $field->required_in_form ? " <span class='awf-required'>*</span>" : '';
@@ -1030,6 +1037,28 @@ JS;
                 }
             }
         }
+
+        // == AUTO FILL FIELDS ==
+        $js .= "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Read URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.forEach((value, key) => {
+                    if (['entryPoint', 'id', 'module', 'action'].includes(key)) return;
+
+                    // Find matching inputs by name
+                    const inputs = document.querySelectorAll(`[name='\${key}'], [name$='_\${key}'], [name$='.\${key}']`);
+                    inputs.forEach(input => {
+                        if (!input.value) {
+                            input.value = value;
+                            input.dispatchEvent(new Event('input'));
+                        }
+                    });
+                });
+            } catch (e) { console.warn('AWF Prefill Error:', e); }
+        });
+        </script>" . $this->newLine();
         
         // == CUSTOM JS ==
         // Add custom JS from layout

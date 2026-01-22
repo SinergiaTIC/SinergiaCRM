@@ -398,27 +398,27 @@ class AWF_Field {
       return AWF_Field.type_in_formList();
     }
 
-    // text, textarea, number, date, select
+    // text, textarea, number, date, select, hidden
     if (this.type == "enum" || this.type == "radioenum" || this.type == "multienum" || this.type == "bool" || this.type == "checkbox") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "select");
+      return AWF_Field.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
     }
     if (this.type == "relate") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "select");
+      return AWF_Field.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
     }
     if (this.type == "date" || this.type == "time" || this.type == "datetime" || this.type == "datetimecombo") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "date");
+      return AWF_Field.type_in_formList().filter(t => t.id == "date" || t.id == "hidden");
     }
     if (this.type == "int" || this.type == "float" || this.type == "double" || this.type == "decimal") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "number" || t.id == "select");
+      return AWF_Field.type_in_formList().filter(t => t.id == "number" || t.id == "select" || t.id == "hidden");
     }
-    if (this.type == "json") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "textarea");
+    if (this.type == "json" || this.type == "textarea") {
+      return AWF_Field.type_in_formList().filter(t => t.id == "textarea" || t.id == "hidden");
     }
     if (this.type == "name" || this.type == "phone" || this.type == "email" || this.type == "url" || 
         this.type == "password" || this.type == "encrypt") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "select");
+      return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "select" || t.id == "hidden");
     }
-    return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number" || t.id == "select");
+    return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number" || t.id == "select" || t.id == "hidden");
   }
 
   getTypeInActions() {

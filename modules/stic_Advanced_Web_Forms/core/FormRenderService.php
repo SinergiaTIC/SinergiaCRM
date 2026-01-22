@@ -68,6 +68,9 @@ class FormRenderService {
         // Process ConfigData
         try {
             $formConfig = FormConfig::fromJsonArray($configData);
+            if (!$isPreview && !empty($_GET)) {
+                $this->prefillFieldsFromRequest($formConfig, $_GET);
+            }
         } catch (\Throwable $e) {
             throw new Exception("Error processing config Form: " . $e->getMessage());
         }
@@ -81,5 +84,35 @@ class FormRenderService {
         $generator = new FormHtmlGeneratorService();
         $html = $generator->generate($formConfig, $recordId, $actionUrl, $isPreview);
         return $html;
+    }
+
+    /**
+     * Prefill form fields from request data (GET or POST)
+     * @param FormConfig $config
+     * @param array $requestData
+     * @return void
+     */
+    private function prefillFieldsFromRequest(FormConfig $config, array $requestData): void {
+        foreach ($config->data_blocks as $block) {
+            foreach ($block->fields as $field) {
+                // Buscamos coincidencias para el nombre del campo (Ej: "email", "first_name")
+                // También soportamos el formato completo "BlockName_fieldname" si es necesario desambiguar
+                $val = null;
+                
+                if (isset($requestData[$field->name])) {
+                    $val = $requestData[$field->name];
+                } elseif (isset($requestData[$block->name . '_' . $field->name])) {
+                    $val = $requestData[$block->name . '_' . $field->name];
+                }
+
+                if ($val !== null) {
+                    // Sanitize básico para evitar XSS en inyectar al value="" del input
+                    $safeVal = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
+                    // Asignamos el valor al campo correspondiente
+                    $field->value = $safeVal;
+                    $field->value_text = $safeVal;
+                }
+            }
+        }
     }
 }
