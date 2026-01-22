@@ -108,6 +108,13 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
     array (
       0 => array(
         0 => array(
+          'name' => 'notification_auto_prospect_list_name',
+          'label' => 'LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME',
+        ),
+        1 => array(),
+      ),
+      1 => array(
+        0 => array(
           'name' => 'notification_prospect_list_ids',
           'label' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
         ),
@@ -116,7 +123,7 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
           'label' => 'LBL_NOTIFICATION_TEMPLATE_ID',
         ),
       ),
-      1 => array(
+      2 => array(
         0 => array(
           'name' => 'notification_outbound_email_id',
           'label' => 'LBL_NOTIFICATION_OUTBOUND_EMAIL_ID',
@@ -126,7 +133,7 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
           'label' => 'LBL_NOTIFICATION_INBOUND_EMAIL_ID',
         ),
       ),
-      2 => array(
+      3 => array(
         0 => array(
           'name' => 'notification_from_name',
           'label' => 'LBL_NOTIFICATION_FROM_NAME',
@@ -136,7 +143,7 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
           'label' => 'LBL_NOTIFICATION_FROM_ADDR',
         ),
       ),
-      3 => array(
+      4 => array(
         0 => array(
           'name' => 'notification_reply_to_name',
           'label' => 'LBL_NOTIFICATION_REPLY_TO_NAME',
@@ -146,6 +153,7 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
           'label' => 'LBL_NOTIFICATION_REPLY_TO_ADDR',
         ),
       ),
+
     ),
     'lbl_msg_notification_information_panel' =>
     array (

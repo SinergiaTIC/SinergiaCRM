@@ -105,7 +105,7 @@ $mod_strings = array(
     'LBL_TOTAL_HOURS_TITLE' => 'Para os eventos con sesións, o campo Horas totais calcularare automaticamente a partir da duración das sesións. Nos eventos sen sesións, se é necesario, pódese reencher manualmente o campo.',
     'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE' => 'Centro',
 
-    // Asistente de creación de sesións periódicas
+    // Asistente de creación de sesiones periódicas
     'LBL_CANCEL_BUTTON' => 'Cancelar',
     'LBL_PERIODIC_SESSIONS' => 'Crear sesións periódicas',
     'LBL_REPEAT_DOW' => 'Día da semana',

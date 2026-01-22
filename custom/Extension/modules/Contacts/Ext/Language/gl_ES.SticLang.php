@@ -103,7 +103,7 @@ $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Xerar Candidaturas';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione unha oferta laboral na ventá emerxente';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
 
-// Cadeas Inserción Laboral
+// Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
 $mod_strings['LBL_STIC_PANEL_SEPE'] = 'SEPE';
 $mod_strings['LBL_STIC_PANEL_INCORPORA_ADDRESS'] = 'Ubicación / enderezo Incorpora';
@@ -176,7 +176,7 @@ $mod_strings['LBL_STIC_SEPE_INCIDENTS_CONTACTS_FROM_STIC_SEPE_INCIDENTS_TITLE'] 
 $mod_strings['LBL_STIC_PROFESSIONAL_PROFILE_HELP'] = "Este campo existe tanto no módulo de Persoas como no de Ofertas e utilízase para enlazar unhas e outras. As tipoloxías de perfiles pódense xestionar na lista 'stic_professional_profile_list' do Editor de listas despregables.";
 $mod_strings['LBL_INC_INCORPORA_RECORD_HELP'] = "Cando este campo está activado, todos os campos que son obrigatorios para facer unha sincronización do tipo Alta na intranet de Incorpora, marcaranse cun apóstrofe en vermello (<span style='color:red;'>#</span>).";
 
-// Cadeas adaptadas de Contactos a Persoas
+// Cadenas adaptadas de Contactos a Personas
 $mod_strings['LBL_ACCOUNT_ID'] = 'ID da Organización';
 $mod_strings['LBL_ACCOUNT_NAME'] = 'Organización';
 $mod_strings['LBL_CONTACT_NAME'] = 'Nome Persoa:';
@@ -221,28 +221,28 @@ $mod_strings['LNK_IMPORT_CONTACTS'] = 'Importar Persoas';
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direccións de correo";
 
-// Cadeas Medicación
-$mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Rexistro de medicación";
-$mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescricións";
+// Medicación
+$mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = 'Rexistro de medicación';
+$mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = 'Prescricións';
 
-// Cadeas Ayudas
+// Ayudas
 $mod_strings['LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 
-// Cadeas Diario
+// Diario
 $mod_strings['LBL_STIC_JOURNAL_CONTACTS_FROM_STIC_JOURNAL_TITLE'] = 'Diario';
 
-// Cadeas Formación
+// Formación
 $mod_strings['LBL_STIC_TRAINING_CONTACTS_FROM_STIC_TRAINING_TITLE'] = 'Formación';
 
-// Cadeas Experiencia laboral
+// Experiencia laboral
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiencia laboral';
 
-// Cadeas Competencias
+// Competencias
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competencias';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Lista de público objectivo';
 $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';
 
-// Cadeas Productos financieros
+// Productos financieros
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
