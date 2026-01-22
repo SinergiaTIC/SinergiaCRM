@@ -52,9 +52,10 @@ class stic_JustificationsUtils {
         }
     }
 
-    public static function updateRelatedConditions($justification) {
+    public static function updateRelatedConditions($conditionId) {
         // get related condition
-        $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $justification->stic_justi13ccditions_ida);
+        // $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $justification->stic_justi13ccditions_ida);
+        $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $conditionId);
         if ($conditionBean) {
             $db = DBManagerFactory::getInstance();
             $sql = "

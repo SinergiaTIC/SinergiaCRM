@@ -95,7 +95,7 @@ class stic_Justifications extends Basic
         if (!$tempFetchedRow || $oldAmount !== $justifiedAmount) {
             // If amount changed, update related allocations
             stic_JustificationsUtils::updateRelatedOpportunity($this->opportunit01eunities_ida);
-            stic_JustificationsUtils::updateRelatedConditions($this);
+            stic_JustificationsUtils::updateRelatedConditions($this->stic_justi13ccditions_ida);
         }
 
     }
@@ -116,9 +116,10 @@ class stic_Justifications extends Basic
 
     public function mark_deleted($id) {
         $opportunityId = $this->opportunit01eunities_ida;
-
+        
         parent::mark_deleted($id);
-
+        
+        stic_JustificationsUtils::updateRelatedConditions($this->stic_justi13ccditions_ida);
         stic_JustificationsUtils::updateRelatedOpportunity($opportunityId);
     }
 
