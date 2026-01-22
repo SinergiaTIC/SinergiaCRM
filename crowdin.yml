@@ -1,5 +1,6 @@
 files:
-  - source: '*Dashlet.es_ES.lang.php*'
+  - source: 'modules/*/Dashlets/*/*Dashlet.es_ES.lang.php'
+    dest: /%original_path%/%file_name%.php
     translation: /%original_path%/%original_file_name%.%locale_with_underscore%.lang.php
   - source: '*es_ES.lang.php*'
     translation: /%original_path%/%locale_with_underscore%.lang.php
