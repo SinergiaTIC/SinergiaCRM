@@ -400,9 +400,22 @@ class ListViewDisplay
             ) {
                 $menuItems[] = $this->buildExportLink($location);
                 // STIC-Custom 20220124 MHP - Export and PDF Link must be able to be executed with the same ACL action
-                // STIC#564               
-                $menuItems[] = $this->buildPDFLinkAndPopupHtml();
+                // STIC#564
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+                $excludedModules = ['stic_Signatures', 'stic_Signers', 'stic_Signature_Log'];               
+                if(!in_array($this->seed->module_dir, $excludedModules)) {
+                    $menuItems[] = $this->buildPDFLinkAndPopupHtml();
+                }
                 // END-Custom
+
+                // STIC-Custom 20250715 JCH - Add "Add to Signature Process" link
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+                $excludedModules = ['stic_Signatures', 'stic_Signers', 'stic_Signature_Log'];
+                if (!in_array($this->seed->module_dir, $excludedModules)) {
+                    $menuItems[] = $this->buildSignatureLinkAndPopupHtml();
+                }
+                // END-Custom
+
             }
 
             foreach ($this->actionsMenuExtraItems as $item) {
@@ -453,6 +466,23 @@ class ListViewDisplay
         return formLetter::LVSmarty();
     }
     // END STIC-Custom
+
+    
+    // STIC-Custom 20250715 JCH - Add "Add to Signature Process" link
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+    /**
+     * Add to Signature process Link and popupHtml, in list view
+     *
+     * @return string HTML
+     */
+    protected function buildSignatureLinkAndPopupHtml()
+    {
+        require_once('modules/stic_Signatures/SignaturePopup.php');
+        SelectSignatureTemplate::LVPopupHtml($this->seed->module_name);
+        return SelectSignatureTemplate::LVSmarty();
+    }
+    // END-Custom
+
 
     /**
      * Builds the massupdate link
