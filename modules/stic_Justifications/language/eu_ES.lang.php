@@ -58,6 +58,6 @@ $mod_strings = array(
     'LBL_SUBGROUP' => 'Azpitaldea',
     'LBL_ACCOUNT' => 'Kontua',
     'LBL_SUBACCOUNT' => 'Azpikontua',
-    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'La justificación está en estado "Enviada" y no se puede modificar.'
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'La justificación está en estado "Presentada" y no se puede modificar.'
 );
 ?>
