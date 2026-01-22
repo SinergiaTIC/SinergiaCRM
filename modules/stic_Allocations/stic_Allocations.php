@@ -87,47 +87,16 @@ class stic_Allocations extends Basic
         $isValidated = filter_var($this->validated, FILTER_VALIDATE_BOOLEAN);
         // If record is blocked, no updates are allowed
         if ($tempFetchedRow && $tempFetchedRow['blocked'] && $isBlocked) {
-            if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                // This is an AJAX request
-                $errorMsg = $allocationsModStrings['LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED'];
-                $jsMsg = json_encode($errorMsg);
-
-                // 2. Output a script to alert the user
-                echo "<script>alert($jsMsg);</script>";
-                echo "<script>location.reload();</script>";
-
-                // 4. Stop execution
-                exit();
-                }
-            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED'] . '</div>');
+            $this->showError('LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED');
             return false;
         }
-
-
         
         // Calculate amount 
         $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_allocations);
         if (empty($paymentBean->{$this->payment_amount_field})) {
             // validate payment field needed is filled
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE']);
-            if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                $errorMsg = $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'];
-                $jsMsg = json_encode($errorMsg);
-                // 2. Output a script to alert the user
-                echo "<script>alert($jsMsg);</script>";
-                echo "<script>location.reload();</script>";
-                // 4. Stop execution
-                exit();
-            }
-            if (!empty($_REQUEST['relate_to'])) {
-                $errorMsg = $allocationsModStrings['LBL_PAYMENT_FIELD_NOT_FOUND'];
-                $jsMsg = json_encode($errorMsg);
-                // 2. Output a script to alert the user
-                echo "<script>alert($jsMsg);</script>";
-                exit();
-            }
-
-            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_ALLOCATION_NOT_COMPATIBLE'] . '</div>');
+            $this->showError('LBL_ALLOCATION_NOT_COMPATIBLE');
             return false;
         }
         else {
@@ -138,6 +107,17 @@ class stic_Allocations extends Basic
         $newAmount = SticUtils::unformatDecimal($this->amount);
         $amountChanged = ($oldAmount !== $newAmount); 
 
+        $validatedBeforeSave = $tempFetchedRow['validated'] ?? false;
+        if($validatedBeforeSave && !$isValidated) {
+            // Allocation is being un-validated, check if there are justifications linked to it
+            $hasBlockedJustifications = stic_JustificationsUtils::allocationHasBlockedJustifications($this);
+            if ($hasBlockedJustifications) {
+                $this->showError('LBL_CANNOT_UNVALIDATE_ALLOCATION_WITH_BLOCKED_JUSTIFICATIONS');
+                return false;
+            }
+        }
+
+
         // Save the bean
         parent::save($check_notify);
 
@@ -146,7 +126,6 @@ class stic_Allocations extends Basic
         //     stic_AllocationsUtils::updatePayment($this);
         // }
 
-        $validatedBeforeSave = $tempFetchedRow['validated'] ?? false;
         if ($isValidated && !$validatedBeforeSave) {
             // Allocation has been validated now
             stic_JustificationsUtils::createJustificationsFromAllocation($this); 
@@ -230,5 +209,31 @@ class stic_Allocations extends Basic
 
         stic_AllocationsUtils::updatePayment($paymentId);
 
+    }
+
+
+
+    protected function showError($labelId) {
+        
+        global $current_language;
+        $allocationsModStrings = return_module_language($current_language, 'stic_Allocations'); // can not be $mod_strings because of different contexts (specially inline edition)
+
+        if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+            $errorMsg = $allocationsModStrings[$labelId];
+            $jsMsg = json_encode($errorMsg);
+            // 2. Output a script to alert the user
+            echo "<script>alert($jsMsg);</script>";
+            echo "<script>location.reload();</script>";
+            // 4. Stop execution
+            exit();
+        }
+        if (!empty($_REQUEST['relate_to'])) {
+            $errorMsg = $allocationsModStrings[$labelId];
+            $jsMsg = json_encode($errorMsg);
+            // 2. Output a script to alert the user
+            echo "<script>alert($jsMsg);</script>";
+            exit();
+        }
+        SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings[$labelId] . '</div>');
     }
 }

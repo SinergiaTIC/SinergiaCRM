@@ -85,4 +85,5 @@ $mod_strings = array(
     'LBL_BLOCKED_ALLOCATION_CANNOT_BE_MODIFIED' => 'Imputazio hau blokeatuta dago eta ezin da aldatu.',
     'LBL_ALLOCATION_NOT_COMPATIBLE' => 'Ordainketak ordainketa zenbateko eremuarekin bateragarria ez den imputazioa du',
     'LBL_PAYMENT_FIELD_NOT_FOUND' => 'Ordainketa zenbateko eremua ez dago beteta',
+    'LBL_CANNOT_UNVALIDATE_ALLOCATION_WITH_BLOCKED_JUSTIFICATIONS' => 'Imputazio hau desbalioztatu ezin da, justifikazio blokeatuak dituelako.',
 );

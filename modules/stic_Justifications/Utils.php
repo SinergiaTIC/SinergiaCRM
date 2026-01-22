@@ -324,4 +324,20 @@ class stic_JustificationsUtils {
         return $endResult;
     }
 
+    public static function allocationHasBlockedJustifications($allocation)
+    {
+        // retrieve all justifications linked to the allocation
+        $justificationBeans = array();
+        $linkName = 'stic_allocations_stic_justifications';
+        if ($allocation->load_relationship($linkName)) {
+            $justificationBeans = $allocation->$linkName->getBeans();
+        }
+        // check if any justification is blocked
+        foreach ($justificationBeans as $justificationBean) {
+            if ($justificationBean->blocked) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
