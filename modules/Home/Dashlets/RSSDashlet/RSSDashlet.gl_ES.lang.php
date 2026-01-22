@@ -43,12 +43,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['RSSDashlet'] = array(
-    'LBL_TITLE' => 'Fuentes de Noticias',
-    'LBL_DESCRIPTION' => 'Fuentes de Noticias',
+    'LBL_TITLE' => 'Fontes de Noticias',
+    'LBL_DESCRIPTION' => 'Fontes de Noticias',
     'LBL_SAVING' => 'Analizando...',
     'LBL_SAVED' => 'Completado',
     'LBL_CONFIGURE_TITLE' => 'Título',
     'LBL_CONFIGURE_HEIGHT' => 'Altura (1 - 300)',
     'LBL_CONFIGURE_RSSURL' => 'Url RSS',
-    'ERR_LOADING_FEED' => 'Falló la carga la fuente RSS',
+    'ERR_LOADING_FEED' => 'Fallou a carga a fonte RSS',
 );
