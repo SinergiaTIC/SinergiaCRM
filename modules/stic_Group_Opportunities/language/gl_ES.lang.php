@@ -46,6 +46,7 @@ $mod_strings = array(
     'LBL_REMOVE' => 'Desvincular',
     'LBL_ASCENDING' => 'Ascendente',
     'LBL_DESCENDING' => 'Descendente',
+
     'LBL_LIST_FORM_TITLE' => 'Lista de Organizacións subvencionadas',
     'LBL_MODULE_NAME' => 'Organizacións subvencionadas',
     'LBL_MODULE_TITLE' => 'Organizacións subvencionadas',

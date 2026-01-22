@@ -138,8 +138,8 @@ $mod_strings = array(
     'LBL_LOG_ENTRIES_BLOCKEDD_TITLE' => 'Destinatarios excluidos por enderezo ou dominio',
     'LBL_SURVEYRESPONSES_CAMPAIGNS_FROM_SURVEYRESPONSES_TITLE' => 'Respostas á enquisas',
     'LBL_CAMPAIGN_SURVEY' => 'Enquisa',
-    
-    //erro messages.
+
+    //error messages.
     'ERR_SENDING_NOW' => 'As mensaxes están sendo enviados, por favor inténteo de novo máis tarde.',
 
     'LBL_TRACK_ROI_BUTTON_LABEL' => 'Ver ROI',
@@ -262,8 +262,8 @@ $mod_strings = array(
     'LBL_TEST_EMAILS_SENT' => 'Probar Emails Enviados',
     'LBL_USERS_CANNOT_OPTOUT' => 'Os Usuarios de Sistema non poden optar por non recibir emails.',
     'LBL_ELECTED_TO_OPTOUT' => 'Escolleu optar por non recibir emails.',
-    'LBL_CONFIRM_OPTOUT' => "Confirme que non desexa recibir máis emails pulsando %0.",
-    'LBL_CONFIRM_OPTOUT_HERE' => "aquí",
+    'LBL_CONFIRM_OPTOUT' => 'Confirme que non desexa recibir máis emails pulsando %0.',
+    'LBL_CONFIRM_OPTOUT_HERE' => 'aquí',
     'LBL_COPY_OF' => 'Copia de ',
     'LBL_SAVED_SEARCH' => 'Buscas e Deseño Gardados',
     //email setup wizard

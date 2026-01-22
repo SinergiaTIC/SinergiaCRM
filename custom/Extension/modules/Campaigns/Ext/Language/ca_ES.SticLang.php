@@ -69,6 +69,7 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'Remitent (nom)';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitent (adreça)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Respondre a (nom)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Envia una notificació a:';
 $mod_strings['LBL_MSG_TYPE'] = 'Tipus';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla ha de ser de tipus SMS i pot incloure camps del registre associat a la notificació (l'esdeveniment o la subvenció).";
@@ -81,6 +82,9 @@ $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificació s'envi
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correu electrònic ha de ser del tipus 'Notificació' i s'hi poden incloure camps del registre associat a la notificació (l'esdeveniment o la subvenció)."; 
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Compte de correu que es farà servir per enviar la notificació. Es pot configurar a l'apartat 'Correu electrònic sortint' de l'àrea d'Adminstració.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Bústia de correu on rebre els missatges d'error que es puguin produir en l'enviament. Es pot configurar a l'apartat 'Correu electrònic entrant' de l'àrea d'Administració.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = "Es crearà automàticament una llista de públic objectiu d'acord amb l'opció seleccionada i s'afegirà a la notificació.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = "S'ha produït un error al crear la llista de públic objectiu.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = "S'ha creat la següent llista de públic objectiu: ";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
 $mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = "En desar la notificació els missatges a enviar s'afegiran automàticament a la cua d'enviament.";
