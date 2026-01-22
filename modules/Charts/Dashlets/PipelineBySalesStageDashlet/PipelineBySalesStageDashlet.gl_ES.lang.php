@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['PipelineBySalesStageDashlet'] = array(
-    'LBL_TITLE' => 'Proceso por Etapa de Ventas',
-    'LBL_DESCRIPTION' => 'Gráfico de Barras Verticales de Proceso por Etapa de Ventas',
+    'LBL_TITLE' => 'Proceso por Etapa de Vendas',
+    'LBL_DESCRIPTION' => 'Gráfico de Barras Verticais de Proceso por Etapa de Vendas',
     'LBL_REFRESH' => 'Actualizar Gráfico'
 );
