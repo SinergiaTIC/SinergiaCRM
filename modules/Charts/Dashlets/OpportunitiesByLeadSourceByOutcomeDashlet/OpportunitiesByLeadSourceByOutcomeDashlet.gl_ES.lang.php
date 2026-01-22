@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['OpportunitiesByLeadSourceByOutcomeDashlet'] = array(
-    'LBL_TITLE' => 'Todas as Oportunidades por Toma de Contacto por Resultado',
-    'LBL_DESCRIPTION' => 'Gráfico de barras horizontais de Oportunidades por Orixe e Resultado',
+    'LBL_TITLE' => 'Todas las Oportunidades por Toma de Contacto por Resultado',
+    'LBL_DESCRIPTION' => 'Gráfico de barras horizontales de Oportunidades por Origen y Resultado',
     'LBL_REFRESH' => 'Actualizar Gráfico'
 );
