@@ -160,16 +160,6 @@ array(
                         'label' => 'LBL_BLOCKED',
                     ),
                 ),
-                // 2 => array(
-                //     0 => array(
-                //         'name' => 'allocated_percentage',
-                //         'label' => 'LBL_ALLOCATED_PERCENTAGE',
-                //     ),
-                //     1 => array(
-                //         'name' => 'justified_percentage',
-                //         'label' => 'LBL_JUSTIFIED_PERCENTAGE',
-                //     ),
-                // ),
                 3 => array(
                     0 => array(
                         'name' => 'tax_withholding',

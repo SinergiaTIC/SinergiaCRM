@@ -309,8 +309,6 @@ function checkPCContactOrAccount() {
  * Callback function after selecting a payment commitment to copy from
  */
 function setReturnAndCopyProposals(popupReplyData) {
-  console.log("callback");
-  debugger;
   var obj = {
     action: "copyPCProposals",
     module: "stic_Payment_Commitments",
@@ -319,7 +317,6 @@ function setReturnAndCopyProposals(popupReplyData) {
     record: window.document.forms["DetailView"].record.value,
     originPC: popupReplyData.name_to_value_array.originalPC,
   };
-  console.log(obj);
 
   var url = "?index.php&" + $.param(obj);
   location.href = url;
@@ -329,7 +326,6 @@ function setReturnAndCopyProposals(popupReplyData) {
  * Callback function after selecting a payment commitment to copy from, from the list view
  */
 function setReturnAndMassCopyProposals(popupReplyData) {
-    debugger;
     sugarListView.get_checks();
     if(sugarListView.get_checks_count() < 1) {
         alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));

@@ -149,17 +149,7 @@ function checkAmountInEditView() {
   
 }
 
-function addAmountInEditViewAlert() {
-  let amount =  $("#amount").val().replace(/\n/g, "");
-  let alertMessage = SUGAR.language.get("stic_Payments", "LBL_ALLOCATED_AMOUNT_ALERT").replace("{amount}", amount);
-  let alertDiv = `<div class="alert alert-info" role="alert" id="allocatedAmountAlertEditView" style="margin-top:10px;">${alertMessage}</div>`;
-console.log('pppppp');
-
-
-}
-
 function checkAmountInDetailView() {
-  let amount =  $("#amount").text().replace(/\n/g, "");
 
   var allocated = $("[field='allocated'] input").is(":checked");
   if (allocated) {
@@ -169,13 +159,8 @@ function checkAmountInDetailView() {
 
 function addAmountInDetailViewAlert() {
   let alertMessage = SUGAR.language.get("stic_Payments", "LBL_ALLOCATED_AMOUNT_ALERT");
-  let alertDiv = `<div class="alert alert-info" role="alert" id="allocatedAmountAlertDetailView" style="margin-top:10px;">${alertMessage}</div>`;
-  // if ($("#allocatedAmountAlertDetailView").length == 0) {
-  //   $("#detail_header").after(alertDiv);
-  // }
   const targetNode = document.querySelector('[field="amount"]');
   var observer = new MutationObserver(function(mutations) {
-    debugger;
     // check if any added node is a form
     mutations.forEach(function(mutation) {
       mutation.addedNodes.forEach(function(addedNode) {
