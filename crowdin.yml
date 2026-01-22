@@ -25,6 +25,9 @@ files:
 
   - source: 'modules/Charts/Dashlets/PipelineBySalesStageDashlet/PipelineBySalesStageDashlet.es_ES.lang.php'
     translation: '/modules/Charts/Dashlets/PipelineBySalesStageDashlet/PipelineBySalesStageDashlet.%locale_with_underscore%.lang.php'
+  
+  - source: 'modules/Home/Dashlets/ChartsDashlet/ChartsDashlet.es_ES.lang.php'
+    translation: '/modules/Home/Dashlets/ChartsDashlet/ChartsDashlet.%locale_with_underscore%.lang.php'
 
   - source: 'modules/Home/Dashlets/InvadersDashlet/InvadersDashlet.es_ES.lang.php'
     translation: '/modules/Home/Dashlets/InvadersDashlet/InvadersDashlet.%locale_with_underscore%.lang.php'
