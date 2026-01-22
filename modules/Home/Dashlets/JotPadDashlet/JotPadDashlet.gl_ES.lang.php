@@ -46,10 +46,10 @@ $defaultText = "";
 $dashletStrings['JotPadDashlet'] = array(
     'LBL_TITLE' => 'Notas Rápidas',
     'LBL_DESCRIPTION' => 'Un dashlet para tomar notas',
-    'LBL_SAVING' => 'Gardando nota...',
-    'LBL_SAVED' => 'Gardado',
+    'LBL_SAVING' => 'Guardando nota...',
+    'LBL_SAVED' => 'Guardado',
     'LBL_CONFIGURE_TITLE' => 'Título',
     'LBL_CONFIGURE_HEIGHT' => 'Altura (1 - 300)',
-    'LBL_DBLCLICK_HELP' => 'Faga doble clic abaixo para Editar.',
+    'LBL_DBLCLICK_HELP' => 'Haga doble clic abajo para Editar.',
     'LBL_DEFAULT_TEXT' => $defaultText,
 );
