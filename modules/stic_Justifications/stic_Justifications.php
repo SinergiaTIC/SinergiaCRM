@@ -88,6 +88,7 @@ class stic_Justifications extends Basic
 
         if ($previousState !== 'submitted' && $currentState === 'submitted') {
             stic_JustificationsUtils::blockRelatedAllocation($this);
+            stic_JustificationsUtils::blockRelatedPayment($this);
         }
         $oldAmount = SticUtils::unformatDecimal($tempFetchedRow['justified_amount'] ?? 0);
 

@@ -35,7 +35,7 @@ switch (viewType()) {
 
     checkBlockedJustification();
     // add observer for blocked changes
-    $("form").on("change", "#status", function () {
+    $("form").on("change", "#blocked", function () {
       checkBlockedJustification();
     });
     break;

@@ -22,6 +22,7 @@
  */
 
 require_once 'SticInclude/Utils.php';
+require_once 'modules/stic_Payments/Utils.php';
 
 class stic_JustificationsUtils {
 
@@ -32,6 +33,18 @@ class stic_JustificationsUtils {
             stic_AllocationsUtils::blockAllocation($allocationBean);
         }
     }
+
+    public static function blockRelatedPayment($justification) {
+        $allocationBean = BeanFactory::getBean('stic_Allocations', $justification->stic_alloc8c71cations_ida);
+        if ($allocationBean) {
+            $paymentBean = BeanFactory::getBean('stic_Payments', $allocationBean->stic_payments_stic_allocations);
+            if ($paymentBean) {
+                stic_PaymentsUtils::blockPayment($paymentBean);
+            }
+        }
+
+    }
+
     public static function updateRelatedOpportunity($opportunityId) {
         $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
         if ($opportunity) {
