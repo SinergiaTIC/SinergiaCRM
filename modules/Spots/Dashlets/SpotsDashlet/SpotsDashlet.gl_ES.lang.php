@@ -43,14 +43,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['SpotsDashlet'] = array(
-    'LBL_TITLE' => 'Análisis dinámico',
-    'LBL_DESCRIPTION' => 'Informe de puntos de sus datos',
-    'LBL_SAVING' => 'Guardando análisis dinámico...',
-    'LBL_SAVED' => 'Guardado',
+    'LBL_TITLE' => 'Análise dinámico',
+    'LBL_DESCRIPTION' => 'Informe de puntos dos seus datos',
+    'LBL_SAVING' => 'Gardando análise dinámico...',
+    'LBL_SAVED' => 'Gardado',
     'LBL_CONFIGURE_TITLE' => 'Titulo',
     'LBL_SPOTS_TO_LOAD' => 'Puntos para cargar',
-    'LBL_NO_SPOTS_SELECTED' => 'No hay puntos seleccionados para mostrar',
-    'LBL_SPOTS_POINTED_DELETED' => 'Este spot se ha eliminado',
+    'LBL_NO_SPOTS_SELECTED' => 'Non hai puntos seleccionados para mostrar',
+    'LBL_SPOTS_POINTED_DELETED' => 'Este spot eliminouse',
     'LBL_SHOW_UI' => 'Mostrar interfaz de usuario',
-    'LBL_NAME' => 'Nombre',
+    'LBL_NAME' => 'Nome',
 );
