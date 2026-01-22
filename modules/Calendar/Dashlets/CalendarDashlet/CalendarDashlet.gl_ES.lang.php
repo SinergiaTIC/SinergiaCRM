@@ -43,11 +43,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['CalendarDashlet'] = array(
-    'LBL_TITLE' => 'O meu Calendario',
+    'LBL_TITLE' => 'O Meu Calendario',
     'LBL_DESCRIPTION' => 'Dashlet de Calendario',
     'LBL_CONFIGURE_TITLE' => 'Titulo',
     'LBL_CONFIGURE_VIEW' => 'Ver',
-    'LBL_SAVE_BUTTON_LABEL' => 'Guardar',
+    'LBL_SAVE_BUTTON_LABEL' => 'Gardar',
 
     'LBL_VIEW_DAY' => 'Dia',
     'LBL_VIEW_WEEK' => 'Semana',
