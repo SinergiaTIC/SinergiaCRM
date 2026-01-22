@@ -373,6 +373,31 @@ class WizardStep2 {
             },
 
             /**
+             * Retorna la descripción de la condición de una validación
+             * @param {AWF_FieldValidation} validation 
+             * @returns {string}
+             */
+            getConditionLabel(validation) {
+              if (!validation.condition_field) return '';
+              
+              // Obtenemos la etiqueta del campo
+              const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(validation.condition_field);
+              const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : validation.condition_field;
+
+              // Obtenemos el valor formateado
+              let val = validation.condition_value;
+              if (fieldDef && (fieldDef.type == 'bool' || fieldDef.type == 'checkbox' || fieldDef.subtype_in_form == 'select_checkbox')) {
+                if (val == '1' || val == 'true') {
+                  val = utils.translate('LBL_YES');
+                } else if (val == '0' || val == 'false') {
+                  val = utils.translate('LBL_NO');
+                }
+              }
+              
+              return `${label} = ${val}`;
+            },
+
+            /**
              * Retorna un array de objetos {label, value} para mostrar en la tabla de parámetros
              */
             getValidationParamsForTable(validation) {
@@ -479,6 +504,9 @@ class WizardStep2 {
             field: null,                            // El campo al que pertenece la validación
             dataBlock: null,                        // El bloque de datos del campo
 
+            applyCondition: false,                  // Indica si se aplica condición
+            _activeConditionFieldDef: null,         // Definición del campo de condición activo
+
             get formConfig() { return window.alpineComponent.formConfig; },
 
             /**
@@ -495,6 +523,88 @@ class WizardStep2 {
             },
             get fieldLabel() { return utils.fromFieldLabelText((this.field?.label ?? "") || (this.field?.text_original ?? "")); },
             get subtitle() { return `${this.dataBlock?.text} » ${this.fieldLabel}`; },
+
+            get availableFieldsInForm() { 
+              const currentFieldName = this.dataBlock?.getFieldInputName(this.field);
+              return this.formConfig?.getAllFieldsInForm(currentFieldName) ?? []; 
+            },
+            get activeConditionFieldDef() { return this._activeConditionFieldDef; },
+            
+            get isBooleanCondition() {
+              const def = this._activeConditionFieldDef;
+              if (!def) return false;
+              return def.type === 'bool' || def.type === 'checkbox' || 
+                     def.subtype_in_form === 'select_checkbox' || def.subtype_in_form === 'select_switch';
+            },
+
+            get conditionInputType() {
+              const def = this._activeConditionFieldDef;
+              if (!def) return 'text';
+              if (def.type_in_form === 'number') return 'number';
+              if (def.type_in_form === 'date') {
+                if (def.subtype_in_form === 'date_time') return 'time';
+                if (def.subtype_in_form === 'date_datetime') return 'datetime-local';
+                return 'date';
+              }
+              return 'text';
+            },
+
+            init() {
+              Alpine.effect(() => {
+                const fieldName = this.validation?.condition_field;
+                this.updateActiveConditionFieldDef(fieldName);
+              });
+              
+              Alpine.effect(() => {
+                if (this.applyCondition === false && this.validation) {
+                  if (this.validation.condition_field !== '' || this.validation.condition_value !== '') {
+                    this.validation.condition_field = '';
+                    this.validation.condition_value = '';
+                    this._activeConditionFieldDef = null;
+                  }
+                }
+              });
+
+              Alpine.effect(() => {
+                const validatorName = this.validation?.validator;
+                if (validatorName && (!this.validation.message || this.validation.message === '')) {
+                  const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                  if (def) {
+                    this.validation.message = def.defaultErrorMessage ?? '';
+                  }
+                }
+              });
+            },
+
+            updateActiveConditionFieldDef(fieldName) {
+              if (!fieldName) {
+                this._activeConditionFieldDef = null;
+              } else {
+                const newDef = this.formConfig.getFieldDefinitionByHtmlName(fieldName);
+                if (this._activeConditionFieldDef !== newDef) {
+                  this._activeConditionFieldDef = newDef;
+                  // Reactivar el valor si es un select para que refresque las opciones
+                  if (this._activeConditionFieldDef && this._activeConditionFieldDef.type_in_form === 'select') {
+                    const currentValue = this.validation.condition_value;
+                    if (currentValue) {
+                      setTimeout(() => { 
+                        if(this.validation) this.validation.condition_value = currentValue; 
+                      }, 50);
+                    }
+                  }
+                }
+              }
+            },
+
+            syncConditionState() {
+              if (this.validation && this.validation.condition_field) {
+                this.applyCondition = true;
+                this.updateActiveConditionFieldDef(this.validation.condition_field);
+              } else {
+                this.applyCondition = false;
+                this._activeConditionFieldDef = null;
+              }
+            },
 
             /**
              * Abre el Modal para Crear una validación
@@ -1017,62 +1127,6 @@ class WizardStep2 {
         if (!this.validation.validator) return null;
         return utils.getDefinedActions().find(a => a.name === this.validation.validator);
       },
-      get activeConditionFieldDef() { return this._activeDef;},
-      get conditionInputType() {
-        const def = this._activeDef;
-        if (!def) return 'text';
-        if (def.type_in_form === 'number') return 'number';
-        if (def.type_in_form === 'date') {
-          if (def.subtype_in_form === 'date_time') return 'time';
-          if (def.subtype_in_form === 'date_datetime') return 'datetime-local';
-          return 'date';
-        }
-        return 'text';
-      },
-
-      init() {
-        this.$watch('store.validation', (newVal) => {
-          if (newVal) this.syncState();
-        });
-        this.$watch('validation.condition_field', (newVal) => {
-          this.updateActiveDef(newVal);
-        });        
-        this.$watch('applyCondition', (newValue, oldValue) => {
-          if (!newValue) {
-            this.validation.condition_field = '';
-            this.validation.condition_value = '';
-            this._activeDef = null;
-          }
-        });
-        this.$watch('validation.validator', (newName) => {
-          if (!newName) return;
-          if (!this.validation.message) {
-            this.validation.message = this.selectedValidatorDefinition?.defaultErrorMessage ?? '';
-          }
-        });
-
-        // Carga inicial
-        if (this.validation) this.syncState();
-      },
-      syncState() {
-        const hasCondition = !!(this.validation.condition_field && this.validation.condition_field !== '');
-        this.applyCondition = hasCondition;
-        this.updateActiveDef(this.validation.condition_field);
-      },
-      updateActiveDef(fieldName) {
-        if (!fieldName) {
-          this._activeDef = null;
-        } else {
-          this._activeDef = this.formConfig.getFieldDefinitionByHtmlName(fieldName);
-          if (this._activeDef && this._activeDef.type_in_form === 'select') {
-            const currentValue = this.validation.condition_value;
-            if (currentValue) {
-              // Pequeña espera para forzar reactividad (damos tiempo a que se renderice el select)
-              setTimeout(() => { this.validation.condition_value = currentValue; }, 50);
-            }
-          }
-        }
-      },
     };
   }
 
@@ -1225,7 +1279,13 @@ class WizardStep3 {
             get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm() ?? []; },
             
             get activeConditionFieldDef() { return this._activeConditionFieldDef; },
-            
+            get isBooleanCondition() {
+              debugger;
+              const def = this.activeConditionFieldDef;
+              if (!def) return false;
+              return def.type === 'bool' || def.type === 'checkbox' || 
+                     def.subtype_in_form === 'select_checkbox' || def.subtype_in_form === 'select_switch';
+            },
             get conditionInputType() {
                 const def = this._activeConditionFieldDef;
                 if (!def) return 'text';
@@ -1737,6 +1797,31 @@ class WizardStep3 {
         this.actions.splice(index, 1);
         this.actions.splice(index + 1, 0, actionToMove);
       },
+
+      /**
+       * Genera la etiqueta descriptiva de la condición de una acción
+       * @param {AWF_Action} action La acción
+       * @returns {string}
+       */
+      getActionConditionLabel(action) {
+        if (!action.condition_field) return '';
+        
+        // Obtenemos la etiqueta del campo
+        const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(action.condition_field);
+        const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : action.condition_field;
+        
+        // Obtenemos el valor formateado
+        let val = action.condition_value;
+        if (fieldDef && (fieldDef.type == 'bool' || fieldDef.type == 'checkbox' || fieldDef.subtype_in_form == 'select_checkbox')) {
+          if (val == '1' || val == 'true') {
+            val = utils.translate('LBL_YES');
+          } else if (val == '0' || val == 'false') {
+            val = utils.translate('LBL_NO');
+          }
+        }
+
+        return `${label} = ${val}`;
+      }
     };
   }
 
@@ -1797,32 +1882,6 @@ class WizardStep3 {
           }, mode, true);
       },
       
-    };
-  }
-
-  static addActionFlowxData(initial_formConfig) {
-    return {
-      formConfig: initial_formConfig,
-
-      creatingAction: false,
-
-      newAction: {flow:''},
-      newDataBlock: {module:'', text:''},
-      get isValid() { 
-        return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
-      },
-
-      handleAddDatablockModule() {
-        this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
-        this.creatingDataBcreatingActionlock = false;
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
-      },
-
-      init() {
-        if (this.formConfig && !this.formConfig.data_blocks.some(b => b.module!='')) {
-          this.creatingAction = true;
-        }
-      },
     };
   }
 }

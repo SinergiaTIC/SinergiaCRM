@@ -30,12 +30,27 @@
                         <div :id="action.id+'_Header'" class="mt-1 mb-1 pe-2 btn accordion-header accordion-button p-0 align-items-center" :class="{'collapsed': !opened}">
                             <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
                                  data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
-                                <div class="fw-bold text-truncate" style="max-width: 30%;">
+                                <!-- Condition -->
+                                <template x-if="action.condition_field">
+                                    <span class="badge rounded-pill bg-warning-subtle text-dark me-2" :title="utils.translate('LBL_ACTION_CONDITION_TEXT')">
+                                        <i class="suitepicon suitepicon-action-confirm"></i>
+                                        <span x-text="getActionConditionLabel(action)">
+                                    </span>
+                                </template>
+                                <!-- Action Text -->
+                                <div class="fw-bold text-truncate">
                                     <span :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></span>
                                 </div>
+                                <!-- Title -->
+                                <div class="text-muted small text-truncate px-2" style="flex: 1; text-align: end;">
+                                    <span x-text="action.title"></span>
+                                </div> 
+                                <!-- Description -->
+                                <!--
                                 <div class="text-muted small text-truncate px-2" style="flex: 1; text-align: center;">
                                     <span x-text="action.description"></span>
-                                </div>
+                                </div> 
+                                -->
                             </div>
                             <!-- Buttons -->
                             <template x-if="showAllActions">
@@ -78,7 +93,14 @@
                                     <tbody>
                                         <tr>
                                             <!-- Name -->
-                                            <td><strong :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></strong></td>
+                                            <td>
+                                                <strong :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></strong>
+                                                <template x-if="action.condition_field">
+                                                    <div class="small text-muted fst-italic">
+                                                        <span x-text="utils.translateForFieldLabel('LBL_CONDITION_SUMMARY') + ' ' + getActionConditionLabel(action)"></span>
+                                                    </div>
+                                                </template>
+                                            </td>
                                             <!-- Category -->
                                             <td x-text="action.category_in_formText"></td>
                                             <!-- Parameters -->
@@ -245,8 +267,16 @@
                                         <template x-if="$store.actionEditor.applyCondition && $store.actionEditor.action.condition_field != '' && $store.actionEditor.activeConditionFieldDef">
                                             <div class="col-3">
                                             <label for="action_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_VALUE')"></label>
+                                            <!-- Boolean -->
+                                            <template x-if="$store.actionEditor.isBooleanCondition">
+                                                <select id="action_ConditionValue" class="form-select" x-model="$store.actionEditor.action.condition_value">
+                                                    <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                    <option value="1" x-text="utils.translate('LBL_YES')"></option>
+                                                    <option value="0" x-text="utils.translate('LBL_NO')"></option>
+                                                </select>
+                                            </template>
                                             <!-- Select -->
-                                            <template x-if="$store.actionEditor.activeConditionFieldDef?.type_in_form == 'select'">
+                                            <template x-if="!$store.actionEditor.isBooleanCondition && $store.actionEditor.activeConditionFieldDef?.type_in_form == 'select'">
                                                 <select id="action_ConditionValue" class="form-select" x-model="$store.actionEditor.action.condition_value">
                                                 <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                                 <template x-for="opt in $store.actionEditor.activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
@@ -255,7 +285,7 @@
                                                 </select>
                                             </template>
                                             <!-- Text -->
-                                            <template x-if="$store.actionEditor.activeConditionFieldDef?.type_in_form != 'select'">
+                                            <template x-if="!$store.actionEditor.isBooleanCondition && $store.actionEditor.activeConditionFieldDef?.type_in_form != 'select'">
                                                 <input id="action_ConditionValue" :type="conditionInputType" class="form-control" x-model="$store.actionEditor.action.condition_value">
                                             </template>
                                             </div>

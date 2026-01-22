@@ -652,7 +652,7 @@
                                 <span x-text="store.getValidatorTitle(val.validator)"></span>
                                 <template x-if="val.condition_field">
                                   <div class="small text-muted fst-italic mt-1">
-                                    <span x-text="utils.translateForFieldLabel('LBL_CONDITION_SUMMARY') + ' ' + val.condition_field + ' = ' + val.condition_value""></span>
+                                    <span x-text="utils.translateForFieldLabel('LBL_CONDITION_SUMMARY') + ' ' + store.getConditionLabel(val)"></span>
                                   </div>
                                 </template>
                               </td>
@@ -727,37 +727,45 @@
                       <!-- Apply condition -->
                       <div class="col-3 form-switch">
                         <label for="validation_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_APPLY_CONDITION')"></label>
-                        <input class="form-check-input form-switch" type="checkbox" role="switch" id="validation_ApplyCondition" x-model="applyCondition"/>
+                        <input class="form-check-input form-switch" type="checkbox" role="switch" id="validation_ApplyCondition" x-model="store.applyCondition"/>
                       </div>
                       <!-- Condition field -->
-                      <template x-if="applyCondition">
+                      <template x-if="store.applyCondition">
                         <div class="col-4">
                           <label for="validation_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD')"></label>
-                          <select id="validation_ConditionField" x-bind:disabled="availableFieldsInForm.length<=1" class="form-select" 
+                          <select id="validation_ConditionField" x-bind:disabled="store.availableFieldsInForm.length<=1" class="form-select" 
                                   x-model="validation.condition_field" @change="validation.condition_value = ''">
                             <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                            <template x-for="field in availableFieldsInForm" :key="field.name">
+                            <template x-for="field in store.availableFieldsInForm" :key="field.name">
                               <option :value="field.name" x-text="field.text"></option>
                             </template>
                           </select>
                         </div>
                       </template>
                       <!-- Condition value -->
-                      <template x-if="applyCondition && validation.condition_field != '' && activeConditionFieldDef">
+                      <template x-if="store.applyCondition && validation.condition_field != '' && store.activeConditionFieldDef">
                         <div class="col-3">
                           <label for="validation_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_VALUE')"></label>
-                          <!-- Select -->
-                          <template x-if="activeConditionFieldDef?.type_in_form == 'select'">
+                          <!-- Boolean -->
+                          <template x-if="store.isBooleanCondition">
                             <select id="validation_ConditionValue" class="form-select" x-model="validation.condition_value">
                               <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                              <template x-for="opt in activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
+                              <option value="1" x-text="utils.translate('LBL_YES')"></option>
+                              <option value="0" x-text="utils.translate('LBL_NO')"></option>
+                            </select>
+                          </template>
+                          <!-- Select -->
+                          <template x-if="!store.isBooleanCondition && store.activeConditionFieldDef?.type_in_form == 'select'">
+                            <select id="validation_ConditionValue" class="form-select" x-model="validation.condition_value">
+                              <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                              <template x-for="opt in store.activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
                                 <option :value="opt.value" x-text="opt.text"></option>
                               </template>
                             </select>
                           </template>
                           <!-- Text -->
-                          <template x-if="activeConditionFieldDef?.type_in_form != 'select'">
-                            <input id="validation_ConditionValue" :type="conditionInputType" class="form-control" x-model="validation.condition_value">
+                          <template x-if="!store.isBooleanCondition && store.activeConditionFieldDef?.type_in_form != 'select'">
+                            <input id="validation_ConditionValue" :type="store.conditionInputType" class="form-control" x-model="validation.condition_value">
                           </template>
                         </div>
                       </template>

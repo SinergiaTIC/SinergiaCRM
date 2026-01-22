@@ -271,6 +271,7 @@ $mod_strings = array (
   'LBL_ACTION_PARAM_CRM_RECORD_RECORD' => 'Registro',
   'LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION' => 'Opción',
   'LBL_ACTION_PARAM_MISSING_MESSAGE' => 'Hay parámetros obligados sin valor. Revise la configuración de la acción y asigne valores a los parámetros requeridos antes de guardar.',
+  'LBL_ACTION_CONDITION_TEXT' => 'Esta acción solo se ejecutará si se cumple la condición',
   
   'LBL_LAYOUT_SETTINGS' => 'Configuración',
   'LBL_LAYOUT_FORM_DESIGN' => 'Diseño del formulario',
