@@ -23,13 +23,13 @@ $dashletData['TemplateSectionLineDashlet']['columns'] = array(
     'default' => true,
     'name' => 'name',
   ),
-  'grp' =>
-  array(
-    'type' => 'varchar',
-    'label' => 'LBL_GRP',
-    'width' => '10%',
-    'default' => true,
-  ),
+  // 'grp' =>
+  // array(
+  //   'type' => 'varchar',
+  //   'label' => 'LBL_GRP',
+  //   'width' => '10%',
+  //   'default' => true,
+  // ),
   'description' =>
   array(
     'type' => 'text',

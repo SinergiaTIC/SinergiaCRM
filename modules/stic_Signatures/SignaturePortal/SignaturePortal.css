@@ -1,0 +1,313 @@
+/**
+* This file is part of SinergiaCRM.
+* SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+* Copyright (C) 2013 - 2023 SinergiaTIC Association
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Affero General Public License version 3 as published by the
+* Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Affero General Public License along with
+* this program; if not, see http://www.gnu.org/licenses or write to the Free
+* Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+* 02110-1301 USA.
+*
+* You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+*/
+
+/*
+ * SticSign.css - This file contains CSS styles for the signature portal.
+ */
+
+/* Import Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Import handwritten fonts for text signature */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=Pacifico&family=Great+Vibes&family=Caveat&family=Indie+Flower&family=Sacramento&family=Shadows+Into+Light&family=Satisfy&display=swap');
+
+
+/* Base styles for the body and main elements */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5; /* A soft light gray */
+    color: #333;
+}
+
+/* Styles for the logo container in the header */
+.logo-container {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white background */
+    padding: 0.1rem; 
+    /* border-radius: 0.5rem; Rounded corners */
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
+    max-width: 100%;
+}
+
+/* Styles for the main portal container */
+.stic-container {
+    max-width: 900px;
+    min-height: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 1rem; /* More rounded borders */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Space between sections */
+    align-items: stretch; /* ensure children stretch to container width */
+}
+
+section.signed-area iframe {
+    min-height: 500px;
+    width: 100%;
+}
+
+/* Make all main portal sections use full width of the container and be responsive */
+.stic-container > section,
+.stic-container .document-area,
+.stic-container .signature-area,
+.stic-container .audit-trail-area,
+.stic-container .logs-area,
+.stic-container .otp-area,
+.stic-container .field-validation-area,
+.stic-container .signed-area,
+.stic-container .unnecessary-area {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure the scrollable content fills available width */
+.document-scroll-content {
+    width: 100%;
+}
+
+/* Make the canvas responsive inside the signature area; height controlled by JS */
+#signatureCanvas {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+}
+
+/* Center and wrap action buttons responsively */
+.signature-area .action-buttons,
+.stic-container .action-buttons {
+    width: 100%;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Styles for the document area */
+.document-area {
+    border: 1px solid #e2e8f0; /* Soft border color */
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    background-color: #fdfdfd; /* Base background for the area, content will have white */
+    line-height: 1.6;
+    /* box-shadow and background-color moved to .document-scroll-content */
+    position: relative; /* allow absolute positioning of the instruction message */
+}
+
+/* Styles for scrollable document content */
+.document-scroll-content {
+    max-height: 400px; /* Fixed maximum height for the document */
+    overflow-y: auto; /* Enables vertical scroll if content exceeds height */
+    padding-right: 1rem; /* Space for the scrollbar */
+    background-color: #ffffff; /* White background for document content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.30); /* Slight shadow for the content */
+    border-radius: 0;
+    padding: 1rem; /* Internal padding for the content */
+    border: .5px solid #777;
+}
+
+/* Styles for the signature area */
+.signature-area {
+    /* Added to center content (canvas and buttons) */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally centers child elements */
+    border: 1px solid #e2e8f0; /* Soft border color */
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    background-color: #fdfdfd;
+    line-height: 1.6;
+}
+
+/* Styles for the signature canvas */
+#signatureCanvas {
+    border: 2px dashed #93c5fd; /* Light blue dashed border */
+    background-color: #ffffff;
+    touch-action: none; /* Prevents browser scrolling when drawing */
+    max-width: 100%; /* Ensures it doesn't overflow the container */
+    height: 250px; /* Set fixed height for the canvas */
+    width: auto; /* Allow the width to be determined by the aspect ratio */
+    border-radius: 0.75rem;
+    cursor: crosshair; /* Cursor indicating drawing is possible */
+    display: block; /* Ensures auto margin works for centering if needed */
+    margin: 0 auto; /* Centers the canvas if its width is less than 100% */
+    transition: opacity 0.3s ease-in-out, cursor 0.3s ease-in-out; /* Smooth transition for disabled state */
+}
+
+/* Style for the canvas when disabled */
+#signatureCanvas.canvas-disabled {
+    opacity: 0.5; /* Reduces opacity to indicate it's disabled */
+    cursor: not-allowed; /* Changes cursor to indicate no interaction is possible */
+    pointer-events: none; /* Disables all mouse/touch events */
+}
+
+/* Styles for action buttons */
+.action-buttons button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Specific styles for the primary button (Save Signature) */
+.btn-primary {
+    background-color: #3b82f6; /* Vibrant blue */
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb; /* Darker blue on hover */
+}
+
+/* Specific styles for the secondary button (Clear) */
+.btn-secondary {
+    background-color: #e2e8f0; /* Light gray */
+    color: #4a5568; /* Dark gray text */
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e0; /* Slightly darker gray on hover */
+}
+
+/* Styles for disabled buttons */
+.action-buttons button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Styles for the audit trail area */
+.audit-trail-area {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    background-color: #fdfdfd;
+    min-height: 150px; /* Minimum height for the audit area */
+    overflow-y: auto; /* Allows scrolling if there are many records */
+}
+
+.audit-record {
+    padding: 0.75rem;
+    border-bottom: 1px dashed #e2e8f0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.audit-record:last-child {
+    border-bottom: none;
+}
+
+/* Styles for modal messages (success/warning) */
+.fixed.inset-0 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.otp-input, #validationFieldInput{
+    
+    height: 48px;
+    text-align: center;
+    border:3px solid #8d8c8c;
+    margin:5px;
+    font-weight: bolder;
+    font-size: large;
+}
+
+.otp-input{
+    width: 48px;
+    display: inline-block;
+}
+
+#validationFieldInput{
+    display: block;
+}
+
+/* Container styles for responsive layout */
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Solo aplicar max-width en pantallas grandes */
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+    }
+}
+
+/* Media queries for responsiveness (Tailwind handles most, but for fine adjustments) */
+@media (max-width: 768px) {
+    .stic-container {
+        margin: 1rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+    .document-area, .audit-trail-area, .signature-area { /* Include signature-area here as well */
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+    .action-buttons {
+        flex-direction: column; /* Stack buttons on mobile */
+        gap: 0.75rem;
+    }
+    .action-buttons button {
+        width: 100%; /* Full-width buttons */
+    }
+    .document-scroll-content {
+        max-height: 300px; /* Adjust height on mobile if necessary */
+    }
+}
+
+.signature-canvas-container canvas {
+    max-width: 100% !important;
+    height: auto !important;
+}
