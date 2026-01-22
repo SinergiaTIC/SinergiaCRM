@@ -1,0 +1,112 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+$module_name = 'stic_Signatures';
+$layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
+    'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
+    'order' => 900,
+    'sort_by' => 'name',
+    'sort_order' => 'asc',
+    'module' => 'SecurityGroups',
+    'refresh_page' => 1,
+    'subpanel_name' => 'default',
+    'get_subpanel_data' => 'SecurityGroups',
+    'add_subpanel_data' => 'securitygroup_id',
+    'title_key' => 'LBL_SECURITYGROUPS_SUBPANEL_TITLE',
+);
+
+$layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signature_log'] = array(
+    'order' => 100,
+    'module' => 'stic_Signature_Log',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE',
+    'get_subpanel_data' => 'stic_signatures_stic_signature_log',
+    'top_buttons' => array(
+        // 0 => array(
+        //     'widget_class' => 'SubPanelTopButtonQuickCreate',
+        // ),
+        // 1 => array(
+        //     'widget_class' => 'SubPanelTopSelectButton',
+        //     'mode' => 'MultiSelect',
+        // ),
+    ),
+);
+
+$layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signers'] = array(
+    'order' => 100,
+    'module' => 'stic_Signers',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNERS_FROM_STIC_SIGNERS_TITLE',
+    'get_subpanel_data' => 'function:getSticSignersForSignature',
+    // 'function_parameters' => array(
+    //     'import_function_file' => 'modules/stic_Signers/Utils.php',
+    // ),
+    'top_buttons' => array(
+        // 0 => array(
+        //     'widget_class' => 'SubPanelTopButtonQuickCreate',
+        // ),
+        // 1 => array(
+        //     'widget_class' => 'SubPanelTopSelectButton',
+        //     'mode' => 'MultiSelect',
+        // ),
+    ),
+);
+
+// Notifications subpanel
+$layout_defs['stic_Signatures']['subpanel_setup']['stic_campaigns_notification'] = array(
+    'order' => 100,
+    'module' => 'Campaigns',
+    'subpanel_name' => 'SticForNotifications',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'get_subpanel_data' => 'function:getNotificationsFromParent',
+    'function_parameters' => array(
+        'import_function_file' => 'custom/modules/Campaigns/SticUtils.php',
+        'parent_id' => $this->_focus->id,
+        'parent_type' => 'stic_Signatures',
+        'return_as_array' => false,
+    ),
+    'title_key' => 'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
+            'title' => 'LBL_NEW_NOTIFICATION',
+            'id'=> 'NEW_NOTIFICATION',
+            'additional_form_fields' => array(
+                'campaign_type' => 'Notification', // This will pre-populate the 'type' field
+            ),
+        ),
+        // 1 => array(
+        //     'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
+        //     'id' => 'NEW_MSG_NOTIFICATION',
+        //     'title' => 'LBL_NEW_MSG_NOTIFICATION',
+        //     'additional_form_fields' => array(
+        //         'campaign_type' => 'NotifMsg', // This will pre-populate the 'type' field
+        //         // 'another_field' => 'another_value', // You can add more here
+        //     ),
+        // ),
+    ),
+);
