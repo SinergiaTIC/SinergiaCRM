@@ -22,3 +22,6 @@
  */
 
 $mod_strings['ERROR_USER_INTERFACE'] = "S'ha produït un error i el contingut no es pot mostrar.";
+$mod_strings['LNK_NEW_RECORD'] = 'Crea una Secció de plantilla';
+$mod_strings['LNK_LIST'] = 'Mostra les Seccions de plantilla';
+$mod_strings['LNK_CAMPAIGN_LIST'] = 'Campanyes';

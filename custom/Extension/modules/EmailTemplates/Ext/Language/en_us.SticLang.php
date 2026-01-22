@@ -22,3 +22,6 @@
  */
 
 $mod_strings['ERROR_USER_INTERFACE'] = 'An error has occurred and the content cannot be displayed.';
+$mod_strings['LNK_NEW_RECORD'] = 'Create a Template Section';
+$mod_strings['LNK_LIST'] = 'View Template Sections';
+$mod_strings['LNK_CAMPAIGN_LIST'] = 'Campaigns';

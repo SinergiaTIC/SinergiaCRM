@@ -64,6 +64,9 @@ $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'From name';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'From address';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Reply to name';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Send notification to:';
+$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
+
 $mod_strings['LBL_MSG_TYPE'] = 'Type';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Template';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = 'The template must be of SMS type and may include fields from the record related to the notification (the event or the opportunity).';
@@ -76,9 +79,11 @@ $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "Notification will be s
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "The email template must be of type 'Notification' and can include fields from the record related to the notification (the event or the opportunity).";
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Email account that will be used to send the notification. It can be configured in the 'Outbound email' section of the Administration area.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive error messages that may occur after sending. It can be configured in the 'Inbound email' section of the Administration area.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = 'A target list will be automatically created based on the selection and it will be added to the notification.';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = 'An error occurred while creating the target list.';
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = 'The following target list has been created: ';
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving the notification the emails to be sent will be automatically added to the sending queue.';
-$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Include a link in the message to view the content in the browser';
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving the notification the emails to be sent will be automatically added to the sending queue.";
 $mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = "When saving the notification the messages to be sent will be automatically added to the sending queue.";
 
@@ -95,3 +100,4 @@ $mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'View template sections';
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convert message links to trackers';
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' tracking URLs have been created and the template content has been updated.';
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'No tracking URLs have been created.';
+$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Include a link in the message to view the content in the browser';

@@ -144,6 +144,14 @@ class stic_Messages extends Basic
     {
         global $current_user, $timedate;
 
+        // Allow send messages from no authenticated contexts as Signature Portal
+        if (empty($current_user->id)) {
+            // Get first admin active user
+            $adminUser = BeanFactory::getBean('Users');
+            $adminUser->retrieve_by_string_fields(array('is_admin' => 1, 'status' => 'Active'));
+            $current_user = $adminUser;
+        }
+
         $parentType = $parentType?? $this->parent_type;
         $parentId = $parentId ?? $this->parent_id;
 
