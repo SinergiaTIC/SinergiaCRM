@@ -144,19 +144,7 @@ class stic_Payments extends Basic
         $isAllocated = filter_var(($this->allocated ?? false), FILTER_VALIDATE_BOOLEAN);
         // If record is blocked, no updates are allowed
         if ($tempFetchedRow && $tempFetchedRow['blocked'] && $isBlocked) {
-            if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
-                // // This is an AJAX request
-                $errorMsg = $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'];
-                $jsMsg = json_encode($errorMsg);
-
-                // 2. Output a script to alert the user
-                echo "<script>alert($jsMsg);</script>";
-                echo "<script>location.reload();</script>";
-
-                // 4. Stop execution
-                exit();
-                }
-            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED'] . '</div>');
+            $this->showError('LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED');
             return false;
         }
 
@@ -172,6 +160,15 @@ class stic_Payments extends Basic
             $this->updateAllocationsFromPayment(true);
         }
 
+        // If changing from allocated to not allocated, delete allocations from payment
+        if (!empty($tempFetchedRow['allocated']) && $tempFetchedRow['allocated'] && !$isAllocated) {
+            $anyBlocked = stic_AllocationsUtils::paymentHasBlockedAllocations($this);
+            if ($anyBlocked) {
+                $this->showError('LBL_CANNOT_DEALLOCATE_PAYMENT_BLOCKED_ALLOCATIONS');
+                return false;
+            }
+        }
+
         
         // Call the generic save() function from the SugarBean class
         parent::save();
@@ -185,10 +182,6 @@ class stic_Payments extends Basic
         // If payment is allocated and any amount field has changed, update allocations from payment
         if (!empty($tempFetchedRow['allocated']) && $isAllocated && $anyamountChanged) {
             $hasValidatedAllocations = stic_AllocationsUtils::paymentHasValidatedAllocations($this);
-            if ($hasValidatedAllocations) {
-                // There are validated allocations, do not allow amount change
-                SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings['LBL_CANNOT_CHANGE_AMOUNT_ALLOCATED_PAYMENT_VALIDATED_ALLOCATIONS'] . '</div>');
-            }
             $this->updateAllocationsFromPayment(false);
             stic_PaymentsUtils::updateAllocationPercentage($this);
         }
@@ -326,5 +319,25 @@ class stic_Payments extends Basic
         }
 
         parent::call_custom_logic($event, $arguments);
+    }
+
+
+    protected function showError($labelId) {
+        
+        global $current_language;
+        $paymentsModStrings = return_module_language($current_language, 'stic_Payments'); // can not be $mod_strings because of different contexts (specially inline edition)
+
+        if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+            // // This is an AJAX request
+            $errorMsg = $paymentsModStrings[$labelId];
+            $jsMsg = json_encode($errorMsg);
+            // 2. Output a script to alert the user
+            echo "<script>alert($jsMsg);</script>";
+            echo "<script>location.reload();</script>";
+            // 4. Stop execution
+            exit();
+        }
+        SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings[$labelId] . '</div>');
+
     }
 }

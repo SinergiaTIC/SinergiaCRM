@@ -223,6 +223,8 @@ class stic_Allocations extends Basic
 
     public function mark_deleted($id) {
         $paymentId = $this->stic_payments_stic_allocations;
+        
+        stic_JustificationsUtils::removeJustificationsFromAllocation($this);
 
         parent::mark_deleted($id);
 

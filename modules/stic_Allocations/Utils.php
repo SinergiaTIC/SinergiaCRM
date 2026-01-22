@@ -135,23 +135,23 @@ class stic_AllocationsUtils {
         // delete each allocation
         foreach ($allocationBeans as $allocationBean) {
             $allocationBean->mark_deleted($allocationBean->id);
-            self::deleteJustificationsFromAllocation($allocationBean);
+            // self::deleteJustificationsFromAllocation($allocationBean);
         }
     }
 
-    public static function deleteJustificationsFromAllocation($allocationBean)
-    {
-        // retrieve all justifications linked to the allocation
-        $justificationBeans = array();
-        $linkName = 'stic_allocations_stic_justifications';
-        if ($allocationBean->load_relationship($linkName)) {
-            $justificationBeans = $allocationBean->$linkName->getBeans();
-        }
-        // delete each justification
-        foreach ($justificationBeans as $justificationBean) {
-            $justificationBean->mark_deleted($justificationBean->id);
-        }
-    }
+    // public static function deleteJustificationsFromAllocation($allocationBean)
+    // {
+    //     // retrieve all justifications linked to the allocation
+    //     $justificationBeans = array();
+    //     $linkName = 'stic_allocations_stic_justifications';
+    //     if ($allocationBean->load_relationship($linkName)) {
+    //         $justificationBeans = $allocationBean->$linkName->getBeans();
+    //     }
+    //     // delete each justification
+    //     foreach ($justificationBeans as $justificationBean) {
+    //         $justificationBean->mark_deleted($justificationBean->id);
+    //     }
+    // }
 
     public static function allocationsFromPayment($paymentBean) {
         // retrieve all allocations linked to the payment
@@ -171,6 +171,19 @@ class stic_AllocationsUtils {
         // check if any allocation is validated
         foreach ($allocationBeans as $allocationBean) {
             if ($allocationBean->validated) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function paymentHasBlockedAllocations($paymentBean)
+    {
+        // retrieve all allocations linked to the payment
+        $allocationBeans = self::allocationsFromPayment($paymentBean);
+        // check if any allocation is blocked
+        foreach ($allocationBeans as $allocationBean) {
+            if ($allocationBean->blocked) {
                 return true;
             }
         }

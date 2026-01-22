@@ -160,4 +160,5 @@ $mod_strings = array(
     'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'Un pagament bloquejat no pot canviar l\'estat d\'imputació.',
     'LBL_ALLOCATED_AMOUNT_ALERT' => 'Ja hi ha imputacions realitzades per aquest pagament.',
     'LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED' => 'Un pagament bloquejat no es pot modificar.',
+    'LBL_CANNOT_DEALLOCATE_PAYMENT_BLOCKED_ALLOCATIONS' => 'No es pot desvalidar el pagament perquè té imputacions bloquejades.'
 );
