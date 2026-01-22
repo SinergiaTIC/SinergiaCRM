@@ -44,6 +44,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $dashletStrings['PipelineBySalesAgentDashlet'] = array(
     'LBL_TITLE' => 'Pipeline por vendedor',
-    'LBL_DESCRIPTION' => 'Gráfico de barras horizontal de Ventas por Etapa y Agente',
+    'LBL_DESCRIPTION' => 'Gráfico de barras horizontal de Vendas por Etapa e Axente',
     'LBL_REFRESH' => 'Actualizar Gráfico',
 );
