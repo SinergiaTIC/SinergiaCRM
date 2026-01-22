@@ -227,13 +227,14 @@ class stic_Allocations extends Basic
             // 4. Stop execution
             exit();
         }
-        if (!empty($_REQUEST['relate_to'])) {
-            $errorMsg = $allocationsModStrings[$labelId];
-            $jsMsg = json_encode($errorMsg);
-            // 2. Output a script to alert the user
-            echo "<script>alert($jsMsg);</script>";
-            exit();
-        }
+        // TODOEPS: Hi havia un cas en que era necessari aquesta part
+        // if (!empty($_REQUEST['relate_to'])) {
+        //     $errorMsg = $allocationsModStrings[$labelId];
+        //     $jsMsg = json_encode($errorMsg);
+        //     // 2. Output a script to alert the user
+        //     echo "<script>alert($jsMsg);</script>";
+        //     exit();
+        // }
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings[$labelId] . '</div>');
     }
 }
