@@ -874,16 +874,20 @@ JS;
 
         // --- COMMON CASES ---
 
-        $placeholder = htmlspecialchars($field->placeholder ?? '');
+        $userPlaceholder = htmlspecialchars($field->placeholder ?? '');
         $isFloating = $theme->floating_labels && 
                       $field->subtype_in_form !== 'select_checkbox_list' && 
                       $field->subtype_in_form !== 'select_radio' &&
                       $field->subtype_in_form !== 'select_multiple';
 
-        // Placeholder is required in Floating labels
-        $placeholder = $isFloating ? ($placeholder ?: '...') : $placeholder; 
-        $wrapperClass = $isFloating ? 'form-floating awf-field' : 'awf-field';
+        if ($isFloating) {
+            // Placeholder is required in Floating labels
+            $placeholder = $userPlaceholder !== '' ? $userPlaceholder : '...';
+        } else {
+            $placeholder = $userPlaceholder;
+        }
 
+        $wrapperClass = $isFloating ? 'form-floating awf-field' : 'awf-field';
         $html = "<div class='{$wrapperClass}'>" .$this->newLine('+');
         {
             $controlHtml = "";
