@@ -80,6 +80,8 @@ class stic_Justifications extends Basic
         $allocatedAmount = SticUtils::unformatDecimal($this->amount);
         $percentage = $this->max_allocable_percentage;
         $justifiedAmount = $percentage ? ($allocatedAmount * $percentage) / 100 : null;
+        $justified_hours = $percentage ? ($this->hours * $percentage) / 100 : null;
+        $this->justified_hours = SticUtils::formatDecimalInConfigSettings($justified_hours);
         $this->justified_amount = SticUtils::formatDecimalInConfigSettings($justifiedAmount);
 
 

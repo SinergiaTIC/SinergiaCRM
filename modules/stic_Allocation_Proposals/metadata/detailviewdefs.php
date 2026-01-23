@@ -71,6 +71,10 @@ $viewdefs['stic_Allocation_Proposals']['DetailView'] = array(
                 'percentage',
             ),
             array(
+                'hours',
+                '',
+            ),
+            array(
                 array(
                     'name' => 'description',
                     'span' => 12,

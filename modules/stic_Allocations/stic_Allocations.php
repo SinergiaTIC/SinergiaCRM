@@ -107,6 +107,10 @@ class stic_Allocations extends Basic
         $newAmount = SticUtils::unformatDecimal($this->amount);
         $amountChanged = ($oldAmount !== $newAmount); 
 
+        $oldHours = SticUtils::unformatDecimal($this->fetched_row['hours'] ?? null);
+        $newHours = SticUtils::unformatDecimal($this->hours);
+        $hoursChanged = ($oldHours !== $newHours);
+
         $validatedBeforeSave = $tempFetchedRow['validated'] ?? false;
         if($validatedBeforeSave && !$isValidated) {
             // Allocation is being un-validated, check if there are justifications linked to it
@@ -140,7 +144,7 @@ class stic_Allocations extends Basic
         }
 
         // Payment is only updated if amount has changed and we are not in stic_Payments module to avoid recursion
-        if ($amountChanged && ($_REQUEST['current_module'] ?? false) != 'stic_Payments') {
+        if (($amountChanged || $hoursChanged) && ($_REQUEST['current_module'] ?? false) != 'stic_Payments') {
             if (isset($this->stic_payments_stic_allocations)) {
                 if ($this->stic_payments_stic_allocations instanceof Link2) {
                     $paymentBean = SticUtils::getRelatedBeanObject($this, 'stic_payments_stic_allocations');
