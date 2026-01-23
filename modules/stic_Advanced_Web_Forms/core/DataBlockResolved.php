@@ -107,7 +107,7 @@ class DataBlockResolved {
 
         // Gestión de Checkboxes Desmarcados: HTML no envia los checkboxes desmarcados, no se actualizarían en el CRM si se desmarcan.
         foreach ($config->fields as $fieldName => $fieldDef) {
-            if ($fieldDef->type_field === DataBlockFieldType::HIDDEN) continue;
+            if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
 
             $isUnlinked = ($fieldDef->type_field === DataBlockFieldType::UNLINKED);
             if ($isUnlinked && isset($this->detachedData[$fieldName])) continue;

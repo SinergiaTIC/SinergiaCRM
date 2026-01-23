@@ -84,8 +84,8 @@
                 </div>
                 <template x-if="item.module">
                   <div class="stic-tab">
-                    <input class="form-check-input" type="radio" :id="`dataBlockFieldsHiddenTab${item.id}`" x-model="fieldTabSelected" value="hidden"/>
-                    <label class="form-label" :for="`dataBlockFieldsHiddenTab${item.id}`" x-text="utils.translate('LBL_FIELDS_HIDDEN') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'"></label>
+                    <input class="form-check-input" type="radio" :id="`dataBlockFieldsHiddenTab${item.id}`" x-model="fieldTabSelected" value="fixed"/>
+                    <label class="form-label" :for="`dataBlockFieldsHiddenTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FIXED') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'"></label>
                   </div>
                 </template>
               </div>
@@ -103,9 +103,9 @@
                   <template x-if="fieldTabSelected=='form'">
                     <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_FIELD_UNLINKED_ADD')"></button>
                   </template>
-                  <!-- Button: Add Hidden Field -->
-                  <template x-if="item.module && fieldTabSelected=='hidden'">
-                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'hidden')" x-text="utils.translate('LBL_FIELD_HIDDEN_ADD')"></button>
+                  <!-- Button: Add Fixed Field -->
+                  <template x-if="item.module && fieldTabSelected=='fixed'">
+                    <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'fixed')" x-text="utils.translate('LBL_FIELD_FIXED_ADD')"></button>
                   </template>
                 </div>
                 <!-- Fields -->
@@ -323,12 +323,12 @@
               <!-- Buttons -->
               <div class="mb-2">
                 <!-- Button: Convert to Field in Form -->
-                <template x-if="isEdit && field && field.type_field=='hidden'">
+                <template x-if="isEdit && field && field.type_field=='fixed'">
                   <button type="button" class="btn" @click="convertFieldToType('form')" x-text="utils.translate('LBL_FIELD_CONVERT_TO_FIELD_FORM')"></button>
                 </template>
-                <!-- Button: Convert to Hidden Field -->
+                <!-- Button: Convert to Fixed Field -->
                 <template x-if="isEdit && field && field.type_field=='form'">
-                  <button type="button" class="btn" @click="convertFieldToType('hidden')" x-text="utils.translate('LBL_FIELD_CONVERT_TO_FIELD_HIDDEN')"></button>
+                  <button type="button" class="btn" @click="convertFieldToType('fixed')" x-text="utils.translate('LBL_FIELD_CONVERT_TO_FIELD_HIDDEN')"></button>
                 </template>
               </div>
               <!-- Definition -->
@@ -378,7 +378,7 @@
                       </div>
                     </template>
                     <!-- Type in form -->
-                    <template x-if="field && field.type_field != 'hidden'">
+                    <template x-if="field && field.type_field != 'fixed'">
                       <div class="col-3">
                         <label for="modalField_TypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
                         <select id="modalField_TypeInForm" x-bind:disabled="availableTypesInForm.length<=1;" class="form-select" x-model="field.type_in_form">
@@ -389,7 +389,7 @@
                       </div>
                     </template>
                     <!-- Subtype in form -->
-                    <template x-if="field && field.type_field != 'hidden'">
+                    <template x-if="field && field.type_field != 'fixed' && field.type_in_form != 'hidden'">
                       <div class="col-3">
                         <label for="modalField_SubtypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_SUBTYPE_IN_FORM')"></label>
                         <select id="modalField_SubtypeInForm" x-bind:disabled="availableSubtypesInForm.length<=1;" class="form-select" x-model="field.subtype_in_form">
@@ -514,7 +514,7 @@
                       </div>
                     </template>
                     <!-- Value type -->
-                    <template x-if="field && field.type_field == 'hidden'">
+                    <template x-if="field && field.type_field == 'fixed'">
                       <div class="col-3">
                         <label for="modalField_ValueType" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
                         <select id="modalField_ValueType" x-bind:disabled="availableValueTypes.length<=1;" class="form-select" x-model="field.value_type">
@@ -593,7 +593,7 @@
                 </div>
               </div>
               <!-- In form representation -->
-              <template x-if="field && field.isFieldInForm()">
+              <template x-if="field && field.isFieldInForm() && field.type_in_form != 'hidden'">
                 <div class="card">
                   <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION_FORM')"></div>
                   <div class="card-body">
@@ -620,7 +620,8 @@
                   </div>
                 </div>
               </template>
-              <template x-if="field && field.isFieldInForm()">
+              <!-- Validations -->
+              <template x-if="field && field.isFieldInForm() && field.type_in_form != 'hidden'">
                 <div class="card">
                   <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION_VALIDATIONS')"></div>
                   <div class="card-body">

@@ -338,8 +338,8 @@ class WizardStep2 {
                     return utils.translate('LBL_FIELD_FORM_NEW');
                   case 'unlinked':
                     return utils.translate('LBL_FIELD_UNLINKED_NEW');
-                  case 'hidden':
-                    return utils.translate('LBL_FIELD_HIDDEN_NEW');
+                  case 'fixed':
+                    return utils.translate('LBL_FIELD_FIXED_NEW');
                 }
               } else {
                 let title = "";
@@ -350,8 +350,8 @@ class WizardStep2 {
                   case 'unlinked':
                     title += utils.translate('LBL_FIELD_UNLINKED') + ' » ';
                     break;
-                  case 'hidden':
-                    title += utils.translate('LBL_FIELD_HIDDEN') + ' » ';
+                  case 'fixed':
+                    title += utils.translate('LBL_FIELD_FIXED') + ' » ';
                 }
                 title += this.field.text_original;
                 return title;
@@ -434,7 +434,7 @@ class WizardStep2 {
             /**
              * Abre el Modal para Crear un campo
              * @param {AWF_DataBlock} dataBlock El Bloque de datos
-             * @param {string} type Tipo de campo: unlinked, form, hidden
+             * @param {string} type Tipo de campo: unlinked, form, fixed
              */
             openCreate(dataBlock, type) {
               this.isEdit = false;
@@ -455,7 +455,7 @@ class WizardStep2 {
              * Abre el Modal para editar o crear un campo
              * @param {AWF_DataBlock} dataBlock El Bloque de datos
              * @param {AWF_Field} fieldData El campo
-             * @param {string} type Tipo de campo: unlinked, form, hidden
+             * @param {string} type Tipo de campo: unlinked, form, fixed
              */
             _open(dataBlock, fieldData, type) {
               this.dataBlock = dataBlock;
@@ -884,10 +884,10 @@ class WizardStep2 {
 
       get isDate() {return this.field?.type == 'date' || this.field?.type == 'datetime' || this.field?.type == 'datetimecombo'; },
 
-      get isInFormSelectableValues() { return this.field && this.field.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type != "relate"},
-      get isInFormSelectableRelation() { return this.field && this.field.type_field != 'hidden' && this.field.acceptValueOptions() && this.field.type == "relate" },
+      get isInFormSelectableValues() { return this.field && this.field.type_field != 'fixed' && this.field.acceptValueOptions() && this.field.type != "relate"},
+      get isInFormSelectableRelation() { return this.field && this.field.type_field != 'fixed' && this.field.acceptValueOptions() && this.field.type == "relate" },
 
-      get isFixedValue() { return this.field && this.field.type_field == 'hidden' && this.field.value_type == 'fixed'; },
+      get isFixedValue() { return this.field && this.field.type_field == 'fixed' && this.field.value_type == 'fixed'; },
       get isFixedValueOfEnum() { return this.isFixedValue && this.field.value_options.length > 0; },
       get isFixedValueOfRelated() { return this.isFixedValue && this.field.type == 'relate'},
       get isFixedValueOfDate() { return this.isFixedValue && this.isDate; },
@@ -915,7 +915,7 @@ class WizardStep2 {
           }
           if (newName != oldName) {
             this.field.updateWithFieldInformation(this.selectedFieldInfo);
-            if (this.field.type_field == 'hidden' || this.isInFormSelectableValues) {
+            if (this.field.type_field == 'fixed' || this.isInFormSelectableValues) {
               this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
             } else {
               this.field.setValueOptions();
@@ -1009,7 +1009,7 @@ class WizardStep2 {
               this.optionValuesRelated = this.field.value_options.map(o => o.value).join("|");
             }
           } else {
-            if (this.field.type_field == 'hidden' && newArray.length > 0) {
+            if (this.field.type_field == 'fixed' && newArray.length > 0) {
               this.field.value = newArray[0]?.value ?? '';
             }
           }
@@ -1067,7 +1067,7 @@ class WizardStep2 {
       convertFieldToType(type) {
         if (!this.field) return;
         if (type == this.field.type_field) return;
-        if (type == 'form' || type == 'hidden') {
+        if (type == 'form' || type == 'fixed') {
           this.field.updateWithFieldInformation(this.selectedFieldInfo, type);
           this.store.needDeleteOld = true;
           this.configValueOptions = false;
@@ -1145,8 +1145,8 @@ class WizardStep2 {
         switch(this.fieldTabSelected) {
           case 'form':
             return utils.translate('LBL_FIELDS_FORM_DESC');
-          case 'hidden':
-            return utils.translate('LBL_FIELDS_HIDDEN_DESC');
+          case 'fixed':
+            return utils.translate('LBL_FIELDS_FIXED_DESC');
         }
         return '';
       },
@@ -1155,7 +1155,7 @@ class WizardStep2 {
         switch(this.fieldTabSelected) {
           case 'form':
             return field.isFieldInForm();
-          case 'hidden':
+          case 'fixed':
             return !field.isFieldInForm();
         }
         return true;
@@ -1164,7 +1164,7 @@ class WizardStep2 {
       canShowFieldColumn(column) {
         if (column == 'label' || column == 'type_in_form' || column == 'subtype_in_form' || 
             column == 'value_options' || column == 'required_in_form') {
-          return this.fieldTabSelected != 'hidden';
+          return this.fieldTabSelected != 'fixed';
         } 
         if (column == 'type_field') {
           return this.fieldTabSelected != 'form' && this.dataBlock.module;
@@ -1173,7 +1173,7 @@ class WizardStep2 {
           return this.fieldTabSelected != 'form';
         } 
         if (column == 'value_type') {
-          return this.fieldTabSelected == 'hidden';
+          return this.fieldTabSelected == 'fixed';
         }
         return true;
       },
@@ -2036,7 +2036,7 @@ class WizardStep4 {
       },
 
       getFields(element) {
-        return this.getDataBlock(element)?.fields.filter(f => f.type_field != 'hidden');
+        return this.getDataBlock(element)?.fields.filter(f => f.type_field != 'fixed');
       },
 
       getElementHeader(element) {

@@ -3961,6 +3961,7 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['textarea']
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['number'] = '#️⃣ Entrada numérica';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['date'] = '🗓️ Selección de tiempo';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['select'] = '▼ Opciones cerradas';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['hidden'] = '🕵️ Oculto';
 
 // Subtipo de campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text'] = '🔤 Texto simple';

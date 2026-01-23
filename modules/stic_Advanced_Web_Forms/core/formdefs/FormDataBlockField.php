@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 enum DataBlockFieldType: string {
     case UNLINKED  = 'unlinked';
     case FORM      = 'form';
-    case HIDDEN    = 'hidden';
+    case FIXED     = 'fixed';
 }
 enum DataBlockFieldValueType: string {
     case EDITABLE   = 'editable';
@@ -44,7 +44,7 @@ class FormDataBlockField {
     public string $text_original;                // Texto original del campo
     public string $label;                        // Etiqueta que aparecerá con el campo
     public string $description;                  // Descripción del campo
-    public DataBlockFieldType $type_field;       // Tipo de campo: unlinked, form, hidden
+    public DataBlockFieldType $type_field;       // Tipo de campo: unlinked, form, fixed
     public bool $required_in_form;               // Indica si el campo será obligado en el formulario
     public string $type_in_form;                 // Tipo de editor en el formulario: stic_advanced_web_forms_field_in_form_type_list
     public string $subtype_in_form;              // SubTipo de editor en el formulario: stic_advanced_web_forms_field_in_form_subtype_list

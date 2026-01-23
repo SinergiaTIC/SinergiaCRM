@@ -153,7 +153,7 @@ class AWF_Utils {
 
                 foreach ($block->fields as $fieldDef) {
                     // Sólo mostramos los campos visibles en el formulario
-                    if ($fieldDef->type_field === DataBlockFieldType::HIDDEN) {
+                    if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
                         continue;
                     }
                     // Si no tiene etiqueta, no se muestra
@@ -247,7 +247,7 @@ class AWF_Utils {
                 if (!$block) continue;
 
                 foreach ($block->fields as $fieldDef) {
-                    if ($fieldDef->type_field === DataBlockFieldType::HIDDEN) continue;
+                    if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                     if (empty($fieldDef->label)) continue;
 
                     $formKey = "{$block->name}.{$fieldDef->name}";

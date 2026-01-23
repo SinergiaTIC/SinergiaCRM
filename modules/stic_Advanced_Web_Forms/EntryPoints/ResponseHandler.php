@@ -411,7 +411,7 @@ class AWF_ResponseHandler
 
         foreach ($config->data_blocks as $block) {
             foreach ($block->fields as $field) {
-                if ($field->type_field === DataBlockFieldType::HIDDEN) {
+                if ($field->type_field === DataBlockFieldType::FIXED) {
                     continue;
                 }
 

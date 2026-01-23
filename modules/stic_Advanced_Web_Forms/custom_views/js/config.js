@@ -110,7 +110,7 @@ class AWF_DataBlock {
       field = new AWF_Field();
       let type_field = 'form';
       if (moduleField.required && moduleField.default != null && moduleField.default != '') {
-        type_field = 'hidden';
+        type_field = 'fixed';
       }
       field.updateWithFieldInformation(moduleField, type_field);
       field.setValueOptions(utils.getFieldOptions(moduleField));
@@ -142,7 +142,7 @@ class AWF_DataBlock {
 
   addField(field) {
     let newField = new AWF_Field(field);
-    if (newField.type_field == 'hidden') {
+    if (newField.type_field == 'fixed') {
       this.fields.unshift(newField);
     }
     else {
@@ -251,7 +251,7 @@ class AWF_Field {
       label: '',               // Etiqueta que aparecerá con el campo
       description: '',         // Descripción del campo
       required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
-      type_field: 'form',      // Tipo de campo: unlinked, form, hidden
+      type_field: 'form',      // Tipo de campo: unlinked, form, fixed
       required_in_form: false, // Indica si el campo será obligado en el formulario
       in_form: true,           // Indica si el campo estará en el formulario
       type_in_form: 'text',    // Tipo de editor en el formulario: text, textarea, number, date, select
@@ -274,7 +274,7 @@ class AWF_Field {
     this.validations = (data.validations || this.validations).map(v => new AWF_FieldValidation(v));
 
     if (!data.in_form) {
-      this.in_form = this.type_field != 'hidden';
+      this.in_form = this.type_field != 'fixed';
     }
   }
 
@@ -320,7 +320,7 @@ class AWF_Field {
       this.subtype_in_form = '';
     }
 
-    this.in_form = this.type_field != 'hidden';
+    this.in_form = this.type_field != 'fixed';
     if (this.value_type == 'fixed') {
       if (fieldInfo.default != null && fieldInfo.default != '') {
         this.value = fieldInfo.default;
@@ -336,7 +336,7 @@ class AWF_Field {
   }
 
   isFieldInForm() {
-    return this.type_field != 'hidden';
+    return this.type_field != 'fixed';
   }
 
   isValid() {
@@ -372,7 +372,7 @@ class AWF_Field {
     if (this.name == "") {
       return [];
     }
-    if (this.type_field == 'hidden') {
+    if (this.type_field == 'fixed') {
       // if (this.type == 'relate') {
       //   return AWF_Field.value_typeList().filter(t => t.id == 'fixed' || t.id == 'dataBlock');
       // }
@@ -846,8 +846,8 @@ class AWF_Layout {
         if (placedBlockIds.has(el.ref_id)) return false; // Es un duplicado
         
         // Comprobamos visibilidad de campos
-        // (si no tiene campos visibles, no tiene que estar en la maquetación)
-        if (!block.fields.some(f => f.type_field !== 'hidden')) return false; // El bloque solo tiene campos ocultos
+        // (si no tiene campos fijos, no tiene que estar en la maquetación)
+        if (!block.fields.some(f => f.type_field !== 'fixed')) return false; // El bloque solo tiene campos fijos
           
         // Marcamos el bloque como colocado
         placedBlockIds.add(el.ref_id); 
@@ -861,7 +861,7 @@ class AWF_Layout {
     // Añadimos los bloques que falten
     const orphanBlocks = dataBlocks.filter(b => {
       if (placedBlockIds.has(b.id)) return false; // El bloque está colocado
-      if (!b.fields.some(f => f.type_field !== 'hidden')) return false; // Solo tiene campos ocultos
+      if (!b.fields.some(f => f.type_field !== 'fixed')) return false; // Solo tiene campos fijos
 
       return true;
     });
@@ -1282,7 +1282,7 @@ class AWF_Configuration {
         let newField = new AWF_Field();
         let type_field = 'form';
         if (fieldDef.required && fieldDef.default != null && fieldDef.default != '') {
-            type_field = 'hidden';
+            type_field = 'fixed';
         }
         newField.updateWithFieldInformation(fieldDef, type_field);
         newField.setValueOptions(utils.getFieldOptions(fieldDef));
@@ -1475,7 +1475,7 @@ class AWF_Configuration {
 
     this.data_blocks.forEach(block => {
       block.fields.forEach(field => {
-        if (field.type_field === 'hidden') return;
+        if (field.type_field === 'fixed') return;
         let fullName = block.getFieldInputName(field);
         if (excludeName && fullName === excludeName) return;
 
@@ -1563,7 +1563,7 @@ class AWF_Configuration {
      *  }
      */
     let dataField_orig = dataBlock_orig.addFieldFromModuleField(module_orig.fields[rel.field_orig]);
-    dataField_orig.type_field = 'hidden';
+    dataField_orig.type_field = 'fixed';
     dataField_orig.in_form = false;
     dataField_orig.value_type = "dataBlock";
     dataField_orig.value = dataBlock_dest.id;

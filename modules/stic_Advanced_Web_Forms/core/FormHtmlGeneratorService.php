@@ -804,7 +804,7 @@ JS;
     private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme): string {
         $html = "";
         foreach ($block->fields as $field) {
-            if ($field->type_field === DataBlockFieldType::HIDDEN) continue;
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
             $html .= $this->renderField($block, $field, $theme);
         }
         return $html;
