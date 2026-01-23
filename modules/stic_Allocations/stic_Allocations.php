@@ -24,6 +24,7 @@
 require_once 'modules/stic_Allocations/Utils.php';
 require_once 'modules/stic_Justifications/Utils.php';
 require_once 'SticInclude/Utils.php';
+#[\AllowDynamicProperties]
 class stic_Allocations extends Basic
 {
     public $module_dir = 'stic_Allocations';

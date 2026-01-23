@@ -24,6 +24,7 @@
 require_once 'modules/stic_Justifications/Utils.php';
 require_once 'modules/stic_Justification_Conditions/Utils.php';
 
+#[\AllowDynamicProperties]
 class stic_Justification_Conditions extends Basic
 {
     public $module_dir = 'stic_Justification_Conditions';

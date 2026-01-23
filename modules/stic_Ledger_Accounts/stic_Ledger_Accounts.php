@@ -25,6 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+#[\AllowDynamicProperties]
 class stic_Ledger_Accounts extends Basic
 {
     public $module_dir = 'stic_Ledger_Accounts';
