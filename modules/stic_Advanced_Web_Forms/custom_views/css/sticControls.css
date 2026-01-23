@@ -88,6 +88,12 @@
 .stic_panel {
   font-size: unset !important;
 }
+#stic_panel {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 130px);
+  min-height: 500px;
+}
 
 .stic_panel table {
   caption-side: top;
@@ -101,16 +107,45 @@
 }
 
 #wizard-section-title {
-  text-transform: uppercase;
-  margin-top: 1rem;
+  text-transform: none !important;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.2;
 }
 
+.wizard-card-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #dee2e6; 
+  background-color: #fff;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+  margin-bottom: 5px !important;
+}
 .wizard-container {
-  height: 700px;
+  flex: 1;
   overflow-y: auto;
-  margin: 0 0 1em 0;
+  padding: 20px;
+  margin: 0;
+  height: auto !important;
+  max-height: none !important;
 }
 
+.wizard-nav {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  z-index: 10;
+}
+.wizard-nav .button {
+    min-width: 120px;
+    font-weight: bold;
+}
 .wizard-nav .button[disabled],
 .wizard-nav .button[disabled]:hover {
   background-color: #828282 !important;
@@ -350,3 +385,78 @@ h4 {
 .stic_panel .accordion-button:hover {
   padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
 }
+
+.wizard-stepper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  position: relative;
+  margin-bottom: 1.5rem !important;
+}
+/* Line between steps */
+.wizard-stepper::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 0;
+}
+.wizard-step-item {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+.wizard-step-item:hover {
+    opacity: 1;
+}
+.wizard-step-item.active {
+    opacity: 1;
+    font-weight: bold;
+}
+/* Step icon */
+.wizard-step-icon {
+    width: 32px;
+    height: 32px;
+    background: #e9ecef;
+    color: #6c757d;
+    border-radius: 50%;
+    margin: 0 auto 5px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e9ecef;
+    transition: all 0.3s ease;
+    font-size: 1.1em;
+    position: relative;
+    top: -1px;
+}
+/* Current step */
+.wizard-step-item.active .wizard-step-icon {
+    background: #0d6efd; /* Primary Color */
+    color: #fff;
+    box-shadow: 0 0 0 2px #0d6efd;
+    transform: scale(1.1);
+}
+/* Completed steps */
+.wizard-step-item.completed .wizard-step-icon {
+    background: #198754; /* Success Color */
+    color: #fff;
+    box-shadow: 0 0 0 2px #198754;
+}
+.wizard-step-label {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-top: 5px;
+}
+.wizard-step-item.active .wizard-step-label {
+    color: #0d6efd;
+}
+

@@ -2,7 +2,15 @@ function wizardForm() {
   return {
     navigation: {
       step: 1,
-      totalSteps: 5,
+      // Definición explícita de los pasos del asistente
+      stepsList: [
+        { id: 1, label: 'LBL_WIZARD_TITLE_STEP1', desc: 'LBL_WIZARD_DESC_STEP1', icon: 'suitepicon-action-info' },          // General
+        { id: 2, label: 'LBL_WIZARD_TITLE_STEP2', desc: 'LBL_WIZARD_DESC_STEP2', icon: 'suitepicon-module-fields' },        // Campos
+        { id: 3, label: 'LBL_WIZARD_TITLE_STEP3', desc: 'LBL_WIZARD_DESC_STEP3', icon: 'suitepicon-module-aow-workflow' },  // Lógica
+        { id: 4, label: 'LBL_WIZARD_TITLE_STEP4', desc: 'LBL_WIZARD_DESC_STEP4', icon: 'suitepicon-module-layouts' },       // Diseño
+        { id: 5, label: 'LBL_WIZARD_TITLE_STEP5', desc: 'LBL_WIZARD_DESC_STEP5', icon: 'suitepicon-module-overview' }       // Publicar
+      ],
+      get totalSteps() { return this.stepsList.length; }
     },
 
     bean: STIC.record || {},
@@ -115,10 +123,13 @@ class WizardNavigation {
       return;
     }
 
-    // Step title
-    $("#wizard-section-title").text(utils.translate(`LBL_WIZARD_TITLE_STEP${step}`) + ` (${step}/${totalSteps})`);
-    // Step description
-    $("#wizard-section-desc").text(utils.translate(`LBL_WIZARD_DESC_STEP${step}`));
+    // Find step info
+    const stepInfo = window.alpineComponent.navigation.stepsList.find(s => s.id == step);
+
+    // Step title, icon and description
+    $("#wizard-section-title").text(utils.translate(stepInfo.label));
+    $("#wizard-step-icon").attr("class", "suitepicon " + stepInfo.icon + " me-2 align-middle");
+    $("#wizard-section-desc").text(utils.translate(stepInfo.desc));
 
     // Step content
     if (!(step in WizardNavigation.cacheSteps)) {
@@ -154,24 +165,49 @@ class WizardNavigation {
     }
   }
 
+  static goToStep(targetStep) {
+    const currentStep = window.alpineComponent.navigation.step;
+    if (targetStep === currentStep) return;
+
+    // Si vamos atrás, no es necesario validar
+    if (targetStep < currentStep) {
+      window.alpineComponent.navigation.step = targetStep;
+      WizardNavigation.loadStep();
+      return;
+    }
+
+    // Si vamos adelante, validar el paso actual
+    if (WizardNavigation.validateCurrentStep()) {
+      window.alpineComponent.navigation.step = targetStep;
+      WizardNavigation.autoSave();
+      WizardNavigation.loadStep();
+    }
+  }
+
+  static validateCurrentStep() {
+    let allOk = true;
+
+    const stepForms = document.querySelectorAll("#wizard-step-container form.needs-validation");
+    if (stepForms.length === 0) return true;
+
+    stepForms.forEach(function (f) {
+      if (!f.reportValidity()) {
+        allOk = false;
+      }
+    });
+    return allOk;
+  }
+
+
   static prev() {
     if (WizardNavigation.enabled("prev")) {
-      window.alpineComponent.navigation.step--;
-      WizardNavigation.loadStep();
+      WizardNavigation.goToStep(window.alpineComponent.navigation.step - 1);
     }
   }
 
   static next() {
     if (WizardNavigation.enabled("next")) {
-      let allOk = true;
-      document.querySelectorAll("#wizard-step-container form.needs-validation").forEach(function (f) {
-        allOk &= f.reportValidity();
-      });
-      if (allOk) {
-        window.alpineComponent.navigation.step++;
-        WizardNavigation.autoSave();
-        WizardNavigation.loadStep();
-      }
+      WizardNavigation.goToStep(window.alpineComponent.navigation.step + 1);
     }
   }
 
