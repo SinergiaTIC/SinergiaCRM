@@ -140,7 +140,7 @@ class stic_Allocations extends Basic
             stic_JustificationsUtils::removeJustificationsFromAllocation($this); 
         }
         else if($tempFetchedRow) {
-            stic_JustificationsUtils::reviewJustificationsFromAllocation($this);
+            stic_JustificationsUtils::reviewJustificationsFromAllocation($this, $amountChanged || $hoursChanged);
         }
 
         // Payment is only updated if amount has changed and we are not in stic_Payments module to avoid recursion

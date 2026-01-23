@@ -86,7 +86,7 @@ class stic_JustificationsUtils {
         }
     }
 
-    public static function reviewJustificationsFromAllocation($allocation) {
+    public static function reviewJustificationsFromAllocation($allocation, $updateJustificationFromAllocation = true) {
 
         // get actual justifications and check if they still met conditions
         $justificationBeans = array();
@@ -102,7 +102,9 @@ class stic_JustificationsUtils {
             }
             else {
                 // condition still met, update justification
-                stic_JustificationsUtils::updateJustificationFromAllocation($justificationBean, $allocation);
+                if ($updateJustificationFromAllocation) {
+                    stic_JustificationsUtils::updateJustificationFromAllocation($justificationBean, $allocation);
+                }
             }
         }
 
@@ -192,7 +194,7 @@ class stic_JustificationsUtils {
 
     public static function createJustificationRecord($condition, $allocation) {
         $justification = BeanFactory::newBean('stic_Justifications');
-        $justification->status = 'Pending';
+        $justification->status = 'pending';
         $justification->blocked = false;
         $justification->reference = '';
         $justification->amount = $allocation->amount;
