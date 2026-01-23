@@ -86,4 +86,5 @@ $mod_strings = array(
     'LBL_ALLOCATION_NOT_COMPATIBLE' => 'El pagament té una imputació incompatible amb els camps d\'import del pagament',
     'LBL_PAYMENT_FIELD_NOT_FOUND' => 'El camp d\'import del pagament no està informat',
     'LBL_CANNOT_UNVALIDATE_ALLOCATION_WITH_BLOCKED_JUSTIFICATIONS' => 'No es pot desvalidar aquesta imputació perquè té justificacions bloquejades.',
+    'LBL_BLOCKED_ALLOCATION_CANNOT_BE_DELETED' => 'Aquesta imputació està bloquejada i no es pot eliminar.',
 );

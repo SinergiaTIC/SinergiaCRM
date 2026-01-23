@@ -340,4 +340,16 @@ class stic_Payments extends Basic
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings[$labelId] . '</div>');
 
     }
+
+    public function mark_deleted($id) {
+
+        if($this->blocked) {
+            $this->showError('LBL_BLOCKED_PAYMENT_CANNOT_BE_DELETED');
+            return false;
+        }
+        
+        parent::mark_deleted($id);
+    }
+
+
 }

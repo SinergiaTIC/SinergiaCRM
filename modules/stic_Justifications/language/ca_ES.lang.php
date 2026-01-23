@@ -59,5 +59,6 @@ $mod_strings = array(
     'LBL_ACCOUNT' => 'Compte',
     'LBL_SUBACCOUNT' => 'Subcompte',
     'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'La justificació està en estat "Presentada" i no es pot modificar.',
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_DELETED' => 'La justificació està en estat "Presentada" i no es pot eliminar.',
 );
 ?>

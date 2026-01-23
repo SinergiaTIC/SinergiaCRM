@@ -86,4 +86,5 @@ $mod_strings = array(
     'LBL_ALLOCATION_NOT_COMPATIBLE' => 'The payment has an allocation not compatible with the payment amount fields',
     'LBL_PAYMENT_FIELD_NOT_FOUND' => 'The payment amount field is not filled',
     'LBL_CANNOT_UNVALIDATE_ALLOCATION_WITH_BLOCKED_JUSTIFICATIONS' => 'This allocation cannot be un-validated because it has blocked justifications.',
+    'LBL_BLOCKED_ALLOCATION_CANNOT_BE_DELETED' => 'This allocation is blocked and cannot be deleted.',
 );

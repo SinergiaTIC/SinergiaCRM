@@ -58,6 +58,7 @@ $mod_strings = array(
     'LBL_SUBGROUP' => 'Subgrupo',
     'LBL_ACCOUNT' => 'Conta',
     'LBL_SUBACCOUNT' => 'Subconta',
-    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'La justificación está en estado "Presentada" y no se puede modificar.'
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'A xustificación está en estado "Presentada" e non se pode modificar.',
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_DELETED' => 'A xustificación está en estado "Presentada" e non se pode eliminar.',
 );
 ?>

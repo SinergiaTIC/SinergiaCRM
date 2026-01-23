@@ -161,5 +161,6 @@ $mod_strings = array(
     'LBL_BLOCKED_PAYMENT_CANNOT_CHANGE_ALLOCATION_STATUS' => 'A blocked payment can not change allocation status.',
     'LBL_ALLOCATED_AMOUNT_ALERT' => 'There are already allocations made for this payment.',
     'LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED' => 'A blocked payment can not be modified.',
-    'LBL_CANNOT_DEALLOCATE_PAYMENT_BLOCKED_ALLOCATIONS' => 'Cannot deallocate payment because it has blocked allocations.'
+    'LBL_CANNOT_DEALLOCATE_PAYMENT_BLOCKED_ALLOCATIONS' => 'Cannot deallocate payment because it has blocked allocations.',
+    'LBL_BLOCKED_PAYMENT_CANNOT_BE_DELETED' => 'A blocked payment can not be deleted.',
 );

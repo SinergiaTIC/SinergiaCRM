@@ -76,7 +76,10 @@ function checkBlockedAllocation() {
 
 function checkBlockedAllocationInDetailView() {
   // To block the inline edit on double click, we add/remove event listeners to the parent element of inlineEdit fields
-  var blocked = $("[field='blocked'] input").is(":checked")
+  var blocked = $("[field='blocked'] input").is(":checked");
+
+  $("#delete_button").hide(); // hide delete button
+
   if (blocked) {
     $(".inlineEdit").each(function() {
       if ($(this).attr('field') !== 'blocked') {
@@ -85,7 +88,7 @@ function checkBlockedAllocationInDetailView() {
     });
   }
   else {
-    // $(".inlineEdit").css("pointer-events", "auto");
+    $("#delete_button").show(); // show delete button
     $(".inlineEdit").each(function() {
       if ($(this).attr('field') !== 'blocked') {
         $(this).parent()[0].removeEventListener('dblclick', blockDblClick, true);

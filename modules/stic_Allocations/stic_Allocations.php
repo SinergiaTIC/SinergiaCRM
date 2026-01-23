@@ -207,7 +207,13 @@ class stic_Allocations extends Basic
 
     public function mark_deleted($id) {
         $paymentId = $this->stic_payments_stic_allocations;
+
+        if($this->blocked) {
+            $this->showError('LBL_BLOCKED_ALLOCATION_CANNOT_BE_DELETED');
+            return false;
+        }
         
+
         stic_JustificationsUtils::removeJustificationsFromAllocation($this);
 
         parent::mark_deleted($id);

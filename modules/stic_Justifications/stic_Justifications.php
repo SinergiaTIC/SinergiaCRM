@@ -119,6 +119,11 @@ class stic_Justifications extends Basic
 
     public function mark_deleted($id) {
         $opportunityId = $this->opportunit01eunities_ida;
+
+        if($this->blocked) {
+            $this->showError('LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_DELETED');
+            return false;
+        }
         
         parent::mark_deleted($id);
         
@@ -126,4 +131,28 @@ class stic_Justifications extends Basic
         stic_JustificationsUtils::updateRelatedOpportunity($opportunityId);
     }
 
+    protected function showError($labelId) {
+        
+        global $current_language;
+        $justificationsModStrings = return_module_language($current_language, 'stic_Justifications'); // can not be $mod_strings because of different contexts (specially inline edition)
+
+        if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+            $errorMsg = $justificationsModStrings[$labelId];
+            $jsMsg = json_encode($errorMsg);
+            // 2. Output a script to alert the user
+            echo "<script>alert($jsMsg);</script>";
+            echo "<script>location.reload();</script>";
+            // 4. Stop execution
+            exit();
+        }
+        // TODOEPS: Hi havia un cas en que era necessari aquesta part
+        // if (!empty($_REQUEST['relate_to'])) {
+        //     $errorMsg = $allocationsModStrings[$labelId];
+        //     $jsMsg = json_encode($errorMsg);
+        //     // 2. Output a script to alert the user
+        //     echo "<script>alert($jsMsg);</script>";
+        //     exit();
+        // }
+        SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $justificationsModStrings[$labelId] . '</div>');
+    }
 }

@@ -203,10 +203,12 @@ function checkPercentagesInDetailView() {
 function checkBlockedPaymentInDetailView() {
   var blocked = $("[field='blocked'] input").is(":checked")
   if (blocked) {
+    $("#delete_button").hide(); // hide delete button
     $(".inlineEdit").css("pointer-events", "none");
     $("[field='blocked']").css("pointer-events", "auto");
   }
   else {
+    $("#delete_button").show(); // show delete button
     $(".inlineEdit").css("pointer-events", "auto");
 
   }
