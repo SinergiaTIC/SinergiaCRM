@@ -216,10 +216,6 @@ class stic_AllocationsUtils {
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE']);
                 if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
                     // // This is an AJAX request
-                    // ob_clean();
-                    // header('HTTP/1.1 500 Internal Server Error');
-                    // echo "Save aborted: " . $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE'];
-                    // exit;
                     $errorMsg = $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE'];
                     $jsMsg = json_encode($errorMsg);
 
@@ -231,8 +227,6 @@ class stic_AllocationsUtils {
                     exit();
                 }
                 SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings['LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE'] . '</div>');
-                // SugarApplication::redirect("index.php?module={$remittance->bean->module_dir}&action=DetailView&record={$remittance->bean->id}");
-                // SugarApplication::redirect("index.php?module={$paymentBean->module_dir}&action=EditView&record={$paymentBean->id}");
 
                 return false;
             }
