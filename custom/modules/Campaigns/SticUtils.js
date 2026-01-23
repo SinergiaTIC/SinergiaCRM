@@ -629,3 +629,131 @@ function refresh_email_template_list(template_id, template_name) {
   }
   template_change();
 }
+
+/**
+ * Custom JS for auto-prospect list creation from category
+ */
+$('#notification_auto_prospect_list_name').on('change', function () {
+  var $select = $('#notification_prospect_list_ids')[0].selectize;
+  $select.clear();
+
+  var selectedCategory = $(this).val();
+  var selectedLabel = $(this).find('option:selected').text();
+  if (selectedCategory.length > 0) {
+    // $select.disable();
+    createAutoProspectListFromCategory(selectedCategory, selectedLabel);
+  } else {
+    $select.enable();
+  }
+});
+
+
+
+/* Function to create an auto-prospect list from a selected category.
+ * The function sends an AJAX request to the server to create the list and handles the response.
+ * On success, it adds the new prospect list to the selectize field and alerts the user.
+ * On failure, it logs the error and alerts the user.
+ * The expected response from the server is a JSON object with 'status', 'lpoId', and 'lpoName' fields.
+ * example: { "status": "success", "lpoId": "12345", "lpoName": "My Prospect List" }
+ *
+ * @param {string} type - The type of category selected (e.g., 'stic_Signatures_all_signers').
+ * @param {string} label - The label of the selected category for naming the prospect list.
+ */
+
+function createAutoProspectListFromCategory(filterName, label) {
+  console.log("Creating auto-prospect list for category: " + label + " (" + type + ")");
+
+  const url = "index.php";
+
+  const data = {
+    module: 'ProspectLists',
+    action: 'createAutoLpo',
+    filterModule: new URLSearchParams(window.location.search).get('module'),
+    filterName: filterName,
+    label: label,
+    id: $('[name="record"]').val()
+  }
+  console.log("Request Data: ", data);
+  console.log("Request URL: " + url);
+
+  // Send AJAX request to create the auto-prospect list
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(data).toString()
+  }).then(response => {
+
+    // Manage the response
+    if (!response.ok) {
+      throw new Error('Error de red o del servidor');
+    }
+    return response.json();
+
+  }
+  ).then(data => {
+
+    console.log("Response data:", data);
+    if (data.status == 'success') {
+      console.log("Auto-prospect list created successfully: " + data.prospectListId);
+      // Add the new prospect list to the selectize field
+      var $select = $('#notification_prospect_list_ids')[0].selectize;
+      $select.addOption({ value: data.lpoId, text: data.lpoName });
+      $select.addItem(data.lpoId);
+
+
+      alert(SUGAR.language.get('Campaigns', 'LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS') + '\n' + data.lpoName );
+    }
+  }
+  ).catch(error => {
+    console.error('Error al crear la auto-prospect list:', error);
+    var $select = $('#notification_prospect_list_ids')[0].selectize;
+    $select.enable();
+    // Clear the auto-prospect list selector
+    $('#notification_auto_prospect_list_name').val('');
+    alert(SUGAR.language.get('Campaigns', 'LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'));
+  }
+  );
+
+}
+
+function populateLPOFilters() {
+
+  // Remove existing options from other modules and set disabled state remaining options
+  $('#notification_auto_prospect_list_name option').each(function () {
+    if ($(this).val().split('__')[0] != new URLSearchParams(window.location.search).get('module') && $(this).val() != '') {
+      $(this).remove();
+    } else{
+      $(this).prop('disabled', true).attr('title', 'Filter unconfigured');
+    }
+  });
+
+  // Fetch the filter options from the server
+  fetch("index.php?module=ProspectLists&action=populateLPOFilters", { method: 'GET' })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("LPO Filters data:", data);
+      var $select = $('#notification_auto_prospect_list_name');
+      
+      $.each(data, function (key, value) {
+        // debugger;
+        if (key.split('__')[0] == new URLSearchParams(window.location.search).get('module')) {
+          $select.append($('<option>', { value: key, text: value }));
+        }
+      });
+
+    })
+    .catch(error => {
+      console.error('Error fetching LPO filters:', error);
+    });
+
+}
+
+populateLPOFilters();
+

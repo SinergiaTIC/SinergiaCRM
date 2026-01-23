@@ -70,7 +70,7 @@ $mod_strings = array (
   'LBL_SENDER' => 'Remitente',
   'LBL_LIST_RELATED_TO' => 'Relacionado con',
   'LBL_LIST_RELATED_TO_ID' => 'Relacionado con ID',
-  'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Realizar envío',
+  'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Enviar',
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Enviar grupo de mensajes',
   'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => 'Esta acción enviará un mensaje por cada registro seleccionado. ¿Desea continuar?',
   'LBL_MESSAGE_SENT' => 'Mensaje enviado',
@@ -84,6 +84,6 @@ $mod_strings = array (
   'LBL_LIST_CONTACT' => 'Contacto',
   'LBL_LIST_DATE_MODIFIED' => 'Fecha de Modificación',
   'LBL_LIST_STATUS' => 'Estado',
-  'LBL_LIST_SUBJECT' => 'Asunto',  
+  'LBL_LIST_SUBJECT' => 'Asunto',
   'LBL_INFO_TXT' => 'Si el mensaje supera los 160 caracteres se dividirá en tantas partes como sea necesario, con los efectos que esto pueda tener sobre el número de mensajes enviados y, por tanto, facturables.',
 );

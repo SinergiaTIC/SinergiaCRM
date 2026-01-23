@@ -68,6 +68,7 @@ $mod_strings = array(
     'LBL_RELATIONSHIP_TYPE' => 'Tipus de relació',
     'LBL_START_DATE' => "Data d'alta",
     'LBL_END_DATE' => 'Data de baixa',
+    'LBL_AUTHORIZED_SIGNER' =>  'Signant autoritzat',
     'LBL_DEFAULT_PANEL' => 'Dades generals',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
     'LBL_STIC_PERSONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona base',
