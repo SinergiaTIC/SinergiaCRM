@@ -86,6 +86,7 @@ $mod_strings = array (
   'LBL_REMOTE_IP' => 'Dirección IP',
   'LBL_RAW_PAYLOAD' => 'Respuesta recibida',
   'LBL_RESPONSE_HASH' => 'Hash de la respuesta',
+  'LBL_HTML_SUMMARY' => 'Respuesta',
   'LBL_STATUS' => 'Estado',
   'LBL_EXECUTION_LOG' => 'Registro de ejecución',
 

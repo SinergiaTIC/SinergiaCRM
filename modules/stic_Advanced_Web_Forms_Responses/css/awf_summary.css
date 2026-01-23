@@ -1,0 +1,90 @@
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+ /* modules/stic_Advanced_Web_Forms_Responses/css/awf_summary.css */
+
+.awf-summary-container {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    color: #212529;
+    max-width: 100%; 
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.awf-summary-title {
+    color: #0d6efd;
+    border-bottom: 2px solid #0d6efd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.awf-sections-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.awf-section-item {
+    flex: 1 1 300px;
+    min-width: 300px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background: #fff;
+    margin-bottom: 20px;
+}
+
+.awf-summary-section-title {
+    color: #212529;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.awf-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.awf-summary-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.awf-summary-label {
+    width: 35%;
+    font-weight: bold;
+    color: #212529;
+    background-color: rgba(0,0,0,0.02);
+    font-size: 0.9em;
+}
+
+.awf-summary-value {
+    width: 65%;
+}

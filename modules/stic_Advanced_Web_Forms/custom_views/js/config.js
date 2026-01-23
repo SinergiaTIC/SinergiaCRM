@@ -411,7 +411,7 @@ class AWF_Field {
     if (this.type == "int" || this.type == "float" || this.type == "double" || this.type == "decimal") {
       return AWF_Field.type_in_formList().filter(t => t.id == "number" || t.id == "select" || t.id == "hidden");
     }
-    if (this.type == "json" || this.type == "textarea") {
+    if (this.type == "json" || this.type == "textarea" || this.type == "longtext") {
       return AWF_Field.type_in_formList().filter(t => t.id == "textarea" || t.id == "hidden");
     }
     if (this.type == "name" || this.type == "phone" || this.type == "email" || this.type == "url" || 

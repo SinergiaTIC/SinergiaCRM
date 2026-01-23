@@ -103,44 +103,67 @@ class AWF_Utils {
      * Genera un resumen en HTML con todos los datos del formulario basándose en el Layout.
      *
      * @param ExecutionContext $context El contexto que contiene los datos.
+     * @param array $options Opciones de visualización ['showTitle' => bool, 'useFlex' => bool, 'includeCss' => bool]
      * @return string Un string HTML con la tabla resumen.
      */
-    public static function generateSummaryHtml(ExecutionContext $context): string
+    public static function generateSummaryHtml(ExecutionContext $context, array $options = []): string
     {
         $theme = $context->formConfig->layout->theme;
         $layout = $context->formConfig->layout;
         $formData = $context->formData;
+
+        // Opciones por defecto
+        $showTitle = $options['showTitle'] ?? true;
+        $useFlex = $options['useFlex'] ?? false;
+        $includeCss = $options['includeCss'] ?? true;
 
         $fontFamily = $theme->font_family ?? 'system-ui, -apple-system, sans-serif';
         $fontSize = $theme->font_size ?? 16;
         $primaryColor = $theme->primary_color ?? '#0d6efd';
         $textColor = $theme->text_color ?? '#212529';
         $borderColor = $theme->border_color ?? '#dee2e6';
-        $formWidth = $theme->form_width ?? '800px';
+        $formWidth = $useFlex ? '100%' : ($theme->form_width ?? '800px');
         
-        $css = "
-        <style>
-            .awf-summary-container {font-family: {$fontFamily};font-size: {$fontSize}px;color: {$textColor};max-width: {$formWidth};margin: 0 auto;line-height: 1.5;}
-            .awf-summary-title {color: {$primaryColor};border-bottom: 2px solid {$primaryColor};padding-bottom: 10px;margin-bottom: 20px;font-size: 1.5em;}
-            .awf-summary-section-title {color: {$theme->text_color};background-color: {$theme->page_bg_color};padding: 8px 12px;margin-top: 25px;margin-bottom: 5px;font-size: 1.2em;font-weight: bold;border-bottom: 2px solid {$borderColor};}
-            .awf-summary-table {width: 100%;border-collapse: collapse;margin-bottom: 15px;}
-            .awf-summary-table td {padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;}
-            .awf-summary-label {width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);}
-            .awf-summary-value {width: 65%;}
-        </style>";
-
-        $html = $css;
+        $html = '';
+        if ($includeCss) {
+            $css = "
+            <style>
+                .awf-summary-container {font-family: {$fontFamily};font-size: {$fontSize}px;color: {$textColor};max-width: {$formWidth};margin: 0 auto;line-height: 1.5;}
+                .awf-summary-title {color: {$primaryColor};border-bottom: 2px solid {$primaryColor};padding-bottom: 10px;margin-bottom: 20px;font-size: 1.5em;}
+                .awf-summary-section-title {color: {$theme->text_color};background-color: {$theme->page_bg_color};padding: 8px 12px;margin-top: 25px;margin-bottom: 5px;font-size: 1.2em;font-weight: bold;border-bottom: 2px solid {$borderColor};}
+                .awf-summary-table {width: 100%;border-collapse: collapse;margin-bottom: 0px;}
+                .awf-summary-table td {padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;}
+                .awf-summary-label {width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);}
+                .awf-summary-value {width: 65%;}
+                " . ($useFlex ? "
+                .awf-sections-wrapper { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+                .awf-section-item { 
+                    flex: 1 1 250px;
+                    min-width: 250px; 
+                    border: 1px solid {$borderColor}; 
+                    border-radius: 6px; 
+                    overflow: hidden; 
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                }
+                .awf-summary-section-title { margin-top: 0; margin-bottom: 0; border-top: 0; }
+                " : "") . "
+            </style>";
+            $html .= $css;
+        }
         $html .= "<div class='awf-summary-container'>";
-        $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
-        
+        if ($showTitle) {
+            $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
+        }
+        $html .= "<div class='awf-sections-wrapper'>";
+
         // Iteración por secciones (layout)
         foreach ($layout->structure as $section) {
-            
+            $html .= "<div class='awf-section-item'>";
+
             // Si la sección tiene título y tiene que mostrarse
             if ($section->showTitle && !empty($section->title)) {
                 $html .= "<div class='awf-summary-section-title'>" . htmlspecialchars($section->title) . "</div>";
             }
-
             $html .= "<table class='awf-summary-table'>";
             $hasFields = false;
 
@@ -206,8 +229,10 @@ class AWF_Utils {
                 // Si la sección no tenía campos visibles, cerramos la tabla y seguimos (el CSS la hará invisible o mínima)
             }
             $html .= "</table>";
+            $html .= "</div>";
         }
         
+        $html .= "</div>";
         $html .= "</div>";
         
         return $html;

@@ -157,6 +157,21 @@ $dictionary['stic_Advanced_Web_Forms_Responses'] = array(
     'len' => '255',
     'size' => '20',
   ),
+  'html_summary' => 
+  array(
+    'name' => 'html_summary',
+    'vname' => 'LBL_HTML_SUMMARY',
+    'type' => 'longtext',
+    'dbType' => 'longtext',
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'studio' => false,
+    'group' => 'html_summary_group',
+    'inline_edit' => false,
+  ),
   'status' => 
   array (
     'required' => true,

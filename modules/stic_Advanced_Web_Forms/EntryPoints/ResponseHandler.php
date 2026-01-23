@@ -191,6 +191,16 @@ class AWF_ResponseHandler
             $defaultAssignedUserId = $current_user->id;
         }
         $context = new ExecutionContext($formBean->id, $responseBean->id, $rawPostData, $formConfig, null, $defaultAssignedUserId);
+
+        // Generamos el HTML resumen y lo guardamos en la respuesta
+        try {
+            $snapshotHtml = AWF_Utils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
+            $responseBean->html_summary = $snapshotHtml;
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error generating HTML snapshot for response {$responseBean->id}: " . $e->getMessage());
+            $responseBean->html_summary = "<div class='alert alert-danger'>Error generating HTML snapshot for response.</div>";
+        }
+
         $executor = new ServerActionFlowExecutor($context);
         
         // Preparación de los Flujos de acciones

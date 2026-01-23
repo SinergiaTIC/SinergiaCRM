@@ -70,8 +70,9 @@ $viewdefs [$module_name] = array (
         ),
         5 => array (
           0 => array (
-            'name' => 'raw_payload',
-            'label' => 'LBL_RAW_PAYLOAD',
+            'name' => 'html_summary',
+            'label' => 'LBL_HTML_SUMMARY',
+            'customCode' => '{$fields.html_summary.value|html_entity_decode}',
           ),
         ),
         6 => array (
