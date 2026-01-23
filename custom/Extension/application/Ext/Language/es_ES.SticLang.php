@@ -3813,7 +3813,6 @@ $app_list_strings['stic_budgets_status_list']['validated'] = 'Validado';
 $app_list_strings['stic_budgets_status_list']['accepted'] = 'Aceptado';
 $app_list_strings['stic_budgets_status_list']['discarded'] = 'Descartado';
 
-$app_list_strings['stic_justifications_status_list'][''] = '';
 $app_list_strings['stic_justifications_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_justifications_status_list']['working'] = 'En curso';
 $app_list_strings['stic_justifications_status_list']['submitted'] = 'Presentada';

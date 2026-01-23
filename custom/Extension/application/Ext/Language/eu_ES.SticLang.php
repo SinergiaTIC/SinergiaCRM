@@ -3804,7 +3804,6 @@ $app_list_strings['stic_budgets_status_list']['validated'] = 'Balioztatua';
 $app_list_strings['stic_budgets_status_list']['accepted'] = 'Onartua';
 $app_list_strings['stic_budgets_status_list']['discarded'] = 'Baztertua';
 
-$app_list_strings['stic_justifications_status_list'][''] = '';
 $app_list_strings['stic_justifications_status_list']['pending'] = 'Zain';
 $app_list_strings['stic_justifications_status_list']['working'] = 'Lanean';
 $app_list_strings['stic_justifications_status_list']['submitted'] = 'Aurkeztua';
