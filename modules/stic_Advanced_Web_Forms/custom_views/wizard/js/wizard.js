@@ -884,8 +884,10 @@ class WizardStep2 {
 
       get isDate() {return this.field?.type == 'date' || this.field?.type == 'datetime' || this.field?.type == 'datetimecombo'; },
 
-      get isInFormSelectableValues() { return this.field && this.field.type_field != 'fixed' && this.field.acceptValueOptions() && this.field.type != "relate"},
-      get isInFormSelectableRelation() { return this.field && this.field.type_field != 'fixed' && this.field.acceptValueOptions() && this.field.type == "relate" },
+      get isInFormSelectableValues() { return this.field && this.field.type_field != 'fixed' && this.field.type_in_form != 'hidden' && 
+                                              this.field.acceptValueOptions() && this.field.type != "relate"},
+      get isInFormSelectableRelation() { return this.field && this.field.type_field != 'fixed' && this.field.type_in_form != 'hidden' && 
+                                                this.field.acceptValueOptions() && this.field.type == "relate" },
 
       get isFixedValue() { return this.field && this.field.type_field == 'fixed' && this.field.value_type == 'fixed'; },
       get isFixedValueOfEnum() { return this.isFixedValue && this.field.value_options.length > 0; },
@@ -993,6 +995,8 @@ class WizardStep2 {
           }
           if (this.field.type_field == 'unlinked' || this.field.isSelectCustomOptions()) {
             this.configValueOptions = this.isInFormSelectableValues;
+          } else if (!this.isInFormSelectableValues) {
+            this.configValueOptions = false;
           }
         });
         this.$watch('field.value_options', (newArray) => {
