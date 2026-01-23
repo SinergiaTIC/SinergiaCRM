@@ -3,6 +3,7 @@
     STIC.mainThemeColor = '{$mainThemeColor}';
     STIC.formMsgWarnings = {$msgWarnings|json_encode};
     STIC.isAdmin = {$isAdminUser|json_encode};
+    STIC.record = {$beanJson};
 </script>
 
 {$title}

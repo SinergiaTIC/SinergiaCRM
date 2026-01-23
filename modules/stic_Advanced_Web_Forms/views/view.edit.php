@@ -73,6 +73,13 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
 
         SticViews::display($this);
 
+        // Assign current user to assifned user if new record
+        if (empty($this->bean->id) && empty($this->bean->assigned_user_id)) {
+            global $current_user;
+            $this->bean->assigned_user_id = $current_user->id;
+            $this->bean->assigned_user_name = $current_user->name ?? $current_user->user_name; // Nom complet o login
+        }
+
         $responseCount = 0;
         if (!empty($this->bean->id)) {
             $db = DBManagerFactory::getInstance();
@@ -106,6 +113,11 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         $this->ss->assign('mainThemeColor', getCustomBaseColor());
         $this->ss->assign('msgWarnings', $msgWarnings);
         $this->ss->assign('isAdminUser', $GLOBALS['current_user']->is_admin ? true : false);
+
+        $beanArray = $this->bean->toArray();
+        $beanArray['assigned_user_id'] = $this->bean->assigned_user_id;
+        $beanArray['assigned_user_name'] = $this->bean->assigned_user_name;
+        $this->ss->assign('beanJson', json_encode($beanArray));
 
         echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');
     }
