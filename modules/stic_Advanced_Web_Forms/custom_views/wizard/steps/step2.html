@@ -158,7 +158,7 @@
                           <td x-text="getfieldValueText(field)" x-show="canShowFieldColumn('value_text')"></td>
                           <!-- Required in form -->
                           <td x-show="canShowFieldColumn('required_in_form')">
-                            <div class="form-switch">
+                            <div class="form-switch" x-show="field.type_in_form != 'hidden'">
                               <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="field.required_in_form" 
                                      :id="`dataBlockFieldReqForm-${item.id}-${field.name}`"/>
                             </div>
