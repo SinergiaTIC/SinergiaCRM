@@ -92,13 +92,61 @@ class stic_MessagesController extends SugarController
                 $this->bean->phone = $phone;
                 $this->bean->save(!empty($this->bean->notify_on_save));  
             }, $idsArray, $phonesArray);
-            header('Content-Type: application/json');
-            echo json_encode(array('success' =>  true, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
-            exit;
+                // If mass send and type is WhatsAppWeb, return an open_url built from the phones/message
+                if (isset($_REQUEST['type']) && $_REQUEST['type'] === 'WhatsAppWeb') {
+                    $phonesRaw = isset($_REQUEST['phone']) ? $_REQUEST['phone'] : '';
+                    $phonesList = $phonesRaw !== '' ? explode(',', $phonesRaw) : array();
+                    $text = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
+                    $openData = array();
+                foreach ($phonesList as $index => $p) {
+                    $p = trim($p);
+                    if ($p === '') continue;
+                    $phoneClean = preg_replace('/\D+/', '', $p);
+                    if ($phoneClean === '') continue;
+                    
+                    $processedText = $text;
+                    if (isset($idsArray[$index]) && !empty($idsArray[$index])) {
+                        $parentBean = BeanFactory::getBean($_REQUEST['return_module'], $idsArray[$index]);
+                        $processedText = stic_Messages::replaceTemplateVariables($text, $parentBean);
+                    }
+                    
+                    $openData[] = array('phone' => $phoneClean, 'text' => $processedText);
+                }
+
+                // Clear accidental output and return JSON
+                while (ob_get_level()) { ob_end_clean(); }
+                header('Content-Type: application/json');
+                echo json_encode(array('success' => true, 'open_data' => $openData, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_WHATSAPP_WEB_SENT']));
+                exit;                }
+
+                // Clear any accidental output (warnings, HTML, etc.) so the response is pure JSON
+                while (ob_get_level()) { ob_end_clean(); }
+                header('Content-Type: application/json');
+                echo json_encode(array('success' =>  true, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
+                exit;
         }
         else {
             $oldStatus = $this->bean->fetched_row['status']??'';
             $id = $this->bean->save(!empty($this->bean->notify_on_save));
+
+            if (isset($this->bean->type) && $this->bean->type === 'WhatsAppWeb') {
+                $phone = isset($this->bean->phone) ? preg_replace('/\D+/', '', $this->bean->phone) : '';
+                $text = isset($this->bean->message) ? $this->bean->message : '';
+                
+                if (!empty($this->bean->parent_type) && !empty($this->bean->parent_id)) {
+                    $parentBean = BeanFactory::getBean($this->bean->parent_type, $this->bean->parent_id);
+                    $text = stic_Messages::replaceTemplateVariables($text, $parentBean);
+                }
+                
+                // Clear output buffer before returning JSON to avoid malformed responses
+                while (ob_get_level()) { ob_end_clean(); }
+                header('Content-Type: application/json');
+                echo json_encode(array('success' => true, 'phone' => $phone, 'text' => $text, 'id' => $id));
+                exit;
+            }
+
+            // Ensure response is clean JSON
+            while (ob_get_level()) { ob_end_clean(); }
             header('Content-Type: application/json');
             switch ($this->bean->status) {
                 case 'sent':
