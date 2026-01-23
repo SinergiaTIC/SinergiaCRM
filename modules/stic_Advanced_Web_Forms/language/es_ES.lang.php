@@ -115,6 +115,8 @@ $mod_strings = array (
   'LBL_WIZARD_PREVIOUS' => '<< Anterior',
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
   'LBL_WIZARD_FINISH' => 'Finalizar',
+  'LBL_WIZARD_SAVE' => 'Guardar',
+  'LBL_WIZARD_SAVED_DRAFT' => 'Formulario guardado',
 
   'LBL_WIZARD_FORM_EDIT_WARNING_TITLE' => '⚠️ ¡Precaución al editar!',
   'LBL_WIZARD_FORM_EDIT_WARNING_PUBLIC' => 'Este formulario es público: Alguien podría estar rellenándolo en este mismo momento.',

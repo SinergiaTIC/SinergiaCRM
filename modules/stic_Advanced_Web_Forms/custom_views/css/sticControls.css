@@ -94,7 +94,25 @@
   height: calc(100vh - 130px);
   min-height: 500px;
 }
-
+#stic_panel.panel-auto-height {
+  height: auto !important;
+  min-height: 0 !important;
+  display: block;
+  margin-bottom: 20px;
+}
+#stic_panel.panel-auto-height .wizard-container {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 0;
+}
+#stic_panel.panel-auto-height .wizard-card-wrapper {
+  height: auto !important;
+  overflow: visible !important;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
 .stic_panel table {
   caption-side: top;
 }
