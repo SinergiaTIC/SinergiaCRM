@@ -700,6 +700,9 @@ JS;
                     // TimeTrap: Hidden field to track time spent on form
                     $html .= "<input type='hidden' name='awf_submission_ts' x-model='loadTime'>";
 
+                    // Captura de la url del formulario
+                    $html .= "<input type='hidden' name='awf_form_url' x-init=\"\$el.value = (window.self !== window.top) ? document.referrer : window.location.href\">" . $this->newLine();
+                    
                     // Sections Grid
                     $html .= "<div class='awf-grid-sections'>" .$this->newLine('+');
                     {

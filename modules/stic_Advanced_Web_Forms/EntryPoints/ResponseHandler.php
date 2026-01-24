@@ -60,12 +60,19 @@ class AWF_ResponseHandler
             $isSpam = true;
         }
 
+        // URL del formulario
+        $formUrl = $_POST['awf_form_url'] ?? $_SERVER['HTTP_REFERER'] ?? '';
+        $formUrl = substr(strip_tags($formUrl), 0, 255);
+
         // Saneamiento de datos
         unset($rawPostData['module']);
         unset($rawPostData['action']);
         unset($rawPostData['entryPoint']);
         unset($rawPostData['id']);
         unset($rawPostData['awf_honey_pot']);
+        unset($rawPostData['awf_submission_ts']);
+        unset($rawPostData['awf_form_url']);
+
 
         // Validaciones iniciales
         if (empty($formId)) {
@@ -83,7 +90,6 @@ class AWF_ResponseHandler
         // Detección de duplicados: Fingerprint
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $formUrl = $_SERVER['HTTP_REFERER'] ?? '';
         $payloadJson = json_encode($rawPostData);
 
         $fingerprintString = $payloadJson . $formId . $remoteIp . $userAgent . $formUrl;
@@ -379,34 +385,69 @@ class AWF_ResponseHandler
         }
 
         global $app_list_strings;
-        $sequence = 1;
+
+        // Consolidamos los links: Un único link por cada bean afectado
+        $consolidatedBeans = []; 
         foreach ($context->actionResults as $result) {
-            foreach ($result->modifiedBeans as $modifiedBean) {
-                $linkBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Links');
+            foreach ($result->modifiedBeans as $modBean) {
+                $key = $modBean->moduleName . ':' . $modBean->beanId;
 
-                $targetBean = BeanFactory::getBean($modifiedBean->moduleName, $modifiedBean->beanId);
-                $targetBeanName = $targetBean ? $targetBean->get_summary_text() : $modifiedBean->beanId;
-                $actionValue = $modifiedBean->modificationType->value;
-                $recordActionName = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionValue];
-                $moduleSingular = $app_list_strings['moduleListSingular'][$modifiedBean->moduleName];
+                if (!isset($consolidatedBeans[$key])) {
+                    // Primera vez que lo tocamos
+                    $consolidatedBeans[$key] = [
+                        'module' => $modBean->moduleName,
+                        'id' => $modBean->beanId,
+                        'type' => $modBean->modificationType, // (CREATED, UPDATED, ENRICHED, SKIPPED)
+                        'data' => $modBean->submittedData
+                    ];
+                } else {
+                    // Ya existe, hacemos fusión
+                    $currentEntry = &$consolidatedBeans[$key];
 
-                $linkBean->is_automated_save = true;
-                $linkBean->name = $responseBean->name ." - ". $moduleSingular .": ". $targetBeanName ." (". $recordActionName .")";
-                $linkBean->sequence_number = $sequence++;
-                $linkBean->parent_id = $modifiedBean->beanId; 
-                $linkBean->parent_type = $modifiedBean->moduleName; 
-                $linkBean->record_action = $actionValue;
-                $linkBean->assigned_user_id = $responseBean->assigned_user_id;
+                    // Fusión del tipo de acción realizada. Prioridad: CREATED > UPDATED > ENRICHED
+                    if ($modBean->modificationType === BeanModificationType::CREATED) {
+                        $currentEntry['type'] = BeanModificationType::CREATED;
+                    } elseif ($currentEntry['type'] !== BeanModificationType::CREATED && $modBean->modificationType === BeanModificationType::UPDATED) {
+                        $currentEntry['type'] = BeanModificationType::UPDATED;
+                    }
 
-                if (!empty($modifiedBean->submittedData)) {
-                    $linkBean->submitted_data = json_encode($modifiedBean->submittedData, JSON_UNESCAPED_UNICODE);
+                    // Fusión de los datos tocados: Acumulamos los campos
+                    if (!empty($modBean->submittedData)) {
+                        $currentEntry['data'] = array_merge($currentEntry['data'], $modBean->submittedData);
+                    }
                 }
-
-                $linkBean->save();
-
-                // Vinculamos el Link a la Response
-                $responseBean->stic_1c31forms_links->add($linkBean->id);
             }
+        }
+
+        // Guardamos los links
+        $sequence = 1;
+        foreach ($consolidatedBeans as $item) {
+            $linkBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Links');
+
+            $targetBean = BeanFactory::getBean($item['module'], $item['id']);
+            $targetBeanName = $targetBean ? $targetBean->get_summary_text() : $item['id'];
+            
+            $actionValue = $item['type']->value;
+            $recordActionName = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionValue] ?? $actionValue;
+            $moduleSingular = $app_list_strings['moduleListSingular'][$item['module']] ?? $item['module'];
+
+            $linkBean->is_automated_save = true;
+            // Formato del nombre del link: "NombreFormulario - Módulo: NombreRegistro (Creado)"
+            $linkBean->name = $responseBean->name ." - ". $moduleSingular .": ". $targetBeanName ." (". $recordActionName .")";
+            $linkBean->sequence_number = $sequence++;
+            $linkBean->parent_id = $item['id']; 
+            $linkBean->parent_type = $item['module']; 
+            $linkBean->record_action = $actionValue;
+            $linkBean->assigned_user_id = $responseBean->assigned_user_id;
+
+            if (!empty($item['data'])) {
+                $linkBean->submitted_data = json_encode($item['data'], JSON_UNESCAPED_UNICODE);
+            }
+
+            $linkBean->save();
+
+            // Vinculamos el Link a la Response
+            $responseBean->stic_1c31forms_links->add($linkBean->id);
         }
     }
 

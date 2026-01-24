@@ -20,6 +20,9 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 /**
  * Retrieves fields and relationships of given Module to given SuiteCRM modules.

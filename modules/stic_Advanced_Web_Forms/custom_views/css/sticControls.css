@@ -98,7 +98,7 @@
   height: auto !important;
   min-height: 0 !important;
   display: block;
-  margin-bottom: 20px;
+  margin-top: -50px;
 }
 #stic_panel.panel-auto-height .wizard-container {
   height: auto !important;

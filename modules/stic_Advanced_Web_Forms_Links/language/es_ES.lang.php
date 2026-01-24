@@ -88,6 +88,9 @@ $mod_strings = array (
   'LBL_FLEX_RELATE' => 'Relacionado con',
   'LBL_RECORD_ACTION' => 'Acción',
   'LBL_SUBMITTED_DATA' => 'Datos aplicados',
+  
+  'LBL_NO_MODIFIED_DATA' => 'No se han registrado cambios de datos específicos.',
+  'LBL_NO_NAME' => 'Sin nombre',
 
   'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuesta a formulario',
 );

@@ -158,7 +158,9 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $beanWasCreatedHere = $this->wasBeanCreatedInThisContext($bean->id, $context);
 
         // El nombre no se ha indicado explícitamente, se ha creado el bean y tiene un nombre (calculado)
-        if (!$nameIsUserDefined && $beanWasCreatedHere && !empty($bean->name)) {
+        if (!$nameIsUserDefined && $beanWasCreatedHere) {
+            // Recuperamos el bean para tener los datos actualizados
+            $bean->retrieve($bean->id);
             // Reseteamos el nombre
             $bean->name = '';
             // Guardamos de nuevo para que se recalcule el nombre

@@ -195,6 +195,21 @@ $dictionary['stic_Advanced_Web_Forms_Links'] = array(
     'rows' => '4',
     'cols' => '20',
   ),
+  'submitted_data_html' => 
+  array (
+    'name' => 'submitted_data_html',
+    'vname' => 'LBL_SUBMITTED_DATA',
+    'type' => 'varchar',
+    'source' => 'non-db',
+    'studio' => false,
+    'inline_edit' => false,
+    'function' => 
+    array (
+      'name' => 'getLinkDataHtml',
+      'returns' => 'html',
+      'include' => 'modules/stic_Advanced_Web_Forms_Links/Utils.php',
+    ),
+  ),
 ),
     'relationships' => array (
 ),

@@ -58,7 +58,7 @@ $viewdefs [$module_name] = array (
         ),
         3 => array (
           0 => array (
-            'name' => 'submitted_data',
+            'name' => 'submitted_data_html',
             'label' => 'LBL_SUBMITTED_DATA',
           ),
         ),

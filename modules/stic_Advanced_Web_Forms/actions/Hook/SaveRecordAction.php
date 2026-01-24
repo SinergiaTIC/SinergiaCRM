@@ -146,7 +146,14 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     {
         foreach ($block->formData as $fieldName => $field) {
             if ($field != null) {
-                $bean->{$fieldName} = $field->value;
+                $fieldDef = $bean->field_defs[$fieldName] ?? null;
+                if ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name'])) {
+                    // Campo Relate: necesitamos asignar el ID relacionado al campo oculto del ID
+                    $idField = $fieldDef['id_name'];
+                    $bean->{$idField} = $field->value;
+                } else {
+                    $bean->{$fieldName} = $field->value;
+                }
             }
         }
     }
@@ -158,8 +165,23 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     {
         foreach ($block->formData as $fieldName => $field) {
             // Comprobamos si el campo en el bean está vacío o nulo
-            if ($bean->{$fieldName} === null || $bean->{$fieldName} === '') {
-                $bean->{$fieldName} = $field->value;
+            $isEmpty = ($bean->{$fieldName} === null || $bean->{$fieldName} === '');
+            $fieldDef = $bean->field_defs[$fieldName] ?? null;
+
+            // Si es un relate, comprobamos el campo ID relacionado
+            if ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name'])) {
+                $idField = $fieldDef['id_name'];
+                $isEmpty = empty($bean->$idField);
+            }
+
+            if ($isEmpty) {
+                if ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name'])) {
+                    // Campo Relate: necesitamos asignar el ID relacionado al campo oculto del ID
+                    $idField = $fieldDef['id_name'];
+                    $bean->{$idField} = $field->value;
+                } else {
+                    $bean->{$fieldName} = $field->value;
+                }
             }
         }
     }
