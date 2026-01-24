@@ -1026,6 +1026,18 @@ class WizardStep2 {
         });
         this.$watch('field.subtype_in_form', (newType, oldType) => {
           if (!this.field) return;
+          // Adjust field.type based on subtype_in_form when type_field is 'unlinked'
+          if (this.field.type_field == 'unlinked') {
+            if (newType == 'select_checkbox' || newType == 'select_switch') {
+              this.field.type = 'bool'; 
+            } else if (newType == 'date') {
+              this.field.type = 'date';
+            } else if (newType == 'number') {
+              this.field.type = 'float';
+            } else {
+              this.field.type = 'varchar';
+            }
+          }
           if (!this.isEdit) {
             this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
           }
