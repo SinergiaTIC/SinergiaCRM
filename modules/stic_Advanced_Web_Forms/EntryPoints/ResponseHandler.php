@@ -409,10 +409,13 @@ class AWF_ResponseHandler
                         $currentEntry['type'] = BeanModificationType::CREATED;
                     } elseif ($currentEntry['type'] !== BeanModificationType::CREATED && $modBean->modificationType === BeanModificationType::UPDATED) {
                         $currentEntry['type'] = BeanModificationType::UPDATED;
+                    } elseif ($currentEntry['type'] === BeanModificationType::SKIPPED && $modBean->modificationType !== BeanModificationType::SKIPPED) {
+                        // Si estaba como SKIPPED y ahora es otra acción, lo actualizamos
+                        $currentEntry['type'] = $modBean->modificationType;
                     }
 
-                    // Fusión de los datos tocados: Acumulamos los campos
-                    if (!empty($modBean->submittedData)) {
+                    // Fusión de los datos tocados: Acumulamos los campos (no SKIPPED)
+                    if ($modBean->modificationType !== BeanModificationType::SKIPPED && !empty($modBean->submittedData)) {
                         $currentEntry['data'] = array_merge($currentEntry['data'], $modBean->submittedData);
                     }
                 }
