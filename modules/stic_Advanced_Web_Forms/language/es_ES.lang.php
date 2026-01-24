@@ -92,6 +92,11 @@ $mod_strings = array (
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
+  'LBL_ANALYTICS_VIEWS' => 'Visitas Totales',
+  'LBL_ANALYTICS_BLOCKED' => 'Visitas Bloqueadas (No público)',
+  'LBL_ANALYTICS_SUBMISSIONS' => 'Respuestas Válidas',
+  'LBL_ANALYTICS_SPAM' => 'Spam Detectado',
+  'LBL_ANALYTICS_REFERRERS' => 'Fuentes de Tráfico (Dominios)',
   'LBL_HONEYPOT_LABEL' => 'Mantenga este campo vacío',
 
   'LBL_PREVIEW_RIBBON' => 'Previsualización',

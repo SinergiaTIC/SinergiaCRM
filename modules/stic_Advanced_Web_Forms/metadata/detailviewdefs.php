@@ -51,6 +51,32 @@ $viewdefs [$module_name] = array (
           ),
         ),
         2 => array (
+          0 => array (
+            'name' => 'analytics_views',
+            'label' => 'LBL_ANALYTICS_VIEWS',
+          ),
+          1 => array (
+            'name' => 'analytics_blocked',
+            'label' => 'LBL_ANALYTICS_BLOCKED',
+          ),
+        ),
+        3 => array (
+          0 => array (
+            'name' => 'analytics_submissions',
+            'label' => 'LBL_ANALYTICS_SUBMISSIONS',
+          ),
+          1 => array (
+            'name' => 'analytics_spam',
+            'label' => 'LBL_ANALYTICS_SPAM',
+          ),
+        ),
+        4 => array (
+          0 => array (
+            'name' => 'analytics_referrers',
+            'label' => 'LBL_ANALYTICS_REFERRERS',
+          ),
+        ),
+        5 => array (
           0 => 'description',
         ),
       ),

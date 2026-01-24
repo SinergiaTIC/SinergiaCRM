@@ -50,6 +50,41 @@ $listViewDefs[$module_name] = array(
         'default' => true,
         'link' => true
     ),
+    'STATUS' => array(
+        'width' => '10',
+        'label' => 'LBL_STATUS',
+        'default' => true,
+    ),
+    'PROCESSING_MODE' => array(
+        'width' => '10',
+        'label' => 'LBL_PROCESSING_MODE',
+        'default' => true,
+    ),
+    'ANALYTICS_REFERRERS' => array(
+        'width' => '32',
+        'label' => 'LBL_ANALYTICS_REFERRERS',
+        'default' => true,
+    ),
+    'ANALYTICS_VIEWS' => array(
+        'width' => '10',
+        'label' => 'LBL_ANALYTICS_VIEWS',
+        'default' => true,
+    ),
+    'ANALYTICS_SUBMISSIONS' => array(
+        'width' => '10',
+        'label' => 'LBL_ANALYTICS_SUBMISSIONS',
+        'default' => true,
+    ),
+    'ANALYTICS_BLOCKED' => array(
+        'width' => '10',
+        'label' => 'LBL_ANALYTICS_BLOCKED',
+        'default' => true,
+    ),
+    'ANALYTICS_SPAM' => array(
+        'width' => '10',
+        'label' => 'LBL_ANALYTICS_SPAM',
+        'default' => true,
+    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',
         'label' => 'LBL_ASSIGNED_TO_NAME',

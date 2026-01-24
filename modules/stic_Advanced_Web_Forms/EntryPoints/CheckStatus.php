@@ -44,8 +44,41 @@ if (empty($id)) {
 
 $db = DBManagerFactory::getInstance();
 $safeId = $db->quote($id);
+
+// Obtenemos el estado del formulario
 $status = $db->getOne("SELECT status FROM stic_advanced_web_forms WHERE id = '$safeId' AND deleted = 0");
 $isActive = ($status === 'public');
+
+// Actualizamos los contadores de estadísticas de acceso al formulario
+if ($status) {
+    // Contador de visitas
+    if ($isActive) {
+        $db->query("UPDATE stic_advanced_web_forms SET analytics_views = analytics_views + 1 WHERE id = '$safeId'");
+    } else {
+        $db->query("UPDATE stic_advanced_web_forms SET analytics_blocked = analytics_blocked + 1 WHERE id = '$safeId'");
+    }
+
+    // Registro del referer (dominio)
+    $referer = $_SERVER['HTTP_REFERER'] ?? '';
+    if (!empty($referer)) {
+        $parts = parse_url($referer);
+        $host = $parts['host'] ?? '';
+        $path = $parts['path'] ?? '';
+
+        // Construimos la URL limpia: Dominio + Ruta (sin https:// ni parámetros)
+        $cleanUrl = $host . $path;
+        $cleanUrl = substr($cleanUrl, 0, 200); 
+        $safeUrl = $db->quote($cleanUrl);
+
+        // CONCAT_WS añade un separador automáticamente
+        $queryRef = "UPDATE stic_advanced_web_forms 
+                        SET analytics_referrers = CONCAT_WS('\n', analytics_referrers, '$safeUrl')
+                        WHERE id = '$safeId' 
+                        AND (analytics_referrers IS NULL OR analytics_referrers NOT LIKE '%$safeUrl%')";
+        
+        $db->query($queryRef);
+    }
+}
 
 require_once 'include/utils.php';
 $message = !$isActive ? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms') : '';

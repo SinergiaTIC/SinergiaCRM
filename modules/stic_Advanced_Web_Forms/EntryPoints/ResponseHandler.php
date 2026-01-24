@@ -158,11 +158,16 @@ class AWF_ResponseHandler
         // Paramos si es SPAM (Fake success)
         if ($isSpam) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected and saved for Form ID: $formId");
+
+            // Actualizamos contador de spam
+            $db = DBManagerFactory::getInstance();
+            $safeId = $db->quote($formId);
+            $db->query("UPDATE stic_advanced_web_forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
             
             // Mostramos éxito genérico para engañar al bot
             AWF_Utils::renderGenericResponse($formConfig, 
-                                         translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                                         translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                                             translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
+                                             translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
             return; // Paramos: no procesamos más
         }
 
@@ -190,6 +195,11 @@ class AWF_ResponseHandler
             AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
+
+        // Actualizamos contador de respuestas válidas
+        $db = DBManagerFactory::getInstance();
+        $safeId = $db->quote($formId);
+        $db->query("UPDATE stic_advanced_web_forms SET analytics_submissions = analytics_submissions + 1 WHERE id = '$safeId'");
 
         // Contexto de ejecución
         $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
