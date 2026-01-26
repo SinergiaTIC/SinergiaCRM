@@ -613,7 +613,14 @@
                       </template>
                       <!-- Description -->
                       <div class="col-3">
-                        <label for="modalField_Description" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_DESCRIPTION')"></label>
+                        <div class="d-flex justify-content-between align-items-end mb-1">
+                          <label for="modalField_Description" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_DESCRIPTION')"></label>
+                          <!-- Add link to description -->
+                          <button type="button" class="btn btn-xs btn-outline-primary" @click="$store.legalLinkModal.open(field)"
+                                  :title="utils.translate('LBL_FIELD_ADD_LINK')">
+                            <span class="suitepicon suitepicon-module-campaigntrackers"></span>
+                          </button>
+                        </div>
                         <input id="modalField_Description" class="form-control" x-model="field.description" />
                       </div>
                     </div>
@@ -705,6 +712,42 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal: Add link to description -->
+    <div x-show="$store.legalLinkModal.isOpen" x-cloak class="custom-modal-wrapper" style="z-index: 1060;">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" style="max-width: 500px;">
+        <div class="custom-modal-content">
+          <div class="custom-modal-header">
+            <h3 class="modal-title" id="modalLegalLinkTitle" x-text="utils.translate('LBL_FIELD_LINK_CREATE')"></h3>
+            <button type="button" class="btn-close" @click="$store.legalLinkModal.close()"></button>
+          </div>
+          <div class="custom-modal-body">
+            <!-- Text -->
+            <div class="mb-3">
+              <label for="legalLinkModal-text" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_LINK_TEXT')"></label>
+              <input id="legalLinkModal-text" type="text" class="form-control" x-model="$store.legalLinkModal.linkText"
+                     @keydown.enter="$refs.urlInputLegal.focus()"> 
+            </div>
+            <!-- Url -->
+            <div class="mb-3">
+              <label for="legalLinkModal-url" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_LINK_URL')"></label>
+              <input id="legalLinkModal-url" type="text" x-ref="urlInputLegal" class="form-control" placeholder="https://..." 
+                     x-model="$store.legalLinkModal.linkUrl" @keydown.enter="$store.legalLinkModal.insert()">
+            </div>
+          </div>
+          <!-- Accept / Cancel Buttons -->
+          <div class="custom-modal-footer">
+            <button type="button" class="col-2 btn btn-secondary" @click="$store.legalLinkModal.close()" 
+                    x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" @click="$store.legalLinkModal.insert()" 
+                    :disabled="!$store.legalLinkModal.linkText || !$store.legalLinkModal.linkUrl" 
+                    x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <!-- Modal: Create/Edit Field Validation -->
     <div x-show="$store.fieldValidationEditor.isOpen" x-cloak class="custom-modal-wrapper">

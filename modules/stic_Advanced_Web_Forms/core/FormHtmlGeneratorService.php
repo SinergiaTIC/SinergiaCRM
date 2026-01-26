@@ -845,9 +845,10 @@ JS;
             }
         }
 
-        $description = '';
+        $description = "";
         if ($field->description != '') {
-            $description = "<div class='awf-help-text'>{$field->description}</div>";
+            $parsedDesc = $this->parseAnchorMarkdown($field->description);
+            $description = "<div class='form-text awf-help-text'>{$parsedDesc}</div>";
         }
 
         // --- SPECIAL CASES (Single Checkbox / Switch) with own representation ---
@@ -1193,6 +1194,17 @@ JS;
 #{$wrapperId} .awf-icon-toggle.open {
   transform: rotate(180deg);
 }";
+    }
+
+    private function parseAnchorMarkdown(string $text): string {
+        if (empty($text)) return '';
+
+        $pattern = '/\[([^\]]+)\]\(([^\)]+)\)/';
+        $replacement = '<a href="$2" target="_blank" rel="noopener noreferrer" class="awf-link" title="$1">$1</a>';
+        
+        $html = preg_replace($pattern, $replacement, $text);
+
+        return nl2br($html);
     }
 
 }

@@ -692,6 +692,38 @@ class WizardStep2 {
           });
         }
 
+        // Store for the Legal Link Modal
+        if (!Alpine.store('legalLinkModal')) {
+          Alpine.store('legalLinkModal', {
+            isOpen: false,
+            linkText: '',
+            linkUrl: '',
+            targetField: null, 
+
+            open(field) {
+              this.targetField = field;
+              this.linkText = '';
+              this.linkUrl = '';
+              this.isOpen = true;
+            },
+
+            close() {
+              this.isOpen = false;
+              this.targetField = null;
+            },
+
+            insert() {
+              if (!this.linkText || !this.linkUrl || !this.targetField) return;
+              
+              const md = ` [${this.linkText}](${this.linkUrl})`;
+              this.targetField.description = (this.targetField.description || '') + md;
+              
+              this.close();
+            }
+          });
+        }
+        
+
         // Store for the Relationship Creator management
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
