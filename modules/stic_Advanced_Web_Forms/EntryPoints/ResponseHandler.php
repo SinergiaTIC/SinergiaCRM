@@ -48,9 +48,10 @@ class AWF_ResponseHandler
         // Obtención de datos
         $formId = $_REQUEST['id'] ?? null;
         $rawPostData = $_POST;
+        $cleanData = $this->sanitizeInput($rawPostData);
 
         // Detección Anti-Spam (Honeypot): Campo oculto que los bots suelen rellenar
-        $isSpam = !empty($rawPostData['awf_honey_pot']);
+        $isSpam = !empty($cleanData['awf_honey_pot']);
 
         // Detección Anti-Spam (TimeTrap): Normalmente los bots envían el formulario inmediatamente y/o sin ejecutar JS
         $submissionTs = (int)($_POST['awf_submission_ts'] ?? 0);
@@ -65,13 +66,13 @@ class AWF_ResponseHandler
         $formUrl = substr(strip_tags($formUrl), 0, 255);
 
         // Saneamiento de datos
-        unset($rawPostData['module']);
-        unset($rawPostData['action']);
-        unset($rawPostData['entryPoint']);
-        unset($rawPostData['id']);
-        unset($rawPostData['awf_honey_pot']);
-        unset($rawPostData['awf_submission_ts']);
-        unset($rawPostData['awf_form_url']);
+        unset($cleanData['module']);
+        unset($cleanData['action']);
+        unset($cleanData['entryPoint']);
+        unset($cleanData['id']);
+        unset($cleanData['awf_honey_pot']);
+        unset($cleanData['awf_submission_ts']);
+        unset($cleanData['awf_form_url']);
 
 
         // Validaciones iniciales
@@ -90,7 +91,7 @@ class AWF_ResponseHandler
         // Detección de duplicados: Fingerprint
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $payloadJson = json_encode($rawPostData);
+        $payloadJson = json_encode($cleanData);
 
         $fingerprintString = $payloadJson . $formId . $remoteIp . $userAgent . $formUrl;
         $responseHash = md5($fingerprintString);
@@ -180,7 +181,7 @@ class AWF_ResponseHandler
         }
 
         // Validación de datos
-        $validationErrors = $this->validateSubmission($formConfig, $rawPostData);
+        $validationErrors = $this->validateSubmission($formConfig, $cleanData);
         if ($validationErrors) {
             $errorString = implode(", ", $validationErrors);
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Data Validation errors for Form ID {$formId}:" . $errorString);
@@ -206,7 +207,7 @@ class AWF_ResponseHandler
         if (empty($defaultAssignedUserId)) {
             $defaultAssignedUserId = $current_user->id;
         }
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $rawPostData, $formConfig, null, $defaultAssignedUserId);
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId);
 
         // Generamos el HTML resumen y lo guardamos en la respuesta
         try {
@@ -264,7 +265,7 @@ class AWF_ResponseHandler
                 $this->saveLinks($responseBean, $context);
 
                 // Generamos las respuestas analíticas
-                $this->generateAnalyticsAnswers($responseBean, $formConfig, $rawPostData);
+                $this->generateAnalyticsAnswers($responseBean, $formConfig, $cleanData);
 
                 // Actualizamos el estado y generamos el log de ejecución
                 $hasErrors = false;
@@ -616,6 +617,29 @@ class AWF_ResponseHandler
             if ($opt->value == $value) return $opt;
         }
         return null;
+    }
+
+    /**
+     * Función que limpia recursivamente el input para evitar XSS
+     * Elimina tags HTML peligrosos y espacios sobrantes
+     */
+    private function sanitizeInput($input) {
+        if (is_array($input)) {
+            // Si es un array, limpiamos cada uno de los elementos, también la clave
+            $clean = [];
+            foreach ($input as $key => $value) {
+                $clean[strip_tags($key)] = $this->sanitizeInput($value);
+            }
+            return $clean;
+        }
+        
+        // Si es un bool, null o numérico puro lo dejamos pasar
+        if (is_bool($input) || is_null($input) || is_numeric($input)) {
+            return $input;
+        }
+
+        // Limpiamos el input
+        return strip_tags(trim((string)$input));
     }    
 }
 
