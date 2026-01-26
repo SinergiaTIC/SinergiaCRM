@@ -98,7 +98,7 @@ class stic_Job_Applications extends Basic
         {
             // If the available time field has been updated, the corresponding field of the contact related also is updated.
             if (isset($this->available_time) && (!isset($this->fetched_row['available_time']) || $this->available_time != $this->fetched_row['available_time'])) {
-                $contactBean->time_availability_c = $this->available_time;
+                $contactBean->stic_time_availability_c = $this->available_time;
                 $contactBean->save();
             }
 

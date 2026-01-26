@@ -2511,11 +2511,11 @@ $dictionary["Contact"]["fields"]["stic_skills_contacts"] = array(
 );
 
 // Volunteering Fields
-$dictionary['Contact']['fields']['confidentiality_agreement_c'] = array(
+$dictionary['Contact']['fields']['stic_confidentiality_agreement_c'] = array(
     'required' => false,
-    'id' => 'Contactsconfidentiality_agreement_c',    
-    'name' => 'confidentiality_agreement_c',
-    'vname' => 'LBL_CONFIDENTIALITY_AGREEMENT',
+    'id' => 'Contactsstic_confidentiality_agreement_c',    
+    'name' => 'stic_confidentiality_agreement_c',
+    'vname' => 'LBL_STIC_CONFIDENTIALITY_AGREEMENT',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',    
     'type' => 'bool',
@@ -2533,11 +2533,11 @@ $dictionary['Contact']['fields']['confidentiality_agreement_c'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
 );
-$dictionary['Contact']['fields']['conduct_code_c'] = array(
+$dictionary['Contact']['fields']['stic_conduct_code_c'] = array(
     'required' => false,
-    'id' => 'Contactsconduct_code_c',    
-    'name' => 'conduct_code_c',
-    'vname' => 'LBL_CONDUCT_CODE',
+    'id' => 'Contactsstic_conduct_code_c',    
+    'name' => 'stic_conduct_code_c',
+    'vname' => 'LBL_STIC_CONDUCT_CODE',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',    
     'type' => 'bool',
@@ -2555,11 +2555,11 @@ $dictionary['Contact']['fields']['conduct_code_c'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
 );
-$dictionary['Contact']['fields']['occupational_safety_c'] = array(
+$dictionary['Contact']['fields']['stic_occupational_safety_c'] = array(
     'required' => false,
-    'id' => 'Contactsoccupational_safety_c',
-    'name' => 'occupational_safety_c',
-    'vname' => 'LBL_OCCUPATIONAL_SAFETY',
+    'id' => 'Contactsstic_occupational_safety_c',
+    'name' => 'stic_occupational_safety_c',
+    'vname' => 'LBL_STIC_OCCUPATIONAL_SAFETY',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',    
     'type' => 'bool',
@@ -2577,11 +2577,11 @@ $dictionary['Contact']['fields']['occupational_safety_c'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
 );
-$dictionary['Contact']['fields']['time_availability_c'] = array(
+$dictionary['Contact']['fields']['stic_time_availability_c'] = array(
     'required' => false,
-    'id' => 'Contactstime_availability_c',
-    'name' => 'time_availability_c',
-    'vname' => 'LBL_TIME_AVAILABILITY',
+    'id' => 'Contactsstic_time_availability_c',
+    'name' => 'stic_time_availability_c',
+    'vname' => 'LBL_STIC_TIME_AVAILABILITY',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
     'type' => 'varchar',

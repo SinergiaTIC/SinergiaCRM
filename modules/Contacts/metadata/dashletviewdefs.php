@@ -311,40 +311,40 @@ $dashletData['ContactsDashlet']['columns'] = array(
         'default' => false,
         'name' => 'lawful_basis',
     ),
-    'confidentiality_agreement_c' => 
+    'stic_confidentiality_agreement_c' => 
     array (
         'type' => 'bool',
         'default' => false,
         'studio' => 'visible',
-        'label' => 'LBL_CONFIDENTIALITY_AGREEMENT',
+        'label' => 'LBL_STIC_CONFIDENTIALITY_AGREEMENT',
         'width' => '10%',
-        'name' => 'confidentiality_agreement_c',
+        'name' => 'stic_confidentiality_agreement_c',
     ),
-    'conduct_code_c' => 
+    'stic_conduct_code_c' => 
     array (
         'type' => 'bool',
         'default' => false,
         'studio' => 'visible',
-        'label' => 'LBL_CONDUCT_CODE',
+        'label' => 'LBL_STIC_CONDUCT_CODE',
         'width' => '10%',
-        'name' => 'conduct_code_c',
+        'name' => 'stic_conduct_code_c',
     ),
-    'occupational_safety_c' => 
+    'stic_occupational_safety_c' => 
     array (
         'type' => 'bool',
         'default' => false,
         'studio' => 'visible',
-        'label' => 'LBL_OCCUPATIONAL_SAFETY',
+        'label' => 'LBL_STIC_OCCUPATIONAL_SAFETY',
         'width' => '10%',
-        'name' => 'occupational_safety_c',
+        'name' => 'stic_occupational_safety_c',
     ),
-    'time_availability_c' => 
+    'stic_time_availability_c' => 
     array (
         'type' => 'varchar',
-        'label' => 'LBL_TIME_AVAILABILITY',
+        'label' => 'LBL_STIC_TIME_AVAILABILITY',
         'width' => '10%',
         'default' => false,
-        'name' => 'time_availability',
+        'name' => 'stic_time_availability_c',
     ),
     'date_reviewed' => array(
         'type' => 'date',

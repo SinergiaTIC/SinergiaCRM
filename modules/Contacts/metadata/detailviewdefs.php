@@ -872,30 +872,30 @@ array (
         array (
           0 => 
           array (
-            'name' => 'confidentiality_agreement_c',
+            'name' => 'stic_confidentiality_agreement_c',
             'studio' => 'visible',
-            'label' => 'LBL_CONFIDENTIALITY_AGREEMENT',
+            'label' => 'LBL_STIC_CONFIDENTIALITY_AGREEMENT',
           ),
           1 => 
           array (
-            'name' => 'conduct_code_c',
+            'name' => 'stic_conduct_code_c',
             'studio' => 'visible',
-            'label' => 'LBL_CONDUCT_CODE',
+            'label' => 'LBL_STIC_CONDUCT_CODE',
           ),
         ),
         7 => 
         array (
           0 => 
           array (
-            'name' => 'occupational_safety_c',
+            'name' => 'stic_occupational_safety_c',
             'studio' => 'visible',
-            'label' => 'LBL_OCCUPATIONAL_SAFETY',
+            'label' => 'LBL_STIC_OCCUPATIONAL_SAFETY',
           ),
           1 => 
           array (
-            'name' => 'time_availability_c',
+            'name' => 'stic_time_availability_c',
             'studio' => 'visible',
-            'label' => 'LBL_TIME_AVAILABILITY',
+            'label' => 'LBL_STIC_TIME_AVAILABILITY',
           ),
         ),
         8 => 
