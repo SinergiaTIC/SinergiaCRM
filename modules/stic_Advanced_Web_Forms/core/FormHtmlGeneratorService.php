@@ -682,7 +682,7 @@ JS;
                     $formAttributes = 'action="#" autocomplete="off" onsubmit="event.preventDefault(); alert(\''.translate('LBL_PREVIEW_MODE_ALERT', 'stic_Advanced_Web_Forms').'\'); return false;"';
                     $alpineSubmit = "";
                 } else {
-                    $formAttributes = "action='{$actionUrl}' method='POST' autocomplete='off' novalidate";
+                    $formAttributes = "action='{$actionUrl}' method='POST' autocomplete='off' novalidate enctype='multipart/form-data'";
                     $alpineSubmit = "@submit.prevent='submitForm(\$el)'";
                 }
 
