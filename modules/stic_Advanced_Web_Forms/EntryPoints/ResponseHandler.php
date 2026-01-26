@@ -207,7 +207,7 @@ class AWF_ResponseHandler
         if (empty($defaultAssignedUserId)) {
             $defaultAssignedUserId = $current_user->id;
         }
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId);
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
 
         // Generamos el HTML resumen y lo guardamos en la respuesta
         try {
@@ -260,6 +260,11 @@ class AWF_ResponseHandler
             if ($mainFlow) {
                 // Ejecutamos las acciones no terminales
                 $pendingTerminalAction = $executor->executeFlow($mainFlow, $errorFlow);
+
+                // Si el flujo se ha pausado, salimos
+                if ($responseBean->status === 'awaiting_action') {
+                    return;
+                }
                 
                 // Guardamos los vínculos de trazabilidad (registros creados/modificados)                
                 $this->saveLinks($responseBean, $context);

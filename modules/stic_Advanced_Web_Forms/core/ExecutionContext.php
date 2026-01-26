@@ -30,6 +30,7 @@ class ExecutionContext {
     
     public string $formId = '';        // ID del formulario que se está procesando
     public string $responseId = '';    // ID de respuesta generado para este envío
+    public ?SugarBean $responseBean;   // Bean de respuesta generado para este envío
 
     public FormConfig $formConfig;     // Configuración del formulario
 
@@ -48,8 +49,9 @@ class ExecutionContext {
      * @param FormConfig $formConfig Configuración del formulario
      * @param ?float $timestamp El timestamp del envío de datos del formulario (opcional)
      * @param string $defaultAssignedUserId ID del usuario asignado por defecto (opcional)
+     * @param ?SugarBean $responseBean El Bean de respuesta (opcional)
      */
-    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '') {
+    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null) {
         $this->formId = $formId;
         $this->responseId = $responseId;
         $this->formData = $formData;
@@ -57,6 +59,7 @@ class ExecutionContext {
         $this->actionResults = [];
         $this->submissionTimestamp = $timestamp ?? microtime(true);
         $this->defaultAssignedUserId = $defaultAssignedUserId;
+        $this->responseBean = $responseBean;
     }
 
     /**

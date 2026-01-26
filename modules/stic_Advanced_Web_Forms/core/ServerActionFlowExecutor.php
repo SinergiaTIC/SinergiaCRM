@@ -81,6 +81,20 @@ class ServerActionFlowExecutor {
                 // Actualización del Contexto
                 $this->context->addActionResult($actionResult);
 
+
+                if ($actionResult->isWait()) {
+                    // Marcamos que la respuesta está esperando
+                    if ($this->context->responseBean) {
+                        $this->context->responseBean->status = 'awaiting_action';
+                        $this->context->responseBean->save();
+                    }
+                    
+                    $GLOBALS['log']->info("Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $actionResult->message);
+
+                    // Retornamos null para finalizar: El motor se pondrá en espera
+                    return null; 
+                }
+
                 // Detección de Error
                 if ($actionResult->isError()) {
                     // Si hay flujo de error: cambio inmediato al flujo de error

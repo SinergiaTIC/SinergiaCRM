@@ -3935,6 +3935,7 @@ $app_list_strings['stic_advanced_web_forms_processing_mode_list']['async'] = 'As
 // Estado del proceso de respuestas a los Formularios Web Avanzados
 $app_list_strings['stic_advanced_web_forms_response_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_advanced_web_forms_response_status_list']['processing'] = 'Procesando';
+$app_list_strings['stic_advanced_web_forms_response_status_list']['awaiting_action'] = 'En espera';
 $app_list_strings['stic_advanced_web_forms_response_status_list']['processed'] = 'Procesada';
 $app_list_strings['stic_advanced_web_forms_response_status_list']['rejected'] = 'Rechazada';
 $app_list_strings['stic_advanced_web_forms_response_status_list']['spam'] = 'Spam';

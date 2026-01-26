@@ -28,6 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 enum ResultStatus: string {
     case OK      = 'ok';
     case SKIPPED = 'skipped';
+    case WAIT    = 'wait';
     case ERROR   = 'error';
 }
 
@@ -121,6 +122,10 @@ class ActionResult {
 
     public function isOk(): bool {
         return $this->status === ResultStatus::OK;
+    }
+
+    public function isWait(): bool {
+        return $this->status === ResultStatus::WAIT;
     }
 
 }
