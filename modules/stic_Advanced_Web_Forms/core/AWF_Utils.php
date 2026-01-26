@@ -561,4 +561,20 @@ class AWF_Utils {
         
         return "{$r}, {$g}, {$b}"; // Retorna "255, 87, 51"
     }
+
+    /**
+     * Parsea un link en Markdown
+     * @param string $text El texto a parsear
+     * @return string El texto parseado (en html)
+     */
+    public static function parseAnchorMarkdown(string $text): string {
+        if (empty($text)) return '';
+
+        $pattern = '/\[([^\]]+)\]\(([^\)]+)\)/';
+        $replacement = '<a href="$2" target="_blank" rel="noopener noreferrer" class="awf-link" title="$1">$1</a>';
+        
+        $html = preg_replace($pattern, $replacement, $text);
+
+        return nl2br($html);
+    }
 }

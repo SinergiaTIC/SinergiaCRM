@@ -280,6 +280,17 @@ $dictionary["stic_Advanced_Web_Forms_Responses"]["fields"]["stic_8324s_responses
   'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_ANSWERS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_ANSWERS_TITLE',
 );
 
+$dictionary['stic_Advanced_Web_Forms_Responses']['fields']['answers_link'] = array(
+    'name' => 'answers_link',
+    'type' => 'link',
+    'relationship' => 'stic_awf_responses_answers', 
+    'source' => 'non-db',
+    'module' => 'stic_Advanced_Web_Forms_Answers',
+    'bean_name' => 'stic_Advanced_Web_Forms_Answers',
+    'vname' => 'LBL_ANSWERS_SUBPANEL_TITLE',
+    'side' => 'right',
+);
+
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }

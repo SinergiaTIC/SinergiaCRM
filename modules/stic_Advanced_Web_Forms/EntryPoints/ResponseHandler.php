@@ -546,8 +546,14 @@ class AWF_ResponseHandler
     private function generateAnalyticsAnswers(SugarBean $responseBean, FormConfig $formConfig, array $submittedData): void {
         global $app_strings;
 
+        // Contador global
+        $orderCounter = 1;
+
         foreach ($formConfig->data_blocks as $block) {
             foreach ($block->fields as $field) {
+                $currentOrder = $orderCounter;
+                $orderCounter += 1;
+
                 // Saltamos los campos fijos
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
 
@@ -599,8 +605,13 @@ class AWF_ResponseHandler
                 
                 $answerBean->question_key = $block->name . '.' . $field->name;
                 $answerBean->question_label = $field->label ?? $field->text_original ?? $field->name;
-                $answerBean->question_section = $block->text; 
+                if (!empty($field->description)) {
+                    $answerBean->question_help_text = AWF_Utils::parseAnchorMarkdown($field->description);
+                }
+                $answerBean->question_section = $block->text;
                 
+                $answerBean->question_sort_order = $currentOrder;
+
                 $answerBean->answer_value = (string)$storedValue;
                 $answerBean->answer_text = (string)$readableText;
                 $answerBean->answer_type = $field->type_in_form;

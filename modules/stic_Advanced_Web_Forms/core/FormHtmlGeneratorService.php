@@ -847,7 +847,7 @@ JS;
 
         $description = "";
         if ($field->description != '') {
-            $parsedDesc = $this->parseAnchorMarkdown($field->description);
+            $parsedDesc = AWF_Utils::parseAnchorMarkdown($field->description);
             $description = "<div class='form-text awf-help-text'>{$parsedDesc}</div>";
         }
 
@@ -1194,17 +1194,6 @@ JS;
 #{$wrapperId} .awf-icon-toggle.open {
   transform: rotate(180deg);
 }";
-    }
-
-    private function parseAnchorMarkdown(string $text): string {
-        if (empty($text)) return '';
-
-        $pattern = '/\[([^\]]+)\]\(([^\)]+)\)/';
-        $replacement = '<a href="$2" target="_blank" rel="noopener noreferrer" class="awf-link" title="$1">$1</a>';
-        
-        $html = preg_replace($pattern, $replacement, $text);
-
-        return nl2br($html);
     }
 
 }

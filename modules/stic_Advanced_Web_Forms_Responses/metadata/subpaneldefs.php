@@ -21,4 +21,14 @@ $layout_defs["stic_Advanced_Web_Forms_Responses"]["subpanel_setup"]['stic_1c31fo
     'title_key' => 'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE',
     'get_subpanel_data' => 'stic_1c31forms_links',
     'top_buttons' => array (),
-  );
+);
+$layout_defs["stic_Advanced_Web_Forms_Responses"]["subpanel_setup"]['answers_link'] = array(
+    'order' => 10,
+    'module' => 'stic_Advanced_Web_Forms_Answers',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'question_sort_order',
+    'title_key' => 'LBL_ANSWERS_SUBPANEL_TITLE',
+    'get_subpanel_data' => 'answers_link',
+    'top_buttons' => array(), 
+);

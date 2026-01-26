@@ -44,6 +44,23 @@ $dictionary['stic_Advanced_Web_Forms_Answers'] = array(
     'inline_edit' => false,
     'duplicate_merge' => false,
     'fields' => array (
+  'question_sort_order' => 
+  array(
+    'name' => 'question_sort_order',
+    'vname' => 'LBL_QUESTION_SORT_ORDER',
+    'type' => 'int',
+    'default' => 0,
+    'comments' => '',
+    'help' => '',
+    'importable' => true,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+  ),  
   'question_key' => 
   array (
     'required' => false,

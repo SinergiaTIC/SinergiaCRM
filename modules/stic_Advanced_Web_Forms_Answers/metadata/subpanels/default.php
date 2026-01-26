@@ -50,14 +50,35 @@ $subpanel_layout = array(
     'where' => '',
 
     'list_fields' => array(
-        'name' => array(
-            'vname' => 'LBL_NAME',
-            'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '45%',
+        'question_sort_order' => array(
+             'vname' => 'LBL_QUESTION_SORT_ORDER',
+             'width' => '5%',
+             'default' => true,
         ),
-        'date_modified' => array(
-            'vname' => 'LBL_DATE_MODIFIED',
-            'width' => '45%',
+        'question_section' => array(
+            'vname' => 'LBL_QUESTION_SECTION',
+            'width' => '20%',
+            'default' => true,
+        ),
+        'question_label' => array(
+            'vname' => 'LBL_QUESTION_LABEL',
+            'width' => '20%',
+            'default' => true,
+        ),
+        'question_help_text' => array(
+            'vname' => 'LBL_QUESTION_HELP_TEXT',
+            'width' => '20%',
+            'default' => true,
+        ),
+        'answer_text' => array(
+            'vname' => 'LBL_ANSWER_TEXT',
+            'width' => '25%',
+            'default' => true,
+        ),
+        'date_entered' => array(
+            'vname' => 'LBL_DATE_ENTERED',
+            'width' => '10%',
+            'default' => true,
         ),
     ),
 );
