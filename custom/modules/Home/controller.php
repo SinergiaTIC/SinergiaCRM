@@ -47,4 +47,18 @@ class CustomHomeController extends HomeController
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "An error occurred while trying to redirect to SinergiaDA. The user [{$current_user->user_name}] does not have access to SinergiaDA");
         }
     }
+
+    public function action_getSdaUserPermision()
+    {
+        require_once 'SticInclude/SinergiaDA.php';
+        
+        $userName = 'u1';
+        $userBean = new User();
+        $userId = $userBean->retrieve_user_id($userName);
+        $externalReporting = new ExternalReporting();
+        $permision = $externalReporting->getUserSdaPermissions($userId);
+        var_dump($userId);
+        var_dump($permision);
+        die();
+    }
 }

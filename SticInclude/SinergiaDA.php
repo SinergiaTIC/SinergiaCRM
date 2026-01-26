@@ -2040,6 +2040,199 @@ class ExternalReporting
     }
 
     /**
+     * Returns an array of permissions for a given user id over all tables/views with the "sda_" prefix.
+     *
+     * Each permission entry can be:
+     * - fullTable: Full access to the table
+     * - dynamic: A SQL statement that restricts access dynamically
+     *
+     * @param string $userId User id
+     * @return array
+     */
+    public function getUserSdaPermissions($userId)
+    {
+        global $sugar_config;
+
+        $db = DBManagerFactory::getInstance();
+        include_once 'modules/ACLActions/ACLAction.php';
+
+        $userId = $db->quote($userId);
+        $userQuery = "SELECT id, user_name, is_admin FROM users WHERE id = '{$userId}' AND deleted = 0";
+        $userResult = $db->query($userQuery);
+        $userRow = $db->fetchByAssoc($userResult);
+
+        if (empty($userRow['user_name'])) {
+            return [];
+        }
+
+        $userName = $userRow['user_name'];
+        $permissions = [];
+        $permissionsByTable = [];
+
+        // Load available SDA tables/views
+        $availableTables = [];
+        $dbName = $sugar_config['dbconfig']['db_name'];
+        $tablesResult = $db->query(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = '{$dbName}' AND table_name LIKE '" . $this->viewPrefix . "\\_%'"
+        );
+        while ($tableRow = $db->fetchByAssoc($tablesResult)) {
+            $availableTables[$tableRow['table_name']] = true;
+        }
+
+        // Build module list from all available modules, removing only admin-disabled tabs
+        include_once 'modules/MySettings/TabController.php';
+        global $moduleList;
+
+        $controller = new TabController();
+        $userBean = BeanFactory::getBean('Users', $userRow['id']);
+
+        $visibleModules = is_array($moduleList) ? $moduleList : [];
+        $removeTabs = $controller->get_user_tabs($userBean, 'remove');
+        if (!empty($removeTabs)) {
+            $visibleModules = array_diff($visibleModules, $removeTabs);
+        }
+
+        $modulesList = array_diff($visibleModules, $this->evenExcludedModules);
+        $modulesList = array_merge($modulesList, $this->evenIncludedModules);
+        $modulesList = array_unique($modulesList);
+        $modulesList['Users'] = 'Users';
+
+        if (in_array('Project', $modulesList)) {
+            $modulesList['ProjectTask'] = 'ProjectTask';
+        }
+
+        if (in_array('Campaigns', $modulesList)) {
+            $modulesList['CampaignLog'] = 'CampaignLog';
+        }
+
+        if (in_array('Surveys', $modulesList)) {
+            $modulesList['SurveyResponses'] = 'SurveyResponses';
+            $modulesList['SurveyQuestions'] = 'SurveyQuestions';
+            $modulesList['SurveyQuestionOptions'] = 'SurveyQuestionOptions';
+            $modulesList['SurveyQuestionResponses'] = 'SurveyQuestionResponses';
+        }
+
+        natsort($modulesList);
+
+        // Preload user groups if group permissions are enabled
+        $userGroups = [];
+        if ($sugar_config['stic_sinergiada']['group_permissions_enabled']) {
+            $groupsQuery = "SELECT name as `group` FROM sda_def_user_groups WHERE user_name = '{$db->quote($userName)}'";
+            $groupsResult = $db->query($groupsQuery);
+            while ($group = $db->fetchByAssoc($groupsResult)) {
+                $userGroups[] = $group['group'];
+            }
+        }
+
+        $normalizedUserGroups = [];
+        foreach ($userGroups as $group) {
+            $normalizedGroup = $this->normalizeSecurityGroupName($group);
+            if (!empty($normalizedGroup)) {
+                $normalizedUserGroups[$normalizedGroup] = true;
+            }
+        }
+        $normalizedUserGroups = array_keys($normalizedUserGroups);
+
+        $allUserActions = ACLAction::getUserActions($userRow['id']);
+
+        foreach ($modulesList as $moduleName) {
+            if ($userRow['is_admin'] == 0 && $moduleName == 'Users') {
+                continue;
+            }
+
+            $value = $allUserActions[$moduleName]['module'] ?? null;
+            if (empty($value) || $value['access']['aclaccess'] < 0 || $value['view']['aclaccess'] < 0) {
+                continue;
+            }
+
+            $key = $moduleName == 'ProjectTask' ? 'Project_Task' : $moduleName;
+            $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
+            $currentTable = $this->viewPrefix . '_' . strtolower($key);
+
+            if (empty($availableTables[$currentTable])) {
+                continue;
+            }
+
+            if (!isset($permissionsByTable[$currentTable])) {
+                $permissionsByTable[$currentTable] = [
+                    'full' => false,
+                    'dynamic' => [],
+                ];
+            }
+
+            switch ($value['view']['aclaccess']) {
+                case '80': // Security group permissions
+                    if (!empty($normalizedUserGroups)) {
+                        $quotedGroups = array_map(function ($groupName) use ($db) {
+                            return "'" . $db->quote($groupName) . "'";
+                        }, $normalizedUserGroups);
+
+                        $groupList = implode(', ', $quotedGroups);
+                        $permissionsByTable[$currentTable]['dynamic']['groups'] = [
+                            'usersName' => $userName,
+                            'table' => $currentTable,
+                            'type' => 'dynamic',
+                            'value' => "select id from `{$currentTable}` where ((id in (select record_id from sda_def_security_group_records where `group` IN  ({$groupList})  and `table` =  '{$currentTable}')) OR (`assigned_user_name` = 'EDA_USER'))",
+                        ];
+                    }
+                    break;
+
+                case '75': // Owner-based permissions
+                    $permissionsByTable[$currentTable]['dynamic']['owner'] = [
+                        'usersName' => $userName,
+                        'table' => $currentTable,
+                        'type' => 'dynamic',
+                        'value' => "select id from `{$currentTable}` where `assigned_user_name` = 'EDA_USER'",
+                    ];
+                    break;
+
+                default: // Full access
+                    $permissionsByTable[$currentTable]['full'] = true;
+                    $permissionsByTable[$currentTable]['dynamic'] = [];
+                    break;
+            }
+        }
+
+        foreach ($permissionsByTable as $table => $data) {
+            if ($data['full']) {
+                $permissions[] = [
+                    'usersName' => $userName,
+                    'table' => $table,
+                    'type' => 'fullTable',
+                ];
+                continue;
+            }
+
+            if (!empty($data['dynamic'])) {
+                $permissions = array_merge($permissions, array_values($data['dynamic']));
+            }
+        }
+
+        return $permissions;
+    }
+
+    /**
+     * Ensures the security group name has the SCRM_ prefix.
+     *
+     * @param string $groupName
+     * @return string
+     */
+    private function normalizeSecurityGroupName($groupName)
+    {
+        $groupName = trim($groupName);
+
+        if ($groupName === '') {
+            return $groupName;
+        }
+
+        if (strpos($groupName, 'SCRM_') === 0 || strpos($groupName, 'EDA_') === 0) {
+            return $groupName;
+        }
+
+        return 'SCRM_' . $groupName;
+    }
+
+    /**
      * Performs batch insertions of permission records into the database.
      *
      * This function handles the bulk insertion of permission records into the sda_def_permissions table,
