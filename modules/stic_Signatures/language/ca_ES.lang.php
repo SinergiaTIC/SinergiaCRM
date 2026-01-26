@@ -92,7 +92,7 @@ $mod_strings = array(
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "La data d'activació ha de ser anterior a la data de caducitat.",
     'LBL_EXPIRATION_DATE_ERROR' => "La data de caducitat ha de ser posterior a la data d'activació.",
-    'LBL_SIGNERS_ADDED_MSG' => "firmant(s) afegit(s) correctament",
+    'LBL_SIGNERS_ADDED_MSG' => 'firmant(s) afegit(s) correctament',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => "Per tal que els nous firmants puguin firmar el document cal canviar l'estat a Obert o Permanent.",
     'LBL_SIGNERS_NOT_ADDED_MSG' => "Els firmants no s'han afegit: ja existeixen o s'ha produït un error.",
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => "S'omet el següent registre perquè no s'han trobat firmants.",
