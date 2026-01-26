@@ -119,6 +119,12 @@ switch (viewType()) {
         checkAmountInDetailView();
     });    
 
+  const validatedNode = document.querySelector('[field="allocated"]');
+    var observerValidated = new MutationObserver(function(mutations) {
+      showSubPanel('stic_payments_stic_allocations', null, true);
+    });
+    observerValidated.observe(validatedNode, { childList: true, subtree: true});
+
     break;
 
   case "list":

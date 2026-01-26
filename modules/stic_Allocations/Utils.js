@@ -49,6 +49,14 @@ switch (viewType()) {
       checkBlockedAllocationInDetailView();
     });
     observer.observe(targetNode, { childList: true, subtree: true});
+
+
+    const validatedNode = document.querySelector('[field="validated"]');
+    var observerValidated = new MutationObserver(function(mutations) {
+      showSubPanel('stic_allocations_stic_justifications', null, true);
+    });
+    observerValidated.observe(validatedNode, { childList: true, subtree: true});
+
     break;
 
   case "list":
