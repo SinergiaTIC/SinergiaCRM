@@ -263,6 +263,9 @@ class AWF_ResponseHandler
                 // Guardamos los vínculos de trazabilidad (registros creados/modificados)                
                 $this->saveLinks($responseBean, $context);
 
+                // Generamos las respuestas analíticas
+                $this->generateAnalyticsAnswers($responseBean, $formConfig, $rawPostData);
+
                 // Actualizamos el estado y generamos el log de ejecución
                 $hasErrors = false;
                 $logSummary = ">> " . date('Y-m-d H:i:s') . "\n";
@@ -527,6 +530,93 @@ class AWF_ResponseHandler
 
         return empty($errors) ? null : $errors;
     }
+
+    /**
+     * Genera las respuestas analíticas para su almacenamiento y análisis posterior.
+     * @param SugarBean $responseBean Bean de la respuesta
+     * @param FormConfig $formConfig Configuración del formulario
+     * @param array $submittedData Datos enviados en la sumisión
+     */
+    private function generateAnalyticsAnswers(SugarBean $responseBean, FormConfig $formConfig, array $submittedData): void {
+        global $app_strings;
+
+        foreach ($formConfig->data_blocks as $block) {
+            foreach ($block->fields as $field) {
+                // Saltamos los campos fijos
+                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+
+                // Clave del input
+                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached_' : '';
+                $inputKey = $prefix . $block->name . '_' . $field->name;
+                
+                $rawValue = $submittedData[$inputKey] ?? null;
+                
+                // Calculamos el texto legible y el valor a almacenar
+                $readableText = $rawValue;
+                $storedValue = $rawValue;
+                
+                // Campos de tipo lista (select, multiselect, radio)
+                if (!empty($field->value_options)) {
+                    if (is_array($rawValue)) {
+                        // Multiselección
+                        $labels = [];
+                        foreach ($rawValue as $valItem) {
+                            $opt = $this->findOption($field->value_options, $valItem);
+                            $labels[] = $opt ? $opt->text : $valItem;
+                        }
+                        $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Guardamos JSON ["A","B"]
+                        $readableText = implode(', ', $labels); // Text: "Opción A, Opción B"
+                    } else {
+                        // Selección única
+                        $opt = $this->findOption($field->value_options, $rawValue);
+                        if ($opt) {
+                            $readableText = $opt->text;
+                        }
+                    }
+                } 
+                // Campos booleanos (checkbox)
+                elseif ($field->type === 'bool' || $field->type === 'checkbox') {
+                    $isTrue = ($rawValue === '1' || $rawValue === 'on' || $rawValue === 'true' || $rawValue === true);
+                    $readableText = $isTrue ? $app_strings['LBL_YES'] : $app_strings['LBL_NO'];
+                    $storedValue = $isTrue ? '1' : '0';
+                }
+                // Arrays genéricos que no son listas
+                elseif (is_array($rawValue)) {
+                    $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE);
+                    $readableText = 'Array'; 
+                }
+
+                // Creamos el bean de la respuesta analítica
+                $answerBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Answers');
+                $answerBean->response_id = $responseBean->id;
+                $answerBean->form_id = $formConfig->id ?? ''; 
+                
+                $answerBean->question_key = $block->name . '.' . $field->name;
+                $answerBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                $answerBean->question_section = $block->text; 
+                
+                $answerBean->answer_value = (string)$storedValue;
+                $answerBean->answer_text = (string)$readableText;
+                $answerBean->answer_type = $field->type_in_form;
+                
+                // Para facilitar análisis, guardamos el valor numérico si aplica
+                if (!is_array($rawValue) && is_numeric($rawValue)) {
+                    $answerBean->answer_integer = (float)$rawValue;
+                } else {
+                    $answerBean->answer_integer = 0;
+                }
+
+                $answerBean->save();
+            }
+        }
+    }
+
+    private function findOption(array $options, $value) {
+        foreach ($options as $opt) {
+            if ($opt->value == $value) return $opt;
+        }
+        return null;
+    }    
 }
 
 // Ejecución del Handler

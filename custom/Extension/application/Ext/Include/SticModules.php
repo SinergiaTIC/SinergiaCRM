@@ -135,6 +135,7 @@ $beanList['stic_Financial_Products'] = 'stic_Financial_Products';
 $beanList['stic_Advanced_Web_Forms'] = 'stic_Advanced_Web_Forms';
 $beanList['stic_Advanced_Web_Forms_Responses'] = 'stic_Advanced_Web_Forms_Responses';
 $beanList['stic_Advanced_Web_Forms_Links'] = 'stic_Advanced_Web_Forms_Links';
+$beanList['stic_Advanced_Web_Forms_Answers'] = 'stic_Advanced_Web_Forms_Answers';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -194,6 +195,7 @@ $beanFiles['stic_Financial_Products'] = 'modules/stic_Financial_Products/stic_Fi
 $beanFiles['stic_Advanced_Web_Forms'] = 'modules/stic_Advanced_Web_Forms/stic_Advanced_Web_Forms.php';
 $beanFiles['stic_Advanced_Web_Forms_Responses'] = 'modules/stic_Advanced_Web_Forms_Responses/stic_Advanced_Web_Forms_Responses.php';
 $beanFiles['stic_Advanced_Web_Forms_Links'] = 'modules/stic_Advanced_Web_Forms_Links/stic_Advanced_Web_Forms_Links.php';
+$beanFiles['stic_Advanced_Web_Forms_Answers'] = 'modules/stic_Advanced_Web_Forms_Answers/stic_Advanced_Web_Forms_Answers.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -210,6 +212,7 @@ $modInvisList[] = 'stic_Custom_View_Actions';
 $modInvisList[] = 'stic_MessagesMan';
 $modInvisList[] = 'stic_Advanced_Web_Forms_Responses';
 $modInvisList[] = 'stic_Advanced_Web_Forms_Links';
+$modInvisList[] = 'stic_Advanced_Web_Forms_Answers';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
@@ -220,6 +223,7 @@ $modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Links'] = 'stic
 
 // Modules that have been hidden with $modInvisList, but must be available in reporting
 // $report_include_modules['stic_XXXXXXXXXX'] = 'stic_XXXXXXXXXX'; // sample value
+$report_include_modules['stic_Advanced_Web_Forms_Answers'] = 'stic_Advanced_Web_Forms_Answers'; // sample value
 
 // Modules that should be accessed only by administrators through the Admin page
 $adminOnlyList['stic_Settings'] = array('all' => 1);
