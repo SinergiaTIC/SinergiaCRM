@@ -1978,10 +1978,10 @@ $app_strings = array(
     'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS' => 'Mostrar Files',
 
     // MySugar status strings
-    'LBL_MAX_DASHLETS_REACHED' => 'Ha assolit el nombre màxim de Dashlets de SuiteCRM establert pel seu administrador. Si us plau, elimini un Dashlet de SuiteCRM per a poder afegir-ne més.',
+    'LBL_MAX_DASHLETS_REACHED' => 'Heu assolit el nombre màxim de Dashlets de SuiteCRM establert pel vostre administrador. Elimineu un Dashlet per poder afegir-ne més.',
     'LBL_ADDING_DASHLET' => 'Afegint Dashlet de SuiteCRM...',
     'LBL_ADDED_DASHLET' => 'Dashlet de SuiteCRM afegit',
-    'LBL_REMOVE_DASHLET_CONFIRM' => 'Està segur que vol eliminar el Dashlet de SuiteCRM?',
+    'LBL_REMOVE_DASHLET_CONFIRM' => 'Segur que voleu eliminar el Dashlet de SuiteCRM?',
     'LBL_REMOVING_DASHLET' => 'Eliminant Dashlet de SuiteCRM...',
     'LBL_REMOVED_DASHLET' => 'Dashlet de SuiteCRM eliminat',
     'LBL_MAX_DASHLET_COLUMNS' => "Es poden mostrar un màxim de %s columnes.",
@@ -2213,7 +2213,7 @@ $app_strings = array(
     'LBL_CONFIRM_DISREGARD_DRAFT_TITLE' => 'Descarta l\'esborrany',
     'LBL_CONFIRM_DISREGARD_DRAFT_BODY' => 'Amb aquesta operació se suprimirà aquest missatge, voleu continuar?',
     'LBL_CONFIRM_DISREGARD_EMAIL_TITLE' => 'Sortir del diàleg del compositor',
-    'LBL_CONFIRM_DISREGARD_EMAIL_BODY' => 'Sortint del diàleg del compositor tota l\'informació entrada es perdrà, segur que vols continuar sortint?',
+    'LBL_CONFIRM_DISREGARD_EMAIL_BODY' => 'Sortint del diàleg del compositor tota la informació entrada es perdrà, segur que voleu continuar sortint?',
     'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE' => 'Aplicar una plantilla de missatge',
     'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_BODY' => 'Aquesta operació esborrarà el camp cos del missatge, ¿vol continuar?',
 
@@ -3615,7 +3615,7 @@ $app_strings['LBL_EDIT_TAB'] = 'Editar pestanyes';
 $app_strings['LBL_SUITE_DASHBOARD'] = 'Tauler de control de SuiteCRM'; //Can be translated in all caps. This string will be used by SuiteP template menu actions
 $app_strings['LBL_ENTER_DASHBOARD_NAME'] = 'Entrar el nom del tauler de control:';
 $app_strings['LBL_NUMBER_OF_COLUMNS'] = 'Nombre de columnes:';
-$app_strings['LBL_DELETE_DASHBOARD1'] = 'Està segur que vol eliminar el';
+$app_strings['LBL_DELETE_DASHBOARD1'] = 'Segur que voleu eliminar el';
 $app_strings['LBL_DELETE_DASHBOARD2'] = 'tauler de control?';
 $app_strings['LBL_ADD_DASHBOARD_PAGE'] = 'Afegir una pàgina de tauler de control';
 $app_strings['LBL_DELETE_DASHBOARD_PAGE'] = 'Eliminar la pàgina de tauler de control actual';
