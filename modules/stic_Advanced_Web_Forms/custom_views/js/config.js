@@ -395,7 +395,8 @@ class AWF_Field {
       return [];
     }
     if (this.type_field == 'unlinked') {
-      return AWF_Field.type_in_formList();
+      // TODO: Accept rating for surveys!! (Not working yet)
+      return AWF_Field.type_in_formList().filter(t => t.id != "rating");
     }
 
     // text, textarea, number, date, select, hidden
@@ -1709,6 +1710,8 @@ class AWF_Configuration {
 
     // Generate SAVE actions for each DataBlock
     this.data_blocks.forEach(block => {
+      if (!block.module) return;
+      
       const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
       if (originalDef) {
         // Prepare definition override

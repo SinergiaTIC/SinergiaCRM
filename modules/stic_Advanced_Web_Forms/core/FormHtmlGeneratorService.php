@@ -555,7 +555,11 @@ class FormHtmlGeneratorService {
                             // Execute validator
                             const validatorFn = AWF_Validators[rule.validator];
                             if (validatorFn) {
-                                if (!validatorFn(input.value, rule.params, form)) {
+                                let valueToValidate = input.value;
+                                if (input.type === 'checkbox') {
+                                    valueToValidate = input.checked;
+                                }
+                                if (!validatorFn(valueToValidate, rule.params, form)) {
                                     // Mark input as invalid
                                     customErrorMessage = rule.message || 'Validation error';
                                     input.setCustomValidity(customErrorMessage);
@@ -857,7 +861,7 @@ JS;
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" .$this->newLine();
+                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr} {$validationsAttr} >" .$this->newLine();
                 $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
                 $html .= $description .$this->newLine();
             }
@@ -868,12 +872,18 @@ JS;
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr}>" .$this->newLine();
+                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr} {$validationsAttr}>" .$this->newLine();
                 $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
                 $html .= $description .$this->newLine();
             }
             $html .= "</div>" .$this->newLine('-');
             return $html;
+        }
+
+        // --- SPECIAL CASES (ratings) ---
+
+        if ($field->type_in_form === 'rating') {
+            return $this->generateRatingField($field) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -984,6 +994,168 @@ JS;
             $html .= $description .$this->newLine();
         }
         $html .= "</div>" .$this->newLine('-');
+
+        return $html;
+    }
+
+/**
+     * Genera el HTML para el campo de tipo 'rating' (Valoración)
+     * VERSIÓ ESTABLE + NPS FIX:
+     * - Estrelles/Emojis: Mida fixa i clara (sense parpellejos).
+     * - NPS: S'ajusta al 100% de l'ample disponible (sense scroll).
+     */
+    private function generateRatingField(FormDataBlockField $field): string {
+        $name = htmlspecialchars($field->name);
+        $label = htmlspecialchars($field->label ?? '');
+        $description = "";
+        
+        if (!empty($field->description)) {
+            $parsedDesc = AWF_Utils::parseAnchorMarkdown($field->description);
+            $description = "<div class='form-text awf-help-text'>{$parsedDesc}</div>";
+        }
+
+        $subtype = !empty($field->subtype_in_form) ? $field->subtype_in_form : 'rating_stars';
+        $isRequired = $field->required_in_form;
+        $requiredHtml = $isRequired ? ' <span class="awf-required">*</span>' : '';
+        
+        // Icones SVG al 100% per omplir el botó contenidor
+        $iconStarFill = str_replace(['width="1.5em"', 'height="1.5em"'], 'width="100%" height="100%"', $this->getRawSvgIcon('star_fill'));
+        $iconStarEmpty = str_replace(['width="1.5em"', 'height="1.5em"'], 'width="100%" height="100%"', $this->getRawSvgIcon('star_empty'));
+
+        // Lògica AlpineJS (NOWDOC)
+        $alpineLogic = <<<'JS'
+        { 
+            val: null, 
+            hover: 0, 
+            setVal(v) { 
+                this.val = v; 
+                $nextTick(() => { 
+                    this.$refs.input.dispatchEvent(new Event('input', {bubbles:true}));
+                    this.$refs.input.dispatchEvent(new Event('change', {bubbles:true}));
+                });
+            },
+            npsClass(i) {
+               // Colors estàndard NPS
+               if(this.val !== i) return 'btn-outline-secondary opacity-75';
+               if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
+               if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
+               return 'btn-success text-white border-success shadow-sm';
+            },
+            starContainerStyle(i) {
+                let curr = this.hover > 0 ? this.hover : this.val;
+                let active = curr >= i;
+                // Actiu: Groc i una mica més gran (1.2x)
+                if (active) return 'transform: scale(1.2); color: #ffc107; opacity: 1; z-index: 2;';
+                // Inactiu: Gris
+                return 'transform: scale(1); color: #ccc; opacity: 0.6; z-index: 1;';
+            },
+            emojiStyle(i) {
+                let curr = this.hover > 0 ? this.hover : this.val;
+                let active = curr === i; 
+                // Actiu: Color i més gran
+                if (active) return 'transform: scale(1.2); filter: grayscale(0%); opacity: 1; z-index: 2;';
+                // Inactiu: Blanc i negre
+                return 'transform: scale(1); filter: grayscale(100%); opacity: 0.5; z-index: 1;';
+            }
+        }
+JS;
+        $safeAlpine = htmlspecialchars($alpineLogic, ENT_QUOTES, 'UTF-8');
+
+        $html = "<div class='awf-field mb-3' x-data=\"{$safeAlpine}\">" . $this->newLine('+');
+        
+        if ($label) {
+            $html .= "<label class='form-label fw-bold'>{$label}{$requiredHtml}</label>" . $this->newLine();
+        }
+
+        // Input Fantasma per a la validació HTML5
+        $requiredAttr = $isRequired ? 'required' : '';
+        $html .= <<<HTML
+<input type="text" x-ref="input" name="$name" id="f_$name" :value="val" $requiredAttr
+       style="opacity: 0; width: 1px; height: 1px; position: absolute; z-index: -1; pointer-events: none;"
+       tabindex="-1">
+HTML;
+        $html .= $this->newLine();
+
+        // --- ZONA DE CONTROLS ---
+
+        // A. ESTRELLES (Mida fixa 2rem / ~32px)
+        if ($subtype === 'rating_stars') {
+            $html .= "<div class='d-flex flex-wrap gap-2 mt-2 align-items-center'>" . $this->newLine();
+            for ($i = 1; $i <= 5; $i++) {
+                $html .= <<<HTML
+<button type="button" class="btn btn-link p-0 text-decoration-none border-0"
+    style="width: 2rem; height: 2rem; transition: transform 0.2s ease;"
+    :style="starContainerStyle($i)"
+    @click="setVal($i)" 
+    @mouseover="hover=$i" 
+    @mouseleave="hover=0">
+    <span style="display:block; width: 100%; height: 100%;" x-show="(hover ? hover : val) >= $i">$iconStarFill</span>
+    <span style="display:block; width: 100%; height: 100%;" x-show="(hover ? hover : val) < $i">$iconStarEmpty</span>
+</button>
+HTML;
+            }
+            $html .= "</div>";
+        }
+        
+        // B. EMOJIS (Mida fixa 2.5rem / ~40px)
+        elseif ($subtype === 'rating_emoji') {
+            $emojis = ['😠', '☹️', '😐', '🙂', '😍'];
+            
+            $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine();
+            foreach ($emojis as $k => $icon) {
+                $val = $k + 1;
+                $html .= <<<HTML
+<button type="button" class="btn btn-link p-0 text-decoration-none border-0"
+    style="font-size: 2.5rem; line-height: 1; transition: transform 0.2s ease;"
+    :style="emojiStyle($val)"
+    @click="setVal($val)" 
+    @mouseover="hover=$val" 
+    @mouseleave="hover=0">
+    $icon
+</button>
+HTML;
+            }
+            $html .= "</div>";
+        }
+        
+        // C. NPS (CORREGIT: Sense Scroll)
+        elseif ($subtype === 'rating_nps') {
+            // gap-1 (petit espai), w-100 (ample total)
+            $html .= "<div class='d-flex w-100 gap-1 mt-2'>" . $this->newLine();
+            for ($i = 0; $i <= 10; $i++) {
+                // canvis clau:
+                // 1. flex-fill: Ocupa tot l'espai disponible equitativament.
+                // 2. min-width: 0: Permet que el botó s'encongeixi si cal (sense desbordar).
+                // 3. p-0: Reduïm padding perquè el número destaqui més en espais petits.
+                $html .= <<<HTML
+<button type="button" class="btn btn-sm flex-fill p-0 fw-bold" 
+    style="min-width: 0;"
+    :class="npsClass($i)" 
+    @click="setVal($i)">
+    $i
+</button>
+HTML;
+            }
+            $html .= "</div>";
+        }
+
+        // -------------------------
+
+        if ($description) {
+            $html .= $description . $this->newLine();
+        }
+        
+        // Missatge d'error
+        if ($isRequired) {
+             $errorMsg = translate('LBL_REQUIRED_FIELD', 'stic_Advanced_Web_Forms') ?: 'This field is required';
+             $html .= <<<HTML
+<div class="invalid-feedback" x-show="!val && \$el.closest('form').classList.contains('was-validated')" style="display:block">
+    $errorMsg
+</div>
+HTML;
+        }
+
+        $html .= "</div>" . $this->newLine('-'); 
 
         return $html;
     }
@@ -1133,6 +1305,14 @@ JS;
             return 'awf-icon-' . str_replace('_', '-', $subtype);
         }
         return null;
+    }
+
+    private function getRawSvgIcon(string $name): string {
+        $icons = [
+            'star_fill' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>',
+            'star_empty' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16"><path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/></svg>',
+        ];
+        return $icons[$name] ?? '';
     }
 
     private function getSvgIconsData(): array {

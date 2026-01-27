@@ -3964,6 +3964,7 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['textarea']
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['number'] = '#️⃣ Entrada numérica';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['date'] = '🗓️ Selección de tiempo';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['select'] = '▼ Opciones cerradas';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['rating'] = '🏅 Valoración';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['hidden'] = '🕵️ Oculto';
 
 // Subtipo de campo en un Formulario Web Avanzado
@@ -3982,6 +3983,9 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_radio'] = '🔘 Selección de opción';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_checkbox'] = '◻️ Casilla de selección';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_switch'] = '🎚️ Interruptor';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['rating_stars'] = '⭐ Estrellas';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['rating_emoji'] = '🙂 Caras';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['rating_nps']   = '🔟 Escala 0-10 (NPS)';
 
 // Tipo de valor de un campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['editable'] = 'Editable';
