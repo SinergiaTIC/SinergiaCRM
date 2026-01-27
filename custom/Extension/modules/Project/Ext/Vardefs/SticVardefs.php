@@ -147,7 +147,17 @@ $dictionary["Project"]["fields"]["stic_centers_project"] = array (
     'bean_name' => 'stic_Centers',
     'vname' => 'LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE',
   );
-
+// Resources relationship Vardef
+$dictionary["Project"]["fields"]["stic_resources_project"] = array(
+    'name' => 'stic_resources_project',
+    'type' => 'link',
+    'relationship' => 'stic_resources_project',
+    'source' => 'non-db',
+    'module' => 'stic_Resources',
+    'bean_name' => 'stic_Resources',
+    'side' => 'right',
+    'vname' => 'LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE',
+);
 // Base fields from the module
 $dictionary['Project']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 

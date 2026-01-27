@@ -60,3 +60,6 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = '¿Seguro que quiere borrar esta tarea
 // Cadenas Ayudas
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centros';
+
+// Cadenas Recursos
+$mod_strings['LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE'] = 'Recursos';
