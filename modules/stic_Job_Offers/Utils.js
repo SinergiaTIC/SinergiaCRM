@@ -67,10 +67,10 @@ switch (viewType()) {
 
       // Depending on the type of assessment, add or remove validations in other fields
     type = document.getElementById('offer_type');
-    addValidateIfVolunteering(type.value);
+    manageValidatationsIfVolunteering(type.value);
     type.addEventListener("change", function () {
         clear_all_errors();
-        addValidateIfVolunteering(type.value);
+        manageValidatationsIfVolunteering(type.value);
     });
 
     // Definition of the behavior of fields that are conditionally enabled or disabled
@@ -159,14 +159,30 @@ function onClickIncorporaSyncButton() {
 /**
  * Depending on the type of offer, add or remove validations in project field
  */
-function addValidateIfVolunteering(type) 
+function manageValidatationsIfVolunteering(type) 
 {
     if (type == 'volunteering') {
-      addToValidateCallback(getFormName(), "project_stic_job_offers_name", "varchar", true, SUGAR.language.get(module, "LBL_AVAILABLE_TIME"));
+      addToValidateCallback(getFormName(), "project_stic_job_offers_name", "varchar", true, SUGAR.language.get(module, "LBL_STIC_JOB_OFFERS_PROJECT_FROM_PROJECT_TITLE"));
       addRequiredMark('project_stic_job_offers_name');
+      removeFromValidate('EditView', 'type');
+      removeRequiredMark('type');
+      removeFromValidate('EditView', 'sector');
+      removeRequiredMark('sector');
+      removeFromValidate('EditView', 'position_type');
+      removeRequiredMark('position_type');
+      removeFromValidate('EditView', 'contract_type');
+      removeRequiredMark('contract_type');                  
     } else {
       removeFromValidate('EditView', 'project_stic_job_offers_name');
       removeRequiredMark('project_stic_job_offers_name');
+      addToValidateCallback(getFormName(), "type", "varchar", true, SUGAR.language.get(module, "LBL_TYPE"));
+      addRequiredMark('type');
+      addToValidateCallback(getFormName(), "sector", "varchar", true, SUGAR.language.get(module, "LBL_SECTOR"));
+      addRequiredMark('sector');
+      addToValidateCallback(getFormName(), "position_type", "varchar", true, SUGAR.language.get(module, "LBL_POSITION_TYPE"));
+      addRequiredMark('position_type');
+      addToValidateCallback(getFormName(), "contract_type", "varchar", true, SUGAR.language.get(module, "LBL_CONTRACT_TYPE"));
+      addRequiredMark('contract_type');
     }
     return true;
 }
