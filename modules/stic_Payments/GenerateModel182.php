@@ -148,7 +148,7 @@ if ($paymentTypeArray == '') {
 $paymentTypes = "p.payment_type = '" . implode("' OR p.payment_type = '", $paymentTypeArray) . "'";
 
 // Initialize the variables with the years to be analyzed
-$lastyear = date("Y") - 1;   // Year for which we are presenting the M182
+$lastyear = date("Y") - 1;   // Year for which the M182 is presented
 $twoYearsAgo = date("Y") - 2;   // Year before $lastyear
 $threeYearsAgo = date("Y") - 3;   // Year before $twoYearsAgo
 $fourYearsAgo = date("Y") - 4; // Year before $threeYearsAgo
@@ -157,10 +157,12 @@ $fourYearsAgo = date("Y") - 4; // Year before $threeYearsAgo
 $issuingOrganizationKey = $_REQUEST['issuing_organization_key'] ?? '';
 $sufixSetting = '';
 if ($issuingOrganizationKey != '') {
-    $total_annual_donations_field = 'stic_m182_amount_' . strtolower($issuingOrganizationKey) . '_c';
+    // Special method for multitenant instances
     $sufixSetting = '_' . strtoupper($issuingOrganizationKey);
-    $sufixPaymentType = strtolower($sufixSetting);
+    $sufixPaymentType = '_' . strtolower($issuingOrganizationKey);
+    $total_annual_donations_field = 'stic_m182_amount_' . strtolower($issuingOrganizationKey) . '_c'; // On multitenant instances the filed name is 'stic_m182_amount_ORG_c' instead of 'stic_total_annual_donations_ORG_c' due to name length reasons.
 } else {
+    // Standard method for single tenant instances
     $total_annual_donations_field = 'stic_total_annual_donations_c';
 }
 
@@ -185,7 +187,7 @@ $m182Vars = array_merge($m182SettingsTemp, $generalSettingsTemp, $m182FixedValue
 
 $declarantType = $m182Vars["M182_NATURALEZA_DECLARANTE".$sufixSetting];
 
-// 1.5 Reset the fields $total_annual_donations_field and 'stic_182_error_c' in accounts and contacts to delate previous data (from the same year or from previous ones).
+// 1.5 Reset the fields $total_annual_donations_field and 'stic_182_error_c' in accounts and contacts to delete previous data (from the same year or from previous ones).
 $db->query("UPDATE accounts_cstm SET $total_annual_donations_field = 0, stic_182_error_c = 0");
 $db->query("UPDATE contacts_cstm SET $total_annual_donations_field = 0, stic_182_error_c = 0");
 
@@ -207,7 +209,7 @@ $GLOBALS['log']->info('[M182] ' . (is_array($paymentsIds) ? sizeof($paymentsIds)
 // 3. Creating 3 arrays:
 // - one with all the contacts that have payments in the previous selection.
 // - one with all the accounts that have payments in the previous selection.
-// - one with the amounts accumulated by each donor (account or contact) in the exercise of the declaration (according to the selected payments).
+// - one with the amounts accumulated by each donor (account or contact) in the year of the declaration (according to the selected payments).
 // The contacts and accounts arrays will be filled later with the historical payment data of each contact and account.
 // The arrays indexes are the ids of accounts and contacts.
 $contacts = array();
@@ -221,7 +223,7 @@ foreach ($paymentsIds as $id) {
     $accountRow = null;
     $contactRow = null;
 
-    // Get the contact (must be non excluded)
+    // Get the contact (must be non 182 excluded)
     $contactSQL =
         "SELECT
             c.id as contact_id,
@@ -239,10 +241,10 @@ foreach ($paymentsIds as $id) {
     if ($db->getRowCount($contactResult) > 0) {
         $contactRow = $db->fetchByAssoc($contactResult);
     } else {
-        // If there is no contact, get the account (must be non excluded)
+        // If there is no contact, get the account (must be non 182 excluded)
         $accountSQL =
             "SELECT
-                a.id as accountId,
+                a.id as account_id,
                 amount,
                 payment_type
             FROM stic_payments p
@@ -266,11 +268,11 @@ foreach ($paymentsIds as $id) {
         }
         $yearPayments[$contactRow['contact_id']][$contactRow['payment_type']] = ($yearPayments[$contactRow['contact_id']][$contactRow['payment_type']] ?? 0) + $contactRow['amount'];
     } elseif (isset($accountRow)) {
-        $accounts[$accountRow['accountId']] = $accountRow['accountId'];
-        if (!isset($yearPayments[$accountRow['accountId']])) {
-            $yearPayments[$accountRow['accountId']] = [];
+        $accounts[$accountRow['account_id']] = $accountRow['account_id'];
+        if (!isset($yearPayments[$accountRow['account_id']])) {
+            $yearPayments[$accountRow['account_id']] = [];
         }
-        $yearPayments[$accountRow['accountId']][$accountRow['payment_type']] = ($yearPayments[$accountRow['accountId']][$accountRow['payment_type']] ?? 0) + $accountRow['amount'];
+        $yearPayments[$accountRow['account_id']][$accountRow['payment_type']] = ($yearPayments[$accountRow['account_id']][$accountRow['payment_type']] ?? 0) + $accountRow['amount'];
     }
 }
 
@@ -286,7 +288,7 @@ foreach ($contacts as $id) {
     $row = null;
     $paymentsSQL =
         "SELECT
-            YEAR(p.payment_date) AS periodo,
+            YEAR(p.payment_date) AS periode,
             p.payment_type,
             SUM(p.amount) as total_donation
         FROM stic_payments p
@@ -301,28 +303,26 @@ foreach ($contacts as $id) {
             AND c.deleted = 0
             AND pc.deleted = 0
         GROUP BY YEAR(p.payment_date), p.payment_type";
-
     $paymentsResult = $db->query($paymentsSQL);
     while ($row = $db->fetchByAssoc($paymentsResult)) {
-        // We keep the total amount of donations for each exercise and type of payment
-        $historicalPayments[$row['periodo']][$row['payment_type']] = $row['total_donation'];
+        // Keep the total amount of donations for each year and type of payment
+        $historicalPayments[$row['periode']][$row['payment_type']] = $row['total_donation'];
         
         // Initialize totals if not set
-        $historicalPayments[$row['periodo']]['kind_total'] ??= 0;
-        $historicalPayments[$row['periodo']]['monetary_total'] ??= 0;
+        $historicalPayments[$row['periode']]['kind_total'] ??= 0;
+        $historicalPayments[$row['periode']]['monetary_total'] ??= 0;
         
-        // We accumulate totals separately for kind and monetary donations
+        // Accumulate totals separately for kind and monetary donations
         if ($row['payment_type'] === ('kind'.$sufixPaymentType)) {
-            $historicalPayments[$row['periodo']]['kind_total'] = $row['total_donation'];
-        } else if (!($declarantType == '4' && $row['payment_type'] == 'fee')) {
-            // For monetary donations, exclude fees in case of political parties
-            $historicalPayments[$row['periodo']]['monetary_total'] += $row['total_donation'];
+            $historicalPayments[$row['periode']]['kind_total'] = $row['total_donation'];
+        } else if (!($declarantType == '4' && $row['payment_type'] == 'fee'.$sufixPaymentType)) { // For monetary donations, exclude fees in case of political parties
+            $historicalPayments[$row['periode']]['monetary_total'] += $row['total_donation'];
         }
 
         // Calculate total (kind + monetary)
-        $historicalPayments[$row['periodo']]['total'] = 
-            $historicalPayments[$row['periodo']]['kind_total'] + 
-            $historicalPayments[$row['periodo']]['monetary_total'];
+        $historicalPayments[$row['periode']]['total'] = 
+            $historicalPayments[$row['periode']]['kind_total'] + 
+            $historicalPayments[$row['periode']]['monetary_total'];
     }
 
     // 4.1.2 Add to the array the payments of the year of the declaration
@@ -339,7 +339,7 @@ foreach ($contacts as $id) {
         // Update totals based on payment type
         if ($paymentType === ('kind'.$sufixPaymentType)) {
             $historicalPayments[$lastyear]['kind_total'] = $paymentTypeValue;
-        } else if (!($declarantType == '4' && $paymentType == 'fee')) {
+        } else if (!($declarantType == '4' && $paymentType == 'fee'.$sufixPaymentType)) { // For monetary donations, exclude fees in case of political parties
             $historicalPayments[$lastyear]['monetary_total'] += $paymentTypeValue;
         }
     }
@@ -369,8 +369,8 @@ foreach ($contacts as $id) {
     $recurrenceMonetary = true;
     }
 
-    $historicalPayments['recurrente_kind'] = $recurrenceKind;
-    $historicalPayments['recurrente_monetary'] = $recurrenceMonetary;
+    $historicalPayments['recurring_kind'] = $recurrenceKind;
+    $historicalPayments['recurring_monetary'] = $recurrenceMonetary;
         
     // 4.1.4 Save the data obtained for the contact
     $contacts[$id] = $historicalPayments;
@@ -388,7 +388,7 @@ foreach ($accounts as $id) {
     $row = null;
     $paymentsSQL =
         "SELECT
-            YEAR(p.payment_date) AS periodo,
+            YEAR(p.payment_date) AS periode,
             p.payment_type,
             SUM(p.amount) as total_donation
         FROM stic_payments p
@@ -405,18 +405,18 @@ foreach ($accounts as $id) {
         GROUP BY YEAR (p.payment_date), p.payment_type";
     $paymentsResult = $db->query($paymentsSQL);
     while ($row = $db->fetchByAssoc($paymentsResult)) {
-        // We keep the total amount of donations for each exercise and type of payment
-        $historicalPayments[$row['periodo']][$row['payment_type']] = $row['total_donation'];
+        // Keep the total amount of donations for each year and type of payment
+        $historicalPayments[$row['periode']][$row['payment_type']] = $row['total_donation'];
         // Initialize total if not set
-        $historicalPayments[$row['periodo']]['total'] ??= 0;
-        // We accumulate the total total per year to assess whether it is a recurring donor.
-        $historicalPayments[$row['periodo']]['total'] += $row['total_donation'];
+        $historicalPayments[$row['periode']]['total'] ??= 0;
+        // Accumulate the total total per year to assess whether it is a recurring donor.
+        $historicalPayments[$row['periode']]['total'] += $row['total_donation'];
     }
 
     // 4.2.2 Add to the array the payments of the year of the declaration, previously calculated
     $historicalPayments[$lastyear]['total'] ??= 0;
-    foreach ($yearPayments[$id] as $claveTipoPago => $paymentTypeValue) {
-        $historicalPayments[$lastyear][$claveTipoPago] = $paymentTypeValue;
+    foreach ($yearPayments[$id] as $paymentType => $paymentTypeValue) {
+        $historicalPayments[$lastyear][$paymentType] = $paymentTypeValue;
         $historicalPayments[$lastyear]['total'] += $paymentTypeValue;
     }
 
@@ -434,13 +434,12 @@ foreach ($accounts as $id) {
         && $historicalPayments[$fourYearsAgo]['total'] > 0) {
         $recurrence = true;
     }
-    $historicalPayments['recurrente'] = $recurrence;
+    $historicalPayments['recurring'] = $recurrence;
     
-
     // 4.2.4 Save the data obtained for the account
     $accounts[$id] = $historicalPayments;
 
-    $GLOBALS['log']->debug('[M182] Account processed: [id] = ' . $historicalPayments['id'] . '; [' . $fourYearsAgo . '] = ' . $historicalPayments[$fourYearsAgo]['total'] . '; [' . $threeYearsAgo . '] = ' . $historicalPayments[$threeYearsAgo]['total'] . '; [' . $twoYearsAgo . '] = ' . $historicalPayments[$twoYearsAgo]['total'] . '; [' . $lastyear . '] = ' . $historicalPayments[$lastyear]['total'] . '; [recurrente] = ' . ($historicalPayments['recurrente'] ? 'Sí' : 'No') . ';');
+    $GLOBALS['log']->debug('[M182] Account processed: [id] = ' . $historicalPayments['id'] . '; [' . $fourYearsAgo . '] = ' . $historicalPayments[$fourYearsAgo]['total'] . '; [' . $threeYearsAgo . '] = ' . $historicalPayments[$threeYearsAgo]['total'] . '; [' . $twoYearsAgo . '] = ' . $historicalPayments[$twoYearsAgo]['total'] . '; [' . $lastyear . '] = ' . $historicalPayments[$lastyear]['total'] . '; [recurrente] = ' . ($historicalPayments['recurring'] ? 'Sí' : 'No') . ';');
 }
 
 // 5. M182 generation
@@ -449,18 +448,18 @@ $donationKey = $m182Vars["M182_CLAVE_DONATIVO".$sufixSetting];
 $year = $lastyear;
 $total = 0;
 
-// Create an array to save records formatted according to the regulations
+// Create an array to save records formatted according to the regulation
 $model182T2 = array();
 
 // 5.1 Contacts
 foreach ($contacts as $id) {
-    // Initialize array keys for contacts
+    // Initialize array keys for contacts in case they are not previously set
+    $id[$year]['monetary_total'] ??= 0;
     $id[$year]['kind'.$sufixPaymentType] ??= 0;
     $id[$year]['total'] ??= 0;
-    $id[$year]['monetary_total'] ??= 0;
     $id[$year]['donation'] ??= 0;
     $id[$year]['fee'] ??= 0;
-    $id['recurrente'] ??= false;
+    $id['recurring'] ??= false;
 
     $contactRow = null;
     $contactSQL = "SELECT * FROM contacts c LEFT JOIN contacts_cstm cc ON c.id = cc.id_c WHERE c.id = '" . $id['id'] . "' AND c.deleted = 0";
@@ -537,7 +536,7 @@ foreach ($contacts as $id) {
 
                 // Calculation of the percentage of deduction based on the amount and recurrence of donations
                 if ($id[$year]['donation'] + $id[$year]['kind'.$sufixPaymentType] > $m182Vars['M182_LIMITE_DEDUCCION']) {
-                    if ($id['recurrente']) {
+                    if ($id['recurring']) {
                         $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE"];
                     } else {
                         $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE"];
@@ -545,7 +544,7 @@ foreach ($contacts as $id) {
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurrente'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring'] ? '1' : '2');
 
                 // If applicable, set the percentage of autonomous deduction (not applicable to political parties)
                 $m182['deduccion_com_autonoma'] = 0;
@@ -566,7 +565,7 @@ foreach ($contacts as $id) {
 
                 // Calculation of the percentage of deduction based on the amount and recurrence of donations
                 if ($id[$year]['donation'] + $id[$year]['kind'.$sufixPaymentType] > $m182Vars['M182_LIMITE_DEDUCCION']) {
-                    if ($id['recurrente']) {
+                    if ($id['recurring']) {
                         $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE"];
                     } else {
                         $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE"];
@@ -574,7 +573,7 @@ foreach ($contacts as $id) {
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurrente'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring'] ? '1' : '2');
 
                 // If applicable, set the percentage of autonomous deduction (not applicable to political parties)
                 $m182['deduccion_com_autonoma'] = 0;
@@ -593,13 +592,13 @@ foreach ($contacts as $id) {
 
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
-                $m182['importe_donacion'] = $id[$year]['total'] - $id[$year]['kind'.$sufixPaymentType];
+                $m182['importe_donacion'] = $id[$year]['monetary_total'];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = ' ';
 
                 // Calculation of the percentage of deduction based on the amount and recurrence of donations
                 if ($m182['importe_donacion'] > $m182Vars['M182_LIMITE_DEDUCCION']) {
-                    if ($id['recurrente_monetary']) {
+                    if ($id['recurring_monetary']) {
                         $m182['por_deduccion'] = $m182Vars['M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE'];
                     } else {
                         $m182['por_deduccion'] = $m182Vars['M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE'];
@@ -607,7 +606,7 @@ foreach ($contacts as $id) {
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurrente_monetary'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring_monetary'] ? '1' : '2');
 
                 // If applicable, set the percentage of autonomous deduction
                 if (isset($provinciasComunidades[$m182['declarado_provincia']]) && isset($m182Vars["M182_PORCENTAJE_DEDUCCION_AUTONOMICA_" . $provinciasComunidades[$m182['declarado_provincia']]])) {
@@ -633,7 +632,7 @@ foreach ($contacts as $id) {
 
                 // Calculation of the percentage of deduction based on the amount and recurrence of donations
                 if ($m182['importe_donacion'] > $m182Vars['M182_LIMITE_DEDUCCION']) {
-                    if ($id['recurrente']) {
+                    if ($id['recurring']) {
                         $m182['por_deduccion'] = $m182Vars['M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE'];
                     } else {
                         $m182['por_deduccion'] = $m182Vars['M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE'];
@@ -641,7 +640,7 @@ foreach ($contacts as $id) {
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurrente_kind'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring_kind'] ? '1' : '2');
 
                 // If applicable, set the percentage of autonomous deduction
                 if (isset($provinciasComunidades[$m182['declarado_provincia']]) && isset($m182Vars["M182_PORCENTAJE_DEDUCCION_AUTONOMICA_" . $provinciasComunidades[$m182['declarado_provincia']]])) {
@@ -671,12 +670,12 @@ foreach ($contacts as $id) {
 // 5.2. Accounts
 foreach ($accounts as $id) {
     // Initialize array keys for account
+    $id[$year]['monetary_total'] ??= 0;
     $id[$year]['kind'.$sufixPaymentType] ??= 0;
     $id[$year]['total'] ??= 0;
-    $id[$year]['monetary_total'] ??= 0;
     $id[$year]['donation'] ??= 0;
     $id[$year]['fee'] ??= 0;
-    $id['recurrente'] ??= false;
+    $id['recurring'] ??= false;
 
     $accountRow = null;
     $accountSQL = "SELECT * FROM accounts a LEFT JOIN accounts_cstm ac ON a.id = ac.id_c  WHERE  a.id = '" . $id['id'] . "' AND a.deleted = 0";
@@ -692,7 +691,7 @@ foreach ($accounts as $id) {
     } else {
         // The account has all the necessary data, so include it in the M182
 
-        // Importatnt! By law, political parties cannot get donations from organizations, 
+        // Important! By law, political parties cannot get donations from organizations, 
         // so this section will only apply to organizations related to law 49/2002 (declarant type is 1).
 
         $m182 = array(); // The array will contain the individual record formatted according to the regulations
@@ -721,14 +720,14 @@ foreach ($accounts as $id) {
                 $m182['kind'] = ' ';
 
                 // Calculation of the percentage of deduction based on the recurrence of donations
-                if ($id['recurrente']) {
+                if ($id['recurring']) {
                     $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE"];
                 } else {
                     $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS"];
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurrente'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring'] ? '1' : '2');
 
                 // There is no regional deduction for organizations
                 $m182['deduccion_com_autonoma'] = 0;
@@ -748,14 +747,14 @@ foreach ($accounts as $id) {
                 $m182['kind'] = 'X';
 
                 // Calculation of the percentage of deduction based on the recurrence of donations
-                if ($id['recurrente']) {
+                if ($id['recurring']) {
                     $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE"];
                 } else {
                     $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS"];
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurrente'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring'] ? '1' : '2');
 
                 // There is no regional deduction for organizations
                 $m182['deduccion_com_autonoma'] = 0;
