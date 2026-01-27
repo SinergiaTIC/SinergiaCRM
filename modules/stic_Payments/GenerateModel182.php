@@ -458,8 +458,8 @@ foreach ($contacts as $id) {
     $id[$year]['monetary_total'] ??= 0;
     $id[$year]['kind_total'] ??= 0;
     $id[$year]['total'] ??= 0;
-    $id[$year]['donation'] ??= 0;
-    $id[$year]['fee'] ??= 0;
+    $id[$year]['donation'.$sufixPaymentType] ??= 0;
+    $id[$year]['fee'.$sufixPaymentType] ??= 0;
     $id['recurring'] ??= false;
 
     $contactRow = null;
@@ -507,11 +507,11 @@ foreach ($contacts as $id) {
 
         case '4': // Political parties
 
-            if ($id[$year]['fee'] > 0) {
+            if ($id[$year]['fee'.$sufixPaymentType] > 0) {
 
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_CUOTAS_PARTIDOS"];
                 $m182['clave'] = 'F';
-                $m182['importe_donacion'] = $id[$year]['fee'];
+                $m182['importe_donacion'] = $id[$year]['fee'.$sufixPaymentType];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = ' ';
 
@@ -527,11 +527,11 @@ foreach ($contacts as $id) {
 
             }
 
-            if ($id[$year]['donation'] > 0) {
+            if ($id[$year]['donation'.$sufixPaymentType] > 0) {
 
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = 'G';
-                $m182['importe_donacion'] = $id[$year]['donation'];
+                $m182['importe_donacion'] = $id[$year]['donation'.$sufixPaymentType];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = ' ';
 
@@ -674,8 +674,6 @@ foreach ($accounts as $id) {
     $id[$year]['monetary_total'] ??= 0;
     $id[$year]['kind_total'] ??= 0;
     $id[$year]['total'] ??= 0;
-    $id[$year]['donation'] ??= 0;
-    $id[$year]['fee'] ??= 0;
     $id['recurring'] ??= false;
 
     $accountRow = null;
@@ -712,11 +710,11 @@ foreach ($accounts as $id) {
 
         case '1': // Organizations related to law 49/2002
 
-            if ($id[$year]['kind_total'] != $id[$year]['total']) {
+            if ($id[$year]['kind'] != $id[$year]['total']) {
 
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
-                $m182['importe_donacion'] = $id[$year]['total'] - $id[$year]['kind_total'];
+                $m182['importe_donacion'] = $id[$year]['total'] - $id[$year]['kind'];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = ' ';
 
@@ -739,11 +737,11 @@ foreach ($accounts as $id) {
 
             }
 
-            if ($id[$year]['kind_total'] > 0) {
+            if ($id[$year]['kind'] > 0) {
 
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
-                $m182['importe_donacion'] = $id[$year]['kind_total'];
+                $m182['importe_donacion'] = $id[$year]['kind'];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = 'X';
 
