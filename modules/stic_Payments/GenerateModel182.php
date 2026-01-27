@@ -356,18 +356,18 @@ foreach ($contacts as $id) {
 
     // Check kind donations recurrence
     if (($historicalPayments[$lastyear]['kind_total'] ?? 0) > 0
-    && ($historicalPayments[$twoYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) 
-    && ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) 
-    && ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) > 0) {
-    $recurrenceKind = true;
+        && ($historicalPayments[$twoYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) 
+        && ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) 
+        && ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) > 0) {
+        $recurrenceKind = true;
     }
 
     // Check monetary donations recurrence
     if (($historicalPayments[$lastyear]['monetary_total'] ?? 0) > 0
-    && ($historicalPayments[$twoYearsAgo]['monetary_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['monetary_total'] ?? 0) 
-    && ($historicalPayments[$threeYearsAgo]['monetary_total'] ??0) >= ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) 
-    && ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) > 0) {
-    $recurrenceMonetary = true;
+        && ($historicalPayments[$twoYearsAgo]['monetary_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['monetary_total'] ?? 0) 
+        && ($historicalPayments[$threeYearsAgo]['monetary_total'] ??0) >= ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) 
+        && ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) > 0) {
+        $recurrenceMonetary = true;
     }
 
     $historicalPayments['recurring_kind'] = $recurrenceKind;
@@ -408,35 +408,71 @@ foreach ($accounts as $id) {
     while ($row = $db->fetchByAssoc($paymentsResult)) {
         // Keep the total amount of donations for each year and type of payment
         $historicalPayments[$row['periode']][$row['payment_type']] = $row['total_donation'];
+
         // Initialize total if not set
-        $historicalPayments[$row['periode']]['total'] ??= 0;
-        // Accumulate the total total per year to assess whether it is a recurring donor.
-        $historicalPayments[$row['periode']]['total'] += $row['total_donation'];
+        $historicalPayments[$row['periode']]['kind_total'] ??= 0;
+        $historicalPayments[$row['periode']]['monetary_total'] ??= 0;
+
+        // Accumulate totals separately for kind and monetary donations
+        if ($row['payment_type'] === ('kind'.$sufixPaymentType)) {
+            $historicalPayments[$row['periode']]['kind_total'] = $row['total_donation'];
+        } else {
+            $historicalPayments[$row['periode']]['monetary_total'] += $row['total_donation'];
+        }
+
+        // Calculate total (kind + monetary)
+        $historicalPayments[$row['periode']]['total'] = 
+            $historicalPayments[$row['periode']]['kind_total'] + 
+            $historicalPayments[$row['periode']]['monetary_total'];
     }
 
-    // 4.2.2 Add to the array the payments of the year of the declaration, previously calculated
-    $historicalPayments[$lastyear]['total'] ??= 0;
+    // 4.2.2 Add to the array the payments of the year of the declaration
+    // Initialize totals for last year
+    $historicalPayments[$lastyear]['kind_total'] = 0;
+    $historicalPayments[$lastyear]['monetary_total'] = 0;
+    $historicalPayments[$lastyear]['total'] = 0;
+
+    // Process each payment type
     foreach ($yearPayments[$id] as $paymentType => $paymentTypeValue) {
+        // Save individual payment value
         $historicalPayments[$lastyear][$paymentType] = $paymentTypeValue;
-        $historicalPayments[$lastyear]['total'] += $paymentTypeValue;
+        
+        // Update totals based on payment type
+        if ($paymentType === ('kind'.$sufixPaymentType)) {
+            $historicalPayments[$lastyear]['kind_total'] = $paymentTypeValue;
+        } else {
+            $historicalPayments[$lastyear]['monetary_total'] += $paymentTypeValue;
+        }
     }
 
+    // Calculate total after processing all payments
+    $historicalPayments[$lastyear]['total'] = 
+        $historicalPayments[$lastyear]['kind_total'] + 
+        $historicalPayments[$lastyear]['monetary_total'];
+    
     // 4.2.3 Check if the account can be considered a recurring donor according to the regulation
-    // Initialize all year totals
-    $historicalPayments[$lastyear]['total'] ??= 0;
-    $historicalPayments[$twoYearsAgo]['total'] ??= 0;
-    $historicalPayments[$threeYearsAgo]['total'] ??= 0;
-    $historicalPayments[$fourYearsAgo]['total'] ??= 0;
-    
-    $recurrence = false;
-    if ($historicalPayments[$lastyear]['total'] > 0
-        && $historicalPayments[$twoYearsAgo]['total'] >= $historicalPayments[$threeYearsAgo]['total'] 
-        && $historicalPayments[$threeYearsAgo]['total'] >= $historicalPayments[$fourYearsAgo]['total'] 
-        && $historicalPayments[$fourYearsAgo]['total'] > 0) {
-        $recurrence = true;
+    $recurrenceKind = false;
+    $recurrenceMonetary = false;
+
+    // Check kind donations recurrence
+    if (($historicalPayments[$lastyear]['kind_total'] ?? 0) > 0
+        && ($historicalPayments[$twoYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) 
+        && ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) 
+        && ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) > 0) {
+        $recurrenceKind = true;
     }
-    $historicalPayments['recurring'] = $recurrence;
-    
+
+    // Check monetary donations recurrence
+    if (($historicalPayments[$lastyear]['monetary_total'] ?? 0) > 0
+        && ($historicalPayments[$twoYearsAgo]['monetary_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['monetary_total'] ?? 0) 
+        && ($historicalPayments[$threeYearsAgo]['monetary_total'] ??0) >= ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) 
+        && ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) > 0) {
+        $recurrenceMonetary = true;
+    }
+
+    $historicalPayments['recurring_kind'] = $recurrenceKind;
+    $historicalPayments['recurring_monetary'] = $recurrenceMonetary;
+
     // 4.2.4 Save the data obtained for the account
     $accounts[$id] = $historicalPayments;
 
@@ -466,7 +502,6 @@ foreach ($contacts as $id) {
     $contactSQL = "SELECT * FROM contacts c LEFT JOIN contacts_cstm cc ON c.id = cc.id_c WHERE c.id = '" . $id['id'] . "' AND c.deleted = 0";
     $contactResult = $db->query($contactSQL);
     $contactRow = $db->fetchByAssoc($contactResult);
-
 
     // Check if the contact is valid for M182 purposes. If not, mark it as wrong and exclude it from the M182.
     // Causes of exclusion:
@@ -670,10 +705,9 @@ foreach ($contacts as $id) {
 
 // 5.2. Accounts
 foreach ($accounts as $id) {
-    // Initialize array keys for account
+    // Initialize array keys for accounts in case they are not previously set
     $id[$year]['monetary_total'] ??= 0;
     $id[$year]['kind_total'] ??= 0;
-    $id[$year]['kind'.$sufixPaymentType] ??= 0;
     $id[$year]['total'] ??= 0;
     $id['recurring'] ??= false;
 
@@ -695,7 +729,6 @@ foreach ($accounts as $id) {
         // so this section will only apply to organizations related to law 49/2002 (declarant type is 1).
 
         $m182 = array(); // The array will contain the individual record formatted according to the regulations
-
         $m182['ejercicio'] = $year;
         $m182['nif_declarante'] = $declarantIdentification;
         $m182['nif_declarado'] = $accountRow['stic_identification_number_c'];
@@ -710,11 +743,12 @@ foreach ($accounts as $id) {
         switch ($declarantType) {
 
         case '1': // Organizations related to law 49/2002
-            if ($id[$year]['kind'.$sufixPaymentType] != $id[$year]['total']) {
-
+            
+            if ($id[$year]['monetary_total'] > 0) {
+                
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
-                $m182['importe_donacion'] = $id[$year]['total'] - $id[$year]['kind'.$sufixPaymentType];
+                $m182['importe_donacion'] = $id[$year]['monetary_total'];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = ' ';
 
@@ -726,7 +760,7 @@ foreach ($accounts as $id) {
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurring'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring_monetary'] ? '1' : '2');
 
                 // There is no regional deduction for organizations
                 $m182['deduccion_com_autonoma'] = 0;
@@ -737,11 +771,11 @@ foreach ($accounts as $id) {
 
             }
 
-            if ($id[$year]['kind'.$sufixPaymentType] > 0) {
+            if ($id[$year]['kind_total'] > 0) {
 
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
-                $m182['importe_donacion'] = $id[$year]['kind'.$sufixPaymentType];
+                $m182['importe_donacion'] = $id[$year]['kind_total'];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = 'X';
 
@@ -753,7 +787,7 @@ foreach ($accounts as $id) {
                 }
 
                 // Recurrence mark
-                $m182['recurrencia'] = ($id['recurring'] ? '1' : '2');
+                $m182['recurrencia'] = ($id['recurring_kind'] ? '1' : '2');
 
                 // There is no regional deduction for organizations
                 $m182['deduccion_com_autonoma'] = 0;
@@ -796,10 +830,6 @@ $m182['patrimonio_protegido_apellido_2'] = '';
 $m182['patrimonio_protegido_nombre'] = '';
 $linea1 = model182T1($m182);
 
-
-
-// flush();
-// echo $linea1; // Header record (declarant)
 $xmlFile = $linea1;
 foreach ($model182T2 as $linea) {
     $xmlFile .= model182T2($linea); // Declared records
