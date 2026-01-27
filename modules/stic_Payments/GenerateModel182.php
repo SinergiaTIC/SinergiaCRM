@@ -311,7 +311,7 @@ foreach ($contacts as $id) {
         $historicalPayments[$row['periodo']]['monetary_total'] ??= 0;
         
         // We accumulate totals separately for kind and monetary donations
-        if ($row['payment_type'] === 'kind') {
+        if ($row['payment_type'] === ('kind'.$sufixSetting)) {
             $historicalPayments[$row['periodo']]['kind_total'] = $row['total_donation'];
         } else if (!($declarantType == '4' && $row['payment_type'] == 'fee')) {
             // For monetary donations, exclude fees in case of political parties
@@ -336,7 +336,7 @@ foreach ($contacts as $id) {
         $historicalPayments[$lastyear][$paymentType] = $paymentTypeValue;
         
         // Update totals based on payment type
-        if ($paymentType === 'kind') {
+        if ($paymentType === ('kind'.$sufixSetting)) {
             $historicalPayments[$lastyear]['kind_total'] = $paymentTypeValue;
         } else if (!($declarantType == '4' && $paymentType == 'fee')) {
             $historicalPayments[$lastyear]['monetary_total'] += $paymentTypeValue;
