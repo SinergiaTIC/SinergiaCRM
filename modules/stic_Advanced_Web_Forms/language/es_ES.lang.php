@@ -131,7 +131,9 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP1' => 'Información general',
   'LBL_WIZARD_DESC_STEP1' => 'Definición de la identidad del formulario con las propiedades generales de éste.',
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
-  'LBL_WIZARD_DESC_STEP2' => 'Definción del contenido del formulario. Los Bloques de datos representan las entidades del CRM con las que se trabajará y los campos son los datos que se recogerán en el formulario. También es posible definir valores fijos ocultos y configurar la detección de duplicados para evitar la creación de registros repetidos.',
+  'LBL_WIZARD_DESC_STEP2' => 'Definición del contenido del formulario. Los Bloques de datos pueden vincularse a módulos del CRM (para gestionar entidades) o funcionar de forma independiente (para encuestas). En los bloques vinculados, además, es posible definir valores fijos y configurar la detección de duplicados.',
+  'LBL_WIZARD_TITLE_STEP2_START' => 'Empieza a construir el formulario',
+  'LBL_WIZARD_TITLE_STEP2_START_DESC' => 'Configura aquí la estructura de datos. Puedes añadir bloques de datos conectados a algún módulo del CRM (ej: Personas) o bloques de datos no enlazados para recopilar información sin crear registros en modúlos del CRM.',
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_DESC_STEP3' => 'Definición de la lógica del formulario mediante las acciones que se ejecutarán cuando se reciba una respuesta del formulario. Las acciones permiten guardar o actualizar registros en el CRM, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
@@ -140,7 +142,7 @@ $mod_strings = array (
   'LBL_WIZARD_DESC_STEP5' => 'Revisión final y puesta en marcha del formulario. Permite activar la recepción de respuestas, obtener el enlace de acceso público o descargar el código HTML para integrarlo en una página web externa.',
 
   'LBL_WIZARD_SHOW_DEBUG_INFO' => 'Mostrar detalles',
-
+  
   'LBL_BUTTON_ADD' => 'Añadir',
   'LBL_BUTTON_EDIT' => 'Editar',
   'LBL_BUTTON_DELETE' => 'Eliminar',
@@ -162,9 +164,15 @@ $mod_strings = array (
   'LBL_DATABLOCKS' => 'Bloques de datos',
   'LBL_DATABLOCK_DETACHED' => 'Datos no enlazados',
   'LBL_DATABLOCK_ADD' => 'Añadir Bloque de datos',
+  'LBL_DATABLOCK_ADD_TITLE' => 'Crear un nuevo Bloque de datos sobre un módulo del CRM',
+  'LBL_DATABLOCK_ADD_UNLINKED' => 'Añadir Bloque de datos no enlazado',
+  'LBL_DATABLOCK_ADD_UNLINKED_TITLE' => 'Crear un nuevo Bloque de datos sin enlazar con ningún módulo del CRM',
   'LBL_DATABLOCK_NEW' => 'Nuevo Bloque de datos',
+  'LBL_DATABLOCK_NEW_UNLINKED' => 'Nuevo Bloque de datos no enlazado',
   'LBL_DATABLOCK_MODULE' => 'Módulo',
+  'LBL_DATABLOCK_NAME' => 'Nombre',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
+  'LBL_ERROR_NO_DATABLOCKS' => 'Debe definirse al menos un bloque de datos para continuar',
 
   'LBL_FIELDS' => 'Campos',
   'LBL_FIELD_FORM' => 'Campo en el formulario',

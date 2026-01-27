@@ -1309,6 +1309,37 @@ class AWF_Configuration {
   }
 
   /**
+   * Gets a new DataBlock unlinked (without module)
+   * @param {string} text 
+   * @returns {AWF_DataBlock}
+   */
+  addUnlinkedDataBlock(text) {
+    // Generate a secure unique name
+    let baseName = "_NoModule_";
+    let index = 0;
+    let name = `${baseName}${index}`;
+
+    while(this.data_blocks.some((b) => b.name === name)) {
+      index++;
+      name = `${baseName}${index}`;
+    }
+
+    // Create DataBlock
+    let dataBlock = new AWF_DataBlock({
+      name: name,
+      text: text,
+      module: "", // No module set
+      editable_text: true,
+      required: false
+    });
+
+    this.data_blocks.push(dataBlock);
+    this.syncLayoutWithDataBlocks();
+
+    return dataBlock;
+  }
+
+  /**
    * Adds a field to a DataBlock
    * @param {AWF_DataBlock} dataBlock 
    * @param {AWF_Field} field 

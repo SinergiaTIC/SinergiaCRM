@@ -1,13 +1,48 @@
 <!-- Main Panel -->
 <main class="wizard-main flex-fill d-flex flex-column" x-data="WizardStep2.mainStep2xData();">
-  <!-- Add DataBlock from Module -->
+  <!-- Add Data Block -->
   <div class="row mb-3" x-data="WizardStep2.addDataBlockModulexData(formConfig);">
-    <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" x-text="utils.translate('LBL_DATABLOCK_ADD')"></button>
+    <!-- No Data Block Configured -->
+    <div x-show="formConfig.data_blocks.length === 0" class="text-center p-5 border rounded bg-light">
+      <h2 class="mb-3">
+        <span class="suitepicon suitepicon-module-fields me-2 align-middle"></span>
+        <span id="wizard-section-title" x-text="utils.translate('LBL_WIZARD_TITLE_STEP2')"></span>
+      </h2>
+      <h3 x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START')"></h3>
+      <p x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START_DESC')"></p>
+      <div class="d-flex justify-content-center gap-3 mt-3">
+        <!-- Button: Add Datablock -->
+        <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" :title="utils.translate('LBL_DATABLOCK_ADD_TITLE')">
+          <i class="suitepicon suitepicon-module-basic me-2"></i>
+          <span x-text="utils.translate('LBL_DATABLOCK_ADD')"></span>
+        </button>
+        <!-- Button: Add Unlinked Datablock -->
+        <button type="button" class="btn w-auto" @click="creatingUnlinkedDataBlock=true;" :title="utils.translate('LBL_DATABLOCK_ADD_UNLINKED_TITLE')">
+          <i class="suitepicon suitepicon-module-surveys me-2"></i>
+          <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
+        </button>
+      </div>
+    </div>
+    <!-- Buttons -->
+    <div class="row mb-3" x-show="formConfig.data_blocks.length > 0" x-cloak>
+      <div class="d-flex gap-2">
+        <!-- Button: Add Datablock -->
+        <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" :title="utils.translate('LBL_DATABLOCK_ADD_TITLE')">
+          <i class="suitepicon suitepicon-module-basic me-2"></i>
+          <span x-text="utils.translate('LBL_DATABLOCK_ADD')"></span>
+        </button>
+        <!-- Button: Add Unlinked Datablock -->
+        <button type="button" class="btn w-auto" @click="creatingUnlinkedDataBlock=true;" :title="utils.translate('LBL_DATABLOCK_ADD_UNLINKED_TITLE')">
+          <i class="suitepicon suitepicon-module-surveys me-2"></i>
+          <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
+        </button>
+      </div>
+    </div>
 
     <!-- Modal: Create DataBlock -->
     <div x-show="creatingDataBlock" x-cloak class="custom-modal-wrapper">
       <div class="custom-modal-backdrop"></div>
-      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalCreateDataBlock">
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalCreateDataBlock" style="max-width: 600px;">
         <div class="custom-modal-content">
           <div class="custom-modal-header">
             <h3 class="modal-title" id="modalCreateDataBlock" x-text="utils.translate('LBL_DATABLOCK_NEW')"></h3>
@@ -17,15 +52,19 @@
             <form id="newDataBlockModalForm">
               <div class="row align-items-end">
                 <!-- Module -->
-                <stic-field-select class="col-3" x-model="newDataBlock.module" label="LBL_DATABLOCK_MODULE" map="STIC.enabledModules" map-text="text"></stic-field-select>
+                <div class="col-6">
+                  <stic-field-select class="col-6" x-model="newDataBlock.module" label="LBL_DATABLOCK_MODULE" required
+                                    map="STIC.enabledModules" map-text="text"></stic-field-select>
+                </div>
                 <!-- Data Block name -->
-                <stic-field-text class="col-3" x-model="newDataBlock.text" label="LBL_DATABLOCK_NEW" 
-                                 x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
-                                 keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
+                <div class="col-6">
+                  <stic-field-text class="col-6" x-model="newDataBlock.text" label="LBL_DATABLOCK_NAME" required
+                                  x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
+                                  keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
+                </div>
               </div>
             </form>
           </div>
-
           <!-- Accept / Cancel Buttons -->
           <div class="custom-modal-footer">
             <button type="button" class="col-2 btn btn-secondary" id="cancelAddDataBlockModuleButton" @click="creatingDataBlock = false;" 
@@ -36,9 +75,39 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal: Create Unlinked DataBlock -->
+    <div x-show="creatingUnlinkedDataBlock" x-cloak class="custom-modal-wrapper">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" style="max-width: 400px;">
+        <div class="custom-modal-content">
+          <div class="custom-modal-header">
+            <h3 class="modal-title" x-text="utils.translate('LBL_DATABLOCK_NEW_UNLINKED')"></h3>
+            <button type="button" class="btn-close" @click="creatingUnlinkedDataBlock = false;"></button>
+          </div>
+          <div class="custom-modal-body">
+            <form @submit.prevent="handleAddUnlinkedDatablock()">
+              <div class="mb-3">
+                <!-- Data Block name -->
+                <stic-field-text class="w-100" x-model="newUnlinkedDataBlock.text" label="LBL_DATABLOCK_NAME" required
+                                 keydown.enter="handleAddUnlinkedDatablock()" keydown.esc="creatingUnlinkedDataBlock = false;"></stic-field-text>
+              </div>
+            </form>
+          </div>
+          <!-- Accept / Cancel Buttons -->
+          <div class="custom-modal-footer">
+            <button type="button" class="col-3 btn btn-secondary" @click="creatingUnlinkedDataBlock = false;" 
+                    x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL')"></button>
+            <button type="button" class="col-3 btn btn-primary" @click="handleAddUnlinkedDatablock();" 
+                    x-bind:disabled="!isValidUnlinked" x-text="utils.translate('LBL_BUTTON_ADD')"></button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- Data Blocks -->
-  <div class="flex-fill border rounded p-2 overflow-auto" x-data="WizardStep2.generalDatablocksxData(formConfig);">
+  <div x-show="formConfig.data_blocks.length > 0" class="flex-fill border rounded p-2 overflow-auto" 
+       x-data="WizardStep2.generalDatablocksxData(formConfig);">
     <h2 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')"></h2>
     <!-- Main Content -->
 

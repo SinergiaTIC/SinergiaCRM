@@ -187,8 +187,25 @@ class WizardNavigation {
   static validateCurrentStep() {
     let allOk = true;
 
+    // Validación HTML5 estandard
     const stepForms = document.querySelectorAll("#wizard-step-container form.needs-validation");
-    if (stepForms.length === 0) return true;
+    if (stepForms.length > 0) {
+      stepForms.forEach(function (f) {
+        if (!f.reportValidity()) {
+          allOk = false;
+        }
+      });
+    }
+
+    // Validación lógica específica del paso
+    const currentStep = window.alpineComponent.navigation.step;
+    // Paso 2: Debe existir algún bloque de datos
+    if (currentStep === 2) {
+      if (window.alpineComponent.formConfig.data_blocks.length === 0) {
+        alert(utils.translate('LBL_ERROR_NO_DATABLOCKS'));
+        allOk = false;
+      }
+    }
 
     stepForms.forEach(function (f) {
       if (!f.reportValidity()) {
@@ -876,23 +893,32 @@ class WizardStep2 {
     return {
       formConfig: initial_formConfig,
 
-      creatingDataBlock: false,
+      creatingDataBlock: false,          // Modal CRM
+      creatingUnlinkedDataBlock: false,  // Modal Unlinked
 
       newDataBlock: {module:'', text:''},
+      newUnlinkedDataBlock: {text:''},
+
       get isValid() { 
         return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
+      },
+      get isValidUnlinked() { 
+        return this.newUnlinkedDataBlock.text.trim() != '';
       },
 
       handleAddDatablockModule() {
         this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
         this.creatingDataBlock = false;
+        this.newDataBlock = {module:'', text:''};
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+      },
+      handleAddUnlinkedDatablock() {
+        this.formConfig.addUnlinkedDataBlock(this.newUnlinkedDataBlock.text);
+        this.creatingUnlinkedDataBlock = false;
+        this.newUnlinkedDataBlock = {text:''};
       },
 
       init() {
-        if (this.formConfig && !this.formConfig.data_blocks.some(b => b.module!='')) {
-          this.creatingDataBlock = true;
-        }
       },
     };
   }
