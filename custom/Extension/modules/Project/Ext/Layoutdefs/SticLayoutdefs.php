@@ -214,6 +214,28 @@ $layout_defs["Project"]["subpanel_setup"]['stic_centers_project'] = array(
     ),
 );
 
+// Resources subpanel
+$layout_defs["Project"]["subpanel_setup"]['stic_resources_project'] = array(
+    'order' => 100,
+    'module' => 'stic_Resources',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'title_key' => 'LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE',
+    'get_subpanel_data' => 'stic_resources_project',
+    'top_buttons' => array(
+        0 =>
+        array (
+          'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 =>
+        array (
+          'widget_class' => 'SubPanelTopSelectButton',
+          'mode' => 'MultiSelect',
+        ),
+    ),
+);
+
 // Subpanels default sorting
 $layout_defs['Project']['subpanel_setup']['activities']['sort_order'] = 'asc';
 $layout_defs['Project']['subpanel_setup']['activities']['sort_by'] = 'date_due';
