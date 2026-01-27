@@ -156,6 +156,7 @@ $fourYearsAgo = date("Y") - 4; // Year before $threeYearsAgo
 // Check if an issuing organization has been selected and set custom annual donations fields
 $issuingOrganizationKey = $_REQUEST['issuing_organization_key'] ?? '';
 $sufixSetting = '';
+$sufixPaymentType = '';
 if ($issuingOrganizationKey != '') {
     // Special method for multitenant instances
     $sufixSetting = '_' . strtoupper($issuingOrganizationKey);
