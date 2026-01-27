@@ -1659,6 +1659,7 @@ class ExternalReporting
                             `column` varchar(64) NOT NULL,
                             `global` tinyint(1) NOT NULL,
                             `stic_permission_source` varchar(20) NOT NULL,
+                            `sql_filter` text DEFAULT NULL,
                             PRIMARY KEY (`id`),
                             KEY `sda_def_permissions_user_name_IDX` (`user_name`) USING BTREE,
                             KEY `sda_def_permissions_group_IDX` (`group`) USING BTREE,
@@ -2040,14 +2041,13 @@ class ExternalReporting
     }
 
     /**
-     * Returns an array of permissions for a given user id over all tables/views with the "sda_" prefix.
+     * Rebuilds permissions for a single user in sda_def_permissions.
      *
-     * Each permission entry can be:
-     * - fullTable: Full access to the table
-     * - dynamic: A SQL statement that restricts access dynamically
+     * This deletes existing rows for the user and reinserts them using the
+     * same structure and values as the global ACL process.
      *
      * @param string $userId User id
-     * @return array
+     * @return void
      */
     public function getUserSdaPermissions($userId)
     {
@@ -2057,17 +2057,37 @@ class ExternalReporting
         include_once 'modules/ACLActions/ACLAction.php';
 
         $userId = $db->quote($userId);
-        $userQuery = "SELECT id, user_name, is_admin FROM users WHERE id = '{$userId}' AND deleted = 0";
+        $userQuery = "SELECT u.id, u.user_name, u.is_admin, u.status, uc.sda_allowed_c
+                      FROM users u
+                      JOIN users_cstm uc ON u.id = uc.id_c
+                      WHERE u.id = '{$userId}' AND u.deleted = 0";
         $userResult = $db->query($userQuery);
         $userRow = $db->fetchByAssoc($userResult);
 
-        if (empty($userRow['user_name'])) {
-            return [];
+        if (empty($userRow['user_name']) || $userRow['status'] !== 'Active' || (int) $userRow['sda_allowed_c'] <= 0) {
+            return;
+        }
+
+        if ((int) $userRow['is_admin'] !== 0) {
+            return;
         }
 
         $userName = $userRow['user_name'];
-        $permissions = [];
-        $permissionsByTable = [];
+
+        // Delete existing permissions for user
+        $db->query("DELETE FROM sda_def_permissions WHERE user_name = '{$db->quote($userName)}'");
+
+        // Define mapping of access levels to their identifier constants
+        $aclSourcesList = [
+            100 => 'ACL_ALLOW_ADMIN_DEV',
+            99 => 'ACL_ALLOW_ADMIN',
+            90 => 'ACL_ALLOW_ALL',
+            89 => 'ACL_ALLOW_ENABLED',
+            80 => 'ACL_ALLOW_GROUP',
+            75 => 'ACL_ALLOW_OWNER',
+            1 => 'ACL_ALLOW_NORMAL',
+            0 => 'ACL_ALLOW_DEFAULT',
+        ];
 
         // Load available SDA tables/views
         $availableTables = [];
@@ -2117,26 +2137,21 @@ class ExternalReporting
         // Preload user groups if group permissions are enabled
         $userGroups = [];
         if ($sugar_config['stic_sinergiada']['group_permissions_enabled']) {
-            $groupsQuery = "SELECT name as `group` FROM sda_def_user_groups WHERE user_name = '{$db->quote($userName)}'";
+            $groupsQuery = "SELECT name as `group`
+                       FROM sda_def_user_groups
+                       WHERE user_name = '{$db->quote($userName)}' AND `name` != 'EDA_ADMIN' AND `name` != 'EDA_RO'";
             $groupsResult = $db->query($groupsQuery);
             while ($group = $db->fetchByAssoc($groupsResult)) {
                 $userGroups[] = $group['group'];
             }
         }
 
-        $normalizedUserGroups = [];
-        foreach ($userGroups as $group) {
-            $normalizedGroup = $this->normalizeSecurityGroupName($group);
-            if (!empty($normalizedGroup)) {
-                $normalizedUserGroups[$normalizedGroup] = true;
-            }
-        }
-        $normalizedUserGroups = array_keys($normalizedUserGroups);
-
+        $permissionsBatch = [];
+        $groupPermissionsByTable = [];
         $allUserActions = ACLAction::getUserActions($userRow['id']);
 
         foreach ($modulesList as $moduleName) {
-            if ($userRow['is_admin'] == 0 && $moduleName == 'Users') {
+            if ($moduleName == 'Users') {
                 continue;
             }
 
@@ -2144,6 +2159,8 @@ class ExternalReporting
             if (empty($value) || $value['access']['aclaccess'] < 0 || $value['view']['aclaccess'] < 0) {
                 continue;
             }
+
+            $aclSource = $aclSourcesList[$value['view']['aclaccess']];
 
             $key = $moduleName == 'ProjectTask' ? 'Project_Task' : $moduleName;
             $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
@@ -2153,62 +2170,91 @@ class ExternalReporting
                 continue;
             }
 
-            if (!isset($permissionsByTable[$currentTable])) {
-                $permissionsByTable[$currentTable] = [
-                    'full' => false,
-                    'dynamic' => [],
-                ];
-            }
-
             switch ($value['view']['aclaccess']) {
                 case '80': // Security group permissions
-                    if (!empty($normalizedUserGroups)) {
-                        $quotedGroups = array_map(function ($groupName) use ($db) {
-                            return "'" . $db->quote($groupName) . "'";
-                        }, $normalizedUserGroups);
-
-                        $groupList = implode(', ', $quotedGroups);
-                        $permissionsByTable[$currentTable]['dynamic']['groups'] = [
-                            'usersName' => $userName,
-                            'table' => $currentTable,
-                            'type' => 'dynamic',
-                            'value' => "select id from `{$currentTable}` where ((id in (select record_id from sda_def_security_group_records where `group` IN  ({$groupList})  and `table` =  '{$currentTable}')) OR (`assigned_user_name` = 'EDA_USER'))",
-                        ];
+                    if (!empty($userGroups)) {
+                        if (empty($groupPermissionsByTable[$currentTable])) {
+                            $groupPermissionsByTable[$currentTable] = [];
+                        }
+                        $groupPermissionsByTable[$currentTable] = array_unique(array_merge(
+                            $groupPermissionsByTable[$currentTable],
+                            $userGroups
+                        ));
                     }
                     break;
 
                 case '75': // Owner-based permissions
-                    $permissionsByTable[$currentTable]['dynamic']['owner'] = [
-                        'usersName' => $userName,
+                    $permissionsBatch[] = [
+                        'user_name' => $userName,
+                        'group' => null,
                         'table' => $currentTable,
-                        'type' => 'dynamic',
-                        'value' => "select id from `{$currentTable}` where `assigned_user_name` = 'EDA_USER'",
+                        'column' => 'assigned_user_name',
+                        'stic_permission_source' => $aclSource,
+                        'global' => 0,
+                        'sql_filter' => "select id from `{$currentTable}` where `assigned_user_name` = 'EDA_USER'",
                     ];
                     break;
 
-                default: // Full access
-                    $permissionsByTable[$currentTable]['full'] = true;
-                    $permissionsByTable[$currentTable]['dynamic'] = [];
+                default: // Global permissions
+                    $permissionsBatch[] = [
+                        'user_name' => $userName,
+                        'group' => null,
+                        'table' => $currentTable,
+                        'column' => 'users_id',
+                        'stic_permission_source' => $aclSource,
+                        'global' => 1,
+                        'sql_filter' => null,
+                    ];
                     break;
             }
         }
 
-        foreach ($permissionsByTable as $table => $data) {
-            if ($data['full']) {
-                $permissions[] = [
-                    'usersName' => $userName,
-                    'table' => $table,
-                    'type' => 'fullTable',
-                ];
-                continue;
-            }
+        if (!empty($groupPermissionsByTable)) {
+            foreach ($groupPermissionsByTable as $tableName => $groupsList) {
+                if (empty($groupsList)) {
+                    continue;
+                }
+                $quotedGroups = array_map(function ($groupName) use ($db) {
+                    return "'" . $db->quote($groupName) . "'";
+                }, $groupsList);
+                $groupList = implode(', ', $quotedGroups);
 
-            if (!empty($data['dynamic'])) {
-                $permissions = array_merge($permissions, array_values($data['dynamic']));
+                $permissionsBatch[] = [
+                    'user_name' => $userName,
+                    'group' => null,
+                    'table' => $tableName,
+                    'column' => 'id',
+                    'stic_permission_source' => $aclSourcesList[80],
+                    'global' => 0,
+                    'sql_filter' => "select id from `{$tableName}` where ((id in (select record_id from sda_def_security_group_records where `group` IN ({$groupList}) and `table` =  '{$tableName}')) OR (`assigned_user_name` = 'EDA_USER'))",
+                ];
             }
         }
 
-        return $permissions;
+        if (!empty($permissionsBatch)) {
+            $this->info .= "<h3>Permisos actualizados para {$userName}</h3><ul>";
+            foreach ($permissionsBatch as $permission) {
+                $tableName = htmlspecialchars($permission['table'] ?? '', ENT_QUOTES, 'UTF-8');
+                $columnName = htmlspecialchars($permission['column'] ?? '', ENT_QUOTES, 'UTF-8');
+                $groupName = htmlspecialchars($permission['group'] ?? '', ENT_QUOTES, 'UTF-8');
+                $sourceName = htmlspecialchars($permission['stic_permission_source'] ?? '', ENT_QUOTES, 'UTF-8');
+                $globalValue = htmlspecialchars((string) ($permission['global'] ?? ''), ENT_QUOTES, 'UTF-8');
+                $sqlFilter = htmlspecialchars($permission['sql_filter'] ?? '', ENT_QUOTES, 'UTF-8');
+
+                $this->info .= "<li><b>{$tableName}</b> | column={$columnName} | group={$groupName} | global={$globalValue} | source={$sourceName}";
+                if (!empty($sqlFilter)) {
+                    $this->info .= " | sql_filter={$sqlFilter}";
+                }
+                $this->info .= "</li>";
+            }
+            $this->info .= "</ul>";
+
+            if (isset($_REQUEST['print_debug'])) {
+                echo $this->info;
+            }
+
+            $this->batchInsertPermissions($permissionsBatch);
+        }
     }
 
     /**
@@ -2258,9 +2304,9 @@ class ExternalReporting
         $db = DBManagerFactory::getInstance();
 
         // Define base SQL for all insertions
-        $baseSQL = "INSERT INTO sda_def_permissions
-           (user_name, `group`, `table`, `column`, stic_permission_source, `global`)
-           VALUES ";
+          $baseSQL = "INSERT INTO sda_def_permissions
+              (user_name, `group`, `table`, `column`, stic_permission_source, `global`, sql_filter)
+              VALUES ";
 
         // Set batch processing parameters
         $subBatchSize = 100000; // Maximum records per batch
@@ -2270,9 +2316,13 @@ class ExternalReporting
         // Process each permission record
         foreach ($permissionsBatch as $record) {
             // Ensure record has all required fields
-            if (count($record) !== 6) {
+            if (count($record) !== 6 && count($record) !== 7) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid record structure: ' . print_r($record, true));
                 continue;
+            }
+
+            if (count($record) === 6) {
+                $record[] = null;
             }
 
             // Sanitize and quote record values
