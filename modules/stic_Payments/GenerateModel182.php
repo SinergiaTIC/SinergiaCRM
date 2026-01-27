@@ -717,7 +717,13 @@ foreach ($accounts as $id) {
     $accountRow = $db->fetchByAssoc($accountResult);
 
     // Check if the account is valid for M182 purposes. If not, mark it as wrong and exclude it from the M182.
-    if (trim($accountRow['stic_identification_number_c']) == '' or trim($accountRow['name']) == '' or $accountRow['billing_address_state'] == '') {
+    // Causes of exclusion:
+    // - General: Missing name or province.
+    // - Residents in Spain: The identification number is empty.
+    // - Non-residents (province = 99): There are no specific causes of exclusion, the M182 admits declared non-residents even without an identification number.
+    if (trim($accountRow['name']) == '' || $accountRow['billing_address_state'] == '' ||
+        (trim($accountRow['stic_identification_number_c']) == '' && $accountRow['billing_address_state'] != 99)
+       ) {
 
         $db->query("UPDATE accounts_cstm SET stic_182_error_c = 1 WHERE id_c = '" . $id['id'] . "'");
         $GLOBALS['log']->fatal('[M182] Account with errors: ' . $id['id']);
