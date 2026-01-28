@@ -340,13 +340,12 @@ array(
 );
 
 $dictionary['stic_Advanced_Web_Forms_Answers']['indices'] = array(
-  array('name' => 'idx_awf_answers_pk', 'type' => 'primary', 'fields' => array('id')),
   array('name' => 'idx_awf_answers_del', 'type' => 'index', 'fields' => array('deleted')),
-  // Índice para agruoar por respuesta
+  // Index for grouping by response
   array('name' => 'idx_awf_answers_resp_id', 'type' => 'index', 'fields' => array('response_id', 'deleted')),
-  // Índice para agrupar por formulario
+  // Index for grouping by form
   array('name' => 'idx_awf_answers_form_id', 'type' => 'index', 'fields' => array('form_id', 'deleted')),
-  // Índice para agrupar por pregunta 
+  // Index for grouping by field
   array('name' => 'idx_awf_answers_q_key', 'type' => 'index', 'fields' => array('question_key', 'deleted')),
 );
 
