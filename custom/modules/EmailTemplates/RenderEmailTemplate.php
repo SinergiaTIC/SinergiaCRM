@@ -52,6 +52,12 @@ if (!empty($emailMarketing->template_id)) {
     $emailTemplate = BeanFactory::getBean('EmailTemplates', $emailMarketing->template_id);
 }
 
+// Get the email template related to the marketing email
+if (empty($_REQUEST['module']) || $_REQUEST['module'] == 'Home') {
+    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": The entered marketing email must have a related campaign and a related email template.");
+    die($modStrings['ERROR_USER_INTERFACE']);
+}
+
 // Validate if the marketing email had an associated email template and campaign
 if (empty($campaign) || empty($emailTemplate)) {
     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": The entered marketing email must have a related campaign and a related email template.");
@@ -59,7 +65,7 @@ if (empty($campaign) || empty($emailTemplate)) {
 }
 
 // Get objects related with optional parameters
-$optionalParams = ['module', 'recordId', 'targetId', 'trackingURL'];
+$optionalParams = ['recordId', 'targetId', 'trackingURL'];
 foreach ($optionalParams as $key) {
     if (empty($_REQUEST[$key])) {
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . "You have not provided the optional parameter:: " . $key);
