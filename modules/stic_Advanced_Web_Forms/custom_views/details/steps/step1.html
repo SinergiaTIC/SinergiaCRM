@@ -1,0 +1,81 @@
+<!-- Main Panel -->
+<main class="wizard-main flex-fill d-flex flex-column" x-data="DetailsStep1.mainStep1xData();">
+    <div class="container">
+        <!-- Publish Form -->
+        <div class="card p-2 mt-4" x-data="{ formPublishTabSelected:'link' }">
+            <div class="card-header" >
+                <h4 x-text="utils.translate('LBL_FORM_PUBLISH_OPTIONS')"></h4>
+            </div>
+            <div class="card-body">
+                <div class="accordion">
+                    <!-- Link -->
+                    <div class="accordion-item" x-data="{opened:false}">
+                        <div id="formLink_Header" class="accordion-header accordion-button" role="button" 
+                             :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                             data-bs-target="#formLink_Content" aria-controls="formLink_Content">
+                            <h5 x-text="utils.translate('LBL_FORM_PUBLISH_LINK')"></h5>
+                        </div>
+                        <div id="formLink_Content" class="accordion-collapse collapse" aria-labelledby="formLink_Header">
+                            <div class="accordion-body">
+                                <div class="p-2 form-text text-muted small fst-italic">
+                                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                                    <span x-text="utils.translate('LBL_FORM_PUBLISH_LINK_DESC')"></span>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" :value="publicUrl" readonly>
+                                    <button type="button" class="btn" @click="copyToClipboard(publicUrl)" x-text="utils.translate('LBL_BUTTON_COPY')"></button>
+                                    <button type="button" class="btn">
+                                        <a :href="publicUrl" target="_blank" x-text="utils.translate('LBL_BUTTON_OPEN')"></a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Iframe -->
+                    <div class="accordion-item" x-data="{opened:false}">
+                        <div id="formIframe_Header" class="accordion-header accordion-button" role="button" 
+                             :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                             data-bs-target="#formIframe_Content" aria-controls="formIframe_Content">
+                            <h5 x-text="utils.translate('LBL_FORM_PUBLISH_IFRAME')"></h5>
+                        </div>
+                        <div id="formIframe_Content" class="accordion-collapse collapse" aria-labelledby="formIframe_Header">
+                            <div class="accordion-body">
+                                <div class="p-2 form-text text-muted small fst-italic">
+                                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                                    <span x-text="utils.translate('LBL_FORM_PUBLISH_IFRAME_DESC')"></span>
+                                </div>
+                                <div class="input-group">
+                                    <textarea class="form-control font-monospace small bg-light" rows="2" readonly x-model="iframeCode" 
+                                              style="width:70% !important; resize: none; height: 50px !important;"></textarea>
+                                    <button type="button" class="btn" @click="copyToClipboard(iframeCode)" x-text="utils.translate('LBL_BUTTON_COPY')"
+                                            style="height: 50px !important;"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Html -->
+                    <div class="accordion-item" x-data="{opened:false}">
+                        <div id="formHtml_Header" class="accordion-header accordion-button" role="button" 
+                             :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                             data-bs-target="#formHtml_Content" aria-controls="formHtml_Content">
+                            <h5 x-text="utils.translate('LBL_FORM_PUBLISH_HTML')"></h5>
+                        </div>
+                        <div id="formHtml_Content" class="accordion-collapse collapse" aria-labelledby="formHtml_Header">
+                            <div class="accordion-body">
+                                <div class="p-2 form-text text-muted small fst-italic">
+                                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                                    <span x-text="utils.translate('LBL_FORM_PUBLISH_HTML_DESC')"></span>
+                                </div>
+                                <textarea class="form-control font-monospace small bg-light" rows="10" readonly x-model="generatedHtml"></textarea>
+                                <div class="mt-2 text-end">
+                                    <button type="button" class="btn button" @click="copyToClipboard(generatedHtml)" x-text="utils.translate('LBL_BUTTON_COPY')"></button>
+                                    <button type="button" class="btn button" @click="downloadHtml()" x-text="utils.translate('LBL_BUTTON_DOWNLOAD')"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
