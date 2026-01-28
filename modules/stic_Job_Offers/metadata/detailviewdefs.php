@@ -51,7 +51,7 @@ array(
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_EDITVIEW_PANEL5' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_EDITVIEW_PANEL8' => 

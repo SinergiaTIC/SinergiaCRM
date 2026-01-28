@@ -67,12 +67,11 @@ switch (viewType()) {
 
       // Depending on the type of assessment, add or remove validations in other fields
     type = document.getElementById('offer_type');
-    manageValidatationsIfVolunteering(type.value);
+    manageValidatationsAndTabsIfVolunteering(type.value);
     type.addEventListener("change", function () {
         clear_all_errors();
-        manageValidatationsIfVolunteering(type.value);
+        manageValidatationsAndTabsIfVolunteering(type.value);
     });
-
     // Definition of the behavior of fields that are conditionally enabled or disabled
     sepeActivationDate = {
       true: {
@@ -159,9 +158,13 @@ function onClickIncorporaSyncButton() {
 /**
  * Depending on the type of offer, add or remove validations in project field
  */
-function manageValidatationsIfVolunteering(type) 
+function manageValidatationsAndTabsIfVolunteering(type) 
 {
+    const laboralTab = $('#EditView').find('ul.nav.nav-tabs li[role="presentation"] > a[data-toggle="tab"][data-label="LBL_EDITVIEW_PANEL5"]');
+    const volunteeringTab = $('#EditView').find('ul.nav.nav-tabs li[role="presentation"] > a[data-toggle="tab"][data-label="LBL_EDITVIEW_PANEL8"]');
+
     if (type == 'volunteering') {
+      // manage validations
       addToValidateCallback(getFormName(), "project_stic_job_offers_name", "varchar", true, SUGAR.language.get(module, "LBL_STIC_JOB_OFFERS_PROJECT_FROM_PROJECT_TITLE"));
       addRequiredMark('project_stic_job_offers_name');
       removeFromValidate('EditView', 'type');
@@ -171,8 +174,13 @@ function manageValidatationsIfVolunteering(type)
       removeFromValidate('EditView', 'position_type');
       removeRequiredMark('position_type');
       removeFromValidate('EditView', 'contract_type');
-      removeRequiredMark('contract_type');                  
+      removeRequiredMark('contract_type');
+
+      // manage tabs
+      laboralTab.addClass('hidden');
+      volunteeringTab.removeClass('hidden');
     } else {
+      // manage validations
       removeFromValidate('EditView', 'project_stic_job_offers_name');
       removeRequiredMark('project_stic_job_offers_name');
       addToValidateCallback(getFormName(), "type", "varchar", true, SUGAR.language.get(module, "LBL_TYPE"));
@@ -183,6 +191,10 @@ function manageValidatationsIfVolunteering(type)
       addRequiredMark('position_type');
       addToValidateCallback(getFormName(), "contract_type", "varchar", true, SUGAR.language.get(module, "LBL_CONTRACT_TYPE"));
       addRequiredMark('contract_type');
+
+      // manage tabs
+      laboralTab.removeClass('hidden');
+      volunteeringTab.addClass('hidden');
     }
     return true;
 }
