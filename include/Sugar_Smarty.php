@@ -79,8 +79,12 @@ class Sugar_Smarty extends Smarty
         $this->registerPlugin("modifier", "array_values", "array_values");
         $this->registerPlugin("modifier", "max", "max");
         $this->registerPlugin("modifier", "key", "key");
+        // End STIC Custom
+        // STIC Custom 20260128 JBL - Advanced Web Forms - Remove warning for deprecated use of PHP functions as modifiers in Templates
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/775
         $this->registerPlugin("modifier", "html_entity_decode", "html_entity_decode");
         // End STIC Custom
+
 
         if (!file_exists(SUGAR_SMARTY_DIR)) {
             mkdir_recursive(SUGAR_SMARTY_DIR, true);

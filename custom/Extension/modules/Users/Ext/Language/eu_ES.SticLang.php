@@ -102,4 +102,3 @@ $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
 // Modelo 182
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = '182 Ereduaren jaulkipena';
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Erabiltzaileak 182 Eredua zein erakunderentzat sor dezakeen adierazten du. Zerrenda dinamikoki sortzen da <a href="index.php?module=stic_Settings" target="_blank">konfigurazio parametroetatik</a>.';
-

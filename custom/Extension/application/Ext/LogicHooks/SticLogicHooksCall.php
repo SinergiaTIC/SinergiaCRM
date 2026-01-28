@@ -34,7 +34,6 @@ if (!isset($hook_array['server_round_trip']) || !is_array($hook_array['server_ro
 }
 $hook_array['server_round_trip'][] = Array(1, 'SticRemoteLog Hook', 'SticInclude/SticRemoteLogLogicHooksCode.php','SticRemoteLogLogicHooks', 'server_round_trip'); 
 
-
 $hook_array['after_ui_frame'][] = array(
     1,
     'Impersonate UI Injection',
