@@ -67,8 +67,12 @@ $mod_strings = array(
   'LBL_ORAL' => 'Oral level',
   'LBL_CERTIFICATE' => 'Certificate',
   'LBL_CERTIFICATE_DATE' => 'Certificate date',
+  'LBL_CERTIFIED_SKILL' => 'Certified skill',
+  'LBL_EVALUATION_DATE' => 'Evaluation date',
+  'LBL_EVALUATION_STAGE' => 'Evaluation stage',
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_PANEL_LANGUAGE' => 'Language',
+  'LBL_PANEL_EVALUATION' => 'Evaluation',
   'LBL_STIC_SKILLS_CONTACTS_FROM_CONTACTS_TITLE'=> 'Contact',
 );

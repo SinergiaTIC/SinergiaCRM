@@ -159,6 +159,19 @@ array (
         array (
           0 => 
           array (
+            'name' => 'volunteer_mode',
+            'label' => 'LBL_VOLUNTEER_MODE',
+          ),
+          1 => 
+          array (
+            'name' => 'target_audience',
+            'label' => 'LBL_TARGET_AUDIENCE',
+          ),
+        ),        
+        9 => 
+        array (
+          0 => 
+          array (
             'name' => 'description',
             'comment' => 'Full text of the note',
             'label' => 'LBL_DESCRIPTION',
