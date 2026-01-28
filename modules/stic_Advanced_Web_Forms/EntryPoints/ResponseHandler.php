@@ -89,11 +89,14 @@ class ResponseHandler
         }
 
         // Detección de duplicados: Fingerprint
+        $timeWindow = 300; // 300s = 5 min
+        $timeSlot = floor(time() / $timeWindow); // $timeSlot cambiará cada 5 minutos: evitamos F5 accidental
+
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
         $payloadJson = json_encode($cleanData);
 
-        $fingerprintString = $payloadJson . $formId . $remoteIp . $userAgent . $formUrl;
+        $fingerprintString = $payloadJson . $formId . $remoteIp . $userAgent . $formUrl . $timeSlot;
         $responseHash = md5($fingerprintString);
 
         if ($this->checkDuplicateSubmission($formId, $responseHash)) {
