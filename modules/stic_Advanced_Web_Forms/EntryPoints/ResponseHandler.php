@@ -30,7 +30,7 @@ require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
  * EntryPoint: ResponseHandler
  * Se encarga de recibir, validar, persistir y procesar las respuestas de los formularios web.
  */
-class AWF_ResponseHandler
+class ResponseHandler
 {
     public function run(): void {
         global $current_user;
@@ -168,7 +168,7 @@ class AWF_ResponseHandler
             // Mostramos éxito genérico para engañar al bot
             $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
             $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-            AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
+            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             return; // Paramos: no procesamos más
         }
 
@@ -176,7 +176,7 @@ class AWF_ResponseHandler
         if (!$isPublic) {
             $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
             $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-            AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
+            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
 
@@ -193,7 +193,7 @@ class AWF_ResponseHandler
             $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
             $errors = "\n- " . implode("\n- ", $validationErrors);
             $msg = translate('LBL_ERROR_FORM_VALIDATION_MSG', 'stic_Advanced_Web_Forms_Responses') . ":" .$errors;
-            AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
+            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
 
@@ -211,7 +211,7 @@ class AWF_ResponseHandler
 
         // Generamos el HTML resumen y lo guardamos en la respuesta
         try {
-            $snapshotHtml = AWF_Utils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
+            $snapshotHtml = stic_AWFUtils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
             $responseBean->html_summary = $snapshotHtml;
         } catch (Exception $e) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error generating HTML snapshot for response {$responseBean->id}: " . $e->getMessage());
@@ -243,14 +243,14 @@ class AWF_ResponseHandler
                     $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Receipt flow in form. ID: $formId");
                     $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
                     $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-                    AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
+                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
                 }
             } else {
                 // Si no hay flujo de recibido, mostramos mensaje genérico
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
                 $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
                 $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-                AWF_Utils::renderGenericResponse($formConfig, $title, $msg);                
+                stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
             }
         } else {
             // Modo sync - Ejecutamos Flow 0: 'mainFlow' inmediatamente
@@ -301,19 +301,19 @@ class AWF_ResponseHandler
                 } else {
                     $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Main flow in form. ID: $formId");
                     if ($hasErrors) {
-                        AWF_Utils::renderGenericResponse($formConfig, 
+                        stic_AWFUtils::renderGenericResponse($formConfig, 
                                                          translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
                                                          translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
                     } else {
                         $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
                         $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-                        AWF_Utils::renderGenericResponse($formConfig, $title, $msg); 
+                        stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg); 
                     }
                 }
             } else {
                 // Si no hay flujo principal, mostramos mensaje genérico
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
-                AWF_Utils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
+                stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
             }
         }
     }
@@ -358,7 +358,7 @@ class AWF_ResponseHandler
             }
             // Si todo falla mostramos error genérico
             if (!headers_sent()) {
-                AWF_Utils::renderGenericResponse($context->formConfig, "Error", "Error processing terminal action.");
+                stic_AWFUtils::renderGenericResponse($context->formConfig, "Error", "Error processing terminal action.");
             }
         }
     }
@@ -389,7 +389,7 @@ class AWF_ResponseHandler
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
-            AWF_Utils::renderGenericResponse($formConfig, 
+            stic_AWFUtils::renderGenericResponse($formConfig, 
                                              translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_Advanced_Web_Forms_Responses'),
                                              translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_Advanced_Web_Forms_Responses'));
         } else {
@@ -611,7 +611,7 @@ class AWF_ResponseHandler
                 $answerBean->question_key = $block->name . '.' . $field->name;
                 $answerBean->question_label = $field->label ?? $field->text_original ?? $field->name;
                 if (!empty($field->description)) {
-                    $answerBean->question_help_text = AWF_Utils::parseAnchorMarkdown($field->description);
+                    $answerBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 }
                 $answerBean->question_section = $block->text;
                 
@@ -665,5 +665,5 @@ class AWF_ResponseHandler
 }
 
 // Ejecución del Handler
-$handler = new AWF_ResponseHandler();
+$handler = new ResponseHandler();
 $handler->run();

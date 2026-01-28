@@ -70,7 +70,7 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
         ini_set('display_errors', 0);
         error_reporting(0);
 
-        $summaryHtml = AWF_Utils::generateSummaryHtml($context);
+        $summaryHtml = stic_AWFUtils::generateSummaryHtml($context);
 
         echo $summaryHtml;
         exit;

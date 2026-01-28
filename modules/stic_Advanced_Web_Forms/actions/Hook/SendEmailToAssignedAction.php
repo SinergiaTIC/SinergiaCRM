@@ -160,7 +160,7 @@ class SendEmailToAssignedAction extends HookActionDefinition {
 
         // Enviamos el email usando la plantilla y $sourceBean como contexto
         try {
-            AWF_Utils::sendTemplateEmail($emailAddress, $templateRef->beanId, $sourceBean, $context, $sourceBean);
+            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $sourceBean, $context, $sourceBean);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         }

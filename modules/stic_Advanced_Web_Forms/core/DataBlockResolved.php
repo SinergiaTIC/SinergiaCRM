@@ -51,7 +51,7 @@ class DataBlockResolved {
         foreach ($config->fields as $fieldName => $fieldDef) {
             if ($fieldDef->value_type === DataBlockFieldValueType::FIXED) {
                 // Obtenemos el tipo de campo en el crm para hacer su casting
-                $castedValue = AWF_Utils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
+                $castedValue = stic_AWFUtils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
 
                 // El campo no está en el formulario, buscamos la clave lógica que tendría
                 $formKey = ""; 
@@ -90,7 +90,7 @@ class DataBlockResolved {
                 $crmFieldType = $definition?->type;
                 
                 // Hacemos el casting del valor al tipo adecuado
-                $castedValue = AWF_Utils::castCrmValue($value, $crmFieldType, $context);
+                $castedValue = stic_AWFUtils::castCrmValue($value, $crmFieldType, $context);
 
                 // Reconstruimos la clave lógica original
                 $logicalKey = ($isUnlinked ? '_detached.' : '') . $config->name . '.' . $fieldName;

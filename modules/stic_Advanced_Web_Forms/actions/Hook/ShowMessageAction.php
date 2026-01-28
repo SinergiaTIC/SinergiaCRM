@@ -89,7 +89,7 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
         $title = $actionConfig->getResolvedParameter('title');
         $message = $actionConfig->getResolvedParameter('message');
 
-        AWF_Utils::renderGenericResponse($context->formConfig, $title, $message);
+        stic_AWFUtils::renderGenericResponse($context->formConfig, $title, $message);
 
         // Acción terminal: detenemos la ejecución del script
         exit;

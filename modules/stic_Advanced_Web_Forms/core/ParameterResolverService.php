@@ -215,11 +215,11 @@ class ParameterResolverService {
         $finalValue = null;
         if (array_key_exists($phpKey, $context->formData)) {
             // Fill value from form data
-            $finalValue = AWF_Utils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
+            $finalValue = stic_AWFUtils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
         } else {
             // If not set in form data, then find if is a field with fixed value in DataBlock
             if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
-                $finalValue = AWF_Utils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
+                $finalValue = stic_AWFUtils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
             }
         }
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $finalValue);

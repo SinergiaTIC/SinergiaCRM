@@ -102,7 +102,7 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
 
         // Enviamos el email
         try {
-            AWF_Utils::sendTemplateEmail($emailAddress, $templateRef->beanId, $bean, $context);
+            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $bean, $context);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error sending email: " . $e->getMessage());
         }

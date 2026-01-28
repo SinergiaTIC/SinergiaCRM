@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class AWF_Utils {
+class stic_AWFUtils {
     /**
      * Convierte un valor string del formulario al tipo PHP correcto basándose en el tipo de campo en el CRM.
      * @param mixed $valueToCast El valor a convertir

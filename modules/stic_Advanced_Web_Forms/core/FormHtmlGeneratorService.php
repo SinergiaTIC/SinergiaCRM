@@ -88,7 +88,7 @@ class FormHtmlGeneratorService {
     private function generateCss(FormLayout $layout, string $wrapperId): string {
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
-        $primaryRgb = AWF_Utils::hex2rgb($theme->primary_color);
+        $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
         $btnTextColor = $this->getContrastColor($theme->primary_color);
 
         // Grid
@@ -851,7 +851,7 @@ JS;
 
         $description = "";
         if ($field->description != '') {
-            $parsedDesc = AWF_Utils::parseAnchorMarkdown($field->description);
+            $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
             $description = "<div class='form-text awf-help-text'>{$parsedDesc}</div>";
         }
 
@@ -1009,7 +1009,7 @@ JS;
         $description = "";
         
         if (!empty($field->description)) {
-            $parsedDesc = AWF_Utils::parseAnchorMarkdown($field->description);
+            $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
             $description = "<div class='form-text awf-help-text'>{$parsedDesc}</div>";
         }
 
