@@ -803,6 +803,14 @@ class AWF_Layout {
       closed_form_title: utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE'),
       closed_form_text: utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE'),
 
+      // Texto por defecto: Datos procesados
+      processed_form_title: utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE'),
+      processed_form_text: utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE'),
+
+      // Texto por defecto: Datos recibidos
+      receipt_form_title: utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE'),
+      receipt_form_text: utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE'),
+
       custom_css: '',              // CSS personalizado
       custom_js: '',               // JS personalizado
 

@@ -908,7 +908,8 @@ JS;
 
             // Text Areas
             if ($field->type_in_form == 'textarea') {
-                $controlHtml .= "<textarea {$validationsAttr} name='{$inputName}' class='form-control' id='f_{$inputName}' placeholder='{$placeholder}' style='height: 100px' {$requiredAttr}></textarea>";
+                $controlHtml .= "<textarea {$validationsAttr} name='{$inputName}' class='form-control' id='f_{$inputName}' ".
+                                "placeholder='{$placeholder}' style='height: 100px' {$requiredAttr}></textarea>" .$this->newLine();
 
             // Selects & Lists
             } else if ($field->type_in_form == 'select') {
@@ -979,7 +980,8 @@ JS;
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" .$this->newLine();
+                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' ".
+                                "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" .$this->newLine();
             }
 
             if ($isFloating) {
@@ -998,11 +1000,8 @@ JS;
         return $html;
     }
 
-/**
+    /**
      * Genera el HTML para el campo de tipo 'rating' (Valoración)
-     * VERSIÓ ESTABLE + NPS FIX:
-     * - Estrelles/Emojis: Mida fixa i clara (sense parpellejos).
-     * - NPS: S'ajusta al 100% de l'ample disponible (sense scroll).
      */
     private function generateRatingField(FormDataBlockField $field): string {
         $name = htmlspecialchars($field->name);
@@ -1018,145 +1017,110 @@ JS;
         $isRequired = $field->required_in_form;
         $requiredHtml = $isRequired ? ' <span class="awf-required">*</span>' : '';
         
-        // Icones SVG al 100% per omplir el botó contenidor
-        $iconStarFill = str_replace(['width="1.5em"', 'height="1.5em"'], 'width="100%" height="100%"', $this->getRawSvgIcon('star_fill'));
-        $iconStarEmpty = str_replace(['width="1.5em"', 'height="1.5em"'], 'width="100%" height="100%"', $this->getRawSvgIcon('star_empty'));
+        $iconStarFill = $this->getRawSvgIcon('star_fill');
+        $iconStarEmpty = $this->getRawSvgIcon('star_empty');
 
-        // Lògica AlpineJS (NOWDOC)
+        // Lógica AlpineJS
         $alpineLogic = <<<'JS'
-        { 
-            val: null, 
-            hover: 0, 
-            setVal(v) { 
-                this.val = v; 
-                $nextTick(() => { 
-                    this.$refs.input.dispatchEvent(new Event('input', {bubbles:true}));
-                    this.$refs.input.dispatchEvent(new Event('change', {bubbles:true}));
-                });
-            },
-            npsClass(i) {
-               // Colors estàndard NPS
-               if(this.val !== i) return 'btn-outline-secondary opacity-75';
-               if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
-               if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
-               return 'btn-success text-white border-success shadow-sm';
-            },
-            starContainerStyle(i) {
-                let curr = this.hover > 0 ? this.hover : this.val;
-                let active = curr >= i;
-                // Actiu: Groc i una mica més gran (1.2x)
-                if (active) return 'transform: scale(1.2); color: #ffc107; opacity: 1; z-index: 2;';
-                // Inactiu: Gris
-                return 'transform: scale(1); color: #ccc; opacity: 0.6; z-index: 1;';
-            },
-            emojiStyle(i) {
-                let curr = this.hover > 0 ? this.hover : this.val;
-                let active = curr === i; 
-                // Actiu: Color i més gran
-                if (active) return 'transform: scale(1.2); filter: grayscale(0%); opacity: 1; z-index: 2;';
-                // Inactiu: Blanc i negre
-                return 'transform: scale(1); filter: grayscale(100%); opacity: 0.5; z-index: 1;';
-            }
-        }
+{
+    val: null,
+    hover: 0, 
+    setVal(v) {
+        this.val = v; 
+        $nextTick(() => { 
+            this.$refs.input.dispatchEvent(new Event('input', {bubbles:true}));
+            this.$refs.input.dispatchEvent(new Event('change', {bubbles:true}));
+        });
+    },
+    npsClass(i) { // Standard NPS colors
+        if(this.val !== i) return 'btn-outline-secondary opacity-75';
+        if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
+        if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
+        return 'btn-success text-white border-success shadow-sm';
+    },
+    starContainerStyle(i) {
+        let curr = this.hover > 0 ? this.hover : this.val;
+        let active = curr >= i;
+        if (active) return 'transform: scale(1.2); color: #ffc107; opacity: 1; z-index: 2;';
+        return 'transform: scale(1); color: #ccc; opacity: 0.6; z-index: 1;';
+    },
+    emojiStyle(i) {
+        let curr = this.hover > 0 ? this.hover : this.val;
+        let active = curr === i; 
+        if (active) return 'transform: scale(1.5); filter: grayscale(0%); opacity: 1; z-index: 2;';
+        return 'transform: scale(1); filter: grayscale(100%); opacity: 0.5; z-index: 1;';
+    }
+}
 JS;
         $safeAlpine = htmlspecialchars($alpineLogic, ENT_QUOTES, 'UTF-8');
-
-        $html = "<div class='awf-field mb-3' x-data=\"{$safeAlpine}\">" . $this->newLine('+');
-        
+        $html = '<div class="awf-field mb-3" x-data="' . $safeAlpine. '">' . $this->newLine('+');
         if ($label) {
-            $html .= "<label class='form-label fw-bold'>{$label}{$requiredHtml}</label>" . $this->newLine();
+            $html .= "<label for='f_{$name}' class='form-label'>{$label}{$requiredHtml}</label>" . $this->newLine();
         }
 
-        // Input Fantasma per a la validació HTML5
+        // Input Fantasma para la validación HTML5
+        $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_Advanced_Web_Forms');
         $requiredAttr = $isRequired ? 'required' : '';
         $html .= <<<HTML
-<input type="text" x-ref="input" name="$name" id="f_$name" :value="val" $requiredAttr
-       style="opacity: 0; width: 1px; height: 1px; position: absolute; z-index: -1; pointer-events: none;"
-       tabindex="-1">
+<input type="text" x-ref="input" name="$name" id="f_$name" :value="val" $requiredAttr tabindex="-1"
+       style="opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;"
+       oninvalid="this.setCustomValidity('$errorMsg')" oninput="this.setCustomValidity('')">
 HTML;
         $html .= $this->newLine();
 
-        // --- ZONA DE CONTROLS ---
+        // --- ZONA DE CONTROLES ---
 
-        // A. ESTRELLES (Mida fixa 2rem / ~32px)
+        // STARS 
         if ($subtype === 'rating_stars') {
-            $html .= "<div class='d-flex flex-wrap gap-2 mt-2 align-items-center'>" . $this->newLine();
+            $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine('+');
             for ($i = 1; $i <= 5; $i++) {
                 $html .= <<<HTML
-<button type="button" class="btn btn-link p-0 text-decoration-none border-0"
-    style="width: 2rem; height: 2rem; transition: transform 0.2s ease;"
-    :style="starContainerStyle($i)"
-    @click="setVal($i)" 
-    @mouseover="hover=$i" 
-    @mouseleave="hover=0">
-    <span style="display:block; width: 100%; height: 100%;" x-show="(hover ? hover : val) >= $i">$iconStarFill</span>
-    <span style="display:block; width: 100%; height: 100%;" x-show="(hover ? hover : val) < $i">$iconStarEmpty</span>
+<button type="button" class="btn p-0 text-decoration-none border-0" style="transition: transform 0.2s ease;"
+        :style="starContainerStyle($i)" @click="setVal($i)" @mouseover="hover=$i" @mouseleave="hover=0">
+    <span x-show="(hover ? hover : val) >= $i">$iconStarFill</span>
+    <span x-show="(hover ? hover : val) < $i">$iconStarEmpty</span>
 </button>
 HTML;
             }
-            $html .= "</div>";
+            $html .= "</div>".$this->newLine('-');
         }
         
-        // B. EMOJIS (Mida fixa 2.5rem / ~40px)
+        // EMOJIS
         elseif ($subtype === 'rating_emoji') {
             $emojis = ['😠', '☹️', '😐', '🙂', '😍'];
-            
-            $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine();
+            $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine('+');
             foreach ($emojis as $k => $icon) {
                 $val = $k + 1;
                 $html .= <<<HTML
-<button type="button" class="btn btn-link p-0 text-decoration-none border-0"
-    style="font-size: 2.5rem; line-height: 1; transition: transform 0.2s ease;"
-    :style="emojiStyle($val)"
-    @click="setVal($val)" 
-    @mouseover="hover=$val" 
-    @mouseleave="hover=0">
-    $icon
-</button>
+<button type="button" class="btn p-0 text-decoration-none border-0" style="transition: transform 0.2s ease;"
+        :style="emojiStyle($val)" @click="setVal($val)" @mouseover="hover=$val" @mouseleave="hover=0">$icon</button>
 HTML;
             }
-            $html .= "</div>";
+            $html .= "</div>".$this->newLine('-');
         }
         
-        // C. NPS (CORREGIT: Sense Scroll)
+        // NPS
         elseif ($subtype === 'rating_nps') {
-            // gap-1 (petit espai), w-100 (ample total)
-            $html .= "<div class='d-flex w-100 gap-1 mt-2'>" . $this->newLine();
+            $html .= "<div class='d-flex w-100 gap-1 mt-2'>" . $this->newLine('+');
             for ($i = 0; $i <= 10; $i++) {
-                // canvis clau:
-                // 1. flex-fill: Ocupa tot l'espai disponible equitativament.
-                // 2. min-width: 0: Permet que el botó s'encongeixi si cal (sense desbordar).
-                // 3. p-0: Reduïm padding perquè el número destaqui més en espais petits.
                 $html .= <<<HTML
-<button type="button" class="btn btn-sm flex-fill p-0 fw-bold" 
-    style="min-width: 0;"
-    :class="npsClass($i)" 
-    @click="setVal($i)">
-    $i
-</button>
+<button type="button" class="btn btn-sm flex-fill p-0 fw-bold" style="min-width: 0;" :class="npsClass($i)" @click="setVal($i)">$i</button>
 HTML;
             }
-            $html .= "</div>";
+            $html .= "</div>".$this->newLine('-');
         }
-
-        // -------------------------
 
         if ($description) {
             $html .= $description . $this->newLine();
         }
         
-        // Missatge d'error
+        // Error message
         if ($isRequired) {
-             $errorMsg = translate('LBL_REQUIRED_FIELD', 'stic_Advanced_Web_Forms') ?: 'This field is required';
-             $html .= <<<HTML
-<div class="invalid-feedback" x-show="!val && \$el.closest('form').classList.contains('was-validated')" style="display:block">
-    $errorMsg
-</div>
+            $html .= <<<HTML
+<div class="invalid-feedback" x-show="!val && \$el.closest('form').classList.contains('was-validated')" style="display:block">$errorMsg</div>
 HTML;
         }
-
         $html .= "</div>" . $this->newLine('-'); 
-
         return $html;
     }
 

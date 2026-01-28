@@ -166,9 +166,9 @@ class AWF_ResponseHandler
             $db->query("UPDATE stic_advanced_web_forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
             
             // Mostramos éxito genérico para engañar al bot
-            AWF_Utils::renderGenericResponse($formConfig, 
-                                             translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                                             translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+            $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+            $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+            AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
             return; // Paramos: no procesamos más
         }
 
@@ -191,8 +191,8 @@ class AWF_ResponseHandler
             $responseBean->save();
 
             $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
-            $htmlErrors = "<ul><li>" . implode("</li><li>", $validationErrors) . "</li></ul>";
-            $msg = translate('LBL_ERROR_FORM_VALIDATION_MSG', 'stic_Advanced_Web_Forms_Responses') . ":<br>" .$htmlErrors;
+            $errors = "\n- " . implode("\n- ", $validationErrors);
+            $msg = translate('LBL_ERROR_FORM_VALIDATION_MSG', 'stic_Advanced_Web_Forms_Responses') . ":" .$errors;
             AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
@@ -240,17 +240,17 @@ class AWF_ResponseHandler
                 if ($pendingTerminalAction) {
                     $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
                 } else {
-                    $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Receipt flow in form. ID: $formId");
-                    AWF_Utils::renderGenericResponse($formConfig, 
-                                                     translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'), 
-                                                     translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Receipt flow in form. ID: $formId");
+                    $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+                    $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+                    AWF_Utils::renderGenericResponse($formConfig, $title, $msg);
                 }
             } else {
                 // Si no hay flujo de recibido, mostramos mensaje genérico
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
-                AWF_Utils::renderGenericResponse($formConfig, 
-                                                 translate('LBL_RECEIPT_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'), 
-                                                 translate('LBL_RECEIPT_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+                $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+                AWF_Utils::renderGenericResponse($formConfig, $title, $msg);                
             }
         } else {
             // Modo sync - Ejecutamos Flow 0: 'mainFlow' inmediatamente
@@ -274,15 +274,15 @@ class AWF_ResponseHandler
 
                 // Actualizamos el estado y generamos el log de ejecución
                 $hasErrors = false;
-                $logSummary = ">> " . date('Y-m-d H:i:s') . "\n";
+                $logSummary = "[" . date('Y-m-d H:i:s') . "]\n";
                 foreach ($context->actionResults as $result) {
                     if ($result->isError()) {
                         $hasErrors = true;
-                        $icon = "❌";
+                        $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_Advanced_Web_Forms_Responses');
                     }elseif ($result->isSkipped()) {
-                        $icon = "⏭️";
+                        $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_Advanced_Web_Forms_Responses');
                     } else {
-                        $icon = "✅";
+                        $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_Advanced_Web_Forms_Responses');
                     }
                     $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
                     $logSummary .= "{$icon} {$actionName}";
@@ -305,9 +305,9 @@ class AWF_ResponseHandler
                                                          translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
                                                          translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
                     } else {
-                        AWF_Utils::renderGenericResponse($formConfig, 
-                                                         translate('LBL_MAIN_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                                                         translate('LBL_MAIN_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                        $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+                        $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+                        AWF_Utils::renderGenericResponse($formConfig, $title, $msg); 
                     }
                 }
             } else {
@@ -495,7 +495,8 @@ class AWF_ResponseHandler
                 // Validación de campo obligado (Required)
                 if ($field->required_in_form) {
                     if ($value === null || $value === '' || (is_array($value) && empty($value))) {
-                        $errors[] = "Field '{$field->label}' is required.";
+                        $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
+                                    translate('LBL_ERROR_REQUIRED_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         continue;
                     }
                 }
@@ -504,17 +505,20 @@ class AWF_ResponseHandler
                 if ($value !== null && $value !== '') {
                     if ($field->type_in_form === 'number') {
                         if (!is_numeric($value)) {
-                            $errors[] = "Field value '{$field->label}' is not a valid number.";
+                            $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
+                                        translate('LBL_ERROR_NUMERIC_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         }
                     }
                     if ($field->type_in_form === 'date') {
                         if (!strtotime($value)) {
-                            $errors[] = "Field value '{$field->label}' is not a valid date.";
+                            $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
+                                        translate('LBL_ERROR_DATE_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         }
                     }
                     if ($field->subtype_in_form === 'text_email') {
                         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                            $errors[] = "Field value '{$field->label}' is not a valid email.";
+                            $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
+                                        translate('LBL_ERROR_EMAIL_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         }
                     }
                     if (!empty($field->value_options) && $field->value_type === DataBlockFieldValueType::SELECTABLE) {
@@ -525,7 +529,8 @@ class AWF_ResponseHandler
                                 continue;
                             }
                             if (!in_array($subVal, $validValues)) {
-                                $errors[] = "The value '{$subVal}' is not valid for field '{$field->label}'.";
+                                $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
+                                            translate('LBL_ERROR_VALUE_FIELD', 'stic_Advanced_Web_Forms_Responses') . ' ({$subVal})';
                                 break; 
                             }
                         }

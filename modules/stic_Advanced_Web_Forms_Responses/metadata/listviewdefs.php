@@ -50,6 +50,36 @@ $listViewDefs[$module_name] = array(
         'default' => true,
         'link' => true
     ),
+    'FORM_URL' => array(
+        'width' => '30',
+        'label' => 'LBL_FORM_URL',
+        'default' => true,
+    ),
+    'USER_AGENT' => array(
+        'width' => '30',
+        'label' => 'LBL_USER_AGENT',
+        'default' => false,
+    ),
+    'REMOTE_IP' => array(
+        'width' => '30',
+        'label' => 'LBL_REMOTE_IP',
+        'default' => false,
+    ),
+    'RAW_PAYLOAD' => array(
+        'width' => '30',
+        'label' => 'LBL_RAW_PAYLOAD',
+        'default' => false,
+    ),
+    'RESPONSE_HASH' => array(
+        'width' => '30',
+        'label' => 'LBL_RESPONSE_HASH',
+        'default' => false,
+    ),
+    'STATUS' => array(
+        'width' => '30',
+        'label' => 'LBL_STATUS',
+        'default' => true,
+    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',
         'label' => 'LBL_ASSIGNED_TO_NAME',

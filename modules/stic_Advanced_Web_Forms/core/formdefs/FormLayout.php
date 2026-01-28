@@ -35,6 +35,10 @@ class FormLayout {
     public string $submit_button_text = 'Send';
     public string $closed_form_title = 'Form closed!';
     public string $closed_form_text = 'This form is no longer accepting responses.';
+    public string $processed_form_title = 'Processed';
+    public string $processed_form_text = 'Your response has been processed successfully.';
+    public string $receipt_form_title = 'Received';
+    public string $receipt_form_text = 'This form is no longer accepting responses.';
 
     public string $custom_css = '';
     public string $custom_js = '';
@@ -50,9 +54,15 @@ class FormLayout {
 
         $dto->header_html = $data['header_html'] ?? '';
         $dto->footer_html = $data['footer_html'] ?? '';
-        $dto->submit_button_text = $data['submit_button_text'] ?? 'Send';
-        $dto->closed_form_title = $data['closed_form_title'] ?? 'Form closed!';
-        $dto->closed_form_text = $data['closed_form_text'] ?? 'This form is no longer accepting responses.';
+
+        $dto->submit_button_text = $data['submit_button_text'] ?? translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+        $dto->closed_form_title = $data['closed_form_title'] ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+        $dto->closed_form_text = $data['closed_form_text'] ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+        $dto->processed_form_title = $data['processed_form_title'] ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+        $dto->processed_form_text = $data['processed_form_text'] ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+        $dto->receipt_form_title = $data['receipt_form_title'] ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+        $dto->receipt_form_text = $data['receipt_form_text'] ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+        
         $dto->custom_css = $data['custom_css'] ?? '';
         $dto->custom_js = $data['custom_js'] ?? '';
 

@@ -334,12 +334,28 @@ $mod_strings = array (
   'LBL_THEME_CUSTOM_CSS_DESC' => 'Se inyectará en un bloque <style>.',
   'LBL_THEME_CUSTOM_JS' => 'JS Personalizado',
   'LBL_THEME_CUSTOM_JS_DESC' => 'Se procesará cuando todo el formulario se haya cargado.',
-  'LBL_THEME_CLOSED_FORM' => 'Formulario cerrado',
-  'LBL_THEME_CLOSED_FORM_DESC' => 'Mensaje que aparecerá por encima del formulario cuando ya no acepte respuestas.',
+
+  'LBL_THEME_CLOSED_FORM' => 'Aviso: Formulario cerrado',
+  'LBL_THEME_CLOSED_FORM_DESC' => 'Aviso que aparecerá por encima del formulario cuando ya no acepte respuestas.',
   'LBL_THEME_CLOSED_FORM_TITLE' => 'Título de aviso',
   'LBL_THEME_CLOSED_FORM_TITLE_VALUE' => '⛔ Formulario Cerrado',
   'LBL_THEME_CLOSED_FORM_TEXT' => 'Texto de aviso',
   'LBL_THEME_CLOSED_FORM_TEXT_VALUE' => 'Este formulario no acepta respuestas.',
+
+  'LBL_THEME_PROCESSED_FORM' => 'Mensaje: Datos procesados',
+  'LBL_THEME_PROCESSED_FORM_DESC' => 'Mensaje que se mostrará por defecto al procesar correctamente una respuesta al formulario. Este mensaje no se mostrará si se define una acción final.',
+  'LBL_THEME_PROCESSED_FORM_TITLE' => 'Título del mensaje',
+  'LBL_THEME_PROCESSED_FORM_TITLE_VALUE' => 'Procesado',
+  'LBL_THEME_PROCESSED_FORM_TEXT' => 'Texto del mensaje',
+  'LBL_THEME_PROCESSED_FORM_TEXT_VALUE' => 'Su respuesta ha estado procesada correctamente.',
+  
+  'LBL_THEME_RECEIPT_FORM' => 'Mensaje: Datos recibidos',
+  'LBL_THEME_RECEIPT_FORM_DESC' => 'Mensaje que se mostrará por defecto al recibir una respuesta y guardarla para procesarla más tarde. Este mensaje no se mostrará si se define una acción final.',
+  'LBL_THEME_RECEIPT_FORM_TITLE' => 'Título del mensaje',
+  'LBL_THEME_RECEIPT_FORM_TITLE_VALUE' => 'Recibido',
+  'LBL_THEME_RECEIPT_FORM_TEXT' => 'Texto del mensaje',
+  'LBL_THEME_RECEIPT_FORM_TEXT_VALUE' => 'Se ha recibido correctamente su respuesta y será procesada en la mayor brevedad posible.',
+
   'LBL_THEME_RESET_BUTTON' => 'Configuración por defecto',
     
   'LBL_SECTIONS' => 'Secciones',
@@ -362,6 +378,8 @@ $mod_strings = array (
 
   'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
   'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione el bloque de datos que será utilizado como parámetro en la acción',
+
+  'LBL_REQUIRED_FIELD_MESSAGE' => 'Es necesario informar este campo',
 
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro en el CRM basado en los datos del formulario',

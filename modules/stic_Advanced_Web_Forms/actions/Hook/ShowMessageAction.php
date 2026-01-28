@@ -38,7 +38,7 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
 {
     public function __construct()
     {
-        $this->isActive = true;
+        $this->isActive = false;
         $this->isUserSelectable = true;
         $this->category = 'navigation';
         $this->baseLabel = 'LBL_SHOW_MESSAGE_ACTION';
@@ -52,7 +52,7 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
         $paramTitle = new ActionParameterDefinition();
         $paramTitle->name = 'title';
         $paramTitle->text = $this->translate('TITLE_TEXT');
-        $paramTitle->defaultValue = translate('LBL_MAIN_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
+        $paramTitle->defaultValue = translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
         $paramTitle->type = ActionParameterType::VALUE;
         $paramTitle->dataType = ActionDataType::TEXT;
         $paramTitle->required = true;
@@ -60,7 +60,7 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
         $paramBody = new ActionParameterDefinition();
         $paramBody->name = 'message';
         $paramBody->text = $this->translate('MESSAGE_TEXT');
-        $paramBody->defaultValue = translate('LBL_MAIN_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses');                                                     
+        $paramBody->defaultValue = translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');                                                     
         $paramBody->type = ActionParameterType::VALUE;
         $paramBody->dataType = ActionDataType::TEXTAREA; 
         $paramBody->required = true;

@@ -44,11 +44,31 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $module_name = 'stic_Advanced_Web_Forms_Links';
 $listViewDefs[$module_name] = array(
+    'SEQUENCE_NUMBER' => array(
+        'width' => '5',
+        'label' => 'LBL_SEQUENCE_NUMBER',
+        'default' => true,
+    ),
     'NAME' => array(
         'width' => '32',
         'label' => 'LBL_NAME',
         'default' => true,
         'link' => true
+    ),
+    'PARENT_NAME' => array(
+        'width' => '5',
+        'label' => 'LBL_FLEX_RELATE',
+        'default' => false,
+    ),
+    'RECORD_ACTION' => array(
+        'width' => '10',
+        'label' => 'LBL_RECORD_ACTION',
+        'default' => true,
+    ),
+    'SUBMITTED_DATA' => array(
+        'width' => '30',
+        'label' => 'LBL_SUBMITTED_DATA',
+        'default' => false,
     ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',

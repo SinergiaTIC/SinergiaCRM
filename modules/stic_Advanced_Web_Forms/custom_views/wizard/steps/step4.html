@@ -224,12 +224,12 @@
                     <!-- closed_form_title -->
                     <div class="mb-3">
                         <label for="theme-closed_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TITLE')"></label>
-                        <textarea id="theme-closed_form_title" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_title"></textarea>
+                        <textarea id="theme-closed_form_title" class="form-control font-monospace small" rows="1" x-model="formConfig.layout.closed_form_title"></textarea>
                     </div>
                     <!-- closed_form_text -->
                     <div class="mb-3">
                        <label for="theme-closed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TEXT')"></label>
-                        <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.closed_form_text"></textarea>
+                        <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="3" x-model="formConfig.layout.closed_form_text"></textarea>
                     </div>
 
                     <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
@@ -239,6 +239,49 @@
                 </div>
             </details>
 
+            <!-- Processed form -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_PROCESSED_FORM')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- processed_form_title -->
+                    <div class="mb-3">
+                        <label for="theme-processed_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PROCESSED_FORM_TITLE')"></label>
+                        <textarea id="theme-processed_form_title" class="form-control font-monospace small" rows="1" x-model="formConfig.layout.processed_form_title"></textarea>
+                    </div>
+                    <!-- processed_form_text -->
+                    <div class="mb-3">
+                       <label for="theme-processed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PROCESSED_FORM_TEXT')"></label>
+                        <textarea id="theme-processed_form_text" class="form-control font-monospace small" rows="3" x-model="formConfig.layout.processed_form_text"></textarea>
+                    </div>
+
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_PROCESSED_FORM_DESC')"></span>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Receipt form -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_RECEIPT_FORM')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- receipt_form_title -->
+                    <div class="mb-3">
+                        <label for="theme-receipt_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_RECEIPT_FORM_TITLE')"></label>
+                        <textarea id="theme-receipt_form_title" class="form-control font-monospace small" rows="1" x-model="formConfig.layout.receipt_form_title"></textarea>
+                    </div>
+                    <!-- receipt_form_text -->
+                    <div class="mb-3">
+                       <label for="theme-receipt_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_RECEIPT_FORM_TEXT')"></label>
+                        <textarea id="theme-receipt_form_text" class="form-control font-monospace small" rows="3" x-model="formConfig.layout.receipt_form_text"></textarea>
+                    </div>
+
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_RECEIPT_FORM_DESC')"></span>
+                    </div>
+                </div>
+            </details>
             <!-- Advanced -->
             <details class="mb-3">
                 <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_ADVANCED')"></summary>
