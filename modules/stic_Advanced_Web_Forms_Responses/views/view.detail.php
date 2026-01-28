@@ -39,7 +39,7 @@ class stic_Advanced_Web_Forms_ResponsesViewDetail extends ViewDetail
         SticViews::preDisplay($this);
 
         // AWF Summary
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms_Responses/css/awf_summary.css"). "'>";
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms_Responses/css/stic_awfsummary.css"). "'>";
     }
 
     public function display()
