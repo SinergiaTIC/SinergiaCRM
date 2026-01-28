@@ -74,6 +74,7 @@ $moduleList[] = 'stic_Transactions';
 $moduleList[] = 'stic_Financial_Products';
 $moduleList[] = 'stic_Advanced_Web_Forms';
 // $moduleList[] = 'stic_Advanced_Web_Forms_Responses';
+// $moduleList[] = 'stic_Advanced_Web_Forms_Answers';
 // $moduleList[] = 'stic_Advanced_Web_Forms_Links';
 
 // Bean names for custom modules
@@ -220,10 +221,11 @@ $modules_exempt_from_availability_check['stic_Incorpora'] = 'stic_Incorpora';
 $modules_exempt_from_availability_check['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations';
 $modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Responses'] = 'stic_Advanced_Web_Forms_Responses';
 $modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Links'] = 'stic_Advanced_Web_Forms_Links';
+$modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Answers'] = 'stic_Advanced_Web_Forms_Answers';
 
 // Modules that have been hidden with $modInvisList, but must be available in reporting
 // $report_include_modules['stic_XXXXXXXXXX'] = 'stic_XXXXXXXXXX'; // sample value
-$report_include_modules['stic_Advanced_Web_Forms_Answers'] = 'stic_Advanced_Web_Forms_Answers'; // sample value
+$report_include_modules['stic_Advanced_Web_Forms_Answers'] = 'stic_Advanced_Web_Forms_Answers';
 
 // Modules that should be accessed only by administrators through the Admin page
 $adminOnlyList['stic_Settings'] = array('all' => 1);
