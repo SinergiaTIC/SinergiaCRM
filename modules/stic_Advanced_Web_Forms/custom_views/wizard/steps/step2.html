@@ -284,7 +284,7 @@
                       <!-- Duplicate Action -->
                       <td class="col-3">
                         <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate">
-                          <template x-for="action in AWF_DuplicateDetection.on_duplicateList()" :key="action.id">
+                          <template x-for="action in stic_AwfDuplicateDetection.on_duplicateList()" :key="action.id">
                             <option :value="action.id" x-text="action.text"></option>
                           </template>
                         </select>
@@ -320,7 +320,7 @@
                   </template>
                 </tbody>
               </table>
-              <button type="button" class="btn" @click="item.duplicate_detections.push(new AWF_DuplicateDetection());" :title="utils.translate('LBL_DUPLICATE_CHECK_ADD')">
+              <button type="button" class="btn" @click="item.duplicate_detections.push(new stic_AwfDuplicateDetection());" :title="utils.translate('LBL_DUPLICATE_CHECK_ADD')">
                 <span class="suitepicon suitepicon-action-plus"></span>
               </button>
             </div>
@@ -575,7 +575,7 @@
                             </tbody>
                           </table>
                           <template x-if="field.isSelectCustomOptions()">
-                            <button type="button" class="btn" @click="field.value_options.push(new AWF_ValueOption());" :title="utils.translate('LBL_BUTTON_ADD')">
+                            <button type="button" class="btn" @click="field.value_options.push(new stic_AwfValueOption());" :title="utils.translate('LBL_BUTTON_ADD')">
                               <span class="suitepicon suitepicon-action-plus"></span>
                             </button>
                           </template>

@@ -18,12 +18,12 @@ function DetailsForm() {
         jsonString = utils.decodeHTMLString(this.bean.configuration);
       }
       try {
-        this.formConfig = AWF_Configuration.fromJSON(jsonString);
+        this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);
       } catch (e) {
         console.error("Error parsing JSON:", e);
         console.log("Bad JSON String:", jsonString);
         // Fallback a config vacía si falla
-        this.formConfig = new AWF_Configuration();
+        this.formConfig = new stic_AwfConfiguration();
       }
 
       // Load current Step

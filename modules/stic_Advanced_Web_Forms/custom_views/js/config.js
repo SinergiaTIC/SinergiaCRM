@@ -6,7 +6,7 @@
  *    duplicate_detections: [{fields: [<field_name>], on_duplicate}],
  *  }
  */
-class AWF_DataBlock {
+class stic_AwfDataBlock {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
@@ -25,11 +25,11 @@ class AWF_DataBlock {
     Object.assign(this, data);
 
     // 3. Map sub-objects and arrays to their classes
-    this.fields = (data.fields || this.fields).map(d => new AWF_Field(d));
-    this.duplicate_detections = (data.duplicate_detections || this.duplicate_detections).map(d => new AWF_DuplicateDetection(d));
+    this.fields = (data.fields || this.fields).map(d => new stic_AwfField(d));
+    this.duplicate_detections = (data.duplicate_detections || this.duplicate_detections).map(d => new stic_AwfDuplicateDetection(d));
 
     if (this.duplicate_detections.length == 0) {
-      this.duplicate_detections.push(new AWF_DuplicateDetection());
+      this.duplicate_detections.push(new stic_AwfDuplicateDetection());
     }
   }
 
@@ -53,7 +53,7 @@ class AWF_DataBlock {
   /**
    * Gets the complete field name in HTML for a given field
    * Ex: "MyBlock.my_field" or "_detached.MyBlock.my_field"
-   * @param {AWF_Field} field
+   * @param {stic_AwfField} field
    * @returns {string}
    */
   getFieldInputName(field) {
@@ -99,7 +99,7 @@ class AWF_DataBlock {
   /**
    * Add a Field to the DataBlock, from a FieldInformation (the summarized field definition in vardefs)
    * @param {object} moduleField: FieldInformation
-   * @returns {AWF_Field} the field added to DataBlock
+   * @returns {stic_AwfField} the field added to DataBlock
    * FieldInformation: { name, text, type, required, default, options, inViews }
    */
   addFieldFromModuleField(moduleField) {
@@ -107,7 +107,7 @@ class AWF_DataBlock {
 
     let field = this.fields.find((f) => f.name === moduleField.name);
     if (!field) {
-      field = new AWF_Field();
+      field = new stic_AwfField();
       let type_field = 'form';
       if (moduleField.required && moduleField.default != null && moduleField.default != '') {
         type_field = 'fixed';
@@ -126,7 +126,7 @@ class AWF_DataBlock {
   /**
    * Add a Field with DuplicateDetection to the DataBlock, from a FieldInformation (the summarized field definition in vardefs)
    * @param {object} moduleField FieldInformation
-   * @returns {AWF_Field} the field added to DataBlock
+   * @returns {stic_AwfField} the field added to DataBlock
    * FieldInformation: { name, text, type, required, options, inViews }
    */
   addDuplicateDetectionFromModuleField(moduleField) {
@@ -141,7 +141,7 @@ class AWF_DataBlock {
   }
 
   addField(field) {
-    let newField = new AWF_Field(field);
+    let newField = new stic_AwfField(field);
     if (newField.type_field == 'fixed') {
       this.fields.unshift(newField);
     }
@@ -242,7 +242,7 @@ class AWF_DataBlock {
  *   type_in_form, value_type, value_options: [{value, text}], value, value_text 
  * }
  */
-class AWF_Field {
+class stic_AwfField {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
@@ -270,8 +270,8 @@ class AWF_Field {
     Object.assign(this, data);
 
     // 3. Map sub-objects and arrays to their classes
-    this.value_options = (data.value_options || this.value_options).map(d => new AWF_ValueOption(d));
-    this.validations = (data.validations || this.validations).map(v => new AWF_FieldValidation(v));
+    this.value_options = (data.value_options || this.value_options).map(d => new stic_AwfValueOption(d));
+    this.validations = (data.validations || this.validations).map(v => new stic_AwfFieldValidation(v));
 
     if (!data.in_form) {
       this.in_form = this.type_field != 'fixed';
@@ -374,17 +374,17 @@ class AWF_Field {
     }
     if (this.type_field == 'fixed') {
       // if (this.type == 'relate') {
-      //   return AWF_Field.value_typeList().filter(t => t.id == 'fixed' || t.id == 'dataBlock');
+      //   return stic_AwfField.value_typeList().filter(t => t.id == 'fixed' || t.id == 'dataBlock');
       // }
-      return AWF_Field.value_typeList().filter(t => t.id == 'fixed');
+      return stic_AwfField.value_typeList().filter(t => t.id == 'fixed');
     }
 
     // Form or unlinked
     if (this.type == 'relate' || this.type == 'enum' || this.type == 'multienum') {
-      return AWF_Field.value_typeList().filter(t => t.id == 'selectable');
+      return stic_AwfField.value_typeList().filter(t => t.id == 'selectable');
     }
 
-    return AWF_Field.value_typeList().filter(t => t.id == 'editable');
+    return stic_AwfField.value_typeList().filter(t => t.id == 'editable');
   }
 
   getAvailableTypesInForm() {
@@ -396,30 +396,30 @@ class AWF_Field {
     }
     if (this.type_field == 'unlinked') {
       // TODO: Accept rating for surveys!! (Not working yet)
-      return AWF_Field.type_in_formList().filter(t => t.id != "rating");
+      return stic_AwfField.type_in_formList().filter(t => t.id != "rating");
     }
 
     // text, textarea, number, date, select, hidden
     if (this.type == "enum" || this.type == "radioenum" || this.type == "multienum" || this.type == "bool" || this.type == "checkbox") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
+      return stic_AwfField.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
     }
     if (this.type == "relate") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
+      return stic_AwfField.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
     }
     if (this.type == "date" || this.type == "time" || this.type == "datetime" || this.type == "datetimecombo") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "date" || t.id == "hidden");
+      return stic_AwfField.type_in_formList().filter(t => t.id == "date" || t.id == "hidden");
     }
     if (this.type == "int" || this.type == "float" || this.type == "double" || this.type == "decimal") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "number" || t.id == "select" || t.id == "hidden");
+      return stic_AwfField.type_in_formList().filter(t => t.id == "number" || t.id == "select" || t.id == "hidden");
     }
     if (this.type == "json" || this.type == "textarea" || this.type == "longtext") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "textarea" || t.id == "hidden");
+      return stic_AwfField.type_in_formList().filter(t => t.id == "textarea" || t.id == "hidden");
     }
     if (this.type == "name" || this.type == "phone" || this.type == "email" || this.type == "url" || 
         this.type == "password" || this.type == "encrypt") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "select" || t.id == "hidden");
+      return stic_AwfField.type_in_formList().filter(t => t.id == "text" || t.id == "select" || t.id == "hidden");
     }
-    return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number" || t.id == "select" || t.id == "hidden");
+    return stic_AwfField.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number" || t.id == "select" || t.id == "hidden");
   }
 
   getTypeInActions() {
@@ -468,7 +468,7 @@ class AWF_Field {
       return [];
     }
 
-    let base_subtypes = AWF_Field.subtype_in_formList().filter(s => s.id == this.type_in_form || s.id.startsWith(this.type_in_form + '_'));
+    let base_subtypes = stic_AwfField.subtype_in_formList().filter(s => s.id == this.type_in_form || s.id.startsWith(this.type_in_form + '_'));
 
     if (base_subtypes.length <= 1) {
       return base_subtypes;
@@ -551,7 +551,7 @@ class AWF_Field {
   setValueOptions(originalOptions) {
     if (this.isSelectCustomOptions() && this.acceptValueOptions()) {
       if ((this.value_options?.length ?? 0) == 0) {
-        this.value_options = [new AWF_ValueOption()];
+        this.value_options = [new stic_AwfValueOption()];
       }
       return this.value_options;
     }
@@ -562,7 +562,7 @@ class AWF_Field {
     this.value_options = [];
     if (originalOptions) {
       originalOptions.forEach(o => {
-        this.value_options.push(new AWF_ValueOption({
+        this.value_options.push(new stic_AwfValueOption({
           value: o.id,
           is_visible: true,
           text_original: o.text,
@@ -578,7 +578,7 @@ class AWF_Field {
   }
 
   addOrUpdateValidation(validation) {
-    let newValidation = new AWF_FieldValidation(validation);
+    let newValidation = new stic_AwfFieldValidation(validation);
 
     const index = this.validations.findIndex(v => v.name === validation.name);
     if (index == -1) {
@@ -593,32 +593,32 @@ class AWF_Field {
     return utils.getList("stic_advanced_web_forms_field_type_list", asString);
   }
   get type_fieldText(){
-    return AWF_Field.type_fieldList().find(i => i.id == this.type_field)?.text;  
+    return stic_AwfField.type_fieldList().find(i => i.id == this.type_field)?.text;  
   }
 
   static type_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_in_form_type_list", asString);
   }
   get type_in_formText(){
-    return AWF_Field.type_in_formList().find(i => i.id == this.type_in_form)?.text;  
+    return stic_AwfField.type_in_formList().find(i => i.id == this.type_in_form)?.text;  
   }
 
   static subtype_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_in_form_subtype_list", asString);
   }
   get subtype_in_formText(){
-    return AWF_Field.subtype_in_formList().find(i => i.id == this.subtype_in_form)?.text;  
+    return stic_AwfField.subtype_in_formList().find(i => i.id == this.subtype_in_form)?.text;  
   }
 
   static value_typeList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_in_form_value_type_list", asString);
   }
   get value_typeText(){
-    return AWF_Field.value_typeList().find(i => i.id == this.value_type)?.text;  
+    return stic_AwfField.value_typeList().find(i => i.id == this.value_type)?.text;  
   }
 }
 
-class AWF_FieldValidation {
+class stic_AwfFieldValidation {
   constructor(data = {}) {
     Object.assign(this, {
       name: '',         // Nombre de la validación
@@ -646,7 +646,7 @@ class AWF_FieldValidation {
  *    value, is_visible, text_original, text
  *  }
  */
-class AWF_ValueOption{
+class stic_AwfValueOption{
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
@@ -668,7 +668,7 @@ class AWF_ValueOption{
  *   fields: [<field_name>], on_duplicate
  * }
  */
-class AWF_DuplicateDetection {
+class stic_AwfDuplicateDetection {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
@@ -686,7 +686,7 @@ class AWF_DuplicateDetection {
     return utils.getList("stic_advanced_web_forms_datablocks_duplicate_action_list", asString);
   }
   get on_duplicateText(){
-    return AWF_DuplicateDetection.on_duplicateList().find(i => i.id == this.on_duplicate)?.text;  
+    return stic_AwfDuplicateDetection.on_duplicateList().find(i => i.id == this.on_duplicate)?.text;  
   }
 }
 
@@ -696,7 +696,7 @@ class AWF_DuplicateDetection {
  *   actions: [{ order, action_name, params: [{name, source, value}],
  * } 
  */
-class AWF_Flow {
+class stic_AwfFlow {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
@@ -711,7 +711,7 @@ class AWF_Flow {
     Object.assign(this, data);
 
     // 3. Map sub-objects and arrays to their classes
-    this.actions = (data.actions || this.actions).map(f => new AWF_Action(f));
+    this.actions = (data.actions || this.actions).map(f => new stic_AwfAction(f));
   }
 
   getText() {
@@ -723,7 +723,7 @@ class AWF_Flow {
   }
 }
 
-class AWF_Action {
+class stic_AwfAction {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
@@ -747,7 +747,7 @@ class AWF_Action {
     Object.assign(this, data);
 
     // 3. Map sub-objects and arrays to their classes
-    this.parameters = (data.parameters || this.parameters).map(a => new AWF_ActionParameter(a));
+    this.parameters = (data.parameters || this.parameters).map(a => new stic_AwfActionParameter(a));
   }
 
   get is_fixed_order() {
@@ -763,11 +763,11 @@ class AWF_Action {
     return utils.getList("stic_advanced_web_forms_action_category_list", asString);
   }
   get category_in_formText(){
-    return AWF_Action.category_in_formList().find(i => i.id == this.category)?.text;  
+    return stic_AwfAction.category_in_formList().find(i => i.id == this.category)?.text;  
   }
 }
 
-class AWF_ActionParameter {
+class stic_AwfActionParameter {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
@@ -787,11 +787,11 @@ class AWF_ActionParameter {
   }
 }
 
-class AWF_Layout {
+class stic_AwfLayout {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      theme: new AWF_Theme(),      // Variables visuales del formulario
+      theme: new stic_AwfTheme(),      // Variables visuales del formulario
 
       header_html: '',             // Html con la cabecera del formulario
       footer_html: '',             // Html con el pie del formulario
@@ -821,8 +821,8 @@ class AWF_Layout {
     Object.assign(this, data);
 
     // 3. Map sub-objects
-    this.theme = new AWF_Theme(data.theme ?? {});
-    this.structure = (data.structure || this.structure).map(s => new AWF_LayoutSection(s));
+    this.theme = new stic_AwfTheme(data.theme ?? {});
+    this.structure = (data.structure || this.structure).map(s => new stic_AwfLayoutSection(s));
 
     // Decode: If it comes from the DB (JSON), it will come in Base64. If it is new, it will be empty.
     this.header_html = utils.fromBase64(this.header_html);
@@ -837,7 +837,7 @@ class AWF_Layout {
    *  - Elimina bloques duplicados (solo mantiene la primera aparición)
    *  - Elimina/Ignora los bloques que no tienen campos visibles
    *  - Añade los nuevos bloques de datos al final.
-   * @param {AWF_DataBlock[]} dataBlocks Lista actual de bloques de datos
+   * @param {stic_AwfDataBlock[]} dataBlocks Lista actual de bloques de datos
    */
   syncWithDataBlocks(dataBlocks) {
     const placedBlockIds = new Set(); // Conjunto de bloques colocados
@@ -884,12 +884,12 @@ class AWF_Layout {
   }
 
   _addSectionWithBlock(block) {
-    const section = new AWF_LayoutSection({
+    const section = new stic_AwfLayoutSection({
       title: block.text, 
       containerType: 'panel'
     });
     
-    const element = new AWF_LayoutElement({
+    const element = new stic_AwfLayoutElement({
       type: 'datablock',
       ref_id: block.id
     });
@@ -899,11 +899,11 @@ class AWF_Layout {
   }
 
   addSection(title) {
-    this.structure.push(new AWF_LayoutSection({ title: title }));
+    this.structure.push(new stic_AwfLayoutSection({ title: title }));
   }
 }
 
-class AWF_Theme {
+class stic_AwfTheme {
   constructor(data = {}) {
     Object.assign(this, {
       primary_color: STIC.mainThemeColor ?? '#0d6efd',  // Color corporativo por defecto 
@@ -945,35 +945,35 @@ class AWF_Theme {
     return utils.getList("stic_advanced_web_forms_shadow_intensity_list", asString);
   }
   get shadow_intensity_in_formText(){
-    return AWF_Theme.shadow_intensity_in_formList().find(i => i.id == this.shadow_intensity)?.text;  
+    return stic_AwfTheme.shadow_intensity_in_formList().find(i => i.id == this.shadow_intensity)?.text;  
   }
 
   static input_style_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_input_style_list", asString);
   }
   get input_style_in_formText(){
-    return AWF_Theme.input_style_in_formList().find(i => i.id == this.input_style)?.text;  
+    return stic_AwfTheme.input_style_in_formList().find(i => i.id == this.input_style)?.text;  
   }
 
   static form_width_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_form_width_list", asString);
   }
   get form_width_in_formText(){
-    return AWF_Theme.form_width_in_formList().find(i => i.id == this.form_width)?.text;  
+    return stic_AwfTheme.form_width_in_formList().find(i => i.id == this.form_width)?.text;  
   }
 
   static field_spacing_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_field_spacing_list", asString);
   }
   get field_spacing_in_formText(){
-    return AWF_Theme.field_spacing_in_formList().find(i => i.id == this.field_spacing)?.text;  
+    return stic_AwfTheme.field_spacing_in_formList().find(i => i.id == this.field_spacing)?.text;  
   }
 }
 
 /**
  * Define un contenedor visual
  */
-class AWF_LayoutSection {
+class stic_AwfLayoutSection {
   constructor(data = {}) {
     Object.assign(this, {
       id: utils.newId('sect'), // Id de la sección
@@ -988,40 +988,40 @@ class AWF_LayoutSection {
 
     Object.assign(this, data);
 
-    this.elements = (data.elements || this.elements).map(e => new AWF_LayoutElement(e));
+    this.elements = (data.elements || this.elements).map(e => new stic_AwfLayoutElement(e));
   }
 
   static containerType_in_formList(asString = false){
     return utils.getList("stic_advanced_web_forms_sections_type_list", asString);
   }
   get containerType_in_formText(){
-    return AWF_LayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;  
+    return stic_AwfLayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;  
   }
 }
 
 /**
  * Elemento dentro de un contenedor visual
  */
-class AWF_LayoutElement {
+class stic_AwfLayoutElement {
   constructor(data = {}) {
     Object.assign(this, {
       id: utils.newId('el'),  // Id del elemento
       
       type: 'datablock',      // Tipo de elemento: 'datablock' (posibles ampliaciones: 'line', etc)
-      ref_id: '',             // ID de referencia (el ID del AWF_DataBlock)
+      ref_id: '',             // ID de referencia (el ID del stic_AwfDataBlock)
     });
 
     Object.assign(this, data);
   }
 }
 
-class AWF_Configuration {
+class stic_AwfConfiguration {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
       data_blocks: [],          // Los Bloques de Datos
       flows: [],                // Los Flujos de Acciones
-      layout: new AWF_Layout(), // El Layout
+      layout: new stic_AwfLayout(), // El Layout
 
       _lastDataBlocksHash: "",  // Hash interno para controlar cambios en los bloques de datos
     });
@@ -1030,9 +1030,9 @@ class AWF_Configuration {
     Object.assign(this, data);
 
     // 3. Map sub-objects and arrays to their classes
-    this.data_blocks = (data.data_blocks || this.data_blocks).map(d => new AWF_DataBlock(d));
-    this.flows = (data.flows || this.flows).map(d => new AWF_Flow(d));
-    this.layout = new AWF_Layout(data.layout || {})
+    this.data_blocks = (data.data_blocks || this.data_blocks).map(d => new stic_AwfDataBlock(d));
+    this.flows = (data.flows || this.flows).map(d => new stic_AwfFlow(d));
+    this.layout = new stic_AwfLayout(data.layout || {})
 
     // 4. Ensure default objects
     this._ensureDefaultDataBlocks();
@@ -1040,7 +1040,7 @@ class AWF_Configuration {
     this._ensureDefaultLayout();
   }
   static fromJSON(jsonString){
-    const config = new AWF_Configuration(JSON.parse(jsonString));
+    const config = new stic_AwfConfiguration(JSON.parse(jsonString));
     config._lastDataBlocksHash = config._computeDataBlocksHash();
     
     return config;
@@ -1094,7 +1094,7 @@ class AWF_Configuration {
     // // Check exists Detached DataBlock
     // const detachedDataBlockExists = this.data_blocks.some((b) => b.name === "_Detached");
     // if (!detachedDataBlockExists) {
-    //   this.data_blocks.push(new AWF_DataBlock({
+    //   this.data_blocks.push(new stic_AwfDataBlock({
     //     name: "_Detached",
     //     text: utils.translate("LBL_DATABLOCK_DETACHED"),
     //     module: "",
@@ -1106,17 +1106,17 @@ class AWF_Configuration {
   _ensureDefaultFlows() {
     // Check exists Main Flow
     if (!this.flows.some(f => f.id == '0')) {
-      this.flows.push(new AWF_Flow({ id: 0, name: "main", label: "LBL_FLOW_MAIN" }));
+      this.flows.push(new stic_AwfFlow({ id: 0, name: "main", label: "LBL_FLOW_MAIN" }));
     }
 
     // Check exists OnError Flow
     if (!this.flows.some(f => f.id == '-1')) {
-      this.flows.push(new AWF_Flow({ id: -1, name: "onError", label: "LBL_FLOW_ONERROR" }));
+      this.flows.push(new stic_AwfFlow({ id: -1, name: "onError", label: "LBL_FLOW_ONERROR" }));
     }
     
     // Check exists Receipt Flow
     if (!this.flows.some(f => f.id == '1')) {
-      this.flows.push(new AWF_Flow({ id: 1, name: "receipt", label: "LBL_FLOW_RECEIPT" }));
+      this.flows.push(new stic_AwfFlow({ id: 1, name: "receipt", label: "LBL_FLOW_RECEIPT" }));
     }
 
     // Sort flows: Receipt, Main, Error
@@ -1241,7 +1241,7 @@ class AWF_Configuration {
    * @param {string} moduleName Module
    * @param {boolean} force 
    * @param {string} text 
-   * @returns {AWF_DataBlock}
+   * @returns {stic_AwfDataBlock}
    */
   addDataBlockModule(moduleName, force = false, text = "") {
     let module = utils.getModuleInformation(moduleName);
@@ -1267,7 +1267,7 @@ class AWF_Configuration {
     }
 
     // Set unique name with Module name
-    let baseName = AWF_Configuration.getSafeNameFromModule(moduleName);
+    let baseName = stic_AwfConfiguration.getSafeNameFromModule(moduleName);
     index = 0;
     let name = `${baseName}${index}`; // Ex: SticAdvancedWebForms0
     while(this.data_blocks.some((b) => b.name === name)) {
@@ -1275,7 +1275,7 @@ class AWF_Configuration {
       name = `${baseName}${index}`;
     }
 
-    dataBlock = new AWF_DataBlock({
+    dataBlock = new stic_AwfDataBlock({
       name: name,
       text: text,
       module: moduleName,
@@ -1288,7 +1288,7 @@ class AWF_Configuration {
         hasRequiredRelate = true;
       }
       if (fieldDef.required) {
-        let newField = new AWF_Field();
+        let newField = new stic_AwfField();
         let type_field = 'form';
         if (fieldDef.required && fieldDef.default != null && fieldDef.default != '') {
             type_field = 'fixed';
@@ -1320,7 +1320,7 @@ class AWF_Configuration {
   /**
    * Gets a new DataBlock unlinked (without module)
    * @param {string} text 
-   * @returns {AWF_DataBlock}
+   * @returns {stic_AwfDataBlock}
    */
   addUnlinkedDataBlock(text) {
     // Generate a secure unique name
@@ -1334,7 +1334,7 @@ class AWF_Configuration {
     }
 
     // Create DataBlock
-    let dataBlock = new AWF_DataBlock({
+    let dataBlock = new stic_AwfDataBlock({
       name: name,
       text: text,
       module: "", // No module set
@@ -1350,9 +1350,9 @@ class AWF_Configuration {
 
   /**
    * Adds a field to a DataBlock
-   * @param {AWF_DataBlock} dataBlock 
-   * @param {AWF_Field} field 
-   * @returns {AWF_Field}
+   * @param {stic_AwfDataBlock} dataBlock 
+   * @param {stic_AwfField} field 
+   * @returns {stic_AwfField}
    */
   addDataBlockField(dataBlock, field) {
     return dataBlock.addField(field);
@@ -1360,9 +1360,9 @@ class AWF_Configuration {
 
   /**
    * Adds or Updates a validation to a field
-   * @param {AWF_Field} field 
-   * @param {AWF_FieldValidation} validation 
-   * @returns {AWF_FieldValidation}
+   * @param {stic_AwfField} field 
+   * @param {stic_AwfFieldValidation} validation 
+   * @returns {stic_AwfFieldValidation}
    */
   addOrUpdateFieldValidation(field, validation) {
     return field.addOrUpdateValidation(validation);
@@ -1378,7 +1378,7 @@ class AWF_Configuration {
    * @param {object} actionDef The Action definition (from ActionDefinitionDTO)
    * @param {object} params A map of parameters, ex: { 'param_name': { value: 'value', selectedOption: 'opt' } }
    * @param {string} flowId Id of the flow where action will be added (ex: '0' for main flow)
-   * @returns {AWF_Action} The new action
+   * @returns {stic_AwfAction} The new action
    */
   addAction(actionDef, params = {}, flowId = '0') {
     const flow = this.flows.find(f => f.id == flowId);
@@ -1390,7 +1390,7 @@ class AWF_Configuration {
     // Si es una acción terminal, asignamos orden a 999
     const defaultOrder = actionDef.isTerminal ? 999 : (actionDef.order ?? 0);
 
-    const newAction = new AWF_Action({
+    const newAction = new stic_AwfAction({
       name: actionDef.name,
       title: actionDef.title, 
       text: actionDef.title,
@@ -1406,7 +1406,7 @@ class AWF_Configuration {
     (actionDef.parameters || []).forEach(paramDef => {      
       const paramConfig = params[paramDef.name];       
       const paramValue = paramConfig?.value ?? paramDef.defaultValue;
-      const newParam = new AWF_ActionParameter({
+      const newParam = new stic_AwfActionParameter({
         name: paramDef.name,
         text: paramDef.text,
         type: paramDef.type,
@@ -1449,7 +1449,7 @@ class AWF_Configuration {
 
   /**
    * Deletes a DataBlock, removing all field references to the DataBlock
-   * @param {AWF_DataBlock} dataBlock 
+   * @param {stic_AwfDataBlock} dataBlock 
    */
   deleteDataBlock(dataBlock) {
     // Reset all fields pointing to this DataBlock
@@ -1536,7 +1536,7 @@ class AWF_Configuration {
   /**
    * Gets the field definition by its full HTML name
    * @param {string} fullName The full HTML name of the field (BlockName.FieldName)
-   * @returns {AWF_Field|null} The field definition or null if not found
+   * @returns {stic_AwfField|null} The field definition or null if not found
    */
   getFieldDefinitionByHtmlName(fullName) {
     if (!fullName) return null;

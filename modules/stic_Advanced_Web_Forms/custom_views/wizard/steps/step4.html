@@ -71,7 +71,7 @@
                     <div class="mb-3">
                         <label for="theme-input_style" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_INPUT_STYLE')"></label>
                         <select id="theme-input_style" class="form-select" x-model="formConfig.layout.theme.input_style">
-                            <template x-for="item in AWF_Theme.input_style_in_formList()" :key="item.id">
+                            <template x-for="item in stic_AwfTheme.input_style_in_formList()" :key="item.id">
                                 <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.input_style"></option>
                             </template>
                         </select>
@@ -138,7 +138,7 @@
                     <div class="mb-3">
                         <label for="theme-shadow_intensity" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_SHADOW_INTENSITY')"></label>
                         <select id="theme-shadow_intensity" class="form-select" x-model="formConfig.layout.theme.shadow_intensity">
-                            <template x-for="item in AWF_Theme.shadow_intensity_in_formList()" :key="item.id">
+                            <template x-for="item in stic_AwfTheme.shadow_intensity_in_formList()" :key="item.id">
                                 <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.shadow_intensity"></option>
                             </template>
                         </select>
@@ -154,7 +154,7 @@
                     <div class="mb-3">
                         <label for="theme-form_width" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FORM_WIDTH')"></label>
                         <select id="theme-form_width" class="form-select" x-model="formConfig.layout.theme.form_width">
-                            <template x-for="item in AWF_Theme.form_width_in_formList()" :key="item.id">
+                            <template x-for="item in stic_AwfTheme.form_width_in_formList()" :key="item.id">
                                 <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.form_width"></option>
                             </template>
                         </select>
@@ -194,7 +194,7 @@
                     <div class="mb-3">
                         <label for="theme-field_spacing" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FIELD_SPACING')"></label>
                         <select id="theme-form_width" class="form-select" x-model="formConfig.layout.theme.field_spacing">
-                            <template x-for="item in AWF_Theme.field_spacing_in_formList()" :key="item.id">
+                            <template x-for="item in stic_AwfTheme.field_spacing_in_formList()" :key="item.id">
                                 <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.field_spacing"></option>
                             </template>
                         </select>

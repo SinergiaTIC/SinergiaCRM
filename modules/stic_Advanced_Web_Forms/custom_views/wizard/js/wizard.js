@@ -98,12 +98,12 @@ function wizardForm() {
         jsonString = utils.decodeHTMLString(this.bean.configuration);
       }
       try {
-        this.formConfig = AWF_Configuration.fromJSON(jsonString);
+        this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);
       } catch (e) {
         console.error("Error parsing JSON:", e);
         console.log("Bad JSON String:", jsonString);
         // Fallback a config vacía si falla
-        this.formConfig = new AWF_Configuration();
+        this.formConfig = new stic_AwfConfiguration();
       }
 
       // Load current Step
@@ -366,7 +366,7 @@ class WizardStep2 {
           Alpine.store('fieldEditor', {
             isOpen: false,           // Indica si está abierto el editor de campos
             isEdit: false,           // Indica si es modo edición (false: modo creación)
-            field: new AWF_Field(),  // Copia de los datos del campo
+            field: new stic_AwfField(),  // Copia de los datos del campo
             dataBlock: null,         // El bloque de datos del campo
             needDeleteOld: false,    // Indica si es necesario eliminar el campo anterior antes de guardar
             original_name: '',       // Nombre original del campo
@@ -427,7 +427,7 @@ class WizardStep2 {
 
             /**
              * Retorna la descripción de la condición de una validación
-             * @param {AWF_FieldValidation} validation 
+             * @param {stic_AwfFieldValidation} validation 
              * @returns {string}
              */
             getConditionLabel(validation) {
@@ -486,7 +486,7 @@ class WizardStep2 {
 
             /**
              * Abre el Modal para Crear un campo
-             * @param {AWF_DataBlock} dataBlock El Bloque de datos
+             * @param {stic_AwfDataBlock} dataBlock El Bloque de datos
              * @param {string} type Tipo de campo: unlinked, form, fixed
              */
             openCreate(dataBlock, type) {
@@ -496,8 +496,8 @@ class WizardStep2 {
 
             /**
              * Abre el Modal para Editar un campo
-             * @param {AWF_DataBlock} dataBlock El Bloque de datos
-             * @param {AWF_Field} field El campo
+             * @param {stic_AwfDataBlock} dataBlock El Bloque de datos
+             * @param {stic_AwfField} field El campo
              */
             openEdit(dataBlock, field) {
               this.isEdit = true;
@@ -506,13 +506,13 @@ class WizardStep2 {
 
             /**
              * Abre el Modal para editar o crear un campo
-             * @param {AWF_DataBlock} dataBlock El Bloque de datos
-             * @param {AWF_Field} fieldData El campo
+             * @param {stic_AwfDataBlock} dataBlock El Bloque de datos
+             * @param {stic_AwfField} fieldData El campo
              * @param {string} type Tipo de campo: unlinked, form, fixed
              */
             _open(dataBlock, fieldData, type) {
               this.dataBlock = dataBlock;
-              this.field = new AWF_Field(fieldData || {type_field: type});
+              this.field = new stic_AwfField(fieldData || {type_field: type});
               this.original_name = this.field.name;
               this.needDeleteOld = false;
               this.isOpen = true;
@@ -553,7 +553,7 @@ class WizardStep2 {
           Alpine.store('fieldValidationEditor', {
             isOpen: false,                          // Indica si está abierto el editor de validaciones
             isEdit: false,                          // Indica si es modo edición (false: modo creación)
-            validation: new AWF_FieldValidation(),  // Copia de los datos de la validación
+            validation: new stic_AwfFieldValidation(),  // Copia de los datos de la validación
             field: null,                            // El campo al que pertenece la validación
             dataBlock: null,                        // El bloque de datos del campo
 
@@ -661,7 +661,7 @@ class WizardStep2 {
 
             /**
              * Abre el Modal para Crear una validación
-             * @param {AWF_Field} field El campo al que pertenece la validación
+             * @param {stic_AwfField} field El campo al que pertenece la validación
              */
             openCreate(dataBlock, field) {
               this.isEdit = false;
@@ -670,8 +670,8 @@ class WizardStep2 {
 
             /**
              * Abre el Modal para Editar una validación
-             * @param {AWF_Field} field El campo al que pertenece la validación
-             * @param {AWF_FieldValidation} validation La validación
+             * @param {stic_AwfField} field El campo al que pertenece la validación
+             * @param {stic_AwfFieldValidation} validation La validación
              */
             openEdit(dataBlock, field, validation) {
               this.isEdit = true;
@@ -680,13 +680,13 @@ class WizardStep2 {
 
             /**
              * Abre el Modal para editar o crear una validación de campo
-             * @param {AWF_Field} fiel El campo
-             * @param {AWF_FieldValidation} validation La validación
+             * @param {stic_AwfField} fiel El campo
+             * @param {stic_AwfFieldValidation} validation La validación
              */
             _open(dataBlock, field, validation) {
               this.dataBlock = dataBlock;
               this.field = field;
-              this.validation = new AWF_FieldValidation(validation || {name:`${utils.newId('validation_')}` });
+              this.validation = new stic_AwfFieldValidation(validation || {name:`${utils.newId('validation_')}` });
               this.isOpen = true;
             },
 
@@ -774,7 +774,7 @@ class WizardStep2 {
 
             /**
              * Abre el modal de creación de relaciones
-             * @param {AWF_DataBlock} dataBlock 
+             * @param {stic_AwfDataBlock} dataBlock 
              */
             openCreate(dataBlock) {
               this.dataBlock = dataBlock;
@@ -1026,7 +1026,7 @@ class WizardStep2 {
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
           if (this.field.type_field == 'unlinked') {
-            this.field.name = AWF_Configuration.cleanName(newText);
+            this.field.name = stic_AwfConfiguration.cleanName(newText);
             this.field.label = utils.toFieldLabelText(newText);
           }
         });
@@ -1458,7 +1458,7 @@ class WizardStep3 {
             get availableCategories() {
               const validActions = this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter);
               const uniqueCatIds = [...new Set(validActions.map(a => a.category))];
-              return AWF_Action.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
+              return stic_AwfAction.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
             },
 
             /**
@@ -1477,7 +1477,7 @@ class WizardStep3 {
 
             /**
              * Abre el Modal para Crear una acción
-             * @param {AWF_Flow} flow El Flujo de acciones
+             * @param {stic_AwfFlow} flow El Flujo de acciones
              * @param {boolean} isTerminal Indica si es una acción terminal
              * @returns {void}
              */
@@ -1504,8 +1504,8 @@ class WizardStep3 {
 
             /**
              * Abre el Modal para Editar una acción
-             * @param {AWF_Flow} flow El Flujo de acciones
-             * @param {AWF_Action} action La acción a editar
+             * @param {stic_AwfFlow} flow El Flujo de acciones
+             * @param {stic_AwfAction} action La acción a editar
              * @returns {void}
              */
             openEdit(flow, action) {
@@ -1523,7 +1523,7 @@ class WizardStep3 {
               this.selectedActionDefName = this.definition.name;
 
               // Clonamos la acción para editarla
-              this.action = new AWF_Action(action);
+              this.action = new stic_AwfAction(action);
 
               // Adaptamos los valores de los parámetros tipo textarea para mostrar saltos de línea correctamente
               if (this.action.parameters && this.definition.parameters) {
@@ -1567,7 +1567,7 @@ class WizardStep3 {
                 const defaultOrder = def.isTerminal ? 999 : (def.order ?? 0);
 
                 // Creamos una instancia vacía basada en la definición
-                this.action = new AWF_Action({
+                this.action = new stic_AwfAction({
                     name: def.name,
                     title: def.title,
                     text: def.title, // Por defecto el título
@@ -1579,7 +1579,7 @@ class WizardStep3 {
                 });
 
                 // Inicializamos los parámetros vacíos según la definición
-                this.action.parameters = (def.parameters || []).map(pDef => new AWF_ActionParameter({
+                this.action.parameters = (def.parameters || []).map(pDef => new stic_AwfActionParameter({
                     name: pDef.name,
                     text: pDef.text,
                     type: pDef.type,
@@ -1595,7 +1595,7 @@ class WizardStep3 {
              * Gestiona el cambio de opción en el selector de opciones de un parámetro
              * Si la opción es de tipo 'empty', asigna un valor automático para pasar la validación.
              * Si no, limpia el valor.
-             * * @param {AWF_ActionParameter} param El parámetro que se está editando
+             * * @param {stic_AwfActionParameter} param El parámetro que se está editando
              * @param {object} paramDef La definición del parámetro (DTO)
              */
             onParamOptionChange(param, paramDef) {
@@ -1720,7 +1720,7 @@ class WizardStep3 {
 
             /**
              * Reconstruye los parámetros y recalcula los requisitos de una acción basándose en su definición y los valores actuales.
-             * @param {AWF_Action} action La acción a procesar (se modifica in-place)
+             * @param {stic_AwfAction} action La acción a procesar (se modifica in-place)
              * @param {object} definition La definición de la acción (ActionDefinitionDTO)
              * @returns {void}
              */
@@ -1734,7 +1734,7 @@ class WizardStep3 {
                 const currentParam = action.parameters.find(p => p.name == paramDef.name);
 
                 // Construimos el parámetro asegurando estructura actualizada
-                const newParam = new AWF_ActionParameter({
+                const newParam = new stic_AwfActionParameter({
                   name: paramDef.name,
                   text: paramDef.text,
                   type: paramDef.type,
@@ -1809,7 +1809,7 @@ class WizardStep3 {
 
       /**
        * Indica si se puede editar una acción
-       * @param {AWF_Action} action La acción
+       * @param {stic_AwfAction} action La acción
        * @returns {boolean}
        */
       canEditAction(action) {
@@ -1818,7 +1818,7 @@ class WizardStep3 {
 
       /**
        * Indica si se puede eliminar una acción
-       * @param {AWF_Action} action La acción
+       * @param {stic_AwfAction} action La acción
        * @returns {boolean}
        */
       canRemoveAction(action) {
@@ -1827,7 +1827,7 @@ class WizardStep3 {
 
       /**
        * Elimina una acción del flujo
-       * @param {AWF_Action} action La acción a eliminar
+       * @param {stic_AwfAction} action La acción a eliminar
        * @return {void}
        */
       removeAction(action) {
@@ -1836,7 +1836,7 @@ class WizardStep3 {
 
       /**
        * Indica si se puede mover hacia arriba una acción
-       * @param {AWF_Action} action La acción
+       * @param {stic_AwfAction} action La acción
        * @returns {boolean}
        */
       canMoveUpAction(action) {
@@ -1859,7 +1859,7 @@ class WizardStep3 {
 
       /**
        * Mueve hacia arriba una acción
-       * @param {AWF_Action} action La acción
+       * @param {stic_AwfAction} action La acción
        * @returns {void}
        */
       moveUpAction(action) {
@@ -1873,7 +1873,7 @@ class WizardStep3 {
 
       /**
        * Indica si se puede mover hacia abajo una acción
-       * @param {AWF_Action} action La acción
+       * @param {stic_AwfAction} action La acción
        * @returns {boolean}
        */
       canMoveDownAction(action) {
@@ -1896,7 +1896,7 @@ class WizardStep3 {
 
       /**
        * Mueve hacia abajo una acción
-       * @param {AWF_Action} action La acción
+       * @param {stic_AwfAction} action La acción
        * @returns {void}
        */
       moveDownAction(action) {
@@ -1910,7 +1910,7 @@ class WizardStep3 {
 
       /**
        * Genera la etiqueta descriptiva de la condición de una acción
-       * @param {AWF_Action} action La acción
+       * @param {stic_AwfAction} action La acción
        * @returns {string}
        */
       getActionConditionLabel(action) {
@@ -2010,7 +2010,7 @@ class WizardStep4 {
 
       get availableContainerTypes() {
         const validCategories = ['panel', 'card'];
-        return AWF_LayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
+        return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
       },
 
       init() {
@@ -2091,7 +2091,7 @@ class WizardStep4 {
       },
 
       createSection() {
-        this.sections.push(new AWF_LayoutSection({
+        this.sections.push(new stic_AwfLayoutSection({
           title: utils.translate('LBL_SECTION_NEW'),
         }));
       },
@@ -2185,7 +2185,7 @@ class WizardStep4 {
       },
 
       resetTheme() {
-        this.formConfig.layout.theme = new AWF_Theme();
+        this.formConfig.layout.theme = new stic_AwfTheme();
         this.formConfig.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
         this.formConfig.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
         this.formConfig.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
