@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * AddToTargetListAction
  *
- * Acción que añade el registro procesado (Persona, Interesado, Usuario o Organización) a una Lista de Público Objetivo (ProspectList) existente.
+ * Action that adds the processed record (Contact, Lead, User or Organization) to an existing Target List (ProspectList).
  */
 class AddToTargetListAction extends HookBeanActionDefinition {
     public function __construct() {
@@ -41,14 +41,14 @@ class AddToTargetListAction extends HookBeanActionDefinition {
     }
 
     /**
-     * Módulos soportados por la acción
+     * Modules supported by the action
      */
     protected function getSupportedModules(): array {
         return ['Contacts', 'Users', 'Prospects', 'Leads', 'Accounts'];
     }
 
     /**
-     * Nombre del parámetro que contiene el bloque de datos.
+     * Name of the parameter that contains the data block.
      * @return string
      */
     protected function getDataBlockParameterText(): string {
@@ -56,7 +56,7 @@ class AddToTargetListAction extends HookBeanActionDefinition {
     }
 
     /**
-     * La descripción (help text) del parámetro de bloque de datos.
+     * The description (help text) of the data block parameter.
      * @return string
      */
     protected function getDataBlockParameterDescription(): string {
@@ -64,13 +64,13 @@ class AddToTargetListAction extends HookBeanActionDefinition {
     }
 
     /**
-     * getCustomParameters()
-     * Definición de los parámetros ADICIONALES que son necesarios para la acción
-     * El parámtreo del Bloque de Datos principal lo pide la clase padre.
-     */
+    * getCustomParameters()
+    * Definition of the ADDITIONAL parameters required for the action
+    * The main Data Block parameters are requested by the parent class.
+    */
     protected function getCustomParameters(): array
     {
-        // La LPO a la que añadir el contacto / entidad
+        // The ProsectList to which to add the contact / entity
         $paramLPO = new ActionParameterDefinition();
         $paramLPO->name = 'target_list_record';
         $paramLPO->text = $this->translate('TARGET_LIST_RECORD_TEXT');
@@ -85,26 +85,26 @@ class AddToTargetListAction extends HookBeanActionDefinition {
 
     public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
     {
-        // Obtención de los parámetros adicionales (ParameterResolver asegura que no sean nulos porque son obligatorios)
+        // Obtaining the additional parameters (ParameterResolver ensures they are not null because they are mandatory)
         
         /** @var BeanReference $lpoRef */
         $lpoRef = $actionConfig->getResolvedParameter('target_list_record');
         
 
-        // Cargamos la Relación de LPOs del Bean (Contacto, Entidad, etc.)
+        // We load the Bean's TargerLists Relationship (Contact, Entity, etc.)
         $linkName = 'prospect_lists';
         if (!$bean->load_relationship($linkName)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Module '{$bean->module_name}' doesn't have a relation '{$linkName}' or can't be loaded.");
         }
 
-        // Añadimos el contacto a la LPO (add gestiona si ya existe o no)
+        // We add the contact to the TargetList (add checks if it already exists or not)
         try {
             $bean->$linkName->add($lpoRef->beanId);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error adding to ProspectList: " . $e->getMessage());
         }
 
-        // Notificación del resultado
+        // Notification of the result
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Added to ProspectList: {$lpoRef->beanId}");
         $dataToLog = ['added_to_prospect_list_id' => $lpoRef->beanId];
         $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED, $dataToLog);
