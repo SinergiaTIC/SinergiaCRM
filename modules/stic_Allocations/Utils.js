@@ -38,6 +38,7 @@ switch (viewType()) {
     $("form").on("change", "#blocked", function () {
       checkBlockedAllocation();
     });
+    disableProposalFieldsInEditView();
 
     break;
 
@@ -67,6 +68,15 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+function disableProposalFieldsInEditView() {
+  // if not creating a new record
+  if ($("input[name='record']").val() !== "") {
+      $("#stic_allocation_proposals_name").prop('disabled', true);
+      $("#btn_stic_allocation_proposals_name").prop('disabled', true);
+      $("#btn_clr_stic_allocation_proposals_name").prop('disabled', true);
+  }
+}
+
 function checkBlockedAllocation() {
   var blocked = $("#blocked").is(":checked");
   if (blocked) {

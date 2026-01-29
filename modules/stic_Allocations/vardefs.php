@@ -212,7 +212,7 @@ $dictionary['stic_Allocations'] = array(
             'table' => 'stic_allocation_proposals',
             'module' => 'stic_Allocation_Proposals',
             'rname' => 'name',
-            'inline_edit' => 1,
+            'inline_edit' => 0,
             'massupdate' => 0,
         ),
         'stic_allocation_propo424d' => array(
