@@ -23,6 +23,7 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
+global $current_language, $sugar_config;
 
 $GLOBALS['log']->debug('Entrypoint File: RenderEmailTemplate.php: Generating the HTML of an email template.');
 $modStrings = return_module_language($current_language, 'EmailTemplates');
@@ -68,6 +69,7 @@ if (empty($campaign) || empty($emailTemplate)) {
 $optionalParams = ['recordId', 'targetId', 'trackingURL'];
 foreach ($optionalParams as $key) {
     if (empty($_REQUEST[$key])) {
+        $_REQUEST[$key] = '';
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . "You have not provided the optional parameter:: " . $key);
     }
 }
