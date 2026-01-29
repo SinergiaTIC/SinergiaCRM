@@ -980,11 +980,17 @@
 
 
 		</table>
-
-
-
-
-
+		<!-- 
+		STIC-Custom 20251202 MHP - Show display HTML field
+		https://github.com/SinergiaTIC/SinergiaCRM/pull/770
+		-->
+		<table cellpadding="0" cellspacing="0" width="100%" class='edit view'>
+			<tr>
+				<td scope="row" colspan="2" style="width: 50%;"><span>{$MOD.LBL_STIC_DISPLAY_HTML}</span></td>
+				<td><span><input type="checkbox" id="stic_display_html_c" name="stic_display_html_c" {if $displayHTML}checked{/if}></span></td>
+			</tr>
+		</table>
+		<!-- END STIC-Custom -->
 
 		<div class="wizard-box">
 			<label>{$MOD.LBL_FROM_NAME}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></label><br>

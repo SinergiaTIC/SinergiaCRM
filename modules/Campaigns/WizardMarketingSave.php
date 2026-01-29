@@ -134,6 +134,10 @@ foreach ($marketing->additional_column_fields as $field) {
 }
 
 $marketing->campaign_id = $_REQUEST['campaign_id'];
+// STIC-Custom 20251201 MHP - Manage custom HTML display field
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/770
+$marketing->stic_display_html_c = $_REQUEST['stic_display_html_c'] ? true : false;
+// END STIC-Custom
 $marketing->save($check_notify);
 
 //add prospect lists to campaign.
