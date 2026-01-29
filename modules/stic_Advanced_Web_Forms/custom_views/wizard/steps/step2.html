@@ -33,7 +33,7 @@
       <div class="work-area-container" style="position: relative; padding-bottom: 20px;">
         <template x-for="item in formConfig.data_blocks" :key="item.id">
           <!-- DataBlock -->
-          <div class="card datablock" :class="{'has-errors':!item.isValid()}" x-data="WizardStep2.datablockxData(formConfig, item);">
+          <div :id="'dataBlock_' + item.id" class="card datablock" :class="{'has-errors':!item.isValid()}" x-data="WizardStep2.datablockxData(formConfig, item);">
             <!-- DataBlock header -->
             <div class="card-header d-flex flex-column">
               <div class="d-flex justify-content-start datablock-module">

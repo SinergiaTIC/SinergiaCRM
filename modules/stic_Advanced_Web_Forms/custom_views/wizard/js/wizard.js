@@ -909,15 +909,27 @@ class WizardStep2 {
       },
 
       handleAddDatablockModule() {
-        this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
+        const dataBlock = this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
         this.creatingDataBlock = false;
         this.newDataBlock = {module:'', text:''};
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + dataBlock.id); 
+          if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
       },
       handleAddUnlinkedDatablock() {
-        this.formConfig.addUnlinkedDataBlock(this.newUnlinkedDataBlock.text);
+        const dataBlock = this.formConfig.addUnlinkedDataBlock(this.newUnlinkedDataBlock.text);
         this.creatingUnlinkedDataBlock = false;
         this.newUnlinkedDataBlock = {text:''};
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + dataBlock.id); 
+          if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
       },
 
       init() {
