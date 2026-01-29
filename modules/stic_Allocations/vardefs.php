@@ -272,7 +272,7 @@ $dictionary['stic_Allocations'] = array(
             'importable' => 'true',
             'duplicate_merge' => 'enabled',
             'duplicate_merge_dom_value' => '0',
-            'audited' => false,
+            'audited' => true,
             'inline_edit' => true,
             'reportable' => true,
             'unified_search' => false,
@@ -328,6 +328,7 @@ $dictionary['stic_Allocations'] = array(
             'rname' => 'name',
             'inline_edit' => 1,
             'massupdate' => 0,
+            'audited' => true,
         ),
         'opportunities_stic_allocationsopportunities_ida' => array(
             'name' => 'opportunities_stic_allocationsopportunities_ida',
@@ -363,6 +364,7 @@ $dictionary['stic_Allocations'] = array(
             'rname' => 'name',
             'inline_edit' => 1,
             'massupdate' => 0,
+            'audited' => true,
         ),
         'project_stic_allocationsproject_ida' => array(
             'name' => 'project_stic_allocationsproject_ida',

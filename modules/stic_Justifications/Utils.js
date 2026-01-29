@@ -73,6 +73,10 @@ function disableProposalFieldsInEditView() {
       $("#stic_allocations_stic_justifications_name").prop('disabled', true);
       $("#btn_stic_allocations_stic_justifications_name").prop('disabled', true);
       $("#btn_clr_stic_allocations_stic_justifications_name").prop('disabled', true);
+      
+      $("#allocation_type").prop('disabled', true);
+      $("#amount").prop('disabled', true);
+      $("#hours").prop('disabled', true);
   }
 }
 

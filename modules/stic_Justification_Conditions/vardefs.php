@@ -43,12 +43,14 @@ $dictionary['stic_Justification_Conditions'] = array(
             'type' => 'bool',
             'default' => 1,
             'vname' => 'LBL_ACTIVE',
+            'audited' => true,
         ),
         'blocked' => array(
             'name' => 'blocked',
             'type' => 'bool',
             'default' => 0,
             'vname' => 'LBL_BLOCKED',
+            'audited' => true,
         ),
         'allocation_type' => array(
             'name' => 'allocation_type',
@@ -57,6 +59,7 @@ $dictionary['stic_Justification_Conditions'] = array(
             'len' => 100,
             'vname' => 'LBL_ALLOCATION_TYPE',
             'required' => true,
+            'audited' => true,
         ),
         'max_allocable_percentage' => array(
             'name' => 'max_allocable_percentage',
@@ -65,6 +68,7 @@ $dictionary['stic_Justification_Conditions'] = array(
             'required' => true,
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => 1,
+            'audited' => true,
         ),
         'max_allocable_percentage_grant' => array(
             'name' => 'max_allocable_percentage_grant',
@@ -73,6 +77,7 @@ $dictionary['stic_Justification_Conditions'] = array(
             'required' => true,
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => 1,
+            'audited' => true,
         ),
         'max_allocable_amount_grant' => array(
             'name' => 'max_allocable_amount_grant',
@@ -82,6 +87,7 @@ $dictionary['stic_Justification_Conditions'] = array(
             'vname' => 'LBL_MAX_ALLOCABLE_AMOUNT_GRANT',
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => 1,
+            'audited' => true,
         ),
         'justified_percentage' => array(
             'name' => 'justified_percentage',

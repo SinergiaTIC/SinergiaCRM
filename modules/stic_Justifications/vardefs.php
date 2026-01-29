@@ -45,18 +45,21 @@ $dictionary['stic_Justifications'] = array(
             'len' => 100,
             'vname' => 'LBL_STATUS',
             'required' => true,
+            'audited' => true,
         ),
         'blocked' => array(
             'name' => 'blocked',
             'type' => 'bool',
             'default' => 0,
             'vname' => 'LBL_BLOCKED',
+            'audited' => true,
         ),
         'reference' => array(
             'name' => 'reference',
             'type' => 'varchar',
             'len' => 255,
             'vname' => 'LBL_REFERENCE',
+            'audited' => true,
         ),
         'amount' => array(
             'name' => 'amount',
@@ -65,11 +68,13 @@ $dictionary['stic_Justifications'] = array(
             'precision' => 2,
             'vname' => 'LBL_AMOUNT',
             'required' => true,
+            'inline_edit' => false,
         ),
         'hours' => array(
             'name' => 'hours',
             'type' => 'int',
             'vname' => 'LBL_HOURS',
+            'inline_edit' => false,
         ),
         'allocation_type' => array(
             'name' => 'allocation_type',
@@ -78,11 +83,13 @@ $dictionary['stic_Justifications'] = array(
             'len' => 100,
             'vname' => 'LBL_ALLOCATION_TYPE',
             'required' => true,
+            'inline_edit' => false,
         ),
         'max_allocable_percentage' => array(
             'name' => 'max_allocable_percentage',
             'type' => 'int',
             'vname' => 'LBL_MAX_ALLOCABLE_PERCENTAGE',
+            'audited' => true,
         ),
         'justified_amount' => array(
             'name' => 'justified_amount',

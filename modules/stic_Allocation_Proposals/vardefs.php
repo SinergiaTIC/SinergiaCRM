@@ -203,6 +203,7 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'rname' => 'name',
             'quicksearch' => 'enabled',
             'studio' => 'visible',
+            'audited' => true,
         ),
         'stic_ledger_accounts_ida' => array(
             'name' => 'stic_ledger_accounts_ida',
@@ -236,6 +237,7 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'rname' => 'name',
             'inline_edit' => 1,
             'massupdate' => 0,
+            'audited' => true,
         ),
         'opportunities_stic_allocation_proposalsopportunities_ida' => array(
             'name' => 'opportunities_stic_allocation_proposalsopportunities_ida',
@@ -271,6 +273,7 @@ $dictionary['stic_Allocation_Proposals'] = array(
             'rname' => 'name',
             'inline_edit' => 1,
             'massupdate' => 0,
+            'audited' => true,
         ),
         'project_stic_allocation_proposalsproject_ida' => array(
             'name' => 'project_stic_allocation_proposalsproject_ida',
