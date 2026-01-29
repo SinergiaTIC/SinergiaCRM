@@ -55,6 +55,11 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_STATUS',
         'default' => true,
     ),
+    'PUBLIC_URL' => array(
+        'width' => '30',
+        'label' => 'LBL_PUBLIC_URL',
+        'default' => false,
+    ),
     'PROCESSING_MODE' => array(
         'width' => '10',
         'label' => 'LBL_PROCESSING_MODE',
@@ -85,12 +90,47 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_ANALYTICS_SPAM',
         'default' => true,
     ),
-    'ASSIGNED_USER_NAME' => array(
-        'width' => '9',
-        'label' => 'LBL_ASSIGNED_TO_NAME',
-        'module' => 'Employees',
-        'id' => 'ASSIGNED_USER_ID',
-        'default' => true
+    'DESCRIPTION' => array(
+        'type' => 'text',
+        'label' => 'LBL_DESCRIPTION',
+        'sortable' => false,
+        'width' => '10%',
+        'default' => false,
+    ),    
+    'CREATED_BY_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_CREATED',
+        'id' => 'CREATED_BY',
+        'width' => '10%',
+        'default' => false,
     ),
-
+    'MODIFIED_BY_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_MODIFIED_NAME',
+        'id' => 'MODIFIED_USER_ID',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'DATE_MODIFIED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_MODIFIED',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'DATE_ENTERED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_ENTERED',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'ASSIGNED_USER_NAME' => array(
+        'link' => true,
+        'type' => 'relate',
+        'label' => 'LBL_ASSIGNED_TO_NAME',
+        'id' => 'ASSIGNED_USER_ID',
+        'width' => '9%',
+        'default' => true,
+    ),
 );

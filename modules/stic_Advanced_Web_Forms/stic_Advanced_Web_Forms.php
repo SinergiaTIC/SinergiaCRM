@@ -53,7 +53,6 @@ class stic_Advanced_Web_Forms extends Basic
     public $custom_js;
     public $custom_header_html;
     public $custom_footer_html;
-    public $additional_info;
     public $analytics_views;
     public $analytics_blocked;
     public $analytics_submissions;

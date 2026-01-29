@@ -91,7 +91,6 @@ $mod_strings = array (
   'LBL_CUSTOM_HEADER_HTML' => 'Cabecera personalizada',
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
-  'LBL_ADDITIONAL_INFO' => 'Información adicional',
   'LBL_ANALYTICS_VIEWS' => 'Visitas Totales',
   'LBL_ANALYTICS_BLOCKED' => 'Visitas Bloqueadas (No público)',
   'LBL_ANALYTICS_SUBMISSIONS' => 'Respuestas Válidas',
