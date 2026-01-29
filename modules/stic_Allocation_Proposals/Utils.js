@@ -35,6 +35,37 @@ switch (viewType()) {
     break;
 
   case "detail":
+    $(document).ready(function() {
+      debugger;
+      // 1. Defineix l'ID del contenidor del subpanell (ajusta 'contacts' segons el teu cas)
+      var subpanelID = 'whole_subpanel_stic_allocation_proposals_stic_allocations'; 
+      var targetNode = document.getElementById(subpanelID);
+
+      if (!targetNode) {
+          console.warn("No s'ha trobat el subpanell: " + subpanelID);
+          return;
+      }
+
+      // 2. Configuració de l'observador
+      var config = { childList: true, subtree: true };
+
+      // 3. Funció que s'executa quan hi ha canvis
+      var callback = function(mutationsList, observer) {
+          // Busquem les files de dades (oddListRowS1 o evenListRowS1)
+          var rows = $(targetNode).find('tr.oddListRowS1, tr.evenListRowS1');
+          
+          if (rows.length > 0) {
+            $("#delete_button").hide(); // hide delete button
+          } 
+          else {
+            $("#delete_button").show(); // show delete button
+          }
+      };
+
+      // 4. Crear i iniciar l'observador
+      var observer = new MutationObserver(callback);
+      observer.observe(targetNode, config);
+    });
     break;
 
   case "list":

@@ -77,4 +77,5 @@ $mod_strings = array(
     'LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_PROJECT_TITLE' => 'Projecte',
     'LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE' => "Proposta d'imputació no compatible",
     'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE' => 'Imputacions',
+    'LBL_ALLOCATION_PROPOSAL_HAS_ALLOCATIONS_CANNOT_DELETE' => 'La proposta d\'imputació té imputacions associades i no es pot eliminar.',
 );

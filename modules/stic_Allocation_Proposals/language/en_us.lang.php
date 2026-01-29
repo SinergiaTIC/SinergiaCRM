@@ -78,4 +78,5 @@ $mod_strings = array(
     'LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_PROJECT_TITLE' => 'Project',
     'LBL_ALLOCATION_PROPOSAL_NOT_COMPATIBLE' => 'Allocation Proposal Not Compatible',
     'LBL_STIC_ALLOCATION_PROPOSALS_STIC_ALLOCATIONS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE' => 'Allocations',
+    'LBL_ALLOCATION_PROPOSAL_HAS_ALLOCATIONS_CANNOT_DELETE' => 'The allocation proposal has associated allocations and cannot be deleted.',
 );

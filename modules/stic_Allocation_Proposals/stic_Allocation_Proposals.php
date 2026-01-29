@@ -125,4 +125,37 @@ class stic_Allocation_Proposals extends Basic
             $this->name = implode(' - ', $nameParts);
         }
     }
+
+    public function mark_deleted($id) {
+        // load allocations relationship to check if any allocation is blocked
+        $this->load_relationship('stic_allocation_proposals_stic_allocations');
+        $allocations = $this->stic_allocation_proposals_stic_allocations->getBeans();
+        if(count($allocations) > 0) {
+            $this->showError('LBL_ALLOCATION_PROPOSAL_HAS_ALLOCATIONS_CANNOT_DELETE');
+            return false;
+        }
+
+        parent::mark_deleted($id);
+
+    }
+
+
+    protected function showError($labelId) {
+        
+        global $current_language;
+        $allocationsModStrings = return_module_language($current_language, 'stic_Allocation_Proposals'); // can not be $mod_strings because of different contexts (specially inline edition)
+
+        if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+            $errorMsg = $allocationsModStrings[$labelId];
+            $jsMsg = json_encode($errorMsg);
+            // 2. Output a script to alert the user
+            echo "<script>alert($jsMsg);</script>";
+            echo "<script>location.reload();</script>";
+            // 4. Stop execution
+            exit();
+        }
+
+        SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings[$labelId] . '</div>');
+    }
+
 }
