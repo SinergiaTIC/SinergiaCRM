@@ -247,7 +247,7 @@ $dictionary['stic_Allocations'] = array(
             'table' => 'stic_payments',
             'module' => 'stic_Payments',
             'rname' => 'name',
-            'inline_edit' => 1,
+            'inline_edit' => 0,
             'massupdate' => 0,
         ),
         'stic_payments_stic_allocations' => array(
