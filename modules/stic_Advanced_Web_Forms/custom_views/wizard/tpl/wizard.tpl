@@ -60,8 +60,8 @@
     </div>
 
     <div class="wizard-card-wrapper mx-2 mb-2">
-        <div class="wizard-container" id="wizard-step-container"></div>
-        <div id="debug-container" class="p-2 bg-light border-top" style="display:none;" x-show="showDetailsData"></div>
+        <div class="wizard-container wizard-main flex-fill d-flex flex-column" id="wizard-step-container"></div>
+        {* <div id="debug-container" class="p-2 bg-light border-top" style="display:none;" x-show="showDetailsData"></div> *}
 
         <div class="wizard-nav">
             <button type="button" class="button btn-lg" @click="WizardNavigation.prev()" x-bind:disabled="!WizardNavigation.enabled('prev')" x-text="utils.translate('LBL_WIZARD_PREVIOUS')"></button>

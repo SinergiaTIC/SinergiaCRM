@@ -145,7 +145,7 @@
 .wizard-container {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 10px;
   margin: 0;
   height: auto !important;
   max-height: none !important;
@@ -168,6 +168,14 @@
 .wizard-nav .button[disabled]:hover {
   background-color: #828282 !important;
   cursor: not-allowed;
+}
+.add-block-toolbar {
+  position: sticky;
+  bottom: -15px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  border-top: 1px solid #ddd;
+  padding: 15px;
 }
 
 .accordion-header {

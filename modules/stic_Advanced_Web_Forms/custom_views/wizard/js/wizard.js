@@ -147,7 +147,9 @@ class WizardNavigation {
       ).text();
     }
     let $elDebug = document.getElementById("debug-container");
-    $elDebug.innerHTML = WizardNavigation.cacheDebug;
+    if ($elDebug) {
+      $elDebug.innerHTML = WizardNavigation.cacheDebug;
+    }
 
     // Initialize Alpine.js over new content
     Alpine.initTree($el);
@@ -1390,7 +1392,6 @@ class WizardStep3 {
             
             get activeConditionFieldDef() { return this._activeConditionFieldDef; },
             get isBooleanCondition() {
-              debugger;
               const def = this.activeConditionFieldDef;
               if (!def) return false;
               return def.type === 'bool' || def.type === 'checkbox' || 
