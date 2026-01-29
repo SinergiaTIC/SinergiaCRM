@@ -132,6 +132,7 @@ $dictionary['stic_Justifications'] = array(
             'module' => 'stic_Justification_Conditions',
             'rname' => 'name',
             'required' => true,
+            'inline_edit' => 0,
         ),
         'stic_allocations_stic_justifications' => array(
             'name' => 'stic_allocations_stic_justifications',
@@ -167,6 +168,7 @@ $dictionary['stic_Justifications'] = array(
             'module' => 'stic_Allocations',
             'rname' => 'name',
             'required' => true,
+            'inline_edit' => 0,
         ),
         'opportunities_stic_justifications' => array(
             'name' => 'opportunities_stic_justifications',
@@ -202,6 +204,7 @@ $dictionary['stic_Justifications'] = array(
             'module' => 'Opportunities',
             'rname' => 'name',
             'required' => true,
+            'inline_edit' => 0,
         ),
         'ledger_group' => array(
             'name' => 'ledger_group',

@@ -38,6 +38,7 @@ switch (viewType()) {
     $("form").on("change", "#blocked", function () {
       checkBlockedJustification();
     });
+    disableProposalFieldsInEditView();
     break;
 
   case "detail":
@@ -58,6 +59,23 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+function disableProposalFieldsInEditView() {
+  // if not creating a new record
+  if ($("input[name='record']").val() !== "") {
+      $("#stic_justification_conditions_stic_justifications_name").prop('disabled', true);
+      $("#btn_stic_justification_conditions_stic_justifications_name").prop('disabled', true);
+      $("#btn_clr_stic_justification_conditions_stic_justifications_name").prop('disabled', true);
+
+      $("#opportunities_stic_justifications_name").prop('disabled', true);
+      $("#btn_opportunities_stic_justifications_name").prop('disabled', true);
+      $("#btn_clr_opportunities_stic_justifications_name").prop('disabled', true);
+
+      $("#stic_allocations_stic_justifications_name").prop('disabled', true);
+      $("#btn_stic_allocations_stic_justifications_name").prop('disabled', true);
+      $("#btn_clr_stic_allocations_stic_justifications_name").prop('disabled', true);
+  }
+}
+
 function checkBlockedJustification() {
   var blocked = $("#blocked").is(":checked");
   if (blocked) {
