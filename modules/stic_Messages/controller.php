@@ -182,6 +182,18 @@ class stic_MessagesController extends SugarController
 
         $id = $_REQUEST['recordId'];
         $bean = BeanFactory::getBean('stic_Messages', $id);
+        
+        // WhatsAppWeb messages cannot be retried
+        if ($bean->type === 'WhatsAppWeb') {
+            echo json_encode(array(
+                'success' => false, 
+                'title' => $mod_strings['LBL_ERROR'], 
+                'detail' => $mod_strings['LBL_WHATSAPP_WEB_RETRY'],
+                'id' => $id
+            ));
+            exit;
+        }
+        
         $bean->status = 'sent';
         $bean->save();
 
@@ -196,7 +208,8 @@ class stic_MessagesController extends SugarController
 
         $db = DBManagerFactory::getInstance();
         // only messages not sent and with direction outbound can be retried
-        $sql = "SELECT id,name,`type`,direction,phone,sender,message,status  FROM stic_messages WHERE deleted = 0 and status <> 'sent' and direction = 'outbound'";
+        // WhatsAppWeb messages are excluded from retry
+        $sql = "SELECT id,name,`type`,direction,phone,sender,message,status  FROM stic_messages WHERE deleted = 0 and status <> 'sent' and direction = 'outbound' and `type` <> 'WhatsAppWeb'";
         if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
             require_once 'include/export_utils.php';
             $retArray = generateSearchWhere('stic_Messages', $_REQUEST['current_query_by_page']);
@@ -227,8 +240,11 @@ class stic_MessagesController extends SugarController
 
         while ($row = $db->fetchByAssoc($result)) {
             $bean = BeanFactory::getBean('stic_Messages', $row['id']);
-            $bean->status = 'sent';
-            $bean->save();
+            // Double check to prevent WhatsAppWeb retry
+            if ($bean->type !== 'WhatsAppWeb') {
+                $bean->status = 'sent';
+                $bean->save();
+            }
         }
 
         SugarApplication::redirect("index.php?module=stic_Messages&action=index");
