@@ -30,20 +30,27 @@ class stic_Payment_CommitmentsUtils
         $originBean = BeanFactory::getBean('stic_Payment_Commitments', $originPCId);
         $linkName = 'stic_allocation_proposals';
         $originBean->load_relationship($linkName);
-        $proposalsIds = $originBean->$linkName->get(); 
+        // $proposalsIds = $originBean->$linkName->get(); 
+        $proposalsIds = $originBean->$linkName->get([
+            'where' => [
+                'lhs_field' => 'active',
+                'operator' => '=',
+                'rhs_value' => '1' // Els booleans a la DB solen ser '1'
+            ]
+        ]);
 
         self::copyProposals($targetPCBean, $proposalsIds);
     }
 
-public static function copyProposals($targetPCBean, $proposalsIds) {
-    $linkName = 'stic_allocation_proposals';
-    $targetPCBean->load_relationship($linkName);
-    foreach ($proposalsIds as $proposalId) {
-        $newProposalId = SticUtils::duplicateBeanRecord('stic_Allocation_Proposals', $proposalId, array());
-        $targetPCBean->$linkName->add($newProposalId);
+    public static function copyProposals($targetPCBean, $proposalsIds) {
+        $linkName = 'stic_allocation_proposals';
+        $targetPCBean->load_relationship($linkName);
+        foreach ($proposalsIds as $proposalId) {
+            $newProposalId = SticUtils::duplicateBeanRecord('stic_Allocation_Proposals', $proposalId, array());
+            $targetPCBean->$linkName->add($newProposalId);
+        }
+        return true;
     }
-    return true;
-}
 
     /**
      * Calculation of the annualized fee based on the amount and the periodicity of the payment commitment.
