@@ -83,7 +83,7 @@ class MyEmailsDashlet extends DashletGeneric
             $this->filters['assigned_user_id'] = $current_user->id;
         }
         // STIC-Custom 20260130 ART - Email dashlet does not display records
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/974
         // $this->filters['type'] = array("inbound");
         // $this->filters['status'] = array("unread");
         // END STIC-Custom
