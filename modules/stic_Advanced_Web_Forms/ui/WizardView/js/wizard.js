@@ -134,7 +134,7 @@ class WizardNavigation {
     // Step content
     if (!(step in WizardNavigation.cacheSteps)) {
       WizardNavigation.cacheSteps[step] = await (
-        await fetch(`modules/stic_Advanced_Web_Forms/custom_views/wizard/steps/step${step}.html`)
+        await fetch(`modules/stic_Advanced_Web_Forms/ui/WizardView/steps/step${step}.html`)
       ).text();
     }
     let $el = document.getElementById("wizard-step-container");
@@ -143,7 +143,7 @@ class WizardNavigation {
     // Debug options
     if (!(WizardNavigation.cacheDebug)) {
       WizardNavigation.cacheDebug = await (
-        await fetch(`modules/stic_Advanced_Web_Forms/custom_views/wizard/steps/debug.html`)
+        await fetch(`modules/stic_Advanced_Web_Forms/ui/WizardView/steps/debug.html`)
       ).text();
     }
     let $elDebug = document.getElementById("debug-container");

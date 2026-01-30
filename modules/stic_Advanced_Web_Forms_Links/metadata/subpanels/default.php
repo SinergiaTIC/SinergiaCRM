@@ -71,9 +71,5 @@ $subpanel_layout = array(
             'vname' => 'LBL_FLEX_RELATE',
             'width' => '30%',
         ),
-        'parent_id' => array(
-            'vname' => 'LBL_PARENT_ID',
-            'width' => '30%',
-        ),
     ),
 );

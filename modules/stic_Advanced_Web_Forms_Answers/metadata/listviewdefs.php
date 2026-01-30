@@ -44,12 +44,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $module_name = 'stic_Advanced_Web_Forms_Answers';
 $listViewDefs[$module_name] = array(
-    'NAME' => array(
-        'width' => '32',
-        'label' => 'LBL_NAME',
-        'default' => true,
-        'link' => true
-    ),
     'QUESTION_SORT_ORDER' => array(
         'width' => '10',
         'label' => 'LBL_QUESTION_SORT_ORDER',

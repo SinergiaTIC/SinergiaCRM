@@ -45,7 +45,7 @@ class DetailsNavigation {
     // Step content
     if (!(step in DetailsNavigation.cacheSteps)) {
       DetailsNavigation.cacheSteps[step] = await (
-        await fetch(`modules/stic_Advanced_Web_Forms/custom_views/details/steps/step${step}.html`)
+        await fetch(`modules/stic_Advanced_Web_Forms/ui/DetailView/steps/step${step}.html`)
       ).text();
     }
     let $el = document.getElementById("wizard-step-container");

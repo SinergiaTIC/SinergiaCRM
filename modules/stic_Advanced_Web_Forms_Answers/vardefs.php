@@ -37,7 +37,6 @@
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
-
 $dictionary['stic_Advanced_Web_Forms_Answers'] = array(
     'table' => 'stic_advanced_web_forms_answers',
     'audited' => false,

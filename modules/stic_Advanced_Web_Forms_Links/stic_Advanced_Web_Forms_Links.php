@@ -91,7 +91,8 @@ class stic_Advanced_Web_Forms_Links extends Basic
      */
     public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
     {
-        if ($view == 'edit' || $view == 'editview' || $view == 'save') {
+        $editViews = ['edit', 'editview', 'save'];
+        if (in_array(strtolower($view), $editViews)) {
             if ($this->is_automated_save) {
                 return true;
             }

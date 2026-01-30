@@ -57,14 +57,14 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         echo "<link rel='stylesheet' href='". getVersionedPath("SticInclude/vendor/quill/quill.snow.css"). "'>";
 
         // AWF 
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/config.js");
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/utils.js");
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/sticControls.js");
-        echo "<script src='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/js/sticTemplates.js"). "' defer></script>";
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/css/sticControls.css"). "'>";
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/js/stic_AwfClasses.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/js/utils.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/ui/Common/js/sticControls.js");
+        echo "<script src='". getVersionedPath("modules/stic_Advanced_Web_Forms/ui/Common/js/sticTemplates.js"). "' defer></script>";
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/ui/Common/css/sticControls.css"). "'>";
 
         // Wizard
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/wizard/js/wizard.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/ui/WizardView/js/wizard.js");
     }
 
     public function display()
@@ -119,7 +119,7 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         $beanArray['assigned_user_name'] = $this->bean->assigned_user_name;
         $this->ss->assign('beanJson', json_encode($beanArray));
 
-        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');
+        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/ui/WizardView/tpl/wizard.tpl');
     }
 
 }

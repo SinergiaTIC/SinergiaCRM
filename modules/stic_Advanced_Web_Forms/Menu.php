@@ -45,8 +45,47 @@
 global $mod_strings, $app_strings, $sugar_config;
  
 if(ACLController::checkAccess('stic_Advanced_Web_Forms', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Advanced_Web_Forms&action=EditView&return_module=stic_Advanced_Web_Forms&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Advanced_Web_Forms');
+    $module_menu[] = 
+    array(
+        'index.php?module=stic_Advanced_Web_Forms&action=EditView&return_module=stic_Advanced_Web_Forms&return_action=DetailView', 
+        $mod_strings['LNK_NEW_RECORD'], 
+        'Add', 
+        'stic_Advanced_Web_Forms'
+    );
 }
 if(ACLController::checkAccess('stic_Advanced_Web_Forms', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Advanced_Web_Forms&action=index&return_module=stic_Advanced_Web_Forms&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Advanced_Web_Forms');
+    $module_menu[] = 
+    array(
+        'index.php?module=stic_Advanced_Web_Forms&action=index&return_module=stic_Advanced_Web_Forms&return_action=DetailView', 
+        $mod_strings['LNK_LIST'],
+        'View', 
+        'stic_Advanced_Web_Forms'
+    );
+}
+if(ACLController::checkAccess('stic_Advanced_Web_Forms_Responses', 'list', true)){
+    $module_menu[] = 
+    array(
+        'index.php?module=stic_Advanced_Web_Forms_Responses&action=index&return_module=stic_Advanced_Web_Forms&return_action=index', 
+        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Responses'),
+        'View', 
+        'stic_Advanced_Web_Forms_Responses'
+    );
+}
+if(ACLController::checkAccess('stic_Advanced_Web_Forms_Answers', 'list', true)){
+    $module_menu[] = 
+    array(
+        'index.php?module=stic_Advanced_Web_Forms_Answers&action=index&return_module=stic_Advanced_Web_Forms&return_action=index', 
+        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Answers'),
+        'View', 
+        'stic_Advanced_Web_Forms_Answers'
+    );
+}
+if(ACLController::checkAccess('stic_Advanced_Web_Forms_Links', 'list', true)){
+    $module_menu[] = 
+    array(
+        'index.php?module=stic_Advanced_Web_Forms_Links&action=index&return_module=stic_Advanced_Web_Forms&return_action=index', 
+        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Links'),
+        'View', 
+        'stic_Advanced_Web_Forms_Links'
+    );
 }

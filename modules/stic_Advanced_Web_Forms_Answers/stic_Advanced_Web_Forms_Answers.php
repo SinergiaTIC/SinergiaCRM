@@ -68,6 +68,22 @@ class stic_Advanced_Web_Forms_Answers extends Basic
     public $question_help_text;
     public $answer_text;
 	
+
+    /**
+     * Disable "edit" 
+     * @param string $view
+     * @param string $is_owner
+     * @param string $in_group
+     */
+    public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
+    {
+        $editViews = ['edit', 'editview', 'save']; // 'delete'
+        if (in_array(strtolower($view), $editViews)) {
+            return false;
+        }
+        return parent::ACLAccess($view, $is_owner, $in_group);
+    }
+
     public function bean_implements($interface)
     {
         switch($interface)
@@ -75,7 +91,6 @@ class stic_Advanced_Web_Forms_Answers extends Basic
             case 'ACL':
                 return true;
         }
-
         return false;
     }
 	

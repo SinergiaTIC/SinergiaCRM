@@ -47,12 +47,12 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
         echo '<script src="' . getVersionedPath('SticInclude/vendor/alpine/alpine.min.js') . '" defer></script>';
 
         // AWF 
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/config.js");
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/utils.js");
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/css/sticControls.css"). "'>";
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/js/stic_AwfClasses.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/js/utils.js");
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/ui/Common/css/sticControls.css"). "'>";
 
         // Details
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/details/js/details.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/ui/DetailView/js/details.js");
     }
 
     public function display()
@@ -62,7 +62,7 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
         SticViews::display($this);
 
         // DetailView: Custom Details 
-        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/details/tpl/details.tpl');
+        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/ui/DetailView/tpl/details.tpl');
     }
 
 }
