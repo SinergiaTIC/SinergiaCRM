@@ -2522,6 +2522,19 @@ $dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array (
     'vname' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE',
   );
 
+// Assets Relationships
+$dictionary["Contact"]["fields"]["stic_assets_contacts"] = array (
+  'name' => 'stic_assets_contacts',
+  'type' => 'link',
+  'relationship' => 'stic_assets_contacts',
+  'source' => 'non-db',
+  'module' => 'stic_Assets',
+  'bean_name' => 'stic_Assets',
+  'side' => 'right',
+  'vname' => 'LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE',
+);
+
+
 // Modified properties in native fields
 $dictionary['Contact']['fields']['first_name']['massupdate'] = 0;
 $dictionary['Contact']['fields']['first_name']['merge_filter'] = 'selected';
