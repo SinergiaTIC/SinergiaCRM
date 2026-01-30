@@ -353,6 +353,18 @@ $listViewDefs['Documents'] = array (
     'width' => '10%',
     'default' => false,
   ),
+  'STIC_CATEGORY_ID' => 
+  array (
+    'width' => '10%',
+    'label' => 'LBL_STIC_CATEGORY',
+    'default' => false,
+  ),
+  'STIC_SUBCATEGORY_ID' => 
+  array (
+    'width' => '10%',
+    'label' => 'LBL_STIC_SUBCATEGORY',
+    'default' => false,
+  ),  
   'DESCRIPTION' => 
   array (
     'type' => 'text',

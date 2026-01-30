@@ -85,5 +85,27 @@ $popupMeta = array(
             ),
             'width' => '10%',
         ),
+        'certified_skill' => array(
+            'type' => 'bool',
+            'label' => 'LBL_CERTIFIED_SKILL',
+            'width' => '10%',
+            'default' => false,
+            'name' => 'certified_skill',
+        ),    
+        'evaluation_date' => array(
+            'type' => 'date',
+            'label' => 'LBL_EVALUATION_DATE',
+            'width' => '10%',
+            'default' => false,
+            'name' => 'evaluation_date',
+        ),
+        'evaluation_stage' => array(
+            'type' => 'enum',
+            'studio' => 'visible',
+            'label' => 'LBL_EVALUATION_STAGE',
+            'width' => '10%',
+            'default' => false,
+            'name' => 'evaluation_stage',
+        ),        
     ),
 );
