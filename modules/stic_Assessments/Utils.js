@@ -47,12 +47,18 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
 
-    // Depending on the type of assessment, add or remove validations in other fields
+    // Depending on the type and the moment of assessment, add or remove validations in other fields
     type = document.getElementById('type');
-    addValidateIfVolunteering(type.value);
+    moment = document.getElementById('moment');
+    addValidateIfVolunteering(type.value, moment.value);
+    
     type.addEventListener("change", function () {
         clear_all_errors();
-        addValidateIfVolunteering(type.value);
+        addValidateIfVolunteering(this.value, document.getElementById('moment').value);
+    });
+    moment.addEventListener("change", function () {
+        clear_all_errors();
+        addValidateIfVolunteering(document.getElementById('type').value, this.value);
     });
 
     // Set autofill mark beside field label
@@ -126,15 +132,31 @@ function checkContactOrFamily() {
 /**
  * Depending on the type of assessment, add or remove validations in other fields
  */
-function addValidateIfVolunteering(type) 
+function addValidateIfVolunteering(type, moment) 
 {
     if (type == 'volunteering') {
-      addToValidateCallback(getFormName(), "available_days", "multienum", true, SUGAR.language.get(module, "LBL_AVAILABLE_DAYS"));
-      addRequiredMark('available_days');     
-      addToValidateCallback(getFormName(), "available_time", "varchar", true, SUGAR.language.get(module, "LBL_AVAILABLE_TIME"));
-      addRequiredMark('available_time');
       addToValidateCallback(getFormName(), "project_stic_assessments_name", "varchar", true, SUGAR.language.get(module, "LBL_AVAILABLE_TIME"));
       addRequiredMark('project_stic_assessments_name');
+      
+      if (moment == 'initial') {
+        addToValidateCallback(getFormName(), "available_days", "multienum", true, SUGAR.language.get(module, "LBL_AVAILABLE_DAYS"));
+        addRequiredMark('available_days');     
+        addToValidateCallback(getFormName(), "available_time", "varchar", true, SUGAR.language.get(module, "LBL_AVAILABLE_TIME"));
+        addRequiredMark('available_time');
+      } else {
+        removeFromValidate('EditView', 'available_days');
+        removeRequiredMark('available_days');
+        removeFromValidate('EditView', 'available_time');
+        removeRequiredMark('available_time');
+      }
+
+      if (moment == 'closing') {
+        addToValidateCallback(getFormName(), "resignation_date", "date", true, SUGAR.language.get(module, "LBL_AVAILABLE_DAYS"));
+        addRequiredMark('resignation_date');     
+      } else {
+        removeFromValidate('EditView', 'resignation_date');
+        removeRequiredMark('resignation_date');
+      }
     } else {
       removeFromValidate('EditView', 'available_days');
       removeRequiredMark('available_days');
@@ -142,6 +164,8 @@ function addValidateIfVolunteering(type)
       removeRequiredMark('available_time');
       removeFromValidate('EditView', 'project_stic_assessments_name');
       removeRequiredMark('project_stic_assessments_name');
+      removeFromValidate('EditView', 'resignation_date');
+      removeRequiredMark('resignation_date');
     }
     return true;
 }
