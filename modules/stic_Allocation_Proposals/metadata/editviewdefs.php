@@ -40,8 +40,8 @@ $viewdefs['stic_Allocation_Proposals']['EditView'] = array(
                 'active'
             ),
             array(
-                'opportunities_stic_allocation_proposals_name',
                 'project_stic_allocation_proposals_name',
+                'opportunities_stic_allocation_proposals_name',
             ),
             array(
                 'stic_ledger_accounts_name',

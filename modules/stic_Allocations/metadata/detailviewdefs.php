@@ -67,8 +67,8 @@ $viewdefs['stic_Allocations']['DetailView'] = array(
                 'blocked',
             ),
             array(
-                'opportunities_stic_allocations_name',
                 'project_stic_allocations_name',
+                'opportunities_stic_allocations_name',
             ),
             array(
                 'stic_ledger_accounts_name',
