@@ -91,7 +91,6 @@ class stic_Payments extends Basic
         include_once 'modules/stic_Payments/Utils.php';
 
         global $current_language;
-        $paymentsModStrings = return_module_language($current_language, 'stic_Payments'); // can not be $mod_strings because of different contexts (specially inline edition)
 
         // Get payment commitment bean. Depending on the context (editview, subpanel, workflow, etc.)
         // stic_paymebfe2itments_ida will be an string that contains the id of the related payment

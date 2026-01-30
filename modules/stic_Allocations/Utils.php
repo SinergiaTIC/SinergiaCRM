@@ -88,7 +88,7 @@ class stic_AllocationsUtils {
     public static function updatePayment($paymentId) {
         // retrieve payment linked to the allocation
         $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
-        if ($paymentBean) {
+        if (!empty($paymentBean->id)) {
             require_once 'modules/stic_Payments/Utils.php';
             stic_PaymentsUtils::updateAllocationPercentage($paymentBean);
         }

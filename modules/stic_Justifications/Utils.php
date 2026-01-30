@@ -31,16 +31,16 @@ class stic_JustificationsUtils {
     public static function blockRelatedAllocation($justification) {
         // get related allocation
         $allocationBean = BeanFactory::getBean('stic_Allocations', $justification->stic_alloc8c71cations_ida);
-        if ($allocationBean) {
+        if (!empty($allocationBean->id)) {
             stic_AllocationsUtils::blockAllocation($allocationBean);
         }
     }
 
     public static function blockRelatedPayment($justification) {
         $allocationBean = BeanFactory::getBean('stic_Allocations', $justification->stic_alloc8c71cations_ida);
-        if ($allocationBean) {
+        if (!empty($allocationBean->id)) {
             $paymentBean = BeanFactory::getBean('stic_Payments', $allocationBean->stic_payments_stic_allocations);
-            if ($paymentBean) {
+            if (!empty($paymentBean->id)) {
                 stic_PaymentsUtils::blockPayment($paymentBean);
             }
         }
@@ -48,14 +48,14 @@ class stic_JustificationsUtils {
 
     public static function blockRelatedCondition($justification) {
         $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $justification->stic_justi13ccditions_ida);
-        if ($conditionBean) {
+        if (!empty($conditionBean->id)) {
             stic_Justification_ConditionsUtils::blockCondition($conditionBean);
         }
     }
 
     public static function updateRelatedOpportunity($opportunityId) {
         $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
-        if ($opportunity) {
+        if (!empty($opportunity->id)) {
             $db = DBManagerFactory::getInstance();
             $sql = "
                 SELECT sum(justified_amount) as amount
@@ -77,7 +77,7 @@ class stic_JustificationsUtils {
         // get related condition
         // $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $justification->stic_justi13ccditions_ida);
         $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $conditionId);
-        if ($conditionBean) {
+        if (!empty($conditionBean->id)) {
             $db = DBManagerFactory::getInstance();
             $sql = "
                 select sum(sj.justified_amount) as amount
@@ -104,7 +104,7 @@ class stic_JustificationsUtils {
         }
         foreach ($justificationBeans as $justificationBean) {
             $condition = BeanFactory::getBean('stic_Justification_Conditions', $justificationBean->stic_justi13ccditions_ida);
-            if (!self::conditionMet($condition, $allocation)) {
+            if (!empty($condition->id) &&!self::conditionMet($condition, $allocation)) {
                 // condition no longer met, delete justification
                 $justificationBean->mark_deleted($justificationBean->id);
             }
@@ -288,7 +288,7 @@ class stic_JustificationsUtils {
 
         while ($row = $db->fetchByAssoc($result)) {
             $condition = BeanFactory::getBean('stic_Justification_Conditions', $row['id']);
-            if ($condition) {
+            if (!empty($condition->id)) {
                 $conditions[] = $condition;
             }
         }

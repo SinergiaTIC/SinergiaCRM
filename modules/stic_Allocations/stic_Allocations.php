@@ -170,22 +170,22 @@ class stic_Allocations extends Basic
             
             // Add related payment name if available
             $paymentBean = BeanFactory::getBean('stic_Payments', $this->stic_payments_stic_allocations);
-            if ($paymentBean){
+            if (!empty($paymentBean->id)){
                 $nameParts[] = $paymentBean->name;
             }
 
             $opportunityBean = BeanFactory::getBean('Opportunities', $this->opportunities_stic_allocationsopportunities_ida);
-            if ($opportunityBean){
+            if (!empty($opportunityBean->id)){
                 $nameParts[] = $opportunityBean->name;
             }
 
             $projectBean = BeanFactory::getBean('Project', $this->project_stic_allocationsproject_ida);
-            if ($projectBean){
+            if (!empty($projectBean->id)){
                 $nameParts[] = $projectBean->name;
             }
 
             $ledgerAccountBean = BeanFactory::getBean('stic_Ledger_Accounts', $this->stic_ledger_accounts_ida);
-            if ($ledgerAccountBean){
+            if (!empty($ledgerAccountBean->id)){
                 $nameParts[] = $ledgerAccountBean->name;
             }
 

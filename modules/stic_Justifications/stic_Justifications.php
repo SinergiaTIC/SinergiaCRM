@@ -111,7 +111,7 @@ class stic_Justifications extends Basic
     {
         // get Allocation
         $allocation = BeanFactory::getBean('stic_Allocations', $this->stic_alloc8c71cations_ida);
-        if ($allocation) {
+        if (!empty($allocation->id)) {
             $this->name = $allocation->name;
         } else {
             $this->name = $this->date_entered;

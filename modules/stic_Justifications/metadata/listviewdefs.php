@@ -33,10 +33,10 @@ $listViewDefs['stic_Justifications'] = array(
         'label' => 'LBL_STATUS',
         'default' => true,
     ),
-    'stic_opportunities_stic_justifications_name' => array(
+    'opportunities_stic_justifications_name' => array(
         'width' => '20%',
         'label' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE',
-        'id' => 'STIC_OPPORTUNITIES_STIC_JUSTIFICATIONSOCCURRENCES_IDA',
+        'id' => 'OPPORTUNIT01EUNITIES_IDA',
         'module' => 'Opportunities',
         'default' => true,
     ),
