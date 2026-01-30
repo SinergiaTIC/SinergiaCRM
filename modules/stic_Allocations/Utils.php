@@ -205,10 +205,21 @@ class stic_AllocationsUtils {
         }
         // retrieve all allocation proposals linked to the payment commitment
         $allocationProposalBeans = array();
-        $linkName = 'stic_allocation_proposals';
-        if ($pcBean->load_relationship($linkName)) {
-            $allocationProposalBeans = $pcBean->$linkName->getBeans();
-        }
+    
+
+        $allocationProposalBeans = $pcBean->get_linked_beans(
+            'stic_allocation_proposals', // Nom de la relació
+            'Stic_Allocation_Proposal',   // Nom del mòdul relacionat
+            array(),                      // Ordre (ex: 'name ASC')
+            0,                            // Inici (offset)
+            -1,                           // Límit (-1 = tots)
+            0,                            // Deleted (0 = no eliminats)
+            "stic_allocation_proposals.active = 1" // El filtre SQL
+        );
+
+
+
+
         // validate all payment fields needed are filled
         foreach ($allocationProposalBeans as $allocationProposalBean) {
             if (empty($paymentBean->{$allocationProposalBean->payment_amount_field})) {
