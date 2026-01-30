@@ -82,8 +82,11 @@ class MyEmailsDashlet extends DashletGeneric
         if ($this->myItemsOnly) {
             $this->filters['assigned_user_id'] = $current_user->id;
         }
-        $this->filters['type'] = array("inbound");
-        $this->filters['status'] = array("unread");
+        // STIC-Custom 20260130 ART - Email dashlet does not display records
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // $this->filters['type'] = array("inbound");
+        // $this->filters['status'] = array("unread");
+        // END STIC-Custom
 
         $lvsParams = array();
         $lvsParams['custom_select'] = " ,emails_text.from_addr as from_addr ";
