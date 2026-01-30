@@ -36,7 +36,51 @@ switch (sticViewType) {
     $(document).ready(function() {
       setAutofill(["name"]);
       state = $('#status').val();
+      var messageType = $('#type').val();
+      
       addEditCreateTemplateLinks();
+      
+      // WhatsAppWeb messages are always sent and cannot be edited
+      if (messageType === 'WhatsAppWeb' && $('#EditView input[name="record"]').val()) {
+        // Disable all fields except parent relationship
+        $('#type').prop('disabled', true);
+        $('#type').attr('readonly', true);
+        $('#type').css('background', '#F8F8F8');
+        $('#type').css('border-color', '#E2E7EB');
+
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+        
+        $('#phone').prop('disabled', true);
+        $('#phone').attr('readonly', true);
+        $('#phone').css('background', '#F8F8F8');
+        $('#phone').css('border-color', '#E2E7EB');
+
+        $('#message').prop('disabled', true);
+        $('#message').attr('readonly', true);
+        $('#message').css('background', '#F8F8F8');
+        $('#message').css('border-color', '#E2E7EB');
+
+        $('#template_id').prop('disabled', true);
+        $('#template_id').attr('readonly', true);
+        $('#template_id').css('background', '#F8F8F8');
+        $('#template_id').css('border-color', '#E2E7EB');
+
+        $('#status').prop('disabled', true);
+        $('#status').attr('readonly', true);
+        $('#status').css('background', '#F8F8F8');
+        $('#status').css('border-color', '#E2E7EB');
+
+        $("#template_id_edit_link").addClass("ui-state-disabled");
+        $("#template_id_create_link").addClass("ui-state-disabled");
+
+        // Hide save button for WhatsAppWeb messages
+        $('#EditView input[type="submit"][name="button"]').hide();
+        
+      }
+      
       if ($('#EditView input[name="record"]').val()) {
         // Status can only be changed through actions
         $('#status').prop('disabled', true);
@@ -73,8 +117,28 @@ switch (sticViewType) {
 
         $("#template_id_edit_link").addClass("ui-state-disabled");
         $("#template_id_create_link").addClass("ui-state-disabled");
+      }
 
+      // When type changes to WhatsAppWeb, force status to 'sent'
+      $('#type').on('change', function() {
+        if ($(this).val() === 'WhatsAppWeb') {
+          $('#status').val('sent');
+          $('#status').prop('disabled', true);
+          $('#status').attr('readonly', true);
+          $('#status').css('background', '#F8F8F8');
+          $('#status').css('border-color', '#E2E7EB');
+        } else if (!$('#EditView input[name="record"]').val()) {
+          // Only enable status if it's a new message
+          $('#status').prop('disabled', false);
+          $('#status').attr('readonly', false);
+          $('#status').css('background', '');
+          $('#status').css('border-color', '');
+        }
+      });
 
+      // On page load, if type is WhatsAppWeb, force status to 'sent'
+      if ($('#type').val() === 'WhatsAppWeb') {
+        $('#status').val('sent');
       }
 
       if($("#mass_ids").val()) {
@@ -116,8 +180,10 @@ switch (sticViewType) {
   case "detail":
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
-    // Define button content
-    if ($("#status").val() != 'sent') {
+    var messageType = $("#type").val();
+    
+    // Define button content - Don't show retry button for WhatsAppWeb messages
+    if ($("#status").val() != 'sent' && messageType !== 'WhatsAppWeb') {
       var buttons = {
         retry: {
           id: "bt_retry_detailview",
@@ -207,7 +273,12 @@ function showMessageBox(title, detail, onOk = null, onCancel = null) {
 
 function onClickRetryMessagesButton(recordId) {
   var status = $("#status").val();
-  if(status === 'sent') {
+  var messageType = $("#type").val();
+  
+  if(messageType === 'WhatsAppWeb') {
+    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), 'Los mensajes de WhatsApp Web no se pueden reintentar. Ya fueron enviados mediante el cliente.');
+  }
+  else if(status === 'sent') {
     showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
   }
   else {
