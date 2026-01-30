@@ -46,43 +46,125 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 global $current_user, $app_strings;
 
+// STIC-Custom 20260130 ART - Email dashlet does not display records
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+// $dashletData['MyEmailsDashlet']['searchFields'] = array(
+//     'date_sent_received'  => array('default' => ''),
+//     'name'  => array('default' => ''),
+//     //'from_addr_name' => array('default' => ''),
+//     'assigned_user_id'   => array('default' => ''),
+//     'category_id'      => array('default' => ''),
+//     'status'      => array('default' => ''),
+//     'type'      => array('default' => ''),
+// );
+// $dashletData['MyEmailsDashlet']['columns'] = array(
+//     'from_addr' => array(
+//         'width'   => '15',
+//         'label'   => 'LBL_FROM',
+//         'default' => true
+//     ),
+//     'name' => array(
+//         'width'   => '40',
+//         'label'   => 'LBL_SUBJECT',
+//         'link'    => true,
+//         'default' => true
+//     ),
+//     'to_addrs_names' => array(
+//         'width'   => '15',
+//         'label'   => 'LBL_TO_ADDRS',
+//         'default' => false
+//     ),
+//     'assigned_user_name' => array(
+//         'width'   => '15',
+//         'label'   => 'LBL_LIST_ASSIGNED',
+//         'default' => false
+//     ),
+
+//     'date_sent_received' => array(
+//         'width'   => '15',
+//         'label'   => 'LBL_DATE_SENT_RECEIVED',
+//         'default' => true,
+//         'defaultOrderColumn' => array('sortOrder' => 'ASC')
+//     ),
+//     'date_entered' => array(
+//         'width'   => '15',
+//         'label'   => 'LBL_DATE_ENTERED'
+//     ),
+//     'date_modified' => array(
+//         'width'   => '15',
+//         'label'   => 'LBL_DATE_MODIFIED'
+//     ),
+//     'quick_reply' => array(
+//         'width'   => '15',
+//         'label'   => 'LNK_QUICK_REPLY',
+//         'sortable' => false,
+//         'default' => true
+//     ),
+
+//     'category_id' => array(
+//         'width' => '8',
+//         'label' => 'LBL_CATEGORY',
+//         'default' => true
+//     ),
+// );
+
 $dashletData['MyEmailsDashlet']['searchFields'] = array(
-                                                       'date_sent_received'  => array('default' => ''),
-                                                       'name'  => array('default' => ''),
-                                                       //'from_addr_name' => array('default' => ''),
-                                                       'assigned_user_id'   => array('default' => ''),
+    'date_sent_received'  => array('default' => ''),
+    'name'  => array('default' => ''),
+    //'from_addr_name' => array('default' => ''),
+    'assigned_user_id'   => array('default' => ''),
     'category_id'      => array('default' => ''),
-                                                       );
-$dashletData['MyEmailsDashlet']['columns'] = array(
-                                                   'from_addr' => array('width'   => '15',
-                                                                       'label'   => 'LBL_FROM',
-                                                                       'default' => true),
-                                                   'name' => array('width'   => '40',
-                                                                   'label'   => 'LBL_SUBJECT',
-                                                                   'link'    => true,
-                                                                   'default' => true),
-                                                   'to_addrs_names' => array('width'   => '15',
-                                                                         'label'   => 'LBL_TO_ADDRS',
-                                                                         'default' => false),
-                                                   'assigned_user_name' => array('width'   => '15',
-                                                                         'label'   => 'LBL_LIST_ASSIGNED',
-                                                                         'default' => false),
-
-                                                   'date_sent_received' => array('width'   => '15',
-                                                                         'label'   => 'LBL_DATE_SENT_RECEIVED',
-                                                                         'default' => true,
-                                                                         'defaultOrderColumn' => array('sortOrder' => 'ASC')
-                                                                         ),
-                                                  'date_entered' => array('width'   => '15',
-                                                                          'label'   => 'LBL_DATE_ENTERED'),
-                                                  'date_modified' => array('width'   => '15',
-                                                                           'label'   => 'LBL_DATE_MODIFIED'),
-                                                  'quick_reply' => array('width'   => '15',
-                                                                        'label'   => 'LNK_QUICK_REPLY',
-                                                                        'sortable' => false,
-                                                                        'default' => true),
-
-    'category_id' => array('width' => '8',
-        'label' => 'LBL_CATEGORY',
-        'default' => true),
+    'status'      => array('default' => ''),
+    'type'      => array('default' => ''),
 );
+$dashletData['MyEmailsDashlet']['columns'] = array(
+    'from_addr' => array(
+        'width'   => '15',
+        'label'   => 'LBL_FROM',
+        'default' => true
+    ),
+    'name' => array(
+        'width'   => '40',
+        'label'   => 'LBL_SUBJECT',
+        'link'    => true,
+        'default' => true
+    ),
+    'to_addrs_names' => array(
+        'width'   => '15',
+        'label'   => 'LBL_TO_ADDRS',
+        'default' => false
+    ),
+    'assigned_user_name' => array(
+        'width'   => '15',
+        'label'   => 'LBL_LIST_ASSIGNED',
+        'default' => false
+    ),
+
+    'date_sent_received' => array(
+        'width'   => '15',
+        'label'   => 'LBL_DATE_SENT_RECEIVED',
+        'default' => true,
+        'defaultOrderColumn' => array('sortOrder' => 'ASC')
+    ),
+    'date_entered' => array(
+        'width'   => '15',
+        'label'   => 'LBL_DATE_ENTERED'
+    ),
+    'date_modified' => array(
+        'width'   => '15',
+        'label'   => 'LBL_DATE_MODIFIED'
+    ),
+    'quick_reply' => array(
+        'width'   => '15',
+        'label'   => 'LNK_QUICK_REPLY',
+        'sortable' => false,
+        'default' => true
+    ),
+
+    'category_id' => array(
+        'width' => '8',
+        'label' => 'LBL_CATEGORY',
+        'default' => true
+    ),
+);
+// END STIC-Custom
