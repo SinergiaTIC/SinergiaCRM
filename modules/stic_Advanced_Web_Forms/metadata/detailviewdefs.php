@@ -52,6 +52,16 @@ $viewdefs [$module_name] = array (
         ),
         2 => array (
           0 => array (
+            'name' => 'start_date',
+            'label' => 'LBL_START_DATE',
+          ),
+          1 => array (
+            'name' => 'end_date',
+            'label' => 'LBL_END_DATE',
+          ),
+        ),        
+        3 => array (
+          0 => array (
             'name' => 'analytics_views',
             'label' => 'LBL_ANALYTICS_VIEWS',
           ),
@@ -60,7 +70,7 @@ $viewdefs [$module_name] = array (
             'label' => 'LBL_ANALYTICS_BLOCKED',
           ),
         ),
-        3 => array (
+        4 => array (
           0 => array (
             'name' => 'analytics_submissions',
             'label' => 'LBL_ANALYTICS_SUBMISSIONS',
@@ -70,13 +80,13 @@ $viewdefs [$module_name] = array (
             'label' => 'LBL_ANALYTICS_SPAM',
           ),
         ),
-        4 => array (
+        5 => array (
           0 => array (
             'name' => 'analytics_referrers',
             'label' => 'LBL_ANALYTICS_REFERRERS',
           ),
         ),
-        5 => array (
+        6 => array (
           0 => 'description',
         ),
       ),

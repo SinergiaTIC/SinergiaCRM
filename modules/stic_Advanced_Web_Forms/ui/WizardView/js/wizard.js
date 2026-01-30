@@ -326,9 +326,11 @@ class WizardStep2 {
               this._dataBlockRelationships = null;
             },
             usedDatablockRelationships(datablockId) {
+              if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
               return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig != '' && r.datablock_dest != '');
             },
             unusedDatablockRelationships(datablockId) {
+              if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
               return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
             },
             addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText) {

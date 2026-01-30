@@ -55,6 +55,16 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_STATUS',
         'default' => true,
     ),
+    'START_DATE' => array(
+        'width' => '10',
+        'label' => 'LBL_START_DATE',
+        'default' => true,
+    ),
+    'END_DATE' => array(
+        'width' => '10',
+        'label' => 'LBL_END_DATE',
+        'default' => true,
+    ),    
     'PUBLIC_URL' => array(
         'width' => '30',
         'label' => 'LBL_PUBLIC_URL',

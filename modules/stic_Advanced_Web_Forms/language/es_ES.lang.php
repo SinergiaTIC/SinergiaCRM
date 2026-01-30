@@ -82,6 +82,8 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
   'LBL_STATUS' => 'Estado',
+  'LBL_START_DATE' => 'Fecha de inicio',
+  'LBL_END_DATE' => 'Fecha de fin',
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Modo de procesamiento',
   'LBL_PROCESSING_MODE_DESC' => 'El modo de procesamiento define cómo se gestionan las respuestas recibidas al formulario. En el modo síncrono, cada respuesta se procresa al recibirse. En el modo asíncrono, las respuestas se almacenan temporalmente y se procesan posteriormente mediante un proceso en segundo plano (cron).',

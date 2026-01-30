@@ -19,7 +19,19 @@
                 </button>
             </div>
         </div>
-
+        <div class="row">
+            <!-- Start date -->
+            <div class="col-6">
+                <label for="form_start_date" class="form-label" x-text="utils.translateForFieldLabel('LBL_START_DATE')"></label>
+                <input type="datetime-local" class="form-control" id="form_start_date" x-model="bean.start_date">
+            </div>
+            <!-- End date -->
+            <div class="col-6">
+                <label for="form_end_date" class="form-label" x-text="utils.translateForFieldLabel('LBL_END_DATE')"></label>
+                <input type="datetime-local" class="form-control" id="form_end_date" x-model="bean.end_date">
+            </div>
+        </div>
+        </div>
 
         <!-- Publish Form -->
         <div class="card p-2 mt-4" x-data="{ formPublishTabSelected:'link' }">

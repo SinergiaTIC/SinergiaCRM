@@ -470,6 +470,10 @@ class stic_AwfField {
 
     let base_subtypes = stic_AwfField.subtype_in_formList().filter(s => s.id == this.type_in_form || s.id.startsWith(this.type_in_form + '_'));
 
+    if (this.type_field == 'unlinked') {
+      return base_subtypes;
+    }
+
     if (base_subtypes.length <= 1) {
       return base_subtypes;
     }
@@ -478,13 +482,6 @@ class stic_AwfField {
     if (this.isSelectCustomOptions()) {
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
-      
-      if (this.type_field == 'unlinked') {
-        list.push(base_subtypes.find(s => s.id == "select_checkbox"));
-        list.push(base_subtypes.find(s => s.id == "select_switch"));
-        list.push(base_subtypes.find(s => s.id == "select_multiple"));
-        list.push(base_subtypes.find(s => s.id == "select_checkbox_list"));
-      }
       return list
     }
     if (this.type == "phone") {
