@@ -88,9 +88,6 @@ class stic_Assessments extends Basic
                     $contactBean->save();
                 }
 
-                $userTimezone = $current_user->getPreference('timezone');
-                $userDateNow = ($timedate->fromUser($timedate->now(), $current_user))->setTimezone(new DateTimeZone($userTimezone));
-
                 // If the assessment is volunteering, completed and closing
                 if ((!empty($this->status) && $this->status == 'completed') && 
                     (!empty($this->moment) && $this->moment == 'closing'))                 
@@ -110,12 +107,16 @@ class stic_Assessments extends Basic
                         // Deactivate the relationship if it has the same project as the assessment
                         if ($contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $this->project_stic_assessmentsproject_ida) 
                         {
-                            $contactRelationshipBean->end_date = $userDateNow->format('Y-m-d');
+                            $contactRelationshipBean->end_date = $this->resignation_date;
                             $contactRelationshipBean->active = false;
                             $contactRelationshipBean->save();
                         }
                     }
                 } else {
+
+                    $userTimezone = $current_user->getPreference('timezone');
+                    $userDateNow = ($timedate->fromUser($timedate->now(), $current_user))->setTimezone(new DateTimeZone($userTimezone));
+
                     // If the assessment is volunteering, completed and initial
                     if ((!empty($this->status) && $this->status == 'completed') && 
                         (!empty($this->moment) && $this->moment == 'initial')) 
