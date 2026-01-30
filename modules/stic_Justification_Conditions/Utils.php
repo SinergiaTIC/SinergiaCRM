@@ -46,4 +46,9 @@ class stic_Justification_ConditionsUtils {
             stic_JustificationsUtils::createNewJustificationsFromJustificationCondition($condition);
         }
     }
+
+    public static function blockCondition($condition) {
+        $condition->blocked = true;
+        $condition->save();
+    }
 }

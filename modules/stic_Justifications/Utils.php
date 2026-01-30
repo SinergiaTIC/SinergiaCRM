@@ -23,6 +23,8 @@
 
 require_once 'SticInclude/Utils.php';
 require_once 'modules/stic_Payments/Utils.php';
+require_once 'modules/stic_Allocations/Utils.php';
+require_once 'modules/stic_Justification_Conditions/Utils.php';
 
 class stic_JustificationsUtils {
 
@@ -42,7 +44,13 @@ class stic_JustificationsUtils {
                 stic_PaymentsUtils::blockPayment($paymentBean);
             }
         }
+    }
 
+    public static function blockRelatedCondition($justification) {
+        $conditionBean = BeanFactory::getBean('stic_Justification_Conditions', $justification->stic_justi13ccditions_ida);
+        if ($conditionBean) {
+            stic_Justification_ConditionsUtils::blockCondition($conditionBean);
+        }
     }
 
     public static function updateRelatedOpportunity($opportunityId) {
