@@ -38,6 +38,7 @@ switch (viewType()) {
 
   case "detail":
     checkBlockedJustificationInDetailView();
+    checkAmountAndPercentage();
     break;
 
   case "list":
@@ -74,4 +75,73 @@ function checkBlockedJustificationInDetailView() {
 function blockDblClick(event) {
   event.stopPropagation();
   event.preventDefault(); 
+}
+
+function checkAmountAndPercentage() {
+  debugger;
+  var maxAmount = parseSmartDecimal($("[field='max_allocable_amount_grant']").text());
+  var justifiedAmount = parseSmartDecimal($("[field='justified_amount']").text());
+  var percentage = parseSmartDecimal($("[field='justified_percentage']").text());
+
+  if (justifiedAmount > maxAmount) {
+    $("[field='max_allocable_amount_grant']").css("color", "red");
+    var iconUrl = "https://cdn-icons-png.flaticon.com/512/3253/3253156.png";
+
+    // Create the image HTML with inline styles for size and spacing
+    var iconHtml = '<img src="' + iconUrl + '" style="width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" />';
+
+    // Append it to the span
+    $('#max_allocable_amount_grant').prepend(iconHtml);
+
+  }
+
+  if (percentage > 100) {
+    $("[field='justified_percentage']").css("color", "red");
+    var iconUrl = "https://cdn-icons-png.flaticon.com/512/3253/3253156.png";
+
+    // Create the image HTML with inline styles for size and spacing
+    var iconHtml = '<img src="' + iconUrl + '" style="width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" />';
+
+    // Append it to the span
+    $('#justified_percentage').prepend(iconHtml);
+
+  }
+}
+
+function parseSmartDecimal(text) {
+    // Netegem espais i agafem el text
+    let val = text.trim();
+    
+    if (!val) return 0;
+
+    // Mirem quin és l'últim separador (sigui punt o coma)
+    const lastComma = val.lastIndexOf(',');
+    const lastDot = val.lastIndexOf('.');
+    
+    // CAS 1: Format Europeu (1.000,00) -> La coma està al final
+    if (lastComma > lastDot) {
+        // Eliminem el punt de milers i canviem coma per punt
+        val = val.replace(/\./g, '').replace(',', '.');
+    } 
+    // CAS 2: Format Americà (1,000.00) -> El punt està al final
+    else if (lastDot > lastComma) {
+        // Mirem si el punt separa 3 dígits (seria milers en format EUR: 1.000)
+        // o si separa 2 dígits (seria decimal en format USA: 1.00)
+        const digitsAfterDot = val.length - lastDot - 1;
+        
+        if (digitsAfterDot === 2) {
+            // Clarament americà amb 2 decimals: eliminem la coma de milers
+            val = val.replace(/,/g, '');
+        } else {
+            // Sembla format europeu sense decimals (ex: 1.000)
+            // L'interpretem com a miler
+            val = val.replace(/\./g, '');
+        }
+    }
+    // CAS 3: No hi ha separadors
+    else {
+        // Ja és un número net o no té decimals
+    }
+
+    return parseFloat(val) || 0;
 }
