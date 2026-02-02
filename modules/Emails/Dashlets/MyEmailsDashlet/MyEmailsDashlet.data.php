@@ -46,8 +46,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 global $current_user, $app_strings;
 
-// STIC-Custom 20260130 ART - Email dashlet does not display records
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/974
+// STIC-Custom 20260130 ART - Add filters to the Email Dashlet
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/976
 // $dashletData['MyEmailsDashlet']['searchFields'] = array(
 //     'date_sent_received'  => array('default' => ''),
 //     'name'  => array('default' => ''),
