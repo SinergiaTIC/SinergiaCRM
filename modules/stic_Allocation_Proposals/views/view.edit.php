@@ -47,6 +47,26 @@ class stic_Allocation_ProposalsViewEdit extends ViewEdit
         SticViews::display($this);
 
         // Custom JavaScript includes
+        $this->echoExistingAllocationsScript();
         echo getVersionedScript("modules/stic_Allocation_Proposals/Utils.js");
     }
+
+
+    protected function checkExistingAllocations() {
+        $linkName = 'stic_allocation_proposals_stic_allocations';
+        if (isset($this->bean->$linkName)) {
+            $this->bean->load_relationship($linkName);
+            $relatedBeans = $this->bean->$linkName->get();
+            if (count($relatedBeans) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function echoExistingAllocationsScript() {
+        $hasAllocations = $this->checkExistingAllocations() ? 'true' : 'false';
+        echo "<script type='text/javascript'>function hasExistingAllocations() {return {$hasAllocations};} </script>";
+    }   
+
 }

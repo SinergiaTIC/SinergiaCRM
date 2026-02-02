@@ -32,6 +32,7 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
     setAutofill(["name"]);
+    blockRelatedInEditView();
     break;
 
   case "detail":
@@ -76,3 +77,21 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+function blockRelatedInEditView() {
+  $(document).ready(function() {
+    if (hasExistingAllocations()) {
+      $("#stic_payment_commitments_name").prop('disabled', true);
+      $("#btn_stic_payment_commitments_name").prop('disabled', true);
+      $("#btn_clr_stic_payment_commitments_name").prop('disabled', true);
+
+      $("#project_stic_allocation_proposals_name").prop('disabled', true);
+      $("#btn_project_stic_allocation_proposals_name").prop('disabled', true);
+      $("#btn_clr_project_stic_allocation_proposals_name").prop('disabled', true);
+
+      $("#opportunities_stic_allocation_proposals_name").prop('disabled', true);
+      $("#btn_opportunities_stic_allocation_proposals_name").prop('disabled', true);
+      $("#btn_clr_opportunities_stic_allocation_proposals_name").prop('disabled', true);
+
+
+    }
+  });}
