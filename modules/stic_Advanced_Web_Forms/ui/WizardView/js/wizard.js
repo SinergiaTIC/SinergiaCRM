@@ -16,6 +16,32 @@ function wizardForm() {
     bean: STIC.record || {},
     formConfig: {},
     init() {
+      const toIso = (dateStr) => {
+        if (!dateStr) return '';
+        
+        // If it already comes in ISO format (YYYY-...), we just fix the space
+        if (dateStr.match(/^\d{4}-\d{2}-\d{2}/)) {
+          return dateStr.replace(' ', 'T').substring(0, 16);
+        }
+            
+        // If it comes in European format (DD/MM/YYYY HH:MM): Day(1) / Month(2) / Year(3) Space_or_T Time(4)
+        const parts = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[\sT](\d{1,2}:\d{2})/);
+        if (parts) {
+          // Rebuild: YYYY-MM-DDTHH:MM
+          return `${parts[3]}-${parts[2].padStart(2,'0')}-${parts[1].padStart(2,'0')}T${parts[4]}`;
+        }
+            
+        return dateStr;
+      };
+
+      // Convert date format in bean to html format
+      if (this.bean && this.bean.start_date) {
+        this.bean.start_date = toIso(this.bean.start_date);
+      }
+      if (this.bean && this.bean.end_date) {
+        this.bean.end_date = toIso(this.bean.end_date);
+      }
+
       this.$watch('bean.processing_mode', (newMode, oldMode) => {
         this.formConfig.prepareProcessingMode(newMode);
       });
@@ -2222,6 +2248,7 @@ class WizardStep5 {
       
       tab: 'link', // Active tab
       generatedHtml: utils.translate('LBL_CODE_GENERATING'),
+      get isPublic() { return this.bean.status=='public'; }, 
       
       get publicUrl() {
         const baseUrl = window.location.origin + window.location.pathname;

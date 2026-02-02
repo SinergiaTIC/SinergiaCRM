@@ -1,7 +1,7 @@
 <!-- Main Panel -->
 <main x-data="WizardStep5.mainStep5xData();">
-    <div class="container mt-5" style="max-width: 900px;">
-        <div class="row">
+    <div class="container" style="max-width: 900px;">
+        <div class="row mt-5">
             <!-- Status -->
             <div class="col-6">
                 <label for="form_status" class="form-label" x-text="utils.translateForFieldLabel('LBL_STATUS')"></label>
@@ -19,22 +19,21 @@
                 </button>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-5">
             <!-- Start date -->
             <div class="col-6">
                 <label for="form_start_date" class="form-label" x-text="utils.translateForFieldLabel('LBL_START_DATE')"></label>
-                <input type="datetime-local" class="form-control" id="form_start_date" x-model="bean.start_date">
+                <input type="datetime-local" class="form-control" id="form_start_date" x-model="bean.start_date" x-bind:disabled="!isPublic">
             </div>
             <!-- End date -->
             <div class="col-6">
                 <label for="form_end_date" class="form-label" x-text="utils.translateForFieldLabel('LBL_END_DATE')"></label>
-                <input type="datetime-local" class="form-control" id="form_end_date" x-model="bean.end_date">
+                <input type="datetime-local" class="form-control" id="form_end_date" x-model="bean.end_date" x-bind:disabled="!isPublic">
             </div>
-        </div>
         </div>
 
         <!-- Publish Form -->
-        <div class="card p-2 mt-4" x-data="{ formPublishTabSelected:'link' }">
+        <div class="card p-2 mt-5" x-data="{ formPublishTabSelected:'link' }">
             <div class="card-header" >
                 <h3 x-text="utils.translate('LBL_FORM_PUBLISH_OPTIONS')"></h3>
             </div>

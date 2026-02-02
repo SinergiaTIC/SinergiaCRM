@@ -45,32 +45,56 @@ if (empty($id)) {
 $db = DBManagerFactory::getInstance();
 $safeId = $db->quote($id);
 
-// Obtenemos el estado del formulario
-$status = $db->getOne("SELECT status FROM stic_advanced_web_forms WHERE id = '$safeId' AND deleted = 0");
-$isActive = ($status === 'public');
+// Get the status and dates
+$query = "SELECT status, start_date, end_date 
+            FROM stic_advanced_web_forms 
+            WHERE id = '$safeId' AND deleted = 0";
+$result = $db->query($query);
+$row = $db->fetchByAssoc($result);
 
-// Actualizamos los contadores de estadísticas de acceso al formulario
+$isActive = false;
+if ($row) {
+    $status = $row['status'];
+    $startDate = $row['start_date'];
+    $endDate = $row['end_date'];
+    
+    // Get the current time in UTC (DB format) for comparison
+    $now = gmdate('Y-m-d H:i:s');
+
+    // Validation logic
+    if ($status === 'public') {
+        $isActive = true;
+        if (!empty($startDate) && $startDate > $now) {
+            $isActive = false;
+        }
+        if (!empty($endDate) && $endDate < $now) {
+            $isActive = false;
+        }
+    }
+}
+
+// Update the form access statistics counters
 if ($status) {
-    // Contador de visitas
+    // Visitor counter
     if ($isActive) {
         $db->query("UPDATE stic_advanced_web_forms SET analytics_views = analytics_views + 1 WHERE id = '$safeId'");
     } else {
         $db->query("UPDATE stic_advanced_web_forms SET analytics_blocked = analytics_blocked + 1 WHERE id = '$safeId'");
     }
 
-    // Registro del referer (dominio)
+    // Referrer registration (domain)
     $referer = $_SERVER['HTTP_REFERER'] ?? '';
     if (!empty($referer)) {
         $parts = parse_url($referer);
         $host = $parts['host'] ?? '';
         $path = $parts['path'] ?? '';
 
-        // Construimos la URL limpia: Dominio + Ruta (sin https:// ni parámetros)
+        // Build the clean URL: Domain + Path (without https:// or parameters)
         $cleanUrl = $host . $path;
         $cleanUrl = substr($cleanUrl, 0, 200); 
         $safeUrl = $db->quote($cleanUrl);
 
-        // CONCAT_WS añade un separador automáticamente
+        // CONCAT_WS automatically adds a separator
         $queryRef = "UPDATE stic_advanced_web_forms 
                         SET analytics_referrers = CONCAT_WS('\n', analytics_referrers, '$safeUrl')
                         WHERE id = '$safeId' 

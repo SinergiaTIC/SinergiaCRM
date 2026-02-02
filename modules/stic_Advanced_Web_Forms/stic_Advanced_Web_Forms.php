@@ -46,6 +46,8 @@ class stic_Advanced_Web_Forms extends Basic
     public $assigned_user_link;
     public $SecurityGroups;
     public $status;
+    public $start_date;
+    public $end_date;
     public $public_url;
     public $processing_mode;
     public $configuration;

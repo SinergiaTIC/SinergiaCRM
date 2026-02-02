@@ -284,5 +284,16 @@ class utils {
       return str;
     }
   }
+
+  /**
+   * Helper function to get "Now" in local YYYY-MM-DDTHH:MM format
+   * @returns string 
+   */
+  static getNowString() {
+    const now = new Date();
+    
+    const local = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+    return local.toISOString().slice(0, 16);
+  }
   
 }

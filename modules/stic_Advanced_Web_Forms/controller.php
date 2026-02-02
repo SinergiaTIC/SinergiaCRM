@@ -40,11 +40,19 @@ class stic_Advanced_Web_FormsController extends SugarController
         // Update all fields in vardef
         foreach ($bean->field_defs as $fieldName => $def) {
             if (isset($data['bean'][$fieldName])) {
-                // Except critical fields
+                // Skip protected fields
                 if (in_array($fieldName, ['id','date_entered','date_modified','deleted'])) {
                     continue;
                 }
-                $bean->$fieldName = $data['bean'][$fieldName];
+                $value = $data['bean'][$fieldName];
+                if (($fieldName === 'start_date' || $fieldName === 'end_date') && !empty($value)) {
+                    // Convert the frontend format to DB: 2026-02-28T14:30 -> 2026-02-28 14:30:00
+                    $value = str_replace('T', ' ', $value);
+                    if (strlen($value) === 16) { // YYYY-MM-DD HH:MM
+                        $value .= ':00';
+                    }
+                }
+                $bean->$fieldName = $value;
             }
         }
 
