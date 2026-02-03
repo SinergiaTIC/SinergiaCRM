@@ -106,7 +106,7 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
             }
 
             // Consulta AJAX
-            fetch('index.php?entryPoint=stic_AWF_CheckSession&id={$formId}')
+            fetch('index.php?entryPoint=stic_AWF_checkSession&id={$formId}')
                 .then(r => r.json())
                 .then(data => {
                     const loader = document.getElementById('awf-session-loader');
