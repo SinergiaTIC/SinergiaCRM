@@ -58,7 +58,7 @@ $mod_strings = array(
     'LBL_SUBGROUP' => 'Subgroup',
     'LBL_ACCOUNT' => 'Account',
     'LBL_SUBACCOUNT' => 'Subaccount',
-    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'The justification is in "Submitted" status and cannot be modified.',
-    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_DELETED' => 'The justification is in "Submitted" status and cannot be deleted.',
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_MODIFIED' => 'The justification is blocked status and cannot be modified.',
+    'LBL_BLOCKED_JUSTIFICATION_CANNOT_BE_DELETED' => 'The justification is blocked status and cannot be deleted.',
 );
 ?>

@@ -152,7 +152,9 @@ class stic_Allocation_Proposals extends Basic
             echo "<script>alert($jsMsg);</script>";
             echo "<script>location.reload();</script>";
             // 4. Stop execution
-            exit();
+            if (($_REQUEST['current_module'] ?? '') === 'stic_Allocation_Proposals') {
+                exit();
+            }
         }
 
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings[$labelId] . '</div>');

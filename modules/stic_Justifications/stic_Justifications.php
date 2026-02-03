@@ -144,16 +144,11 @@ class stic_Justifications extends Basic
             echo "<script>alert($jsMsg);</script>";
             echo "<script>location.reload();</script>";
             // 4. Stop execution
-            exit();
+            if (($_REQUEST['current_module'] ?? '') === 'stic_Justifications') {
+                exit();
+            }
         }
-        // TODOEPS: Hi havia un cas en que era necessari aquesta part
-        // if (!empty($_REQUEST['relate_to'])) {
-        //     $errorMsg = $allocationsModStrings[$labelId];
-        //     $jsMsg = json_encode($errorMsg);
-        //     // 2. Output a script to alert the user
-        //     echo "<script>alert($jsMsg);</script>";
-        //     exit();
-        // }
+
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $justificationsModStrings[$labelId] . '</div>');
     }
 }
