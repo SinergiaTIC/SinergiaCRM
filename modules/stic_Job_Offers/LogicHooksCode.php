@@ -31,4 +31,71 @@ class stic_Job_OffersLogicHooks
             stic_Incorpora_LocationsUtils::transferLocationData($bean);
         }
     }
+    
+
+    /**
+     * Calculate Job Applications Counts
+     * 
+     * @param SugarBean $bean The stic_Job_Offers bean
+     * @param string $event The hook event
+     * @param array $arguments Additional arguments
+     */
+    public function after_retrieve(&$bean, $event, $arguments)
+    {
+        if (empty($bean->id)) {
+            return;
+        }
+
+        global $db;
+
+        // Initialize counts to zero
+        $bean->stic_job_applications_count_total = 0;
+        $statuses = array(
+            'expected_presentation',
+            'presented',
+            'pending_interview',
+            'interviewed',
+            'accepted',
+            'rejected_closed',
+            'review'
+        );
+        
+        foreach ($statuses as $status) {
+            $fieldName = 'stic_job_applications_count_' . $status;
+            $bean->$fieldName = 0;
+        }
+
+        // Query to count applications by status
+        $query = "SELECT 
+                    ja.status,
+                    COUNT(*) as total
+                  FROM stic_job_applications_stic_job_offers_c rel
+                  INNER JOIN stic_job_applications ja ON rel.stic_job_applications_stic_job_offersstic_job_applications_idb = ja.id
+                  WHERE rel.stic_job_applications_stic_job_offersstic_job_offers_ida = " . $db->quoted($bean->id) . "
+                  AND rel.deleted = 0
+                  AND ja.deleted = 0
+                  GROUP BY ja.status";
+        
+        $result = $db->query($query);
+        
+        // Process the results
+        $totalCount = 0;
+        while ($row = $db->fetchByAssoc($result)) {
+            $status = $row['status'];
+            $count = (int)$row['total'];
+            
+            // Accumulate the total
+            $totalCount += $count;
+            
+            // Assign the count to the corresponding field
+            if (!empty($status)) {
+                $fieldName = 'stic_job_applications_count_' . $status;
+                $bean->$fieldName = $count;
+            }
+        }
+        
+        // Assign the total
+        $bean->stic_job_applications_count_total = $totalCount;
+    }
+    
 }

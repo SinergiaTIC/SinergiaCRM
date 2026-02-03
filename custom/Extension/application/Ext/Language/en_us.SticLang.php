@@ -1182,6 +1182,7 @@ $app_list_strings['stic_job_offers_status_list']['closed_covered'] = 'Closed (co
 $app_list_strings['stic_job_offers_status_list']['closed_partially_covered'] = 'Closed (partially covered)';
 $app_list_strings['stic_job_offers_status_list']['closed_not_covered'] = 'Closed (not covered)';
 $app_list_strings['stic_job_offers_status_list']['reopened'] = 'Reopened';
+$app_list_strings['stic_job_offers_status_list']['review'] = 'Under review';
 
 // Job offers: Origins
 $app_list_strings['stic_job_offer_origin_list'][''] = '';
@@ -1199,6 +1200,7 @@ $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'P
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Interviewed';
 $app_list_strings['stic_job_applications_status_list']['accepted'] = 'Accepted';
 $app_list_strings['stic_job_applications_status_list']['rejected_closed'] = 'Rejected or closed';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'Under review';
 
 // Job applications: Rejection reasons
 $app_list_strings['stic_job_applications_rejection_reasons_list'][''] = '';

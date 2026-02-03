@@ -28,3 +28,5 @@ if (! isset($hook_array) || ! is_array($hook_array)) {
 $hook_version = 1;
 
 $hook_array['before_save'][] = Array(100, 'before_save', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'before_save');
+// Calculated Fields for Job Applications
+$hook_array['after_retrieve'][] = Array(100, 'after_retrieve', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_retrieve');
