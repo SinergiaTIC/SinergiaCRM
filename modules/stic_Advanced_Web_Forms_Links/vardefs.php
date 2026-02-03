@@ -258,9 +258,6 @@ if (!class_exists('VardefManager')) {
 
 VardefManager::createVardef('stic_Advanced_Web_Forms_Links', 'stic_Advanced_Web_Forms_Links', array('basic','assignable','security_groups'));
 
-// Set special values for SuiteCRM base fields
-$dictionary['stic_Advanced_Web_Forms_Links']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
-
 $dictionary['stic_Advanced_Web_Forms_Links']['fields']['name']['massupdate'] = false;
 $dictionary['stic_Advanced_Web_Forms_Links']['fields']['name']['inline_edit'] = false;
 
