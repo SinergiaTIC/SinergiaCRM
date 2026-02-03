@@ -7793,3 +7793,8 @@ $dictionary["stic_resources_stic_centers"] = array (
       ),
     ),
   );
+
+  $dictionary['aow_processed_aow_actions']['indices'] = [
+    ['name' => 'aow_processed_aow_actionsspk', 'type' => 'primary', 'fields' => ['id']],
+    ['name' => 'idx_actid_del_freid', 'type' => 'index', 'fields' => ['aow_action_id', 'deleted', 'aow_processed_id']],
+  ];
