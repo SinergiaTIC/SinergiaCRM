@@ -55,17 +55,17 @@ abstract class ActionDefinition {
 
     protected string $baseLabel = 'LBL_CUSTOM_ACTION';
     /**
-     * Traduce una subclave al idioma actual (usando el baseLabel de la acción y el módulo stic_Advanced_Web_Forms)
-     * @param string $subkey La subclave a traducir
-     * @return string El texto traducido
+     * Translates a subkey to the current language (using the baseLabel of the action and the stic_Advanced_Web_Forms module)
+     * @param string $subkey The subkey to translate
+     * @return string The translated text
      */
     protected function translate(string $subkey): string {
         return translate($this->baseLabel.'_'.$subkey, 'stic_Advanced_Web_Forms');
     }
 
     /**
-     * Retorna el nombre de la acción (es el del fichero de la acción sin extensión)
-     * @return string El nombre del fichero de la acción
+     * Returns the name of the action (it is the action file name without extension)
+     * @return string The name of the action file
      */
     final public function getName(): string {
         $class = static::class;
@@ -85,26 +85,26 @@ abstract class ActionDefinition {
     }
 
     /**
-     * Retorna el título descriptivo de la acción
-     * @return string El título de la acción
+     * Returns the descriptive title of the action
+     * @return string The title of the action
      */
     public function getTitle(): string { return $this->translate('TITLE'); }
 
     /**
-     * Retorna la descripción de la acción
-     * @return string La descripción de la acción
+     * Returns the description of the action
+     * @return string The description of the action
      */
     public function getDescription(): string { return $this->translate('DESC'); }
 
     /**
-     * Retorna los parámetros definidos para la acción
-     * @return ActionParameterDefinition[] Los parámetros de la acción
+     * Returns the parameters defined for the action
+     * @return ActionParameterDefinition[] The parameters of the action
      */
     public abstract function getParameters(): array;
 
     /**
-     * Retorna el tipo de la acción
-     * @return ActionType El tipo de la acción
+     * Returns the type of the action
+     * @return ActionType The type of the action
      */
     public abstract function getType(): ActionType;
 }

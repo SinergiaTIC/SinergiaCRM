@@ -33,16 +33,16 @@ enum ResultStatus: string {
 }
 
 /**
- * Clase para representar el resultado de una acción.
+ * Class representing the result of an action.
  */
 class ActionResult {
-    public ResultStatus $status;        // Estado del resultado
-    public ?string $message;            // Mensaje adicional del resultado
+    public ResultStatus $status;        // Result status
+    public ?string $message;            // Additional result message
     /** @var BeanModified[] */
-    public array $modifiedBeans;        // Beans modificados por la acción
+    public array $modifiedBeans;        // Beans modified by the action
 
-    public float $timestamp;            // Marca temporal de la ejecución
-    public ?FormAction $actionConfig;   // Configuración de la acción ejecutada
+    public float $timestamp;            // Execution timestamp
+    public ?FormAction $actionConfig;   // Configuration of the executed action
 
     public function __construct(ResultStatus $status, ?FormAction $actionConfig, ?string $message = null) {
         $this->status = $status;
@@ -53,12 +53,12 @@ class ActionResult {
     }
 
     /**
-     * Registra una modificación de un bean al resultado de la acción
-     * Se usa cuando el bean NO proviene de un DataBlock 
-     * 
-     * @param SugarBean $bean El bean modificado.
-     * @param BeanModificationType $action El tipo de modificación (CREATED, UPDATED, ENRICHED, SKIPPED)
-     * @param array $submittedData (Opcional) Los datos [field => value] que la acción ha usado o aplicado.
+     * Registers a bean modification in the action result
+     * Used when the bean does NOT come from a DataBlock
+     *
+     * @param SugarBean $bean The modified bean.
+     * @param BeanModificationType $action The modification type (CREATED, UPDATED, ENRICHED, SKIPPED)
+     * @param array $submittedData (Optional) The [field => value] data used or applied by the action.
      */
     public function registerBeanModification(SugarBean $bean, BeanModificationType $action, array $submittedData = []): void 
     {
@@ -67,15 +67,15 @@ class ActionResult {
     }
 
     /**
-     * Registra una modificación de un bean que SÍ proviene de un DataBlock.
-     *  - Registra la modificación
-     *  - Guarda la referencia al bean en el FormDataBlock original para futuras acciones.
-     * 
-     * @param SugarBean $bean El bean que se ha procesado.
-     * @param DataBlockResolved $block El DataBlockResolved que se ha procesado.
-     * @param BeanModificationType $action El tipo de modificación  (CREATED, UPDATED, ENRICHED, SKIPPED)
-     * @param array $submittedData (Opcional) Los datos [field => value] que la acción ha usado o aplicado.
-     * @throws \LogicException Si el módulo del bean no coincide con el del bloque.
+     * Registers a bean modification that DOES come from a DataBlock.
+     *  - Registers the modification
+     *  - Saves a reference to the bean in the original FormDataBlock for future actions.
+     *
+     * @param SugarBean $bean The processed bean.
+     * @param DataBlockResolved $block The processed DataBlockResolved.
+     * @param BeanModificationType $action The modification type (CREATED, UPDATED, ENRICHED, SKIPPED)
+     * @param array $submittedData (Optional) The [field => value] data used or applied by the action.
+     * @throws \LogicException If the bean module does not match the block's module.
      */
     public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action, ?array $submittedData = null): void 
     {
@@ -88,7 +88,7 @@ class ActionResult {
         if ($submittedData !== null) {
             $dataToLog = $submittedData;
         } else {
-            // Extraemos los datos del formulario mapeables al bean para registrarlos
+            // Extract form data mappable to the bean for logging
             foreach ($block->formData as $fieldName => $fieldResolved) {
                 $dataToLog[$fieldName] = $fieldResolved->value;
             }

@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Referencia a un bean del CRM
+ * Reference to a CRM bean
  */
 class BeanReference {
     public string $moduleName;
@@ -34,9 +34,9 @@ class BeanReference {
     private ?SugarBean $_bean = null;
 
     /**
-     * Constructor de BeanReference
-     * @param string $moduleName Nombre del módulo del bean
-     * @param string $beanId ID del bean
+     * BeanReference constructor
+     * @param string $moduleName The bean's module name
+     * @param string $beanId The bean ID
      */
     public function __construct(string $moduleName, string $beanId) {
         $this->moduleName = $moduleName;
@@ -44,8 +44,8 @@ class BeanReference {
     }
 
     /**
-     * Recupera el bean referenciado
-     * @return SugarBean|null El bean referenciado o null si no se encuentra
+     * Retrieves the referenced bean
+     * @return SugarBean|null The referenced bean or null if not found
      */
     public function getBean(): ?SugarBean {
         if ($this->_bean !== null) {

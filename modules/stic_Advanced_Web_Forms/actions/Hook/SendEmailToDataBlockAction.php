@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * SendEmailToDataBlockAction
  *
- * Acción que envía un email al registro procesado (Persona, Interesado, Usuario o Organización) contenido en un Bloque de Datos.
+ * Action that sends an email to the processed record (Person, Prospect, User or Organization) contained in a Data Block.
  */
 class SendEmailToDataBlockAction extends HookBeanActionDefinition {
     public function __construct() {
@@ -41,14 +41,14 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
     }
 
     /**
-     * Módulos soportados por la acción
+     * Modules supported by the action
      */
     protected function getSupportedModules(): array {
         return ['Contacts', 'Users', 'Prospects', 'Leads', 'Accounts'];
     }
 
     /**
-     * Nombre del parámetro que contiene el bloque de datos.
+     * Name of the parameter containing the data block.
      * @return string
      */
     protected function getDataBlockParameterText(): string {
@@ -56,7 +56,7 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
     }
 
     /**
-     * La descripción (help text) del parámetro de bloque de datos.
+     * The description (help text) of the data block parameter.
      * @return string
      */
     protected function getDataBlockParameterDescription(): string {
@@ -65,12 +65,12 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
 
     /**
      * getCustomParameters()
-     * Definición de los parámetroes ADICIONALES que son necesarios para la acción
-     * El parámtreo del Bloque de Datos principal lo pide la clase padre.
+     * Definition of the ADDITIONAL parameters needed for the action
+     * The parameter of the main Data Block is requested by the parent class.
      */
     protected function getCustomParameters(): array
     {
-        // La Plantilla de Email a usar
+        // The email template to use
         $paramTemplate = new ActionParameterDefinition();
         $paramTemplate->name = 'email_template';
         $paramTemplate->text = $this->translate('TEMPLATE_TEXT'); 
@@ -85,7 +85,7 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
 
     public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
     {
-        // Obtención de los parámetros adicionales (ParameterResolver asegura que no sean nulos porque son obligatorios)
+        // Get additional parameters (ParameterResolver ensures they are not null because they are required)
         
         /** @var ?BeanReference $templateRef */
         $templateRef = $actionConfig->getResolvedParameter('email_template');
@@ -93,21 +93,21 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Email template parameter is missing.");
         }
 
-        // Obtenemos el email del Bean. Asumimos el campo estandard 'email1'
+        // Get email from Bean. We assume the standard field 'email1'
         $emailAddress = $bean->email1 ?? null;
-        // Validamos que el email es correcto
+        // Validate that the email is correct
         if (empty($emailAddress) || !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "DataBlock '{$block->dataBlock->name}' does not have a valid 'email1' field ('{$emailAddress}').");
         }
 
-        // Enviamos el email
+        // Send the email
         try {
             stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $bean, $context);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error sending email: " . $e->getMessage());
         }
 
-        // Notificación del resultado
+        // Result notification
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Email sent to: {$emailAddress}");
         $dataToLog = ['email_sent_to' => $emailAddress, 'template_id' => $templateRef->beanId];
         $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED, $dataToLog);

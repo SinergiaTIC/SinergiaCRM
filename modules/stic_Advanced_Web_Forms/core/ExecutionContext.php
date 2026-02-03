@@ -26,13 +26,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class ExecutionContext {
-    public array $formData = [];       // Copia de los datos RAW del formulario recibido
+    public array $formData = [];       // Copy of the RAW form data received
     
-    public string $formId = '';        // ID del formulario que se está procesando
-    public string $responseId = '';    // ID de respuesta generado para este envío
-    public ?SugarBean $responseBean;   // Bean de respuesta generado para este envío
+    public string $formId = '';        // ID of the form being processed
+    public string $responseId = '';    // Response ID generated for this submission
+    public ?SugarBean $responseBean;   // Response Bean generated for this submission
 
-    public FormConfig $formConfig;     // Configuración del formulario
+    public FormConfig $formConfig;     // Form configuration
 
     /** @var ActionResult[] */
     public array $actionResults = [];
@@ -42,14 +42,14 @@ class ExecutionContext {
     public string $defaultAssignedUserId;
 
     /**
-     * Constructor de la clase ExecutionContext.
-     * @param string $formId ID del formulario que se está procesando
-     * @param string $responseId ID de respuesta generado para este envío
-     * @param array $formData Datos RAW del formulario recibido
-     * @param FormConfig $formConfig Configuración del formulario
-     * @param ?float $timestamp El timestamp del envío de datos del formulario (opcional)
-     * @param string $defaultAssignedUserId ID del usuario asignado por defecto (opcional)
-     * @param ?SugarBean $responseBean El Bean de respuesta (opcional)
+     * Constructor for ExecutionContext.
+     * @param string $formId ID of the form being processed
+     * @param string $responseId Response ID generated for this submission
+     * @param array $formData RAW form data received
+     * @param FormConfig $formConfig Form configuration
+     * @param ?float $timestamp Submission timestamp (optional)
+     * @param string $defaultAssignedUserId Default assigned user ID (optional)
+     * @param ?SugarBean $responseBean The response Bean (optional)
      */
     public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null) {
         $this->formId = $formId;
@@ -63,8 +63,8 @@ class ExecutionContext {
     }
 
     /**
-     *  Agrega el resultado de una acción al contexto de ejecución.
-     * @param ActionResult $result Resultado de la acción
+     * Adds an action result to the execution context.
+     * @param ActionResult $result Action result
      */
     public function addActionResult(ActionResult $result): void {
         $result->resetTimestamp();
@@ -95,27 +95,27 @@ class ExecutionContext {
     }
 
     /**
-     * Obtiene el resultado de una acción por su ID.
-     * @param string $actionId ID de la acción
-     * @return ?ActionResult Resultado de la acción o null si no se encuentra
+     * Gets an action result by its ID.
+     * @param string $actionId Action ID
+     * @return ?ActionResult Action result or null if not found
      */
     public function getActionResultById(string $actionId): ?ActionResult {
         return $this->actionResults[$actionId] ?? null;
     }
 
     /**
-     * Obtiene el bloque de datos por su ID.
-     * @param string $blockId ID del bloque de datos
-     * @return ?FormDataBlock El bloque de datos o null si no se encuentra
+     * Gets a data block by its ID.
+     * @param string $blockId Data block ID
+     * @return ?FormDataBlock The data block or null if not found
      */
     public function getDataBlockById(string $blockId): ?FormDataBlock {
         return $this->formConfig->data_blocks[$blockId] ?? null;
     }
 
     /**
-     * Obtiene el bloque de datos por su Nombre.
-     * @param string $blockName El nombre del bloque de datos
-     * @return ?FormDataBlock El bloque de datos o null si no se encuentra
+     * Gets a data block by its name.
+     * @param string $blockName The data block name
+     * @return ?FormDataBlock The data block or null if not found
      */
     public function getDataBlockByName(string $blockName): ?FormDataBlock {
         foreach ($this->formConfig->data_blocks as $block) {

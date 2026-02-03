@@ -26,13 +26,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Clase abstracta para acciones que operen sobre UN bloque de datos.
- * Automatiza la definición, obtención y validación del parámetro DataBlock.
+ * Abstract class for actions that operate on ONE data block.
+ * Automates the definition, obtaining and validation of the DataBlock parameter.
  */
 abstract class HookDataBlockActionDefinition extends HookActionDefinition {
 
     /** 
-     * (Opcional) Sobreescribir para cambiar el nombre del parámetro que contiene el bloque de datos.
+     * (Optional) Override to change the name of the parameter that contains the data block.
      * @return string
     */
     protected function getDataBlockParameterName(): string {
@@ -40,7 +40,7 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
     }
 
     /**
-     * (Opcional) Sobreescribir para definir el texto (label) del parámetro de bloque de datos.
+     * (Optional) Override to define the text (label) of the data block parameter.
      * @return string
      */
     protected function getDataBlockParameterText(): string {
@@ -48,7 +48,7 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
     }
 
     /**
-     * (Opcional) Sobreescribir para definir la descripción (help text) del parámetro de bloque de datos.
+     * (Optional) Override to define the description (help text) of the data block parameter.
      * @return string
      */
     protected function getDataBlockParameterDescription(): string {
@@ -56,15 +56,15 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
     }
 
     /**
-     * (Opcional) Sobreescribir para limitar a qué módulos puede apuntar el parámetro de bloque de datos.
-     * @return string[] Lista de módulos permitidos (ej: ['Contacts', 'Accounts'])
+     * (Optional) Override to limit which modules the data block parameter can point to.
+     * @return string[] List of allowed modules (e.g.: ['Contacts', 'Accounts'])
      */
     protected function getSupportedModules(): array {
-        return []; // Vacío = todos los módulos
+        return []; // Empty = all modules
     }
 
     /**
-     * (Opcional) Sobreescribir para añadir parámetros ADICIONALES a parte del parámetro de bloque de datos.
+     * (Optional) Override to add ADDITIONAL parameters besides the data block parameter.
      * @return ActionParameterDefinition[]
      */
     protected function getCustomParameters(): array {
@@ -73,7 +73,7 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
 
     final public function getParameters(): array
     {
-        // Crear el parámetro de bloque de datos
+        // Create the data block parameter
         $blockParam = new ActionParameterDefinition();
         $blockParam->name = $this->getDataBlockParameterName();
         $blockParam->text = $this->getDataBlockParameterText();
@@ -82,7 +82,7 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
         $blockParam->supportedModules = $this->getSupportedModules();
         $blockParam->required = true;
 
-        // Añadir los parámetros personalizados del programador
+        // Add the custom parameters from the developer
         $customParams = $this->getCustomParameters();
         
         return array_merge([$blockParam], $customParams);
@@ -97,17 +97,17 @@ abstract class HookDataBlockActionDefinition extends HookActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not resolve DataBlock parameter '{$this->getDataBlockParameterName()}'.");
         }
 
-        // Llamar al método que se implementará en la acción
+        // Call the method that will be implemented in the action
         return $this->executeWithBlock($context, $actionConfig, $block);
     }
 
     /**
-     * Método a implementar
-     * Ejecuta la acción, recibe el bloque de datos principal resuelto y validado.
+     * Method to be implemented
+     * Executes the action, receives the main data block resolved and validated.
      *
-     * @param ExecutionContext $context El contexto global.
-     * @param FormAction $actionConfig La configuración de la acción.
-     * @param DataBlockResolved $block El bloque de datos principal, listo para ser usado.
+     * @param ExecutionContext $context The global context.
+     * @param FormAction $actionConfig The configuration of the action.
+     * @param DataBlockResolved $block The main data block, ready to be used.
      * @return ActionResult
      */
     public abstract function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult;

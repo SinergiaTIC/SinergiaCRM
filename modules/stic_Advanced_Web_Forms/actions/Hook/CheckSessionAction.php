@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * CheckSessionAction
  *
- * Acción que verifica la que el usuario actual tiene una sesión válida en el sistema.
+ * Action that verifies that the current user has a valid session in the system.
  * 
  */
 class CheckSessionAction extends HookActionDefinition implements IFrontendAction
@@ -45,7 +45,7 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
     }
 
     /**
-     * Define los parámetros que se mostrarán en el wizard.
+     * Defines the parameters that will be displayed in the wizard.
      */
     public function getParameters(): array
     {
@@ -61,13 +61,13 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
     }
 
     /**
-     * Ejecuta la lógica de la redirección.
+     * Executes the redirect logic.
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
         global $current_user;
         
-        // Verificación estricta al servidor en el momento del submit
+        // Strict server-side verification at submit time
         if (empty($current_user) || empty($current_user->id)) {
             $msg = $actionConfig->getResolvedParameter('error_message');
             return new ActionResult(ResultStatus::ERROR, $actionConfig, $msg);
@@ -77,11 +77,11 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
     }
 
     /**
-     * Devuelve los assets (CSS/JS) que deben inyectarse en el frontend para esta acción.
-     * @param array $params Parámetros de la acción (sin resolver)
-     * @param FormConfig|null $formConfig Configuración del formulario (si aplica)
-     * @param string $formId ID del formulario (si aplica)
-     * @return array array Estructura: ['script' => ['console.log("hi")'], 'css' => [], 'html' => []]
+     * Returns the assets (CSS/JS) that should be injected into the frontend for this action.
+     * @param array $params Action parameters (unresolved)
+     * @param FormConfig|null $formConfig Form configuration (if applicable)
+     * @param string $formId Form ID (if applicable)
+     * @return array array Structure: ['script' => ['console.log("hi")'], 'css' => [], 'html' => []]
      */
     public function getFrontendAssets(array $params, ?FormConfig $formConfig = null, string $formId = ''): array {
         $errorMsg = $this->translate('ERROR_MSG_TEXT_DEFAULT'); 
@@ -95,7 +95,7 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
 
         $script = <<<JS
         document.addEventListener('DOMContentLoaded', function() {
-            // Bloqueo inicial visual
+            // Initial visual blocking
             const wrapper = document.querySelector('.awf-main-card');
             if (wrapper) {
                 wrapper.style.visibility = 'hidden'; 

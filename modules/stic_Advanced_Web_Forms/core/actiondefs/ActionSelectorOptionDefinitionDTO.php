@@ -26,20 +26,20 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Data Transfer Object (DTO) para la definición de una opción de selector de acción
- * Se enviará al Frontend para mostrar la configuración de la opción
+ * Data Transfer Object (DTO) for the definition of an action selector option
+ * Will be sent to the Frontend to display the option configuration
  */
 class ActionSelectorOptionDefinitionDTO {
     public string $name;
     public string $text;
-    public string $resolvedType;      // Tipo de parámetro resuelto para esta opción (ex: 'value', 'field')
+    public string $resolvedType;      // Resolved parameter type for this option (ex: 'value', 'field')
 
     /** @var string[] */
     public array $supportedModules;
 
     /** @var string[] */
-    public array $supportedDataTypes; // Lista de Tipos de datos permitidos por esta acción, si aplica (ex: 'text', 'relate')
-    public string $resolvedDataType;  // El tipo de datos resuelto para los parámetros resueltos a VALUE
+    public array $supportedDataTypes; // List of data types allowed by this action, if applicable (ex: 'text', 'relate')
+    public string $resolvedDataType;  // The resolved data type for parameters resolved to VALUE
 
     public function __construct(ActionSelectorOptionDefinition $def) {
         $this->name = $def->name;
@@ -48,7 +48,7 @@ class ActionSelectorOptionDefinitionDTO {
         $this->supportedModules = $def->supportedModules;
         $this->resolvedDataType = $def->resolvedDataType?->value ?? '';
         
-        // Convertim l'array d'Enums de dataTypes a un array de strings
+        // Convert the array of Enums of dataTypes to an array of strings
         $this->supportedDataTypes = array_map(
             fn($dataType) => $dataType->value,
             $def->supportedDataTypes

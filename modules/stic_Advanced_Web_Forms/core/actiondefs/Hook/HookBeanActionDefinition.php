@@ -26,41 +26,41 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Clase abstracta para acciones que operen sobre UN Bean que ha estado guardado por una acción anterior.
- * Automatiza:
- *   - La definición, obtención y validación del parámetro DataBlock.
- *   - La obtención del BeanReference del DataBlock.
- *   - La carga (retrieve) del Bean.
- *   - La gestión de errores 
+ * Abstract class for actions that operate on ONE Bean that has been saved by a previous action.
+ * Automates:
+ *   - The definition, obtaining and validation of the DataBlock parameter.
+ *   - The obtaining of the BeanReference from the DataBlock.
+ *   - The loading (retrieve) of the Bean.
+ *   - Error management 
  */
 abstract class HookBeanActionDefinition extends HookDataBlockActionDefinition {
 
     final public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
     {
-        // Obtener la referencia del Bean guardado para el Bloque de Datos 
+        // Get the Bean reference saved for the Data Block 
         $beanRef = $block->dataBlock->getBeanReference();
         if ($beanRef === null) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "There is no saved Bean for DataBlock {$block->dataBlock->name}.");
         }
         
-        // Cargar el Bean
+        // Load the Bean
         $bean = BeanFactory::getBean($beanRef->moduleName, $beanRef->beanId);
         if ($bean === null) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not load Bean with ID {$beanRef->beanId} from module {$beanRef->moduleName}.");
         }
 
-        // Ejecutamos la acción con el Bean y el Bloque de datos
+        // Execute the action with the Bean and the Data Block
         return $this->executeWithBean($context, $actionConfig, $bean, $block);
     }
 
     /**
-     * Método a implementar
-     * Ejecuta la acción, recibe el bean cargado y el bloque de datos principal con los datos del forumlario
+     * Method to be implemented
+     * Executes the action, receives the loaded bean and the main data block with the form data
      *
-     * @param ExecutionContext $context El contexto global.
-     * @param FormAction $actionConfig La configuración de la acción.
-     * @param SugarBean $bean El bean cargado de la BD (datos guardados).
-     * @param DataBlockResolved $block El bloque de datos (datos del formulario).
+     * @param ExecutionContext $context The global context.
+     * @param FormAction $actionConfig The configuration of the action.
+     * @param SugarBean $bean The bean loaded from the DB (saved data).
+     * @param DataBlockResolved $block The data block (form data).
      * @return ActionResult
      */
     public abstract function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult;

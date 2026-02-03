@@ -30,9 +30,9 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * ShowMessageAction
  *
- * Acción terminal que redirige el navegador del usuario a una página con un mensaje, manteniendo el estilo del forumulario
+ * Terminal action that redirects the user's browser to a page with a message, maintaining the form style
  *
- * Implementa ITerminalAction para parar la ejecución el flujo
+ * Implements ITerminalAction to stop the execution of the flow
  */
 class ShowMessageAction extends HookActionDefinition implements ITerminalAction
 {
@@ -45,7 +45,7 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
     }
 
     /**
-     * Define los parámetros que se mostrarán en el wizard.
+     * Defines the parameters that will be displayed in the wizard.
      */
     public function getParameters(): array
     {
@@ -69,7 +69,7 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
     }
 
     /**
-     * Ejecuta la lógica de la redirección a página con el mensaje.
+     * Executes the logic of the redirect to page with the message.
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
@@ -77,12 +77,12 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
             define('sugarEntry', true);
         }
 
-        // Limpiar el buffer de salida para eliminar warnings o errores previos
+        // Clean the output buffer to remove previous warnings or errors
         while (ob_get_level()) {
             ob_end_clean();
         }
         
-        // Evitar mostrar nuevos errores o warnings
+        // Avoid showing new errors or warnings
         ini_set('display_errors', 0);
         error_reporting(0);
 
@@ -91,10 +91,10 @@ class ShowMessageAction extends HookActionDefinition implements ITerminalAction
 
         stic_AWFUtils::renderGenericResponse($context->formConfig, $title, $message);
 
-        // Acción terminal: detenemos la ejecución del script
+        // Terminal action: we stop script execution
         exit;
 
-        // Este código no se ejecutará, se introduce para evitar que haya execute sin return
+        // This code will not be executed, it is introduced to avoid having execute without return
         return new ActionResult(ResultStatus::OK, $actionConfig);
     }
 

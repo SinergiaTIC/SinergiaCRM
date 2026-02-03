@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * TrueValidatorAction
  *
- * Acción que valida que un campo Checkbox esté marcado 
+ * Action that validates that a Checkbox field is checked
  */
 class TrueValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

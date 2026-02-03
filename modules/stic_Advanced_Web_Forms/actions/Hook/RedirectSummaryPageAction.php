@@ -30,9 +30,9 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * RedirectSummaryPageAction
  *
- * Acción terminal que redirige el navegador del usuario a una página con el resumen de los datos del forumulario
+ * Terminal action that redirects the user's browser to a page with the summary of the form data
  *
- * Implementa ITerminalAction para parar la ejecución el flujo
+ * Implements ITerminalAction to stop the execution of the flow
  */
 class RedirectSummaryPageAction extends HookActionDefinition implements ITerminalAction
 {
@@ -45,7 +45,7 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
     }
 
     /**
-     * Define los parámetros que se mostrarán en el wizard.
+     * Defines the parameters that will be displayed in the wizard.
      */
     public function getParameters(): array
     {
@@ -53,7 +53,7 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
     }
 
     /**
-     * Ejecuta la lógica de la redirección.
+     * Executes the redirect logic.
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
@@ -75,7 +75,7 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
         echo $summaryHtml;
         exit;
 
-        // Este código no se ejecutará, se introduce para evitar que haya execute sin return
+        // This code will not execute, introduced to avoid having execute without return
         return new ActionResult(ResultStatus::OK, $actionConfig);
     }
 

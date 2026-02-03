@@ -33,17 +33,17 @@ enum OnDuplicateAction: string {
 }
 
 class FormDuplicateRule {
-    public FormDataBlock $data_block;          // El Bloque de datos al que pertenece
+    public FormDataBlock $data_block;          // The data block it belongs to
 
     /** @var string[] */
-    public array $fields;                     // Array con el nombre de los campos para la detección de duplicados
-    public OnDuplicateAction $on_duplicate;   // Acción a realizar con los duplicados: update, enrich, skip, error
+    public array $fields;                     // Array with the field names for duplicate detection
+    public OnDuplicateAction $on_duplicate;   // Action to perform with duplicates: update, enrich, skip, error
 
     /**
-     * Crea una instancia de FormDuplicateRule a partir de un array JSON.
-     * @param FormDataBlock $dataBlock El Bloque de datos al que pertenece
-     * @param array $data Los datos en formato array
-     * @return FormDuplicateRule La instancia creada
+     * Creates an instance of FormDuplicateRule from a JSON array.
+     * @param FormDataBlock $dataBlock The data block it belongs to
+     * @param array $data The data in array format
+     * @return FormDuplicateRule The created instance
      */
     public static function fromJsonArray(FormDataBlock $dataBlock, array $data): self {
         $dto = new self();

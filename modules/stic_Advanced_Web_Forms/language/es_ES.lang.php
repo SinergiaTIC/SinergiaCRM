@@ -161,6 +161,18 @@ $mod_strings = array (
 
   'LBL_COPY_TO_CLIPBOARD_DONE' => 'Copiado al portapapeles',
 
+
+  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'El bloque de datos tiene errores',
+  'LBL_ERROR_DATABLOCK_NAME' => 'El nombre interno del bloque de datos está vacío',
+  'LBL_ERROR_DATABLOCK_TITLE' => 'El bloque de datos debe tener un nombre público',
+  'LBL_ERROR_DATABLOCK_FIELDS_INVALID' => 'El bloque de datos contiene campos inválidos',
+  'LBL_ERROR_DATABLOCK_EMPTY' => 'El bloque de datos está vacío',
+  'LBL_ERROR_FIELD_NAME' => 'El nombre interno del campo está vacío',
+  'LBL_ERROR_FIELD_LABEL' => 'No existe etiqueta para el campo',
+  'LBL_ERROR_FIELD_TYPE' => 'No se ha definido el tipo de campo o de editor en el formulario',
+  'LBL_ERROR_FIELD_OPTIONS' => 'Desplegable sin opciones definidas',
+  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fijo sin valor asignado',
+  
   'LBL_DATABLOCK' => 'Bloque de datos',
   'LBL_DATABLOCKS' => 'Bloques de datos',
   'LBL_DATABLOCK_DETACHED' => 'Datos no enlazados',
@@ -189,6 +201,8 @@ $mod_strings = array (
   'LBL_FIELDS_FIXED_DESC' => 'Los valores constantes ocultos a los que hace referencia el formulario',
   'LBL_FIELD_FIXED_ADD' => 'Añadir valor fijo',
   'LBL_FIELD_FIXED_NEW' => 'Nuevo valor fijo',
+  'LBL_FIELD_TITLE_OK' => 'El campo es correcto',
+  'LBL_FIELD_TITLE_ERROR' => 'El campo tiene errores',
 
   'LBL_FIELD_CONVERT_TO_FIELD_FORM' => 'Convertir en campo en el formulario',
   'LBL_FIELD_CONVERT_TO_FIELD_HIDDEN' => 'Convertir en valor fijo',

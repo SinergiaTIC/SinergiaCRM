@@ -26,8 +26,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Data Transfer Object (DTO) para la definición de una acción
- * Se enviará al Frontend para mostrar la configuración de la acción
+ * Data Transfer Object (DTO) for the definition of an action
+ * Will be sent to the Frontend to display the action configuration
  */
 class ActionDefinitionDTO {
     public string $name;

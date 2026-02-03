@@ -33,9 +33,9 @@ class ActionDiscoveryService {
     ];
 
     /**
-     * Escanea todas las rutas configuradas para descubrir acciones, gestionando las anulaciones (sobre-escrituras) en las rutas de custom.
-     * @param ActionType[] $availableTypes Los tipos de acciones a descubrir (vacío para todos)
-     * @return ActionDefinition[] Las acciones descubiertas
+     * Scans configured paths to discover actions, handling overrides in custom paths.
+     * @param ActionType[] $availableTypes Action types to discover (empty for all)
+     * @return ActionDefinition[] Discovered actions
      */
     public static function discoverActions(array $availableTypes = []): array {
         $discoveredFiles = [];
@@ -43,29 +43,29 @@ class ActionDiscoveryService {
             $availableTypes = ActionType::cases();
         }
 
-        // Iteramos sobre los directorios base: core -> custom - > custom/Extension
+        // Iterate over base directories: core -> custom - > custom/Extension
         foreach (self::$basePaths as $basePath) {
             if (!is_dir($basePath)) {
                 continue;
             }
-            // Iteramos dinámicamente sobre los tipos de acciones
+            // Iterate dynamically over action types
             foreach ($availableTypes as $actionType) {
                 $typePath = $basePath . $actionType->value . '/';
                 if (is_dir($typePath)) {
                     $searchPath = $typePath.'*.php';
                     foreach (glob($searchPath) as $filePath) {
                         $actionName = pathinfo($filePath, PATHINFO_FILENAME); // Ex: 'SaveRecordAction'
-                        $discoveredFiles[$actionName] = $filePath; // El último archivo encontrado (con mayor prioridad) sobrescribe los anteriores
+                        $discoveredFiles[$actionName] = $filePath; // The last found file (higher priority) overwrites previous ones
                     }
                 }
             }
         }
 
-        // Instanciamos las definiciones de acción descubiertas
+        // Instantiate the discovered action definitions
         $discoveredActions = [];
         foreach ($discoveredFiles as $actionName => $filePath) {
             try {
-                // Si hay un error de sintaxi, se lanzará un ParseError, capturado por el catch (\Throwable $t)
+                // If there is a syntax error, a ParseError will be thrown, caught by catch (\Throwable $t)
                 require_once($filePath);
                 if (!class_exists($actionName)) {
                     throw new \RuntimeException("Line ".__LINE__.": ".__METHOD__.": File {$filePath} exists, but class {$actionName} is not defined.");

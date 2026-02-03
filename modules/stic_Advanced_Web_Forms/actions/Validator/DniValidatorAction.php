@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * DniValidatorAction
  *
- * Acción que valida un DNI
+ * Action that validates a DNI (Spanish ID)
  */
 class DniValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

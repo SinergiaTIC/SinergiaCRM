@@ -1,4 +1,28 @@
-<!-- Main Panel -->
+<!-- 
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+ -->
+ 
+ <!-- Main Panel -->
 <main x-data="WizardStep2.mainStep2xData();">
   <div x-data="WizardStep2.addDataBlockModulexData(formConfig);">
     <!-- No Data Block Configured -->
@@ -60,6 +84,22 @@
             </div>
             <!-- DataBlock body -->
             <div class="card-body">
+              <!-- Alert message -->
+              <template x-if="!item.isValid()">
+                <div class="alert alert-danger p-2 mb-3 shadow-sm border-danger">
+                  <div class="d-flex align-items-start">
+                    <i class="suitepicon  suitepicon-template-issue text-danger me-2 mt-1"></i>
+                    <div>
+                      <strong class="text-danger" x-text="utils.translate('LBL_ERROR_DATABLOCK_IS_INVALID')"></strong>
+                      <ul class="mb-0 ps-3 mt-1 text-danger small">
+                        <template x-for="err in item.getValidationErrors()">
+                          <li x-text="err"></li>
+                        </template>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </template>              
               <!-- Fields Definition -->
               <div :id="`dataBlockFields${item.id}`">
                 <!-- Fields summary Tabs -->
@@ -100,6 +140,7 @@
                     <table class="table table-bordered table-striped" >
                       <thead>
                         <tr>
+                          <th></th>
                           <th x-text="utils.translate(dataBlock.module?'LBL_FIELD':'LBL_FIELD_NAME')" x-show="canShowFieldColumn('text_original')"></th>
                           <th x-text="utils.translate('LBL_FIELD_LABEL')" x-show="canShowFieldColumn('label')"></th>
                           <th x-text="utils.translate('LBL_FIELD_TYPE_IN_FORM')" x-show="canShowFieldColumn('type_in_form')"></th>
@@ -113,7 +154,32 @@
                       <tbody>
                         <template x-for="(field, index) in item.fields">
                           <template x-if="field && canShowField(field)">
-                            <tr :class="{'has-errors':!field.isValid()}">
+                            <tr :class="{ 'table-danger': !field.isValid() }">
+                              <td>
+                                <!-- Ok tick -->
+                                <template x-if="field.isValid()">
+                                  <div class="d-flex align-items-center">
+                                    <i class="suitepicon  suitepicon-action-confirm text-success me-2 mt-1" :title="utils.translate('LBL_FIELD_TITLE_OK')"></i>
+                                  </div>
+                                </template>
+                                <!-- Alert message -->
+                                <template x-if="!field.isValid()">
+                                  <div class="alert-danger d-flex align-items-center">
+                                    <i class="suitepicon suitepicon-template-issue text-danger me-2 mt-1" :title="utils.translate('LBL_FIELD_TITLE_ERROR')"></i>
+                                    <ul class="m-0 p-0 text-danger small">
+                                      <template x-for="err in field.getValidationErrors()">
+                                        <li x-text="err"></li>
+                                      </template>
+                                    </ul>
+                                    <button type="button" class="btn" :disabled="field.value_type == 'dataBlock'" 
+                                            @click="$store.fieldEditor.openEdit(item, field);" 
+                                            :title="utils.translate('LBL_BUTTON_EDIT')">
+                                      <span class="suitepicon suitepicon-action-edit"></span>
+                                    </button>
+                                  </div>
+                                </template>
+                              </td>
+
                               <!-- Field -->
                               <td x-show="canShowFieldColumn('text_original')">
                                 <i x-show="field?.type_field == 'unlinked'" x-text="'[ ' + field.text_original +' ]'"></i>
@@ -325,6 +391,20 @@
               <button type="button" class="btn-close" @click="store.close()"></button>
             </div>
             <div class="custom-modal-body">
+              <!-- Alert message -->
+              <template x-if="isEdit && field && !field.isValid()">
+                <div class="alert alert-danger d-flex align-items-center p-2 mb-3">
+                  <i class="suitepicon suitepicon-template-issue text-danger me-2" style="font-size: 1.2em;"></i>
+                  <div>
+                    <strong class="text-danger" x-text="utils.translateForFieldLabel('LBL_FIELD_TITLE_ERROR')"></strong>
+                    <ul class="mb-0 ps-3 small text-danger">
+                      <template x-for="err in field.getValidationErrors()">
+                        <li x-text="err"></li>
+                      </template>
+                    </ul>
+                  </div>
+                </div>
+              </template>
               <form id="dataBlockFieldModalForm">
                 <!-- Buttons -->
                 <div class="mb-2">
@@ -531,7 +611,7 @@
                         </div>
                       </template>
                       <!-- Value (fixed value of enum) -->
-                      <template x-if="field && isFixedValueOfEnum">
+                      <template x-if="field && isFixedValueOfEnum && !isFixedValueOfRelated">
                         <div class="col-3">
                           <label for="modalField_ValFixOptions" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
                           <select id="modalField_ValFixOptions" x-bind:disabled="field.value_options.length<=1;" class="form-select" x-model="field.value">

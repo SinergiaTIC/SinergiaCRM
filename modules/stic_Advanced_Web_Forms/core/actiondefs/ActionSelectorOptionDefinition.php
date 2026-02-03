@@ -27,19 +27,19 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 
 /**
- * Definición de una opción para un parámetro de tipo selector de opciones.
+ * Definition of an option for a parameter of type option selector.
  */
 class ActionSelectorOptionDefinition {
-    public string $name;                       // Nombre interno de la opción
-    public string $text;                       // El texto a mostrar
-    public ActionParameterType $resolvedType;  // Tipo de parámetro resuelto para esta opción
+    public string $name;                       // Internal name of the option
+    public string $text;                       // The text to display
+    public ActionParameterType $resolvedType;  // Resolved parameter type for this option
 
     /** @var string[] */
-    public array $supportedModules = [];       // Módulos soportados por esta opción si el destino es un registro CRM
+    public array $supportedModules = [];       // Modules supported by this option if the destination is a CRM record
 
     /** @var ActionDataType[] */
-    public array $supportedDataTypes = [];     // Lista de Tipos de datos permitidos por esta acción, si aplica
+    public array $supportedDataTypes = [];     // List of data types allowed by this action, if applicable
 
-    public ?ActionDataType $resolvedDataType;  // El tipo de datos resuelto para los parámetros resueltos a VALUE
+    public ?ActionDataType $resolvedDataType;  // The resolved data type for parameters resolved to VALUE
 }
 

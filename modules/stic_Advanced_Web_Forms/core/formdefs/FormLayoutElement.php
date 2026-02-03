@@ -26,11 +26,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormLayoutElement {
-    public FormLayoutSection $section;  // La sección a la que pertenece
+    public FormLayoutSection $section;  // The section it belongs to
 
     public string $id;
     public string $type;                // 'datablock', etc.
-    public string $ref_id;              // ID del bloque de datos
+    public string $ref_id;              // ID of the data block
 
     public static function fromJsonArray(FormLayoutSection $section, array $data): self {
         $dto = new self();

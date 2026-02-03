@@ -26,15 +26,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Clase para un campo de bloque de datos con los datos rellenados de un formulario
+ * Class representing a data block field with the filled form data
  */
 class DataBlockFieldResolved {
-    public ?FormDataBlockField $dataBlockField;   // La confifuración del Campo del Bloque de datos (si existe)
+    public ?FormDataBlockField $dataBlockField;   // The Data Block Field configuration (if present)
 
-    public string $formKey;         // El nombre completo del campo en el formulario
-    public string $fieldName;       // El nombre del campo (después del prefijo) (ex: email1, first_name)
-    public mixed $value;            // El valor enviado desde el formulario en formato de Base de Datos
-    public mixed $originalValue;    // El valor original en objeto complejo (por ejemplo: DateTime)
+    public string $formKey;         // The full field name in the form
+    public string $fieldName;       // The field name (after the prefix) (ex: email1, first_name)
+    public mixed $value;            // The value sent from the form in DB-ready format
+    public mixed $originalValue;    // The original value in complex object form (e.g., DateTime)
 
     public function __construct(string $formKey, string $fieldName, ?FormDataBlockField $config, mixed $value) {
         $this->formKey = $formKey;
@@ -42,7 +42,7 @@ class DataBlockFieldResolved {
         $this->dataBlockField = $config;
         $this->originalValue = $value;
 
-        // Normalizamos el valor para poder ser mapeado en la Base de Datos
+        // Normalize the value so it can be mapped to the Database
         if ($value instanceof \DateTime) {
             global $timedate;
             $type = $config->type ?? 'datetime'; 

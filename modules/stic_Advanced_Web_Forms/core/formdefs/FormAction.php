@@ -26,27 +26,27 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormAction {
-    public FormFlow $flow;           // El Flujo de acciones al que pertenece
+    public FormFlow $flow;           // The action flow it belongs to
 
-    public string $id;               // Id de la acción
-    public string $name;             // Nombre de la acción
-    public string $text;             // El texto a mostrar
-    public string $description;      // La descripción de la acción
+    public string $id;               // ID of the action
+    public string $name;             // Name of the action
+    public string $text;             // The text to display
+    public string $description;      // The description of the action
     /** @var string[] */
-    public array $requisite_actions; // Array con los identificadores de las acciones previas a la actual
+    public array $requisite_actions; // Array with the identifiers of the actions prior to the current one
     /** @var FormActionParameter[] */
-    public array $parameters;        // Los parámetros de la acción
+    public array $parameters;        // The parameters of the action
 
-    private array $resolvedParameters = []; // Parámetros resueltos, con el valor final
+    private array $resolvedParameters = []; // Resolved parameters, with the final value
 
-    public string $condition_field = '';    // El campo que condiciona la ejecución
-    public string $condition_value = '';    // El valor necessario para ejecutar la acción
+    public string $condition_field = '';    // The field that conditions the execution
+    public string $condition_value = '';    // The value required to execute the action
 
     /**
-     * Crea una instancia de FormAction a partir de un array JSON.
-     * @param FormFlow $flow El Flujo de acciones al que pertenece 
-     * @param array $data Los datos en formato array
-     * @return FormAction La instancia creada
+     * Creates an instance of FormAction from a JSON array.
+     * @param FormFlow $flow The action flow it belongs to 
+     * @param array $data The data in array format
+     * @return FormAction The created instance
      */
     public static function fromJsonArray(FormFlow $flow, array $data): self {
         $dto = new self();
@@ -58,7 +58,7 @@ class FormAction {
         $dto->description = $data['description'];
         $dto->requisite_actions = $data['requisite_actions'] ?? [];
 
-        // Condiciones
+        // Conditions
         $dto->condition_field = $data['condition_field'] ?? '';
         $dto->condition_value = $data['condition_value'] ?? '';
 
@@ -74,7 +74,7 @@ class FormAction {
     }
 
     /**
-     * Método para guardar los parámetros resueltos
+     * Method to save the resolved parameters
      * @param array $params [name => resolved_value]
      */
     public function setResolvedParameters(array $params): void {
@@ -82,10 +82,10 @@ class FormAction {
     }
 
     /**
-     * Método para que las Acciones obtengan los valores resueltos
-     * @param string $name El nombre del parámetro
-     * @param mixed $default Un valor por defecto si no se encuentra
-     * @return mixed El valor resuelto
+     * Method for actions to obtain the resolved values
+     * @param string $name The name of the parameter
+     * @param mixed $default A default value if not found
+     * @return mixed The resolved value
      */
     public function getResolvedParameter(string $name, mixed $default = null): mixed { 
         return $this->resolvedParameters[$name] ?? $default;

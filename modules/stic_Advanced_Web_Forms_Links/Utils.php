@@ -25,12 +25,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Retorna un HTML formateado con los datos modificados a un bean por las acciones del fomulario
- * @param SugarBean $focus El bean del stic_Advanced_Web_Forms_Links
- * @param string $field El campo (no usado)
- * @param mixed $value El valor (no usado)
- * @param string $view La vista (no usado)
- * @return string HTML con los datos modificados
+ * Returns formatted HTML with the data modified on a bean by the form actions
+ * @param SugarBean $focus The bean of stic_Advanced_Web_Forms_Links
+ * @param string $field The field (not used)
+ * @param mixed $value The value (not used)
+ * @param string $view The view (not used)
+ * @return string HTML with the modified data
  */
 function getLinkDataHtml($focus, $field, $value, $view) {
     global $app_list_strings;
@@ -46,12 +46,12 @@ function getLinkDataHtml($focus, $field, $value, $view) {
         $actionLabel = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionLabel];
     }
     
-    // Color del badge según la acción
+    // Badge color according to the action
     $badgeColor = '#6c757d'; // Gris (default)
     if ($focus->record_action === 'created') $badgeColor = '#198754'; // Verde
     if ($focus->record_action === 'updated') $badgeColor = '#0d6efd'; // Azul
 
-    // Nombre del registro relacionado
+    // Name of the related record
     $recordName = $focus->parent_name;
     if (empty($recordName) && !empty($focus->parent_id) && !empty($module)) {
         $relatedBean = BeanFactory::getBean($module, $focus->parent_id);
@@ -61,10 +61,10 @@ function getLinkDataHtml($focus, $field, $value, $view) {
     }
     if (empty($recordName) || trim($recordName) === '') {
         if (!empty($focus->parent_id)) {
-            // Si no tenemos nombre, pero sí ID
+            // If we don't have a name, but we do have an ID
             $recordName = $focus->parent_id; 
         } else {
-            // Si no tenemos ni nombre ni ID
+            // If we don't have either name or ID
             $recordName = "<i>(". translate('LBL_NO_NAME', 'stic_Advanced_Web_Forms_Links') .")</i>";
         }
     }
@@ -77,7 +77,7 @@ function getLinkDataHtml($focus, $field, $value, $view) {
         $targetAttr = "target='_blank'";
     } else {
         $linkClass = "text-muted"; 
-        $targetAttr = "onclick='return false;'"; // Desactivar clic
+        $targetAttr = "onclick='return false;'"; // Disable click
     }
 
     $html = "
@@ -159,7 +159,7 @@ function getLinkDataHtml($focus, $field, $value, $view) {
     } else {
         $html .= '<table class="awf-link-table">';
 
-        // Obtenemos los field_defs del módulo para poder traducir las etiquetas
+        // Get the field_defs of the module to be able to translate the labels
         $fieldDefs = [];
         if (!empty($module)) {
             $seed = BeanFactory::newBean($module);
@@ -171,14 +171,14 @@ function getLinkDataHtml($focus, $field, $value, $view) {
         foreach ($data as $key => $val) {
             if ($key === 'id' || $key === 'date_modified') continue;
 
-            // Obtenemos la etiqueta del campo
+            // Get the field label
             $label = $key;
             if (isset($fieldDefs[$key]['vname'])) {
                 $label = translate($fieldDefs[$key]['vname'], $module);
                 $label = rtrim($label, ':');
             }
 
-            // Formateamos el valor
+            // Format the value
             if (is_array($val)) {
                 $val = implode(', ', $val);
             } elseif (is_bool($val)) {

@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * UrlValidatorAction
  *
- * Acción que valida una url
+ * Action that validates a URL
  */
 class UrlValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

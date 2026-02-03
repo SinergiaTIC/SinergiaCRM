@@ -28,13 +28,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class ParameterResolverService {
 
     /**
-     * Resuelve todos los parámetros de una acción, paritiendo de las definiciones y la configuración del wizard
+     * Resolves all parameters for an action, starting from definitions and the wizard configuration
      *
-     * @param FormAction $actionConfig La configuración de la acción
-     * @param ActionParameterDefinition[] $paramDefinitions Las definiciones de los parámetros
-     * @param FormActionParameter[] $paramConfigurations La configuración de los parámetros
-     * @param ExecutionContext $context El contexto de ejecución
-     * @return array Un mapa [param_name => resolved_value]
+     * @param FormAction $actionConfig The action configuration
+     * @param ActionParameterDefinition[] $paramDefinitions Parameter definitions
+     * @param FormActionParameter[] $paramConfigurations Parameter configurations
+     * @param ExecutionContext $context The execution context
+     * @return array A map [param_name => resolved_value]
      */
     public function resolveAll(FormAction $actionConfig, array $paramDefinitions, array $paramConfigurations, ExecutionContext $context): array {
         $resolvedParameters = [];
@@ -59,40 +59,40 @@ class ParameterResolverService {
     }
 
     /**
-     * Resuelve un parámetro observando todo el contexto
+     * Resolves a single parameter using the full context
      */
     private function resolveSingleParam(ActionParameterDefinition $def, ?FormActionParameter $config, ExecutionContext $context): mixed {
-        // Gestión del parámetro no configurado
+        // Handle missing parameter configuration
         $value = $config?->value;
         switch ($def->type) {
             case ActionParameterType::VALUE:
-                // El parámetro es un valor fijo. Value contiene el valor
+                // The parameter is a fixed value. Value contains the value
                 return $this->resolveFixedValue($def, $value, $context);
 
             case ActionParameterType::DATA_BLOCK:
-                // El parámetro es un Bloque de datos. Value contiene el id del bloque
+                // The parameter is a Data Block. Value contains the block id
                 return $this->resolveDataBlock($def, $value, $context);
                 
             case ActionParameterType::FIELD:
-                // El parámetro es un campo del formulario. Value contiene el nombre del campo
+                // The parameter is a form field. Value contains the field name
                 return $this->resolveFormField($def, $value, $context);
 
             case ActionParameterType::FIELD_LIST:
-                // El parámetro es un listado de campos del formulario. Value contiene los nombres de campos separados por comas
+                // The parameter is a list of form fields. Value contains comma-separated field names
                 $listString = $value !== null ? $value : $def->defaultValue;
                 return $this->resolveFieldList($def, $listString, $context);
 
             case ActionParameterType::CRM_RECORD:
-                // El parámetro es un Registro del crm. Value contiene 'modulo|id'
+                // The parameter is a CRM record. Value contains 'module|id'
                 return $this->resolveBean($def, $value, $context);
 
             case ActionParameterType::OPTION_SELECTOR:
-                // El parámetro es un selector 'selectedOption' contiene la selección
+                // The parameter is a selector; 'selectedOption' contains the selection
                 $selectedOption = $config?->selectedOption;
                 return $this->resolveOptionSelector($def, $selectedOption, $value, $context);
         }
 
-        // No se ha retornado ninguna resolución
+        // No resolution has been returned
         $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Parameter {$def->name} not informed in form configuration.");
         return null;
     }
@@ -196,7 +196,7 @@ class ParameterResolverService {
             $prefix = $block->name . '.';
             if (str_starts_with($keyToParse, $prefix)) {
                 $foundBlock = $block;
-                // El nom del camp és la resta de la cadena
+                // The field name is the rest of the string
                 $fieldName = substr($keyToParse, strlen($prefix));
                 $fieldDefinition = $block->fields[$fieldName] ?? null;
                 break;
@@ -249,22 +249,22 @@ class ParameterResolverService {
         $resolvedValue = null;
         switch ($optionDef->resolvedType) {
             case ActionParameterType::VALUE:
-                // El parámetro es un valor fijo. Value contiene el valor
+                // The parameter is a fixed value. Value contains the value
                 $resolvedValue = $this->resolveFixedValue($def, $value, $context);
                 break;
 
             case ActionParameterType::DATA_BLOCK:
-                // El parámetro es un Bloque de datos. Value contiene el id del bloque
+                // The parameter is a Data Block. Value contains the block id
                 $resolvedValue = $this->resolveDataBlock($def, $value, $context);
                 break;
                 
             case ActionParameterType::FIELD:
-                // El parámetro es un campo del formulario. Value contiene el nombre del campo
+                // The parameter is a form field. Value contains the field name
                 $resolvedValue = $this->resolveFormField($def, $value, $context);
                 break;
 
             case ActionParameterType::CRM_RECORD:
-                // El parámetro es un Registro del crm. Value contiene 'modulo|id'
+                // The parameter is a CRM Record. Value contains 'module|id'
                 $resolvedValue = $this->resolveBean($def, $value, $context);
                 break;
 
@@ -277,13 +277,13 @@ class ParameterResolverService {
     }
 
     /**
-     * Convierte un string de campos separados por comas (ex: "Block.field1, Block.field2") 
-     * en un array asociativo [formKey => resolvedValue].
+     * Converts a comma-separated string of fields (ex: "Block.field1, Block.field2")
+     * into an associative array [formKey => resolvedValue].
      * 
-     * @param ActionParameterDefinition $def La definición del parámetro
-     * @param string $fieldListString El string con los campos separados por comas (ex: "Block.field1, Block.field2")
-     * @param ExecutionContext $context El contexto de ejecución
-     * @return array El array asociativo resuelto
+     * @param ActionParameterDefinition $def The definition of the parameter
+     * @param string $fieldListString The string with fields separated by commas (ex: "Block.field1, Block.field2")
+     * @param ExecutionContext $context The execution context
+     * @return array The resolved associative array
      */
     private function resolveFieldList(ActionParameterDefinition $def, string $fieldListString, ExecutionContext $context): array
     {
@@ -299,8 +299,8 @@ class ParameterResolverService {
                 continue;
             }
 
-            // Para cada campo lo resolvemos y lo añadimos al array de resultados
-            // La clave de cada elemento será el nombre completo del campo "Block.field1"
+            // For each field we resolve it and add it to the results array
+            // The key of each element will be the full field name "Block.field1"
             $fieldResolved = $this->resolveFormField($def, $formKey, $context);
             if ($fieldResolved !== null && $fieldResolved->value !== null) {
                 $resolvedData[$formKey] = $fieldResolved->value;

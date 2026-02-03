@@ -32,11 +32,11 @@ abstract class UIActionDefinition extends ActionDefinition implements IFrontendA
     }
 
     /**
-     * Devuelve los assets (CSS/JS) que deben inyectarse en el frontend para esta acción.
-     * @param array $params Parámetros de la acción (sin resolver)
-     * @param FormConfig|null $formConfig Configuración del formulario (si aplica)
-     * @param string $formId ID del formulario (si aplica)
-     * @return array array Estructura: ['script' => ['console.log("hi")'], 'css' => [], 'html' => []]
+     * Returns the assets (CSS/JS) that should be injected into the frontend for this action.
+     * @param array $params Action parameters (unresolved)
+     * @param FormConfig|null $formConfig Form configuration (if applicable)
+     * @param string $formId Form ID (if applicable)
+     * @return array array Structure: ['script' => ['console.log("hi")'], 'css' => [], 'html' => []]
      */
     abstract public function getFrontendAssets(array $params, ?FormConfig $formConfig = null, string $formId = ''): array;
 }   

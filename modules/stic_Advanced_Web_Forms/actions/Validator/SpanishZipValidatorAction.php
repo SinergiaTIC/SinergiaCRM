@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * SpanishZipValidatorAction
  *
- * Acción que valida un Código Postal español
+ * Action that validates a Spanish postal code
  */
 class SpanishZipValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

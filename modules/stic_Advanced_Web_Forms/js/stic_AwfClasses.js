@@ -1,4 +1,26 @@
 /**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+/**
  * DataBlock: {
  *   id, name, text, editable_text, module, required,
  *   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form, 
@@ -10,15 +32,15 @@ class stic_AwfDataBlock {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      id: utils.newId("awfdb"), // Id del Bloque de datos
-      name: "",                 // Nombre interno (identificador en UI) del Bloque de Datos
-      text: "",                 // Texto a mostrar para el Bloque de Datos
-      editable_text: true,      // Indica si el texto se puede modificar
-      module: "",               // Nombre del módulo
-      required: false,          // Indica si es obligado (interno, no se puede eliminar)
-      fields: [],               // Campos del Bloque de Datos
-      duplicate_detections: [], // Definición de detección de duplicados
-      save_action_id: "",       // Id de la acción de guardado del bloque de datos
+      id: utils.newId("awfdb"), // Data Block ID
+      name: "",                 // Internal name (UI identifier) of the Data Block
+      text: "",                 // Text to display for the Data Block
+      editable_text: true,      // Indicates if the text can be modified
+      module: "",               // Module name
+      required: false,          // Indicates if it is required (internal, cannot be deleted)
+      fields: [],               // Fields of the Data Block
+      duplicate_detections: [], // Duplicate detection definition
+      save_action_id: "",       // ID of the data block save action
     });
 
     // 2. Overwrite with provided data
@@ -33,10 +55,41 @@ class stic_AwfDataBlock {
     }
   }
 
+  getValidationErrors() {
+    let errors = [];
+
+    // Internal Name validation (if needed)
+    if ((this.name ?? "").trim() == '') {
+      errors.push(utils.translate('LBL_ERROR_DATABLOCK_NAME'));
+    }
+
+    // Title validation
+    if ((this.text ?? "").trim() == '') {
+      errors.push(utils.translate('LBL_ERROR_DATABLOCK_TITLE'));
+    }
+
+    // Fields validation
+    if (this.fields && this.fields.length > 0) {
+      this.fields.forEach((field, index) => {
+        const fieldErrors = field.getValidationErrors();
+        if (fieldErrors.length > 0) {
+          const fieldName = field.label ? `"${utils.fromFieldLabelText(field.label)}"` : `(${field.text_original})`;
+          fieldErrors.forEach(err => {
+            errors.push(`${utils.translate('LBL_FIELD')} ${fieldName}: ${err}`);
+          });
+        }
+      });
+    } else {
+      if (!this.module || this.module === '') {
+        errors.push(utils.translate('LBL_ERROR_DATABLOCK_EMPTY'));
+      }
+    }
+
+    return errors;
+  }
+
   isValid() {
-    if ((this.name??"").trim()=='') return false;
-    if ((this.text??"").trim()=='') return false;
-    return this.fields.every(f => f.isValid());
+    return this.getValidationErrors().length === 0;
   }
 
   /**
@@ -246,24 +299,24 @@ class stic_AwfField {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      name: '',                // Nombre del campo
-      text_original: '',       // Texto original del campo
-      label: '',               // Etiqueta que aparecerá con el campo
-      description: '',         // Descripción del campo
-      required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
-      type_field: 'form',      // Tipo de campo: unlinked, form, fixed
-      required_in_form: false, // Indica si el campo será obligado en el formulario
-      in_form: true,           // Indica si el campo estará en el formulario
-      type_in_form: 'text',    // Tipo de editor en el formulario: text, textarea, number, date, select
-      subtype_in_form: 'text', // SubTipo de editor en el formulario: text, text_email, text_tel, text_password, textarea, number, data, date_time, date_datetime...
-      type: '',                // Tipo de datos del campo
-      value_type: 'editable',  // Tipo de valor: editable, selectable, fixed, dataBlock
-      value_options: [],       // Las opciones para el valor del campo
-      placeholder: '',         // El placeholder o texto de fondo en el editor
-      value: '',               // El valor del campo
-      value_text: '',          // El texto a mostrar para el valor del campo
-      related_module: '',      // Módulo relacionado (si aplica)
-      validations: [],         // Validaciones del campo
+      name: '',                // Field name
+      text_original: '',       // Original field text
+      label: '',               // Label that will appear with the field
+      description: '',         // Field description
+      required: false,         // Indicates if the field is required in the data block (cannot be deleted)
+      type_field: 'form',      // Field type: unlinked, form, fixed
+      required_in_form: false, // Indicates if the field will be required in the form
+      in_form: true,           // Indicates if the field will be in the form
+      type_in_form: 'text',    // Editor type in the form: text, textarea, number, date, select
+      subtype_in_form: 'text', // SubType of editor in the form: text, text_email, text_tel, text_password, textarea, number, data, date_time, date_datetime...
+      type: '',                // Field data type
+      value_type: 'editable',  // Value type: editable, selectable, fixed, dataBlock
+      value_options: [],       // Options for the field value
+      placeholder: '',         // The placeholder or background text in the editor
+      value: '',               // The field value
+      value_text: '',          // The text to display for the field value
+      related_module: '',      // Related module (if applicable)
+      validations: [],         // Field validations
     });
 
     // 2. Overwrite with provided data
@@ -339,21 +392,36 @@ class stic_AwfField {
     return this.type_field != 'fixed';
   }
 
-  isValid() {
-    if ((this.name??"").trim()=='') return false;
+  getValidationErrors() {
+    let errors = [];
+    
+    // Name validation
+    if ((this.name ?? "").trim() == '') {
+      errors.push(utils.translate('LBL_ERROR_FIELD_NAME'));
+    }
 
     if (this.isFieldInForm()) {
-      if (this.label.trim() == '') return false;
-      if (this.type_in_form == '') return false;
-      if (this.value_type == 'fixed' || this.value_type == 'dataBlock') return false;
-      if (this.value_type == 'selectable' && this.value_options.length == 0) return false;
-      if (this.value_type == 'selectable' && this.value_options.every(o => !o.is_visible)) return false;
-      return true;
+      if ((this.label ?? "").trim() == '') {
+        errors.push(utils.translate('LBL_ERROR_FIELD_LABEL'));
+      }
+      if ((this.type_in_form ?? "").trim() == '') {
+        errors.push(utils.translate('LBL_ERROR_FIELD_TYPE'));
+      }
+      if (this.value_type == 'selectable') {
+        if (this.value_options.length == 0 || this.value_options.every(o => !o.is_visible)) {
+          errors.push(utils.translate('LBL_ERROR_FIELD_OPTIONS'));
+        }
+      }
     } else {
-      if (this.value_type == 'editable' || this.value_type == 'selectable') return false;
-      if (this.value == '') return false;
-      return true;
+      if (this.value == '') {
+        errors.push(utils.translate('LBL_ERROR_FIELD_FIXED_EMPTY'));
+      }
     }
+    return errors;
+  }
+
+  isValid() {
+    return this.getValidationErrors().length === 0;
   }
 
   isSelectCustomOptions() {
@@ -618,12 +686,12 @@ class stic_AwfField {
 class stic_AwfFieldValidation {
   constructor(data = {}) {
     Object.assign(this, {
-      name: '',         // Nombre de la validación
-      validator: '',    // Nombre de la acción de validación (ex: RegexValidatorAction)
-      message: '',      // Mensaje de error personalizado
-      params: {},       // Parámetros (ex: { pattern: '...' })
+      name: '',         // Validation name
+      validator: '',    // Name of the validation action (ex: RegexValidatorAction)
+      message: '',      // Custom error message
+      params: {},       // Parameters (ex: { pattern: '...' })
       
-      // Condición simple para ejecutar la validación (el campo contiene este valor)
+      // Simple condition to execute the validation (the field contains this value)
       condition_field: '',
       condition_value: '',
     });
@@ -647,10 +715,10 @@ class stic_AwfValueOption{
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      value: '',          // Valor de la opción
-      is_visible: true,   // Indica si se mostrará
-      text_original: '',  // Texto original de la opción
-      text: '',           // Texto de la opción
+      value: '',          // Option value
+      is_visible: true,   // Indicates if it will be shown
+      text_original: '',  // Original option text
+      text: '',           // Option text
     });
 
     // 2. Overwrite with provided data
@@ -669,8 +737,8 @@ class stic_AwfDuplicateDetection {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      fields: [],              // Array con el nombre de los campos para la detección de duplicados
-      on_duplicate: "enrich"   // Acción a realizar con los duplicados: update, enrich, skip, error
+      fields: [],              // Array with the name of fields for duplicate detection
+      on_duplicate: "enrich"   // Action to perform with duplicates: update, enrich, skip, error
     });
 
     // 2. Overwrite with provided data
@@ -697,11 +765,11 @@ class stic_AwfFlow {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      id: utils.newId("awffa"), // Id del Flujo de acciones
-      name: "",                 // Nombre del Flujo de acciones
-      label: "",                // La etiqueta a traducir para el nombre
-      text: "",                 // El texto a mostrar 
-      actions: [],              // Las acciones del Flujo
+      id: utils.newId("awffa"), // ID of the action flow
+      name: "",                 // Name of the action flow
+      label: "",                // The label to translate for the name
+      text: "",                 // The text to display
+      actions: [],              // The actions of the Flow
     });
 
     // 2. Overwrite with provided data
@@ -724,20 +792,20 @@ class stic_AwfAction {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      id: utils.newId("awfa"),  // Id de la acción
-      name: "",                 // Nombre interno de la acción
-      title: "",                // Título de la acción (nombre genérico)
-      text: "",                 // Texto a mostrar para la acción
-      description: "",          // Descripción de la acción 
-      requisite_actions: [],    // Array con los identificadores de las acciones previas a la actual
-      category: 'data',         // Categoría de la acción
-      parameters: [],           // Los parámetros de la acción
-      is_user_selectable: true, // Indica si la acción es seleccionable por el usuario
-      is_automatic: false,      // Indica si la acción es automática
-      is_terminal: false,       // Indica si la acción es terminal
-      order: 0,                 // El orden de ejecución de la acción
-      condition_field: '',      // El campo para la condición de ejecución
-      condition_value: '',      // El valor para la condición de ejecución
+      id: utils.newId("awfa"),  // Action ID
+      name: "",                 // Internal name of the action
+      title: "",                // Action title (generic name)
+      text: "",                 // Text to display for the action
+      description: "",          // Action description
+      requisite_actions: [],    // Array with the identifiers of the actions prior to the current one
+      category: 'data',         // Action category
+      parameters: [],           // Action parameters
+      is_user_selectable: true, // Indicates if the action is user selectable
+      is_automatic: false,      // Indicates if the action is automatic
+      is_terminal: false,       // Indicates if the action is terminal
+      order: 0,                 // Execution order of the action
+      condition_field: '',      // Field for the execution condition
+      condition_value: '',      // Value for the execution condition
     });
 
     // 2. Overwrite with provided data
@@ -768,13 +836,13 @@ class stic_AwfActionParameter {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      name: '',                // Nombre del parámetro
-      text: '',                // Texto del parámetro
-      type: '',                // Tipo del parámetro: value, field, dataBlock, crmRecord, optionSelector
-      required: false,         // Indica si el parámetro es obligatorio
-      value: '',               // Valor del parámetro
-      value_text: '',          // Texto a mostrar para el valor del parámetro
-      selectedOption: '',      // Opción seleccionada (si aplica)
+      name: '',                // Parameter name
+      text: '',                // Parameter text
+      type: '',                // Parameter type: value, field, dataBlock, crmRecord, optionSelector
+      required: false,         // Indicates if the parameter is required
+      value: '',               // Parameter value
+      value_text: '',          // Text to display for the parameter value
+      selectedOption: '',      // Selected option (if applicable)
     });
 
     // 2. Overwrite with provided data
@@ -788,30 +856,30 @@ class stic_AwfLayout {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      theme: new stic_AwfTheme(),      // Variables visuales del formulario
+      theme: new stic_AwfTheme(),      // Visual variables of the form
 
-      header_html: '',             // Html con la cabecera del formulario
-      footer_html: '',             // Html con el pie del formulario
+      header_html: '',             // Html with the header of the form
+      footer_html: '',             // Html with the footer of the form
 
-      // Texto del botón de enviar
+      // Submit button text
       submit_button_text: utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE'),
 
-      // Texto en caso de formulario cerrado
+      // Text in case of closed form
       closed_form_title: utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE'),
       closed_form_text: utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE'),
 
-      // Texto por defecto: Datos procesados
+      // Default text: Data processed
       processed_form_title: utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE'),
       processed_form_text: utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE'),
 
-      // Texto por defecto: Datos recibidos
+      // Default text: Data received
       receipt_form_title: utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE'),
       receipt_form_text: utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE'),
 
-      custom_css: '',              // CSS personalizado
-      custom_js: '',               // JS personalizado
+      custom_css: '',              // Custom CSS
+      custom_js: '',               // Custom JS
 
-      structure: [],               // Array de Secciones
+      structure: [],               // Array of Sections
     });
 
     // 2. Overwrite with provided data
@@ -829,33 +897,33 @@ class stic_AwfLayout {
   }
 
   /**
-   * Sincroniza la estructura visual con los bloques de datos reales.
-   *  - Borra referencias a bloques eliminados 
-   *  - Elimina bloques duplicados (solo mantiene la primera aparición)
-   *  - Elimina/Ignora los bloques que no tienen campos visibles
-   *  - Añade los nuevos bloques de datos al final.
-   * @param {stic_AwfDataBlock[]} dataBlocks Lista actual de bloques de datos
+   * Synchronizes the visual structure with the actual data blocks.
+   *  - Removes references to deleted blocks
+   *  - Removes duplicate blocks (keeps only the first occurrence)
+   *  - Removes/Ignores blocks that have no visible fields
+   *  - Adds new data blocks at the end.
+   * @param {stic_AwfDataBlock[]} dataBlocks Current list of data blocks
    */
   syncWithDataBlocks(dataBlocks) {
-    const placedBlockIds = new Set(); // Conjunto de bloques colocados
+    const placedBlockIds = new Set(); // Set of placed blocks
     const cleanStructure = [];
 
-    // Limpieza de los bloques de la estructura visual
+    // Cleanup of the blocks of the visual structure
     this.structure.forEach(section => {
       section.elements = section.elements.filter(el => {
-        if (el.type != 'datablock') return true; // No es un bloque, lo mantenemos
+        if (el.type != 'datablock') return true; // It's not a block: keep it
 
-        // Comprobamos que exista el bloque
+        // We check that the block exists
         const block = dataBlocks.find(b => b.id === el.ref_id);
         
-        if (!block) return false; // El bloque ya no existe
-        if (placedBlockIds.has(el.ref_id)) return false; // Es un duplicado
+        if (!block) return false; // The block no longer exists
+        if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
         
-        // Comprobamos visibilidad de campos
-        // (si no tiene campos fijos, no tiene que estar en la maquetación)
-        if (!block.fields.some(f => f.type_field !== 'fixed')) return false; // El bloque solo tiene campos fijos
+        // Check field visibility
+        // (if it has no fixed fields, it should not be in the layout)
+        if (!block.fields.some(f => f.type_field !== 'fixed')) return false; // The block only has fixed fields
           
-        // Marcamos el bloque como colocado
+        // Mark the block as placed
         placedBlockIds.add(el.ref_id); 
         return true;
       });
@@ -864,16 +932,16 @@ class stic_AwfLayout {
 
     this.structure = cleanStructure;
 
-    // Añadimos los bloques que falten
+    // Add the missing blocks
     const orphanBlocks = dataBlocks.filter(b => {
-      if (placedBlockIds.has(b.id)) return false; // El bloque está colocado
-      if (!b.fields.some(f => f.type_field !== 'fixed')) return false; // Solo tiene campos fijos
+      if (placedBlockIds.has(b.id)) return false; // The block is placed
+      if (!b.fields.some(f => f.type_field !== 'fixed')) return false; // Only has fixed fields
 
       return true;
     });
 
     if (orphanBlocks.length > 0) {
-      // Creamos una sección para cada bloque
+      // Create a section for each block
       orphanBlocks.forEach(block => {
         this._addSectionWithBlock(block);
       });
@@ -903,38 +971,38 @@ class stic_AwfLayout {
 class stic_AwfTheme {
   constructor(data = {}) {
     Object.assign(this, {
-      primary_color: STIC.mainThemeColor ?? '#0d6efd',  // Color corporativo por defecto 
-      page_bg_color: '#f8f9fa',  // Fondo de la página (gris muy suave)
-      form_bg_color: '#ffffff',  // Fondo del formulario (blanco)
+      primary_color: STIC.mainThemeColor ?? '#0d6efd',  // Default corporate color
+      page_bg_color: '#f8f9fa',  // Page background (very light gray)
+      form_bg_color: '#ffffff',  // Form background (white)
 
-      border_radius_container: 10, // Redondeo para los contenedores en px (10px). Range: [0..40]
-      border_radius_controls: 4,   // Redondeo para los contenedores en px (4px). Range: [0..20]
+      border_radius_container: 10, // Rounding for containers in px (10px). Range: [0..40]
+      border_radius_controls: 4,   // Rounding for containers in px (4px). Range: [0..20]
 
-      text_color: '#212529',     // Color del texto (gris oscuro)
-      border_color: '#dee2e6',   // Color del borde (gris claro)
-      border_width: 1,             // Ancho del borde en px
+      text_color: '#212529',     // Text color (dark gray)
+      border_color: '#dee2e6',   // Border color (light gray)
+      border_width: 1,             // Border width in px
 
-      floating_labels: true,       // Inica si se usaran etiquetas flotantes en los controles (true)
+      floating_labels: true,       // Indicates if floating labels will be used in the controls (true)
       
-      // Tipografía
+      // Typography
       font_family: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
 
-      font_size: 16,               // Tamaño de letra en px. 
-      form_width: '800px',         // Ancho máximo del formulario. String para permitir %, px, rem
-      shadow_intensity: 'normal',  // Intensidad de la sombra: 'none', 'light', 'normal', 'heavy'
+      font_size: 16,               // Font size in px.
+      form_width: '800px',         // Maximum width of the form. String to allow %, px, rem
+      shadow_intensity: 'normal',  // Shadow intensity: 'none', 'light', 'normal', 'heavy'
       
-      // Estructura (Grid)
-      sections_per_row: 1,         // Secciones por fila (1, 2 o 3)
-      fields_per_row: 2,           // Campos por fila (1, 2, 3 o 4)
+      // Structure (Grid)
+      sections_per_row: 1,         // Sections per row (1, 2 or 3)
+      fields_per_row: 2,           // Fields per row (1, 2, 3 or 4)
 
-      field_spacing: '1rem',       // Espaciado entre campos
-      equal_height_sections: true, // Indica si las secciones tendrán el mismo alto
-      label_weight_bold: false,    // Negrita en las etiquetas
-      submit_full_width: false,    // Ancho total del botón de enviar
-      input_style: 'standard',     // Estilo de los campos: 'standard', 'flat', 'filled'
+      field_spacing: '1rem',       // Spacing between fields
+      equal_height_sections: true, // Indicates if sections will have the same height
+      label_weight_bold: false,    // Bold in the labels
+      submit_full_width: false,    // Full width of the submit button
+      input_style: 'standard',     // Style of the fields: 'standard', 'flat', 'filled'
     });
 
-    // 2. Sobreescriure amb dades
+    // 2. Overwrite with data
     Object.assign(this, data);
   }
 
@@ -968,18 +1036,18 @@ class stic_AwfTheme {
 }
 
 /**
- * Define un contenedor visual
+ * Defines a visual container
  */
 class stic_AwfLayoutSection {
   constructor(data = {}) {
     Object.assign(this, {
-      id: utils.newId('sect'), // Id de la sección
-      title: "",               // Título a mostrar
-      showTitle: true,         // Indica si se mostrará el título
-      isCollapsible: false,    // Indica si la sección se puede colapsar
-      isCollapsed: false,      // Indica si la sección aparecerá inicialmente colapsada
+      id: utils.newId('sect'), // ID of the section
+      title: "",               // Title to display
+      showTitle: true,         // Indicates if the title will be shown
+      isCollapsible: false,    // Indicates if the section can be collapsed
+      isCollapsed: false,      // Indicates if the section will appear initially collapsed
       
-      containerType: 'card',  // Tipo de contenedor visual: 'panel' (simple), 'card' (con borde), 'tabs', 'accordion'
+      containerType: 'card',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
       elements: [],
     });
 
@@ -997,15 +1065,15 @@ class stic_AwfLayoutSection {
 }
 
 /**
- * Elemento dentro de un contenedor visual
+ * Element inside a visual container
  */
 class stic_AwfLayoutElement {
   constructor(data = {}) {
     Object.assign(this, {
-      id: utils.newId('el'),  // Id del elemento
+      id: utils.newId('el'),  // ID of the element
       
-      type: 'datablock',      // Tipo de elemento: 'datablock' (posibles ampliaciones: 'line', etc)
-      ref_id: '',             // ID de referencia (el ID del stic_AwfDataBlock)
+      type: 'datablock',      // Element type: 'datablock' (possible extensions: 'line', etc)
+      ref_id: '',             // Reference ID (the ID of the stic_AwfDataBlock)
     });
 
     Object.assign(this, data);
@@ -1016,11 +1084,11 @@ class stic_AwfConfiguration {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      data_blocks: [],          // Los Bloques de Datos
-      flows: [],                // Los Flujos de Acciones
-      layout: new stic_AwfLayout(), // El Layout
+      data_blocks: [],          // The Data Blocks
+      flows: [],                // The Action Flows
+      layout: new stic_AwfLayout(), // The Layout
 
-      _lastDataBlocksHash: "",  // Hash interno para controlar cambios en los bloques de datos
+      _lastDataBlocksHash: "",  // Internal hash to control changes in data blocks
     });
 
     // 2. Overwrite with provided data
@@ -1384,7 +1452,7 @@ class stic_AwfConfiguration {
       return null;
     }
 
-    // Si es una acción terminal, asignamos orden a 999
+    // If it is a terminal action, we assign order to 999
     const defaultOrder = actionDef.isTerminal ? 999 : (actionDef.order ?? 0);
 
     const newAction = new stic_AwfAction({

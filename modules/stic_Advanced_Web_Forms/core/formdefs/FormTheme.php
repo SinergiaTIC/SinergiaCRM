@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormTheme {
-    public FormLayout $layout;           // El Layout al que pertenece
+    public FormLayout $layout;           // The layout it belongs to
 
     public string $primary_color = '#0d6efd';
     public string $page_bg_color = '#f8f9fa';

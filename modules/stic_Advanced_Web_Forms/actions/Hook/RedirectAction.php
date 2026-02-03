@@ -30,10 +30,10 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * RedirectAction
  *
- * Acción terminal que redirige el navegador del usuario a una URL específica
- * Opcionalmente, puede adjuntar datos del formulario a la petición mediante GET o POST.
+ * Terminal action that redirects the user's browser to a specific URL
+ * Optionally, it can attach form data to the request via GET or POST.
  *
- * Implementa ITerminalAction para parar la ejecución el flujo
+ * Implements ITerminalAction to stop the execution of the flow
  */
 class RedirectAction extends HookActionDefinition implements ITerminalAction
 {
@@ -46,11 +46,11 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
     }
 
     /**
-     * Define los parámetros que se mostrarán en el wizard.
+     * Defines the parameters that will be displayed in the wizard.
      */
     public function getParameters(): array
     {
-        // La URL destino (Obligatoria)
+        // The target URL (required)
         $paramUrl = new ActionParameterDefinition();
         $paramUrl->name = 'url';
         $paramUrl->text = $this->translate('URL_TEXT'); 
@@ -59,7 +59,7 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
         $paramUrl->dataType = ActionDataType::URL;
         $paramUrl->required = true;
 
-        // El método de envio (GET / POST)
+        // The send method (GET / POST)
         $paramMethod = new ActionParameterDefinition();
         $paramMethod->name = 'method';
         $paramMethod->text = $this->translate('METHOD_TEXT');
@@ -73,7 +73,7 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
             new ActionParameterOption('POST', $this->translate('METHOD_POST_TEXT'))
         ];
         
-        // Los campos a enviar (Opcional)
+        // The fields to send (optional)
         $paramFields = new ActionParameterDefinition();
         $paramFields->name = 'fields_to_send';
         $paramFields->text = $this->translate('FIELDS_TEXT');
@@ -85,33 +85,33 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
     }
 
     /**
-     * Ejecuta la lógica de la redirección.
+     * Executes the redirect logic.
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        // Obtener los parámetros
+        // Get the parameters
         $url = $actionConfig->getResolvedParameter('url');
         $method = $actionConfig->getResolvedParameter('method'); 
         $data = $actionConfig->getResolvedParameter('fields_to_send') ?? [];
 
-        // Ejecutar la redirección
+        // Execute the redirect
         if ($method === 'POST' && !empty($data)) {
             $this->redirectWithPost($url, $data);
             exit;
         } else {
             if (!empty($data)) {
-                // Añadimos los datos a la url
+                // Add data to the URL
                 $queryString = http_build_query($data);
                 $separator = strpos($url, '?') === false ? '?' : '&';
                 $url .= $separator . $queryString;
             }
             
-            // Redireccionamos
+            // Redirect
             header("Location: " . $url);
             exit;
         }
 
-        // Este código sólo se ejecutará si la redirección falla (No damos error)
+        // This code will only execute if the redirect fails (We do not give error)
         return new ActionResult(ResultStatus::OK, $actionConfig, "Redirecting to {$url}");
     }
 

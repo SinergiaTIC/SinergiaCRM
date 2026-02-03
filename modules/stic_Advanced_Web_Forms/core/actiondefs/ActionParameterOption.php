@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Opciones simples para un parámetro del tipo SELECT
+ * Simple options for a SELECT type parameter
  */
 class ActionParameterOption {
     public string $value;

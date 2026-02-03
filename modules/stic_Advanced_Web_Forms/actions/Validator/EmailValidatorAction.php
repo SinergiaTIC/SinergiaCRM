@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * EmailValidatorAction
  *
- * Acción que valida un email
+ * Action that validates an email
  */
 class EmailValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

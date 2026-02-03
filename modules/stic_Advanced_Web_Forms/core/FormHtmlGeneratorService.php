@@ -30,8 +30,8 @@ class FormHtmlGeneratorService {
     private $indent = 0;
 
     /**
-     * Genera el documento HTML completo (con doctype, head, body).
-     * Para visualizaciones standalone o iframes.
+     * Generates the full HTML document (doctype, head, body).
+     * For standalone or iframe views.
      */
     public function generate(FormConfig $config, string $formId, string $actionUrl, bool $isPreview = false): string {
         $this->indent = 0;
@@ -44,14 +44,14 @@ class FormHtmlGeneratorService {
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
                 $htmlRaw .= "<title>Advanced Web Form</title>" .$this->newLine();
         
-                // Librerías externas (Bootstrap + Alpine)
+                // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
                 $htmlRaw .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>' .$this->newLine();
             }
             $htmlRaw .= "</head>" .$this->newLine('-');
             $htmlRaw .= "<body class='bg-light'>" .$this->newLine('+');
             {
-                // Inyectamos el HTML del formulario
+                // Inject the form HTML
                 $htmlRaw .= $this->generateFormHtml($config, $formId, $actionUrl, $isPreview);
             }
             $htmlRaw .= "</body>" .$this->newLine('-');
@@ -63,8 +63,8 @@ class FormHtmlGeneratorService {
 
 
     /**
-     * Genera sólo el HTML del formulario (el div wrapper y su contenido, sin head ni body).
-     * Para incrustar en otras páginas.
+     * Generates only the form HTML (wrapper div and its content, without head or body).
+     * For embedding in other pages.
      */
     public function generateFormHtml(FormConfig $config, string $formId, string $actionUrl, bool $isPreview): string {
         $layout = $config->layout;
@@ -1001,7 +1001,7 @@ JS;
     }
 
     /**
-     * Genera el HTML para el campo de tipo 'rating' (Valoración)
+    * Generates the HTML for the 'rating' field type (rating)
      */
     private function generateRatingField(FormDataBlockField $field): string {
         $name = htmlspecialchars($field->name);
@@ -1020,7 +1020,7 @@ JS;
         $iconStarFill = $this->getRawSvgIcon('star_fill');
         $iconStarEmpty = $this->getRawSvgIcon('star_empty');
 
-        // Lógica AlpineJS
+        // AlpineJS logic
         $alpineLogic = <<<'JS'
 {
     val: null,
@@ -1058,7 +1058,7 @@ JS;
             $html .= "<label for='f_{$name}' class='form-label'>{$label}{$requiredHtml}</label>" . $this->newLine();
         }
 
-        // Input Fantasma para la validación HTML5
+        // Phantom input for HTML5 validation
         $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_Advanced_Web_Forms');
         $requiredAttr = $isRequired ? 'required' : '';
         $html .= <<<HTML

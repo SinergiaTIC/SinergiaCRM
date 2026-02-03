@@ -29,10 +29,10 @@ class ServerActionFactory {
 
     public function createAction(FormAction $actionConfig): ServerActionDefinition {
         
-        $actionName = $actionConfig->name;    // Ex: 'SaveRecordAction' (nombre del fichero sin extensión y de la clase)
-        $className = $actionName;             // Ex: 'SaveRecordAction' (nombre de la clase)
+        $actionName = $actionConfig->name;    // Ex: 'SaveRecordAction' (file and class name without extension)
+        $className = $actionName;             // Ex: 'SaveRecordAction' (class name)
 
-        // Definición de las rutas de búsqueda con prioridad
+        // Define search paths with priority
         $basePath = 'modules/stic_Advanced_Web_Forms/actions/Hook/';
         $searchPaths = [
             'custom/Extension/' . $basePath . $actionName . '.php',
@@ -42,7 +42,7 @@ class ServerActionFactory {
 
         $filePath = null;
 
-        // Buscamos el fichero en las rutas definidas
+        // Search the file in the defined paths
         foreach ($searchPaths as $path) {
             if (file_exists($path)) { 
                 $filePath = $path;

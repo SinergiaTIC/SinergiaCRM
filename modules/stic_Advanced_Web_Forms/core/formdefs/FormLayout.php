@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormLayout {
-    public FormConfig $form_config;    // La configuración del formulario al que pertenece
+    public FormConfig $form_config;    // The configuration of the form to which it belongs
 
     public FormTheme $theme;
     public string $header_html = '';
@@ -44,7 +44,7 @@ class FormLayout {
     public string $custom_js = '';
 
     /** @var FormLayoutSection[] */
-    public array $structure = [];      // Las secciones
+    public array $structure = [];      // The sections
 
     public static function fromJsonArray(FormConfig $form, array $data): self {
         $dto = new self();

@@ -33,7 +33,7 @@ enum WebhookStatus: string {
 }
 
 /**
- * Clase para representar el resultado de un webhook.
+ * Class to represent the result of a webhook.
  */
 class WebhookResult {
     public function __construct(

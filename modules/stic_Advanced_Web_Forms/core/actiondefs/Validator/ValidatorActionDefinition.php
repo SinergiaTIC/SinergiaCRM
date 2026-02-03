@@ -33,25 +33,25 @@ abstract class ValidatorActionDefinition extends ActionDefinition
 
     public string $category = 'validation';
 
-    // Las validaciones son a nivel de campo (por defecto)
+    // Validations are at field level (by default)
     public ActionScope $scope = ActionScope::FIELD;
 
     /** @var ActionDataType[] */
     public array $supportedDataTypes = [];
 
     /**
-     * Retorna la función JS. 
-     * Firma JS: (value, params, formElement) => boolean
-     *   value: valor del campo a validar
-     *   params: parámetros de la acción de validación
-     *   formElement: elemento HTML del formulario (para validaciones más complejas)
-     * @return string Código JS de la función de validación
+     * Returns the JS function. 
+     * JS Signature: (value, params, formElement) => boolean
+     *   value: value of the field to validate
+     *   params: parameters of the validation action
+     *   formElement: HTML element of the form (for more complex validations)
+     * @return string JS code of the validation function
      */
     abstract public function getValidationJS(): string;
 
     /**
-     * Retorna el mensaje de error por defecto de la validación
-     * @return string Mensaje de error por defecto 
+     * Returns the default error message of the validation
+     * @return string Default error message 
      */
     abstract public function getDefaultErrorMessage(): string;
 }   

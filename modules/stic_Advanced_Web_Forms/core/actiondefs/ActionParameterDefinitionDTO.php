@@ -26,8 +26,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Data Transfer Object (DTO) para la definición de un parámetro de acción
- * Se enviará al Frontend para mostrar la configuración del parámetro
+ * Data Transfer Object (DTO) for the definition of an action parameter
+ * Will be sent to the Frontend to display the parameter configuration
  */
 class ActionParameterDefinitionDTO {
     public string $name;

@@ -41,12 +41,12 @@ $response = [
     'error' => ''
 ];
 
-// Validar sesión
+// Validate session
 if (!empty($current_user) && !empty($current_user->id)) {
     $response['is_logged'] = true;
     $response['user_id'] = $current_user->id;
 
-    // Validar ID del formulario
+    // Validate Form ID
     $formId = $_REQUEST['id'] ?? '';
     if (empty($formId)) {
         $response['error'] = 'No Form ID provided';
@@ -54,7 +54,7 @@ if (!empty($current_user) && !empty($current_user->id)) {
         exit;
     }
 
-    // Cargar Bean del formulario
+    // Load Form Bean
     $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $formId);
     if (!$bean || empty($bean->id)) {
         $response['error'] = 'Form not found';
@@ -62,7 +62,7 @@ if (!empty($current_user) && !empty($current_user->id)) {
         exit;
     }
 
-    // Buscamos los módulos asociados al formulario y verificamos permisos
+    // Look for modules associated with the form and verify permissions
     $configData = json_decode(html_entity_decode($bean->configuration), true);
     if ($configData && isset($configData['data_blocks'])) {
         foreach ($configData['data_blocks'] as $block) {

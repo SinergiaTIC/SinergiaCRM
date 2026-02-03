@@ -37,10 +37,10 @@ class ServerActionFlowExecutor {
     }
 
     /**
-     * Ejecuta el flujo principal y gestiona los errores cambiando al flujo de error si es necesario.
-     * @param FormFlow $flowConfig La definición del flujo a ejecutar.
-     * @param ?FormFlow $errorFlowConfig La definición del flujo de error (null si no hay flujo de error).
-     * @return ?FormAction La configuración de la acción Terminal pendiente de ejecutar, o null si ha acabado.
+     * Executes the main flow and manages errors by switching to the error flow if needed.
+     * @param FormFlow $flowConfig The flow definition to execute.
+     * @param ?FormFlow $errorFlowConfig The error flow definition (null if none).
+     * @return ?FormAction The Terminal action configuration pending execution, or null if finished.
      */
     public function executeFlow(FormFlow $flowConfig, ?FormFlow $errorFlowConfig = null): ?FormAction {
         $lastActionConfig = null;
@@ -49,41 +49,41 @@ class ServerActionFlowExecutor {
             foreach ($actions as $actionConfig) {
                 $lastActionConfig = $actionConfig;
 
-                // Verificación de la Condición (si existe)
+                // Check the Condition (if any)
                 if (!empty($actionConfig->condition_field)) {
                     if (!$this->checkCondition($actionConfig, $this->context)) {
                         $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Skipping action '{$actionConfig->text}' because condition failed.");
                         
-                        // Registramos la acción como saltada
+                        // Record the action as skipped
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
                         $this->context->addActionResult($skippedResult);
                         continue; 
                     }
                 }
 
-                // Buscamos la acción a ejecutar (excepción si no existe)
+                // Find the action executor (throws if not found)
                 $actionExecutor = $this->factory->createAction($actionConfig);
                 
-                // Si es Terminal no la ejecutamos: paramos el bucle y la retornamos para que se ejecute después
+                // If it's Terminal we don't execute it: stop loop and return it to be executed later
                 if ($actionExecutor instanceof ITerminalAction) {
                     return $actionConfig;
                 }
 
-                // Resolución de Parámetros 
+                // Parameter resolution
                 $paramDefinitions  = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
                 $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
                 $actionConfig->setResolvedParameters($resolvedParameters);
 
-                // Ejecutamos la acción
+                // Execute the action
                 $actionResult = $actionExecutor->execute($this->context, $actionConfig); 
 
-                // Actualización del Contexto
+                // Context update
                 $this->context->addActionResult($actionResult);
 
 
                 if ($actionResult->isWait()) {
-                    // Marcamos que la respuesta está esperando
+                    // Mark the response as waiting
                     if ($this->context->responseBean) {
                         $this->context->responseBean->status = 'awaiting_action';
                         $this->context->responseBean->save();
@@ -91,26 +91,26 @@ class ServerActionFlowExecutor {
                     
                     $GLOBALS['log']->info("Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $actionResult->message);
 
-                    // Retornamos null para finalizar: El motor se pondrá en espera
+                    // Return null to finish: the engine will be put on hold
                     return null; 
                 }
 
-                // Detección de Error
+                // Error detection
                 if ($actionResult->isError()) {
-                    // Si hay flujo de error: cambio inmediato al flujo de error
+                    // If there's an error flow: immediately switch to the error flow
                     if ($errorFlowConfig !== null) {
                         return $this->executeFlow($errorFlowConfig);
                     }
-                    // Si no hay flujo de error, finalizamos
+                    // If there is no error flow, finish
                     return null; 
                 }
             }
         } catch (\Throwable $t) {
-            // Captura cualquier Excepción y Fatal Error de PHP y lo convierte en un error del contexto
+            // Catch any Exception or PHP Fatal Error and convert it into a context error
             $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': '."CRITICAL ERROR in ServerActionFlowExecutor: " . $t->getMessage());
             $this->context->addError($t, $lastActionConfig);
             
-            // Si hay flujo de error: cambio inmediato al flujo de error
+            // If there's an error flow: immediately switch to it
             if ($errorFlowConfig !== null) {
                 try {
                     return $this->executeFlow($errorFlowConfig);
@@ -118,7 +118,7 @@ class ServerActionFlowExecutor {
                     $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': '."Double Fault: Error flow failed too: " . $t2->getMessage());
                 }
             }
-            // Si no hay flujo de error, finalizamos
+            // If there is no error flow, we finish
             return null; 
         }
         
@@ -126,26 +126,26 @@ class ServerActionFlowExecutor {
     }
 
     /**
-     * Verifica si se cumple la condición para ejecutar una acción.
-     * @param FormAction $action La acción a verificar
-     * @param ExecutionContext $context El contexto de ejecución
-     * @return bool True si se cumple la condición o no hay condición, false en caso contrario
+     * Checks if the condition is met to execute an action.
+     * @param FormAction $action The action to check
+     * @param ExecutionContext $context The execution context
+     * @return bool True if the condition is met or there is no condition, false otherwise
      */
     private function checkCondition(FormAction $action, ExecutionContext $context): bool {
         $fieldKey = $action->condition_field; // Ex: "Contact0.newsletter"
         $expectedValue = $action->condition_value;
 
-        // Convertimos la clave lógica a clave PHP (reemplazando '.' por '_')
+        // Convert the logical key to PHP key (replacing '.' with '_')
         $phpKey = str_replace('.', '_', $fieldKey);
 
-        // Buscamos el valor enviado en el formulario
+        // Look for the submitted value in the form
         if (!isset($context->formData[$phpKey])) {
             $submittedValue = $context->formData[$phpKey];
         } else {
-            $submittedValue = '0'; // Assumimos false si no ha llegado del formulario
+            $submittedValue = '0'; // We assume false if it has not arrived from the form
         }
 
-        // Comprobamos si el valor enviado coincide con el esperado
+        // Check if the submitted value matches the expected one
         if (is_array($submittedValue)) {
             return in_array($expectedValue, $submittedValue);
         }

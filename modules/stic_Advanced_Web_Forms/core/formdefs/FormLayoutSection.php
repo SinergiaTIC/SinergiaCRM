@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormLayoutSection {
-    public FormLayout $layout;       // El Layout al que pertenece
+    public FormLayout $layout;       // The layout it belongs to
 
     public string $id;
     public string $title;

@@ -28,32 +28,32 @@ require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
 
 /**
  * EntryPoint: ResponseHandler
- * Se encarga de recibir, validar, persistir y procesar las respuestas de los formularios web.
+ * It is responsible for receiving, validating, persisting and processing form responses.
  */
 class ResponseHandler
 {
     public function run(): void {
         global $current_user;
 
-        // Usuario real (antes de cambiar a admin)
+        // Real user (before changing to admin)
         $realUserId = null;
         if (!empty($current_user) && !empty($current_user->id)) {
             $realUserId = $current_user->id;
         }
 
-        // Usuario administrador
+        // Admin user
         $current_user = BeanFactory::newBean('Users');
         $current_user->getSystemUser();
 
-        // Obtención de datos
+        // Data retrieval
         $formId = $_REQUEST['id'] ?? null;
         $rawPostData = $_POST;
         $cleanData = $this->sanitizeInput($rawPostData);
 
-        // Detección Anti-Spam (Honeypot): Campo oculto que los bots suelen rellenar
+        // Anti-Spam Detection (Honeypot): Hidden field that bots usually fill in
         $isSpam = !empty($cleanData['awf_honey_pot']);
 
-        // Detección Anti-Spam (TimeTrap): Normalmente los bots envían el formulario inmediatamente y/o sin ejecutar JS
+        // Anti-Spam Detection (TimeTrap): Normally bots submit the form immediately and/or without executing JS
         $submissionTs = (int)($_POST['awf_submission_ts'] ?? 0);
         $currentTs = time();
         $duration = $currentTs - $submissionTs;
@@ -61,11 +61,11 @@ class ResponseHandler
             $isSpam = true;
         }
 
-        // URL del formulario
+        // Form URL
         $formUrl = $_POST['awf_form_url'] ?? $_SERVER['HTTP_REFERER'] ?? '';
         $formUrl = substr(strip_tags($formUrl), 0, 255);
 
-        // Saneamiento de datos
+        // Data sanitization
         unset($cleanData['module']);
         unset($cleanData['action']);
         unset($cleanData['entryPoint']);
@@ -75,7 +75,7 @@ class ResponseHandler
         unset($cleanData['awf_form_url']);
 
 
-        // Validaciones iniciales
+        // Initial validations
         if (empty($formId)) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler. EntryPoint called without ID");
             $this->terminateRawError("No Form ID provided.");
@@ -88,9 +88,9 @@ class ResponseHandler
             $this->terminateRawError("Form not found.");
         }
 
-        // Detección de duplicados: Fingerprint
+        // Duplicate detection: Fingerprint
         $timeWindow = 300; // 300s = 5 min
-        $timeSlot = floor(time() / $timeWindow); // $timeSlot cambiará cada 5 minutos: evitamos F5 accidental
+        $timeSlot = floor(time() / $timeWindow); // $timeSlot will change every 5 minutes: we avoid accidental F5
 
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
@@ -105,7 +105,7 @@ class ResponseHandler
             return;
         }
 
-        // Buscamos el estado de la respuesta
+        // We look for the response status
         $isPublic = ($formBean->status === 'public');
         if ($isSpam) {
             $responseStatus = 'spam';
@@ -122,7 +122,7 @@ class ResponseHandler
                                    "'{$app_list_strings['stic_advanced_web_forms_response_status_list'][$formBean->status]}'";
         }
 
-        // Guardamos la respuesta
+        // We save the response
         $responseBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Responses');
         $responseBean->is_automated_save = true;
         $responseBean->name = $formBean->name ." - ". date('Y-m-d H:i:s');
@@ -136,7 +136,7 @@ class ResponseHandler
         $responseBean->assigned_user_id = $formBean->assigned_user_id;
         $responseBean->save();
 
-        // Vinculamos la respuesta con el formulario
+        // Link the response with the form
         if ($formBean->load_relationship('stic_69c1s_responses')) {
             $formBean->stic_69c1s_responses->add($responseBean->id);
         } else {
@@ -144,12 +144,12 @@ class ResponseHandler
             $this->terminateRawError("Form relationship not found.");
         }
 
-        // Cargamos la configuración (con los flujos de acciones)
+        // Load the configuration (with action flows)
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         if (!$configData) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form Configuration not found. ID: $formId");
 
-            // Actualizamos la respuesta
+            // Update the response
             if ($isPublic) {
                 $responseBean->status = 'error';
                 $responseBean->description = translate('LBL_ERROR_FORM_CONFIG', 'stic_Advanced_Web_Forms_Responses');
@@ -159,23 +159,23 @@ class ResponseHandler
         }
         $formConfig = FormConfig::fromJsonArray($configData);
 
-        // Paramos si es SPAM (Fake success)
+        // Stop if it's SPAM (Fake success)
         if ($isSpam) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected and saved for Form ID: $formId");
 
-            // Actualizamos contador de spam
+            // Update spam counter
             $db = DBManagerFactory::getInstance();
             $safeId = $db->quote($formId);
             $db->query("UPDATE stic_advanced_web_forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
             
-            // Mostramos éxito genérico para engañar al bot
+            // Show generic success to fool the bot
             $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
             $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
-            return; // Paramos: no procesamos más
+            return; // Stop: we don't process further
         }
 
-        // Solo los formularios 'public' procesan las respuestas
+        // Only 'public' forms process responses
         if (!$isPublic) {
             $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
             $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
@@ -183,7 +183,7 @@ class ResponseHandler
             return;
         }
 
-        // Validación de datos
+        // Data validation
         $validationErrors = $this->validateSubmission($formConfig, $cleanData);
         if ($validationErrors) {
             $errorString = implode(", ", $validationErrors);
@@ -200,19 +200,19 @@ class ResponseHandler
             return;
         }
 
-        // Actualizamos contador de respuestas válidas
+        // Update valid responses counter
         $db = DBManagerFactory::getInstance();
         $safeId = $db->quote($formId);
         $db->query("UPDATE stic_advanced_web_forms SET analytics_submissions = analytics_submissions + 1 WHERE id = '$safeId'");
 
-        // Contexto de ejecución
+        // Execution context
         $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
         if (empty($defaultAssignedUserId)) {
             $defaultAssignedUserId = $current_user->id;
         }
         $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
 
-        // Generamos el HTML resumen y lo guardamos en la respuesta
+        // Generate summary HTML and save it in the response
         try {
             $snapshotHtml = stic_AWFUtils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
             $responseBean->html_summary = $snapshotHtml;
@@ -223,9 +223,9 @@ class ResponseHandler
 
         $executor = new ServerActionFlowExecutor($context);
         
-        // Preparación de los Flujos de acciones
-        //    0: Main    (Principal)
-        //    1: Receipt (Recibido/Confirmación para 'async')
+        // Preparation of the Action Flows
+        //    0: Main    (Main)
+        //    1: Receipt (Received/Confirmation for 'async')
         //   -1: OnError (Error)
         $mainFlow = $formConfig->flows['0'] ?? null;
         $receiptFlow = $formConfig->flows['1'] ?? null;
@@ -233,13 +233,13 @@ class ResponseHandler
 
         $isAsync = ($formBean->processing_mode === 'async');
         if ($isAsync) {
-            // Modo async - Ejecutamos Flow 1: 'receiptFlow' para data feedback inmediato al usuario
+            // Async mode - Execute Flow 1: 'receiptFlow' for immediate data feedback to user
             if ($receiptFlow) {
-                // Ejecutamos las acciones no terminales
+                // Execute non-terminal actions
                 $pendingTerminalAction = $executor->executeFlow($receiptFlow, $errorFlow);
-                // No actualizamos el estado: seguirá siendo 'pending'
+                // We don't update the status: it will continue to be 'pending'
                 
-                // Ejecutamos la acción terminal
+                // Execute terminal action
                 if ($pendingTerminalAction) {
                     $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
                 } else {
@@ -249,33 +249,33 @@ class ResponseHandler
                     stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
                 }
             } else {
-                // Si no hay flujo de recibido, mostramos mensaje genérico
+                // If there is no receipt flow, we show generic message
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
                 $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
                 $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
                 stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
             }
         } else {
-            // Modo sync - Ejecutamos Flow 0: 'mainFlow' inmediatamente
+            // Sync mode - Execute Flow 0: 'mainFlow' immediately
             $responseBean->status = 'processing';
             $responseBean->save();
 
             if ($mainFlow) {
-                // Ejecutamos las acciones no terminales
+                // Execute non-terminal actions
                 $pendingTerminalAction = $executor->executeFlow($mainFlow, $errorFlow);
 
-                // Si el flujo se ha pausado, salimos
+                // If the flow has paused, exit
                 if ($responseBean->status === 'awaiting_action') {
                     return;
                 }
                 
-                // Guardamos los vínculos de trazabilidad (registros creados/modificados)                
+                // Save traceability links (created/modified records)                
                 $this->saveLinks($responseBean, $context);
 
-                // Generamos las respuestas analíticas
+                // Generate analytical answers
                 $this->generateAnalyticsAnswers($responseBean, $formConfig, $cleanData);
 
-                // Actualizamos el estado y generamos el log de ejecución
+                // Update status and generate execution log
                 $hasErrors = false;
                 $logSummary = "[" . date('Y-m-d H:i:s') . "]\n";
                 foreach ($context->actionResults as $result) {
@@ -298,7 +298,7 @@ class ResponseHandler
                 $responseBean->status = $hasErrors ? 'error' : 'processed';
                 $responseBean->save();
 
-                // Ejecutamos la acción terminal
+                // Execute terminal action
                 if ($pendingTerminalAction) {
                     $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
                 } else {
@@ -314,7 +314,7 @@ class ResponseHandler
                     }
                 }
             } else {
-                // Si no hay flujo principal, mostramos mensaje genérico
+                // If there is no main flow, we show generic message
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
                 stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
             }
@@ -322,10 +322,10 @@ class ResponseHandler
     }
 
     /**
-     * Ejecuta la acción terminal pendiente
-     * @param FormAction $actionConfig Configuración de la acción a ejecutar
-     * @param ExecutionContext $context Contexto de ejecución
-     * @param ?FormFlow $errorFlow Flujo de error que se ejecutará si falla la acción
+     * Executes the pending terminal action
+     * @param FormAction $actionConfig Configuration of the action to execute
+     * @param ExecutionContext $context Execution context
+     * @param ?FormFlow $errorFlow Error flow that will be executed if the action fails
      */
     private function executeTerminalAction(FormAction $actionConfig, ExecutionContext $context, ?FormFlow $errorFlow = null): void {
         $factory = new ServerActionFactory();
@@ -334,17 +334,17 @@ class ResponseHandler
         try {
             $actionExecutor = $factory->createAction($actionConfig);
             
-            // Resolución de parámetros
+            // Parameter resolution
             $paramDefinitions = $actionExecutor->getParameters();
             $resolvedParameters = $resolver->resolveAll($actionConfig, $paramDefinitions, $actionConfig->parameters, $context);
             $actionConfig->setResolvedParameters($resolvedParameters);
             
-            // Ejecutamos. Seguramente no retornará porque tendrá un exit/redirect
+            // Execute. It probably won't return because it will have an exit/redirect
             $actionExecutor->execute($context, $actionConfig);
         } catch (\Exception $e) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal Action Failed: " . $e->getMessage());
 
-            // Si ha fallado y tenemos un flujo de error definido lo ejecutamos si no se han enviado las cabeceras aún
+            // If it has failed and we have a defined error flow, execute it if headers have not been sent yet
             if ($errorFlow && !headers_sent()) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Attempting to execute Error Flow after Terminal Action failure.");
                 
@@ -359,7 +359,7 @@ class ResponseHandler
                     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error Flow execution failed also: " . $e->getMessage());
                 }
             }
-            // Si todo falla mostramos error genérico
+            // If everything fails we show generic error
             if (!headers_sent()) {
                 stic_AWFUtils::renderGenericResponse($context->formConfig, "Error", "Error processing terminal action.");
             }
@@ -408,14 +408,14 @@ class ResponseHandler
 
         global $app_list_strings;
 
-        // Consolidamos los links: Un único link por cada bean afectado
+        // Consolidate links: A single link for each affected bean
         $consolidatedBeans = []; 
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modBean) {
                 $key = $modBean->moduleName . ':' . $modBean->beanId;
 
                 if (!isset($consolidatedBeans[$key])) {
-                    // Primera vez que lo tocamos
+                    // First time we touch it
                     $consolidatedBeans[$key] = [
                         'module' => $modBean->moduleName,
                         'id' => $modBean->beanId,
@@ -423,20 +423,20 @@ class ResponseHandler
                         'data' => $modBean->submittedData
                     ];
                 } else {
-                    // Ya existe, hacemos fusión
+                    // It already exists, we merge
                     $currentEntry = &$consolidatedBeans[$key];
 
-                    // Fusión del tipo de acción realizada. Prioridad: CREATED > UPDATED > ENRICHED
+                    // Merge of action type performed. Priority: CREATED > UPDATED > ENRICHED
                     if ($modBean->modificationType === BeanModificationType::CREATED) {
                         $currentEntry['type'] = BeanModificationType::CREATED;
                     } elseif ($currentEntry['type'] !== BeanModificationType::CREATED && $modBean->modificationType === BeanModificationType::UPDATED) {
                         $currentEntry['type'] = BeanModificationType::UPDATED;
                     } elseif ($currentEntry['type'] === BeanModificationType::SKIPPED && $modBean->modificationType !== BeanModificationType::SKIPPED) {
-                        // Si estaba como SKIPPED y ahora es otra acción, lo actualizamos
+                        // If it was SKIPPED and now it is another action, we update it
                         $currentEntry['type'] = $modBean->modificationType;
                     }
 
-                    // Fusión de los datos tocados: Acumulamos los campos (no SKIPPED)
+                    // Merge of touched data: We accumulate the fields (not SKIPPED)
                     if ($modBean->modificationType !== BeanModificationType::SKIPPED && !empty($modBean->submittedData)) {
                         $currentEntry['data'] = array_merge($currentEntry['data'], $modBean->submittedData);
                     }
@@ -444,7 +444,7 @@ class ResponseHandler
             }
         }
 
-        // Guardamos los links
+        // Save the links
         $sequence = 1;
         foreach ($consolidatedBeans as $item) {
             $linkBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Links');
@@ -457,7 +457,7 @@ class ResponseHandler
             $moduleSingular = $app_list_strings['moduleListSingular'][$item['module']] ?? $item['module'];
 
             $linkBean->is_automated_save = true;
-            // Formato del nombre del link: "NombreFormulario - Módulo: NombreRegistro (Creado)"
+            // Link name format: "FormName - Module: RecordName (Created)"
             $linkBean->name = $responseBean->name ." - ". $moduleSingular .": ". $targetBeanName ." (". $recordActionName .")";
             $linkBean->sequence_number = $sequence++;
             $linkBean->parent_id = $item['id']; 
@@ -471,16 +471,16 @@ class ResponseHandler
 
             $linkBean->save();
 
-            // Vinculamos el Link a la Response
+            // Link the Link to the Response
             $responseBean->stic_1c31forms_links->add($linkBean->id);
         }
     }
 
     /**
-     * Valida los datos de la sumisión contra la configuración del formulario.
-     * @param FormConfig $config Configuración del formulario
-     * @param array $data Datos recibidos en la sumisión
-     * @return ?array Lista de errores o null si no hay errores
+     * Validates submission data against form configuration.
+     * @param FormConfig $config Form configuration
+     * @param array $data Received data in the submission
+     * @return ?array List of errors or null if no errors
      */
     private function validateSubmission(FormConfig $config, array $data): ?array {
         $errors = [];
@@ -495,7 +495,7 @@ class ResponseHandler
                 $inputKey = $prefix . $block->name . '_' . $field->name;
                 $value = $data[$inputKey] ?? null;
 
-                // Validación de campo obligado (Required)
+                // Validation of required field (Required)
                 if ($field->required_in_form) {
                     if ($value === null || $value === '' || (is_array($value) && empty($value))) {
                         $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
@@ -504,7 +504,7 @@ class ResponseHandler
                     }
                 }
 
-                // Validación de tipo de datos (Sanity Check)
+                // Data type validation (Sanity Check)
                 if ($value !== null && $value !== '') {
                     if ($field->type_in_form === 'number') {
                         if (!is_numeric($value)) {
@@ -546,15 +546,15 @@ class ResponseHandler
     }
 
     /**
-     * Genera las respuestas analíticas para su almacenamiento y análisis posterior.
-     * @param SugarBean $responseBean Bean de la respuesta
-     * @param FormConfig $formConfig Configuración del formulario
-     * @param array $submittedData Datos enviados en la sumisión
+     * Generates analytical responses for storage and subsequent analysis.
+     * @param SugarBean $responseBean Response bean
+     * @param FormConfig $formConfig Form configuration
+     * @param array $submittedData Data sent in the submission
      */
     private function generateAnalyticsAnswers(SugarBean $responseBean, FormConfig $formConfig, array $submittedData): void {
         global $app_strings;
 
-        // Contador global
+        // Global counter
         $orderCounter = 1;
 
         foreach ($formConfig->data_blocks as $block) {
@@ -562,51 +562,51 @@ class ResponseHandler
                 $currentOrder = $orderCounter;
                 $orderCounter += 1;
 
-                // Saltamos los campos fijos
+                // Skip fixed fields
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
 
-                // Clave del input
+                // Input key
                 $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached_' : '';
                 $inputKey = $prefix . $block->name . '_' . $field->name;
                 
                 $rawValue = $submittedData[$inputKey] ?? null;
                 
-                // Calculamos el texto legible y el valor a almacenar
+                // Calculate readable text and value to store
                 $readableText = $rawValue;
                 $storedValue = $rawValue;
                 
-                // Campos de tipo lista (select, multiselect, radio)
+                // List type fields (select, multiselect, radio)
                 if (!empty($field->value_options)) {
                     if (is_array($rawValue)) {
-                        // Multiselección
+                        // Multi-selection
                         $labels = [];
                         foreach ($rawValue as $valItem) {
                             $opt = $this->findOption($field->value_options, $valItem);
                             $labels[] = $opt ? $opt->text : $valItem;
                         }
-                        $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Guardamos JSON ["A","B"]
-                        $readableText = implode(', ', $labels); // Text: "Opción A, Opción B"
+                        $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Store JSON ["A","B"]
+                        $readableText = implode(', ', $labels); // Text: "Option A, Option B"
                     } else {
-                        // Selección única
+                        // Single selection
                         $opt = $this->findOption($field->value_options, $rawValue);
                         if ($opt) {
                             $readableText = $opt->text;
                         }
                     }
                 } 
-                // Campos booleanos (checkbox)
+                // Boolean fields (checkbox)
                 elseif ($field->type === 'bool' || $field->type === 'checkbox') {
                     $isTrue = ($rawValue === '1' || $rawValue === 'on' || $rawValue === 'true' || $rawValue === true);
                     $readableText = $isTrue ? $app_strings['LBL_YES'] : $app_strings['LBL_NO'];
                     $storedValue = $isTrue ? '1' : '0';
                 }
-                // Arrays genéricos que no son listas
+                // Generic arrays that are not lists
                 elseif (is_array($rawValue)) {
                     $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE);
                     $readableText = 'Array'; 
                 }
 
-                // Creamos el bean de la respuesta analítica
+                // Create analytical response bean
                 $answerBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Answers');
                 $answerBean->response_id = $responseBean->id;
                 $answerBean->form_id = $formConfig->id ?? ''; 
@@ -624,7 +624,7 @@ class ResponseHandler
                 $answerBean->answer_text = (string)$readableText;
                 $answerBean->answer_type = $field->type_in_form;
                 
-                // Para facilitar análisis, guardamos el valor numérico si aplica
+                // To facilitate analysis, we save the numeric value if applicable
                 if (!is_array($rawValue) && is_numeric($rawValue)) {
                     $answerBean->answer_integer = (float)$rawValue;
                 } else {
@@ -644,12 +644,12 @@ class ResponseHandler
     }
 
     /**
-     * Función que limpia recursivamente el input para evitar XSS
-     * Elimina tags HTML peligrosos y espacios sobrantes
+     * Function that recursively cleans the input to avoid XSS
+     * Removes dangerous HTML tags and extra spaces
      */
     private function sanitizeInput($input) {
         if (is_array($input)) {
-            // Si es un array, limpiamos cada uno de los elementos, también la clave
+            // If it is an array, we clean each element, also the key
             $clean = [];
             foreach ($input as $key => $value) {
                 $clean[strip_tags($key)] = $this->sanitizeInput($value);
@@ -657,16 +657,16 @@ class ResponseHandler
             return $clean;
         }
         
-        // Si es un bool, null o numérico puro lo dejamos pasar
+        // If it is a bool, null or pure numeric, let it pass
         if (is_bool($input) || is_null($input) || is_numeric($input)) {
             return $input;
         }
 
-        // Limpiamos el input
+        // Clean the input
         return strip_tags(trim((string)$input));
     }    
 }
 
-// Ejecución del Handler
+// Handler execution
 $handler = new ResponseHandler();
 $handler->run();

@@ -28,11 +28,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 abstract class ServerActionDefinition extends ActionDefinition {
 
     /**
-     * Ejecuta la acción definida por esta definición.
+     * Executes the action defined by this definition.
      *
-     * @param ExecutionContext $context Contexto de ejecución de la acción
-     * @param FormAction $actionConfig Configuración de la acción del formulario
-     * @return ActionResult Resultado de la ejecución de la acción
+     * @param ExecutionContext $context Execution context of the action
+     * @param FormAction $actionConfig Configuration of the form action
+     * @return ActionResult Result of the execution of the action
      */
     public abstract function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult;
 }

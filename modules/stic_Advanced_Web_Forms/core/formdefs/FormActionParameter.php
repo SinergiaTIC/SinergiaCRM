@@ -26,18 +26,18 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormActionParameter {
-    public FormAction $action;      // La Acción a la que pertenece
+    public FormAction $action;      // The action it belongs to
 
-    public string $name;            // Nombre del Parámetro
-    public string $text;            // El texto a mostrar
-    public string $selectedOption;  // El nombre de la opción seleccionada (si aplica)
-    public string $value;           // El valor del Parámetro
+    public string $name;            // Name of the parameter
+    public string $text;            // The text to display
+    public string $selectedOption;  // The name of the selected option (if applicable)
+    public string $value;           // The value of the parameter
 
     /**
-     * Crea una instancia de FormActionParameter a partir de un array JSON.
-     * @param FormAction $action La Acción a la que pertenece
-     * @param array $data Los datos en formato array
-     * @return FormActionParameter La instancia creada
+     * Creates an instance of FormActionParameter from a JSON array.
+     * @param FormAction $action The action it belongs to
+     * @param array $data The data in array format
+     * @return FormActionParameter The created instance
      */
     public static function fromJsonArray(FormAction $action, array $data): self {
         $dto = new self();

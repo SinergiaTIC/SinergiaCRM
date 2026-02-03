@@ -26,22 +26,22 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormFieldValidation {
-    public FormDataBlockField $field;    // El campo al que pertenece la validación
+    public FormDataBlockField $field;    // The field to which the validation belongs
 
-    public string $name;                 // Nombre interno del validador
-    public string $validator;            // Nombre de la clase validadora (ex: RegexValidatorAction)
-    public string $message;              // Mensaje de error personalizado
-    public array $params;                // Parámetros (ex: ['pattern' => '...'])
+    public string $name;                 // Internal name of the validator
+    public string $validator;            // Name of the validator class (ex: RegexValidatorAction)
+    public string $message;              // Custom error message
+    public array $params;                // Parameters (ex: ['pattern' => '...'])
     
-    // Condición para aplicar la validación (si campo_x tiene valor y)
+    // Condition to apply the validation (if field_x has value y)
     public string $condition_field;
     public string $condition_value;
 
     /**
-     * Crea una instancia de FormFieldValidation a partir de un array JSON.
-     * @param FormDataBlockField $field El campo al que pertenece
-     * @param array $data Los datos en formato array
-     * @return FormFieldValidation La instancia creada
+     * Creates an instance of FormFieldValidation from a JSON array.
+     * @param FormDataBlockField $field The field it belongs to
+     * @param array $data The data in array format
+     * @return FormFieldValidation The created instance
      */
     public static function fromJsonArray(FormDataBlockField $field, array $data): self {
         $dto = new self();
@@ -52,7 +52,7 @@ class FormFieldValidation {
         $dto->message = $data['message'] ?? '';
         $dto->params = $data['params'] ?? [];
         
-        // Condición
+        // Condition
         $dto->condition_field = $data['condition_field'] ?? '';
         $dto->condition_value = $data['condition_value'] ?? '';
 

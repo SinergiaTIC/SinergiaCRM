@@ -1,14 +1,36 @@
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
 function wizardForm() {
   return {
     navigation: {
       step: 1,
-      // Definición explícita de los pasos del asistente
+      // Explicit definition of wizard steps
       stepsList: [
         { id: 1, label: 'LBL_WIZARD_TITLE_STEP1', desc: 'LBL_WIZARD_DESC_STEP1', icon: 'suitepicon-action-info' },          // General
-        { id: 2, label: 'LBL_WIZARD_TITLE_STEP2', desc: 'LBL_WIZARD_DESC_STEP2', icon: 'suitepicon-module-fields' },        // Campos
-        { id: 3, label: 'LBL_WIZARD_TITLE_STEP3', desc: 'LBL_WIZARD_DESC_STEP3', icon: 'suitepicon-module-aow-workflow' },  // Lógica
-        { id: 4, label: 'LBL_WIZARD_TITLE_STEP4', desc: 'LBL_WIZARD_DESC_STEP4', icon: 'suitepicon-module-layouts' },       // Diseño
-        { id: 5, label: 'LBL_WIZARD_TITLE_STEP5', desc: 'LBL_WIZARD_DESC_STEP5', icon: 'suitepicon-module-overview' }       // Publicar
+        { id: 2, label: 'LBL_WIZARD_TITLE_STEP2', desc: 'LBL_WIZARD_DESC_STEP2', icon: 'suitepicon-module-fields' },        // Fields
+        { id: 3, label: 'LBL_WIZARD_TITLE_STEP3', desc: 'LBL_WIZARD_DESC_STEP3', icon: 'suitepicon-module-aow-workflow' },  // Logic
+        { id: 4, label: 'LBL_WIZARD_TITLE_STEP4', desc: 'LBL_WIZARD_DESC_STEP4', icon: 'suitepicon-module-layouts' },       // Design
+        { id: 5, label: 'LBL_WIZARD_TITLE_STEP5', desc: 'LBL_WIZARD_DESC_STEP5', icon: 'suitepicon-module-overview' }       // Publish
       ],
       get totalSteps() { return this.stepsList.length; }
     },
@@ -128,7 +150,7 @@ function wizardForm() {
       } catch (e) {
         console.error("Error parsing JSON:", e);
         console.log("Bad JSON String:", jsonString);
-        // Fallback a config vacía si falla
+        // Fallback to empty config if parsing fails
         this.formConfig = new stic_AwfConfiguration();
       }
 
@@ -197,14 +219,14 @@ class WizardNavigation {
     const currentStep = window.alpineComponent.navigation.step;
     if (targetStep === currentStep) return;
 
-    // Si vamos atrás, no es necesario validar
+    // If going back, no need to validate
     if (targetStep < currentStep) {
       window.alpineComponent.navigation.step = targetStep;
       WizardNavigation.loadStep();
       return;
     }
 
-    // Si vamos adelante, validar el paso actual
+    // If going forward, validate the current step
     if (WizardNavigation.validateCurrentStep()) {
       window.alpineComponent.navigation.step = targetStep;
       WizardNavigation.autoSave();
@@ -215,7 +237,7 @@ class WizardNavigation {
   static validateCurrentStep() {
     let allOk = true;
 
-    // Validación HTML5 estandard
+    // HTML5 standard validation
     const stepForms = document.querySelectorAll("#wizard-step-container form.needs-validation");
     if (stepForms.length > 0) {
       stepForms.forEach(function (f) {
@@ -225,9 +247,9 @@ class WizardNavigation {
       });
     }
 
-    // Validación lógica específica del paso
+    // Step-specific logical validation
     const currentStep = window.alpineComponent.navigation.step;
-    // Paso 2: Debe existir algún bloque de datos
+    // Step 2: At least one data block must exist
     if (currentStep === 2) {
       if (window.alpineComponent.formConfig.data_blocks.length === 0) {
         alert(utils.translate('LBL_ERROR_NO_DATABLOCKS'));
@@ -394,12 +416,12 @@ class WizardStep2 {
         // Store for the Field Editor management
         if (!Alpine.store('fieldEditor')) {
           Alpine.store('fieldEditor', {
-            isOpen: false,           // Indica si está abierto el editor de campos
-            isEdit: false,           // Indica si es modo edición (false: modo creación)
-            field: new stic_AwfField(),  // Copia de los datos del campo
-            dataBlock: null,         // El bloque de datos del campo
-            needDeleteOld: false,    // Indica si es necesario eliminar el campo anterior antes de guardar
-            original_name: '',       // Nombre original del campo
+            isOpen: false,           // Indicates if the field editor is open
+            isEdit: false,           // Indicates if it is edit mode (false: creation mode)
+            field: new stic_AwfField(),  // Copy of the field data
+            dataBlock: null,         // The data block of the field
+            needDeleteOld: false,    // Indicates if it is necessary to delete the previous field before saving
+            original_name: '',       // Original field name
 
             /**
              * Retorna si es un campo nuevo
@@ -492,7 +514,7 @@ class WizardStep2 {
               return Object.entries(validation.params).map(([key, value]) => {
                 const paramDef = def.parameters.find(p => p.name === key);
                 
-                // Si és un checkbox (boolean)
+                // If it is a checkbox (boolean)
                 let displayValue = value;
                 if (paramDef && utils.getParameterInputType(paramDef.dataType) === 'checkbox') {
                   displayValue = value ? '☑' : '☐';
@@ -581,14 +603,14 @@ class WizardStep2 {
         // Store for the Field Validation Editor management
         if (!Alpine.store('fieldValidationEditor')) {
           Alpine.store('fieldValidationEditor', {
-            isOpen: false,                          // Indica si está abierto el editor de validaciones
-            isEdit: false,                          // Indica si es modo edición (false: modo creación)
-            validation: new stic_AwfFieldValidation(),  // Copia de los datos de la validación
-            field: null,                            // El campo al que pertenece la validación
-            dataBlock: null,                        // El bloque de datos del campo
+            isOpen: false,                          // Indicates if the validation editor is open
+            isEdit: false,                          // Indicates if it is edit mode (false: creation mode)
+            validation: new stic_AwfFieldValidation(),  // Copy of the validation data
+            field: null,                            // The field to which the validation belongs
+            dataBlock: null,                        // The data block of the field
 
-            applyCondition: false,                  // Indica si se aplica condición
-            _activeConditionFieldDef: null,         // Definición del campo de condición activo
+            applyCondition: false,                  // Indicates if condition applies
+            _activeConditionFieldDef: null,         // Definition of the active condition field
 
             get formConfig() { return window.alpineComponent.formConfig; },
 
@@ -774,7 +796,7 @@ class WizardStep2 {
         // Store for the Relationship Creator management
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
-            isOpen: false,           // Indica si está abierto el creador de relaciones
+            isOpen: false,           // Indicates if the relationship creator is open
             dataBlock: null,         // El bloque de datos del campo
             relationships: Alpine.store('dataBlockRelationships'), // Store con las operaciones generales de Relaciones
 
@@ -836,7 +858,7 @@ class WizardStep2 {
               let selectedRelName_old = this.selectedRelName;
               let relatedDataBlockId_old = this.relatedDataBlockId;
 
-              // En Stores, la observación de cambios la hacemos por effect (bajo nivel, no vinculado a elemento DOM)
+              // In Stores, we do change observation with effect (low level, not bound to DOM element)
               Alpine.effect(() => {
                 // Changes in selectedRelName
                 if (this.selectedRelName != selectedRelName_old && this.dataBlock) {
@@ -1263,14 +1285,14 @@ class WizardStep2 {
       get availableValidators() {
         if (!this.field) return [];
 
-        // Obtenemos el tipo de acción del campo (ej: un campo 'int' del CRM retorna 'integer')
+        // Get the action type of the field (ex: a 'int' field in CRM returns 'integer')
         const fieldType = this.field.getTypeInActions(); 
 
         // Filtramos las acciones del servidor
         return utils.getDefinedActions().filter(a => 
             a.type === 'Validator' &&
             (
-                a.supportedDataTypes.length === 0 || // Si está vacío, es que soporta todos los tipos
+                a.supportedDataTypes.length === 0 || // If it is empty, it means it supports all types
                 a.supportedDataTypes.includes(fieldType) // O si incluye el tipo del campo
             )
         );
@@ -1404,25 +1426,25 @@ class WizardStep3 {
         // Store for the Action Editor management
         if (!Alpine.store('actionEditor')) {
           Alpine.store('actionEditor', {
-            isOpen: false,             // Indica si está abierto el editor de acciones
-            isEdit: false,             // Indica si es modo edición (false: modo creación)
-            flow: null,                // El flujo de la acción
-            original_id: '',           // Id original de la acción
+            isOpen: false,             // Indicates if the action editor is open
+            isEdit: false,             // Indicates if it is edit mode (false: creation mode)
+            flow: null,                // The action flow
+            original_id: '',           // Original action ID
 
-            // Objetos de trabajo
-            action: null,              // Copia de los datos de la acción
-            definition: null,          // Definición de la acción
+            // Working objects
+            action: null,              // Copy of the action data
+            definition: null,          // Definition of the action
 
-            // Estado de la UI
-            currentStep: 1,            // 1: Selección, 2: Configuración
+            // UI state
+            currentStep: 1,            // 1: Selection, 2: Configuration
 
-            // Listados y filtros
-            allDefinitions: [],        // Todas las definiciones de acciones disponibles
-            isTerminalFilter: false,   // Filtro para acciones terminales al crear
-            selectedCategory: '',      // Para guardar la categoría seleccionada 
-            selectedActionDefName: '', // Para guardar la acción seleccionada en modo creación
+            // Lists and filters
+            allDefinitions: [],        // All available action definitions
+            isTerminalFilter: false,   // Filter for terminal actions when creating
+            selectedCategory: '',      // To save the selected category
+            selectedActionDefName: '', // To save the selected action in creation mode
 
-            // Condición
+            // Condition
             applyCondition: false,
             _activeConditionFieldDef: null,
 
@@ -1529,13 +1551,13 @@ class WizardStep3 {
 
               this.currentStep = 1;
 
-              // Para crear, empezamos sin acción ni definición: Se deberá seleccionar una definición
+              // For creation, we start without action or definition: A definition must be selected
               this.action = null;
               this.definition = null;
               this.isTerminalFilter = isTerminal;
               this.selectedActionDefName = '';
 
-              // Preseleccionamos la primera categoría disponible
+              // We pre-select the first available category
               const cats = this.availableCategories;
               if (cats.length > 0) this.selectedCategory = cats[0].id;
 
@@ -1556,22 +1578,22 @@ class WizardStep3 {
 
               this.currentStep = 2;
 
-              // Recuperamos definición y estado visual
+              // Retrieve definition and visual state
               this.definition = this.allDefinitions.find(d => d.name == action.name);
               if (!this.definition) { console.error("Definition not found for action: " + action.name); return; }
 
               this.selectedCategory = this.definition.category;
               this.selectedActionDefName = this.definition.name;
 
-              // Clonamos la acción para editarla
+              // Clone the action to edit it
               this.action = new stic_AwfAction(action);
 
-              // Adaptamos los valores de los parámetros tipo textarea para mostrar saltos de línea correctamente
+              // Adapt textarea type parameter values to display line breaks correctly
               if (this.action.parameters && this.definition.parameters) {
                 this.action.parameters.forEach(param => {
                   const paramDef = this.definition.parameters.find(p => p.name === param.name);
                   if (paramDef && paramDef.dataType === 'textarea' && typeof param.value === 'string') {
-                    // Reemplazamos los '\n' guardados por saltos de línea reales
+                    // Replace stored '\n' with real line breaks
                     param.value = param.value.replace(/\\+n/g, '\n');
                   }
                 });
@@ -1604,14 +1626,14 @@ class WizardStep3 {
 
                 this.definition = def;
                 
-                // Si es una acción terminal, asignamos orden a 999
+                // If it is a terminal action, we assign order to 999
                 const defaultOrder = def.isTerminal ? 999 : (def.order ?? 0);
 
-                // Creamos una instancia vacía basada en la definición
+                // Create an empty instance based on the definition
                 this.action = new stic_AwfAction({
                     name: def.name,
                     title: def.title,
-                    text: def.title, // Por defecto el título
+                    text: def.title, // By default the title
                     description: def.description,
                     category: def.category,
                     is_terminal: def.isTerminal,
@@ -1619,7 +1641,7 @@ class WizardStep3 {
                     is_user_selectable: true
                 });
 
-                // Inicializamos los parámetros vacíos según la definición
+                // Initialize empty parameters according to the definition
                 this.action.parameters = (def.parameters || []).map(pDef => new stic_AwfActionParameter({
                     name: pDef.name,
                     text: pDef.text,
@@ -1726,7 +1748,7 @@ class WizardStep3 {
             saveChanges() {
               const form = document.getElementById('ModalActionConfigForm');
               if (form) {
-                  // Ejecutamos la función nativa para comprobar la validez de los imputs y mostrar errores
+                  // Execute the native function to check input validity and show errors
                   if (!form.reportValidity()) {
                       return; // Si no es valido, abortamos el proceso
                   }
@@ -1769,12 +1791,12 @@ class WizardStep3 {
               const newParams = [];
               const requisiteActions = new Set();
 
-              // Iteramos sobre la DEFINICIÓN (la fuente de verdad)
+              // Iterate over the DEFINITION (the source of truth)
               (definition.parameters || []).forEach(paramDef => {
-                // Buscamos el valor actual que tenía la acción (si existía)
+                // Look for the current value that the action had (if it existed)
                 const currentParam = action.parameters.find(p => p.name == paramDef.name);
 
-                // Construimos el parámetro asegurando estructura actualizada
+                // Build the parameter ensuring updated structure
                 const newParam = new stic_AwfActionParameter({
                   name: paramDef.name,
                   text: paramDef.text,
@@ -1789,8 +1811,8 @@ class WizardStep3 {
                     
                 newParams.push(newParam);
 
-                // 2. Recálculo de Requisitos (Requisite Actions)
-                // Miramos si este parámetro apunta a un DataBlock
+                // 2. Recalculation of Requisites (Requisite Actions)
+                // Check if this parameter points to a DataBlock
                 const paramIsDataBlock = (paramDef.type === 'dataBlock') || 
                                          (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
 
@@ -1802,7 +1824,7 @@ class WizardStep3 {
                 }
               });
 
-              // 3. Actualizamos la acción
+              // 3. Update the action
               action.parameters = newParams;
               action.requisite_actions = Array.from(requisiteActions); //
             },
@@ -1876,23 +1898,23 @@ class WizardStep3 {
       },
 
       /**
-       * Indica si se puede mover hacia arriba una acción
-       * @param {stic_AwfAction} action La acción
+       * Indicates if an action can be moved up
+       * @param {stic_AwfAction} action The action
        * @returns {boolean}
        */
       canMoveUpAction(action) {
-        // No podemos mover una acción fija
+        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // No podemos mover la primera acción
+        // We cannot move the first action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index <= 0) return false;
 
-        // No podemos saltar una acción fija      
+        // We cannot skip a fixed order action
         const prevAction = this.actions[index - 1];
         if (prevAction.is_fixed_order) return false;
 
-        // No podemos mover antes de una acción requisito
+        // We cannot move before a requisite action
         if ((action.requisite_actions || []).includes(prevAction.id)) return false;
 
         return true;
@@ -1913,23 +1935,23 @@ class WizardStep3 {
       },
 
       /**
-       * Indica si se puede mover hacia abajo una acción
-       * @param {stic_AwfAction} action La acción
+       * Indicates if an action can be moved down
+       * @param {stic_AwfAction} action The action
        * @returns {boolean}
        */
       canMoveDownAction(action) {
-        // No podemos mover una acción fija
+        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // No podemos mover la última acción
+        // We cannot move the last action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index >= this.actions.length - 1) return false;
 
-        // No podemos saltar una acción fija      
+        // We cannot skip a fixed order action
         const nextAction = this.actions[index + 1];
         if (nextAction.is_fixed_order) return false;
 
-        // No podemos mover si somos requisito de la siguiente acción
+        // We cannot move if we are a requisite of the next action
         if ((nextAction.requisite_actions || []).includes(action.id)) return false;
 
         return true;  

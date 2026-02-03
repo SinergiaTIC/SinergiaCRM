@@ -26,20 +26,20 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormFlow {
-    public FormConfig $form_config;  // La configuración del formulario al que pertenece
+    public FormConfig $form_config;  // The configuration of the form it belongs to
 
-    public string $id;               // Id del flujo de acciones
-    public string $name;             // Nombre interno del flujo de acciones
-    public string $text;             // El texto a mostrar
+    public string $id;               // ID of the action flow
+    public string $name;             // Internal name of the action flow
+    public string $text;             // The text to display
 
     /** @var FormAction[] */
-    public array $actions;           // Las acciones del Flujo
+    public array $actions;           // The actions of the flow
 
     /**
-     * Crea una instancia de FormFlow a partir de un array JSON.
-     * @param FormConfig $form La configuración del formulario al que pertenece
-     * @param array $data Los datos en formato array
-     * @return FormFlow La instancia creada
+     * Creates an instance of FormFlow from a JSON array.
+     * @param FormConfig $form The configuration of the form it belongs to
+     * @param array $data The data in array format
+     * @return FormFlow The created instance
      */
     public static function fromJsonArray(FormConfig $form, array $data): self {
         $dto = new self();

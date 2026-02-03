@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * NumericValidatorAction
  *
- * Acción que valida un valor numérico
+ * Action that validates a numeric value
  */
 class NumericValidatorAction extends ValidatorActionDefinition {
     public function __construct() {
@@ -40,7 +40,7 @@ class NumericValidatorAction extends ValidatorActionDefinition {
     }
 
     public function getParameters(): array {
-        // Parámetro Mínimo (Opcional)
+        // Minimum parameter (optional)
         $paramMin = new ActionParameterDefinition();
         $paramMin->name = 'min';
         $paramMin->text = $this->translate('MIN_TEXT');
@@ -48,7 +48,7 @@ class NumericValidatorAction extends ValidatorActionDefinition {
         $paramMin->dataType = ActionDataType::FLOAT; 
         $paramMin->required = false;
 
-        // Parámetro Máximo (Opcional)
+        // Maximum parameter (optional)
         $paramMax = new ActionParameterDefinition();
         $paramMax->name = 'max';
         $paramMax->text = $this->translate('MAX_TEXT');

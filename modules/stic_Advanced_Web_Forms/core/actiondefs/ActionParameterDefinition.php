@@ -32,7 +32,7 @@ enum ActionParameterType: string {
     case FIELD_LIST      = 'field_list';
     case CRM_RECORD      = 'crmRecord';
     case OPTION_SELECTOR = 'optionSelector';
-    case EMPTY           = 'empty'; // El parámetro u opción no requiere valor
+    case EMPTY           = 'empty'; // The parameter or option does not require a value
 }
 
 enum ActionDataType: string {
@@ -65,23 +65,23 @@ enum ActionDataType: string {
 }
 
 /**
- * Clase para definir un parámetro de una acción
+ * Class to define a parameter of an action
  */
 class ActionParameterDefinition {
-    public string $name;                   // Nombre del Parámetro
-    public string $text;                   // El texto a mostrar
-    public string $description = '';       // La descripción del parámetro
-    public ActionParameterType $type = ActionParameterType::VALUE;  // El tipo de parámetro
-    public ?ActionDataType $dataType = ActionDataType::TEXT;         // El tipo de dato del parámetro: Obligado si $type es VALUE
-    public bool $required = false;         // Indica si el parámetro es obligatorio
-    public string $defaultValue = '';      // Valor por defecto del parámetro
+    public string $name;                   // Parameter name
+    public string $text;                   // The text to display
+    public string $description = '';       // The description of the parameter
+    public ActionParameterType $type = ActionParameterType::VALUE;  // The type of parameter
+    public ?ActionDataType $dataType = ActionDataType::TEXT;         // The data type of the parameter: Required if $type is VALUE
+    public bool $required = false;         // Indicates if the parameter is required
+    public string $defaultValue = '';      // Default value of the parameter
     /** @var ActionParameterOption[] */
-    public array $options = [];            // Las opciones del parámetro si el tipo es SELECT
+    public array $options = [];            // The options of the parameter if the type is SELECT
     /** @var ActionSelectorOptionDefinition[] */
-    public array $selectorOptions = [];    // Opciones adicionales para selectores de objetos
+    public array $selectorOptions = [];    // Additional options for object selectors
     /** @var string[] */
-    public array $supportedModules = [];   // Módulos soportados si el destino es un registro CRM
+    public array $supportedModules = [];   // Supported modules if the destination is a CRM record
     /** @var ActionDataType[] */
-    public array $supportedDataTypes = []; // Lista de Tipos de datos de los campos apuntados, si aplica (para FIELD o FIELD_LIST)
+    public array $supportedDataTypes = []; // List of data types of the fields pointed to, if applicable (for FIELD or FIELD_LIST)
 }
 

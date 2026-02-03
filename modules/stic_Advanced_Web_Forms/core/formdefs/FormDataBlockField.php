@@ -38,32 +38,32 @@ enum DataBlockFieldValueType: string {
 }
 
 class FormDataBlockField {
-    public FormDataBlock $data_block;             // El Bloque de datos al que pertenece
+    public FormDataBlock $data_block;             // The data block it belongs to
 
-    public string $name;                         // Nombre del campo
-    public string $text_original;                // Texto original del campo
-    public string $label;                        // Etiqueta que aparecerá con el campo
-    public string $description;                  // Descripción del campo
-    public string $placeholder = '';             // Placeholder para el campo
-    public DataBlockFieldType $type_field;       // Tipo de campo: unlinked, form, fixed
-    public bool $required_in_form;               // Indica si el campo será obligado en el formulario
-    public string $type_in_form;                 // Tipo de editor en el formulario: stic_advanced_web_forms_field_in_form_type_list
-    public string $subtype_in_form;              // SubTipo de editor en el formulario: stic_advanced_web_forms_field_in_form_subtype_list
-    public string $type;                         // Tipo de datos del campo
-    public DataBlockFieldValueType $value_type;  // Tipo de valor: editable, selectable, fixed, dataBlock
-    public string $value;                        // El valor del campo
-    public string $value_text;                   // El texto a mostrar para el valor del campo
-    public ?string $related_module = null;       // Módulo relacionado (si aplica)
+    public string $name;                         // Field name
+    public string $text_original;                // Original text of the field
+    public string $label;                        // Label that will appear with the field
+    public string $description;                  // Field description
+    public string $placeholder = '';             // Placeholder for the field
+    public DataBlockFieldType $type_field;       // Field type: unlinked, form, fixed
+    public bool $required_in_form;               // Indicates if the field is required in the form
+    public string $type_in_form;                 // Type of editor in the form: stic_advanced_web_forms_field_in_form_type_list
+    public string $subtype_in_form;              // Subtype of editor in the form: stic_advanced_web_forms_field_in_form_subtype_list
+    public string $type;                         // Field data type
+    public DataBlockFieldValueType $value_type;  // Type of value: editable, selectable, fixed, dataBlock
+    public string $value;                        // The value of the field
+    public string $value_text;                   // The text to display for the field value
+    public ?string $related_module = null;       // Related module (if applicable)
     /** @var FormValueOption[] */
-    public array $value_options = [];            // Opciones del campo
+    public array $value_options = [];            // Field options
     /** @var FormFieldValidation[] */
-    public array $validations = [];              // Validaciones del campo
+    public array $validations = [];              // Field validations
 
     /**
-     * Crea una instancia de FormDataBlockField a partir de un array JSON.
-     * @param FormDataBlock $dataBlock El Bloque de datos al que pertenece
-     * @param array $data Los datos en formato array
-     * @return FormDataBlockField La instancia creada
+     * Creates an instance of FormDataBlockField from a JSON array.
+     * @param FormDataBlock $dataBlock The data block it belongs to
+     * @param array $data The data in array format
+     * @return FormDataBlockField The created instance
      */
     public static function fromJsonArray(FormDataBlock $dataBlock, array $data): self {
         $dto = new self();

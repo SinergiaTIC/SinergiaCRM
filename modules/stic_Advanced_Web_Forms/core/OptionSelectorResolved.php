@@ -26,12 +26,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Clase para un campo de Selección de opciones con los datos rellenados de un formulario
+ * Class for an Option Selector field with the filled form data
  */
 class OptionSelectorResolved {
-    public string $selectedOptionName;   // El nombre de la opción seleccionada de la definición del parámetro
+    public string $selectedOptionName;   // The selected option name from the parameter definition
 
-    public mixed $resolvedValue;         // El valor enviado desde el formulario y resuelto según la definición de la opción seleccionada
+    public mixed $resolvedValue;         // The value submitted from the form and resolved per the selected option
 
     public function __construct(string $optionName, mixed $resolvedValue) {
         $this->selectedOptionName = $optionName;

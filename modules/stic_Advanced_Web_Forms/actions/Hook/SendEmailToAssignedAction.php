@@ -30,8 +30,8 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * SendEmailToAssignedAction
  *
- * Envia un correo al USUARIO ASIGNADO de un registro.
- * El registro origen puede ser el formulario, un Bloque de Datos (recién creado) o un Registro Fijo (ej: el Evento).
+ * Sends an email to the ASSIGNED USER of a record.
+ * The source record can be the form, a Data Block (newly created) or a Fixed Record (e.g.: the Event).
  */
 class SendEmailToAssignedAction extends HookActionDefinition {
 
@@ -43,11 +43,11 @@ class SendEmailToAssignedAction extends HookActionDefinition {
     }
 
     /**
-     * Retorna los parámetros definidos para la acción
-     * @return ActionParameterDefinition[] Los parámetros de la acción
+     * Returns the parameters defined for the action
+     * @return ActionParameterDefinition[] The parameters of the action
      */
     public function getParameters(): array {
-        // --- El Origen del Responsable (SELECTOR) ---
+        // --- The Source of the Assignee (SELECTOR) ---
         $paramSource = new ActionParameterDefinition();
         $paramSource->name = 'record_source_selector';
         $paramSource->text = $this->translate('SOURCE_TEXT');
@@ -55,25 +55,25 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         $paramSource->type = ActionParameterType::OPTION_SELECTOR;
         $paramSource->required = true;
 
-        // Opción A: El responsable del Formulario
+        // Option A: The form owner
         $optFormOwner = new ActionSelectorOptionDefinition();
         $optFormOwner->name = 'opt_form_owner';
         $optFormOwner->text = $this->translate('OPT_OWNER_TEXT');
-        $optFormOwner->resolvedType = ActionParameterType::EMPTY; // No requiere valor adicional
+        $optFormOwner->resolvedType = ActionParameterType::EMPTY; // Does not require additional value
         
-        // Opción B: Un Bloque de datos (ej: El asignado del Contacto creado)
+        // Option B: A Data Block (e.g.: The assigned from the created Contact)
         $optBlock = new ActionSelectorOptionDefinition();
         $optBlock->name = 'opt_datablock';
         $optBlock->text = $this->translate('OPT_DATABLOCK_TEXT');
         $optBlock->resolvedType = ActionParameterType::DATA_BLOCK;
 
-        // Opción C: Un Registro Fijo (ej: El asignado del Evento X)
+        // Option C: A Fixed Record (e.g.: The assigned from Event X)
         $optRecord = new ActionSelectorOptionDefinition();
         $optRecord->name = 'opt_record';
         $optRecord->text = $this->translate('OPT_RECORD_TEXT');
         $optRecord->resolvedType = ActionParameterType::CRM_RECORD;
         
-        // Opción D: Un Campo Relacionado (ej: El asignado del registro seleccionado en un campo Relate)
+        // Option D: A Related Field (e.g.: The assigned from the record selected in a Relate field)
         $optField = new ActionSelectorOptionDefinition();
         $optField->name = 'opt_field';
         $optField->text = $this->translate('OPT_RELATE_TEXT');
@@ -116,23 +116,23 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         $selector = $actionConfig->getResolvedParameter('record_source_selector');
         if ($selector) {
             if ($selector->selectedOptionName === 'opt_form_owner') {
-                // Opción A: El responsable del Formulario
+                // Option A: The Form owner
                 $sourceBean = BeanFactory::getBean('stic_Advanced_Web_Forms', $context->formId);
 
             } else if ($selector->selectedOptionName === 'opt_datablock') {
-                // Opción B: Un Bloque de datos (ej: El asignado del Contacto creado)
+                // Option B: A Data Block (ex: The assigned of the created Contact)
                 /** @var DataBlockResolved $block */
                 $block = $selector->resolvedValue;
                 $sourceBean = $block->dataBlock->getBeanReference()?->getBean();
                
             } else if ($selector->selectedOptionName === 'opt_record') {
-                // Opción C: Un Registro Fijo (ej: El asignado del Evento X)
+                // Option C: A Fixed Record (ex: The assigned of Event X)
                 /** @var BeanReference $recordRef */
                 $recordRef = $selector->resolvedValue;
                 $sourceBean = $recordRef?->getBean();
                 
             } else if ($selector->selectedOptionName === 'opt_field') {
-                // Opción D: Un Campo Relacionado (ej: El asignado del registro seleccionado en un campo Relate)
+                // Option D: A Related Field (ex: The assigned of the record selected in a Relate field)
                 /** @var DataBlockFieldResolved $fieldResolved */
                 $fieldResolved = $selector->resolvedValue;
                 /** @var BeanReference $recordRef */

@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * AgeValidatorAction
  *
- * Acción que valida la edad a partir de un campo de fecha de nacimiento
+ * Action that validates the age from a date of birth field
  */
 class AgeValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

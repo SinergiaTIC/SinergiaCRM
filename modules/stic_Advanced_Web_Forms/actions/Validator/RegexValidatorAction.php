@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * RegexValidatorAction
  *
- * Acción que valida un campo según una expresión Regex
+ * Action that validates a field according to a Regex expression
  */
 class RegexValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

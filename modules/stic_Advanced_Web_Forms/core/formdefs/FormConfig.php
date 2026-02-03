@@ -27,10 +27,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 class FormConfig {
     /** @var FormDataBlock[] */
-    public array $data_blocks;         // Los bloques de datos del formulario
+    public array $data_blocks;         // The form's data blocks
     /** @var FormFlow[] */
-    public array $flows;               // Los flujos de acciones del formulario
-    public ?FormLayout $layout = null; // La maquetación del formulario
+    public array $flows;               // The form's action flows
+    public ?FormLayout $layout = null; // The form layout
 
     /**
      * Crea una instancia de FormConfig a partir de un array JSON.
@@ -59,7 +59,7 @@ class FormConfig {
         if (isset($data['layout'])) {
             $dto->layout = FormLayout::fromJsonArray($dto, $data['layout']);
         } else {
-            $dto->layout = new FormLayout();     // Layout por defecto
+            $dto->layout = new FormLayout();     // Default layout
             $dto->layout->theme = new FormTheme();
         }
         return $dto;

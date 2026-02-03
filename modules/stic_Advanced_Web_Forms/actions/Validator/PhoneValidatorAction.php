@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * PhoneValidatorAction
  *
- * Acción que valida un Teléfono: mínimo 9 dígitos
+ * Action that validates a Phone: minimum 9 digits
  */
 class PhoneValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

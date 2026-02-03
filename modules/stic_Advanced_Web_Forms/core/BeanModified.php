@@ -33,19 +33,19 @@ enum BeanModificationType: string {
 }
 
 /**
- * Clase para indicar un Bean modificado por una acción
+ * Class to represent a Bean modified by an action
  */
 class BeanModified extends BeanReference {
     public BeanModificationType $modificationType;
 
-    /** @var array Datos [field_name => value] que se han aplicado */
+    /** @var array Submitted data [field_name => value] that were applied */
     public array $submittedData; 
 
-    /** Constructor de BeanModified 
-     * @param string $id ID del bean modificado
-     * @param string $module Módulo del bean modificado
-     * @param BeanModificationType $modificationType Tipo de modificación realizada
-     * @param array $submittedData Datos que se han aplicado
+    /** BeanModified constructor
+     * @param string $id The modified bean ID
+     * @param string $module The modified bean module
+     * @param BeanModificationType $modificationType The modification type
+     * @param array $submittedData The data that was applied
     */
     public function __construct(string $id, string $module, BeanModificationType $modificationType, array $submittedData = []) {
         parent::__construct($module, $id);

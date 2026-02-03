@@ -31,10 +31,10 @@ require_once "modules/stic_Advanced_Web_Forms/core/FormHtmlGeneratorService.php"
 class FormRenderService {
 
     /**
-     * @param string $recordId Id del registro (obligado si configData está vacío)
-     * @param bool $isPreview Si es modo de previsualización
-     * @param array|null $configData Configuración directa (para Live Preview)
-     * @return string El HTML generado
+     * @param string $recordId Record ID (required if configData is empty)
+     * @param bool $isPreview Whether this is preview mode
+     * @param array|null $configData Direct configuration (for Live Preview)
+     * @return string Generated HTML
      * @throws Exception
      */
     public function render(string $recordId, bool $isPreview, ?array $configData = null): string
@@ -95,8 +95,8 @@ class FormRenderService {
     private function prefillFieldsFromRequest(FormConfig $config, array $requestData): void {
         foreach ($config->data_blocks as $block) {
             foreach ($block->fields as $field) {
-                // Buscamos coincidencias para el nombre del campo (Ej: "email", "first_name")
-                // También soportamos el formato completo "BlockName_fieldname" si es necesario desambiguar
+                // Look for matches by field name (e.g., "email", "first_name")
+                // Also support the full format "BlockName_fieldname" when disambiguation is needed
                 $val = null;
                 
                 if (isset($requestData[$field->name])) {
@@ -106,9 +106,9 @@ class FormRenderService {
                 }
 
                 if ($val !== null) {
-                    // Sanitize básico para evitar XSS en inyectar al value="" del input
+                    // Basic sanitize to avoid XSS when injecting into input value=""
                     $safeVal = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
-                    // Asignamos el valor al campo correspondiente
+                    // Assign the value to the corresponding field
                     $field->value = $safeVal;
                     $field->value_text = $safeVal;
                 }

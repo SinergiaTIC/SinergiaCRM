@@ -26,24 +26,24 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormDataBlock {
-    public FormConfig $form_config;       // La configuración del formulario al que pertenece
+    public FormConfig $form_config;       // The configuration of the form it belongs to
 
-    public string $id;                    // Id del Bloque de datos
-    public string $name;                  // Nombre interno (identificador en UI) del Bloque de Datos
-    public string $text;                  // Texto a mostrar para el Bloque de Datos
-    public string $module;                // Nombre del módulo
+    public string $id;                    // ID of the data block
+    public string $name;                  // Internal name (UI identifier) of the data block
+    public string $text;                  // Text to display for the data block
+    public string $module;                // Module name
     /** @var FormDataBlockField[] */
-    public array $fields;                 // Campos del Bloque de Datos
+    public array $fields;                 // Fields of the data block
     /** @var FormDuplicateRule[] */
-    public array $duplicate_detections;   // Definición de detección de duplicados
+    public array $duplicate_detections;   // Definition of duplicate detection
 
-    private ?BeanReference $beanReference = null; // Bean donde se ha guardado el Bloque de Datos
+    private ?BeanReference $beanReference = null; // Bean where the data block has been saved
 
     /**
-     * Crea una instancia de FormDataBlock a partir de un array JSON.
-     * @param FormConfig $form La configuración del formulario al que pertenece
-     * @param array $data Los datos en formato array
-     * @return FormDataBlock La instancia creada
+     * Creates an instance of FormDataBlock from a JSON array.
+     * @param FormConfig $form The configuration of the form it belongs to
+     * @param array $data The data in array format
+     * @return FormDataBlock The created instance
      */
     public static function fromJsonArray(FormConfig $form, array $data): self {
         $dto = new self();

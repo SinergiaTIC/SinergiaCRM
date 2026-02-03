@@ -30,7 +30,7 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
 /**
  * IbanValidatorAction
  *
- * Acción que valida un IBAN
+ * Action that validates an IBAN
  */
 class IbanValidatorAction extends ValidatorActionDefinition {
     public function __construct() {

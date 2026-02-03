@@ -27,29 +27,29 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 class stic_AWFUtils {
     /**
-     * Convierte un valor string del formulario al tipo PHP correcto basándose en el tipo de campo en el CRM.
-     * @param mixed $valueToCast El valor a convertir
-     * @param ?string $crmFieldType El tipo de campo en el CRM
-     * @param ExecutionContext $context El contexto de ejecución
-     * @return mixed El valor convertido
+     * Converts a form string value to the correct PHP type based on the CRM field type.
+     * @param mixed $valueToCast The value to convert
+     * @param ?string $crmFieldType The CRM field type
+     * @param ExecutionContext $context The execution context
+     * @return mixed The converted value
      */
     public static function castCrmValue(mixed $valueToCast, ?string $crmFieldType, ExecutionContext $context): mixed {
         
         if (is_array($valueToCast)) {
-            // Si es un array de un multiselect: Array -> String ^A^,^B^
+            // If it's an array from a multiselect: Array -> encoded multienum string
             if ($crmFieldType === 'multienum') {
                 return encodeMultienumValue($valueToCast);
             }
-            // Si es un array con subarrays, guardamos la estructura json
+            // If it's an array with subarrays/objects, store as JSON
             $firstElement = reset($valueToCast);
             if (is_array($firstElement) || is_object($firstElement)) {
                 return json_encode($valueToCast, JSON_UNESCAPED_UNICODE);
             }
-            // Si es otro tipo de campo que no es multienum, lo convertimos a string con comas
+            // For other array types (not multienum), convert to comma-separated string
             return implode(',', $valueToCast);
         }
 
-        // Si no hay tipo definido, lo tratamos como texto
+        // If no type is defined, treat as text
         if ($crmFieldType === null) {
             $crmFieldType = 'text';
         }
@@ -61,7 +61,7 @@ class stic_AWFUtils {
                 $lowerValue = strtolower(trim($valueToCast));
                 return !($lowerValue === 'false' || $lowerValue === '0' || $lowerValue === 'off' || $lowerValue === '');
 
-            // Numéricos
+            // Numerics
             case 'int':
                 return (int)$valueToCast;
             
@@ -71,13 +71,13 @@ class stic_AWFUtils {
             case 'currency': 
                 return (float)$valueToCast;
 
-            // Fechas y horas
+            // Dates and times
             case 'date':
             case 'time':
             case 'datetime':
             case 'datetimecombo':
                 $baseTimestamp = (int)$context->submissionTimestamp;
-                // strtotime también gestiona "today", "+1 day", etc.
+                // strtotime also handles "today", "+1 day", etc.
                 $parsedTime = @strtotime($valueToCast, $baseTimestamp);
                 
                 if ($parsedTime === false) {
@@ -90,7 +90,7 @@ class stic_AWFUtils {
                     return $dateTimeObj;
                 } catch (\Exception $e) { return null; }
 
-            // Strings 
+            // Strings
             case 'varchar':
             case 'text':
             case 'relate':
@@ -162,18 +162,18 @@ class stic_AWFUtils {
         }
         $html .= "<div class='awf-sections-wrapper'>";
 
-        // Iteración por secciones (layout)
+        // Iterate through sections (layout)
         foreach ($layout->structure as $section) {
             $html .= "<div class='awf-section-item'>";
 
-            // Si la sección tiene título y tiene que mostrarse
+            // If the section has a title and should be displayed
             if ($section->showTitle && !empty($section->title)) {
                 $html .= "<div class='awf-summary-section-title'>" . htmlspecialchars($section->title) . "</div>";
             }
             $html .= "<table class='awf-summary-table'>";
             $hasFields = false;
 
-            // Los elementos de la sección (bloques de datos)
+            // Elements of the section (data blocks)
             foreach ($section->elements as $element) {
                 if ($element->type !== 'datablock') continue;
 
@@ -181,11 +181,11 @@ class stic_AWFUtils {
                 if (!$block) continue;
 
                 foreach ($block->fields as $fieldDef) {
-                    // Sólo mostramos los campos visibles en el formulario
+                    // Only show visible fields in the form
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
                         continue;
                     }
-                    // Si no tiene etiqueta, no se muestra
+                    // If it has no label, it is not displayed
                     if (empty($fieldDef->label)) {
                         continue;
                     }
@@ -196,11 +196,11 @@ class stic_AWFUtils {
                     }
                     $formKey = str_replace('.', '_', $formKey);
                     
-                    // Valor a mostrar
+                    // Value to display
                     $value = $formData[$formKey] ?? '';
 
                     if (!empty($fieldDef->value_options)) {
-                        // Función helper para encontrar el texto de un valor
+                        // Helper function to find the text of a value
                         $findLabel = function($val) use ($fieldDef) {
                             foreach ($fieldDef->value_options as $opt) {
                                 if ($opt->value == $val) return $opt->text;
@@ -232,7 +232,7 @@ class stic_AWFUtils {
             }
 
             if (!$hasFields) {
-                // Si la sección no tenía campos visibles, cerramos la tabla y seguimos (el CSS la hará invisible o mínima)
+                // If the section had no visible fields, we close the table and continue (CSS will make it invisible or minimal)
             }
             $html .= "</table>";
             $html .= "</div>";
@@ -245,14 +245,14 @@ class stic_AWFUtils {
     }
 
     /**
-     * Genera un resumen en texto plano con todos los datos del formulario basándose en el Layout.
+     * Generates a plain-text summary with all form data based on the Layout.
      *
-     * @param ExecutionContext $context El contexto que contiene los datos.
-     * @return string Un string de texto plano con el resumen.
+     * @param ExecutionContext $context The context containing the data.
+     * @return string A plain-text string with the summary.
      */
     public static function generateSummaryText(ExecutionContext $context): string
     {
-        // Título principal
+        // Main title
         $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms');
         $text = $title . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
         
@@ -261,13 +261,13 @@ class stic_AWFUtils {
         
         foreach ($layout->structure as $section) {
             
-            // Título de Sección
+            // Section title
             if ($section->showTitle && !empty($section->title)) {
                 $sectionTitle = mb_strtoupper($section->title);
                 $text .= $sectionTitle . "\n";
                 $text .= str_repeat('-', mb_strlen($sectionTitle)) . "\n";
             } else {
-                // Separador visual si no hay título
+                // Visual separator if there is no title
                 $text .= "--------------------\n";
             }
 
@@ -398,11 +398,11 @@ class stic_AWFUtils {
             throw new \Exception("Email template not found: '{$templateId}'.");
         }
 
-        // Obtenemos los adjuntos de la plantilla
+        // Get attachments from the template
         $attachments = $emailTemplate->getAttachments() ?: [];
 
-        // Comprobamos si necesitamos el resumen del formulario
-        // Variable mágica {::form_summary::} que será reemplazada por el resumen HTML del formulario
+        // Check if we need the form summary
+        // Magic variable {::form_summary::} that will be replaced by the form HTML summary
         $needsSummaryHtml = strpos((string)$emailTemplate->body_html, '{::form_summary::}') !== false;
         $needsSummaryText = strpos((string)$emailTemplate->body, '{::form_summary::}') !== false;
 
@@ -430,7 +430,7 @@ class stic_AWFUtils {
         $mailer->prepForOutbound();
         $mailer->setMailerForSystem();
 
-        // Obtenemos la dirección de correo del sistema
+        // Get the system email address
         $admin = BeanFactory::newBean('Administration');
         $admin->retrieveSettings();
         $systemFromAddress = $admin->settings['notify_fromaddress'] ?? '';
@@ -449,7 +449,7 @@ class stic_AWFUtils {
         $mailer->isHTML(true); 
         $mailer->CharSet = 'UTF-8';
 
-        // Procesamos y añadimos los adjuntos
+        // Process and add attachments
         $mailer->handleAttachments($attachments);
 
         // Enviar
@@ -485,49 +485,49 @@ class stic_AWFUtils {
         /** @var Email $emailBean */
         $emailBean = BeanFactory::newBean('Emails');
 
-        // Datos básicos
+        // Basic data
         $emailBean->name = $subject;
         $emailBean->date_sent_received = TimeDate::getInstance()->nowDb();
         $emailBean->type = 'out';
         $emailBean->status = 'sent';
         $emailBean->assigned_user_id = $GLOBALS['current_user']->id ?? '1';
 
-        // Direcciones
+        // Addresses
         $emailBean->from_addr = $from;
         $emailBean->to_addrs = $to;
 
-        // Contenido
+        // Content
         $emailBean->description = strip_tags($body);
         $emailBean->description_html = $body;
 
-        // Relación con el bean padre
+        // Relationship with parent bean
         $emailBean->parent_type = $parentBean->module_dir;
         $emailBean->parent_id = $parentBean->id;
 
-        // Guardado del email
+        // Email saving
         $emailBean->save();
 
-        // Vinculación del email al bean padre
+        // Link email to parent bean
         if ($parentBean->load_relationship('emails')) {
             $parentBean->emails->add($emailBean->id);
         }
 
-        // Duplicación de los adjuntos
+        // Duplication of attachments
         foreach ($attachments as $originalNote) {
             $newNote = BeanFactory::newBean('Notes');
             $newNote->id = create_guid();
             $newNote->new_with_id = true;
 
-            // Vinculación con el email archivado
+            // Link with archived email
             $newNote->parent_id = $emailBean->id;
             $newNote->parent_type = 'Emails';
 
-            // Copiamos las propiedades de la Nota original
+            // Copy the original Note properties
             $newNote->name = $originalNote->name;
             $newNote->filename = $originalNote->filename;
             $newNote->file_mime_type = $originalNote->file_mime_type;
             
-            // Copiamos el archivo físico
+            // Copy the physical file
             $source = "upload://{$originalNote->id}";
             $dest = "upload://{$newNote->id}";
 
