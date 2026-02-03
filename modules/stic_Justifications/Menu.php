@@ -31,9 +31,4 @@ $module_menu = array(
         $mod_strings['LNK_LIST'],
         'List',
     ),
-    array(
-        'index.php?module=stic_Justifications&action=EditView&return_module=stic_Justifications&return_action=DetailView',
-        $mod_strings['LNK_NEW_RECORD'],
-        'Create',
-    ),
 );

@@ -31,9 +31,6 @@ $layout_defs[$module_name]['subpanel_setup']['stic_justification_conditions_stic
     'title_key' => 'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE',
     'get_subpanel_data' => 'stic_justification_conditions_stic_justifications',
     'top_buttons' => array(
-        0 => array(
-            'widget_class' => 'SubPanelTopCreateButton',
-        ),
     ),
 );
 

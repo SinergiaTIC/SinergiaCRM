@@ -135,10 +135,6 @@ $layout_defs["Opportunities"]["subpanel_setup"]['opportunities_stic_justificatio
     'get_subpanel_data' => 'opportunities_stic_justifications',
     'top_buttons' => 
     array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
     ),
 );
 
