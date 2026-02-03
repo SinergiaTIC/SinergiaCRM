@@ -152,4 +152,14 @@ $mod_strings = array(
     'LBL_SEPE_COVERED_DATE_ERROR' => 'A Data oferta cuberta (SEPE) debe ser igual ou posterior á Data activación (SEPE).',
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "Este campo existe tanto no módulo de Persoas como no de Ofertas e utilízase para enlazar unhas e outras. As tipoloxías de perfiles pódense xestionar na lista 'stic_professional_profile_list' do Editor de listas despregables.",
     'LBL_INC_INCORPORA_RECORD_HELP' => "Cando este campo está activado, todos os campos que son obrigatorios para facer unha sincronización do tipo Alta na intranet de Incorpora, marcaranse cunha apóstrofe en vermello (<span style='color:red;'>#</span>).",
+    // Calculated Fields for Job Applications
+    'LBL_PANEL_STIC_JOB_APPLICATIONS_COUNT' => 'Candidaturas',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL' => 'Total candidaturas',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION' => 'Prevista presentación',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_PRESENTED' => 'Presentada',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_PENDING_INTERVIEW' => 'Pendiente entrevista',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_INTERVIEWED' => 'Entrevistada',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_ACCEPTED' => 'Aceptada',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED' => 'Rechazada o cerrada',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW' => 'En revisión',
 );
