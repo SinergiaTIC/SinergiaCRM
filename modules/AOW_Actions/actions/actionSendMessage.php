@@ -136,7 +136,6 @@ class actionSendMessage extends actionBase
         $html .= "<td style='width:20%; margin-bottom:20px;'>";
         $html .= '</td>';
 
-
         $html .= '</tr>';
 
         // Status
@@ -350,8 +349,6 @@ class actionSendMessage extends actionBase
         // Direction field not used until new types added
         // $messageBean->direction = $params['direction'];
 
-        // TODOEPS
-        // $messageBean->phone = $recipients['phone'];
         $messageBean->message = $txt;
         $name = $messageBean->fillName($bean->module_name, $bean->id);
 

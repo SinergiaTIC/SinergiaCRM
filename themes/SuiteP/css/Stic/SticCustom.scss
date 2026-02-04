@@ -1429,6 +1429,15 @@ span.totals{
   pointer-events: none;
 }
 
+// Change position of alerts dropdown to open leftward and adjust size
+#alerts.dropdown-menu {
+  right: 0 !important;   // keep it aligned to the right edge of the button
+  left: auto !important; // override Bootstrap’s default left positioning
+  min-width: 280px;    
+  max-height: 400px;   
+  overflow-y: auto;    // Not growing beyond max-height
+}
+
 // Fix for ACL Edit View header sticky
 #ACLEditView_Access_Header {
   position: sticky;

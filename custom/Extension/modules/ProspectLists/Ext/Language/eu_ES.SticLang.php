@@ -43,4 +43,9 @@ $mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Personas';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
 
 // Campos de filtro en relaciones muchos a muchos
-$mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Persona';
+$mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Pertsona';
+
+// Filtros para creación dinámica de listas de público objetivo (LPO)
+$mod_strings['LBL_LPO_STIC_SIGNATURES_ALL_SIGNERS'] = 'Todos los firmantes';
+$mod_strings['LBL_LPO_STIC_SIGNATURES_PENDING_SIGNERS'] = 'Firmantes pendientes';
+$mod_strings['LBL_LPO_STIC_EVENTS_CONFIRMED_REGISTRATIONS'] = 'Inscripciones confirmadas';

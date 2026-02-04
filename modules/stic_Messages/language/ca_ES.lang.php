@@ -70,7 +70,7 @@ $mod_strings = array (
   'LBL_SENDER' => 'Remitent',
   'LBL_LIST_RELATED_TO' => 'Relacionat amb',
   'LBL_LIST_RELATED_TO_ID' => 'Relacionat amb ID',
-  'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => "Realitza l'enviament",
+  'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Envia',
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Envia un grup de missatges',
   'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => "Aquesta operació enviarà un missatge per a cada registre seleccionat. N'esteu segur?",
   'LBL_MESSAGE_SENT' => 'Missatge enviat',
@@ -84,4 +84,5 @@ $mod_strings = array (
   'LBL_LIST_DATE_MODIFIED' => 'Data de Modificació',
   'LBL_LIST_STATUS' => 'Estat',
   'LBL_LIST_SUBJECT' => 'Assumpte',
+  'LBL_INFO_TXT' => 'Si el missatge supera els 160 caràcters es dividirà en tantes parts com calgui, amb els efectes que això pugui tenir sobre el nombre de missatges enviats i, per tant, facturables.',
 );
