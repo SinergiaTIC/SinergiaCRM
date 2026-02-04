@@ -545,7 +545,7 @@ $dictionary['stic_FollowUps'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_FAMILIES_STIC_FOLLOWUPS_FROM_STIC_FOLLOWUPS_TITLE',
         ),
-        "stic_assets_stic_followups" => array(
+        'stic_assets_stic_followups' => array(
             'name' => 'stic_assets_stic_followups',
             'type' => 'link',
             'relationship' => 'stic_assets_stic_followups',
@@ -553,7 +553,30 @@ $dictionary['stic_FollowUps'] = array(
             'module' => 'stic_Assets',
             'bean_name' => 'stic_Assets',
             'vname' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE',
+            'id_name' => 'stic_assets_stic_followupsstic_assets_ida',
         ),
+        'stic_assets_stic_followups_name' => array(
+            'name' => 'stic_assets_stic_followups_name',
+            'type' => 'relate',
+            'source' => 'non-db',
+            'vname' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE',
+            'save' => true,
+            'id_name' => 'stic_assets_stic_followupsstic_assets_ida',
+            'link' => 'stic_assets_stic_followups',
+            'table' => 'stic_assets',
+            'module' => 'stic_Assets',
+            'rname' => 'name',
+        ),
+        'stic_assets_stic_followupsstic_assets_ida' => array(
+            'name' => 'stic_assets_stic_followupsstic_assets_ida',
+            'type' => 'link',
+            'relationship' => 'stic_assets_stic_followups',
+            'source' => 'non-db',
+            'reportable' => false,
+            'side' => 'right',
+            'vname' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_FOLLOWUPS_TITLE',
+        ),
+
     ),
     'relationships' => array(
     ),
