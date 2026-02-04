@@ -57,6 +57,26 @@ switch (viewType()) {
       addEditCreateTemplateLinks();
       $("#select_all").on("click", toggle_message_for);
       toggle_message_for();
+
+     (function removeWhatsappOption() {
+       var $type = $("#type");
+       if ($type.length) {
+         // Remove both common casings to be safe
+         $type.find('option[value="WhatsAppWeb"], option[value="whatsappweb"]').remove();
+
+         // If it was selected, pick the first non-empty option available (fallback)
+         var cur = $type.val();
+         if (cur === 'WhatsAppWeb' || cur === 'whatsappweb') {
+           var $first = $type.find('option').filter(function() { return $(this).val() !== ''; }).first();
+           if ($first.length) {
+             $type.val($first.val()).change();
+           } else {
+             // fallback to first index
+             $type.prop('selectedIndex', 0).change();
+           }
+         }
+       }
+     })();
     });
     if (viewType() == "quickcreate") {
       // Disabling the "Campaign" field relationship
