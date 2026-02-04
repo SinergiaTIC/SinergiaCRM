@@ -144,6 +144,14 @@ class stic_Messages extends Basic
     {
         global $current_user, $timedate;
 
+        // Allow send messages from no authenticated contexts as Signature Portal
+        if (empty($current_user->id)) {
+            // Get first admin active user
+            $adminUser = BeanFactory::getBean('Users');
+            $adminUser->retrieve_by_string_fields(array('is_admin' => 1, 'status' => 'Active'));
+            $current_user = $adminUser;
+        }
+
         $parentType = $parentType?? $this->parent_type;
         $parentId = $parentId ?? $this->parent_id;
 
@@ -175,6 +183,10 @@ class stic_Messages extends Basic
 
         // Get the timezone from the user's preferences
         $timezone = $userPreferences->getPreference('timezone');
+        if ($timezone === null) {
+            require_once('include/TimeDate.php');
+            $timezone =  TimeDate::guessTimezone();;
+        }
 
         $date = $date->setTimezone(new DateTimeZone($timezone));
         $formatedDate = $date->format($timedate->get_date_time_format($current_user));

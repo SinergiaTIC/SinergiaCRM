@@ -66,7 +66,7 @@ $mod_strings = array(
     'LBL_LIST_NAME' => 'Nome',
     'LBL_EDIT_BUTTON' => 'Editar',
     'LBL_REMOVE' => 'Quitar',
-    
+
     'ERR_DELETE_RECORD' => 'Debe especificar un rexistro para borralo da conta.',
     'LBL_ACCOUNT_NAME' => 'Nome',
     'LBL_ACCOUNT' => 'Conta:',
@@ -177,7 +177,7 @@ $mod_strings = array(
     'LBL_UNIT_PRICE' => 'Prezo con desconto',
     'LBL_TOTAL_PRICE' => 'Prezo total',
     'LBL_VAT' => '% IVE', 
-    'LBL_VAT_AMT' => 'IVE', 
+    'LBL_VAT_AMT' => 'IVE',
     'LBL_ADD_PRODUCT_LINE' => 'Nova Liña de Produto',
     'LBL_SERVICE_NAME' => 'Servizo',
     'LBL_SERVICE_LIST_PRICE' => 'Prezo de lista',

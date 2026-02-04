@@ -277,7 +277,11 @@ if (empty($mrkt_focus->inbound_email_id)) {
 
 $outboundEmailAccountLabels = array();
 $outboundEmailLabels = array();
-$outboundEmailAccounts = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+// STIC-Custom 20250707 - Do not list personal outbound accounts as options
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+// $outboundEmailAccounts = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+$outboundEmailAccounts = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list("", "type != 'user'");
+// END STIC-Custom
 if ($outboundEmailAccounts) {
     foreach ($outboundEmailAccounts as $outboundEmailAccount) {
         $outboundEmailLabels[$outboundEmailAccount->id] = $outboundEmailAccount->name;
