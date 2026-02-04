@@ -54,7 +54,7 @@ YAHOO.widget.DataTable.prototype.getColumn = function(column) {
     if(!oColumn) {
         // Validate TD element
         // STIC Custom 20260104 ART - Resizable columns in Studio
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/984
         // var elCell = column.nodeName.toLowerCase() != "th" ? this.getTdEl(column) : false;
         // if(elCell) {
         //     oColumn = this._oColumnSet.getColumn(elCell.cellIndex);
@@ -88,7 +88,7 @@ var relationships = {ldelim}relationships:{$relationships}{rdelim};
 var grid = new YAHOO.widget.ScrollingDataTable('relGrid',
 	[
         // STIC Custom 20260104 ART - Resizable columns in Studio
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/984
 	    // {ldelim}key:'name',       label: SUGAR.language.get('ModuleBuilder','LBL_REL_NAME'),        width: 200, sortable: true{rdelim},
 	    // {ldelim}key:'lhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_LHS_MODULE'),      width: 120, sortable: true{rdelim},
 	    // {ldelim}key:'relationship_type', label: SUGAR.language.get('ModuleBuilder','LBL_REL_TYPE'), width: 120, sortable: true{rdelim},
