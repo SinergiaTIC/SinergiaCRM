@@ -49,4 +49,9 @@ INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_us
 ('3cbabeae-f992-4958-955b-1a0cd4300dc8', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_TERMINAL', '3', 'Número de terminal, proporcionado por la pasarela de pago (usualmente el número 3). Disponible en la aplicación web del TPV CECA (https://comercios.ceca.es/)'),
 ('d72a1bc8-c20b-49b6-a970-0ff37178b9d5', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_TEST', '1', 'Indica el modo de trabajo (0 = Real, 1 = Test).'),
 ('78e895d4-b528-7392-5e83-66347f276649', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_LOWER_MARGIN_PERCENT', '20', 'Indica el porcentaje de horas trabajadas de menos (respecto del horario teórico semanal) que hará que se envíe una alerta.'),
-('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', 'Indica el porcentaje de horas trabajadas de más (respecto del horario teórico semanal) que hará que se envíe una alerta.');
+('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', 'Indica el porcentaje de horas trabajadas de más (respecto del horario teórico semanal) que hará que se envíe una alerta.'),
+('652c33e1-522e-4f06-8a66-755d05a318e6', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_ACTIVE', '0', 'Indica si está habilitado el envío de mensajes SMS a través de Seven (0 = No, 1 = Sí).'),
+('d9f0118c-b752-444d-9057-456b18f9f360', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_API_KEY', '', 'Clave para conectar con Seven. Se obtiene en su panel de control.'),
+('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_SENDER', '', 'Nombre que aparecerá como remitente en los mensajes enviados.'),
+('64b1554a-cf95-423b-ae78-7f75951f3976', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_LIMIT', '100', 'Número máximo de mensajes permitidos en un envío masivo.'),
+('e5a26eec-b326-11f0-b8b0-f2de65fe24cb', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_MESSAGES_BULK', '5000', 'Mensajes por hora en campañas SMS.');

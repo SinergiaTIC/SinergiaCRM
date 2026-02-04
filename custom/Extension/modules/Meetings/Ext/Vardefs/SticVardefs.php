@@ -58,3 +58,4 @@ $dictionary['Meeting']['fields']['outlook_id']['massupdate'] = 0;
 $dictionary['Meeting']['fields']['parent_name']['massupdate']='1';
 $dictionary['Meeting']['fields']['status']['massupdate']='1';
 $dictionary['Meeting']['fields']['date_start']['massupdate']='1';
+

@@ -41,3 +41,11 @@ $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalls del registre';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizations';
 $mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Persones';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interessats';
+
+// Camps de filtre en relacions molts a molts
+$mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Persona';
+
+// Filtres per a creació dinàmica de llistes de públic objectiu (LPO)
+$mod_strings['LBL_LPO_STIC_SIGNATURES_ALL_SIGNERS']    = 'Tots els firmants'; 
+$mod_strings['LBL_LPO_STIC_SIGNATURES_PENDING_SIGNERS'] = 'Firmants pendents';
+$mod_strings['LBL_LPO_STIC_EVENTS_CONFIRMED_REGISTRATIONS'] = 'Inscripcions confirmades';

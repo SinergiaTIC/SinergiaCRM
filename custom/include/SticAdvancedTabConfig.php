@@ -86,6 +86,9 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 8 => array(
                     'id' => 'stic_Time_Tracker',
                 ),
+                9 => array(
+                    'id' => 'stic_Messages',
+                ),
             ),
         ),
         2 => array(
@@ -139,6 +142,17 @@ if (empty($GLOBALS["SticTabStructure"])) {
                         ),
                         4 => array(
                             'id' => 'AOS_Contracts',
+                        ),
+                    ),
+                ),
+                5 => array(
+                    'id' => 'LBL_GROUPTAB_FINANCIAL_MANAGEMENT',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Financial_Products',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Transactions',
                         ),
                     ),
                 ),
@@ -260,6 +274,12 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 2 => array(
                     'id' => 'stic_Bookings_Calendar',
                 ),
+                3 => array(
+                    'id' => 'stic_Places',
+                ),
+                4 => array(
+                    'id' => 'stic_Bookings_Places_Calendar',
+                ),
             ),
         ),
         7 => array(
@@ -269,15 +289,26 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'id' => 'AOS_PDF_Templates',
                 ),
                 1 => array(
-                    'id' => 'DHA_PlantillasDocumentos',
+                    'id' => 'stic_Signatures',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Signers',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Signature_Log',
+                        ),
+                    ),
                 ),
                 2 => array(
-                    'id' => 'KReports',
+                    'id' => 'DHA_PlantillasDocumentos',
                 ),
                 3 => array(
-                    'id' => 'AOW_WorkFlow',
+                    'id' => 'KReports',
                 ),
                 4 => array(
+                    'id' => 'AOW_WorkFlow',
+                ),
+                5 => array(
                     'id' => 'SinergiaDA',
                     'url' => 'index.php?module=Home&action=sdaRedirect',
                 ),

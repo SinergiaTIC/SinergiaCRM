@@ -40,3 +40,4 @@ $mod_strings['LBL_OPPORTUNITIESREMINDER'] = 'Recordatori de subvencions';
 $mod_strings['LBL_VALIDATIONACTIONS'] = 'Accions de validació';
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_SCHEDULERS_FROM_STIC_VALIDATION_ACTIONS_TITLE'] = 'Accions de Validació';
 $mod_strings['LBL_CREATEMEDICATIONLOGS'] = 'Crea els registres de medicació';
+$mod_strings['LBL_STICSENDPHONEMESSAGES'] = 'Enviament de missatges a telèfons';

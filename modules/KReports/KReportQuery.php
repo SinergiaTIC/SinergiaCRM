@@ -908,6 +908,18 @@ class KReportQuery {
                      $this->whereString .= ' AND ' . $group_where;
                   }
                }
+               // // STIC Custom 20251003 EPS - Fixing behaviour when Nothing selected in role
+               // // https://github.com/SinergiaTIC/SinergiaCRM/pull/821
+               // $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? ACL_ALLOW_NONE; 
+               // if ($actionPermission == ACL_ALLOW_NONE) {
+               //     if (empty($this->whereString)) {
+               //          $this->whereString = " ( 0 = 1 ) ";
+               //       } else {
+               //          $this->whereString .= " AND ( 0 = 1) ";
+               //       }
+               // }
+               // // END STIC Custom
+
                break;
          }
       }
@@ -1897,15 +1909,33 @@ class KReportQuery {
             break;
          case 'isempty':
             $thisWhereString .= ' = \'\'';
+            // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
+            if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
+               $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . ' = \'^^\'';
+            }
+            // END STIC-Custom
             break;
          case 'isemptyornull':
             $thisWhereString .= ' = \'\' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . ' IS NULL';
+            // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
+            if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
+               $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . ' = \'^^\'';
+            }
+            // END STIC-Custom
             break;
          case 'isnull':
             $thisWhereString .= ' IS NULL';
             break;
          case 'isnotempty':
             $thisWhereString .= ' <> \'\' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . ' is not null';
+            // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
+            if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
+               $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . ' <> \'^^\'';
+            }
+            // END STIC-Custom
             break;
          case 'oneof':
             if ($this->fieldNameMap[$fieldid]['type'] == 'multienum') {

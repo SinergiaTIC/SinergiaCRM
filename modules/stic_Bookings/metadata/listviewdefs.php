@@ -74,6 +74,11 @@ array(
         'id' => 'ASSIGNED_USER_ID',
         'default' => true,
     ),
+    'PERIODIC_CODE' => array(
+        'label' => 'LBL_PERIODIC_CODE',
+        'width' => '10%',
+        'default' => false,
+    ),
     'ALL_DAY' => array(
         'type' => 'bool',
         'label' => 'LBL_ALL_DAY',

@@ -58,7 +58,7 @@ $app_list_strings = array(
         'Cases' => 'Casos',
         'Notes' => 'Notas',
         'Calls' => 'Chamadas',
-        'TemplateSectionLine' => 'Liña de sección de plantilla',
+        'TemplateSectionLine' => 'Secciones de plantilla',
         'Calls_Reschedule' => 'Reprogramación de chamadas',
         'Emails' => 'Correos',
         'EAPM' => 'EAPM',
@@ -1003,7 +1003,7 @@ $app_list_strings = array(
     'campainglog_activity_type_dom' => array(
         '' => '',
         'targeted' => 'Mensaxe enviado',
-        'send erro' => 'Mensaxe non enviado (outras causas)',
+        'send error' => 'Mensaxe non enviado (outras causas)',
         'invalid email' => 'Mensaxe non enviado (enderezo non válido)',
         'link' => 'Enlace clicado',
         'viewed' => 'Mensaxe visto',
@@ -1666,7 +1666,6 @@ $app_strings = array(
     'LBL_PROFILE' => 'Perfil',
     'LBL_MAILMERGE' => 'Combinar Correspondencia',
     'LBL_MASS_UPDATE' => 'Actualización Masiva',
-    'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'Non hai campos dispoñibles para a operación de actualización masiva.',
     // STIC-Custom - 20220704 - JCH - Duplicate & Mass Update
     // STIC#776
     'LBL_MASS_DUPLICATE_UPDATE' => 'Duplicado e Actualización Masiva',
@@ -1674,6 +1673,7 @@ $app_strings = array(
     'LBL_MASS_DUPLICATE_UPDATE_CONFIRMATION_NUM' => '¿Está seguro de que desexa duplicar e actualizar o(os) ',
     'LBL_MASS_DUPLICATE_UPDATE_BTN' => 'Duplicar e Actualizar',
     // END STIC
+    'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'Non hai campos dispoñibles para a operación de actualización masiva.',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Rehusar para Email Principal',
     'LBL_OPT_IN_FLAG_PRIMARY' => 'Adherir con e-mail principal',
     'LBL_MEETINGS' => 'Reunións',
@@ -2052,7 +2052,7 @@ $app_strings = array(
     'LBL_BREADCRUMBSTACK_CREATED' => 'BreadCrumbStack creado polo usuario id {0}',
     'LBL_VISIBLE' => 'Dato visible',
     'LBL_DATE_LAST_ACTION' => 'Data',
-
+    
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'non antes de',
     'MSG_IS_MORE_THAN' => 'é máis que',
@@ -2125,7 +2125,7 @@ $app_strings = array(
     'LBL_ENTER_YEAR' => 'Poñer ano',
     'LBL_ENTER_VALID_YEAR' => 'Por favor, poñer un ano valido',
 
-    //File write erro label
+    //File write error label
     'ERR_FILE_WRITE' => 'Erro: non se puido escribir o arquivo {0}. Por favor, revise o sistema e os permisos do servidor web.',
     'ERR_FILE_NOT_FOUND' => 'Erro: non se pode cargar o arquivo {0}. Por favor, comprobe os permisos do sistema e do servidor web.',
 
@@ -2309,7 +2309,7 @@ $app_list_strings['countries_dom'] = array(
     'ANGOLA' => 'ANGOLA',
     'ANTARCTICA' => 'ANTÁRTIDA',
     'ANTIGUA' => 'ANTIGUA',
-    'ARXENTINA' => 'Arxentina',
+    'ARGENTINA' => 'Arxentina',
     'ARMENIA' => 'Armenia',
     'ARUBA' => 'ARUBA',
     'AUSTRALIA' => 'Australia',
@@ -2370,7 +2370,7 @@ $app_list_strings['countries_dom'] = array(
     'DUBAI' => 'DUBAI',
     'ECUADOR' => 'Ecuador',
     'EGYPT' => 'EXIPTO',
-    'O SALVADOR' => 'O Salvador',
+    'EL SALVADOR' => 'O Salvador',
     'EQUATORIAL GUINEA' => 'GUINEA ECUATORIAL',
     'ESTONIA' => 'Estonia',
     'ETHIOPIA' => 'ETIOPÍA',
@@ -2470,7 +2470,7 @@ $app_list_strings['countries_dom'] = array(
     'POLAND' => 'POLONIA',
     'PORTUGAL' => 'PORTUGAL',
     'PORTUGUESE TIMOR' => 'TIMOR ORIENTAL',
-    'PORTO RICO' => 'PORTO RICO',
+    'PUERTO RICO' => 'PORTO RICO',
     'QATAR' => 'QATAR',
     'REPUBLIC OF BELARUS' => 'REPÚBLICA DE BIELORRUSIA',
     'REPUBLIC OF SOUTH AFRICA' => 'REPÚBLICA DE SUDÁFRICA',
@@ -2899,16 +2899,16 @@ $app_list_strings['timezone_dom'] = array(
     'America/Grand_Turk' => 'America/Grand_Turk',
     'America/Tortola' => 'America/Tortola',
     'America/St_Thomas' => 'America/St_Thomas',
-    'America/Arxentina/Buenos_Aires' => 'America/Arxentina/Buenos_Aires',
-    'America/Arxentina/Cordoba' => 'America/Arxentina/Cordoba',
-    'America/Arxentina/Tucuman' => 'America/Arxentina/Tucuman',
-    'America/Arxentina/La_Rioja' => 'America/Arxentina/La_Rioja',
-    'America/Arxentina/San_Juan' => 'America/Arxentina/San_Juan',
-    'America/Arxentina/Jujuy' => 'America/Arxentina/Jujuy',
-    'America/Arxentina/Catamarca' => 'America/Arxentina/Catamarca',
-    'America/Arxentina/Mendoza' => 'America/Arxentina/Mendoza',
-    'America/Arxentina/Rio_Gallegos' => 'America/Arxentina/Rio_Gallegos',
-    'America/Arxentina/Ushuaia' => 'America/Arxentina/Ushuaia',
+    'America/Argentina/Buenos_Aires' => 'America/Arxentina/Buenos_Aires',
+    'America/Argentina/Cordoba' => 'America/Arxentina/Cordoba',
+    'America/Argentina/Tucuman' => 'America/Arxentina/Tucuman',
+    'America/Argentina/La_Rioja' => 'America/Arxentina/La_Rioja',
+    'America/Argentina/San_Juan' => 'America/Arxentina/San_Juan',
+    'America/Argentina/Jujuy' => 'America/Arxentina/Jujuy',
+    'America/Argentina/Catamarca' => 'America/Arxentina/Catamarca',
+    'America/Argentina/Mendoza' => 'America/Arxentina/Mendoza',
+    'America/Argentina/Rio_Gallegos' => 'America/Arxentina/Rio_Gallegos',
+    'America/Argentina/Ushuaia' => 'America/Arxentina/Ushuaia',
     'America/Aruba' => 'America/Aruba',
     'America/La_Paz' => 'America/La_Paz',
     'America/Noronha' => 'America/Noronha',
@@ -3119,7 +3119,7 @@ $app_list_strings['aor_total_options']['SUM'] = 'Suma';
 $app_list_strings['aor_total_options']['AVG'] = 'Promedio';
 $app_list_strings['aor_chart_types']['bar'] = 'Gráfico de barras';
 $app_list_strings['aor_chart_types']['line'] = 'Gráfico de liñas';
-$app_list_strings['aor_chart_types']['pé'] = 'Gráfico de sectores';
+$app_list_strings['aor_chart_types']['pie'] = 'Gráfico de sectores';
 $app_list_strings['aor_chart_types']['radar'] = 'Gráfico radial';
 $app_list_strings['aor_chart_types']['stacked_bar'] = 'Barra apilada';
 $app_list_strings['aor_chart_types']['grouped_bar'] = 'Barra agrupada';
@@ -3228,12 +3228,12 @@ $app_list_strings['product_quote_parent_type_dom']['AOS_Invoices'] = 'Facturas';
 $app_list_strings['product_quote_parent_type_dom']['AOS_Contracts'] = 'Contratos';
 // STIC-Custom 20220124 MHP - Delete the values of the pdf_template_type_dom  
 // STIC#564            
-// $app_list_strings['pdf_template_type_dom']['AOS_Quotes'] = 'Presupostos';
+// $app_list_strings['pdf_template_type_dom']['AOS_Quotes'] = 'Presupuestos';
 // $app_list_strings['pdf_template_type_dom']['AOS_Invoices'] = 'Facturas';
 // $app_list_strings['pdf_template_type_dom']['AOS_Contracts'] = 'Contratos';
-// $app_list_strings['pdf_template_type_dom']['Accounts'] = 'Contas';
+// $app_list_strings['pdf_template_type_dom']['Accounts'] = 'Cuentas';
 // $app_list_strings['pdf_template_type_dom']['Contacts'] = 'Contactos';
-// $app_list_strings['pdf_template_type_dom']['Leads'] = 'Clientes Potenciais';
+// $app_list_strings['pdf_template_type_dom']['Leads'] = 'Clientes Potenciales';
 // END STIC-Custom
 $app_list_strings['pdf_template_sample_dom'][''] = '';
 $app_list_strings['contract_status_list']['Not Started'] = 'Non Iniciado';
@@ -3275,7 +3275,7 @@ $app_list_strings['aow_condition_type_list']['Field'] = 'Campo';
 $app_list_strings['aow_condition_type_list']['Any_Change'] = 'Calquera cambio';
 $app_list_strings['aow_condition_type_list']['SecurityGroup'] = 'En SecurityGroup';
 $app_list_strings['aow_condition_type_list']['Date'] = 'Data';
-$app_list_strings['aow_condition_type_list']['Multi'] = 'Un de';
+$app_list_strings['aow_condition_type_list']['Multi'] = 'Multiple';
 $app_list_strings['aow_action_type_list']['Value'] = 'Valor';
 $app_list_strings['aow_action_type_list']['Field'] = 'Campo';
 $app_list_strings['aow_action_type_list']['Date'] = 'Data';
@@ -3855,3 +3855,6 @@ $app_strings['LBL_TCPDF_ENGINE'] = 'Motor TCPDF';
 $app_strings['ERR_INVALID_FILE_NAME'] = 'O nome do ficheiro non é válido:';
 $app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'Só pode conter caracteres alfanuméricos, o punto (.), o guion (-) ou o guion baixo (_).';
 $app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'O nome do ficheiro de importación non é válido';
+
+$app_strings['LBL_PASSWORD_SET_NEW_VALUE_TO_RESET'] = 'Contraseña establecida. Introduzca un valor para establecer una nueva contraseña.';
+$app_strings['LBL_VALUE_SET_PLACEHOLDER'] = 'Valor establecido. Introduzca un nuevo valor para sobrescribir el valor actual.';

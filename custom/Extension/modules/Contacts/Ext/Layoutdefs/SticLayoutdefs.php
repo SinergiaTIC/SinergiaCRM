@@ -429,6 +429,62 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_skills_contacts'] = array(
     ),
 );
 
+// New collection in activities/history
+$layout_defs['Contacts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+$layout_defs['Contacts']['subpanel_setup']['activities']['collection_list']['stic_Messages'] = array(
+    'module' => 'stic_Messages',
+    'subpanel_name' => 'ForHistory',
+    'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
+    'generate_select' => true,
+    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'draft'"),
+);
+$layout_defs['Contacts']['subpanel_setup']['history']['collection_list']['stic_Messages'] = array(
+    'module' => 'stic_Messages',
+    'subpanel_name' => 'ForHistory',
+    'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
+    'generate_select' => true,
+    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'sent', 'error'"),
+);
+
+// Signatures subpanel
+$layout_defs["Contacts"]["subpanel_setup"]['stic_signers_contacts'] = array(
+    'order' => 100,
+    'module' => 'stic_Signers',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_modified',
+    'title_key' => 'LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE',
+    'get_subpanel_data' => 'function:stic_SignersUtils::getSticSignersForContacts',
+    'function_parameters' => array(
+        'import_function_file' => 'modules/stic_Signers/Utils.php',
+    ),
+    'top_buttons' => [], // must be defined
+);
+
+
+// Financial Products subpanel
+$layout_defs["Contacts"]["subpanel_setup"]['stic_financial_products_contacts'] = array (
+    'order' => 100,
+    'module' => 'stic_Financial_Products',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE',
+    'get_subpanel_data' => 'stic_financial_products_contacts',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array (
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
+    ),
+  );
+
 $layout_defs['Contacts']['subpanel_setup']['leads']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Contacts']['subpanel_setup']['opportunities']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Contacts']['subpanel_setup']['documents']['override_subpanel_name'] = 'SticDefault';

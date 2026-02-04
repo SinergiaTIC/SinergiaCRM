@@ -100,8 +100,12 @@
                                                     id='date_start_date' size='11' tabindex='1' maxlength='10'
                                                     type="text" value="{DATE_START}"> <span id="jscal_trigger"
                                                     class="suitepicon suitepicon-module-calendar"></span>&nbsp;</td>
-                                            <td nowrap><input type="text" size='5' maxlength='5' name='time_start'
-                                                    tabindex="1" value="{TIME_START}" />{TIME_MERIDIEM}</td>
+                                                    <td nowrap>
+                                                        <select id="time_hour" name="time_hour"></select>
+                                                        <span id="time_separator"></span>
+                                                        <select id="time_minute" name="time_minute"></select>
+                                                        {TIME_MERIDIEM}
+                                                    </td>
                                         </tr>
                                         <tr>
                                             <td nowrap><span class="dateFormat">{USER_DATEFORMAT}</span></td>
@@ -154,7 +158,8 @@
                                         class="required">{APP.LBL_REQUIRED_SYMBOL}</span></span></td>
                             <td><span><input name='from_name' id='from_name' tabindex='2' size='25' maxlength='100'
                                         type="text" value="{FROM_NAME}"></span></td>
-                            <td scope="row"><span>{MOD.LBL_FROM_ADDR}</span></td>
+                            <td scope="row"><span>{MOD.LBL_FROM_ADDR}</span> <span
+                                class="required">{APP.LBL_REQUIRED_SYMBOL}</span></td>
                             <td class="datafield"><span><input name='from_addr' id='from_addr'
                                         title='{MOD.LBL_FROM_ADDR}' tabindex='2' size='25' maxlength='100' type="text"
                                         value="{FROM_ADDR}"></span></td>
@@ -205,6 +210,65 @@
     Calendar.setup({
         inputField: "date_start_date", ifFormat: "{CALENDAR_DATEFORMAT}", showsTime: false, button: "jscal_trigger", singleClick: true, step: 1
     });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const timeFormat = "{TIME_FORMAT}".trim();
+        const is12h = timeFormat.toLowerCase().includes("pm");
+        const maxHour = is12h ? 12 : 23;
+        const timeSeparator = timeFormat.includes(":") ? ":" : ".";
+
+        const hourSelect = document.getElementById("time_hour");
+        const minuteSelect = document.getElementById("time_minute");
+        const meridiemSelect = document.querySelector('select[name="meridiem"]');
+        const timeSeparatorField = document.getElementById("time_separator");
+        if (timeSeparator) timeSeparatorField.textContent = timeSeparator;
+
+        // Add the options to the hours input
+        for (let val = 0; val <= maxHour; val++) {
+            const opt = document.createElement("option");
+            opt.value = val.toString().padStart(2, "0");
+            opt.text = opt.value;
+            hourSelect.appendChild(opt);
+        }
+
+        // Add the options to the minutes input
+        for (let m = 0; m < 60; m++) {
+            const opt = document.createElement("option");
+            opt.value = m.toString().padStart(2, "0");
+            opt.text = opt.value;
+            minuteSelect.appendChild(opt);
+        }
+
+        // Preload values ​​if they already exist
+        const existingTime = "{TIME_START}";
+        if (existingTime) {
+            const timeParts = existingTime.split(timeSeparator);
+            if (timeParts.length >= 2) {
+                hourSelect.value = is12h
+                    ? (timeParts[0].padStart(2, "0") % 12).toString().padStart(2, "0")
+                    : timeParts[0].padStart(2, "0");
+                if (hourSelect.value == "00") hourSelect.value = "12";
+                minuteSelect.value = timeParts[1].padStart(2, "0");
+            }
+        }
+
+        // Rebuild date_start before saving
+        const form = document.forms.EditView;
+        form.addEventListener("submit", () => {
+            const hour = parseInt(hourSelect.value, 10);
+            const minute = minuteSelect.value;
+            const dateStart = document.getElementById("date_start_date");
+            const separator = timeSeparatorField.textContent;
+
+            let timeValue = hour.toString().padStart(2, "0") + separator + minute;
+            if (is12h && meridiemSelect) {
+                timeValue += meridiemSelect.value;
+            }
+
+            dateStart.value = dateStart.value.split(" ")[0] + " " + timeValue;
+        });
+    });
+
 
     function show_edit_template_link(field) {
 
@@ -296,8 +360,16 @@
     // Call the onchange function of the outbound_email_id field to preload the values ​​of the selected element when creating a new marketing email
     // It is used to differentiate when we are loading the view or when the user has changed the value of the outgoing account
     var onReady = 1;
-    $(document).ready(function() {
-        $('select[name="outbound_email_id"]').change(); // Dispara el evento `change`
+    $(document).ready(function() 
+    {
+        // Trigger the `change` event
+        $('select[name="outbound_email_id"]').change();
+
+        // Add format validations for email fields
+        addToValidate('EditView','time_start','time',true,SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE'));
+        addToValidate('EditView','from_addr','email',true,SUGAR.language.get('app_strings', 'ERR_INVALID_EMAIL_ADDRESS'));
+        addToValidate('EditView','reply_to_addr','email',false,SUGAR.language.get('app_strings', 'ERR_INVALID_EMAIL_ADDRESS'));
+
     });
     // END STIC-Custom
     var from_emails = new Array({ FROM_EMAILS });

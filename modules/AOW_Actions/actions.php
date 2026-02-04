@@ -42,6 +42,10 @@ $aow_actions_list[] = 'CreateRecord';
 $aow_actions_list[] = 'ModifyRecord';
 $aow_actions_list[] = 'SendEmail';
 $aow_actions_list[] = 'ComputeField';
+// STIC-Custom 20240909 EPS - Añadimos la acción de enviar mensaje al core para evitar tenerla en carpetas custom
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/182
+$aow_actions_list[] = 'SendMessage';
+// END STIC-Custom 
 
 
 if (file_exists('custom/modules/AOW_Actions/Ext/Actions/actions.ext.php')) {
