@@ -41,6 +41,14 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
     protected function getBookedResources($start_date, $end_date, $filteredResources)
     {
         global $current_user, $db;
+
+        $user_tz_name = $current_user->getPreference('timezone');
+        if (empty($user_tz_name)) {
+            $user_tz_name = isset($sugar_config['default_timezone']) ? $sugar_config['default_timezone'] : 'UTC';
+        }
+
+
+
         $resourcesBean = BeanFactory::getBean('stic_Resources');
         $bookedResources = array();
         $query = "
@@ -54,8 +62,10 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                 sb.id AS booking_id,
                 sb.code AS booking_code,
                 sb.name AS booking_name,
-                sb.start_date,
-                sb.end_date,
+                // sb.start_date,
+                // sb.end_date,
+                CONVERT_TZ(sb.start_date, '+00:00', '$user_tz_name') as start_date, 
+                CONVERT_TZ(sb.end_date, '+00:00', '$user_tz_name') as end_date,
                 sb.all_day,
                 sc.id AS center_id,
                 sc.name AS center_name
@@ -150,7 +160,12 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
 
         foreach ($bookedResources as $resource) {
             $resourceStart = max($startDate, substr($resource['start'], 0, 10));
-            $resourceEnd = min($endDate, substr($resource['end'], 0, 10));
+            if (substr($resource['end'], 11, 8) == '00:00:00') {
+                $resourceEnd = date('Y-m-d', strtotime(substr($resource['end'], 0, 10) . ' -1 day'));
+            } else {
+                $resourceEnd = substr($resource['end'], 0, 10);
+            }
+            $resourceEnd = min($endDate, $resourceEnd);
             $currentDate = $resourceStart;
 
             if (isset($resource['resourceType']) && $resource['resourceType'] == 'place' && in_array($resource['resourceId'], $filteredResources)) {
@@ -190,7 +205,12 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
      */
     private function getPlacesAvailability($start_date, $end_date, $filteredResources = null)
     {
-        global $db;
+        global $db, $current_user;
+
+        $user_tz_name = $current_user->getPreference('timezone');
+        if (empty($user_tz_name)) {
+            $user_tz_name = isset($sugar_config['default_timezone']) ? $sugar_config['default_timezone'] : 'UTC';
+        }
 
         $availablePlaces = array();
 
@@ -223,13 +243,15 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
         }
 
         $query = "SELECT stic_resources_stic_bookingsstic_resources_ida as resource_id,
-                     start_date, end_date
+                     CONVERT_TZ(start_date, '+00:00', '$user_tz_name') as start_date, CONVERT_TZ(end_date, '+00:00', '$user_tz_name') as end_date
+                    --  start_date, end_date
               FROM stic_bookings
               JOIN stic_resources_stic_bookings_c ON stic_resources_stic_bookingsstic_bookings_idb = stic_bookings.id
               WHERE stic_bookings.deleted = 0
                 AND stic_resources_stic_bookings_c.deleted = 0
                 AND start_date <= '$end_date'
-                AND end_date >= '$start_date'";
+                AND end_date >= '$start_date'
+                AND stic_bookings.place_booking = 1";
         $result = $db->query($query);
 
         $bookedResources = array();
@@ -237,6 +259,10 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             $resourceId = $row['resource_id'];
             $startDate = $row['start_date'];
             $endDate = $row['end_date'];
+            // if endDate end with 00:00:00, we consider that the place is freed that day
+            if (substr($endDate, 11, 8) == '00:00:00') {
+                $endDate = date('Y-m-d', strtotime($endDate . ' -1 day'));
+            }            
 
             $currentDate = $startDate;
             while ($currentDate <= $endDate && $currentDate <= $end_date) {
