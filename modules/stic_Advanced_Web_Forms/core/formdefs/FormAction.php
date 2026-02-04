@@ -42,6 +42,11 @@ class FormAction {
     public string $condition_field = '';    // The field that conditions the execution
     public string $condition_value = '';    // The value required to execute the action
 
+    // For deferred actions
+    public ?string $flow_success_id = null; // Flow to execute if the deferred action returns successfully
+    public ?string $flow_error_id = null;   // Flow to execute if the deferred action returns with an error
+
+
     /**
      * Creates an instance of FormAction from a JSON array.
      * @param FormFlow $flow The action flow it belongs to 
@@ -61,6 +66,10 @@ class FormAction {
         // Conditions
         $dto->condition_field = $data['condition_field'] ?? '';
         $dto->condition_value = $data['condition_value'] ?? '';
+
+        // Deferred actions
+        $dto->flow_success_id = $data['flow_success_id'] ?? '';
+        $dto->flow_error_id = $data['flow_error_id'] ?? '';
 
         $dto->parameters = [];
         if (isset($data['parameters'])) {

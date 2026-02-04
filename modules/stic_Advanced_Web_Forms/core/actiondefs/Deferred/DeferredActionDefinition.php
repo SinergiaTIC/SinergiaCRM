@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class DeferredAction extends ServerActionDefinition {
+abstract class DeferredActionDefinition extends ServerActionDefinition {
     final public function getType(): ActionType {
         return ActionType::DEFERRED;
     }
@@ -38,4 +38,17 @@ abstract class DeferredAction extends ServerActionDefinition {
      * @return WebhookResult El objeto con el ID de la transacción y el estado.
      */
     public abstract function processWebhook(array $requestData): WebhookResult;
+
+    /**
+     * Decide si el resultado externo es un Éxito o un Error para decidir qué flujo ejecutar: flow_success_id o flow_error_id
+     * 
+     * @param ExecutionContext $context Execution context of the action
+     * @param WebhookResult El objeto con el ID de la transacción y el estado.
+     * Decideix si el resultat extern és un Èxit o un Error.
+     * Retorna un ActionResult estàndard.
+     * * - Si isSuccess() -> El Executor dispararà el flow_success_id.
+     * - Si !isSuccess() -> El Executor dispararà el flow_error_id.
+     * - getData() -> S'incorporaran al formulari ($context->mergeData).
+     */
+    abstract public function resolve(ExecutionContext $context, WebhookResult $webhookData): ActionResult;
 }

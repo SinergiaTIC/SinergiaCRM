@@ -180,6 +180,8 @@ $app_list_strings['moduleList']['stic_Advanced_Web_Forms_Answers'] = 'Detalle de
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms_Responses'] = 'Respuestas a formularios';
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms_Links'] = 'Vínculos de Formularios';
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms'] = 'Formularios Web Avanzados';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Deferred_Tickets'] = 'Procesos en espera de Formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Incoming_Events'] = 'Notificaciones externas de Formularios';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -240,6 +242,8 @@ $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Answers'] = 'De
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Responses'] = 'Respuesta a formulario';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Links'] = 'Vínculo de Formulario';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms'] = 'Formulario Web Avanzado';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Deferred_Tickets'] = 'Proceso en espera de formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Incoming_Events'] = 'Notificación externa de formulario';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -4053,6 +4057,19 @@ $app_list_strings['stic_advanced_web_forms_field_spacing_list']['1.5rem'] = 'Esp
 $app_list_strings['stic_advanced_web_forms_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_advanced_web_forms_status_list']['public'] = 'Público';
 $app_list_strings['stic_advanced_web_forms_status_list']['closed'] = 'Cerrado';
+
+// Estado de un proceso en espera de los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_deferred_ticket_status']['pending'] = 'Pendiente';
+$app_list_strings['stic_advanced_web_forms_deferred_ticket_status']['completed'] = 'Completado';
+$app_list_strings['stic_advanced_web_forms_deferred_ticket_status']['error'] = 'Error';
+$app_list_strings['stic_advanced_web_forms_deferred_ticket_status']['cancelled'] = 'Cancelado';
+
+// Estado de una notificación externa de los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_incoming_event_status']['pending'] = 'Pendiente';
+$app_list_strings['stic_advanced_web_forms_incoming_event_status']['processing'] = 'Procesando';
+$app_list_strings['stic_advanced_web_forms_incoming_event_status']['completed'] = 'Completado';
+$app_list_strings['stic_advanced_web_forms_incoming_event_status']['failed'] = 'Fallado';
+$app_list_strings['stic_advanced_web_forms_incoming_event_status']['ignored'] = 'Ignorado';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

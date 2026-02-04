@@ -694,6 +694,10 @@ class stic_AwfFieldValidation {
       // Simple condition to execute the validation (the field contains this value)
       condition_field: '',
       condition_value: '',
+
+      // For deferred actions: flows to execute when returns from deferred action
+      flow_success_id: '',
+      flow_error_id: '',
     });
     Object.assign(this, data);
   }

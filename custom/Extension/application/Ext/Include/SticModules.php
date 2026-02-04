@@ -76,6 +76,8 @@ $moduleList[] = 'stic_Advanced_Web_Forms';
 // $moduleList[] = 'stic_Advanced_Web_Forms_Responses';
 // $moduleList[] = 'stic_Advanced_Web_Forms_Answers';
 // $moduleList[] = 'stic_Advanced_Web_Forms_Links';
+// $moduleList[] = 'stic_Advanced_Web_Forms_Deferred_Tickets';
+// $moduleList[] = 'stic_Advanced_Web_Forms_Incoming_Events';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -137,6 +139,9 @@ $beanList['stic_Advanced_Web_Forms'] = 'stic_Advanced_Web_Forms';
 $beanList['stic_Advanced_Web_Forms_Responses'] = 'stic_Advanced_Web_Forms_Responses';
 $beanList['stic_Advanced_Web_Forms_Links'] = 'stic_Advanced_Web_Forms_Links';
 $beanList['stic_Advanced_Web_Forms_Answers'] = 'stic_Advanced_Web_Forms_Answers';
+$beanList['stic_Advanced_Web_Forms_Deferred_Tickets'] = 'stic_Advanced_Web_Forms_Deferred_Tickets';
+$beanList['stic_Advanced_Web_Forms_Incoming_Events'] = 'stic_Advanced_Web_Forms_Incoming_Events';
+
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -197,6 +202,8 @@ $beanFiles['stic_Advanced_Web_Forms'] = 'modules/stic_Advanced_Web_Forms/stic_Ad
 $beanFiles['stic_Advanced_Web_Forms_Responses'] = 'modules/stic_Advanced_Web_Forms_Responses/stic_Advanced_Web_Forms_Responses.php';
 $beanFiles['stic_Advanced_Web_Forms_Links'] = 'modules/stic_Advanced_Web_Forms_Links/stic_Advanced_Web_Forms_Links.php';
 $beanFiles['stic_Advanced_Web_Forms_Answers'] = 'modules/stic_Advanced_Web_Forms_Answers/stic_Advanced_Web_Forms_Answers.php';
+$beanFiles['stic_Advanced_Web_Forms_Deferred_Tickets'] = 'modules/stic_Advanced_Web_Forms_Deferred_Tickets/stic_Advanced_Web_Forms_Deferred_Tickets.php';
+$beanFiles['stic_Advanced_Web_Forms_Incoming_Events'] = 'modules/stic_Advanced_Web_Forms_Incoming_Events/stic_Advanced_Web_Forms_Incoming_Events.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -214,6 +221,8 @@ $modInvisList[] = 'stic_MessagesMan';
 $modInvisList[] = 'stic_Advanced_Web_Forms_Responses';
 $modInvisList[] = 'stic_Advanced_Web_Forms_Links';
 $modInvisList[] = 'stic_Advanced_Web_Forms_Answers';
+$modInvisList[] = 'stic_Advanced_Web_Forms_Deferred_Tickets';
+$modInvisList[] = 'stic_Advanced_Web_Forms_Incoming_Events';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
