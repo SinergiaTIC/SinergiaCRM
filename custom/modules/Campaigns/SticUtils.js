@@ -414,21 +414,11 @@ function updateViewNotificationMsgType(isNotification) {
     }
 
     // Prevent selecting WhatsAppWeb in this panel when campaign is NotifMsg
-    (function disableWhatsAppInMsgPanel() {
-      var $typeSelect = $form.find('[name="notification_message_type"], #notification_message_type, #notification_message_type');
+    (function removeWhatsAppInMsgPanel() {
+      var $typeSelect = $form.find('[name="notification_message_type"], #notification_message_type');
+
       if ($typeSelect.length) {
-        $typeSelect.find('option[value="WhatsAppWeb"], option[value="whatsappweb"]').each(function() {
-          $(this).prop('disabled', true).hide();
-        });
-        var curVal = $typeSelect.val();
-        if (curVal === 'WhatsAppWeb' || curVal === 'whatsappweb') {
-          var $fallback = $typeSelect.find('option').filter(function() { return $(this).val() !== '' && !$(this).prop('disabled'); }).first();
-          if ($fallback.length) {
-            $typeSelect.val($fallback.val()).change();
-          } else {
-            $typeSelect.prop('selectedIndex', 0).change();
-          }
-        }
+        $typeSelect.find('option[value="WhatsAppWeb"]').remove().end().change();
       }
     })();
 
