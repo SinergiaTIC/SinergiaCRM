@@ -53,10 +53,17 @@ YAHOO.widget.DataTable.prototype.getColumn = function(column) {
 
     if(!oColumn) {
         // Validate TD element
-        var elCell = column.nodeName.toLowerCase() != "th" ? this.getTdEl(column) : false;
+        // STIC Custom 20260104 ART - Resizable columns in Studio
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // var elCell = column.nodeName.toLowerCase() != "th" ? this.getTdEl(column) : false;
+        // if(elCell) {
+        //     oColumn = this._oColumnSet.getColumn(elCell.cellIndex);
+        // }
+        var elCell = this.getTdEl(column);
         if(elCell) {
-            oColumn = this._oColumnSet.getColumn(elCell.cellIndex);
+            oColumn = this._oColumnSet.getColumn(this.getCellIndex(elCell));
         }
+        // END STIC Custom
         // Validate TH element
         else {
             elCell = this.getThEl(column);
@@ -80,10 +87,17 @@ YAHOO.widget.DataTable.prototype.getColumn = function(column) {
 var relationships = {ldelim}relationships:{$relationships}{rdelim};
 var grid = new YAHOO.widget.ScrollingDataTable('relGrid',
 	[
-	    {ldelim}key:'name',       label: SUGAR.language.get('ModuleBuilder','LBL_REL_NAME'),        width: 200, sortable: true{rdelim},
-	    {ldelim}key:'lhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_LHS_MODULE'),      width: 120, sortable: true{rdelim},
-	    {ldelim}key:'relationship_type', label: SUGAR.language.get('ModuleBuilder','LBL_REL_TYPE'), width: 120, sortable: true{rdelim},
-	    {ldelim}key:'rhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_RHS_MODULE'),      width: 120, sortable: true{rdelim}
+        // STIC Custom 20260104 ART - Resizable columns in Studio
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+	    // {ldelim}key:'name',       label: SUGAR.language.get('ModuleBuilder','LBL_REL_NAME'),        width: 200, sortable: true{rdelim},
+	    // {ldelim}key:'lhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_LHS_MODULE'),      width: 120, sortable: true{rdelim},
+	    // {ldelim}key:'relationship_type', label: SUGAR.language.get('ModuleBuilder','LBL_REL_TYPE'), width: 120, sortable: true{rdelim},
+	    // {ldelim}key:'rhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_RHS_MODULE'),      width: 120, sortable: true{rdelim}
+        {ldelim}key:'name',       label: SUGAR.language.get('ModuleBuilder','LBL_REL_NAME'),        width: 200, sortable: true, resizeable: true{rdelim},
+        {ldelim}key:'lhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_LHS_MODULE'),      width: 120, sortable: true, resizeable: true{rdelim},
+        {ldelim}key:'relationship_type', label: SUGAR.language.get('ModuleBuilder','LBL_REL_TYPE'), width: 120, sortable: true, resizeable: true{rdelim},
+        {ldelim}key:'rhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_RHS_MODULE'),      width: 120, sortable: true, resizeable: true{rdelim}
+        // END STIC Custom
 	],{literal}
 	new YAHOO.util.LocalDataSource(relationships, {
 	    responseSchema: {
