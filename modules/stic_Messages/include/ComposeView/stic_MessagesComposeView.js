@@ -246,20 +246,27 @@ $(function () {
                 txt.innerHTML = html;
                 return txt.value;
             };
-            if (res.phone && res.text) {
-              var cleanText = decodeHTML(res.text);
-              var waUrl = 'https://wa.me/' + res.phone + '?text=' + encodeURIComponent(cleanText);
-              console.log('Opening WhatsApp URL:', waUrl);
-              window.open(waUrl, '_blank');
-            }
+            
+            // Check if this is a WhatsAppWeb message using explicit type field
+            if (res.type === 'WhatsAppWeb') {
+              // Single message
+              if (res.phone && res.text) {
+                var cleanText = decodeHTML(res.text);
+                var waUrl = 'https://wa.me/' + res.phone + '?text=' + encodeURIComponent(cleanText);
+                console.log('Opening WhatsApp URL:', waUrl);
+                window.open(waUrl, '_blank');
+              }
 
-            if (res.open_data && Array.isArray(res.open_data)) {
-                res.open_data.forEach(function(item) {
-                    var cleanItemText = decodeHTML(item.text);
-                    var waUrl = 'https://wa.me/' + item.phone + '?text=' + encodeURIComponent(cleanItemText);
-                    window.open(waUrl, '_blank');
-                });
-            }              
+              // Multiple messages (mass send)
+              if (res.open_data && Array.isArray(res.open_data)) {
+                  res.open_data.forEach(function(item) {
+                      var cleanItemText = decodeHTML(item.text);
+                      var waUrl = 'https://wa.me/' + item.phone + '?text=' + encodeURIComponent(cleanItemText);
+                      window.open(waUrl, '_blank');
+                  });
+              }
+            }
+            
             var baseUrl = window.location.href.split("?")[0];
             var returnModule = $('#EditView [name="return_module"]').val();
             var returnAction = $('#EditView [name="return_action"]').val();
@@ -279,7 +286,7 @@ $(function () {
               window.location.href = newUrl;
             }
             else {
-              var isWhatsAppWeb = $('#type').val() === 'WhatsAppWeb';
+              var isWhatsAppWeb = res.type === 'WhatsAppWeb';
               var title = isWhatsAppWeb ? 
                 (res.title || SUGAR.language.get('app_strings', 'LBL_EMAIL_SUCCESS')) : 
                 res.title;

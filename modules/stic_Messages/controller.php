@@ -116,7 +116,7 @@ class stic_MessagesController extends SugarController
                 // Clear accidental output and return JSON
                 while (ob_get_level()) { ob_end_clean(); }
                 header('Content-Type: application/json');
-                echo json_encode(array('success' => true, 'open_data' => $openData, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_WHATSAPP_WEB_SENT']));
+                echo json_encode(array('success' => true, 'type' => 'WhatsAppWeb', 'open_data' => $openData, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_WHATSAPP_WEB_SENT']));
                 exit;                }
 
                 // Clear any accidental output (warnings, HTML, etc.) so the response is pure JSON
@@ -141,7 +141,7 @@ class stic_MessagesController extends SugarController
                 // Clear output buffer before returning JSON to avoid malformed responses
                 while (ob_get_level()) { ob_end_clean(); }
                 header('Content-Type: application/json');
-                echo json_encode(array('success' => true, 'phone' => $phone, 'text' => $text, 'id' => $id));
+                echo json_encode(array('success' => true, 'type' => 'WhatsAppWeb', 'phone' => $phone, 'text' => $text, 'id' => $id));
                 exit;
             }
 
