@@ -89,7 +89,7 @@ switch (sticViewType) {
         $('#status').css('border-color', '#E2E7EB');
       }
       if (state !== 'draft' && $('#EditView input[name="record"]').val()) {
-        // Some fields canonly be edited when message is in draft
+        // Some fields can only be edited when message is in draft
         $('#type').prop('disabled', true);
         $('#type').attr('readonly', true);
         $('#type').css('background', '#F8F8F8');
@@ -127,18 +127,50 @@ switch (sticViewType) {
           $('#status').attr('readonly', true);
           $('#status').css('background', '#F8F8F8');
           $('#status').css('border-color', '#E2E7EB');
+          
+          // For WhatsAppWeb, sender is automatically set to assigned user
+          $('#sender').prop('disabled', true);
+          $('#sender').attr('readonly', true);
+          $('#sender').css('background', '#F8F8F8');
+          $('#sender').css('border-color', '#E2E7EB');
+          
+          // Get assigned user name and set it as sender
+          var assignedUserName = $('#assigned_user_name').val();
+          if (assignedUserName) {
+            $('#sender').val(assignedUserName);
+          }
         } else if (!$('#EditView input[name="record"]').val()) {
-          // Only enable status if it's a new message
+          // Only enable status and sender if it's a new message and not WhatsAppWeb
           $('#status').prop('disabled', false);
           $('#status').attr('readonly', false);
           $('#status').css('background', '');
           $('#status').css('border-color', '');
+          
+          // Re-enable sender field for other types
+          if (state === 'draft' || !$('#EditView input[name="record"]').val()) {
+            $('#sender').prop('disabled', false);
+            $('#sender').attr('readonly', false);
+            $('#sender').css('background', '');
+            $('#sender').css('border-color', '');
+          }
         }
       });
 
-      // On page load, if type is WhatsAppWeb, force status to 'sent'
+      // On page load, if type is WhatsAppWeb, force status to 'sent' and set sender
       if ($('#type').val() === 'WhatsAppWeb') {
         $('#status').val('sent');
+        
+        // Disable and set sender for WhatsAppWeb
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+        
+        // Get assigned user name and set it as sender if not already set
+        var assignedUserName = $('#assigned_user_name').val();
+        if (assignedUserName && !$('#sender').val()) {
+          $('#sender').val(assignedUserName);
+        }
       }
 
       if($("#mass_ids").val()) {
@@ -461,4 +493,3 @@ function updateMessageBox (args) {
       mb.remove();
     });
   }
-

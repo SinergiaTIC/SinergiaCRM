@@ -128,6 +128,11 @@ class stic_Messages extends Basic
 
         $this->assigned_user_id = $current_user->id;
 
+        // For WhatsAppWeb messages, set sender to assigned user name
+        if ($this->type === 'WhatsAppWeb') {
+            $this->sender = $current_user->name;
+        }
+
         // WhatsAppWeb messages are always sent immediately, never saved as draft
         if ($this->type === 'WhatsAppWeb' && $this->status === 'draft') {
             $this->status = 'sent';
