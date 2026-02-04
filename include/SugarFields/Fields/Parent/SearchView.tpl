@@ -65,11 +65,13 @@ onchange='document.{{$form_name}}.{{sugarvar key='name'}}.value="";document.{{$f
 <script type="text/javascript">
 if (typeof(changeParentQSSearchView) == 'undefined'){
 function changeParentQSSearchView(field) {
+    var type = field.replace('parent_name', 'parent_type');
 	field = YAHOO.util.Dom.get(field);
     var sqs_objects = {};
     var form = field.form;
     var sqsId = form.id + "_" + field.id;
-    var typeField =  form.elements["{{$vardef.type_name}}"];
+    var typeField =  form.elements[type];
+    console.log(typeField);
     var new_module = typeField.value;
     sqs_objects[sqsId] = {}; 
     if(typeof(disabledModules[new_module]) != 'undefined') {
