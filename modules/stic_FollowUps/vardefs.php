@@ -545,7 +545,15 @@ $dictionary['stic_FollowUps'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_FAMILIES_STIC_FOLLOWUPS_FROM_STIC_FOLLOWUPS_TITLE',
         ),
-
+        "stic_assets_stic_followups" => array(
+            'name' => 'stic_assets_stic_followups',
+            'type' => 'link',
+            'relationship' => 'stic_assets_stic_followups',
+            'source' => 'non-db',
+            'module' => 'stic_Assets',
+            'bean_name' => 'stic_Assets',
+            'vname' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE',
+        ),
     ),
     'relationships' => array(
     ),

@@ -1134,6 +1134,29 @@ $dictionary['stic_Assets'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE',
         ),
+        "stic_assets_documents" => array(
+            'name' => 'stic_assets_documents',
+            'type' => 'link',
+            'relationship' => 'stic_assets_documents',
+            'source' => 'non-db',
+            'module' => 'Documents',
+            'bean_name' => 'Document',
+            'side' => 'right',
+            'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+        ),
+        "stic_assets_stic_followups" => array(
+            'name' => 'stic_assets_stic_followups',
+            'type' => 'link',
+            'relationship' => 'stic_assets_stic_followups',
+            'source' => 'non-db',
+            'module' => 'stic_FollowUps',
+            'bean_name' => 'stic_FollowUps',
+            'side' => 'right',
+            'vname' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_FOLLOWUPS_TITLE',
+        ),
+        
+
+        
     ),
     'relationships' => array(
     ),
