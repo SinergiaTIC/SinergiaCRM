@@ -20,4 +20,4 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_EDIT_VIEW_DIRECTIONS'] = 'Double click on a cell to change its value. Double click on the header to change all values in a column.';
+$mod_strings['LBL_EDIT_VIEW_DIRECTIONS'] = 'Double click on a cell to change its value. Click on the header to change all values in a column.';
