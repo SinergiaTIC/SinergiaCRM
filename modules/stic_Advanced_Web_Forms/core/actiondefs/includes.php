@@ -34,6 +34,7 @@ include_once __DIR__."/ActionParameterDefinitionDTO.php";
 include_once __DIR__."/ActionSelectorOptionDefinitionDTO.php";
 include_once __DIR__."/ActionDefinitionDTO.php";
 
+include_once __DIR__."/IServerAction.php";
 include_once __DIR__."/ServerActionDefinition.php";
 include_once __DIR__."/ITerminalAction.php";
 include_once __DIR__."/IFrontendAction.php";

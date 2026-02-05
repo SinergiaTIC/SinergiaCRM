@@ -84,14 +84,17 @@ class ExecutionContext {
      * Accept \Throwable to handle both Exceptions and PHP 8 Errors.
      * @param \Throwable $e The exception or error thrown
      * @param ?FormAction $actionConfig Configuration of the action where the error occurred
+     * @return ActionResult The ActionResult added to Context
      */
-    public function addError(\Throwable $e, ?FormAction $actionConfig): void {
+    public function addError(\Throwable $e, ?FormAction $actionConfig): ActionResult {
         // Create an ActionResult with ERROR status
         $errorResult = new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         $this->addActionResult($errorResult);
 
         $GLOBALS['log']->error("AWF Execution Exception: " . $e->getMessage());
         $GLOBALS['log']->error($e->getTraceAsString());
+        
+        return $errorResult;
     }
 
     /**

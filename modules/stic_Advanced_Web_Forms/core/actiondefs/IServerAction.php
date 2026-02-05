@@ -25,14 +25,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class ServerActionDefinition extends ActionDefinition implements IServerAction {
-
+interface IServerAction {
     /**
-     * Executes the action defined by this definition.
-     *
+     * Executes the main logic of the action.
+     * 
      * @param ExecutionContext $context Execution context of the action
      * @param FormAction $actionConfig Configuration of the form action
      * @return ActionResult Result of the execution of the action
      */
-    public abstract function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult;
+    public function execute(ExecutionContext $context, FormAction $actionConfig);
 }

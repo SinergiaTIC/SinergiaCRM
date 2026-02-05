@@ -36,13 +36,34 @@ enum ResultStatus: string {
  * Class representing the result of an action.
  */
 class ActionResult {
-    public ResultStatus $status;        // Result status
-    public ?string $message;            // Additional result message
+    public ResultStatus $status;             // Result status
+    public ?string $message;                 // Additional result message
     /** @var BeanModified[] */
-    public array $modifiedBeans;        // Beans modified by the action
+    public array $modifiedBeans;             // Beans modified by the action
 
-    public float $timestamp;            // Execution timestamp
-    public ?FormAction $actionConfig;   // Configuration of the executed action
+    public float $timestamp;                 // Execution timestamp
+    public ?FormAction $actionConfig;        // Configuration of the executed action
+
+    protected ?IServerAction $actionSource;  // The action that generated this result 
+    public array $data = array();            // Result data from the execution
+
+    public function setAction(IServerAction $action) {
+        $this->actionSource = $action;
+        return $this;
+    }
+
+    public function getAction(): ?IServerAction {
+        return $this->actionSource;
+    }
+
+    public function setData(array $data) {
+        $this->data = $data;
+        return $this;
+    }
+
+    public function getData(): array {
+        return $this->data;
+    }
 
     public function __construct(ResultStatus $status, ?FormAction $actionConfig, ?string $message = null) {
         $this->status = $status;
@@ -50,6 +71,8 @@ class ActionResult {
         $this->message = $message;
         $this->modifiedBeans = [];
         $this->timestamp = microtime(true);
+        $this->actionSource = null;
+        $this->data = array();
     }
 
     /**
@@ -127,5 +150,4 @@ class ActionResult {
     public function isWait(): bool {
         return $this->status === ResultStatus::WAIT;
     }
-
 }
