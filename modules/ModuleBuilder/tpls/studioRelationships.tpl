@@ -43,7 +43,8 @@
 <input type='button' name='addrelbtn' value='{$mod_strings.LBL_BTN_ADD_RELATIONSHIP}'
 	class='button' onclick='ModuleBuilder.moduleLoadRelationship2("");' style="margin-bottom:5px;">
 {/if}
-<div id='relGrid'></div>
+{* <div id='relGrid'></div> *}
+<div id='relGrid' style="width:100%;"></div>
 {if $studio}{sugar_translate label='LBL_CUSTOM_RELATIONSHIPS' module='ModuleBuilder'}</h3>{/if}
 <script>
 {literal}
@@ -96,7 +97,7 @@ var grid = new YAHOO.widget.ScrollingDataTable('relGrid',
         {ldelim}key:'name',       label: SUGAR.language.get('ModuleBuilder','LBL_REL_NAME'),        width: 200, sortable: true, resizeable: true{rdelim},
         {ldelim}key:'lhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_LHS_MODULE'),      width: 120, sortable: true, resizeable: true{rdelim},
         {ldelim}key:'relationship_type', label: SUGAR.language.get('ModuleBuilder','LBL_REL_TYPE'), width: 120, sortable: true, resizeable: true{rdelim},
-        {ldelim}key:'rhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_RHS_MODULE'),      width: 120, sortable: true, resizeable: true{rdelim}
+        {ldelim}key:'rhs_module', label: SUGAR.language.get('ModuleBuilder','LBL_RHS_MODULE'),      sortable: true, resizeable: true{rdelim}
         // END STIC Custom
 	],{literal}
 	new YAHOO.util.LocalDataSource(relationships, {
@@ -105,7 +106,8 @@ var grid = new YAHOO.widget.ScrollingDataTable('relGrid',
 		   fields : [{key : "name"}, {key: "lhs_module"}, {key: "relationship_type"}, {key: "rhs_module"}]
 	    }
 	}),
-    {MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS'), height:"auto"}
+    // {MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS'), height:"auto"}
+    {MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS'), height:"auto", width:"100%"}
 );
 grid.subscribe("rowMouseoverEvent", grid.onEventHighlightRow); 
 grid.subscribe("rowMouseoutEvent", grid.onEventUnhighlightRow); 

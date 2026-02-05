@@ -52,7 +52,11 @@
 
 <br>
 
-<div id="field_table"></div>
+{* STIC Custom 20260105 ART - Resizable columns in Studio *}
+{* https://github.com/SinergiaTIC/SinergiaCRM/pull/984 *}
+{* <div id="field_table"></div> *}
+<div id="field_table" style="width:100%;"></div>
+{* END STIC Custom *}
 {if $studio}{sugar_translate label='LBL_CUSTOM_FIELDS' module='ModuleBuilder'}</h3>{/if}
 
 <script type="text/javascript">
@@ -83,8 +87,13 @@ var labelFormatter = function(elCell, oRecord, oColumn, oData)
 
 var myColumnDefs = [
     {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150, sortOptions:{sortFunction:sortName, defaultDir:YAHOO.widget.DataTable.CLASS_ASC}},
-    {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
-    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125}
+    // STIC Custom 20260105 ART - Resizable columns in Studio
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/984
+    // {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
+    // {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125}
+    {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter"},
+    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true}
+    // END STIC Custom
 ];
 {/literal}
 
@@ -95,7 +104,11 @@ myDataSource.responseSchema = {fields: ["label","name","type"]};
 YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
 YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
 
-var fieldsTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource);
+// STIC Custom 20260105 ART - Resizable columns in Studio
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/984
+// var fieldsTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource);
+var fieldsTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource, {width:"100%", height:"auto"});
+// END STIC Custom
 
 fieldsTable.doBeforeSortColumn = function(column, sortDirection)
 {
