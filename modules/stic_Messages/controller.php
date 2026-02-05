@@ -92,12 +92,12 @@ class stic_MessagesController extends SugarController
                 $this->bean->phone = $phone;
                 $this->bean->save(!empty($this->bean->notify_on_save));  
             }, $idsArray, $phonesArray);
-                // If mass send and type is WhatsAppWeb, return an open_url built from the phones/message
-                if (isset($_REQUEST['type']) && $_REQUEST['type'] === 'WhatsAppWeb') {
-                    $phonesRaw = isset($_REQUEST['phone']) ? $_REQUEST['phone'] : '';
-                    $phonesList = $phonesRaw !== '' ? explode(',', $phonesRaw) : array();
-                    $text = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
-                    $openData = array();
+            // If mass send and type is WhatsAppWeb, return an open_url built from the phones/message
+            if (isset($_REQUEST['type']) && $_REQUEST['type'] === 'WhatsAppWeb') {
+                $phonesRaw = isset($_REQUEST['phone']) ? $_REQUEST['phone'] : '';
+                $phonesList = $phonesRaw !== '' ? explode(',', $phonesRaw) : array();
+                $text = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
+                $openData = array();
                 foreach ($phonesList as $index => $p) {
                     $p = trim($p);
                     if ($p === '') continue;
@@ -117,13 +117,14 @@ class stic_MessagesController extends SugarController
                 while (ob_get_level()) { ob_end_clean(); }
                 header('Content-Type: application/json');
                 echo json_encode(array('success' => true, 'type' => 'WhatsAppWeb', 'open_data' => $openData, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_WHATSAPP_WEB_SENT']));
-                exit;                }
+                exit;                
+            }
 
-                // Clear any accidental output (warnings, HTML, etc.) so the response is pure JSON
-                while (ob_get_level()) { ob_end_clean(); }
-                header('Content-Type: application/json');
-                echo json_encode(array('success' =>  true, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
-                exit;
+            // Clear any accidental output (warnings, HTML, etc.) so the response is pure JSON
+            while (ob_get_level()) { ob_end_clean(); }
+            header('Content-Type: application/json');
+            echo json_encode(array('success' =>  true, 'type' => 'sms', 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
+            exit;
         }
         else {
             $oldStatus = $this->bean->fetched_row['status']??'';
@@ -171,7 +172,7 @@ class stic_MessagesController extends SugarController
                     $title = $mod_strings['LBL_EMAIL_SUCCESS'];
                     $detail = $mod_strings['LBL_MESSAGE_SAVED'];
             }
-            echo json_encode(array('success' => $this->bean->status === 'error' ? false : true, 'title' => $title, 'detail' => $detail, 'id' => $id));
+            echo json_encode(array('success' => $this->bean->status === 'error' ? false : true, 'type' => 'sms', 'title' => $title, 'detail' => $detail, 'id' => $id));
             exit;
         }
     }
