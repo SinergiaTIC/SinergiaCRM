@@ -40,9 +40,10 @@ class ServerActionFlowExecutor {
      * Executes the main flow and manages errors by switching to the error flow if needed.
      * @param FormFlow $flowConfig The flow definition to execute.
      * @param ?FormFlow $errorFlowConfig The error flow definition (null if none).
-     * @return ?FormAction The Terminal action configuration pending execution, or null if finished.
+     * @return ActionResult Returns last ActionResult
      */
-    public function executeFlow(FormFlow $flowConfig, ?FormFlow $errorFlowConfig = null): ?FormAction {
+    public function executeFlow(FormFlow $flowConfig, ?FormFlow $errorFlowConfig = null): ActionResult {
+        $lastResult = new ActionResult(ResultStatus::OK, null);
         $lastActionConfig = null;
         try {
             $actions = $flowConfig->actions ?? [];
@@ -63,11 +64,6 @@ class ServerActionFlowExecutor {
 
                 // Find the action executor (throws if not found)
                 $actionExecutor = $this->factory->createAction($actionConfig);
-                
-                // If it's Terminal we don't execute it: stop loop and return it to be executed later
-                if ($actionExecutor instanceof ITerminalAction) {
-                    return $actionConfig;
-                }
 
                 // Parameter resolution
                 $paramDefinitions  = $actionExecutor->getParameters();
@@ -76,13 +72,13 @@ class ServerActionFlowExecutor {
                 $actionConfig->setResolvedParameters($resolvedParameters);
 
                 // Execute the action
-                $actionResult = $actionExecutor->execute($this->context, $actionConfig); 
-
+                $lastResult = $actionExecutor->execute($this->context, $actionConfig);
+                $lastResult->setAction($actionExecutor);
+                
                 // Context update
-                $this->context->addActionResult($actionResult);
+                $this->context->addActionResult($lastResult);
 
-
-                if ($actionResult->isWait()) {
+                if ($lastResult->isWait()) {
                     // Mark the response as waiting
                     if ($this->context->responseBean) {
                         $this->context->responseBean->status = 'awaiting_action';
@@ -91,38 +87,40 @@ class ServerActionFlowExecutor {
                     
                     $GLOBALS['log']->info("Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $actionResult->message);
 
-                    // Return null to finish: the engine will be put on hold
-                    return null; 
+                    // Return $lastResult to finish: the engine will be put on hold
+                    return $lastResult; 
                 }
 
                 // Error detection
-                if ($actionResult->isError()) {
+                if ($lastResult->isError()) {
                     // If there's an error flow: immediately switch to the error flow
                     if ($errorFlowConfig !== null) {
                         return $this->executeFlow($errorFlowConfig);
                     }
                     // If there is no error flow, finish
-                    return null; 
+                    return $lastResult; 
                 }
             }
         } catch (\Throwable $t) {
             // Catch any Exception or PHP Fatal Error and convert it into a context error
             $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': '."CRITICAL ERROR in ServerActionFlowExecutor: " . $t->getMessage());
-            $this->context->addError($t, $lastActionConfig);
+            $lastResult = $this->context->addError($t, $lastActionConfig);
             
             // If there's an error flow: immediately switch to it
             if ($errorFlowConfig !== null) {
                 try {
                     return $this->executeFlow($errorFlowConfig);
                 } catch (\Throwable $t2) {
+                    $lastResult = $this->context->addError($t2, $lastActionConfig);
                     $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': '."Double Fault: Error flow failed too: " . $t2->getMessage());
                 }
             }
+
             // If there is no error flow, we finish
-            return null; 
+            return $lastResult; 
         }
         
-        return null;
+        return $lastResult;
     }
 
     /**

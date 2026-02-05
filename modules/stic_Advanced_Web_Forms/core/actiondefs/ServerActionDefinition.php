@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class ServerActionDefinition extends ActionDefinition {
+abstract class ServerActionDefinition extends ActionDefinition implements IServerAction {
 
     /**
      * Executes the action defined by this definition.

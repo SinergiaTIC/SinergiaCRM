@@ -25,6 +25,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-interface ITerminalAction {
-
+interface ITerminalAction extends IServerAction {
+    /**
+     * Called only if execute() was successful.
+     * This is where the 'exit', 'header' or HTML is rendered, losing control of execution.
+     * 
+     * @param ExecutionContext $context Execution context of the action
+     * @param ActionResult Result of the execution of the action (last ActionResult)
+     */
+    public function performTerminal(ExecutionContext $context, ActionResult $executionResult): void;
+    
 }

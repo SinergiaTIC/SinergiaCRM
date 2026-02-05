@@ -235,40 +235,40 @@ class ResponseHandler
         if ($isAsync) {
             // Async mode - Execute Flow 1: 'receiptFlow' for immediate data feedback to user
             if ($receiptFlow) {
-                // Execute non-terminal actions
-                $pendingTerminalAction = $executor->executeFlow($receiptFlow, $errorFlow);
+                // Execute all actions
+                $lastResult = $executor->executeFlow($receiptFlow, $errorFlow);
                 // We don't update the status: it will continue to be 'pending'
-                
-                // Execute terminal action
-                if ($pendingTerminalAction) {
-                    $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
-                } else {
-                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Receipt flow in form. ID: $formId");
-                    $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
-                    $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
+
+                // Get last action and check if is Terminal
+                $lastAction = $lastResult->getAction();
+                if ($lastAction instanceof ITerminalAction) {
+                    try {
+                        $lastAction->performTerminal($context, $lastResult);
+                    } catch (\Throwable $t) {
+                        $context->addError($t, $lastResult->actionConfig);
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action {$lastResult->actionConfig?->name}: " . $t->getMessage());
+                    }
                 }
+                // No terminal (or error runing terminal)
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found or failed in Receipt flow in form. ID: $formId");
             } else {
-                // If there is no receipt flow, we show generic message
+                // No receipt flow
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
-                $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
-                $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-                stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
             }
+            // If we get here, no flow or terminal has been run: Show generic message
+            $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+            $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
+
         } else {
             // Sync mode - Execute Flow 0: 'mainFlow' immediately
             $responseBean->status = 'processing';
             $responseBean->save();
 
             if ($mainFlow) {
-                // Execute non-terminal actions
-                $pendingTerminalAction = $executor->executeFlow($mainFlow, $errorFlow);
+                // Execute all actions
+                $lastResult = $executor->executeFlow($mainFlow, $errorFlow);
 
-                // If the flow has paused, exit
-                if ($responseBean->status === 'awaiting_action') {
-                    return;
-                }
-                
                 // Save traceability links (created/modified records)                
                 $this->saveLinks($responseBean, $context);
 
@@ -295,73 +295,48 @@ class ResponseHandler
                     $logSummary .= "\n";
                 }
                 $responseBean->execution_log = $logSummary;
-                $responseBean->status = $hasErrors ? 'error' : 'processed';
+
+                // Update status
+                if ($lastResult->isError()) {
+                    $responseBean->status = 'error';
+                } elseif ($lastResult->isWait()) {
+                    $responseBean->status = 'awaiting_action'; 
+                } else {
+                    $responseBean->status = $hasErrors ? 'error' : 'processed';
+                }
                 $responseBean->save();
 
-                // Execute terminal action
-                if ($pendingTerminalAction) {
-                    $this->executeTerminalAction($pendingTerminalAction, $context, $errorFlow);
-                } else {
-                    $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found in Main flow in form. ID: $formId");
-                    if ($hasErrors) {
-                        stic_AWFUtils::renderGenericResponse($formConfig, 
-                                                         translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                                                         translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses'));
-                    } else {
-                        $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
-                        $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-                        stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg); 
+                if ($lastResult->isWait()) {
+                    // TODO: Create Deferred ticket: Is a deferred action!! (v2)
+                    // $this->createDeferredTicket($context, $lastResult->getData());
+                }
+
+                // Get last action and check if is Terminal
+                $lastAction = $lastResult->getAction();
+                if ($lastAction instanceof ITerminalAction) {
+                    try {
+                        $lastAction->performTerminal($context, $lastResult);
+                    } catch (\Throwable $t) {
+                        $context->addError($t, $lastResult->actionConfig);
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action in Main flow {$lastResult->actionConfig?->name}: " . $t->getMessage());
                     }
                 }
+                // No terminal (or error runing terminal): Show generic message
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found or failed in Main flow in form. ID: $formId");
+                if ($hasErrors) {
+                    $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
+                    $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses');
+                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
+                } else {
+                    $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
+                    $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg); 
+                }
+                
             } else {
                 // If there is no main flow, we show generic message
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
                 stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
-            }
-        }
-    }
-
-    /**
-     * Executes the pending terminal action
-     * @param FormAction $actionConfig Configuration of the action to execute
-     * @param ExecutionContext $context Execution context
-     * @param ?FormFlow $errorFlow Error flow that will be executed if the action fails
-     */
-    private function executeTerminalAction(FormAction $actionConfig, ExecutionContext $context, ?FormFlow $errorFlow = null): void {
-        $factory = new ServerActionFactory();
-        $resolver = new ParameterResolverService();
-        
-        try {
-            $actionExecutor = $factory->createAction($actionConfig);
-            
-            // Parameter resolution
-            $paramDefinitions = $actionExecutor->getParameters();
-            $resolvedParameters = $resolver->resolveAll($actionConfig, $paramDefinitions, $actionConfig->parameters, $context);
-            $actionConfig->setResolvedParameters($resolvedParameters);
-            
-            // Execute. It probably won't return because it will have an exit/redirect
-            $actionExecutor->execute($context, $actionConfig);
-        } catch (\Exception $e) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal Action Failed: " . $e->getMessage());
-
-            // If it has failed and we have a defined error flow, execute it if headers have not been sent yet
-            if ($errorFlow && !headers_sent()) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Attempting to execute Error Flow after Terminal Action failure.");
-                
-                try {
-                    $executor = new ServerActionFlowExecutor($context);
-                    $errorTerminalAction = $executor->executeFlow($errorFlow, null);
-                    if ($errorTerminalAction) {
-                        $this->executeTerminalAction($errorTerminalAction, $context, null);
-                        return;
-                    }
-                } catch (\Exception $ex) {
-                    $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error Flow execution failed also: " . $e->getMessage());
-                }
-            }
-            // If everything fails we show generic error
-            if (!headers_sent()) {
-                stic_AWFUtils::renderGenericResponse($context->formConfig, "Error", "Error processing terminal action.");
             }
         }
     }

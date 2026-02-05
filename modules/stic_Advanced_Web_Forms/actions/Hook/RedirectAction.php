@@ -92,16 +92,39 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
         // Get the parameters
         $url = $actionConfig->getResolvedParameter('url');
         $method = $actionConfig->getResolvedParameter('method'); 
-        $data = $actionConfig->getResolvedParameter('fields_to_send') ?? [];
+        $fields_to_send = $actionConfig->getResolvedParameter('fields_to_send') ?? [];
+
+        $result = new ActionResult(ResultStatus::OK, $actionConfig, "Redirecting to {$url}");
+        $result->setData(array (
+            'url' => $url,
+            'method' => $method,
+            'fields_to_send' => $fields_to_send
+        ));
+        return $result;
+    }
+
+    /**
+     * Called only if execute() was successful.
+     * This is where the 'exit', 'header' or HTML is rendered, losing control of execution.
+     * 
+     * @param ExecutionContext $context Execution context of the action
+     * @param ActionResult Result of the execution of the action (last ActionResult)
+     */
+    public function performTerminal(ExecutionContext $context, ActionResult $executionResult): void {
+        // Recover parameters from $executionResult
+        $data = $executionResult->getData();
+        $url = $data['url'];
+        $method = $data['method'];
+        $fields_to_send = $data['fields_to_send'];
 
         // Execute the redirect
-        if ($method === 'POST' && !empty($data)) {
-            $this->redirectWithPost($url, $data);
+        if ($method === 'POST' && !empty($fields_to_send)) {
+            $this->redirectWithPost($url, $fields_to_send);
             exit;
         } else {
-            if (!empty($data)) {
+            if (!empty($fields_to_send)) {
                 // Add data to the URL
-                $queryString = http_build_query($data);
+                $queryString = http_build_query($fields_to_send);
                 $separator = strpos($url, '?') === false ? '?' : '&';
                 $url .= $separator . $queryString;
             }
@@ -110,9 +133,6 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
             header("Location: " . $url);
             exit;
         }
-
-        // This code will only execute if the redirect fails (We do not give error)
-        return new ActionResult(ResultStatus::OK, $actionConfig, "Redirecting to {$url}");
     }
 
     /**

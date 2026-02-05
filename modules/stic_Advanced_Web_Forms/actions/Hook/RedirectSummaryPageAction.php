@@ -57,26 +57,42 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
+        $summaryHtml = stic_AWFUtils::generateSummaryHtml($context);
+        
+        $result = new ActionResult(ResultStatus::OK, $actionConfig, "Redirecting to Summary Page");
+        $result->setData(array (
+            'summaryHtml' => $summaryHtml
+        ));
+        return $result;
+
         if (!defined('sugarEntry') || !sugarEntry) {
             define('sugarEntry', true);
         }
+    }
 
-        // Limpiar el buffer de salida para eliminar warnings o errores previos
+    /**
+     * Called only if execute() was successful.
+     * This is where the 'exit', 'header' or HTML is rendered, losing control of execution.
+     * 
+     * @param ExecutionContext $context Execution context of the action
+     * @param ActionResult Result of the execution of the action (last ActionResult)
+     */
+    public function performTerminal(ExecutionContext $context, ActionResult $executionResult): void {
+        // Recover parameters from $executionResult
+        $data = $executionResult->getData();
+        $summaryHtml = $data['summaryHtml'];
+
+        // Clear the output buffer to remove previous warnings or errors
         while (ob_get_level()) {
             ob_end_clean();
         }
         
-        // Evitar mostrar nuevos errores o warnings
+        // Avoid showing new errors or warnings
         ini_set('display_errors', 0);
         error_reporting(0);
 
-        $summaryHtml = stic_AWFUtils::generateSummaryHtml($context);
-
         echo $summaryHtml;
         exit;
-
-        // This code will not execute, introduced to avoid having execute without return
-        return new ActionResult(ResultStatus::OK, $actionConfig);
     }
 
 }
