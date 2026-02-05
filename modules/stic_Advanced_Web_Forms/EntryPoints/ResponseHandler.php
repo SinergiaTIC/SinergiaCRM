@@ -237,8 +237,6 @@ class ResponseHandler
             if ($receiptFlow) {
                 // Execute all actions
                 $lastResult = $executor->executeFlow($receiptFlow, $errorFlow);
-                // Execute all actions
-                $lastResult = $executor->executeFlow($receiptFlow, $errorFlow);
                 // We don't update the status: it will continue to be 'pending'
 
                 // Get last action and check if is Terminal
