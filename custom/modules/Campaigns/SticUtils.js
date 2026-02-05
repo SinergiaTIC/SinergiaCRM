@@ -412,6 +412,16 @@ function updateViewNotificationMsgType(isNotification) {
         $form.find("#start_date").val(moment().format(formatDate));
       }
     }
+
+    // Prevent selecting WhatsAppWeb in this panel when campaign is NotifMsg
+    (function removeWhatsAppInMsgPanel() {
+      var $typeSelect = $form.find('[name="notification_message_type"], #notification_message_type');
+
+      if ($typeSelect.length) {
+        $typeSelect.find('option[value="WhatsAppWeb"]').remove().end().change();
+      }
+    })();
+
   } else {
     $form.find(".panel-body[data-id='LBL_MSG_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
   }
