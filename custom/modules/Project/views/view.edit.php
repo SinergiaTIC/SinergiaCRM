@@ -70,5 +70,34 @@ class CustomProjectViewEdit extends ProjectViewEdit {
         echo getVersionedScript("custom/modules/Project/SticUtils.js");
 
         // Write here you custom code
+
+        // Ensure module/record are set before save
+        $recordId = !empty($this->bean->id) ? $this->bean->id : '';
+        $recordIdJs = json_encode($recordId);
+        echo <<<SCRIPT
+            <script type="text/javascript">
+            (function() {
+                // Force module/record values in the EditView form
+                function fixModule() {
+                    if (!document.EditView) { return; }
+                    if (document.EditView.module) { document.EditView.module.value = "Project"; }
+                    if (document.EditView.record && $recordIdJs) { document.EditView.record.value = $recordIdJs; }
+                }
+
+                // Run once on load
+                fixModule();
+                window.addEventListener("pageshow", fixModule);
+
+                // Re-run just before the standard save submit
+                if (typeof window.formSubmitCheck === "function") {
+                    var originalFormSubmitCheck = window.formSubmitCheck;
+                    window.formSubmitCheck = function() {
+                        fixModule();
+                        return originalFormSubmitCheck.apply(this, arguments);
+                    };
+                }
+            })();
+            </script>
+            SCRIPT;
     }
 }
