@@ -25,30 +25,25 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/ActionParameterOption.php";
-include_once __DIR__."/ActionParameterDefinition.php";
-include_once __DIR__."/ActionSelectorOptionDefinition.php";
-include_once __DIR__."/ActionDefinition.php";
+/**
+ * IWebhookDecodable interface for actions that handle webhooks whose token must be decoded
+ * The token decoding type is indicated by the Source url parameter. For example: source="stripe_payment"
+ */
+interface IWebhookDecodable {
 
-include_once __DIR__."/ActionParameterDefinitionDTO.php";
-include_once __DIR__."/ActionSelectorOptionDefinitionDTO.php";
-include_once __DIR__."/ActionDefinitionDTO.php";
+    /**
+     * Indicates whether the action knows how to handle the specified Source.
+     * @param string $source The source url parameter
+     * @return bool indicating if the action can handle the specified source
+     */
+    public function handlesSource(string $source): bool;
 
-include_once __DIR__."/ServerActionDefinition.php";
-include_once __DIR__."/ITerminalAction.php";
-include_once __DIR__."/IFrontendAction.php";
-include_once __DIR__."/IWebhookDecodable.php";
-
-include_once __DIR__."/UI/UIActionDefinition.php";
-
-include_once __DIR__."/Validator/ValidatorActionDefinition.php";
-
-include_once __DIR__."/DataProvider/DataProviderActionDefinition.php";
-
-include_once __DIR__."/Hook/HookActionDefinition.php";
-include_once __DIR__."/Hook/HookDataBlockActionDefinition.php";
-include_once __DIR__."/Hook/HookBeanActionDefinition.php";
-
-include_once __DIR__."/Deferred/DeferredActionDefinition.php";
-
-include_once __DIR__."/Group/GroupActionDefinition.php";
+    /**
+     * Asks the action to extract the Token from the raw payload.
+     * Returns the hash of the Deferred_Ticket.
+     * @param string $rawPayload the body raw payload received
+     * @param array $headers the headers received
+     * @return string|null the hash of the Deferred_Ticket
+     */
+    public function extractTokenFromEvent(string $rawPayload, array $headers): ?string;
+}

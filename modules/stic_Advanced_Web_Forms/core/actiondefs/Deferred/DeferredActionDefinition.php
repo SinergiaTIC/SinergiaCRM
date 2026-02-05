@@ -31,6 +31,19 @@ abstract class DeferredActionDefinition extends ServerActionDefinition {
     }
 
     /**
+     * Ejecuta la "acción terminal" de la acción diferida (si existe)
+     * Se llama después de preparar y ejecutar el guardado del ticket (execute)
+     * Es donde se hace la redirección a la plataforma externa: 'echo', 'header()', 'exit'.
+     * 
+     * @param ExecutionContext $context El contexto actual
+     * @param ActionResult $executionResult El resultado que ha retornado execute()
+     */
+    public function performDeferral(ExecutionContext $context, ActionResult $executionResult) {
+        // Por defecto no hace nada
+        // Las acciones diferidas que redireccionen deberán sobreescribir la función
+    }
+
+    /**
      * Procesa una petición entrante (webhook) de un servicio externo.
      * Este método solo es relevante para aquellas acciones que esperan un callback de servidor.
      * 
@@ -39,16 +52,4 @@ abstract class DeferredActionDefinition extends ServerActionDefinition {
      */
     public abstract function processWebhook(array $requestData): WebhookResult;
 
-    /**
-     * Decide si el resultado externo es un Éxito o un Error para decidir qué flujo ejecutar: flow_success_id o flow_error_id
-     * 
-     * @param ExecutionContext $context Execution context of the action
-     * @param WebhookResult El objeto con el ID de la transacción y el estado.
-     * Decideix si el resultat extern és un Èxit o un Error.
-     * Retorna un ActionResult estàndard.
-     * * - Si isSuccess() -> El Executor dispararà el flow_success_id.
-     * - Si !isSuccess() -> El Executor dispararà el flow_error_id.
-     * - getData() -> S'incorporaran al formulari ($context->mergeData).
-     */
-    abstract public function resolve(ExecutionContext $context, WebhookResult $webhookData): ActionResult;
 }
