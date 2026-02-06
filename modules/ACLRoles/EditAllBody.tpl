@@ -118,8 +118,10 @@ Not ideal but it'll work since it's the only way to get that info without editin
 
 			<td align='center'>
 				<div align='center' id="{$ACTION_NAME}link" onclick="aclviewer.toggleDisplay('{$ACTION_NAME}')"><b>{$ACTION_LABEL}</b></div>
-				<div  style="all: initial; display: none; text-align: center;" id="{$ACTION_NAME}">
-					<select name='act_guid{$ACTION_NAME}' id='act_guid{$ACTION_NAME}' onblur="cascadeAccessOption('{$ACTION_NAME}',this); aclviewer.toggleDisplay('{$ACTION_NAME}');" >
+			{* STIC-Custom AAM 20260106 - Do not reset styles *}
+				<div style="display: none; text-align: center;" id="{$ACTION_NAME}">
+				<select name='act_guid{$ACTION_NAME}' id='act_guid{$ACTION_NAME}' onblur="cascadeAccessOption('{$ACTION_NAME}',this); aclviewer.toggleDisplay('{$ACTION_NAME}');" style="font-family: inherit; font-size: inherit; padding: 2px 4px;">
+			{* END STIC-Custom *}
 					{html_options options=$ACTION.accessOptions selected=$ACTION.aclaccess }
 					</select>
 				</div>
