@@ -52,10 +52,12 @@ abstract class stic_AWF_PaymentStrategy
     protected function getConfigValues(array $keys): array {
         require_once "modules/stic_Settings/Utils.php";
 
+        // Lazy load all the configuration of this type
         if ($this->settings === null) {
             $this->settings = stic_SettingsUtils::getSettingsByType($this->configType);
-            if ($this->settings === null) {
-                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not load settings related to ". $this->configType);
+            if (!is_array($this->settings)) {
+                $this->settings = array();
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not load settings of type ". $this->configType);
                 return [];
             }
         }
@@ -82,8 +84,21 @@ abstract class stic_AWF_PaymentStrategy
         return $resolvedValues;
     }
 
-
+    /**
+    * Prepare payment.
+    * If Offline -> Returns OK.
+    * If External platform -> Returns WAIT with data to redirection.
+    */
     abstract public function initiate(ExecutionContext $context, FormAction $actionConfig): ActionResult;
+
+    /**
+    * Terminal: Execute the output (HTML form, Redirect header...).
+    * Only called if initiate() has returned WAIT.
+    */
+    abstract public function performTerminal(ExecutionContext $context, ActionResult $result): void;
+
+    /**
+    * WEBHOOK: Resolves action when notification arrives from external event.
+    */ 
     abstract public function resolve(ExecutionContext $context, WebhookResult $webhookData): ActionResult;
-    abstract public function isDeferred(): bool;
 }

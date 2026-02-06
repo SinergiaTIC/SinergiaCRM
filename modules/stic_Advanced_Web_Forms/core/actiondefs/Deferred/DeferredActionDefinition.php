@@ -25,31 +25,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Base class for all actions that can wait for an external event.
+ * Examples: Payments, SMS Validation, Digital Signature, Manual Approval...
+ */
 abstract class DeferredActionDefinition extends ServerActionDefinition {
     final public function getType(): ActionType {
         return ActionType::DEFERRED;
     }
 
-    /**
-     * Ejecuta la "acción terminal" de la acción diferida (si existe)
-     * Se llama después de preparar y ejecutar el guardado del ticket (execute)
-     * Es donde se hace la redirección a la plataforma externa: 'echo', 'header()', 'exit'.
+    /** 
+     * Process an incoming request (webhook) from an external service. 
+     * This method is only relevant for those actions that expect a server callback. 
      * 
-     * @param ExecutionContext $context El contexto actual
-     * @param ActionResult $executionResult El resultado que ha retornado execute()
+     * @param ExecutionContext $context Execution context of the action
+     * @param array $requestData The data of the incoming request. 
+     * @return WebhookResult The object with the ID of the transaction and the state. 
      */
-    public function performDeferral(ExecutionContext $context, ActionResult $executionResult) {
-        // Por defecto no hace nada
-        // Las acciones diferidas que redireccionen deberán sobreescribir la función
-    }
-
-    /**
-     * Procesa una petición entrante (webhook) de un servicio externo.
-     * Este método solo es relevante para aquellas acciones que esperan un callback de servidor.
-     * 
-     * @param array $requestData Los datos de la petición entrante.
-     * @return WebhookResult El objeto con el ID de la transacción y el estado.
-     */
-    public abstract function processWebhook(array $requestData): WebhookResult;
+    public abstract function processWebhook(ExecutionContext $context, array $requestData): WebhookResult;
 
 }

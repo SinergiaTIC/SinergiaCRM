@@ -307,8 +307,7 @@ class ResponseHandler
                 $responseBean->save();
 
                 if ($lastResult->isWait()) {
-                    // TODO: Create Deferred ticket: Is a deferred action!! (v2)
-                    // $this->createDeferredTicket($context, $lastResult->getData());
+                    $this->createDeferredTicket($context, $lastResult);
                 }
 
                 // Get last action and check if is Terminal
@@ -339,6 +338,43 @@ class ResponseHandler
                 stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
             }
         }
+    }
+
+    /**
+     * Create a record in the deferred tickets table to resume the flow.
+     * @param ExecutionContext $context Execution context of the flow
+     * @param ActionResult $lastResult Result of the last action
+     */
+    private function createDeferredTicket(ExecutionContext $context, ActionResult $lastResult): void {
+        $ticket = BeanFactory::newBean('stic_Advanced_Web_Forms_Deferred_Tickets');
+        $ticket->name = "Deferred: " . $context->formId . " - " . date('Y-m-d H:i');
+        $ticket->status = 'pending';
+        $data = $lastResult->getData();
+
+        // Essential data to recover context
+        $ticket->form_id = $context->formId;
+        $ticket->response_id = $context->responseId;
+        
+        // Unique token generation (hash)
+        $token = bin2hex(random_bytes(16));
+        $ticket->token_hash = $token;
+
+        // Store the specific data of the action (ex: strategy_class, order_id)
+        $ticket->context_data = json_encode($data);
+
+        // IEPA!!
+        // TODO: Recuperar External ID de forma agnóstica
+        // // Optional: If the strategy has given us an external ID (ex: Redsys Order ID), we save it
+        // if (isset($data['external_ref_id'])) {
+        //     $ticket->external_ref_id = $data['external_ref_id'];
+        // } elseif (isset($data['redsys_order_id'])) {
+        //     $ticket->external_ref_id = $data['redsys_order_id'];
+        // }
+
+        $ticket->save();
+        
+        // Optional: Update the result with the ticket_id in case the terminal action wants to use it
+        // $data['ticket_id'] = $ticket->id;
     }
 
     private function terminateRawError($msg): void {

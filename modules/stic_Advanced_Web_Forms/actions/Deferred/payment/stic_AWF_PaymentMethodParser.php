@@ -47,7 +47,7 @@ class stic_AWF_PaymentMethodParser
     {
         // Special logic detection (Prefixes)
         foreach (self::$specialStrategies as $prefix => $class) {
-            // "card" or "card_futbol"
+            // "card" or "card_football"
             if ($methodValue === $prefix || strpos($methodValue, $prefix . '_') === 0) {
                 $suffix = null;
                 if (strlen($methodValue) > strlen($prefix)) {
