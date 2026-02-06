@@ -164,7 +164,10 @@ Not ideal but it'll work since it's the only way to get that info without editin
 		{foreach from=$TYPES item="ACTIONS"}
 			{foreach from=$ACTIONS item="ACTION" key="ACTION_NAME_ACTIVE"}
 				{if $ACTION_NAME==$ACTION_NAME_ACTIVE}
-					<td nowrap width='{$TDWIDTH}%' style="text-align: center;" id="ACLEditView_Access_{$CATEGORY_NAME}_{$ACTION_NAME}">
+					{* STIC-Custom AAM 20260106 - Remove TDWITH *}
+					<td nowrap style="text-align: center;" id="ACLEditView_Access_{$CATEGORY_NAME}_{$ACTION_NAME}">
+					{* END STIC-Custom	*}					
+				
 					<div  style="display: none" id="{$ACTION.id}">
 					{if $APP_LIST.moduleList[$CATEGORY_NAME]==$APP_LIST.moduleList.Users && $ACTION_LABEL != $MOD.LBL_ACTION_ADMIN}
 					<select DISABLED name='act_guid{$ACTION.id}' id = 'act_guid{$ACTION.id}' onblur="document.getElementById('{$ACTION.id}link').innerHTML=this.options[this.selectedIndex].text; aclviewer.toggleDisplay('{$ACTION.id}');" >
@@ -192,7 +195,9 @@ Not ideal but it'll work since it's the only way to get that info without editin
 			{/foreach}
 		{/foreach}
 		{if $ACTION_FIND=='false'}
-			<td nowrap width='{$TDWIDTH}%' style="text-align: center;" id="ACLEditView_Access_{$CATEGORY_NAME}_{$ACTION_NAME}">
+			{* STIC-Custom AAM 20260106 - Remove TDWITH *}	
+			<td nowrap style="text-align: center;" id="ACLEditView_Access_{$CATEGORY_NAME}_{$ACTION_NAME}">
+			{* END STIC-Custom *}
 			<div><font color='red'>N/A</font></div>
 			</td>
 		{/if}

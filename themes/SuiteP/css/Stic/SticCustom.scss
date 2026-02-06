@@ -1447,8 +1447,14 @@ span.totals{
   
   // First column in header - 20% width
   #ACLEditView_Access_Header_category {
-    width: 20%;
-    min-width: 20%;
+    width: 20% !important;
+    min-width: 20% !important;
+    max-width: 20% !important;
+  }
+  
+  // All other columns in header should have equal width
+  td:not(#ACLEditView_Access_Header_category) {
+    width: auto !important;
   }
 }
 // Fix for ACL Edit View scrollable area
@@ -1461,11 +1467,16 @@ span.totals{
     width: 100%;
   }
   
-  
   // First column (category names) - 20% width
   td[id$="_category"] {
-    width: 20%;
-    min-width: 20%;
+    width: 20% !important;
+    min-width: 20% !important;
+    max-width: 20% !important;
+  }
+  
+  // All other columns should have equal width
+  td:not([id$="_category"]) {
+    width: auto !important;
   }
 }
 
