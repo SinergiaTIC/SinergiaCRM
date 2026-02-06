@@ -150,7 +150,7 @@ Not ideal but it'll work since it's the only way to get that info without editin
 	{if $APP_LIST.moduleList[$CATEGORY_NAME]!='Users'}
 
 	<TR id="ACLEditView_Access_{$CATEGORY_NAME}">
-	<td nowrap width='1%' id="ACLEditView_Access_{$CATEGORY_NAME}_category"><b>
+	<td width='20%' style="min-width: 20%; white-space: normal;" id="ACLEditView_Access_{$CATEGORY_NAME}_category"><b>
 	{if $APP_LIST.moduleList[$CATEGORY_NAME]=='Users'}
 	   {$MOD.LBL_USER_NAME_FOR_ROLE}
 	{elseif !empty($APP_LIST.moduleList[$CATEGORY_NAME])}

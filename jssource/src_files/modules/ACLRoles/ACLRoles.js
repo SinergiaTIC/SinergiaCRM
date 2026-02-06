@@ -215,16 +215,16 @@ var aclviewer = function () {
   var originalDisplay = aclviewer.display;
   aclviewer.display = function(o) {
     originalDisplay(o);
-    // Restaurar filtro después de que se actualice el contenido
+    // Restore filter after a short delay to ensure DOM is updated
     setTimeout(function() { aclviewer.restoreFilter(); }, 50);
     setTimeout(function() { aclviewer.restoreFilter(); }, 200);
   };
   
-  // Restaurar filtro al cargar la página
+  // Restore filter when the page loads
   window.addEventListener('load', function() { aclviewer.restoreFilter(); });
   window.addEventListener('DOMContentLoaded', function() { aclviewer.restoreFilter(); });
   
-  // Restaurar después de varios delays para capturar actualizaciones AJAX
+  // Restore after several delays to capture AJAX updates
   setTimeout(function() { aclviewer.restoreFilter(); }, 100);
   setTimeout(function() { aclviewer.restoreFilter(); }, 300);
 })();

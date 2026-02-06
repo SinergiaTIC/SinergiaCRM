@@ -1444,11 +1444,29 @@ span.totals{
   top: 0;
   background: #f8f8f8;
   z-index: 20;
+  
+  // First column in header - 20% width
+  #ACLEditView_Access_Header_category {
+    width: 20%;
+    min-width: 20%;
+  }
 }
 // Fix for ACL Edit View scrollable area
 #acl-scroll-wrapper {
   max-height: 400px;
   overflow-y: auto;
+  
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  
+  
+  // First column (category names) - 20% width
+  td[id$="_category"] {
+    width: 20%;
+    min-width: 20%;
+  }
 }
 
 #acl-scroll-wrapper table tr:hover td {
