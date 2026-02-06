@@ -3802,6 +3802,37 @@ $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectiu';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferència';
 
+// Gestió patrimonial: Tipus
+$app_list_strings['stic_asset_managment_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_types_list']['housing'] = 'Habitatge';
+$app_list_strings['stic_asset_managment_types_list']['premises'] = 'Local';
+$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Aparcament';
+$app_list_strings['stic_asset_managment_types_list']['land'] = 'Terreny';
+$app_list_strings['stic_asset_managment_types_list']['vehicle'] = 'Vehicle';
+$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Joia';
+$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Actiu financer';
+$app_list_strings['stic_asset_managment_types_list']['other'] = 'Altres';
+
+// Gestió patrimonial: Titularitats
+$app_list_strings['stic_asset_managment_ownerships_list'][''] = '';
+$app_list_strings['stic_asset_managment_ownerships_list']['property'] = 'Propietat';
+$app_list_strings['stic_asset_managment_ownerships_list']['usufruct'] = 'Usdefruit';
+$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Lloguer';
+
+// Gestió patrimonial: Estats d'ocupació
+$app_list_strings['stic_asset_managment_occupancy_status_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['occupied'] = 'Ocupat';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['empty'] = 'Buit';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Altres';
+
+// Gestió patrimonial: Tipus d'ocupant
+$app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Persona assistida';
+$app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Família';
+$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Lloguer de mercat';
+$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Lloguer social';
+$app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Irregular';
+
 // Modificacions del core de SuiteCRM
 
 // Cadenes generals (procedents d'include)
@@ -3924,37 +3955,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
-
-// Gestió patrimonial: Tipus
-$app_list_strings['stic_asset_managment_types_list'][''] = '';
-$app_list_strings['stic_asset_managment_types_list']['housing'] = 'Habitatge';
-$app_list_strings['stic_asset_managment_types_list']['premises'] = 'Local';
-$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Aparcament';
-$app_list_strings['stic_asset_managment_types_list']['land'] = 'Terreny';
-$app_list_strings['stic_asset_managment_types_list']['vehicle'] = 'Vehicle';
-$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Joia';
-$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Actiu financer';
-$app_list_strings['stic_asset_managment_types_list']['other'] = 'Altres';
-
-// Gestió patrimonial: Titularitats
-$app_list_strings['stic_asset_managment_ownerships_list'][''] = '';
-$app_list_strings['stic_asset_managment_ownerships_list']['property'] = 'Propietat';
-$app_list_strings['stic_asset_managment_ownerships_list']['usufruct'] = 'Usufructe';
-$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Lloguer';
-
-// Gestió patrimonial: Estat d'ocupació
-$app_list_strings['stic_asset_managment_occupancy_status_list'][''] = '';
-$app_list_strings['stic_asset_managment_occupancy_status_list']['occupied'] = 'Ocupat';
-$app_list_strings['stic_asset_managment_occupancy_status_list']['empty'] = 'Buit';
-$app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Altres';
-
-// Gestió patrimonial: Tipus d'ocupant
-$app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
-$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Persona tutelada';
-$app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Família';
-$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Lloguer de mercat';
-$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Lloguer social';
-$app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Irregular';
 
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
