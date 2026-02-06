@@ -56,7 +56,7 @@ $dictionary['stic_Assets'] = array(
             'importable' => 'true',
             'duplicate_merge' => 'enabled',
             'duplicate_merge_dom_value' => '1',
-            'audited' => false,
+            'audited' => true,
             'inline_edit' => true,
             'reportable' => true,
             'unified_search' => false,
@@ -114,6 +114,7 @@ $dictionary['stic_Assets'] = array(
             'type' => 'date',
             'massupdate' => '1',
             'no_default' => false,
+            'default' => 'now',
             'comments' => '',
             'help' => '',
             'importable' => 'true',
@@ -1119,6 +1120,7 @@ $dictionary['stic_Assets'] = array(
             'link' => 'stic_assets_contacts',
             'table' => 'contacts',
             'module' => 'Contacts',
+            'required' => true,
             'rname' => 'name',
             'db_concat_fields' => array(
                 0 => 'first_name',
@@ -1167,3 +1169,7 @@ if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('stic_Assets', 'stic_Assets', array('basic', 'assignable', 'security_groups'));
+
+$dictionary['stic_Assets']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Assets']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Assets']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
