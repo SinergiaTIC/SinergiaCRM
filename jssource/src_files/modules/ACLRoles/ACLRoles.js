@@ -142,7 +142,12 @@ var aclviewer = function () {
     },
     
     filterCategories: function(filterValue) {
-      var filter = filterValue.toUpperCase();
+      // Helper function to remove accents/diacritics for accent-insensitive search
+      var removeAccents = function(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      };
+      
+      var filter = removeAccents(filterValue.toUpperCase());
       var table = document.querySelector('#acl-scroll-wrapper table');
       var rows = table.getElementsByTagName('tr');
       var hasFilter = filterValue.trim() !== '';
@@ -171,7 +176,8 @@ var aclviewer = function () {
           var categoryCell = row.querySelector('td[id$="_category"]');
           if (categoryCell) {
             var categoryText = categoryCell.textContent || categoryCell.innerText;
-            if (categoryText.toUpperCase().indexOf(filter) > -1) {
+            var normalizedText = removeAccents(categoryText.toUpperCase());
+            if (normalizedText.indexOf(filter) > -1) {
               row.style.display = '';
               visibleCount++;
             } else {
