@@ -21,3 +21,5 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings['LBL_EDIT_VIEW_DIRECTIONS'] = 'Haga doble clic en una celda para cambiar su valor. Haga clic en el encabezado para cambiar todos los valores de una columna.';
+$mod_strings['LBL_FILTER_CATEGORIES'] = 'Filtrar módulos';
+$mod_strings['LBL_CLEAR_FILTER'] = 'Limpiar filtro';

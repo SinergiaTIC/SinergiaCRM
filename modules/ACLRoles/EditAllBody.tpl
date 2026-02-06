@@ -49,6 +49,13 @@ function cascadeAccessOption(action,selectEle) {
 	var nodes = YAHOO.util.Selector.query('.'+action);
 	var selectId = '';
 	for(i=0; i < nodes.length; i++) {
+		// STIC-Custom AAM 20260206 - Verify if the row of the current select is hidden by the category filter, if so skip it to avoid changing values in hidden rows
+		var parentRow = nodes[i].closest('tr');
+		if (parentRow && parentRow.style.display === 'none') {
+			continue; // Skip this element if its row is hidden
+		}
+		// END STIC-Custom
+		
 		selectId = nodes[i].id.substring(8);
 //alert('selectId: '+selectId);
 		nodes[i].value = accessOption;
@@ -78,7 +85,23 @@ function cascadeAccessOption(action,selectEle) {
 {* END STIC-Custom *}
 <TABLE width='100%' class='detail view' border='0' cellpadding=0 cellspacing = 1  >
 <TR id="ACLEditView_Access_Header">
-<td id="ACLEditView_Access_Header_category"></td>
+<td id="ACLEditView_Access_Header_category">
+	{* STIC-Custom AAM 20260106 - Added category filter input to ACL Roles Edit All Body *}
+	<div style="position: relative;">
+		<span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px; pointer-events: none;">🔍</span>
+		<input type="text" 
+			   id="categoryFilter" 
+			   placeholder="{$MOD.LBL_FILTER_CATEGORIES}" 
+			   style="width: 100%; padding: 5px 45px 5px 30px; box-sizing: border-box;"
+			   onkeyup="aclviewer.filterCategories(this.value)"
+			   onchange="aclviewer.filterCategories(this.value)">
+		<span id="clearFilter" 
+			  onclick="aclviewer.clearCategoryFilter()" 
+			  style="display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #dc3545; font-size: 12px; cursor: pointer; font-weight: bold;"
+			  title="{$MOD.LBL_CLEAR_FILTER}">❌</span>
+	</div>
+	{* END STIC-Custom *}
+</td>
 
 {* BEGIN - SECURITY GROUPS
 Just get the accessOptions for the Accounts module and use for the header select...less file edits this way.

@@ -108,11 +108,11 @@ var aclviewer = function () {
       document.getElementById(id + 'link').style.display = 'none';
     },
     // STIC-Custom AAM 20260204 - showStatus not working properly with async calls
+    // and filter modules functionality
     showMessageACLRoles: function(message) {
         SUGAR.ajaxUI.loadingPanel = new YAHOO.widget.Panel("ajaxloading",
             {
                 width:"240px",
-                fixedcenter:true,
                 close:false,
                 draggable:false,
                 constraintoviewport:false,
@@ -122,10 +122,86 @@ var aclviewer = function () {
         SUGAR.ajaxUI.loadingPanel.setBody('<div class="acl-saving-message"><b>' + message + '</b></div>');
         SUGAR.ajaxUI.loadingPanel.render(document.body);
         SUGAR.ajaxUI.loadingPanel.show();
+        
+        var panelElement = document.getElementById('ajaxloading');
+        if (panelElement) {
+            panelElement.style.position = 'fixed';
+            panelElement.style.top = '200px';
+            panelElement.style.left = '50%';
+            panelElement.style.transform = 'translateX(-50%)';
+            panelElement.style.zIndex = '99999';
+        }
+        var maskElement = document.querySelector('.mask');
+        if (maskElement) {
+            maskElement.style.zIndex = '99998';
+        }
+    
     },
     hideMessageACLRoles: function() {
         SUGAR.ajaxUI.loadingPanel.hide();
     },
+    
+    filterCategories: function(filterValue) {
+      var filter = filterValue.toUpperCase();
+      var table = document.querySelector('#acl-scroll-wrapper table');
+      var rows = table.getElementsByTagName('tr');
+      var hasFilter = filterValue.trim() !== '';
+      var clearButton = document.getElementById('clearFilter');
+      var visibleCount = 0;
+      var totalCount = 0;
+      
+      // Save filter in localStorage to restore after AJAX updates
+      if (typeof(Storage) !== "undefined") {
+        localStorage.setItem('aclRolesCategoryFilter', filterValue);
+      }
+      
+      // Show or hide the clear button based on whether there is a filter
+      clearButton.style.display = hasFilter ? 'inline' : 'none';
+      
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        // Skip the header row
+        if (row.id === 'ACLEditView_Access_Header') {
+          continue;
+        }
+        
+        // Only process category rows
+        if (row.id && row.id.indexOf('ACLEditView_Access_') === 0) {
+          totalCount++;
+          var categoryCell = row.querySelector('td[id$="_category"]');
+          if (categoryCell) {
+            var categoryText = categoryCell.textContent || categoryCell.innerText;
+            if (categoryText.toUpperCase().indexOf(filter) > -1) {
+              row.style.display = '';
+              visibleCount++;
+            } else {
+              row.style.display = 'none';
+            }
+          }
+        }
+      }
+    },
+    
+    clearCategoryFilter: function() {
+      var filterInput = document.getElementById('categoryFilter');
+      if (filterInput) {
+        filterInput.value = '';
+        aclviewer.filterCategories('');
+      }
+    },
+    
+    restoreFilter: function() {
+      if (typeof(Storage) !== "undefined") {
+        var savedFilter = localStorage.getItem('aclRolesCategoryFilter');
+        if (savedFilter) {
+          var filterInput = document.getElementById('categoryFilter');
+          if (filterInput) {
+            filterInput.value = savedFilter;
+            aclviewer.filterCategories(savedFilter);
+          }
+        }
+      }
+    }
     // END STIC-Custom
 
 
@@ -133,3 +209,23 @@ var aclviewer = function () {
 
 
 }();
+
+// STIC-Custom AAM 20260206 - Intercept display function to restore filter after AJAX update
+(function() {
+  var originalDisplay = aclviewer.display;
+  aclviewer.display = function(o) {
+    originalDisplay(o);
+    // Restaurar filtro después de que se actualice el contenido
+    setTimeout(function() { aclviewer.restoreFilter(); }, 50);
+    setTimeout(function() { aclviewer.restoreFilter(); }, 200);
+  };
+  
+  // Restaurar filtro al cargar la página
+  window.addEventListener('load', function() { aclviewer.restoreFilter(); });
+  window.addEventListener('DOMContentLoaded', function() { aclviewer.restoreFilter(); });
+  
+  // Restaurar después de varios delays para capturar actualizaciones AJAX
+  setTimeout(function() { aclviewer.restoreFilter(); }, 100);
+  setTimeout(function() { aclviewer.restoreFilter(); }, 300);
+})();
+// END STIC-Custom
