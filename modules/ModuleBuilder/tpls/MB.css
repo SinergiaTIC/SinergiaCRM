@@ -199,6 +199,12 @@ img.right_icon {
     font-weight: bold !important;
 }
 
+#mblayout #field_table .yui-dt-bd,
+#mblayout #relGrid .yui-dt-bd {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 /* END STIC Custom */
 
 input[disabled], select[disabled] {
