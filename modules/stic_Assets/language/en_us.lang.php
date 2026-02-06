@@ -133,4 +133,6 @@ $mod_strings = array(
     'LBL_INSURANCES_PANEL' => 'Insurances',
     'LBL_UTILITIES_PANEL' => 'Utilities',
     'LBL_PANEL_RECORD_DETAILS' => 'Record Details',
+
+    'LBL_NO_OTHER_ERROR' => 'A value must be specified for the "Other" field if the type is "Other".',
 );

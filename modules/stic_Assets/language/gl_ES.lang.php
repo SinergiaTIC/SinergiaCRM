@@ -134,4 +134,6 @@ $mod_strings = array(
     'LBL_INSURANCES_PANEL' => 'Seguros',
     'LBL_UTILITIES_PANEL' => 'Sumministros',
     'LBL_PANEL_RECORD_DETAILS' =>  'Detalles do rexistro',
+
+    'LBL_NO_OTHER_ERROR' => 'Se debe especificar un valor para el campo "Otro" si el tipo es "Otro".',
 );
