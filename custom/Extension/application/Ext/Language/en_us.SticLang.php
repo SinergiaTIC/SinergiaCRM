@@ -3741,6 +3741,7 @@ $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signatur
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document signed by another authorized person';
 $app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'The document has been downloaded internally';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'All signers have signed';
+
 // SinergiaDA: Users access levels
 $app_list_strings['sda_users_access_list']['0'] = 'No access';
 $app_list_strings['sda_users_access_list']['1'] = 'Full access';
@@ -3800,6 +3801,37 @@ $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal
 $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'Over the counter';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'Cash';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transfer';
+
+// Asset management: Types
+$app_list_strings['stic_asset_managment_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_types_list']['housing'] = 'Housing';
+$app_list_strings['stic_asset_managment_types_list']['premises'] = 'Premises';
+$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Parking';
+$app_list_strings['stic_asset_managment_types_list']['land'] = 'Land';
+$app_list_strings['stic_asset_managment_types_list']['vehicle'] = 'Vehicle';
+$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Jewel';
+$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Financial asset';
+$app_list_strings['stic_asset_managment_types_list']['other'] = 'Other';
+
+// Asset management: Ownerships
+$app_list_strings['stic_asset_managment_ownerships_list'][''] = '';
+$app_list_strings['stic_asset_managment_ownerships_list']['property'] = 'Property';
+$app_list_strings['stic_asset_managment_ownerships_list']['usufruct'] = 'Usufruct';
+$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Rent';
+
+// Asset management: Occupancy status
+$app_list_strings['stic_asset_managment_occupancy_status_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['occupied'] = 'Occupied';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['empty'] = 'Empty';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Other';
+
+// Asset management: Occupant types
+$app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Ward';
+$app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Family use';
+$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Market rent';
+$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Social rent';
+$app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Irregular occupation';
 
 // SuiteCRM Core modifications
 
@@ -3891,37 +3923,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
-
-// Asset management: Types
-$app_list_strings['stic_asset_managment_types_list'][''] = '';
-$app_list_strings['stic_asset_managment_types_list']['housing'] = 'Housing';
-$app_list_strings['stic_asset_managment_types_list']['premises'] = 'Premises';
-$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Parking';
-$app_list_strings['stic_asset_managment_types_list']['land'] = 'Land';
-$app_list_strings['stic_asset_managment_types_list']['vehicle'] = 'Vehicle';
-$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Jewel';
-$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Financial asset';
-$app_list_strings['stic_asset_managment_types_list']['other'] = 'Other';
-
-// Asset management: Ownerships
-$app_list_strings['stic_asset_managment_ownerships_list'][''] = '';
-$app_list_strings['stic_asset_managment_ownerships_list']['property'] = 'Property';
-$app_list_strings['stic_asset_managment_ownerships_list']['usufruct'] = 'Usufruct';
-$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Rent';
-
-// Asset management: Occupancy status
-$app_list_strings['stic_asset_managment_occupancy_status_list'][''] = '';
-$app_list_strings['stic_asset_managment_occupancy_status_list']['occupied'] = 'Occupied';
-$app_list_strings['stic_asset_managment_occupancy_status_list']['empty'] = 'Empty';
-$app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Other';
-
-// Asset management: Occupant types
-$app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
-$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Ward';
-$app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Family use';
-$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Market rent';
-$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Social rent';
-$app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Irregular occupation';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
