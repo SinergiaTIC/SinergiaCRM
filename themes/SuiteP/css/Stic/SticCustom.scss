@@ -1485,6 +1485,12 @@ span.totals{
   font-weight: bold;
 }
 
+// Fix para los selects en las celdas ACL - evitar solapamiento del símbolo de verificación
+#acl-scroll-wrapper select option,
+#ACLEditView_Access_Header select option {
+  padding-left: 20px !important;
+}
+
 .acl-saving-message {
   color: bw($stic-base);
   padding: 10px;

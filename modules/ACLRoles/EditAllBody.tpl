@@ -177,8 +177,10 @@ Not ideal but it'll work since it's the only way to get that info without editin
 {* BEGIN - SECURITY GROUPS : Add class='{$ACTION_NAME}' *}
 {*
 					<select name='act_guid{$ACTION.id}' id = 'act_guid{$ACTION.id}' onblur="document.getElementById('{$ACTION.id}link').innerHTML=this.options[this.selectedIndex].text; aclviewer.toggleDisplay('{$ACTION.id}');" >
-*}
-                        <select class='{$ACTION_NAME}' style="all: initial" name='act_guid{$ACTION.id}' id = 'act_guid{$ACTION.id}' onblur="document.getElementById('{$ACTION.id}link').innerHTML=this.options[this.selectedIndex].text; aclviewer.toggleDisplay('{$ACTION.id}');" >
+*}						
+						{* STIC-Custom AAM 20260106 - No reset styles for select *}
+                        <select class='{$ACTION_NAME}' style="font-family: inherit; font-size: inherit; padding: 2px 4px;" name='act_guid{$ACTION.id}' id = 'act_guid{$ACTION.id}' onblur="document.getElementById('{$ACTION.id}link').innerHTML=this.options[this.selectedIndex].text; aclviewer.toggleDisplay('{$ACTION.id}');" >
+						{* END STIC-Custom *}
  					{* END - SECURITY GROUPS *}
 					{html_options options=$ACTION.accessOptions selected=$ACTION.aclaccess }
 					</select>
