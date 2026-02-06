@@ -194,6 +194,11 @@ img.right_icon {
 #mblayout th .yui-dt-resizeable {
     position: static !important;
 }
+
+#mblayout th .yui-dt-sortable {
+    font-weight: bold !important;
+}
+
 /* END STIC Custom */
 
 input[disabled], select[disabled] {
