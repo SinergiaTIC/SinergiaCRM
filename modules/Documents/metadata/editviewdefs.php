@@ -250,7 +250,11 @@ $viewdefs['Documents']['EditView'] = array (
           'name' => 'stic_shared_document_link_c',
           'label' => 'LBL_STIC_SHARED_DOCUMENT_LINK',
         ),
-        1 => '',
+        1 => 
+          array (
+            'name' => 'stic_assets_documents_name',
+            'label' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE',
+          ),
       ),
       3 => 
       array (

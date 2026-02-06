@@ -107,6 +107,14 @@ array(
         'width' => '10%',
         'default' => false,
     ),
+    'STIC_ASSETS_STIC_FOLLOWUPS_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE',
+        'id' => 'STIC_ASSETS_STIC_FOLLOWUPSSTIC_ASSETS_IDA',
+        'width' => '10%',
+        'default' => false,
+    ),
     'DESCRIPTION' => array(
         'type' => 'text',
         'label' => 'LBL_DESCRIPTION',

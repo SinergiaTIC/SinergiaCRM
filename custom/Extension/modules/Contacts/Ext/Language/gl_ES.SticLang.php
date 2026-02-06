@@ -102,6 +102,7 @@ $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de modelos de proxe
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Xerar Candidaturas';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione unha oferta laboral na ventá emerxente';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
+$mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';

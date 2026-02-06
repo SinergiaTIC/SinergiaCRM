@@ -84,6 +84,7 @@ $mod_strings = array(
     'LBL_STIC_FOLLOWUPS_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Inscripció',
     'LBL_STIC_GOALS_STIC_FOLLOWUPS_FROM_STIC_GOALS_TITLE' => 'Objectius',
     'LBL_STIC_FAMILIES_STIC_FOLLOWUPS_FROM_STIC_FAMILIES_TITLE' => 'Unitat familiar',
+    'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE' => 'Actiu',
     'LBL_MUST_RELATE_TO_A_FAMILY_OR_A_CONTACT' => 'Cal indicar una persona o una unitat familiar.',
     'LBL_COLOR_INFO' => "Color amb què es mostrarà el seguiment al Calendari d'Activitats.",
 );

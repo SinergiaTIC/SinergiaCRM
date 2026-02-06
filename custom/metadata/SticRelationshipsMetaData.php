@@ -7793,3 +7793,217 @@ $dictionary["stic_resources_stic_centers"] = array (
       ),
     ),
   );
+
+  $dictionary["stic_assets_contacts"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_assets_contacts' => array(
+            'lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Assets',
+            'rhs_table' => 'stic_assets',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_assets_contacts_c',
+            'join_key_lhs' => 'stic_assets_contactscontacts_ida',
+            'join_key_rhs' => 'stic_assets_contactsstic_assets_idb',
+        ),
+    ),
+    'table' => 'stic_assets_contacts_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_assets_contactscontacts_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_assets_contactsstic_assets_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_assets_contactsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_assets_contacts_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_assets_contactscontacts_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_assets_contacts_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_assets_contactsstic_assets_idb',
+            ),
+        ),
+    ),
+);
+
+$dictionary["stic_assets_documents"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_assets_documents' => array(
+            'lhs_module' => 'stic_Assets',
+            'lhs_table' => 'stic_assets',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Documents',
+            'rhs_table' => 'documents',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_assets_documents_c',
+            'join_key_lhs' => 'stic_assets_documentsstic_assets_ida',
+            'join_key_rhs' => 'stic_assets_documentsdocuments_idb',
+        ),
+    ),
+    'table' => 'stic_assets_documents_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_assets_documentsstic_assets_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_assets_documentsdocuments_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        5 => array(
+            'name' => 'document_revision_id',
+            'type' => 'varchar',
+            'len' => '36',
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_assets_documentsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_assets_documents_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_assets_documentsstic_assets_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_assets_documents_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_assets_documentsdocuments_idb',
+            ),
+        ),
+    ),
+);
+$dictionary["stic_assets_stic_followups"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_assets_stic_followups' => array(
+            'lhs_module' => 'stic_Assets',
+            'lhs_table' => 'stic_assets',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_FollowUps',
+            'rhs_table' => 'stic_followups',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_assets_stic_followups_c',
+            'join_key_lhs' => 'stic_assets_stic_followupsstic_assets_ida',
+            'join_key_rhs' => 'stic_assets_stic_followupsstic_followups_idb',
+        ),
+    ),
+    'table' => 'stic_assets_stic_followups_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_assets_stic_followupsstic_assets_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_assets_stic_followupsstic_followups_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_assets_stic_followupsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_assets_stic_followups_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_assets_stic_followupsstic_assets_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_assets_stic_followups_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_assets_stic_followupsstic_followups_idb',
+            ),
+        ),
+    ),
+);
