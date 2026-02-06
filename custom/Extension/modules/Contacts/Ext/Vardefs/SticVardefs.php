@@ -2511,7 +2511,7 @@ $dictionary["Contact"]["fields"]["stic_skills_contacts"] = array(
 );
 
 // Financial Products Relationships
-$dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array (
+$dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array(
     'name' => 'stic_financial_products_contacts',
     'type' => 'link',
     'relationship' => 'stic_financial_products_contacts',
@@ -2520,20 +2520,19 @@ $dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array (
     'bean_name' => false,
     'side' => 'right',
     'vname' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE',
-  );
-
-// Assets Relationships
-$dictionary["Contact"]["fields"]["stic_assets_contacts"] = array (
-  'name' => 'stic_assets_contacts',
-  'type' => 'link',
-  'relationship' => 'stic_assets_contacts',
-  'source' => 'non-db',
-  'module' => 'stic_Assets',
-  'bean_name' => 'stic_Assets',
-  'side' => 'right',
-  'vname' => 'LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE',
 );
 
+// Assets Relationships
+$dictionary["Contact"]["fields"]["stic_assets_contacts"] = array(
+    'name' => 'stic_assets_contacts',
+    'type' => 'link',
+    'relationship' => 'stic_assets_contacts',
+    'source' => 'non-db',
+    'module' => 'stic_Assets',
+    'bean_name' => 'stic_Assets',
+    'side' => 'right',
+    'vname' => 'LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE',
+);
 
 // Modified properties in native fields
 $dictionary['Contact']['fields']['first_name']['massupdate'] = 0;
@@ -2666,4 +2665,3 @@ $dictionary['Contact']['fields']['am_projecttemplates_resources']['vname'] = 'LB
 // STIC#981
 $dictionary['Contact']['fields']['primary_address_postalcode']['inline_edit'] = true;
 $dictionary['Contact']['fields']['do_not_call']['massupdate'] = '1';
-
