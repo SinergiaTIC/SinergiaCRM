@@ -176,9 +176,9 @@ $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario d
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
-$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Answers'] = 'Detalle de respuestas a Formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Answers'] = 'Detalles de respuestas a formularios';
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms_Responses'] = 'Respuestas a formularios';
-$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Links'] = 'Vínculos de Formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Links'] = 'Vínculos de formularios';
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
@@ -238,7 +238,7 @@ $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacción';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producto financiero';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Answers'] = 'Detalle de respuesta a formulario';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Responses'] = 'Respuesta a formulario';
-$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Links'] = 'Vínculo de Formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Links'] = 'Vínculo de formulario';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms'] = 'Formulario Web Avanzado';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
@@ -3805,129 +3805,6 @@ $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectivo';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferencia';
 
-// Modificaciones del core de SuiteCRM
-
-// Cadenas generales (procedentes de include)
-$app_strings['LBL_ACCOUNT'] = 'Organización';
-$app_strings['LBL_ACCOUNTS'] = 'Organizaciones';
-$app_strings['LBL_CONTACT'] = 'Persona';
-$app_strings['LBL_CONTACTS'] = 'Personas';
-$app_strings['LBL_LEADS'] = 'Interesados';
-$app_strings['LBL_OPPORTUNITY'] = 'Subvención';
-$app_strings['LBL_OPPORTUNITIES'] = 'Subvenciones';
-$app_strings['LBL_OPPORTUNITY_NAME'] = 'Nombre de la subvención';
-$app_strings['LBL_CREATE_CONTACT'] = 'Nueva Persona';
-$app_strings['LBL_CREATE_OPPORTUNITY'] = 'Nueva Subvención';
-$app_strings['LBL_EMAIL_QC_LEADS'] = 'Interesado';
-$app_strings['LBL_EMAIL_QC_CONTACTS'] = 'Persona';
-$app_strings['LBL_EMAIL_QC_OPPORTUNITIES'] = 'Subvención';
-
-// Oportunidades: Roles de las personas en este contexto
-$app_list_strings['opportunity_relationship_type_dom'][''] = '';
-$app_list_strings['opportunity_relationship_type_dom']['Primary Decision Maker'] = 'Decisor principal';
-$app_list_strings['opportunity_relationship_type_dom']['Technical Decision Maker'] = 'Decisor técnico';
-$app_list_strings['opportunity_relationship_type_dom']['Technical Evaluator'] = 'Evaluador técnico';
-$app_list_strings['opportunity_relationship_type_dom']['organization_manager'] = 'Gestor de la entidad';
-$app_list_strings['opportunity_relationship_type_dom']['Other'] = 'Otros';
-
-// Registro de Campañas: Tipo de actividad
-$app_list_strings['campainglog_activity_type_dom'][''] = '';
-$app_list_strings['campainglog_activity_type_dom']['targeted'] = 'Mensaje enviado';
-$app_list_strings['campainglog_activity_type_dom']['send error'] = 'Mensaje no enviado (otras causas)';
-$app_list_strings['campainglog_activity_type_dom']['invalid email'] = 'Mensaje no enviado (dirección no válida)';
-$app_list_strings['campainglog_activity_type_dom']['link'] = 'Enlace clicado';
-$app_list_strings['campainglog_activity_type_dom']['viewed'] = 'Mensaje visto';
-$app_list_strings['campainglog_activity_type_dom']['removed'] = 'Baja';
-$app_list_strings['campainglog_activity_type_dom']['lead'] = 'Interesado creado';
-$app_list_strings['campainglog_activity_type_dom']['contact'] = 'Persona creada';
-$app_list_strings['campainglog_activity_type_dom']['blocked'] = 'Destinatario excluido por dirección o dominio';
-$app_list_strings['campainglog_activity_type_dom']['Survey'] = 'Respuesta a encuesta';
-
-// Registro de Campañas: Tipo de destinatario
-$app_list_strings['campainglog_target_type_dom']['Contacts'] = 'Personas';
-$app_list_strings['campainglog_target_type_dom']['Users'] = 'Usuarios';
-$app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Público Objetivo';
-$app_list_strings['campainglog_target_type_dom']['Leads'] = 'Interesados';
-$app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Organizaciones';
-
-// Flujos de trabajo: listas adaptadas
-$app_list_strings['aow_date_options']['now'] = 'Ahora';
-$app_list_strings['aow_date_options']['today'] = 'Hoy';
-$app_list_strings['aow_date_options']['field'] = 'Este campo';
-$app_list_strings['aow_date_options']['anniversary'] = 'Aniversario'; // New STIC item
-$app_list_strings['aow_date_type_list'][''] = '';
-$app_list_strings['aow_date_type_list']['minute'] = 'Minutos';
-$app_list_strings['aow_date_type_list']['hour'] = 'Horas';
-$app_list_strings['aow_date_type_list']['day'] = 'Días';
-$app_list_strings['aow_date_type_list']['week'] = 'Semanas';
-$app_list_strings['aow_date_type_list']['month'] = 'Meses';
-$app_list_strings['aow_date_type_list']['year'] = 'Años'; // New STIC item
-$app_list_strings['aow_date_type_list']['business_hours'] = 'Horario laboral';
-
-// Flujos de trabajo: Destinatarios de mensajes
-$app_list_strings['aow_message_type_list']['Phone'] = 'Teléfono';
-$app_list_strings['aow_message_type_list']['Record Phone'] = 'Teléfono del registro';
-$app_list_strings['aow_message_type_list']['Related Field'] = 'Campo relacionado';
-$app_list_strings['aow_message_type_list']['Specify User'] = 'Usuario';
-$app_list_strings['aow_message_type_list']['Users'] = 'Usuarios';
-
-// Mapas: listas adaptadas
-$app_list_strings['map_module_type_list']['Accounts'] = 'Organizaciones';
-$app_list_strings['map_module_type_list']['Contacts'] = 'Personas';
-$app_list_strings['map_module_type_list']['Cases'] = 'Casos';
-$app_list_strings['map_module_type_list']['Leads'] = 'Interesados';
-$app_list_strings['map_module_type_list']['Meetings'] = 'Reuniones';
-$app_list_strings['map_module_type_list']['Opportunities'] = 'Subvenciones';
-$app_list_strings['map_module_type_list']['Project'] = 'Proyectos';
-$app_list_strings['map_module_type_list']['Prospects'] = 'Público Objetivo';
-$app_list_strings['map_relate_type_list']['Accounts'] = 'Organizaciones';
-$app_list_strings['map_relate_type_list']['Contacts'] = 'Personas';
-$app_list_strings['map_relate_type_list']['Cases'] = 'Casos';
-$app_list_strings['map_relate_type_list']['Leads'] = 'Interesados';
-$app_list_strings['map_relate_type_list']['Meetings'] = 'Reuniones';
-$app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvenciones';
-$app_list_strings['map_relate_type_list']['Project'] = 'Proyectos';
-$app_list_strings['map_relate_type_list']['Prospects'] = 'Público Objetivo';
-
-// Campañas: Tipos de campaña
-$app_list_strings['campaign_type_dom'][''] = '';
-$app_list_strings['campaign_type_dom']['Telesales'] = 'Televenta';
-$app_list_strings['campaign_type_dom']['Mail'] = 'Correo';
-$app_list_strings['campaign_type_dom']['Email'] = 'Email';
-$app_list_strings['campaign_type_dom']['Print'] = 'Imprenta';
-$app_list_strings['campaign_type_dom']['Web'] = 'Web';
-$app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
-$app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
-$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
-$app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
-$app_list_strings['campaign_type_dom']['Notification'] = 'Notificación por correo electrónico';
-$app_list_strings['campaign_type_dom']['Message'] = 'Mensaje telefónico';
-$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notificación por mensaje telefónico';
-
-// Plantillas de Correo electrónico: Tipos de plantilla
-$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
-$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
-$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
-$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correo electrónico';
-$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
-$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
-
-// Plantillas de Correo electrónico: Tipos de plantilla
-$app_list_strings['emailTemplates_type_list'][''] = '';
-$app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
-$app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
-$app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
-$app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
-$app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
-
-// Elementos añadidos al Historial
-$app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';
-$app_list_strings['collection_temp_list']['Meetings'] = 'Reuniones';
-$app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
-$app_list_strings['collection_temp_list']['Notes'] = 'Notas';
-$app_list_strings['collection_temp_list']['Emails'] = 'Correos';
-$app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
-
 // Modos de proceso de los Formularios Web Avanzados
 $app_list_strings['stic_advanced_web_forms_processing_mode_list']['sync'] = 'Síncrono';
 $app_list_strings['stic_advanced_web_forms_processing_mode_list']['async'] = 'Asíncrono';
@@ -4053,6 +3930,129 @@ $app_list_strings['stic_advanced_web_forms_field_spacing_list']['1.5rem'] = 'Esp
 $app_list_strings['stic_advanced_web_forms_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_advanced_web_forms_status_list']['public'] = 'Público';
 $app_list_strings['stic_advanced_web_forms_status_list']['closed'] = 'Cerrado';
+
+// Modificaciones del core de SuiteCRM
+
+// Cadenas generales (procedentes de include)
+$app_strings['LBL_ACCOUNT'] = 'Organización';
+$app_strings['LBL_ACCOUNTS'] = 'Organizaciones';
+$app_strings['LBL_CONTACT'] = 'Persona';
+$app_strings['LBL_CONTACTS'] = 'Personas';
+$app_strings['LBL_LEADS'] = 'Interesados';
+$app_strings['LBL_OPPORTUNITY'] = 'Subvención';
+$app_strings['LBL_OPPORTUNITIES'] = 'Subvenciones';
+$app_strings['LBL_OPPORTUNITY_NAME'] = 'Nombre de la subvención';
+$app_strings['LBL_CREATE_CONTACT'] = 'Nueva Persona';
+$app_strings['LBL_CREATE_OPPORTUNITY'] = 'Nueva Subvención';
+$app_strings['LBL_EMAIL_QC_LEADS'] = 'Interesado';
+$app_strings['LBL_EMAIL_QC_CONTACTS'] = 'Persona';
+$app_strings['LBL_EMAIL_QC_OPPORTUNITIES'] = 'Subvención';
+
+// Oportunidades: Roles de las personas en este contexto
+$app_list_strings['opportunity_relationship_type_dom'][''] = '';
+$app_list_strings['opportunity_relationship_type_dom']['Primary Decision Maker'] = 'Decisor principal';
+$app_list_strings['opportunity_relationship_type_dom']['Technical Decision Maker'] = 'Decisor técnico';
+$app_list_strings['opportunity_relationship_type_dom']['Technical Evaluator'] = 'Evaluador técnico';
+$app_list_strings['opportunity_relationship_type_dom']['organization_manager'] = 'Gestor de la entidad';
+$app_list_strings['opportunity_relationship_type_dom']['Other'] = 'Otros';
+
+// Registro de Campañas: Tipo de actividad
+$app_list_strings['campainglog_activity_type_dom'][''] = '';
+$app_list_strings['campainglog_activity_type_dom']['targeted'] = 'Mensaje enviado';
+$app_list_strings['campainglog_activity_type_dom']['send error'] = 'Mensaje no enviado (otras causas)';
+$app_list_strings['campainglog_activity_type_dom']['invalid email'] = 'Mensaje no enviado (dirección no válida)';
+$app_list_strings['campainglog_activity_type_dom']['link'] = 'Enlace clicado';
+$app_list_strings['campainglog_activity_type_dom']['viewed'] = 'Mensaje visto';
+$app_list_strings['campainglog_activity_type_dom']['removed'] = 'Baja';
+$app_list_strings['campainglog_activity_type_dom']['lead'] = 'Interesado creado';
+$app_list_strings['campainglog_activity_type_dom']['contact'] = 'Persona creada';
+$app_list_strings['campainglog_activity_type_dom']['blocked'] = 'Destinatario excluido por dirección o dominio';
+$app_list_strings['campainglog_activity_type_dom']['Survey'] = 'Respuesta a encuesta';
+
+// Registro de Campañas: Tipo de destinatario
+$app_list_strings['campainglog_target_type_dom']['Contacts'] = 'Personas';
+$app_list_strings['campainglog_target_type_dom']['Users'] = 'Usuarios';
+$app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Público Objetivo';
+$app_list_strings['campainglog_target_type_dom']['Leads'] = 'Interesados';
+$app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Organizaciones';
+
+// Flujos de trabajo: listas adaptadas
+$app_list_strings['aow_date_options']['now'] = 'Ahora';
+$app_list_strings['aow_date_options']['today'] = 'Hoy';
+$app_list_strings['aow_date_options']['field'] = 'Este campo';
+$app_list_strings['aow_date_options']['anniversary'] = 'Aniversario'; // New STIC item
+$app_list_strings['aow_date_type_list'][''] = '';
+$app_list_strings['aow_date_type_list']['minute'] = 'Minutos';
+$app_list_strings['aow_date_type_list']['hour'] = 'Horas';
+$app_list_strings['aow_date_type_list']['day'] = 'Días';
+$app_list_strings['aow_date_type_list']['week'] = 'Semanas';
+$app_list_strings['aow_date_type_list']['month'] = 'Meses';
+$app_list_strings['aow_date_type_list']['year'] = 'Años'; // New STIC item
+$app_list_strings['aow_date_type_list']['business_hours'] = 'Horario laboral';
+
+// Flujos de trabajo: Destinatarios de mensajes
+$app_list_strings['aow_message_type_list']['Phone'] = 'Teléfono';
+$app_list_strings['aow_message_type_list']['Record Phone'] = 'Teléfono del registro';
+$app_list_strings['aow_message_type_list']['Related Field'] = 'Campo relacionado';
+$app_list_strings['aow_message_type_list']['Specify User'] = 'Usuario';
+$app_list_strings['aow_message_type_list']['Users'] = 'Usuarios';
+
+// Mapas: listas adaptadas
+$app_list_strings['map_module_type_list']['Accounts'] = 'Organizaciones';
+$app_list_strings['map_module_type_list']['Contacts'] = 'Personas';
+$app_list_strings['map_module_type_list']['Cases'] = 'Casos';
+$app_list_strings['map_module_type_list']['Leads'] = 'Interesados';
+$app_list_strings['map_module_type_list']['Meetings'] = 'Reuniones';
+$app_list_strings['map_module_type_list']['Opportunities'] = 'Subvenciones';
+$app_list_strings['map_module_type_list']['Project'] = 'Proyectos';
+$app_list_strings['map_module_type_list']['Prospects'] = 'Público Objetivo';
+$app_list_strings['map_relate_type_list']['Accounts'] = 'Organizaciones';
+$app_list_strings['map_relate_type_list']['Contacts'] = 'Personas';
+$app_list_strings['map_relate_type_list']['Cases'] = 'Casos';
+$app_list_strings['map_relate_type_list']['Leads'] = 'Interesados';
+$app_list_strings['map_relate_type_list']['Meetings'] = 'Reuniones';
+$app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvenciones';
+$app_list_strings['map_relate_type_list']['Project'] = 'Proyectos';
+$app_list_strings['map_relate_type_list']['Prospects'] = 'Público Objetivo';
+
+// Campañas: Tipos de campaña
+$app_list_strings['campaign_type_dom'][''] = '';
+$app_list_strings['campaign_type_dom']['Telesales'] = 'Televenta';
+$app_list_strings['campaign_type_dom']['Mail'] = 'Correo';
+$app_list_strings['campaign_type_dom']['Email'] = 'Email';
+$app_list_strings['campaign_type_dom']['Print'] = 'Imprenta';
+$app_list_strings['campaign_type_dom']['Web'] = 'Web';
+$app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
+$app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificación por correo electrónico';
+$app_list_strings['campaign_type_dom']['Message'] = 'Mensaje telefónico';
+$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notificación por mensaje telefónico';
+
+// Plantillas de Correo electrónico: Tipos de plantilla
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correo electrónico';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+
+// Plantillas de Correo electrónico: Tipos de plantilla
+$app_list_strings['emailTemplates_type_list'][''] = '';
+$app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
+$app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
+$app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
+$app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
+$app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+
+// Elementos añadidos al Historial
+$app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';
+$app_list_strings['collection_temp_list']['Meetings'] = 'Reuniones';
+$app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
+$app_list_strings['collection_temp_list']['Notes'] = 'Notas';
+$app_list_strings['collection_temp_list']['Emails'] = 'Correos';
+$app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
