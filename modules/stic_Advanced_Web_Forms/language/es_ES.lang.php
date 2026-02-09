@@ -461,7 +461,10 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso y permisos...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Acceso denegado',
   'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Iniciar sesión',
-  
+
+  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
+  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un Bloque de datos en una plataforma externa',
+
 
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
   'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo según una expresión regular',

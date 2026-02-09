@@ -28,42 +28,31 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 class PaymentRouterAction extends DeferredActionDefinition implements ITerminalAction
 {
-    // Map payment prefixes to special treatment
-    // From stic_payments_methods_list: Payment platform Strategies
-    public static $specialStrategies = array(
-        'bizum' => 'stic_AWF_RedsysStrategy',
-        'stripe' => 'stic_AWF_StripeStrategy',
-        'card' => 'stic_AWF_RedsysStrategy',
-        'ceca_card' => 'stic_AWF_CecaStrategy',
-        'paypal' => 'stic_AWF_PaypalStrategy',
-    );
+    public function __construct() {
+        $this->isActive = true;
+        $this->isUserSelectable = true;
+        $this->category = 'integration';
+        $this->baseLabel = 'LBL_PAYMENT_ROUTER_ACTION';
+    }
 
-    /**
-     * Returns array('strategy_class' => string, 'base_method' => string, 'suffix' => string|null)
-     */
-    public static function parse($methodValue)
+    public function execute()
     {
-        // Special logic detection (Prefixes)
-        foreach (self::$specialStrategies as $prefix => $class) {
-            // "card" or "card_futbol"
-            if ($methodValue === $prefix || strpos($methodValue, $prefix . '_') === 0) {
-                $suffix = null;
-                if (strlen($methodValue) > strlen($prefix)) {
-                    $suffix = strtoupper(substr($methodValue, strlen($prefix) + 1));
-                }
-                return array(
-                    'strategy_class' => $class,
-                    'base_method' => $prefix,
-                    'suffix' => $suffix
-                );
-            }
-        }
+        // Implementation needed
+    }
 
-        // Default tratment (Catch-All) 'cash', 'transfer', 'check'...
-        return array(
-            'strategy_class' => 'stic_AWF_OfflineStrategy',
-            'base_method' => $methodValue, 
-            'suffix' => null
-        );
+    public function getParameters()
+    {
+        // Implementation needed
+        return [];
+    }
+
+    public function processWebhook($data)
+    {
+        // Implementation needed
+    }
+
+    public function performTerminal()
+    {
+        // Implementation needed
     }
 }
