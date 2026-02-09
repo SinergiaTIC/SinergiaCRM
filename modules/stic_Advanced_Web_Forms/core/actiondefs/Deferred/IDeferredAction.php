@@ -25,16 +25,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Abstract class for hook actions that operate on ONE Bean that has been saved by a previous action.
- * Automates:
- *   - The definition, obtaining and validation of the DataBlock parameter.
- *   - The obtaining of the BeanReference from the DataBlock.
- *   - The loading (retrieve) of the Bean.
- *   - Error management 
- */
-abstract class HookBeanActionDefinition extends ServerBeanActionDefinition {
-    final public function getType(): ActionType {
-        return ActionType::HOOK;
-    }
+interface IDeferredAction {
+
+    /**
+     * Processes an incoming request (webhook) from an external service.
+     * 
+     * This method is only relevant for actions that expect a server callback.
+     * @param array $requestData The data of the incoming request.
+     * @return WebhookResult The object with the transaction ID and status.
+     */
+    public function processWebhook(array $requestData): WebhookResult;
 }

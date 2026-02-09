@@ -26,15 +26,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Abstract class for hook actions that operate on ONE Bean that has been saved by a previous action.
+ * Abstract class for deferred actions that operate on ONE Bean that has been saved by a previous action.
  * Automates:
  *   - The definition, obtaining and validation of the DataBlock parameter.
  *   - The obtaining of the BeanReference from the DataBlock.
  *   - The loading (retrieve) of the Bean.
  *   - Error management 
  */
-abstract class HookBeanActionDefinition extends ServerBeanActionDefinition {
+abstract class DeferredBeanActionDefinition extends ServerBeanActionDefinition implements IDeferredAction {
     final public function getType(): ActionType {
-        return ActionType::HOOK;
+        return ActionType::DEFERRED;
     }
 }

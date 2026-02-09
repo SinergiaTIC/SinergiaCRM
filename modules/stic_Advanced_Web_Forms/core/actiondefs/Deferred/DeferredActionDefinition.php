@@ -25,17 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class DeferredAction extends ServerActionDefinition {
+abstract class DeferredActionDefinition extends ServerActionDefinition implements IDeferredAction {
     final public function getType(): ActionType {
         return ActionType::DEFERRED;
     }
-
-    /**
-     * Procesa una petición entrante (webhook) de un servicio externo.
-     * Este método solo es relevante para aquellas acciones que esperan un callback de servidor.
-     * 
-     * @param array $requestData Los datos de la petición entrante.
-     * @return WebhookResult El objeto con el ID de la transacción y el estado.
-     */
-    public abstract function processWebhook(array $requestData): WebhookResult;
 }
