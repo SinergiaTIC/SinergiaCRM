@@ -25,8 +25,40 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+include_once __DIR__."/PaymentStrategy.php";
 
-class stic_AWF_PaymentMethodParser
+class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
 {
+    protected string $configType = 'STRIPE'; 
+    protected string $configKeyPrefix = 'STRIPE';
 
+    /**
+    * Prepare payment.
+    * If Offline -> Returns OK.
+    * If External platform -> Returns WAIT with data to redirection.
+    */
+    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payment $beanPayment): ActionResult
+    {
+        $config = $this->getConfigValues(array('SECRET_KEY', 'WEBHOOK_SECRET', 'SECRET_KEY_TEST', 'WEBHOOK_SECRET_TEST', 'TEST'));
+
+        
+        return new ActionResult(ResultStatus::WAIT, $actionConfig, "");
+    }
+
+    /**
+    * Terminal: Execute the output (HTML form, Redirect header...).
+    * Only called if initiate() has returned WAIT.
+    */
+    public function performTerminal(ExecutionContext $context, ActionResult $result): void
+    {
+
+    }
+
+    /**
+    * WEBHOOK: Resolves action when notification arrives from external event.
+    */ 
+    public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
+    {
+
+    }
 }

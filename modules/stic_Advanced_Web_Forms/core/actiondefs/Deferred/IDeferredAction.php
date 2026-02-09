@@ -25,14 +25,19 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Interface for all actions that can wait for an external event.
+ * Examples: Payments, SMS Validation, Digital Signature, Manual Approval...
+ */
 interface IDeferredAction {
 
     /**
      * Processes an incoming request (webhook) from an external service.
      * 
      * This method is only relevant for actions that expect a server callback.
+     * @param ExecutionContext $context The global context.
      * @param array $requestData The data of the incoming request.
-     * @return WebhookResult The object with the transaction ID and status.
+     * @return ActionResult Result of the execution of the action.
      */
-    public function processWebhook(array $requestData): WebhookResult;
+    public function processWebhook(ExecutionContext $context, array $requestData): ActionResult;
 }

@@ -464,6 +464,8 @@ $mod_strings = array (
 
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un Bloque de datos en una plataforma externa',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de Pago',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos con el Compromiso de Pago para realizar su pago en la plataforma externa.',
 
 
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',

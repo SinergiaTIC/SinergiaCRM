@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
+require_once "modules/stic_Payment_Commitments/stic_Payment_Commitments.php";
 
 abstract class stic_AWF_PaymentStrategy
 {
@@ -89,7 +90,7 @@ abstract class stic_AWF_PaymentStrategy
     * If Offline -> Returns OK.
     * If External platform -> Returns WAIT with data to redirection.
     */
-    abstract public function initiate(ExecutionContext $context, FormAction $actionConfig): ActionResult;
+    abstract public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payment $beanPayment): ActionResult;
 
     /**
     * Terminal: Execute the output (HTML form, Redirect header...).
@@ -100,5 +101,5 @@ abstract class stic_AWF_PaymentStrategy
     /**
     * WEBHOOK: Resolves action when notification arrives from external event.
     */ 
-    abstract public function resolve(ExecutionContext $context, WebhookResult $webhookData): ActionResult;
+    abstract public function resolve(ExecutionContext $context, ActionResult $result): ActionResult;
 }

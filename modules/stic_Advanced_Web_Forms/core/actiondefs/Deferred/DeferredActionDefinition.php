@@ -25,10 +25,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Base class for all actions that can wait for an external event.
- * Examples: Payments, SMS Validation, Digital Signature, Manual Approval...
- */
 abstract class DeferredActionDefinitionDefinition extends ServerActionDefinition implements IDeferredAction {
     final public function getType(): ActionType {
         return ActionType::DEFERRED;

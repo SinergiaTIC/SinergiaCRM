@@ -27,23 +27,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once __DIR__."/PaymentStrategy.php";
 
-class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
+class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
 {
-    protected string $configType = 'TPV';
-    protected string $configKeyPrefix = 'TPV';
+    protected string $configType = 'PAYPAL'; 
+    protected string $configKeyPrefix = 'PAYPAL';
 
-        /**
+    /**
     * Prepare payment.
     * If Offline -> Returns OK.
     * If External platform -> Returns WAIT with data to redirection.
     */
     public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payment $beanPayment): ActionResult
     {
-        $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'TERMINAL', 'MERCHANT_NAME', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
-        $config['SERVER_URL'] = 'https://sis.redsys.es/sis/realizarPago';
-        $config['SERVER_URL_TEST'] = 'https://sis-t.redsys.es:25443/sis/realizarPago';
-        $config['VERSION'] = 'HMAC_SHA256_V1';
-        $config['VERSION_TEST'] = 'HMAC_SHA256_V1';
+        $config = $this->getConfigValues(array('ID', 'ID_TEST', 'TEST'));
+        $config['URL'] = 'https://www.paypal.com/cgi-bin/webscr';
+        $config['URL_TEST'] = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+
+
 
         return new ActionResult(ResultStatus::WAIT, $actionConfig, "");
     }
@@ -62,7 +62,6 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
     */ 
     public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
     {
-        
-    }
 
+    }
 }
