@@ -70,6 +70,7 @@ class formLetter
         $result = $db->query($sql);
         while ($row = $db->fetchByAssoc($result)) {
             // STIC-Custom 20260209 EPS - Filtering PDF templates
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/987
             $pdfBean = BeanFactory::getBean('AOS_PDF_Templates', $row['id']);
             if ($pdfBean->ACLAccess('ListView', $pdfBean->isOwner($current_user->id))) {
             // if( ACLController::moduleSupportsACL('AOS_PDF_Templates') && ACLController::checkAccess('AOS_PDF_Templates', 'view', false)){
