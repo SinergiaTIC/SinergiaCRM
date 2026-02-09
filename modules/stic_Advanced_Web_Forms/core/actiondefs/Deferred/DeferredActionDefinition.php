@@ -25,9 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-abstract class DeferredActionDefinitionDefinition extends ServerActionDefinition implements IDeferredAction {
+abstract class DeferredActionDefinition extends ServerActionDefinition implements IDeferredAction {
     final public function getType(): ActionType {
         return ActionType::DEFERRED;
     }
-
 }
