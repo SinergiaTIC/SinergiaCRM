@@ -26,42 +26,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Abstract class for actions that operate on ONE Bean that has been saved by a previous action.
+ * Abstract class for hook actions that operate on ONE Bean that has been saved by a previous action.
  * Automates:
  *   - The definition, obtaining and validation of the DataBlock parameter.
  *   - The obtaining of the BeanReference from the DataBlock.
  *   - The loading (retrieve) of the Bean.
  *   - Error management 
  */
-abstract class HookBeanActionDefinition extends HookDataBlockActionDefinition {
-
-    final public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
-    {
-        // Get the Bean reference saved for the Data Block 
-        $beanRef = $block->dataBlock->getBeanReference();
-        if ($beanRef === null) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "There is no saved Bean for DataBlock {$block->dataBlock->name}.");
-        }
-        
-        // Load the Bean
-        $bean = BeanFactory::getBean($beanRef->moduleName, $beanRef->beanId);
-        if ($bean === null) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not load Bean with ID {$beanRef->beanId} from module {$beanRef->moduleName}.");
-        }
-
-        // Execute the action with the Bean and the Data Block
-        return $this->executeWithBean($context, $actionConfig, $bean, $block);
+abstract class HookBeanActionDefinition extends ServerBeanActionDefinition {
+    final public function getType(): ActionType {
+        return ActionType::HOOK;
     }
-
-    /**
-     * Method to be implemented
-     * Executes the action, receives the loaded bean and the main data block with the form data
-     *
-     * @param ExecutionContext $context The global context.
-     * @param FormAction $actionConfig The configuration of the action.
-     * @param SugarBean $bean The bean loaded from the DB (saved data).
-     * @param DataBlockResolved $block The data block (form data).
-     * @return ActionResult
-     */
-    public abstract function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult;
 }

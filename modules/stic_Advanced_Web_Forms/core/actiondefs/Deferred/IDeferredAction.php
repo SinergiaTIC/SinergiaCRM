@@ -25,13 +25,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-/**
- * Base class for all actions that can wait for an external event.
- * Examples: Payments, SMS Validation, Digital Signature, Manual Approval...
- */
-abstract class DeferredActionDefinitionDefinition extends ServerActionDefinition implements IDeferredAction {
-    final public function getType(): ActionType {
-        return ActionType::DEFERRED;
-    }
+interface IDeferredAction {
 
+    /**
+     * Processes an incoming request (webhook) from an external service.
+     * 
+     * This method is only relevant for actions that expect a server callback.
+     * @param array $requestData The data of the incoming request.
+     * @return WebhookResult The object with the transaction ID and status.
+     */
+    public function processWebhook(array $requestData): WebhookResult;
 }

@@ -26,12 +26,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Base class for all actions that can wait for an external event.
- * Examples: Payments, SMS Validation, Digital Signature, Manual Approval...
+ * Abstract class for deferred actions that operate on ONE data block.
+ * Automates the definition, obtaining and validation of the DataBlock parameter.
  */
-abstract class DeferredActionDefinitionDefinition extends ServerActionDefinition implements IDeferredAction {
+abstract class DeferredDataBlockActionDefinition extends ServerDataBlockActionDefinition implements IDeferredAction {
     final public function getType(): ActionType {
         return ActionType::DEFERRED;
     }
-
 }
