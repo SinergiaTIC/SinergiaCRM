@@ -79,11 +79,7 @@ class stic_AwfDataBlock {
           });
         }
       });
-    } else {
-      if (!this.module || this.module === '') {
-        errors.push(utils.translate('LBL_ERROR_DATABLOCK_EMPTY'));
-      }
-    }
+    } 
 
     return errors;
   }
