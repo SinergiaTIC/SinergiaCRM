@@ -166,7 +166,6 @@ $mod_strings = array (
   'LBL_ERROR_DATABLOCK_NAME' => 'El nombre interno del bloque de datos está vacío',
   'LBL_ERROR_DATABLOCK_TITLE' => 'El bloque de datos debe tener un nombre público',
   'LBL_ERROR_DATABLOCK_FIELDS_INVALID' => 'El bloque de datos contiene campos inválidos',
-  'LBL_ERROR_DATABLOCK_EMPTY' => 'El bloque de datos está vacío',
   'LBL_ERROR_FIELD_NAME' => 'El nombre interno del campo está vacío',
   'LBL_ERROR_FIELD_LABEL' => 'No existe etiqueta para el campo',
   'LBL_ERROR_FIELD_TYPE' => 'No se ha definido el tipo de campo o de editor en el formulario',

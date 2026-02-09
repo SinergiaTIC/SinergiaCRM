@@ -258,22 +258,14 @@
                   <table class="table table-bordered table-striped w-auto">
                     <thead>
                       <tr>
-                        <th x-text="utils.translate('LBL_ONDUPLICATE_ACTION')"></th>
                         <th x-text="utils.translate('LBL_DUPLICATE_FIELDS')"></th>
+                        <th x-text="utils.translate('LBL_ONDUPLICATE_ACTION')"></th>
                         <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       <template x-for="(dupli, index) in item.duplicate_detections">
                         <tr>
-                          <!-- Duplicate Action -->
-                          <td class="col-3">
-                            <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate">
-                              <template x-for="action in stic_AwfDuplicateDetection.on_duplicateList()" :key="action.id">
-                                <option :value="action.id" x-text="action.text"></option>
-                              </template>
-                            </select>
-                          </td>
                           <!-- Duplicate Fields -->
                           <td class="col-8">
                             <div x-data="WizardStep2.duplicateFieldsxData(item, index)">
@@ -292,6 +284,14 @@
                                 </div>
                               </div>
                             </div>
+                          </td>
+                          <!-- Duplicate Action -->
+                          <td class="col-3">
+                            <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate">
+                              <template x-for="action in stic_AwfDuplicateDetection.on_duplicateList()" :key="action.id">
+                                <option :value="action.id" x-text="action.text"></option>
+                              </template>
+                            </select>
                           </td>
                           <!-- Delete Button -->
                           <td>
