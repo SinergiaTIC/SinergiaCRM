@@ -61,13 +61,21 @@ class formLetter
 
     public static function getModuleTemplates($module)
     {
+        global $current_user;
+
         $db = DBManagerFactory::getInstance();
         $templates = array();
 
         $sql = "SELECT id,name FROM aos_pdf_templates WHERE type = '" . $module . "' AND deleted = 0  AND active = 1 ORDER BY name";
         $result = $db->query($sql);
         while ($row = $db->fetchByAssoc($result)) {
-            $templates[$row['id']] = $row['name'];
+            // STIC-Custom 20260209 EPS - Filtering PDF templates
+            $pdfBean = BeanFactory::getBean('AOS_PDF_Templates', $row['id']);
+            if ($pdfBean->ACLAccess('ListView', $pdfBean->isOwner($current_user->id))) {
+            // if( ACLController::moduleSupportsACL('AOS_PDF_Templates') && ACLController::checkAccess('AOS_PDF_Templates', 'view', false)){
+                $templates[$row['id']] = $row['name'];
+            }
+            // END STIC-Custom
         }
 
         return $templates;
