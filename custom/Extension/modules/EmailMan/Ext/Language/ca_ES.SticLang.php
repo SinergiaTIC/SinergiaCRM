@@ -20,4 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1'] = 'Per veure el contingut al navegador, feu clic';
+$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2'] = 'aquí.';
 $mod_strings['LBL_CAMPAIGNS_SEND_QUEUED_HELP'] = "Es recomana no forçar l'enviament de correu sense deixar un període de temps suficient entre l'enviament forçat anterior i l'actual, atès que si el servei de correu és lent podria duplicar-se l'enviament a determinats destinataris.";

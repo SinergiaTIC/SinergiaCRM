@@ -88,6 +88,7 @@ $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = 'Produciuse un erro 
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = 'Creouse a seguinte lista de público obxectivo para as notificacións: ';
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
+$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Incluir un enlace en el mensaje para ver el contenido en el navegador';
 $mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los mensajes a enviar se añadirán automáticamente a la cola de envío.';
 
 $mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Envíos de mensajes';
