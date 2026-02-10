@@ -105,7 +105,7 @@ $mod_strings = array(
     'LBL_OWNERSHIP_PERCENTAGE' => 'Ownership percentage',
     'LBL_OWNERS_PRESIDENT_CONTACT_ID' => 'Owners president (related Person ID)',
     'LBL_OWNERS_PRESIDENT' => 'Owners president',
-    'LBL_KEY_SET' => 'Key set',
+    'LBL_KEY_SET' => 'Key sets',
     'LBL_OWNERSHIP_NOTES' => 'Ownership/Occupation notes',
     'LBL_INSURANCE_ACCOUNT_ID' => 'Insurance company',
     'LBL_INSURANCE' => 'Insurance company',
@@ -125,7 +125,7 @@ $mod_strings = array(
     'LBL_SECURITY' => 'Security',
     'LBL_UTILITIES_NOTES' => 'Utilities Notes',
 
-    'LBL_STIC_ASSETS_CONTACTS_FROM_CONTACTS_TITLE' => 'Person',
+    'LBL_STIC_ASSETS_CONTACTS_FROM_CONTACTS_TITLE' => 'Contact',
     'LBL_STIC_ASSETS_DOCUMENTS_FROM_DOCUMENTS_TITLE' => 'Documents',
     'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_FOLLOWUPS_TITLE' => 'Follow-ups',
 
@@ -136,6 +136,5 @@ $mod_strings = array(
     'LBL_INSURANCES_PANEL' => 'Insurances',
     'LBL_UTILITIES_PANEL' => 'Utilities',
 
-    'LBL_NO_OTHER_ERROR' => 'A value must be specified for the "Other" field if the type is "Other".',
-    
+    'LBL_NO_OTHER_ERROR' => 'A value must be specified for "Other" field if type is "Other".',    
 );
