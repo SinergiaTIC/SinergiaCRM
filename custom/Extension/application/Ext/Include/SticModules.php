@@ -72,6 +72,7 @@ $moduleList[] = 'stic_Signature_Log';
 // $moduleList[] = 'stic_MessagesMan';
 $moduleList[] = 'stic_Transactions';
 $moduleList[] = 'stic_Financial_Products';
+$moduleList[] = 'stic_Conversations';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
