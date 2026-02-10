@@ -90,8 +90,8 @@ $mod_strings = array(
     'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE' => 'Notificaciones',
 
     // Messages
-    'LBL_ACTIVATION_DATE_ERROR' => "A data de activación debe ser anterior á data de caducidad.",
-    'LBL_EXPIRATION_DATE_ERROR' => "A data de caducidad debe ser posterior á data de activación.",
+    'LBL_ACTIVATION_DATE_ERROR' => 'A data de activación debe ser anterior á data de caducidad.',
+    'LBL_EXPIRATION_DATE_ERROR' => 'A data de caducidad debe ser posterior á data de activación.',
     'LBL_SIGNERS_ADDED_MSG' => 'Asinantes engadidos correctamente',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Para que los nuevos firmantes puedan firmar el documento es necesario cambiar el estado a Abierto o Permanente.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Asinantes non engadidos, xa existen ou ocorreu un erro',
@@ -178,9 +178,9 @@ $mod_strings = array(
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'Non é necesario que asine este documento, xa foi asinado por outra persoa autorizada.',
     'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'O período para asinar este documento expirou. Data de caducidad:',
     'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'O período para asinar este documento aínda non comezou. A sinatura estará dispoñible a partir de:',
-    
+    'LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE' => 'El proceso de firma de este documento está cerrado y no es posible firmarlo.',
 
-    //Audit page
+    // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de auditoría da sinatura',
     'LBL_AUDIT_PAGE_SIGNATURE_DATA_TITLE' => 'Datos da sinatura',
     'LBL_AUDIT_PAGE_DOCUMENT_NAME' => 'Nome do documento',

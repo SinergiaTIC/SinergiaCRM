@@ -70,7 +70,6 @@ $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitente (dirección)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Responder a (nome)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME'] = 'Enviar notificación a:';
-$mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacións';
 $mod_strings['LBL_MSG_TYPE'] = 'Tipo';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla';
 $mod_strings['LBL_MSG_NOTIFICATION_TEMPLATE_ID_HELP'] = 'A plantilla debe ser do tipo SMS e póde incluir campos do rexistro asociado á notificación (o evento ou a subvención).';
@@ -83,9 +82,11 @@ $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "A notificación enviar
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "A plantilla de correo electrónico debe ser do tipo 'Notificación' e pódense incluir nela campos do rexistro asociado á notificación (o evento ou a subvención).";
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Conta de correo que se utilizará para enviar a notificación. Pódese configurar no apartado 'Correo electrónico saínte' da área de Adminstración.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo onde recibir as mensaxes de erro que se poidan producir tralo envío. Pódese configurar no apartado 'Correo electrónico entrante' da área de Administración.";
-$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = "Crearáse automaticamente unha lista de público obxectivo en base á selección e esta engadirase á notificación.";
+$mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP'] = 'Crearáse automaticamente unha lista de público obxectivo en base á selección e esta engadirase á notificación.';
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = 'Produciuse un erro ao crear a lista de público obxectivo.';
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = 'Creouse a seguinte lista de público obxectivo para as notificacións: ';
+ 
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
 $mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Incluir un enlace en el mensaje para ver el contenido en el navegador';

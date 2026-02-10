@@ -3981,7 +3981,6 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
-$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 
 // Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
