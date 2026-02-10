@@ -1437,3 +1437,63 @@ span.totals{
   max-height: 400px;   
   overflow-y: auto;    // Not growing beyond max-height
 }
+
+// Fix for ACL Edit View header sticky
+#ACLEditView_Access_Header {
+  position: sticky;
+  top: 0;
+  background: #f8f8f8;
+  z-index: 20;
+  
+  // First column in header - 20% width
+  #ACLEditView_Access_Header_category {
+    width: 20% !important;
+    min-width: 20% !important;
+    max-width: 20% !important;
+  }
+  
+  // All other columns in header should have equal width
+  td:not(#ACLEditView_Access_Header_category) {
+    width: auto !important;
+  }
+}
+// Fix for ACL Edit View scrollable area
+#acl-scroll-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  
+  // First column (category names) - 20% width
+  td[id$="_category"] {
+    width: 20% !important;
+    min-width: 20% !important;
+    max-width: 20% !important;
+  }
+  
+  // All other columns should have equal width
+  td:not([id$="_category"]) {
+    width: auto !important;
+  }
+}
+
+#acl-scroll-wrapper table tr:hover td {
+  background-color: lighten($stic-base, 40%) !important;
+  font-weight: bold;
+}
+
+// Fix para los selects en las celdas ACL - evitar solapamiento del símbolo de verificación
+#acl-scroll-wrapper select option,
+#ACLEditView_Access_Header select option {
+  padding-left: 20px !important;
+}
+
+.acl-saving-message {
+  color: bw($stic-base);
+  padding: 10px;
+  text-align: center;
+  font-size: 16px;
+}
