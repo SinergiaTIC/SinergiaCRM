@@ -32,7 +32,7 @@ class stic_Incorpora_LocationsUtils {
      * @param recordBean It can be a Contact, Accounts or stic_Job_Offers bean
      */
     public static function transferLocationData($recordBean) {
-        $sufix = $recordBean->field_defs['inc_id_c'] ? '_c' : '';
+        $sufix = isset($recordBean->field_defs['inc_id_c']) ? '_c' : '';
         $inc_town_code = 'inc_town_code' .$sufix;
         $inc_town = 'inc_town' .$sufix;
         $inc_municipality_code = 'inc_municipality_code' .$sufix;

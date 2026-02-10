@@ -180,6 +180,19 @@ $viewdefs['Documents']['QuickCreate'] = array (
       array (
         0 => 
         array (
+          'name' => 'stic_category_c',
+          'label' => 'LBL_STIC_CATEGORY',
+        ),
+        1 => 
+        array (
+          'name' => 'stic_subcategory_c',
+          'label' => 'LBL_STIC_SUBCATEGORY',
+        ),
+      ),      
+      4 => 
+      array (
+        0 => 
+        array (
           'name' => 'active_date',
           'displayParams' => 
           array (
@@ -192,7 +205,7 @@ $viewdefs['Documents']['QuickCreate'] = array (
           'label' => 'LBL_DOC_EXP_DATE',
         ),
       ),
-      4 => 
+      5 => 
       array (
         0 => 
         array (
