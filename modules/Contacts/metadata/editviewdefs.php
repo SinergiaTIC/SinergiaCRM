@@ -639,6 +639,46 @@ array (
             'label' => 'LBL_STIC_182_EXCLUDED',
           ),
         ),
+        5 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_confidentiality_agreement_c',
+            'studio' => 'visible',
+            'label' => 'LBL_STIC_CONFIDENTIALITY_AGREEMENT',
+          ),
+          1 => 
+          array (
+            'name' => 'stic_conduct_code_c',
+            'studio' => 'visible',
+            'label' => 'LBL_STIC_CONDUCT_CODE',
+          ),
+        ),
+        6 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_occupational_safety_c',
+            'studio' => 'visible',
+            'label' => 'LBL_STIC_OCCUPATIONAL_SAFETY',
+          ),
+          1 => 
+          array (
+            'name' => 'stic_time_availability_c',
+            'studio' => 'visible',
+            'label' => 'LBL_STIC_TIME_AVAILABILITY',
+          ),
+        ),
+        7 => 
+        array (
+          0 => 
+          array (
+            'name' => 'sepe_benefit_perceiver_c',
+            'studio' => 'visible',
+            'label' => 'LBL_SEPE_BENEFIT_PERCEIVER',
+          ),
+          1 => '',
+        ),
       ),
       'LBL_STIC_PANEL_GDPR' => 
       array (

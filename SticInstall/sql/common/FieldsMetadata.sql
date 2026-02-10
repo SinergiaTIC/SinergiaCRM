@@ -167,6 +167,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsinc_state_c', 'Contacts', 'inc_state_c'),
 ('Contactsinc_municipality_c', 'Contacts', 'inc_municipality_c'),
 ('Contactsinc_town_c', 'Contacts', 'inc_town_c'),
+('Contactsstic_confidentiality_agreement_c', 'Contacts', 'stic_confidentiality_agreement_c'),
+('Contactsstic_conduct_code_c', 'Contacts', 'stic_conduct_code_c'),
+('Contactsstic_occupational_safety_c', 'Contacts', 'stic_occupational_safety_c'),
+('Contactsstic_time_availability_c', 'Contacts', 'stic_time_availability_c'),
 -- Leads
 ('Leadsstic_acquisition_channel_c','Leads','stic_acquisition_channel_c'),
 ('Leadsstic_alt_address_county_c','Leads','stic_alt_address_county_c'),
@@ -204,6 +208,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('FP_Event_Locationsstic_address_region_c','FP_Event_Locations','stic_address_region_c'),
 -- Documents
 ('Documentsstic_shared_document_link_c','Documents','stic_shared_document_link_c'),
+('Documentsstic_category_c','Documents','stic_category_c'),
+('Documentsstic_subcategory_c','Documents','stic_subcategory_c'),
 -- Project
 ('Projectstic_location_c','Project','stic_location_c'),
 -- Users

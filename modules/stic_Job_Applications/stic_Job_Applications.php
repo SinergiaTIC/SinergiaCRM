@@ -65,10 +65,8 @@ class stic_Job_Applications extends Basic
         }
         return false;
     }
-	public function save($check_notify = true) {
-        include_once 'SticInclude/Utils.php';
-        include_once 'modules/stic_Job_Applications/Utils.php';
-
+	public function save($check_notify = true) 
+    {
         // Call the generic save() function from the SugarBean class
         if (empty($this->name)) {
             if ($this->stic_job_applications_contactscontacts_ida) {
@@ -79,14 +77,61 @@ class stic_Job_Applications extends Basic
             }
             $this->name = $contact_name .' - '.$offer_name;
         }
+        
+        $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
+        // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
+        if (!empty($offerBean) && ($offerBean->offer_type == 'volunteering') &&
+            $this->assigned_user_id != $offerBean->assigned_user_id) {
+            $this->assigned_user_id = $offerBean->assigned_user_id;
+        }
 
         parent::save($check_notify);
 
         if( $this->status == 'accepted'){
-
+            include_once 'modules/stic_Job_Applications/Utils.php';
             stic_Job_ApplicationsUtils::createWorkExperience($this);
-
 		}
-    }
 
+        include_once 'SticInclude/Utils.php';
+        $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_job_applications_contacts');
+        if (!empty($contactBean) && !empty($offerBean) && !empty($offerBean->offer_type) && ($offerBean->offer_type == 'volunteering')) 
+        {
+            // If the available time field has been updated, the corresponding field of the contact related also is updated.
+            if (isset($this->available_time) && (!isset($this->fetched_row['available_time']) || $this->available_time != $this->fetched_row['available_time'])) {
+                $contactBean->stic_time_availability_c = $this->available_time;
+                $contactBean->save();
+            }
+
+            // Get the active contact relationships, whether pre-voluntary or voluntary, related to the contact
+            $query = "stic_contacts_relationships.active = 1 AND (stic_contacts_relationships.relationship_type = 'pre-volunteer' OR stic_contacts_relationships.relationship_type = 'volunteer')";
+            $contactRelationshipBeans = $contactBean->get_linked_beans(
+                'stic_contacts_relationships_contacts',
+                '',
+                '',
+                0,
+                0,
+                0,
+                $query,
+            );
+
+            // Check if there is any relationship for the same project as the offer
+            $relationsCount = 0;
+            foreach ($contactRelationshipBeans as $contactRelationshipBean) {
+                if ($contactRelationshipBean->stic_contacts_relationships_projectproject_ida == $offerBean->project_stic_job_offersproject_ida) {
+                    $relationsCount++;
+                    break;  
+                }
+            }
+
+            // If there is no pre-voluntary and voluntary contact relationship, create a new pre-volunteer relationship
+            if ($relationsCount == 0) {
+                $relationshipBean = BeanFactory::newBean('stic_Contacts_Relationships');
+                $relationshipBean->relationship_type = 'pre-volunteer';
+                $relationshipBean->stic_contacts_relationships_contactscontacts_ida = $contactBean->id;
+                $relationshipBean->stic_contacts_relationships_projectproject_ida = $offerBean->project_stic_job_offersproject_ida;
+                $relationshipBean->assigned_user_id = $offerBean->assigned_user_id;
+                $relationshipBean->save();
+            }
+        }
+    }
 }

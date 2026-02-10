@@ -51,8 +51,13 @@ array(
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_EDITVIEW_PANEL5' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
+                ),
+                'LBL_EDITVIEW_PANEL8' => 
+                array (
+                'newTab' => true,
+                'panelDefault' => 'expanded',
                 ),
                 'LBL_EDITVIEW_PANEL2' => array(
                     'newTab' => true,
@@ -79,69 +84,140 @@ array(
         ),
         'panels' => array(
             'LBL_DEFAULT_PANEL' => array(
-                0 => array(
+                0 => array (
                     0 => 'name',
                     1 => 'assigned_user_name',
                 ),
-                1 => array(
-                    0 => array(
+                1 => array (
+                    0 => 
+                    array (
                         'name' => 'stic_job_offers_accounts_name',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'interlocutor',
                         'studio' => 'visible',
                         'label' => 'LBL_INTERLOCUTOR',
                     ),
                 ),
-                2 => array(
-                    0 => array(
-                        'name' => 'type',
+                2 => array (
+                    0 => 
+                    array (
+                        'name' => 'offer_type',
                         'studio' => 'visible',
-                        'label' => 'LBL_TYPE',
+                        'label' => 'LBL_OFFER_TYPE',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'status',
                         'studio' => 'visible',
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                3 => array(
-                    0 => array(
+                3 => array (
+                    0 => 
+                    array (
+                        'name' => 'type',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TYPE',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'territorial_scope',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TERRITORIAL_SCOPE',
+                    ),
+                ),
+                4 => array (
+                    0 => 
+                    array (
                         'name' => 'offer_origin',
                         'studio' => 'visible',
                         'label' => 'LBL_OFFER_ORIGIN',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'offered_positions',
                         'label' => 'LBL_OFFERED_POSITIONS',
                     ),
                 ),
-                4 => array(
-                    0 => array(
+                5 => array (
+                    0 => 
+                    array (
                         'name' => 'process_start_date',
                         'label' => 'LBL_PROCESS_START_DATE',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'process_end_date',
                         'label' => 'LBL_PROCESS_END_DATE',
                     ),
                 ),
-                5 => array(
-                    0 => array(
+                6 => array (
+                    0 => 
+                    array (
                         'name' => 'applications_start_date',
                         'label' => 'LBL_APPLICATIONS_START_DATE',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'applications_end_date',
                         'label' => 'LBL_APPLICATIONS_END_DATE',
                     ),
                 ),
-                6 => array(
-                    0 => 'description',
-                    1 => array(
+                7 => array (
+                    0 => 
+                    array (
                         'name' => 'offer_code',
                         'label' => 'LBL_OFFER_CODE',
                     ),
+                    1 => 
+                    array (
+                        'name' => 'offer_mode',
+                        'studio' => 'visible',
+                        'label' => 'LBL_OFFER_MODE',
+                    ),
+                ),
+                8 => array (
+                    0 => 
+                    array (
+                        'name' => 'weekdays',
+                        'studio' => 'visible',
+                        'label' => 'LBL_WEEKDAYS',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'timetable',
+                        'label' => 'LBL_TIMETABLE',
+                    ),
+                ),
+                9 => array (
+                    0 => 
+                    array (
+                        'name' => 'evaluation',
+                        'label' => 'LBL_EVALUATION',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'responsible',
+                        'studio' => 'visible',
+                        'label' => 'LBL_RESPONSIBLE',
+                    ),
+                ),
+                10 => array (
+                    0 => 
+                    array (
+                        'name' => 'center',
+                        'studio' => 'visible',
+                        'label' => 'LBL_CENTER',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'project_stic_job_offers_name',
+                    ),
+                ),
+                11 => array (
+                    0 => 'description',
                 ),
             ),
             'lbl_editview_panel5' => array(
@@ -216,6 +292,25 @@ array(
                     ),
                 ),
             ),
+            'lbl_editview_panel8' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'temporality',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TEMPORALITY',
+                    ),
+                    1 => array(
+                        'name' => 'expected_duration',
+                        'label' => 'LBL_EXPECTED_DURATION',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'goals',
+                        'label' => 'LBL_GOALS',
+                    ),
+                ),  
+            ),
             'lbl_editview_panel2' => array(
                 0 => array(
                     0 => array(
@@ -223,7 +318,6 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_SEPE_CONTRACT_TYPE',
                     ),
-                    1 => '',
                 ),
                 1 => array(
                     0 => array(
@@ -244,11 +338,6 @@ array(
                     ),
                     1 => array(
                         'name' => 'inc_incorpora_record',
-                        'studio' => array(
-                            'no_duplicate' => true,
-                            'editview' => false,
-                            'quickcreate' => false,
-                        ),
                         'label' => 'LBL_INC_INCORPORA_RECORD',
                     ),
                 ),
@@ -257,14 +346,6 @@ array(
                         'name' => 'inc_status',
                         'studio' => 'visible',
                         'label' => 'LBL_INC_STATUS',
-                    ),
-                    1 => array(
-                        'name' => 'inc_status_details',
-                        'studio' => array(
-                            'editview' => false,
-                            'quickcreate' => false,
-                        ),
-                        'label' => 'LBL_INC_STATUS_DETAILS',
                     ),
                 ),
                 2 => array(
@@ -369,23 +450,6 @@ array(
                 ),
                 12 => array(
                     0 => array(
-                        'name' => 'inc_municipality',
-                        'label' => 'LBL_INC_MUNICIPALITY',
-                    ),
-                    1 => array(
-                        'name' => 'inc_town',
-                        'label' => 'LBL_INC_TOWN',
-                    ),
-                ),
-                13 => array(
-                    0 => array(
-                        'name' => 'inc_state',
-                        'label' => 'LBL_INC_STATE',
-                    ),
-                    1 => '',
-                ),
-                14 => array(
-                    0 => array(
                         'name' => 'inc_location',
                         'studio' => 'visible',
                         'label' => 'LBL_INC_LOCATION',
@@ -397,7 +461,7 @@ array(
                     ),
                 ),
             ),
-            'lbl_editview_panel7' => array(
+            'LBL_EDITVIEW_PANEL7' => array(
                 0 => array(
                     0 => array(
                         'name' => 'inc_collective_requirements',
@@ -412,15 +476,15 @@ array(
                 ),
                 1 => array(
                     0 => array(
-                        'name' => 'inc_education',
-                        'studio' => 'visible',
-                        'label' => 'LBL_INC_EDUCATION',
-                    ),
-                    1 => array(
                         'name' => 'inc_working_experience',
                         'comment' => '',
                         'studio' => 'visible',
                         'label' => 'LBL_INC_WORKING_EXPERIENCE',
+                    ),
+                    1 => array(
+                        'name' => 'inc_education',
+                        'studio' => 'visible',
+                        'label' => 'LBL_INC_EDUCATION',
                     ),
                 ),
                 2 => array(
@@ -435,92 +499,39 @@ array(
                 ),
                 3 => array(
                     0 => array(
-                        'name' => 'inc_driving_licenses',
-                        'label' => 'LBL_INC_DRIVING_LICENSES',
-                    ),
-                    1 => array(
                         'name' => 'inc_professional_licenses',
                         'label' => 'LBL_INC_PROFESSIONAL_LICENSES',
                     ),
-                ),
-            ),
-            'LBL_DETAILVIEW_PANEL6' => array(
-                0 => array(
-                    0 => array(
-                        'name' => 'inc_reference_officer',
-                        'label' => 'LBL_INC_REFERENCE_OFFICER',
-                    ),
                     1 => array(
-                        'name' => 'inc_reference_entity',
-                        'studio' => 'visible',
-                        'label' => 'LBL_INC_REFERENCE_ENTITY',
-                    ),
-                ),
-                1 => array(
-                    0 => array(
-                        'name' => 'inc_reference_group',
-                        'studio' => 'visible',
-                        'label' => 'LBL_INC_REFERENCE_GROUP',
-                    ),
-                    1 => '',
-                ),
-                2 => array(
-                    0 => array(
-                        'name' => 'inc_synchronization_date',
-                        'studio' => array(
-                            'no_duplicate' => true,
-                            'editview' => false,
-                            'quickcreate' => false,
-                        ),
-                        'label' => 'LBL_INC_SYNCHRONIZATION_DATE',
-                    ),
-                    1 => array(
-                        'name' => 'inc_synchronization_errors',
-                        'studio' => array(
-                            'no_duplicate' => true,
-                            'editview' => false,
-                            'quickcreate' => false,
-                        ),
-                        'label' => 'LBL_INC_SYNCHRONIZATION_ERRORS',
-                    ),
-                ),
-                3 => array(
-                    0 => array(
-                        'name' => 'inc_synchronization_log',
-                        'comment' => 'Full text of log',
-                        'studio' => array(
-                            'no_duplicate' => true,
-                            'editview' => false,
-                            'quickcreate' => false,
-                        ),
-                        'label' => 'LBL_INC_SYNCHRONIZATION_LOG',
-                    ),
-                ),
-            ),
-            'LBL_PANEL_RECORD_DETAILS' => array(
-                0 => array(
-                    0 => array(
-                        'name' => 'created_by_name',
-                        'label' => 'LBL_CREATED',
-                    ),
-                    1 => array(
-                        'name' => 'date_entered',
-                        'customCode' => '{$fields.date_entered.value}',
-                        'label' => 'LBL_DATE_ENTERED',
-                    ),
-                ),
-                1 => array(
-                    0 => array(
-                        'name' => 'modified_by_name',
-                        'label' => 'LBL_MODIFIED_NAME',
-                    ),
-                    1 => array(
-                        'name' => 'date_modified',
-                        'customCode' => '{$fields.date_modified.value}',
-                        'label' => 'LBL_DATE_MODIFIED',
+                        'name' => 'inc_driving_licenses',
+                        'label' => 'LBL_INC_DRIVING_LICENSES',
                     ),
                 ),
             ),
         ),
+        'LBL_PANEL_RECORD_DETAILS' => array(
+            0 => array(
+                0 => array(
+                    'name' => 'created_by_name',
+                    'label' => 'LBL_CREATED',
+                ),
+                1 => array(
+                    'name' => 'date_entered',
+                    'customCode' => '{$fields.date_entered.value}',
+                    'label' => 'LBL_DATE_ENTERED',
+                ),
+            ),
+            1 => array(
+                0 => array(
+                    'name' => 'modified_by_name',
+                    'label' => 'LBL_MODIFIED_NAME',
+                ),
+                1 => array(
+                    'name' => 'date_modified',
+                    'customCode' => '{$fields.date_modified.value}',
+                    'label' => 'LBL_DATE_MODIFIED',
+                ),
+            ),
+        ),   
     ),
 );
