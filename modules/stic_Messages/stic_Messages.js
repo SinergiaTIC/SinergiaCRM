@@ -144,6 +144,18 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           // $("#EditView .dcQuickEdit td.buttons").append("<input type='hidden' name='mass_ids' id='mass_ids' value='{$idsList}'>");
           panelBody.find('.dcQuickEdit td.buttons').append("<input type='hidden' name='mass_ids' id='mass_ids' value='"+idsList+"'>");
           // panelBody.find('#mass_ids').val(idsList);
+          // If this is a mass send with more than one target, disable WhatsAppWeb option and force SMS
+            if (targetCount > 1) {
+              var $typeSelect = panelBody.find('select[name="type"]');
+              if ($typeSelect.length) {
+                // Disable WhatsApp option and change to SMS if WhatsAppWeb is selected
+                $typeSelect.find('option[value="WhatsAppWeb"]').prop('disabled', true);
+                if ($typeSelect.val() === 'WhatsAppWeb') {
+                  const smsOption = $typeSelect.find('option[value="SevenSmsHelper"]');
+                  $typeSelect.val(smsOption.length ? 'SevenSmsHelper' : $typeSelect.find('option:not(:disabled)').first().val());
+                }
+              }
+            }
         }
           SUGAR.ajaxUI.hideLoadingPanel();
 
@@ -169,6 +181,42 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 
 $(function() {
   $.fn.qtip.zindex = 26000;
+
+  // Disable editing for WhatsAppWeb messages
+  if (typeof viewType !== 'undefined' && (viewType() === 'detail' || viewType() === 'edit')) {
+    var messageType = $('select[name="type"]').val() || $('input[name="type"]').val();
+    var messageId = $('input[name="record"]').val();
+    
+    // If editing an existing WhatsAppWeb message, disable all fields
+    if (messageId && messageType === 'WhatsAppWeb') {
+      // Disable all form fields except parent relationship
+      $('#EditView input:not([name="parent_name"]):not([name="parent_id"]):not([name="parent_type"])').prop('disabled', true);
+      $('#EditView select:not([name="parent_type"])').prop('disabled', true);
+      $('#EditView textarea').prop('disabled', true);
+      
+      // Hide save button, only allow cancel/back
+      $('#EditView input[type="submit"][name="button"]').hide();
+      
+      // Add a notice
+      if ($('#EditView .whatsapp-readonly-notice').length === 0) {
+        $('#EditView').prepend('<div class="whatsapp-readonly-notice" style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px;"><strong>Aviso:</strong> Los mensajes de WhatsApp Web no pueden ser editados una vez enviados.</div>');
+      }
+    }
+  }
+
+  // Force status to 'sent' when type is WhatsAppWeb
+  $('select[name="type"]').on('change', function() {
+    if ($(this).val() === 'WhatsAppWeb') {
+      $('select[name="status"]').val('sent').prop('disabled', true);
+    } else {
+      $('select[name="status"]').prop('disabled', false);
+    }
+  });
+
+  // On page load, check if type is WhatsAppWeb
+  if ($('select[name="type"]').val() === 'WhatsAppWeb') {
+    $('select[name="status"]').val('sent').prop('disabled', true);
+  }
 
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 

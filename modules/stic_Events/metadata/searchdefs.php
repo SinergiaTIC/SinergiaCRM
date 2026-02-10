@@ -322,6 +322,22 @@ array (
         'default' => true,
         'name' => 'session_color',
       ),
+      'volunteer_mode' => 
+      array (
+          'type' => 'enum',
+          'label' => 'LBL_VOLUNTEER_MODE',
+          'width' => '10%',
+          'default' => true,
+          'name' => 'volunteer_mode',
+      ),
+      'target_audience' => 
+      array (
+          'type' => 'enum',
+          'label' => 'LBL_TARGET_AUDIENCE',
+          'width' => '10%',
+          'default' => true,
+          'name' => 'target_audience',
+      ),           
       'created_by' => 
       array (
         'type' => 'assigned_user_name',

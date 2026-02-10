@@ -57,8 +57,10 @@ class sticGenerateSignedPdf
      */
     public static function generateSignaturePdf($signedMode = 'handwritten')
     {
-        global $sugar_config, $app_list_strings, $app_strings, $mod_strings;
-
+        global $sugar_config, $app_list_strings, $app_strings;
+        
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Signatures');
+        
         // Required utility and function files
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
         require_once 'modules/stic_Signatures/Utils.php';
@@ -167,7 +169,7 @@ class sticGenerateSignedPdf
             case 'button':
                 // Generate an acceptance image with signer details and timestamp
                 $textArray = [
-                    'Document accepted by:',
+                    $mod_strings['LBL_PORTAL_DOCUMENT_ACCEPTED_BY'],
                     $signerBean->parent_name,
                     $signerBean->email_address,
                     $userTime,
