@@ -81,6 +81,7 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
+  // Module fields
   'LBL_FORM_URL' => 'URL del formulario',
   'LBL_USER_AGENT' => 'Navegador y sistema operativo',
   'LBL_REMOTE_IP' => 'Dirección IP',
@@ -89,26 +90,37 @@ $mod_strings = array (
   'LBL_HTML_SUMMARY' => 'Respuesta',
   'LBL_STATUS' => 'Estado',
   'LBL_EXECUTION_LOG' => 'Registro de ejecución',
+
+  // Execution log: action results
   'LBL_EXECUTION_ITEM_OK' => '✅ [OK]',
   'LBL_EXECUTION_ITEM_SKIPPED' => '⏭️ [OMITIDO]',
   'LBL_EXECUTION_ITEM_ERROR' => '❌ [ERROR]',
-  'LBL_FIELD' => 'Campo',
 
+  // General
+  'LBL_FIELD' => 'Campo',
+  'LBL_RESPONSE_SUMMARY_DATA' => 'Resumen de respuestas',
+
+  // Generic response messages
+  'LBL_DUPLICATE_RESPONSE_TITLE' => 'Aviso',
+  'LBL_DUPLICATE_RESPONSE_MSG' => 'Esta respuesta ya ha sido enviada y procesada anteriormente.',
+
+  'LBL_ERROR_GENERIC_TITLE' => 'Error',
+  'LBL_ERROR_GENERIC_MSG' => 'Se ha producido un error al procesar su respuesta.',
+
+  'LBL_ERROR_FORM_VALIDATION' => 'Error en la validación de datos del formulario',
+  'LBL_ERROR_FORM_VALIDATION_MSG' => 'Se han detectado errores en los datos enviados.',
+
+  // Errors
   'LBL_RESPONSE_NO_PUBLIC_STATUS' => 'Respuesta recibida con el formulario sin publicar',
   'LBL_RESPONSE_HONEYPOT_SPAM' => 'Respuesta no deseada: se ha rellenado el campo trampa oculto',
   'LBL_ERROR_FORM_CONFIG' => 'Error en la configuración del formulario',
-  'LBL_DUPLICATE_RESPONSE_TITLE' => 'Aviso',
-  'LBL_DUPLICATE_RESPONSE_MSG' => 'Esta respuesta ya ha sido enviada y procesada anteriormente',
-  'LBL_ERROR_GENERIC_TITLE' => 'Error',
-  'LBL_ERROR_GENERIC_MSG' => 'Se ha producido un error al procesar su respuesta.',
-  'LBL_ERROR_FORM_VALIDATION' => 'Error en la validación de datos del formulario',
-  'LBL_ERROR_FORM_VALIDATION_MSG' => 'Se han detectado errores en los datos enviados',
   'LBL_ERROR_REQUIRED_FIELD' => 'Es un campo obligatorio',
   'LBL_ERROR_NUMERIC_FIELD' => 'El valor debe ser numérico',
   'LBL_ERROR_DATE_FIELD' => 'El valor debe ser una fecha válida',
   'LBL_ERROR_EMAIL_FIELD' => 'El valor debe ser una dirección de correo válida',
   'LBL_ERROR_VALUE_FIELD' => 'El valor no es válido para el campo',
   
+  // Subpanels
   'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE' => 'Vínculos de formularios',
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE' => 'Formulario Web Avanzado',
   'LBL_ANSWERS_SUBPANEL_TITLE' => 'Detalles de la respuesta',

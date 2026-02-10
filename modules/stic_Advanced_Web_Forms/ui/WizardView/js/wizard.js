@@ -1318,9 +1318,9 @@ class WizardStep2 {
       get summaryDescription() {
         switch(this.fieldTabSelected) {
           case 'form':
-            return utils.translate('LBL_FIELDS_FORM_DESC');
+            return utils.translate('LBL_FIELDS_FORM_TAB_DESC');
           case 'fixed':
-            return utils.translate('LBL_FIELDS_FIXED_DESC');
+            return utils.translate('LBL_FIELDS_FIXED_TAB_DESC');
         }
         return '';
       },
