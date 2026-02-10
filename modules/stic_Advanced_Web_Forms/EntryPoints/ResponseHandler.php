@@ -272,8 +272,8 @@ class ResponseHandler
                 // Save traceability links (created/modified records)                
                 $this->saveLinks($responseBean, $context);
 
-                // Generate analytical answers
-                $this->generateAnalyticsAnswers($responseBean, $formConfig, $cleanData);
+                // Generate analytical response details
+                $this->generateResponseDetails($responseBean, $formConfig, $cleanData);
 
                 // Update status and generate execution log
                 $hasErrors = false;
@@ -557,16 +557,20 @@ class ResponseHandler
     }
 
     /**
-     * Generates analytical responses for storage and subsequent analysis.
+     * Generates response details for storage and subsequent analysis.
      * @param SugarBean $responseBean Response bean
      * @param FormConfig $formConfig Form configuration
      * @param array $submittedData Data sent in the submission
      */
-    private function generateAnalyticsAnswers(SugarBean $responseBean, FormConfig $formConfig, array $submittedData): void {
+    private function generateResponseDetails(SugarBean $responseBean, FormConfig $formConfig, array $submittedData): void {
         global $app_strings;
 
         // Global counter
         $orderCounter = 1;
+
+        // if (!$responseBean->load_relationship('details_link')) {
+        //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
+        // }
 
         foreach ($formConfig->data_blocks as $block) {
             foreach ($block->fields as $field) {
@@ -618,31 +622,31 @@ class ResponseHandler
                 }
 
                 // Create analytical response bean
-                $answerBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Answers');
-                $answerBean->response_id = $responseBean->id;
-                $answerBean->form_id = $formConfig->id ?? ''; 
+                $detailBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Response_Details');
+                $detailBean->stic_advanced_web_forms_responses_id_c = $responseBean->id;
+                $detailBean->stic_advanced_web_forms_id_c = $formConfig->id ?? ''; 
                 
-                $answerBean->question_key = $block->name . '.' . $field->name;
-                $answerBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                $detailBean->question_key = $block->name . '.' . $field->name;
+                $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
                 if (!empty($field->description)) {
-                    $answerBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
+                    $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 }
-                $answerBean->question_section = $block->text;
+                $detailBean->question_section = $block->text;
                 
-                $answerBean->question_sort_order = $currentOrder;
+                $detailBean->question_sort_order = $currentOrder;
 
-                $answerBean->answer_value = (string)$storedValue;
-                $answerBean->answer_text = (string)$readableText;
-                $answerBean->answer_type = $field->type_in_form;
+                $detailBean->answer_value = (string)$storedValue;
+                $detailBean->answer_text = (string)$readableText;
+                $detailBean->answer_type = $field->type_in_form;
                 
                 // To facilitate analysis, we save the numeric value if applicable
                 if (!is_array($rawValue) && is_numeric($rawValue)) {
-                    $answerBean->answer_integer = (float)$rawValue;
+                    $detailBean->answer_integer = (float)$rawValue;
                 } else {
-                    $answerBean->answer_integer = 0;
+                    $detailBean->answer_integer = 0;
                 }
 
-                $answerBean->save();
+                $detailBean->save();
             }
         }
     }

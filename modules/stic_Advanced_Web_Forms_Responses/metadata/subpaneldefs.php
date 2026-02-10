@@ -22,13 +22,13 @@ $layout_defs["stic_Advanced_Web_Forms_Responses"]["subpanel_setup"]['stic_1c31fo
     'get_subpanel_data' => 'stic_1c31forms_links',
     'top_buttons' => array (),
 );
-$layout_defs["stic_Advanced_Web_Forms_Responses"]["subpanel_setup"]['answers_link'] = array(
+$layout_defs["stic_Advanced_Web_Forms_Responses"]["subpanel_setup"]['details_link'] = array(
     'order' => 10,
-    'module' => 'stic_Advanced_Web_Forms_Answers',
+    'module' => 'stic_Advanced_Web_Forms_Response_Details',
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'question_sort_order',
     'title_key' => 'LBL_ANSWERS_SUBPANEL_TITLE',
-    'get_subpanel_data' => 'answers_link',
+    'get_subpanel_data' => 'details_link',
     'top_buttons' => array(), 
 );

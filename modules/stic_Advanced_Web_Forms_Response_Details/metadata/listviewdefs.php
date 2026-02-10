@@ -42,24 +42,77 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Advanced_Web_Forms_Answers/stic_Advanced_Web_Forms_Answers.php');
-
-class stic_Advanced_Web_Forms_AnswersDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
-    {
-        global $current_user, $app_strings;
-        require('modules/stic_Advanced_Web_Forms_Answers/metadata/dashletviewdefs.php');
-
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Advanced_Web_Forms_Answers');
-        }
-
-        $this->searchFields = $dashletData['stic_Advanced_Web_Forms_AnswersDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Advanced_Web_Forms_AnswersDashlet']['columns'];
-
-        $this->seedBean = new stic_Advanced_Web_Forms_Answers();        
-    }
-}
+$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+$listViewDefs[$module_name] = array(
+    'QUESTION_SORT_ORDER' => array(
+        'width' => '10',
+        'label' => 'LBL_QUESTION_SORT_ORDER',
+        'default' => true,
+    ),
+    'QUESTION_KEY' => array(
+        'width' => '10',
+        'label' => 'LBL_QUESTION_KEY',
+        'default' => false,
+    ),
+    'QUESTION_SECTION' => array(
+        'width' => '10',
+        'label' => 'LBL_QUESTION_SECTION',
+        'default' => true,
+    ),
+    'QUESTION_LABEL' => array(
+        'width' => '10',
+        'label' => 'LBL_QUESTION_LABEL',
+        'default' => true,
+    ),
+    'QUESTION_HELP_TEXT' => array(
+        'width' => '10',
+        'label' => 'LBL_QUESTION_HELP_TEXT',
+        'default' => true,
+    ),
+    'ANSWER_VALUE' => array(
+        'width' => '10',
+        'label' => 'LBL_ANSWER_VALUE',
+        'default' => false,
+    ), 
+    'ANSWER_TEXT' => array(
+        'width' => '10',
+        'label' => 'LBL_ANSWER_TEXT',
+        'default' => true,
+    ),
+    'ANSWER_FORM_TYPE' => array(
+        'width' => '10',
+        'label' => 'LBL_ANSWER_FORM_TYPE',
+        'default' => false,
+    ), 
+    'ANSWER_INTEGER' => array(
+        'width' => '10',
+        'label' => 'LBL_ANSWER_INTEGER',
+        'default' => false,
+    ),
+    // 'FORM_NAME' => array(
+    //     'width' => '9',
+    //     'label' => 'LBL_FORM_NAME',
+    //     'module' => 'stic_Advanced_Web_Forms',
+    //     'id' => 'FORM_ID',
+    //     'default' => true
+    // ),
+    // 'RESPONSE_NAME' => array(
+    //     'width' => '9',
+    //     'label' => 'LBL_RESPONSE_NAME',
+    //     'module' => 'stic_Advanced_Web_Forms_Responses',
+    //     'id' => 'RESPONSE_ID',
+    //     'default' => true
+    // ),
+    'DATE_MODIFIED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_MODIFIED',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'DATE_ENTERED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_ENTERED',
+        'width' => '10%',
+        'default' => false,
+    ),
+);

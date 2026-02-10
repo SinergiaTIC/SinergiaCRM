@@ -71,7 +71,7 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Mis Detalles de respuestas a formularios',
   'LNK_NEW_RECORD' => 'Crear Detalle de respuesta a formularios',
   'LNK_LIST' => 'Ver Detalles de respuestas a formularios',
-  'LNK_IMPORT_STIC_ADVANCED_WEB_FORMS_ANSWERS' => 'Importar Detalles de respuestas a formularios',
+  'LNK_IMPORT_STIC_ADVANCED_WEB_FORMS_RESPONSE_DETAILS' => 'Importar Detalles de respuestas a formularios',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Detalles de respuestas a formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
@@ -87,12 +87,11 @@ $mod_strings = array (
   'LBL_ANSWER_TEXT' => 'Respuesta',
   'LBL_ANSWER_FORM_TYPE' => 'Tipo',
   'LBL_ANSWER_INTEGER' => 'Valor entero de la respuesta',
-  'LBL_FORM_ID' => 'ID del formulario',
-  'LBL_FORM_LINK' => 'Formulario',
-  'LBL_FORM_NAME' => 'Formulario',
-  'LBL_RESPONSE_ID' => 'ID de la respuesta',
-  'LBL_RESPONSE_LINK' => 'Respuesta del formulario',
-  'LBL_RESPONSE_NAME' => 'Respuesta del formulario',
 
-  'LBL_STIC_ADVANCED_WEB_FORMS_ANSWERS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_ANSWERS_TITLE' => 'Detalles de respuestas a formularios ',
+  'LBL_FORM_ID' => 'ID del formulario',
+  'LBL_FORM' => 'Formulario',
+  'LBL_RESPONSE_ID' => 'ID de la respuesta',
+  'LBL_RESPONSE' => 'response',
+
+  'LBL_STIC_AWF_RESPONSE_DETAILS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSE_DETAILS_TITLE' => 'Detalles de respuestas a formularios ',
 );

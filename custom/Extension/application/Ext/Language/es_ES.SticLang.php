@@ -176,7 +176,7 @@ $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario d
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
-$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Answers'] = 'Detalles de respuestas a formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Response_Details'] = 'Detalles de respuestas a formularios';
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms_Responses'] = 'Respuestas a formularios';
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms_Links'] = 'Vínculos de formularios';
 $app_list_strings['moduleList']['stic_Advanced_Web_Forms'] = 'Formularios Web Avanzados';
@@ -238,7 +238,7 @@ $app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
 $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmante';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacción';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producto financiero';
-$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Answers'] = 'Detalle de respuesta a formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Response_Details'] = 'Detalle de respuesta a formulario';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Responses'] = 'Respuesta a formulario';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Links'] = 'Vínculo de formulario';
 $app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms'] = 'Formulario Web Avanzado';
@@ -3830,7 +3830,7 @@ $app_list_strings['stic_advanced_web_forms_field_type_list']['form'] = 'Formular
 $app_list_strings['stic_advanced_web_forms_field_type_list']['hidden'] = 'Valor fijo';
 
 // Advanced Web Forms: configuration->data_block->field->type_in_form
-// Advanced Web Forms Answers: answer_form_type
+// Advanced Web Forms Response Details: answer_form_type
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['text'] = '➖ Entrada de texto';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['textarea'] = '☰ Entrada larga';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['number'] = '#️⃣ Entrada numérica';

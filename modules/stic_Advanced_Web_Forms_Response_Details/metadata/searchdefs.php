@@ -38,47 +38,26 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-$module_name = 'stic_Advanced_Web_Forms_Answers';
-$subpanel_layout = array(
-    'top_buttons' => array(
+$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+$searchdefs[$module_name] = array(
+    'templateMeta' => array(
+        'maxColumns' => '3',
+        'maxColumnsBasic' => '4',
+        'widths' => array('label' => '10', 'field' => '30'),
     ),
-
-    'where' => '',
-
-    'list_fields' => array(
-        'question_sort_order' => array(
-             'vname' => 'LBL_QUESTION_SORT_ORDER',
-             'width' => '5%',
-             'default' => true,
+    'layout' => array(
+        'basic_search' => array(
+            'name',
+            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
         ),
-        'question_section' => array(
-            'vname' => 'LBL_QUESTION_SECTION',
-            'width' => '20%',
-            'default' => true,
-        ),
-        'question_label' => array(
-            'vname' => 'LBL_QUESTION_LABEL',
-            'width' => '20%',
-            'default' => true,
-        ),
-        'question_help_text' => array(
-            'vname' => 'LBL_QUESTION_HELP_TEXT',
-            'width' => '20%',
-            'default' => true,
-        ),
-        'answer_text' => array(
-            'vname' => 'LBL_ANSWER_TEXT',
-            'width' => '25%',
-            'default' => true,
-        ),
-        'date_entered' => array(
-            'vname' => 'LBL_DATE_ENTERED',
-            'width' => '10%',
-            'default' => true,
+        'advanced_search' => array(
+            'name',
+            array(
+                'name' => 'assigned_user_id',
+                'label' => 'LBL_ASSIGNED_TO',
+                'type' => 'enum',
+                'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
         ),
     ),
 );

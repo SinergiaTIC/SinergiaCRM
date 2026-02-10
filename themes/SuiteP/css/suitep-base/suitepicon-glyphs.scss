@@ -1,10 +1,10 @@
 @font-face {
     font-family: "suitepicon";
-    src: url("suitepicon.eot?a1ea5eefff1a562556f0ea7dd6c76023?#iefix") format("embedded-opentype"),
-url("suitepicon.woff2?a1ea5eefff1a562556f0ea7dd6c76023") format("woff2"),
-url("suitepicon.woff?a1ea5eefff1a562556f0ea7dd6c76023") format("woff"),
-url("suitepicon.ttf?a1ea5eefff1a562556f0ea7dd6c76023") format("truetype"),
-url("suitepicon.svg?a1ea5eefff1a562556f0ea7dd6c76023#suitepicon") format("svg");
+    src: url("suitepicon.eot?2615b82dcab4aa59c530c17e8f4cbf58?#iefix") format("embedded-opentype"),
+url("suitepicon.woff2?2615b82dcab4aa59c530c17e8f4cbf58") format("woff2"),
+url("suitepicon.woff?2615b82dcab4aa59c530c17e8f4cbf58") format("woff"),
+url("suitepicon.ttf?2615b82dcab4aa59c530c17e8f4cbf58") format("truetype"),
+url("suitepicon.svg?2615b82dcab4aa59c530c17e8f4cbf58#suitepicon") format("svg");
 }
 
 i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
@@ -327,10 +327,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-admin-module-trackers:before {
     content: "\f167";
 }
-.suitepicon-admin-oauth-keys:before {
+.suitepicon-admin-oauth2:before {
     content: "\f168";
 }
-.suitepicon-admin-oauth2:before {
+.suitepicon-admin-oauth-keys:before {
     content: "\f169";
 }
 .suitepicon-admin-outbound-email:before {
@@ -501,16 +501,16 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-campaigntrackers:before {
     content: "\f1a1";
 }
-.suitepicon-module-case-updates:before {
+.suitepicon-module-cases:before {
     content: "\f1a2";
 }
-.suitepicon-module-cases:before {
+.suitepicon-module-case-updates:before {
     content: "\f1a3";
 }
-.suitepicon-module-company:before {
+.suitepicon-module-companyc:before {
     content: "\f1a4";
 }
-.suitepicon-module-companyc:before {
+.suitepicon-module-company:before {
     content: "\f1a5";
 }
 .suitepicon-module-contacts:before {
@@ -534,10 +534,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-editview:before {
     content: "\f1ac";
 }
-.suitepicon-module-email-marketing:before {
+.suitepicon-module-email-marketing2:before {
     content: "\f1ad";
 }
-.suitepicon-module-email-marketing2:before {
+.suitepicon-module-email-marketing:before {
     content: "\f1ae";
 }
 .suitepicon-module-emails:before {
@@ -645,10 +645,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-stic-accounts-relationships:before {
     content: "\f1d1";
 }
-.suitepicon-module-stic-advanced-web-forms-answers:before {
+.suitepicon-module-stic-advanced-web-forms-links:before {
     content: "\f1d2";
 }
-.suitepicon-module-stic-advanced-web-forms-links:before {
+.suitepicon-module-stic-advanced-web-forms-response-details:before {
     content: "\f1d3";
 }
 .suitepicon-module-stic-advanced-web-forms-responses:before {
