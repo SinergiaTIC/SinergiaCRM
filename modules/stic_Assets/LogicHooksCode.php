@@ -30,20 +30,22 @@ class stic_AssetsLogicHooks
     public function before_save(&$bean, $event, $arguments)
     {
         global $app_list_strings;
-        
+
         // Set the code if it's a new record
         if (!$bean->fetched_row) {
             $query = "SELECT MAX(CAST(code AS UNSIGNED)) FROM {$bean->table_name} WHERE deleted = 0";
             $result = intval($bean->db->getOne($query));
             $bean->code = str_pad($result + 1, 4, '0', STR_PAD_LEFT);
         }
-        
+
         // Set the name field if it's empty
         if (empty($bean->name)) {
             require_once 'SticInclude/Utils.php';
             // Get the subject name
             $contactBean = SticUtils::getRelatedBeanObject($bean, 'stic_assets_contacts');
-            $contactName = !empty($bean->stic_assets_contactscontacts_ida) ? $contactBean->first_name . ' ' . $contactBean->last_name : '';
+            if ($contactBean && !empty($contactBean->id)) {
+                $contactName = !empty($bean->stic_assets_contactscontacts_ida) ? $contactBean->first_name . ' ' . $contactBean->last_name : '';
+            }
 
             // $contactName = $contactBean ? $contactBean->full_name : '';
             $bean->name = "{$contactName} - {$app_list_strings['stic_asset_managment_types_list'][$bean->type]} - {$bean->code}";

@@ -114,7 +114,6 @@ $dictionary['stic_Assets'] = array(
             'type' => 'date',
             'massupdate' => '1',
             'no_default' => false,
-            'default' => 'now',
             'comments' => '',
             'help' => '',
             'importable' => 'true',
@@ -128,7 +127,7 @@ $dictionary['stic_Assets'] = array(
             'size' => '20',
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
-            
+
         ),
         'end_date' => array(
             'required' => false,
@@ -149,7 +148,7 @@ $dictionary['stic_Assets'] = array(
             'merge_filter' => 'disabled',
             'size' => '20',
             'enable_range_search' => true,
-             'options' => 'date_range_search_dom',
+            'options' => 'date_range_search_dom',
         ),
         'address_street' => array(
             'required' => false,
@@ -1156,9 +1155,7 @@ $dictionary['stic_Assets'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_FOLLOWUPS_TITLE',
         ),
-        
 
-        
     ),
     'relationships' => array(
     ),
