@@ -62,4 +62,43 @@ class stic_Conversations extends Basic
         return false;
     }
 	
+    /**
+     * Overriding SugarBean save function to insert additional logic:
+     * Build the name of the conversation using the code, the type and the subject
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = false) {
+        
+        global $app_list_strings, $sugar_config;
+
+        // Generate progressive code only once
+        if (empty($this->code)) {
+            if (!empty($sugar_config['dbconfig']['db_type']) && $sugar_config['dbconfig']['db_type'] === 'mssql') {
+                $this->code = $this->db->getOne("SELECT MAX(CAST(code as INT))+1 FROM {$this->table_name} WHERE deleted = 0");
+            } else {
+                $this->code = $this->db->getOne("SELECT MAX(CAST(code as UNSIGNED))+1 FROM {$this->table_name} WHERE deleted = 0");
+            }
+
+            if (empty($this->code)) {
+                $this->code = 1;
+            }
+        }
+
+        // Create name if empty
+        if(empty($this->name)) {
+            $typeLabel = $this->type;
+            if (!empty($this->type) && !empty($app_list_strings['stic_conversations_types_list'][$this->type])) {
+                $typeLabel = $app_list_strings['stic_conversations_types_list'][$this->type];
+            }
+
+            $this->name = $this->code . ' - ' . $typeLabel . ' - ' . $this->subject;
+        }
+        
+        // Call the generic save() function from the SugarBean class
+        parent::save();
+    }
+
+
 }
