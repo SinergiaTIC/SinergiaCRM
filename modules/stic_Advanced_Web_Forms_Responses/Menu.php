@@ -53,13 +53,13 @@ if(ACLController::checkAccess('stic_Advanced_Web_Forms_Responses', 'list', true)
         'stic_Advanced_Web_Forms_Responses'
     );
 }
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Answers', 'list', true)){
+if(ACLController::checkAccess('stic_Advanced_Web_Forms_Response_Details', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms_Answers&action=index&return_module=stic_Advanced_Web_Forms_Responses&return_action=index', 
-        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Answers'),
+        'index.php?module=stic_Advanced_Web_Forms_Response_Details&action=index&return_module=stic_Advanced_Web_Forms_Responses&return_action=index', 
+        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Response_Details'),
         'View', 
-        'stic_Advanced_Web_Forms_Answers'
+        'stic_Advanced_Web_Forms_Response_Details'
     );
 }
 if(ACLController::checkAccess('stic_Advanced_Web_Forms_Links', 'list', true)){
