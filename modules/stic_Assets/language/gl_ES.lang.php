@@ -105,7 +105,7 @@ $mod_strings = array(
     'LBL_OWNERSHIP_PERCENTAGE' => 'Porcentaje de titularidad',
     'LBL_OWNERS_PRESIDENT_CONTACT_ID' => 'Presidencia comunidad (relacionado Persona ID)',
     'LBL_OWNERS_PRESIDENT' => 'Presidencia comunidad',
-    'LBL_KEY_SET' => 'Juego de llaves',
+    'LBL_KEY_SET' => 'Juegos de llaves',
     'LBL_OWNERSHIP_NOTES' => 'Notas sobre titularidad/ocupación',
     'LBL_INSURANCE_ACCOUNT_ID' => 'Aseguradora (relacionado Organización ID)',
     'LBL_INSURANCE' => 'Aseguradora',
@@ -136,6 +136,5 @@ $mod_strings = array(
     'LBL_INSURANCES_PANEL' => 'Seguros',
     'LBL_UTILITIES_PANEL' => 'Suministros',
 
-    'LBL_NO_OTHER_ERROR' => 'Se debe especificar un valor para el campo "Otro" si el tipo es "Otro".',
-
+    'LBL_NO_OTHER_ERROR' => 'Debe especificarse un valor para el campo "Otro" si el tipo es "Otro".',
 );
