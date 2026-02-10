@@ -42,77 +42,43 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Advanced_Web_Forms_Answers';
-$listViewDefs[$module_name] = array(
-    'QUESTION_SORT_ORDER' => array(
-        'width' => '10',
-        'label' => 'LBL_QUESTION_SORT_ORDER',
-        'default' => true,
+$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+$subpanel_layout = array(
+    'top_buttons' => array(
     ),
-    'QUESTION_KEY' => array(
-        'width' => '10',
-        'label' => 'LBL_QUESTION_KEY',
-        'default' => false,
-    ),
-    'QUESTION_SECTION' => array(
-        'width' => '10',
-        'label' => 'LBL_QUESTION_SECTION',
-        'default' => true,
-    ),
-    'QUESTION_LABEL' => array(
-        'width' => '10',
-        'label' => 'LBL_QUESTION_LABEL',
-        'default' => true,
-    ),
-    'QUESTION_HELP_TEXT' => array(
-        'width' => '10',
-        'label' => 'LBL_QUESTION_HELP_TEXT',
-        'default' => true,
-    ),
-    'ANSWER_VALUE' => array(
-        'width' => '10',
-        'label' => 'LBL_ANSWER_VALUE',
-        'default' => false,
-    ), 
-    'ANSWER_TEXT' => array(
-        'width' => '10',
-        'label' => 'LBL_ANSWER_TEXT',
-        'default' => true,
-    ),
-    'ANSWER_FORM_TYPE' => array(
-        'width' => '10',
-        'label' => 'LBL_ANSWER_FORM_TYPE',
-        'default' => false,
-    ), 
-    'ANSWER_INTEGER' => array(
-        'width' => '10',
-        'label' => 'LBL_ANSWER_INTEGER',
-        'default' => false,
-    ),
-    'FORM_NAME' => array(
-        'width' => '9',
-        'label' => 'LBL_FORM_NAME',
-        'module' => 'stic_Advanced_Web_Forms',
-        'id' => 'FORM_ID',
-        'default' => true
-    ),
-    'RESPONSE_NAME' => array(
-        'width' => '9',
-        'label' => 'LBL_RESPONSE_NAME',
-        'module' => 'stic_Advanced_Web_Forms_Responses',
-        'id' => 'RESPONSE_ID',
-        'default' => true
-    ),
-    'DATE_MODIFIED' => array(
-        'type' => 'datetime',
-        'label' => 'LBL_DATE_MODIFIED',
-        'width' => '10%',
-        'default' => false,
-    ),
-    'DATE_ENTERED' => array(
-        'type' => 'datetime',
-        'label' => 'LBL_DATE_ENTERED',
-        'width' => '10%',
-        'default' => false,
+
+    'where' => '',
+
+    'list_fields' => array(
+        'question_sort_order' => array(
+             'vname' => 'LBL_QUESTION_SORT_ORDER',
+             'width' => '5%',
+             'default' => true,
+        ),
+        'question_section' => array(
+            'vname' => 'LBL_QUESTION_SECTION',
+            'width' => '20%',
+            'default' => true,
+        ),
+        'question_label' => array(
+            'vname' => 'LBL_QUESTION_LABEL',
+            'width' => '20%',
+            'default' => true,
+        ),
+        'question_help_text' => array(
+            'vname' => 'LBL_QUESTION_HELP_TEXT',
+            'width' => '20%',
+            'default' => true,
+        ),
+        'answer_text' => array(
+            'vname' => 'LBL_ANSWER_TEXT',
+            'width' => '25%',
+            'default' => true,
+        ),
+        'date_entered' => array(
+            'vname' => 'LBL_DATE_ENTERED',
+            'width' => '10%',
+            'default' => true,
+        ),
     ),
 );

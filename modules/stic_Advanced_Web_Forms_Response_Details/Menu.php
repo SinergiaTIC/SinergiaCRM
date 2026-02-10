@@ -44,19 +44,19 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Answers', 'list', true)){
+if(ACLController::checkAccess('stic_Advanced_Web_Forms_Response_Details', 'list', true)){
     $module_menu[] =
     array(
-        'index.php?module=stic_Advanced_Web_Forms_Answers&action=index&return_module=stic_Advanced_Web_Forms_Answers&return_action=DetailView', 
+        'index.php?module=stic_Advanced_Web_Forms_Response_Details&action=index&return_module=stic_Advanced_Web_Forms_Response_Details&return_action=DetailView', 
         $mod_strings['LNK_LIST'],
         'View', 
-        'stic_Advanced_Web_Forms_Answers'
+        'stic_Advanced_Web_Forms_Response_Details'
     );
 }
 if(ACLController::checkAccess('stic_Advanced_Web_Forms_Responses', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms_Responses&action=index&return_module=stic_Advanced_Web_Forms_Answers&return_action=index', 
+        'index.php?module=stic_Advanced_Web_Forms_Responses&action=index&return_module=stic_Advanced_Web_Forms_Response_Details&return_action=index', 
         translate('LNK_LIST', 'stic_Advanced_Web_Forms_Responses'),
         'View', 
         'stic_Advanced_Web_Forms_Responses'
@@ -65,7 +65,7 @@ if(ACLController::checkAccess('stic_Advanced_Web_Forms_Responses', 'list', true)
 if(ACLController::checkAccess('stic_Advanced_Web_Forms', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms&action=index&return_module=stic_Advanced_Web_Forms_Answers&return_action=index', 
+        'index.php?module=stic_Advanced_Web_Forms&action=index&return_module=stic_Advanced_Web_Forms_Response_Details&return_action=index', 
         translate('LNK_LIST', 'stic_Advanced_Web_Forms'),
         'View', 
         'stic_Advanced_Web_Forms'

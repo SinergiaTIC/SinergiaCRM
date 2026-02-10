@@ -38,60 +38,48 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
+$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+$viewdefs[$module_name]['DetailView'] = array(
+    'templateMeta' => array(
+        'form' => array(
+            'buttons' => array(
+                'EDIT',
+                'DUPLICATE',
+                'DELETE',
+                'FIND_DUPLICATES',
+            )
+        ),
+        'maxColumns' => '2',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
+        ),
+    ),
 
-class stic_Advanced_Web_Forms_Answers extends Basic
-{
-    public $new_schema = true;
-    public $module_dir = 'stic_Advanced_Web_Forms_Answers';
-    public $object_name = 'stic_Advanced_Web_Forms_Answers';
-    public $table_name = 'stic_advanced_web_forms_answers';
-    public $importable = false;
+    'panels' =>
+        array(
+            'default' =>
+                array(
+                    array(
+                        'name',
+                        'assigned_user_name',
+                    ),
+                    array(
+                        array(
+                            'name' => 'date_entered',
+                            'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
+                            'label' => 'LBL_DATE_ENTERED',
+                        ),
+                        array(
+                            'name' => 'date_modified',
+                            'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
+                            'label' => 'LBL_DATE_MODIFIED',
+                        ),
+                    ),
 
-    public $id;
-    public $name;
-    public $date_entered;
-    public $date_modified;
-    public $modified_user_id;
-    public $modified_by_name;
-    public $created_by;
-    public $created_by_name;
-    public $description;
-    public $deleted;
-    public $created_by_link;
-    public $modified_user_link;
-    public $assigned_user_id;
-    public $assigned_user_name;
-    public $assigned_user_link;
-    public $SecurityGroups;
-    public $securitygroups_name;
-    public $question_label;
-    public $question_help_text;
-    public $answer_text;
-	
-
-    /**
-     * Disable "edit" 
-     * @param string $view
-     * @param string $is_owner
-     * @param string $in_group
-     */
-    public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
-    {
-        $editViews = ['edit', 'editview', 'save']; // 'delete'
-        if (in_array(strtolower($view), $editViews)) {
-            return false;
-        }
-        return parent::ACLAccess($view, $is_owner, $in_group);
-    }
-
-    public function bean_implements($interface)
-    {
-        switch($interface)
-        {
-            case 'ACL':
-                return true;
-        }
-        return false;
-    }
-	
-}
+                    array(
+                        'description',
+                    ),
+                )
+        )
+);
