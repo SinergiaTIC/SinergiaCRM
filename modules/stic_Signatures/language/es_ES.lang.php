@@ -127,6 +127,7 @@ $mod_strings = array(
     'LBL_PORTAL_ACCEPTANCE_AREA' => 'Área de firma',
     'LBL_PORTAL_ACCEPTANCE_INSTRUCTION' => 'Para aceptar el documento, haga clic en el botón de abajo.',
     'LBL_PORTAL_ACCEPT_AND_SIGN_BTN' => 'Aceptar y firmar documento',
+    'LBL_PORTAL_DOCUMENT_ACCEPTED_BY' => 'Documento aceptado por:',
     'LBL_PORTAL_DOCUMENT_SIGNED' => 'Documento firmado',
     'LBL_PORTAL_DOWNLOAD_SIGNED_DOC' => 'Descargar documento firmado',
     'LBL_PORTAL_SEND_COPY_EMAIL' => 'Enviarme una copia por correo',

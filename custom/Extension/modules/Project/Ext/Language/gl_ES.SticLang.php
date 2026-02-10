@@ -45,6 +45,8 @@ $mod_strings['LBL_PROJECT_OPPORTUNITIES_1_FROM_OPPORTUNITIES_TITLE'] = 'Subvenci
 $mod_strings['LBL_OPPORTUNITIES_SUBPANEL_TITLE'] = 'Subvencións';
 $mod_strings['LBL_STIC_FOLLOWUPS_PROJECT_FROM_STIC_FOLLOWUPS_TITLE'] = 'Seguimentos';
 $mod_strings['LBL_STIC_GOALS_PROJECT_FROM_STIC_GOALS_TITLE'] = 'Obxectivos';
+$mod_strings['LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofertas laborales';
+$mod_strings['LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE'] = 'Valoraciones';
 $mod_strings['LBL_STIC_LOCATION'] = 'Ubicacións';
 $mod_strings['LBL_ESTIMATED_END_DATE_ERROR'] = 'A data de finalización debe ser posterior á data de inicio.';
 $mod_strings['LBL_ESTIMATED_START_DATE_ERROR'] = 'A data de inicio debe ser anterior á data de finalización.';
@@ -60,3 +62,6 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = '¿Seguro que quere borrar esta tarefa
 // Cadenas Ayudas
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centros';
+
+// Cadenas Recursos
+$mod_strings['LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE'] = 'Recursos';

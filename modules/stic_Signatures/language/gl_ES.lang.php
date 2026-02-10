@@ -90,8 +90,8 @@ $mod_strings = array(
     'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_STIC_SIGNATURES_TITLE' => 'Notificaciones',
 
     // Messages
-    'LBL_ACTIVATION_DATE_ERROR' => "A data de activación debe ser anterior á data de caducidad.",
-    'LBL_EXPIRATION_DATE_ERROR' => "A data de caducidad debe ser posterior á data de activación.",
+    'LBL_ACTIVATION_DATE_ERROR' => 'A data de activación debe ser anterior á data de caducidad.',
+    'LBL_EXPIRATION_DATE_ERROR' => 'A data de caducidad debe ser posterior á data de activación.',
     'LBL_SIGNERS_ADDED_MSG' => 'Asinantes engadidos correctamente',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Para que los nuevos firmantes puedan firmar el documento es necesario cambiar el estado a Abierto o Permanente.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Asinantes non engadidos, xa existen ou ocorreu un erro',
@@ -127,6 +127,7 @@ $mod_strings = array(
     'LBL_PORTAL_ACCEPTANCE_AREA' => 'Área de sinatura',
     'LBL_PORTAL_ACCEPTANCE_INSTRUCTION' => 'Para aceptar o documento, prema no botón de abaixo.',
     'LBL_PORTAL_ACCEPT_AND_SIGN_BTN' => 'Aceptar e asinar documento',
+    'LBL_PORTAL_DOCUMENT_ACCEPTED_BY' => 'Documento aceptado por:',
     'LBL_PORTAL_DOCUMENT_SIGNED' => 'Documento asinado',
     'LBL_PORTAL_DOWNLOAD_SIGNED_DOC' => 'Descargar documento asinado',
     'LBL_PORTAL_SEND_COPY_EMAIL' => 'Enviarme unha copia por correo',
@@ -177,9 +178,9 @@ $mod_strings = array(
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'Non é necesario que asine este documento, xa foi asinado por outra persoa autorizada.',
     'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'O período para asinar este documento expirou. Data de caducidad:',
     'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'O período para asinar este documento aínda non comezou. A sinatura estará dispoñible a partir de:',
-    
+    'LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE' => 'El proceso de firma de este documento está cerrado y no es posible firmarlo.',
 
-    //Audit page
+    // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de auditoría da sinatura',
     'LBL_AUDIT_PAGE_SIGNATURE_DATA_TITLE' => 'Datos da sinatura',
     'LBL_AUDIT_PAGE_DOCUMENT_NAME' => 'Nome do documento',

@@ -291,10 +291,23 @@ $viewdefs['Documents']['DetailView'] = array (
       ),
       3 => 
       array (
+        0 => 
+        array (
+          'name' => 'stic_category_c',
+          'label' => 'LBL_STIC_CATEGORY',
+        ),
+        1 => 
+        array (
+          'name' => 'stic_subcategory_c',
+          'label' => 'LBL_STIC_SUBCATEGORY',
+        ),
+      ),      
+      4 => 
+      array (
         0 => 'active_date',
         1 => 'exp_date',
       ),
-      4 => 
+      5 => 
       array (
         0 => 
         array (

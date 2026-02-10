@@ -160,6 +160,9 @@ $dictionary['stic_Medication_Log'] = array(
     'merge_filter' => 'disabled',
     'len' => '255',
     'size' => '20',
+    'studio' => array(
+      'searchview' => false,
+    ),
   ),
   'stock_depletion' => 
   array (
