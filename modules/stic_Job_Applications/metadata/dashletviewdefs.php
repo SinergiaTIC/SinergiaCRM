@@ -121,6 +121,34 @@ $dashletData['stic_Job_ApplicationsDashlet']['columns'] = array (
     'width' => '10%',
     'default' => false,
   ),
+  'previous_experience' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_PREVIOUS_EXPERIENCE',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'available_days' => array (
+    'type' => 'multienum',
+    'studio' => 'visible',
+    'label' => 'LBL_AVAILABLE_DAYS',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'available_time' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_AVAILABLE_TIME',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'account' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_ACCOUNT',
+    'id' => 'CREATED_BY',
+    'width' => '10%',
+    'default' => false,
+  ),
   'postinsertion_observations' => 
   array (
     'type' => 'text',
