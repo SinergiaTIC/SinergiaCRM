@@ -86,6 +86,19 @@ class stic_Messages extends Basic
             $this->fillName();
         }
 
+        // WhatsAppWeb messages cannot be edited once created (they are always sent immediately)
+        if ($this->fetched_row && $this->fetched_row['type'] === 'WhatsAppWeb' && !empty($this->id)) {
+            // Restore all original values to prevent any modification
+            $this->template_id = $this->fetched_row['template_id'];
+            $this->message = $this->fetched_row['message'];
+            $this->type = $this->fetched_row['type'];
+            $this->phone = $this->fetched_row['phone'];
+            $this->status = $this->fetched_row['status'];
+            $this->sender = $this->fetched_row['sender'];
+            // Only allow updating parent relationship
+            // parent_type and parent_id can still be updated
+        }
+
         // If message is not in draft, only direction and related to can be changed
         if ($this->fetched_row && $this->fetched_row['status'] !== 'draft' && !empty($this->id)) {
             $this->template_id = $this->fetched_row['template_id'];
@@ -115,8 +128,26 @@ class stic_Messages extends Basic
 
         $this->assigned_user_id = $current_user->id;
 
+        // For WhatsAppWeb messages, set sender to assigned user name
+        if ($this->type === 'WhatsAppWeb') {
+            $this->sender = $current_user->name;
+        }
+
+        // WhatsAppWeb messages are always sent immediately, never saved as draft
+        if ($this->type === 'WhatsAppWeb' && $this->status === 'draft') {
+            $this->status = 'sent';
+        }
+
         // If Message is being created or status changed to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
+            // If type is WhatsAppWeb we don't have a server-side sender: mark as sent and skip helper
+            if ($this->type === 'WhatsAppWeb') {
+                // mark as sent because user/client will open WhatsApp Web
+                $response = array('code' => self::OK, 'message' => 'Sent via WhatsApp Web (client)');
+                $this->status = 'sent';
+                $this->response = $response['message'];
+                $this->sent_date = $GLOBALS['timedate']->nowDb();
+            } else {
             if (!empty($this->phone)){
                 $response = $this->sendMessage();
                 if ($response['code'] === self::OK) {
@@ -132,6 +163,7 @@ class stic_Messages extends Basic
             else {
                 $this->status = 'error';
                 $this->response = 'No phone number';
+            }
             }
         }
 
@@ -220,7 +252,7 @@ class stic_Messages extends Basic
 
     }
 
-    public function replaceTemplateVariables($screenText, $bean)
+    public static function replaceTemplateVariables($screenText, $bean)
     {
             $macro_nv = array();
     
@@ -252,8 +284,7 @@ class stic_Messages extends Basic
                 );
     
             }
-    
-        return $templateData['body'];
+        return html_entity_decode($templateData['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
     
 

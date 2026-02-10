@@ -81,7 +81,7 @@ $mod_strings = array(
     'LBL_REJECTION_REASON' => 'Motivo de rexeitamento',
     'LBL_ON_BEHALF_OF_ID' => 'Persoa representada',
     'LBL_ON_BEHALF_OF_ID_CONTACT_ID' => 'Autorizado a asinar en nome de',
-    'LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Sinaturas',  
+    'LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE' => 'Sinaturas',
     'LBL_STIC_SIGNERS_USERS_FROM_STIC_SIGNERS_TITLE' => 'Sinaturas',
 
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar sinatura por correo electrónico',
@@ -101,7 +101,7 @@ $mod_strings = array(
     'LBL_PHONE_HELP' => 'Número de teléfono del firmante al que se enviarán los mensajes que corresponda durante el proceso de firma.', 
     'LBL_STATUS_HELP' => 'Estado del proceso de firma:<ul><li><strong>Pendiente:</strong> El firmante aún no ha firmado el documento.</li> <li><strong>Firmado:</strong> El firmante ha firmado el documento.</li><li><strong>Innecesario:</strong> El firmante no tiene por qué firmar porque otra persona autorizada ya lo ha hecho.</li></ul>', 
     'LBL_PDF_DOCUMENT_HELP' => 'Permite descargar el documento una vez firmado.', 
-    'LBL_SIGNATURE_DATE_HELP' => 'Data na que se asinou o documento.',
-    'LBL_VERIFICATION_CODE_HELP' => 'Código de verificación xerado tras a sinatura do documento.',
+    'LBL_SIGNATURE_DATE_HELP' => 'Data na que se asinou o documento.', 
+    'LBL_VERIFICATION_CODE_HELP' => 'Código de verificación xerado tras a sinatura do documento.', 
     'LBL_RECORD_NAME_HELP' => 'Nome do rexistro relacionado coa sinatura, a partir do cal se xerou o rexistro do asinante.',
-);
+ );

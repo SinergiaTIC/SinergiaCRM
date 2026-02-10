@@ -87,6 +87,7 @@ $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_ERROR'] = "S'ha produït un er
 $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = "S'ha creat la següent llista de públic objectiu: ";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
+$mod_strings['LBL_STIC_DISPLAY_HTML'] = "Inclou un enllaç al missatge per veure'n el contingut al navegador";
 $mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = "En desar la notificació els missatges a enviar s'afegiran automàticament a la cua d'enviament.";
 
 $mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Enviaments de missatges';

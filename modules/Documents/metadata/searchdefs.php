@@ -244,6 +244,18 @@ $searchdefs['Documents'] = array(
               'width' => '10%',
           ),
           7 => array(
+              'type' => 'enum',
+              'name' => 'stic_category_c',
+              'default' => true,
+              'width' => '10%',
+          ),
+          8 => array(
+              'type' => 'enum',  
+              'name' => 'stic_subcategory_c',
+              'default' => true,
+              'width' => '10%',
+          ),                    
+          9 => array(
               'type' => 'text',
               'label' => 'LBL_DESCRIPTION',
               'sortable' => false,
@@ -251,42 +263,42 @@ $searchdefs['Documents'] = array(
               'default' => true,
               'name' => 'description',
           ),
-          8 => array(
+          10 => array(
               'type' => 'datetime',
               'label' => 'LBL_DATE_ENTERED',
               'width' => '10%',
               'default' => true,
               'name' => 'date_entered',
           ),
-          9 => array(
+          11 => array(
               'type' => 'datetime',
               'label' => 'LBL_DATE_MODIFIED',
               'width' => '10%',
               'default' => true,
               'name' => 'date_modified',
           ),
-          10 => array(
+          12 => array(
               'type' => 'assigned_user_name',
               'label' => 'LBL_CREATED',
               'width' => '10%',
               'default' => true,
               'name' => 'created_by',
           ),
-          11 => array(
+          13 => array(
               'type' => 'assigned_user_name',
               'label' => 'LBL_MODIFIED',
               'width' => '10%',
               'default' => true,
               'name' => 'modified_user_id',
           ),
-          12 => array(
+          14 => array(
               'name' => 'current_user_only',
               'label' => 'LBL_CURRENT_USER_FILTER',
               'type' => 'bool',
               'default' => true,
               'width' => '10%',
           ),
-          13 => array(
+          15 => array(
               'name' => 'favorites_only',
               'label' => 'LBL_FAVORITES_FILTER',
               'type' => 'bool',

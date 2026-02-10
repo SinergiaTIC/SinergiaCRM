@@ -67,7 +67,7 @@ Go to the signing portal: $sugarurl/index.php?entryPoint=sticSign&signerId=$stic
 <p style="margin: 5px 0 0 0; font-size: 14px; color: #888888;"><strong>Date of signature:</strong> $stic_signers_signature_date</p>
 </div>
 <p style="font-size: 16px; color: #555555; margin-top: 20px;">You may access the signed document on the signing portal whenever necessary.</p>
-<div style="text-align: center; margin-top: 30px;"><a style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #000000; background-color: #b5bc31; border-radius: 5px; text-decoration: none; font-weight: bold;" href="#">Go to the signing portal</a></div>
+<div style="text-align: center; margin-top: 30px;"><a style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #000000; background-color: #b5bc31; border-radius: 5px; text-decoration: none; font-weight: bold;" href="$sugarurl/index.php?entryPoint=sticSign&signerId=$stic_signers_id">Go to the signing portal</a></div>
 </div>
 </div>
 </body>

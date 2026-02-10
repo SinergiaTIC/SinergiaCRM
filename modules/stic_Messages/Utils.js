@@ -36,7 +36,51 @@ switch (sticViewType) {
     $(document).ready(function() {
       setAutofill(["name"]);
       state = $('#status').val();
+      var messageType = $('#type').val();
+      
       addEditCreateTemplateLinks();
+      
+      // WhatsAppWeb messages are always sent and cannot be edited
+      if (messageType === 'WhatsAppWeb' && $('#EditView input[name="record"]').val()) {
+        // Disable all fields except parent relationship
+        $('#type').prop('disabled', true);
+        $('#type').attr('readonly', true);
+        $('#type').css('background', '#F8F8F8');
+        $('#type').css('border-color', '#E2E7EB');
+
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+        
+        $('#phone').prop('disabled', true);
+        $('#phone').attr('readonly', true);
+        $('#phone').css('background', '#F8F8F8');
+        $('#phone').css('border-color', '#E2E7EB');
+
+        $('#message').prop('disabled', true);
+        $('#message').attr('readonly', true);
+        $('#message').css('background', '#F8F8F8');
+        $('#message').css('border-color', '#E2E7EB');
+
+        $('#template_id').prop('disabled', true);
+        $('#template_id').attr('readonly', true);
+        $('#template_id').css('background', '#F8F8F8');
+        $('#template_id').css('border-color', '#E2E7EB');
+
+        $('#status').prop('disabled', true);
+        $('#status').attr('readonly', true);
+        $('#status').css('background', '#F8F8F8');
+        $('#status').css('border-color', '#E2E7EB');
+
+        $("#template_id_edit_link").addClass("ui-state-disabled");
+        $("#template_id_create_link").addClass("ui-state-disabled");
+
+        // Hide save button for WhatsAppWeb messages
+        $('#EditView input[type="submit"][name="button"]').hide();
+        
+      }
+      
       if ($('#EditView input[name="record"]').val()) {
         // Status can only be changed through actions
         $('#status').prop('disabled', true);
@@ -45,7 +89,7 @@ switch (sticViewType) {
         $('#status').css('border-color', '#E2E7EB');
       }
       if (state !== 'draft' && $('#EditView input[name="record"]').val()) {
-        // Some fields canonly be edited when message is in draft
+        // Some fields can only be edited when message is in draft
         $('#type').prop('disabled', true);
         $('#type').attr('readonly', true);
         $('#type').css('background', '#F8F8F8');
@@ -73,8 +117,60 @@ switch (sticViewType) {
 
         $("#template_id_edit_link").addClass("ui-state-disabled");
         $("#template_id_create_link").addClass("ui-state-disabled");
+      }
 
+      // When type changes to WhatsAppWeb, force status to 'sent'
+      $('#type').on('change', function() {
+        if ($(this).val() === 'WhatsAppWeb') {
+          $('#status').val('sent');
+          $('#status').prop('disabled', true);
+          $('#status').attr('readonly', true);
+          $('#status').css('background', '#F8F8F8');
+          $('#status').css('border-color', '#E2E7EB');
+          
+          // For WhatsAppWeb, sender is automatically set to assigned user
+          $('#sender').prop('disabled', true);
+          $('#sender').attr('readonly', true);
+          $('#sender').css('background', '#F8F8F8');
+          $('#sender').css('border-color', '#E2E7EB');
+          
+          // Get assigned user name and set it as sender
+          var assignedUserName = $('#assigned_user_name').val();
+          if (assignedUserName) {
+            $('#sender').val(assignedUserName);
+          }
+        } else if (!$('#EditView input[name="record"]').val()) {
+          // Only enable status and sender if it's a new message and not WhatsAppWeb
+          $('#status').prop('disabled', false);
+          $('#status').attr('readonly', false);
+          $('#status').css('background', '');
+          $('#status').css('border-color', '');
+          
+          // Re-enable sender field for other types
+          if (state === 'draft' || !$('#EditView input[name="record"]').val()) {
+            $('#sender').prop('disabled', false);
+            $('#sender').attr('readonly', false);
+            $('#sender').css('background', '');
+            $('#sender').css('border-color', '');
+          }
+        }
+      });
 
+      // On page load, if type is WhatsAppWeb, force status to 'sent' and set sender
+      if ($('#type').val() === 'WhatsAppWeb') {
+        $('#status').val('sent');
+        
+        // Disable and set sender for WhatsAppWeb
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+        
+        // Get assigned user name and set it as sender if not already set
+        var assignedUserName = $('#assigned_user_name').val();
+        if (assignedUserName && !$('#sender').val()) {
+          $('#sender').val(assignedUserName);
+        }
       }
 
       if($("#mass_ids").val()) {
@@ -116,8 +212,10 @@ switch (sticViewType) {
   case "detail":
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
-    // Define button content
-    if ($("#status").val() != 'sent') {
+    var messageType = $("#type").val();
+    
+    // Define button content - Don't show retry button for WhatsAppWeb messages
+    if ($("#status").val() != 'sent' && messageType !== 'WhatsAppWeb') {
       var buttons = {
         retry: {
           id: "bt_retry_detailview",
@@ -207,7 +305,12 @@ function showMessageBox(title, detail, onOk = null, onCancel = null) {
 
 function onClickRetryMessagesButton(recordId) {
   var status = $("#status").val();
-  if(status === 'sent') {
+  var messageType = $("#type").val();
+  
+  if(messageType === 'WhatsAppWeb') {
+    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), 'Los mensajes de WhatsApp Web no se pueden reintentar. Ya fueron enviados mediante el cliente.');
+  }
+  else if(status === 'sent') {
     showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
   }
   else {
@@ -390,4 +493,3 @@ function updateMessageBox (args) {
       mb.remove();
     });
   }
-
