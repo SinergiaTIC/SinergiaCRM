@@ -69,11 +69,13 @@ class stic_Job_Applications extends Basic
     {
         // Call the generic save() function from the SugarBean class
         if (empty($this->name)) {
-            if ($this->stic_job_applications_contactscontacts_ida) {
-                $contact_name = $this->stic_job_applications_contacts_name;
+            $contact_name = '';
+            $offer_name = '';
+            if (!empty($this->stic_job_applications_contactscontacts_ida)) {
+                $contact_name = $this->stic_job_applications_contacts_name ?? '';
             }
-            if ($this->stic_job_applications_stic_job_offersstic_job_offers_ida) {
-                $offer_name = $this->stic_job_applications_stic_job_offers_name;
+            if (!empty($this->stic_job_applications_stic_job_offersstic_job_offers_ida)) {
+                $offer_name = $this->stic_job_applications_stic_job_offers_name ?? '';
             }
             $this->name = $contact_name .' - '.$offer_name;
         }
