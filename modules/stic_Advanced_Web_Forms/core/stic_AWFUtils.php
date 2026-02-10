@@ -158,7 +158,7 @@ class stic_AWFUtils {
         }
         $html .= "<div class='awf-summary-container'>";
         if ($showTitle) {
-            $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms')."</h1>";
+            $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms_Responses')."</h1>";
         }
         $html .= "<div class='awf-sections-wrapper'>";
 
@@ -253,7 +253,7 @@ class stic_AWFUtils {
     public static function generateSummaryText(ExecutionContext $context): string
     {
         // Main title
-        $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms');
+        $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms_Responses');
         $text = $title . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
         
         $layout = $context->formConfig->layout;

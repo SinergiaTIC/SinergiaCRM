@@ -82,7 +82,6 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
   'LBL_SEQUENCE_NUMBER' => 'Número de secuencia',
-  'LBL_RELATED_MODULE' => 'Módulo relacionado',
   'LBL_PARENT_TYPE' => 'Tipo de registro relacionado',
   'LBL_PARENT_ID' => 'ID de registro relacionado',
   'LBL_FLEX_RELATE' => 'Relacionado con',

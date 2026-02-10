@@ -108,12 +108,12 @@
                   <div class="stic-tabs">
                     <div class="stic-tab">
                       <input class="form-check-input" type="radio" :id="`dataBlockFieldsFormTab${item.id}`" x-model="fieldTabSelected" value="form"/>
-                      <label class="form-label" :for="`dataBlockFieldsFormTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FORM') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'"></label>
+                      <label class="form-label" :for="`dataBlockFieldsFormTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FORM_TAB') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'"></label>
                     </div>
                     <template x-if="item.module">
                       <div class="stic-tab">
                         <input class="form-check-input" type="radio" :id="`dataBlockFieldsHiddenTab${item.id}`" x-model="fieldTabSelected" value="fixed"/>
-                        <label class="form-label" :for="`dataBlockFieldsHiddenTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FIXED') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'"></label>
+                        <label class="form-label" :for="`dataBlockFieldsHiddenTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FIXED_TAB') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'"></label>
                       </div>
                     </template>
                   </div>
@@ -159,13 +159,13 @@
                                 <!-- Ok tick -->
                                 <template x-if="field.isValid()">
                                   <div class="d-flex align-items-center">
-                                    <i class="suitepicon  suitepicon-action-confirm text-success me-2 mt-1" :title="utils.translate('LBL_FIELD_TITLE_OK')"></i>
+                                    <i class="suitepicon  suitepicon-action-confirm text-success me-2 mt-1" :title="utils.translate('LBL_OK_FIELD_IS_VALID')"></i>
                                   </div>
                                 </template>
                                 <!-- Alert message -->
                                 <template x-if="!field.isValid()">
                                   <div class="alert-danger d-flex align-items-center">
-                                    <i class="suitepicon suitepicon-template-issue text-danger me-2 mt-1" :title="utils.translate('LBL_FIELD_TITLE_ERROR')"></i>
+                                    <i class="suitepicon suitepicon-template-issue text-danger me-2 mt-1" :title="utils.translate('LBL_ERROR_FIELD_IS_INVALID')"></i>
                                     <ul class="m-0 p-0 text-danger small">
                                       <template x-for="err in field.getValidationErrors()">
                                         <li x-text="err"></li>
@@ -396,7 +396,7 @@
                 <div class="alert alert-danger d-flex align-items-center p-2 mb-3">
                   <i class="suitepicon suitepicon-template-issue text-danger me-2" style="font-size: 1.2em;"></i>
                   <div>
-                    <strong class="text-danger" x-text="utils.translateForFieldLabel('LBL_FIELD_TITLE_ERROR')"></strong>
+                    <strong class="text-danger" x-text="utils.translateForFieldLabel('LBL_ERROR_FIELD_IS_INVALID')"></strong>
                     <ul class="mb-0 ps-3 small text-danger">
                       <template x-for="err in field.getValidationErrors()">
                         <li x-text="err"></li>
