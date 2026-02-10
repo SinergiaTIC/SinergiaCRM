@@ -176,6 +176,7 @@ $app_list_strings['moduleList']['stic_Signatures'] = 'Firmes';
 $app_list_strings['moduleList']['stic_Signers'] = 'Firmants';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['moduleList']['stic_Conversations'] = 'Converses';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -232,6 +233,7 @@ $app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
 $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmant';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacció';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producte financer';
+$app_list_strings['moduleList']['stic_Conversations'] = 'Converse';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -276,6 +278,7 @@ $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Cal
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['parent_type_display']['stic_Conversations'] = 'Converses';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -323,6 +326,7 @@ $app_list_strings['record_type_display']['stic_Signatures'] = 'Firmes';
 $app_list_strings['record_type_display']['stic_Signers'] = 'Firmants';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['record_type_display']['stic_Conversations'] = 'Converses';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -370,10 +374,15 @@ $app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmes';
 $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmants';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Converses';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmes';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidatures';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertes laborals';
+$app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Converses';
+$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Missatges';
 
 // Creació dinàmica de Llistes de públic objectiu
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -3798,6 +3807,10 @@ $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal
 $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'A finestreta';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectiu';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferència';
+
+// Converses: Tipus
+$app_list_strings['stic_conversations_types_list']['technical_support'] = 'Suport tècnic';
+$app_list_strings['stic_conversations_types_list']['general_information'] = 'Informació general';
 
 // Modificacions del core de SuiteCRM
 

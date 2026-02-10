@@ -176,6 +176,7 @@ $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario d
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['moduleList']['stic_Conversations'] = 'Conversaciones';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -232,6 +233,7 @@ $app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
 $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmante';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacción';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producto financiero';
+$app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -276,6 +278,7 @@ $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Cal
 $app_list_strings['parent_type_display']['stic_Places'] = 'Plazas';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display']['Contacts'] = 'Personas';
@@ -323,6 +326,7 @@ $app_list_strings['record_type_display']['stic_Signatures'] = 'Firmas';
 $app_list_strings['record_type_display']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['record_type_display']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Personas';
@@ -370,10 +374,14 @@ $app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmas';
 $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvenciones';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmas';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidaturas';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborales';
+$app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversaciones';
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -3798,6 +3806,10 @@ $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal
 $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'En ventanilla';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectivo';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferencia';
+
+// Conversaciones: Tipos
+$app_list_strings['stic_conversations_types_list']['technical_support'] = 'Soporte técnico';
+$app_list_strings['stic_conversations_types_list']['general_information'] = 'Información general';
 
 // Modificaciones del core de SuiteCRM
 
