@@ -1973,6 +1973,16 @@ $dictionary['stic_Job_Offers'] = array(
             'side' => 'right',
             'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE',
         ),
+        "project_stic_job_offers" => array (
+            'name' => 'project_stic_job_offers',
+            'type' => 'link',
+            'relationship' => 'project_stic_job_offers',
+            'source' => 'non-db',
+            'module' => 'Project',
+            'bean_name' => 'Project',
+            'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE',
+            'id_name' => 'project_stic_job_offersproject_ida',
+        ),
         // Calculated Fields for Job Applications
         'stic_job_applications_count_total' => array(
             'name' => 'stic_job_applications_count_total',
@@ -2133,16 +2143,6 @@ $dictionary['stic_Job_Offers'] = array(
             'importable' => false,
             'audited' => false,
             'inline_edit' => false,
-        ),
-            "project_stic_job_offers" => array (
-            'name' => 'project_stic_job_offers',
-            'type' => 'link',
-            'relationship' => 'project_stic_job_offers',
-            'source' => 'non-db',
-            'module' => 'Project',
-            'bean_name' => 'Project',
-            'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE',
-            'id_name' => 'project_stic_job_offersproject_ida',
         ),
     ),
     'relationships' => array(),
