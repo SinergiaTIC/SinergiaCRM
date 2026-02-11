@@ -519,6 +519,7 @@ class FormHtmlGeneratorService {
             loadTime: 0,
             message: {$safeMessage},
             submitting: false,
+            serverErrors: {},
             
             init() {
                 this.loadTime = Math.floor(Date.now() / 1000);
@@ -530,6 +531,7 @@ class FormHtmlGeneratorService {
                 // Clear previous errors
                 input.setCustomValidity(''); 
                 input.classList.remove('is-invalid');
+                this.serverErrors = {};
 
                 let customErrorMessage = '';
                 const form = input.closest('form');
@@ -538,14 +540,12 @@ class FormHtmlGeneratorService {
                 if (input.dataset.awfValidations) {
                     try {
                         const rules = JSON.parse(input.dataset.awfValidations);
-                        
                         for (const rule of rules) {
                             // Check condition
                             if (rule.condition_field && rule.condition_field !== '') {
                                 // Find the condition input within the same form
                                 const condInputId = 'f_' + rule.condition_field;
                                 const condInput = form.querySelector('[id="' + condInputId + '"]');
-                                
                                 // If condition not met, skip this rule
                                 if (condInput && condInput.value != rule.condition_value) {
                                     continue;
@@ -588,25 +588,44 @@ class FormHtmlGeneratorService {
                         parent.appendChild(feedback);
                     }
                     feedback.textContent = finalMessage;
-
+                    feedback.style.display = 'block';
                     return false;
                 }
-
                 return true;
+            },
+
+            // Show server error message
+            showServerError(fieldId, message) {
+                const input = document.getElementById('f_'+fieldId);
+                if (!input) return;
+
+                input.classList.add('is-invalid');
+
+                const parent = input.parentElement;
+                let feedback = parent.querySelector('.invalid-feedback');
+                if (!feedback) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    parent.appendChild(feedback);
+                }
+                
+                feedback.textContent = message;
+                feedback.style.display = 'block';
             },
 
             submitForm(formElement) {
                 if (this.submitting) return;
                 
                 let formValid = true;
+                this.serverErrors = {};
 
+                // Client Validation (Alpine/HTML5)
                 const inputs = formElement.querySelectorAll('input, select, textarea');
                 inputs.forEach(input => {
                     if (input.willValidate && !this.validateInput(input)) {
                         formValid = false;
                     }
                 });
-
                 if (!formValid) {
                     formElement.classList.add('was-validated');
                     
@@ -618,9 +637,43 @@ class FormHtmlGeneratorService {
                     }
                     return;
                 }
-                
+
+                // Activate spinner
                 this.submitting = true;
-                formElement.submit();
+
+                // Server Validation (AJAX)
+                const formData = new FormData(formElement);
+                formData.append('ajax_validation_only', '1');
+
+                fetch(formElement.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Do real Submit
+                        formElement.submit();
+                    } else {
+                        // Deactivate spinner
+                        this.submitting = false;
+                        
+                        // Show errors
+                        this.serverErrors = data.errors || {};
+                        const errorIds = Object.keys(this.serverErrors);
+                        if (errorIds.length > 0) {
+                            errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
+                        } else {
+                            // Do real Submit
+                            formElement.submit();
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error('Validation Error', err);
+                    formElement.submit();
+                });
             }
         }
 JS;
@@ -686,7 +739,7 @@ JS;
                     $formAttributes = 'action="#" autocomplete="off" onsubmit="event.preventDefault(); alert(\''.translate('LBL_PREVIEW_MODE_ALERT', 'stic_Advanced_Web_Forms').'\'); return false;"';
                     $alpineSubmit = "";
                 } else {
-                    $formAttributes = "action='{$actionUrl}' method='POST' autocomplete='off' novalidate enctype='multipart/form-data'";
+                    $formAttributes = "action='{$actionUrl}' method='POST' novalidate enctype='multipart/form-data'";
                     $alpineSubmit = "@submit.prevent='submitForm(\$el)'";
                 }
 
@@ -967,7 +1020,7 @@ JS;
             // Inputs
             } else {
                 $controlType = 'text';
-                $autocomplete = 'off';
+                $autocomplete = $inputName; //'off';
 
                 switch ($field->subtype_in_form) {
                     case 'text_email': $controlType = 'email'; break;

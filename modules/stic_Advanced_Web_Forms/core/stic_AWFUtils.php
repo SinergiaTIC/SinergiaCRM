@@ -324,7 +324,7 @@ class stic_AWFUtils {
     /**
      * Renderiza una página HTML básica usando los estilos del formulario
      */
-    public static function renderGenericResponse(FormConfig $config, string $title, string $message)
+    public static function renderGenericResponseHtml(?FormConfig $config, string $title, string $titleHtml, string $messageHtml): void
     {
         // Limpiar el buffer de salida para eliminar warnings o errores previos
         while (ob_get_level()) {
@@ -335,35 +335,37 @@ class stic_AWFUtils {
         ini_set('display_errors', 0);
         error_reporting(0);
         
-        $theme = $config->layout->theme;
+        $theme = $config?->layout?->theme ?? new FormTheme();
         $fontFamily = $theme->font_family ?? 'sans-serif';
         $bgColor = $theme->page_bg_color ?? '#f8f9fa';
         $textColor = $theme->text_color ?? '#212529';
         $formBg = $theme->form_bg_color ?? '#ffffff';
         $primaryColor = $theme->primary_color ?? '#0d6efd';
-        $customCss = $config->layout->custom_css ?? '';
-        $customJs = $config->layout->custom_js ?? '';
+        $customCss = $config?->layout?->custom_css ?? '';
+        $customJs = $config?->layout?->custom_js ?? '';
         
         echo "
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>" . htmlspecialchars($title) . "</title>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>{$title}</title>
         <style>
             body { font-family: {$fontFamily}; background-color: {$bgColor}; color: {$textColor}; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
             .message-card { background-color: {$formBg}; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; width: 90%; text-align: center; }
             h1 { color: {$primaryColor}; margin-bottom: 20px; }
+            .btn-primary { background-color: {$primaryColor}; border-color: {$primaryColor}; color: {$textColor}; }
             {$customCss}
         </style>
     </head>
     <body>
         <div class='message-card'>
-            <h1>" . htmlspecialchars($title) . "</h1>
-            <div>" . nl2br(htmlspecialchars($message)) . "</div>
+            <h1>{$titleHtml}</h1>
+            <div>{$messageHtml}</div>
         </div>";
-        if (!empty($config->layout->custom_js)) { 
-            echo "<script>" . $config->layout->custom_js . "</script>"; 
+        if (!empty($customJs)) { 
+            echo "<script>" . $customJs . "</script>"; 
         }
         echo "
     </body>
@@ -371,8 +373,83 @@ class stic_AWFUtils {
         
         sugar_cleanup(true);
     }
-    
-    
+
+    /**
+     * Renderiza una página HTML básica usando los estilos del formulario
+     */
+    public static function renderGenericResponse(?FormConfig $config, string $title, string $message): void
+    {
+        $title = htmlspecialchars($title);
+        $message = nl2br(htmlspecialchars($message));
+
+        self::renderGenericResponseHtml($config, $title, $title, $message);
+    }
+
+    /**
+     * Renderiza una página HTML básica de error usando los estilos del formulario
+     */
+    public static function renderErrorWithBackButton(?FormConfig $formConfig, string $title, array $errors): void
+    {
+        $title = htmlspecialchars($title);
+
+        // Generamos la lista HTML de errores
+        $errorListHtml = "<ul>";
+        foreach ($errors as $err) {
+            $errorListHtml .= "<li>" . htmlspecialchars($err, ENT_QUOTES, 'UTF-8') . "</li>";
+        }
+        $errorListHtml .= "</ul>";
+
+        // Añadimos el botón de Javascript History Back
+        $backButtonHtml = "
+        <div style='margin-top: 20px; text-align: center;'>
+            <button onclick='window.history.back()' class='btn btn-primary' style='padding: 10px 20px; font-size: 16px; cursor: pointer;'>
+                " . translate('LBL_BUTTON_GO_BACK_AND_FIX', 'stic_Advanced_Web_Forms_Responses') . "
+            </button>
+        </div>";
+
+        // Combinamos
+        $finalHtml = $errorListHtml . $backButtonHtml;
+
+        self::renderGenericResponseHtml($formConfig, $title, $title, $finalHtml);
+    }
+
+
+    /**
+     * Renderiza una página HTML básica de respuesta a Spam (evitando proceso extra)
+     */
+    public static function renderGenericSpamResponse()
+    {
+        $title = htmlspecialchars(translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms'));
+        $message = nl2br(htmlspecialchars(translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms')));
+
+        $fontFamily = 'sans-serif';
+        $bgColor = '#f8f9fa';
+        $textColor = '#212529';
+        $formBg = '#ffffff';
+        $primaryColor = '#0d6efd';
+        
+        echo "
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>{$title}</title>
+        <style>
+            body { font-family: {$fontFamily}; background-color: {$bgColor}; color: {$textColor}; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+            .message-card { background-color: {$formBg}; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; width: 90%; text-align: center; }
+            h1 { color: {$primaryColor}; margin-bottom: 20px; }
+        </style>
+    </head>
+    <body>
+        <div class='message-card'>
+            <h1>{$title}</h1>
+            <div>{$message}</div>
+        </div>
+    </body>
+</html>";
+        sugar_cleanup(true);
+    }
+
     /**
      * Método para enviar un correo basado en una plantilla
      *

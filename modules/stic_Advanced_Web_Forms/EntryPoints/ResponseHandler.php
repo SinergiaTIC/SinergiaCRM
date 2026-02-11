@@ -50,15 +50,37 @@ class ResponseHandler
         $rawPostData = $_POST;
         $cleanData = $this->sanitizeInput($rawPostData);
 
-        // Anti-Spam Detection (Honeypot): Hidden field that bots usually fill in
-        $isSpam = !empty($cleanData['awf_honey_pot']);
+        $isSpam = false;
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
 
-        // Anti-Spam Detection (TimeTrap): Normally bots submit the form immediately and/or without executing JS
-        $submissionTs = (int)($_POST['awf_submission_ts'] ?? 0);
-        $currentTs = time();
-        $duration = $currentTs - $submissionTs;
-        if ($submissionTs === 0 || $duration < 3) {
-            $isSpam = true;
+        // Anti-Spam Detection 
+        // 1- Honeypot: Hidden field that bots usually fill in
+        if (!$isSpam) {
+            if (isset($cleanData['awf_honey_pot'])&& !empty($cleanData['awf_honey_pot'])) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Honeypot protection");
+                $isSpam = true;
+                $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_Advanced_Web_Forms_Responses');
+            }
+        }
+        // 2- TimeTrap: Normally bots submit the form immediately and/or without executing JS
+        if (!$isSpam) {
+            $submissionTs = (int)($_POST['awf_submission_ts'] ?? 0);
+            $currentTs = time();
+            $duration = $currentTs - $submissionTs;
+            if ($submissionTs === 0 || $duration < 2) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Timetrap protection");
+                $isSpam = true;
+                $responseDescription = translate('LBL_RESPONSE_TIMETRAP_SPAM', 'stic_Advanced_Web_Forms_Responses');
+            }
+        }
+        // 3- UserAgent: Some bots don't impersonate browsers
+        if (!$isSpam) {
+            if ($this->isBotUserAgent($userAgent)) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by UserAgent filter");
+                $isSpam = true;
+                $responseDescription = translate('LBL_RESPONSE_USERAGENT_SPAM', 'stic_Advanced_Web_Forms_Responses');
+            }
         }
 
         // Form URL
@@ -77,6 +99,11 @@ class ResponseHandler
 
         // Initial validations
         if (empty($formId)) {
+            if ($isSpam) {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam without formId");
+                stic_AWFUtils::renderGenericSpamResponse();
+                return;
+            }
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler. EntryPoint called without ID");
             $this->terminateRawError("No Form ID provided.");
         }
@@ -84,35 +111,86 @@ class ResponseHandler
         /** @var stic_Advanced_Web_Forms $formBean */
         $formBean = BeanFactory::getBean('stic_Advanced_Web_Forms', $formId);
         if (!$formBean || empty($formBean->id)) {
+            if ($isSpam) {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam with bad formId");
+                stic_AWFUtils::renderGenericSpamResponse();
+                return;
+            }
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form not found. ID: $formId");
             $this->terminateRawError("Form not found.");
         }
 
         // Duplicate detection: Fingerprint
-        $timeWindow = 300; // 300s = 5 min
-        $timeSlot = floor(time() / $timeWindow); // $timeSlot will change every 5 minutes: we avoid accidental F5
-
-        $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        //      For humans: check if we have received the same response from the same origin within a 5-minute window
+        //      For bots: check if we have received the same response from the same origin at any time
+        if ($isSpam) {
+            $timeSlot = 0; // $timeSlot is const
+        } else {
+            $timeWindow = 300; // 300s = 5 min
+            $timeSlot = floor(time() / $timeWindow); // $timeSlot will change every 5 minutes: we avoid accidental F5
+        }
         $payloadJson = json_encode($cleanData);
 
         $fingerprintString = $payloadJson . $formId . $remoteIp . $userAgent . $formUrl . $timeSlot;
         $responseHash = md5($fingerprintString);
 
         if ($this->checkDuplicateSubmission($formId, $responseHash)) {
+            if ($isSpam) {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam duplicated");
+                stic_AWFUtils::renderGenericSpamResponse();
+                return;
+            }
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Duplicated response detected");
             $this->handleDuplicateError($formBean);
             return;
+        }
+
+        // Load the configuration
+        $formConfig = null;
+        if (!$isSpam) {
+            $configData = json_decode(html_entity_decode($formBean->configuration), true);
+            if (!$configData) {
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form Configuration not found. ID: $formId");
+                $this->terminateRawError("Invalid Form Configuration.");
+            }
+            $formConfig = FormConfig::fromJsonArray($configData);
+        }
+
+        // AJAX: Remote validation for js
+        if (!$isSpam) {
+            if (isset($_REQUEST['ajax_validation_only']) && $_REQUEST['ajax_validation_only'] == '1') {
+                if (ob_get_length()) ob_clean();
+                header('Content-Type: application/json');
+
+                $errors = $this->validateSubmission($formConfig, $cleanData);
+
+                if (!empty($errors) && !empty($errors['errors'])) {
+                    echo json_encode(['status' => 'error', 'errors' => $errors['errors']]);
+                } else {
+                    echo json_encode(['status' => 'success']);
+                }
+                exit; // Exit: Only validation, no data saved
+            }
         }
 
         // We look for the response status
         $isPublic = ($formBean->status === 'public');
         if ($isSpam) {
             $responseStatus = 'spam';
-            $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_Advanced_Web_Forms_Responses');
         } elseif ($isPublic) {
             $responseStatus = 'pending';
             $responseDescription = '';
+
+            // Data validation
+            $validationErrors = $this->validateSubmission($formConfig, $cleanData);
+            if (!empty($validationErrors) && !empty($validationErrors['errorDescriptions'])) {
+                $errorString = implode(", ", $validationErrors['errorDescriptions']);
+                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Data Validation errors for Form ID {$formId}:" . $errorString);
+
+                $errorTitle = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
+                stic_AWFUtils::renderErrorWithBackButton($formConfig, $errorTitle, $validationErrors['errorDescriptions']);
+                return;
+            }
         } else {
             global $app_list_strings;
 
@@ -141,23 +219,12 @@ class ResponseHandler
             $formBean->stic_69c1s_responses->add($responseBean->id);
         } else {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship form-responses for Form ID {$formId}");
+            if ($isSpam) {
+                stic_AWFUtils::renderGenericSpamResponse();
+                return;
+            }
             $this->terminateRawError("Form relationship not found.");
         }
-
-        // Load the configuration (with action flows)
-        $configData = json_decode(html_entity_decode($formBean->configuration), true);
-        if (!$configData) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form Configuration not found. ID: $formId");
-
-            // Update the response
-            if ($isPublic) {
-                $responseBean->status = 'error';
-                $responseBean->description = translate('LBL_ERROR_FORM_CONFIG', 'stic_Advanced_Web_Forms_Responses');
-                $responseBean->save();
-            }
-            $this->terminateRawError("Invalid Form Configuration.");
-        }
-        $formConfig = FormConfig::fromJsonArray($configData);
 
         // Stop if it's SPAM (Fake success)
         if ($isSpam) {
@@ -168,34 +235,14 @@ class ResponseHandler
             $safeId = $db->quote($formId);
             $db->query("UPDATE stic_advanced_web_forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
             
-            // Show generic success to fool the bot
-            $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
-            $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
-            return; // Stop: we don't process further
+            stic_AWFUtils::renderGenericSpamResponse();
+            return;
         }
 
         // Only 'public' forms process responses
         if (!$isPublic) {
             $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
             $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
-            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
-            return;
-        }
-
-        // Data validation
-        $validationErrors = $this->validateSubmission($formConfig, $cleanData);
-        if ($validationErrors) {
-            $errorString = implode(", ", $validationErrors);
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Data Validation errors for Form ID {$formId}:" . $errorString);
-
-            $responseBean->status = 'error';
-            $responseBean->description = translate('LBL_ERROR_FORM_VALIDATION', 'stic_Advanced_Web_Forms_Responses') . ": " . $errorString;
-            $responseBean->save();
-
-            $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
-            $errors = "\n- " . implode("\n- ", $validationErrors);
-            $msg = translate('LBL_ERROR_FORM_VALIDATION_MSG', 'stic_Advanced_Web_Forms_Responses') . ":" .$errors;
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
@@ -458,7 +505,10 @@ class ResponseHandler
      * @return ?array List of errors or null if no errors
      */
     private function validateSubmission(FormConfig $config, array $data): ?array {
-        $errors = [];
+        $errors = [
+            'errors' => [], 
+            'errorDescriptions' => []
+            ];
 
         foreach ($config->data_blocks as $block) {
             foreach ($block->fields as $field) {
@@ -466,15 +516,18 @@ class ResponseHandler
                     continue;
                 }
 
-                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached_' : '';
-                $inputKey = $prefix . $block->name . '_' . $field->name;
+                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached.' : '';
+                $inputKeyInForm = $prefix . $block->name . '.' . $field->name;
+                $inputKey = str_replace(".", "_", $inputKeyInForm);
                 $value = $data[$inputKey] ?? null;
+                $label = rtrim($field->label, ":");
 
                 // Validation of required field (Required)
                 if ($field->required_in_form) {
                     if ($value === null || $value === '' || (is_array($value) && empty($value))) {
-                        $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
-                                    translate('LBL_ERROR_REQUIRED_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
+                                                                        translate('LBL_ERROR_REQUIRED_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_REQUIRED_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         continue;
                     }
                 }
@@ -483,20 +536,23 @@ class ResponseHandler
                 if ($value !== null && $value !== '') {
                     if ($field->type_in_form === 'number') {
                         if (!is_numeric($value)) {
-                            $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
-                                        translate('LBL_ERROR_NUMERIC_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_NUMERIC_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_NUMERIC_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         }
                     }
                     if ($field->type_in_form === 'date') {
                         if (!strtotime($value)) {
-                            $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
-                                        translate('LBL_ERROR_DATE_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_DATE_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_DATE_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         }
                     }
                     if ($field->subtype_in_form === 'text_email') {
-                        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                            $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
-                                        translate('LBL_ERROR_EMAIL_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                        if (strpos($value, '@') === false || strpos($value, '.') === false) {
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_EMAIL_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_EMAIL_FIELD', 'stic_Advanced_Web_Forms_Responses');
                         }
                     }
                     if (!empty($field->value_options) && $field->value_type === DataBlockFieldValueType::SELECTABLE) {
@@ -507,8 +563,9 @@ class ResponseHandler
                                 continue;
                             }
                             if (!in_array($subVal, $validValues)) {
-                                $errors[] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$field->label}': ". 
-                                            translate('LBL_ERROR_VALUE_FIELD', 'stic_Advanced_Web_Forms_Responses') . ' ({$subVal})';
+                                $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
+                                                                                translate('LBL_ERROR_VALUE_FIELD', 'stic_Advanced_Web_Forms_Responses') . ' ({$subVal})';
+                                $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_VALUE_FIELD', 'stic_Advanced_Web_Forms_Responses') . ' ({$subVal})';
                                 break; 
                             }
                         }
@@ -517,7 +574,7 @@ class ResponseHandler
             }
         }
 
-        return empty($errors) ? null : $errors;
+        return $errors;
     }
 
     /**
@@ -643,7 +700,41 @@ class ResponseHandler
 
         // Clean the input
         return strip_tags(trim((string)$input));
-    }    
+    }
+
+    
+    private function isBotUserAgent(string $userAgent): bool 
+    {
+        // If it's empty, it's suspicious (all browsers send something)
+        if (empty($userAgent)) {
+            return true; 
+        }
+
+        // Blacklist of programming tools that are NOT browsers
+        // If the User Agent contains any of these words, it is a script.
+        $botSignatures = [
+            'curl',          // Linux command tool
+            'wget',          // Download tool
+            'python',        // Requests/Ulllib library
+            'java/',         // Java HTTP Client
+            'libwww',        // Perl library
+            'httpclient',    // Generic Apache/Java
+            'php/',          // PHP scripts (file_get_contents)
+            'postman',       // API testing tool
+            'insomnia',      // API testing tool
+            'node-fetch',    // NodeJS
+            'axios',         // JS library (server side)
+            'go-http-client' // Golang
+        ];
+
+        foreach ($botSignatures as $bot) {
+            if (strpos($userAgent, $bot) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 // Handler execution

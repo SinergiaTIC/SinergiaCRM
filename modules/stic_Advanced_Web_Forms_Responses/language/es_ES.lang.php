@@ -109,10 +109,13 @@ $mod_strings = array (
 
   'LBL_ERROR_FORM_VALIDATION' => 'Error en la validación de datos del formulario',
   'LBL_ERROR_FORM_VALIDATION_MSG' => 'Se han detectado errores en los datos enviados.',
+  'LBL_BUTTON_GO_BACK_AND_FIX' => 'Volver a editar el formulario',
 
   // Internal processing errors
   'LBL_RESPONSE_NO_PUBLIC_STATUS' => 'Respuesta recibida con el formulario sin publicar',
   'LBL_RESPONSE_HONEYPOT_SPAM' => 'Respuesta no deseada: se ha rellenado el campo trampa oculto',
+  'LBL_RESPONSE_TIMETRAP_SPAM' => 'Respuesta no deseada: se ha rellenado el formulario demasiado rápido',
+  'LBL_RESPONSE_USERAGENT_SPAM' => 'Respuesta no deseada: se ha enviado el formulario desde una herramienta de programación',
   'LBL_ERROR_FORM_CONFIG' => 'Error en la configuración del formulario',
 
   // User-facing validation errors
