@@ -1,0 +1,8 @@
+SticUpdates/Languages/ca/20251015_feature_Signatures.sql
+SticUpdates/Languages/ca/20251203_feature_Voluntariado.sql
+SticUpdates/Languages/en/20251015_feature_Signatures.sql
+SticUpdates/Languages/es/20251203_feature_Voluntariado.sql
+SticUpdates/Languages/eu/20251203_feature_Voluntariado.sql
+SticUpdates/Languages/gl/20251203_feature_Voluntariado.sql
+SticUpdates/Migrations/20251201_enhancement_renderEmailTemplateInBrowser.sql
+SticUpdates/Migrations/20251203_feature_Voluntariado.sql
