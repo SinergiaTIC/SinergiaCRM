@@ -27,7 +27,6 @@ A	SticUpdates/Languages/eu/20251203_feature_Voluntariado.sql
 A	SticUpdates/Languages/gl/20251203_feature_Voluntariado.sql
 A	SticUpdates/Migrations/20251201_enhancement_renderEmailTemplateInBrowser.sql
 A	SticUpdates/Migrations/20251203_feature_Voluntariado.sql
-M	config.php
 M	crowdin.yml
 M	custom/Extension/application/Ext/EntryPointRegistry/SticEntryPoints.php
 M	custom/Extension/application/Ext/Language/ca_ES.SticLang.php
@@ -232,7 +231,6 @@ M	modules/stic_Messages/language/gl_ES.lang.php
 M	modules/stic_Messages/stic_Messages.js
 M	modules/stic_Messages/stic_Messages.php
 M	modules/stic_Payment_Commitments/stic_Payment_Commitments.php
-M	modules/stic_Payments/GenerateModel182.php
 M	modules/stic_Payments/stic_Payments.php
 M	modules/stic_Personal_Environment/language/eu_ES.lang.php
 M	modules/stic_Resources/vardefs.php
@@ -267,10 +265,6 @@ A	modules/stic_Validation_Actions/DataAnalyzer/Functions/ContactRelationships_Ch
 A	modules/stic_Validation_Actions/DataAnalyzer/Functions/ContactRelationships_CheckExpiredDocuments/language/gl_ES.lang.php
 M	modules/stic_Validation_Actions/DataAnalyzer/Functions/DataCheckFunctionFactory.php
 M	modules/stic_Work_Calendar/language/gl_ES.lang.php
-M	themes/SuiteP/css/Dawn/style.css
-M	themes/SuiteP/css/Day/style.css
-M	themes/SuiteP/css/Dusk/style.css
-M	themes/SuiteP/css/Night/style.css
-M	themes/SuiteP/css/Noon/style.css
 M	themes/SuiteP/css/Stic/SticCustom.scss
 M	themes/SuiteP/css/Stic/style.css
+M	themes/SuiteP/css/SticCustom/style.css
