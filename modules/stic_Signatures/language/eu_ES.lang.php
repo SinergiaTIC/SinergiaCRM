@@ -92,7 +92,7 @@ $mod_strings = array(
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => 'La fecha de activación debe ser anterior a la fecha de caducidad.',
     'LBL_EXPIRATION_DATE_ERROR' => 'La fecha de caducidad debe ser posterior a la fecha de activación.',
-    'LBL_SIGNERS_ADDED_MSG' => 'Firmantes añadidos correctamente',
+    'LBL_SIGNERS_ADDED_MSG' => 'firmante(s) añadido(s) correctamente',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Para que los nuevos firmantes puedan firmar el documento es necesario cambiar el estado a Abierto o Permanente.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos, ya existen o se ha producido un error',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes.',
@@ -127,6 +127,7 @@ $mod_strings = array(
     'LBL_PORTAL_ACCEPTANCE_AREA' => 'Área de firma',
     'LBL_PORTAL_ACCEPTANCE_INSTRUCTION' => 'Para aceptar el documento, haga clic en el botón de abajo.',
     'LBL_PORTAL_ACCEPT_AND_SIGN_BTN' => 'Aceptar y firmar documento',
+    'LBL_PORTAL_DOCUMENT_ACCEPTED_BY' => 'Documento aceptado por:',
     'LBL_PORTAL_DOCUMENT_SIGNED' => 'Documento firmado',
     'LBL_PORTAL_DOWNLOAD_SIGNED_DOC' => 'Descargar documento firmado',
     'LBL_PORTAL_SEND_COPY_EMAIL' => 'Enviarme una copia por correo',

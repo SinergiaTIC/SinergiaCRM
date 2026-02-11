@@ -77,6 +77,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsstic_pa_password_c', 'Accounts', 'stic_pa_password_c'),
 ('Accountsstic_pa_username_c', 'Accounts', 'stic_pa_username_c'),
 ('Accountsstic_pa_enable_c', 'Accounts', 'stic_pa_enable_c'),
+-- Emails Marketing
+('EmailMarketingstic_display_html_c', 'EmailMarketing', 'stic_display_html_c'),
 -- Campaigns
 ('Campaignsparent_id', 'Campaigns', 'parent_id'),
 ('Campaignsparent_name', 'Campaigns', 'parent_name'),
@@ -170,6 +172,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsinc_state_c', 'Contacts', 'inc_state_c'),
 ('Contactsinc_municipality_c', 'Contacts', 'inc_municipality_c'),
 ('Contactsinc_town_c', 'Contacts', 'inc_town_c'),
+('Contactsstic_confidentiality_agreement_c', 'Contacts', 'stic_confidentiality_agreement_c'),
+('Contactsstic_conduct_code_c', 'Contacts', 'stic_conduct_code_c'),
+('Contactsstic_occupational_safety_c', 'Contacts', 'stic_occupational_safety_c'),
+('Contactsstic_time_availability_c', 'Contacts', 'stic_time_availability_c'),
 ('Contactsstic_pa_password_c', 'Contacts', 'stic_pa_password_c'),
 ('Contactsstic_pa_username_c', 'Contacts', 'stic_pa_username_c'),
 ('Contactsstic_pa_enable_c', 'Contacts', 'stic_pa_enable_c'),
@@ -210,6 +216,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('FP_Event_Locationsstic_address_region_c','FP_Event_Locations','stic_address_region_c'),
 -- Documents
 ('Documentsstic_shared_document_link_c','Documents','stic_shared_document_link_c'),
+('Documentsstic_category_c','Documents','stic_category_c'),
+('Documentsstic_subcategory_c','Documents','stic_subcategory_c'),
 -- Project
 ('Projectstic_location_c','Project','stic_location_c'),
 -- Users

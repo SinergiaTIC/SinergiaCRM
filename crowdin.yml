@@ -1,9 +1,55 @@
 files:
+  - source: 'modules/Calendar/Dashlets/CalendarDashlet/CalendarDashlet.es_ES.lang.php'
+    translation: '/modules/Calendar/Dashlets/CalendarDashlet/CalendarDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Charts/Dashlets/CampaignROIChartDashlet/CampaignROIChartDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/CampaignROIChartDashlet/CampaignROIChartDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Charts/Dashlets/ModuleActivityDashlet/ModuleActivityDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/ModuleActivityDashlet/ModuleActivityDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Charts/Dashlets/MyPipelineBySalesStageDashlet/MyPipelineBySalesStageDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/MyPipelineBySalesStageDashlet/MyPipelineBySalesStageDashlet.%locale_with_underscore%.lang.php'
+  
+  - source: 'modules/Charts/Dashlets/OpportunitiesByLeadSourceByOutcomeDashlet/OpportunitiesByLeadSourceByOutcomeDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/OpportunitiesByLeadSourceByOutcomeDashlet/OpportunitiesByLeadSourceByOutcomeDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Charts/Dashlets/OpportunitiesByLeadSourceDashlet/OpportunitiesByLeadSourceDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/OpportunitiesByLeadSourceDashlet/OpportunitiesByLeadSourceDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Charts/Dashlets/OutcomeByMonthDashlet/OutcomeByMonthDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/OutcomeByMonthDashlet/OutcomeByMonthDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Charts/Dashlets/PipelineBySalesAgentDashlet/PipelineBySalesAgentDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/PipelineBySalesAgentDashlet/PipelineBySalesAgentDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Charts/Dashlets/PipelineBySalesStageDashlet/PipelineBySalesStageDashlet.es_ES.lang.php'
+    translation: '/modules/Charts/Dashlets/PipelineBySalesStageDashlet/PipelineBySalesStageDashlet.%locale_with_underscore%.lang.php'
+  
+  - source: 'modules/Home/Dashlets/ChartsDashlet/ChartsDashlet.es_ES.lang.php'
+    translation: '/modules/Home/Dashlets/ChartsDashlet/ChartsDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Home/Dashlets/InvadersDashlet/InvadersDashlet.es_ES.lang.php'
+    translation: '/modules/Home/Dashlets/InvadersDashlet/InvadersDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Home/Dashlets/JotPadDashlet/JotPadDashlet.es_ES.lang.php'
+    translation: '/modules/Home/Dashlets/JotPadDashlet/JotPadDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Home/Dashlets/RSSDashlet/RSSDashlet.es_ES.lang.php'
+    translation: '/modules/Home/Dashlets/RSSDashlet/RSSDashlet.%locale_with_underscore%.lang.php'
+
+  - source: 'modules/Spots/Dashlets/SpotsDashlet/SpotsDashlet.es_ES.lang.php'
+    translation: '/modules/Spots/Dashlets/SpotsDashlet/SpotsDashlet.%locale_with_underscore%.lang.php'
+
+
   - source: '*es_ES.lang.php*'
     translation: /%original_path%/%locale_with_underscore%.lang.php
+
   - source: '*es_ES.SticLang.php*'
     translation: /%original_path%/%locale_with_underscore%.SticLang.php
   - source: '*es_ES.KReporterCore.php*'
     translation: /%original_path%/%locale_with_underscore%.KReporterCore.php
   - source: '*es_ES.MailMergeReports.php*'
     translation: /%original_path%/%locale_with_underscore%.MailMergeReports.php
+  - source: '*Dashlet.es_ES.lang.php*'
+    translation: /%original_path%/%original_file_name%.%locale_with_underscore%.lang.php

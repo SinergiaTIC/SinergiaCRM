@@ -27,12 +27,15 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Signers', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Signers&action=EditView&return_module=stic_Signers&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Signers');
-}
+
+// Disable create and import signers.
+// if(ACLController::checkAccess('stic_Signers', 'edit', true)){
+//     $module_menu[]=array('index.php?module=stic_Signers&action=EditView&return_module=stic_Signers&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Signers');
+// }
+// if(ACLController::checkAccess('stic_Signers', 'import', true)){
+//     $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Signers&return_module=stic_Signers&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Signers');
+// }
+
 if(ACLController::checkAccess('stic_Signers', 'list', true)){
     $module_menu[]=array('index.php?module=stic_Signers&action=index&return_module=stic_Signers&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Signers');
-}
-if(ACLController::checkAccess('stic_Signers', 'import', true)){
-    $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Signers&return_module=stic_Signers&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Signers');
 }

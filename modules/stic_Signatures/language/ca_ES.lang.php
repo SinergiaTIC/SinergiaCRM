@@ -92,7 +92,7 @@ $mod_strings = array(
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "La data d'activació ha de ser anterior a la data de caducitat.",
     'LBL_EXPIRATION_DATE_ERROR' => "La data de caducitat ha de ser posterior a la data d'activació.",
-    'LBL_SIGNERS_ADDED_MSG' => "Els firmants s'han afegit correctament.",
+    'LBL_SIGNERS_ADDED_MSG' => 'firmant(s) afegit(s) correctament',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => "Per tal que els nous firmants puguin firmar el document cal canviar l'estat a Obert o Permanent.",
     'LBL_SIGNERS_NOT_ADDED_MSG' => "Els firmants no s'han afegit: ja existeixen o s'ha produït un error.",
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => "S'omet el següent registre perquè no s'han trobat firmants.",
@@ -127,6 +127,7 @@ $mod_strings = array(
     'LBL_PORTAL_ACCEPTANCE_AREA' => 'Àrea de firma',
     'LBL_PORTAL_ACCEPTANCE_INSTRUCTION' => 'Per acceptar el document, feu clic al botó de sota.',
     'LBL_PORTAL_ACCEPT_AND_SIGN_BTN' => 'Accepta i firma el document',
+    'LBL_PORTAL_DOCUMENT_ACCEPTED_BY' => 'Document acceptat per:',
     'LBL_PORTAL_DOCUMENT_SIGNED' => 'Document firmat',
     'LBL_PORTAL_DOWNLOAD_SIGNED_DOC' => 'Descarrega el document firmat',
     'LBL_PORTAL_SEND_COPY_EMAIL' => "Envia-me'n una còpia per correu",
