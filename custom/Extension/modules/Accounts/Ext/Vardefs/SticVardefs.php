@@ -2079,3 +2079,53 @@ $dictionary['Account']['fields']['emails_list'] = array(
         ),
     ),
 );
+
+// Private Area fields
+$dictionary['Account']['fields']['stic_pa_username_c'] = array(
+    'name' => 'stic_pa_username_c',
+    'vname' => 'LBL_STIC_PA_USERNAME',
+    'type' => 'varchar',
+    'len' => '255',
+    'inline_edit' => '1',
+    'required' => false,
+    'massupdate' => 1,
+    'importable' => 'true',
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => '1',
+    'audited' => true,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+);
+
+$dictionary['Account']['fields']['stic_pa_password_c'] = array(
+    'name' => 'stic_pa_password_c',
+    'vname' => 'LBL_STIC_PA_PASSWORD',
+    'type' => 'varchar',
+    'len' => '255',
+    'inline_edit' => '1',
+    'required' => false,
+    'massupdate' => 0,
+    'importable' => 'false',
+    'duplicate_merge' => 'disabled',
+    'audited' => false,
+    'reportable' => false,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+);
+
+$dictionary['Account']['fields']['stic_pa_enable_c'] = array(
+    'name' => 'stic_pa_enable_c',
+    'vname' => 'LBL_STIC_PA_ENABLE',
+    'type' => 'bool',
+    'default' => '0',
+    'inline_edit' => '1',
+    'required' => false,
+    'massupdate' => 1,
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'audited' => true,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+);

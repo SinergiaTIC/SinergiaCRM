@@ -187,3 +187,8 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Current project';
 
 // Financial Products
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Financial products';
+
+// Private Area Strings
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Private Area User';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private Area Password';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable Private Area';
