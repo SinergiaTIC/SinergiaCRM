@@ -175,4 +175,6 @@ $mod_strings = array(
     'LBL_STIC_JOB_APPLICATIONS_COUNT_ACCEPTED' => 'Accepted',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED' => 'Rejected or closed',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW' => 'Under review',
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT' => 'Job offer {0} closes today',
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => 'The closing date of job offer {0} is today and its status is not Closed. Review the offer here: {1}',
 );

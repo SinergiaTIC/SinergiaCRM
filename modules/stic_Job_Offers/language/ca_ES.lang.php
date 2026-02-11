@@ -175,4 +175,6 @@ $mod_strings = array(
     'LBL_STIC_JOB_APPLICATIONS_COUNT_ACCEPTED' => 'Acceptada',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED' => 'Rebutjada o tancada',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW' => 'En revisió',
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT' => "L'oferta {0} tanca avui",
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => "La data de tancament de l'oferta {0} és avui i el seu estat no és Tancada. Revisa l'oferta aquí: {1}",
 );

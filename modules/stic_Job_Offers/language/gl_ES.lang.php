@@ -176,4 +176,6 @@ $mod_strings = array(
     'LBL_STIC_JOB_APPLICATIONS_COUNT_ACCEPTED' => 'Aceptada',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED' => 'Rechazada o cerrada',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW' => 'En revisión',
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT' => 'A oferta {0} péchase hoxe',
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => 'A data de peche da oferta {0} é hoxe e o seu estado non é Pechada. Revisa a oferta aquí: {1}',
 );
