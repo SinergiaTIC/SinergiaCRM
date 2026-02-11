@@ -246,3 +246,8 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Egungo proiektua';
 
 // Productos financieros
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
+
+// Cadenas Área Privada
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario Área Privada';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña Área Privada';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Activar Área Privada';
