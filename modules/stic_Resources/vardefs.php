@@ -428,7 +428,7 @@ $dictionary['stic_Resources'] = array(
             'vname' => 'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE',
         ),
         'stic_resources_project' => array(
-            'name' => 'stic_resources_stic_centers',
+            'name' => 'stic_resources_project',
             'type' => 'link',
             'relationship' => 'stic_resources_project',
             'source' => 'non-db',

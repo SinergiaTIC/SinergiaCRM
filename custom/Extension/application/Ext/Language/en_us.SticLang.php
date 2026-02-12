@@ -31,6 +31,12 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "The field valid
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Add Accounts and Contacts to Target List';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Incorpora synchronization';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Send PDF by email';
+$app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Add to signature process';
+$app_strings['LBL_SELECT_SIGNATURE'] = 'Select a signature process';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Show related signatures';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Related signatures';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Signatures related to this module record are shown';
+$app_strings['LBL_NO_SIGNATURES_FOUND'] = 'No related signatures found';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validate import';
 $app_strings['LBL_PRINT_AS_PDF'] = 'Generate PDF document'; 
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'An error has occurred';
@@ -162,6 +168,9 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
+$app_list_strings['moduleList']['stic_Signature_Log'] = 'Signature Log';
+$app_list_strings['moduleList']['stic_Signatures'] = 'Signatures';
+$app_list_strings['moduleList']['stic_Signers'] = 'Signers';
 $app_list_strings['moduleList']['stic_Message_Marketing'] = 'Message Sendings';
 $app_list_strings['moduleList']['stic_MessagesMan'] = 'Messages Queue';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
@@ -213,6 +222,9 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condition';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Granted account';
+$app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Signature Log';
+$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Signature';
+$app_list_strings['moduleListSingular']['stic_Signers'] = 'Signer';
 $app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Message Sendings';
 $app_list_strings['moduleListSingular']['stic_MessagesMan'] = 'Messages Queue';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
@@ -306,6 +318,8 @@ $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Granted 
 $app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Message Sendings';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display']['stic_Signatures'] = 'Signatures';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Signers';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transactions';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Financial Products';
 
@@ -351,11 +365,17 @@ $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Gr
 $app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Message Sendings';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Signatures';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Signers';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transactions';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Financial Products';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';
+$app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Signatures';
+
+// Categories for Target Lists dynamic creation 
+$app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
 
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
@@ -557,6 +577,12 @@ $app_list_strings['stic_boolean_list'][''] = '';
 $app_list_strings['stic_boolean_list']['1'] = 'Yes';
 $app_list_strings['stic_boolean_list']['0'] = 'No';
 
+// Boolean tri-state values (Yes/No/NA)
+$app_list_strings['stic_yes_no_na_list'][''] = '';
+$app_list_strings['stic_yes_no_na_list']['yes'] = 'Yes';
+$app_list_strings['stic_yes_no_na_list']['no'] = 'No';
+$app_list_strings['stic_yes_no_na_list']['not_applicable'] = 'Not applicable';
+
 // Genders
 $app_list_strings['stic_genders_list'][''] = '';
 $app_list_strings['stic_genders_list']['male'] = 'Male';
@@ -703,6 +729,7 @@ $app_list_strings['stic_contacts_relationships_types_list']['board_directors'] =
 $app_list_strings['stic_contacts_relationships_types_list']['member'] = 'Member';
 $app_list_strings['stic_contacts_relationships_types_list']['employee'] = 'Employee';
 $app_list_strings['stic_contacts_relationships_types_list']['beneficiary'] = 'Beneficiary';
+$app_list_strings['stic_contacts_relationships_types_list']['pre-volunteer'] = 'Prevolunteer';
 $app_list_strings['stic_contacts_relationships_types_list']['volunteer'] = 'Volunteer';
 
 // Contacts Relationships: Roles in projects
@@ -758,6 +785,27 @@ $app_list_strings['stic_project_locations_list'][''] = '';
 $app_list_strings['stic_project_locations_list']['sample_value_1'] = 'Sample value 1';
 $app_list_strings['stic_project_locations_list']['sample_value_2'] = 'Sample value 2';
 $app_list_strings['stic_project_locations_list']['sample_value_3'] = 'Sample value 3';
+
+// Documents: Categories
+$app_list_strings['stic_documents_categories_list'][''] = '';
+$app_list_strings['stic_documents_categories_list']['identification'] = 'Identification';
+$app_list_strings['stic_documents_categories_list']['certificate'] = 'Certificate';
+$app_list_strings['stic_documents_categories_list']['insurance'] = 'Insurance';
+
+// Documents: Subcategories
+$app_list_strings['stic_documents_subcategories_list'][''] = '';
+$app_list_strings['stic_documents_subcategories_list']['identification_nif'] = 'NIF';
+$app_list_strings['stic_documents_subcategories_list']['identification_nie'] = 'NIE';
+$app_list_strings['stic_documents_subcategories_list']['identification_passport'] = 'Passport';
+$app_list_strings['stic_documents_subcategories_list']['identification_other'] = 'Other';
+$app_list_strings['stic_documents_subcategories_list']['certificate_disability'] = 'Disability';
+$app_list_strings['stic_documents_subcategories_list']['certificate_dependency'] = 'Dependency';
+$app_list_strings['stic_documents_subcategories_list']['certificate_residence'] = 'Residence';
+$app_list_strings['stic_documents_subcategories_list']['certificate_sexual_offences'] = 'Sexual offences';
+$app_list_strings['stic_documents_subcategories_list']['certificate_other'] = 'Other';
+$app_list_strings['stic_documents_subcategories_list']['insurance_volunteering'] = 'Volunteering';
+$app_list_strings['stic_documents_subcategories_list']['insurance_travel'] = 'Travel';
+$app_list_strings['stic_documents_subcategories_list']['insurance_other'] = 'Other';
 
 // Payment Commitments: Periodicities
 $app_list_strings['stic_payments_periodicities_list'][''] = '';
@@ -902,6 +950,18 @@ $app_list_strings['stic_events_discard_reasons_list']['economic'] = 'Economic';
 $app_list_strings['stic_events_discard_reasons_list']['disinterest'] = 'Disinterest';
 $app_list_strings['stic_events_discard_reasons_list']['other'] = 'Other';
 
+// Events: Volunteering modalities
+$app_list_strings['stic_events_volunteer_modes_list'][''] = '';
+$app_list_strings['stic_events_volunteer_modes_list']['no_volunteering'] = 'No volunteering';
+$app_list_strings['stic_events_volunteer_modes_list']['mixed'] = 'Mixed';
+$app_list_strings['stic_events_volunteer_modes_list']['volunteering'] = 'Volunteering';
+
+// Events: Target audiences
+$app_list_strings['stic_events_target_audiences_list'][''] = '';
+$app_list_strings['stic_events_target_audiences_list']['service_users'] = 'Services user';
+$app_list_strings['stic_events_target_audiences_list']['volunteering'] = 'Volunteering';
+$app_list_strings['stic_events_target_audiences_list']['institutional_relations'] = 'Institutional relations';
+
 // Registrations: Status
 $app_list_strings['stic_registrations_status_list'][''] = '';
 $app_list_strings['stic_registrations_status_list']['uninvited'] = 'Uninvited';
@@ -994,6 +1054,12 @@ $app_list_strings['stic_assessments_status_list']['decision_pending'] = 'Decisio
 $app_list_strings['stic_assessments_status_list']['completed'] = 'Complete';
 $app_list_strings['stic_assessments_status_list']['referred'] = 'Referred';
 $app_list_strings['stic_assessments_status_list']['discarded'] = 'Discarded';
+
+// Assessments: Types
+$app_list_strings['stic_assesments_types_list'][''] = '';
+$app_list_strings['stic_assesments_types_list']['service_user'] = 'Services user';
+$app_list_strings['stic_assesments_types_list']['volunteering'] = 'Volunteering';
+$app_list_strings['stic_assesments_types_list']['other'] = 'Other';
 
 // Goals: Origins
 $app_list_strings['stic_goals_origins_list'][''] = '';
@@ -1170,6 +1236,31 @@ $app_list_strings['stic_job_offer_origin_list']['incorpora'] = 'Incorpora';
 $app_list_strings['stic_job_offer_origin_list']['infojobs'] = 'Infojobs';
 $app_list_strings['stic_job_offer_origin_list']['orientation'] = 'Orientation';
 $app_list_strings['stic_job_offer_origin_list']['other'] = 'Other';
+
+// Job offers: Offer types
+$app_list_strings['stic_job_offers_types_list'][''] = '';
+$app_list_strings['stic_job_offers_types_list']['job'] = 'Job';
+$app_list_strings['stic_job_offers_types_list']['external'] = 'External';
+$app_list_strings['stic_job_offers_types_list']['volunteering'] = 'Volunteering';
+
+// Job offers: Offer modes
+$app_list_strings['stic_job_offers_modes_list'][''] = '';
+$app_list_strings['stic_job_offers_modes_list']['on_site'] = 'On site';
+$app_list_strings['stic_job_offers_modes_list']['remote'] = 'Remote';
+$app_list_strings['stic_job_offers_modes_list']['hybrid'] = 'Hybrid';
+
+// Job offers: Territorial scope
+$app_list_strings['stic_territorial_scopes_list'][''] = '';
+$app_list_strings['stic_territorial_scopes_list']['local'] = 'Local';
+$app_list_strings['stic_territorial_scopes_list']['district'] = 'District/County';
+$app_list_strings['stic_territorial_scopes_list']['provincial'] = 'State/Province';
+$app_list_strings['stic_territorial_scopes_list']['regional'] = 'Regional';
+$app_list_strings['stic_territorial_scopes_list']['national'] = 'National';
+
+// Job offers: Temporary
+$app_list_strings['stic_job_offers_temporalities_list'][''] = '';
+$app_list_strings['stic_job_offers_temporalities_list']['permanent'] = 'Permanent';
+$app_list_strings['stic_job_offers_temporalities_list']['temporary'] = 'Temporary';
 
 // Job applications: Status
 $app_list_strings['stic_job_applications_status_list'][''] = '';
@@ -3541,9 +3632,16 @@ $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DA
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
+// Skills: Evaluation stages
+$app_list_strings['stic_skills_evaluation_stages_list'][''] = '';
+$app_list_strings['stic_skills_evaluation_stages_list']['initial'] = 'Initial';
+$app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Intermediate';
+$app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
+
 // Messages: Type
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
+$app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
 
 // Messages: Direction
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
@@ -3660,6 +3758,63 @@ $app_list_strings['trackers_actions_list']['logout'] = 'User logout';
 $app_list_strings['trackers_actions_list']['impersonate_start'] = 'Impersonation start';
 $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Impersonation end';
 
+// Signatures: Status
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Draft';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Open';
+$app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanent';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Paused';
+$app_list_strings['stic_signatures_status_list']['completed'] = 'Completed';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelled';
+
+// Signatures: Auth methods
+$app_list_strings['stic_signatures_auth_methods_list'][''] = '';
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Unique link';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'One time password (by SMS or email)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'One time password (by email)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = 'One time password (by SMS)';
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Phone';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Identification number';
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Birthdate';
+
+// Signatures: Types
+// $app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+// $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (custom)';
+// $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternative';
+
+// Signatures: Modes
+$app_list_strings['stic_signatures_modes_list'][''] = '';
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Handwritten';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Button';
+
+// Signatures: On behalf of...
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Yes, only one representative';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Yes, all representatives';
+
+// Signers: Status
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pending';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Signed';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Unnecessary';
+
+// Signature logs: Actions
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Document signed with button'; 
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document signed with handwritten signature';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Signer added to the signature process';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = "One time password sent to signer's email";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = "One time password sent to signer's phone";
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] =  'One time password verified by signer';
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] =  'Email sent to signer';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] =  'Signer accessed the signing portal before signing';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Signed document downloaded by signer';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Signed document sent to signer by email';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signature process expired';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Document signed by another authorized person';
+$app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'The document has been downloaded internally';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'All signers have signed';
 // SinergiaDA: Users access levels
 $app_list_strings['sda_users_access_list']['0'] = 'No access';
 $app_list_strings['sda_users_access_list']['1'] = 'Full access';
@@ -3750,7 +3905,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Targets';
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Leads';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Accounts';
 
-// Workflows: customized lists
+// Workflows: Customized lists
 $app_list_strings['aow_date_options']['now'] = 'Now';
 $app_list_strings['aow_date_options']['today'] = 'Today';
 $app_list_strings['aow_date_options']['field'] = 'This field';

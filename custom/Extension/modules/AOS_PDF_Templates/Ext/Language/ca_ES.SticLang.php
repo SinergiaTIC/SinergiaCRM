@@ -22,3 +22,5 @@
  */
 
 $mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Feu servir aquest enllaç per descarregar el fitxer PDF:<br>';
+$mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Firmant autoritzat';
+$mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Firmants autoritzats';

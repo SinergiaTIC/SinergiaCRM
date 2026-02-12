@@ -443,7 +443,7 @@ $mod_strings = array(
     'LBL_HCUSTOM' => 'PERSONALIZADO',
     'LBL_HDEFAULT' => 'POR DEFECTO',
     'LBL_LANGUAGE' => 'Idioma:',
-    'LBL_CUSTOM_FIELDS' => 'campo creado en Estudio',
+    'LBL_CUSTOM_FIELDS' => '* campo creado en Estudio',
 
 //SECTION
     'LBL_SECTION_EDLABELS' => 'Editar Etiquetas',

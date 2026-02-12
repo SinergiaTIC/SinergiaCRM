@@ -552,6 +552,41 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
+            'stic_confidentiality_agreement_c' => 
+            array (
+                'type' => 'bool',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_STIC_CONFIDENTIALITY_AGREEMENT',
+                'width' => '10%',
+                'name' => 'stic_confidentiality_agreement_c',
+            ),
+            'stic_conduct_code_c' => 
+            array (
+                'type' => 'bool',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_STIC_CONDUCT_CODE',
+                'width' => '10%',
+                'name' => 'stic_conduct_code_c',
+            ),
+            'stic_occupational_safety_c' => 
+            array (
+                'type' => 'bool',
+                'default' => true,
+                'studio' => 'visible',
+                'label' => 'LBL_STIC_OCCUPATIONAL_SAFETY',
+                'width' => '10%',
+                'name' => 'stic_occupational_safety_c',
+            ),
+            'stic_time_availability_c' => 
+            array (
+                'type' => 'varchar',
+                'label' => 'LBL_STIC_TIME_AVAILABILITY',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'stic_time_availability_c',
+            ),
             'jjwg_maps_geocode_status_c' => array(
                 'type' => 'varchar',
                 'default' => true,

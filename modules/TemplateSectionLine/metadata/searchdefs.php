@@ -176,14 +176,14 @@ array(
         'default' => true,
         'width' => '10%',
       ),
-      'grp' =>
-      array(
-        'type' => 'varchar',
-        'label' => 'LBL_GRP',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'grp',
-      ),
+      // 'grp' =>
+      // array(
+      //   'type' => 'varchar',
+      //   'label' => 'LBL_GRP',
+      //   'width' => '10%',
+      //   'default' => true,
+      //   'name' => 'grp',
+      // ),
       'description' =>
       array(
         'type' => 'text',
@@ -226,14 +226,14 @@ array(
         'default' => true,
         'width' => '10%',
       ),
-      'grp' =>
-      array(
-        'type' => 'varchar',
-        'label' => 'LBL_GRP',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'grp',
-      ),
+      // 'grp' =>
+      // array(
+      //   'type' => 'varchar',
+      //   'label' => 'LBL_GRP',
+      //   'width' => '10%',
+      //   'default' => true,
+      //   'name' => 'grp',
+      // ),
       'description' =>
       array(
         'type' => 'text',

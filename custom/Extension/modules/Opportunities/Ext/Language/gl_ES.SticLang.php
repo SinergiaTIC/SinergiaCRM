@@ -43,7 +43,7 @@ $mod_strings['LBL_STIC_PRESENTATION_DATE'] = 'Data de presentación';
 $mod_strings['LBL_STIC_RESOLUTION_DATE'] = 'Data de resolución';
 $mod_strings['LBL_STIC_STATUS'] = 'Estado';
 $mod_strings['LBL_STIC_TYPE'] = 'Tipo';
-$mod_strings['LBL_ACCOUNT_NAME'] = 'Organización';
+$mod_strings['LBL_ACCOUNT_NAME'] = 'Organización convocante:';
 $mod_strings['LBL_AMOUNT'] = 'Importe solicitado';
 $mod_strings['LBL_PROJECT_OPPORTUNITIES_1_FROM_PROJECT_TITLE'] = 'Proxecto destino';
 $mod_strings['LBL_OPPORTUNITIES_INFORMATION'] = 'Datos xerais';
@@ -51,16 +51,16 @@ $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles do rexistro';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
 $mod_strings['LBL_PROJECTS_SUBPANEL_TITLE'] = 'Proxectos';
 
-// Cadeas para a tarefa programada de recordatorio de subvencións
+// Cadenas para la tarea programada de recordatorio de subvenciones
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_SUBJECT'] = '[Recordatorio do CRM] Data relevante para a subvención: ';
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_1'] = 'Aproxímase unha data relevante para a seguinte subvención: ';
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = 'Faga clic no enlace para revisala.';
 
 // Cadenas Organizaciones subvencionadas
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organizacións subvencionadas';
-$mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Carga de participantes';
+$mod_strings['LBL_LOAD_PARTICIPANTS'] = "Carga de participantes";
 
-// Cadeas adaptadas de Oportunidades a Subvencións
+// Cadenas adaptadas de Oportunidades a Subvenciones
 $mod_strings['LBL_MODULE_NAME'] = 'Subvencións';
 $mod_strings['LBL_MODULE_TITLE'] = 'Subvencións: Inicio';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Buscar Subvencións';
@@ -87,10 +87,10 @@ $mod_strings['LBL_TOTAL_OPPORTUNITIES'] = 'Total de Subvencións';
 $mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = 'Subvencións gañadas';
 $mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importar Subvencións';
 
-// Cadeas de notificación de novas subvencións
+// Cadenas para la notificación de nuevas subvenciones
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL da convocatoria';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Información adicional';
 $mod_strings['LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE'] = 'Notificacións';
 
-// Cadeas Ayudas
+// Cadenas Ayudas
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Axudas';

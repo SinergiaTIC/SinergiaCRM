@@ -26,7 +26,7 @@
 $lang_format_config = array (
 
    'ca' => array (
-      'week_days' => array("dilluns","dimarts","dimecres","dijous","divendres","dissapte","diumenge"),
+      'week_days' => array("dilluns","dimarts","dimecres","dijous","divendres","dissabte","diumenge"),
       'months' => array("gener","febrer","març","abril","maig","juny","juliol","agost","setembre","octubre","novembre","desembre"),
       'decimal_point' => ',',
       'thousands_sep' => '.',
@@ -34,7 +34,7 @@ $lang_format_config = array (
       'time_format' => 'G:i',
       'long_date_format' => 'j \d\e F \d\e Y',  // 'j / F / Y'
       'bool_0' => 'No',
-      'bool_1' => 'Si',
+      'bool_1' => 'Sí',
       'NumberToWords' => false,
       'CurrencyToWords' => false,
    ),

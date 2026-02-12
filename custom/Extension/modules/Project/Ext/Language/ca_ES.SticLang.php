@@ -42,9 +42,11 @@ $mod_strings['LBL_STIC_PAYMENT_COMMITMENTS_PROJECT_FROM_STIC_PAYMENT_COMMITMENTS
 $mod_strings['LBL_STIC_EVENTS_PROJECT_FROM_STIC_EVENTS_TITLE'] = 'Esdeveniments';
 $mod_strings['LBL_STIC_ACCOUNTS_RELATIONSHIPS_PROJECT_FROM_STIC_ACCOUNTS_RELATIONSHIPS_TITLE'] = 'Relacions amb Organitzacions';
 $mod_strings['LBL_PROJECT_OPPORTUNITIES_1_FROM_OPPORTUNITIES_TITLE'] = 'Subvencions';
+$mod_strings['LBL_OPPORTUNITIES_SUBPANEL_TITLE'] = 'Subvencions';
 $mod_strings['LBL_STIC_FOLLOWUPS_PROJECT_FROM_STIC_FOLLOWUPS_TITLE'] = 'Seguiments';
 $mod_strings['LBL_STIC_GOALS_PROJECT_FROM_STIC_GOALS_TITLE'] = 'Objectius';
-$mod_strings['LBL_OPPORTUNITIES_SUBPANEL_TITLE'] = 'Subvencions';
+$mod_strings['LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofertes laborals';
+$mod_strings['LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE'] = 'Valoracions';
 $mod_strings['LBL_STIC_LOCATION'] = 'Ubicacions';
 $mod_strings['LBL_ESTIMATED_END_DATE_ERROR'] = "La data de finalització ha de ser igual o posterior a la data d'inici.";
 $mod_strings['LBL_ESTIMATED_START_DATE_ERROR'] = "La data d'inici ha de ser igual o anterior a la data de finalització.";
@@ -60,3 +62,6 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = 'Segur que voleu esborrar aquesta tasc
 // Cadenes adaptades Ajuts
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centres';
+
+// Cadenes Recursos
+$mod_strings['LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE'] = 'Recursos';

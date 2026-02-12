@@ -20,4 +20,31 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+$dictionary['EmailMarketing']['fields']['stic_display_html_c'] = array(
+    'id' => 'EmailMarketingstic_display_html_c',
+    'name' => 'stic_display_html_c',
+    'vname' => 'LBL_STIC_DISPLAY_HTML',
+    'custom_module' => 'EmailMarketing',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'bool',
+    'len' => '255',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => 0,
+    'no_default' => 0,
+    'inline_edit' => 1,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'enabled',
+    'studio' => 'visible',
+);
+
 $dictionary["EmailMarketing"]["fields"]["inbound_email_id"]["required"] = true;

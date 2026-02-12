@@ -78,6 +78,18 @@ class EmailTemplateParser
      */
     private $module;
 
+    // STIC-Custom - JCH - 20251009 - Notifications: Parse Email Templates with notified module
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+    /**
+     * @var EmailInterface
+     */
+    private $origModule;
+    /**
+     * @var EmailInterface
+     */
+    private $notificationModule;
+    // END STIC-Custom
+
     /**
      * @var string
      */
@@ -115,6 +127,7 @@ class EmailTemplateParser
 
         // STIC-Custom - JBL - 20240709 - Notifications: Parse Email Templates with notified module
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
         if ($campaign->campaign_type == "Notification" && !empty($campaign->parent_id)) {
             global $beanList, $beanFiles;
 
@@ -127,8 +140,8 @@ class EmailTemplateParser
                     require_once($beanFiles[$class]);
                 }
                 // Instantiate the related object and retrieve its data using parent_id
-                $this->module = new $class();
-                $this->module->retrieve($campaign->parent_id);
+                $this->notificationModule = new $class();
+                $this->notificationModule->retrieve($campaign->parent_id);
             }
         }
         // END STIC-Custom
@@ -160,8 +173,49 @@ class EmailTemplateParser
         $matches = preg_match_all(static::PATTERN, $attributeValue, $variables);
 
         if ($matches !== 0) {
-            foreach ($variables[0] as $variable) {
-                $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
+            
+            // STIC-Custom - JCH - 20251009 - Notifications: Parse Email Templates with notified module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+            // foreach ($variables[0] as $variable) {
+                //     $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
+                // }
+                
+            // special variables replacement
+            global $sugar_config;
+            $attributeValue = str_replace('$sugarurl', $sugar_config['site_url'], $attributeValue);
+
+            // If the campaign is not of type Notification, parse as usual
+            if ($this->campaign->campaign_type != 'Notification') {
+                foreach ($variables[0] as $variable) {
+                    $attributeValue = str_replace($variable, $this->getValueFromBean($variable), $attributeValue);
+                }
+
+            } else {
+                // If the campaign is of type Notification, first parse with contact/lead/user/account module
+                // without replacing empty values, then parse with notified module
+                foreach ($variables[0] as $variable) {
+                    $valueToReplaceWith = $this->getValueFromBean($variable);
+
+                    // Prevent replacing with empty string if value is empty (eg.)
+                    if (!empty($valueToReplaceWith)) {
+                        $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
+                    }
+                }
+                // preserve original module
+                $this->origModule = $this->module;
+
+                // switch to notified module
+                $this->module = $this->notificationModule;
+
+                // Now parse again with the notified module, finally replacing empty values
+                foreach ($variables[0] as $variable) {
+                    $valueToReplaceWith = $this->getValueFromBean($variable);
+                    $attributeValue = str_replace($variable, $valueToReplaceWith, $attributeValue);
+                }
+
+                // restore original module
+                $this->module = $this->origModule;
+                // END STIC-Custom
             }
         }
 
@@ -195,13 +249,27 @@ class EmailTemplateParser
 
         // STIC-Custom 20250624 MHP - Get the module name correctly
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/696
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
         // $parts = explode($charUnderscore, ltrim($variable, $charVariable));
         // list($moduleName, $attribute) = [array_shift($parts), implode($charUnderscore, $parts)];
         if ($this->campaign->campaign_type == 'Notification')
         {
             $variable = ltrim($variable, $charVariable);
             $moduleName = strtolower($this->module->object_name);
-            $attribute = substr($variable, strlen($moduleName . '_'));
+
+            switch ($moduleName) {
+                case 'user':
+                    $attribute = str_replace('contact_user_', '', $variable);
+                    break;
+                case 'lead':
+                case 'prospect':
+                    $attribute = str_replace('contact_', '', $variable);
+                    break;
+                default:
+                    $attribute = substr($variable, strlen($moduleName . '_'));
+                    break;
+            }
+
         } else {
             $parts = explode($charUnderscore, ltrim($variable, $charVariable));
             list($moduleName, $attribute) = [array_shift($parts), implode($charUnderscore, $parts)];

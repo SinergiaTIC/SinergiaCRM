@@ -40,6 +40,14 @@
 var selected = 0;
 
 function showVariable(fld){
+
+    // STIC CUSTOM - JCH - 20250916 - Populate with Contacts values if authorized
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+    if ($('#module_name').find('option:selected').hasClass('authorized-signer')) {
+        fld = fld.replace('$contacts_', '$authorized_signer_');
+    }
+    // END STIC CUSTOM
+
     document.getElementById('variable_text').value=fld;
 }
 
@@ -49,6 +57,15 @@ function setType(type){
 }
 
 function populateVariables(type){
+
+    // STIC CUSTOM - JCH - 20250916 - Populate with Contacts valuesyif authorized
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+    if($('#module_name').find('option:selected').hasClass('authorized-signer')){
+        type = 'Contacts';
+    }
+    // END STIC CUSTOM
+
+
     var reg_values =  regularOptions[type];
 
     document.getElementById('variable_name').innerHTML = '';
@@ -70,8 +87,35 @@ function populateModuleVariables(type){
     for (var i in mod_values) {
         selector.options[selector.options.length] = new Option(mod_values[i], i);
     }
-
-    populateVariables(type);
+    
+    // STIC CUSTOM - JCH - 20250916 - Add option for authorized Contacts
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+    
+    
+    // Find and store the values and texts of options that meet the criteria.
+    const authorizedItems = $('#module_name option').filter(function () {
+        const value = $(this).val();
+        return value === 'Contacts' || value.includes('_FROM_CONTACTS_');
+    }).map(function () {
+        return {
+            value: $(this).val(),
+            text: $(this).text()
+        };
+    }).get();
+    
+    // If items were found, create and append the new option group.
+    if (authorizedItems.length > 0) {
+        const authorizedGroup = authorizedItems.reduce((acc, item) => {
+            // Add the "authorized-signer" class to identify these new options.
+            return acc + `<option class="authorized-signer" value="${item.value}">${item.text} (${SUGAR.language.get('AOS_PDF_Templates', 'LBL_AUTHORIZED_SIGNER')})</option>`;
+        }, `<optgroup label="${SUGAR.language.get('AOS_PDF_Templates', 'LBL_AUTHORIZED_SIGNERS')}">`) + '</optgroup>';
+        
+        $('#module_name').append(authorizedGroup);
+    }
+    
+    // END STIC CUSTOM
+            
+        populateVariables(type);
 }
 
 function insert_variable(text) {

@@ -71,12 +71,12 @@ array(
     'default' => true,
     'link' => true,
   ),
-  'GRP' => array(
-    'width' => '5%',
-    'label' => 'LBL_GRP',
-    'default' => true,
-    'link' => true,
-  ),
+  // 'GRP' => array(
+  //   'width' => '5%',
+  //   'label' => 'LBL_GRP',
+  //   'default' => true,
+  //   'link' => true,
+  // ),
   'ORD' => array(
     'width' => '5%',
     'label' => 'LBL_ORD',

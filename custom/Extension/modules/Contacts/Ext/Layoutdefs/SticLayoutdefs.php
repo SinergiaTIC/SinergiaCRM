@@ -446,6 +446,22 @@ $layout_defs['Contacts']['subpanel_setup']['history']['collection_list']['stic_M
     'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'sent', 'error'"),
 );
 
+// Signatures subpanel
+$layout_defs["Contacts"]["subpanel_setup"]['stic_signers_contacts'] = array(
+    'order' => 100,
+    'module' => 'stic_Signers',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_modified',
+    'title_key' => 'LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE',
+    'get_subpanel_data' => 'function:stic_SignersUtils::getSticSignersForContacts',
+    'function_parameters' => array(
+        'import_function_file' => 'modules/stic_Signers/Utils.php',
+    ),
+    'top_buttons' => [], // must be defined
+);
+
+
 // Financial Products subpanel
 $layout_defs["Contacts"]["subpanel_setup"]['stic_financial_products_contacts'] = array (
     'order' => 100,
