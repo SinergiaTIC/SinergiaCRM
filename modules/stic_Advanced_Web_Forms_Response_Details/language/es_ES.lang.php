@@ -69,7 +69,7 @@ $mod_strings = array (
   'LBL_MODULE_NAME' => 'Detalles de respuestas a formularios',
   'LBL_MODULE_TITLE' => 'Detalles de respuestas a formularios',
   'LBL_HOMEPAGE_TITLE' => 'Mis Detalles de respuestas a formularios',
-  'LNK_NEW_RECORD' => 'Crear Detalle de respuesta a formularios',
+  'LNK_NEW_RECORD' => 'Crear un Detalle de respuesta a formulario',
   'LNK_LIST' => 'Ver Detalles de respuestas a formularios',
   'LNK_IMPORT_STIC_ADVANCED_WEB_FORMS_RESPONSE_DETAILS' => 'Importar Detalles de respuestas a formularios',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Detalles de respuestas a formularios',
@@ -93,5 +93,5 @@ $mod_strings = array (
   'LBL_RESPONSE_ID' => 'ID de la respuesta',
   'LBL_RESPONSE' => 'response',
 
-  'LBL_STIC_AWF_RESPONSE_DETAILS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSE_DETAILS_TITLE' => 'Detalles de respuestas a formularios ',
+  'LBL_STIC_AWF_RESPONSE_DETAILS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSE_DETAILS_TITLE' => 'Detalles de respuesta a formulario',
 );
