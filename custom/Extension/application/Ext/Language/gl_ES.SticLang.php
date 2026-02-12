@@ -3906,7 +3906,7 @@ $app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Otro
 
 // Gestión patrimonial: Tipos de ocupante
 $app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
-$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Persona tutelada';
+$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Persona asistida';
 $app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Uso familiar';
 $app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Alquiler de mercado';
 $app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Alquiler social';
