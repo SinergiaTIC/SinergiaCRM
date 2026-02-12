@@ -51,6 +51,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
      */
     public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
     {
+        global $db;
         $module = $block->dataBlock->module;
         $bean = null;
         $onDuplicateAction = null;
@@ -58,8 +59,12 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         // Duplicate detection logic
         $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
         foreach ($duplicateRules as $rule) {
-            $queryFields = [];
-            $canSearch = true;
+            $scalarFields = [];
+            $emailValues = [];
+            $skipRule = false;
+
+            $foundBean = null;
+            $tempBean = BeanFactory::newBean($module);
 
             // Build the search fields for this rule
             foreach ($rule->fields as $fieldName) {
@@ -68,22 +73,90 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 // If a field in the duplicate rule is empty, do not apply the rule
                 // (Two persons cannot be the same if both have an empty email field)
                 if ($fieldValue === null || $fieldValue === '') {
-                    $canSearch = false;
+                    $skipRule = false;
                     break; // Move to the next rule
                 }
-                $queryFields[$fieldName] = $fieldValue;
+                if ($this->isEmailField($tempBean, $fieldName)) {
+                    $emailValues[] = $fieldValue;
+                } else {
+                    $scalarFields[$fieldName] = $fieldValue;
+                }
+            }
+            if ($skipRule) {
+                continue; // Move to the next rule
             }
 
-            // If the rule is valid and has fields, search for the bean
-            if ($canSearch && !empty($queryFields)) {
-                $tempBean = BeanFactory::newBean($module);
-                $foundBean = $tempBean->retrieve_by_string_fields($queryFields);
-
-                if ($foundBean !== null) {
-                    $bean = $foundBean; // Duplicate found
-                    $onDuplicateAction = $rule->on_duplicate;
-                    break; // Stop searching, we found one
+            // Email duplicate check
+            if (!empty($emailValues)) {
+                // Rule includes emails: JOIN with email table
+                foreach ($emailValues as $email) {
+                    // Query to find IDs that have THIS specific email
+                    $sql = "SELECT DISTINCT ebr.bean_id 
+                            FROM email_addr_bean_rel ebr
+                            INNER JOIN email_addresses ea ON ebr.email_address_id = ea.id
+                            WHERE ebr.bean_module = '{$module}'
+                                AND ebr.deleted = 0 
+                                AND ea.deleted = 0
+                                AND ea.email_address = '" . $db->quote($email) . "'";
+            
+                    $result = $db->query($sql);
+                    $idsFoundForThisEmail = [];
+                    while ($row = $db->fetchByAssoc($result)) {
+                        $idsFoundForThisEmail[] = $row['bean_id'];
+                    }
+                    if ($candidateIds === null) {
+                        // Is the first email checked, the candidates are the ones we found
+                        $candidateIds = $idsFoundForThisEmail;
+                    } else {
+                        // Already had candidates from a previous email.
+                        // Do the INTERSECTION: Only use those that have THE PREVIOUS and THE CURRENT.
+                        $candidateIds = array_intersect($candidateIds, $idsFoundForThisEmail);
+                    }
+                    // If no candidates: break loop
+                    if (empty($candidateIds)) {
+                        break;
+                    }
                 }
+                // If after looking at the emails we have no candidates, this rule has failed
+                if (empty($candidateIds)) {
+                   continue;
+                }
+            }
+
+            // Scalar duplicate check
+            $foundBean = null;
+
+            if ($candidateIds !== null) {
+                // Found candidates via Email.
+                // Verify if these candidates satisfy the rest of the scalar fields.
+                foreach ($candidateIds as $id) {
+                    $beanToCheck = BeanFactory::getBean($module, $id);
+                    if ($beanToCheck) {
+                        $match = true;
+                        foreach ($scalarFields as $sField => $sValue) {
+                            if ($beanToCheck->$sField != $sValue) {
+                                $match = false;
+                                break;
+                            }
+                        }
+                        if ($match) {
+                            $foundBean = $beanToCheck;
+                            break; // Full match found
+                        }
+                    }
+                }
+            } else {
+                // The rule did NOT have emails. Only scalar fields.
+                if (!empty($scalarFields)) {
+                    $tempBean = BeanFactory::newBean($module);
+                    $foundBean = $tempBean->retrieve_by_string_fields($scalarFields);
+                }
+            }
+
+            if ($foundBean !== null) {
+                $bean = $foundBean; // Duplicate found
+                $onDuplicateAction = $rule->on_duplicate;
+                break; // Stop searching, we found one
             }
         }
 
@@ -137,6 +210,24 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         $actionResult->registerBeanModificationFromBlock($bean, $block, $modificationType);
 
         return $actionResult;
+    }
+
+    private function isEmailField($bean, $fieldName) 
+    {
+        if (isset($bean->field_defs[$fieldName]) &&
+            isset($bean->field_defs[$fieldName]['type']) &&
+            $bean->field_defs[$fieldName]['type'] === 'email') {
+            return true;
+        }
+        if (isset($bean->field_defs[$fieldName]) &&
+            isset($bean->field_defs[$fieldName]['type']) &&
+            $bean->field_defs[$fieldName]['type'] === 'varchar' && 
+            isset($bean->field_defs[$fieldName]['source']) &&
+            $bean->field_defs[$fieldName]['source'] === 'non-db' &&
+            strpos($fieldName, 'email') !== false) {
+            return true;
+        }
+        return false;
     }
 
     /**

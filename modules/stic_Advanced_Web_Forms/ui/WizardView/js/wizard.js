@@ -279,6 +279,8 @@ class WizardNavigation {
   }
 
   static async autoSave() {
+    window.alpineComponent.formConfig.syncLayoutWithDataBlocks();
+    
     const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=saveDraft", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

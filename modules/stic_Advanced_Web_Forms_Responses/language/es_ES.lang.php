@@ -117,6 +117,7 @@ $mod_strings = array (
   'LBL_RESPONSE_TIMETRAP_SPAM' => 'Respuesta no deseada: se ha rellenado el formulario demasiado rápido',
   'LBL_RESPONSE_USERAGENT_SPAM' => 'Respuesta no deseada: se ha enviado el formulario desde una herramienta de programación',
   'LBL_ERROR_FORM_CONFIG' => 'Error en la configuración del formulario',
+  'LBL_ERROR_GENERATING_HTML_SUMMARY' => 'Error generando resumen de la respuesta en formato tabla',
 
   // User-facing validation errors
   'LBL_ERROR_REQUIRED_FIELD' => 'Es un campo obligatorio',

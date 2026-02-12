@@ -906,7 +906,7 @@ class stic_AwfLayout {
 
     // Cleanup of the blocks of the visual structure
     this.structure.forEach(section => {
-      section.elements = section.elements.filter(el => {
+      const validElements = section.elements = section.elements.filter(el => {
         if (el.type != 'datablock') return true; // It's not a block: keep it
 
         // We check that the block exists
@@ -916,14 +916,18 @@ class stic_AwfLayout {
         if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
         
         // Check field visibility
-        // (if it has no fixed fields, it should not be in the layout)
-        if (!block.fields.some(f => f.type_field !== 'fixed')) return false; // The block only has fixed fields
+        // (if it has only fixed or hidden fields, it should not be in the layout)
+        if (!block.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false;
           
         // Mark the block as placed
         placedBlockIds.add(el.ref_id); 
         return true;
       });
-      cleanStructure.push(section);
+      section.elements = validElements;
+
+      if (section.elements.length > 0) {
+        cleanStructure.push(section);
+      }
     });
 
     this.structure = cleanStructure;
@@ -931,7 +935,7 @@ class stic_AwfLayout {
     // Add the missing blocks
     const orphanBlocks = dataBlocks.filter(b => {
       if (placedBlockIds.has(b.id)) return false; // The block is placed
-      if (!b.fields.some(f => f.type_field !== 'fixed')) return false; // Only has fixed fields
+      if (!b.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false; // Only has fixed or hidden fields
 
       return true;
     });
@@ -947,7 +951,6 @@ class stic_AwfLayout {
   _addSectionWithBlock(block) {
     const section = new stic_AwfLayoutSection({
       title: block.text, 
-      containerType: 'panel'
     });
     
     const element = new stic_AwfLayoutElement({
@@ -1043,7 +1046,7 @@ class stic_AwfLayoutSection {
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
       
-      containerType: 'card',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
+      containerType: 'panel',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
       elements: [],
     });
 
@@ -1373,8 +1376,6 @@ class stic_AwfConfiguration {
 
     this.data_blocks.push(dataBlock);
 
-    this.syncLayoutWithDataBlocks();
-
     return dataBlock;
   }
 
@@ -1404,7 +1405,6 @@ class stic_AwfConfiguration {
     });
 
     this.data_blocks.push(dataBlock);
-    this.syncLayoutWithDataBlocks();
 
     return dataBlock;
   }
@@ -1523,9 +1523,6 @@ class stic_AwfConfiguration {
 
     // Remove DataBlock
     this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
-
-    // Sync Layout with DataBlocks
-    this.syncLayoutWithDataBlocks();
   }
 
   deleteDataBlockField(dataBlock, field) {
