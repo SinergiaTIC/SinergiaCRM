@@ -146,31 +146,30 @@ class ResponseHandler
         }
 
         // Load the configuration
-        $formConfig = null;
-        if (!$isSpam) {
-            $configData = json_decode(html_entity_decode($formBean->configuration), true);
-            if (!$configData) {
-                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form Configuration not found. ID: $formId");
-                $this->terminateRawError("Invalid Form Configuration.");
-            }
-            $formConfig = FormConfig::fromJsonArray($configData);
+        $configData = json_decode(html_entity_decode($formBean->configuration), true);
+        if (!$configData) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form Configuration not found. ID: $formId");
+            $this->terminateRawError("Invalid Form Configuration.");
         }
+        $formConfig = FormConfig::fromJsonArray($configData);
 
         // AJAX: Remote validation for js
-        if (!$isSpam) {
-            if (isset($_REQUEST['ajax_validation_only']) && $_REQUEST['ajax_validation_only'] == '1') {
-                if (ob_get_length()) ob_clean();
-                header('Content-Type: application/json');
+        if (isset($_REQUEST['ajax_validation_only']) && $_REQUEST['ajax_validation_only'] == '1') {
+            if (ob_get_length()) ob_clean();
+            header('Content-Type: application/json');
 
-                $errors = $this->validateSubmission($formConfig, $cleanData);
-
-                if (!empty($errors) && !empty($errors['errors'])) {
-                    echo json_encode(['status' => 'error', 'errors' => $errors['errors']]);
-                } else {
-                    echo json_encode(['status' => 'success']);
-                }
-                exit; // Exit: Only validation, no data saved
+            if ($isSpam) {
+                echo json_encode(['status' => 'success']); 
+                exit;
             }
+
+            $errors = $this->validateSubmission($formConfig, $cleanData);
+            if (!empty($errors) && !empty($errors['errors'])) {
+                echo json_encode(['status' => 'error', 'errors' => $errors['errors']]);
+            } else {
+                echo json_encode(['status' => 'success']);
+            }
+            exit; // Exit: Only validation, no data saved
         }
 
         // We look for the response status
@@ -200,7 +199,13 @@ class ResponseHandler
                                    "'{$app_list_strings['stic_advanced_web_forms_response_status_list'][$formBean->status]}'";
         }
 
-        // We save the response
+        // Execution context
+        $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
+        if (empty($defaultAssignedUserId)) {
+            $defaultAssignedUserId = $current_user->id;
+        }
+
+        // Save the response
         $responseBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Responses');
         $responseBean->is_automated_save = true;
         $responseBean->name = $formBean->name ." - ". date('Y-m-d H:i:s');
@@ -213,6 +218,21 @@ class ResponseHandler
         $responseBean->description = $responseDescription;
         $responseBean->assigned_user_id = $formBean->assigned_user_id;
         $responseBean->save();
+
+        // Execution Context
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
+
+        // Html Summary
+        $htmlSummary = '';
+        try {
+            $htmlSummary = stic_AWFUtils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error generating HTML snapshot for response {$responseBean->id}: " . $e->getMessage());
+            $htmlSummary = "<div class='alert alert-danger'>". translate('LBL_ERROR_GENERATING_HTML_SUMMARY', 'stic_Advanced_Web_Forms_Responses') ."</div>";
+        }
+        $responseBean->html_summary = $htmlSummary;
+        $responseBean->save();
+
 
         // Link the response with the form
         if ($formBean->load_relationship('stic_69c1s_responses')) {
@@ -252,22 +272,7 @@ class ResponseHandler
         $safeId = $db->quote($formId);
         $db->query("UPDATE stic_advanced_web_forms SET analytics_submissions = analytics_submissions + 1 WHERE id = '$safeId'");
 
-        // Execution context
-        $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
-        if (empty($defaultAssignedUserId)) {
-            $defaultAssignedUserId = $current_user->id;
-        }
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
-
-        // Generate summary HTML and save it in the response
-        try {
-            $snapshotHtml = stic_AWFUtils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
-            $responseBean->html_summary = $snapshotHtml;
-        } catch (Exception $e) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error generating HTML snapshot for response {$responseBean->id}: " . $e->getMessage());
-            $responseBean->html_summary = "<div class='alert alert-danger'>Error generating HTML snapshot for response.</div>";
-        }
-
+        // Execution flow
         $executor = new ServerActionFlowExecutor($context);
         
         // Preparation of the Action Flows

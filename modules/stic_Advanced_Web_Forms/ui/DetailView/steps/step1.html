@@ -90,7 +90,7 @@
                                     <i class="suitepicon suitepicon-action-info me-1"></i>
                                     <span x-text="utils.translate('LBL_FORM_PUBLISH_HTML_DESC')"></span>
                                 </div>
-                                <textarea class="form-control font-monospace small bg-light" rows="10" readonly x-model="generatedHtml"></textarea>
+                                <textarea class="form-control font-monospace small bg-light" rows="10" readonly x-model="generatedHtml" style="overflow-y: scroll;"></textarea>
                                 <div class="mt-2 text-end">
                                     <button type="button" class="btn button" @click="copyToClipboard(generatedHtml)" x-text="utils.translate('LBL_BUTTON_COPY')"></button>
                                     <button type="button" class="btn button" @click="downloadHtml()" x-text="utils.translate('LBL_BUTTON_DOWNLOAD')"></button>

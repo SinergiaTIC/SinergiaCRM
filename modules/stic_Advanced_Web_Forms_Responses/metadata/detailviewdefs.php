@@ -81,6 +81,12 @@ $viewdefs [$module_name] = array (
             'label' => 'LBL_EXECUTION_LOG',
           ),
         ),
+        7 => array (
+          0 => array(
+            'name' => 'description',
+            'label' => 'LBL_DESCRIPTION',
+          ),
+        ),
       ),
       'lbl_panel_record_details' => array(
         0 => array(

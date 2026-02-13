@@ -524,6 +524,37 @@ class FormHtmlGeneratorService {
             init() {
                 this.loadTime = Math.floor(Date.now() / 1000);
                 {$jsCheckStatus}
+                this.prefillFromUrl();
+            },
+
+            // Auto fill fields from URL
+            prefillFromUrl() {
+                try {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const ignore = ['entryPoint', 'id', 'module', 'action', 'ajax_validation_only'];
+
+                    urlParams.forEach((value, key) => {
+                        if (ignore.includes(key)) return;
+
+                        // Look for inputs ONLY within our form (scoped)
+                        const form = this.\$refs.form;
+                        if (!form) return;
+
+                        // Flexible selector: exact name, or ending in _name (Sugar style), or .name
+                        const selector = `[name='\${key}'], [name$='_\${key}'], [name$='.\${key}']`;
+                        const inputs = form.querySelectorAll(selector);
+
+                        inputs.forEach(input => {
+                            if (!input.value && input.type !== 'hidden') {
+                                input.value = value;
+                                input.dispatchEvent(new Event('input', { bubbles: true }));
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        });
+                    });
+                } catch (e) {
+                    console.warn('AWF Prefill Error:', e);
+                }
             },
 
             // Validate single input
@@ -1235,28 +1266,6 @@ HTML;
             }
         }
 
-        // == AUTO FILL FIELDS ==
-        $js .= "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                // Read URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.forEach((value, key) => {
-                    if (['entryPoint', 'id', 'module', 'action'].includes(key)) return;
-
-                    // Find matching inputs by name
-                    const inputs = document.querySelectorAll(`[name='\${key}'], [name$='_\${key}'], [name$='.\${key}']`);
-                    inputs.forEach(input => {
-                        if (!input.value) {
-                            input.value = value;
-                            input.dispatchEvent(new Event('input'));
-                        }
-                    });
-                });
-            } catch (e) { console.warn('AWF Prefill Error:', e); }
-        });
-        </script>" . $this->newLine();
-        
         // == CUSTOM JS ==
         // Add custom JS from layout
         $customJs = $this->decode($config->layout->custom_js);
