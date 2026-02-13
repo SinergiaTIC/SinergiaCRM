@@ -208,13 +208,13 @@ class stic_AllocationsUtils {
     
 
         $allocationProposalBeans = $pcBean->get_linked_beans(
-            'stic_allocation_proposals', // Nom de la relació
-            'Stic_Allocation_Proposal',   // Nom del mòdul relacionat
-            array(),                      // Ordre (ex: 'name ASC')
-            0,                            // Inici (offset)
-            -1,                           // Límit (-1 = tots)
-            0,                            // Deleted (0 = no eliminats)
-            "stic_allocation_proposals.active = 1" // El filtre SQL
+            'stic_allocation_proposals', // Relationship name
+            'Stic_Allocation_Proposal',   // Related module name
+            array(),                      // Order (ex: 'name ASC')
+            0,                            // Start (offset)
+            -1,                           // Limit (-1 = all)
+            0,                            // Deleted (0 = not deleted)
+            "stic_allocation_proposals.active = 1" // SQL filter    
         );
 
 

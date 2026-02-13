@@ -219,7 +219,7 @@ class stic_JustificationsUtils {
         $justification->account = $condition->account;
         $justification->subaccount = $condition->subaccount;
         $justification->opportunit01eunities_ida = $condition->opportunit378funities_ida;
-        // TODOEPS: Si posem projecte, copiar-lo aquí
+        // TODOEPS: If we add project, copy it here
         $justification->save();
     }
 
@@ -252,7 +252,7 @@ class stic_JustificationsUtils {
 
     public static function getConditionsForProjectAndOpportunity($projectId, $opportunityId, $allocationDate)
     {
-        // TODOEPS: Si incorporem Projecte a les condicions, caldrà revisar aquesta funció
+        // TODOEPS: If we incorporate Project in the conditions, this function will need to be reviewed
 
         $conditions = array();
 
