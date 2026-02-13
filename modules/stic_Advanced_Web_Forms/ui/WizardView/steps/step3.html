@@ -1,0 +1,575 @@
+<!-- 
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+ -->
+ 
+ <!-- Main Panel -->
+<main x-data="WizardStep3.mainStep3xData();">
+    <!-- Flows -->
+    <div>
+        <h2 class="mb-2" x-text="utils.translate('LBL_FLOWS')"></h2>
+        <!-- Show all Actions -->
+        <div class="text-muted form-check form-switch small p-3" x-init="utils.setInlineHelpQtip()">
+            <label for="actions_allcheck" class="form-label" x-text="utils.translate('LBL_ACTIONS_SHOW_ALL')"></label>
+            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_ACTIONS_SHOW_ALL_DESC')"></div>
+            <input class="form-check-input form-switch" type="checkbox" role="switch" id="actions_allcheck" x-model="showAllActions"/>
+        </div>
+        <!-- Tab Headers: Flows -->
+        <div class="stic-tabs">
+            <template x-for="flow in formConfig.flows" :key="flow.id">
+                <template x-if="flow.id != 1 || bean.processing_mode == 'async'">
+                    <div class="stic-tab">
+                        <input class="form-check-input" type="radio" :id="`flowTab${flow.id}`" x-model="flowTabSelected" :value="`${flow.id}`"/>
+                        <label class="form-label" :for="`flowTab${flow.id}`" x-text="flow.getText()"></label>
+                    </div>
+                </template>
+            </template>
+        </div>
+        <!-- Tab Content: Flows -->
+        <div class="stic-tabcontent">
+            <!-- Actions -->
+            <div class="accordion">
+                <template x-for="action in actions" :key="action.id">
+                    <div class="accordion-item" x-data="{opened:false}" x-show="action.is_user_selectable || showAllActions">
+                        <div :id="action.id+'_Header'" class="mt-1 mb-1 pe-2 btn accordion-header accordion-button p-0 align-items-center" :class="{'collapsed': !opened}">
+                            <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
+                                 data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
+                                <!-- Condition -->
+                                <template x-if="action.condition_field">
+                                    <span class="badge rounded-pill bg-warning-subtle text-dark me-2" :title="utils.translate('LBL_ACTION_CONDITION_TEXT')">
+                                        <i class="suitepicon suitepicon-action-confirm"></i>
+                                        <span x-text="getActionConditionLabel(action)">
+                                    </span>
+                                </template>
+                                <!-- Action Text -->
+                                <div class="fw-bold text-truncate">
+                                    <span :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></span>
+                                </div>
+                                <!-- Title -->
+                                <div class="text-muted small text-truncate px-2" style="flex: 1; text-align: end;">
+                                    <span x-text="action.title"></span>
+                                </div> 
+                                <!-- Description -->
+                                <!--
+                                <div class="text-muted small text-truncate px-2" style="flex: 1; text-align: center;">
+                                    <span x-text="action.description"></span>
+                                </div> 
+                                -->
+                            </div>
+                            <!-- Buttons -->
+                            <template x-if="showAllActions">
+                                <div class="d-flex align-items-center pe-3">
+                                    <div class="d-inline-flex input-group" role="group">
+                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                :disabled="!canMoveUpAction(action);" @click="moveUpAction(action);">
+                                            <span class="suitepicon suitepicon-action-move-up"></span>
+                                        </button>
+                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                :disabled="!canMoveDownAction(action);" @click="moveDownAction(action);">
+                                            <span class="suitepicon suitepicon-action-move-down"></span>
+                                        </button>
+                                    </div> 
+                                </div>
+                            </template>
+                        </div>
+                        <div :id="action.id+'_Content'" class="accordion-collapse collapse" :aria-labelledby="action.id+'_Header'">
+                            <div :id="action.id+'_Body'" class="accordion-body"> 
+                                <!-- Action details-->
+                                <table class="table table-bordered align-middle" >
+                                    <colgroup>
+                                        <col style="width:30%">
+                                        <col style="width:20%">
+                                        <col style="width:40%">
+                                        <template x-if="action.is_user_selectable">
+                                            <col style="width:10%">
+                                        </template>
+                                    </colgroup>
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th x-text="utils.translate('LBL_ACTION_NAME')"></th>
+                                            <th x-text="utils.translate('LBL_ACTION_CATEGORY')"></th>
+                                            <th x-text="utils.translate('LBL_ACTION_PARAMETERS')"></th>
+                                            <template x-if="action.is_user_selectable">
+                                                <th x-text="utils.translate('LBL_ACTION_ACTIONS')"></th>
+                                            </template>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <!-- Name -->
+                                            <td>
+                                                <strong :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></strong>
+                                                <template x-if="action.condition_field">
+                                                    <div class="small text-muted fst-italic">
+                                                        <span x-text="utils.translateForFieldLabel('LBL_CONDITION_SUMMARY') + ' ' + getActionConditionLabel(action)"></span>
+                                                    </div>
+                                                </template>
+                                            </td>
+                                            <!-- Category -->
+                                            <td x-text="action.category_in_formText"></td>
+                                            <!-- Parameters -->
+                                            <td rowspan="2" class="p-0">
+                                                <table class="table table-sm mb-0">
+                                                    <tbody>
+                                                        <template x-for="param in action.parameters" :key="param.name">
+                                                            <tr>
+                                                                <th class="w-25" x-text="param.text"></th>
+                                                                <td x-text="param.value_text!=''?param.value_text:param.value"></td>
+                                                            </tr>
+                                                        </template>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Buttons -->
+                                            <template x-if="action.is_user_selectable">
+                                                <td rowspan="2">
+                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')"
+                                                            :disabled="!canEditAction(action);" @click="$store.actionEditor.openEdit(flow, action);">
+                                                        <span class="suitepicon suitepicon-action-edit"></span>
+                                                    </button>
+                                                    <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                            :disabled="!canRemoveAction(action);" @click="removeAction(action);">
+                                                        <span class="suitepicon suitepicon-action-delete"></span>
+                                                    </button>
+                                                </td>
+                                            </template>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-muted small" x-text="action.description"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                        
+                    </div>
+                </template>
+            </div>
+            <!-- Create Action Button -->
+            <template x-if="bean.processing_mode == 'sync'">
+                <div class="row m-3">
+                    <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD')" 
+                            @click="$store.actionEditor.openCreate(flow, false)"></button>
+                    <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_TERMINAL_ADD')" 
+                            @click="$store.actionEditor.openCreate(flow, true)"
+                            x-bind:disabled="flow.hasTerminalAction();"></button>
+                </div>
+            </template>
+            <template x-if="bean.processing_mode == 'async'">
+                <div class="row m-3">
+                    <template x-if="flow.id == 1">
+                        <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_TERMINAL_ADD')" 
+                                @click="$store.actionEditor.openCreate(flow, true)"
+                                x-bind:disabled="flow.hasTerminalAction();"></button>
+                    </template>
+                    <template x-if="flow.id != 1">
+                        <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD')" 
+                                @click="$store.actionEditor.openCreate(flow, false)"></button>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Modal: Create Action -->
+    <div x-show="$store.actionEditor.isOpen" x-cloak class="custom-modal-wrapper">
+        <div class="custom-modal-backdrop"></div>
+        <div class="custom-modal-dialog modal-lg" role="dialog">
+            <div class="custom-modal-content">
+                
+                <div class="custom-modal-header">
+                    <h3 class="modal-title" x-text="$store.actionEditor.title"></h3>
+                    <button type="button" class="btn-close" @click="$store.actionEditor.close()"></button>
+                </div>
+
+                <div class="custom-modal-body bg-light">
+                    <!-- Step 1: Select Action -->
+                    <div x-show="$store.actionEditor.currentStep === 1" x-transition>
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-white fw-bold" x-text="utils.translate('LBL_ACTION_SELECT')"></div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <!-- Category & Action -->
+                                    <div class="col-md-6">
+                                        <!-- Category -->
+                                        <div class="mb-3">
+                                            <label for="ModalAction-category" class="form-label" x-text="utils.translateForFieldLabel('LBL_CATEGORY')"></label>
+                                            <select id="ModalAction-category" class="form-select" x-model="$store.actionEditor.selectedCategory">
+                                                <template x-for="cat in $store.actionEditor.availableCategories" :key="cat.id">
+                                                    <option :value="cat.id" x-text="cat.text"></option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                        <!-- Action -->
+                                        <div>
+                                            <label for="ModalAction-action" class="form-label" x-text="utils.translateForFieldLabel('LBL_ACTION')"></label>
+                                            <select id="ModalAction-action" class="form-select" size="5" x-model="$store.actionEditor.selectedActionDefName" 
+                                                    @change="$store.actionEditor.onActionChange()">
+                                                <template x-for="def in $store.actionEditor.filteredActions" :key="def.name">
+                                                    <option :value="def.name" x-text="def.title"></option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- Description -->
+                                    <div class="col-md-6">
+                                        <div class="card bg-light border h-100">
+                                            <div class="card-body d-flex align-items-center justify-content-center text-center p-3">
+                                                <template x-if="$store.actionEditor.definition">
+                                                    <div>
+                                                        <i class="suitepicon suitepicon-action-info fs-1 text-info"></i>
+                                                        <h5 class="card-title mt-3" x-text="$store.actionEditor.definition.title"></h5>
+                                                        <p class="card-text text-muted small" x-text="$store.actionEditor.definition.description"></p>
+                                                    </div>
+                                                </template>
+                                                <template x-if="!$store.actionEditor.definition">
+                                                    <span class="text-muted small fst-italic" x-text="utils.translate('LBL_ACTION_TO_VIEW_DETAILS')"></span>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Configure Action -->
+                    <template x-if="$store.actionEditor.definition && $store.actionEditor.definition.parameters
+                                    && $store.actionEditor.action && $store.actionEditor.action.parameters">
+                        <div x-show="$store.actionEditor.currentStep === 2" x-transition>
+                            <!-- Action Title & Description -->
+                            <div class="alert alert-info d-flex align-items-center py-2 mb-3" role="alert">
+                                <i class="suitepicon suitepicon-action-settings me-2"></i>
+                                <div class="flex-grow-1">
+                                    <h4 class="mb-0" id="ModalAction-title" data-model="$store.actionEditor.action.text" x-init="sticControls.editableText($el);"></h4>
+                                    <span class="ms-3 small" x-text="$store.actionEditor.definition.description"></span>
+                                </div>
+                            </div>
+                            <!-- Condition -->
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header" x-text="utils.translate('LBL_CONDITION')"></div>
+                                <div class="card-body">
+                                    <div class="row align-items-end">
+                                        <!-- Apply condition -->
+                                        <div class="col-3 form-switch">
+                                            <label for="action_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_APPLY_CONDITION')"></label>
+                                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="action_ApplyCondition" x-model="$store.actionEditor.applyCondition"/>
+                                        </div>
+                                        <!-- Condition field -->
+                                        <template x-if="$store.actionEditor.applyCondition">
+                                            <div class="col-4">
+                                                <label for="action_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD')"></label>
+                                                <select id="action_ConditionField" x-bind:disabled="$store.actionEditor.availableFieldsInForm.length<=1" class="form-select" 
+                                                        x-model="$store.actionEditor.action.condition_field" @change="$store.actionEditor.action.condition_value = ''">
+                                                    <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                    <template x-for="field in $store.actionEditor.availableFieldsInForm" :key="field.name">
+                                                        <option :value="field.name" x-text="field.text"></option>
+                                                    </template>
+                                                </select>
+                                            </div>
+                                        </template>
+                                        <!-- Condition value -->
+                                        <template x-if="$store.actionEditor.applyCondition && $store.actionEditor.action.condition_field != '' && $store.actionEditor.activeConditionFieldDef">
+                                            <div class="col-3">
+                                            <label for="action_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_VALUE')"></label>
+                                            <!-- Boolean -->
+                                            <template x-if="$store.actionEditor.isBooleanCondition">
+                                                <select id="action_ConditionValue" class="form-select" x-model="$store.actionEditor.action.condition_value">
+                                                    <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                    <option value="1" x-text="utils.translate('LBL_YES')"></option>
+                                                    <option value="0" x-text="utils.translate('LBL_NO')"></option>
+                                                </select>
+                                            </template>
+                                            <!-- Select -->
+                                            <template x-if="!$store.actionEditor.isBooleanCondition && $store.actionEditor.activeConditionFieldDef?.type_in_form == 'select'">
+                                                <select id="action_ConditionValue" class="form-select" x-model="$store.actionEditor.action.condition_value">
+                                                <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                <template x-for="opt in $store.actionEditor.activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
+                                                    <option :value="opt.value" x-text="opt.text"></option>
+                                                </template>
+                                                </select>
+                                            </template>
+                                            <!-- Text -->
+                                            <template x-if="!$store.actionEditor.isBooleanCondition && $store.actionEditor.activeConditionFieldDef?.type_in_form != 'select'">
+                                                <input id="action_ConditionValue" :type="conditionInputType" class="form-control" x-model="$store.actionEditor.action.condition_value">
+                                            </template>
+                                            </div>
+                                        </template>                                         
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Action Parameters -->
+                            <div class="card shadow-sm">
+                                <div class="card-header" x-text="utils.translate('LBL_ACTION_PARAMETERS')"></div>
+                                <div class="card-body">
+                                    <form id="ModalActionConfigForm">
+                                        <div class="row g-3">
+                                            <template x-if="$store.actionEditor.definition.parameters.length == 0">
+                                                <span class="text-muted small fst-italic" x-text="utils.translate('LBL_ACTION_NO_PARAMS')"></span>
+                                            </template>
+
+                                            <template x-for="param in $store.actionEditor.action.parameters" :key="param.name">
+                                                <div class="mb-3 col-4" x-data="{ paramDef: $store.actionEditor.definition.parameters.find(p => p.name == param.name) }" x-show="paramDef">
+                                                    <!-- Label, required, description -->
+                                                    <label :for="'ModalAction-param-'+paramDef.name" class="form-label" x-init="utils.setInlineHelpQtip()">
+                                                        <span x-text="utils.toFieldLabelText(paramDef.text)"></span>
+                                                        <span x-show="paramDef.required" class="required">*</span>
+                                                        <i x-show="paramDef.description!=''" class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                        <div class="inline-help-content" style="display:none;" x-text="paramDef.description"></div>
+                                                    </label>
+
+                                                    <!-- Type: Value -->
+                                                    <template x-if="paramDef.type === 'value'">
+                                                        <div>
+                                                            <!-- Type: Value, DataType: Input: text, date, datetime-local, time, email, tel, url... -->
+                                                            <template x-if="$store.actionEditor.getParameterValueInputType(paramDef.dataType) != '' 
+                                                                            && $store.actionEditor.getParameterValueInputType(paramDef.dataType) != 'checkbox'">
+                                                                <input :id="'ModalAction-param-'+paramDef.name" :type="$store.actionEditor.getParameterValueInputType(paramDef.dataType)" class="form-control" 
+                                                                    x-model="param.value" :required="paramDef.required">
+                                                            </template>
+
+                                                            <!-- Type: Value, DataType: boolean -->
+                                                            <template x-if="$store.actionEditor.getParameterValueInputType(paramDef.dataType) == 'checkbox'">
+                                                                <div class="form-check form-switch">
+                                                                    <input :id="'ModalAction-param-'+paramDef.name" type="checkbox" class="form-check-input" 
+                                                                        x-model="param.value" :required="paramDef.required">
+                                                                </div>
+                                                            </template>
+
+                                                            <!-- Type: Value, DataType: textarea -->
+                                                            <template x-if="paramDef.dataType == 'textarea'">
+                                                                <textarea :id="'ModalAction-param-'+paramDef.name" class="form-control" rows="2" 
+                                                                        x-model="param.value" :required="paramDef.required"></textarea>
+                                                            </template>
+                                                            
+                                                            <!-- Type: Value, DataType: select -->
+                                                            <template x-if="paramDef.dataType === 'select'">
+                                                                <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" :required="paramDef.required">
+                                                                    <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                    <template x-for="opt in paramDef.options">
+                                                                        <option :value="opt.value" x-text="opt.text"></option>
+                                                                    </template>
+                                                                </select>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Type: field, field_list -->
+                                                    <template x-if="['field', 'field_list'].includes(paramDef.type)">
+                                                        <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" 
+                                                                :multiple="paramDef.type=='field_list'" :required="paramDef.required">
+                                                            <template x-if="paramDef.type=='field'">
+                                                                <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                            </template>
+                                                            <template x-for="field in $store.actionEditor.getSupportedFieldsList(paramDef.supportedDataTypes)" :key="field.id">
+                                                                <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)"></option>
+                                                            </template>
+                                                        </select>
+                                                    </template>
+
+                                                    <!-- Type: dataBlock -->
+                                                    <template x-if="paramDef.type === 'dataBlock'">
+                                                        <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" 
+                                                                @change="param.value_text = $event.target.options[$event.target.selectedIndex].text"
+                                                                :required="paramDef.required">
+                                                            <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                            <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(paramDef.supportedModules)" :key="block.id">
+                                                                <option :value="block.id" x-text="block.text"></option>
+                                                            </template>
+                                                        </select>
+                                                    </template>
+                                                
+                                                    <!-- Type: crmRecord -->
+                                                    <template x-if="paramDef.type === 'crmRecord'">
+                                                        <div x-data="WizardStep3.editCrmRecordParamxData(paramDef.name, paramDef.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
+                                                            <template x-if="allowedModules.length > 1">
+                                                                <div>
+                                                                    <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_MODULE')"></label>
+                                                                    <select class="form-select mb-2" x-model="selectedModule" @change="onModuleChange()">
+                                                                        <template x-for="mod in allowedModules" :key="mod.name">
+                                                                            <option :value="mod.name" x-text="mod.text"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                    <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_RECORD')"></label>
+                                                                </div>
+                                                            </template>
+                                                            <div class="input-group">
+                                                                <input class="form-control" type="text" :id="'ModalAction-param-'+paramDef.name+'_name'" 
+                                                                       x-model="param.value_text" readonly style="background-color: #fff; cursor: default;"
+                                                                       :required="paramDef.required"/>
+                                                                <input type="hidden" :id="'ModalAction-param-'+paramDef.name+'_id'" x-model="rawId" />
+                                                                <button class="btn btn-outline-secondary" type="button" :disabled="!selectedModule"
+                                                                        @click="openPopUp('ModalAction-param-' + paramDef.name, selectedModule)"> 
+                                                                    <span class="suitepicon suitepicon-action-select"></span>
+                                                                </button>
+                                                                <button class="btn btn-outline-secondary" type="button" @click="rawId=''; param.value_text='';">
+                                                                    <span class="suitepicon suitepicon-action-clear"></span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Type: optionSelector -->
+                                                    <template x-if="paramDef.type === 'optionSelector'">
+                                                        <div class="card p-3 bg-white border">
+                                                            <div class="mb-2">
+                                                                <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION')"></label>
+                                                                <select class="form-select" x-model="param.selectedOption" 
+                                                                        @change="$store.actionEditor.onParamOptionChange(param, paramDef)" :required="paramDef.required"> 
+                                                                    <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                    <template x-for="optDef in paramDef.selectorOptions" :key="optDef.name">
+                                                                        <option :value="optDef.name" x-text="optDef.text"></option>
+                                                                    </template>
+                                                                </select>
+                                                            </div>
+                                                            <div x-data="{ get activeOpt() { return paramDef.selectorOptions.find(o => o.name == param.selectedOption); } }">
+                                                                <!-- Resolved Type: value -->
+                                                                <template x-if="activeOpt && activeOpt.resolvedType === 'value'">
+                                                                    <div>
+                                                                        <!-- Resolved DataType: Input: text, date, datetime-local, time, email, tel, url... -->
+                                                                        <template x-if="activeOpt && $store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) != '' 
+                                                                                        && $store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) != 'checkbox'">
+                                                                            <input :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" :type="$store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType)" class="form-control" 
+                                                                                   x-model="param.value" :required="paramDef.required">
+                                                                        </template>
+
+                                                                        <!-- Resolved DataType: boolean -->
+                                                                        <template x-if="activeOpt && $store.actionEditor.getParameterValueInputType(activeOpt.resolvedDataType) == 'checkbox'">
+                                                                            <div class="form-check form-switch">
+                                                                                <input :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" type="checkbox" class="form-check-input" 
+                                                                                       x-model="param.value" :required="paramDef.required">
+                                                                            </div>
+                                                                        </template>
+
+                                                                        <!-- Resolved DataType: textarea -->
+                                                                        <template x-if="activeOpt && activeOpt.resolvedDataType == 'textarea'">
+                                                                            <textarea :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-control" rows="2" 
+                                                                                      x-model="param.value" :required="paramDef.required"></textarea>
+                                                                        </template>
+                                                                    </div>
+                                                                </template>
+
+                                                                <!-- Resolved Type: field, field_list-->
+                                                                <template x-if="activeOpt && ['field', 'field_list'].includes(activeOpt.resolvedType)">
+                                                                    <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" 
+                                                                            :multiple="activeOpt.resolvedType=='field_list'" :required="paramDef.required">
+                                                                        <template x-if="activeOpt.resolvedType=='field'">
+                                                                            <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                        </template>
+                                                                        <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes)" :key="field.id">
+                                                                            <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                </template>
+
+                                                                <!-- Resolved Type: dataBlock -->
+                                                                <template x-if="activeOpt && activeOpt.resolvedType === 'dataBlock'">
+                                                                    <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" 
+                                                                            @change="param.value_text = $event.target.options[$event.target.selectedIndex].text"
+                                                                            :required="paramDef.required">
+                                                                        <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                        <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(activeOpt.supportedModules)" :key="block.id">
+                                                                            <option :value="block.id" x-text="block.text"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                </template>
+
+                                                                <!-- Resolved Type: crmRecord -->
+                                                                <template x-if="activeOpt && activeOpt.resolvedType === 'crmRecord'">
+                                                                    <div x-data="WizardStep3.editCrmRecordParamxData(paramDef.name, activeOpt.supportedModules)" :class="allowedModules.length > 1 ? 'card p-3 bg-white border' : ''">
+                                                                        <template x-if="allowedModules.length > 1">
+                                                                            <div>
+                                                                                <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_MODULE')"></label>
+                                                                                <select class="form-select mb-2" x-model="selectedModule" @change="onModuleChange()">
+                                                                                    <template x-for="mod in allowedModules" :key="mod.name">
+                                                                                        <option :value="mod.name" x-text="mod.text"></option>
+                                                                                    </template>
+                                                                                </select>
+                                                                                <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_RECORD')"></label>
+                                                                            </div>
+                                                                        </template>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control" type="text" :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name+'_name'" 
+                                                                                   x-model="param.value_text" readonly style="background-color: #fff; cursor: default;"
+                                                                                   :required="paramDef.required"/>
+                                                                            <input type="hidden" :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name+'_id'" x-model="rawId" />
+                                                                            <button class="btn btn-outline-secondary" type="button" :disabled="!selectedModule"
+                                                                                    @click="openPopUp('ModalAction-param-'+paramDef.name+'_'+activeOpt.name, selectedModule)"> 
+                                                                                <span class="suitepicon suitepicon-action-select"></span>
+                                                                            </button>
+                                                                            <button class="btn btn-outline-secondary" type="button" @click="rawId=''; param.value_text='';">
+                                                                                <span class="suitepicon suitepicon-action-clear"></span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <template x-if="$store.actionEditor.currentStep === 1">
+                        <button type="button" class="col-2 btn btn-secondary" @click="$store.actionEditor.close()" 
+                                x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL')"></button>
+                    </template>
+                        
+                    <template x-if="$store.actionEditor.currentStep === 2 && $store.actionEditor.isNewAction">
+                        <button type="button" class="col-2 btn btn-secondary" @click="$store.actionEditor.goBackToStep1()">
+                            <span class="suitepicon suitepicon-action-left me-1"></span>
+                            <span x-text="utils.translate('LBL_ACTION_BACK')"></span>
+                        </button>
+                    </template>
+
+                    <template x-if="$store.actionEditor.currentStep === 2 && !$store.actionEditor.isNewAction">
+                        <button type="button" class="col-2 btn btn-secondary" @click="$store.actionEditor.close()" 
+                                x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL')"></button>
+                    </template>
+                    
+                    <template x-if="$store.actionEditor.currentStep === 1">
+                        <button type="button" class="col-2 btn btn-primary" @click="$store.actionEditor.goToStep2()" 
+                                :disabled="!$store.actionEditor.selectedActionDefName">
+                            <span x-text="utils.translate('LBL_ACTION_CONTINUE')"></span>
+                            <span class="suitepicon suitepicon-action-right ms-1"></span>
+                        </button>
+                    </template>
+
+                    <template x-if="$store.actionEditor.currentStep === 2">
+                        <button type="button" class="col-2 btn btn-primary" @click="$store.actionEditor.saveChanges()">
+                            <span x-text="utils.translate('LBL_SAVE_BUTTON_LABEL')"></span>
+                        </button>
+                    </template>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>

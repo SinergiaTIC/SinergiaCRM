@@ -1,0 +1,584 @@
+<!-- 
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+ -->
+ 
+ <!-- Main Panel -->
+<main x-data="WizardStep4.mainStep4xData();">
+    <div class="row h-100 g-0">
+        <!-- Themes and configurations -->
+         <div class="col-md-3 border-end bg-light overflow-auto p-3" style="max-height: calc(100vh - 200px);">
+            <h3 class="mb-3" x-text="utils.translate('LBL_LAYOUT_SETTINGS')"></h3>
+
+            <!-- submit_button_text -->
+            <div class="mb-3 row">
+                <label for="theme-submit_button_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_SUBMIT_BUTTON_TEXT')"></label>
+                <input id="theme-submit_button_text" type="text" x-model="formConfig.layout.submit_button_text">
+            </div>
+
+            <!-- Main colors -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_MAIN_COLORS')"></summary>
+                <div class="ps-4 g-2  mt-2">
+                    <!-- primary_color -->
+                    <div class="mb-3">
+                        <label for="theme-primary_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PRIMARY_COLOR')"></label>
+                        <input id="theme-primary_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.primary_color"
+                               :value="formConfig.layout.theme.primary_color" :style="`background-color: ${formConfig.layout.theme.primary_color}`">
+                    </div>
+                    <!-- page_bg_color -->
+                    <div class="mb-3">
+                        <label for="theme-page_bg_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PAGE_BG_COLOR')"></label>
+                        <input id="theme-page_bg_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.page_bg_color"
+                               :value="formConfig.layout.theme.page_bg_color" :style="`background-color: ${formConfig.layout.theme.page_bg_color}`">
+                    </div>
+                    <!-- form_bg_color -->
+                    <div class="mb-3">
+                        <label for="theme-form_bg_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FORM_BG_COLOR')"></label>
+                        <input id="theme-form_bg_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.form_bg_color"
+                               :value="formConfig.layout.theme.form_bg_color" :style="`background-color: ${formConfig.layout.theme.form_bg_color}`">
+                    </div>
+                </div>
+            </details>
+
+            <!-- Typography and text-->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_TYPOGRAPGY_TEXT')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- font_family -->
+                    <div class="mb-3">
+                        <label for="theme-font_family" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FONT_FAMILY')"></label>
+                        <textarea id="theme-font_family" rows="3" x-model="formConfig.layout.theme.font_family"></textarea>
+                    </div>
+                    <!-- font_size -->
+                    <div class="mb-3">
+                        <label for="theme-font_size" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_FONT_SIZE')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.font_size + 'px'"></span>
+                        </label>
+                        <input id="theme-font_size" type="range" class="form-range" min="8" max="26" step="1" 
+                               x-model.number="formConfig.layout.theme.font_size">
+                    </div>
+                    <!-- text_color -->
+                    <div class="mb-3">
+                        <label for="theme-text_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_TEXT_COLOR')"></label>
+                        <input id="theme-text_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.text_color"
+                               :value="formConfig.layout.theme.text_color" :style="`background-color: ${formConfig.layout.theme.text_color}`">
+                    </div>
+                </div>
+            </details>
+
+            <!-- Fields and labels -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_FIELDS_LABELS')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- input_style -->
+                    <div class="mb-3">
+                        <label for="theme-input_style" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_INPUT_STYLE')"></label>
+                        <select id="theme-input_style" class="form-select" x-model="formConfig.layout.theme.input_style">
+                            <template x-for="item in stic_AwfTheme.input_style_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.input_style"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <!-- label_weight_bold -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-label_weight_bold" x-model="formConfig.layout.theme.label_weight_bold">
+                            <label class="form-check-label small" for="theme-label_weight_bold" x-text="utils.translate('LBL_THEME_LABEL_WEIGHT_BOLD')"></label>
+                        </div>
+                    </div>
+                    <!-- floating_labels -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-floating_labels" x-model="formConfig.layout.theme.floating_labels">
+                            <label class="form-check-label fw-bold small" for="theme-floating_labels" x-text="utils.translate('LBL_THEME_FLOATING_LABELS')"></label>
+                        </div>
+                        <div class="form-text text-muted extra-small fst-italic">
+                            <i class="suitepicon suitepicon-action-info me-1"></i>
+                            <span x-text="utils.translate('LBL_THEME_FLOATING_LABELS_DESC')"></span>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Borders -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_BORDERS')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- border_radius_container -->
+                    <div class="mb-3">
+                        <label for="theme-border_radius_container" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_RADIUS_CONTAINER')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_radius_container + 'px'"></span>
+                        </label>
+                        <input id="theme-border_radius_container" type="range" class="form-range" min="0" max="40" step="1" 
+                               x-model.number="formConfig.layout.theme.border_radius_container">
+                    </div>
+                    <!-- border_radius_controls -->
+                    <div class="mb-3">
+                        <label for="theme-border_radius_controls" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_RADIUS_CONTROLS')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_radius_controls + 'px'"></span>
+                        </label>
+                        <input id="theme-border_radius_controls" type="range" class="form-range" min="0" max="20" step="1" 
+                               x-model.number="formConfig.layout.theme.border_radius_controls">
+                    </div>
+                    <!-- border_width -->
+                    <div class="mb-3">
+                        <label for="theme-border_width" class="form-label small d-flex justify-content-between">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_WIDTH')"></span>
+                            <span class="text-muted" x-text="formConfig.layout.theme.border_width + 'px'"></span>
+                        </label>
+                        <input id="theme-border_width" type="range" class="form-range" min="0" max="20" step="1" 
+                               x-model.number="formConfig.layout.theme.border_width">
+                    </div>
+                    <!-- border_color -->
+                    <div class="mb-3">
+                        <label for="theme-border_color" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_BORDER_COLOR')"></label>
+                        <input id="theme-border_color" type="color" class="form-control form-control-color w-100" x-model="formConfig.layout.theme.border_color"
+                               :value="formConfig.layout.theme.border_color" :style="`background-color: ${formConfig.layout.theme.border_color}`">
+                    </div>
+                    <!-- shadow_intensity -->
+                    <div class="mb-3">
+                        <label for="theme-shadow_intensity" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_SHADOW_INTENSITY')"></label>
+                        <select id="theme-shadow_intensity" class="form-select" x-model="formConfig.layout.theme.shadow_intensity">
+                            <template x-for="item in stic_AwfTheme.shadow_intensity_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.shadow_intensity"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Structure -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_STRUCTURE')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- form_width -->
+                    <div class="mb-3">
+                        <label for="theme-form_width" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FORM_WIDTH')"></label>
+                        <select id="theme-form_width" class="form-select" x-model="formConfig.layout.theme.form_width">
+                            <template x-for="item in stic_AwfTheme.form_width_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.form_width"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <!-- sections_per_row -->
+                    <div class="mb-3">
+                        <label for="theme-sections_per_row" class="form-label small d-flex justify-content-between mb-1">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_SECTIONS_PER_ROW')"></span>
+                            <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.sections_per_row"></span>
+                        </label>
+                        <input id="theme-sections_per_row" type="range" class="form-range" min="1" max="3" step="1" 
+                               x-model.number="formConfig.layout.theme.sections_per_row">
+                        <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
+                            <span>1</span><span>2</span><span>3</span>
+                        </div>
+                    </div>
+                    <!-- fields_per_row -->
+                    <div class="mb-3">
+                        <label for="theme-fields_per_row" class="form-label small d-flex justify-content-between mb-1">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_FIELDS_PER_ROW')"></span>
+                            <span class="badge bg-light text-dark border" x-text="formConfig.layout.theme.fields_per_row"></span>
+                        </label>
+                        <input id="theme-fields_per_row" type="range" class="form-range" min="1" max="4" step="1" 
+                               x-model.number="formConfig.layout.theme.fields_per_row">
+                        <div class="d-flex justify-content-between px-1 text-muted" style="font-size: 0.65rem; margin-top: -5px;">
+                            <span>1</span><span>2</span><span>3</span><span>4</span>
+                        </div>
+                    </div>
+                    <!-- Per row description -->
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_PER_ROW_DESC')"></span>
+                    </div>
+                    <!-- Separator -->
+                    <hr class="text-muted">
+                    <!-- field_spacing -->
+                    <div class="mb-3">
+                        <label for="theme-field_spacing" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FIELD_SPACING')"></label>
+                        <select id="theme-form_width" class="form-select" x-model="formConfig.layout.theme.field_spacing">
+                            <template x-for="item in stic_AwfTheme.field_spacing_in_formList()" :key="item.id">
+                                <option :value="item.id" x-text="item.text" :selected="item.id == formConfig.layout.theme.field_spacing"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <!-- equal_height_sections -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-equal_height_sections" x-model="formConfig.layout.theme.equal_height_sections">
+                            <label class="form-check-label small" for="theme-equal_height_sections" x-text="utils.translate('LBL_THEME_EQUAL_HEIGHT_SECTIONS')"></label>
+                        </div>
+                    </div>
+                    <!-- submit_full_width -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="theme-submit_full_width" x-model="formConfig.layout.theme.submit_full_width"
+                                   :true-value="'full'" :false-value="'auto'">
+                            <label class="form-check-label small" for="theme-submit_full_width" x-text="utils.translate('LBL_THEME_SUBMIT_FULL_WIDTH')"></label>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Closed form -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_CLOSED_FORM')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- closed_form_title -->
+                    <div class="mb-3">
+                        <label for="theme-closed_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TITLE')"></label>
+                        <textarea id="theme-closed_form_title" class="form-control font-monospace small" rows="1" x-model="formConfig.layout.closed_form_title"></textarea>
+                    </div>
+                    <!-- closed_form_text -->
+                    <div class="mb-3">
+                       <label for="theme-closed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TEXT')"></label>
+                        <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="3" x-model="formConfig.layout.closed_form_text"></textarea>
+                    </div>
+
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_CLOSED_FORM_DESC')"></span>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Processed form -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_PROCESSED_FORM')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- processed_form_title -->
+                    <div class="mb-3">
+                        <label for="theme-processed_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PROCESSED_FORM_TITLE')"></label>
+                        <textarea id="theme-processed_form_title" class="form-control font-monospace small" rows="1" x-model="formConfig.layout.processed_form_title"></textarea>
+                    </div>
+                    <!-- processed_form_text -->
+                    <div class="mb-3">
+                       <label for="theme-processed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PROCESSED_FORM_TEXT')"></label>
+                        <textarea id="theme-processed_form_text" class="form-control font-monospace small" rows="3" x-model="formConfig.layout.processed_form_text"></textarea>
+                    </div>
+
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_PROCESSED_FORM_DESC')"></span>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Receipt form -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_RECEIPT_FORM')"></summary>
+                <div class="ps-4 g-2 mt-2">
+                    <!-- receipt_form_title -->
+                    <div class="mb-3">
+                        <label for="theme-receipt_form_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_RECEIPT_FORM_TITLE')"></label>
+                        <textarea id="theme-receipt_form_title" class="form-control font-monospace small" rows="1" x-model="formConfig.layout.receipt_form_title"></textarea>
+                    </div>
+                    <!-- receipt_form_text -->
+                    <div class="mb-3">
+                       <label for="theme-receipt_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_RECEIPT_FORM_TEXT')"></label>
+                        <textarea id="theme-receipt_form_text" class="form-control font-monospace small" rows="3" x-model="formConfig.layout.receipt_form_text"></textarea>
+                    </div>
+
+                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
+                        <i class="suitepicon suitepicon-action-info me-1"></i>
+                        <span x-text="utils.translate('LBL_THEME_RECEIPT_FORM_DESC')"></span>
+                    </div>
+                </div>
+            </details>
+            <!-- Advanced -->
+            <details class="mb-3">
+                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_ADVANCED')"></summary>
+                <div class="ps-4 g-2 mt-2" x-show="STIC.isAdmin">
+                    <!-- custom_css -->
+                    <div class="mb-3">
+                        <label for="theme-custom_css" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_CSS')"></label>
+                        <textarea id="theme-custom_css" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.custom_css" 
+                                  placeholder=".btn { background: red !important; }"></textarea>
+                        <div class="form-text text-muted extra-small fst-italic">
+                            <i class="suitepicon suitepicon-action-info me-1"></i>
+                            <span x-text="utils.translate('LBL_THEME_CUSTOM_CSS_DESC')"></span>
+                        </div>
+                    </div>
+                    <!-- custom_js -->
+                    <div class="mb-3">
+                       <label for="theme-custom_js" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_JS')"></label>
+                        <textarea id="theme-custom_js" class="form-control font-monospace small" rows="4" x-model="formConfig.layout.custom_js" 
+                                  placeholder="console.log('Form loaded');"></textarea>
+                        <div class="form-text text-muted extra-small fst-italic">
+                            <i class="suitepicon suitepicon-action-info me-1"></i>
+                            <span x-text="utils.translate('LBL_THEME_CUSTOM_JS_DESC')"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 p-3 bg-light border rounded small text-muted fst-italic" x-show="!STIC.isAdmin">
+                    <i class="suitepicon suitepicon-action-info me-1"></i>
+                    <span x-text="utils.translateForFieldLabel('LBL_THEME_ADVANCED_NO_ADMIN_DESC')"></span>
+                </div>
+            </details>
+
+            <!-- Reset Button -->
+            <button type="button" class="btn w-auto" x-text="utils.translate('LBL_THEME_RESET_BUTTON')" @click="resetTheme()"></button>
+        </div>
+
+        <!-- Main content-->
+        <div class="col-md-9 p2-2 bg-white overflow-auto" style="max-height: calc(100vh - 200px);">
+
+            <!-- Tab Headers -->
+            <div class="stic-tabs">
+                <div class="stic-tab">
+                    <input class="form-check-input" type="radio" id="LayoutDesing_Tab" x-model="layoutTabSelected" value="design"/>
+                    <label class="form-label" for="LayoutDesing_Tab" x-text="utils.translate('LBL_LAYOUT_FORM_DESIGN')"></label>
+                </div>
+                <div class="stic-tab">
+                    <input class="form-check-input" type="radio" id="LayoutPreview_Tab" x-model="layoutTabSelected" value="preview"/>
+                    <label class="form-label" for="LayoutPreview_Tab" x-text="utils.translate('LBL_LAYOUT_PREVIEW')"></label>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="stic-tabcontent">
+                <!-- Form design -->
+                <template x-if="layoutTabSelected=='design'">
+                    <div>
+                        <h2 x-text="utils.translate('LBL_LAYOUT_FORM_DESIGN')"></h2>
+                        <div class="accordion">
+                            <!-- Header -->
+                            <div class="accordion-item" x-data="{opened:false}">
+                                <div id="LayoutHeader_Header" class="accordion-header accordion-button" role="button" 
+                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                    data-bs-target="#LayoutHeader_Content" aria-controls="LayoutHeader_Content">
+                                    <h3 x-text="utils.translate('LBL_LAYOUT_HEADER')"></h3>
+                                </div>
+                                <div id="LayoutHeader_Content" class="accordion-collapse collapse" aria-labelledby="LayoutHeader_Header">
+                                    <div id="LayoutHeader_Body" class="accordion-body"> 
+                                        <div class="bg-white text-dark"> 
+                                            <div x-data="quillEditor(formConfig.layout.header_html, (html) => formConfig.layout.header_html = html)">
+                                                <div class="bg-white border rounded overflow-hidden">
+                                                    <div x-ref="editor" style="height: 175px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="accordion-item">
+                                <div id="LayoutBody_Header" class="pt-3 ps-3 accordion-header card-header" aria-controls="LayoutBody_Content">
+                                    <h3 x-text="utils.translate('LBL_LAYOUT_BODY')"></h3>
+                                </div>
+                                <div id="LayoutBody_Content" class="accordion-collapse show" aria-labelledby="LayoutBody_Header">
+                                    <div id="LayoutBody_Body" class="accordion-body"> 
+                                        <div class="flex-fill border rounded p-2 overflow-auto">
+                                            <h4 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
+                                            <template x-for="(section, index) in formConfig.layout.structure" :key="section.id">
+                                                <div class="card datablock">
+                                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                                        <span :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></span>
+                                                        <!-- Buttons -->
+                                                        <div class="d-inline-flex">
+                                                            <div class="d-inline-flex input-group" role="group">
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                        :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                </button>
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                        :disabled="!canMoveDownSection(section);" @click="moveDownSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                </button>
+                                                            </div> 
+                                                            <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                                    :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
+                                                                <span class="suitepicon suitepicon-action-delete"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body bg-white">
+                                                        <div class="accordion">
+                                                            <!-- Configuration -->
+                                                            <div class="accordion-item" x-data="{opened:false}">
+                                                                <div :id="`sectionConfig${section.id}_Header`" class="accordion-header accordion-button" role="button" 
+                                                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                                                    :data-bs-target="`#sectionConfig${section.id}_Content`" :aria-controls="`sectionConfig${section.id}_Content`"
+                                                                    x-text="utils.translate('LBL_SECTION_CONFIG')">
+                                                                </div>
+                                                                <div :id="`sectionConfig${section.id}_Content`" class="accordion-collapse collapse" 
+                                                                    :aria-labelledby="`sectionConfig${section.id}_Header`">
+                                                                    <div :id="`sectionConfig${section.id}_Body`" class="accordion-body row"> 
+                                                                        <!-- Configuration -->
+                                                                        <!-- Title -->
+                                                                        <div class="col-3">
+                                                                            <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
+                                                                            <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
+                                                                        </div>
+                                                                        <!-- Show Title -->
+                                                                        <div class="col-2 form-check form-switch">
+                                                                            <label :for="`section${section.id}_showTitle`" class="form-label" x-text="utils.translate('LBL_SECTION_SHOW_TITLE')"></label>
+                                                                            <input :id="`section${section.id}_showTitle`" class="form-check-input form-switch" type="checkbox" role="switch" x-model="section.showTitle"/>
+                                                                        </div>
+                                                                        <!-- Container Type -->
+                                                                        <div class="col-3">
+                                                                            <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
+                                                                            <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
+                                                                                <template x-for="type in availableContainerTypes" :key="type.id">
+                                                                                    <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
+                                                                                </template>
+                                                                            </select>
+                                                                        </div>
+                                                                        <!-- Collapsible -->
+                                                                        <div class="col-2 form-check form-switch">
+                                                                            <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" 
+                                                                                x-model="section.isCollapsible"/>
+                                                                            <label :for="`section${section.id}_isCollapsible`" class="form-label small" 
+                                                                                x-text="utils.translate('LBL_SECTION_IS_COLLAPSIBLE')"></label>
+                                                                        </div>
+                                                                        <!-- Collaped -->
+                                                                        <div class="col-2 form-check form-switch" x-show="section.isCollapsible" x-transition>
+                                                                            <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" 
+                                                                                x-model="section.isCollapsed"/>
+                                                                            <label :for="`section${section.id}_isCollapsed`" class="form-label small" 
+                                                                                x-text="utils.translate('LBL_SECTION_ISCOLLAPSED')"></label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Content -->
+                                                            <div class="accordion-item" x-data="{opened:false}">
+                                                                <div :id="`sectionContent${section.id}_Header`" class="accordion-header accordion-button" role="button" 
+                                                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                                                    :data-bs-target="`#sectionContent${section.id}_Content`" :aria-controls="`sectionContent${section.id}_Content`"
+                                                                    x-text="utils.translate('LBL_SECTION_CONTENT')">
+                                                                </div>
+                                                                <div :id="`sectionContent${section.id}_Content`" class="accordion-collapse collapse" 
+                                                                    :aria-labelledby="`sectionContent${section.id}_Header`">
+                                                                    <div :id="`sectionContent${section.id}_Body`" class="accordion-body"> 
+                                                                        <!-- Content -->
+                                                                        <template x-for="(element, index) in section.elements" :key="element.id">
+                                                                            <div class="card mb-2 border-secondary">
+                                                                                <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
+                                                                                    <strong x-text="getElementHeader(element)"></strong>
+                                                                                    <div class="d-inline-flex gap-2">
+                                                                                        <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
+                                                                                                style="min-width: 100px;">
+                                                                                            <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
+                                                                                            <template x-for="sec in formConfig.layout.structure" :key="sec.id">
+                                                                                                <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
+                                                                                                        x-show="sec.id !== section.id"></option>
+                                                                                            </template>
+                                                                                        </select>
+
+                                                                                        <div class="input-group flex-shrink-0" role="group">
+                                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                                                    :disabled="index === 0" @click="moveElementUp(section, index);">
+                                                                                                <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                                            </button>
+                                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                                                    :disabled="index === section.elements.length - 1" @click="moveElementDown(section, index)">                                                                                
+                                                                                                <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                                            </button>
+                                                                                        </div> 
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="card-body">
+                                                                                    <template x-if="element.type=='datablock'">
+                                                                                        <template x-for="field in getFields(element)" :key="field.name">
+                                                                                            <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
+                                                                                        </template>
+                                                                                    </template>
+                                                                                </div>
+                                                                            </div>
+                                                                        </template>
+                                                                        <template x-if="section.elements.length === 0">
+                                                                            <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <button type="button" class="btn w-auto" x-text="utils.translate('LBL_SECTION_ADD')" @click="createSection"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="accordion-item" x-data="{opened:false}">
+                                <div id="LayoutFooter_Header" class="accordion-header accordion-button" role="button" 
+                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                    data-bs-target="#LayoutFooter_Content" aria-controls="LayoutFooter_Content">
+                                    <h3 x-text="utils.translate('LBL_LAYOUT_FOOTER')"></h3>
+                                </div>
+                                <div id="LayoutFooter_Content" class="accordion-collapse collapse" aria-labelledby="LayoutFooter_Header">
+                                    <div id="LayoutFooter_Body" class="accordion-body"> 
+                                        <div class="bg-white text-dark"> 
+                                            <div x-data="quillEditor(formConfig.layout.footer_html, (html) => formConfig.layout.footer_html = html)">
+                                                <div class="bg-white border rounded overflow-hidden">
+                                                    <div x-ref="editor" style="height: 175px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Preview -->
+                <template x-if="layoutTabSelected=='preview'">
+                    <div class="h-100 d-flex flex-column relative bg-light border rounded overflow-hidden">
+                        
+                        <!-- Spinner -->
+                        <template x-if="isLoadingPreview">
+                            <div class="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75" style="z-index: 10;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden" x-text="utils.translate('LBL_PREVIEW_LOADING')"></span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Information Bar -->
+                        <div class="bg-white border-bottom p-2 d-flex justify-content-between align-items-center">
+                             <div class="small text-muted ms-2">
+                                <i class="suitepicon suitepicon-action-info"></i>
+                                <span x-text="utils.translate('LBL_PREVIEW_DESC')"></span>
+                             </div>
+                             <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_RELOAD')" @click="refreshPreview();">
+                                <span class="suitepicon suitepicon-action-reload"></span>
+                            </button>
+                        </div>
+
+                        <!-- Preview -->
+                        <iframe x-ref="previewFrame" class="w-100 border-0"></iframe>
+
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</main>

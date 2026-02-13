@@ -7965,3 +7965,173 @@ $dictionary["project_stic_assessments"] = array (
       ),
     ),
   );
+
+  $dictionary["stic_advanced_web_forms_stic_advanced_web_forms_responses"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_stic_advanced_web_forms_responses' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms',
+        'lhs_table' => 'stic_advanced_web_forms',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Responses',
+        'rhs_table' => 'stic_advanced_web_forms_responses',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_f193responses_c',
+        'join_key_lhs' => 'stic_aa0eb_forms_ida',
+        'join_key_rhs' => 'stic_21b0sponses_idb',
+      ),
+    ),
+    'table' => 'stic_f193responses_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_aa0eb_forms_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_21b0sponses_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_69c1s_responsesspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_69c1s_responses_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_aa0eb_forms_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_69c1s_responses_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_21b0sponses_idb',
+        ),
+      ),
+    ),
+  );
+  $dictionary["stic_advanced_web_forms_responses_stic_advanced_web_forms_links"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_responses_stic_advanced_web_forms_links' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms_Responses',
+        'lhs_table' => 'stic_advanced_web_forms_responses',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Links',
+        'rhs_table' => 'stic_advanced_web_forms_links',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_2b5arms_links_c',
+        'join_key_lhs' => 'stic_e755sponses_ida',
+        'join_key_rhs' => 'stic_fe09s_links_idb',
+      ),
+    ),
+    'table' => 'stic_2b5arms_links_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_e755sponses_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_fe09s_links_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_1c31forms_linksspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_1c31forms_links_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_e755sponses_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_1c31forms_links_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_fe09s_links_idb',
+        ),
+      ),
+    ),
+  );
+  
