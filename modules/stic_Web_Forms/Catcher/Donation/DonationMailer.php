@@ -58,7 +58,15 @@ class DonationMailer extends WebFormMailer
                 break;
             case DonationBO::DONATOR_NEW:
             case DonationBO::DONATOR_UNIQUE:
-                $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
+                
+                // Function that verify if the form have the 'custom_assigned_email_template' input
+                if(!empty($_REQUEST['custom_assigned_email_template'])) {
+                    return $this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $payment);
+                // If the form doesn't have the input send the generic email
+                } else {
+                    $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
+                }
+                
                 break;
         }
 
@@ -82,9 +90,9 @@ class DonationMailer extends WebFormMailer
             }
             $html .= '</table><br><br>';
         }
+
         $this->body = $html;
         $this->subject = "{$payment->transaction_code} - {$this->subject}";
-
         return $this->send();
     }
 
@@ -239,6 +247,35 @@ class DonationMailer extends WebFormMailer
     }
 
     /**
+     * Function to parse the email
+     *
+     * @param $templateId id of the template
+     * @param $payment data of the payment
+     * @param $replacementObjects array with the object
+     * @param $lang
+     * @return void
+     */
+    public function parsingEmail($templateId, $payment, $replacementObjects, $lang){
+        $payment = $replacementObjects[1];
+
+        // Function to get the object
+        if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
+            $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
+            foreach ($relatedBeans as $fpBean) {
+                $replacementObjects[] = $fpBean;
+            }
+        }
+
+        // Parse the template
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template [{$templateId}]...");
+
+        if (false === $this->parseEmailTemplateById($templateId, $replacementObjects, $replacementObjects[0], $lang)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
+            return false;
+        }
+    }
+
+    /**
      * Send the notification email to the registered user
      */
     public function sendUserMail($templateId, $objWeb, $payment, $lang = null)
@@ -264,20 +301,68 @@ class DonationMailer extends WebFormMailer
         $replacementObjects = array();
         $replacementObjects[0] = $objWeb;
         $replacementObjects[1] = $payment;
-        if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
-            $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
-            foreach ($relatedBeans as $fpBean) {
-                $replacementObjects[] = $fpBean;
+
+        // Function to parse the email
+        $this->parsingEmail($templateId, $replacementObjects[1], $replacementObjects, $lang);
+
+        // Send the mail
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
+
+        // If there's a template for the user send the mail
+        if(!empty($templateId)) {
+            return $this->send();
+        }
+    }
+    
+    /**
+     * Send the notification email to the assigned user
+     *
+     * @param $templateId id of the template
+     * @param $objWeb data from the form
+     * @param $payment data of the payment
+     * @param $lang
+     * @return void
+     */
+    public function sendAssignedUserMail($templateId, $objWeb, $payment, $lang = null)
+    {
+        // Reset the recipient list
+        $this->resetDest();
+
+        // Add the recipient
+        $user = BeanFactory::getBean('Users', $_REQUEST['assigned_user_id']);
+        // Use the primary address of the assigned user
+        $userEmail = $user->emailAddress->getPrimaryAddress($user);
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Adding recipient [{$userEmail}] ...");
+        $this->addMailsDest($userEmail);
+
+        // Get the Contact from the CRM
+        include_once 'SticInclude/Utils.php';
+
+        // Get the form if there is a contact or an account
+        if($_REQUEST['web_module'] == 'Contacts') {
+            $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_contacts');
+        } elseif ($_REQUEST['web_module'] == 'Accounts') {
+            $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_accounts');
+        }
+
+        // Build the array of objects to parse
+        $replacementObjects = array();
+        $replacementObjects[0] = $objWeb;
+        $replacementObjects[1] = $payment;
+        $replacementObjects[2] = $user;
+        $replacementObjects[3] = $contactBean;
+
+        // If there is an attached document it is added to the array
+        if(!empty($contactBean->documents)){
+            $documents = $contactBean->documents->tempBeans;
+            foreach($documents as $key => $valueDocument) {
+                $replacementObjects[4] = $valueDocument;
             }
         }
 
-        // Parse the template
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template...");
-
-        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
-            return false;
-        }
+        // Function to parse the email
+        $this->parsingEmail($templateId, $replacementObjects[1], $replacementObjects, $lang);
 
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
