@@ -90,6 +90,16 @@ function getModuleInformation($moduleName, $availableModules) {
                     continue;
                 }
 
+                // Exclude non Studio editable fields
+                if (isset($arr['studio'])) {
+                    if (is_array($arr['studio']) && isset($arr['studio']['editview']) && $arr['studio']['editview'] === false) {
+                        continue;
+                    }
+                    if ($arr['studio'] === false || $arr['studio'] === 'false') {
+                        continue;
+                    }
+                }
+                
                 // Exclude ID type fields
                 if ($arr['type'] == 'id' || (isset($arr['dbType']) && strtolower($arr['dbType']) == 'id')) {
                     continue;
