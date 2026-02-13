@@ -306,9 +306,12 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'id' => 'KReports',
                 ),
                 4 => array(
-                    'id' => 'AOW_WorkFlow',
+                    'id' => 'stic_Advanced_Web_Forms',
                 ),
                 5 => array(
+                    'id' => 'AOW_WorkFlow',
+                ),
+                6 => array(
                     'id' => 'SinergiaDA',
                     'url' => 'index.php?module=Home&action=sdaRedirect',
                 ),

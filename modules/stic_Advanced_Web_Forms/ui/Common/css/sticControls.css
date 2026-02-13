@@ -1,0 +1,510 @@
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+ 
+[x-cloak] { display: none !important; }
+
+.custom-modal-wrapper {
+  z-index: 1050; 
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  overflow-y: auto;
+  outline: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.6); 
+}
+
+.custom-modal-dialog {
+  z-index: 1051;
+
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+
+  margin: 1.75rem auto;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+
+  overflow: hidden; 
+
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.custom-modal-content {
+  background-color: white;
+  border-radius: 0.3rem;
+
+  display: flex;
+  flex-direction: column; 
+  
+  flex-grow: 1;
+  min-height: 0; 
+}
+
+.custom-modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto; 
+  padding: 1rem; 
+}
+
+.custom-modal-footer {
+  padding: 0.75rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.selectize-dropdown .option {
+  opacity: unset !important;
+}
+
+.selectize-dropdown, .selectize-dropdown.form-control {
+  z-index: 1052;
+}
+
+.stic_panel {
+  font-size: unset !important;
+}
+#stic_panel {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 130px);
+  min-height: 500px;
+}
+#stic_panel.panel-auto-height {
+  height: auto !important;
+  min-height: 0 !important;
+  display: block;
+  margin-top: -50px;
+}
+#stic_panel.panel-auto-height .wizard-container {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 0;
+}
+#stic_panel.panel-auto-height .wizard-card-wrapper {
+  height: auto !important;
+  overflow: visible !important;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+.stic_panel table {
+  caption-side: top;
+}
+
+.w-32px {
+  width: 32px !important;
+}
+.mb-1px {
+  margin-bottom: 1px;
+}
+
+#wizard-section-title {
+  text-transform: none !important;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.2;
+}
+
+.wizard-card-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #dee2e6; 
+  background-color: #fff;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+  margin-bottom: 5px !important;
+}
+.wizard-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  margin: 0;
+  height: auto !important;
+  max-height: none !important;
+}
+
+.wizard-nav {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  z-index: 10;
+}
+.wizard-nav .button {
+    min-width: 120px;
+    font-weight: bold;
+}
+.wizard-nav .button[disabled],
+.wizard-nav .button[disabled]:hover {
+  background-color: #828282 !important;
+  cursor: not-allowed;
+}
+.add-block-toolbar {
+  position: sticky;
+  bottom: -15px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  border-top: 1px solid #ddd;
+  padding: 15px;
+}
+
+.accordion-header {
+  font-size: unset !important;
+  text-align: start !important;
+}
+
+.card .datablock {
+  border-width: medium;
+}
+
+.datablock-module {
+  margin: -5px 0px -5px -6px;
+}
+
+label, .form-label {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.datablock.has-errors, tr.has-errors td {
+  color: red !important;
+  font-style: italic;
+}
+
+label.field-required::after {
+  content: " *";
+  color: red;
+}
+
+.modal.fade.show {
+  z-index: 99999 !important; 
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.form-switch {
+  padding-left: calc(var(--bs-gutter-x) * .5);
+}
+.form-switch .form-check-input {
+  margin-left: inherit;
+}
+
+.stic_panel button {
+  text-transform: capitalize !important;
+}
+
+.stic_panel .btn {
+  font-size: unset !important;
+  text-transform: none !important;
+  margin-right: 5px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+}
+.stic_panel .btn a {
+    text-decoration: none;
+    color: inherit;
+}
+.stic_panel .input-group .btn {
+  margin-right: inherit !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stic_panel form .row {
+  margin-bottom: 1.5rem;
+}
+
+.btn[disabled] {
+  text-transform: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+
+select,
+textarea {
+  max-width: 100% !important;
+}
+
+textarea,
+.selectize-control {
+  width: 100% !important;
+}
+
+.form-control,
+.form-select {
+  line-height: 20px;
+  min-height: 34px;
+  padding: 5px;
+  font-size: 1em;
+}
+
+.form-select.selectize-control {
+  height: auto !important;
+  border: none;
+  padding: 0;
+}
+
+.selectize-input.focus {
+  border-color: #86b7fe !important;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.selectize-dropdown .selected {
+  color: inherit;
+  font-weight: bold;
+}
+
+.jstree-icon {
+  background-image: none !important;
+}
+
+.wizard-sidebar {
+  display: flex;
+  flex-direction: column;
+  resize: horizontal;
+  overflow: hidden;
+  width: 250px;
+  min-width: 150px;
+  max-width: 600px;
+}
+
+.wizard-tree {
+  flex: 1;
+  overflow: auto;
+}
+
+.suitepicon {
+  color: inherit;
+}
+
+h3,
+h4 {
+  font-weight: inherit;
+}
+
+.card {
+  margin-bottom: 5px;
+}
+.card-title {
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.card-body {
+  padding: 5px;
+}
+
+.stic-tree-item.selected {
+  font-weight: bold;
+}
+
+.spinner-container {
+  height: 100%;
+  display: flex;
+}
+
+.accordion-button {
+  font-size: inherit;
+  font-weight: bold;
+  color: inherit;
+  background-color: #e9ecef;
+  padding: 5px;
+}
+
+.accordion-button:not(.collapsed) {
+  font-weight: bolder;
+  color: inherit;
+  background-color: #dee2e6;
+}
+
+.accordion-body {
+  padding: 5px;
+}
+
+/* TABS */
+/* Hide original radio buttons*/
+.stic-tab input {
+  display: none;
+}
+
+.stic-tab label {
+  display: block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 0.25rem 0.25rem 0 0;
+
+  /* Inactive Styles */
+  background-color: #dee2e6; 
+  color: #495057;
+  border-color: #dee2e6 #dee2e6 #fff;
+  margin-bottom: -1px; 
+  margin-right: 1px;
+  margin-left: 1px;
+}
+
+/* Selected tab */
+.stic-tab input:checked + label {
+  background-color: #fff;
+  border-color: #0d6efd #dee2e6 #fff;
+  border-top-width: 2px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.stic-tab label:hover {
+  background-color: #e9ecef;
+  border-color: #e9ecef #e9ecef #dee2e6;
+}
+
+.stic-tabs {
+  border-bottom: 1px solid #dee2e6;
+  display: flex; 
+  margin-bottom: 0 !important; 
+}
+
+.stic-tabcontent {
+  border: 1px solid #dee2e6;
+  border-top: none; 
+  padding: 1rem;
+}
+
+.stic-tablecard {
+  border-width: 3px !important;
+}
+
+.stic_panel .btn:hover {
+    padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
+}
+
+.stic_panel .accordion-button:hover {
+  padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
+}
+
+.wizard-stepper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  position: relative;
+  margin-bottom: 1.5rem !important;
+}
+/* Line between steps */
+.wizard-stepper::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 0;
+}
+.wizard-step-item {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+.wizard-step-item:hover {
+    opacity: 1;
+}
+.wizard-step-item.active {
+    opacity: 1;
+    font-weight: bold;
+}
+/* Step icon */
+.wizard-step-icon {
+    width: 32px;
+    height: 32px;
+    background: #e9ecef;
+    color: #6c757d;
+    border-radius: 50%;
+    margin: 0 auto 5px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e9ecef;
+    transition: all 0.3s ease;
+    font-size: 1.1em;
+    position: relative;
+    top: -1px;
+}
+/* Current step */
+.wizard-step-item.active .wizard-step-icon {
+    background: #0d6efd; /* Primary Color */
+    color: #fff;
+    box-shadow: 0 0 0 2px #0d6efd;
+    transform: scale(1.1);
+}
+/* Completed steps */
+.wizard-step-item.completed .wizard-step-icon {
+    background: #198754; /* Success Color */
+    color: #fff;
+    box-shadow: 0 0 0 2px #198754;
+}
+.wizard-step-label {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-top: 5px;
+}
+.wizard-step-item.active .wizard-step-label {
+    color: #0d6efd;
+}
+
