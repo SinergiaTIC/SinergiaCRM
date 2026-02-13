@@ -363,7 +363,7 @@ $dictionary['Opportunity']['fields']['stic_additional_information_c'] = array(
 // Justification tab fields
 $dictionary["Opportunity"]["fields"]['stic_justified_amount_c'] = array(
      'id' => 'Opportunitiesstic_justified_amount_c',
-//      'custom_module' => 'Opportunities', -- if custom_module is set, reapir does not create the fields
+     'custom_module' => 'Opportunities', 
      'name' => 'stic_justified_amount_c',
      'vname' => 'LBL_JUSTIFIED_AMOUNT',
      'source' => 'custom_fields',
@@ -386,7 +386,7 @@ $dictionary["Opportunity"]["fields"]['stic_justified_amount_c'] = array(
 );
 $dictionary["Opportunity"]["fields"]['stic_justified_percentage_c'] = array(
     'id' => 'Opportunitiesstic_justified_percentage_c',
-//     'custom_module' => 'Opportunities',
+    'custom_module' => 'Opportunities',
     'name' => 'stic_justified_percentage_c',
     'vname' => 'LBL_JUSTIFIED_PERCENTAGE',
     'source' => 'custom_fields',
@@ -409,7 +409,7 @@ $dictionary["Opportunity"]["fields"]['stic_justified_percentage_c'] = array(
 );
 $dictionary["Opportunity"]["fields"]['stic_start_date_c'] = array(
     'id' => 'Opportunitiesstic_start_date_c',
-//     'custom_module' => 'Opportunities',
+    'custom_module' => 'Opportunities',
     'name' => 'stic_start_date_c',
     'vname' => 'LBL_START_DATE',
     'source' => 'custom_fields',
@@ -429,7 +429,7 @@ $dictionary["Opportunity"]["fields"]['stic_start_date_c'] = array(
 );
 $dictionary["Opportunity"]["fields"]['stic_end_date_c'] = array(
     'id' => 'Opportunitiesstic_end_date_c',
-//     'custom_module' => 'Opportunities',
+    'custom_module' => 'Opportunities',
     'name' => 'stic_end_date_c',
     'vname' => 'LBL_END_DATE',
     'source' => 'custom_fields',

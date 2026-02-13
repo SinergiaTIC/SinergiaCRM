@@ -195,6 +195,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Opportunitiesstic_type_c', 'Opportunities', 'stic_type_c'),
 ('Opportunitiesstic_opportunity_url_c', 'Opportunities', 'stic_opportunity_url_c'),
 ('Opportunitiesstic_additional_information_c', 'Opportunities', 'stic_additional_information_c'),
+('Opportunitiesstic_confidentiality_agreement_c', 'Opportunities', 'stic_end_date_c'),
+('Opportunitiesstic_conduct_code_c', 'Opportunities', 'stic_start_date_c'),
+('Opportunitiesstic_occupational_safety_c', 'Opportunities', 'stic_justified_percentage_c'),
+('Opportunitiesstic_time_availability_c', 'Opportunities', 'stic_justified_amount_c'),
 -- FP_Event_Locations
 ('FP_Event_Locationsstic_address_county_c','FP_Event_Locations','stic_address_county_c'),
 ('FP_Event_Locationsstic_address_region_c','FP_Event_Locations','stic_address_region_c'),
