@@ -39,10 +39,22 @@ class UrlValidatorAction extends ValidatorActionDefinition {
         $this->supportedDataTypes = [ActionDataType::URL, ActionDataType::TEXT];
     }
 
+    /**
+     * Returns rules to automatically apply this validation.
+     * Can filter by field type (vardef type) editor in form (subtype_in_form), or by name pattern (regex).
+     * @return array ex: ['types' => ['email'], 'subtypes_in_form' => ['text_email'], 'name_patterns' => ['/^email/i']]
+     */
+    public function getAutoApplyRules(): array {
+        return [
+            'types' => ['url'],                  // Url type
+            'subtypes_in_form' => ['text_url'],  // Url editor
+            'name_patterns' => []
+        ];
+    }
+
     public function getParameters(): array {
         return [];
     }
-
 
     public function getDefaultErrorMessage(): string {
         return $this->translate('ERROR_MESSAGE_TEXT');

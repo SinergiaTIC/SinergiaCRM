@@ -163,6 +163,7 @@ class stic_AwfDataBlock {
       }
       field.updateWithFieldInformation(moduleField, type_field);
       field.setValueOptions(utils.getFieldOptions(moduleField));
+      field.syncAutomaticValidators();
 
       field = this.addField(field);
     }
@@ -304,7 +305,7 @@ class stic_AwfField {
       required_in_form: false, // Indicates if the field will be required in the form
       in_form: true,           // Indicates if the field will be in the form
       type_in_form: 'text',    // Editor type in the form: text, textarea, number, date, select
-      subtype_in_form: 'text', // SubType of editor in the form: text, text_email, text_tel, text_password, textarea, number, data, date_time, date_datetime...
+      subtype_in_form: 'text', // SubType of editor in the form: text, text_email, text_tel, text_url, text_password, textarea, number, data, date_time, date_datetime...
       type: '',                // Field data type
       value_type: 'editable',  // Value type: editable, selectable, fixed, dataBlock
       value_options: [],       // Options for the field value
@@ -553,6 +554,11 @@ class stic_AwfField {
       list.push(base_subtypes.find(s => s.id == "text"));
       return list;
     }
+    if (this.type == "url") {
+      list.push(base_subtypes.find(s => s.id == "text_url"));
+      list.push(base_subtypes.find(s => s.id == "text"));
+      return list;
+    }
     if (this.type == "email") {
       list.push(base_subtypes.find(s => s.id == "text_email"));
       list.push(base_subtypes.find(s => s.id == "text"));
@@ -650,6 +656,78 @@ class stic_AwfField {
     return newValidation;
   }
 
+  /**
+   * Synchronize automatic validators based on field name, type and subtype in form.
+   * Add those that apply and remove automatic ones that no longer apply.
+   */
+  syncAutomaticValidators() {
+    const definedActions = utils.getDefinedActions();
+    if (!definedActions) return;
+
+    const validatorActions = definedActions.filter(a => a.type === 'Validator');
+
+    validatorActions.forEach(actionDef => {
+      const rules = actionDef.autoApplyRules;
+      if (!rules) return;
+
+      let isMatch = false;
+
+      // Check by Field Type (vardef type) - ex: 'email', 'phone'
+      if (rules.types && rules.types.includes(this.type)) {
+        isMatch = true;
+      }
+
+      // Check by Subtype in form (editor) - ex: 'text_email', 'number'
+      if (!isMatch && rules.subtypes_in_form && rules.subtypes_in_form.includes(this.subtype_in_form)) {
+        isMatch = true;
+      }
+
+      // Check by Name pattern
+      if (!isMatch && rules.name_patterns && rules.name_patterns.length > 0) {
+        rules.name_patterns.forEach(pattern => {
+          try {
+            // Clean PHP strings like "/^email/i"
+            const parts = pattern.match(/^\/(.*?)\/([a-z]*)$/);
+            let regex;
+            if (parts) {
+                regex = new RegExp(parts[1], parts[2]);
+            } else {
+                regex = new RegExp(pattern);
+            }
+            
+            if (regex.test(this.name)) {
+              isMatch = true;
+            }
+          } catch(e) { console.warn("Invalid Regex in AutoApplyRules", pattern); }
+        });
+      }
+
+      // Actions
+      const existingIndex = this.validations.findIndex(v => v.validator === actionDef.name);
+      if (isMatch) {
+        // If it needs to be applied and it doesn't exist, we add it.
+        if (existingIndex === -1) {
+          this.validations.push(new stic_AwfFieldValidation({
+            name: utils.newId('val_'),
+            validator: actionDef.name,
+            message: actionDef.defaultErrorMessage || '',
+            params: {},
+            is_automatic: true // Mark as automatic
+          }));
+        }
+      } else {
+        // If we do NOT have to apply it, but it exists...
+        if (existingIndex !== -1) {
+          // Delete it if it was created automatically.
+          // Respect it if user added it manually.
+          if (this.validations[existingIndex].is_automatic) {
+            this.validations.splice(existingIndex, 1);
+          }
+        }
+      }
+    });
+  }
+
   static type_fieldList(asString = false) {
     return utils.getList("stic_advanced_web_forms_field_type_list", asString);
   }
@@ -690,6 +768,8 @@ class stic_AwfFieldValidation {
       // Simple condition to execute the validation (the field contains this value)
       condition_field: '',
       condition_value: '',
+
+      is_automatic: false, // Indicates if the validation is automatic
     });
     Object.assign(this, data);
   }
@@ -1696,6 +1776,12 @@ class stic_AwfConfiguration {
 
           allRelationships[d.id].push(rel);
         });
+
+        // Sort relationships
+        allRelationships[d.id].sort((a, b) => {
+          return a.textExtended.localeCompare(b.textExtended);
+        });
+
         // Find and fill defined relationships in datablock fields
         d.fields.filter(f => f.value_type == "dataBlock").forEach(f => {
           let rel = allRelationships[d.id].find(r => r.module_orig == d.module && r.field_orig == f.name);

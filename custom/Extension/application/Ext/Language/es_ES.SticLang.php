@@ -3917,6 +3917,7 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['hidden'] =
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text'] = '🔤 Texto simple';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_email'] = '✉️ Correo electrónico';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_tel'] = '📞 Teléfono';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_url'] = '🔗 Dirección URL';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_password'] = '🔒 Contraseña';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['textarea'] = '📃 Párrafo';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['number'] = '🔢 Numérico';

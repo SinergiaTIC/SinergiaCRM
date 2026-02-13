@@ -55,6 +55,9 @@ class ActionDefinitionDTO {
     /** @var string[] */
     public array $supportedDataTypes = [];
     
+    /** @var array[] */
+    public array $autoApplyRules = [];
+
     public int $order;
     
     /** @var ActionParameterDefinitionDTO[] */
@@ -85,6 +88,7 @@ class ActionDefinitionDTO {
                 fn($dt) => $dt->value, 
                 $def->supportedDataTypes
             );
+            $this->autoApplyRules = $def->getAutoApplyRules();
         }
         
         $this->order = $def->order;

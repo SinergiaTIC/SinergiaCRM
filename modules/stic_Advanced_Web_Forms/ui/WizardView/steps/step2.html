@@ -164,7 +164,7 @@
                                 </template>
                                 <!-- Alert message -->
                                 <template x-if="!field.isValid()">
-                                  <div class="alert-danger d-flex align-items-center">
+                                  <div class="d-flex align-items-center">
                                     <i class="suitepicon suitepicon-template-issue text-danger me-2 mt-1" :title="utils.translate('LBL_ERROR_FIELD_IS_INVALID')"></i>
                                     <ul class="m-0 p-0 text-danger small">
                                       <template x-for="err in field.getValidationErrors()">
@@ -766,7 +766,8 @@
                                   </template>
                                 </td>
                                 <!-- Error Message -->
-                                <td x-text="val.message"></td>
+                                <!-- <td x-text="val.message"></td> -->
+                                <td data-model="val.message" x-init="sticControls.editableText($el);"></td>
                                 <!-- Buttons -->
                                 <td class="text-end">
                                   <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')"

@@ -280,7 +280,7 @@ class WizardNavigation {
 
   static async autoSave() {
     window.alpineComponent.formConfig.syncLayoutWithDataBlocks();
-    
+
     const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=saveDraft", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1067,6 +1067,10 @@ class WizardStep2 {
           this.showRelativeDateSelector = false;
 
           if (!this.field) return;
+          
+          // Sync Automatic validators for current field
+          this.field.syncAutomaticValidators();
+
           if (this.isEdit) {
             if (this.isFixedValueOfDate) {
               if (this.availableRelativeDates.find(v => v.id == this.field.value)) {
@@ -1162,6 +1166,9 @@ class WizardStep2 {
               this.field.type = 'varchar';
             }
           }
+          // Sync Automatic validators for current subtype
+          this.field.syncAutomaticValidators();
+
           if (!this.isEdit) {
             this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
           }
