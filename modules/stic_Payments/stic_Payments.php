@@ -323,8 +323,12 @@ class stic_Payments extends Basic
 
     protected function showError($labelId) {
         
-        global $current_language;
+        global $current_language, $paymentAlertIssued;
         $paymentsModStrings = return_module_language($current_language, 'stic_Payments'); // can not be $mod_strings because of different contexts (specially inline edition)
+
+        if (($paymentAlertIssued ?? false) === true) {
+            return; // Avoid showing multiple alerts in the same request
+        }
 
         if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
             // // This is an AJAX request
@@ -337,7 +341,7 @@ class stic_Payments extends Basic
             exit();
         }
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings[$labelId] . '</div>');
-
+        $paymentAlertIssued = true;
     }
 
     public function mark_deleted($id) {

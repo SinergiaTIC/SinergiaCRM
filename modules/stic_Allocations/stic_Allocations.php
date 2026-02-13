@@ -226,9 +226,12 @@ class stic_Allocations extends Basic
 
     protected function showError($labelId) {
         
-        global $current_language;
+        global $current_language, $allocationAlertIssued;
         $allocationsModStrings = return_module_language($current_language, 'stic_Allocations'); // can not be $mod_strings because of different contexts (specially inline edition)
 
+        if (($allocationAlertIssued ?? false) === true) {
+            return; // Avoid showing multiple alerts in the same request
+        }
         if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
             $errorMsg = $allocationsModStrings[$labelId];
             $jsMsg = json_encode($errorMsg);
@@ -240,7 +243,7 @@ class stic_Allocations extends Basic
                 exit();
             }
         }
-
+                
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings[$labelId] . '</div>');
-    }
+        $allocationAlertIssued = true;
 }

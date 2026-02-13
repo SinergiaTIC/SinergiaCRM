@@ -134,9 +134,12 @@ class stic_Justifications extends Basic
 
     protected function showError($labelId) {
         
-        global $current_language;
+        global $current_language, $justificationAlertIssued;
         $justificationsModStrings = return_module_language($current_language, 'stic_Justifications'); // can not be $mod_strings because of different contexts (specially inline edition)
 
+        if (($justificationAlertIssued ?? false) === true) {
+            return; // Avoid showing multiple alerts in the same request
+        }
         if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
             $errorMsg = $justificationsModStrings[$labelId];
             $jsMsg = json_encode($errorMsg);
@@ -150,5 +153,7 @@ class stic_Justifications extends Basic
         }
 
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $justificationsModStrings[$labelId] . '</div>');
+        $justificationAlertIssued = true; // We use a flag to avoid showing multiple alerts in the same request in case of multiple justifications being blocked in the same operation
+
     }
 }
