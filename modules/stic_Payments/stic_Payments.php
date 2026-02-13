@@ -21,7 +21,6 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-include_once 'modules/stic_Allocations/Utils.php';
 
 #[\AllowDynamicProperties]
 class stic_Payments extends Basic
@@ -161,6 +160,7 @@ class stic_Payments extends Basic
 
         // If changing from allocated to not allocated, delete allocations from payment
         if (!empty($tempFetchedRow['allocated']) && $tempFetchedRow['allocated'] && !$isAllocated) {
+            require_once 'modules/stic_Allocations/Utils.php';
             $anyBlocked = stic_AllocationsUtils::paymentHasBlockedAllocations($this);
             if ($anyBlocked) {
                 $this->showError('LBL_CANNOT_DEALLOCATE_PAYMENT_BLOCKED_ALLOCATIONS');
@@ -180,6 +180,7 @@ class stic_Payments extends Basic
 
         // If payment is allocated and any amount field has changed, update allocations from payment
         if (!empty($tempFetchedRow['allocated']) && $isAllocated && $anyamountChanged) {
+            require_once 'modules/stic_Allocations/Utils.php';
             $hasValidatedAllocations = stic_AllocationsUtils::paymentHasValidatedAllocations($this);
             $this->updateAllocationsFromPayment(false);
             stic_PaymentsUtils::updateAllocationPercentage($this);
@@ -225,14 +226,17 @@ class stic_Payments extends Basic
     }
 
     protected function deleteAllocationsFromPayment() {
+        require_once 'modules/stic_Allocations/Utils.php';
         stic_AllocationsUtils::deleteAllocationsFromPayment($this);
     }
 
     protected function generateAllocationsFromPayment($dryrun = false) {
+        require_once 'modules/stic_Allocations/Utils.php';
         return stic_AllocationsUtils::createAllocationsFromPayment($this, $dryrun);
     }
 
     protected function updateAllocationsFromPayment($dryrun = false) {
+        require_once 'modules/stic_Allocations/Utils.php';
         return stic_AllocationsUtils::updateAllocationsFromPayment($this, $dryrun);
     }
 

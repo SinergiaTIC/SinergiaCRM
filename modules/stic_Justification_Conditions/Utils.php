@@ -33,6 +33,7 @@ class stic_Justification_ConditionsUtils {
     }
 
     public static function deleteJustificationsForOpportunity($opportunity) {
+        require_once 'modules/stic_Justification_Conditions/Utils.php';
         $conditions = $opportunity->get_linked_beans('opportunities_stic_justification_conditions', 'stic_Justification_Conditions');
         foreach ($conditions as $condition) {
             stic_Justification_ConditionsUtils::deleteJustifications($condition);
@@ -40,6 +41,8 @@ class stic_Justification_ConditionsUtils {
     }
 
     public static function updateJustificationsForOpportunity($opportunity) {
+        require_once 'modules/stic_Justification_Conditions/Utils.php';
+        require_once 'modules/stic_Justifications/Utils.php';
         $conditions = $opportunity->get_linked_beans('opportunities_stic_justification_conditions', 'stic_Justification_Conditions');
         foreach ($conditions as $condition) {
             stic_Justification_ConditionsUtils::deleteJustifications($condition);

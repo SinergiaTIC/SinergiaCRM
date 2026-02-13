@@ -21,8 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'modules/stic_Justifications/Utils.php';
-require_once 'modules/stic_Justification_Conditions/Utils.php';
 
 #[\AllowDynamicProperties]
 class stic_Justification_Conditions extends Basic
@@ -69,6 +67,8 @@ class stic_Justification_Conditions extends Basic
 
 
         if ($this->matchingFieldsChanged()) {
+            require_once 'modules/stic_Justifications/Utils.php';
+            require_once 'modules/stic_Justification_Conditions/Utils.php';
             stic_Justification_ConditionsUtils::deleteJustifications($this);
             stic_JustificationsUtils::createNewJustificationsFromJustificationCondition($this);
         }

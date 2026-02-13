@@ -21,9 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'modules/stic_Allocations/Utils.php';
-require_once 'modules/stic_Justifications/Utils.php';
-require_once 'SticInclude/Utils.php';
 #[\AllowDynamicProperties]
 class stic_Allocations extends Basic
 {
@@ -76,6 +73,8 @@ class stic_Allocations extends Basic
      */
     public function save($check_notify = false)
     {
+        require_once 'SticInclude/Utils.php';
+
         global $current_language;
         $allocationsModStrings = return_module_language($current_language, 'stic_Allocations'); // can not be $mod_strings because of different contexts (specially inline edition)
 
@@ -115,6 +114,7 @@ class stic_Allocations extends Basic
         $validatedBeforeSave = $tempFetchedRow['validated'] ?? false;
         if($validatedBeforeSave && !$isValidated) {
             // Allocation is being un-validated, check if there are justifications linked to it
+            require_once 'modules/stic_Justifications/Utils.php';
             $hasBlockedJustifications = stic_JustificationsUtils::allocationHasBlockedJustifications($this);
             if ($hasBlockedJustifications) {
                 $this->showError('LBL_CANNOT_UNVALIDATE_ALLOCATION_WITH_BLOCKED_JUSTIFICATIONS');
@@ -131,8 +131,10 @@ class stic_Allocations extends Basic
         //     stic_AllocationsUtils::updatePayment($this);
         // }
 
+        require_once 'modules/stic_Justifications/Utils.php';
         if ($isValidated && !$validatedBeforeSave) {
             // Allocation has been validated now
+            require_once 'modules/stic_Allocations/Utils.php';
             stic_JustificationsUtils::createJustificationsFromAllocation($this); 
             stic_AllocationsUtils::updatePayment($this->stic_payments_stic_allocations);
         }
@@ -154,6 +156,7 @@ class stic_Allocations extends Basic
                     $idPayment = $this->stic_payments_stic_allocations;
                 }
             }
+            require_once 'modules/stic_Allocations/Utils.php';
             stic_AllocationsUtils::updatePayment($idPayment);
         }
     }
@@ -213,11 +216,12 @@ class stic_Allocations extends Basic
             return false;
         }
         
-
+        require_once 'modules/stic_Justifications/Utils.php';
         stic_JustificationsUtils::removeJustificationsFromAllocation($this);
 
         parent::mark_deleted($id);
-
+        
+        require_once 'modules/stic_Allocations/Utils.php';
         stic_AllocationsUtils::updatePayment($paymentId);
 
     }
@@ -246,4 +250,5 @@ class stic_Allocations extends Basic
                 
         SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $allocationsModStrings[$labelId] . '</div>');
         $allocationAlertIssued = true;
+    }
 }
