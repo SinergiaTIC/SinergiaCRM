@@ -201,7 +201,7 @@ $dictionary["Document"]["fields"]["stic_families_documentsstic_families_ida"] = 
     'side' => 'right',
     'vname' => 'LBL_STIC_FAMILIES_DOCUMENTS_FROM_DOCUMENTS_TITLE',
 );
-$dictionary["Document"]["fields"]["stic_group_opportunities_documents_1"] = array (
+$dictionary["Document"]["fields"]["stic_group_opportunities_documents_1"] = array(
     'name' => 'stic_group_opportunities_documents_1',
     'type' => 'link',
     'relationship' => 'stic_group_opportunities_documents_1',
@@ -209,7 +209,38 @@ $dictionary["Document"]["fields"]["stic_group_opportunities_documents_1"] = arra
     'module' => 'stic_Group_Opportunities',
     'bean_name' => 'stic_Group_Opportunities',
     'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNITIES_TITLE',
-  );
+);
+$dictionary["Document"]["fields"]["stic_assets_documents"] = array(
+    'name' => 'stic_assets_documents',
+    'type' => 'link',
+    'relationship' => 'stic_assets_documents',
+    'source' => 'non-db',
+    'module' => 'stic_Assets',
+    'bean_name' => 'stic_Assets',
+    'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE',
+    'id_name' => 'stic_assets_documentsstic_assets_ida',
+);
+$dictionary["Document"]["fields"]["stic_assets_documents_name"] = array(
+    'name' => 'stic_assets_documents_name',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE',
+    'save' => true,
+    'id_name' => 'stic_assets_documentsstic_assets_ida',
+    'link' => 'stic_assets_documents',
+    'table' => 'stic_assets',
+    'module' => 'stic_Assets',
+    'rname' => 'name',
+);
+$dictionary["Document"]["fields"]["stic_assets_documentsstic_assets_ida"] = array(
+    'name' => 'stic_assets_documentsstic_assets_ida',
+    'type' => 'link',
+    'relationship' => 'stic_assets_documents',
+    'source' => 'non-db',
+    'reportable' => false,
+    'side' => 'right',
+    'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+);
 
 // Modified properties in native fields
 $dictionary['Document']['fields']['filename']['required'] = 0;
@@ -262,4 +293,3 @@ $dictionary['Document']['fields']['selected_revision_filename']['massupdate'] = 
 $dictionary['Document']['fields']['aos_contracts']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_shared_document_link_c']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_sessions_documents_name']['massupdate'] = 0;
-
