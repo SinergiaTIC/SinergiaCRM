@@ -38,7 +38,6 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-
 class stic_Assets extends Basic
 {
     public $new_schema = true;
@@ -110,16 +109,54 @@ class stic_Assets extends Basic
     public $account_id6_c;
     public $security;
     public $utilities_notes;
-	
+
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
 
         return false;
     }
-	
+
+    /**
+     * Override the bean's save function to assign an auto-incrementing value to the code field when a new record is created
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = false)
+    {
+
+        // Set the code if it's a new record
+        if (!$this->fetched_row) {
+            $query = "SELECT MAX(CAST(code AS UNSIGNED)) FROM {$this->table_name} WHERE deleted = 0";
+            $result = intval($this->db->getOne($query));
+            $this->code = str_pad($result + 1, 4, '0', STR_PAD_LEFT);
+        }
+
+        // Set the name field if it's empty always after generating the code
+        $this->fillName();
+
+        // Save the bean
+        parent::save($check_notify);
+        return $this->id;
+    }
+
+    protected function fillName()
+    {
+        if (empty($this->name)) {
+            global $app_list_strings;
+            $contactName = '';
+            $contactBean = BeanFactory::getBean('Contacts', $this->stic_assets_contactscontacts_ida);
+            if ($contactBean) {
+                $contactName = $contactBean->first_name . ' ' . $contactBean->last_name;
+                $this->name = "{$contactName} - {$app_list_strings['stic_asset_managment_types_list'][$this->type]} - {$this->code}";
+            } else {
+                $GLOBALS['log']->error("Could not find contact with id {$this->stic_assets_contactscontacts_ida} for asset with id {$this->id}");
+            }
+
+        }
+    }
 }
