@@ -141,7 +141,7 @@ class stic_AwfDataBlock {
     // FieldInformation: { name, text, type, required, options, inViews }
 
     let availableFields = Object.values(allFieldsInfo).filter(fi => !this.fields.some(f => f.name == fi.name) );
-    availableFields.push({name:'', text:'', type:'', required:false, options:[], inViews:true });
+    availableFields.unshift({name:'', text:'', type:'', required:false, options:[], inViews:true });
     return availableFields;
   }
 
@@ -547,63 +547,53 @@ class stic_AwfField {
     if (this.isSelectCustomOptions()) {
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
-      return list
-    }
-    if (this.type == "phone") {
+      
+    } else if (this.type == "phone") {
       list.push(base_subtypes.find(s => s.id == "text_tel"));
       list.push(base_subtypes.find(s => s.id == "text"));
-      return list;
-    }
-    if (this.type == "url") {
+
+    } else if (this.type == "url") {
       list.push(base_subtypes.find(s => s.id == "text_url"));
       list.push(base_subtypes.find(s => s.id == "text"));
-      return list;
-    }
-    if (this.type == "email" || (this.type == "varchar" && this.name.toLowerCase().startsWith("email"))) {
+
+    } else if (this.type == "email" || (this.type == "varchar" && this.name.toLowerCase().startsWith("email"))) {
       list.push(base_subtypes.find(s => s.id == "text_email"));
       list.push(base_subtypes.find(s => s.id == "text"));
-      return list;
-    }
-    if (this.type == "password" || this.type == "encrypt") {
+
+    } else if (this.type == "password" || this.type == "encrypt") {
       list.push(base_subtypes.find(s => s.id == "text_password"));
       list.push(base_subtypes.find(s => s.id == "text"));
-      return list;
-    }
 
-    if (this.type == "date") {
+    } else if (this.type == "date") {
       list.push(base_subtypes.find(s => s.id == "date"));
-      return list;
-    }
-    if (this.type == "time") {
+
+    } else if (this.type == "time") {
       list.push(base_subtypes.find(s => s.id == "date_time"));
-      return list;
-    }
-    if (this.type == "datetime" || this.type == "datetimecombo") {
+
+    } else if (this.type == "datetime" || this.type == "datetimecombo") {
       list.push(base_subtypes.find(s => s.id == "date_datetime"));
       list.push(base_subtypes.find(s => s.id == "date"));
-      return list;
-    }
 
-    if (this.type == "enum" || this.type == "radioenum" || this.type == "relate") {
+    } else if (this.type == "enum" || this.type == "radioenum" || this.type == "relate") {
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
-      return list
-    }
-    if (this.type == "bool" || this.type == "check") {
+
+    } else if (this.type == "bool" || this.type == "check") {
       list.push(base_subtypes.find(s => s.id == "select_checkbox"));
       list.push(base_subtypes.find(s => s.id == "select_switch"));
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
-      return list
-    }
-    if (this.type == "multienum") {
+
+    } else if (this.type == "multienum") {
       list.push(base_subtypes.find(s => s.id == "select_multiple"));
       list.push(base_subtypes.find(s => s.id == "select_checkbox_list"));
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
-      return list
     }
 
+    if (list.length > 0) {
+        return list.filter(item => item); // Remove undefined items
+    }
     return base_subtypes;
   }
 

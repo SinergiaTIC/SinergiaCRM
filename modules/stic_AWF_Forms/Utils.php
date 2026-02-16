@@ -402,7 +402,7 @@ function getRelationshipsBetween($availableModules) {
 }
 
 /**
- * Get all modules enabled in Administration
+ * Get all modules enabled in Administration with a valid Bean
  * Result: [EnabedModule]
  * EnabledModule: {
  *   name, text, textSingular, inStudio, icon
@@ -423,13 +423,6 @@ function getEnabledModules() {
         $enabled[$key] = ["name" => $key, "text" => $text, "textSingular" => $textSingular, "inStudio" => false, "icon" => ""];
     }
 
-    if (!isset($enabled["Users"])) {
-        $key = "Users";
-        $text = translate($key);
-        $textSingular = $app_list_strings['moduleListSingular'][$key] ?? $text;
-        $enabled[$key] = ["name" => $key, "text" => $text, "textSingular" => $textSingular, "inStudio" => false, "icon" => ""];
-    }
-
     // Fill inStudio information
     require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
     $sb = new StudioBrowser();
@@ -441,12 +434,16 @@ function getEnabledModules() {
         }
     }
 
+    $result = array_filter($enabled, function($item) {
+        return isset($item['inStudio']) && $item['inStudio'] == true;
+    });
+
     // Sort modules by text
-    uasort($enabled, function($a, $b) {
+    uasort($result, function($a, $b) {
         return strcmp($a['text'], $b['text']);
     });
 
-    return $enabled;
+    return $result;
 }
 
 /**
