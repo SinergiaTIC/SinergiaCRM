@@ -1,341 +1,274 @@
 <?php
 /**
- * Archivo: custom/modules/stic_Messages/WhatsAppWebhookEntryPoint.php
- * 
- * Entry Point para recibir webhooks de WhatsApp desde Twilio
- * 
- * Este es el método oficial de SuiteCRM para endpoints públicos
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Entry point to receive Twilio webhooks with incoming WhatsApp messages
+ */
 class WhatsAppWebhookEntryPoint
 {
     /**
-     * Método principal que ejecuta SuiteCRM cuando se llama al entry point
+     * Processes the Twilio webhook
      */
     public function run()
     {
-        // Log de inicio
-        $GLOBALS['log']->info('========== WhatsApp Webhook Entry Point ==========');
-        $GLOBALS['log']->debug('POST Data: ' . print_r($_POST, true));
-        
-        // Validar que hay datos
-        if (empty($_POST)) {
-            $GLOBALS['log']->error('WhatsApp Webhook: No POST data received');
-            $this->respondToTwilio('No data received');
-            return;
-        }
-        
         try {
-            // Extraer datos del webhook de Twilio
+            // Initial log for debugging
+            $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: Processing started');
+            $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: POST data = ' . print_r($_POST, true));
+
+            // Validate that necessary data is present
+            if (!$this->validateWebhookData()) {
+                $GLOBALS['log']->error('WhatsAppWebhookEntryPoint: Invalid webhook data');
+                $this->sendResponse(400, 'Invalid webhook data');
+                return;
+            }
+
+            // Extract data from Twilio webhook
             $messageSid = $_POST['MessageSid'] ?? '';
-            $from = $_POST['From'] ?? '';           // whatsapp:+34636642141
-            $to = $_POST['To'] ?? '';               // whatsapp:+14155238886
+            $from = $this->cleanPhoneNumber($_POST['From'] ?? '');
+            $to = $this->cleanPhoneNumber($_POST['To'] ?? '');
             $body = $_POST['Body'] ?? '';
+            $smsStatus = $_POST['SmsStatus'] ?? '';
             $numMedia = intval($_POST['NumMedia'] ?? 0);
-            $accountSid = $_POST['AccountSid'] ?? '';
-            $messageStatus = $_POST['SmsStatus'] ?? 'received';
+
+            $GLOBALS['log']->info("WhatsAppWebhookEntryPoint: From=$from, To=$to, Body=$body");
+
+            // Search for related record by phone number in multiple modules
+            $parentInfo = $this->findContactByPhone($from);
             
-            // Validar datos mínimos requeridos
-            if (empty($messageSid) || empty($from)) {
-                $GLOBALS['log']->error('WhatsApp Webhook: Missing MessageSid or From');
-                $this->respondToTwilio('Missing required fields');
-                return;
+            if (!$parentInfo) {
+                $GLOBALS['log']->warn("WhatsAppWebhookEntryPoint: No related record found for phone: $from");
+                // You can decide whether to create an orphaned message or ignore it
+                // For now, we'll create the message without relationship
             }
-            
-            // Limpiar números de teléfono (remover prefijo 'whatsapp:')
-            $fromPhone = $this->cleanPhoneNumber($from);
-            $toPhone = $this->cleanPhoneNumber($to);
-            
-            $GLOBALS['log']->info("WhatsApp entrante de: {$fromPhone}");
-            
-            // Verificar si el mensaje ya existe (evitar duplicados)
-            if ($this->messageExists($messageSid)) {
-                $GLOBALS['log']->info('WhatsApp Webhook: Message already processed');
-                $this->respondToTwilio('Already processed');
-                return;
-            }
-            
-            // Buscar contacto relacionado por número de teléfono
-            $contactInfo = $this->findContactByPhone($fromPhone);
-            
-            // Crear nuevo mensaje en stic_Messages
+
+            // Create the incoming message record
             $message = BeanFactory::newBean('stic_Messages');
-            
-            // Nombre del mensaje
-            $messageName = $this->generateMessageName($contactInfo, $body);
-            
-            // Configurar campos
-            $message->name = $messageName;
+            $message->name = $this->generateMessageName($parentInfo, $from);
             $message->type = 'WhatsApp';
             $message->direction = 'inbound';
-            $message->phone = $fromPhone;
-            $message->sender = $toPhone;
+            $message->phone = $from;
+            $message->sender = $from;
             $message->message = $body;
             $message->status = 'received';
-            $message->response = "SID: {$messageSid} | Status: {$messageStatus}";
+            $message->response = "MessageSid: $messageSid";
+            $message->sent_date = $GLOBALS['timedate']->nowDb();
             
-            // Relacionar con contacto si se encontró
-            if (!empty($contactInfo['id'])) {
-                $message->parent_type = 'Contacts';
-                $message->parent_id = $contactInfo['id'];
-                $GLOBALS['log']->info("Relacionado con: {$contactInfo['name']} ({$contactInfo['id']})");
-            } else {
-                $GLOBALS['log']->warning("Contacto no encontrado para: {$fromPhone}");
+            // Relate to the found record (Contact, User, Account, Employee, or Lead) if found
+            if ($parentInfo) {
+                $message->parent_type = $parentInfo['module'];
+                $message->parent_id = $parentInfo['id'];
             }
-            
-            // Guardar mensaje (sin disparar envío porque direction = inbound)
+
+            // Save the message
             $messageId = $message->save();
-            
-            if ($messageId) {
-                $GLOBALS['log']->info("✅ Mensaje creado: {$messageId}");
-                
-                // Procesar archivos multimedia si existen
-                if ($numMedia > 0) {
-                    $this->processMediaFiles($messageId, $_POST, $numMedia);
-                }
-                
-                // Responder a Twilio
-                $this->respondToTwilio('Message received', $messageId);
-            } else {
-                $GLOBALS['log']->error('Error guardando mensaje');
-                $this->respondToTwilio('Error saving message');
-            }
-            
+
+            $GLOBALS['log']->info("WhatsAppWebhookEntryPoint: Message saved with ID: $messageId");
+
+            // Respond to Twilio with empty TwiML (200 OK)
+            $this->sendTwiMLResponse();
+
         } catch (Exception $e) {
-            $GLOBALS['log']->error('WhatsApp Webhook Exception: ' . $e->getMessage());
-            $GLOBALS['log']->error('Stack trace: ' . $e->getTraceAsString());
-            $this->respondToTwilio('Internal error');
+            $GLOBALS['log']->error('WhatsAppWebhookEntryPoint: Error - ' . $e->getMessage());
+            $GLOBALS['log']->error('WhatsAppWebhookEntryPoint: Stack trace - ' . $e->getTraceAsString());
+            $this->sendResponse(500, 'Internal server error');
         }
     }
-    
+
     /**
-     * Limpiar número de teléfono
+     * Validates that webhook data is valid
+     */
+    private function validateWebhookData()
+    {
+        // Minimum required fields by Twilio
+        $requiredFields = ['MessageSid', 'From', 'Body'];
+        
+        foreach ($requiredFields as $field) {
+            if (empty($_POST[$field])) {
+                $GLOBALS['log']->error("WhatsAppWebhookEntryPoint: Required field missing: $field");
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Cleans phone number by removing whatsapp: prefix
      */
     private function cleanPhoneNumber($phone)
     {
-        return str_replace('whatsapp:', '', $phone);
+        // Twilio sends numbers as "whatsapp:+34636642141"
+        $phone = str_replace('whatsapp:', '', $phone);
+        $phone = trim($phone);
+        return $phone;
     }
-    
+
     /**
-     * Verificar si el mensaje ya existe en la base de datos
+     * Searches for a contact, user, account, employee or lead by phone number
+     * Returns array with 'module' and 'id', or null if not found
      */
-    private function messageExists($messageSid)
+    private function findContactByPhone($phone)
     {
         global $db;
         
-        $messageSid = $db->quote($messageSid);
-        $query = "SELECT id FROM stic_messages 
-                  WHERE response LIKE '%{$messageSid}%' 
-                  AND deleted = 0 
-                  LIMIT 1";
+        // Clean the number for search (remove non-numeric characters except +)
+        $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
         
-        $result = $db->query($query);
-        return ($db->fetchByAssoc($result) !== false);
-    }
-    
-    /**
-     * Buscar contacto por número de teléfono
-     */
-    private function findContactByPhone($phoneNumber)
-    {
-        global $db;
-        
-        // Limpiar número para búsqueda
-        $cleanPhone = preg_replace('/[^0-9]/', '', $phoneNumber);
-        
-        // Buscar en múltiples campos de teléfono
-        $query = "SELECT c.id, c.first_name, c.last_name 
-                  FROM contacts c
-                  WHERE c.deleted = 0
-                  AND (
-                      REPLACE(REPLACE(REPLACE(REPLACE(c.phone_mobile, '+', ''), ' ', ''), '-', ''), '(', '') LIKE '%{$cleanPhone}%'
-                      OR REPLACE(REPLACE(REPLACE(REPLACE(c.phone_work, '+', ''), ' ', ''), '-', ''), '(', '') LIKE '%{$cleanPhone}%'
-                      OR REPLACE(REPLACE(REPLACE(REPLACE(c.phone_home, '+', ''), ' ', ''), '-', ''), '(', '') LIKE '%{$cleanPhone}%'
-                      OR REPLACE(REPLACE(REPLACE(REPLACE(c.phone_other, '+', ''), ' ', ''), '-', ''), '(', '') LIKE '%{$cleanPhone}%'
-                  )
-                  LIMIT 1";
-        
-        $result = $db->query($query);
-        
-        if ($row = $db->fetchByAssoc($result)) {
-            return [
-                'id' => $row['id'],
-                'name' => trim($row['first_name'] . ' ' . $row['last_name'])
-            ];
-        }
-        
-        return ['id' => null, 'name' => null];
-    }
-    
-    /**
-     * Generar nombre descriptivo para el mensaje
-     */
-    private function generateMessageName($contactInfo, $messageBody)
-    {
-        $parts = ['WhatsApp entrante'];
-        
-        // Agregar nombre del contacto
-        if (!empty($contactInfo['name'])) {
-            $parts[] = $contactInfo['name'];
-        }
-        
-        // Agregar fecha y hora
-        $parts[] = date('d/m/Y H:i');
-        
-        // Agregar preview del mensaje
-        $preview = mb_substr($messageBody, 0, 30);
-        if (mb_strlen($messageBody) > 30) {
-            $preview .= '...';
-        }
-        $parts[] = $preview;
-        
-        return implode(' - ', $parts);
-    }
-    
-    /**
-     * Procesar archivos multimedia adjuntos
-     */
-    private function processMediaFiles($messageId, $postData, $numMedia)
-    {
-        global $sugar_config;
-        
-        $GLOBALS['log']->info("Procesando {$numMedia} archivo(s) multimedia...");
-        
-        for ($i = 0; $i < $numMedia; $i++) {
-            try {
-                $mediaUrl = $postData["MediaUrl{$i}"] ?? '';
-                $mediaContentType = $postData["MediaContentType{$i}"] ?? '';
-                
-                if (empty($mediaUrl)) {
-                    continue;
-                }
-                
-                $GLOBALS['log']->info("Descargando: {$mediaUrl}");
-                
-                // Descargar archivo
-                $fileContent = $this->downloadFile($mediaUrl);
-                
-                if ($fileContent === false) {
-                    $GLOBALS['log']->error("Error descargando: {$mediaUrl}");
-                    continue;
-                }
-                
-                // Crear Note para el adjunto
-                $note = BeanFactory::newBean('Notes');
-                $note->name = 'WhatsApp Media ' . ($i + 1) . ' - ' . date('Y-m-d H:i:s');
-                $note->description = "Archivo recibido por WhatsApp\nTipo: {$mediaContentType}";
-                $note->parent_type = 'stic_Messages';
-                $note->parent_id = $messageId;
-                $note->save();
-                
-                // Determinar extensión del archivo
-                $extension = $this->getExtensionFromMimeType($mediaContentType);
-                $filename = $note->id . '_' . time() . '.' . $extension;
-                
-                // Guardar en directorio upload
-                $uploadDir = rtrim($sugar_config['upload_dir'] ?? 'upload', '/') . '/';
-                $filePath = $uploadDir . $filename;
-                
-                if (file_put_contents($filePath, $fileContent)) {
-                    // Actualizar Note con información del archivo
-                    $note->filename = $filename;
-                    $note->file_mime_type = $mediaContentType;
-                    $note->save();
-                    
-                    $GLOBALS['log']->info("✅ Archivo guardado: {$filename}");
-                } else {
-                    $GLOBALS['log']->error("Error guardando: {$filePath}");
-                }
-                
-            } catch (Exception $e) {
-                $GLOBALS['log']->error("Error procesando media {$i}: " . $e->getMessage());
-            }
-        }
-    }
-    
-    /**
-     * Descargar archivo desde URL usando cURL
-     */
-    private function downloadFile($url)
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        
-        $content = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($httpCode >= 200 && $httpCode < 300 && $content !== false) {
-            return $content;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Obtener extensión de archivo desde MIME type
-     */
-    private function getExtensionFromMimeType($mimeType)
-    {
-        $mimeMap = [
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/gif' => 'gif',
-            'image/webp' => 'webp',
-            'video/mp4' => 'mp4',
-            'video/3gpp' => '3gp',
-            'audio/mpeg' => 'mp3',
-            'audio/ogg' => 'ogg',
-            'audio/aac' => 'aac',
-            'application/pdf' => 'pdf',
-            'application/msword' => 'doc',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
-            'application/vnd.ms-excel' => 'xls',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
-            'text/plain' => 'txt',
-            'text/csv' => 'csv',
+        $modulesToSearch = [
+            'Contacts',
+            'Users',
+            'Accounts',
+            'Employees',
+            'Leads'
         ];
         
-        return $mimeMap[$mimeType] ?? 'bin';
-    }
-    
-    /**
-     * Responder a Twilio con TwiML (XML)
-     */
-    private function respondToTwilio($message = '', $messageId = null)
-    {
-        // Limpiar cualquier output previo
-        ob_clean();
         
-        // Headers para respuesta XML
-        header('Content-Type: text/xml; charset=utf-8');
+        $GLOBALS['log']->info("WhatsAppWebhookEntryPoint: Searching phone in modules: " . implode(', ', $modulesToSearch));
         
-        // TwiML básico
-        echo '<?xml version="1.0" encoding="UTF-8"?>';
-        echo '<Response>';
-        
-        // Opcional: Enviar respuesta automática
-        // Descomenta si quieres que el sistema responda automáticamente
-        /*
-        if ($messageId) {
-            echo '<Message>';
-            echo '<Body>Gracias por tu mensaje. Te responderemos pronto.</Body>';
-            echo '</Message>';
+        // Search in each module until a match is found
+        foreach ($modulesToSearch as $module) {
+            $result = $this->searchPhoneInModule($module, $cleanPhone);
+            if ($result) {
+                $GLOBALS['log']->info("WhatsAppWebhookEntryPoint: Found record in $module with ID: {$result['id']}");
+                return $result;
+            }
         }
-        */
         
-        echo '</Response>';
+        $GLOBALS['log']->warn("WhatsAppWebhookEntryPoint: No record found in any module for phone: $phone");
+        return null;
+    }
+
+    /**
+     * Searches for a record in a specific module by phone number
+     */
+    private function searchPhoneInModule($module, $phone)
+    {
+        global $db;
         
-        $GLOBALS['log']->info("Respuesta TwiML enviada: {$message}");
+        $bean = BeanFactory::newBean($module);
+        if (!$bean) {
+            return null;
+        }
+        
+        $tableName = $bean->table_name;
+        
+        // Common phone fields
+        $phoneFields = ['phone_mobile', 'phone_work', 'phone_home', 'phone_other', 'phone_fax'];
+        
+        // Build WHERE conditions
+        $conditions = array();
+        foreach ($phoneFields as $field) {
+            // Check if field exists in bean definition
+            if (isset($bean->field_defs[$field])) {
+                // Clean phone for search (numbers only)
+                $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+                $conditions[] = "REPLACE(REPLACE(REPLACE(REPLACE({$field}, ' ', ''), '-', ''), '.', ''), '+', '') LIKE '%{$cleanPhone}%'";
+            }
+        }
+        
+        if (empty($conditions)) {
+            $GLOBALS['log']->warn("WhatsAppWebhookEntryPoint: No phone fields found in module $module");
+            return null;
+        }
+        
+        $whereClause = implode(' OR ', $conditions);
+        
+        $sql = "SELECT id FROM {$tableName} WHERE deleted = 0 AND ({$whereClause}) LIMIT 1";
+        
+        $GLOBALS['log']->info("WhatsAppWebhookEntryPoint: Searching in $module with SQL: $sql");
+        
+        $result = $db->query($sql);
+        
+        if ($row = $db->fetchByAssoc($result)) {
+            $GLOBALS['log']->info("WhatsAppWebhookEntryPoint: Found $module with ID: {$row['id']}");
+            return array(
+                'module' => $module,
+                'id' => $row['id']
+            );
+        }
+        
+        return null;
+    }
+
+    /**
+     * Generates a descriptive name for the message
+     */
+    private function generateMessageName($parentInfo, $from)
+    {
+        global $app_strings;
+        
+        $name = $app_strings['LBL_WHATSAPP_INCOMING_MESSAGE'] ?? 'Incoming WhatsApp message';
+        
+        if ($parentInfo) {
+            $bean = BeanFactory::getBean($parentInfo['module'], $parentInfo['id']);
+            if ($bean) {
+                $name = $bean->name . ' - ' . $GLOBALS['timedate']->nowDb();
+            }
+        } else {
+            $name .= ' ' . ($app_strings['LBL_FROM'] ?? 'from') . ' ' . $from . ' - ' . $GLOBALS['timedate']->nowDb();
+        }
+        
+        return $name;
+    }
+
+    /**
+     * Sends a valid TwiML response to Twilio
+     */
+    private function sendTwiMLResponse()
+    {
+        // If in test mode (called from a simulator), don't send headers or exit
+        if (defined('WEBHOOK_TEST_MODE') && WEBHOOK_TEST_MODE === true) {
+            return;
+        }
+        
+        header('Content-Type: text/xml');
+        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        echo '<Response></Response>';
+        exit;
+    }
+
+    /**
+     * Sends an HTTP response with status code
+     */
+    private function sendResponse($code, $message)
+    {
+        // If in test mode, only log
+        if (defined('WEBHOOK_TEST_MODE') && WEBHOOK_TEST_MODE === true) {
+            $GLOBALS['log']->error("WhatsAppWebhookEntryPoint: Response $code - $message");
+            return;
+        }
+        
+        http_response_code($code);
+        header('Content-Type: application/json');
+        echo json_encode(array(
+            'success' => $code >= 200 && $code < 300,
+            'message' => $message
+        ));
+        exit;
     }
 }
-
-$entryPoint = new WhatsAppWebhookEntryPoint();
-$entryPoint->run();

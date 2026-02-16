@@ -21,10 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-/**
- * Helper para enviar mensajes de WhatsApp usando Twilio
- * * Este helper se integra con el sistema existente de stic_Messages
- */
+// WhatsApp Helper class to send WhatsApp messages through Twilio provider.
 
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
@@ -79,108 +76,110 @@ class WhatsAppHelper implements stic_MessagesHelper {
         return $this;
     }
 
-    /**
-     * Enviar mensaje de WhatsApp
-     *
-     * @param string|null $sender No se usa (Twilio usa su número configurado)
-     * @param string $message Cuerpo del mensaje O el ContentSid (si empieza por HX)
-     * @param string $phone Número de destino
-     * @return array
-     */
     public function sendMessage(?string $sender, string $message, string $phone): array
     {
-        if (!$this->isConfigured()) {
+        $phone = $this->formatPhoneNumber($phone);
+        
+        $result = $this->apiCall($sender, $message, $phone);
+        
+        $resultArray = json_decode($result, true);
+        
+        if (!isset($resultArray['success']) || !$resultArray['success']) {
             return [
-                'code' => stic_Messages::ERROR_NOT_SENT,
-                'message' => 'Configuración de Twilio incompleta.'
+                'code' => stic_Messages::ERROR_NOT_SENT, 
+                'message' => $result
             ];
         }
-
-        if (empty($phone) || empty($message)) {
+        
+        if (isset($resultArray['data']['sid'])) {
+            $GLOBALS['log']->info('WhatsApp enviado. SID: ' . $resultArray['data']['sid']);
             return [
-                'code' => stic_Messages::ERROR_NOT_SENT,
-                'message' => 'Teléfono o mensaje vacíos.'
+                'code' => stic_Messages::OK,
+                'message' => 'Message sent',
+                'twilio_sid' => $resultArray['data']['sid'],
+                'status' => $resultArray['data']['status'] ?? 'sent'
             ];
-        }
-
-        try {
-            $from = 'whatsapp:' . $this->twilioNumber;
-            $to = 'whatsapp:' . $this->formatPhoneNumber($phone);
-
-            // Preparar datos base
-            $postData = [
-                'From' => $from,
-                'To' => $to
-            ];
-
-            /**
-             * Lógica de Plantilla vs Mensaje Directo:
-             * Si el mensaje comienza con 'HX' (prefijo de Twilio ContentSid),
-             * lo enviamos como plantilla de WhatsApp.
-             */
-            if (strpos($message, 'HX') === 0) {
-                $postData['ContentSid'] = $message;
-                // Nota: Si necesitas variables dinámicas, podrías pasar un JSON en el mensaje 
-                // y decodificarlo aquí para llenar 'ContentVariables'.
-            } else {
-                $postData['Body'] = $message;
-            }
-
-            $url = $this->apiUrl . '/Accounts/' . $this->sid . '/Messages.json';
-            $result = $this->makeTwilioRequest($url, $postData);
-
-            if ($result['success']) {
-                $GLOBALS['log']->info('WhatsApp enviado. SID: ' . ($result['data']['sid'] ?? 'N/A'));
-                
-                return [
-                    'code' => stic_Messages::OK,
-                    'message' => 'Enviado correctamente',
-                    'twilio_sid' => $result['data']['sid'] ?? '',
-                    'status' => $result['data']['status'] ?? 'sent'
-                ];
-            }
-
+        } else {
             return [
-                'code' => stic_Messages::ERROR_NOT_SENT,
-                'message' => 'Error Twilio: ' . $result['error']
-            ];
-
-        } catch (Exception $e) {
-            $GLOBALS['log']->error('WhatsApp Exception: ' . $e->getMessage());
-            return [
-                'code' => stic_Messages::ERROR_NOT_SENT,
-                'message' => $e->getMessage()
+                'code' => stic_Messages::ERROR_NOT_SENT, 
+                'message' => $result
             ];
         }
     }
 
-    private function makeTwilioRequest($url, $data)
+    protected function apiCall(?string $sender, string $message, string $phone): string
     {
+        if (!$this->isConfigured()) {
+            return json_encode([
+                'success' => false, 
+                'message' => 'Configuración de Twilio incompleta'
+            ]);
+        }
+
+        if (empty($phone) || empty($message)) {
+            return json_encode([
+                'success' => false, 
+                'message' => 'Teléfono o mensaje vacíos'
+            ]);
+        }
+
+        $from = 'whatsapp:' . $this->twilioNumber;
+        $to = 'whatsapp:' . $phone;
+
+        $postData = [
+            'From' => $from,
+            'To' => $to
+        ];
+
+        if (strpos($message, 'HX') === 0) {
+            $postData['ContentSid'] = $message;
+        } else {
+            $postData['Body'] = $message;
+        }
+
+        $url = $this->apiUrl . '/Accounts/' . $this->sid . '/Messages.json';
+        
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
         curl_setopt($ch, CURLOPT_USERPWD, $this->sid . ':' . $this->token);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 7500);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlError = curl_error($ch);
-        curl_close($ch);
 
-        if ($curlError) {
-            return ['success' => false, 'error' => $curlError];
+        if ($response === false) {
+            $errorNumber = curl_errno($ch);
+            $errorMessage = curl_error($ch);
+            curl_close($ch);
+            
+            $GLOBALS['log']->fatal('Error sending WhatsApp ' . __METHOD__ . __LINE__, $errorNumber, $errorMessage);
+            $errorMsg = $errorNumber . '-' . $errorMessage;
+            return json_encode([
+                'success' => false, 
+                'message' => $errorMsg
+            ]);
         }
+
+        curl_close($ch);
 
         $responseData = json_decode($response, true);
 
         if ($httpCode >= 200 && $httpCode < 300) {
-            return ['success' => true, 'data' => $responseData];
+            return json_encode([
+                'success' => true, 
+                'data' => $responseData
+            ]);
         }
 
         $errorMessage = $responseData['message'] ?? 'Error desconocido';
-        return ['success' => false, 'error' => $errorMessage];
+        return json_encode([
+            'success' => false, 
+            'message' => $errorMessage
+        ]);
     }
 
     private function formatPhoneNumber($phone)
