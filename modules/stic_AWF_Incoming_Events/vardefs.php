@@ -38,8 +38,8 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$dictionary['stic_Advanced_Web_Forms_Incoming_Events'] = array(
-    'table' => 'stic_advanced_web_forms_incoming_events',
+$dictionary['stic_AWF_Incoming_Events'] = array(
+    'table' => 'stic_AWF_Incoming_Events',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,
@@ -259,4 +259,4 @@ $dictionary['stic_Advanced_Web_Forms_Incoming_Events'] = array(
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('stic_Advanced_Web_Forms_Incoming_Events', 'stic_Advanced_Web_Forms_Incoming_Events', array('basic'));
+VardefManager::createVardef('stic_AWF_Incoming_Events', 'stic_AWF_Incoming_Events', array('basic'));

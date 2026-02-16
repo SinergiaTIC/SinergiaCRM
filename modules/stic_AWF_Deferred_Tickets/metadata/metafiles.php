@@ -38,30 +38,11 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-<<<<<<<< HEAD:modules/stic_Advanced_Web_Forms_Incoming_Events/metadata/searchdefs.php
-$module_name = 'stic_Advanced_Web_Forms_Incoming_Events';
-========
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
->>>>>>>> feature/advancedWebForms:modules/stic_Advanced_Web_Forms_Response_Details/metadata/searchdefs.php
-$searchdefs[$module_name] = array(
-    'templateMeta' => array(
-        'maxColumns' => '3',
-        'maxColumnsBasic' => '4',
-        'widths' => array('label' => '10', 'field' => '30'),
-    ),
-    'layout' => array(
-        'basic_search' => array(
-            'name',
-            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
-        ),
-        'advanced_search' => array(
-            'name',
-            array(
-                'name' => 'assigned_user_id',
-                'label' => 'LBL_ASSIGNED_TO',
-                'type' => 'enum',
-                'function' => array('name' => 'get_user_array', 'params' => array(false))
-            ),
-        ),
-    ),
+$module_name = 'stic_AWF_Deferred_Tickets';
+$metafiles[$module_name] = array(
+    'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
+    'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
+    'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
+    'searchfields' => 'modules/' . $module_name . '/metadata/SearchFields.php',
+    'subpaneldefs' => 'modules/' . $module_name . '/metadata/subpaneldefs.php',
 );

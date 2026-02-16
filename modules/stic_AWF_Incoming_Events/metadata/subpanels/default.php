@@ -38,47 +38,49 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-
-class stic_Advanced_Web_Forms_Incoming_Events extends Basic
-{
-    public $new_schema = true;
-    public $module_dir = 'stic_Advanced_Web_Forms_Incoming_Events';
-    public $object_name = 'stic_Advanced_Web_Forms_Incoming_Events';
-    public $table_name = 'stic_advanced_web_forms_incoming_events';
-    public $importable = false;
-
-    public $id;
-    public $name;
-    public $date_entered;
-    public $date_modified;
-    public $modified_user_id;
-    public $modified_by_name;
-    public $created_by;
-    public $created_by_name;
-    public $description;
-    public $deleted;
-    public $created_by_link;
-    public $modified_user_link;
-
-    public $token;
-    public $external_transaction_id;
-    public $raw_payload;
-    public $headers;
-    public $status;
-    public $processing_attempts;
-    public $last_error_message;
-    public $date_received;
-    public $date_processed;
-	
-    public function bean_implements($interface)
-    {
-        switch($interface)
-        {
-            case 'ACL':
-                return true;
-        }
-
-        return false;
-    }
-	
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
 }
+
+$module_name = 'stic_AWF_Incoming_Events';
+$subpanel_layout = array(
+    'top_buttons' => array(
+        array('widget_class' => 'SubPanelTopCreateButton'),
+        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
+    ),
+
+    'where' => '',
+
+    'list_fields' => array(
+        'name' => array(
+            'vname' => 'LBL_NAME',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '45%',
+        ),
+        'date_modified' => array(
+            'vname' => 'LBL_DATE_MODIFIED',
+            'width' => '45%',
+        ),
+        'edit_button' => array(
+            'vname' => 'LBL_EDIT_BUTTON',
+            'widget_class' => 'SubPanelEditButton',
+            'module' => $module_name,
+            'width' => '4%',
+        ),
+        // STIC-Custom 20240214 JBL - QuickEdit view
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+        'quickedit_button' => array(
+            'vname' => 'LBL_QUICKEDIT_BUTTON',
+            'widget_class' => 'SubPanelQuickEditButton',
+            'module' => $module_name,
+            'width' => '4%',
+        ),
+        // END STIC-Custom
+        'remove_button' => array(
+            'vname' => 'LBL_REMOVE',
+            'widget_class' => 'SubPanelRemoveButton',
+            'module' => $module_name,
+            'width' => '5%',
+        ),
+    ),
+);

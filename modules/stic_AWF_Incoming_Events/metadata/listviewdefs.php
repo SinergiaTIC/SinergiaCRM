@@ -38,15 +38,24 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-<<<<<<<< HEAD:modules/stic_Advanced_Web_Forms_Incoming_Events/metadata/metafiles.php
-$module_name = 'stic_Advanced_Web_Forms_Incoming_Events';
-========
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
->>>>>>>> feature/advancedWebForms:modules/stic_Advanced_Web_Forms_Response_Details/metadata/metafiles.php
-$metafiles[$module_name] = array(
-    'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
-    'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
-    'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
-    'searchfields' => 'modules/' . $module_name . '/metadata/SearchFields.php',
-    'subpaneldefs' => 'modules/' . $module_name . '/metadata/subpaneldefs.php',
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+$module_name = 'stic_AWF_Incoming_Events';
+$listViewDefs[$module_name] = array(
+    'NAME' => array(
+        'width' => '32',
+        'label' => 'LBL_NAME',
+        'default' => true,
+        'link' => true
+    ),
+    'ASSIGNED_USER_NAME' => array(
+        'width' => '9',
+        'label' => 'LBL_ASSIGNED_TO_NAME',
+        'module' => 'Employees',
+        'id' => 'ASSIGNED_USER_ID',
+        'default' => true
+    ),
+
 );

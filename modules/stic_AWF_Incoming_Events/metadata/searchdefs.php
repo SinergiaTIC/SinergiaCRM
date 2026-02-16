@@ -38,12 +38,30 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Deferred_Tickets', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Advanced_Web_Forms_Deferred_Tickets&action=index&return_module=stic_Advanced_Web_Forms_Deferred_Tickets&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Advanced_Web_Forms_Deferred_Tickets');
-}
+<<<<<<<< HEAD:modules/stic_AWF_Incoming_Events/metadata/searchdefs.php
+$module_name = 'stic_AWF_Incoming_Events';
+========
+$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+>>>>>>>> feature/advancedWebForms:modules/stic_Advanced_Web_Forms_Response_Details/metadata/searchdefs.php
+$searchdefs[$module_name] = array(
+    'templateMeta' => array(
+        'maxColumns' => '3',
+        'maxColumnsBasic' => '4',
+        'widths' => array('label' => '10', 'field' => '30'),
+    ),
+    'layout' => array(
+        'basic_search' => array(
+            'name',
+            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
+        ),
+        'advanced_search' => array(
+            'name',
+            array(
+                'name' => 'assigned_user_id',
+                'label' => 'LBL_ASSIGNED_TO',
+                'type' => 'enum',
+                'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
+        ),
+    ),
+);

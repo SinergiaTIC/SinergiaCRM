@@ -1,5 +1,5 @@
 <?php
-$module_name = 'stic_Advanced_Web_Forms_Incoming_Events';
+$module_name = 'stic_AWF_Incoming_Events';
 $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
     'order' => 900,

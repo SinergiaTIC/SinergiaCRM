@@ -38,12 +38,15 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Incoming_Events', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Advanced_Web_Forms_Incoming_Events&action=index&return_module=stic_Advanced_Web_Forms_Incoming_Events&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Advanced_Web_Forms_Incoming_Events');
-}
+<<<<<<<< HEAD:modules/stic_AWF_Incoming_Events/metadata/metafiles.php
+$module_name = 'stic_AWF_Incoming_Events';
+========
+$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+>>>>>>>> feature/advancedWebForms:modules/stic_Advanced_Web_Forms_Response_Details/metadata/metafiles.php
+$metafiles[$module_name] = array(
+    'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
+    'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
+    'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
+    'searchfields' => 'modules/' . $module_name . '/metadata/SearchFields.php',
+    'subpaneldefs' => 'modules/' . $module_name . '/metadata/subpaneldefs.php',
+);

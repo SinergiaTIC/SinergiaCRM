@@ -38,8 +38,8 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$dictionary['stic_Advanced_Web_Forms_Deferred_Tickets'] = array(
-    'table' => 'stic_advanced_web_forms_deferred_tickets',
+$dictionary['stic_AWF_Deferred_Tickets'] = array(
+    'table' => 'stic_AWF_Deferred_Tickets',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,
@@ -236,4 +236,4 @@ $dictionary['stic_Advanced_Web_Forms_Deferred_Tickets'] = array(
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('stic_Advanced_Web_Forms_Deferred_Tickets', 'stic_Advanced_Web_Forms_Deferred_Tickets', array('basic'));
+VardefManager::createVardef('stic_AWF_Deferred_Tickets', 'stic_AWF_Deferred_Tickets', array('basic'));

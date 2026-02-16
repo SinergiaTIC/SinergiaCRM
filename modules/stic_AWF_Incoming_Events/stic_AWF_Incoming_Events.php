@@ -38,24 +38,47 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
+
+class stic_AWF_Incoming_Events extends Basic
+{
+    public $new_schema = true;
+    public $module_dir = 'stic_AWF_Incoming_Events';
+    public $object_name = 'stic_AWF_Incoming_Events';
+    public $table_name = 'stic_AWF_Incoming_Events';
+    public $importable = false;
+
+    public $id;
+    public $name;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $modified_by_name;
+    public $created_by;
+    public $created_by_name;
+    public $description;
+    public $deleted;
+    public $created_by_link;
+    public $modified_user_link;
+
+    public $token;
+    public $external_transaction_id;
+    public $raw_payload;
+    public $headers;
+    public $status;
+    public $processing_attempts;
+    public $last_error_message;
+    public $date_received;
+    public $date_processed;
+	
+    public function bean_implements($interface)
+    {
+        switch($interface)
+        {
+            case 'ACL':
+                return true;
+        }
+
+        return false;
+    }
+	
 }
-
-$module_name = 'stic_Advanced_Web_Forms_Deferred_Tickets';
-$listViewDefs[$module_name] = array(
-    'NAME' => array(
-        'width' => '32',
-        'label' => 'LBL_NAME',
-        'default' => true,
-        'link' => true
-    ),
-    'ASSIGNED_USER_NAME' => array(
-        'width' => '9',
-        'label' => 'LBL_ASSIGNED_TO_NAME',
-        'module' => 'Employees',
-        'id' => 'ASSIGNED_USER_ID',
-        'default' => true
-    ),
-
-);

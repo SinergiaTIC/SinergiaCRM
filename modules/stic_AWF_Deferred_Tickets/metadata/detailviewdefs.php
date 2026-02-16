@@ -38,26 +38,44 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Advanced_Web_Forms_Deferred_Tickets';
-$searchdefs[$module_name] = array(
+$module_name = 'stic_AWF_Deferred_Tickets';
+$viewdefs[$module_name]['DetailView'] = array(
     'templateMeta' => array(
-        'maxColumns' => '3',
-        'maxColumnsBasic' => '4',
-        'widths' => array('label' => '10', 'field' => '30'),
-    ),
-    'layout' => array(
-        'basic_search' => array(
-            'name',
-            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
+        'form' => array(
+            'buttons' => array(
+            )
         ),
-        'advanced_search' => array(
-            'name',
-            array(
-                'name' => 'assigned_user_id',
-                'label' => 'LBL_ASSIGNED_TO',
-                'type' => 'enum',
-                'function' => array('name' => 'get_user_array', 'params' => array(false))
-            ),
+        'maxColumns' => '2',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
         ),
     ),
+
+    'panels' =>
+        array(
+            'default' =>
+                array(
+                    array(
+                        'name',
+                        'assigned_user_name',
+                    ),
+                    array(
+                        array(
+                            'name' => 'date_entered',
+                            'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
+                            'label' => 'LBL_DATE_ENTERED',
+                        ),
+                        array(
+                            'name' => 'date_modified',
+                            'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
+                            'label' => 'LBL_DATE_MODIFIED',
+                        ),
+                    ),
+
+                    array(
+                        'description',
+                    ),
+                )
+        )
 );

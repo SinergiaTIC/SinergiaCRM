@@ -38,49 +38,12 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
+ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Advanced_Web_Forms_Deferred_Tickets';
-$subpanel_layout = array(
-    'top_buttons' => array(
-        array('widget_class' => 'SubPanelTopCreateButton'),
-        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
-    ),
-
-    'where' => '',
-
-    'list_fields' => array(
-        'name' => array(
-            'vname' => 'LBL_NAME',
-            'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '45%',
-        ),
-        'date_modified' => array(
-            'vname' => 'LBL_DATE_MODIFIED',
-            'width' => '45%',
-        ),
-        'edit_button' => array(
-            'vname' => 'LBL_EDIT_BUTTON',
-            'widget_class' => 'SubPanelEditButton',
-            'module' => $module_name,
-            'width' => '4%',
-        ),
-        // STIC-Custom 20240214 JBL - QuickEdit view
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
-        'quickedit_button' => array(
-            'vname' => 'LBL_QUICKEDIT_BUTTON',
-            'widget_class' => 'SubPanelQuickEditButton',
-            'module' => $module_name,
-            'width' => '4%',
-        ),
-        // END STIC-Custom
-        'remove_button' => array(
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
-            'module' => $module_name,
-            'width' => '5%',
-        ),
-    ),
-);
+global $mod_strings, $app_strings, $sugar_config;
+ 
+if(ACLController::checkAccess('stic_AWF_Incoming_Events', 'list', true)){
+    $module_menu[]=array('index.php?module=stic_AWF_Incoming_Events&action=index&return_module=stic_AWF_Incoming_Events&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_AWF_Incoming_Events');
+}

@@ -42,40 +42,45 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Advanced_Web_Forms_Deferred_Tickets';
-$searchFields[$module_name] = array(
-    'name' => array('query_type' => 'default'),
-    'current_user_only' => array(
-        'query_type' => 'default',
-        'db_field' => array('assigned_user_id'),
-        'my_items' => true,
-        'vname' => 'LBL_CURRENT_USER_FILTER',
-        'type' => 'bool'
+$module_name = 'stic_AWF_Deferred_Tickets';
+$subpanel_layout = array(
+    'top_buttons' => array(
+        array('widget_class' => 'SubPanelTopCreateButton'),
+        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
     ),
-    'assigned_user_id' => array('query_type' => 'default'),
 
-    //Range Search Support
-    'range_date_entered' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
-    'start_range_date_entered' => array(
-        'query_type' => 'default',
-        'enable_range_search' => true,
-        'is_date_field' => true
+    'where' => '',
+
+    'list_fields' => array(
+        'name' => array(
+            'vname' => 'LBL_NAME',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '45%',
+        ),
+        'date_modified' => array(
+            'vname' => 'LBL_DATE_MODIFIED',
+            'width' => '45%',
+        ),
+        'edit_button' => array(
+            'vname' => 'LBL_EDIT_BUTTON',
+            'widget_class' => 'SubPanelEditButton',
+            'module' => $module_name,
+            'width' => '4%',
+        ),
+        // STIC-Custom 20240214 JBL - QuickEdit view
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+        'quickedit_button' => array(
+            'vname' => 'LBL_QUICKEDIT_BUTTON',
+            'widget_class' => 'SubPanelQuickEditButton',
+            'module' => $module_name,
+            'width' => '4%',
+        ),
+        // END STIC-Custom
+        'remove_button' => array(
+            'vname' => 'LBL_REMOVE',
+            'widget_class' => 'SubPanelRemoveButton',
+            'module' => $module_name,
+            'width' => '5%',
+        ),
     ),
-    'end_range_date_entered' => array(
-        'query_type' => 'default',
-        'enable_range_search' => true,
-        'is_date_field' => true
-    ),
-    'range_date_modified' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
-    'start_range_date_modified' => array(
-        'query_type' => 'default',
-        'enable_range_search' => true,
-        'is_date_field' => true
-    ),
-    'end_range_date_modified' => array(
-        'query_type' => 'default',
-        'enable_range_search' => true,
-        'is_date_field' => true
-    ),
-    //Range Search Support
 );

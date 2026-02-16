@@ -38,44 +38,46 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Advanced_Web_Forms_Deferred_Tickets';
-$viewdefs[$module_name]['DetailView'] = array(
-    'templateMeta' => array(
-        'form' => array(
-            'buttons' => array(
-            )
-        ),
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30')
-        ),
-    ),
 
-    'panels' =>
-        array(
-            'default' =>
-                array(
-                    array(
-                        'name',
-                        'assigned_user_name',
-                    ),
-                    array(
-                        array(
-                            'name' => 'date_entered',
-                            'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
-                            'label' => 'LBL_DATE_ENTERED',
-                        ),
-                        array(
-                            'name' => 'date_modified',
-                            'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
-                            'label' => 'LBL_DATE_MODIFIED',
-                        ),
-                    ),
+class stic_AWF_Deferred_Tickets extends Basic
+{
+    public $new_schema = true;
+    public $module_dir = 'stic_AWF_Deferred_Tickets';
+    public $object_name = 'stic_AWF_Deferred_Tickets';
+    public $table_name = 'stic_AWF_Deferred_Tickets';
+    public $importable = false;
 
-                    array(
-                        'description',
-                    ),
-                )
-        )
-);
+    public $id;
+    public $name;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $modified_by_name;
+    public $created_by;
+    public $created_by_name;
+    public $description;
+    public $deleted;
+    public $created_by_link;
+    public $modified_user_link;
+
+    public $stic_advanced_web_forms_responses_id_c;
+    public $response;
+    public $token_hash;
+    public $external_transaction_id;
+    public $status;
+    public $handler_action_id;
+    public $context_data;
+    public $expiration_date;
+	
+    public function bean_implements($interface)
+    {
+        switch($interface)
+        {
+            case 'ACL':
+                return true;
+        }
+
+        return false;
+    }
+	
+}
