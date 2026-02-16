@@ -60,7 +60,7 @@ class stic_AWF_Deferred_Tickets extends Basic
     public $created_by_link;
     public $modified_user_link;
 
-    public $stic_advanced_web_forms_responses_id_c;
+    public $stic_awf_responses_id_c;
     public $response;
     public $token_hash;
     public $external_transaction_id;

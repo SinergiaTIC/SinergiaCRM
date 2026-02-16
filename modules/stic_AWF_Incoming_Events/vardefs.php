@@ -153,7 +153,7 @@ $dictionary['stic_AWF_Incoming_Events'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_advanced_web_forms_incoming_event_status',
+    'options' => 'stic_awf_incoming_events_status',
     'studio' => 'visible',
     'dependency' => false,
   ),

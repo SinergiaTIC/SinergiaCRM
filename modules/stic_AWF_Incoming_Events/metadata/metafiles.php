@@ -41,8 +41,8 @@
 <<<<<<<< HEAD:modules/stic_AWF_Incoming_Events/metadata/metafiles.php
 $module_name = 'stic_AWF_Incoming_Events';
 ========
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
->>>>>>>> feature/advancedWebForms:modules/stic_Advanced_Web_Forms_Response_Details/metadata/metafiles.php
+$module_name = 'stic_AWF_Response_Details';
+>>>>>>>> feature/advancedWebForms:modules/stic_AWF_Response_Details/metadata/metafiles.php
 $metafiles[$module_name] = array(
     'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
     'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',

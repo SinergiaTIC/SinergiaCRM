@@ -41,8 +41,8 @@
 <<<<<<<< HEAD:modules/stic_AWF_Incoming_Events/metadata/searchdefs.php
 $module_name = 'stic_AWF_Incoming_Events';
 ========
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
->>>>>>>> feature/advancedWebForms:modules/stic_Advanced_Web_Forms_Response_Details/metadata/searchdefs.php
+$module_name = 'stic_AWF_Response_Details';
+>>>>>>>> feature/advancedWebForms:modules/stic_AWF_Response_Details/metadata/searchdefs.php
 $searchdefs[$module_name] = array(
     'templateMeta' => array(
         'maxColumns' => '3',

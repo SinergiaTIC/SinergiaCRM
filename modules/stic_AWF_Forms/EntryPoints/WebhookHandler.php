@@ -24,7 +24,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
+require_once "modules/stic_AWF_Forms/core/includes.php";
 
 /**
  * EntryPoint: WebhookHandler

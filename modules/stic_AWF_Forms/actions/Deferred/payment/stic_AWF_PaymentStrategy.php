@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
+include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 require_once "modules/stic_Payment_Commitments/stic_Payment_Commitments.php";
 
 abstract class stic_AWF_PaymentStrategy

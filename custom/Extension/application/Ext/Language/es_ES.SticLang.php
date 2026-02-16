@@ -4007,6 +4007,11 @@ $app_list_strings['stic_AWF_Links_record_action_list']['updated'] = 'Actualizado
 $app_list_strings['stic_AWF_Links_record_action_list']['enriched'] = 'Ampliado';
 $app_list_strings['stic_AWF_Links_record_action_list']['skipped'] = 'Ignorado';
 
+// IEPA!!
+// TODO:
+// Define: stic_awf_deferred_tickets_status
+// Define: stic_awf_incoming_events_status
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)

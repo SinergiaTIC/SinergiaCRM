@@ -398,7 +398,7 @@ class ResponseHandler
      * @param ActionResult $lastResult Result of the last action
      */
     private function createDeferredTicket(ExecutionContext $context, ActionResult $lastResult): void {
-        $ticket = BeanFactory::newBean('stic_Advanced_Web_Forms_Deferred_Tickets');
+        $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
         $ticket->name = "Deferred: " . $context->formId . " - " . date('Y-m-d H:i');
         $ticket->status = 'pending';
         $data = $lastResult->getData();

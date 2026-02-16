@@ -45,8 +45,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 <<<<<<<< HEAD:modules/stic_AWF_Incoming_Events/metadata/SearchFields.php
 $module_name = 'stic_AWF_Incoming_Events';
 ========
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
->>>>>>>> feature/advancedWebForms:modules/stic_Advanced_Web_Forms_Response_Details/metadata/SearchFields.php
+$module_name = 'stic_AWF_Response_Details';
+>>>>>>>> feature/advancedWebForms:modules/stic_AWF_Response_Details/metadata/SearchFields.php
 $searchFields[$module_name] = array(
     'name' => array('query_type' => 'default'),
     'current_user_only' => array(
