@@ -73,7 +73,7 @@ class stic_AWF_Response_Details extends Basic
     public $answer_text;
     public $answer_form_type;
     public $answer_integer;
-    public $stic_AWF_Forms_id_c;
+    public $stic_awf_forms_id_c;
     public $form;
 	
     /**

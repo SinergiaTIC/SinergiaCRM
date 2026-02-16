@@ -223,7 +223,7 @@ $dictionary['stic_AWF_Response_Details'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_AWF_Forms_field_in_form_type_list', // text, select, date...
+    'options' => 'stic_awf_forms_field_type_in_form_list', // text, select, date...
     'studio' => 'visible',
     'dependency' => false,
   ),
@@ -253,10 +253,10 @@ $dictionary['stic_AWF_Response_Details'] = array(
     'min' => false,
     'max' => false,
   ),
-  'stic_AWF_Forms_id_c' => 
+  'stic_awf_forms_id_c' => 
   array (
     'required' => false,
-    'name' => 'stic_AWF_Forms_id_c',
+    'name' => 'stic_awf_forms_id_c',
     'vname' => 'LBL_FORM_ID',
     'type' => 'id',
     'massupdate' => 0,
@@ -295,7 +295,7 @@ $dictionary['stic_AWF_Response_Details'] = array(
     'merge_filter' => 'disabled',
     'len' => '255',
     'size' => '20',
-    'id_name' => 'stic_AWF_Forms_id_c',
+    'id_name' => 'stic_awf_forms_id_c',
     'ext2' => 'stic_AWF_Forms',
     'module' => 'stic_AWF_Forms',
     'rname' => 'name',
@@ -303,10 +303,10 @@ $dictionary['stic_AWF_Response_Details'] = array(
     'studio' => 'visible',
     'resetFieldInStudio' => 'true',
   ),
-  'stic_AWF_Responses_id_c' => 
+  'stic_awf_responses_id_c' => 
   array (
     'required' => false,
-    'name' => 'stic_AWF_Responses_id_c',
+    'name' => 'stic_awf_responses_id_c',
     'vname' => 'LBL_RESPONSE_ID',
     'type' => 'id',
     'massupdate' => 0,
@@ -345,7 +345,7 @@ $dictionary['stic_AWF_Response_Details'] = array(
     'merge_filter' => 'disabled',
     'len' => '255',
     'size' => '20',
-    'id_name' => 'stic_AWF_Responses_id_c',
+    'id_name' => 'stic_awf_responses_id_c',
     'ext2' => 'stic_AWF_Responses',
     'module' => 'stic_AWF_Responses',
     'rname' => 'name',
@@ -372,7 +372,7 @@ $dictionary['stic_AWF_Response_Details'] = array(
         'lhs_key' => 'id',
         'rhs_module' => 'stic_AWF_Response_Details',
         'rhs_table' => 'stic_AWF_Response_Details',
-        'rhs_key' => 'stic_AWF_Responses_id_c', 
+        'rhs_key' => 'stic_awf_responses_id_c', 
         'relationship_type' => 'one-to-many',
       ),
 ),

@@ -47,8 +47,8 @@ class FormDataBlockField {
     public string $placeholder = '';             // Placeholder for the field
     public DataBlockFieldType $type_field;       // Field type: unlinked, form, fixed
     public bool $required_in_form;               // Indicates if the field is required in the form
-    public string $type_in_form;                 // Type of editor in the form: stic_AWF_Forms_field_in_form_type_list
-    public string $subtype_in_form;              // Subtype of editor in the form: stic_AWF_Forms_field_in_form_subtype_list
+    public string $type_in_form;                 // Type of editor in the form: stic_awf_forms_field_type_in_form_list
+    public string $subtype_in_form;              // Subtype of editor in the form: stic_awf_forms_field_subtype_in_form_list
     public string $type;                         // Field data type
     public DataBlockFieldValueType $value_type;  // Type of value: editable, selectable, fixed, dataBlock
     public string $value;                        // The value of the field

@@ -196,7 +196,7 @@ class ResponseHandler
             $responseStatus = 'rejected';
             $responseDescription = translate('LBL_RESPONSE_NO_PUBLIC_STATUS', 'stic_AWF_Responses')." ".
                                    translate('LBL_STATUS', 'stic_AWF_Responses').": ". 
-                                   "'{$app_list_strings['stic_AWF_Forms_response_status_list'][$formBean->status]}'";
+                                   "'{$app_list_strings['stic_awf_responses_status_list'][$formBean->status]}'";
         }
 
         // Execution context
@@ -516,7 +516,7 @@ class ResponseHandler
             $targetBeanName = $targetBean ? $targetBean->get_summary_text() : $item['id'];
             
             $actionValue = $item['type']->value;
-            $recordActionName = $app_list_strings['stic_AWF_Links_record_action_list'][$actionValue] ?? $actionValue;
+            $recordActionName = $app_list_strings['stic_awf_links_record_action_list'][$actionValue] ?? $actionValue;
             $moduleSingular = $app_list_strings['moduleListSingular'][$item['module']] ?? $item['module'];
 
             $linkBean->is_automated_save = true;
@@ -685,8 +685,8 @@ class ResponseHandler
 
                 // Create analytical response bean
                 $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
-                $detailBean->stic_AWF_Responses_id_c = $responseBean->id;
-                $detailBean->stic_AWF_Forms_id_c = $formConfig->id ?? ''; 
+                $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                $detailBean->stic_awf_forms_id_c = $formConfig->id ?? ''; 
                 
                 $detailBean->question_key = $block->name . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;

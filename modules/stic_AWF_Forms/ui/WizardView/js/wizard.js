@@ -1056,7 +1056,7 @@ class WizardStep2 {
       get isFixedValueOfDefault() { return this.isFixedValue && !this.isFixedValueOfEnum && !this.isFixedValueOfRelated && !this.isFixedValueOfDate },
       showRelativeDateSelector: false,
       relativeDateSelected: 'custom',
-      get availableRelativeDates() { return utils.getList("stic_AWF_Forms_date_relative_list"); },
+      get availableRelativeDates() { return utils.getList("stic_awf_forms_date_relative_list"); },
         
 
       get isValid() { return this.field?.isValid() == true; },

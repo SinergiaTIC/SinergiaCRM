@@ -42,8 +42,8 @@ function getLinkDataHtml($focus, $field, $value, $view) {
     }
 
     $actionLabel = $focus->record_action;
-    if (isset($app_list_strings['stic_AWF_Links_record_action_list'][$actionLabel])) {
-        $actionLabel = $app_list_strings['stic_AWF_Links_record_action_list'][$actionLabel];
+    if (isset($app_list_strings['stic_awf_links_record_action_list'][$actionLabel])) {
+        $actionLabel = $app_list_strings['stic_awf_links_record_action_list'][$actionLabel];
     }
     
     // Badge color according to the action
