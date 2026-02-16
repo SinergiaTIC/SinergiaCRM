@@ -42,7 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Advanced_Web_Forms_Links';
+$module_name = 'stic_AWF_Links';
 $listViewDefs[$module_name] = array(
     'SEQUENCE_NUMBER' => array(
         'width' => '5',

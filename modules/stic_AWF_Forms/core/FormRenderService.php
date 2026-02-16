@@ -25,8 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once "modules/stic_Advanced_Web_Forms/core/includes.php"; 
-require_once "modules/stic_Advanced_Web_Forms/core/FormHtmlGeneratorService.php";
+require_once "modules/stic_AWF_Forms/core/includes.php"; 
+require_once "modules/stic_AWF_Forms/core/FormHtmlGeneratorService.php";
 
 class FormRenderService {
 
@@ -45,7 +45,7 @@ class FormRenderService {
                 throw new Exception("Record ID missing for DB generation.");
             }
 
-            $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $recordId);
+            $bean = BeanFactory::getBean('stic_AWF_Forms', $recordId);
             if (!$bean || empty($bean->id)) {
                 throw new Exception("Form not found with id: {$recordId}");
             }

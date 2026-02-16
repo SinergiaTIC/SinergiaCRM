@@ -182,7 +182,7 @@ class WizardNavigation {
     // Step content
     if (!(step in WizardNavigation.cacheSteps)) {
       WizardNavigation.cacheSteps[step] = await (
-        await fetch(`modules/stic_Advanced_Web_Forms/ui/WizardView/steps/step${step}.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/step${step}.html`)
       ).text();
     }
     let $el = document.getElementById("wizard-step-container");
@@ -191,7 +191,7 @@ class WizardNavigation {
     // Debug options
     if (!(WizardNavigation.cacheDebug)) {
       WizardNavigation.cacheDebug = await (
-        await fetch(`modules/stic_Advanced_Web_Forms/ui/WizardView/steps/debug.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/debug.html`)
       ).text();
     }
     let $elDebug = document.getElementById("debug-container");
@@ -280,8 +280,8 @@ class WizardNavigation {
 
   static async autoSave() {
     window.alpineComponent.formConfig.syncLayoutWithDataBlocks();
-    
-    const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=saveDraft", {
+
+    const response = await fetch("index.php?module=stic_AWF_Forms&action=saveDraft", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -311,7 +311,7 @@ class WizardNavigation {
   static finish() {
     window.alpineComponent.formConfig.syncLayoutWithDataBlocks();
     if (!this.isReadOnly) {
-      fetch("index.php?module=stic_Advanced_Web_Forms&action=finalizeConfig", {
+      fetch("index.php?module=stic_AWF_Forms&action=finalizeConfig", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1056,7 +1056,7 @@ class WizardStep2 {
       get isFixedValueOfDefault() { return this.isFixedValue && !this.isFixedValueOfEnum && !this.isFixedValueOfRelated && !this.isFixedValueOfDate },
       showRelativeDateSelector: false,
       relativeDateSelected: 'custom',
-      get availableRelativeDates() { return utils.getList("stic_advanced_web_forms_date_relative_list"); },
+      get availableRelativeDates() { return utils.getList("stic_AWF_Forms_date_relative_list"); },
         
 
       get isValid() { return this.field?.isValid() == true; },
@@ -1067,6 +1067,10 @@ class WizardStep2 {
           this.showRelativeDateSelector = false;
 
           if (!this.field) return;
+          
+          // Sync Automatic validators for current field
+          this.field.syncAutomaticValidators();
+
           if (this.isEdit) {
             if (this.isFixedValueOfDate) {
               if (this.availableRelativeDates.find(v => v.id == this.field.value)) {
@@ -1162,6 +1166,9 @@ class WizardStep2 {
               this.field.type = 'varchar';
             }
           }
+          // Sync Automatic validators for current subtype
+          this.field.syncAutomaticValidators();
+
           if (!this.isEdit) {
             this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
           }
@@ -2121,7 +2128,7 @@ class WizardStep4 {
         }
 
         try {
-          const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=renderPreview", {
+          const response = await fetch("index.php?module=stic_AWF_Forms&action=renderPreview", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -2280,7 +2287,7 @@ class WizardStep5 {
       },
 
       get previewUrl() {
-        return `index.php?module=stic_Advanced_Web_Forms&action=renderPreviewForm&record=${this.bean.id}`;
+        return `index.php?module=stic_AWF_Forms&action=renderPreviewForm&record=${this.bean.id}`;
       },
 
       get iframeCode() {
@@ -2295,7 +2302,7 @@ class WizardStep5 {
         this.generatedHtml = utils.translate('LBL_CODE_LOADING');
           
         try {
-          const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=renderForm&record=" + this.bean.id);
+          const response = await fetch("index.php?module=stic_AWF_Forms&action=renderForm&record=" + this.bean.id);
           if (response.ok) {
             this.generatedHtml = await response.text();
           } else {

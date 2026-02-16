@@ -43,23 +43,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Advanced_Web_Forms_Responses/stic_Advanced_Web_Forms_Responses.php');
+require_once('modules/stic_AWF_Links/stic_AWF_Links.php');
 
-class stic_Advanced_Web_Forms_ResponsesDashlet extends DashletGeneric {
+class stic_AWF_LinksDashlet extends DashletGeneric {
     function __construct($id, $def = null)
     {
         global $current_user, $app_strings;
-        require('modules/stic_Advanced_Web_Forms_Responses/metadata/dashletviewdefs.php');
+        require('modules/stic_AWF_Links/metadata/dashletviewdefs.php');
 
         parent::__construct($id, $def);
 
         if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Advanced_Web_Forms_Responses');
+            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_AWF_Links');
         }
 
-        $this->searchFields = $dashletData['stic_Advanced_Web_Forms_ResponsesDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Advanced_Web_Forms_ResponsesDashlet']['columns'];
+        $this->searchFields = $dashletData['stic_AWF_LinksDashlet']['searchFields'];
+        $this->columns = $dashletData['stic_AWF_LinksDashlet']['columns'];
 
-        $this->seedBean = new stic_Advanced_Web_Forms_Responses();        
+        $this->seedBean = new stic_AWF_Links();        
     }
 }

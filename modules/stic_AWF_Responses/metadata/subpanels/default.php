@@ -42,7 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Advanced_Web_Forms_Responses';
+$module_name = 'stic_AWF_Responses';
 $subpanel_layout = array(
     'top_buttons' => array(
     ),

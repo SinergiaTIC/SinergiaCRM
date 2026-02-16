@@ -47,7 +47,7 @@ $safeId = $db->quote($id);
 
 // Get the status and dates
 $query = "SELECT status, start_date, end_date 
-            FROM stic_advanced_web_forms 
+            FROM stic_AWF_Forms 
             WHERE id = '$safeId' AND deleted = 0";
 $result = $db->query($query);
 $row = $db->fetchByAssoc($result);
@@ -77,9 +77,9 @@ if ($row) {
 if ($status) {
     // Visitor counter
     if ($isActive) {
-        $db->query("UPDATE stic_advanced_web_forms SET analytics_views = analytics_views + 1 WHERE id = '$safeId'");
+        $db->query("UPDATE stic_AWF_Forms SET analytics_views = analytics_views + 1 WHERE id = '$safeId'");
     } else {
-        $db->query("UPDATE stic_advanced_web_forms SET analytics_blocked = analytics_blocked + 1 WHERE id = '$safeId'");
+        $db->query("UPDATE stic_AWF_Forms SET analytics_blocked = analytics_blocked + 1 WHERE id = '$safeId'");
     }
 
     // Referrer registration (domain)
@@ -95,7 +95,7 @@ if ($status) {
         $safeUrl = $db->quote($cleanUrl);
 
         // CONCAT_WS automatically adds a separator
-        $queryRef = "UPDATE stic_advanced_web_forms 
+        $queryRef = "UPDATE stic_AWF_Forms 
                         SET analytics_referrers = CONCAT_WS('\n', analytics_referrers, '$safeUrl')
                         WHERE id = '$safeId' 
                         AND (analytics_referrers IS NULL OR analytics_referrers NOT LIKE '%$safeUrl%')";
@@ -105,7 +105,7 @@ if ($status) {
 }
 
 require_once 'include/utils.php';
-$message = !$isActive ? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms') : '';
+$message = !$isActive ? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_AWF_Forms') : '';
 echo json_encode(['active' => $isActive, 'message' => $message]);
 
 exit;

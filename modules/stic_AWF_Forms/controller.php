@@ -23,14 +23,14 @@
 
 require_once('include/MVC/Controller/SugarController.php');
 #[\AllowDynamicProperties]
-class stic_Advanced_Web_FormsController extends SugarController
+class stic_AWF_FormsController extends SugarController
 {
     private function _saveBeanFromData($data)
     {
         if (empty($data['bean']['id'])) {
-            $bean = BeanFactory::newBean('stic_Advanced_Web_Forms');
+            $bean = BeanFactory::newBean('stic_AWF_Forms');
         } else {
-            $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $data['bean']['id']);
+            $bean = BeanFactory::getBean('stic_AWF_Forms', $data['bean']['id']);
         }
 
         if (!$bean) {
@@ -93,7 +93,7 @@ class stic_Advanced_Web_FormsController extends SugarController
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $bean = $this->_saveBeanFromData($data);
-            $redirectUrl = 'index.php?module=stic_Advanced_Web_Forms&action=index';
+            $redirectUrl = 'index.php?module=stic_AWF_Forms&action=index';
             echo json_encode(['success' => true, 'id' => $bean->id, 'redirectUrl' => $redirectUrl]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -110,7 +110,7 @@ class stic_Advanced_Web_FormsController extends SugarController
         // Ensure return json 
         header('Content-Type: application/json');
 
-        require_once "modules/stic_Advanced_Web_Forms/Utils.php";
+        require_once "modules/stic_AWF_Forms/Utils.php";
         $result = getModuleInformation($_REQUEST['getmodule'], json_decode(html_entity_decode($_REQUEST['getavailablemodules']),true));
         $resultStr = json_encode($result, JSON_UNESCAPED_UNICODE);
         echo $resultStr;
@@ -125,7 +125,7 @@ class stic_Advanced_Web_FormsController extends SugarController
         // Ensure return json 
         header('Content-Type: application/json');
 
-        require_once "modules/stic_Advanced_Web_Forms/Utils.php";
+        require_once "modules/stic_AWF_Forms/Utils.php";
         $result = getRecordsTextById($_REQUEST['reqmodule'], json_decode(html_entity_decode($_REQUEST['reqids']),true));
         $resultStr = json_encode($result, JSON_UNESCAPED_UNICODE);
         echo $resultStr;
@@ -142,7 +142,7 @@ class stic_Advanced_Web_FormsController extends SugarController
         // Ensure return json 
         header('Content-Type: application/json');
 
-        require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
+        require_once "modules/stic_AWF_Forms/core/includes.php";
         $serverActions = ActionDiscoveryService::discoverActions();
 
         $actionDTOs = [];
@@ -162,7 +162,7 @@ class stic_Advanced_Web_FormsController extends SugarController
     
     private function renderOutput(string $recordId, bool $isPreview, ?array $configData = null)
     {
-        require_once 'modules/stic_Advanced_Web_Forms/core/FormRenderService.php';
+        require_once 'modules/stic_AWF_Forms/core/FormRenderService.php';
 
         if (ob_get_length()) { 
             ob_clean(); 

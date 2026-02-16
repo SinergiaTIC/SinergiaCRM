@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
+include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
  * SpanishZipValidatorAction
@@ -37,6 +37,23 @@ class SpanishZipValidatorAction extends ValidatorActionDefinition {
         $this->isActive = true;
         $this->baseLabel = 'LBL_SPANISH_ZIP_VALIDATOR_ACTION';
         $this->supportedDataTypes = [ActionDataType::TEXT, ActionDataType::INTEGER];
+    }
+
+    /**
+     * Returns rules to automatically apply this validation.
+     * Can filter by field type (vardef type) editor in form (subtype_in_form), or by name pattern (regex).
+     * @return array ex: ['types' => ['email'], 'subtypes_in_form' => ['text_email'], 'name_patterns' => ['/^email/i']]
+     */
+    public function getAutoApplyRules(): array {
+        return [
+            'types' => [],
+            'subtypes_in_form' => [],
+            'name_patterns' => ['/postalcode/i',   // Name contains postalcode
+                                '/postal_code/i',  // Name contains postal_code
+                                '/zip$/i',         // Name ends with zip
+                                '/zipcode$/i'      // Name ends with zipcode
+                                ],      
+        ];
     }
 
     public function getParameters(): array {

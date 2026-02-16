@@ -27,7 +27,7 @@ require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 
 #[\AllowDynamicProperties]
-class stic_Advanced_Web_FormsViewEdit extends ViewEdit
+class stic_AWF_FormsViewEdit extends ViewEdit
 {
     public function __construct()
     {
@@ -57,14 +57,14 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         echo "<link rel='stylesheet' href='". getVersionedPath("SticInclude/vendor/quill/quill.snow.css"). "'>";
 
         // AWF 
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/js/stic_AwfClasses.js");
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/js/utils.js");
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/ui/Common/js/sticControls.js");
-        echo "<script src='". getVersionedPath("modules/stic_Advanced_Web_Forms/ui/Common/js/sticTemplates.js"). "' defer></script>";
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/ui/Common/css/sticControls.css"). "'>";
+        echo getVersionedScript("modules/stic_AWF_Forms/js/stic_AwfClasses.js");
+        echo getVersionedScript("modules/stic_AWF_Forms/js/utils.js");
+        echo getVersionedScript("modules/stic_AWF_Forms/ui/Common/js/sticControls.js");
+        echo "<script src='". getVersionedPath("modules/stic_AWF_Forms/ui/Common/js/sticTemplates.js"). "' defer></script>";
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_AWF_Forms/ui/Common/css/sticControls.css"). "'>";
 
         // Wizard
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/ui/WizardView/js/wizard.js");
+        echo getVersionedScript("modules/stic_AWF_Forms/ui/WizardView/js/wizard.js");
     }
 
     public function display()
@@ -94,21 +94,21 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         $warnings = [];
         $msgWarnings = "";
         if ($this->bean->status === 'public') {
-            $warnings[] = "\t· " . translate('LBL_WIZARD_FORM_EDIT_WARNING_PUBLIC', 'stic_Advanced_Web_Forms');
+            $warnings[] = "\t· " . translate('LBL_WIZARD_FORM_EDIT_WARNING_PUBLIC', 'stic_AWF_Forms');
         }
         if ($responseCount > 0) {
-            $warnings[] = "\t· " . sprintf(translate('LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES', 'stic_Advanced_Web_Forms'), $responseCount);
+            $warnings[] = "\t· " . sprintf(translate('LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES', 'stic_AWF_Forms'), $responseCount);
         }
         if (count($warnings) > 0) {
-        $msgWarnings = translate('LBL_WIZARD_FORM_EDIT_WARNING_TITLE', 'stic_Advanced_Web_Forms') . "\n" .
+        $msgWarnings = translate('LBL_WIZARD_FORM_EDIT_WARNING_TITLE', 'stic_AWF_Forms') . "\n" .
                        implode("\n", $warnings) . "\n" .
-                       translate('LBL_WIZARD_FORM_EDIT_WARNING_PROCEED', 'stic_Advanced_Web_Forms');
+                       translate('LBL_WIZARD_FORM_EDIT_WARNING_PROCEED', 'stic_AWF_Forms');
         }
 
 
         $this->ss->assign('title', $this->getModuleTitle(false));
 
-        require_once "modules/stic_Advanced_Web_Forms/Utils.php";
+        require_once "modules/stic_AWF_Forms/Utils.php";
         $this->ss->assign('enabledModules', json_encode(getEnabledModules()));
         $this->ss->assign('mainThemeColor', getCustomBaseColor());
         $this->ss->assign('msgWarnings', $msgWarnings);
@@ -119,7 +119,7 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         $beanArray['assigned_user_name'] = $this->bean->assigned_user_name;
         $this->ss->assign('beanJson', json_encode($beanArray));
 
-        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/ui/WizardView/tpl/wizard.tpl');
+        echo $this->ss->fetch('modules/stic_AWF_Forms/ui/WizardView/tpl/wizard.tpl');
     }
 
 }

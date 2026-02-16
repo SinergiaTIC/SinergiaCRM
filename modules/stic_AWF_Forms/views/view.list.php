@@ -23,7 +23,7 @@
 require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
 
-class stic_Advanced_Web_FormsViewList extends ViewList
+class stic_AWF_FormsViewList extends ViewList
 {
 
     public function __construct()
@@ -48,7 +48,7 @@ class stic_Advanced_Web_FormsViewList extends ViewList
 
         SticViews::display($this);
 
-        // echo getVersionedScript("modules/stic_Advanced_Web_Forms/Utils.js");
+        // echo getVersionedScript("modules/stic_AWF_Forms/Utils.js");
 
         // Write here you custom code
     }

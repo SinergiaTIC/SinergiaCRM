@@ -30,7 +30,7 @@
             <div class="col-6">
                 <label for="form_status" class="form-label" x-text="utils.translateForFieldLabel('LBL_STATUS')"></label>
                 <select id="form_status" class="form-select" x-model="bean.status">
-                    <template x-for="item in utils.getList('stic_advanced_web_forms_status_list')" :key="item.id">
+                    <template x-for="item in utils.getList('stic_AWF_Forms_status_list')" :key="item.id">
                         <option :value="item.id" x-text="item.text" :selected="item.id == bean.status"></option>
                     </template>
                 </select>

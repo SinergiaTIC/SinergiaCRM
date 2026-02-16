@@ -55,7 +55,7 @@ if (!empty($current_user) && !empty($current_user->id)) {
     }
 
     // Load Form Bean
-    $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $formId);
+    $bean = BeanFactory::getBean('stic_AWF_Forms', $formId);
     if (!$bean || empty($bean->id)) {
         $response['error'] = 'Form not found';
         echo json_encode($response);

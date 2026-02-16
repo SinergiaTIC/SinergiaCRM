@@ -38,8 +38,8 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$dictionary['stic_Advanced_Web_Forms'] = array(
-    'table' => 'stic_advanced_web_forms',
+$dictionary['stic_AWF_Forms'] = array(
+    'table' => 'stic_AWF_Forms',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,
@@ -65,7 +65,7 @@ $dictionary['stic_Advanced_Web_Forms'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_advanced_web_forms_status_list',
+    'options' => 'stic_AWF_Forms_status_list',
     'studio' => 'visible',
     'dependency' => false,
   ),
@@ -159,7 +159,7 @@ $dictionary['stic_Advanced_Web_Forms'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_advanced_web_forms_processing_mode_list',
+    'options' => 'stic_AWF_Forms_processing_mode_list',
     'studio' => 'visible',
     'dependency' => false,
   ),
@@ -248,24 +248,24 @@ $dictionary['stic_Advanced_Web_Forms'] = array(
     'unified_search' => true,
 );
 
-$dictionary["stic_Advanced_Web_Forms"]["fields"]["stic_69c1s_responses"] = array (
+$dictionary["stic_AWF_Forms"]["fields"]["stic_69c1s_responses"] = array (
   'name' => 'stic_69c1s_responses',
   'type' => 'link',
-  'relationship' => 'stic_advanced_web_forms_stic_advanced_web_forms_responses',
+  'relationship' => 'stic_AWF_Forms_stic_AWF_Responses',
   'source' => 'non-db',
-  'module' => 'stic_Advanced_Web_Forms_Responses',
+  'module' => 'stic_AWF_Responses',
   'bean_name' => false,
   'side' => 'right',
-  'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE',
+  'vname' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Responses_TITLE',
 );
 
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
 
-VardefManager::createVardef('stic_Advanced_Web_Forms', 'stic_Advanced_Web_Forms', array('basic','assignable','security_groups'));
+VardefManager::createVardef('stic_AWF_Forms', 'stic_AWF_Forms', array('basic','assignable','security_groups'));
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Advanced_Web_Forms']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
-$dictionary['stic_Advanced_Web_Forms']['fields']['assigned_user_id']['required'] = 1;
-$dictionary['stic_Advanced_Web_Forms']['fields']['assigned_user_id']['massupdate'] = 1;
+$dictionary['stic_AWF_Forms']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
+$dictionary['stic_AWF_Forms']['fields']['assigned_user_id']['required'] = 1;
+$dictionary['stic_AWF_Forms']['fields']['assigned_user_id']['massupdate'] = 1;

@@ -28,8 +28,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class ActionDiscoveryService {
     /** @var string[] Rutas para la búsqueda de acciones */
     private static array $basePaths = [
-        'modules/stic_Advanced_Web_Forms/actions/',
-        'custom/modules/stic_Advanced_Web_Forms/actions/',
+        'modules/stic_AWF_Forms/actions/',
+        'custom/modules/stic_AWF_Forms/actions/',
     ];
 
     /**

@@ -26,7 +26,7 @@ if (! defined('sugarEntry') || ! sugarEntry) {
 }
 
 // Cargamos todas las clases necesarias para el proceso de Acciones
-include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
+include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
  * ExampleAction (Complete Guide for Developers)
@@ -40,10 +40,10 @@ include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
  *   - The class name (Ex: 'ExampleAction') must match exactly with the file name (Ex: 'ExampleAction.php').
  *
  * * LOCATION:
- *   - The file should be placed in a subfolder of 'modules/stic_Advanced_Web_Forms/actions/' according to its type. For this action, it would be:
+ *   - The file should be placed in a subfolder of 'modules/stic_AWF_Forms/actions/' according to its type. For this action, it would be:
  *     .../actions/Hook/ExampleAction.php
  *   - Or in the 'custom' folder for extensions:
- *     .../custom/modules/stic_Advanced_Web_Forms/actions/Hook/ExampleAction.php
+ *     .../custom/modules/stic_AWF_Forms/actions/Hook/ExampleAction.php
  * 
  * * ACTION TYPES (Inheritance):
  *   1. HookActionDefinition: Generic action (eg: Send Email, Redirect).
@@ -66,11 +66,11 @@ class ExampleAction extends HookActionDefinition
         // We indicate whether the user can select this action in the wizard when creating a form.
         $this->isUserSelectable = false;
 
-        // We indicate the category of the action (from the list stic_advanced_web_forms_action_category_list)
+        // We indicate the category of the action (from the list stic_AWF_Forms_action_category_list)
         $this->category = 'data';
 
         // The prefix to use for multi-language labels used by the application
-        // These labels should be defined in the language files of the stic_Advanced_Web_Forms module
+        // These labels should be defined in the language files of the stic_AWF_Forms module
         $this->baseLabel = 'LBL_EXAMPLE_ACTION';
     }
 

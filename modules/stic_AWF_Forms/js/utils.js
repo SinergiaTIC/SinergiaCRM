@@ -28,7 +28,7 @@ class utils {
    */
   static translate(label) {
     return (
-      SUGAR.language.languages.stic_Advanced_Web_Forms[label] ?? SUGAR.language.languages.app_strings[label] ?? label
+      SUGAR.language.languages.stic_AWF_Forms[label] ?? SUGAR.language.languages.app_strings[label] ?? label
     );
   }
 
@@ -143,7 +143,7 @@ class utils {
         async: false,
         dataType: "json",
         data: {
-          module: "stic_Advanced_Web_Forms",
+          module: "stic_AWF_Forms",
           action: "getModuleInformation",
           getmodule: moduleName,
           getavailablemodules: JSON.stringify(STIC.enabledModules),
@@ -195,7 +195,7 @@ class utils {
         async: false,
         dataType: "json",
         data: {
-          module: "stic_Advanced_Web_Forms",
+          module: "stic_AWF_Forms",
           action: "getDefinedActions",
         },
         success: function (response) {
@@ -239,7 +239,7 @@ class utils {
       async: false,
       dataType: "json",
       data: {
-        module: "stic_Advanced_Web_Forms",
+        module: "stic_AWF_Forms",
         action: "getRecordsTextById",
         reqmodule: moduleName,
         reqids: JSON.stringify(ids),

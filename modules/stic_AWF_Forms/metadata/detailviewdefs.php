@@ -1,5 +1,5 @@
 <?php
-$module_name = 'stic_Advanced_Web_Forms';
+$module_name = 'stic_AWF_Forms';
 $viewdefs [$module_name] = array (
   'DetailView' => array (
     'templateMeta' => array (

@@ -42,24 +42,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Advanced_Web_Forms_Links/stic_Advanced_Web_Forms_Links.php');
+global $app_strings;
 
-class stic_Advanced_Web_Forms_LinksDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
-    {
-        global $current_user, $app_strings;
-        require('modules/stic_Advanced_Web_Forms_Links/metadata/dashletviewdefs.php');
-
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Advanced_Web_Forms_Links');
-        }
-
-        $this->searchFields = $dashletData['stic_Advanced_Web_Forms_LinksDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Advanced_Web_Forms_LinksDashlet']['columns'];
-
-        $this->seedBean = new stic_Advanced_Web_Forms_Links();        
-    }
-}
+$dashletMeta['stic_AWF_ResponsesDashlet'] = array(
+    'module' => 'stic_AWF_Responses',
+    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_AWF_Responses'),
+    'description' => 'A customizable view into stic_AWF_Responses',
+    'category' => 'Module Views'
+);

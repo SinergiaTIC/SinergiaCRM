@@ -21,12 +21,12 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-class stic_Advanced_Web_Forms extends Basic
+class stic_AWF_Forms extends Basic
 {
     public $new_schema = true;
-    public $module_dir = 'stic_Advanced_Web_Forms';
-    public $object_name = 'stic_Advanced_Web_Forms';
-    public $table_name = 'stic_advanced_web_forms';
+    public $module_dir = 'stic_AWF_Forms';
+    public $object_name = 'stic_AWF_Forms';
+    public $table_name = 'stic_AWF_Forms';
     public $importable = false;
 
     public $id;

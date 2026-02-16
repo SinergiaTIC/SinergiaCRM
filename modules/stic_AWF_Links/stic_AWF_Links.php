@@ -39,12 +39,12 @@
  */
 
 
-class stic_Advanced_Web_Forms_Links extends Basic
+class stic_AWF_Links extends Basic
 {
     public $new_schema = true;
-    public $module_dir = 'stic_Advanced_Web_Forms_Links';
-    public $object_name = 'stic_Advanced_Web_Forms_Links';
-    public $table_name = 'stic_advanced_web_forms_links';
+    public $module_dir = 'stic_AWF_Links';
+    public $object_name = 'stic_AWF_Links';
+    public $table_name = 'stic_AWF_Links';
     public $importable = false;
 
     public $id;

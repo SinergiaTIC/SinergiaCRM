@@ -71,11 +71,11 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Mis Detalles de respuestas a formularios',
   'LNK_NEW_RECORD' => 'Crear un Detalle de respuesta a formulario',
   'LNK_LIST' => 'Ver Detalles de respuestas a formularios',
-  'LNK_IMPORT_STIC_ADVANCED_WEB_FORMS_RESPONSE_DETAILS' => 'Importar Detalles de respuestas a formularios',
+  'LNK_IMPORT_stic_AWF_Response_Details' => 'Importar Detalles de respuestas a formularios',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Detalles de respuestas a formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_STIC_ADVANCED_WEB_FORMS_ANSWERS_SUBPANEL_TITLE' => 'Detalles de respuestas a formularios',
+  'LBL_stic_AWF_Forms_ANSWERS_SUBPANEL_TITLE' => 'Detalles de respuestas a formularios',
   'LBL_NEW_FORM_TITLE' => 'Nuevo Detalle de respuesta a formulario',
 
   'LBL_QUESTION_SORT_ORDER' => 'Orden',

@@ -39,12 +39,12 @@
  */
 
 
-class stic_Advanced_Web_Forms_Responses extends Basic
+class stic_AWF_Responses extends Basic
 {
     public $new_schema = true;
-    public $module_dir = 'stic_Advanced_Web_Forms_Responses';
-    public $object_name = 'stic_Advanced_Web_Forms_Responses';
-    public $table_name = 'stic_advanced_web_forms_responses';
+    public $module_dir = 'stic_AWF_Responses';
+    public $object_name = 'stic_AWF_Responses';
+    public $table_name = 'stic_AWF_Responses';
     public $importable = false;
 
     public $id;

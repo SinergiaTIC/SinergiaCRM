@@ -44,48 +44,48 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Advanced_Web_Forms', 'edit', true)){
+if(ACLController::checkAccess('stic_AWF_Forms', 'edit', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms&action=EditView&return_module=stic_Advanced_Web_Forms&return_action=DetailView', 
+        'index.php?module=stic_AWF_Forms&action=EditView&return_module=stic_AWF_Forms&return_action=DetailView', 
         $mod_strings['LNK_NEW_RECORD'], 
         'Add', 
-        'stic_Advanced_Web_Forms'
+        'stic_AWF_Forms'
     );
 }
-if(ACLController::checkAccess('stic_Advanced_Web_Forms', 'list', true)){
+if(ACLController::checkAccess('stic_AWF_Forms', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms&action=index&return_module=stic_Advanced_Web_Forms&return_action=DetailView', 
+        'index.php?module=stic_AWF_Forms&action=index&return_module=stic_AWF_Forms&return_action=DetailView', 
         $mod_strings['LNK_LIST'],
         'View', 
-        'stic_Advanced_Web_Forms'
+        'stic_AWF_Forms'
     );
 }
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Responses', 'list', true)){
+if(ACLController::checkAccess('stic_AWF_Responses', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms_Responses&action=index&return_module=stic_Advanced_Web_Forms&return_action=index', 
-        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Responses'),
+        'index.php?module=stic_AWF_Responses&action=index&return_module=stic_AWF_Forms&return_action=index', 
+        translate('LNK_LIST', 'stic_AWF_Responses'),
         'View', 
-        'stic_Advanced_Web_Forms_Responses'
+        'stic_AWF_Responses'
     );
 }
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Response_Details', 'list', true)){
+if(ACLController::checkAccess('stic_AWF_Response_Details', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms_Response_Details&action=index&return_module=stic_Advanced_Web_Forms&return_action=index', 
-        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Response_Details'),
+        'index.php?module=stic_AWF_Response_Details&action=index&return_module=stic_AWF_Forms&return_action=index', 
+        translate('LNK_LIST', 'stic_AWF_Response_Details'),
         'View', 
-        'stic_Advanced_Web_Forms_Response_Details'
+        'stic_AWF_Response_Details'
     );
 }
-if(ACLController::checkAccess('stic_Advanced_Web_Forms_Links', 'list', true)){
+if(ACLController::checkAccess('stic_AWF_Links', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_Advanced_Web_Forms_Links&action=index&return_module=stic_Advanced_Web_Forms&return_action=index', 
-        translate('LNK_LIST', 'stic_Advanced_Web_Forms_Links'),
+        'index.php?module=stic_AWF_Links&action=index&return_module=stic_AWF_Forms&return_action=index', 
+        translate('LNK_LIST', 'stic_AWF_Links'),
         'View', 
-        'stic_Advanced_Web_Forms_Links'
+        'stic_AWF_Links'
     );
 }

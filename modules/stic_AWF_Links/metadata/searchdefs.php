@@ -38,7 +38,7 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Advanced_Web_Forms_Links';
+$module_name = 'stic_AWF_Links';
 $searchdefs[$module_name] = array(
     'templateMeta' => array(
         'maxColumns' => '3',

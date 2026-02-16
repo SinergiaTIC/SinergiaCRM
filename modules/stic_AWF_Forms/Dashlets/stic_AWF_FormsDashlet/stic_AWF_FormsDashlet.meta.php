@@ -44,9 +44,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 global $app_strings;
 
-$dashletMeta['stic_Advanced_Web_Forms_Response_DetailsDashlet'] = array(
-    'module' => 'stic_Advanced_Web_Forms_Response_Details',
-    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Advanced_Web_Forms_Response_Details'),
-    'description' => 'A customizable view into stic_Advanced_Web_Forms_Response_Details',
+$dashletMeta['stic_AWF_FormsDashlet'] = array(
+    'module' => 'stic_AWF_Forms',
+    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_AWF_Forms'),
+    'description' => 'A customizable view into stic_AWF_Forms',
     'category' => 'Module Views'
 );

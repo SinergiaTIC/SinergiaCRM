@@ -67,7 +67,7 @@ class DetailsNavigation {
     // Step content
     if (!(step in DetailsNavigation.cacheSteps)) {
       DetailsNavigation.cacheSteps[step] = await (
-        await fetch(`modules/stic_Advanced_Web_Forms/ui/DetailView/steps/step${step}.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/DetailView/steps/step${step}.html`)
       ).text();
     }
     let $el = document.getElementById("wizard-step-container");
@@ -125,7 +125,7 @@ class DetailsStep1 {
       },
 
       get previewUrl() {
-        return `index.php?module=stic_Advanced_Web_Forms&action=renderPreviewForm&record=${this.bean.id}`;
+        return `index.php?module=stic_AWF_Forms&action=renderPreviewForm&record=${this.bean.id}`;
       },
 
       get iframeCode() {
@@ -140,7 +140,7 @@ class DetailsStep1 {
         this.generatedHtml = utils.translate('LBL_CODE_LOADING');
           
         try {
-          const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=renderForm&record=" + this.bean.id);
+          const response = await fetch("index.php?module=stic_AWF_Forms&action=renderForm&record=" + this.bean.id);
           if (response.ok) {
             this.generatedHtml = await response.text();
           } else {

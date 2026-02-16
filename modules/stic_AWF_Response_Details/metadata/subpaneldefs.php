@@ -1,5 +1,5 @@
 <?php
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+$module_name = 'stic_AWF_Response_Details';
 $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
     'order' => 900,

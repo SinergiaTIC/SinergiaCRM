@@ -42,7 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+$module_name = 'stic_AWF_Response_Details';
 $listViewDefs[$module_name] = array(
     'QUESTION_SORT_ORDER' => array(
         'width' => '10',
@@ -92,14 +92,14 @@ $listViewDefs[$module_name] = array(
     // 'FORM_NAME' => array(
     //     'width' => '9',
     //     'label' => 'LBL_FORM_NAME',
-    //     'module' => 'stic_Advanced_Web_Forms',
+    //     'module' => 'stic_AWF_Forms',
     //     'id' => 'FORM_ID',
     //     'default' => true
     // ),
     // 'RESPONSE_NAME' => array(
     //     'width' => '9',
     //     'label' => 'LBL_RESPONSE_NAME',
-    //     'module' => 'stic_Advanced_Web_Forms_Responses',
+    //     'module' => 'stic_AWF_Responses',
     //     'id' => 'RESPONSE_ID',
     //     'default' => true
     // ),

@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
+include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
  * SendEmailToAssignedAction
@@ -117,7 +117,7 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         if ($selector) {
             if ($selector->selectedOptionName === 'opt_form_owner') {
                 // Option A: The Form owner
-                $sourceBean = BeanFactory::getBean('stic_Advanced_Web_Forms', $context->formId);
+                $sourceBean = BeanFactory::getBean('stic_AWF_Forms', $context->formId);
 
             } else if ($selector->selectedOptionName === 'opt_datablock') {
                 // Option B: A Data Block (ex: The assigned of the created Contact)

@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once "modules/stic_Advanced_Web_Forms/actions/coreActions.php";
+include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
  * NumericValidatorAction
@@ -37,6 +37,19 @@ class NumericValidatorAction extends ValidatorActionDefinition {
         $this->isActive = true;
         $this->baseLabel = 'LBL_NUMERIC_VALIDATOR_ACTION';
         $this->supportedDataTypes = [ActionDataType::INTEGER, ActionDataType::FLOAT, ActionDataType::TEXT, ActionDataType::TEXTAREA, ActionDataType::TEL];
+    }
+
+    /**
+     * Returns rules to automatically apply this validation.
+     * Can filter by field type (vardef type) editor in form (subtype_in_form), or by name pattern (regex).
+     * @return array ex: ['types' => ['email'], 'subtypes_in_form' => ['text_email'], 'name_patterns' => ['/^email/i']]
+     */
+    public function getAutoApplyRules(): array {
+        return [
+            'types' => [],
+            'subtypes_in_form' => ['number'], // Apply to all number editors
+            'name_patterns' => []
+        ];
     }
 
     public function getParameters(): array {

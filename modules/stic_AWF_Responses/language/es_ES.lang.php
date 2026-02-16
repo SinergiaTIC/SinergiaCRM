@@ -71,11 +71,11 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Mis Respuestas a formularios',
   'LNK_NEW_RECORD' => 'Crear Respuesta a formulario',
   'LNK_LIST' => 'Ver Respuestas a formularios',
-  'LNK_IMPORT_STIC_ADVANCED_WEB_FORMS_RESPONSES' => 'Importar Respuestas a formularios',
+  'LNK_IMPORT_stic_AWF_Responses' => 'Importar Respuestas a formularios',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Respuestas a formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_SUBPANEL_TITLE' => 'Respuestas a formularios',
+  'LBL_stic_AWF_Responses_SUBPANEL_TITLE' => 'Respuestas a formularios',
   'LBL_NEW_FORM_TITLE' => 'Nueva Respuesta a formulario',
    
   'LBL_DEFAULT_PANEL' => 'Datos generales',
@@ -127,7 +127,7 @@ $mod_strings = array (
   'LBL_ERROR_VALUE_FIELD' => 'El valor no es válido para el campo',
   
   // Subpanels
-  'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE' => 'Vínculos de la respuesta al formulario',
-  'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_TITLE' => 'Formulario Web Avanzado',
+  'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Links_TITLE' => 'Vínculos de la respuesta al formulario',
+  'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Forms_TITLE' => 'Formulario Web Avanzado',
   'LBL_ANSWERS_SUBPANEL_TITLE' => 'Detalles de la respuesta',
 );

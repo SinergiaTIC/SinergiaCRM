@@ -33,7 +33,7 @@ class ServerActionFactory {
         $className = $actionName;             // Ex: 'SaveRecordAction' (class name)
 
         // Define search paths with priority
-        $basePath = 'modules/stic_Advanced_Web_Forms/actions/Hook/';
+        $basePath = 'modules/stic_AWF_Forms/actions/Hook/';
         $searchPaths = [
             'custom/Extension/' . $basePath . $actionName . '.php',
             'custom/' . $basePath . $actionName . '.php',

@@ -42,7 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Advanced_Web_Forms_Responses';
+$module_name = 'stic_AWF_Responses';
 $searchFields[$module_name] = array(
     'name' => array('query_type' => 'default'),
     'current_user_only' => array(

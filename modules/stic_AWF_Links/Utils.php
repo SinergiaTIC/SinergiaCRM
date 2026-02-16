@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 /**
  * Returns formatted HTML with the data modified on a bean by the form actions
- * @param SugarBean $focus The bean of stic_Advanced_Web_Forms_Links
+ * @param SugarBean $focus The bean of stic_AWF_Links
  * @param string $field The field (not used)
  * @param mixed $value The value (not used)
  * @param string $view The view (not used)
@@ -42,8 +42,8 @@ function getLinkDataHtml($focus, $field, $value, $view) {
     }
 
     $actionLabel = $focus->record_action;
-    if (isset($app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionLabel])) {
-        $actionLabel = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionLabel];
+    if (isset($app_list_strings['stic_AWF_Links_record_action_list'][$actionLabel])) {
+        $actionLabel = $app_list_strings['stic_AWF_Links_record_action_list'][$actionLabel];
     }
     
     // Badge color according to the action
@@ -65,7 +65,7 @@ function getLinkDataHtml($focus, $field, $value, $view) {
             $recordName = $focus->parent_id; 
         } else {
             // If we don't have either name or ID
-            $recordName = "<i>(". translate('LBL_NO_NAME', 'stic_Advanced_Web_Forms_Links') .")</i>";
+            $recordName = "<i>(". translate('LBL_NO_NAME', 'stic_AWF_Links') .")</i>";
         }
     }
     $recordUrl = "#";
@@ -155,7 +155,7 @@ function getLinkDataHtml($focus, $field, $value, $view) {
 
     $data = json_decode(html_entity_decode($focus->submitted_data), true);
     if (empty($focus->submitted_data) || !is_array($data) || empty($data)) {
-        $html .= "<div class='awf-empty-msg'>". translate('LBL_NO_MODIFIED_DATA', 'stic_Advanced_Web_Forms_Links') ."</div>";
+        $html .= "<div class='awf-empty-msg'>". translate('LBL_NO_MODIFIED_DATA', 'stic_AWF_Links') ."</div>";
     } else {
         $html .= '<table class="awf-link-table">';
 

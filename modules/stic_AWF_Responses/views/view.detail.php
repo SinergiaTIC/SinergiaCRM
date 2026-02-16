@@ -23,7 +23,7 @@
 require_once 'include/MVC/View/views/view.detail.php';
 require_once 'SticInclude/Views.php';
 
-class stic_Advanced_Web_Forms_ResponsesViewDetail extends ViewDetail
+class stic_AWF_ResponsesViewDetail extends ViewDetail
 {
 
     public function __construct()
@@ -39,7 +39,7 @@ class stic_Advanced_Web_Forms_ResponsesViewDetail extends ViewDetail
         SticViews::preDisplay($this);
 
         // AWF Summary
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms_Responses/css/stic_awfsummary.css"). "'>";
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_AWF_Responses/css/stic_awfsummary.css"). "'>";
     }
 
     public function display()

@@ -158,7 +158,7 @@ class stic_AWFUtils {
         }
         $html .= "<div class='awf-summary-container'>";
         if ($showTitle) {
-            $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms_Responses')."</h1>";
+            $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_AWF_Responses')."</h1>";
         }
         $html .= "<div class='awf-sections-wrapper'>";
 
@@ -253,7 +253,7 @@ class stic_AWFUtils {
     public static function generateSummaryText(ExecutionContext $context): string
     {
         // Main title
-        $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_Advanced_Web_Forms_Responses');
+        $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_AWF_Responses');
         $text = $title . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
         
         $layout = $context->formConfig->layout;
@@ -403,7 +403,7 @@ class stic_AWFUtils {
         $backButtonHtml = "
         <div style='margin-top: 20px; text-align: center;'>
             <button onclick='window.history.back()' class='btn btn-primary' style='padding: 10px 20px; font-size: 16px; cursor: pointer;'>
-                " . translate('LBL_BUTTON_GO_BACK_AND_FIX', 'stic_Advanced_Web_Forms_Responses') . "
+                " . translate('LBL_BUTTON_GO_BACK_AND_FIX', 'stic_AWF_Responses') . "
             </button>
         </div>";
 
@@ -419,8 +419,8 @@ class stic_AWFUtils {
      */
     public static function renderGenericSpamResponse()
     {
-        $title = htmlspecialchars(translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms'));
-        $message = nl2br(htmlspecialchars(translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms')));
+        $title = htmlspecialchars(translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_AWF_Forms'));
+        $message = nl2br(htmlspecialchars(translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_AWF_Forms')));
 
         $fontFamily = 'sans-serif';
         $bgColor = '#f8f9fa';

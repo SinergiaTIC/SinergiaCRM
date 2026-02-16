@@ -71,11 +71,11 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Mis Vínculos de formularios',
   'LNK_NEW_RECORD' => 'Crear Vínculo de formulario',
   'LNK_LIST' => 'Ver Vínculos de formularios',
-  'LNK_IMPORT_STIC_ADVANCED_WEB_FORMS_LINKS' => 'Importar Vínculos de formularios',
+  'LNK_IMPORT_stic_AWF_Links' => 'Importar Vínculos de formularios',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Vínculos de formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_STIC_ADVANCED_WEB_FORMS_LINKS_SUBPANEL_TITLE' => 'Vínculos de formularios',
+  'LBL_stic_AWF_Links_SUBPANEL_TITLE' => 'Vínculos de formularios',
   'LBL_NEW_FORM_TITLE' => 'Nuevo Vínculo de formulario',
 
   'LBL_DEFAULT_PANEL' => 'Datos generales',
@@ -91,5 +91,5 @@ $mod_strings = array (
   'LBL_NO_MODIFIED_DATA' => 'No se han registrado cambios de datos específicos.',
   'LBL_NO_NAME' => 'Sin nombre',
 
-  'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuesta a formulario',
+  'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Responses_TITLE' => 'Respuesta a formulario',
 );

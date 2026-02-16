@@ -50,17 +50,17 @@ abstract class ActionDefinition {
     /** @var string[] */
     public array $supportedModules = [];       // moduleList
     /** @var string[] */
-    public array $supportedFieldSubTypes = []; // stic_advanced_web_forms_field_in_form_subtype_list
+    public array $supportedFieldSubTypes = []; // stic_AWF_Forms_field_in_form_subtype_list
     public int $order = 0;
 
     protected string $baseLabel = 'LBL_CUSTOM_ACTION';
     /**
-     * Translates a subkey to the current language (using the baseLabel of the action and the stic_Advanced_Web_Forms module)
+     * Translates a subkey to the current language (using the baseLabel of the action and the stic_AWF_Forms module)
      * @param string $subkey The subkey to translate
      * @return string The translated text
      */
     protected function translate(string $subkey): string {
-        return translate($this->baseLabel.'_'.$subkey, 'stic_Advanced_Web_Forms');
+        return translate($this->baseLabel.'_'.$subkey, 'stic_AWF_Forms');
     }
 
     /**

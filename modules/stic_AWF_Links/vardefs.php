@@ -38,8 +38,8 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$dictionary['stic_Advanced_Web_Forms_Links'] = array(
-    'table' => 'stic_advanced_web_forms_links',
+$dictionary['stic_AWF_Links'] = array(
+    'table' => 'stic_AWF_Links',
     'audited' => false,
     'inline_edit' => false,
     'duplicate_merge' => false,
@@ -170,7 +170,7 @@ $dictionary['stic_Advanced_Web_Forms_Links'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_advanced_web_forms_links_record_action_list',
+    'options' => 'stic_AWF_Links_record_action_list',
     'studio' => 'visible',
     'dependency' => false,
   ),
@@ -209,7 +209,7 @@ $dictionary['stic_Advanced_Web_Forms_Links'] = array(
     array (
       'name' => 'getLinkDataHtml',
       'returns' => 'html',
-      'include' => 'modules/stic_Advanced_Web_Forms_Links/Utils.php',
+      'include' => 'modules/stic_AWF_Links/Utils.php',
     ),
   ),
 ),
@@ -219,47 +219,47 @@ $dictionary['stic_Advanced_Web_Forms_Links'] = array(
     'unified_search' => true,
 );
 
-$dictionary["stic_Advanced_Web_Forms_Links"]["fields"]["stic_1c31forms_links"] = array (
+$dictionary["stic_AWF_Links"]["fields"]["stic_1c31forms_links"] = array (
   'name' => 'stic_1c31forms_links',
   'type' => 'link',
-  'relationship' => 'stic_advanced_web_forms_responses_stic_advanced_web_forms_links',
+  'relationship' => 'stic_AWF_Responses_stic_AWF_Links',
   'source' => 'non-db',
-  'module' => 'stic_Advanced_Web_Forms_Responses',
+  'module' => 'stic_AWF_Responses',
   'bean_name' => false,
-  'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE',
+  'vname' => 'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Responses_TITLE',
   'id_name' => 'stic_e755sponses_ida',
 );
-$dictionary["stic_Advanced_Web_Forms_Links"]["fields"]["stic_c271_links_name"] = array (
+$dictionary["stic_AWF_Links"]["fields"]["stic_c271_links_name"] = array (
   'name' => 'stic_c271_links_name',
   'type' => 'relate',
   'source' => 'non-db',
   'inline_edit' => false,
-  'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE',
+  'vname' => 'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Responses_TITLE',
   'save' => true,
   'id_name' => 'stic_e755sponses_ida',
   'link' => 'stic_1c31forms_links',
-  'table' => 'stic_advanced_web_forms_responses',
-  'module' => 'stic_Advanced_Web_Forms_Responses',
+  'table' => 'stic_AWF_Responses',
+  'module' => 'stic_AWF_Responses',
   'rname' => 'name',
 );
-$dictionary["stic_Advanced_Web_Forms_Links"]["fields"]["stic_e755sponses_ida"] = array (
+$dictionary["stic_AWF_Links"]["fields"]["stic_e755sponses_ida"] = array (
   'name' => 'stic_e755sponses_ida',
   'type' => 'link',
-  'relationship' => 'stic_advanced_web_forms_responses_stic_advanced_web_forms_links',
+  'relationship' => 'stic_AWF_Responses_stic_AWF_Links',
   'source' => 'non-db',
   'reportable' => false,
   'side' => 'right',
-  'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_STIC_ADVANCED_WEB_FORMS_LINKS_FROM_STIC_ADVANCED_WEB_FORMS_LINKS_TITLE',
+  'vname' => 'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Links_TITLE',
 );
 
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
 
-VardefManager::createVardef('stic_Advanced_Web_Forms_Links', 'stic_Advanced_Web_Forms_Links', array('basic','assignable','security_groups'));
+VardefManager::createVardef('stic_AWF_Links', 'stic_AWF_Links', array('basic','assignable','security_groups'));
 
-$dictionary['stic_Advanced_Web_Forms_Links']['fields']['name']['massupdate'] = false;
-$dictionary['stic_Advanced_Web_Forms_Links']['fields']['name']['inline_edit'] = false;
+$dictionary['stic_AWF_Links']['fields']['name']['massupdate'] = false;
+$dictionary['stic_AWF_Links']['fields']['name']['inline_edit'] = false;
 
-$dictionary['stic_Advanced_Web_Forms_Links']['fields']['assigned_user_name']['massupdate'] = false;
-$dictionary['stic_Advanced_Web_Forms_Links']['fields']['assigned_user_name']['inline_edit'] = false;
+$dictionary['stic_AWF_Links']['fields']['assigned_user_name']['massupdate'] = false;
+$dictionary['stic_AWF_Links']['fields']['assigned_user_name']['inline_edit'] = false;

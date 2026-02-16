@@ -24,7 +24,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once 'modules/stic_Advanced_Web_Forms/core/FormRenderService.php';
+require_once 'modules/stic_AWF_Forms/core/FormRenderService.php';
 
 if (ob_get_level()) {
     ob_end_clean();

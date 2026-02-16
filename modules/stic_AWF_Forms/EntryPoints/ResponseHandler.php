@@ -24,7 +24,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once "modules/stic_Advanced_Web_Forms/core/includes.php";
+require_once "modules/stic_AWF_Forms/core/includes.php";
 
 /**
  * EntryPoint: ResponseHandler
@@ -60,7 +60,7 @@ class ResponseHandler
             if (isset($cleanData['awf_honey_pot'])&& !empty($cleanData['awf_honey_pot'])) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Honeypot protection");
                 $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_Advanced_Web_Forms_Responses');
+                $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_AWF_Responses');
             }
         }
         // 2- TimeTrap: Normally bots submit the form immediately and/or without executing JS
@@ -71,7 +71,7 @@ class ResponseHandler
             if ($submissionTs === 0 || $duration < 2) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Timetrap protection");
                 $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_TIMETRAP_SPAM', 'stic_Advanced_Web_Forms_Responses');
+                $responseDescription = translate('LBL_RESPONSE_TIMETRAP_SPAM', 'stic_AWF_Responses');
             }
         }
         // 3- UserAgent: Some bots don't impersonate browsers
@@ -79,7 +79,7 @@ class ResponseHandler
             if ($this->isBotUserAgent($userAgent)) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by UserAgent filter");
                 $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_USERAGENT_SPAM', 'stic_Advanced_Web_Forms_Responses');
+                $responseDescription = translate('LBL_RESPONSE_USERAGENT_SPAM', 'stic_AWF_Responses');
             }
         }
 
@@ -108,8 +108,8 @@ class ResponseHandler
             $this->terminateRawError("No Form ID provided.");
         }
 
-        /** @var stic_Advanced_Web_Forms $formBean */
-        $formBean = BeanFactory::getBean('stic_Advanced_Web_Forms', $formId);
+        /** @var stic_AWF_Forms $formBean */
+        $formBean = BeanFactory::getBean('stic_AWF_Forms', $formId);
         if (!$formBean || empty($formBean->id)) {
             if ($isSpam) {
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam with bad formId");
@@ -186,7 +186,7 @@ class ResponseHandler
                 $errorString = implode(", ", $validationErrors['errorDescriptions']);
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Data Validation errors for Form ID {$formId}:" . $errorString);
 
-                $errorTitle = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
+                $errorTitle = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
                 stic_AWFUtils::renderErrorWithBackButton($formConfig, $errorTitle, $validationErrors['errorDescriptions']);
                 return;
             }
@@ -194,9 +194,9 @@ class ResponseHandler
             global $app_list_strings;
 
             $responseStatus = 'rejected';
-            $responseDescription = translate('LBL_RESPONSE_NO_PUBLIC_STATUS', 'stic_Advanced_Web_Forms_Responses')." ".
-                                   translate('LBL_STATUS', 'stic_Advanced_Web_Forms_Responses').": ". 
-                                   "'{$app_list_strings['stic_advanced_web_forms_response_status_list'][$formBean->status]}'";
+            $responseDescription = translate('LBL_RESPONSE_NO_PUBLIC_STATUS', 'stic_AWF_Responses')." ".
+                                   translate('LBL_STATUS', 'stic_AWF_Responses').": ". 
+                                   "'{$app_list_strings['stic_AWF_Forms_response_status_list'][$formBean->status]}'";
         }
 
         // Execution context
@@ -206,7 +206,7 @@ class ResponseHandler
         }
 
         // Save the response
-        $responseBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Responses');
+        $responseBean = BeanFactory::newBean('stic_AWF_Responses');
         $responseBean->is_automated_save = true;
         $responseBean->name = $formBean->name ." - ". date('Y-m-d H:i:s');
         $responseBean->status = $responseStatus;
@@ -228,7 +228,7 @@ class ResponseHandler
             $htmlSummary = stic_AWFUtils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
         } catch (Exception $e) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error generating HTML snapshot for response {$responseBean->id}: " . $e->getMessage());
-            $htmlSummary = "<div class='alert alert-danger'>". translate('LBL_ERROR_GENERATING_HTML_SUMMARY', 'stic_Advanced_Web_Forms_Responses') ."</div>";
+            $htmlSummary = "<div class='alert alert-danger'>". translate('LBL_ERROR_GENERATING_HTML_SUMMARY', 'stic_AWF_Responses') ."</div>";
         }
         $responseBean->html_summary = $htmlSummary;
         $responseBean->save();
@@ -253,7 +253,7 @@ class ResponseHandler
             // Update spam counter
             $db = DBManagerFactory::getInstance();
             $safeId = $db->quote($formId);
-            $db->query("UPDATE stic_advanced_web_forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
+            $db->query("UPDATE stic_AWF_Forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
             
             stic_AWFUtils::renderGenericSpamResponse();
             return;
@@ -261,8 +261,8 @@ class ResponseHandler
 
         // Only 'public' forms process responses
         if (!$isPublic) {
-            $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
-            $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+            $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+            $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
@@ -270,7 +270,7 @@ class ResponseHandler
         // Update valid responses counter
         $db = DBManagerFactory::getInstance();
         $safeId = $db->quote($formId);
-        $db->query("UPDATE stic_advanced_web_forms SET analytics_submissions = analytics_submissions + 1 WHERE id = '$safeId'");
+        $db->query("UPDATE stic_AWF_Forms SET analytics_submissions = analytics_submissions + 1 WHERE id = '$safeId'");
 
         // Execution flow
         $executor = new ServerActionFlowExecutor($context);
@@ -308,8 +308,8 @@ class ResponseHandler
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
             }
             // If we get here, no flow or terminal has been run: Show generic message
-            $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
-            $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+            $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+            $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_AWF_Forms');
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
 
         } else {
@@ -333,11 +333,11 @@ class ResponseHandler
                 foreach ($context->actionResults as $result) {
                     if ($result->isError()) {
                         $hasErrors = true;
-                        $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_Advanced_Web_Forms_Responses');
+                        $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
                     }elseif ($result->isSkipped()) {
-                        $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_Advanced_Web_Forms_Responses');
+                        $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_AWF_Responses');
                     } else {
-                        $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_Advanced_Web_Forms_Responses');
+                        $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
                     }
                     $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
                     $logSummary .= "{$icon} {$actionName}";
@@ -375,12 +375,12 @@ class ResponseHandler
                 // No terminal (or error runing terminal): Show generic message
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found or failed in Main flow in form. ID: $formId");
                 if ($hasErrors) {
-                    $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_Advanced_Web_Forms_Responses');
-                    $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_Advanced_Web_Forms_Responses');
+                    $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
+                    $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
                     stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
                 } else {
-                    $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_Advanced_Web_Forms');
-                    $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_Advanced_Web_Forms');
+                    $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+                    $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
                     stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg); 
                 }
                 
@@ -436,7 +436,7 @@ class ResponseHandler
 
     private function checkDuplicateSubmission($formId, $hash): bool {
         global $db;
-        $query = "SELECT count(response.id) as count FROM stic_advanced_web_forms_responses response
+        $query = "SELECT count(response.id) as count FROM stic_AWF_Responses response
                     INNER JOIN stic_f193responses_c form_response
                         ON form_response.stic_21b0sponses_idb = response.id
                   WHERE
@@ -456,8 +456,8 @@ class ResponseHandler
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
             stic_AWFUtils::renderGenericResponse($formConfig, 
-                                             translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_Advanced_Web_Forms_Responses'),
-                                             translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_Advanced_Web_Forms_Responses'));
+                                             translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_AWF_Responses'),
+                                             translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_AWF_Responses'));
         } else {
             $this->terminateRawError("This response has already been submitted.");
         }
@@ -510,13 +510,13 @@ class ResponseHandler
         // Save the links
         $sequence = 1;
         foreach ($consolidatedBeans as $item) {
-            $linkBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Links');
+            $linkBean = BeanFactory::newBean('stic_AWF_Links');
 
             $targetBean = BeanFactory::getBean($item['module'], $item['id']);
             $targetBeanName = $targetBean ? $targetBean->get_summary_text() : $item['id'];
             
             $actionValue = $item['type']->value;
-            $recordActionName = $app_list_strings['stic_advanced_web_forms_links_record_action_list'][$actionValue] ?? $actionValue;
+            $recordActionName = $app_list_strings['stic_AWF_Links_record_action_list'][$actionValue] ?? $actionValue;
             $moduleSingular = $app_list_strings['moduleListSingular'][$item['module']] ?? $item['module'];
 
             $linkBean->is_automated_save = true;
@@ -566,9 +566,9 @@ class ResponseHandler
                 // Validation of required field (Required)
                 if ($field->required_in_form) {
                     if ($value === null || $value === '' || (is_array($value) && empty($value))) {
-                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
-                                                                        translate('LBL_ERROR_REQUIRED_FIELD', 'stic_Advanced_Web_Forms_Responses');
-                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_REQUIRED_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                        translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
                         continue;
                     }
                 }
@@ -577,23 +577,23 @@ class ResponseHandler
                 if ($value !== null && $value !== '') {
                     if ($field->type_in_form === 'number') {
                         if (!is_numeric($value)) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_NUMERIC_FIELD', 'stic_Advanced_Web_Forms_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_NUMERIC_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
                         }
                     }
                     if ($field->type_in_form === 'date') {
                         if (!strtotime($value)) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_DATE_FIELD', 'stic_Advanced_Web_Forms_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_DATE_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
                         }
                     }
                     if ($field->subtype_in_form === 'text_email') {
                         if (strpos($value, '@') === false || strpos($value, '.') === false) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_EMAIL_FIELD', 'stic_Advanced_Web_Forms_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_EMAIL_FIELD', 'stic_Advanced_Web_Forms_Responses');
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
                         }
                     }
                     if (!empty($field->value_options) && $field->value_type === DataBlockFieldValueType::SELECTABLE) {
@@ -604,9 +604,9 @@ class ResponseHandler
                                 continue;
                             }
                             if (!in_array($subVal, $validValues)) {
-                                $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_Advanced_Web_Forms_Responses') ." '{$label}': ". 
-                                                                                translate('LBL_ERROR_VALUE_FIELD', 'stic_Advanced_Web_Forms_Responses') . ' ({$subVal})';
-                                $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_VALUE_FIELD', 'stic_Advanced_Web_Forms_Responses') . ' ({$subVal})';
+                                $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                                translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
+                                $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
                                 break; 
                             }
                         }
@@ -684,9 +684,9 @@ class ResponseHandler
                 }
 
                 // Create analytical response bean
-                $detailBean = BeanFactory::newBean('stic_Advanced_Web_Forms_Response_Details');
-                $detailBean->stic_advanced_web_forms_responses_id_c = $responseBean->id;
-                $detailBean->stic_advanced_web_forms_id_c = $formConfig->id ?? ''; 
+                $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+                $detailBean->stic_AWF_Responses_id_c = $responseBean->id;
+                $detailBean->stic_AWF_Forms_id_c = $formConfig->id ?? ''; 
                 
                 $detailBean->question_key = $block->name . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;

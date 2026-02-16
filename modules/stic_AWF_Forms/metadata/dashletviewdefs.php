@@ -44,7 +44,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 global $current_user;
 
-$dashletData['stic_Advanced_Web_FormsDashlet']['searchFields'] = array(
+$dashletData['stic_AWF_FormsDashlet']['searchFields'] = array(
     'date_entered' => array('default' => ''),
     'date_modified' => array('default' => ''),
     'assigned_user_id' => array(
@@ -52,7 +52,7 @@ $dashletData['stic_Advanced_Web_FormsDashlet']['searchFields'] = array(
         'default' => $current_user->name
     )
 );
-$dashletData['stic_Advanced_Web_FormsDashlet']['columns'] = array(
+$dashletData['stic_AWF_FormsDashlet']['columns'] = array(
     'name' => array(
         'width' => '40',
         'label' => 'LBL_LIST_NAME',

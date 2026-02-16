@@ -38,7 +38,7 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Advanced_Web_Forms_Response_Details';
+$module_name = 'stic_AWF_Response_Details';
 $viewdefs[$module_name]['DetailView'] = array(
     'templateMeta' => array(
         'form' => array(

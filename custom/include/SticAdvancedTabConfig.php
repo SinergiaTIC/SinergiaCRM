@@ -306,7 +306,7 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'id' => 'KReports',
                 ),
                 4 => array(
-                    'id' => 'stic_Advanced_Web_Forms',
+                    'id' => 'stic_AWF_Forms',
                 ),
                 5 => array(
                     'id' => 'AOW_WorkFlow',
