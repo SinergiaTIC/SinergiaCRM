@@ -559,7 +559,7 @@ class stic_AwfField {
       list.push(base_subtypes.find(s => s.id == "text"));
       return list;
     }
-    if (this.type == "email") {
+    if (this.type == "email" || (this.type == "varchar" && this.name.toLowerCase().startsWith("email"))) {
       list.push(base_subtypes.find(s => s.id == "text_email"));
       list.push(base_subtypes.find(s => s.id == "text"));
       return list;
