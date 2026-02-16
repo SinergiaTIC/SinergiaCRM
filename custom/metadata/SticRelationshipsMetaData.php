@@ -7966,17 +7966,17 @@ $dictionary["project_stic_assessments"] = array (
     ),
   );
 
-  $dictionary["stic_advanced_web_forms_stic_advanced_web_forms_responses"] = array (
+  $dictionary["stic_AWF_Forms_stic_AWF_Responses"] = array (
     'true_relationship_type' => 'one-to-many',
     'relationships' => 
     array (
-      'stic_advanced_web_forms_stic_advanced_web_forms_responses' => 
+      'stic_AWF_Forms_stic_AWF_Responses' => 
       array (
-        'lhs_module' => 'stic_Advanced_Web_Forms',
-        'lhs_table' => 'stic_advanced_web_forms',
+        'lhs_module' => 'stic_AWF_Forms',
+        'lhs_table' => 'stic_AWF_Forms',
         'lhs_key' => 'id',
-        'rhs_module' => 'stic_Advanced_Web_Forms_Responses',
-        'rhs_table' => 'stic_advanced_web_forms_responses',
+        'rhs_module' => 'stic_AWF_Responses',
+        'rhs_table' => 'stic_AWF_Responses',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
         'join_table' => 'stic_f193responses_c',
@@ -8050,17 +8050,17 @@ $dictionary["project_stic_assessments"] = array (
       ),
     ),
   );
-  $dictionary["stic_advanced_web_forms_responses_stic_advanced_web_forms_links"] = array (
+  $dictionary["stic_AWF_Responses_stic_AWF_Links"] = array (
     'true_relationship_type' => 'one-to-many',
     'relationships' => 
     array (
-      'stic_advanced_web_forms_responses_stic_advanced_web_forms_links' => 
+      'stic_AWF_Responses_stic_AWF_Links' => 
       array (
-        'lhs_module' => 'stic_Advanced_Web_Forms_Responses',
-        'lhs_table' => 'stic_advanced_web_forms_responses',
+        'lhs_module' => 'stic_AWF_Responses',
+        'lhs_table' => 'stic_AWF_Responses',
         'lhs_key' => 'id',
-        'rhs_module' => 'stic_Advanced_Web_Forms_Links',
-        'rhs_table' => 'stic_advanced_web_forms_links',
+        'rhs_module' => 'stic_AWF_Links',
+        'rhs_table' => 'stic_AWF_Links',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
         'join_table' => 'stic_2b5arms_links_c',
