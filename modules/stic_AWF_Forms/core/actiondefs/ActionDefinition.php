@@ -50,7 +50,7 @@ abstract class ActionDefinition {
     /** @var string[] */
     public array $supportedModules = [];       // moduleList
     /** @var string[] */
-    public array $supportedFieldSubTypes = []; // stic_AWF_Forms_field_in_form_subtype_list
+    public array $supportedFieldSubTypes = []; // stic_awf_forms_field_subtype_in_form_list
     public int $order = 0;
 
     protected string $baseLabel = 'LBL_CUSTOM_ACTION';

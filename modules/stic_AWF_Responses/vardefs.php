@@ -193,7 +193,7 @@ $dictionary['stic_AWF_Responses'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_AWF_Forms_response_status_list',
+    'options' => 'stic_awf_responses_status_list',
     'studio' => 'visible',
     'dependency' => false,
   ),

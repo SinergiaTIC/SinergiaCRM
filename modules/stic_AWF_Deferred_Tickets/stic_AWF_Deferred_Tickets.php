@@ -39,12 +39,12 @@
  */
 
 
-class stic_AWF_Response_Details extends Basic
+class stic_AWF_Deferred_Tickets extends Basic
 {
     public $new_schema = true;
-    public $module_dir = 'stic_AWF_Response_Details';
-    public $object_name = 'stic_AWF_Response_Details';
-    public $table_name = 'stic_AWF_Response_Details';
+    public $module_dir = 'stic_AWF_Deferred_Tickets';
+    public $object_name = 'stic_AWF_Deferred_Tickets';
+    public $table_name = 'stic_AWF_Deferred_Tickets';
     public $importable = false;
 
     public $id;
@@ -59,38 +59,16 @@ class stic_AWF_Response_Details extends Basic
     public $deleted;
     public $created_by_link;
     public $modified_user_link;
-    public $assigned_user_id;
-    public $assigned_user_name;
-    public $assigned_user_link;
-    public $SecurityGroups;
-    public $securitygroups_name;
-    public $question_sort_order;
-    public $question_key;
-    public $question_label;
-    public $question_help_text;
-    public $question_section;
-    public $answer_value;
-    public $answer_text;
-    public $answer_form_type;
-    public $answer_integer;
-    public $stic_awf_forms_id_c;
-    public $form;
-	
-    /**
-     * Disable "edit" 
-     * @param string $view
-     * @param string $is_owner
-     * @param string $in_group
-     */
-    public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
-    {
-        $editViews = ['edit', 'editview', 'save']; // 'delete'
-        if (in_array(strtolower($view), $editViews)) {
-            return false;
-        }
-        return parent::ACLAccess($view, $is_owner, $in_group);
-    }
 
+    public $stic_awf_responses_id_c;
+    public $response;
+    public $token_hash;
+    public $external_transaction_id;
+    public $status;
+    public $handler_action_id;
+    public $context_data;
+    public $expiration_date;
+	
     public function bean_implements($interface)
     {
         switch($interface)

@@ -729,28 +729,28 @@ class stic_AwfField {
   }
 
   static type_fieldList(asString = false) {
-    return utils.getList("stic_AWF_Forms_field_type_list", asString);
+    return utils.getList("stic_awf_forms_field_type_field_list", asString);
   }
   get type_fieldText(){
     return stic_AwfField.type_fieldList().find(i => i.id == this.type_field)?.text;  
   }
 
   static type_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_field_in_form_type_list", asString);
+    return utils.getList("stic_awf_forms_field_type_in_form_list", asString);
   }
   get type_in_formText(){
     return stic_AwfField.type_in_formList().find(i => i.id == this.type_in_form)?.text;  
   }
 
   static subtype_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_field_in_form_subtype_list", asString);
+    return utils.getList("stic_awf_forms_field_subtype_in_form_list", asString);
   }
   get subtype_in_formText(){
     return stic_AwfField.subtype_in_formList().find(i => i.id == this.subtype_in_form)?.text;  
   }
 
   static value_typeList(asString = false){
-    return utils.getList("stic_AWF_Forms_field_in_form_value_type_list", asString);
+    return utils.getList("stic_awf_forms_field_value_type_list", asString);
   }
   get value_typeText(){
     return stic_AwfField.value_typeList().find(i => i.id == this.value_type)?.text;  
@@ -824,7 +824,7 @@ class stic_AwfDuplicateDetection {
   }
 
   static on_duplicateList(asString = false){
-    return utils.getList("stic_AWF_Forms_datablocks_duplicate_action_list", asString);
+    return utils.getList("stic_awf_forms_datablock_duplicate_action_list", asString);
   }
   get on_duplicateText(){
     return stic_AwfDuplicateDetection.on_duplicateList().find(i => i.id == this.on_duplicate)?.text;  
@@ -901,7 +901,7 @@ class stic_AwfAction {
   }
 
   static category_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_action_category_list", asString);
+    return utils.getList("stic_awf_forms_action_definition_category_list", asString);
   }
   get category_in_formText(){
     return stic_AwfAction.category_in_formList().find(i => i.id == this.category)?.text;  
@@ -1086,28 +1086,28 @@ class stic_AwfTheme {
   }
 
   static shadow_intensity_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_shadow_intensity_list", asString);
+    return utils.getList("stic_awf_forms_layout_theme_shadow_intensity_list", asString);
   }
   get shadow_intensity_in_formText(){
     return stic_AwfTheme.shadow_intensity_in_formList().find(i => i.id == this.shadow_intensity)?.text;  
   }
 
   static input_style_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_input_style_list", asString);
+    return utils.getList("stic_awf_forms_layout_theme_input_style_list", asString);
   }
   get input_style_in_formText(){
     return stic_AwfTheme.input_style_in_formList().find(i => i.id == this.input_style)?.text;  
   }
 
   static form_width_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_form_width_list", asString);
+    return utils.getList("stic_awf_forms_layout_theme_form_width_list", asString);
   }
   get form_width_in_formText(){
     return stic_AwfTheme.form_width_in_formList().find(i => i.id == this.form_width)?.text;  
   }
 
   static field_spacing_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_field_spacing_list", asString);
+    return utils.getList("stic_awf_forms_layout_theme_field_spacing_list", asString);
   }
   get field_spacing_in_formText(){
     return stic_AwfTheme.field_spacing_in_formList().find(i => i.id == this.field_spacing)?.text;  
@@ -1136,7 +1136,7 @@ class stic_AwfLayoutSection {
   }
 
   static containerType_in_formList(asString = false){
-    return utils.getList("stic_AWF_Forms_sections_type_list", asString);
+    return utils.getList("stic_awf_forms_layout_structure_container_type_list", asString);
   }
   get containerType_in_formText(){
     return stic_AwfLayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;  

@@ -170,7 +170,7 @@ $dictionary['stic_AWF_Links'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_AWF_Links_record_action_list',
+    'options' => 'stic_awf_links_record_action_list',
     'studio' => 'visible',
     'dependency' => false,
   ),
