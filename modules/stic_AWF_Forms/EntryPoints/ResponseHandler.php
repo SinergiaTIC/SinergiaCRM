@@ -196,7 +196,7 @@ class ResponseHandler
             $responseStatus = 'rejected';
             $responseDescription = translate('LBL_RESPONSE_NO_PUBLIC_STATUS', 'stic_AWF_Responses')." ".
                                    translate('LBL_STATUS', 'stic_AWF_Responses').": ". 
-                                   "'{$app_list_strings['stic_AWF_Forms_response_status_list'][$formBean->status]}'";
+                                   "'{$app_list_strings['stic_awf_responses_status_list'][$formBean->status]}'";
         }
 
         // Execution context
@@ -359,8 +359,7 @@ class ResponseHandler
                 $responseBean->save();
 
                 if ($lastResult->isWait()) {
-                    // TODO: Create Deferred ticket: Is a deferred action!! (v2)
-                    // $this->createDeferredTicket($context, $lastResult->getData());
+                    $this->createDeferredTicket($context, $lastResult);
                 }
 
                 // Get last action and check if is Terminal
@@ -391,6 +390,43 @@ class ResponseHandler
                 stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
             }
         }
+    }
+
+    /**
+     * Create a record in the deferred tickets table to resume the flow.
+     * @param ExecutionContext $context Execution context of the flow
+     * @param ActionResult $lastResult Result of the last action
+     */
+    private function createDeferredTicket(ExecutionContext $context, ActionResult $lastResult): void {
+        $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
+        $ticket->name = "Deferred: " . $context->formId . " - " . date('Y-m-d H:i');
+        $ticket->status = 'pending';
+        $data = $lastResult->getData();
+
+        // Essential data to recover context
+        $ticket->form_id = $context->formId;
+        $ticket->response_id = $context->responseId;
+        
+        // Unique token generation (hash)
+        $token = bin2hex(random_bytes(16));
+        $ticket->token_hash = $token;
+
+        // Store the specific data of the action (ex: strategy_class, order_id)
+        $ticket->context_data = json_encode($data);
+
+        // IEPA!!
+        // TODO: Recuperar External ID de forma agnóstica
+        // // Optional: If the strategy has given us an external ID (ex: Redsys Order ID), we save it
+        // if (isset($data['external_ref_id'])) {
+        //     $ticket->external_ref_id = $data['external_ref_id'];
+        // } elseif (isset($data['redsys_order_id'])) {
+        //     $ticket->external_ref_id = $data['redsys_order_id'];
+        // }
+
+        $ticket->save();
+        
+        // Optional: Update the result with the ticket_id in case the terminal action wants to use it
+        // $data['ticket_id'] = $ticket->id;
     }
 
     private function terminateRawError($msg): void {
@@ -480,7 +516,7 @@ class ResponseHandler
             $targetBeanName = $targetBean ? $targetBean->get_summary_text() : $item['id'];
             
             $actionValue = $item['type']->value;
-            $recordActionName = $app_list_strings['stic_AWF_Links_record_action_list'][$actionValue] ?? $actionValue;
+            $recordActionName = $app_list_strings['stic_awf_links_record_action_list'][$actionValue] ?? $actionValue;
             $moduleSingular = $app_list_strings['moduleListSingular'][$item['module']] ?? $item['module'];
 
             $linkBean->is_automated_save = true;
@@ -649,8 +685,8 @@ class ResponseHandler
 
                 // Create analytical response bean
                 $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
-                $detailBean->stic_AWF_Responses_id_c = $responseBean->id;
-                $detailBean->stic_AWF_Forms_id_c = $formConfig->id ?? ''; 
+                $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                $detailBean->stic_awf_forms_id_c = $formConfig->id ?? ''; 
                 
                 $detailBean->question_key = $block->name . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
