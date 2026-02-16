@@ -7979,12 +7979,12 @@ $dictionary["project_stic_assessments"] = array (
         'rhs_table' => 'stic_AWF_Responses',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
-        'join_table' => 'stic_f193responses_c',
-        'join_key_lhs' => 'stic_aa0eb_forms_ida',
-        'join_key_rhs' => 'stic_21b0sponses_idb',
+        'join_table' => 'stic_awf_forms_stic_awf_responses_c',
+        'join_key_lhs' => 'stic_awf_forms_stic_awf_responsesforms_ida',
+        'join_key_rhs' => 'stic_awf_forms_stic_awf_responsesresponses_idb',
       ),
     ),
-    'table' => 'stic_f193responses_c',
+    'table' => 'stic_awf_forms_stic_awf_responses_c',
     'fields' => 
     array (
       0 => 
@@ -8008,13 +8008,13 @@ $dictionary["project_stic_assessments"] = array (
       ),
       3 => 
       array (
-        'name' => 'stic_aa0eb_forms_ida',
+        'name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
         'type' => 'varchar',
         'len' => 36,
       ),
       4 => 
       array (
-        'name' => 'stic_21b0sponses_idb',
+        'name' => 'stic_awf_forms_stic_awf_responsesresponses_idb',
         'type' => 'varchar',
         'len' => 36,
       ),
@@ -8023,7 +8023,7 @@ $dictionary["project_stic_assessments"] = array (
     array (
       0 => 
       array (
-        'name' => 'stic_69c1s_responsesspk',
+        'name' => 'stic_awf_forms_stic_awf_responsesspk',
         'type' => 'primary',
         'fields' => 
         array (
@@ -8036,7 +8036,7 @@ $dictionary["project_stic_assessments"] = array (
         'type' => 'index',
         'fields' => 
         array (
-          0 => 'stic_aa0eb_forms_ida',
+          0 => 'stic_awf_forms_stic_awf_responsesforms_ida',
         ),
       ),
       2 => 
@@ -8045,7 +8045,7 @@ $dictionary["project_stic_assessments"] = array (
         'type' => 'alternate_key',
         'fields' => 
         array (
-          0 => 'stic_21b0sponses_idb',
+          0 => 'stic_awf_forms_stic_awf_responsesresponses_idb',
         ),
       ),
     ),
@@ -8063,12 +8063,12 @@ $dictionary["project_stic_assessments"] = array (
         'rhs_table' => 'stic_AWF_Links',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
-        'join_table' => 'stic_2b5arms_links_c',
-        'join_key_lhs' => 'stic_e755sponses_ida',
-        'join_key_rhs' => 'stic_fe09s_links_idb',
+        'join_table' => 'stic_awf_responses_stic_awf_links_c',
+        'join_key_lhs' => 'stic_awf_responses_stic_awf_linksresponses_ida',
+        'join_key_rhs' => 'stic_awf_responses_stic_awf_linkslinks_idb',
       ),
     ),
-    'table' => 'stic_2b5arms_links_c',
+    'table' => 'stic_awf_responses_stic_awf_links_c',
     'fields' => 
     array (
       0 => 
@@ -8092,13 +8092,13 @@ $dictionary["project_stic_assessments"] = array (
       ),
       3 => 
       array (
-        'name' => 'stic_e755sponses_ida',
+        'name' => 'stic_awf_responses_stic_awf_linksresponses_ida',
         'type' => 'varchar',
         'len' => 36,
       ),
       4 => 
       array (
-        'name' => 'stic_fe09s_links_idb',
+        'name' => 'stic_awf_responses_stic_awf_linkslinks_idb',
         'type' => 'varchar',
         'len' => 36,
       ),
@@ -8107,7 +8107,7 @@ $dictionary["project_stic_assessments"] = array (
     array (
       0 => 
       array (
-        'name' => 'stic_1c31forms_linksspk',
+        'name' => 'stic_awf_responses_stic_awf_linksspk',
         'type' => 'primary',
         'fields' => 
         array (
@@ -8120,7 +8120,7 @@ $dictionary["project_stic_assessments"] = array (
         'type' => 'index',
         'fields' => 
         array (
-          0 => 'stic_e755sponses_ida',
+          0 => 'stic_awf_responses_stic_awf_linksresponses_ida',
         ),
       ),
       2 => 
@@ -8129,7 +8129,7 @@ $dictionary["project_stic_assessments"] = array (
         'type' => 'alternate_key',
         'fields' => 
         array (
-          0 => 'stic_fe09s_links_idb',
+          0 => 'stic_awf_responses_stic_awf_linkslinks_idb',
         ),
       ),
     ),

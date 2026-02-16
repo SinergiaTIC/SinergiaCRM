@@ -85,8 +85,8 @@ class stic_AWF_FormsViewEdit extends ViewEdit
             $db = DBManagerFactory::getInstance();
             $formId = $db->quote($this->bean->id);
 
-            $query = "SELECT count(*) FROM stic_f193responses_c 
-                      WHERE stic_aa0eb_forms_ida = '$formId' 
+            $query = "SELECT count(*) FROM stic_awf_forms_stic_awf_responses_c 
+                      WHERE stic_awf_forms_stic_awf_responsesforms_ida = '$formId' 
                       AND deleted = 0";
 
             $responseCount = $db->getOne($query) ?? 0;

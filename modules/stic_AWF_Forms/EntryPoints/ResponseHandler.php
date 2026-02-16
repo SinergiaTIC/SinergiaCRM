@@ -437,10 +437,10 @@ class ResponseHandler
     private function checkDuplicateSubmission($formId, $hash): bool {
         global $db;
         $query = "SELECT count(response.id) as count FROM stic_AWF_Responses response
-                    INNER JOIN stic_f193responses_c form_response
-                        ON form_response.stic_21b0sponses_idb = response.id
+                    INNER JOIN stic_awf_forms_stic_awf_responses_c form_response
+                        ON form_response.stic_awf_forms_stic_awf_responsesresponses_idb = response.id
                   WHERE
-                    form_response.stic_aa0eb_forms_ida = '{$formId}'
+                    form_response.stic_awf_forms_stic_awf_responsesforms_ida = '{$formId}'
                     AND form_response.deleted = 0
                     AND response.response_hash = '{$hash}'
                     AND response.deleted = 0";
