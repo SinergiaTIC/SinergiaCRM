@@ -275,7 +275,7 @@ const registerSearchableSelect = () => {
     search: '',
     open: false,
     focusedIndex: -1, 
-    isDisabled: false, // ESTAT DISABLED
+    isDisabled: false,
 
     dropdownStyle: {
       position: 'fixed',
@@ -302,16 +302,15 @@ const registerSearchableSelect = () => {
       this.optionsVarName = config.optionsVarName;
       this.modelVarName = config.modelVarName;
       
-      // 1. INICIALITZAR DISABLED
-      // Mirem si el component pare té l'atribut disabled
+      // Initialize disabled looking into parent
       const parent = this.$el.closest('stic-select');
       if (parent) {
           this.isDisabled = parent.hasAttribute('disabled');
           
-          // 2. OBSERVAR CANVIS EN DISABLED (x-bind:disabled)
+          // x-bind:disabled
           const observer = new MutationObserver(() => {
               this.isDisabled = parent.hasAttribute('disabled');
-              if (this.isDisabled && this.open) this.close(); // Tancar si es deshabilita obert
+              if (this.isDisabled && this.open) this.close();
           });
           observer.observe(parent, { attributes: true, attributeFilter: ['disabled'] });
       }
@@ -320,12 +319,12 @@ const registerSearchableSelect = () => {
         this.updateLabel();
         if (this.modelVarName) {
           try {
-            // Actualització model intern
+            // Update internal model
             this.$dispatch('input', val); 
             let setExpr = `${this.modelVarName} = '${val}'`;
             Alpine.evaluate(this.$el, setExpr);
 
-            // 3. DISPARAR EVENT CHANGE (per al @change extern)
+            // Firing event Change (for the external @change)
             this.$el.dispatchEvent(new CustomEvent('change', { 
                 detail: { value: val },
                 bubbles: true 
@@ -338,16 +337,11 @@ const registerSearchableSelect = () => {
       this.$watch('search', () => { this.focusedIndex = 0; });
     },
 
-    // --- ESTILS DEL TRIGGER (Aquí evitem conflictes d'estils) ---
     getTriggerStyle() {
-        // Estils base comuns
         let style = 'position: relative; display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; height: 38px; border: 1px solid #ccc; border-radius: 4px; ';
-        
         if (this.isDisabled) {
-            // Estils quan està DESHABILITAT
             style += 'background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; color: #6c757d;';
         } else {
-            // Estils quan està HABILITAT
             style += 'background-color: #fff; cursor: pointer; color: #333;';
         }
         return style;
@@ -413,7 +407,7 @@ const registerSearchableSelect = () => {
     },
 
     toggle() {
-      if (this.isDisabled) return; // BLOQUEJAR SI DISABLED
+      if (this.isDisabled) return; // Lock if disabled
 
       if (this.open) {
         this.close();
