@@ -37,7 +37,6 @@ switch (viewType()) {
 
   case "detail":
     $(document).ready(function() {
-      debugger;
       var subpanelID = 'whole_subpanel_stic_allocation_proposals_stic_allocations'; 
       var targetNode = document.getElementById(subpanelID);
 

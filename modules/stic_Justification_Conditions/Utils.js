@@ -78,7 +78,6 @@ function blockDblClick(event) {
 }
 
 function checkAmountAndPercentage() {
-  debugger;
   var maxAmount = parseSmartDecimal($("[field='max_allocable_amount_grant']").text());
   var justifiedAmount = parseSmartDecimal($("[field='justified_amount']").text());
   var percentage = parseSmartDecimal($("[field='justified_percentage']").text());
