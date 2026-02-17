@@ -1,6 +1,12 @@
 <?php
-
-// https://github.com/SinergiaTIC/SinergiaCRM/blob/6dfadf98d6f5e5375a65f72fad7379dcf0e5d247/ModuleInstall/ModuleInstaller.php#L127-L141
+/**
+ * SticUpdate.php
+ *
+ * Main update script for SinergiaCRM. Handles database repairs, cache clearing,
+ * and pre/post update script execution.
+ *
+ * Reference: https://github.com/SinergiaTIC/SinergiaCRM/blob/6dfadf98d6f5e5375a65f72fad7379dcf0e5d247/ModuleInstall/ModuleInstaller.php#L127-L141
+ */
 
 if (!defined('sugarEntry')) {
     define('sugarEntry', true);
@@ -9,43 +15,37 @@ if (!defined('sugarEntry')) {
 require_once 'include/entryPoint.php';
 require_once 'modules/Administration/QuickRepairAndRebuild.php';
 
+// Initialize global variables
 global $sugar_config, $current_user, $db;
 $errors = [];
 $infos = [];
+
+// Check if maintenance mode is enabled
 if (!(isset($sugar_config['stic_maintenance_mode_enabled']) && filter_var($sugar_config['stic_maintenance_mode_enabled'], FILTER_VALIDATE_BOOLEAN))) {
     http_response_code(503);
     $errors[] = "stic_maintenance_mode_enabled is not enabled in configuration. Exiting.";
-    @ob_end_clean();
-    ob_start();
-    ob_clean();
-
-    // Optional: Return a JSON error message
-    header('Content-Type: application/json');
-    echo json_encode([
-        'status' => 'error',
-        'errors' => $errors,
-        'infos' => $infos,
-    ]);
-    ob_flush();
+    outputJsonResponse('error', $errors, $infos);
     exit;
 }
 
 
 $scriptsVersion = $_REQUEST['scripts_version'] ?? null;
 
-// For easier management, repair actions will be held in English
+// Store default language for cache management
 $defaultLanguage = $sugar_config['default_language'];
 
 require_once('ModuleInstall/ModuleInstaller.php');
-// Set a user with admin capabilities in order to exec the repair and rebuild process
+
+// Create system user with admin capabilities to execute repairs
 $current_user = new User();
 $current_user->getSystemUser();
 
-// Run all scripts listed in the pre_install.txt file 
+// Execute pre-installation scripts
 runScripts($scriptsVersion, 'pre_install.txt', $errors, $infos);
 
 $mi = new ModuleInstaller();
 
+// Load vardefs for all modules
 global $beanList;
 foreach ($mi->modules as $module_name) {
     if (!empty($beanList[$module_name])) {
@@ -54,6 +54,7 @@ foreach ($mi->modules as $module_name) {
     }
 }
 
+// Define repair and rebuild actions to perform
 $selectedActions = array(
     'clearTpls',
     'clearJsFiles',
@@ -63,12 +64,15 @@ $selectedActions = array(
     'rebuildAuditTables',
     'repairDatabase',
 );
+
+// Clear and rebuild database
 VardefManager::clearVardef();
 global $beanList, $beanFiles, $moduleList;
 $mi->rebuild_all(true);
 require_once('modules/Administration/QuickRepairAndRebuild.php');
 $mod_strings = return_module_language($current_language, 'Administration');
 
+// Execute repair and clear operations
 $db->setDieOnError(true);
 try {
     $rac = new RepairAndClear();
@@ -77,78 +81,99 @@ try {
     ob_clean();
     $errors[] = 'Database error during sync: ' . $e->getMessage();
 }
-// echo '<h3>Repairing roles</h3>';
-// include('modules/ACL/install_actions.php');
-// $GLOBALS['log']->info(__FILE__ . '(' . __LINE__ . ') >> Repairing roles');
 
-//Clear out all the langauge cache files.
+// Clear all language and JavaScript cache files
 clearAllJsAndJsLangFilesWithoutOutput();
-$cache_key = 'app_list_strings.'.$defaultLanguage ?? 'en_us' ;
+$cache_key = 'app_list_strings.' . ($defaultLanguage ?? 'en_us');
 sugar_cache_clear($cache_key);
 sugar_cache_reset();
 
-// Run all scripts listed in the post_install.txt file
+// Execute post-installation scripts
 runScripts($scriptsVersion, 'post_install.txt', $errors, $infos);
 
+// Apply custom SCSS theme settings (configurable via skipCssRebuild parameter, defaults to false)
+if (!filter_var($_REQUEST['skipCssRebuild'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+    $_REQUEST['keepUserTheme'] = 1;
+    include_once('SticInclude/SticCustomScss.php');
+}
 
-$_REQUEST['keepUserTheme'] = 1;
-include_once('SticInclude/SticCustomScss.php');
-
+// Cleanup application resources
 sugar_cleanup(false);
 
-// some jobs have annoying habit of calling sugar_cleanup(), and it can be called only once
-// but job results can be written to DB after job is finished, so we have to disconnect here again
-// just in case we couldn't call cleanup
+// Ensure database disconnection
+// Some jobs call sugar_cleanup() multiple times, which is not allowed.
+// Since job results may be written to DB after completion, we disconnect here.
 if (class_exists('DBManagerFactory')) {
     $db = DBManagerFactory::getInstance();
     $db->disconnect();
 }
+
+// Output results
 if (count($errors)) {
+    outputJsonResponse('error', $errors, $infos);
+    exit;
+}
+
+outputJsonResponse('success', [], $infos);
+exit;
+
+/**
+ * Execute scripts from a specified file list.
+ *
+ * Reads a file containing a list of scripts to execute and runs each one.
+ * Empty lines and comment lines (starting with #) are skipped.
+ *
+ * @param string $scriptsVersion Version identifier for the scripts
+ * @param string $fileName       Name of the file containing script list (e.g., 'pre_install.txt')
+ * @param array  $errors         Reference to errors array to append to
+ * @param array  $infos          Reference to infos array to append to
+ *
+ * @return void
+ */
+function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
+    if (!$scriptsVersion) {
+        $infos[] = "No scripts version provided. Skipping script execution.";
+        return;
+    }
+
+    $scriptsFile = 'SticUpdates/Releases/' . $scriptsVersion . "/$fileName";
+    if (!file_exists($scriptsFile)) {
+        $infos[] = "Scripts file not found: $scriptsFile";
+        return;
+    }
+
+    $scripts = file($scriptsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($scripts as $script) {
+        $script = trim($script);
+        // Skip empty lines and comments
+        if (!empty($script) && strpos($script, '#') !== 0) {
+            $_REQUEST['file'] = $script;
+            include('SticRunScripts.php');
+        }
+    }
+}
+
+/**
+ * Output a JSON response with proper HTTP headers and buffer cleanup.
+ *
+ * Ensures clean output by ending and clearing any existing output buffers
+ * before sending the JSON response.
+ *
+ * @param string $status Status of the operation ('success' or 'error')
+ * @param array  $errors Array of error messages
+ * @param array  $infos  Array of information/success messages
+ *
+ * @return void
+ */
+function outputJsonResponse($status, $errors, $infos) {
     @ob_end_clean();
     ob_start();
     ob_clean();
-
-    // Optional: Return a JSON error message
     header('Content-Type: application/json');
     echo json_encode([
-        'status' => 'error',
+        'status' => $status,
         'errors' => $errors,
         'infos' => $infos,
     ]);
     ob_flush();
-    exit;
-}
-@ob_end_clean();
-ob_start();
-ob_clean();
-
-// Optional: Return a JSON error message
-header('Content-Type: application/json');
-echo json_encode([
-    'status' => 'success',
-    'infos' => $infos,
-]);
-ob_flush();
-exit;
-
-
-function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
-    if ($scriptsVersion) {
-        $scriptsFile = 'SticUpdates/Releases/' . $scriptsVersion . "/$fileName";
-        if (file_exists($scriptsFile)) {
-            $scripts = file($scriptsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($scripts as $script) {
-                $script = trim($script);
-                if (!empty($script) && strpos($script, '#') !== 0) { // Skip empty lines and comments
-                    $_REQUEST['file'] = $script;
-                    include('SticRunScripts.php');
-                }
-            }
-        } else {
-            $errors[] = "Scripts file not found: $scriptsFile";
-        }
-    } else {
-        $infos[] = "No scripts version provided. Skipping script execution.";
-    }
-
 }
