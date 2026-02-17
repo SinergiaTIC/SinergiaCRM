@@ -40,22 +40,23 @@
  * @return PDO PDO connection object on success.
  *                On failure the script sends an HTTP 500 and terminates.
  */
-function connectToDBWithPDO()
-{
-    echo "Connecting to the database <br />";
-    global $sugar_config;
-    $mysqlHost = $sugar_config["dbconfig"]["db_host_name"];
-    $mysqlDatabase = $sugar_config["dbconfig"]["db_name"];
-    $mysqlUser = $sugar_config["dbconfig"]["db_user_name"];
-    $mysqlPassword = $sugar_config["dbconfig"]["db_password"];
-    try {
-        $connection = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDatabase", $mysqlUser, $mysqlPassword);
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $connection->exec("SET NAMES 'utf8'"); // Set connection charset to UTF-8
-        return $connection;
-    } catch (PDOException $e) {
-        http_response_code(500);
-        die("Connection Error: " . $e->getMessage());
+if (!function_exists('connectToDBWithPDO')) {
+    function connectToDBWithPDO() {
+        // echo "Connecting to the database <br />";
+        global $sugar_config;
+        $mysqlHost = $sugar_config["dbconfig"]["db_host_name"];
+        $mysqlDatabase = $sugar_config["dbconfig"]["db_name"];
+        $mysqlUser = $sugar_config["dbconfig"]["db_user_name"];
+        $mysqlPassword = $sugar_config["dbconfig"]["db_password"];
+        try {
+            $connection = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDatabase", $mysqlUser, $mysqlPassword);
+            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $connection->exec("SET NAMES 'utf8'"); // Set connection charset to UTF-8
+            return $connection;
+        } catch (PDOException $e) {
+            $errors[]= "Errors database connection". $e->getMessage();
+            return false;
+        }
     }
 }
 
@@ -68,20 +69,19 @@ function connectToDBWithPDO()
  * @param string $file       Path to the SQL file.
  * @return bool  True on success, false on failure. On failure an HTTP 500 status is sent.
  */
-function executeSQLFile($connection, $file)
-{
-    $sqlFileContent = file_get_contents($file);
-    echo "<br> -- $file <br>";
-    
-    // Execute SQL from file
-    try {
-        $connection->exec($sqlFileContent);
-        echo "SQL statements executed correctly. <br />";
-        return true;
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo "Error when executing SQL statements: " . $e->getMessage() . "<br />";
-        return false;
+if (!function_exists('executeSQLFile')) {
+    function executeSQLFile($connection, $file) {
+        $sqlFileContent = file_get_contents($file);
+        $infos[] = " Executing SQL file-- $file";
+        
+        try {
+            $connection->exec($sqlFileContent);
+            return true;
+        } catch (PDOException $e) {
+            http_response_code(500);
+            $errors[] = "Error when executing SQL statements: " . $e->getMessage() . "<br />";
+            return false;
+        }
     }
 }
 
@@ -97,16 +97,15 @@ ob_start();
 global $sugar_config;
 // Require maintenance mode to be enabled in config (accepts boolean or string-ish values)
 if (!(isset($sugar_config['stic_maintenance_mode_enabled']) && filter_var($sugar_config['stic_maintenance_mode_enabled'], FILTER_VALIDATE_BOOLEAN))) {
-    http_response_code(503);
-    echo "stic_maintenance_mode_enabled is not enabled in configuration. Exiting.";
-    exit;
+    $errors[] = "stic_maintenance_mode_enabled is not enabled in configuration. Exiting.";
+    return;
 }
 
 // Require the `file` parameter: nothing will be executed without it.
 if (!isset($_REQUEST['file'])) {
     http_response_code(400);
-    echo "File isn't specified in URL. Exiting.";
-    exit;
+    $errors[] = "File isn't specified in URL. Exiting.";
+    return;
 }
 
 $file = $_REQUEST['file'];
@@ -116,17 +115,15 @@ $normalizedFile = str_replace('\\', '/', $file);
 $normalizedNoLeading = ltrim($normalizedFile, '/');
 
 if (!file_exists($normalizedNoLeading) || !is_file($normalizedNoLeading)) {
-    http_response_code(404);
-    echo "File $normalizedNoLeading doesn't exist on server or not it is a file";
-    exit;
+    $errors[] = "File $normalizedNoLeading doesn't exist on server or not it is a file";
+    return;
 }
 
 // Restrict allowed files to prevent arbitrary file execution. Only files under `SticUpdates/` or `SticInstall/scripts/` are permitted.
 // Language packages under `SticUpdates/Languages/` must match the CRM default language (checked below).
 if (!preg_match('#^(?:SticUpdates/|SticInstall/scripts/)#i', $normalizedNoLeading)) {
-    http_response_code(403);
-    echo "Execution is restricted to SticUpdates/ or SticInstall/scripts/.";
-    exit;
+    $errors[] = "Execution is restricted to SticUpdates/ or SticInstall/scripts/.";
+    return;
 }
 
 // If this is a language package, ensure its language directory matches the CRM default language
@@ -136,33 +133,30 @@ if (stripos($normalizedNoLeading, 'SticUpdates/Languages/') === 0) {
     $crmLang = strtolower(strtok(str_replace('-', '_', $sugar_config['default_language'] ?? ''), '_')) ?: '';
 
     if ($fileLang !== $crmLang) {
-        http_response_code(204);
-        echo "Requested language file ($fileLang) doesn't match CRM language ($crmLang). Skipping execution.";
-        exit;
+        $infos[] = "Requested language file ($fileLang) doesn't match CRM language ($crmLang). Skipping execution.";
+        return;
     }
 }
 
 $ext = substr($normalizedNoLeading, -3);
 if ($ext === "php") {
-    echo "$normalizedNoLeading <br>";
+    // echo "$normalizedNoLeading <br>";
     require($normalizedNoLeading);
     // Indicate successful execution of the script
-    http_response_code(200);
-    echo "Script executed correctly.";
+    $infos[] = "Script executed correctly. $normalizedNoLeading";
 } else if ($ext === "sql") {
     $connection = connectToDBWithPDO();
-        $ok = executeSQLFile($connection,$normalizedNoLeading);
-        // Close the PDO connection by unsetting the reference so it can be freed
-        $connection = null;
-        if ($ok === false) {
-            // executeSQLFile already set a 500 status and printed the error
-            exit;
-        }
-        // SQL executed successfully
-        http_response_code(200);
-        echo "Script executed correctly.";
+    $ok = executeSQLFile($connection,$normalizedNoLeading);
+    // Close the PDO connection by unsetting the reference so it can be freed
+    $connection = null;
+    if ($ok === false) {
+        // executeSQLFile already set a 500 status and printed the error
+        return;
+    }
+    // SQL executed successfully
+    $infos[] = "Script executed correctly. $normalizedNoLeading";
 } else {
     http_response_code(400);
-    echo "File: $normalizedNoLeading. The file extension must be php or sql";
-    exit;
+    $errors[] = "File: $normalizedNoLeading. The file extension must be php or sql";
+    return;
 }

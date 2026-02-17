@@ -76,7 +76,9 @@ $sourceString = file_get_contents('themes/SuiteP/css/SticCustom/style.scss');
 file_put_contents('themes/SuiteP/css/SticCustom/style.css', $compiler->compileString($sourceString)->getCss());
 
 // Remove cache/themes/SuiteP/css/SticCustom/style.css to force reload css theme
-unlink('cache/themes/SuiteP/css/SticCustom/style.css');
+if (file_exists('cache/themes/SuiteP/css/SticCustom/style.css')) {
+    unlink('cache/themes/SuiteP/css/SticCustom/style.css');
+}
 
 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "End SticCustom subtheme base color change to {$color}");
 echo "<li>End SticCustom subtheme base color change to {$color}";
