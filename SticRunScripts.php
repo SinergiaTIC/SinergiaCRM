@@ -41,7 +41,7 @@
  *                On failure the script sends an HTTP 500 and terminates.
  */
 if (!function_exists('connectToDBWithPDO')) {
-    function connectToDBWithPDO() {
+    function connectToDBWithPDO(&$errors) {
         // echo "Connecting to the database <br />";
         global $sugar_config;
         $mysqlHost = $sugar_config["dbconfig"]["db_host_name"];
@@ -70,7 +70,7 @@ if (!function_exists('connectToDBWithPDO')) {
  * @return bool  True on success, false on failure. On failure an HTTP 500 status is sent.
  */
 if (!function_exists('executeSQLFile')) {
-    function executeSQLFile($connection, $file) {
+    function executeSQLFile($connection, $file, &$errors) {
         $sqlFileContent = file_get_contents($file);
         $infos[] = " Executing SQL file-- $file";
         
@@ -145,8 +145,8 @@ if ($ext === "php") {
     // Indicate successful execution of the script
     $infos[] = "Script executed correctly. $normalizedNoLeading";
 } else if ($ext === "sql") {
-    $connection = connectToDBWithPDO();
-    $ok = executeSQLFile($connection,$normalizedNoLeading);
+    $connection = connectToDBWithPDO($errors);
+    $ok = executeSQLFile($connection,$normalizedNoLeading, $errors);
     // Close the PDO connection by unsetting the reference so it can be freed
     $connection = null;
     if ($ok === false) {
