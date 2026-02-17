@@ -68,7 +68,6 @@ $mod_strings = array(
     'LBL_RETRIBUTION' => 'Retribución',
     'LBL_RETRIBUTION_CONDITIONS' => 'Condicións retribución',
     'LBL_OFFER_CODE' => 'Código oferta',
-    'LBL_OFFER_CODE' => 'Código oferta',
     'LBL_OFFER_TYPE' => 'Tipo',
     'LBL_OFFER_MODE' => 'Modalidad',
     'LBL_WEEKDAYS' => 'Días de la semana',
