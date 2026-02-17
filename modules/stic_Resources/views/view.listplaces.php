@@ -46,7 +46,11 @@ class stic_ResourcesViewListPlaces extends ViewList
     public function display()
     {
         global $mod_strings;
+
+        $return_action = $_REQUEST['action'] ?? '';
+
         parent::display();
+
         echo getVersionedScript("modules/stic_Resources/Utils.js");
 
         SticViews::display($this);
@@ -55,16 +59,25 @@ class stic_ResourcesViewListPlaces extends ViewList
             $(document).ready(function(){
                 $('.moduleTitle').html('<h2>{$mod_strings['LBL_PLACES']}</h2>');
 
-            // Clear filter in Places must mantain the user in the places list not returning to resources list
-            var clearButtons = $('.clearSearchIcon');
-            clearButtons.attr('onclick', '');
-            clearButtons.on('click', function(e) {
+                // Clear filter in Places must mantain the user in the places list not returning to resources list
+                var clearButtons = $('.clearSearchIcon');
+                clearButtons.attr('onclick', '');
+                clearButtons.on('click', function(e) {
                     e.preventDefault();
                     e.stopImmediatePropagation(); // Evita interferències amb altres scripts
                     // Defineix aquí la teva URL de destí
                     // Per exemple, anar a un layout concret o passar paràmetres extres
                     window.location.href = 'index.php?module=stic_Resources&action=listplaces&query=true&clear_query=true';
                 });
+            
+                // Sets the custom where for mass update to discrimate between places and resources. This is needed because mass update does not process the custom where added in listview and updates all the records instead of only places or non-places.
+                var massUpdateForm = $('#MassUpdate');
+                $(\"#MassUpdate [name='return_action']\").val('{$return_action}');
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'custom_where',
+                    value: ' AND (stic_resources.type = \"place\")'
+                }).appendTo(massUpdateForm);
             });
         </script>";
     }
