@@ -20,14 +20,16 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-//prevents directly accessing this file from a web browser
+
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'before_save');
-// Notify assigned user when close date is today and offer is not closed
-$hook_array['after_save'][] = array(100, 'after_save', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_save');
-// Update application counts on relationship changes
-$hook_array['after_relationship_add'][] = array(100, 'after_relationship_add', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_relationship_add');
-$hook_array['after_relationship_delete'][] = array(100, 'after_relationship_delete', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_relationship_delete');
+// Offer counts on create
+$hook_array['after_save'][] = array(100, 'after_save', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'after_save');
+// Update offer counts on delete
+$hook_array['after_delete'][] = array(100, 'after_delete', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'after_delete');
+// Update offer counts on relationship changes
+$hook_array['after_relationship_add'][] = array(100, 'after_relationship_add', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'after_relationship_add');
+$hook_array['after_relationship_delete'][] = array(100, 'after_relationship_delete', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'after_relationship_delete');
+
