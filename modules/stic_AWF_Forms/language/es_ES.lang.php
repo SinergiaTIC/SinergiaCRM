@@ -135,6 +135,11 @@ $mod_strings = array (
   'LBL_BUTTON_OPEN' => 'Abrir',
   'LBL_BUTTON_DOWNLOAD' => 'Descargar',
 
+  // General editors
+  'LBL_SELECT_PLACEHOLDER' => 'Selecciona un elemento...',
+  'LBL_SELECT_WRITE_TO_SEARCH' => 'Escribe para buscar...',
+  'LBL_SELECT_NO_RESULTS' => 'No se encontró nada',
+
   // DataBlocks
   'LBL_DATABLOCK' => 'Bloque de datos',
   'LBL_DATABLOCKS' => 'Bloques de datos',

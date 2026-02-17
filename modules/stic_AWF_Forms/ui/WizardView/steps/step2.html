@@ -456,11 +456,7 @@
                             <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELDS_SHOW_ALL_DESC')"></div>
                             <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_field_allcheck" x-model="showAllFields"/>
                           </div>
-                          <select id="modalField_field" class="form-select" x-model="field.name">
-                            <template x-for="moduleField in availableFields" :key="moduleField.name">
-                              <option :value="moduleField.name" x-text="moduleField.text"></option>
-                            </template>
-                          </select>
+                          <stic-select options="availableFieldsForSelect" model="field.name"></stic-select>
                         </div>
                       </template>
                       <!-- Type in form -->
@@ -863,13 +859,9 @@
                         <template x-if="store.applyCondition">
                           <div class="col-4">
                             <label for="validation_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD')"></label>
-                            <select id="validation_ConditionField" x-bind:disabled="store.availableFieldsInForm.length<=1" class="form-select" 
-                                    x-model="validation.condition_field" @change="validation.condition_value = ''">
-                              <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                              <template x-for="field in store.availableFieldsInForm" :key="field.name">
-                                <option :value="field.name" x-text="field.text"></option>
-                              </template>
-                            </select>
+                            <stic-select id="validation_ConditionField" x-bind:disabled="store.availableFieldsInForm.length<=1"
+                                         options="store.availableFieldsInFormForSelect" model="validation.condition_field" 
+                                         @change="validation.condition_value = ''"></stic-select>
                           </div>
                         </template>
                         <!-- Condition value -->
@@ -886,12 +878,7 @@
                             </template>
                             <!-- Select -->
                             <template x-if="!store.isBooleanCondition && store.activeConditionFieldDef?.type_in_form == 'select'">
-                              <select id="validation_ConditionValue" class="form-select" x-model="validation.condition_value">
-                                <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                <template x-for="opt in store.activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
-                                  <option :value="opt.value" x-text="opt.text"></option>
-                                </template>
-                              </select>
+                              <stic-select options="store.activeConditionFieldAvailableValueOptionsForSelect" model="validation.condition_value"></stic-select>
                             </template>
                             <!-- Text -->
                             <template x-if="!store.isBooleanCondition && store.activeConditionFieldDef?.type_in_form != 'select'">
@@ -910,12 +897,7 @@
                     <div class="row align-items-end">
                       <div class="col-3">
                         <label for="validation_Validator" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATOR')"></label>
-                        <select id="validation_Validator" class="form-select" x-model="validation.validator" @change="validation.params = {}">
-                          <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                          <template x-for="valDef in availableValidators" :key="valDef.name">
-                            <option :value="valDef.name" x-text="valDef.title"></option>
-                          </template>
-                        </select>
+                        <stic-select options="availableValidatorsForSelect" model="validation.validator" @change="validation.params = {}"></stic-select>
                       </div>
                       <template x-if="selectedValidatorDefinition">
                         <div class="col-9 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center" style="height:35px !important;">
@@ -984,11 +966,7 @@
                   <!-- Relationship -->
                   <div class="col-5">
                     <label for="modalRel_Relation" class="form-label" x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP')"></label>
-                    <select id="modalRel_Relation" class="form-select" x-model="$store.relCreator.selectedRelName">
-                      <template x-for="relation in $store.relCreator.availableRels" :key="relation.name">
-                        <option :value="relation.name" x-text="relation.textExtended"></option>
-                      </template>
-                    </select>
+                    <stic-select id="modalRel_Relation" options="$store.relCreator.availableRelsForSelect" model="$store.relCreator.selectedRelName"></stic-select>
                   </div>
                   <!-- Data Block -->
                   <div class="col-3">
@@ -1034,12 +1012,13 @@
               <div class="row align-items-end">
                 <!-- Module -->
                 <div class="col-6">
-                  <stic-field-select class="col-6" x-model="newDataBlock.module" label="LBL_DATABLOCK_MODULE" required
-                                    map="STIC.enabledModules" map-text="text"></stic-field-select>
+                  <label class="form-label" x-text="utils.translateForFieldLabel('LBL_MODULE')"></label>
+                  <stic-select id="newDataBlockModal-module" options="availableModulesForSelect" model="newDataBlock.module"></stic-select>
                 </div>
+
                 <!-- Data Block name -->
                 <div class="col-6">
-                  <stic-field-text class="col-6" x-model="newDataBlock.text" label="LBL_DATABLOCK_NAME" required
+                  <stic-field-text class="col-6" x-model="newDataBlock.text" label="LBL_DATABLOCK_NAME"
                                   x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
                                   keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
                 </div>
@@ -1070,7 +1049,7 @@
             <form @submit.prevent="handleAddUnlinkedDatablock()">
               <div class="mb-3">
                 <!-- Data Block name -->
-                <stic-field-text class="w-100" x-model="newUnlinkedDataBlock.text" label="LBL_DATABLOCK_NAME" required
+                <stic-field-text class="w-100" x-model="newUnlinkedDataBlock.text" label="LBL_DATABLOCK_NAME" 
                                 keydown.enter="handleAddUnlinkedDatablock()" keydown.esc="creatingUnlinkedDataBlock = false;"></stic-field-text>
               </div>
             </form>

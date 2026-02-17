@@ -206,202 +206,323 @@ class SticFieldCheckbox extends HTMLElement {
 }
 customElements.define("stic-field-checkbox", SticFieldCheckbox);
 
-// ---------- FieldSelect ----------
-const tplSticFieldSelect = (() => {
-  const tpl = document.createElement("template");
-  tpl.innerHTML = `
-    <div>
-      <label class="form-label"></label>
-      <select class="form-select"></select>    
+
+// ---------- SearchSelect <stic-select> ----------
+/**
+ * Visual definition (Template)
+ */
+const searchSelectTemplate = (optionsVar, modelVar, placeholder) => `
+  <div x-data="searchableSelect({ optionsVarName: '${optionsVar}', modelVarName: '${modelVar}', placeholder: '${placeholder}' || utils.translate('LBL_SELECT_PLACEHOLDER') })" 
+       x-effect="refreshData()" 
+       class="stic-select-container" 
+       @click.outside="close()" 
+       @resize.window="close()" 
+       @scroll.window="close()"
+       @stic-select-open.window="if ($event.target !== $el) close()"
+       style="position: relative; font-family: Arial, sans-serif;" >
+
+    <div class="form-control form-select" 
+         x-ref="trigger" 
+         tabindex="0" 
+         @click="toggle()" 
+         @keydown.enter.prevent="isDisabled ? null : (open ? selectFocused() : toggle())"
+         @keydown.space.prevent="isDisabled ? null : (open ? selectFocused() : toggle())"
+         @keydown.arrow-down.prevent="isDisabled ? null : (open ? navigateOptions('next') : toggle())"
+         @keydown.arrow-up.prevent="isDisabled ? null : (open ? navigateOptions('prev') : null)"
+         @keydown.escape.prevent="close(true)"
+         :style="getTriggerStyle()">
+      
+      <span x-show="!open" x-html="selectedLabel ? selectedLabel : placeholder" 
+            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 20px;" 
+            :class="{'text-muted': !selectedLabel}"></span>
+      
+      <input x-show="open" x-ref="searchInput" x-model="search" type="text" :placeholder="utils.translate('LBL_SELECT_WRITE_TO_SEARCH')"
+             @keydown.tab="selectFocused(false); close()"
+             @keydown.enter.prevent.stop="selectFocused()"
+             @keydown.arrow-down.prevent.stop="navigateOptions('next')"
+             @keydown.arrow-up.prevent.stop="navigateOptions('prev')"
+             @keydown.escape.prevent="close(true)"
+             style="border: none; outline: none; width: 100%; height: 100%; padding: 0; margin: 0; box-shadow: none; background: transparent; font-size: 15px; color: #333;">
     </div>
-  `;
-  return tpl;
-})();
-class SticFieldSelect extends HTMLElement {
-  connectedCallback() {
-    const idBase = this.getAttribute("id") || utils.newId("fs-");
 
-    // Clone template
-    const clone = tplSticFieldSelect.content.cloneNode(true);
-    const wrapper = clone.firstElementChild;
-    const label = wrapper.querySelector("label");
-    const select = wrapper.querySelector("select");
+    <template x-teleport="body">
+      <div x-show="open" x-transition :style="dropdownStyle" x-ref="dropdownList">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <template x-for="(option, index) in filteredOptions" :key="option.id">
+            <li @click.stop="selectOption(option)" :class="{ 'selected': option.id == selected, 'focused': index === focusedIndex }"
+                @mouseenter="focusedIndex = index" :style="getItemStyle(option.id == selected, index === focusedIndex)"> 
+              <span x-html="option.label ? option.label : '&nbsp;'" :style="getTextStyle(option.id == selected)"></span>
+            </li>
+          </template>
+          
+          <li x-show="filteredOptions.length === 0" x-text="utils.translate('LBL_SELECT_NO_RESULTS')"
+              style="padding: 15px; display: flex; align-items: center; justify-content: center; color: #999; font-style: italic; font-size: 14px; font-family: Arial, sans-serif;">
+          </li>
+        </ul>
+      </div>
+    </template>
+  </div>
+`;
 
-    // Label
-    label.setAttribute("id", `${idBase}_label`);
-    label.setAttribute("for", `${idBase}_select`);
-    if (this.getAttribute("label")) {
-      label.setAttribute("x-text", `utils.translateForFieldLabel('${this.getAttribute("label")}')`);
-    }
-    if (this.hasAttribute("required")) {
-      label.classList.add("field-required");
-    }
+/**
+ * Component Logic (Alpine Data)
+ */
+const registerSearchableSelect = () => {
+  Alpine.data('searchableSelect', (config) => ({
+    options: [], 
+    selected: null,
+    selectedLabel: '',
+    search: '',
+    open: false,
+    focusedIndex: -1, 
+    isDisabled: false, // ESTAT DISABLED
 
-    const model = this.getAttribute("x-model") || "";
-    const map = this.getAttribute("map") || "";
-    const valueProp = this.getAttribute("map-value") ? "." + this.getAttribute("map-value") : "Key";
-    const textProp = this.getAttribute("map-text") ? "." + this.getAttribute("map-text") : "";
+    dropdownStyle: {
+      position: 'fixed',
+      top: '-9999px',
+      left: '-9999px',
+      width: 'auto',
+      maxHeight: '350px', 
+      overflowY: 'auto',
+      zIndex: 999999,
+      background: 'white',
+      border: '1px solid #bbb',
+      borderRadius: '4px',
+      boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
+      fontFamily: 'Arial, sans-serif',
+    },
+    
+    placeholder: '',
+    optionsVarName: '',
+    modelVarName: '',
+    isUserSelect: false,
+    
+    init() {
+      this.placeholder = config.placeholder;
+      this.optionsVarName = config.optionsVarName;
+      this.modelVarName = config.modelVarName;
+      
+      // 1. INICIALITZAR DISABLED
+      // Mirem si el component pare té l'atribut disabled
+      const parent = this.$el.closest('stic-select');
+      if (parent) {
+          this.isDisabled = parent.hasAttribute('disabled');
+          
+          // 2. OBSERVAR CANVIS EN DISABLED (x-bind:disabled)
+          const observer = new MutationObserver(() => {
+              this.isDisabled = parent.hasAttribute('disabled');
+              if (this.isDisabled && this.open) this.close(); // Tancar si es deshabilita obert
+          });
+          observer.observe(parent, { attributes: true, attributeFilter: ['disabled'] });
+      }
 
-    // Select
-    select.setAttribute("id", `${idBase}_select`);
-    select.setAttribute("x-model", model);
-    select.setAttribute("value", this.getAttribute("value") || "");
-    if (this.hasAttribute("required")) {
-      select.setAttribute("required", "");
-    }
-    if (this.hasAttribute("multiple")) {
-      select.setAttribute("multiple", "multiple");
-    }
-    select.setAttribute(
-      "x-init",
-      `$nextTick(() => {
-        let select = $('#${idBase}_select').selectize({ placeholder: '', dropdownParent: 'body', onChange: (value) => { ${model} = value }})[0]?.selectize;
-        select?.setValue(${model});
-      });`
-    );
-  
-    select.innerHTML = `
-    <template x-for="[elKey, el] in Object.entries(${map})" :key="elKey">
-      <option :value="el${valueProp}" x-text="el${textProp}"></option>
-    </template>`;
+      this.$watch('selected', (val) => { 
+        this.updateLabel();
+        if (this.modelVarName) {
+          try {
+            // Actualització model intern
+            this.$dispatch('input', val); 
+            let setExpr = `${this.modelVarName} = '${val}'`;
+            Alpine.evaluate(this.$el, setExpr);
 
-    // Other attributes
-    const reserved = ["id", "label", "help", "x-model"];
-    const wrapperAttrs = ["class", "style", "hidden", "title"];
-    for (const { name, value } of this.attributes) {
-      if (reserved.includes(name)) continue;
-      if (wrapperAttrs.includes(name)) continue;
-      select.setAttribute(name, value);
-    }
+            // 3. DISPARAR EVENT CHANGE (per al @change extern)
+            this.$el.dispatchEvent(new CustomEvent('change', { 
+                detail: { value: val },
+                bubbles: true 
+            }));
 
-    this.appendChild(clone);
-    requestAnimationFrame(() => Alpine.initTree(this));
-  }
-}
-customElements.define("stic-field-select", SticFieldSelect);
-
-// ---------- FieldSelectDynamic ----------
-const tplSticFieldSelectDynamic = (() => {
-  const tpl = document.createElement("template");
-  tpl.innerHTML = `
-  <div 
-    x-data="{ 
-      items: [],
-      open: false,
-      search: '',
-      selectedItem: null,
-
-      model: '',
-      mapExpr: '',
-      valueProp: 'id',
-      textProp: 'text',
-
-      loadItems() {
-        try {
-          const data = Alpine.evaluate(this.$root.closest('[x-data]'), this.mapExpr) || [];
-          this.items = Array.isArray(data) ? data : Object.values(data);
-        } catch (e) {
-          console.error('Error loading items from map expression:', e);
-          this.items = [];
+          } catch(e) { }
         }
-      },
+      });
+      
+      this.$watch('search', () => { this.focusedIndex = 0; });
+    },
 
-      filteredItems() {
-        // ... To fiter elements
-      },
-    
-      select(item) {
-        // ... To select elements
-      },
-    
-      // Reactivity
-      watchItems() {
-        const parentData = Alpine.$data(this.$root.closest('[x-data]'));
-        Alpine.effect(() => {
-          const newItems = Alpine.evaluate(parentData, this.mapExpr);
-          this.items = Array.isArray(newItems) ? newItems : Object.values(newItems);
-        });
-      },
-    
-      // Initialization
-      init() {
-        this.watchItems();
-        const initialValue = Alpine.evaluate(this.$root.closest('[x-data]'), this.model);
-        if (initialValue) {
-          const selected = this.items.find(item => item[this.valueProp] == initialValue);
-          if (selected) {
-            this.selectedItem = selected;
-            this.search = selected[this.textProp];
+    // --- ESTILS DEL TRIGGER (Aquí evitem conflictes d'estils) ---
+    getTriggerStyle() {
+        // Estils base comuns
+        let style = 'position: relative; display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; height: 38px; border: 1px solid #ccc; border-radius: 4px; ';
+        
+        if (this.isDisabled) {
+            // Estils quan està DESHABILITAT
+            style += 'background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; color: #6c757d;';
+        } else {
+            // Estils quan està HABILITAT
+            style += 'background-color: #fff; cursor: pointer; color: #333;';
+        }
+        return style;
+    },
+
+    getItemStyle(isSelected, isFocused) {
+      let style = 'display: flex; align-items: center; min-height: 30px; padding: 6px 10px; transition: background-color 0.05s; cursor: pointer; ';
+      if (isFocused) {
+        style += 'background-color: #e2e6ea; color: #000; '; 
+      } else if (isSelected) {
+        style += 'background-color: #f0f7ff; color: #333; '; 
+      } else {
+        style += 'background-color: white; color: #444; ';
+      }
+      return style;
+    },
+
+    getTextStyle(isSelected) {
+      let style = 'display: block; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit;';
+      if (isSelected) {
+        style += 'font-weight: 600;';
+      } else {
+        style += 'font-weight: normal;';
+      }
+      return style;
+    },
+
+    refreshData() {
+      try {
+        let data = [];
+        if (this.optionsVarName) {
+          data = Alpine.evaluate(this.$el, this.optionsVarName);
+        }
+        if (Array.isArray(data)) {
+          this.options = data;
+        } else if (typeof window[this.optionsVarName] !== 'undefined') {
+          this.options = window[this.optionsVarName];
+        }
+
+        if (this.modelVarName && !this.isUserSelect) {
+          let val = Alpine.evaluate(this.$el, this.modelVarName);
+          if (val !== this.selected) {
+            this.selected = val;
           }
         }
+        this.updateLabel();
+      } catch (e) {}
+    },
+
+    updateLabel() {
+      if (!this.options || this.options.length === 0) {
+        this.selectedLabel = '';
+        return;
       }
-    }"
-    @click.away="open = false"
-    class="relative"
-    >
-    <div class="input-group">
-      <input type="text" x-model="search" @focus="open = true" class="form-control" placeholder="" />
-      <button class="btn btn-outline-secondary" type="button" @click="open = !open">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
-          <path d="M7.247 11.14L2.451 5.658C1.885 5.093 2.221 4 3.003 4h9.994c.782 0 1.118 1.093.553 1.658L8.753 11.14a1 1 0 0 1-1.506 0z"/>
-        </svg>
-      </button>
-    </div>
-    
-    <ul class="absolute z-10 w-full bg-white border rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto" x-show="open">
-      <template x-for="item in filteredItems()" :key="item[valueProp]">
-        <li @mousedown.prevent="select(item)" x-text="item[textProp]" class="cursor-pointer hover:bg-gray-200 p-2"></li>
-      </template>
-      <li x-show="!filteredItems().length" class="p-2 text-gray-400">No hi ha coincidències.</li>
-    </ul>
-</div>
-  `;
-  return tpl;
-})();
-class SticFieldSelectDynamic extends HTMLElement {
+      const found = this.options.find(o => o.id == this.selected);
+      this.selectedLabel = found ? found.label : '';
+    },
+
+    get filteredOptions() {
+      if (!this.options) return [];
+      if (this.search === '') return this.options;
+      return this.options.filter(o => String(o.label).toLowerCase().includes(this.search.toLowerCase()));
+    },
+
+    toggle() {
+      if (this.isDisabled) return; // BLOQUEJAR SI DISABLED
+
+      if (this.open) {
+        this.close();
+      } else {
+        this.$dispatch('stic-select-open'); 
+
+        this.calculatePosition();
+        this.open = true;
+        this.search = ''; 
+        
+        if (this.selected) {
+          const idx = this.filteredOptions.findIndex(o => o.id == this.selected);
+          this.focusedIndex = idx >= 0 ? idx : 0;
+        } else {
+          this.focusedIndex = 0;
+        }
+        
+        this.$nextTick(() => { 
+          if(this.$refs.searchInput) this.$refs.searchInput.focus();
+          this.scrollToFocused(); 
+        });
+      }
+    },
+
+    navigateOptions(direction) {
+      const max = this.filteredOptions.length - 1;
+      if (direction === 'next') {
+        this.focusedIndex = this.focusedIndex < max ? this.focusedIndex + 1 : 0;
+      } else {
+        this.focusedIndex = this.focusedIndex > 0 ? this.focusedIndex - 1 : max;
+      }
+      this.scrollToFocused();
+    },
+
+    scrollToFocused() {
+      this.$nextTick(() => {
+        if (!this.$refs.dropdownList) return;
+        const list = this.$refs.dropdownList;
+        const items = list.querySelectorAll('li'); 
+        if (items[this.focusedIndex]) {
+          items[this.focusedIndex].scrollIntoView({ block: 'nearest' });
+        }
+      });
+    },
+
+    selectFocused(refocus = true) {
+      const options = this.filteredOptions;
+      if (options.length > 0 && this.focusedIndex >= 0 && options[this.focusedIndex]) {
+        this.selectOption(options[this.focusedIndex], refocus);
+      }
+    },
+
+    selectOption(option, refocus = true) {
+      this.isUserSelect = true;
+      this.selected = option.id;
+      this.open = false;
+      this.search = '';
+      this.$nextTick(() => { 
+        this.isUserSelect = false; 
+        if(refocus && this.$refs.trigger) this.$refs.trigger.focus();
+      });
+    },
+
+    close(returnFocus = false) { 
+      this.open = false; 
+      this.search = ''; 
+      if(returnFocus && this.$refs.trigger) this.$refs.trigger.focus();
+    },
+
+    calculatePosition() {
+      if (!this.$refs.trigger) return;
+      const rect = this.$refs.trigger.getBoundingClientRect();
+      this.dropdownStyle = {
+        ...this.dropdownStyle,
+        top: rect.bottom + 'px',
+        left: rect.left + 'px',
+        width: rect.width + 'px',
+        display: 'block'
+      };
+    },
+  }));
+};
+
+if (typeof Alpine !== 'undefined') {
+    registerSearchableSelect();
+} else {
+    document.addEventListener('alpine:init', registerSearchableSelect);
+}
+
+class SticSelect extends HTMLElement {
   connectedCallback() {
-    const idBase = this.getAttribute("id") || utils.newId("fsd-");
+    if (this.querySelector('.stic-select-container')) return;
 
-    const model = this.getAttribute("x-model") || "";
-    const mapExpr = this.getAttribute("map") || "[]";
-    const valueProp = this.getAttribute("map-value") || "id";
-    const textProp = this.getAttribute("map-text") || "text";
+    const optionsVar = this.getAttribute('options') || '';
+    const modelVar = this.getAttribute('model') || '';
+    const placeholder = this.getAttribute('placeholder') || '';
 
-    // Clone template
-    const clone = tplSticFieldSelectDynamic.content.cloneNode(true);
-    const wrapper = clone.firstElementChild;
-    const label = wrapper.querySelector("label");
-    const select = wrapper.querySelector("select");
+    const elementId = this.getAttribute('id') || '';
 
-    // Label
-    label.setAttribute("id", `${idBase}_label`);
-    label.setAttribute("for", `${idBase}_select`);
-    if (this.getAttribute("label")) {
-      label.setAttribute("x-text", `utils.translateForFieldLabel('${this.getAttribute("label")}')`);
+    this.innerHTML = searchSelectTemplate(optionsVar, modelVar, placeholder);
+
+    if (elementId) {
+      const trigger = this.querySelector('[x-ref="trigger"]');
+      if (trigger) {
+        trigger.id = elementId + "_internal"; 
+      }
     }
-
-    // Select
-    select.setAttribute("id", `${idBase}_select`);
-    if (this.hasAttribute("required")) {
-      select.setAttribute("required", "");
-    }
-    const multiple = this.hasAttribute("multiple");
-    if (multiple) {
-      select.setAttribute("multiple", "multiple");
-    }
-
-    // Other attributes
-    const reserved = ["id", "label", "help", "x-model"];
-    const wrapperAttrs = ["class", "style", "hidden", "title"];
-    for (const { name, value } of this.attributes) {
-      if (reserved.includes(name)) continue;
-      if (wrapperAttrs.includes(name)) continue;
-      select.setAttribute(name, value);
-    }
-
-    this.appendChild(clone);
-    requestAnimationFrame(() => Alpine.initTree(this));
   }
 }
-customElements.define("stic-field-select-dynamic", SticFieldSelectDynamic);
-
+if (!customElements.get('stic-select')) {
+  customElements.define('stic-select', SticSelect);
+}
