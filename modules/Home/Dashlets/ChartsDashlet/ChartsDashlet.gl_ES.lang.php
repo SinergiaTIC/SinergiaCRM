@@ -45,5 +45,5 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $dashletStrings['ChartsDashlet'] = array(
     'LBL_TITLE' => 'Gráficos',
     'LBL_DESCRIPTION' => 'Un Dashlet para visualizar gráficos',
-    'LBL_CONFIGURE_TITLE' => 'Título',
+    'LBL_CONFIGURE_TITLE' => 'Titulo',
 );
