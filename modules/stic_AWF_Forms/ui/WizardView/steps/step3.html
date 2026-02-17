@@ -278,13 +278,9 @@
                                         <template x-if="$store.actionEditor.applyCondition">
                                             <div class="col-4">
                                                 <label for="action_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD')"></label>
-                                                <select id="action_ConditionField" x-bind:disabled="$store.actionEditor.availableFieldsInForm.length<=1" class="form-select" 
-                                                        x-model="$store.actionEditor.action.condition_field" @change="$store.actionEditor.action.condition_value = ''">
-                                                    <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                    <template x-for="field in $store.actionEditor.availableFieldsInForm" :key="field.name">
-                                                        <option :value="field.name" x-text="field.text"></option>
-                                                    </template>
-                                                </select>
+                                                <stic-select id="action_ConditionField" x-bind:disabled="$store.actionEditor.availableFieldsInForm.length<=1"
+                                                             options="$store.actionEditor.availableFieldsInFormForSelect" model="$store.actionEditor.action.condition_field" 
+                                                             @change="$store.actionEditor.action.condition_value = ''"></stic-select>
                                             </div>
                                         </template>
                                         <!-- Condition value -->
@@ -301,12 +297,7 @@
                                             </template>
                                             <!-- Select -->
                                             <template x-if="!$store.actionEditor.isBooleanCondition && $store.actionEditor.activeConditionFieldDef?.type_in_form == 'select'">
-                                                <select id="action_ConditionValue" class="form-select" x-model="$store.actionEditor.action.condition_value">
-                                                <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                <template x-for="opt in $store.actionEditor.activeConditionFieldDef.value_options.filter(o => o.is_visible)" :key="opt.value">
-                                                    <option :value="opt.value" x-text="opt.text"></option>
-                                                </template>
-                                                </select>
+                                                <stic-select options="$store.actionEditor.activeConditionFieldAvailableValueOptionsForSelect" model="$store.actionEditor.action.condition_value"></stic-select>
                                             </template>
                                             <!-- Text -->
                                             <template x-if="!$store.actionEditor.isBooleanCondition && $store.actionEditor.activeConditionFieldDef?.type_in_form != 'select'">
@@ -433,13 +424,7 @@
                                                         <div class="card p-3 bg-white border">
                                                             <div class="mb-2">
                                                                 <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION')"></label>
-                                                                <select class="form-select" x-model="param.selectedOption" 
-                                                                        @change="$store.actionEditor.onParamOptionChange(param, paramDef)" :required="paramDef.required"> 
-                                                                    <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                                    <template x-for="optDef in paramDef.selectorOptions" :key="optDef.name">
-                                                                        <option :value="optDef.name" x-text="optDef.text"></option>
-                                                                    </template>
-                                                                </select>
+                                                                <stic-select options="paramDef.selectorOptions.map(o => ({ id: o.name, label: o.text}))" model="param.selectedOption"></stic-select>
                                                             </div>
                                                             <div x-data="{ get activeOpt() { return paramDef.selectorOptions.find(o => o.name == param.selectedOption); } }">
                                                                 <!-- Resolved Type: value -->
@@ -499,11 +484,7 @@
                                                                         <template x-if="allowedModules.length > 1">
                                                                             <div>
                                                                                 <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_MODULE')"></label>
-                                                                                <select class="form-select mb-2" x-model="selectedModule" @change="onModuleChange()">
-                                                                                    <template x-for="mod in allowedModules" :key="mod.name">
-                                                                                        <option :value="mod.name" x-text="mod.text"></option>
-                                                                                    </template>
-                                                                                </select>
+                                                                                <stic-select options="allowedModulesForSelect" model="selectedModule" @change="onModuleChange()"></stic-select>
                                                                                 <label class="form-label small text-muted" x-text="utils.translateForFieldLabel('LBL_ACTION_PARAM_CRM_RECORD_RECORD')"></label>
                                                                             </div>
                                                                         </template>

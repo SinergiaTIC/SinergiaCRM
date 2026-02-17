@@ -83,6 +83,7 @@ class Sugar_Smarty extends Smarty
         // STIC Custom 20260128 JBL - Advanced Web Forms - Remove warning for deprecated use of PHP functions as modifiers in Templates
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/775
         $this->registerPlugin("modifier", "html_entity_decode", "html_entity_decode");
+        $this->registerPlugin("modifier", "file_exists", "file_exists");
         // End STIC Custom
 
 

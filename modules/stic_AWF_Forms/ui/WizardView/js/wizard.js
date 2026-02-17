@@ -635,8 +635,14 @@ class WizardStep2 {
               const currentFieldName = this.dataBlock?.getFieldInputName(this.field);
               return this.formConfig?.getAllFieldsInForm(currentFieldName) ?? []; 
             },
+            get availableFieldsInFormForSelect() { return this.availableFieldsInForm.map(field => ({ id: field.name, label: field.text })); },
+
             get activeConditionFieldDef() { return this._activeConditionFieldDef; },
-            
+            get activeConditionFieldAvailableValueOptions() {return this.activeConditionFieldDef.value_options.filter(o => o.is_visible)},
+            get activeConditionFieldAvailableValueOptionsForSelect() {
+              return this.activeConditionFieldAvailableValueOptions.map(option => ({ id: option.value, label: option.text }));
+            },
+
             get isBooleanCondition() {
               const def = this._activeConditionFieldDef;
               if (!def) return false;
@@ -803,6 +809,7 @@ class WizardStep2 {
             relationships: Alpine.store('dataBlockRelationships'), // Store con las operaciones generales de Relaciones
 
             availableRels: [],
+            get availableRelsForSelect() { return this.availableRels.map(r => ({ id: r.name, label: r.textExtended })); },
             selectedRelName: '',
 
             availableDataBlocks: [],
@@ -953,6 +960,10 @@ class WizardStep2 {
       newDataBlock: {module:'', text:''},
       newUnlinkedDataBlock: {text:''},
 
+      get availableModulesForSelect() {
+        if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
+        return Object.entries(STIC.enabledModules).map(([key, value]) => ({ id: key, label: value.text }));
+      },
       get isValid() { 
         return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
       },
@@ -1006,6 +1017,9 @@ class WizardStep2 {
           return [this.dataBlock?.getModuleInformation()?.fields[this.field.name]];
         }
         return this.showAllFields ? this.dataBlock?.getAvailableFieldsInformation() : this.dataBlock?.getAvailableFieldsInformation().filter(f => f.inViews) ?? [];
+      },
+      get availableFieldsForSelect() {
+        return this.availableFields.map(field => ({ id: field.name, label: field.text }));
       },
 
       get selectedFieldInfo() { 
@@ -1290,6 +1304,7 @@ class WizardStep2 {
       get isValid() { return this.validation?.isValid() == true; },
 
       get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm(this.fieldName) ?? []; },
+      get availableFieldsInFormForSelect() { return this.availableFieldsInForm.map(field => ({ id: field.name, label: field.text })); },
 
       get availableValidators() {
         if (!this.field) return [];
@@ -1306,6 +1321,8 @@ class WizardStep2 {
             )
         );
       },
+      get availableValidatorsForSelect() { return this.availableValidators.map(a => ({ id: a.name, label: a.title })); },
+
       get selectedValidatorDefinition() {
         if (!this.validation.validator) return null;
         return utils.getDefinedActions().find(a => a.name === this.validation.validator);
@@ -1460,8 +1477,14 @@ class WizardStep3 {
             get formConfig() { return window.alpineComponent.formConfig; },
 
             get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm() ?? []; },
-            
+            get availableFieldsInFormForSelect() { return this.availableFieldsInForm.map(field => ({ id: field.name, label: field.text })); },
+
             get activeConditionFieldDef() { return this._activeConditionFieldDef; },
+            get activeConditionFieldAvailableValueOptions() {return this.activeConditionFieldDef.value_options.filter(o => o.is_visible)},
+            get activeConditionFieldAvailableValueOptionsForSelect() {
+              return this.activeConditionFieldAvailableValueOptions.map(option => ({ id: option.value, label: option.text }));
+            },
+
             get isBooleanCondition() {
               const def = this.activeConditionFieldDef;
               if (!def) return false;
@@ -2023,6 +2046,10 @@ class WizardStep3 {
         if (!this.supportedModules || this.supportedModules.length === 0) return all;
         return all.filter(m => this.supportedModules.includes(m.name));
       },
+      get allowedModulesForSelect() {
+        return this.allowedModules.map(m => ({ id: m.name, label: m.text }));
+      },
+
 
       init() {
         this.selectedModule = this.allowedModules[0].name;

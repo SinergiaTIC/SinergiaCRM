@@ -245,7 +245,7 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_69c1s_responses"] = array (
   'module' => 'stic_AWF_Forms',
   'bean_name' => false,
   'vname' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Forms_TITLE',
-  'id_name' => 'stic_aa0eb_forms_ida',
+  'id_name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
 );
 $dictionary["stic_AWF_Responses"]["fields"]["stic_1bb8ponses_name"] = array (
   'name' => 'stic_1bb8ponses_name',
@@ -254,14 +254,14 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_1bb8ponses_name"] = array (
   'inline_edit' => false,
   'vname' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Forms_TITLE',
   'save' => true,
-  'id_name' => 'stic_aa0eb_forms_ida',
+  'id_name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
   'link' => 'stic_69c1s_responses',
   'table' => 'stic_AWF_Forms',
   'module' => 'stic_AWF_Forms',
   'rname' => 'name',
 );
-$dictionary["stic_AWF_Responses"]["fields"]["stic_aa0eb_forms_ida"] = array (
-  'name' => 'stic_aa0eb_forms_ida',
+$dictionary["stic_AWF_Responses"]["fields"]["stic_awf_forms_stic_awf_responsesforms_ida"] = array (
+  'name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
   'type' => 'link',
   'relationship' => 'stic_AWF_Forms_stic_AWF_Responses',
   'source' => 'non-db',
