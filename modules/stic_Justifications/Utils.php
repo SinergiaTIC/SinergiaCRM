@@ -53,7 +53,12 @@ class stic_JustificationsUtils {
         }
     }
 
-    public static function updateRelatedOpportunity($opportunityId) {
+    public static function updateRelatedOpportunity($opportunityId, $forceUpdate = false) {
+        // Avoid updating the opportuniy at every change when chages come from an opportunity change
+        global $sticUpdatingOpportunity;
+        if (($sticUpdatingOpportunity ?? false) && !$forceUpdate) {
+            return; 
+        }
         $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
         if (!empty($opportunity->id)) {
             $db = DBManagerFactory::getInstance();

@@ -35,10 +35,23 @@ class OpportunitiesLogicHooks {
     }
 
     public function after_save(&$bean, $event, $arguments) {
-        if ($this->justificationDatesChanged($bean)) {
-            // Update linked justification conditions
-            require_once 'modules/stic_Justification_Conditions/Utils.php';
-            stic_Justification_ConditionsUtils::updateJustificationsForOpportunity($bean);
+        global $sticUpdatingOpportunity;
+        if (!($sticUpdatingOpportunity ?? false)) { // Only update justifications at first call to avoid recursive calls when justifications update the opportunity
+            $sticUpdatingOpportunity = true; 
+            $updatedJustifications = false;
+            if ($this->justificationDatesChanged($bean)) {
+                // Update linked justification conditions
+                $updatedJustifications = true;
+                require_once 'modules/stic_Justification_Conditions/Utils.php';
+                stic_Justification_ConditionsUtils::updateJustificationsForOpportunity($bean);
+            }
+
+            // After updating justification list, update opportunity fields that depend on justifications
+            if ($updatedJustifications) {
+                require_once 'modules/stic_Justifications/Utils.php';
+                stic_JustificationsUtils::updateRelatedOpportunity($bean->id, true);
+            }
+            $sticUpdatingOpportunity = false;
         }
     }
 
