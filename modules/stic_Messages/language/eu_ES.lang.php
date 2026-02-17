@@ -76,6 +76,8 @@ $mod_strings = array (
   'LBL_MESSAGE_SENT' => 'Mensaje enviado',
   'LBL_MESSAGE_NOT_SENT' => 'Mensaje no enviado',
   'LBL_WHATSAPP_WEB_SENT' => 'Se ha redirigido correctamente a WhatsApp Web',
+  'LBL_WHATSAPP_WEB_RETRY' => 'Los mensajes de WhatsApp Web no se pueden reintentar. Ya fueron enviados mediante el cliente.',
+
   'LBL_MESSAGE_SAVED' => 'Mensaje guardado',
   'LBL_ERROR' => 'ERROR',
   'LBL_CHECK_STATUS' => 'Mensajes enviados. Comprobar el estado',
