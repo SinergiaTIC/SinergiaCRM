@@ -74,9 +74,11 @@ $mod_strings = array (
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Enviar grupo de mensajes',
   'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => 'Esta acción enviará un mensaje por cada registro seleccionado. ¿Desea continuar?',
   'LBL_MESSAGE_SENT' => 'Mensaje enviado',
-  'LBL_MESSAGE_NOT_SENT' => 'Mensaje no enviado', 
+  'LBL_MESSAGE_NOT_SENT' => 'Mensaje no enviado',
   'LBL_WHATSAPP_WEB_SENT' => 'Se ha redirigido correctamente a WhatsApp Web',
-  'LBL_MESSAGE_SAVED' => 'Mensaje guardado', 
+  'LBL_WHATSAPP_WEB_RETRY' => 'Los mensajes de WhatsApp Web no se pueden reintentar. Ya fueron enviados mediante el cliente.',
+
+  'LBL_MESSAGE_SAVED' => 'Mensaje guardado',
   'LBL_ERROR' => 'ERROR',
   'LBL_CHECK_STATUS' => 'Mensajes enviados. Comprobar el estado',
   'LBL_ALREADY_SENT' => 'Mensaje ya enviado',
