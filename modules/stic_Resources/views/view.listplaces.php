@@ -54,6 +54,17 @@ class stic_ResourcesViewListPlaces extends ViewList
         echo "<script>
             $(document).ready(function(){
                 $('.moduleTitle').html('<h2>{$mod_strings['LBL_PLACES']}</h2>');
+
+            // Clear filter in Places must mantain the user in the places list not returning to resources list
+            var clearButtons = $('.clearSearchIcon');
+            clearButtons.attr('onclick', '');
+            clearButtons.on('click', function(e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation(); // Evita interferències amb altres scripts
+                    // Defineix aquí la teva URL de destí
+                    // Per exemple, anar a un layout concret o passar paràmetres extres
+                    window.location.href = 'index.php?module=stic_Resources&action=listplaces&query=true&clear_query=true';
+                });
             });
         </script>";
     }
