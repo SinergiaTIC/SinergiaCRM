@@ -61,7 +61,10 @@ class formLetter
 
     public static function getModuleTemplates($module)
     {
+        // STIC-Custom 20260209 EPS - Filtering PDF templates
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/987
         global $current_user;
+        // END STIC-Custom
 
         $db = DBManagerFactory::getInstance();
         $templates = array();
@@ -71,9 +74,9 @@ class formLetter
         while ($row = $db->fetchByAssoc($result)) {
             // STIC-Custom 20260209 EPS - Filtering PDF templates
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/987
+            // $templates[$row['id']] = $row['name'];
             $pdfBean = BeanFactory::getBean('AOS_PDF_Templates', $row['id']);
             if ($pdfBean->ACLAccess('ListView', $pdfBean->isOwner($current_user->id))) {
-            // if( ACLController::moduleSupportsACL('AOS_PDF_Templates') && ACLController::checkAccess('AOS_PDF_Templates', 'view', false)){
                 $templates[$row['id']] = $row['name'];
             }
             // END STIC-Custom
