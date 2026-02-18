@@ -121,8 +121,11 @@ $mod_strings = array (
 
   // User-facing validation errors
   'LBL_ERROR_REQUIRED_FIELD' => 'Es un campo obligatorio',
+  'LBL_ERROR_INTEGER_FIELD' => 'El valor debe ser un número entero',
   'LBL_ERROR_NUMERIC_FIELD' => 'El valor debe ser numérico',
   'LBL_ERROR_DATE_FIELD' => 'El valor debe ser una fecha válida',
+  'LBL_ERROR_BOOL_FIELD' => 'El valor debe ser verdadero o falso',
+  'LBL_ERROR_ENUM_FIELD' => 'Opción no válida para el desplegable',
   'LBL_ERROR_EMAIL_FIELD' => 'El valor debe ser una dirección de correo válida',
   'LBL_ERROR_VALUE_FIELD' => 'El valor no es válido para el campo',
   
