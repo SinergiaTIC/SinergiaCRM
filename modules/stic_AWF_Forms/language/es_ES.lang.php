@@ -493,9 +493,19 @@ $mod_strings = array (
   'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La dirección de correo electrónico no es válida',
 
   // DniValidatorAction
-  'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI y CIF',
-  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI o un CIF español válido',
-  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI o CIF no es válido',
+  'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI/NIF',
+  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI/NIF español válido',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI/NIF no es válido',
+
+  // CifValidatorAction
+  'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de CIF',
+  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un CIF español válido',
+  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIF no es válido',
+
+  // NieValidatorAction
+  'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'Validador de NIE',
+  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIE español válido',
+  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no es válido',
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador Numérico',
