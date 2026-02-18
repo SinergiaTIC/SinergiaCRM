@@ -540,7 +540,7 @@ class ResponseHandler
     }
 
     /**
-     * Validates submission data against form configuration.
+     * Validates submission data against field definition in vardefs
      * @param FormConfig $config Form configuration
      * @param array $data Received data in the submission
      * @return ?array List of errors or null if no errors
@@ -548,23 +548,26 @@ class ResponseHandler
     private function validateSubmission(FormConfig $config, array $data): ?array {
         $errors = [
             'errors' => [], 
-            'errorDescriptions' => []
-            ];
+            'errorDescriptions' => [],
+        ];
 
         foreach ($config->data_blocks as $block) {
-            foreach ($block->fields as $field) {
-                if ($field->type_field === DataBlockFieldType::FIXED) {
-                    continue;
-                }
+            // Datablock is detached
+            if (empty($block->module)) continue; 
+            
+            $targetBean = BeanFactory::newBean($block->module);
+            $realVardefs = $targetBean ? $targetBean->field_defs : [];
+            if (empty($realVardefs)) continue;
 
-                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached.' : '';
-                $inputKeyInForm = $prefix . $block->name . '.' . $field->name;
+            foreach ($block->fields as $formField) {
+                $prefix = ($formField->type_field === DataBlockFieldType::UNLINKED) ? '_detached.' : '';
+                $inputKeyInForm = $prefix . $block->name . '.' . $formField->name;
                 $inputKey = str_replace(".", "_", $inputKeyInForm);
                 $value = $data[$inputKey] ?? null;
-                $label = rtrim($field->label, ":");
+                $label = rtrim($formField->label, ":");
 
-                // Validation of required field (Required)
-                if ($field->required_in_form) {
+                // Validation of required field (Required) (in Form)
+                if ($formField->required_in_form) {
                     if ($value === null || $value === '' || (is_array($value) && empty($value))) {
                         $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
                                                                         translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
@@ -573,44 +576,102 @@ class ResponseHandler
                     }
                 }
 
-                // Data type validation (Sanity Check)
-                if ($value !== null && $value !== '') {
-                    if ($field->type_in_form === 'number') {
+                // If is empty and not required: Do not validate type
+                if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+                    continue;
+                }
+
+                // Validate Selected values in form
+                if (!empty($formField->value_options) && $formField->value_type === DataBlockFieldValueType::SELECTABLE) {
+                    $validValues = array_map(fn($opt) => $opt->value, $formField->value_options);
+                    $submittedValues = is_array($value) ? $value : [$value];
+                    foreach ($submittedValues as $subVal) {
+                        if ($subVal === '' || $subVal === null) {
+                            continue;
+                        }
+                        if (!in_array($subVal, $validValues)) {
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
+                            break; 
+                        }
+                    }
+                }                
+
+                // Validation of data type (from VarDefs)
+                $defField = isset($realVardefs[$formField->name]) ? $realVardefs[$formField->name] : null;
+                $typeToCheck = $defField ? $defField['type'] : $formField->type_in_form;
+                // Special case for emails
+                if ($typeToCheck === 'varchar' && str_starts_with($defField['name'], 'email')) {
+                    $typeToCheck = 'email';
+                }
+                
+                switch ($typeToCheck) {
+                    case 'int':
+                    case 'integer':
+                        if (!filter_var($value, FILTER_VALIDATE_INT) && $value !== '0' && $value !== 0) {
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_INTEGER_FIELD', 'stic_AWF_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_INTEGER_FIELD', 'stic_AWF_Responses');
+                        }
+                        break;
+
+                    case 'decimal':
+                    case 'float':
+                    case 'currency':
+                    case 'number': // type_in_form
                         if (!is_numeric($value)) {
                             $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
                                                                             translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
                             $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
                         }
-                    }
-                    if ($field->type_in_form === 'date') {
-                        if (!strtotime($value)) {
+                        break;
+
+                    case 'date':
+                    case 'datetime':
+                    case 'datetimecombo':
+                        if (strtotime($value) === false) {
                             $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
                                                                             translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
                             $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
                         }
-                    }
-                    if ($field->subtype_in_form === 'text_email') {
-                        if (strpos($value, '@') === false || strpos($value, '.') === false) {
+                        break;
+
+                    case 'bool':
+                    case 'boolean':
+                    case 'select_checkbox':
+                    case 'select_switch':
+                        if (!filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) {
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                            translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
+                        }                        
+                        break;
+
+                    case 'enum':
+                    case 'radioenum':
+                    case 'select': // type_in_form
+                    case 'select_radio': // type_in_form
+                        // Validate that the option actually exists in the CRM
+                        if ($defField && isset($defField['options'])) {
+                            global $app_list_strings;
+                            $domain = $app_list_strings[$defField['options']] ?? [];
+                            if (!empty($domain) && !array_key_exists($value, $domain)) {
+                                $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
+                                                                                translate('LBL_ERROR_ENUM_FIELD', 'stic_AWF_Responses');
+                                $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_ENUM_FIELD', 'stic_AWF_Responses');
+                            }
+                        }
+                        break;
+
+                    case 'email':
+                    case 'text_email':
+                        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
                             $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
                                                                             translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
                             $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
                         }
-                    }
-                    if (!empty($field->value_options) && $field->value_type === DataBlockFieldValueType::SELECTABLE) {
-                        $validValues = array_map(fn($opt) => $opt->value, $field->value_options);
-                        $submittedValues = is_array($value) ? $value : [$value];
-                        foreach ($submittedValues as $subVal) {
-                            if ($subVal === '' || $subVal === null) {
-                                continue;
-                            }
-                            if (!in_array($subVal, $validValues)) {
-                                $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                                translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
-                                $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
-                                break; 
-                            }
-                        }
-                    }
+                        break;
                 }
             }
         }
