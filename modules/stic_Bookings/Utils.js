@@ -926,16 +926,16 @@ function openCenterPopup() {
 
 function callbackCenterSelectPopup(popupReplyData) {
 
-  var centerAlreadySelected = selectedCenters.some(function(center) {
-    return center.centerId === centerId;
-  });
+
 
   // check if multiple centers are being returned
   if(popupReplyData.selection_list) {
     Object.values(popupReplyData.selection_list).forEach(function(centerId) {
       // search centerId in STIC.centersArray to get the center name
       var centerName = STIC.centersArray.find(item => item.id === centerId).name;
-           
+      var centerAlreadySelected = selectedCenters.some(function(center) {
+        return center.centerId === centerId;
+      });     
       if (!centerAlreadySelected) {
         selectedCenters.push({ centerId: centerId, centerName: centerName });
       } 
@@ -944,6 +944,9 @@ function callbackCenterSelectPopup(popupReplyData) {
   else {
     var centerId = popupReplyData.name_to_value_array.center_id;
     var centerName = popupReplyData.name_to_value_array.center_name;
+    var centerAlreadySelected = selectedCenters.some(function(center) {
+      return center.centerId === centerId;
+    });
     if (centerAlreadySelected) {
       alert(SUGAR.language.get(module, "LBL_CENTER_ALREADY_SELECTED")+ ": " + centerName);
       return; 
