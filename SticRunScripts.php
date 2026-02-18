@@ -82,7 +82,6 @@ class SticRunScripts {
      */
     public static function executeSQLFile($connection, $file, &$infos, &$errors) {
         $sqlFileContent = file_get_contents($file);
-        $infos[] = "Executing SQL file: $file";
         
         try {
             $connection->exec($sqlFileContent);
@@ -176,7 +175,7 @@ class SticRunScripts {
      */
     public static function executeScript($file, &$infos, &$errors) {
         global $sugar_config;
-
+        $infos[] = "Executing file: $file";
         // Initialize arrays if not provided
         if (!is_array($infos)) {
             $infos = array();

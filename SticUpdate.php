@@ -102,6 +102,8 @@ try {
 } catch (Exception $e) {
     ob_clean();
     $errors[] = 'Database error during sync: ' . $e->getMessage();
+    $infos[] = "[ERROR] Database error during sync: " . $e->getMessage();
+
 }
 
 // Clear all language and JavaScript cache files
