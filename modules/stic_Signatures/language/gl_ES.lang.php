@@ -22,14 +22,14 @@
  */
 $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
-    'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
+    'LBL_ASSIGNED_TO_NAME' => 'Asignado a:',
     'LBL_ASSIGNED_TO' => 'Asignado a',
     'LBL_LIST_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_LIST_ASSIGNED_USER' => 'Asignado a',
-    'LBL_CREATED' => 'Creado por',
+    'LBL_CREATED' => 'Creado Por',
     'LBL_CREATED_USER' => 'Creado por',
     'LBL_CREATED_ID' => 'Creado por (ID)',
-    'LBL_MODIFIED' => 'Modificado por',
+    'LBL_MODIFIED' => 'Modificada por',
     'LBL_MODIFIED_NAME' => 'Modificado por',
     'LBL_MODIFIED_USER' => 'Modificado por',
     'LBL_MODIFIED_ID' => 'Modificado por (ID)',
