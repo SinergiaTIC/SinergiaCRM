@@ -35,6 +35,7 @@ if (!defined('sugarEntry')) {
 
 require_once 'include/entryPoint.php';
 require_once 'modules/Administration/QuickRepairAndRebuild.php';
+require_once 'SticRunScripts.php';
 
 // Initialize global variables
 global $sugar_config, $current_user, $db;
@@ -168,8 +169,7 @@ function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
         $script = trim($script);
         // Skip empty lines and comments
         if (!empty($script) && strpos($script, '#') !== 0) {
-            $_REQUEST['file'] = $script;
-            include('SticRunScripts.php');
+            SticRunScripts::executeScript($script, $infos, $errors);
         }
     }
 }
