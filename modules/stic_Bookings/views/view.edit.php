@@ -355,6 +355,14 @@ SCRIPT;
 
         SticViews::display($this);
 
+        // Get centers names
+        require_once('modules/stic_Centers/utils/GetList.php');
+        echo <<<SCRIPT
+        <script>STIC.centersArray = $centersArray;</script>
+    SCRIPT;
+
+
+
         $loadFromSession = isset($_REQUEST['loadFromSession']) && $_REQUEST['loadFromSession'] === 'true';
         $periodicBookingEnabled = $this->bean->periodic_booking ?? false;
         

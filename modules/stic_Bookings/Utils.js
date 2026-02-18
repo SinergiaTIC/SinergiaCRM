@@ -921,29 +921,41 @@ function openCenterPopup() {
       name: "center_name",
     },
   };
-
-  open_popup("stic_Centers", 600, 400, "", true, false, popupRequestData);
+  open_popup("stic_Centers", 600, 400, "", true, false, popupRequestData, 'MultiSelect');
 }
 
 function callbackCenterSelectPopup(popupReplyData) {
-  var centerId = popupReplyData.name_to_value_array.center_id;
-  var centerName = popupReplyData.name_to_value_array.center_name;
-  
+
   var centerAlreadySelected = selectedCenters.some(function(center) {
     return center.centerId === centerId;
   });
-  
-  if (centerAlreadySelected) {
-    alert(SUGAR.language.get(module, "LBL_CENTER_ALREADY_SELECTED")+ ": " + centerName);
-    return; 
+
+  // check if multiple centers are being returned
+  if(popupReplyData.selection_list) {
+    Object.values(popupReplyData.selection_list).forEach(function(centerId) {
+      // search centerId in STIC.centersArray to get the center name
+      var centerName = STIC.centersArray.find(item => item.id === centerId).name;
+           
+      if (!centerAlreadySelected) {
+        selectedCenters.push({ centerId: centerId, centerName: centerName });
+      } 
+    });
+  }
+  else {
+    var centerId = popupReplyData.name_to_value_array.center_id;
+    var centerName = popupReplyData.name_to_value_array.center_name;
+    if (centerAlreadySelected) {
+      alert(SUGAR.language.get(module, "LBL_CENTER_ALREADY_SELECTED")+ ": " + centerName);
+      return; 
+    }
+    selectedCenters.push({ centerId: centerId, centerName: centerName });
   }
   
-  selectedCenters.push({ centerId: centerId, centerName: centerName });
   updateSelectedCentersList();
   $("#selectedCenterName").text(centerName);
   $(".filter-box").show();
   $("#resourceSearchFields").show();
-  if (selectedCenters.length === 1) {
+  if (selectedCenters.length > 0) {
     loadResourceTypes(centerId);
   }
   $("#loadCenterResourcesButton").off("click").on("click", loadResources);
