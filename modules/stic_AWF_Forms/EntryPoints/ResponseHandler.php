@@ -751,6 +751,7 @@ class ResponseHandler
                 
                 $detailBean->question_key = $block->name . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                $detailBean->question_label = rtrim($detailBean->question_label, ' :');
                 if (!empty($field->description)) {
                     $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 }
