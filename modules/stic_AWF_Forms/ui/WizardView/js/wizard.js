@@ -1425,7 +1425,7 @@ class WizardStep2 {
       },
 
       get fieldsToDuplicate() {
-        return this.dataBlock.fields.filter(f => f.type_field!='unlinked' && f.type!='relate');
+        return this.dataBlock.fields.filter(f => f.type_field!='unlinked' && f.type!='relate' && (f.merge_filter == 'enabled' || f.merge_filter == 'selected'));
       },
 
     }

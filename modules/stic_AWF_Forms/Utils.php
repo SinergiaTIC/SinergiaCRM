@@ -134,7 +134,8 @@ function getModuleInformation($moduleName, $availableModules) {
                         'default' => $arr['default'] ?? null,
                         'options' => $arr['options'] ?? '',
                         'module' => $arr['module'] ?? '',
-                        'inViews' => false
+                        'merge_filter' => $arr['merge_filter'] ?? '', // 'enabled', 'disabled', 'selected', ''
+                        'inViews' => false,
                     ];
 
                 }
