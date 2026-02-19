@@ -110,8 +110,8 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
         // Result notification
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Email sent to: {$emailAddress}");
         $dataToLog = ['email_sent_to' => $emailAddress, 'template_id' => $templateRef->beanId];
-        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED, $dataToLog);
-
+        $actionResult->registerActionMetadata($bean, $dataToLog);
+        
         return $actionResult;
     }
 

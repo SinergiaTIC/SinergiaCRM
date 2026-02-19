@@ -395,7 +395,7 @@ class ExampleAction extends HookActionDefinition
         $result->registerBeanModification($newBean, BeanModificationType::CREATED);
 
         // Option B: If we had modified the bean of the 'target_block'
-        // $result->registerBeanModificationFromBlock($blockBean, $block, BeanModificationType::UPDATED);
+        // $actionResult->registerActionMetadata($bean, $dataToLog);
 
         return $result;
     }

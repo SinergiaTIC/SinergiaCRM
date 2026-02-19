@@ -210,6 +210,7 @@ $dictionary['stic_AWF_Links'] = array(
       'name' => 'getLinkDataHtml',
       'returns' => 'html',
       'include' => 'modules/stic_AWF_Links/Utils.php',
+      'pass_bean' => true,
     ),
   ),
 ),

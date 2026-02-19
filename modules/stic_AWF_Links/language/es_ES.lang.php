@@ -91,5 +91,16 @@ $mod_strings = array (
   'LBL_NO_MODIFIED_DATA' => 'No se han registrado cambios de datos específicos.',
   'LBL_NO_NAME' => 'Sin nombre',
 
+  'LBL_FIELD' => 'Campo',
+  'LBL_SENT_VALUE' => 'Valor enviado',
+  'LBL_FINAL_VALUE' => 'Valor final',
+  'LBL_VALUE_EMPTY' => '[Vacío]',
+  'LBL_NOT_APPLIED' => 'No aplicado',
+  'LBL_FIELD_METADATA' => 'Metadatos',
+  'LBL_FIELD_CHANGE_APPLIED' => 'Actualizado',
+  'LBL_FIELD_CHANGE_IGNORED_ENRICH' => 'Ignorado por no estar vacío',
+  'LBL_FIELD_CHANGE_SKIPPED_DUPLICATE' => 'Saltado por duplicado',
+  'LBL_FIELD_CHANGE_UNCHANGED' => 'Sin cambios',
+
   'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Responses_TITLE' => 'Respuesta a formulario',
 );
