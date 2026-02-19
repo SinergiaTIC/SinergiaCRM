@@ -1644,6 +1644,7 @@ EOQ;
         /* bug 31271: using false to not add all bean fields since some beans - like SavedReports
            can have fields named 'module' etc. which may break the query */
         // STIC-Custom 20260219 EPS - json_decode can cause issues with certain characters, so we need to clean up the query before decoding it.
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
         // $query = json_decode(html_entity_decode($query), true);
 
         // 1. Decode any HTML entities in the query. This is to ensure that any special characters that were encoded as HTML entities are properly decoded before we attempt to parse the query. For example, if the query contains &quot; it will be converted back to a double quote character, which is important for the next step where we look for unescaped quotes.
