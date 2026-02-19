@@ -1643,7 +1643,20 @@ EOQ;
         }
         /* bug 31271: using false to not add all bean fields since some beans - like SavedReports
            can have fields named 'module' etc. which may break the query */
-        $query = json_decode(html_entity_decode($query), true);
+        // STIC-Custom 20260219 EPS - json_decode can cause issues with certain characters, so we need to clean up the query before decoding it.
+        // $query = json_decode(html_entity_decode($query), true);
+
+        // 1. Decode any HTML entities in the query. This is to ensure that any special characters that were encoded as HTML entities are properly decoded before we attempt to parse the query. For example, if the query contains &quot; it will be converted back to a double quote character, which is important for the next step where we look for unescaped quotes.
+        $query_clean = html_entity_decode($query);
+
+        // 2. Search for any unescaped double quotes that are not part of the JSON structure and escape them. This is to prevent json_decode from breaking due to unescaped quotes in the query values.
+        // The regex looks for double quotes that are not preceded by a colon, an opening brace, an opening bracket, or a comma (which would indicate they are part of the JSON structure) and not followed by a colon, a closing brace, a closing bracket, or a comma (which would also indicate they are part of the JSON structure). These quotes are likely to be part of the query values and need to be escaped.
+        $query_fixed = preg_replace_callback('/(?<![:{[,])"(?![呈现:,}\]])/', function($m) {
+            return '\"';
+        }, $query_clean);
+
+        $query = json_decode($query_fixed, true);
+        // END STIC
         $searchForm->populateFromArray($query, null, true);
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
