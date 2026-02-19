@@ -301,6 +301,7 @@ class stic_AwfField {
       label: '',               // Label that will appear with the field
       description: '',         // Field description
       required: false,         // Indicates if the field is required in the data block (cannot be deleted)
+      merge_filter: '',        // Merge filter in vardefs
       type_field: 'form',      // Field type: unlinked, form, fixed
       required_in_form: false, // Indicates if the field will be required in the form
       in_form: true,           // Indicates if the field will be in the form
@@ -347,6 +348,8 @@ class stic_AwfField {
     this.required = fieldInfo.required;
     this.required_in_form = typeField == 'form' && fieldInfo.required;
     this.type = fieldInfo.type;
+    this.merge_filter = fieldInfo.merge_filter;
+
 
     this.value = "";
     this.value_text = "";
@@ -1432,14 +1435,10 @@ class stic_AwfConfiguration {
 
         newField.required = fieldDef.required;
         this.addDataBlockField(dataBlock, newField);
-      }
-    }
 
-    // Add Duplicate detection (only if there are not relate required)
-    if (!hasRequiredRelate) {
-      for (const field of Object.values(module.fields)) {
-        if (field.required) {
-          dataBlock.addDuplicateDetectionFromModuleField(field);
+        // Add in Duplicate detection (only if merge_filter == 'selected')
+        if (fieldDef.merge_filter == 'selected') {
+          dataBlock.addDuplicateDetectionFromModuleField(fieldDef);
         }
       }
     }

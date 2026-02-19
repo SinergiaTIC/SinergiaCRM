@@ -38,14 +38,14 @@ enum BeanModificationType: string {
 class BeanModified extends BeanReference {
     public BeanModificationType $modificationType;
 
-    /** @var array Submitted data [field_name => value] that were applied */
+    /** @var FieldModification[] */
     public array $submittedData; 
 
     /** BeanModified constructor
      * @param string $id The modified bean ID
      * @param string $module The modified bean module
      * @param BeanModificationType $modificationType The modification type
-     * @param array $submittedData The data that was applied
+     * @param array<string, FieldModification> $submittedData The data that was applied
     */
     public function __construct(string $id, string $module, BeanModificationType $modificationType, array $submittedData = []) {
         parent::__construct($module, $id);

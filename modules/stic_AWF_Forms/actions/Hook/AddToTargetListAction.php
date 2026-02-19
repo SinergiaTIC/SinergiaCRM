@@ -107,7 +107,7 @@ class AddToTargetListAction extends HookBeanActionDefinition {
         // Notification of the result
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Added to ProspectList: {$lpoRef->beanId}");
         $dataToLog = ['added_to_prospect_list_id' => $lpoRef->beanId];
-        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED, $dataToLog);
+        $actionResult->registerActionMetadata($bean, $dataToLog);
 
         return $actionResult;
     }

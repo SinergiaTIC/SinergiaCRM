@@ -55,6 +55,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         $module = $block->dataBlock->module;
         $bean = null;
         $onDuplicateAction = null;
+        $modifications = [];
 
         // Duplicate detection logic
         $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
@@ -160,8 +161,11 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             }
         }
 
-        // Action Logic (Create or Handle Duplicate)
+        // Action Logic (Create or Handle Duplicate) and performed modifications
         $modificationType = null;
+        /** @var FieldModification[] */
+        $modifications = [];
+
         if ($bean === null) {
             // No duplicate, create a new one
             $bean = BeanFactory::newBean($module);
@@ -170,7 +174,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 $bean->assigned_user_id = $context->defaultAssignedUserId;
             }
             // Fill all bean fields
-            $this->populateBean($bean, $block); 
+            $modifications = $this->populateBean($bean, $block); 
             $bean->save();
             $modificationType = BeanModificationType::CREATED;
 
@@ -183,21 +187,22 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
                 case OnDuplicateAction::UPDATE:
                     // Overwrite all fields of the existing bean
-                    $this->populateBean($bean, $block);
-                    $bean->save();
+                    $modifications = $this->populateBean($bean, $block);
                     $modificationType = BeanModificationType::UPDATED;
+                    $bean->save();
                     break;
 
                 case OnDuplicateAction::ENRICH:
                     // Fill only empty fields of the existing bean
-                    $this->enrichBean($bean, $block); 
-                    $bean->save();
+                    $modifications = $this->enrichBean($bean, $block); 
                     $modificationType = BeanModificationType::ENRICHED;
+                    $bean->save();
                     break;
                 
                 case OnDuplicateAction::SKIP:
                 default:
                     // Do nothing, the bean remains as it was
+                    $modifications = $this->skipBean($bean, $block);
                     $modificationType = BeanModificationType::SKIPPED;
                     break;
             }
@@ -207,7 +212,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig);
         
         // Register the modification (or non-modification)
-        $actionResult->registerBeanModificationFromBlock($bean, $block, $modificationType);
+        $actionResult->registerBeanModificationFromBlock($bean, $block, $modificationType, $modifications);
 
         return $actionResult;
     }
@@ -232,48 +237,98 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
     /**
      * Fills a bean with all form data (overwrites).
+     * @param SugarBean $bean The bean to update
+     * @param DataBlockResolved $block The resolved data block
+     * @return array<string, FieldModification> List of modifications indexed by field name
      */
-    private function populateBean(SugarBean $bean, DataBlockResolved $block): void
+    private function populateBean(SugarBean $bean, DataBlockResolved $block): array
     {
-        foreach ($block->formData as $fieldName => $field) {
-            if ($field != null) {
-                $fieldDef = $bean->field_defs[$fieldName] ?? null;
-                if ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name'])) {
-                    // Relate field: we need to assign the related ID to the hidden ID field
-                    $idField = $fieldDef['id_name'];
-                    $bean->{$idField} = $field->value;
-                } else {
-                    $bean->{$fieldName} = $field->value;
-                }
+        /** @var FieldModification[] */
+        $modifications = [];
+
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            if ($fieldResolved === null) continue;
+
+            $newValue = $fieldResolved->value;
+            $fieldDef = $bean->field_defs[$fieldName] ?? null;
+
+            // If it is a related field, the real field that changes in the database is the id_name
+            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
+            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
+
+            $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            
+            if ($oldValue != $newValue) {
+                $bean->$targetField = $newValue;
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::APPLIED, $newValue, $oldValue);
+            } else {
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
             }
         }
+        return $modifications;
     }
 
     /**
      * Fills a bean only with empty fields (enriches).
+     * @param SugarBean $bean The bean to enrich
+     * @param DataBlockResolved $block The resolved data block
+     * @return array<string, FieldModification> List of modifications indexed by field name
      */
-    private function enrichBean(SugarBean $bean, DataBlockResolved $block): void
+    private function enrichBean(SugarBean $bean, DataBlockResolved $block): array
     {
-        foreach ($block->formData as $fieldName => $field) {
-            // Check if the field in the bean is empty or null
-            $isEmpty = ($bean->{$fieldName} === null || $bean->{$fieldName} === '');
+        $modifications = [];
+
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            if ($fieldResolved === null) continue;
+
+            $newValue = $fieldResolved->value;
             $fieldDef = $bean->field_defs[$fieldName] ?? null;
 
-            // If it is a relate, check the related ID field
-            if ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name'])) {
-                $idField = $fieldDef['id_name'];
-                $isEmpty = empty($bean->$idField);
-            }
+            // If it is a related field, the real field that changes in the database is the id_name
+            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
+            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
 
-            if ($isEmpty) {
-                if ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name'])) {
-                    // Relate field: we need to assign the related ID to the hidden ID field
-                    $idField = $fieldDef['id_name'];
-                    $bean->{$idField} = $field->value;
-                } else {
-                    $bean->{$fieldName} = $field->value;
-                }
+            $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            // Check if the field in the bean is empty or null
+            $isEmpty = ($oldValue === null || $oldValue === '');
+
+            if ($isEmpty && $newValue !== null && $newValue !== '') {
+                // The current field is empty.
+                $bean->$targetField = $newValue;
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::APPLIED, $newValue, $oldValue);
+                
+            } elseif (!$isEmpty && $newValue !== null && $newValue !== '' && $oldValue != $newValue) {
+                // The form sends a value but there is already another one
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::IGNORED_ENRICH, $newValue, $oldValue);
+            } else {
+                // Both values ​​are equal or null
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
             }
         }
+
+        return $modifications;
+    }
+
+    /**
+     * Skips a bean 
+     * @param SugarBean $bean The bean to skip
+     * @param DataBlockResolved $block The resolved data block
+     * @return array<string, FieldModification> List of modifications indexed by field name
+     */
+    private function skipBean(SugarBean $bean, DataBlockResolved $block): array
+    {
+        $modifications = [];
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            if ($fieldResolved === null) continue;
+            
+            $fieldDef = $bean->field_defs[$fieldName] ?? null;
+            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
+            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
+
+            $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+
+            $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::SKIPPED_DUPLICATE, $fieldResolved->value, $oldValue);
+        }
+        return $modifications;
     }
 }

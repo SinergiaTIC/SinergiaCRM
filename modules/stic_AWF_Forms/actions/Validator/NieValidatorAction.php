@@ -28,14 +28,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
- * DniValidatorAction
+ * NieValidatorAction
  *
- * Action that validates a DNI (Spanish ID)
+ * Action that validates a NIE (Spanish foreigners ID)
  */
-class DniValidatorAction extends ValidatorActionDefinition {
+class NieValidatorAction extends ValidatorActionDefinition {
     public function __construct() {
         $this->isActive = true;
-        $this->baseLabel = 'LBL_DNI_VALIDATOR_ACTION';
+        $this->baseLabel = 'LBL_NIE_VALIDATOR_ACTION';
         $this->supportedDataTypes = [ActionDataType::TEXT];
     }
 
@@ -55,12 +55,12 @@ class DniValidatorAction extends ValidatorActionDefinition {
             
             value = value.toUpperCase().trim();
 
-            const isValidDNI = (dni) => {
-                const regex = /^[XYZ]?\d{5,8}[A-Z]$/;
-                if (regex.test(dni) === true) {
-                    let number = dni.substr(0, dni.length - 1);
+            const isValidNIE = (nie) => {
+                const regex = /^[XYZ]\d{7,8}[A-Z]$/;
+                if (regex.test(nie) === true) {
+                    let number = nie.substr(0, nie.length - 1);
                     number = number.replace("X", 0).replace("Y", 1).replace("Z", 2);
-                    const lett = dni.substr(dni.length - 1, 1);
+                    const lett = nie.substr(nie.length - 1, 1);
                     number = number % 23;
                     const letter = "TRWAGMYFPDXBNJZSQVHLCKET";
                     return letter.substring(number, number + 1) === lett;
@@ -68,8 +68,8 @@ class DniValidatorAction extends ValidatorActionDefinition {
                 return false;
             };
             
-            // Check DNI
-            return isValidDNI(value);
+            // Check NIE
+            return isValidNIE(value);
         }
 JS;
     }

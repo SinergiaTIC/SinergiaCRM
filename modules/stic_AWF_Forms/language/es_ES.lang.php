@@ -108,7 +108,7 @@ $mod_strings = array (
   'LBL_WIZARD_FORM_EDIT_WARNING_TITLE' => '⚠️ ¡Precaución al editar!',
   'LBL_WIZARD_FORM_EDIT_WARNING_PUBLIC' => 'Este formulario es público: Alguien podría estar rellenándolo en este mismo momento.',
   'LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES' => 'Hay %s respuestas registradas: Cambiar los campos podría romper su visualización histórica.',
-  'LBL_WIZARD_FORM_EDIT_WARNING_PROCEED' => 'Se recomienda cerrar el formulario o duplicarlo antes de realizar cambios estructurales mayores.',
+  'LBL_WIZARD_FORM_EDIT_WARNING_PROCEED' => 'Se recomienda duplicar el formulario para realizar cambios estructurales.',
   
   // Steps
   'LBL_WIZARD_TITLE_STEP1' => 'Información general',
@@ -500,9 +500,19 @@ $mod_strings = array (
   'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La dirección de correo electrónico no es válida',
 
   // DniValidatorAction
-  'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI y CIF',
-  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI o un CIF español válido',
-  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI o CIF no es válido',
+  'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI/NIF',
+  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI/NIF español válido',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI/NIF no es válido',
+
+  // CifValidatorAction
+  'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de CIF',
+  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un CIF español válido',
+  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIF no es válido',
+
+  // NieValidatorAction
+  'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'Validador de NIE',
+  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIE español válido',
+  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no es válido',
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador Numérico',

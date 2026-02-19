@@ -170,7 +170,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         // Result notification
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via '{$linkName}' to ID {$targetBeanId}");
         $dataToLog = ['_link_name' => $linkName, '_related_id' => $targetBeanId];
-        $actionResult->registerBeanModificationFromBlock($bean, $block, BeanModificationType::UPDATED, $dataToLog);
+        $actionResult->registerActionMetadata($bean, $dataToLog);
 
         return $actionResult;
     }

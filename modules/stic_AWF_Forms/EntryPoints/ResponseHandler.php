@@ -501,8 +501,26 @@ class ResponseHandler
 
                     // Merge of touched data: We accumulate the fields (not SKIPPED)
                     if ($modBean->modificationType !== BeanModificationType::SKIPPED && !empty($modBean->submittedData)) {
-                        $currentEntry['data'] = array_merge($currentEntry['data'], $modBean->submittedData);
-                    }
+                        foreach ($modBean->submittedData as $fieldName => $fieldMod) {
+                            if (!isset($currentEntry['data'][$fieldName])) {
+                                $currentEntry['data'][$fieldName] = $fieldMod;
+                            } else {
+                                // Merge logic: Decide which state prevails: APPLIED > IGNORED_ENRICH > UNCHANGED
+                                /** @var FieldModification $existingMod */
+                                $existingMod = $currentEntry['data'][$fieldName];
+                                
+                                // If the new status is APPLIED, it overwrites whatever was there.
+                                if ($fieldMod->status === FieldModificationStatus::APPLIED) {
+                                     $currentEntry['data'][$fieldName] = $fieldMod;
+                                } 
+                                // If the new state is IGNORED_ENRICH, it only wins if the old state was UNCHANGED
+                                elseif ($fieldMod->status === FieldModificationStatus::IGNORED_ENRICH && $existingMod->status === FieldModificationStatus::UNCHANGED) {
+                                     $currentEntry['data'][$fieldName] = $fieldMod;
+                                }
+                                // In any other case (eg: the old one was APPLIED and the new one is UNCHANGED), do nothing and keep the old one
+                            }
+                        }
+                    }                    
                 }
             }
         }
@@ -751,6 +769,7 @@ class ResponseHandler
                 
                 $detailBean->question_key = $block->name . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                $detailBean->question_label = rtrim($detailBean->question_label, ' :');
                 if (!empty($field->description)) {
                     $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 }

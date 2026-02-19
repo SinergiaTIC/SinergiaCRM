@@ -24,23 +24,35 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-include_once __DIR__."/stic_AWFUtils.php";
 
-include_once __DIR__."/BeanReference.php";
-include_once __DIR__."/BeanModified.php";
-include_once __DIR__."/DataBlockResolved.php";
-include_once __DIR__."/DataBlockFieldResolved.php";
-include_once __DIR__."/OptionSelectorResolved.php";
-include_once __DIR__."/FieldModification.php";
-include_once __DIR__."/ActionResult.php";
-include_once __DIR__."/ExecutionContext.php";
+enum FieldModificationStatus: string
+{
+    case APPLIED = 'applied';
+    case UNCHANGED = 'unchanged';
+    case IGNORED_ENRICH = 'ignored_enrich';
+    case SKIPPED_DUPLICATE = 'skipped_duplicate';
+}
 
-include_once __DIR__."/RequiredParameterException.php";
-include_once __DIR__."/ParameterResolverService.php";
+/**
+ * Class representing field modification as result of an action.
+ */
+class FieldModification
+{
+    public string $fieldName;
+    public FieldModificationStatus $status;
+    public mixed $value;
+    public mixed $oldValue;
 
-include_once __DIR__."/ServerActionFactory.php";
-include_once __DIR__."/ServerActionFlowExecutor.php";
-include_once __DIR__."/ActionDiscoveryService.php";
+    public function __construct(string $fieldName, FieldModificationStatus $status, mixed $value, mixed $oldValue = null)
+    {
+        $this->fieldName = $fieldName;
+        $this->status = $status;
+        $this->value = $value;
+        $this->oldValue = $oldValue;
+    }
 
-include_once __DIR__."/formdefs/includes.php";
-include_once __DIR__."/actiondefs/includes.php";
+    public function wasApplied(): bool
+    {
+        return $this->status === FieldModificationStatus::APPLIED;
+    }
+}

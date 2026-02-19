@@ -97,30 +97,43 @@ class ActionResult {
      * @param SugarBean $bean The processed bean.
      * @param DataBlockResolved $block The processed DataBlockResolved.
      * @param BeanModificationType $action The modification type (CREATED, UPDATED, ENRICHED, SKIPPED)
-     * @param array $submittedData (Optional) The [field => value] data used or applied by the action.
+     * @param array<string, FieldModification> $submittedData Optional. Structured data.
      * @throws \LogicException If the bean module does not match the block's module.
      */
-    public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action, ?array $submittedData = null): void 
+    public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action, array $submittedData): void 
     {
         $blockModule = $block->dataBlock->module;
         if ($bean->module_name !== $blockModule) {
             throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
         }
 
-        $dataToLog = [];
-        if ($submittedData !== null) {
-            $dataToLog = $submittedData;
-        } else {
-            // Extract form data mappable to the bean for logging
-            foreach ($block->formData as $fieldName => $fieldResolved) {
-                $dataToLog[$fieldName] = $fieldResolved->value;
-            }
-        }
-
-        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $dataToLog);
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData);
         $this->addModifiedBean($modifiedBean);
 
         $block->dataBlock->setBeanReference($bean->id);
+    }
+
+    /**
+     * Records metadata or logs of secondary actions (Emails, Lists, Relationships).
+     * Used when the action does not modify physical fields of the Bean, but rather performs context operations.
+     *
+     * @param SugarBean $bean The bean on which the action was performed
+     * @param array $metadata Simple dictionary key => value with the info to record
+     */
+    public function registerActionMetadata(SugarBean $bean, array $metadata): void
+    {
+        require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
+
+        $logData = [];
+        foreach ($metadata as $key => $value) {
+            // Wrap the flat data in a FieldModification object with APPLIED state.
+            $logData[$key] = new FieldModification($key, FieldModificationStatus::APPLIED, $value);
+        }
+
+        // Consider all these actions as an UPDATE of the record context
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, BeanModificationType::UPDATED, $logData);
+        
+        $this->addModifiedBean($modifiedBean);
     }
 
     public function addModifiedBean(BeanModified $bean): void {
