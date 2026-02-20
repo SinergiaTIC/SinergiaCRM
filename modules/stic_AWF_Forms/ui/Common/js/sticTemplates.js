@@ -268,6 +268,13 @@ const searchSelectTemplate = (optionsVar, modelVar, placeholder) => `
  * Component Logic (Alpine Data)
  */
 const registerSearchableSelect = () => {
+  const removeAccents = (str) => {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  };
+
   Alpine.data('searchableSelect', (config) => ({
     options: [], 
     selected: null,
@@ -403,7 +410,9 @@ const registerSearchableSelect = () => {
     get filteredOptions() {
       if (!this.options) return [];
       if (this.search === '') return this.options;
-      return this.options.filter(o => String(o.label).toLowerCase().includes(this.search.toLowerCase()));
+      
+      const cleanSearch = removeAccents(this.search).toLowerCase();
+      return this.options.filter(o => removeAccents(o.label).toLowerCase().includes(cleanSearch));
     },
 
     toggle() {
