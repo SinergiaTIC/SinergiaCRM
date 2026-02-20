@@ -99,6 +99,7 @@ $db->setDieOnError(true);
 try {
     $rac = new RepairAndClear();
     $rac->repairAndClearAll($selectedActions, array(translate('LBL_ALL_MODULES')), true, false);
+    include("modules/Administration/RepairIndex.php");
 } catch (Exception $e) {
     ob_clean();
     $errors[] = 'Database error during sync: ' . $e->getMessage();
