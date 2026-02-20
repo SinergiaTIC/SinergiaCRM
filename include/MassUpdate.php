@@ -1647,16 +1647,8 @@ EOQ;
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
         // $query = json_decode(html_entity_decode($query), true);
 
-        // 1. Decode any HTML entities in the query. This is to ensure that any special characters that were encoded as HTML entities are properly decoded before we attempt to parse the query. For example, if the query contains &quot; it will be converted back to a double quote character, which is important for the next step where we look for unescaped quotes.
-        $query_clean = html_entity_decode($query);
+        $query = $this->repair_suitecrm_json($query);
 
-        // 2. Search for any unescaped double quotes that are not part of the JSON structure and escape them. This is to prevent json_decode from breaking due to unescaped quotes in the query values.
-        // The regex looks for double quotes that are not preceded by a colon, an opening brace, an opening bracket, or a comma (which would indicate they are part of the JSON structure) and not followed by a colon, a closing brace, a closing bracket, or a comma (which would also indicate they are part of the JSON structure). These quotes are likely to be part of the query values and need to be escaped.
-        $query_fixed = preg_replace_callback('/(?<![:{[,])"(?![呈现:,}\]])/', function($m) {
-            return '\"';
-        }, $query_clean);
-
-        $query = json_decode($query_fixed, true);
         // END STIC
         $searchForm->populateFromArray($query, null, true);
         $this->searchFields = $searchForm->searchFields;
@@ -1668,6 +1660,69 @@ EOQ;
             $this->where_clauses = '';
         }
     }
+
+
+// STIC-Custom 20260219 EPS - Added function to clean up the query before decoding it, to prevent issues with certain characters in the query.
+
+function repair_suitecrm_json($json_raw) {
+    // 1. Decodifiquem només les entitats HTML (&quot; -> ")
+    // Important: mantenim la codificació original de la resta
+    $input = html_entity_decode($json_raw, ENT_QUOTES, 'UTF-8');
+    
+    $len = strlen($input);
+    $output = "";
+    $in_value = false;
+
+    for ($i = 0; $i < $len; $i++) {
+        $char = $input[$i];
+        
+        // Mirem si el caràcter següent existeix per detectar patrons
+        $next = ($i + 1 < $len) ? $input[$i+1] : "";
+        $prev = ($i > 0) ? $input[$i-1] : "";
+
+        // DETECTAR INICI DE VALOR: :"
+        if (!$in_value && $char == ':' && $next == '"') {
+            $output .= ':"';
+            $in_value = true;
+            $i++; // Saltem la cometa d'obertura
+            continue;
+        }
+
+        // DETECTAR FINAL DE VALOR O COMETA INTERNA
+        if ($in_value && $char == '"') {
+            // Una cometa NOMÉS tanca el valor si va seguida de coma o tancament de JSON
+            // i si NO està ja escapada per la pròpia SuiteCRM (poc probable però possible)
+            $is_closing = ($next == ',' || $next == '}' || $next == ']');
+            
+            if ($is_closing) {
+                $in_value = false;
+                $output .= '"';
+            } else {
+                // És una cometa de text (com a "X"): l'escapem manualment
+                $output .= '\"';
+            }
+            continue;
+        }
+
+        $output .= $char;
+    }
+
+    // Intentem decodificar. Si falla, podria ser per caràcters de control
+    $decoded = json_decode($output, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        // Si falla, provem una neteja de caràcters de control no imprimibles
+        $output = preg_replace('/[\x00-\x1F\x7F]/u', '', $output);
+        $decoded = json_decode($output, true);
+    }
+
+    return $decoded;
+}
+
+// END STIC
+
+
+
 
     protected function getSearchDefs($module, $metafiles = array())
     {
