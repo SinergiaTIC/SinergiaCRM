@@ -73,11 +73,23 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
 
 * **En el formulario**: Son los campos visibles que el visitante podrá rellenar. Por cada campo se puede configurar su etiqueta (nombre visible), si es obligatorio, el tipo de entrada (texto, desplegable, fecha, etc.) y el texto de fondo (*placeholder*).
 
-  * **Campos no enlazados en bloques vinculados**: Dentro de un bloque de datos que sí va a generar un registro en el CRM (ej. "Inscripción"), es posible añadir campos "virtuales" o no vinculados. Posibles usos: Son ideales para recabar información que solo tiene sentido en el contexto del envío (como casillas de consentimientos concretos para esa operación, valoraciones temporales o comentarios) y que formarán parte de la "Respuesta", pero no "ensuciarán" ni modificarán la ficha de la base de datos principal.
+  * **Textos de ayuda y Enlaces**: Cada campo permite añadir un texto de ayuda o descripción para guiar al usuario. Además, el asistente incluye una herramienta específica para insertar fácilmente enlaces a páginas externas (ideales para acompañar a las casillas de aceptación de Políticas de Privacidad o Condiciones de Uso).
+  
+  * **Campos no enlazados en bloques vinculados**: Dentro de un bloque de datos que sí va a generar un registro en el CRM (ej. "Inscripción"), es posible añadir campos "virtuales" o no vinculados. Son ideales para recabar información que solo tiene sentido en el contexto del envío (como casillas de consentimientos concretos para esa operación, valoraciones temporales o comentarios) y que formarán parte de la "Respuesta", pero no "ensuciarán" ni modificarán la ficha de la base de datos principal.
+  
+  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. El sistema incluye un **amplio catálogo de validadores predefinidos**:
+    * Formato de Email.
+    * Documentos de identidad: DNI, NIE y CIF.
+    * Datos bancarios y de contacto: IBAN y Teléfono (con validación de longitud para España o prefijos internacionales).
+    * Ubicación: Código Postal (formato de España).
+    * Límites y rangos: Comprobación de Edad (mínima y máxima a partir de una fecha de nacimiento) y límites numéricos (valor mínimo/máximo).
+    * Otros: Direcciones web (URL), casillas de marcación obligatoria ( indispensable para aceptar términos y condiciones), y validación libre mediante expresiones regulares (*Regex*).
 
-  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. El sistema incluye validadores predefinidos (comprobación de formato de Email, DNI/NIE, IBAN, longitud mínima/máxima o expresiones regulares). Además, destaca la **condicionalidad de las validaciones**: se pueden configurar reglas simples para que un validador solo se ejecute si otro campo del formulario contiene un valor específico (por ejemplo, validar el campo "número de identificación" como "NIE" solo si el campo "Tipo de identificación" es "nie", o si una casilla específica está marcada). También es posible personalizar el mensaje de error exacto que verá el usuario si la validación falla.
+  * **Condicionalidad de las validaciones**: Se pueden configurar reglas simples para que un validador solo se ejecute si otro campo del formulario contiene un valor específico (por ejemplo, validar el campo "número de identificación" como "NIE" solo si el campo "Tipo de identificación" es "nie", o si una casilla específica está marcada). También es posible personalizar el mensaje de error exacto que verá el usuario si la validación falla.
 
-* **Valores fijos (solo en bloques enlazados)**: Son valores constantes y ocultos que no se muestran al usuario final, pero que el sistema guardará en el CRM al crear el registro. Por ejemplo, en una inscripción, puedes definir por defecto el estado de la inscripción como "Confirmado" o vincularlo a un "Evento" específico sin que el usuario tenga que seleccionarlo
+* **Valores fijos (solo en bloques enlazados)**: Son valores constantes y ocultos que no se muestran al usuario final, pero que el sistema guardará en el CRM al crear el registro. Por ejemplo, en una inscripción, puedes definir por defecto el estado de la inscripción como "Confirmado" o vincularlo a un "Evento" específico sin que el usuario tenga que seleccionarlo.
+
+  * **Fechas relativas**: En el caso de los campos de tipo fecha, el sistema permite configurar valores dinámicos relativos al momento del envío: *Hoy*, *Ahora*, *Dentro de un día*, *Dentro de una semana*, *Dentro de un mes*, *Último día de este mes* o *Primer día del próximo mes*, pero también es posible utilizar expresiones en inglés (como '*+2 weeks*', o '*first day of next week*'), el sistema calculará la fecha exacta partiendo del momento en que se reciba la respuesta.
 
 ##### Detección de duplicados ##### 
 Esta sección solo aparece en los bloques enlazados
@@ -107,12 +119,16 @@ Esta sección es fundamental cuando el formulario interactúa con más de un mó
 En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic en "Enviar" del formulario. La lógica de negocio se articula mediante un sistema visual de flujos compuesto por **Acciones**.
 
 * **Dos flujos de ejecución**: Cada formulario se organiza visualmente en pestañas que representan distintos flujos de ejecución. Principalmente, existen dos:
+
   * **Flujo Principal**: Es la lista ordenada de acciones que se ejecutan de forma secuencial cuando se procesa correctamente una respuesta.
+
   * **Flujo de Error**: Es un flujo de contingencia que se ejecuta de forma automática si alguna de las acciones del flujo principal falla.
 
 * **Acciones automáticas (Persistencia garantizada)**: Al añadir bloques de datos en el paso anterior del asistente, el sistema añade **automáticamente** al flujo principal las acciones necesarias para guardar los datos en el CRM ("Guardar registro") y vincularlos entre sí ("Enlazar registros"). Gracias a esto, no es necesario preocuparse por la persistencia de la información; el sistema garantiza que los registros se crearán, actualizarán y relacionarán solos según las reglas definidas. Estas acciones base no se pueden eliminar, pero sí reordenar.
 
-* **Acciones definidas por el usuario**: Más allá de guardar los datos, se pueden enriquecer los flujos añadiendo y encadenando nuevas acciones configurables. Cada acción introducida permite establecer parámetros específicos basándose en los propios datos introducidos en el formulario.
+* **Acciones definidas por el usuario**: Más allá de guardar los datos, se pueden enriquecer los flujos añadiendo y encadenando nuevas acciones configurables. Cada acción introducida permite establecer parámetros específicos basándose en los propios datos introducidos en el formulario o en registros del CRM. 
+
+  * **Condiciones de ejecución**: La ejecución de cualquier acción se puede condicionar a los datos introducidos por el usuario. Por ejemplo, se puede configurar que la acción de "Añadir a LPO" (suscripción a newsletter) solo se ejecute si el usuario ha marcado previamente la casilla de "Deseo recibir información" en el formulario.
 
 * **Acciones finales**: Es clave destacar un tipo especial de acciones llamadas "Finales". Una acción final es aquella que, una vez ejecutada, **pierde el control del proceso y finaliza el flujo de acciones por completo**, impidiendo que se ejecute ninguna otra acción posterior. Se utilizan para operaciones de cierre, como redirigir al usuario a una página web externa o mostrar un mensaje final.
 
@@ -124,6 +140,8 @@ En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic 
   * **Enlazar registros (Automática)**: Enlaza dos registros del CRM según las relaciones definidas en el paso anterior.
 
   * **Enviar notificación por correo**: Envía un email personalizado a partir de una plantilla del CRM, permitiendo procesarla con los datos del bloque.
+
+  * **Enviar notificación al usuario asignado**: Permite enviar un email de aviso (usando una plantilla del CRM) al trabajador o usuario interno responsable del registro que se acaba de crear o actualizar o de cualquier otro referenciado (por ejemplo, el evento de la inscripción).
 
   * **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
 
@@ -144,6 +162,10 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
   * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado para resaltar un conjunto de datos).
 
+  * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado).
+  
+  * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables.
+
   * **Título**: Se puede definir si la sección muestra un título visible para estructurar el contenido o si queda oculto.
 
   * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella.
@@ -156,7 +178,7 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
   * **Apariencia y diseño**: Control detallado sobre el esquema de colores, la tipografía, los tamaños de fuente, los bordes y los sombreados.
   
-  * **Campos y etiquetas**: Personalización del diseño visual de los campos y la disposición de las etiquetas.
+  * **Campos y etiquetas**: Personalización del diseño visual de los campos y la disposición de las etiquetas, incluyendo el soporte para **Etiquetas Flotantes** (animación donde la etiqueta se integra dentro del propio campo).
 
   * **CSS Personalizado**: Para necesidades más avanzadas, el sistema permite inyectar código CSS propio para aplicar ajustes de diseño a medida y sin límites. Esta opción solo se mostrará si el usuario es un Administrador.
 
@@ -238,7 +260,7 @@ El nuevo sistema ofrece un grado de flexibilidad adicional para perfiles técnic
 
 * **Campos ocultos**: Se incorpora un nuevo tipo de campo de formulario: el campo oculto. Posibles usos: Este campo no es visible para el visitante, pero permite registrar y enviar al CRM información de contexto, como identificadores de seguimiento, códigos de origen de la campaña, o valores fijos invisibles requeridos para el procesado.
 
-* **Edición HTML e inyección de nuevos campos**: El sistema genera un código HTML que puede ser descargado y editado libremente para su inserción externa. Si se respeta la nomenclatura, el CRM entenderá perfectamente cualquier nuevo campo añadido manualmente en el código sin romper el formulario. Para añadir nuevos campos mapeados al CRM se usa el patrón `NombreBloque.NombreCampoCRM` y, para datos de uso exclusivo en la respuesta (campos no enlazados), el patrón `_Detached.NombreBloque.NombreCampo`. Posibles usos: Aporta libertad total para crear diseños web a medida, maquetaciones altamente personalizadas, o inyectar campos interactivos por JavaScript.
+* **Edición HTML e inyección de nuevos campos**: El sistema genera un código HTML que puede ser descargado y editado libremente para su inserción externa. Si se respeta la nomenclatura, el CRM entenderá perfectamente cualquier nuevo campo añadido manualmente en el código sin romper el formulario. Para añadir nuevos campos mapeados al CRM se usa el patrón `NombreBloque.NombreCampoCRM` y, para datos de uso exclusivo en la respuesta (campos no enlazados), el patrón `_detached.NombreBloque.NombreCampo`. Posibles usos: Aporta libertad total para crear diseños web a medida, maquetaciones altamente personalizadas, o inyectar campos interactivos por JavaScript.
 
 * **Formularios de alta complejos para uso interno (Verificar Sesión)**: Combinando la flexibilidad de diseño con la acción de **"Verificar sesión activa y permisos"**, los formularios avanzados pueden convertirse en una potente herramienta de uso interno. Esta acción garantiza que únicamente el personal con sesión iniciada en el CRM pueda acceder a ellos. Además, la URL generada puede añadirse como un enlace directo en el menú principal del CRM, dotando al equipo de atajos para operativas complejas de entrada de datos de forma mucho más ágil que utilizando la interfaz estándar. Por ejemplo, permite diseñar una única pantalla de alta rápida que agrupe la creación simultánea de una Persona, de una Organización y de la relación automática entre ambos registros.
 
