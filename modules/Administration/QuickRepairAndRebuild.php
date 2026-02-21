@@ -71,15 +71,7 @@ class RepairAndClear
         //clear vardefs always..
         $this->clearVardefs();
         //first  clear the language cache.
-        // STIC-Custom 20260220 AAM - Moving function for better performance on update.
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/996
-        // $this->clearLanguageCache();
-        // Check if maintenance mode is enabled
-        if (!(isset($sugar_config['stic_maintenance_mode_enabled']) && filter_var($sugar_config['stic_maintenance_mode_enabled'], FILTER_VALIDATE_BOOLEAN))) {
-            $this->clearLanguageCache();
-        }
-        // END STIC-Custom
-
+        $this->clearLanguageCache();
         foreach ($this->actions as $current_action) {
             switch ($current_action) {
                 case 'repairDatabase':
@@ -138,13 +130,6 @@ class RepairAndClear
                     break;
             }
         }
-
-        // STIC-Custom 20260220 AAM - Moving function for better performance on update.
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/996
-        if (isset($sugar_config['stic_maintenance_mode_enabled']) && filter_var($sugar_config['stic_maintenance_mode_enabled'], FILTER_VALIDATE_BOOLEAN)) {
-            $this->clearLanguageCache();
-        }
-        // END STIC-Custom
 
         // STIC-Custom - 20230901 - jch - STIC#1204
         //               20230919 - jch - STIC#1223
