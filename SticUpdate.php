@@ -94,11 +94,21 @@ $mi->rebuild_all(true);
 require_once('modules/Administration/QuickRepairAndRebuild.php');
 $mod_strings = return_module_language($current_language, 'Administration');
 
-// Execute repair and clear operations
+$rac = new RepairAndClear();
+$rac->clearTpls();
+$rac->clearJsFiles();
+$rac->clearDashlets();
+$rac->clearVardefs();
+$rac->clearJsLangFiles();
+$rac->rebuildAuditTables();
+
+// Enable throwing exceptions for database errors.
 $db->setDieOnError(true);
 try {
-    $rac = new RepairAndClear();
-    $rac->repairAndClearAll($selectedActions, array(translate('LBL_ALL_MODULES')), true, false);
+    // We repair database twice to make sure all the queries are executed.
+    $rac->repairDatabase();
+    $rac->repairDatabase();
+    // repairDatabase function doesn't sync vardefs indexes .
     include("modules/Administration/RepairIndex.php");
 } catch (Exception $e) {
     ob_clean();
@@ -107,7 +117,10 @@ try {
 
 }
 
+
+
 // Clear all language and JavaScript cache files
+$rac->clearLanguageCache();
 clearAllJsAndJsLangFilesWithoutOutput();
 $cache_key = 'app_list_strings.' . ($defaultLanguage ?? 'en_us');
 sugar_cache_clear($cache_key);
