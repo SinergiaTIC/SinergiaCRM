@@ -24,3 +24,4 @@ $mod_strings['LBL_DEFAULT_PANEL'] = 'Overview';
 $mod_strings['LBL_PANEL_RECORD_DETAILS'] = 'Record details';
 $mod_strings['LBL_DUE_DATE_ERROR'] = 'Due date must be equal or after Invoice date.';
 $mod_strings['LBL_INVOICE_DATE_ERROR'] = 'Invoice date must be equal or before Due date.';
+$mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'] = 'Cannot send invoice to AEAT: its issue date (%s) is earlier than the last invoice already registered in the Verifactu chain (no. %s, date %s).';

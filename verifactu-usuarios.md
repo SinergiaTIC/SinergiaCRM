@@ -78,6 +78,7 @@ Para enviar facturas a AEAT es imprescindible un **certificado digital** válido
 ## 10. Buenas prácticas
 - Verificar siempre que el cliente tenga NIF/CIF.
 - Emitir solo facturas definitivas.
+- **Respetar el orden de fechas**: no es posible enviar a AEAT una factura con fecha anterior a la última ya registrada. 
 - Usar **rectificativas** para correcciones, y **anulación** solo en casos excepcionales.
 - Confirmar que el PDF contiene el QR antes de enviar a cliente.
 

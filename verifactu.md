@@ -125,10 +125,10 @@ class CancellationRecord {
 ```
 
 **Proceso de anulación:**
-1. **Validación**: Verifica que la factura está aceptada por AEAT
+1. **Validación de estado**: Verifica que la factura está aceptada por AEAT
 2. **Obtención de configuración**: Carga certificado, NIF emisor, entorno (pre-producción/producción)
 3. **Creación del Computer System**: Configura el sistema informático de facturación (SIF)
-4. **Obtención de factura anterior**: Busca la factura anterior en la cadena para el encadenamiento
+4. **Obtención de factura anterior**: Busca la factura anterior en la cadena para el encadenamiento. Se incluyen facturas anuladas porque su `verifactu_hash_c` contiene el hash del `CancellationRecord` (el último eslabón real).
 5. **Creación del CancellationRecord**:
    - Establece el identificador de la factura a anular (NIF, número, fecha)
    - Referencia la factura anterior (previousInvoiceId, previousHash)
@@ -188,6 +188,7 @@ El botón "Anular factura" se muestra en la vista de detalle y:
 - `verifactu_aeat_status_c`: Se cambia a `'cancelled'` (Anulada)
 - `verifactu_aeat_response_c`: "Factura anulada en AEAT. CSV: {csv}"
 - `verifactu_csv_c`: Código CSV devuelto por AEAT
+- `verifactu_hash_c`: Se **sobreescribe** con el hash del `CancellationRecord` (⚠️ pendiente de verificar — ver nota en la sección de validación de orden cronológico)
 
 **Notas importantes:**
 - La anulación es **irreversible**
@@ -203,6 +204,31 @@ El botón "Anular factura" se muestra en la vista de detalle y:
 - Para permitir la generación de números de factura personalizados, se ha añadido el campo stic_serial_format_c, que permite definir el formato de la serie de la factura. Este formato puede incluir elementos como el año (YEAR), y el número secuencial de su serie (NUM). Por ejemplo, "YYYY-000" para 2024-001, "FACT-0000" para FACT-0000, etc. Tambien se ha convertido el campo number de int a varchar(50) para permitir formatos más flexibles.
 - La logica de generación del número de factura esta en la clase AOS_InvoicesUtils, en el método estático generateNextInvoiceNumber, para facilitar su reutilización desde los hooks. Consecuentemente se ha anulado  (comentado) el código que estaba en el fichero del core modules/AOS_Invoices/AOS_Invoices.php que hasta ahora genberaba el número de factura sumando 1 al más alto.
 - Se ha añadido el campo verifactu_aeat_operation_type_c en el módulo AOS_Products_Quotes, para permitir definir el tipo de operación AEAT por línea de producto. Este campo es un desplegable que contiene los valores definidos por AEAT.
+
+### Validación de orden cronológico en el envío
+
+Antes de enviar un `RegistrationRecord` a AEAT, el sistema comprueba que la fecha de expedición de la factura a enviar **no sea anterior** a la de la última factura ya registrada en la cadena Verifactu.
+
+**Motivación:** La especificación de la AEAT exige que cada registro de la cadena tenga una fecha de expedición igual o posterior a la del registro precedente. Un registro con fecha anterior provoca el rechazo por inconsistencia de encadenamiento.
+
+**Implementación** (`sendToAeat()`, `SticUtils.php`):
+- Se llama a `getPreviousInvoice()` para obtener la última factura registrada (excluyendo las anuladas).
+- Si existe predecesora, se compara `$issueDate < $previousInvoiceDate`.
+- Si la fecha es anterior, el envío se **bloquea** (no se llama a AEAT), se muestra al usuario un mensaje de error con los datos concretos (fecha de la factura, número y fecha de la última registrada) y se redirige al `DetailView`.
+- Si no hay predecesora, la factura es la primera de la cadena y la validación no aplica.
+
+**Búsqueda de la factura anterior** (`getPreviousInvoice()`):
+- Filtra facturas con `verifactu_hash_c` no nulo.
+- Las facturas anuladas **sí se incluyen**: tras una anulación exitosa, el campo `verifactu_hash_c` se sobreescribe con el hash del `CancellationRecord`, que es el último eslabón real de la cadena. Excluirlas rompería el encadenamiento.
+- Ordena por `invoice_date DESC, number DESC` para obtener la más reciente.
+
+> ⚠️ **Pendiente de verificar contra AEAT:** La lógica de incluir facturas anuladas en la cadena (sobreescribir `verifactu_hash_c` con el hash del `CancellationRecord` y no excluirlas en `getPreviousInvoice()`) se basa en la interpretación de la fórmula `CancellationRecord::calculateHash()` de la librería `josemmo/verifactu-php`, que incluye la `Huella` del registro anterior en su cálculo. Sin embargo, **no ha sido verificado empíricamente** contra la plataforma AEAT. Podría ser necesario ajustar este comportamiento tras pruebas reales en preproducción.
+
+**Normalización de fechas** (`parseDateToImmutable()`):
+- El campo `invoice_date` del bean puede llegar en formato BD (`Y-m-d`) o en el formato de presentación configurado en el sistema (`d/m/Y`, `d.m.Y`, `d-m-Y`, etc.).
+- El helper `parseDateToImmutable()` intenta los formatos en este orden: `d-m-Y`, `Y-m-d`, `d/m/Y`, `d.m.Y`, `m/d/Y`.
+- Si ninguno funciona, lanza una excepción con el valor problemático.
+- Se usa en todos los puntos donde se construye un `DateTimeImmutable` a partir de un campo de fecha de bean.
 
 ## 📦 Librerías añadidas y cometido
 

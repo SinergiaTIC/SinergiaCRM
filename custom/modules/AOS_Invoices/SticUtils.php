@@ -297,6 +297,33 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Parse a date string into a DateTimeImmutable regardless of its format.
+     *
+     * SuiteCRM beans can expose dates either in DB format (Y-m-d) or in the
+     * user/locale display format (e.g. d/m/Y or d.m.Y depending on config).
+     * new DateTimeImmutable() only accepts Y-m-d natively; any other format
+     * throws "Unexpected character". This helper tries Y-m-d first and then
+     * the display formats in common use, so callers never need to worry about
+     * which format the bean is using.
+     *
+     * @param string $dateStr Date string from a bean field
+     * @return DateTimeImmutable
+     * @throws Exception If the string cannot be parsed with any known format
+     */
+    private static function parseDateToImmutable($dateStr)
+    {
+        $formats = ['d-m-Y', 'Y-m-d', 'd/m/Y', 'd.m.Y', 'm/d/Y'];
+        foreach ($formats as $format) {
+            $dt = DateTimeImmutable::createFromFormat($format, $dateStr);
+            if ($dt !== false) {
+                // Reset time component to midnight to allow safe date-only comparisons
+                return $dt->setTime(0, 0, 0);
+            }
+        }
+        throw new Exception("Cannot parse date '" . $dateStr . "' with any known format.");
+    }
+
+    /**
      * Send invoice records to AEAT
      *
      * @param AOS_Invoices $invoiceBean Invoice bean object
@@ -306,7 +333,7 @@ class AOS_InvoicesUtils
      */
     public static function sendToAeat($invoiceBean)
     {
-        global $mod_strings, $timedate, $sugar_config;
+        global $mod_strings, $sugar_config;
         if (
             empty($invoiceBean->status ?? '') ||
             empty($invoiceBean->verifactu_aeat_status_c ?? '') ||
@@ -443,9 +470,9 @@ class AOS_InvoicesUtils
             // Extract invoice data from bean and create registration record
             $invoiceNumber = $invoiceBean->number;
 
-            // Force db date format
-            $ldate = $timedate->to_db_date($invoiceBean->invoice_date, false);
-            $issueDate = new DateTimeImmutable($ldate);
+            // Use parseDateToImmutable to handle both Y-m-d (DB) and display formats
+            // (e.g. d/m/Y, d.m.Y) that BeanFactory may return depending on context.
+            $issueDate = self::parseDateToImmutable($invoiceBean->invoice_date);
 
             $description = $invoiceBean->name;
 
@@ -471,10 +498,30 @@ class AOS_InvoicesUtils
             $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
 
             if ($previousInvoice) {
+                $previousInvoiceDate = self::parseDateToImmutable($previousInvoice->invoice_date);
+
+                // Validate chronological order: the invoice being sent must not have
+                // an issue date earlier than the last already-registered invoice.
+                // AEAT rejects records that break the chain's date ordering.
+                if ($issueDate < $previousInvoiceDate) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice date (' . $issueDate->format('Y-m-d') . ') is earlier than last registered invoice date (' . $previousInvoiceDate->format('Y-m-d') . ', #' . $previousInvoice->number . '). Sending blocked.');
+                    SugarApplication::appendErrorMessage('<p class="msg-error">'.
+                        sprintf(
+                            $mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'],
+                            $issueDate->format('d/m/Y'),
+                            $previousInvoice->number,
+                            $previousInvoiceDate->format('d/m/Y')
+                        ).
+                        '</p>'
+                    );
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+                    return;
+                }
+
                 $previousInvoiceId = new InvoiceIdentifier();
                 $previousInvoiceId->issuerId = $issuerNif;
                 $previousInvoiceId->invoiceNumber = $previousInvoice->number;
-                $previousInvoiceId->issueDate = new DateTimeImmutable($previousInvoice->invoice_date ?? '2025-11-23');
+                $previousInvoiceId->issueDate = $previousInvoiceDate;
                 $previousHash = $previousInvoice->verifactu_hash_c ?? null;
 
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Chaining to previous invoice: ' . $previousInvoice->number . ' (Hash: ' . ($previousHash ?? 'N/A') . ')');
@@ -627,7 +674,7 @@ class AOS_InvoicesUtils
             $rectifiedDate = null;
             if (!empty($invoiceBean->verifactu_rectified_date_c)) {
                 try {
-                    $rectifiedDate = new DateTimeImmutable($invoiceBean->verifactu_rectified_date_c);
+                    $rectifiedDate = self::parseDateToImmutable($invoiceBean->verifactu_rectified_date_c);
                 } catch (Exception $e) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid rectified date: ' . $invoiceBean->verifactu_rectified_date_c);
                 }
@@ -878,9 +925,10 @@ class AOS_InvoicesUtils
 
         try {
             // Query to find the most recent invoice that was sent to AEAT
-            // and has a verifactu hash stored (custom fields are in aos_invoices_cstm table)
-            // We include 'accepted' and other statuses because AEAT considers all sent invoices
-            // for chaining purposes, even if they had errors
+            // and has a verifactu hash stored (custom fields are in aos_invoices_cstm table).
+            // Cancelled invoices ARE included because after a successful cancellation
+            // their verifactu_hash_c is overwritten with the CancellationRecord hash,
+            // which is the correct predecessor for the next invoice in the chain.
             $query = "
                 SELECT
                     i.id,
@@ -1227,27 +1275,22 @@ class AOS_InvoicesUtils
             // --- Create Taxpayer ---
             $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
 
-            // --- Get previous invoice info (for chaining) ---
-            $db = DBManagerFactory::getInstance();
-            $previousInvoiceQuery = "SELECT id, number, invoice_date, verifactu_hash_c
-                                     FROM aos_invoices
-                                     WHERE deleted = 0
-                                     AND id != " . $db->quoted($invoiceBean->id) . "
-                                     AND date_entered < " . $db->quoted($invoiceBean->date_entered) . "
-                                     ORDER BY date_entered DESC
-                                     LIMIT 1";
-            $previousInvoiceResult = $db->query($previousInvoiceQuery);
-            $previousInvoiceRow = $db->fetchByAssoc($previousInvoiceResult);
+            // --- Get previous record in chain (for chaining) ---
+            // Uses getPreviousInvoice() which searches by invoice_date and requires
+            // a non-null verifactu_hash_c, guaranteeing a valid chain predecessor.
+            // Cancelled invoices are included because after cancellation their
+            // verifactu_hash_c contains the CancellationRecord hash (the real last link).
+            $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
 
             $previousInvoiceId = null;
             $previousHash = null;
 
-            if ($previousInvoiceRow) {
+            if ($previousInvoice) {
                 $previousInvoiceId = new InvoiceIdentifier();
                 $previousInvoiceId->issuerId = $issuerNif;
-                $previousInvoiceId->invoiceNumber = $previousInvoiceRow['number'];
-                $previousInvoiceId->issueDate = new DateTimeImmutable($previousInvoiceRow['invoice_date']);
-                $previousHash = $previousInvoiceRow['verifactu_hash_c'];
+                $previousInvoiceId->invoiceNumber = $previousInvoice->number;
+                $previousInvoiceId->issueDate = self::parseDateToImmutable($previousInvoice->invoice_date);
+                $previousHash = $previousInvoice->verifactu_hash_c;
             }
 
             // --- Create Cancellation Record ---
@@ -1257,7 +1300,7 @@ class AOS_InvoicesUtils
             $cancellationRecord->invoiceId = new InvoiceIdentifier();
             $cancellationRecord->invoiceId->issuerId = $issuerNif;
             $cancellationRecord->invoiceId->invoiceNumber = $invoiceBean->number;
-            $cancellationRecord->invoiceId->issueDate = new DateTimeImmutable($invoiceBean->invoice_date);
+            $cancellationRecord->invoiceId->issueDate = self::parseDateToImmutable($invoiceBean->invoice_date);
 
             // Set chaining info (previous invoice in the chain)
             $cancellationRecord->previousInvoiceId = $previousInvoiceId;
@@ -1318,6 +1361,11 @@ class AOS_InvoicesUtils
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cancellation sent to AEAT. CSV: ' . $response->csv);
 
             // --- Update invoice with cancellation info ---
+            // Store the CancellationRecord hash in verifactu_hash_c so that the
+            // next invoice in the chain links to this cancellation record and not
+            // to the original registration record hash. This keeps the Verifactu
+            // chain intact: RegistroAlta → RegistroAnulación → next RegistroAlta.
+            $invoiceBean->verifactu_hash_c = $cancellationRecord->hash;
             $invoiceBean->verifactu_aeat_status_c = 'cancelled';
             $invoiceBean->verifactu_aeat_response_c = 'Factura anulada en AEAT. CSV: ' . $response->csv;
             $invoiceBean->verifactu_csv_c = $response->csv;

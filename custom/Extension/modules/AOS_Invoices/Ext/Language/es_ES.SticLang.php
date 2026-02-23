@@ -113,4 +113,5 @@ $mod_strings['LBL_FIELD_RECTIFIED_TYPE'] = 'Tipo de rectificación';
 $mod_strings['LBL_FIELD_RECTIFIED_BASE'] = 'Base de rectificación';
 $mod_strings['LBL_FIELD_RECTIFIED_DATE'] = 'Fecha de la factura rectificada';
 $mod_strings['LBL_MISSING_FIELDS'] = 'Campos faltantes';
+$mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'] = 'No es posible enviar la factura a la AEAT: su fecha de expedición (%s) es anterior a la de la última factura ya registrada en la cadena Verifactu (nº %s, fecha %s).';
 
