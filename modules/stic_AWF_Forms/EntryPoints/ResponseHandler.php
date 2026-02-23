@@ -34,9 +34,18 @@ class ResponseHandler
 {
     public function run(): void {
         global $current_user;
+        
+        // If we have a real user, we will use it as execution context, 
+        // but we will switch to admin to avoid permission issues when processing the response
 
         // Real user (before changing to admin)
         $realUserId = null;
+        // If SuiteCRM does not load the session and user (auth is false), get authenticated_user_id from the session (if available)
+        if (empty($current_user) || empty($current_user->id)) {
+            if (isset($_SESSION['authenticated_user_id'])) {
+                $current_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
+            }
+        }
         if (!empty($current_user) && !empty($current_user->id)) {
             $realUserId = $current_user->id;
         }

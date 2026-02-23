@@ -49,15 +49,23 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
      */
     public function getParameters(): array
     {
-        $paramMsg = new ActionParameterDefinition();
-        $paramMsg->name = 'error_message';
-        $paramMsg->text = $this->translate('ERROR_MSG_TEXT'); 
-        $paramMsg->type = ActionParameterType::VALUE;
-        $paramMsg->dataType = ActionDataType::TEXTAREA;
-        $paramMsg->defaultValue = $this->translate('ERROR_MSG_TEXT_DEFAULT');
-        $paramMsg->required = true;
+        $paramSessionErrorMsg = new ActionParameterDefinition();
+        $paramSessionErrorMsg->name = 'session_error_message';
+        $paramSessionErrorMsg->text = $this->translate('SESSION_ERROR_MSG_TEXT'); 
+        $paramSessionErrorMsg->type = ActionParameterType::VALUE;
+        $paramSessionErrorMsg->dataType = ActionDataType::TEXT;
+        $paramSessionErrorMsg->defaultValue = $this->translate('SESSION_ERROR_MSG_TEXT_DEFAULT');
+        $paramSessionErrorMsg->required = true;
+
+        $paramPermissionsErrorMsg = new ActionParameterDefinition();
+        $paramPermissionsErrorMsg->name = 'permissions_error_message';
+        $paramPermissionsErrorMsg->text = $this->translate('PERMISSIONS_ERROR_MSG_TEXT'); 
+        $paramPermissionsErrorMsg->type = ActionParameterType::VALUE;
+        $paramPermissionsErrorMsg->dataType = ActionDataType::TEXT;
+        $paramPermissionsErrorMsg->defaultValue = $this->translate('PERMISSIONS_ERROR_MSG_TEXT_DEFAULT');
+        $paramPermissionsErrorMsg->required = true;
         
-        return [$paramMsg];
+        return [$paramSessionErrorMsg, $paramPermissionsErrorMsg];
     }
 
     /**
@@ -65,15 +73,27 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        global $current_user;
-        
-        // Strict server-side verification at submit time
-        if (empty($current_user) || empty($current_user->id)) {
-            $msg = $actionConfig->getResolvedParameter('error_message');
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, $msg);
+        // We do not check $current_user because always is an admin (ResponseHandler sets current_user to admin for the execution of the actions)
+        // Instead, we check if there is $defaultAssignedUserId defined in ExecutionContext with the loged user before the change to admin
+
+        $formBean = BeanFactory::getBean('stic_AWF_Forms', $context->formId);
+        if (!$formBean || empty($formBean->id)) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Form not found with ID '{$context->formId}'. Aborting session check.");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Form not found");
         }
 
-        return new ActionResult(ResultStatus::OK, $actionConfig, "User validated: " . $current_user->user_name);
+        if(empty($context->defaultAssignedUserId)) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": No user session found in context for form '{$formBean->name}' (ID: {$formBean->id}). Aborting session check.");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "No user session found");
+        }
+        
+        $authenticated_user = BeanFactory::getBean('Users', $context->defaultAssignedUserId);
+        if (!$authenticated_user) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Authenticated user not found in session for form '{$formBean->name}' (ID: {$formBean->id}). Aborting session check.");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Authenticated user not found");
+        }
+
+        return new ActionResult(ResultStatus::OK, $actionConfig, "User validated: " . $authenticated_user->user_name);
     }
 
     /**
@@ -84,14 +104,18 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
      * @return array array Structure: ['script' => ['console.log("hi")'], 'css' => [], 'html' => []]
      */
     public function getFrontendAssets(array $params, ?FormConfig $formConfig = null, string $formId = ''): array {
-        $errorMsg = $this->translate('ERROR_MSG_TEXT_DEFAULT'); 
+        $sessionErrorMsg = $this->translate('SESSION_ERROR_MSG_TEXT_DEFAULT'); 
+        $permissionsErrorMsg = $this->translate('PERMISSIONS_ERROR_MSG_TEXT_DEFAULT'); 
         foreach($params as $p) {
-            if ($p->name == 'error_message') $errorMsg = $p->value;
+            if ($p->name == 'session_error_message') $sessionErrorMsg = $p->value;
+            if ($p->name == 'permissions_error_message') $permissionsErrorMsg = $p->value;
         }
-        $jsErrorMsg = json_encode($errorMsg);
+        $jsSessionErrorMsg = json_encode($sessionErrorMsg);
+        $jsPermissionsErrorMsg = json_encode($permissionsErrorMsg);
         $jsCheckingMsg = json_encode($this->translate('CHECKING'));
         $jsDeniedTitle = json_encode($this->translate('DENIED_TITLE'));
-        $jsLoginMsg = $this->translate('ACTION_LOGIN');
+        $jsActiveSessionTxt = json_encode($this->translate('ACTIVE_SESSION'));
+        $jsLoginMsg = $this->translate('LOGIN');
 
         $script = <<<JS
         document.addEventListener('DOMContentLoaded', function() {
@@ -105,25 +129,78 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
                 wrapper.parentNode.insertBefore(loader, wrapper);
             }
 
-            // Consulta AJAX
-            fetch('index.php?entryPoint=stic_AWF_checkSession&id={$formId}')
+            // AJAX Request to validate session and permissions
+            fetch('index.php?entryPoint=stic_AWF_checkSession&id={$formId}', {
+                method: 'GET',
+                credentials: 'include', // Important to include cookies for session validation through CORS
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
                 .then(r => r.json())
                 .then(data => {
                     const loader = document.getElementById('awf-session-loader');
                     if(loader) loader.remove();
 
                     if (data.is_logged) {
-                        if(wrapper) wrapper.style.visibility = 'visible';
+                        // Check permissions
+                        if (data.permissions) { 
+                            if (wrapper) {
+                                wrapper.style.visibility = 'visible';
+                                // Add user badge with the name of the logged-in user
+                                if (data.user_name) {
+                                    const userBadge = document.createElement('div');
+                                    userBadge.className = 'awf-user-badge text-end text-muted small mb-3';
+                                    userBadge.style.opacity = '0.7';
+                                    userBadge.innerHTML = '<span class="badge bg-light text-dark border"><i class="fas fa-user-check text-success"></i> ' + {$jsActiveSessionTxt} + ': <strong>' + data.user_name + '</strong></span>';
+                                    wrapper.prepend(userBadge);
+                                }
+                            }
+                        }
+                        else {
+                            // User does not have permissions
+                            if (wrapper) {
+                                wrapper.style.visibility = 'hidden';
+                                const errorDiv = document.createElement('div');
+                                let finalMsg = {$jsPermissionsErrorMsg};
+                                errorDiv.className = 'alert alert-warning m-5 text-center shadow';
+                                errorDiv.innerHTML = '<h4>' + {$jsDeniedTitle} + '</h4><p>' + finalMsg + '</p>';
+                                wrapper.parentNode.insertBefore(errorDiv, wrapper);
+                            } else {
+                                alert({$jsPermissionsErrorMsg}); // Fallback alert if we can't manipulate the DOM
+                            }
+                        }
                     } else {
-                        if(wrapper) wrapper.remove();
-                        const errorDiv = document.createElement('div');
-                        let finalMsg = {$jsErrorMsg};
-                        errorDiv.className = 'alert alert-danger m-5 text-center shadow';
-                        errorDiv.innerHTML = '<h4>' + {$jsDeniedTitle} + '</h4><p>' + finalMsg + '</p><p><a href="index.php" class="btn btn-outline-danger btn-sm">{$jsLoginMsg}</a></p>';
-                        document.body.appendChild(errorDiv);
+                        if (wrapper) {
+                            wrapper.style.visibility = 'hidden';
+                            const errorDiv = document.createElement('div');
+                            let finalMsg = {$jsSessionErrorMsg};
+                            errorDiv.className = 'alert alert-danger m-5 text-center shadow';
+                            errorDiv.innerHTML = '<h4>' + {$jsDeniedTitle} + '</h4><p>' + finalMsg + '</p><p><a href="index.php" class="btn btn-outline-danger btn-sm">{$jsLoginMsg}</a></p>';
+                            wrapper.parentNode.insertBefore(errorDiv, wrapper);
+                        } else {
+                            window.location.href = "index.php"; // Redirect to login if we can't even show the message
+                        }
                     }
                 })
-                .catch(e => { console.error("Session check error", e); });
+                .catch(e => {
+                    console.error("Session check error", e); 
+
+                    // If fails fetch and is not a JSON response, we assume the session is invalid (SuiteCRM has intercepted the call)
+                    const loader = document.getElementById('awf-session-loader');
+                    if(loader) loader.remove();
+
+                    if (wrapper) {
+                        const errorDiv = document.createElement('div');
+                        let finalMsg = {$jsSessionErrorMsg};
+                        errorDiv.className = 'alert alert-danger m-5 text-center shadow';
+                        errorDiv.innerHTML = '<h4>' + {$jsDeniedTitle} + '</h4><p>' + finalMsg + '</p><p><a href="index.php" class="btn btn-outline-danger btn-sm">{$jsLoginMsg}</a></p>';
+                        wrapper.parentNode.insertBefore(errorDiv, wrapper);
+                    } else {
+                        window.location.href = "index.php"; // Redirect to login if we can't even show the message
+                    }
+                });
         });
 JS;
         return ['script' => [$script]];

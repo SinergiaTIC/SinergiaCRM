@@ -2044,7 +2044,15 @@ class WizardStep3 {
       get allowedModules() {
         const all = Object.values(STIC.enabledModules);
         if (!this.supportedModules || this.supportedModules.length === 0) return all;
-        return all.filter(m => this.supportedModules.includes(m.name));
+
+        let allowed = all.filter(m => this.supportedModules.includes(m.name));
+        // Include also the supported modules but not enabled 
+        this.supportedModules.forEach(sm => {
+          if (!allowed.find(m => m.name === sm)) {
+            allowed.push({ name: sm, text: utils.translate(sm) });
+          }
+        });
+        return allowed;
       },
       get allowedModulesForSelect() {
         return this.allowedModules.map(m => ({ id: m.name, label: m.text }));

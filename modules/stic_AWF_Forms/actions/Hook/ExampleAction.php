@@ -64,7 +64,7 @@ class ExampleAction extends HookActionDefinition
         $this->isActive = true;
 
         // We indicate whether the user can select this action in the wizard when creating a form.
-        $this->isUserSelectable = false;
+        $this->isUserSelectable = true;
 
         // We indicate the category of the action (from the list stic_awf_forms_action_definition_category_list)
         $this->category = 'data';
