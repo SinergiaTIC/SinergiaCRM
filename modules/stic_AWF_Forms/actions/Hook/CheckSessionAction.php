@@ -87,7 +87,7 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "No user session found");
         }
         
-        $authenticated_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
+        $authenticated_user = BeanFactory::getBean('Users', $context->defaultAssignedUserId);
         if (!$authenticated_user) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Authenticated user not found in session for form '{$formBean->name}' (ID: {$formBean->id}). Aborting session check.");
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Authenticated user not found");
