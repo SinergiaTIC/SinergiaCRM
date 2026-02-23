@@ -37,3 +37,19 @@ $layout_defs["Users"]["subpanel_setup"]["prospect_lists"] = array(
         ),
     ),
 );
+
+
+// Signatures subpanel
+$layout_defs["Users"]["subpanel_setup"]['stic_signers_users'] = array(
+    'order' => 100,
+    'module' => 'stic_Signers',
+    'subpanel_name' => 'ForUsers',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_modified',
+    'title_key' => 'LBL_STIC_SIGNERS_USERS_FROM_STIC_SIGNERS_TITLE',
+    'get_subpanel_data' => 'function:stic_SignersUtils::getSticSignersForUsers',
+    'function_parameters' => array(
+        'import_function_file' => 'modules/stic_Signers/Utils.php',
+    ),
+    'top_buttons' => [], // must be defined
+);

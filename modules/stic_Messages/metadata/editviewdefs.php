@@ -76,12 +76,17 @@ array(
                 ),
                 3 => array(
                     0 => array(
+                        'name' => 'info',
+                    ),
+                ),
+                4 => array(
+                    0 => array(
                         'name' => 'message',
                         'comment' => 'Full text of the message',
                         'label' => 'LBL_MESSAGE',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
@@ -93,7 +98,7 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
 
                     ),

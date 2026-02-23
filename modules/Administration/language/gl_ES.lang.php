@@ -100,32 +100,33 @@ $mod_strings = array(
 
     'ERR_SMTP_SERVER_NOT_SET' => 'Aviso: non se configurou un servidor SMTP para correo saínte en Configuración de Email. É necesario configuralo para enviar contrasinais aos usuarios.',
     'ERR_UW_ACCEPT_LICENSE' => 'Antes de proceder, debe aceptar o Acordo de Licenza',
-    'ERR_UW_CONFIG_FAILED' => "Erro xerando arquivo config.php.",
+    'ERR_UW_CONFIG_FAILED' => 'Erro xerando arquivo config.php.',
     'ERR_UW_COPY_FAILED' => 'Non pode copiarse o arquivo',
     'ERR_UW_INVALID_VIEW' => 'Vista especificada non válida.',
-    'ERR_UW_NO_DEPENDENCY' => "As seguintes dependencias non foron encontradas no sistema.",
-    'ERR_UW_NO_FILES' => "Non se especificaron os Arquivos a copiar.",
-    'ERR_UW_NO_INSTALL_FILE' => "Arquivo de Instalación non especificado.",
-    'ERR_UW_NO_LANG_DESC' => "Descrición de idioma non especificada.",
-    'ERR_UW_NO_LANG' => "Nome de idioma non especificado.",
-    'ERR_UW_NO_MANIFEST' => "O arquivo zip non contén un arquivo manifest.php.  non se pode continuar.",
-    'ERR_UW_NO_MODE' => "Modo de operación non especificado.",
-    'ERR_UW_NO_TEMP_DIR' => "Directorio Temporal do que copiar arquivos non especificado.",
+    'ERR_UW_NO_DEPENDENCY' => 'As seguintes dependencias non foron encontradas no sistema.',
+    'ERR_UW_NO_FILES' => 'Non se especificaron os Arquivos a copiar.',
+    'ERR_UW_NO_INSTALL_FILE' => 'Arquivo de Instalación non especificado.',
+    'ERR_UW_NO_LANG_DESC' => 'Descrición de idioma non especificada.',
+    'ERR_UW_NO_LANG' => 'Nome de idioma non especificado.',
+    'ERR_UW_NO_MANIFEST' => 'O arquivo zip non contén un arquivo manifest.php.  non se pode continuar.',
+    'ERR_UW_NO_MODE' => 'Modo de operación non especificado.',
+    'ERR_UW_NO_TEMP_DIR' => 'Directorio Temporal do que copiar arquivos non especificado.',
     'ERR_UW_NO_UPDATE_RECORD' => 'Non se puido localizar o rexistro de instalación de',
-    'ERR_UW_NO_UPLOAD_FILE' => "Por favor, faga clic en Explorar para seleccionar un arquivo a subir desde o seu sistema.<br>",
-    'ERR_UW_NO_VIEW' => "Vista non definida.  Por favor, vaia ao inicio de Administración para navegar a esta páxina.",
-    'ERR_UW_NOT_ACCEPTIBLE_TYPE' => "Só pode subir paquetes con módulos, temas e idiomas nesta páxina.",
+    'ERR_UW_NO_UPLOAD_FILE' => 'Por favor, faga clic en Explorar para seleccionar un arquivo a subir desde o seu sistema.<br>',
+    'ERR_UW_NO_VIEW' => 'Vista non definida.  Por favor, vaia ao inicio de Administración para navegar a esta páxina.',
+    'ERR_UW_NOT_ACCEPTIBLE_TYPE' => 'Só pode subir paquetes con módulos, temas e idiomas nesta páxina.',
     'ERR_UW_NOT_RECOGNIZED' => 'non está recoñecido',
     'ERR_UW_NOT_VALID_UPLOAD' => 'Subida non válida.',
-    'ERR_UW_ONLY_PATCHES' => "Só pode subir parches nesta páxina.",
+    'ERR_UW_ONLY_PATCHES' => 'Só pode subir parches nesta páxina.',
     'ERR_UW_REMOVE_FAILED' => 'Non puido quitarse o arquivo',
-    'ERR_UW_UPDATE_CONFIG' => "Erro actualizando config.php coa información da nova versión.",
-    'ERR_UW_UPLOAD_ERROR' => "Ocorreu un erro na subida do arquivo, por favor, ¡inténteo de novo!<br>\n",
+    'ERR_UW_UPDATE_CONFIG' => 'Erro actualizando config.php coa información da nova versión.',
+    'ERR_UW_UPLOAD_ERROR' => 'Ocorreu un erro na subida do arquivo, por favor, ¡inténteo de novo!<br>
+',
     'ERROR_MANIFEST_TYPE' => 'O arquivo de Manifesto debe especificar o tipo de paquete.',
     'ERROR_PACKAGE_TYPE' => 'O arquivo de Manifesto especifica un tipo de paquete non recoñecido',
     'ERROR_VERSION_INCOMPATIBLE' => 'O arquivo subido non é compatible con esta versión de SuiteCRM:',
     'HDR_LOGIN_PANEL' => 'Por favor, introduza as súas credenciais de SuiteCRM.',
-    'HEARTBEAT_MESSAGE' => "<br />O mecanismo de Actualizacións de SuiteCRM permite que o seu servidor comprobe se hai dispoñible algunha actualización para a súa versión de SuiteCRM.",
+    'HEARTBEAT_MESSAGE' => '<br />O mecanismo de Actualizacións de SuiteCRM permite que o seu servidor comprobe se hai dispoñible algunha actualización para a súa versión de SuiteCRM.',
     'LBL_ACCEPT_TERMS' => 'Aceptar Termos e Condicións',
     'LBL_ACCEPT' => 'Aceptar',
     'LBL_ADMINISTRATION_HOME_TITLE' => 'Sistema',
@@ -511,6 +512,7 @@ $mod_strings = array(
     'LBL_REPAIRXSS_INSTRUCTIONS' => 'Seleccione un módulo para quitar potenciais cadeas XSS.  Seleccione "Todo" para revisar todos os módulos.<br>Presione executar para iniciar o proceso de detección e eliminación.',
     'LBL_REPAIRXSS_REPAIRED' => 'Obxectos reparados',
     'LBL_REPAIRXSS_TITLE' => 'Quita vulnerabilidades XSS da Base de Datos',
+    
     'LBL_RESTORE_BUTTON_LABEL' => 'Restaurar',
     'LBL_RETURN' => 'Volver',
     'LBL_SEND_STAT' => '<b>Enviar Estadísticas de Uso Anónimas</b> - Se está seleccionado, SuiteCRM enviará estadísticas de forma anónima sobre a súa actualización a SuiteCRM.com cada vez que o seu sistema comprobe a existencia de actualizacións. A información axudaranos a entender como se utiliza a aplicación e mellorar o produto.',
@@ -584,7 +586,7 @@ $mod_strings = array(
     'LBL_UW_TYPE_THEME' => 'Tema',
     'LBL_UW_TYPE_MODULE' => 'Módulo',
     'LBL_UW_MODE_INSTALL' => 'Instalado',
-    'LBL_UW_MODE_UNINSTALL' => 'Desinstalado',  
+    'LBL_UW_MODE_UNINSTALL' => 'Desinstalado',
     'LBL_UW_UPLOAD_SUCCESS' => "foi subido.<br>",
     'LBL_VISIBLE_PANELS' => 'Subpaneis Visibles',
     'LBL_VISIBLE_TABS' => 'Pestanas Visibles',
@@ -758,7 +760,6 @@ $mod_strings = array(
     'LBL_SAML_LOGIN_URL_DESC' => 'Introducir URL de Inicio de Sesión',
     'LBL_SAML_LOGOUT_URL_DESC' => 'Ingrese URL de peche de sesión',
 
-    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Seleccione o módulo(s) sobre os que usuarios poderán realizar a busca usando a busca global.',
     'LBL_SELECT_MODULES' => 'Avanzado',
     'LBL_SELECT_MODULES_TITLE' => 'Arrastrar e soltar para seleccionar os módulos e para cambiar o orde de presentación. Realizar unha busca para aplicar os cambios.',
     'LBL_LANGUAGE_PACKS' => 'Paquetes de Linguaxe' /*for 508 compliance fix*/,
@@ -837,7 +838,8 @@ $mod_strings = array(
     'LBL_SUGGESTION_POPUP_FROM' => 'Degradado de Suxestión & Ventá Emerxente (de):',
     'LBL_SUGGESTION_POPUP_TO' => 'Degradado de Suxestión & Ventá Emerxente (a):',
 
-    'LBL_SALESAGILITY_ADMIN' => 'OpenAdmin Avanzado',
+    'LBL_MODULE_ADMIN' => 'Configuración de módulos',
+    'LBL_MODULE_ADMIN_HEADER_DESC' => 'Configure aspectos genéricos y específicos de los módulos',
     'LBL_AOP_ADMIN_MANAGE_AOP' => 'Configuración de Advanced OpenPortal',
     'LBL_AOP_ENABLE_AOP' => 'Habilitar AOP',
     'LBL_AOP_ENABLE_PORTAL' => 'Habilitar Portal',
@@ -849,17 +851,13 @@ $mod_strings = array(
     'LBL_AOP_ASSIGNMENT_USER' => 'Usuario de Distribución',
     'LBL_AOP_ASSIGNMENT_OPTIONS' => 'Branco de Distribución',
 
-    'LBL_AOP_ADD_DELIMITER' => '¿Engadir un delimitador de resposta en correos electrónicos?', // PR 5721
-    'LBL_AOP_EMAIL_REPLY_ADD_DELIMITER' => 'Delimitador de resposta de correo electrónico', // PR 5721
-    'LBL_AOP_USE_DELIMITER_CASE_CLOSURE' => '¿Utilizar delimitador no correo de peche de caso?', // PR 5721
-    'LBL_AOP_USE_DEF_CONF' => 'Utilizar a configuración predeterminada', // PR 5721
     'LBL_AOP_EMAIL_SETTINGS' => 'Configuración de Email',
     'LBL_AOP_CONTACT_EMAIL_TEMPLATE' => 'Plantilla de Email de Contacto',
     'LBL_AOP_USER_EMAIL_TEMPLATE' => 'Plantilla de Email de Usuario',
     'LBL_AOP_CASE_CREATION_EMAIL_TEMPLATE' => 'Plantilla de Caso Creado',
     'LBL_AOP_CASE_CLOSURE_EMAIL_TEMPLATE' => 'Plantilla de Caso Cerrado',
     'LBL_AOP_JOOMLA_ACCOUNT_CREATION_EMAIL_TEMPLATE' => 'Plantilla de Creación de Conta do Portal de Soporte de Joomla',
-    'LBL_AOP_MEETING_RESPONSE_URL' => 'URL de repuesta para a Reunión', // PR 3394
+
     'LBL_AOP_BUSINESS_HOURS_SETTINGS' => 'Horarios',
     'LBL_AOP_BUSINESS_HOURS_DESC' => "Restrinxir o fluxo de traballo para lanzar só en certos días e horas",
     'LBL_SUPPORT_FROM_ADDRESS' => 'Enderezo Remitente de Soporte',
@@ -874,10 +872,6 @@ $mod_strings = array(
     'LBL_AOP_ADD_STATUS' => 'Engadir',
     'LBL_AOP_REMOVE_STATUS' => 'Quitar',
 
-    'LBL_AOD_ADMIN_MANAGE_AOD' => 'Configuración de Advanced OpenDiscovery',
-    'LBL_AOD_ENABLE' => 'Habiltar AOD',
-    'LBL_AOD_SETTINGS' => 'Axustes AOD',
-
     'LBL_AOS_ADMIN_CONTRACT_SETTINGS' => 'Configuración de Contratos',
     'LBL_AOS_ADMIN_CONTRACT_RENEWAL_REMINDER' => 'Período para o Recordatorio de Renovación',
     'LBL_AOS_ADMIN_MANAGE_AOS' => 'Configuración de Advanced OpenSales',
@@ -889,7 +883,6 @@ $mod_strings = array(
     'LBL_AOS_ADMIN_ENABLE_LINE_ITEM_GROUPS' => 'Habilitar Grupos de Items de Liña',
     'LBL_AOS_ADMIN_ENABLE_LINE_ITEM_TOTAL_TAX' => 'Agregar Imposto ao Total de Liña',
     'LBL_AOS_SETTINGS' => 'Axustes AOS',
-    'LBL_AOS_PRODUCTS' => 'Produtos AOS',
     'LBL_AOS_DAYS' => 'días',
     'LBL_CHANGE_SETTINGS' => 'Cambiar axustes de Advanced OpenSales',
     'LBL_CHANGE_SETTINGS_AOD' => 'Cambiar axustes para DescubrimentoAberto Avanzado',
@@ -950,6 +943,7 @@ $mod_strings = array(
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION' => 'Proba de conexión',
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION_SUCCESS' => 'Conexión exitosa.',
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION_FAIL' => 'Fallo de conexión.',
+    'LBL_SETUP_ELASTICSEARCH' => 'Active ElasticSearch antes de reparar los índices',
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION_ERROR' => 'Non se puido realizar unha petición de ping.',
     'LBL_ELASTIC_SEARCH_SERVER' => 'Servidor',
     'LBL_ELASTIC_SEARCH_HOST' => 'Host',
@@ -975,37 +969,67 @@ $mod_strings = array(
     'LBL_SEARCH_ENGINE' => 'Motor de busca',
     'LBL_SEARCH_ENGINE_HELP' => 'Configurar o motor de busca predeterminado utilizado polo entorno da busca.',
     'LBL_SEARCH_ENGINE_TOOLTIP' => 'Seleccione un motor de busca para a busca global.',
+    'LBL_SEARCH_GENERAL' => 'General',
 
     'LBL_SEARCH_MODULES' => 'Módulos de busca',
     'LBL_SEARCH_MODULES_HELP' => 'Seleccione o módulo(s) sobre os que usuarios poderán realizar a busca usando a busca global.',
 
     // Search Engines Translations
-    'LBL_LEGACY_SEARCH_ENGINES' => 'Busca Obsoleta',
     'LBL_SEARCH_WRAPPER_ENGINES' => 'Buscadores (novos)',
     'LBL_BASIC_SEARCH_ENGINE' => 'Busca básica',
     'LBL_BASIC_AND_AOD_ENGINE' => 'Busca básica + avanzada',
     'LBL_ELASTIC_SEARCH_ENGINE' => 'Motor busca elástica',
     'LBL_SIMPLE_SQL_SEARCH_ENGINE' => 'Motor de busca SQL simple',
 
+    // SearchWrapper Settings
+    'LBL_PDF_HEADER' => 'PDF',
+    'LBL_CHANGE_PDF_SETTINGS' => 'Configurar las opciones PDF',
+    'LBL_PDF_HEADER_DESC' => 'Gestione sus preferencias PDF',
+    'LBL_PDF_OPTIONS' => 'Motor PDF',
+    'LBL_PDF_OPTIONS_HELP' => 'Seleccione el motor PDF que estará disponible para los usuarios.',
+    'LBL_PDF_INTERFACE' => 'Interfaz PDF',
+
+    // PDF Engines Translations
+    'LBL_PDF_WRAPPER_ENGINES' => 'Motores PDF',
+    'LBL_MPDF_ENGINE' => 'Motor MPDF',
+
     // Ajax Submit
     'LBL_AJAX_SUBMIT_FAIL' => 'Produciuse un erro ao gardar os axustes.',
-    'LBL_SHAREDRULES_SETTINGS' => "Regras de seguridade compartidas", // PR 6143
-    'LBL_SHAREDRULES_SETTINGS_DESC' => "Xestionar as regras de seguridade compartidas", // PR 6143
 
-    'MSG_CACHE_CLEANED' => 'A caché agora está limpa.', // PR 3007
-    'MSG_NOT_CACHE_CLEANED' => 'Non se puido limpar a caché', // PR 3007
-    'LBL_USER_LOCKOUT' => 'Bloqueo de usuario', // PR 2897
-    'LBL_MAX_FAILED_LOGINS' => 'Cantidade Máxima de inicios de sesión fallidos', // PR 2897
-    'LBL_MAX_FAILED_LOGINS_HELP' => 'O número de inicios de sesión fallidos que terá un usuario antes de que a súa conta quede bloqueada.', // PR 2897
-    'LBL_AUTO_UNLOCK_TIME' => 'Tempo de desbloqueo automático do usuario', // PR 2897
-    'LBL_AUTO_UNLOCK_TIME_HELP' => 'O número de minutos necesarios para que unha conta de usuario se desbloquee automaticamente.', // PR 2897
-    'LBL_AUTO_UNLOCK_TIME_UNITS' => 'minutos', // PR 2897
-    'ERR_MAX_FAILED_LOGINS' => 'Especifique un valor válido para o número máximo de inicios de sesión fallidos', // PR 2897
-    'ERR_AUTOMATIC_UNLOCK_TIME' => 'Especifique un valor válido para o tempo de desbloqueo automático', // PR 2897
-    'LBL_ENABLE_MAX_FAILED_LOGINS' => 'Bloquear usuarios despois de varios inicios de sesión fallidos', // PR 2897
-    'LBL_AUTO_UNLOCK' => 'Desbloquea automaticamente os usuarios bloqueados', // PR 2897
-    'LBL_AUTO_UNLOCK_HELP' => 'Desbloqueo de usuarios bloqueados despois dun período configurable de tempo', // PR 2897
+    'LBL_ADMIN_TOOLS_TITLE' => 'Herramientas de administración',
+    'LBL_ADMIN_TOOLS_HEADER_DESC' => 'Repara, actualiza y realiza diagnósticos en tu instancia de SuiteCRM',
+    'LBL_WORKFLOW_MANAGER' => 'Flujos de trabajo',
+    'LBL_WORKFLOW_MANAGER_DESC' => 'Gestiona, añade, elimina o modifica procesos de flujo de trabajo',
 
-    'LBL_SHAREDRULES_SETTINGS' => "Regras de seguridade compartidas", // PR 6143
-    'LBL_SHAREDRULES_SETTINGS_DESC' => "Xestionar as regras de seguridade compartidas", // PR 6143
+    
+    'LBL_WARNING' => 'Aviso',
+    'LBL_ERROR' => 'Error',
+    'LBL_SUBMIT' => 'Enviar',
+    'LBL_REPAIR_UTF_ENCODING' => 'Reparar codificación UTF',
+    'LBL_REPAIR_UTF_ENCODING_DESC' => 'Reparar registros con caracteres UTF codificados incorrectamente',
+    'LBL_REPAIR_UTF_ENCODING_DATA_WARNING' => 'Los datos de sus tablas serán actualizados.',
+    'LBL_REPAIR_UTF_ENCODING_BACKUP_WARNING' => 'Asegúrese de hacer una copia de seguridad de su base de datos antes de ejecutar esta acción.',
+    'LBL_REPAIR_UTF_ENCODING_SYNC_WARNING' => 'Por defecto, esta acción añadirá una tarea a la cola de tareas. Normalizará los registros en lotes. Esto requiere que el cron esté configurado.',
+    'LBL_REPAIR_UTF_ENCODING_ASYNC_WARNING' => 'Ejecutando en modo asíncrono. Se debería haber añadido una tarea a la cola de tareas. Normalizará los registros en lotes. Esto requiere que el cron esté configurado.',
+    'LBL_REPAIR_UTF_ENCODING_ASYNC_PROGRESS_CHECK' => "Para obtener información sobre el progreso, consulte los datos de la entrada en la tabla job_queue con el nombre 'repair utf encoding'",
+    'LBL_REPAIR_UTF_ENCODING_SYNC_PROGRESS_CHECK' => "Ejecutando en modo síncrono. Esta acción tomará un tiempo. Para obtener información sobre el progreso, consulte el registro de SuiteCRM. Consulte los registros con '[utf-normalize]'",
+    'LBL_KEEP_TRACKING_TABLES' => 'Mantener las tablas de seguimiento',
+    'LBL_REPAIR_FROM_DATE' => 'Reparar desde',
+    'LBL_REPAIR_UTF_ENCODING_REPAIR_FROM_INVALID' => 'El valor proporcionado para \'Reparar desde\' no es válido',
+    'LBL_SYNC_RUN' => '¿Ejecutar la reparación de forma síncrona?',
+    'LBL_SYNC_RUNNING' => 'Ejecutando en modo síncrono',
+    'LBL_SYNC_RUNNING_INFORMATION_OUTPUT' => 'No cambie de página o vista. Se mostrará la información del resultado.',
+    'LBL_SYNC_RUNNING_INFORMATION_LOGS' => "También puede consultar el registro de SuiteCRM para más información. Consulte los registros con '[utf-normalize]'",
+    'LBL_SYNC_LONG_EXECUTION_WARNING' => 'Esta acción tomará un tiempo.',
+    'LBL_SYNC_RUN_DESC' => 'Marca para ejecutar la acción en modo síncrono. Esta acción tomará un tiempo. Consulte el registro de SuiteCRM para obtener información sobre el progreso. Consulte los registros con \'[utf-normalize]\'',
+    'LBL_NORMALIZE_SUCCESS' => 'Normalización de registros ejecutada con éxito',
+    'LBL_NORMALIZE_FAILURE' => 'Error al ejecutar la normalización de registros',
+    'LBL_EXECUTION_STATUS' => 'Estado de ejecución',
+    'LBL_EXECUTION_MODE' => 'Modo de ejecución',
+    'LBL_IN_PROGRESS' => 'En progreso',
+    'LBL_REPAIRED' => 'Reparado',
+    'LBL_SYNCHRONOUS' => 'Síncrono',
+    'LBL_ASYNCHRONOUS' => 'Asíncrono',
+    'LBL_OUTPUT' => 'SALIDA',
+    'LBL_RESULT' => 'Resultado',
 );

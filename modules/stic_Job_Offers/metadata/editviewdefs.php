@@ -43,9 +43,13 @@ array(
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_EDITVIEW_PANEL5' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_EDITVIEW_PANEL8' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),                
                 'LBL_EDITVIEW_PANEL2' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
@@ -63,69 +67,140 @@ array(
         ),
         'panels' => array(
             'LBL_DEFAULT_PANEL' => array(
-                0 => array(
+                0 => array (
                     0 => 'name',
                     1 => 'assigned_user_name',
                 ),
-                1 => array(
-                    0 => array(
+                1 => array (
+                    0 => 
+                    array (
                         'name' => 'stic_job_offers_accounts_name',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'interlocutor',
                         'studio' => 'visible',
                         'label' => 'LBL_INTERLOCUTOR',
                     ),
                 ),
-                2 => array(
-                    0 => array(
-                        'name' => 'type',
+                2 => array (
+                    0 => 
+                    array (
+                        'name' => 'offer_type',
                         'studio' => 'visible',
-                        'label' => 'LBL_TYPE',
+                        'label' => 'LBL_OFFER_TYPE',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'status',
                         'studio' => 'visible',
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                3 => array(
-                    0 => array(
+                3 => array (
+                    0 => 
+                    array (
+                        'name' => 'type',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TYPE',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'territorial_scope',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TERRITORIAL_SCOPE',
+                    ),
+                ),
+                4 => array (
+                    0 => 
+                    array (
                         'name' => 'offer_origin',
                         'studio' => 'visible',
                         'label' => 'LBL_OFFER_ORIGIN',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'offered_positions',
                         'label' => 'LBL_OFFERED_POSITIONS',
                     ),
                 ),
-                4 => array(
-                    0 => array(
+                5 => array (
+                    0 => 
+                    array (
                         'name' => 'process_start_date',
                         'label' => 'LBL_PROCESS_START_DATE',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'process_end_date',
                         'label' => 'LBL_PROCESS_END_DATE',
                     ),
                 ),
-                5 => array(
-                    0 => array(
+                6 => array (
+                    0 => 
+                    array (
                         'name' => 'applications_start_date',
                         'label' => 'LBL_APPLICATIONS_START_DATE',
                     ),
-                    1 => array(
+                    1 => 
+                    array (
                         'name' => 'applications_end_date',
                         'label' => 'LBL_APPLICATIONS_END_DATE',
                     ),
                 ),
-                6 => array(
-                    0 => 'description',
-                    1 => array(
+                7 => array (
+                    0 => 
+                    array (
                         'name' => 'offer_code',
                         'label' => 'LBL_OFFER_CODE',
                     ),
+                    1 => 
+                    array (
+                        'name' => 'offer_mode',
+                        'studio' => 'visible',
+                        'label' => 'LBL_OFFER_MODE',
+                    ),
+                ),
+                8 => array (
+                    0 => 
+                    array (
+                        'name' => 'weekdays',
+                        'studio' => 'visible',
+                        'label' => 'LBL_WEEKDAYS',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'timetable',
+                        'label' => 'LBL_TIMETABLE',
+                    ),
+                ),
+                9 => array (
+                    0 => 
+                    array (
+                        'name' => 'evaluation',
+                        'label' => 'LBL_EVALUATION',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'responsible',
+                        'studio' => 'visible',
+                        'label' => 'LBL_RESPONSIBLE',
+                    ),
+                ),
+                10 => array (
+                    0 => 
+                    array (
+                        'name' => 'center',
+                        'studio' => 'visible',
+                        'label' => 'LBL_CENTER',
+                    ),
+                    1 => 
+                    array (
+                        'name' => 'project_stic_job_offers_name',
+                    ),
+                ),
+                11 => array (
+                    0 => 'description',
                 ),
             ),
             'lbl_editview_panel5' => array(
@@ -199,6 +274,25 @@ array(
                     1 => array(
                     ),
                 ),
+            ),
+            'lbl_editview_panel8' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'temporality',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TEMPORALITY',
+                    ),
+                    1 => array(
+                        'name' => 'expected_duration',
+                        'label' => 'LBL_EXPECTED_DURATION',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'goals',
+                        'label' => 'LBL_GOALS',
+                    ),
+                ),  
             ),
             'lbl_editview_panel2' => array(
                 0 => array(

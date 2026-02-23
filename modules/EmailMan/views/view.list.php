@@ -88,8 +88,26 @@ class EmailManViewList extends ViewList
     public function listViewProcess()
     {
         parent::listViewProcess();
+
+        // STIC-Custom 20250728 MHP - Display a warning of possible duplicate mailing
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+        // global $app_strings;
         
-        global $app_strings;
+        // echo "<form action=\"index.php\" method=\"post\" name=\"EmailManDelivery\" id=\"form\">
+		// 	<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class='actionsContainer'>
+		// 		<tr><td style=\"padding-bottom: 2px;\">
+        //                 <input type=\"hidden\" name=\"module\" value=\"EmailMan\">
+        //                 <input type=\"hidden\" name=\"action\">
+        //                 <input type=\"hidden\" name=\"return_module\">
+        //                 <input type=\"hidden\" name=\"return_action\">
+        //                 <input type=\"hidden\" name=\"manual\" value=\"true\">
+        //                 <input	title=\"".$app_strings['LBL_CAMPAIGNS_SEND_QUEUED']."\" 
+        //                         accessKey=\"".$app_strings['LBL_SAVE_BUTTON_KEY']."\" class=\"button\" 
+        //                         onclick=\"this.form.return_module.value='EmailMan'; this.form.return_action.value='index'; this.form.action.value='EmailManDelivery'\" 
+        //                         type=\"submit\" name=\"Send\" value=\"".$app_strings['LBL_CAMPAIGNS_SEND_QUEUED']."\">
+        //     </td></tr></table></form>";
+
+        global $app_strings, $mod_strings;
         
         echo "<form action=\"index.php\" method=\"post\" name=\"EmailManDelivery\" id=\"form\">
 			<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class='actionsContainer'>
@@ -103,6 +121,8 @@ class EmailManViewList extends ViewList
                                 accessKey=\"".$app_strings['LBL_SAVE_BUTTON_KEY']."\" class=\"button\" 
                                 onclick=\"this.form.return_module.value='EmailMan'; this.form.return_action.value='index'; this.form.action.value='EmailManDelivery'\" 
                                 type=\"submit\" name=\"Send\" value=\"".$app_strings['LBL_CAMPAIGNS_SEND_QUEUED']."\">
+                                <tr><td style=\"padding-top: 1.5rem;font-size:1.4rem\">* " . $mod_strings['LBL_CAMPAIGNS_SEND_QUEUED_HELP'] . "</td></tr>                                 
             </td></tr></table></form>";
+        // END STIC-Custom
     }
 }

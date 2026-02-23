@@ -43,7 +43,7 @@ $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = "Indica si la funcionalitat de Cal
 $mod_strings['LBL_STIC_CLOCK'] = 'Registre horari';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = "Indica si la funcionalitat de Registre horari està activada per a l'usuari.";
 $mod_strings['LBL_SDA_ALLOWED'] = 'Accés a SinergiaDA';
-$mod_strings['LBL_SDA_ALLOWED_INFO'] = "Indica si l'usuari disposa d'accés a Sinergia Data Analytics";
+$mod_strings['LBL_SDA_ALLOWED_INFO'] = "Indica el nivell d'accés de l'usuari a Sinergia Data Analytics.<ul><li><b>Sense accés:</b> l'usuari no podrà accedir-hi.</li><li><b>Accés complet:</b> l'usuari podrà crear, modificar i executar informes.</li><li><b>Accés de només lectura:</b> l'usuari podrà executar informes i veure'n els resultats però no podrà crear-ne de nous ni modificar els existents. Aquesta opció només és d'aplicació en usuaris normals, els administradors amb accés a SinergiaDA sempre hi tindran accés complet.</li></ul>";
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
@@ -82,12 +82,12 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbits de l'aplicació 
 
 // Emulació d'usuaris - Usuari que emula
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emula aquest usuari';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Accés emulat';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = 'Ara mateix esteu emulant aquest usuari: ';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Per tornar al vostre usuari feu clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = "Emulació d'usuari";
+$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = "Atenció! Esteu emulant l'usuari: ";
+$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Per tornar al vostre usuari feu clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí</a>.';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuari original';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuari emulat';
-$mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = "Finalitza l'accés";
+$mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = "Finalitza l'emulació";
 
 // Emulació d'usuaris - Usuari emulat
 $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = "Emulació d'usuari";
@@ -96,5 +96,9 @@ $mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = "Un administrad
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuari emulador: ';
 
 // Emulació d'usuaris - Monitorització
-$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulació del usuari ';
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = "Emulació de l'usuari ";
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' amb ID ';
+
+// Model 182
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Emissió del Model 182';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = "Indica per a quines organitzacions l'usuari podrà generar el Model 182. La llista es genera dinàmicament a partir dels <a href='index.php?module=stic_Settings' target='_blank'>paràmetres de configuració</a>.";

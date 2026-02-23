@@ -46,6 +46,10 @@ array(
                     'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_PANEL_EVALUATION' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),                
             ),
             'syncDetailEditViews' => false,
         ),
@@ -79,7 +83,7 @@ array(
                 3 => array(
                     0 => 'description',
                 ),
-            ),
+            ),    
             'lbl_panel_language' => array(
                 0 => array(
                     0 => array(
@@ -114,6 +118,16 @@ array(
                         'name' => 'certificate_date',
                         'label' => 'LBL_CERTIFICATE_DATE',
                     ),
+                ),
+            ),
+            'lbl_panel_evaluation' => array(
+                0 => array(
+                    0 => 'evaluation_stage',
+                    1 => 'evaluation_date',
+                ),
+                1 => array(
+                    0 => 'certified_skill',
+                    1 => array(),
                 ),
             ),
         ),

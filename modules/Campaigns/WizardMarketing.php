@@ -277,7 +277,11 @@ if (empty($mrkt_focus->inbound_email_id)) {
 
 $outboundEmailAccountLabels = array();
 $outboundEmailLabels = array();
-$outboundEmailAccounts = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+// STIC-Custom 20250707 - Do not list personal outbound accounts as options
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+// $outboundEmailAccounts = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+$outboundEmailAccounts = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list("", "type != 'user'");
+// END STIC-Custom
 if ($outboundEmailAccounts) {
     foreach ($outboundEmailAccounts as $outboundEmailAccount) {
         $outboundEmailLabels[$outboundEmailAccount->id] = $outboundEmailAccount->name;
@@ -799,4 +803,10 @@ if (isset($_SESSION['msg']) && $_SESSION['msg']) {
 if (!empty($_REQUEST['func'])) {
     echo '<input type="hidden" id="func" value="'.$_REQUEST['func'].'">';
 }
+
+// STIC-Custom 20251201 MHP - Add custom HTML display field to smarty template
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/770
+$ss->assign('displayHTML', $mrkt_focus->stic_display_html_c);
+// END STIC-Custom
+
       $ss->display('modules/Campaigns/WizardMarketing.html');

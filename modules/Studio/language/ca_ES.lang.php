@@ -43,25 +43,25 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_EDIT_LAYOUT' => 'Editar Diseny',
-    'LBL_EDIT_FIELDS' => 'Editar Camps Personalitzats',
-    'LBL_SELECT_FILE' => 'Seleccionar Arxiu',
+    'LBL_EDIT_LAYOUT' => 'Edita el disseny',
+    'LBL_EDIT_FIELDS' => 'Edita els camps',
+    'LBL_SELECT_FILE' => 'Selecciona un arxiu',
     'LBL_MODULE_TITLE' => 'Estudi',
-    'LBL_TOOLBOX' => 'Caixa d\'Eines',
-    'LBL_SUITE_FIELDS_STAGE' => 'Camps de SuiteCRM (faci clic en els elements per a afegir-los a l\'àrea de disseny)',
-    'LBL_VIEW_SUITE_FIELDS' => 'Veure camps de SuiteCRM',
-    'LBL_FAILED_TO_SAVE' => 'Error al Desar',
-    'LBL_CONFIRM_UNSAVE' => 'Els canvis no s\'han guardat i es perdran. Està segur de que vol continuar?',
-    'LBL_PUBLISHING' => 'Publicant ...',
+    'LBL_TOOLBOX' => "Caixa d'eines",
+    'LBL_SUITE_FIELDS_STAGE' => "Camps de SuiteCRM (feu clic als elements per afegir-los a l'àrea de disseny)",
+    'LBL_VIEW_SUITE_FIELDS' => 'Mostra els camps de SuiteCRM',
+    'LBL_FAILED_TO_SAVE' => 'Error al desar',
+    'LBL_CONFIRM_UNSAVE' => "Els canvis no s'han desat i es perdran. Segur que voleu continuar?",
+    'LBL_PUBLISHING' => 'Publicant...',
     'LBL_PUBLISHED' => 'Publicat',
-    'LBL_FAILED_PUBLISHED' => 'Error al Publicar',
-    'LBL_DROP_HERE' => '[Deixar Anar Aquí]',
+    'LBL_FAILED_PUBLISHED' => 'Error al publicar',
+    'LBL_DROP_HERE' => '[Deixeu-ho anar aquí]',
 
 //CUSTOM FIELDS
     'LBL_NAME' => 'Nom',
     'LBL_LABEL' => 'Etiqueta',
-    'LBL_MASS_UPDATE' => 'Actualització Massiva',
-    'LBL_DEFAULT_VALUE' => 'Valor per Defecte',
+    'LBL_MASS_UPDATE' => 'Actualització massiva',
+    'LBL_DEFAULT_VALUE' => 'Valor per defecte',
     'LBL_REQUIRED' => 'Requerit',
     'LBL_DATA_TYPE' => 'Tipus',
 
@@ -71,18 +71,18 @@ $mod_strings = array(
 //WIZARDS
 
 //STUDIO WIZARD
-    'LBL_SW_WELCOME' => '<h2>Benvingut al Estudi!</h2><br> Què desitja fer avui?<br><b> Si us plau, seleccioni una de les següents opcions.</b>',
-    'LBL_SW_EDIT_MODULE' => 'Editar un Mòdul',
-    'LBL_SW_EDIT_DROPDOWNS' => 'Editar Llistes Desplegables',
-    'LBL_SW_EDIT_TABS' => 'Configurar Pestanyes',
-    'LBL_SW_RENAME_TABS' => 'Renombrar Pestanyes',
-    'LBL_SW_EDIT_GROUPTABS' => 'Configurar Grups de Pestanyes',
-    'LBL_SW_EDIT_PORTAL' => 'Editar Portal',
-    'LBL_SW_REPAIR_CUSTOMFIELDS' => 'Reparar Camps Personalitzats',
-    'LBL_SW_MIGRATE_CUSTOMFIELDS' => 'Migrar Camps Personalitzats',
+    'LBL_SW_WELCOME' => "<h2>Benvingut a l'Estudi!</h2><br> Què voleu fer avui? Seleccioneu una de les següents opcions.</b>",
+    'LBL_SW_EDIT_MODULE' => 'Editar un mòdul',
+    'LBL_SW_EDIT_DROPDOWNS' => 'Editar les llistes desplegables',
+    'LBL_SW_EDIT_TABS' => 'Configurar les pestanyes',
+    'LBL_SW_RENAME_TABS' => 'Canviar el nom de pestanyes',
+    'LBL_SW_EDIT_GROUPTABS' => 'Configurar els grups de pestanyes',
+    'LBL_SW_EDIT_PORTAL' => 'Editar el portal',
+    'LBL_SW_REPAIR_CUSTOMFIELDS' => 'Reparar els camps personalitzats',
+    'LBL_SW_MIGRATE_CUSTOMFIELDS' => 'Migrar els camps personalitzats',
 
 //Manager Backups History
-    'LBL_MB_DELETE' => 'Esborrar',
+    'LBL_MB_DELETE' => 'Esborra',
 
 //EDIT DROP DOWNS
     'LBL_ED_CREATE_DROPDOWN' => 'Crea una llista desplegable',
@@ -93,20 +93,20 @@ $mod_strings = array(
 //END WIZARDS
 
 //DROP DOWN EDITOR
-    'LBL_DD_DISPALYVALUE' => 'Valor de Visualització',
-    'LBL_DD_DATABASEVALUE' => 'Valor de Base de dades',
+    'LBL_DD_DISPALYVALUE' => 'Valor de visualització',
+    'LBL_DD_DATABASEVALUE' => 'Valor de base de dades',
     'LBL_DD_ALL' => 'Tot',
 
 //BUTTONS
-    'LBL_BTN_SAVE' => 'Desar',
-    'LBL_BTN_CANCEL' => 'Cancel·lar',
-    'LBL_BTN_SAVEPUBLISH' => 'Desar i Publicar',
+    'LBL_BTN_SAVE' => 'Desa',
+    'LBL_BTN_CANCEL' => 'Cancel·la',
+    'LBL_BTN_SAVEPUBLISH' => 'Desa i publica',
     'LBL_BTN_HISTORY' => 'Historial',
-    'LBL_BTN_ADDROWS' => 'Agregar Files',
-    'LBL_BTN_UNDO' => 'Desfer',
-    'LBL_BTN_REDO' => 'Repetir',
-    'LBL_BTN_ADDCUSTOMFIELD' => 'Agregar Camp Personalitzat',
-    'LBL_BTN_TABINDEX' => 'Editar Ordre de Pestanyes',
+    'LBL_BTN_ADDROWS' => 'Afegeix files',
+    'LBL_BTN_UNDO' => 'Desfés',
+    'LBL_BTN_REDO' => 'Repeteix',
+    'LBL_BTN_ADDCUSTOMFIELD' => 'Afegeix un camp personalitzat',
+    'LBL_BTN_TABINDEX' => "Edita l'ordre de les pestanyes",
 
 //TABS
     'LBL_MODULES' => 'Mòduls',
@@ -115,31 +115,31 @@ $mod_strings = array(
     'LBL_GROUP_TAB_WELCOME' => 'El disseny dels Grups de Pestanyes s\'usarà sempre que un usuari elegeixi utilitzar Grups de Pestanyes en lloc de les Pestanyes de Mòduls habituals en Dc. Compte>Opcions de Presentació.',
     'LBL_RENAME_TAB_WELCOME' => 'Faci clic en el Valor de Visualització de qualsevol pestanya de la següent taula per rebatejar la pestanya.',
     'LBL_DELETE_MODULE' => 'Eliminar&nbsp;mòdul<br />del&nbsp;filtre',
-    'LBL_TAB_GROUP_LANGUAGE_HELP' => 'Sel·lecciona un dels idiomes disponibles, edita les etiquetes de grup i fes click en guardar i desplegar per aplicar les etiquetes amb l\'idioma escollit.',
-    'LBL_ADD_GROUP' => 'Afegir filtre',
-    'LBL_NEW_GROUP' => 'Nou Grup',
-    'LBL_RENAME_TABS' => 'Renombrar Pestanyes',
+    'LBL_TAB_GROUP_LANGUAGE_HELP' => 'Seleccioneu un dels idiomes disponibles, editeu les etiquetes del grup i feu clic a desa i desplega per aplicar-les.',
+    'LBL_ADD_GROUP' => 'Afegeix un filtre',
+    'LBL_NEW_GROUP' => 'Nou grup',
+    'LBL_RENAME_TABS' => 'Canvia el nom de les pestanyes',
 
 //ERRORS
-    'ERROR_INVALID_KEY_VALUE' => "Error: Valor de Clau No vàlid: [']",
+    'ERROR_INVALID_KEY_VALUE' => "Error: El valor de la clau no és vàlid: [']",
 
 //SUGAR PORTAL
-    'LBL_SAVE' => 'Desar' /*for 508 compliance fix*/,
-    'LBL_UNDO' => 'Desfer' /*for 508 compliance fix*/,
-    'LBL_REDO' => 'Repetir' /*for 508 compliance fix*/,
+    'LBL_SAVE' => 'Desa' /*for 508 compliance fix*/,
+    'LBL_UNDO' => 'Desfés' /*for 508 compliance fix*/,
+    'LBL_REDO' => 'Repeteix' /*for 508 compliance fix*/,
     'LBL_INLINE' => 'de línia' /*for 508 compliance fix*/,
-    'LBL_DELETE' => 'Eliminar' /*for 508 compliance fix*/,
-    'LBL_ADD_FIELD' => 'Afegir Camp' /*for 508 compliance fix*/,
-    'LBL_MAXIMIZE' => 'Maximitzar' /*for 508 compliance fix*/,
-    'LBL_MINIMIZE' => 'Minimitzar' /*for 508 compliance fix*/,
-    'LBL_PUBLISH' => 'Publicar' /*for 508 compliance fix*/,
-    'LBL_ADDROWS' => 'Agregar Files' /*for 508 compliance fix*/,
-    'LBL_ADDFIELD' => 'Afegir Camp' /*for 508 compliance fix*/,
-    'LBL_EDIT' => 'Editar' /*for 508 compliance fix*/,
+    'LBL_DELETE' => 'Elimina' /*for 508 compliance fix*/,
+    'LBL_ADD_FIELD' => 'Afegeix un camp' /*for 508 compliance fix*/,
+    'LBL_MAXIMIZE' => 'Maximitza' /*for 508 compliance fix*/,
+    'LBL_MINIMIZE' => 'Minimitza' /*for 508 compliance fix*/,
+    'LBL_PUBLISH' => 'Publica' /*for 508 compliance fix*/,
+    'LBL_ADDROWS' => 'Afegeix files' /*for 508 compliance fix*/,
+    'LBL_ADDFIELD' => 'Afegeix un camp' /*for 508 compliance fix*/,
+    'LBL_EDIT' => 'Edita' /*for 508 compliance fix*/,
 
-    'LBL_LANGUAGE_TOOLTIP' => 'Seleccioni l\'idioma que desitja editar.',
-    'LBL_SINGULAR' => 'Etiqueta singular',
-    'LBL_PLURAL' => 'Etiqueta plural',
-    'LBL_RENAME_MOD_SAVE_HELP' => 'Cliqui <b>Desar</b> per aplicar els canvis.'
+    'LBL_LANGUAGE_TOOLTIP' => "Seleccioneu l'idioma que voleu editar.",
+    'LBL_SINGULAR' => 'Etiqueta del singular',
+    'LBL_PLURAL' => 'Etiqueta del plural',
+    'LBL_RENAME_MOD_SAVE_HELP' => 'Feu clic a <b>Desa</b> per aplicar els canvis.'
 
 );

@@ -74,11 +74,17 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsinc_state_c', 'Accounts', 'inc_state_c'),
 ('Accountsinc_municipality_c', 'Accounts', 'inc_municipality_c'),
 ('Accountsinc_town_c', 'Accounts', 'inc_town_c'),
+-- Emails Marketing
+('EmailMarketingstic_display_html_c', 'EmailMarketing', 'stic_display_html_c'),
 -- Campaigns
 ('Campaignsparent_id', 'Campaigns', 'parent_id'),
 ('Campaignsparent_name', 'Campaigns', 'parent_name'),
 ('Campaignsparent_type', 'Campaigns', 'parent_type'),
 ('Campaignsstic_notification_prospect_list_names_c', 'Campaigns', 'stic_notification_prospect_list_names_c'),
+-- TemplateSectionLine
+('TemplateSectionLinehtmlcode_c', 'TemplateSectionLine', 'htmlcode_c'),
+('TemplateSectionLinethumbnail_image_c', 'TemplateSectionLine', 'thumbnail_image_c'),
+('TemplateSectionLinethumbnail_name_c', 'TemplateSectionLine', 'thumbnail_name_c'),
 -- Contacts
 ('Contactsstic_acquisition_channel_c', 'Contacts', 'stic_acquisition_channel_c'),
 ('Contactsstic_age_c', 'Contacts', 'stic_age_c'),
@@ -163,6 +169,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsinc_state_c', 'Contacts', 'inc_state_c'),
 ('Contactsinc_municipality_c', 'Contacts', 'inc_municipality_c'),
 ('Contactsinc_town_c', 'Contacts', 'inc_town_c'),
+('Contactsstic_confidentiality_agreement_c', 'Contacts', 'stic_confidentiality_agreement_c'),
+('Contactsstic_conduct_code_c', 'Contacts', 'stic_conduct_code_c'),
+('Contactsstic_occupational_safety_c', 'Contacts', 'stic_occupational_safety_c'),
+('Contactsstic_time_availability_c', 'Contacts', 'stic_time_availability_c'),
 -- Leads
 ('Leadsstic_acquisition_channel_c','Leads','stic_acquisition_channel_c'),
 ('Leadsstic_alt_address_county_c','Leads','stic_alt_address_county_c'),
@@ -200,6 +210,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('FP_Event_Locationsstic_address_region_c','FP_Event_Locations','stic_address_region_c'),
 -- Documents
 ('Documentsstic_shared_document_link_c','Documents','stic_shared_document_link_c'),
+('Documentsstic_category_c','Documents','stic_category_c'),
+('Documentsstic_subcategory_c','Documents','stic_subcategory_c'),
 -- Project
 ('Projectstic_location_c','Project','stic_location_c'),
 -- Users
@@ -224,7 +236,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('AOS_Invoicesverifactu_is_rectified_c', 'AOS_Invoices', 'verifactu_is_rectified_c'),
 ('AOS_Invoicesverifactu_rectified_type_c', 'AOS_Invoices', 'verifactu_rectified_type_c'),
 ('AOS_Invoicesverifactu_rectified_base_c', 'AOS_Invoices', 'verifactu_rectified_base_c'),
-('AOS_Invoicesverifactu_rectified_date_c', 'AOS_Invoices', 'verifactu_rectified_date_c');
+('AOS_Invoicesverifactu_rectified_date_c', 'AOS_Invoices', 'verifactu_rectified_date_c'),
 -- AOS_Products_Quotes
-('AOS_Products_Quotesverifactu_aeat_operation_type_c', 'AOS_Products_Quotes', 'verifactu_aeat_operation_type_c');
+('AOS_Products_Quotesverifactu_aeat_operation_type_c', 'AOS_Products_Quotes', 'verifactu_aeat_operation_type_c'),
 
+('Usersstic_m182_issuing_organization_c', 'Users', 'stic_m182_issuing_organization_c');

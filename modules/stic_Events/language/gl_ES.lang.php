@@ -89,6 +89,8 @@ $mod_strings = array(
     'LBL_SESSION_COLOR' => 'Color da sesión',
     'LBL_SESSION_COLOR_INFO' => 'O valor deste campo poderá herdalo o campo "Color" das sesións vinculadas.',
     'LBL_SESSION_AMOUNT_INFO' => 'O valor deste campo poderán herdalo o campo "Importe da sesión" das inscricións vinculadas e, en cascada, o campo "Importe" das asistencias vinculadas a ditas inscricións.',
+    'LBL_VOLUNTEER_MODE' => 'Modalidad voluntariado',
+    'LBL_TARGET_AUDIENCE' => 'Público objetivo del evento',    
     'LBL_DEFAULT_PANEL' => 'Datos xerais',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
     'LBL_ECONOMY_PANEL' => 'Economía',
@@ -103,7 +105,7 @@ $mod_strings = array(
     'LBL_TOTAL_HOURS_TITLE' => 'Para os eventos con sesións, o campo Horas totais calcularare automaticamente a partir da duración das sesións. Nos eventos sen sesións, se é necesario, pódese reencher manualmente o campo.',
     'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE' => 'Centro',
 
-    // Asistente de creación de sesións periódicas
+    // Asistente de creación de sesiones periódicas
     'LBL_CANCEL_BUTTON' => 'Cancelar',
     'LBL_PERIODIC_SESSIONS' => 'Crear sesións periódicas',
     'LBL_REPEAT_DOW' => 'Día da semana',

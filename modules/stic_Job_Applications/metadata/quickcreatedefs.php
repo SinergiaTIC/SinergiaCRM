@@ -133,6 +133,30 @@ array (
         ),
         6 => 
         array (
+          0 => array(
+            'name' => 'previous_experience',
+            'studio' => 'visible',
+            'label' => 'LBL_PREVIOUS_EXPERIENCE',
+          ),
+          1 => array(
+            'name' => 'available_days',
+            'studio' => 'visible',
+            'label' => 'LBL_AVAILABLE_DAYS',
+          ),
+        ),
+        7 => array(
+          0 => array(
+              'name' => 'available_time',
+              'studio' => 'visible',
+              'label' => 'LBL_AVAILABLE_TIME',
+          ),
+          1 => array(
+              'name' => 'account',
+              'studio' => 'visible',
+              'label' => 'LBL_ACCOUNT',
+          ),
+        ),
+        8 => array(
           0 => 
           array (
             'name' => 'description',
