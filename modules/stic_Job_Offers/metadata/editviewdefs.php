@@ -97,7 +97,17 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                3 => array (
+                3 => 
+                    array (
+                    0 => 
+                    array (
+                        'name' => 'notification_template_c',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE',
+                    ),
+                    1 => '',
+                ),
+                4 => array (
                     0 => 
                     array (
                         'name' => 'type',
@@ -111,7 +121,7 @@ array(
                         'label' => 'LBL_TERRITORIAL_SCOPE',
                     ),
                 ),
-                4 => array (
+                5 => array (
                     0 => 
                     array (
                         'name' => 'offer_origin',
@@ -124,7 +134,7 @@ array(
                         'label' => 'LBL_OFFERED_POSITIONS',
                     ),
                 ),
-                5 => array (
+                6 => array (
                     0 => 
                     array (
                         'name' => 'process_start_date',
@@ -136,7 +146,7 @@ array(
                         'label' => 'LBL_PROCESS_END_DATE',
                     ),
                 ),
-                6 => array (
+                7 => array (
                     0 => 
                     array (
                         'name' => 'applications_start_date',
@@ -148,7 +158,7 @@ array(
                         'label' => 'LBL_APPLICATIONS_END_DATE',
                     ),
                 ),
-                7 => array (
+                8 => array (
                     0 => 
                     array (
                         'name' => 'offer_code',
@@ -161,7 +171,7 @@ array(
                         'label' => 'LBL_OFFER_MODE',
                     ),
                 ),
-                8 => array (
+                9 => array (
                     0 => 
                     array (
                         'name' => 'weekdays',
@@ -174,7 +184,7 @@ array(
                         'label' => 'LBL_TIMETABLE',
                     ),
                 ),
-                9 => array (
+                10 => array (
                     0 => 
                     array (
                         'name' => 'evaluation',
@@ -187,7 +197,7 @@ array(
                         'label' => 'LBL_RESPONSIBLE',
                     ),
                 ),
-                10 => array (
+                11 => array (
                     0 => 
                     array (
                         'name' => 'center',
@@ -199,7 +209,7 @@ array(
                         'name' => 'project_stic_job_offers_name',
                     ),
                 ),
-                11 => array (
+                12 => array (
                     0 => 'description',
                 ),
             ),

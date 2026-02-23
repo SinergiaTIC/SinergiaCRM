@@ -177,4 +177,7 @@ $mod_strings = array(
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW' => 'Under review',
     'LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT' => 'Job offer {0} closes today',
     'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => 'The closing date of job offer {0} is today and its status is not Closed. Review the offer here: {1}',
+    'LBL_NOTIFICATION_TEMPLATE' => 'Notification Template',
+    'LBL_NOTIFICATION_TEMPLATE_EMAILTEMPLATE_ID' => 'Notification Template (ID)',
+    'LBL_NOTIFICATION_TEMPLATE_INFO' => 'Email template to be used for sending notifications regarding status changes related to this job offer. If no template is selected, the default SinergiaCRM template for job offer notifications will be used.',
 );

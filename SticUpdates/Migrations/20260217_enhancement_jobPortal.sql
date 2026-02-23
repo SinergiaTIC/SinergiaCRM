@@ -48,3 +48,7 @@ SET
 	o.stic_job_applications_count_rejected_closed = COALESCE(c.rejected_closed, 0),
 	o.stic_job_applications_count_review = COALESCE(c.review, 0)
 WHERE o.deleted = 0;
+
+-- Job Offers notification template field (emailtemplate_id)
+ALTER TABLE `stic_job_offers_cstm`
+	ADD COLUMN IF NOT EXISTS `emailtemplate_id` CHAR(36) NULL;
