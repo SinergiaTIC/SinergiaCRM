@@ -66,6 +66,7 @@ $mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE'] = 'Tipo de operación';
 $mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE_HELP'] = 'Tipo de operación fiscal asociada a esta factura, según la clasificación establecida por la AEAT. Este campo ayuda a identificar la naturaleza de la transacción para fines tributarios.';
 
 $mod_strings['LBL_SIGNER_SEND_TO_AEAT'] = 'Enviar a AEAT';
+$mod_strings['LBL_SEND_TO_AEAT_CONFIRM_DRAFT'] = 'Esta factura está en estado "Borrador". ¿Confirma que desea marcarla como "Emitida" y enviarla a la AEAT?';
 $mod_strings['LBL_AEAT_STATUS_PANEL'] = 'Estado de la factura en la AEAT';
 $mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT'] = 'La factura no puede ser enviada a la AEAT. El estado debe ser "Emitida" y el estado AEAT debe ser diferente de "Aceptada".';
 $mod_strings['LBL_MISSING_SETTINGS'] = 'Faltan configuraciones obligatorias: contraseña del certificado (GENERAL_CERTIFICATE_PASSWORD), certificado de sello de entidad (GENERAL_CERTIFICATE_ENTITY_SEAL), NIF de la organización (GENERAL_ORGANIZATION_ID) o  nombre de la organización (GENERAL_ORGANIZATION_NAME). Por favor, revise las configuraciones de SinergiaCRM.';

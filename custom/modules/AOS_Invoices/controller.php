@@ -36,6 +36,11 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             return;
         }
         
+        if(!empty($_REQUEST['set']) && $_REQUEST['set'] === 'emitted') {
+            $invoiceBean->status = 'emitted';
+            $invoiceBean->save();
+        }
+
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         AOS_InvoicesUtils::sendToAeat($invoiceBean);
         
@@ -324,8 +329,8 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
     /**
      * Action to cancel an invoice in AEAT Verifactu system.
      * 
-     * This action sends a cancellation record (RegistroAnulacion) to AEAT,
-     * which removes the invoice from the Verifactu system.
+     * This action sends a cancellation record (RegistroAnulacion) to AEAT.
+     *
      * 
      * Requirements:
      * - Invoice must be accepted by AEAT

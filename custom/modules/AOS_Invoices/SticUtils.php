@@ -161,9 +161,9 @@ class AOS_InvoicesUtils
             $rectifiedInvoiceId->issueDate = $rectifiedDate;
 
             // Set corrective type ('S' = Substitution, 'I' = Differences)
-            $record->correctiveType = ($rectifiedType === 'S') 
-                ? \josemmo\Verifactu\Models\Records\CorrectiveType::Substitution 
-                : \josemmo\Verifactu\Models\Records\CorrectiveType::Differences;
+            $record->correctiveType = ($rectifiedType === 'S')
+            ? \josemmo\Verifactu\Models\Records\CorrectiveType::Substitution
+            : \josemmo\Verifactu\Models\Records\CorrectiveType::Differences;
 
             // Add the rectified invoice to the list
             $record->correctedInvoices = [$rectifiedInvoiceId];
@@ -265,6 +265,38 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Build a ComputerSystem object with centralised SIF configuration.
+     *
+     * All Verifactu operations must use this method to guarantee that the
+     * same system identification data is sent to AEAT on every request.
+     *
+     * @param string $issuerNif  NIF of the certificate holder / issuer
+     * @param string $issuerName Name of the certificate holder / issuer
+     *
+     * @return ComputerSystem
+     */
+    private static function buildComputerSystem($issuerNif, $issuerName)
+    {
+        global $sugar_config;
+
+        require_once 'modules/stic_Settings/Utils.php';
+
+        $systemName         = 'SinergiaCRM';
+        $systemId           = 'SC';
+        $systemVersion      = $sugar_config['sinergiacrm_version'] ?? '1.0';
+        $installationNumber = '001';
+
+        return self::configureComputerSystem(
+            $issuerNif,
+            $issuerName,
+            $systemName,
+            $systemId,
+            $systemVersion,
+            $installationNumber
+        );
+    }
+
+    /**
      * Send invoice records to AEAT
      *
      * @param AOS_Invoices $invoiceBean Invoice bean object
@@ -290,26 +322,26 @@ class AOS_InvoicesUtils
         try {
             // Load certificate utilities
             require_once 'custom/include/SticCertificateUtils.php';
-            
+
             // Get certificate components (NO PASSWORD NEEDED!)
             $certComponents = SticCertificateUtils::getCertificateComponents();
             if (!$certComponents) {
                 throw new Exception("Certificate not found or could not be decrypted. Please upload a certificate in Administration > Digital Certificate.");
             }
-            
+
             // Extract NIF and holder name from certificate
             $issuerNif = SticCertificateUtils::getCertificateNif();
             $issuerName = SticCertificateUtils::getCertificateHolderName();
-            
+
             if (empty($issuerNif) || empty($issuerName)) {
                 throw new Exception("Could not extract NIF or holder name from certificate. Please verify the certificate is valid.");
             }
-            
+
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data loaded - NIF: ' . $issuerNif . ', Name: ' . $issuerName);
-            
+
             // Get certificate type (entity seal or representative) from certificate itself
             $certificateType = SticCertificateUtils::isEntitySeal();
-            
+
             // Get other settings from stic_Settings module
             require_once 'modules/stic_Settings/Utils.php';
             $taxTypeSetting = stic_SettingsUtils::getSetting('VERIFACTU_TAX_TYPE');
@@ -328,21 +360,10 @@ class AOS_InvoicesUtils
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             }
 
-            $useProduction = false; // false = pre-production, true = production
-            $systemName = 'SinergiaCRM';
-            $systemId = 'SC';
-            $systemVersion = $sugar_config['sinergiacrm_version'] ?? 'unknown';
-            $installationNumber = '001';
+            $useProduction = stic_SettingsUtils::getSetting('VERIFACTU_TEST') == '1' ? false : true;
 
             // Configure computer system
-            $system = self::configureComputerSystem(
-                $issuerNif,
-                $issuerName,
-                $systemName,
-                $systemId,
-                $systemVersion,
-                $installationNumber
-            );
+            $system = self::buildComputerSystem($issuerNif, $issuerName);
 
             // Create taxpayer identifier
             $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
@@ -357,7 +378,7 @@ class AOS_InvoicesUtils
             $certificate = $certComponents['certificate'];
             $privateKey = $certComponents['private_key'];
             $caChain = $certComponents['ca_chain'];
-            
+
             // Debug info
             $GLOBALS['log']->debug("DEBUG VERIFACTU: Certificate PEM size: " . strlen($certificate));
             $GLOBALS['log']->debug("DEBUG VERIFACTU: Private key PEM size: " . strlen($privateKey));
@@ -421,7 +442,7 @@ class AOS_InvoicesUtils
 
             // Extract invoice data from bean and create registration record
             $invoiceNumber = $invoiceBean->number;
-            
+
             // Force db date format
             $ldate = $timedate->to_db_date($invoiceBean->invoice_date, false);
             $issueDate = new DateTimeImmutable($ldate);
@@ -469,10 +490,12 @@ class AOS_InvoicesUtils
             // Load product quotes relationship
             if ($invoiceBean->load_relationship('aos_products_quotes')) {
                 $productQuotes = $invoiceBean->aos_products_quotes->getBeans();
-                
+
                 foreach ($productQuotes as $quote) {
                     // Skip deleted items just in case
-                    if (!empty($quote->deleted)) continue;
+                    if (!empty($quote->deleted)) {
+                        continue;
+                    }
 
                     // Get tax rate (vat)
                     // vat field usually contains the percentage like "21.0" or "10.0"
@@ -480,17 +503,17 @@ class AOS_InvoicesUtils
                     if ($taxRate === '' || $taxRate === null) {
                         $taxRate = '0.00';
                     }
-                    
+
                     // Normalize tax rate string (ensure 2 decimals)
-                    $taxRate = number_format((float)$taxRate, 2, '.', '');
+                    $taxRate = number_format((float) $taxRate, 2, '.', '');
 
                     // Determine Operation Type from custom field
                     // Values: S=Subject, E=Exempt, N=NotSubject, NL=NotSubjectLoc
                     $opTypeVal = $quote->verifactu_aeat_operation_type_c ?? 'S';
                     $operationType = OperationType::Subject; // Default (S1)
-                    
+
                     if ($opTypeVal === 'E') {
-                        // Defaulting to E1 (Article 20) for generic Exempt. 
+                        // Defaulting to E1 (Article 20) for generic Exempt.
                         // Ideally this should be more specific.
                         $operationType = OperationType::ExemptByArticle20;
                     } elseif ($opTypeVal === 'N') {
@@ -502,35 +525,35 @@ class AOS_InvoicesUtils
                     // Group key must include Tax Rate AND Operation Type
                     // We use the enum value for the key to ensure uniqueness
                     $groupKey = $taxRate . '_' . $operationType->value;
-                    
+
                     if (!isset($taxGroups[$groupKey])) {
                         $taxGroups[$groupKey] = [
                             'baseAmount' => 0.0,
                             'taxAmount' => 0.0,
                             'taxRate' => $taxRate,
-                            'operationType' => $operationType
+                            'operationType' => $operationType,
                         ];
                     }
-                    
+
                     // Calculate line total without tax (product_total_price might include tax in some cases)
                     // Use product_list_price * product_qty to get the base amount
-                    $lineBaseAmount = (float)$quote->product_list_price * (float)$quote->product_qty;
-                    
+                    $lineBaseAmount = (float) $quote->product_list_price * (float) $quote->product_qty;
+
                     // Add amounts
                     $taxGroups[$groupKey]['baseAmount'] += $lineBaseAmount;
-                    $taxGroups[$groupKey]['taxAmount'] += (float)$quote->vat_amt;
+                    $taxGroups[$groupKey]['taxAmount'] += (float) $quote->vat_amt;
                 }
             }
 
             // If no lines found (fallback to invoice totals - legacy behavior)
             if (empty($taxGroups)) {
-                 // Calculate rate from totals to avoid hardcoding 21%
-                 $calculatedRate = 0.00;
-                 if ((float)$baseAmount != 0) {
-                     $calculatedRate = ((float)$totalTaxAmount / (float)$baseAmount) * 100;
-                 }
+                // Calculate rate from totals to avoid hardcoding 21%
+                $calculatedRate = 0.00;
+                if ((float) $baseAmount != 0) {
+                    $calculatedRate = ((float) $totalTaxAmount / (float) $baseAmount) * 100;
+                }
 
-                 $breakdownDetails[] = self::createBreakdownDetail(
+                $breakdownDetails[] = self::createBreakdownDetail(
                     $verifactuTaxType,
                     RegimeType::C01,
                     OperationType::Subject,
@@ -566,7 +589,7 @@ class AOS_InvoicesUtils
             $customerNif = null;
             $customerName = null;
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Getting customer info - billing_account_id: ' . ($invoiceBean->billing_account_id ?? 'empty') . ', billing_contact_id: ' . ($invoiceBean->billing_contact_id ?? 'empty'));
-            
+
             if (!empty($invoiceBean->billing_account_id)) {
                 $account = BeanFactory::getBean('Accounts', $invoiceBean->billing_account_id);
                 if ($account && !empty($account->id)) {
@@ -582,7 +605,7 @@ class AOS_InvoicesUtils
                     $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Customer from Contact - Name: ' . $customerName . ', NIF: ' . ($customerNif ?? 'empty'));
                 }
             }
-            
+
             if (empty($customerNif) || empty($customerName)) {
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': No customer info found for invoice - this will cause error 1189 for R1 invoices');
             }
@@ -591,7 +614,7 @@ class AOS_InvoicesUtils
             $isRectified = !empty($invoiceBean->verifactu_is_rectified_c);
             $rectifiedType = $invoiceBean->verifactu_rectified_type_c ?? null;
             $rectifiedBase = $invoiceBean->verifactu_rectified_base_c ?? null;
-            
+
             // Get the rectified invoice number from the related invoice
             $rectifiedNumber = null;
             if (!empty($invoiceBean->verifactu_cancel_id_c)) {
@@ -600,7 +623,7 @@ class AOS_InvoicesUtils
                     $rectifiedNumber = $originalInvoice->number;
                 }
             }
-            
+
             $rectifiedDate = null;
             if (!empty($invoiceBean->verifactu_rectified_date_c)) {
                 try {
@@ -618,11 +641,11 @@ class AOS_InvoicesUtils
                 $subtotal = isset($invoiceBean->subtotal_amount) ? floatval($invoiceBean->subtotal_amount) : 0.0;
                 // Get tax amount from the current invoice
                 $taxAmount = isset($invoiceBean->tax_amount) ? floatval($invoiceBean->tax_amount) : 0.0;
-                
+
                 // Format as string with 2 decimals (required by AEAT)
                 $correctedBaseAmount = number_format($subtotal, 2, '.', '');
                 $correctedTaxAmount = number_format($taxAmount, 2, '.', '');
-                
+
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Corrected amounts for substitution - Base: ' . $correctedBaseAmount . ', Tax: ' . $correctedTaxAmount);
             }
 
@@ -654,7 +677,7 @@ class AOS_InvoicesUtils
             if (false) {
                 echo '<div style="background:white; padding:20px; border:2px solid red; margin:20px; font-family:sans-serif; z-index:99999; position:relative;">';
                 echo '<h2 style="color:red; border-bottom:1px solid red;">DEBUG VERIFACTU - DATOS A ENVIAR</h2>';
-                
+
                 echo '<h3>0. Configuración y Sistema (SIF)</h3>';
                 echo '<p><em>Estos datos forman parte de la huella digital de la factura.</em></p>';
                 echo '<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">';
@@ -720,16 +743,16 @@ class AOS_InvoicesUtils
                 echo '<tr><th>ID</th><th>Producto</th><th>Total</th><th>VAT (Raw)</th><th>VAT Amt</th><th>Rate Used</th></tr>';
                 if (!empty($productQuotes)) {
                     foreach ($productQuotes as $quote) {
-                         $rawVat = $quote->vat;
-                         $fmtVat = number_format((float)$rawVat, 2, '.', '');
-                         echo "<tr>";
-                         echo "<td>{$quote->id}</td>";
-                         echo "<td>{$quote->name}</td>";
-                         echo "<td>{$quote->product_total_price}</td>";
-                         echo "<td>'{$rawVat}'</td>";
-                         echo "<td>{$quote->vat_amt}</td>";
-                         echo "<td>{$fmtVat}</td>";
-                         echo "</tr>";
+                        $rawVat = $quote->vat;
+                        $fmtVat = number_format((float) $rawVat, 2, '.', '');
+                        echo "<tr>";
+                        echo "<td>{$quote->id}</td>";
+                        echo "<td>{$quote->name}</td>";
+                        echo "<td>{$quote->product_total_price}</td>";
+                        echo "<td>'{$rawVat}'</td>";
+                        echo "<td>{$quote->vat_amt}</td>";
+                        echo "<td>{$fmtVat}</td>";
+                        echo "</tr>";
                     }
                 } else {
                     echo "<tr><td colspan='6'>No se encontraron líneas de producto (productQuotes empty)</td></tr>";
@@ -1016,7 +1039,7 @@ class AOS_InvoicesUtils
 
         $seriesConfig = $sugar_config['aos']['invoices']['series'][$seriesName];
         $format = $seriesConfig['format'];
-        $initialNumber = isset($seriesConfig['initialNumber']) ? (int)$seriesConfig['initialNumber'] : 1;
+        $initialNumber = isset($seriesConfig['initialNumber']) ? (int) $seriesConfig['initialNumber'] : 1;
 
         // Get the year from the invoice date or current date
         $invoiceDate = !empty($bean->invoice_date) ? $bean->invoice_date : date('Y-m-d');
@@ -1174,57 +1197,44 @@ class AOS_InvoicesUtils
             // --- Get configuration ---
             // Load certificate utilities
             require_once 'custom/include/SticCertificateUtils.php';
-            
+
             // Get certificate components
             $certComponents = SticCertificateUtils::getCertificateComponents();
             if (!$certComponents) {
                 throw new Exception("Certificate not found or could not be decrypted. Please upload a certificate in Administration > Digital Certificate.");
             }
-            
+
             // Extract NIF and holder name from certificate
             $issuerNif = SticCertificateUtils::getCertificateNif();
             $issuerName = SticCertificateUtils::getCertificateHolderName();
-            
+
             if (empty($issuerNif) || empty($issuerName)) {
                 throw new Exception("Could not extract NIF or holder name from certificate. Please verify the certificate is valid.");
             }
-            
+
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data loaded - NIF: ' . $issuerNif . ', Name: ' . $issuerName);
-            
+
             // Get certificate type (entity seal or representative) from certificate itself
             $certificateType = SticCertificateUtils::isEntitySeal();
-            
+
             // Get other settings from stic_Settings module
             require_once 'modules/stic_Settings/Utils.php';
-            $useProduction = (stic_SettingsUtils::getSetting('VERIFACTU_ENVIRONMENT') === 'production');
-
-            // --- System information (SIF) ---
-            $systemName = 'SinergiaCRM';
-            $systemId = 'SCRM';
-            $systemVersion = '1.0';
-            $installationNumber = stic_SettingsUtils::getSetting('VERIFACTU_INSTALLATION_NUMBER') ?? '00001';
+            $useProduction = (stic_SettingsUtils::getSetting('VERIFACTU_TEST') == 1 ? false : true);
 
             // --- Create Computer System ---
-            $system = self::configureComputerSystem(
-                $issuerNif,
-                $issuerName,
-                $systemName,
-                $systemId,
-                $systemVersion,
-                $installationNumber
-            );
+            $system = self::buildComputerSystem($issuerNif, $issuerName);
 
             // --- Create Taxpayer ---
             $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
 
             // --- Get previous invoice info (for chaining) ---
             $db = DBManagerFactory::getInstance();
-            $previousInvoiceQuery = "SELECT id, number, invoice_date, verifactu_hash_c 
-                                     FROM aos_invoices 
-                                     WHERE deleted = 0 
+            $previousInvoiceQuery = "SELECT id, number, invoice_date, verifactu_hash_c
+                                     FROM aos_invoices
+                                     WHERE deleted = 0
                                      AND id != " . $db->quoted($invoiceBean->id) . "
                                      AND date_entered < " . $db->quoted($invoiceBean->date_entered) . "
-                                     ORDER BY date_entered DESC 
+                                     ORDER BY date_entered DESC
                                      LIMIT 1";
             $previousInvoiceResult = $db->query($previousInvoiceQuery);
             $previousInvoiceRow = $db->fetchByAssoc($previousInvoiceResult);
@@ -1261,10 +1271,10 @@ class AOS_InvoicesUtils
 
             // --- Send to AEAT ---
             $client = new AeatClient($system, $taxpayer);
-            
+
             // Configure certificate type (Entity Seal vs Personal)
             $client->setEntitySeal((bool) $certificateType);
-            
+
             // Get certificate components (already extracted as PEM - NO PASSWORD NEEDED!)
             $certificate = $certComponents['certificate'];
             $privateKey = $certComponents['private_key'];
@@ -1316,12 +1326,12 @@ class AOS_InvoicesUtils
             return [
                 'success' => true,
                 'csv' => $response->csv,
-                'message' => 'Factura anulada correctamente en AEAT'
+                'message' => 'Factura anulada correctamente en AEAT',
             ];
 
         } catch (Exception $e) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error sending cancellation to AEAT: ' . $e->getMessage());
-            
+
             // Update invoice with error
             if (!empty($invoiceBean->id)) {
                 $invoiceBean->verifactu_aeat_status_c = 'error';
@@ -1331,10 +1341,9 @@ class AOS_InvoicesUtils
 
             return [
                 'success' => false,
-                'message' => 'Error al anular la factura: ' . $e->getMessage()
+                'message' => 'Error al anular la factura: ' . $e->getMessage(),
             ];
         }
     }
 
 }
-

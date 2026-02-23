@@ -48,14 +48,14 @@ switch (viewType()) {
   case "quickcreate":
     break;
 
-                        // 'customCode' => '{if !empty($fields.verifactu_submitted_at_c.value) && empty($fields.verifactu_is_rectified_c.value)}<input type="button" class="button" value="{$MOD.LBL_CREATE_RECTIFIED_INVOICE}" onclick="window.location.href=\'index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record={$fields.id.value}\';" />{/if}',
+  // 'customCode' => '{if !empty($fields.verifactu_submitted_at_c.value) && empty($fields.verifactu_is_rectified_c.value)}<input type="button" class="button" value="{$MOD.LBL_CREATE_RECTIFIED_INVOICE}" onclick="window.location.href=\'index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record={$fields.id.value}\';" />{/if}',
 
   case "detail":
     var buttons = {
       sendToAEAT: {
         id: "bt_send_to_aeat",
         title: SUGAR.language.get("AOS_Invoices", "LBL_SIGNER_SEND_TO_AEAT"),
-        onclick: "window.location='index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=" + STIC.record.id + "'",        
+        onclick: "sendToAEAT()",
       },
       createRectifiedInvoice: {
         id: "bt_create_rectified_invoice",
@@ -70,19 +70,19 @@ switch (viewType()) {
     };
 
     // Rectified invoice button: only enabled if invoice is emitted
-    if(STIC.record.status != 'emitted') {
+    if (STIC.record.status != 'emitted') {
       buttons.createRectifiedInvoice.disabled = 'disabled';
       buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";
     }
 
     // Send to AEAT button: disabled if already accepted
-    if(STIC.record.status === 'emitted' && STIC.record.verifactu_aeat_status_c === 'accepted') {
+    if (STIC.record.status === 'emitted' && STIC.record.verifactu_aeat_status_c === 'accepted') {
       buttons.sendToAEAT.disabled = 'disabled';
       buttons.sendToAEAT.style = "cursor: not-allowed; opacity: .5;";
     }
 
     // Cancel invoice button: only enabled if invoice is accepted by AEAT (not rectified)
-    if(STIC.record.verifactu_aeat_status_c !== 'accepted' ) {
+    if (STIC.record.verifactu_aeat_status_c !== 'accepted') {
       buttons.cancelInvoice.disabled = 'disabled';
       buttons.cancelInvoice.style = "cursor: not-allowed; opacity: .5;";
     }
@@ -100,13 +100,23 @@ switch (viewType()) {
     break;
 }
 
-    
-    // Only show rectified invoice panel if the invoice is rectified
-    if(STIC?.record?.verifactu_is_rectified_c == '0')
-    {
-      $("[data-label=LBL_VERIFACTU_RECTIFIED_PANEL]").closest('.panel').hide();
-    }
+
+// Only show rectified invoice panel if the invoice is rectified
+if (STIC?.record?.verifactu_is_rectified_c == '0') {
+  $("[data-label=LBL_VERIFACTU_RECTIFIED_PANEL]").closest('.panel').hide();
+}
 
 
 
 /* AUX FUNCTIONS */
+
+// Confirmation and redirection for sending invoice to AEAT. 
+// If invoice is in draft status, it will be marked as emitted before sending.
+function sendToAEAT() {
+  if (STIC.record.status === 'draft') {
+    if (!confirm(SUGAR.language.get("AOS_Invoices", "LBL_SEND_TO_AEAT_CONFIRM_DRAFT"))) {
+      return;
+    }
+  }
+  window.location = 'index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=' + STIC.record.id + '&set=emitted';
+}

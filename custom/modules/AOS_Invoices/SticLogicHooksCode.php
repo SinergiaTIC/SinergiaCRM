@@ -49,6 +49,7 @@ class AOS_InvoicesHook
             $bean->verifactu_rectified_base_c = null;
             $bean->verifactu_cancel_id_c = null;
             $bean->verifactu_rectified_date_c = null;
+            $bean->description = null;
         }
 
         // Validate rectified invoice data
@@ -113,15 +114,10 @@ class AOS_InvoicesHook
         }
     }
 
-    /**
-     *
-     * @param SugarBean $bean El bean de la factura
-     * @param string $event El evento que disparó el hook
-     * @param array $arguments Argumentos adicionales
-     */
+    
     public function after_save($bean, $event, $arguments)
     {
-        // return;
+        return;
         // check if status is 'emitted'
         if ($bean->status !== 'emitted') {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} status is not 'emitted', skipping AEAT send.");
