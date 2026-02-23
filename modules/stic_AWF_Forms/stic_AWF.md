@@ -160,12 +160,8 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
 * **Secciones y contenedores visuales**: El formulario se estructura organizando los campos en diferentes **"Secciones"**, que actúan como contenedores visuales. Una sección puede incluir campos de uno o más bloques de datos. A nivel visual, estas secciones ofrecen mucha versatilidad:
 
-  * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado para resaltar un conjunto de datos).
-
   * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado).
   
-  * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables.
-
   * **Título**: Se puede definir si la sección muestra un título visible para estructurar el contenido o si queda oculto.
 
   * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella.
