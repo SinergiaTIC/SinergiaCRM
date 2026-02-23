@@ -99,13 +99,13 @@ array(
                 ),
                 3 => 
                     array (
-                    0 => 
+                    0 => '',
+                    1 => 
                     array (
                         'name' => 'notification_template_c',
                         'studio' => 'visible',
                         'label' => 'LBL_NOTIFICATION_TEMPLATE',
                     ),
-                    1 => '',
                 ),
                 4 => array (
                     0 => 
