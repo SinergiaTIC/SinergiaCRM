@@ -712,7 +712,13 @@ class ListViewDisplay
         global $app_strings;
         unset($_REQUEST[session_name()]);
         unset($_REQUEST['PHPSESSID']);
-        $current_query_by_page = htmlentities(json_encode($_REQUEST));
+        // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
+        // $current_query_by_page = htmlentities(json_encode($_REQUEST));
+        $decoded_request = array_map('html_entity_decode', $_REQUEST);
+        
+        $query = json_encode($decoded_request, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG); 
+        $current_query_by_page = htmlentities($query);
+        // END STIC-Custom
 
         $js = <<<EOF
             if(sugarListView.get_checks_count() < 1) {

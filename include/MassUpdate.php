@@ -112,7 +112,13 @@ class MassUpdate
         unset($_REQUEST['current_query_by_page']);
         unset($_REQUEST[session_name()]);
         unset($_REQUEST['PHPSESSID']);
-        $query = json_encode($_REQUEST);
+
+        // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
+        // $query = json_encode($_REQUEST);
+        $decoded_request = array_map('html_entity_decode', $_REQUEST);
+        
+        $query = json_encode($decoded_request, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG); 
+        // END STIC
 
         if (!isset($_REQUEST['module'])) {
             LoggerManager::getLogger()->warn('Undefined index: module');
@@ -1643,12 +1649,11 @@ EOQ;
         }
         /* bug 31271: using false to not add all bean fields since some beans - like SavedReports
            can have fields named 'module' etc. which may break the query */
-        // STIC-Custom 20260219 EPS - json_decode can cause issues with certain characters, so we need to clean up the query before decoding it.
+        // STIC-Custom 20260223 EPS - json_decode can cause issues with certain characters, so we need to clean up the query before decoding it.
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
         // $query = json_decode(html_entity_decode($query), true);
-
-        $query = $this->repair_suitecrm_json($query);
-
+        $query = json_decode(html_entity_decode($query), true, 512, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG);
+        // $query = $this->repair_suitecrm_json($query);
         // END STIC
         $searchForm->populateFromArray($query, null, true);
         $this->searchFields = $searchForm->searchFields;

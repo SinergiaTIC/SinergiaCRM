@@ -144,7 +144,12 @@ class ViewList extends SugarView
                 if (isset($_REQUEST['lvso'])) {
                     $blockVariables[] = 'lvso';
                 }
-                $current_query_by_page = json_decode(html_entity_decode($_REQUEST['current_query_by_page']), true);
+                
+                // STIC-Custom 20260223 EPS - json_decode can cause issues with certain characters, so we need to clean up the query before decoding it.
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
+                // $current_query_by_page = json_decode(html_entity_decode($_REQUEST['current_query_by_page']), true);
+                $current_query_by_page = json_decode(html_entity_decode($_REQUEST['current_query_by_page']), true, 512, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG);
+                // END STIC-Custom                
                 foreach ($current_query_by_page as $search_key => $search_value) {
                     if ($search_key != $module . '2_' . strtoupper($this->bean->object_name) . '_offset' && !in_array($search_key, $blockVariables)) {
                         if (!is_array($search_value)) {
