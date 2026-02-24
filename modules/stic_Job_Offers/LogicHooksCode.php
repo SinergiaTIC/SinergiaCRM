@@ -32,6 +32,22 @@ class stic_Job_OffersLogicHooks
             include_once 'modules/stic_Incorpora_Locations/Utils.php';
             stic_Incorpora_LocationsUtils::transferLocationData($bean);
         }
+
+        // Check if status is changing and store previous status
+        if (!empty($bean->id)) {
+            $previousStatus = $bean->fetched_row['status'] ?? null;
+            if (empty($previousStatus)) {
+                // Get from database if fetched_row is empty
+                $db = DBManagerFactory::getInstance();
+                $query = "SELECT status FROM stic_job_offers WHERE id = '{$db->quote($bean->id)}' LIMIT 1";
+                $result = $db->query($query);
+                if ($row = $db->fetchByAssoc($result)) {
+                    $previousStatus = $row['status'];
+                }
+            }
+            // Store previous status in bean for use in after_save
+            $bean->_previous_status = $previousStatus;
+        }
     }
 
     /**

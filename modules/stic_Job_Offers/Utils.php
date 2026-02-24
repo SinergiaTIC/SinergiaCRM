@@ -24,7 +24,7 @@
 class stic_Job_OffersUtils
 {
     /**
-     * Recalculate and store Job Applications counts for an offer.
+     * Recalculate and store Job Applications counts for an offer
      *
      * @param string $offerId
      * @return void
@@ -38,20 +38,22 @@ class stic_Job_OffersUtils
         $db = DBManagerFactory::getInstance();
         $offerId = $db->quote($offerId);
 
-        $statuses = array(
-            'expected_presentation',
-            'presented',
-            'pending_interview',
-            'interviewed',
-            'accepted',
-            'rejected_closed',
-            'review',
-        );
-
-        $counts = array();
-        foreach ($statuses as $status) {
-            $counts[$status] = 0;
+        $statusPrefix = 'stic_job_applications_count_';
+        $statuses = array();
+        $offerBean = BeanFactory::newBean('stic_Job_Offers');
+        $fieldDefs = $offerBean->field_defs ?? array();
+        foreach (array_keys($fieldDefs) as $fieldName) {
+            if (strpos($fieldName, $statusPrefix) !== 0) {
+                continue;
+            }
+            if ($fieldName === $statusPrefix . 'total') {
+                continue;
+            }
+            $statusKey = substr($fieldName, strlen($statusPrefix));
+            $statuses[$statusKey] = true;
         }
+        $statusKeys = array_keys($statuses);
+        $counts = array_fill_keys($statusKeys, 0);
 
         $query = "SELECT
                 ja.status,
@@ -65,6 +67,10 @@ class stic_Job_OffersUtils
             GROUP BY ja.status";
 
         $result = $db->query($query);
+        if ($result === false) {
+            $GLOBALS['log']->error(__METHOD__ . ": Error executing counts query for offer {$offerId}.");
+            return;
+        }
 
         $totalCount = 0;
         while ($row = $db->fetchByAssoc($result)) {
@@ -93,11 +99,14 @@ class stic_Job_OffersUtils
         }
 
         $update = "UPDATE stic_job_offers SET " . implode(', ', $setParts) . " WHERE id = '{$offerId}'";
-        $db->query($update);
+        $updateResult = $db->query($update);
+        if ($updateResult === false) {
+            $GLOBALS['log']->error(__METHOD__ . ": Error updating counts for offer {$offerId}.");
+        }
     }
 
     /**
-     * Notify assigned user when applications_end_date is today and offer is not closed.
+     * Notify assigned user when applications_end_date is today and offer is not closed
      *
      * @param SugarBean $bean
      * @return void
@@ -143,7 +152,7 @@ class stic_Job_OffersUtils
     }
 
     /**
-     * Send closing date notification to assigned user.
+     * Send closing date notification to assigned user
      *
      * @param SugarBean $bean
      * @return void
