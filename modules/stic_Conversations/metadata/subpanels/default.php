@@ -29,7 +29,7 @@ $module_name = 'stic_Conversations';
 $subpanel_layout = array(
     'top_buttons' => array(
         array('widget_class' => 'SubPanelTopCreateButton'),
-        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
+        // array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
     ),
 
     'where' => '',
@@ -66,15 +66,12 @@ $subpanel_layout = array(
             'module' => $module_name,
             'width' => '4%',
         ),
-        // STIC-Custom 20240214 JBL - QuickEdit view
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
         'quickedit_button' => array(
             'vname' => 'LBL_QUICKEDIT_BUTTON',
             'widget_class' => 'SubPanelQuickEditButton',
             'module' => $module_name,
             'width' => '4%',
         ),
-        // END STIC-Custom
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',
             'widget_class' => 'SubPanelRemoveButton',
