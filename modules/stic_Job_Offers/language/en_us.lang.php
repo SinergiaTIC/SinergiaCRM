@@ -167,7 +167,7 @@ $mod_strings = array(
     'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE' => 'Project',
     // Calculated Fields for Job Applications
     'LBL_PANEL_STIC_JOB_APPLICATIONS_COUNT' => 'Job applications',
-    'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL' => 'Total applications',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL' => 'Total job applications',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION' => 'Expected presentations',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_PRESENTED' => 'Presented',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_PENDING_INTERVIEW' => 'Pending interview',
