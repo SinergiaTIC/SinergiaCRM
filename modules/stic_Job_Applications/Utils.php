@@ -88,9 +88,10 @@ class stic_Job_ApplicationsUtils
      *
      * @param SugarBean $bean
      * @param bool $checkChanges
+     * @param bool $allowRequest
      * @return void
      */
-    public static function updateRelatedOffersApplicationsCounts($bean, $checkChanges)
+    public static function updateRelatedOffersApplicationsCounts($bean, $checkChanges, $allowRequest = true)
     {
         if (empty($bean) || empty($bean->id)) {
             return;
@@ -101,18 +102,12 @@ class stic_Job_ApplicationsUtils
         $statusChanged = empty($bean->fetched_row) || $previousStatus !== $currentStatus;
 
         $previousOfferId = $bean->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? null;
-        $offerIds = self::getRelatedOfferIds($bean);
-
-        if (empty($offerIds)) {
-            $requestOfferId = self::getOfferIdFromRequest();
-            if (!empty($requestOfferId)) {
-                $offerIds[] = $requestOfferId;
-            }
+        $offerId = self::getRelatedOfferId($bean);
+        if (empty($offerId) && $allowRequest) {
+            $offerId = self::getOfferIdFromRequest();
         }
 
-        if (!empty($previousOfferId) && !in_array($previousOfferId, $offerIds, true)) {
-            $offerIds[] = $previousOfferId;
-        }
+        $offerIds = array_filter(array_unique(array($offerId, $previousOfferId)));
 
         if ($checkChanges && !$statusChanged && empty($previousOfferId)) {
             return;
@@ -122,29 +117,26 @@ class stic_Job_ApplicationsUtils
     }
 
     /**
-     * Collect related offer ids from the bean
+    * Collect related offer id from the bean
      *
      * @param SugarBean $bean
-     * @return array
+     * @return string|null
      */
-    protected static function getRelatedOfferIds($bean)
+    protected static function getRelatedOfferId($bean)
     {
-        $offerIds = array();
+        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)
+            && !($bean->stic_job_applications_stic_job_offersstic_job_offers_ida instanceof Link2)) {
+            return $bean->stic_job_applications_stic_job_offersstic_job_offers_ida;
+        }
 
         if ($bean->load_relationship('stic_job_applications_stic_job_offers')) {
             $ids = $bean->stic_job_applications_stic_job_offers->get();
             if (!empty($ids)) {
-                $offerIds = array_merge($offerIds, $ids);
+                return reset($ids) ?: null;
             }
         }
 
-        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)
-            && !($bean->stic_job_applications_stic_job_offersstic_job_offers_ida instanceof Link2)) {
-            $offerIds[] = $bean->stic_job_applications_stic_job_offersstic_job_offers_ida;
-        }
-
-        $offerIds = array_filter(array_unique($offerIds));
-        return $offerIds;
+        return null;
     }
 
     /**
