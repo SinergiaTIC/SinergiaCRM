@@ -76,11 +76,11 @@ class WhatsAppHelper implements stic_MessagesHelper {
         return $this;
     }
 
-    public function sendMessage(?string $sender, string $message, string $phone): array
+    public function sendMessage(?string $sender, string $message, string $phone, ?string $templateSid = null): array
     {
         $phone = $this->formatPhoneNumber($phone);
         
-        $result = $this->apiCall($sender, $message, $phone);
+        $result = $this->apiCall($sender, $message, $phone, $templateSid);
         
         $resultArray = json_decode($result, true);
         
@@ -107,7 +107,7 @@ class WhatsAppHelper implements stic_MessagesHelper {
         }
     }
 
-    protected function apiCall(?string $sender, string $message, string $phone): string
+    protected function apiCall(?string $sender, string $message, string $phone, ?string $templateSid = null): string
     {
         if (!$this->isConfigured()) {
             return json_encode([
@@ -116,7 +116,7 @@ class WhatsAppHelper implements stic_MessagesHelper {
             ]);
         }
 
-        if (empty($phone) || empty($message)) {
+        if (empty($phone) || (empty($message) && empty($templateSid))) {
             return json_encode([
                 'success' => false, 
                 'message' => 'Teléfono o mensaje vacíos'
@@ -131,10 +131,34 @@ class WhatsAppHelper implements stic_MessagesHelper {
             'To' => $to
         ];
 
-        if (strpos($message, 'HX') === 0) {
-            $postData['ContentSid'] = $message;
+        if (!empty($templateSid)) {
+            // When using a Twilio WhatsApp template (ContentSid), send contentVariables
+            // so Twilio can perform the template interpolation server-side.
+            $postData['ContentSid'] = $templateSid;
+
+            // contentVariables must be a JSON string. Prefer to send a JSON object
+            // with variables if the message field already contains valid JSON. Otherwise
+            // send an empty object so Twilio receives a well-formed contentVariables value.
+            $trimmed = trim($message);
+            $contentVariables = '{}';
+            if ($trimmed !== '') {
+                // If the message already contains valid JSON (object or array), use it as-is.
+                // Otherwise, do NOT wrap the template body as a positional variable; send
+                // an empty object so Twilio receives a well-formed contentVariables value.
+                if (($trimmed[0] === '{' || $trimmed[0] === '[') && json_decode($trimmed) !== null) {
+                    $contentVariables = $trimmed;
+                } else {
+                    // Send empty object instead of wrapping the whole body as variable
+                    $contentVariables = '{}';
+                }
+            }
+            $postData['ContentVariables'] = $contentVariables;
         } else {
-            $postData['Body'] = $message;
+            if (strpos($message, 'HX') === 0) {
+                $postData['ContentSid'] = $message;
+            } else {
+                $postData['Body'] = $message;
+            }
         }
 
         $url = $this->apiUrl . '/Accounts/' . $this->sid . '/Messages.json';
@@ -156,7 +180,8 @@ class WhatsAppHelper implements stic_MessagesHelper {
             $errorMessage = curl_error($ch);
             curl_close($ch);
             
-            $GLOBALS['log']->fatal('Error sending WhatsApp ' . __METHOD__ . __LINE__, $errorNumber, $errorMessage);
+            // fatal accepts a single message argument in this codebase
+            $GLOBALS['log']->fatal('Error sending WhatsApp ' . __METHOD__ . __LINE__ . ' - ' . $errorNumber . ' - ' . $errorMessage);
             $errorMsg = $errorNumber . '-' . $errorMessage;
             return json_encode([
                 'success' => false, 

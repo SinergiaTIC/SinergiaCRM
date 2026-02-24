@@ -3641,8 +3641,8 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 
 // Mensajes: Tipos
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
-$app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
 
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
@@ -3990,6 +3990,20 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
+
+// Email Templates: Whatsapp category types
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Marketing';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilidad';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticación';
+
+// Email Templates: Whatsapp status types
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Borrador';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pendiente de aprobación';
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprobada';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rechazada';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sin enviar';
 
 // Elementos añadidos al Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';

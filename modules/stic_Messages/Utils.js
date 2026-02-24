@@ -154,6 +154,8 @@ switch (sticViewType) {
             $('#sender').css('border-color', '');
           }
         }
+        // Refresh templates list when type changes
+        try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }
       });
 
       // On page load, if type is WhatsAppWeb, force status to 'sent' and set sender
@@ -172,6 +174,9 @@ switch (sticViewType) {
           $('#sender').val(assignedUserName);
         }
       }
+
+  // On load, refresh templates select according to current type
+  try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }
 
       if($("#mass_ids").val()) {
         $('#parent_name').prop('disabled', true);
@@ -247,6 +252,49 @@ switch (sticViewType) {
 
   default:
     break;
+}
+
+function refreshTemplateOptions() {
+  var messageType = ($('#type').val() || '').toLowerCase();
+  var templateType = 'sms';
+  if (messageType.indexOf('whatsapp') !== -1) {
+    templateType = 'whatsapp';
+  } else if (messageType.indexOf('sms') !== -1) {
+    templateType = 'sms';
+  }
+
+  $.ajax({
+    url: 'index.php?module=stic_Messages&action=FillDynamicListMessageTemplate',
+    method: 'POST',
+    data: { type: templateType },
+    dataType: 'json'
+  }).done(function(res) {
+    if (!res || !res.success) {
+      console.log('No templates response or error', res);
+      return;
+    }
+    var $select = $('#template_id');
+    if ($select.length === 0) return;
+    var current = $select.val();
+    $select.empty();
+    $select.append($('<option>').val('').text(SUGAR.language.get('app_strings', 'LBL_NONE')));
+    if (Array.isArray(res.data)) {
+      res.data.forEach(function(t) {
+        $select.append($('<option>').val(t.id).text(t.name));
+      });
+    } else {
+      for (var id in res.data) {
+        if (!res.data.hasOwnProperty(id)) continue;
+        $select.append($('<option>').val(id).text(res.data[id]));
+      }
+    }
+    if (current) {
+      $select.val(current);
+    }
+    template_change();
+  }).fail(function(xhr) {
+    console.log('Error fetching templates', xhr);
+  });
 }
 
 function onTemplateSelect(args) {
@@ -393,7 +441,14 @@ function addEditCreateTemplateLinks() {
 }
 
 function open_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+
+  if ($("#type").val()== 'WhatsAppHelper') {
+    templateType = 'whatsapp';
+  } else if ($("#type").val()== 'SevenSmsHelper') {
+    templateType = 'sms';
+  }
+
+  URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
   URL += "&inboundEmail=false&show_js=1";
 
   windowName = 'email_template';
@@ -407,7 +462,13 @@ function open_email_template_form() {
 }
 
 function edit_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+  if ($("#type").val()== 'WhatsAppHelper') {
+    templateType = 'whatsapp';
+  } else if ($("#type").val()== 'SevenSmsHelper') {
+    templateType = 'sms';
+  }
+
+  URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
 
   var field = document.getElementById('template_id');
   if (field.options[field.selectedIndex].value != 'undefined') {

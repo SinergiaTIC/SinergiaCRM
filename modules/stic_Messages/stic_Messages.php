@@ -242,8 +242,20 @@ class stic_Messages extends Basic
             $messageHelper = new $file; 
         }
 
+        $templateSid = null;
+        if (!empty($this->template_id)) {
+            $templateBean = BeanFactory::getBean('EmailTemplates', $this->template_id);
+            if ($templateBean) {
+                $templateSid = $templateBean->stic_whatsapp_twilio_id_c ?? null;
+            }
+        }
+
         if ($messageHelper !== null) {
-            $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
+            if ($file === 'WhatsApp') {
+                $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone, $templateSid);
+            } else {
+                $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
+            }
         }
         else {
             $returnCode = self::ERROR_NO_HELPER_CLASS;

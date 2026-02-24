@@ -278,6 +278,26 @@ $xtpl->assign("DESCRIPTION", $focus->description);
 $xtpl->assign("TYPE_OPTIONS", get_select_options_with_id($app_list_strings['record_type_display'], $focus->parent_type));
 //$xtpl->assign("DEFAULT_MODULE","Accounts");
 
+// Prepare WhatsApp select options and current values
+$approval_selected = isset($focus->STIC_WHATSAPP_STATUS_c) ? $focus->STIC_WHATSAPP_STATUS_c : '';
+$language_selected = isset($focus->stic_whatsapp_language_c) ? $focus->stic_whatsapp_language_c : '';
+// approval status uses its dedicated list
+if (!empty($app_list_strings['stic_whatsapp_status_list'])) {
+    $xtpl->assign('STIC_WHATSAPP_STATUS_OPTIONS', get_select_options_with_id($app_list_strings['stic_whatsapp_status_list'], $approval_selected));
+} else {
+    $xtpl->assign('STIC_WHATSAPP_STATUS_OPTIONS', "");
+}
+// language uses stic_languages_list
+if (!empty($app_list_strings['stic_languages_list'])) {
+    $xtpl->assign('STIC_WHATSAPP_LANGUAGE_OPTIONS', get_select_options_with_id($app_list_strings['stic_languages_list'], $language_selected));
+} else {
+    $xtpl->assign('STIC_WHATSAPP_LANGUAGE_OPTIONS', "");
+}
+// Also assign simple values if needed
+$xtpl->assign('STIC_WHATSAPP_STATUS', $approval_selected);
+$xtpl->assign('STIC_WHATSAPP_LANGUAGE', $language_selected);
+$xtpl->assign('LBL_STIC_WHATSAPP_CATEGORY', $app_list_strings['stic_whatsapp_category_list'][$language_selected] ?? '');
+
 if (isset($focus->body)) {
     $xtpl->assign("BODY", $focus->body);
 } else {
@@ -508,8 +528,14 @@ if (!$inboundEmail) {
 }
 $xtpl->parse("main.NoInbound4");
 $xtpl->parse("main.NoInbound5");
-$xtpl->parse("main");
 
+// Parse stic_whatsapp_fields only when editing a whatsapp template
+if ((isset($_REQUEST['type']) && ($_REQUEST['type'] === 'whatsapp' || $_REQUEST['type'] === 'whatsappweb'))
+    || (isset($focus->type) && ($focus->type === 'whatsapp' || $focus->type === 'whatsappweb')) ) {
+    $xtpl->parse("main.stic_whatsapp_fields");
+}
+
+$xtpl->parse("main");
 $xtpl->out("main");
 
 $javascript = new javascript();

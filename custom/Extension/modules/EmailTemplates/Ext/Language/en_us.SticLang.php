@@ -25,3 +25,18 @@ $mod_strings['ERROR_USER_INTERFACE'] = 'An error has occurred and the content ca
 $mod_strings['LNK_NEW_RECORD'] = 'Create a Template Section';
 $mod_strings['LNK_LIST'] = 'View Template Sections';
 $mod_strings['LNK_CAMPAIGN_LIST'] = 'Campaigns';
+
+$mod_strings['LBL_TEMPLATE_TYPE'] = 'Tipo de Plantilla';
+$mod_strings['LBL_STIC_WHATSAPP_STATUS'] = 'Estado de Aprobación WhatsApp';
+$mod_strings['LBL_STIC_WHATSAPP_LANGUAGE'] = 'Idioma';
+$mod_strings['LBL_STIC_WHATSAPP_CATEGORY'] = 'Categoría WhatsApp';
+$mod_strings['LBL_STIC_WHATSAPP_LAST_SYNC'] = 'Última Sincronización';
+$mod_strings['LBL_STIC_WHATSAPP_REJECTION_REASON'] = 'Motivo de Rechazo';
+$mod_strings['LBL_STIC_WHATSAPP_TWILIO_ID'] = 'ID de Twilio';
+$mod_strings['LBL_SEND_TO_TWILIO'] = 'Enviar a Twilio';
+$mod_strings['LBL_CHECK_APPROVAL_STATUS'] = 'Verificar Estado';
+$mod_strings['LBL_STIC_WHATSAPP_INFO'] = 'Información de WhatsApp';
+$mod_strings['LBL_STIC_WHATSAPP_HELP'] = 'Las plantillas de WhatsApp deben ser aprobadas por Meta/WhatsApp antes de poder usarlas. El proceso puede tardar 24-48 horas.';
+$mod_strings['LBL_STIC_WHATSAPP_VARIABLES_HELP'] = 'Usa variables con {{1}}, {{2}}, {{3}}, etc. en el contenido de la plantilla.';
+$mod_strings['LBL_STIC_WHATSAPP_CATEGORY_HELP'] = 'La categoría determina el tipo de mensaje: Marketing para promociones, Utilidad para confirmaciones/recordatorios, Autenticación para códigos de seguridad.';
+

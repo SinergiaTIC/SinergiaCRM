@@ -375,5 +375,38 @@ class stic_MessagesController extends SugarController
         die;
     }
 
+    public function action_FillDynamicListMessageTemplate() {
+        // Determine requested type from the client (flexible: accept helper class or 'whatsapp'/'sms')
+        $typeParam = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : '';
+
+        if (strpos($typeParam, 'whatsapp') !== false) {
+            // fillDynamicListMessageTemplate expects 'whatsapphelper' as key in mapping
+            $_REQUEST['type'] = 'whatsapphelper';
+        } elseif (strpos($typeParam, 'sms') !== false) {
+            $_REQUEST['type'] = 'smssevenhelper';
+        } else {
+            // default
+            $_REQUEST['type'] = 'smssevenhelper';
+        }
+
+        // Call the util to populate the app_list_strings
+        require_once 'modules/stic_Messages/Utils.php';
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
+
+        $list = $GLOBALS['app_list_strings']['dynamic_message_template_list'] ?? array();
+
+        // Convert associative array to list of {id,name}
+        $out = array();
+        foreach ($list as $id => $name) {
+            // skip empty key used for 'None'
+            if ($id === '') continue;
+            $out[] = array('id' => $id, 'name' => $name);
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(array('success' => true, 'data' => $out));
+        exit;
+    }
+
 
 }
