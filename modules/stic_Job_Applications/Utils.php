@@ -82,4 +82,225 @@ class stic_Job_ApplicationsUtils
         $workBean->achieved=true;
         $workBean->save();
     }
+
+    /**
+     * Decide whether to update counts and collect related offer ids
+     *
+     * @param SugarBean $bean
+     * @param bool $checkChanges
+     * @return void
+     */
+    public static function updateRelatedOffersApplicationsCounts($bean, $checkChanges)
+    {
+        if (empty($bean) || empty($bean->id)) {
+            return;
+        }
+
+        $previousStatus = $bean->fetched_row['status'] ?? null;
+        $currentStatus = $bean->status ?? null;
+        $statusChanged = empty($bean->fetched_row) || $previousStatus !== $currentStatus;
+
+        $previousOfferId = $bean->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? null;
+        $offerIds = self::getRelatedOfferIds($bean);
+
+        if (empty($offerIds)) {
+            $requestOfferId = self::getOfferIdFromRequest();
+            if (!empty($requestOfferId)) {
+                $offerIds[] = $requestOfferId;
+            }
+        }
+
+        if (!empty($previousOfferId) && !in_array($previousOfferId, $offerIds, true)) {
+            $offerIds[] = $previousOfferId;
+        }
+
+        if ($checkChanges && !$statusChanged && empty($previousOfferId)) {
+            return;
+        }
+
+        self::updateOfferCountsByIds($offerIds);
+    }
+
+    /**
+     * Collect related offer ids from the bean
+     *
+     * @param SugarBean $bean
+     * @return array
+     */
+    protected static function getRelatedOfferIds($bean)
+    {
+        $offerIds = array();
+
+        if ($bean->load_relationship('stic_job_applications_stic_job_offers')) {
+            $ids = $bean->stic_job_applications_stic_job_offers->get();
+            if (!empty($ids)) {
+                $offerIds = array_merge($offerIds, $ids);
+            }
+        }
+
+        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)
+            && !($bean->stic_job_applications_stic_job_offersstic_job_offers_ida instanceof Link2)) {
+            $offerIds[] = $bean->stic_job_applications_stic_job_offersstic_job_offers_ida;
+        }
+
+        $offerIds = array_filter(array_unique($offerIds));
+        return $offerIds;
+    }
+
+    /**
+     * Try to get offer id from request when created from subpanel
+     *
+     * @return string|null
+     */
+    protected static function getOfferIdFromRequest()
+    {
+        if (empty($_REQUEST)) {
+            return null;
+        }
+
+        if (!empty($_REQUEST['stic_job_applications_stic_job_offersstic_job_offers_ida'])) {
+            return $_REQUEST['stic_job_applications_stic_job_offersstic_job_offers_ida'];
+        }
+
+        if (!empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] === 'stic_Job_Offers'
+            && !empty($_REQUEST['parent_id'])) {
+            return $_REQUEST['parent_id'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Update counts for the given offer ids
+     *
+     * @param array $offerIds
+     * @return void
+     */
+    public static function updateOfferCountsByIds($offerIds)
+    {
+        if (empty($offerIds)) {
+            return;
+        }
+
+        require_once 'modules/stic_Job_Offers/Utils.php';
+        foreach (array_filter(array_unique($offerIds)) as $offerId) {
+            stic_Job_OffersUtils::updateApplicationsCounts($offerId);
+        }
+    }
+
+    /**
+     * Check whether the relationship belongs to Job Offers
+     *
+     * @param array $arguments
+     * @return bool
+     */
+    public static function isOfferRelationship($arguments)
+    {
+        return !empty($arguments['relationship'])
+            && $arguments['relationship'] === 'stic_job_applications_stic_job_offers';
+    }
+
+    /**
+     * Notify on job application status change
+     *
+     * @param SugarBean $bean
+     * @return void
+     */
+    public static function notifyStatusChange($bean)
+    {
+        if (empty($bean->id) || empty($bean->status)) {
+            return;
+        }
+
+        // Get previous status from the bean property set by before_save hook
+        $previousStatus = $bean->_previous_status ?? null;
+
+        // Only notify if status actually changed
+        if (empty($previousStatus) || $previousStatus === $bean->status) {
+            return;
+        }
+
+        self::sendNotificationStatusChange($bean);
+    }
+
+    /**
+     * Send notification email to candidate on status change
+     *
+     * @param SugarBean $bean
+     * @return void
+     */
+    protected static function sendNotificationStatusChange($bean)
+    {
+        global $sugar_config, $app_list_strings;
+
+        if (empty($bean->stic_job_applications_contactscontacts_ida)) {
+            $GLOBALS['log']->error(__METHOD__ . ": Job application {$bean->id} has no candidate.");
+            return;
+        }
+
+        $candidate = BeanFactory::getBean('Contacts', $bean->stic_job_applications_contactscontacts_ida);
+        if (empty($candidate) || empty($candidate->id)) {
+            $GLOBALS['log']->error(__METHOD__ . ": Unable to retrieve candidate for job application {$bean->id}.");
+            return;
+        }
+
+        if (!$candidate->emailAddress || !($address = $candidate->emailAddress->getPrimaryAddress($candidate))) {
+            $GLOBALS['log']->error(__METHOD__ . ": Candidate {$candidate->id} has no email address.");
+            return;
+        }
+
+        require_once 'include/SugarPHPMailer.php';
+        $mail = new SugarPHPMailer();
+
+        require_once 'modules/Emails/Email.php';
+        $emailObj = new Email();
+        $defaults = $emailObj->getSystemDefaultEmail();
+
+        $mail->From = $defaults['email'];
+        $mail->FromName = $defaults['name'];
+
+        $mail->ClearAllRecipients();
+        $mail->ClearReplyTos();
+        $mail->AddAddress($address, trim($candidate->first_name . ' ' . $candidate->last_name));
+
+        $subjectTemplate = translate('LBL_JOB_APPLICATION_STATUS_CHANGE_SUBJECT', 'stic_Job_Applications');
+        if ($subjectTemplate === 'LBL_JOB_APPLICATION_STATUS_CHANGE_SUBJECT') {
+            $subjectTemplate = 'Status change of the application for offer {0}';
+        }
+
+        $bodyTemplate = translate('LBL_JOB_APPLICATION_STATUS_CHANGE_BODY', 'stic_Job_Applications');
+        if ($bodyTemplate === 'LBL_JOB_APPLICATION_STATUS_CHANGE_BODY') {
+            $bodyTemplate = 'The job application of the offer {0} status has changed to {1}. Please review the application details: {2}';
+        }
+
+        // Get offer name
+        $offerName = $bean->name;
+        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)) {
+            $offer = BeanFactory::getBean('stic_Job_Offers', $bean->stic_job_applications_stic_job_offersstic_job_offers_ida);
+            if (!empty($offer) && !empty($offer->name)) {
+                $offerName = $offer->name;
+            }
+        }
+
+        // Get status label
+        $statusLabel = $bean->status;
+        $statusOptions = BeanFactory::newBean('stic_Job_Applications')->field_defs['status']['options'] ?? 'stic_job_applications_status_list';
+        if (is_string($statusOptions)) {
+            $statusLabel = $app_list_strings[$statusOptions][$bean->status] ?? $bean->status;
+        }
+
+        $url = rtrim($sugar_config['site_url'], '/') . "/index.php?module={$bean->module_name}&action=DetailView&record={$bean->id}";
+        $link = "<a href=\"{$url}\">{$bean->name}</a>";
+
+        $mail->Subject = string_format($subjectTemplate, array($offerName));
+        $mail->Body = from_html(string_format($bodyTemplate, array($offerName, $statusLabel, $link)));
+        $mail->IsHTML(true);
+
+        $mail->setMailerForSystem();
+        $mail->prepForOutbound();
+
+        if (!$mail->Send()) {
+            $GLOBALS['log']->fatal(__METHOD__ . ": Error sending notification email for job application {$bean->id}.");
+        }
+    }
 }

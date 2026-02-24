@@ -24,6 +24,42 @@
 class stic_Job_ApplicationsLogicHooks
 {
     /**
+     * Detect status change before save and trigger notification
+     *
+     * @param SugarBean $bean The stic_Job_Applications bean
+     * @param string $event The hook event
+     * @param array $arguments Additional arguments
+     */
+    public function before_save(&$bean, $event, $arguments)
+    {
+        $GLOBALS['log']->info("before_save triggered for application: " . ($bean->id ?? 'NEW'));
+        
+        if (empty($bean->id)) {
+            $GLOBALS['log']->info("Skipping status detection - new record");
+            return;
+        }
+
+        // Check if status is changing
+        $previousStatus = $bean->fetched_row['status'] ?? null;
+        $GLOBALS['log']->info("Status from fetched_row: " . ($previousStatus ?? 'NULL'));
+        
+        if (empty($previousStatus)) {
+            // Get from database if fetched_row is empty
+            $db = DBManagerFactory::getInstance();
+            $query = "SELECT status FROM stic_job_applications WHERE id = '{$db->quote($bean->id)}' LIMIT 1";
+            $result = $db->query($query);
+            if ($row = $db->fetchByAssoc($result)) {
+                $previousStatus = $row['status'];
+                $GLOBALS['log']->info("Status from DB: " . ($previousStatus ?? 'NULL'));
+            }
+        }
+
+        // Store previous status in bean for use in after_save
+        $bean->_previous_status = $previousStatus;
+        $GLOBALS['log']->info("Stored previous status: " . ($previousStatus ?? 'NULL') . ", current status: " . ($bean->status ?? 'NULL'));
+    }
+
+    /**
      * Update counts when an application is created
      *
      * @param SugarBean $bean The stic_Job_Applications bean
@@ -36,11 +72,13 @@ class stic_Job_ApplicationsLogicHooks
             return;
         }
 
-        $this->updateRelatedOffersApplicationsCounts($bean, true);
+        require_once 'modules/stic_Job_Applications/Utils.php';
+        stic_Job_ApplicationsUtils::updateRelatedOffersApplicationsCounts($bean, true);
+        stic_Job_ApplicationsUtils::notifyStatusChange($bean);
     }
 
     /**
-     * Update counts when an application is deleted.
+     * Update counts when an application is deleted
      *
      * @param SugarBean $bean
      * @param string $event
@@ -48,11 +86,12 @@ class stic_Job_ApplicationsLogicHooks
      */
     public function after_delete(&$bean, $event, $arguments)
     {
-        $this->updateRelatedOffersApplicationsCounts($bean, false);
+        require_once 'modules/stic_Job_Applications/Utils.php';
+        stic_Job_ApplicationsUtils::updateRelatedOffersApplicationsCounts($bean, false);
     }
 
     /**
-     * Update counts when a relationship is added.
+     * Update counts when a relationship is added
      *
      * @param SugarBean $bean
      * @param string $event
@@ -60,15 +99,16 @@ class stic_Job_ApplicationsLogicHooks
      */
     public function after_relationship_add(&$bean, $event, $arguments)
     {
-        if (!$this->isOfferRelationship($arguments)) {
+        require_once 'modules/stic_Job_Applications/Utils.php';
+        if (!stic_Job_ApplicationsUtils::isOfferRelationship($arguments)) {
             return;
         }
 
-        $this->updateOfferCountsByIds(array($arguments['related_id'] ?? null));
+        stic_Job_ApplicationsUtils::updateOfferCountsByIds(array($arguments['related_id'] ?? null));
     }
 
     /**
-     * Update counts when a relationship is removed.
+     * Update counts when a relationship is removed
      *
      * @param SugarBean $bean
      * @param string $event
@@ -76,127 +116,11 @@ class stic_Job_ApplicationsLogicHooks
      */
     public function after_relationship_delete(&$bean, $event, $arguments)
     {
-        if (!$this->isOfferRelationship($arguments)) {
+        require_once 'modules/stic_Job_Applications/Utils.php';
+        if (!stic_Job_ApplicationsUtils::isOfferRelationship($arguments)) {
             return;
         }
 
-        $this->updateOfferCountsByIds(array($arguments['related_id'] ?? null));
-    }
-
-    /**
-     * Decide whether to update counts and collect related offer ids.
-     *
-     * @param SugarBean $bean
-     * @param bool $checkChanges
-     * @return void
-     */
-    protected function updateRelatedOffersApplicationsCounts($bean, $checkChanges)
-    {
-        if (empty($bean) || empty($bean->id)) {
-            return;
-        }
-
-        $previousStatus = $bean->fetched_row['status'] ?? null;
-        $currentStatus = $bean->status ?? null;
-        $statusChanged = empty($bean->fetched_row) || $previousStatus !== $currentStatus;
-
-        $previousOfferId = $bean->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? null;
-        $offerIds = $this->getRelatedOfferIds($bean);
-
-        if (empty($offerIds)) {
-            $requestOfferId = $this->getOfferIdFromRequest();
-            if (!empty($requestOfferId)) {
-                $offerIds[] = $requestOfferId;
-            }
-        }
-
-        if (!empty($previousOfferId) && !in_array($previousOfferId, $offerIds, true)) {
-            $offerIds[] = $previousOfferId;
-        }
-
-        if ($checkChanges && !$statusChanged && empty($previousOfferId)) {
-            return;
-        }
-
-        $this->updateOfferCountsByIds($offerIds);
-    }
-
-    /**
-     * Collect related offer ids from the bean.
-     *
-     * @param SugarBean $bean
-     * @return array
-     */
-    protected function getRelatedOfferIds($bean)
-    {
-        $offerIds = array();
-
-        if ($bean->load_relationship('stic_job_applications_stic_job_offers')) {
-            $ids = $bean->stic_job_applications_stic_job_offers->get();
-            if (!empty($ids)) {
-                $offerIds = array_merge($offerIds, $ids);
-            }
-        }
-
-        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)
-            && !($bean->stic_job_applications_stic_job_offersstic_job_offers_ida instanceof Link2)) {
-            $offerIds[] = $bean->stic_job_applications_stic_job_offersstic_job_offers_ida;
-        }
-
-        $offerIds = array_filter(array_unique($offerIds));
-        return $offerIds;
-    }
-
-    /**
-     * Try to get offer id from request when created from subpanel.
-     *
-     * @return string|null
-     */
-    protected function getOfferIdFromRequest()
-    {
-        if (empty($_REQUEST)) {
-            return null;
-        }
-
-        if (!empty($_REQUEST['stic_job_applications_stic_job_offersstic_job_offers_ida'])) {
-            return $_REQUEST['stic_job_applications_stic_job_offersstic_job_offers_ida'];
-        }
-
-        if (!empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] === 'stic_Job_Offers'
-            && !empty($_REQUEST['parent_id'])) {
-            return $_REQUEST['parent_id'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Update counts for the given offer ids.
-     *
-     * @param array $offerIds
-     * @return void
-     */
-    protected function updateOfferCountsByIds($offerIds)
-    {
-        if (empty($offerIds)) {
-            return;
-        }
-
-        require_once 'modules/stic_Job_Offers/Utils.php';
-        foreach (array_filter(array_unique($offerIds)) as $offerId) {
-            stic_Job_OffersUtils::updateApplicationsCounts($offerId);
-        }
-    }
-
-    /**
-     * Check whether the relationship belongs to Job Offers.
-     *
-     * @param array $arguments
-     * @return bool
-     */
-    protected function isOfferRelationship($arguments)
-    {
-        return !empty($arguments['relationship'])
-            && $arguments['relationship'] === 'stic_job_applications_stic_job_offers';
+        stic_Job_ApplicationsUtils::updateOfferCountsByIds(array($arguments['related_id'] ?? null));
     }
 }
