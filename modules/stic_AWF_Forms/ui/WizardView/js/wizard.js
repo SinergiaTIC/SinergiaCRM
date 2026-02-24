@@ -1617,20 +1617,50 @@ class WizardStep3 {
               this.selectedCategory = this.definition.category;
               this.selectedActionDefName = this.definition.name;
 
-              // Clone the action to edit it
-              this.action = new stic_AwfAction(action);
+              // Clone the action into a LOCAL variable first, to avoid Alpine reactivity errors
+              let tempAction = new stic_AwfAction(action);
 
-              // Adapt textarea type parameter values to display line breaks correctly
-              if (this.action.parameters && this.definition.parameters) {
-                this.action.parameters.forEach(param => {
+              // Adapt parameter values for UI display
+              if (tempAction.parameters && this.definition.parameters) {
+                tempAction.parameters.forEach(param => {
                   const paramDef = this.definition.parameters.find(p => p.name === param.name);
-                  if (paramDef && paramDef.dataType === 'textarea' && typeof param.value === 'string') {
-                    // Replace stored '\n' with real line breaks
-                    param.value = param.value.replace(/\\+n/g, '\n');
+                  if (paramDef) {
+                    
+                    // Real Type Resolution (Polymorphism of optionSelector)
+                    let actualType = paramDef.type;
+                    let actualDataType = paramDef.dataType;
+
+                    if (paramDef.type === 'optionSelector' && param.selectedOption) {
+                        const optDef = (paramDef.selectorOptions || []).find(o => o.name === param.selectedOption);
+                        if (optDef) {
+                            if (optDef.resolvedType) actualType = optDef.resolvedType;
+                            if (optDef.resolvedDataType) actualDataType = optDef.resolvedDataType;
+                        }
+                    }
+
+                    // Transformations according to the real type
+                    
+                    // Adaptation for Textarea (replacing literal \n with real line breaks)
+                    if ((actualDataType === 'textarea' || actualType === 'textarea') && typeof param.value === 'string') {
+                      param.value = param.value.replace(/\\+n/g, '\n');
+                    }
+
+                    // Normalization for Multiple Selects (Always Guarantee a Pure Array)
+                    if (actualType === 'field_list') {
+                      if (typeof param.value === 'string') {
+                        // If it is a string (ex: "Field1,Field2" or ""), we convert it
+                        param.value = param.value.trim() !== '' ? param.value.split(',').map(s => s.trim()) : [];
+                      }
+                      else if (!Array.isArray(param.value)) {
+                        // If it is null, undefined, or anything else, we set it to an empty array
+                        param.value = [];
+                      }
+                    }
                   }
                 });
               }
 
+              this.action = tempAction;
               this.isOpen = true;
               this.syncConditionState();
             },
@@ -1662,7 +1692,7 @@ class WizardStep3 {
                 const defaultOrder = def.isTerminal ? 999 : (def.order ?? 0);
 
                 // Create an empty instance based on the definition
-                this.action = new stic_AwfAction({
+                let tempAction = new stic_AwfAction({
                     name: def.name,
                     title: def.title,
                     text: def.title, // By default the title
@@ -1674,15 +1704,22 @@ class WizardStep3 {
                 });
 
                 // Initialize empty parameters according to the definition
-                this.action.parameters = (def.parameters || []).map(pDef => new stic_AwfActionParameter({
+                tempAction.parameters = (def.parameters || []).map(pDef => {
+                  let initialValue = pDef.defaultValue;
+                  if (pDef.type === 'field_list') initialValue = [];
+
+                  return new stic_AwfActionParameter({
                     name: pDef.name,
                     text: pDef.text,
                     type: pDef.type,
+                    dataType: pDef.dataType,
                     required: pDef.required,
-                    value: pDef.defaultValue,
+                    value: initialValue,
                     selectedOption: ''
-                }));
+                  });
+                });
 
+                this.action = tempAction;
                 this.syncConditionState();
             },
 
@@ -1699,6 +1736,9 @@ class WizardStep3 {
               if (selectedOptDef && selectedOptDef.resolvedType === 'empty') {
                   param.value = selectedOptDef.name;
                   param.value_text = selectedOptDef.text;
+              } else if (selectedOptDef && selectedOptDef.resolvedType === 'field_list') {
+                  param.value = [];
+                  param.value_text = '';
               } else {
                   param.value = '';
                   param.value_text = '';
@@ -1813,11 +1853,11 @@ class WizardStep3 {
               this.close();
             },
 
-            /**
-             * Reconstruye los parámetros y recalcula los requisitos de una acción basándose en su definición y los valores actuales.
-             * @param {stic_AwfAction} action La acción a procesar (se modifica in-place)
-             * @param {object} definition La definición de la acción (ActionDefinitionDTO)
-             * @returns {void}
+            /** 
+             * Reconstructs the parameters and recalculates the requirements of an action based on its definition and current values. 
+             * @param {stic_AwfAction} action The action to process (changes in-place) 
+             * @param {object} definition The definition of the action (ActionDefinitionDTO) 
+             * @returns {void} 
              */
             _recalculateAction(action, definition) {
               const newParams = [];
@@ -1833,9 +1873,10 @@ class WizardStep3 {
                   name: paramDef.name,
                   text: paramDef.text,
                   type: paramDef.type,
+                  dataType: paramDef.dataType,
                   required: paramDef.required,
                         
-                  // Preservamos el valor editado o usamos el default
+                  // We preserve the edited value or use the default
                   value: currentParam ? currentParam.value : paramDef.defaultValue,
                   value_text: currentParam ? currentParam.value_text : '', 
                   selectedOption: currentParam ? currentParam.selectedOption : ''

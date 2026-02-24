@@ -908,6 +908,7 @@ class stic_AwfActionParameter {
       name: '',                // Parameter name
       text: '',                // Parameter text
       type: '',                // Parameter type: value, field, dataBlock, crmRecord, optionSelector
+      dataType: '',            // Data type for value parameters: text, number, date, etc.
       required: false,         // Indicates if the parameter is required
       value: '',               // Parameter value
       value_text: '',          // Text to display for the parameter value
