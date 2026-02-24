@@ -122,7 +122,7 @@ array(
                     0 => '',
                     1 => 
                     array (
-                        'name' => 'notification_template_c',
+                        'name' => 'notification_template',
                         'studio' => 'visible',
                         'label' => 'LBL_NOTIFICATION_TEMPLATE',
                     ),

@@ -50,5 +50,5 @@ SET
 WHERE o.deleted = 0;
 
 -- Job Offers notification template field (emailtemplate_id)
-ALTER TABLE `stic_job_offers_cstm`
+ALTER TABLE `stic_job_offers`
 	ADD COLUMN IF NOT EXISTS `emailtemplate_id` CHAR(36) NULL;
