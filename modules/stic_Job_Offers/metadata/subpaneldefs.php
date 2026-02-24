@@ -186,14 +186,14 @@ $layout_defs['stic_Job_Offers']['subpanel_setup']['stic_campaigns_notification']
                 // 'another_field' => 'another_value', // You can add more here
             ),
         ),
-        // 1 => array(
-        //     'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
-        //     'id' => 'NEW_MSG_NOTIFICATION',
-        //     'title' => 'LBL_NEW_MSG_NOTIFICATION',
-        //     'additional_form_fields' => array(
-        //         'campaign_type' => 'NotifMsg', // This will pre-populate the 'type' field
-        //         // 'another_field' => 'another_value', // You can add more here
-        //     ),
-        // ),
+        1 => array(
+            'widget_class' => 'CustomSubPanelTopButtonQuickCreate',
+            'id' => 'NEW_MSG_NOTIFICATION',
+            'title' => 'LBL_NEW_MSG_NOTIFICATION',
+            'additional_form_fields' => array(
+                'campaign_type' => 'NotifMsg', // This will pre-populate the 'type' field
+                // 'another_field' => 'another_value', // You can add more here
+            ),
+        ),
     ),
 );
