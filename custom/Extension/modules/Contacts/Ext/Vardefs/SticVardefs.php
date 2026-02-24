@@ -2601,6 +2601,66 @@ $dictionary['Contact']['fields']['stic_time_availability_c'] = array(
     'duplicate_merge_dom_value' => 0,
     'merge_filter' => 'disabled',
 );
+
+// Private Area fields
+$dictionary['Contact']['fields']['stic_pa_username_c'] = array(
+    'name' => 'stic_pa_username_c',
+    'id' => 'Contactsstic_pa_username_c',
+    'vname' => 'LBL_STIC_PA_USERNAME',
+    'type' => 'varchar',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'len' => '255',
+    'inline_edit' => '1',
+    'required' => false,
+    'massupdate' => 1,
+    'importable' => 'true',
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => '1',
+    'audited' => true,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+);
+
+$dictionary['Contact']['fields']['stic_pa_password_c'] = array(
+    'name' => 'stic_pa_password_c',
+    'id' => 'Contactsstic_pa_password_c',
+    'vname' => 'LBL_STIC_PA_PASSWORD',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => '255',
+    'inline_edit' => '1',
+    'required' => false,
+    'massupdate' => 0,
+    'importable' => 'false',
+    'duplicate_merge' => 'disabled',
+    'audited' => false,
+    'reportable' => false,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+);
+
+$dictionary['Contact']['fields']['stic_pa_enable_c'] = array(
+    'name' => 'stic_pa_enable_c',
+    'id' => 'Contactsstic_pa_enable_c',
+    'vname' => 'LBL_STIC_PA_ENABLE',
+    'type' => 'bool',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'default' => '0',
+    'inline_edit' => '1',
+    'required' => false,
+    'massupdate' => 1,
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'audited' => true,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+);
+
 // Financial Products Relationships
 $dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array (
     'name' => 'stic_financial_products_contacts',
@@ -2744,54 +2804,3 @@ $dictionary['Contact']['fields']['am_projecttemplates_resources']['vname'] = 'LB
 // STIC#981
 $dictionary['Contact']['fields']['primary_address_postalcode']['inline_edit'] = true;
 $dictionary['Contact']['fields']['do_not_call']['massupdate'] = '1';
-
-// Private Area fields
-$dictionary['Contact']['fields']['stic_pa_username_c'] = array(
-    'name' => 'stic_pa_username_c',
-    'vname' => 'LBL_STIC_PA_USERNAME',
-    'type' => 'varchar',
-    'len' => '255',
-    'inline_edit' => '1',
-    'required' => false,
-    'massupdate' => 1,
-    'importable' => 'true',
-    'duplicate_merge' => 'enabled',
-    'duplicate_merge_dom_value' => '1',
-    'audited' => true,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-);
-
-$dictionary['Contact']['fields']['stic_pa_password_c'] = array(
-    'name' => 'stic_pa_password_c',
-    'vname' => 'LBL_STIC_PA_PASSWORD',
-    'type' => 'varchar',
-    'len' => '255',
-    'inline_edit' => '1',
-    'required' => false,
-    'massupdate' => 0,
-    'importable' => 'false',
-    'duplicate_merge' => 'disabled',
-    'audited' => false,
-    'reportable' => false,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-);
-
-$dictionary['Contact']['fields']['stic_pa_enable_c'] = array(
-    'name' => 'stic_pa_enable_c',
-    'vname' => 'LBL_STIC_PA_ENABLE',
-    'type' => 'bool',
-    'default' => '0',
-    'inline_edit' => '1',
-    'required' => false,
-    'massupdate' => 1,
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'audited' => true,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-);
-
