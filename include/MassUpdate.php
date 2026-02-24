@@ -114,6 +114,7 @@ class MassUpdate
         unset($_REQUEST['PHPSESSID']);
 
         // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
         // $query = json_encode($_REQUEST);
         $decoded_request = array_map('html_entity_decode', $_REQUEST);
         
