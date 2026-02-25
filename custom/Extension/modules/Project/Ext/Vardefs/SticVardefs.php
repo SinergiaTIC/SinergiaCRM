@@ -146,8 +146,43 @@ $dictionary["Project"]["fields"]["stic_centers_project"] = array (
     'module' => 'stic_Centers',
     'bean_name' => 'stic_Centers',
     'vname' => 'LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE',
-  );
+);
 
+// Resources relationship Vardef
+$dictionary["Project"]["fields"]["stic_resources_project"] = array(
+    'name' => 'stic_resources_project',
+    'type' => 'link',
+    'relationship' => 'stic_resources_project',
+    'source' => 'non-db',
+    'module' => 'stic_Resources',
+    'bean_name' => 'stic_Resources',
+    'side' => 'right',
+    'vname' => 'LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE',
+);
+
+// Job offers relationship
+$dictionary["Project"]["fields"]["project_stic_job_offers"] = array (
+  'name' => 'project_stic_job_offers',
+  'type' => 'link',
+  'relationship' => 'project_stic_job_offers',
+  'source' => 'non-db',
+  'module' => 'stic_Job_Offers',
+  'bean_name' => 'stic_Job_Offers',
+  'side' => 'right',
+  'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE',
+);
+
+// Assesment relationship
+$dictionary["Project"]["fields"]["project_stic_assessments"] = array (
+  'name' => 'project_stic_assessments',
+  'type' => 'link',
+  'relationship' => 'project_stic_assessments',
+  'source' => 'non-db',
+  'module' => 'stic_Assessments',
+  'bean_name' => 'stic_Assessments',
+  'side' => 'right',
+  'vname' => 'LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE',
+);
 // Base fields from the module
 $dictionary['Project']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 

@@ -66,7 +66,7 @@ $mod_strings = array(
     'LBL_LIST_NAME' => 'Nome',
     'LBL_EDIT_BUTTON' => 'Editar',
     'LBL_REMOVE' => 'Quitar',
-    
+
     'LBL_LIST_FORM_TITLE' => 'Lista de Produtos',
     'LBL_MODULE_NAME' => 'Produtos',
     'LBL_MODULE_TITLE' => 'Produtos',

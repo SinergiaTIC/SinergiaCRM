@@ -342,5 +342,19 @@ $dashletData['DocumentsDashlet']['searchFields'] = array (
       'default' => false,
       'name' => 'active_date',
     ),
+    'stic_category_c' => 
+    array (
+      'width' => '10%',
+      'label' => 'LBL_STIC_CATEGORY',
+      'default' => false,
+      'name' => 'stic_category_c',
+    ),
+    'stic_subcategory_c' => 
+    array (
+      'width' => '10%',
+      'label' => 'LBL_STIC_SUBCATEGORY',
+      'default' => false,
+      'name' => 'stic_subcategory_c',
+    ),      
 );
 // END STIC-Custom  

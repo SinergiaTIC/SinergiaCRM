@@ -64,6 +64,20 @@ class stic_Payments extends Basic
     public $c19_rejected_reason;
     public $payment_date;
 
+    public function __construct()
+    {
+        global $app_list_strings;
+        parent::__construct();
+        require_once 'modules/stic_Payments/Utils.php';
+
+        $newPaymentsList = stic_PaymentsUtils::generatePaymentTypeOptionsFromUser();
+
+        if (isset($app_list_strings['stic_payments_types_list']['aggregated_services'])) {
+            $newPaymentsList['aggregated_services'] = $app_list_strings['stic_payments_types_list']['aggregated_services'];
+        }
+        $app_list_strings['stic_payments_types_list'] = $newPaymentsList;
+    }
+
     public function bean_implements($interface)
     {
         switch ($interface) {

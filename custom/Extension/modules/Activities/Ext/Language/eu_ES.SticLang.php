@@ -20,5 +20,5 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_Messages'] = 'Mensajes';
+$mod_strings['LBL_Messages'] = 'Mezuak';
 

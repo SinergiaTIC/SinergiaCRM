@@ -166,3 +166,17 @@ function sticPurgeDatabase()
     }
     return false;
 }
+
+// Scheduled task to process Phone messages queued
+$job_strings[] = 'sticSendPhoneMessages';
+
+/**
+ * Deletes from the database the records where deleted = 1 was set at least N days before 
+ * (N depends on config value 'stic_purge_database_days').
+ * @return boolean
+ */
+function sticSendPhoneMessages() {
+    require_once('modules/stic_MessagesMan/Utils.php');
+
+    return stic_MessagesManUtils::sendQueuedMessages(false);
+}

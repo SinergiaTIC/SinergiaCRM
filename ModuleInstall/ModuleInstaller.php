@@ -290,11 +290,13 @@ class ModuleInstaller
 
         // STIC-Custom - 20230901 - jch - STIC#1204
         //               20230919 - jch - STIC#1223
+        //               20231124 - JCH - https://github.com/SinergiaTIC/SinergiaCRM/pull/876
         // Rebuild SinergiaDA views to avoid incorrect table references and errors in mysqldump if SDA is enabled
         $sdaEnabled = $sugar_config['stic_sinergiada']['enabled'] ?? false;
         $rebuildSDAFile = 'SticInclude/SinergiaDARebuild.php';
+        $sdaAutoRebuild = $sugar_config['stic_sinergiada']['auto_rebuild_on_studio_events'] ?? true;
 
-        if (file_exists($rebuildSDAFile) && $sdaEnabled) {
+        if (file_exists($rebuildSDAFile) && $sdaEnabled && $sdaAutoRebuild != false) {
             require_once $rebuildSDAFile;
             $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Uninstalling module. {$this->base_dir}. Rebuilding SinergiaDA");
             SinergiaDARebuild::callApiRebuildSDA(true, 'views');

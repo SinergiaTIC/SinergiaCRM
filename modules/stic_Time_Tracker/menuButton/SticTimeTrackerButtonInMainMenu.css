@@ -1,7 +1,5 @@
-
 /* GENERAL */
 
-/* Time Tracker Button */
 .no-show-time-tracker-button {
     display:none !important;
 }
@@ -16,14 +14,20 @@
     font-size:2rem;
 }
 
+.time-tracker-info-div {
+    margin-top: 2%;
+    margin-left: 2%;
+}
 
-/* Time Tracker Dialog box */
+.time-tracker-popup-header {
+    font-size:1.9rem;
+}
+
 .time-tracker-dialog-row {
     list-style: circle !important;
     padding-left: 5%;
 }
 
-/* Time Tracker Dialog box */  
 #time-tracker-dialog-box {
     display: none;
     position: fixed;
@@ -35,6 +39,11 @@
     line-height: normal;
     padding: 20px;
     z-index: 1000;
+}
+
+.time-tracker-dialog-info {
+    display: flex;
+    flex-direction: column;
 }
 
 #time-tracker-dialog-description {
@@ -50,9 +59,17 @@
     overflow-wrap: break-word;
 }
 
+#time-tracker-dynamic-list {
+    width: 95%;
+    background-color:white;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+
 #time-tracker-dialog-buttons {
     display: flex;
     justify-content: center;
+    margin-top: 5%;
 }
 
 #time-tracker-dialog-button-confirm {
@@ -60,12 +77,11 @@
 }
 
 
-
 /* MEDIA QUERIES */
  
 /* Extra small screen / phone */
-@media (min-width: 300px) {
-    /* Time Tracker Button */    
+@media (min-width: 300px) 
+{
     .time-tracker-start {
         margin-left: 1.5rem;
     }
@@ -74,7 +90,10 @@
         margin-left: 1.5rem;    
     }
 
-    /* Time Tracker Dialog box */
+    .time-tracker-popup-header {
+        font-size:1.4rem;
+    }
+    
     #time-tracker-dialog-box {
         top: 115px;
         left: 38%;
@@ -96,13 +115,18 @@
 }
 
 /* Small screen / tablet */
-@media (min-width: 751px) {
-    /* Time Tracker Dialog box */
+@media (min-width: 751px) 
+{
+    .time-tracker-popup-header {
+        font-size:1.5rem;
+    }
+    
     #time-tracker-dialog-box {
         top: 65px;        
         left: 45%;
         width: 53%;
     }
+
     .time-tracker-dialog-info {
         text-align: left;
         font-size: 1.2rem !important;  
@@ -110,8 +134,12 @@
 }
 
 /* Medium screen / desktop */
-@media (min-width: 992px) {
-    /* Time Tracker Dialog box */
+@media (min-width: 992px) 
+{
+    .time-tracker-popup-header {
+        font-size:1.6rem;
+    }
+    
     #time-tracker-dialog-box {     
         left: 60%;
         width: 38%;
@@ -124,8 +152,12 @@
 }
 
 /* Large screen / wide desktop */
-@media (min-width: 1200px) {  
-    /* Time Tracker Dialog box */  
+@media (min-width: 1200px) 
+{
+    .time-tracker-popup-header {
+        font-size:1.8rem;
+    }
+
     #time-tracker-dialog-box {       
         left: 68%;
         width: 30%;

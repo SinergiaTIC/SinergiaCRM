@@ -146,7 +146,7 @@ class stic_AttendancesUtils
 
             // Set attendance name, avoiding to duplicate event name
             $sessionNameStart = trim(explode('|', $row['session_name'])[0]);
-            if (strpos($row['registration_name'], $sessionNameStart) !== false) {
+            if (mb_stripos($row['registration_name'], $sessionNameStart) !== false) {
                 $cleanSessionName = str_replace($sessionNameStart, '', $row['session_name']);
                 $cleanSessionName = trim(str_replace('|', '', $cleanSessionName));
             } else {

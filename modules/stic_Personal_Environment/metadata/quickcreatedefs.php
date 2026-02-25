@@ -110,12 +110,24 @@ array (
           ),
           1 => 
           array (
+            'name' => 'authorized_signer',
+            'studio' => 'visible',
+            'label' => 'LBL_AUTHORIZED_SIGNER',
+          ),
+        ),
+        5 => 
+        array (
+          0 => 
+          array (
             'name' => 'coexistence_status',
             'studio' => 'visible',
             'label' => 'LBL_COEXISTENCE_STATUS',
           ),
+          1 => 
+          array (
+          ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (

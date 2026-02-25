@@ -43,7 +43,7 @@ $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Indica se a funcionalidade de Cal
 $mod_strings['LBL_STIC_CLOCK'] = 'Rexistro horario';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indica se a funcionalidade de Rexistro horario está activada para o usuario.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'Acceso a SinergiaDA';
-$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica se o usuario dispón de acceso a Sinergia Data Analytics';
+$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica o nivel de acceso do usuario en Sinergia Data Analytics.<ul><li><b>Sen acceso:</b> o usuario non poderá acceder.</li><li><b>Acceso completo:</b> o usuario poderá crear, modificar e executar informes.</li><li><b>Acceso de só lectura:</b> o usuario poderá executar informes e ver os seus resultados pero non poderá crear informes novos nin modificar os existentes. Esta opción só se aplica a usuarios normais; os administradores con acceso a SinergiaDA sempre terán acceso completo.</li></ul>';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direccións de correo';
@@ -79,3 +79,26 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'URI de redirección';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = "URI de redirección de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Más información</a>.";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Ámbitos';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbitos de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent' target='_blank'>Más información</a>.";
+
+// Emulación de usuarios - Usuario emulador
+$mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emular usuario';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Emulación de usuario';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = '¡Atención! Está emulando al usuario: ';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Para volver a su propio usuario haga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí</a>.';
+$mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuario original';
+$mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuario emulado';
+$mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalizar emulación';
+
+// Emulación de usuarios - Usuario emulado
+$mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'Emulación de usuario';
+$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador está emulando su usuario.';
+$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'Un administrador ha finalizado la emulación de su usuario.';
+$mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
+
+// Emulación de usuarios - Monitorización
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
+
+// Modelo 182
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Emisión do Modelo 182';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indica para que organizacións poderá o usuario xerar o Modelo 182. A lista xérase dinámicamente a partir dos <a href="index.php?module=stic_Settings" target="_blank">parámetros de configuración</a>.';

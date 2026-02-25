@@ -46,6 +46,10 @@ array(
                     'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_PANEL_EVALUATION' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),                        
             ),
         ),
         'panels' => array(
@@ -120,6 +124,16 @@ array(
                     ),
                 ),
             ),
+            'lbl_panel_evaluation' => array(
+                0 => array(
+                    0 => 'evaluation_stage',
+                    1 => 'evaluation_date',
+                ),
+                1 => array(
+                    0 => 'certified_skill',
+                    1 => array(),
+                ),
+            ),            
         ),
     ),
 );

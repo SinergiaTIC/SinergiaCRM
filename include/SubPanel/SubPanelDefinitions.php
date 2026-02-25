@@ -265,8 +265,13 @@ class aSubPanel
             // STIC-Custom JBL 20240123: Don't show button in Custom views
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/73
             // $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
-            if(!isset($this->parent_bean->show_SubPanelTopButtonListView) || $this->parent_bean->show_SubPanelTopButtonListView) {
-                $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
+            // STIC-Custom EPS 20251219: Exception can be added at subpanel definition level
+            $showViewException = $this->_instance_properties['show_SubPanelTopButtonListView'] ?? true;
+            if ($showViewException) {
+            // END STIC-Custom
+                if(!isset($this->parent_bean->show_SubPanelTopButtonListView) || $this->parent_bean->show_SubPanelTopButtonListView) {
+                    $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
+                }
             }
             // END STIC-Custom
         }

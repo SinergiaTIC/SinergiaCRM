@@ -191,6 +191,14 @@ array(
                 'default' => true,
                 'name' => 'reference_contact',
             ),
+            'authorized_signer' => array(
+                'type' => 'bool',
+                'studio' => 'visible',
+                'label' => 'LBL_AUTHORIZED_SIGNER',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'authorized_signer',
+            ),
             'description' => array(
                 'type' => 'text',
                 'label' => 'LBL_DESCRIPTION',

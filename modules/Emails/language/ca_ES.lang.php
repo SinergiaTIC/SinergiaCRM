@@ -310,7 +310,7 @@ $mod_strings = array(
     'LBL_NO_SUBJECT' => '(sense assumpte)',
     'LBL_CHECKING_ACCOUNT' => 'Comprovant la compta',
     'LBL_OF' => 'de',
-    'LBL_TEST_EMAIL_BODY' => 'Aquest correu electrònic va ser enviat per tal de comprovar la informació del servidor de correu sortint presentades amb la sol·licitud SuiteCRM. A la recepció reeixida d\'aquest missatge indica que la informació del servidor de correu sortint sempre és vàlid.',
+    'LBL_TEST_EMAIL_BODY' => "Aquest correu electrònic s'ha enviat per provar la configuració del servidor de correu sortint de SuiteCRM. La seva recepció indica que la configuració és correcta.",
 
     // for outbound email dialog
     'LBL_MISSING_DEFAULT_OUTBOUND_SMTP_SETTINGS' => 'L\'administrador encara no ha configurat la compta sortint per defecte. No és possible enviar un correu electrònic de prova.',

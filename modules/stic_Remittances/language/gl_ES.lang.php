@@ -75,7 +75,7 @@ $mod_strings = array(
     'LBL_NO_BANK_ACCOUNT_ERROR' => 'A conta bancaria é obrigatoria se a remesa é de domiciliacións ou de transferencias.',
     'LBL_BANK_ACCOUNT_SHOULD_BE_EMPTY_ERROR' => 'Se se indica unha conta bancaria, a remesa debe ser de domiciliacións ou de transferencias.',
 
-    // Mensaxes SEPA comunes para recibos e transferencias
+    // Mensajes SEPA comunes para recibos y transferencias
     'LBL_SEPA_FIX_REMITTANCE_ERROR' => 'Comprobe',
     'LBL_SEPA_INVALID_ACCOUNT_NAME' => '<b>Organización</b> non válida no pago: ',
     'LBL_SEPA_INVALID_AMOUNT' => '<b>Importe</b> non válido no pago (e tal vez no seu compromiso de pago): ',
@@ -91,17 +91,17 @@ $mod_strings = array(
     'LBL_SEPA_XML_HAS_ERRORS' => 'O arquivo XML non se xerou porque existen erros que deben ser corrigidos.',
     'LBL_MISSING_SEPA_VARIABLES' => 'Algúns parámetros de configuración necesarios para a xeración de remesas están baleiros. Revíseos na área de administración do CRM antes de continuar:',
 
-    // Mensaxes SEPA para transferencias
+    // Mensajes SEPA para transferencias
     'LBL_SEPA_CREDIT_INVALID_TYPE' => 'O ficheiro non se pode xerar porque o seu tipo debería ser <b>transferencias emitidas</b>.',
 
-    // Mensaxes SEPA para recibos
+    // Mensajes SEPA para recibos
     'LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT' => 'O pago non está relacionado con ningún compromiso de pago: ',
     'LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE' => 'A <b>data de sinatura</b> do compromiso de pago está baleira: ',
     'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'O <b>mandato</b> do pago non é válido. Está baleiro, supera os 35 caracteres ou contén espazos en branco (verifique tamén o compromiso de pago): ',
     'LBL_SEPA_DEBIT_INVALID_NIF' => 'O <b>número de identificación</b> (NIF, NIE...) da persoa/organización está baleiro: ',
     'LBL_SEPA_DEBIT_INVALID_TYPE' => 'O ficheiro non se pode xerar porque o seu tipo debería ser <b>recibos domiciliados</b>.',
 
-    // Mensaxes SEPA para devolución de recibos
+    // Mensajes SEPA para devolución de recibos
     'LBL_SEPA_RETURN_ERR_UPLOADING_FILE' => 'Erro: o ficheiro seleccionado non se pode cargar. Erro número ',
     'LBL_SEPA_RETURN_ERR_NO_RECEIPT' => 'Erro: o ficheiro de devolución non contén ningún recibo.',
     'LBL_SEPA_RETURN_ERR_OPENING_FILE' => 'Erro: o ficheiro cargado non se pode abrir.',
@@ -128,6 +128,6 @@ $mod_strings = array(
     'LBL_CARD_PAYMENTS_REMITTANCE_INFO_FAILED' => 'Pagos con erro:',
     'LBL_CARD_PAYMENTS_PAYMENT_INVALID_METHOD' => 'Omitiuse o pago porque o medio pago non é tarxeta.',
 
-    // Outras cadeas
+    // Otras cadenas
     'LBL_ERROR_QUERY_PAYMENTS_TO_REMITTANCE' => 'Erro ao agregar pagos a remesas',
 );

@@ -1,0 +1,81 @@
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+ 
+.stic-impersonation-indicator {
+    background: red;
+    animation: blink 1.5s linear infinite;
+    font-size: 3rem;
+    color: white !important;
+    margin-left: 8px;  
+}
+
+/* Large screen / wide desktop */
+@media (max-width: 1200px) {  
+    /* Time Tracker Dialog box */  
+    .stic-impersonation-indicator {       
+        padding-top: 3px !important;
+    }
+}
+/* small screen / phone-tablet */
+@media (max-width: 750px) {  
+    /* Time Tracker Dialog box */  
+    .stic-impersonation-indicator {       
+        padding: unset;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+}
+
+@keyframes blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.2;
+    }
+}
+
+.stic-impersonation-dropdown {
+  right: 0;
+  left: auto;
+  background-color: rgb(53, 53, 53) !important;
+  width: auto !important;
+  min-width: unset !important;
+  white-space: nowrap; 
+}
+.stic-impersonation-dropdown-text {
+  color: white !important;
+  font-size: 13px !important;
+  display: flex;
+}
+.stic-impersonation-dropdown-text-label {
+  color: white !important;
+  font-weight: 800 !important;
+  margin-right: 2px;
+}
+
+#stic-impersonation-stop-btn {
+  margin-top: 2px;
+  background-color: red !important;
+}

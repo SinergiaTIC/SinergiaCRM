@@ -25,6 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once 'include/EditView/SubpanelQuickCreate.php';
+require_once 'modules/stic_Settings/Utils.php';
+require_once 'custom/modules/Campaigns/SticUtils.php';
 
 class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
 {
@@ -39,7 +41,7 @@ class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
         if (($key = array_search('SUBPANELFULLFORM', $this->ev->defs['templateMeta']['form']['buttons'])) !== false) {
             unset($this->ev->defs['templateMeta']['form']['buttons'][$key]);
         }
-
+        $this->ev->focus->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';;
         include_once "custom/modules/Campaigns/SticUtils.php";
         CampaignsUtils::fillDynamicListsForNotifications();
 

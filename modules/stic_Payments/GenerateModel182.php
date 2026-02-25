@@ -110,14 +110,14 @@ function model182T2($data) {
     // In this case the field "NIF of declared person" must be filled with blank spaces instead of zeros.
     $text .= SticUtils::fillLeft($data['nif_declarado'], $data['nif_declarado'] == '' ? ' ' : 0, 9);
     $text .= ($data['nif_representante_legal'] == '' ? SticUtils::fillLeft($data['nif_representante_legal'], " ", 9) : SticUtils::fillLeft($data['nif_representante_legal'], 0, 9));
-    $text .= SticUtils::fillRigth(trim($data['nombre_fiscal']) ? trim($data['nombre_fiscal']) : (trim(trim(trim($data['declarado_apellido_1']) . " " . trim($data['declarado_apellido_2'])) . " " . trim($data['declarado_nombre']))), " ", 40);
+    $text .= SticUtils::fillRigth(trim($data['nombre_fiscal'] ?? '') ? trim($data['nombre_fiscal'] ?? '') : (trim(trim(trim(($data['declarado_apellido_1'] ?? '')) . " " . trim(($data['declarado_apellido_2'] ?? ''))) . " " . trim(($data['declarado_nombre'] ?? '')))), " ", 40);
     $text .= SticUtils::fillLeft($data['declarado_provincia'], 0, 2);
     $text .= SticUtils::fillLeft($data['clave'], " ", 1);
     $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion']), 0, 5);
     $text .= SticUtils::fillLeft(convertAmount($data['importe_donacion']), 0, 13);
     $text .= SticUtils::fillLeft($data['kind'], " ", 1);
     $text .= SticUtils::fillLeft($data['deduccion_com_autonoma'], 0, 2);
-    $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion_com_autonoma']), 0, 5);
+    $text .= SticUtils::fillLeft(convertAmount((float)str_replace(',','.',$data['por_deduccion_com_autonoma'])), 0, 5);
     $text .= SticUtils::fillLeft($data['naturaleza_declarado'], " ", 1);
     $text .= ' 0000';
     $text .= SticUtils::fillLeft("", " ", 21);
@@ -142,7 +142,7 @@ $paymentTypeArray = $_REQUEST['payment_type'];
 // Although this is redundant, since javascript validation has been included, it will provide extra security.
 if ($paymentTypeArray == '') {
     SugarApplication::appendErrorMessage('<div class="msg-fatal-lock"> Es necesario seleccionar un tipo de pago</div>');
-    SugarApplication::redirect("index.php?module=stic_Payments&action=model182Wizard");
+    SugarApplication::redirect("index.php?module=stic_Payments&action=selectM182IssuingOrganization");
     sugar_die('');
 }
 $paymentTypes = "p.payment_type = '" . implode("' OR p.payment_type = '", $paymentTypeArray) . "'";
@@ -152,6 +152,16 @@ $lastyear = date("Y") - 1;   // Year for which we are presenting the M182
 $twoYearsAgo = date("Y") - 2;   // Year before $lastyear
 $threeYearsAgo = date("Y") - 3;   // Year before $twoYearsAgo
 $fourYearsAgo = date("Y") - 4; // Year before $threeYearsAgo
+
+// Check if an issuing organization has been selected and set custom annual donations fields
+$issuingOrganizationKey = $_REQUEST['issuing_organization_key'] ?? '';
+$sufixSetting = '';
+if ($issuingOrganizationKey != '') {
+    $total_annual_donations_field = 'stic_m182_amount_' . strtolower($issuingOrganizationKey) . '_c';
+    $sufixSetting = '_' . strtoupper($issuingOrganizationKey);
+} else {
+    $total_annual_donations_field = 'stic_total_annual_donations_c';
+}
 
 // Load M182 settings
 $m182SettingsTemp = stic_SettingsUtils::getSettingsByType('M182');
@@ -172,11 +182,11 @@ $m182FixedValuesTemp = array(
 
 $m182Vars = array_merge($m182SettingsTemp, $generalSettingsTemp, $m182FixedValuesTemp);
 
-$declarantType = $m182Vars["M182_NATURALEZA_DECLARANTE"];
+$declarantType = $m182Vars["M182_NATURALEZA_DECLARANTE".$sufixSetting];
 
-// 1.5 Reset the fields 'stic_total_annual_donations_c' and 'stic_182_error_c' in accounts and contacts to delate previous data (from the same year or from previous ones).
-$db->query("UPDATE accounts_cstm SET stic_total_annual_donations_c = 0, stic_182_error_c = 0");
-$db->query("UPDATE contacts_cstm SET stic_total_annual_donations_c = 0, stic_182_error_c = 0");
+// 1.5 Reset the fields $total_annual_donations_field and 'stic_182_error_c' in accounts and contacts to delate previous data (from the same year or from previous ones).
+$db->query("UPDATE accounts_cstm SET $total_annual_donations_field = 0, stic_182_error_c = 0");
+$db->query("UPDATE contacts_cstm SET $total_annual_donations_field = 0, stic_182_error_c = 0");
 
 // 2. Select all payments with payment_date in the last year, with "paid" status, that are of the selected types and that are not excluded
 $sqlCurrentPayments = "SELECT p.id
@@ -296,6 +306,10 @@ foreach ($contacts as $id) {
         // We keep the total amount of donations for each exercise and type of payment
         $historicalPayments[$row['periodo']][$row['payment_type']] = $row['total_donation'];
         
+        // Initialize totals if not set
+        $historicalPayments[$row['periodo']]['kind_total'] ??= 0;
+        $historicalPayments[$row['periodo']]['monetary_total'] ??= 0;
+        
         // We accumulate totals separately for kind and monetary donations
         if ($row['payment_type'] === 'kind') {
             $historicalPayments[$row['periodo']]['kind_total'] = $row['total_donation'];
@@ -392,17 +406,26 @@ foreach ($accounts as $id) {
     while ($row = $db->fetchByAssoc($paymentsResult)) {
         // We keep the total amount of donations for each exercise and type of payment
         $historicalPayments[$row['periodo']][$row['payment_type']] = $row['total_donation'];
+        // Initialize total if not set
+        $historicalPayments[$row['periodo']]['total'] ??= 0;
         // We accumulate the total total per year to assess whether it is a recurring donor.
         $historicalPayments[$row['periodo']]['total'] += $row['total_donation'];
     }
 
     // 4.2.2 Add to the array the payments of the year of the declaration, previously calculated
+    $historicalPayments[$lastyear]['total'] ??= 0;
     foreach ($yearPayments[$id] as $claveTipoPago => $paymentTypeValue) {
         $historicalPayments[$lastyear][$claveTipoPago] = $paymentTypeValue;
         $historicalPayments[$lastyear]['total'] += $paymentTypeValue;
     }
 
     // 4.2.3 Check if the account can be considered a recurring donor according to the regulation
+    // Initialize all year totals
+    $historicalPayments[$lastyear]['total'] ??= 0;
+    $historicalPayments[$twoYearsAgo]['total'] ??= 0;
+    $historicalPayments[$threeYearsAgo]['total'] ??= 0;
+    $historicalPayments[$fourYearsAgo]['total'] ??= 0;
+    
     $recurrence = false;
     if ($historicalPayments[$lastyear]['total'] > 0
         && $historicalPayments[$twoYearsAgo]['total'] >= $historicalPayments[$threeYearsAgo]['total'] 
@@ -420,15 +443,23 @@ foreach ($accounts as $id) {
 }
 
 // 5. M182 generation
-$declarantIdentification = $m182Vars["GENERAL_ORGANIZATION_ID"];
-$donationKey = $m182Vars["M182_CLAVE_DONATIVO"];
+$declarantIdentification = $m182Vars["GENERAL_ORGANIZATION_ID".$sufixSetting];
+$donationKey = $m182Vars["M182_CLAVE_DONATIVO".$sufixSetting];
 $year = $lastyear;
+$total = 0;
 
 // Create an array to save records formatted according to the regulations
 $model182T2 = array();
 
 // 5.1 Contacts
 foreach ($contacts as $id) {
+    // Initialize array keys for contacts
+    $id[$year]['kind'] ??= 0;
+    $id[$year]['total'] ??= 0;
+    $id[$year]['monetary_total'] ??= 0;
+    $id[$year]['donation'] ??= 0;
+    $id[$year]['fee'] ??= 0;
+    $id['recurrente'] ??= false;
 
     $contactRow = null;
     $contactSQL = "SELECT * FROM contacts c LEFT JOIN contacts_cstm cc ON c.id = cc.id_c WHERE c.id = '" . $id['id'] . "' AND c.deleted = 0";
@@ -631,13 +662,20 @@ foreach ($contacts as $id) {
         // Update the total donation in the contact record
         // Important! Membership fees to political parties are excluded from this total. If political parties 
         // want to generate deduction certificates for both fees and donations, this field only covers the latest.
-        $db->query("UPDATE contacts_cstm SET stic_total_annual_donations_c = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
+        $db->query("UPDATE contacts_cstm SET $total_annual_donations_field = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
 
     }
 }
 
 // 5.2. Accounts
 foreach ($accounts as $id) {
+    // Initialize array keys for account
+    $id[$year]['kind'] ??= 0;
+    $id[$year]['total'] ??= 0;
+    $id[$year]['monetary_total'] ??= 0;
+    $id[$year]['donation'] ??= 0;
+    $id[$year]['fee'] ??= 0;
+    $id['recurrente'] ??= false;
 
     $accountRow = null;
     $accountSQL = "SELECT * FROM accounts a LEFT JOIN accounts_cstm ac ON a.id = ac.id_c  WHERE  a.id = '" . $id['id'] . "' AND a.deleted = 0";
@@ -731,7 +769,7 @@ foreach ($accounts as $id) {
         }
 
         // Update the total donation in the account record
-        $db->query("UPDATE accounts_cstm SET stic_total_annual_donations_c = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
+        $db->query("UPDATE accounts_cstm SET $total_annual_donations_field = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
 
     }
 }
@@ -740,24 +778,33 @@ foreach ($accounts as $id) {
 $m182 = array();
 $m182['ejercicio'] = $year;
 $m182['nif_declarante'] = $declarantIdentification;
-$m182['declarante'] = $m182Vars["GENERAL_ORGANIZATION_NAME"];
+$m182['declarante'] = $m182Vars["GENERAL_ORGANIZATION_NAME".$sufixSetting];
 $m182['tipo_soporte'] = 'T';
-$m182['relacionarse_telefono'] = $m182Vars["M182_PERSONA_CONTACTO_TELEFONO"];
-$m182['relacionarse_apellido_1'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_1"];
-$m182['relacionarse_apellido_2'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_2"];
-$m182['relacionarse_nombre'] = $m182Vars["M182_PERSONA_CONTACTO_NOMBRE"];
-$m182['num_justificante'] = $m182Vars["M182_NUMERO_JUSTIFICANTE"];
+$m182['relacionarse_telefono'] = $m182Vars["M182_PERSONA_CONTACTO_TELEFONO".$sufixSetting];
+$m182['relacionarse_apellido_1'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_1".$sufixSetting];
+$m182['relacionarse_apellido_2'] = $m182Vars["M182_PERSONA_CONTACTO_APELLIDO_2".$sufixSetting];
+$m182['relacionarse_nombre'] = $m182Vars["M182_PERSONA_CONTACTO_NOMBRE".$sufixSetting];
+$m182['num_justificante'] = $m182Vars["M182_NUMERO_JUSTIFICANTE".$sufixSetting];
 $m182['decl_complementaria'] = ' ';
 $m182['decl_sustitutiva'] = ' ';
 $m182['num_justificante_anterior'] = '';
 $m182['num_total_registros_declarados'] = count($model182T2);
 $m182['importe_donacion'] = $total ?? null;
-$m182['naturaleza_decl'] = $m182Vars["M182_NATURALEZA_DECLARANTE"];
+$m182['naturaleza_decl'] = $m182Vars["M182_NATURALEZA_DECLARANTE".$sufixSetting];
 $m182['nif_patrimonio_protegido'] = '';
 $m182['patrimonio_protegido_apellido_1'] = '';
 $m182['patrimonio_protegido_apellido_2'] = '';
 $m182['patrimonio_protegido_nombre'] = '';
 $linea1 = model182T1($m182);
+
+
+
+// flush();
+// echo $linea1; // Header record (declarant)
+$xmlFile = $linea1;
+foreach ($model182T2 as $linea) {
+    $xmlFile .= model182T2($linea); // Declared records
+}
 
 // 5.4. Creation of the file to download
 header("Content-Type: application/force-download");
@@ -766,11 +813,7 @@ header("Content-Disposition: attachment; filename=\"modelo_182_" . $m182['ejerci
 // disable content type sniffing in MSIE
 header("X-Content-Type-Options: nosniff");
 header("Expires: 0");
-
 ob_clean();
-flush();
-echo $linea1; // Header record (declarant)
-foreach ($model182T2 as $linea) {
-    echo model182T2($linea); // Declared records
-}
+
+echo $xmlFile;
 die();

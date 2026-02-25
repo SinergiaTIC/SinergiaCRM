@@ -239,7 +239,11 @@ array(
                 4 => array(
                     0 => 'factor_auth',
                     1 => 'stic_clock_c',
-                ),                     
+                ),        
+                5 => array(
+                    0 => 'stic_m182_issuing_organization_c',
+                    1 => '',
+                ),              
             ),
             'LBL_EMPLOYEE_INFORMATION' => array(
                 0 => array(

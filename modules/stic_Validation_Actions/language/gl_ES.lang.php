@@ -73,5 +73,5 @@ $mod_strings = array(
     'LBL_ACTION_ERRORS' => 'Nas seguintes accións de validación ocorreu un erro interno e é probable que non se validaron todos os rexistros:',
     'LBL_EXCEPTION' => 'Póñase en contacto co administrador do sistema.',
     'LBL_SUCCESS' => 'Xa ten á súa disposición os resultados das validacións realizadas no día',
-    'LBL_RESULTS_LINK' => 'Ir ao listado cos resultados da validación do día',    
+    'LBL_RESULTS_LINK' => 'Ir ao listado cos resultados da validación do día',
 );

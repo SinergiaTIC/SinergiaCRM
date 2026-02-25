@@ -94,31 +94,59 @@ class RedsysUtils
         $dataToSend = array(
             'Ds_MerchantParameters' => $tpvSys->createMerchantParameters(),
             'Ds_SignatureVersion' => 'HMAC_SHA256_V1',
-            'Ds_Signature' => str_replace('+', '%2B', $tpvSys->createMerchantSignature($currentTpvPassword)), // Replace "+" with "%2B" to avoid Redsys error/bug
+            // Sending data as payload with POST - We don't need this bug fix.
+            // 'Ds_Signature' => str_replace('+', '%2B', $tpvSys->createMerchantSignature($currentTpvPassword)), // Replace "+" with "%2B" to avoid Redsys error/bug
+            'Ds_Signature' => $tpvSys->createMerchantSignature($currentTpvPassword),
+
         );
 
         if ($debugMode) {
             $debugMsg .= '<div class="col-md-6"><b>PETITION</b><pre>' . print_r($dataToSend, true) . '</pre></div>';
         }
 
-        // Prepare CURL data
-        $fullURL = "{$tpvUrl}?Ds_MerchantParameters={$dataToSend['Ds_MerchantParameters']}&Ds_SignatureVersion={$dataToSend['Ds_SignatureVersion']}&Ds_Signature={$dataToSend['Ds_Signature']}";
+        $curl = curl_init($tpvUrl);
 
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $fullURL,
+        // Sending data as payload with POST
+        curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 10,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-        ));
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_POSTFIELDS => json_encode($dataToSend, JSON_UNESCAPED_SLASHES),
+        ]);
+
 
         // Send payment to TPV
         $redsysResponse = curl_exec($curl);
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $redsysResponse);
+
+        // Checking network curl errors.
+        if ($redsysResponse === false) {
+            $curlError = curl_error($curl);
+            $curlErrno = curl_errno($curl);
+            curl_close($curl);
+
+            $gatewayErrorText = "CURL error [{$curlErrno}]: {$curlError}";
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $gatewayErrorText);
+
+            $paymentBean->status = 'rejected_gateway';
+            $paymentBean->gateway_rejection_reason = $gatewayErrorText;
+            $paymentBean->save();
+
+            if ($debugMode) {
+                SugarApplication::appendErrorMessage("<b>CURL ERROR:</b> {$gatewayErrorText}");
+            }
+
+            return array(
+                'res' => false,
+                'resCode' => $gatewayErrorText,
+            );
+        }
 
         curl_close($curl);
 

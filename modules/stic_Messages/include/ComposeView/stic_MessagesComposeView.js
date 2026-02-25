@@ -233,6 +233,7 @@ $(function () {
       }
       var formData = getFormDataAsObject($("#EditView"));
       formData.action='SavePopUp';
+
       $.ajax({
         url: "index.php?module=stic_Messages&action=savePopUp",
         type: "post",
@@ -240,7 +241,32 @@ $(function () {
         async: false,
         data: formData,
         success: function (res) {
-          showMessageBox(res.title, res.detail, function () {
+            var decodeHTML = function (html) {
+                var txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value;
+            };
+            
+            // Check if this is a WhatsAppWeb message using explicit type field
+            if (res.type === 'WhatsAppWeb') {
+              // Single message
+              if (res.phone && res.text) {
+                var cleanText = decodeHTML(res.text);
+                var waUrl = 'https://wa.me/' + res.phone + '?text=' + encodeURIComponent(cleanText);
+                console.log('Opening WhatsApp URL:', waUrl);
+                window.open(waUrl, '_blank');
+              }
+
+              // Multiple messages (mass send)
+              if (res.open_data && Array.isArray(res.open_data)) {
+                  res.open_data.forEach(function(item) {
+                      var cleanItemText = decodeHTML(item.text);
+                      var waUrl = 'https://wa.me/' + item.phone + '?text=' + encodeURIComponent(cleanItemText);
+                      window.open(waUrl, '_blank');
+                  });
+              }
+            }
+            
             var baseUrl = window.location.href.split("?")[0];
             var returnModule = $('#EditView [name="return_module"]').val();
             var returnAction = $('#EditView [name="return_action"]').val();
@@ -249,19 +275,32 @@ $(function () {
               returnId = res.id;
             }
             var newUrl =
-              baseUrl +
-              "?module=" +
-              encodeURIComponent(returnModule) +
-              "&action=" +
-              encodeURIComponent(returnAction) +
-              (returnId ? "&record=" + encodeURIComponent(returnId) : "");
-            window.location.href = newUrl;
-          });
-        },
+                baseUrl +
+                "?module=" +
+                encodeURIComponent(returnModule) +
+                "&action=" +
+                encodeURIComponent(returnAction) +
+                (returnId ? "&record=" + encodeURIComponent(returnId) : "");
+            
+            if($("#status").val() == 'draft') {
+              window.location.href = newUrl;
+            }
+            else {
+              var isWhatsAppWeb = res.type === 'WhatsAppWeb';
+              var title = isWhatsAppWeb ? 
+                (res.title || SUGAR.language.get('app_strings', 'LBL_EMAIL_SUCCESS')) : 
+                res.title;
+              var detail = isWhatsAppWeb ? 
+                SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_SENT') : 
+                res.detail;
+              
+              showMessageBox(title, detail, function () {
+                window.location.href = newUrl;
+              });
+            }
+          },
         error: function () {
           showMessageBox(
-            // $("#errorMessage").val(),
-            // $("#errorMessageText").val(),
             SUGAR.language.get('stic_Messages', 'LBL_ERROR'),
             SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'),
             function () {
@@ -289,7 +328,4 @@ $(function () {
   // var _form = document.getElementById('EditView'); _form.action.value='Save'; if(check_form('EditView'))SUGAR.ajaxUI.submitForm(_form);return false;
   myButtons.removeAttr("onclick");
   myButtons.on("click", saveMessage);
-
-
-
 });

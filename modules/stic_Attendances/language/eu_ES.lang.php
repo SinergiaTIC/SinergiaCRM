@@ -76,5 +76,5 @@ $mod_strings = array (
     'LBL_AMOUNT_INFO' => 'Si al crear una asistencia este campo se deja vacío, se rellenará automáticamente con el valor del campo "Importe de la sesión" de la inscripción relacionada.',
 
     // Campos de filtro en relaciones muchos a muchos
-    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Evento (vía Inscripciones)',
+    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Ekitaldi (inskripzioen bidez)',
 );
