@@ -28,10 +28,18 @@ require_once "modules/stic_AWF_Forms/core/includes.php";
 
 /**
  * EntryPoint: ResponseHandler
- * It is responsible for receiving, validating, persisting and processing form responses.
+ * Entry point class responsible for handling form responses submitted by users. 
+ * It processes the incoming data, performs validations, detects spam, saves the response, and executes the defined action flows based on the form configuration.
  */
 class ResponseHandler
 {
+    /** Main method to handle the form response submission. It performs the following steps:
+     * 1. Retrieves and sanitizes input data
+     * 2. Detects potential spam submissions using honeypot, time trap, and user agent checks
+     * 3. Validates the form data against the form configuration
+     * 4. Saves the response in the database with an initial status
+     * 5. Executes the defined action flows based on the form configuration and updates the response status accordingly
+     */
     public function run(): void {
         global $current_user;
         
@@ -343,7 +351,7 @@ class ResponseHandler
                     if ($result->isError()) {
                         $hasErrors = true;
                         $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
-                    }elseif ($result->isSkipped()) {
+                    } elseif ($result->isSkipped()) {
                         $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_AWF_Responses');
                     } else {
                         $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
@@ -438,12 +446,25 @@ class ResponseHandler
         // $data['ticket_id'] = $ticket->id;
     }
 
-    private function terminateRawError($msg): void {
+    /**
+     * Terminates the execution and returns a raw error message with HTTP 400 status code. 
+     * This is used for critical errors where we cannot render a proper response.
+     * @param string $msg The error message to return
+     */
+    private function terminateRawError(string $msg): void {
         http_response_code(400);
         die("System Error: " . htmlspecialchars($msg));
     }
 
-    private function checkDuplicateSubmission($formId, $hash): bool {
+    /**
+     * Checks if a response with the same hash has been received for the same form. This is used for duplicate detection.
+     * For human users, we check if we have received the same response from the same origin within a 5-minute window.
+     * For bots (identified as spam), we check if we have received the same response from the same origin at any time.
+     * @param string $formId The ID of the form
+     * @param string $hash The hash of the response to check for duplicates
+     * @return bool True if a duplicate submission is detected, false otherwise
+     */
+    private function checkDuplicateSubmission(string $formId, string $hash): bool {
         global $db;
         $query = "SELECT count(response.id) as count FROM stic_AWF_Responses response
                     INNER JOIN stic_awf_forms_stic_awf_responses_c form_response
@@ -460,7 +481,11 @@ class ResponseHandler
         return $data['count'] > 0;
     }
 
-    private function handleDuplicateError($formBean): void {
+    /**
+     * Handles the case of a duplicate submission by rendering a generic response indicating that the response has already been submitted.
+     * @param SugarBean $formBean The form bean for which the duplicate response was detected
+     */
+    private function handleDuplicateError(SugarBean $formBean): void {
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
@@ -472,6 +497,13 @@ class ResponseHandler
         }
     }
 
+    /**
+     * Saves the links between the response and the modified/created beans during the execution of the action flows.
+     * It consolidates the modified beans from all actions, determines the type of modification (created, updated, enriched, skipped), 
+     * and saves a link record for each affected bean with the relevant details
+     * @param SugarBean $responseBean The response bean to which the links will be associated
+     * @param ExecutionContext $context The execution context containing the action results with the modified beans
+     */
     private function saveLinks(SugarBean $responseBean, ExecutionContext $context): void {
         if (!$responseBean->load_relationship('stic_1c31forms_links')) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship responses-links for Response ID {$responseBean->id}");
@@ -790,9 +822,23 @@ class ResponseHandler
                 $detailBean->answer_text = (string)$readableText;
                 $detailBean->answer_type = $field->type_in_form;
                 
-                // To facilitate analysis, we save the numeric value if applicable
-                if (!is_array($rawValue) && is_numeric($rawValue)) {
-                    $detailBean->answer_integer = (float)$rawValue;
+                // Save the value as integer to facilitate analysis
+                // Special handling for rating fields to normalize them to a 0-100 scale
+                if ($field->type_in_form === 'rating' && is_numeric($rawValue)) {
+                    $rawNum = (float)$rawValue;
+                    
+                    if ($field->subtype_in_form === 'rating_nps') {
+                        // NPS (0-10) -> Scale 0-100
+                        $normalized = $rawNum * 10;
+                    } else {
+                        // Stars, emojis, lights, thumbs (1-5) -> Scale 0-100: 1=20, 2=40, 3=60, 4=80, 5=100
+                        $normalized = $rawNum * 20;
+                    }
+                    // Make sure to store a clean integer limited between 0 and 100
+                    $detailBean->answer_integer = (int)max(0, min(100, round($normalized)));
+                } elseif (!is_array($rawValue) && is_numeric($rawValue)) {
+                    // Save the numeric value if applicable
+                    $detailBean->answer_integer = (int)round((float)$rawValue);
                 } else {
                     $detailBean->answer_integer = 0;
                 }
@@ -802,6 +848,12 @@ class ResponseHandler
         }
     }
 
+    /** 
+     * Helper function to find an option object by its value in a list of options
+     * @param array $options List of option objects with 'value' and 'text' properties
+     * @param string $value The value to find
+     * @return ?object The option object if found, null otherwise
+    */
     private function findOption(array $options, $value) {
         foreach ($options as $opt) {
             if ($opt->value == $value) return $opt;
@@ -812,6 +864,9 @@ class ResponseHandler
     /**
      * Function that recursively cleans the input to avoid XSS
      * Removes dangerous HTML tags and extra spaces
+     *  If the input is an array, it cleans each element and the keys. 
+     *  If it's a boolean, null or numeric, it lets it pass. 
+     *  Otherwise, it applies strip_tags and trim.
      */
     private function sanitizeInput($input) {
         if (is_array($input)) {
@@ -832,7 +887,16 @@ class ResponseHandler
         return strip_tags(trim((string)$input));
     }
 
-    
+
+    /**
+     * Determines if the User Agent string belongs to a bot or script. This is used for spam detection and to apply different duplicate detection rules.
+     * The function checks if the User Agent is empty (which is suspicious) 
+     *  or if it contains known signatures of programming tools and libraries commonly used for making HTTP requests (like curl, wget, python, java, etc.).
+     * If any of these conditions are met, it returns true, indicating that the User Agent is likely a bot. 
+     * Otherwise, it returns false, indicating that it is likely a human user.
+     * @param string $userAgent The User Agent string from the request headers
+     * @return bool True if the User Agent is identified as a bot, false otherwise
+     */
     private function isBotUserAgent(string $userAgent): bool 
     {
         // If it's empty, it's suspicious (all browsers send something)

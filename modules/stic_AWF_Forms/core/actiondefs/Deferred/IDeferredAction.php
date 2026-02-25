@@ -25,6 +25,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Interface representing a deferred action, which is a type of server action that is executed asynchronously after the form submission.
+ * This interface defines the contract for processing incoming requests (webhooks) from external services, which is relevant for actions that expect a server callback.
+ */
 interface IDeferredAction {
 
     /**

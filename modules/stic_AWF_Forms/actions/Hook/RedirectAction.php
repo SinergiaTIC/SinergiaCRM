@@ -136,7 +136,9 @@ class RedirectAction extends HookActionDefinition implements ITerminalAction
     }
 
     /**
-     * Función de ayuda para imprimir un formulario html para enviar automáticamente
+     * Helper function to perform a POST redirect by generating an HTML form and auto-submitting it.
+     * @param string $url The URL to redirect to
+     * @param array $data The data to include in the POST request (as an associative array of field => value)
      */
     private function redirectWithPost(string $url, array $data): void
     {

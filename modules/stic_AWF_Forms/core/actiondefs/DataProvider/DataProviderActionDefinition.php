@@ -25,16 +25,20 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Abstract class representing the definition of a Data Provider action, which is responsible for providing dynamic data to the form.
+ * It extends the base ActionDefinition and defines the specific method getData that must be implemented by concrete Data Provider actions.
+ */
 abstract class DataProviderActionDefinition extends ActionDefinition 
 {
     final public function getType(): ActionType {
         return ActionType::DATAPROVIDER;
     }
     
-    /**
-     * Retorna datos dinámicos para el formulario
-     * @param FormActionParameter[] $params Parámetros recibidos para la acción
-     * @return string[] Los datos obtenidos
+    /** 
+     * Returns dynamic data for the form 
+     * @param FormActionParameter[] $params Parameters received for the action 
+     * @return string[] The data obtained 
      */
     abstract public function getData(array $params): array;
 }

@@ -84,7 +84,7 @@ class IbanValidatorAction extends ValidatorActionDefinition {
                 } else if (charCode >= 48 && charCode <= 57) {
                     numericIban += rearrenged.charAt(i);
                 } else {
-                    return false; // Caràcter invàlid
+                    return false; // Invalid character
                 }
             }
 

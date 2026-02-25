@@ -25,6 +25,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Service responsible for generating the HTML of the form based on its configuration, including styles and scripts.
+ * It generates both the full HTML document (for standalone or iframe views) and just the form HTML (for embedding in other pages).
+ * It also includes helper functions for generating CSS based on the form's theme, determining contrast colors, and defining icons for field subtypes.
+ */
 class FormHtmlGeneratorService {
 
     private $indent = 0;
@@ -32,6 +37,14 @@ class FormHtmlGeneratorService {
     /**
      * Generates the full HTML document (doctype, head, body).
      * For standalone or iframe views.
+     * If you want to generate only the form HTML (for embedding in other pages), use the generateFormHtml method instead, 
+     *   which generates only the wrapper div and its content, without head or body.
+     * 
+     * @param FormConfig $config The form configuration
+     * @param string $formId The form ID, used for the wrapper div and CSS scoping
+     * @param string $actionUrl The URL to which the form will submit
+     * @param bool $isPreview Whether the form is being generated for preview (in the builder) or for actual use, to conditionally include preview-only elements
+     * @return string The generated HTML document as a string
      */
     public function generate(FormConfig $config, string $formId, string $actionUrl, bool $isPreview = false): string {
         $this->indent = 0;
@@ -65,6 +78,14 @@ class FormHtmlGeneratorService {
     /**
      * Generates only the form HTML (wrapper div and its content, without head or body).
      * For embedding in other pages.
+     * If you want to generate the full HTML document (for standalone or iframe views), use the generate method instead,
+     * which includes the doctype, head, and body tags.
+     * 
+     * @param FormConfig $config The form configuration
+     * @param string $formId The form ID, used for the wrapper div and CSS scoping
+     * @param string $actionUrl The URL to which the form will submit
+     * @param bool $isPreview Whether the form is being generated for preview (in the builder) or for actual use, to conditionally include preview-only elements
+     * @return string The generated HTML for the form as a string
      */
     public function generateFormHtml(FormConfig $config, string $formId, string $actionUrl, bool $isPreview): string {
         $layout = $config->layout;
@@ -85,6 +106,15 @@ class FormHtmlGeneratorService {
         return $htmlRaw;
     }
 
+
+    /**
+     * Generates the CSS styles for the form based on the theme defined in the layout configuration.
+     * It includes styles for colors, spacing, grid layout, input styles, icons, and specific fixes for browser behaviors and Bootstrap validation marks.
+     * 
+     * @param FormLayout $layout The form layout configuration containing the theme and custom CSS
+     * @param string $wrapperId The ID of the wrapper div, used for scoping the CSS to this form instance
+     * @return string The generated CSS styles as a string
+     */
     private function generateCss(FormLayout $layout, string $wrapperId): string {
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
@@ -379,15 +409,10 @@ class FormHtmlGeneratorService {
   border: 1px solid var(--bs-border-color);
   max-width: 80%;
 }
-#{$wrapperId} .awf-relative-wrapper {
-  position: relative;
-  min-height: 300px;
-}
+#{$wrapperId} .awf-relative-wrapper { position: relative; min-height: 300px;}
 
 /* Form Fields */
-#{$wrapperId} .awf-field {
-  margin-bottom: var(--awf-field-spacing);
-}
+#{$wrapperId} .awf-field { margin-bottom: var(--awf-field-spacing); }
 
 /* Help Text */
 #{$wrapperId} .awf-help-text {
@@ -412,9 +437,7 @@ class FormHtmlGeneratorService {
   font-weight: bold;
   border-bottom: 1px solid var(--bs-border-color);
 }
-#{$wrapperId} .awf-section-card .card-header:first-child {
-  border-radius: var(--awf-card-radius) var(--awf-card-radius) 0 0;
-}
+#{$wrapperId} .awf-section-card .card-header:first-child { border-radius: var(--awf-card-radius) var(--awf-card-radius) 0 0; }
 #{$wrapperId} .awf-section-panel {
   border: none;
   background: transparent;
@@ -453,29 +476,20 @@ class FormHtmlGeneratorService {
 }
 
 /* Labels */
-#{$wrapperId} label, 
-#{$wrapperId} .form-label, 
-#{$wrapperId} .form-check-label {
-  font-weight: var(--awf-label-weight);
-}
+#{$wrapperId} label, #{$wrapperId} .form-label, #{$wrapperId} .form-check-label { font-weight: var(--awf-label-weight); }
 
 {$inputCssProps}
-#{$wrapperId} .form-control:focus,
-#{$wrapperId} .form-select:focus {
-  border-color: var(--bs-primary);
-{$inputFocusCssProps}
+#{$wrapperId} .form-control:focus, 
+#{$wrapperId} .form-select:focus { 
+  border-color: var(--bs-primary); 
+  {$inputFocusCssProps} 
 }
 {$selectCssProps}
 {$floatingLabelFix}
 
 /* Submit Button */
-#{$wrapperId} .awf-submit-btn {
-  width: var(--awf-submit-width);
-}
-#{$wrapperId} .awf-submit-container {
-  width: 100%;
-  text-align: " . ($submitWidthVal === '100%' ? 'center' : 'right') . ";
-}
+#{$wrapperId} .awf-submit-btn { width: var(--awf-submit-width); }
+#{$wrapperId} .awf-submit-container { width: 100%; text-align: " . ($submitWidthVal === '100%' ? 'center' : 'right') . "; }
 
 /* User-provided custom CSS */
 {$customCss}
@@ -488,6 +502,17 @@ class FormHtmlGeneratorService {
 </style>" .$this->newLine();
     }
 
+    /**
+     * Generates the body of the form, including the header, footer, and the form fields organized in sections according to the layout configuration.
+     * It also includes the Alpine.js logic for checking the form's active status, 
+     * pre-filling fields from URL parameters, validating inputs, and displaying server error messages.
+     * 
+     * @param FormConfig $config The form configuration containing the layout and field definitions
+     * @param string $wrapperId The ID of the wrapper div, used for scoping and referencing in Alpine.js
+     * @param string $actionUrl The URL to which the form will submit, used for the status check endpoint
+     * @param bool $isPreview Whether the form is being generated for preview (in the builder) or for actual use, to conditionally include preview-only elements and skip the status check in preview mode
+     * @return string The generated HTML for the body of the form as a string
+     */
     private function generateBody(FormConfig $config, string $wrapperId, string $actionUrl, bool $isPreview): string {
         $layout = $config->layout;
         
@@ -909,6 +934,12 @@ JS;
         return $html;
     }
 
+    /**
+     * Generates the HTML for a given data block, iterating through its fields and rendering each field according to its type and the form theme.
+     * @param FormDataBlock $block The data block containing the fields to be rendered
+     * @param FormTheme $theme The form theme containing styling information that may affect how fields are rendered (e.g., floating labels)
+     * @return string The generated HTML for the data block as a string
+     */
     private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme): string {
         $html = "";
         foreach ($block->fields as $field) {
@@ -918,6 +949,16 @@ JS;
         return $html;
     }
 
+    /**
+     * Renders a single field based on its type, subtype, and the form theme. 
+     * It handles special cases such as hidden fields, single checkboxes, switches, and rating fields, as well as common cases for text inputs, textareas, and selects. 
+     * It also incorporates validation attributes and help text when provided.
+     * 
+     * @param FormDataBlock $block The data block to which the field belongs, used for constructing the input name and ID
+     * @param FormDataBlockField $field The field to be rendered, containing all necessary information about its type, label, validations, etc.
+     * @param FormTheme $theme The form theme that may affect the rendering of the field (e.g., whether floating labels are used)
+     * @return string The generated HTML for the field as a string
+     */
     private function renderField(FormDataBlock $block, FormDataBlockField $field, FormTheme $theme): string {
         $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
 
@@ -984,7 +1025,7 @@ JS;
         // --- SPECIAL CASES (ratings) ---
 
         if ($field->type_in_form === 'rating') {
-            return $this->generateRatingField($field) .$this->newLine();
+            return $this->generateRatingField($block, $field) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -1103,10 +1144,17 @@ JS;
     }
 
     /**
-    * Generates the HTML for the 'rating' field type (rating)
+     * Generates the HTML for the 'rating' field type (rating)
+     * Supports different subtypes: stars, emojis, thumbs, and lights, each with its own visual representation and interaction logic.
+     * The method uses AlpineJS for interactivity, allowing users to hover and select their rating, with visual feedback.
+     * 
+     * @param FormDataBlock $block The data block to which the rating field belongs, used for constructing the input name and ID
+     * @param FormDataBlockField $field The rating field to be rendered, containing all necessary information about its label, description, subtype, and validation requirements
+     * @return string The generated HTML for the rating field as a string, including the interactive controls and any associated labels and descriptions
      */
-    private function generateRatingField(FormDataBlockField $field): string {
-        $name = htmlspecialchars($field->name);
+    private function generateRatingField(FormDataBlock $block, FormDataBlockField $field): string {
+        $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+        $name = htmlspecialchars($inputName);
         $label = htmlspecialchars($field->label ?? '');
         $description = "";
         
@@ -1119,8 +1167,8 @@ JS;
         $isRequired = $field->required_in_form;
         $requiredHtml = $isRequired ? ' <span class="awf-required">*</span>' : '';
         
-        $iconStarFill = $this->getRawSvgIcon('star_fill');
-        $iconStarEmpty = $this->getRawSvgIcon('star_empty');
+        $iconStarFill = stic_AWFUtils::getRawSvgIcon('star_fill');
+        $iconStarEmpty = stic_AWFUtils::getRawSvgIcon('star_empty');
 
         // AlpineJS logic
         $alpineLogic = <<<'JS'
@@ -1141,16 +1189,28 @@ JS;
         return 'btn-success text-white border-success shadow-sm';
     },
     starContainerStyle(i) {
+        const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
         let curr = this.hover > 0 ? this.hover : this.val;
         let active = curr >= i;
-        if (active) return 'transform: scale(1.2); color: #ffc107; opacity: 1; z-index: 2;';
-        return 'transform: scale(1); color: #ccc; opacity: 0.6; z-index: 1;';
+        if (active) return baseStyle + ' transform: scale(2.2); color: #ffc107; opacity: 1; z-index: 2;';
+        return baseStyle + ' transform: scale(1.2); color: #ccc; opacity: 0.7; z-index: 1;';
     },
-    emojiStyle(i) {
+    emojiStyle(i, isLight = false) {
+        const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
         let curr = this.hover > 0 ? this.hover : this.val;
         let active = curr === i; 
-        if (active) return 'transform: scale(1.5); filter: grayscale(0%); opacity: 1; z-index: 2;';
-        return 'transform: scale(1); filter: grayscale(100%); opacity: 0.5; z-index: 1;';
+        
+        let colors = {1: '#dc3545', 2: '#fd7e14', 3: '#ffc107', 4: '#20c997', 5: '#198754'};
+        let color = colors[i] || '#6c757d';
+        
+        if (active) {
+            return baseStyle + ` transform: scale(2.2); color: ${color}; opacity: 1; z-index: 2;`;
+        }
+        
+        let inactiveColor = isLight ? color : '#adb5bd';
+        let opacity = isLight ? '0.3' : '1';
+        
+        return baseStyle + ` transform: scale(1.2); color: ${inactiveColor}; opacity: ${opacity}; z-index: 1;`;
     }
 }
 JS;
@@ -1170,32 +1230,66 @@ JS;
 HTML;
         $html .= $this->newLine();
 
-        // --- ZONA DE CONTROLES ---
+        // --- CONTROLS ZONE ---
+       
+        // STARS, EMOJIS, THUMBS, LIGHTS
+        if ($subtype === 'rating_stars' || $subtype === 'rating_emoji' || $subtype === 'rating_thumbs' || $subtype === 'rating_lights') {
+            $emojis = [];
+            $isCumulative = false;
+            $isLight = false;
 
-        // STARS 
-        if ($subtype === 'rating_stars') {
-            $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine('+');
-            for ($i = 1; $i <= 5; $i++) {
-                $html .= <<<HTML
-<button type="button" class="btn p-0 text-decoration-none border-0" style="transition: transform 0.2s ease;"
-        :style="starContainerStyle($i)" @click="setVal($i)" @mouseover="hover=$i" @mouseleave="hover=0">
-    <span x-show="(hover ? hover : val) >= $i">$iconStarFill</span>
-    <span x-show="(hover ? hover : val) < $i">$iconStarEmpty</span>
-</button>
-HTML;
+            if ($subtype === 'rating_stars') {
+                $isCumulative = true;
+                $starEmpty = stic_AWFUtils::getRawSvgIcon('star_empty');
+                $starFill  = stic_AWFUtils::getRawSvgIcon('star_fill');
+                for ($i = 1; $i <= 5; $i++) {
+                    $emojis[$i] = ['empty' => $starEmpty, 'fill' => $starFill];
+                }
+            } elseif ($subtype === 'rating_emoji') {
+                $emojis = [
+                    1 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_angry_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_angry_fill')],
+                    2 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_frown_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_frown_fill')],
+                    3 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_neutral_empty'), 'fill' => stic_AWFUtils::getRawSvgIcon('emoji_neutral_fill')],
+                    4 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_smile_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_smile_fill')],
+                    5 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_laugh_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_laugh_fill')]
+                ];
+            } elseif ($subtype === 'rating_thumbs') {
+                $emojis = [
+                    1 => ['empty' => stic_AWFUtils::getRawSvgIcon('thumb_down_empty'), 'fill' => stic_AWFUtils::getRawSvgIcon('thumb_down_fill')],
+                    5 => ['empty' => stic_AWFUtils::getRawSvgIcon('thumb_up_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('thumb_up_fill')]
+                ];
+            } elseif ($subtype === 'rating_lights') {
+                $isLight = true;
+                $circle = stic_AWFUtils::getRawSvgIcon('circle_fill');
+                $emojis = [
+                    1 => ['empty' => $circle, 'fill' => $circle],
+                    3 => ['empty' => $circle, 'fill' => $circle],
+                    5 => ['empty' => $circle, 'fill' => $circle]
+                ];
             }
-            $html .= "</div>".$this->newLine('-');
-        }
-        
-        // EMOJIS
-        elseif ($subtype === 'rating_emoji') {
-            $emojis = ['😠', '☹️', '😐', '🙂', '😍'];
+
             $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine('+');
-            foreach ($emojis as $k => $icon) {
-                $val = $k + 1;
+            foreach ($emojis as $val => $icons) {
+                $iconEmpty = $icons['empty'];
+                $iconFill = $icons['fill'];
+
+                if ($isCumulative) {
+                    $alpineStyle = "starContainerStyle($val)";
+                    $showFill    = "(hover ? hover : val) >= $val";
+                    $showEmpty   = "(hover ? hover : val) < $val";
+                } else {
+                    $lightStr    = $isLight ? 'true' : 'false';
+                    $alpineStyle = "emojiStyle($val, $lightStr)";
+                    $showFill    = "(hover > 0 ? hover : val) === $val";
+                    $showEmpty   = "(hover > 0 ? hover : val) !== $val";
+                }
+                
                 $html .= <<<HTML
-<button type="button" class="btn p-0 text-decoration-none border-0" style="transition: transform 0.2s ease;"
-        :style="emojiStyle($val)" @click="setVal($val)" @mouseover="hover=$val" @mouseleave="hover=0">$icon</button>
+<button type="button" class="btn p-0 text-decoration-none border-0 d-inline-flex align-items-center justify-content-center"
+        :style="$alpineStyle" @click="setVal($val)" @mouseover="hover=$val" @mouseleave="hover=0">
+    <span x-show="$showFill">$iconFill</span>
+    <span x-show="$showEmpty">$iconEmpty</span>
+</button>
 HTML;
             }
             $html .= "</div>".$this->newLine('-');
@@ -1295,6 +1389,10 @@ HTML;
 
     /**
      * Helper to decode Base64 safely
+     * If the string contains '<', we assume it's already decoded (to avoid double decoding). 
+     * If the string is not valid Base64 or doesn't decode to UTF-8, we return it as is (also to avoid double decoding or invalid data).
+     * This allows users to input either raw JS or Base64-encoded JS in the custom_js field without worrying about the format, while preventing potential issues with invalid data. 
+     * @param string $data The input string that may be Base64-encoded or raw
      */
     private function decode(string $data): string {
         if (empty($data)) return '';
@@ -1309,6 +1407,7 @@ HTML;
 
     /**
      * Calculates whether the text should be black or white according to the font color using the YIQ formula.
+     * @param string $hexColor The background color in hexadecimal format (e.g., '#ff0000' or '#f00')
      */
     private function getContrastColor($hexColor) {
         $hexColor = str_replace('#', '', $hexColor);
@@ -1326,10 +1425,19 @@ HTML;
         // YIQ Luminosity Formula
         $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
 
-        // If it is fosc (<128), white text. If it is clear, black text.
+        // If it is dark (<128), white text. If it is clear, black text.
         return ($yiq >= 128) ? '#000000' : '#ffffff';
     }
 
+    /**
+     * Helper function to manage indentation and new lines in the generated HTML for better readability. 
+     *  - If $inc is '+', it increases the indentation level for subsequent lines.
+     *  - If $inc is '-', it decreases the indentation level for subsequent lines.
+     *  - It returns a string that consists of a newline character followed by spaces corresponding to the current indentation level.
+     * 
+     * @param string|null $inc Optional parameter to adjust indentation level ('+' to increase, '-' to decrease)
+     * @return string A newline character followed by spaces for indentation, improving the readability of the generated HTML
+     */
     private function newLine(?string $inc = ''){
         if ($inc=='+') 
             return "\r\n".str_repeat('  ', ++$this->indent);;
@@ -1342,6 +1450,11 @@ HTML;
 
     /**
      * Gets the css class name for the control
+     * Returns null if no icon is needed for the subtype
+     * Supported subtypes with icons: text_email, text_tel, text_url, text_password, number, date, date_time, date_datetime
+     * 
+     * @param string $subtype The subtype of the field (e.g., 'text_email', 'number', etc.)
+     * @return string|null The CSS class name for the icon if the subtype is supported,
      */
     private function getIconClass(string $subtype): ?string {
         $icons = ['text_email', 'text_tel', 'text_url', 'text_password', 'number', 'date', 'date_time', 'date_datetime'];
@@ -1351,14 +1464,13 @@ HTML;
         return null;
     }
 
-    private function getRawSvgIcon(string $name): string {
-        $icons = [
-            'star_fill' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>',
-            'star_empty' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16"><path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/></svg>',
-        ];
-        return $icons[$name] ?? '';
-    }
-
+    /**
+     * Provides the SVG icon definitions for supported field subtypes that require icons (e.g., email, telephone, URL).
+     * This method returns an associative array where the keys are the subtype identifiers and the values are the corresponding SVG strings.
+     * The icons are styled with a default color and can be used in the form controls to visually indicate the type of input expected (e.g., an envelope icon for email fields).
+     * 
+     * @return array An associative array mapping field subtypes to their corresponding SVG icon strings, used for rendering icons in form controls
+     */
     private function getSvgIconsData(): array {
         // Icon color
         $hexColor = '#6c757d';
@@ -1395,6 +1507,15 @@ HTML;
         return $cssRules;
     }
 
+    /**
+     * Generates the CSS for the chevron toggle icon used in collapsible sections of the form.
+     * The method creates a base64-encoded SVG of a chevron icon, which is then embedded as a background image in the CSS. 
+     * The CSS also includes styles for the toggle behavior, such as rotation when the section is expanded. 
+     * The color of the icon is set to a default value, and the method returns the complete CSS string that can be included in the form's styles.
+     * 
+     * @param string $wrapperId The unique identifier for the form wrapper, used to scope the CSS rules to the specific form instance
+     * @return string The generated CSS string for the chevron toggle icon, including the base64-encoded SVG and styles for the toggle behavior
+     */
     private function getChevronCss(string $wrapperId): string {
         $color = '#6c757d';
         $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/></svg>';

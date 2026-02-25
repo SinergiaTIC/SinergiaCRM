@@ -159,6 +159,11 @@ function wizardForm() {
     },
   };
 }
+
+/**
+ * Class that manages the navigation between steps of the wizard, 
+ * including loading step content, validating steps, and saving progress.
+ */
 class WizardNavigation {
   static cacheSteps = [];
   static cacheDebug = null;
@@ -265,7 +270,6 @@ class WizardNavigation {
     return allOk;
   }
 
-
   static prev() {
     if (WizardNavigation.enabled("prev")) {
       WizardNavigation.goToStep(window.alpineComponent.navigation.step - 1);
@@ -356,6 +360,10 @@ function handle_open_popup(popup_reply_data) {
   }
 }
 
+/**
+ * Class that manages the logic of the second step of the wizard, 
+ * which includes the management of data block relationships and the field editor.
+ */
 class WizardStep2 {
   static mainStep2xData() {
     return {
@@ -418,24 +426,17 @@ class WizardStep2 {
         // Store for the Field Editor management
         if (!Alpine.store('fieldEditor')) {
           Alpine.store('fieldEditor', {
-            isOpen: false,           // Indicates if the field editor is open
-            isEdit: false,           // Indicates if it is edit mode (false: creation mode)
-            field: new stic_AwfField(),  // Copy of the field data
-            dataBlock: null,         // The data block of the field
-            needDeleteOld: false,    // Indicates if it is necessary to delete the previous field before saving
-            original_name: '',       // Original field name
+            isOpen: false,                // Indicates if the field editor is open
+            isEdit: false,                // Indicates if it is edit mode (false: creation mode)
+            field: new stic_AwfField(),   // Copy of the field data
+            dataBlock: null,              // The data block of the field
+            needDeleteOld: false,         // Indicates if it is necessary to delete the previous field before saving
+            original_name: '',            // Original field name
 
-            /**
-             * Retorna si es un campo nuevo
-             * @returns {boolean}
-             */
             get isNewField() { return this.original_name === ''; },
-
             get formConfig() { return window.alpineComponent.formConfig; },
 
-            /**
-             * Retorna el título del modal
-             */
+            /** Get the title of the field editor modal */
             get title() {
               if (!this.field) return '';
 
@@ -464,34 +465,31 @@ class WizardStep2 {
                 return title;
               }
             },
-            /**
-             * Retorna el tubtítulo del modal
-             */
+
+            /** Get the subtitle of the field editor modal */
             get subtitle() {
               return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();
             },
 
-            /**
-             * Retorna el título traducido de un validador
-             */
+            /** Get the translated title of a validator */
             getValidatorTitle(validatorName) {
                 const def = utils.getDefinedActions().find(a => a.name === validatorName);
                 return def ? def.title : validatorName;
             },
 
-            /**
-             * Retorna la descripción de la condición de una validación
-             * @param {stic_AwfFieldValidation} validation 
-             * @returns {string}
-             */
+            /** 
+            * Returns the description of the condition of a validation 
+            * @param {stic_AwfFieldValidation} validation 
+            * @returns {string} 
+            */
             getConditionLabel(validation) {
               if (!validation.condition_field) return '';
               
-              // Obtenemos la etiqueta del campo
+              // Get the label of the condition field
               const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(validation.condition_field);
               const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : validation.condition_field;
 
-              // Obtenemos el valor formateado
+              // Get the formatted value of the condition value, especially for boolean fields
               let val = validation.condition_value;
               if (fieldDef && (fieldDef.type == 'bool' || fieldDef.type == 'checkbox' || fieldDef.subtype_in_form == 'select_checkbox')) {
                 if (val == '1' || val == 'true') {
@@ -505,7 +503,7 @@ class WizardStep2 {
             },
 
             /**
-             * Retorna un array de objetos {label, value} para mostrar en la tabla de parámetros
+             * Returns an array of objects {label, value} to be displayed in the parameters table
              */
             getValidationParamsForTable(validation) {
               if (!validation || !validation.validator || !validation.params) return [];
@@ -530,7 +528,7 @@ class WizardStep2 {
             },
 
             /**
-             * Elimina una validación
+             * Removes a validation from the field's validations array by index
              */
             deleteValidation(index) {
                 if (this.field && this.field.validations) {
@@ -538,31 +536,31 @@ class WizardStep2 {
                 }
             },
 
-            /**
-             * Abre el Modal para Crear un campo
-             * @param {stic_AwfDataBlock} dataBlock El Bloque de datos
-             * @param {string} type Tipo de campo: unlinked, form, fixed
+            /** 
+             * Open the Modal to Create a field 
+             * @param {stic_AwfDataBlock} dataBlock The Data Block 
+             * @param {string} type Field type: unlinked, form, fixed 
              */
             openCreate(dataBlock, type) {
               this.isEdit = false;
               this._open(dataBlock, null, type);
             },
 
-            /**
-             * Abre el Modal para Editar un campo
-             * @param {stic_AwfDataBlock} dataBlock El Bloque de datos
-             * @param {stic_AwfField} field El campo
+            /** 
+             * Open the Modal to Edit a field 
+             * @param {stic_AwfDataBlock} dataBlock The Data Block 
+             * @param {stic_AwfField} field The field 
              */
             openEdit(dataBlock, field) {
               this.isEdit = true;
               this._open(dataBlock, field, '');
             },
 
-            /**
-             * Abre el Modal para editar o crear un campo
-             * @param {stic_AwfDataBlock} dataBlock El Bloque de datos
-             * @param {stic_AwfField} fieldData El campo
-             * @param {string} type Tipo de campo: unlinked, form, fixed
+            /** 
+             * Open the Modal to edit or create a field 
+             * @param {stic_AwfDataBlock} dataBlock The Data Block 
+             * @param {stic_AwfField} fieldData The field 
+             * @param {string} type Field type: unlinked, form, fixed 
              */
             _open(dataBlock, fieldData, type) {
               this.dataBlock = dataBlock;
@@ -572,8 +570,8 @@ class WizardStep2 {
               this.isOpen = true;
             },
 
-            /**
-             * Cierra el modal de edición de un campo
+            /** 
+             * Closes the editing mode of a field 
              */
             close() {
               this.isOpen = false;
@@ -583,8 +581,8 @@ class WizardStep2 {
               this.needDeleteOld = false;
             },
 
-            /**
-             * Guarda los cambios de la edición (o creación) de un campo
+            /** 
+             * Save the changes of the edition (or creation) of a field 
              */
             saveChanges() {
               if (this.isNewField) {
@@ -616,9 +614,7 @@ class WizardStep2 {
 
             get formConfig() { return window.alpineComponent.formConfig; },
 
-            /**
-             * Retorna el título del modal
-             */
+            /** Returns the title of the validation editor modal */
             get title() {
               if (!this.validation) return '';
 
@@ -719,29 +715,29 @@ class WizardStep2 {
               }
             },
 
-            /**
-             * Abre el Modal para Crear una validación
-             * @param {stic_AwfField} field El campo al que pertenece la validación
+            /** 
+             * Open the Modal to Create a validation 
+             * @param {stic_AwfField} field The field to which the validation belongs 
              */
             openCreate(dataBlock, field) {
               this.isEdit = false;
               this._open(dataBlock, field, null);
             },
 
-            /**
-             * Abre el Modal para Editar una validación
-             * @param {stic_AwfField} field El campo al que pertenece la validación
-             * @param {stic_AwfFieldValidation} validation La validación
+            /** 
+             * Open the Modal to Edit a validation 
+             * @param {stic_AwfField} field The field to which the validation belongs 
+             * @param {stic_AwfFieldValidation} validation The validation 
              */
             openEdit(dataBlock, field, validation) {
               this.isEdit = true;
               this._open(dataBlock, field, validation);
             },
 
-            /**
-             * Abre el Modal para editar o crear una validación de campo
-             * @param {stic_AwfField} fiel El campo
-             * @param {stic_AwfFieldValidation} validation La validación
+            /** 
+             * Open the Modal to edit or create a field validation 
+             * @param {stic_AwfField} fiel The field 
+             * @param {stic_AwfFieldValidation} validation The validation 
              */
             _open(dataBlock, field, validation) {
               this.dataBlock = dataBlock;
@@ -750,8 +746,8 @@ class WizardStep2 {
               this.isOpen = true;
             },
 
-            /**
-             * Cierra el modal de edición de una validación de campo
+            /** 
+             * Closes the editing mode of a field validation 
              */
             close() {
               this.isOpen = false;
@@ -759,8 +755,8 @@ class WizardStep2 {
               this.validation = null;
             },
 
-            /**
-             * Guarda los cambios de la edición (o creación) de una validación de campo
+            /** 
+             * Saves the changes of the edition (or creation) of a field validation 
              */
             saveChanges() {
               this.formConfig.addOrUpdateFieldValidation(this.field, this.validation);
@@ -805,9 +801,8 @@ class WizardStep2 {
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
             isOpen: false,           // Indicates if the relationship creator is open
-            dataBlock: null,         // El bloque de datos del campo
-            relationships: Alpine.store('dataBlockRelationships'), // Store con las operaciones generales de Relaciones
-
+            dataBlock: null,         // The field data block
+            relationships: Alpine.store('dataBlockRelationships'), // Store with the general operations of Relations
             availableRels: [],
             get availableRelsForSelect() { return this.availableRels.map(r => ({ id: r.name, label: r.textExtended })); },
             selectedRelName: '',
@@ -820,33 +815,24 @@ class WizardStep2 {
 
             get isValid() { return this.relatedDataBlockId != null && (!this.isNewDataBlock || this.newDataBlockText != ''); },
 
-            /**
-             * Retorna el título del modal
-             */
-            get title() {
-              return utils.translate('LBL_RELATIONSHIP_NEW');
-            },
-            /**
-             * Retorna el tubtítulo del modal
-             */
-            get subtitle() {
-              return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();
-            },
+            
+            get title() { return utils.translate('LBL_RELATIONSHIP_NEW'); },
+            get subtitle() { return this.dataBlock?.text + ' - ' + this.dataBlock?.getTextDescription();},
 
-            /**
-             * Abre el modal de creación de relaciones
+            /** 
+             * Open the relationship creation mode 
              * @param {stic_AwfDataBlock} dataBlock 
-             */
+             */ 
             openCreate(dataBlock) {
               this.dataBlock = dataBlock;
-              this.relationships.resetDataBlockRelationships(); // Forzar recargar relaciones
+              this.relationships.resetDataBlockRelationships(); // Force reload relationships
               this.availableRels = this.relationships.unusedDatablockRelationships(dataBlock.id);
               this.selectedRelName = this.availableRels[0]?.name ?? '';
               this.isOpen = true;
             },
 
-            /**
-             * Cierra el modal de creación de relaciones
+            /** 
+             * Closes the relationship creation mode 
              */
             close() {
               this.isOpen = false;
@@ -855,8 +841,8 @@ class WizardStep2 {
               this.selectedRelName = '';
             },
 
-            /**
-             * Guarda los cambios de la creación de una relación
+            /** 
+             * Saves the changes of the creation of a relationship 
              */
             saveChanges() {
               this.relationships.addDataBlockRelationship(this.dataBlock.id, this.selectedRelName, this.relatedDataBlockId, this.newDataBlockText);
@@ -1312,12 +1298,12 @@ class WizardStep2 {
         // Get the action type of the field (ex: a 'int' field in CRM returns 'integer')
         const fieldType = this.field.getTypeInActions(); 
 
-        // Filtramos las acciones del servidor
+        // Filter the actions of the server
         return utils.getDefinedActions().filter(a => 
             a.type === 'Validator' &&
             (
-                a.supportedDataTypes.length === 0 || // If it is empty, it means it supports all types
-                a.supportedDataTypes.includes(fieldType) // O si incluye el tipo del campo
+                a.supportedDataTypes.length === 0 ||     // If it is empty, it means it supports all types
+                a.supportedDataTypes.includes(fieldType) // or if it includes the field type
             )
         );
       },
@@ -1432,6 +1418,9 @@ class WizardStep2 {
   }
 }
 
+/**
+ * Alpine component for the Step 3 of the Wizard: Action Flows and Validations configuration
+ */
 class WizardStep3 {
   static mainStep3xData() {
     return {
@@ -1444,7 +1433,7 @@ class WizardStep3 {
       showAllActions: false,
 
       selectedCategory: '', 
-      selectedActionDefName: '', // Per al v-model del select d'accions
+      selectedActionDefName: '', 
 
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
@@ -1504,7 +1493,7 @@ class WizardStep3 {
             },
 
             init() {
-              // Cargar todas las definiciones de acciones seleccionables por el usuario
+              // Load all user selectable action definitions
               this.allDefinitions = utils.getDefinedActions().filter(a => a.isUserSelectable && a.isActive && 
                                                                      (a.type == 'Hook' || a.type == 'Deferred'));
               
@@ -1523,16 +1512,7 @@ class WizardStep3 {
               });
             },
 
-            /**
-             * Retorna si es una acción nueva
-             * @returns {boolean}
-             */
             get isNewAction() { return this.original_id === ''; },
-
-            /**
-             * Retorna el título del modal
-             * @returns {string}
-             */
             get title() {
               if (!this.action) return '';
 
@@ -1546,9 +1526,9 @@ class WizardStep3 {
               }
             },
 
-            /**
-             * Retorna las categorías disponibles según las acciones válidas
-             * @returns {Array} Lista de categorías disponibles
+            /** 
+             * Returns the categories available according to the valid actions 
+             * @returns {Array} List of available categories 
              */
             get availableCategories() {
               const validActions = this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter);
@@ -1556,9 +1536,9 @@ class WizardStep3 {
               return stic_AwfAction.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
             },
 
-            /**
-             * Retorna las acciones filtradas según la categoría y si son terminales
-             * @returns {Array} Lista de definiciones de acciones filtradas
+            /** 
+             * Returns filtered actions according to category and if they are terminal 
+             * @returns {Array} List of filtered action definitions 
              */
             get filteredActions() {
                 if (!this.selectedCategory) return [];
@@ -1570,11 +1550,11 @@ class WizardStep3 {
               return this.action.isValid();
             },
 
-            /**
-             * Abre el Modal para Crear una acción
-             * @param {stic_AwfFlow} flow El Flujo de acciones
-             * @param {boolean} isTerminal Indica si es una acción terminal
-             * @returns {void}
+            /** 
+             * Open the Modal to Create an action 
+             * @param {stic_AwfFlow} flow The Flow of actions 
+             * @param {boolean} isTerminal Indicates if it is a terminal action 
+             * @returns {void} 
              */
             openCreate(flow, isTerminal) {
               this.isEdit = false;
@@ -1597,11 +1577,11 @@ class WizardStep3 {
               this.syncConditionState();
             },
 
-            /**
-             * Abre el Modal para Editar una acción
-             * @param {stic_AwfFlow} flow El Flujo de acciones
-             * @param {stic_AwfAction} action La acción a editar
-             * @returns {void}
+            /** 
+             * Open the Modal to Edit an action 
+             * @param {stic_AwfFlow} flow The Flow of actions 
+             * @param {stic_AwfAction} action The action to edit 
+             * @returns {void} 
              */
             openEdit(flow, action) {
               this.isEdit = true;
@@ -1676,9 +1656,9 @@ class WizardStep3 {
                 this.currentStep = 1;
             },
 
-            /**
-             * Gestiona el cambio de acción seleccionada en el selector (modo creación)
-             * @returns {void}
+            /** 
+             * Manages the change of action selected in the selector (creation mode) 
+             * @returns {void} 
              */
             onActionChange() {
                 if (!this.selectedActionDefName) return;
@@ -1723,12 +1703,12 @@ class WizardStep3 {
                 this.syncConditionState();
             },
 
-            /**
-             * Gestiona el cambio de opción en el selector de opciones de un parámetro
-             * Si la opción es de tipo 'empty', asigna un valor automático para pasar la validación.
-             * Si no, limpia el valor.
-             * * @param {stic_AwfActionParameter} param El parámetro que se está editando
-             * @param {object} paramDef La definición del parámetro (DTO)
+            /** 
+             * Manages the change of option in the option selector of a parameter 
+             * If the option is of type 'empty', assign an automatic value to pass the validation. 
+             * If not, clear the value. 
+             * @param {stic_AwfActionParameter} param The parameter being edited 
+             * @param {object} paramDef The parameter definition (DTO) 
              */
             onParamOptionChange(param, paramDef) {
               const selectedOptDef = paramDef.selectorOptions.find(o => o.name == param.selectedOption);
@@ -1745,10 +1725,10 @@ class WizardStep3 {
               }
             },
 
-            /**
-             * Retorna la lista de Bloques de Datos disponibles para asignar en los parámetros
-             * @param {Array} supportedModules Lista de los módulos de los Bloques de datos a mostrar
-             * @returns {Array} Lista de {id, text, module} de bloques de datos
+            /** 
+             * Returns the list of Data Blocks available to assign in the parameters 
+             * @param {Array} supportedModules List of Data Block modules to display 
+             * @returns {Array} List of {id, text, module} data blocks 
              */
             getSupportedDataBlocksList(supportedModules = []) {
               let blocks = [];
@@ -1766,10 +1746,10 @@ class WizardStep3 {
               return blocks;
             }, 
 
-            /**
-             * Retorna la lista de los campos disponibles en el formulario
-             * @param {Array} supportedDataTypes Lista de los tipos de datos de los campos a mostrar
-             * @returns Lista de {id, text, typeInActions} de campos
+            /** 
+             * Returns the list of fields available in the form 
+             * @param {Array} supportedDataTypes List of the data types of the fields to display 
+             * @returns List of {id, text, typeInActions} fields 
              */
             getSupportedFieldsList(supportedDataTypes = []) {
               // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
@@ -1800,8 +1780,8 @@ class WizardStep3 {
               return '';
             },
 
-            /**
-             * Cierra el modal de edición de una acción
+            /** 
+             * Closes the editing mode of an action 
              */
             close() {
               this.isOpen = false;
@@ -1813,9 +1793,9 @@ class WizardStep3 {
               this.isTerminalFilter = false;
             },
 
-            /**
-             * Guarda los cambios de la edición (o creación) de una acción
-             * @returns {void}
+            /** 
+             * Save the changes of the edition (or creation) of an action 
+             * @returns {void} 
              */
             saveChanges() {
               const form = document.getElementById('ModalActionConfigForm');
@@ -1902,19 +1882,19 @@ class WizardStep3 {
               action.requisite_actions = Array.from(requisiteActions); //
             },
 
-            /**
-             * Actualiza la definición del campo activo para la condición
-             * @param {string} fieldName Nombre HTML del campo
+            /** 
+             * Updates the definition of the active field for the condition 
+             * @param {string} fieldName HTML number of the field 
              */
             updateActiveConditionFieldDef(fieldName) {
               if (!fieldName) {
                 this._activeConditionFieldDef = null;
               } else {
-                // Solo actualizamos si ha cambiado
+                // Only update if it has changed
                 const newDef = this.formConfig.getFieldDefinitionByHtmlName(fieldName);
                 if (this._activeConditionFieldDef !== newDef) {
                   this._activeConditionFieldDef = newDef;
-                  // Si es un select, forzamos reactividad para que coja el valor correcto
+                  // If it's a select, force reactivity to get the correct value
                   if (this._activeConditionFieldDef && this._activeConditionFieldDef.type_in_form === 'select') {
                     const currentValue = this.action.condition_value;
                     if (currentValue) {
@@ -1927,8 +1907,8 @@ class WizardStep3 {
               }
             },
 
-            /**
-             * Sincroniza el estado de la condición según los datos de la acción
+            /** 
+             * Synchronizes the status of the condition according to the action data 
              */
             syncConditionState() {
               if (this.action && this.action.condition_field) {
@@ -1943,28 +1923,28 @@ class WizardStep3 {
         }
       },
 
-      /**
-       * Indica si se puede editar una acción
-       * @param {stic_AwfAction} action La acción
-       * @returns {boolean}
+      /** 
+       * Indicates whether an action can be edited 
+       * @param {stic_AwfAction} action The action 
+       * @returns {boolean} 
        */
       canEditAction(action) {
         return action.is_user_selectable;
       },
 
-      /**
-       * Indica si se puede eliminar una acción
-       * @param {stic_AwfAction} action La acción
-       * @returns {boolean}
+      /** 
+       * Indicates whether an action can be deleted 
+       * @param {stic_AwfAction} action The action 
+       * @returns {boolean} 
        */
       canRemoveAction(action) {
         return action.is_user_selectable;
       },
 
-      /**
-       * Elimina una acción del flujo
-       * @param {stic_AwfAction} action La acción a eliminar
-       * @return {void}
+      /** 
+       * Removes an action from the flow 
+       * @param {stic_AwfAction} action The action to remove 
+       * @return {void} 
        */
       removeAction(action) {
         this.flow.actions = this.flow.actions.filter(a => a.id != action.id);
@@ -1993,10 +1973,10 @@ class WizardStep3 {
         return true;
       },
 
-      /**
-       * Mueve hacia arriba una acción
-       * @param {stic_AwfAction} action La acción
-       * @returns {void}
+      /** 
+       * Move an action up 
+       * @param {stic_AwfAction} action The action 
+       * @returns {void} 
        */
       moveUpAction(action) {
         if (!this.canMoveUpAction(action)) return;
@@ -2030,10 +2010,10 @@ class WizardStep3 {
         return true;  
       },
 
-      /**
-       * Mueve hacia abajo una acción
-       * @param {stic_AwfAction} action La acción
-       * @returns {void}
+      /** 
+       * Move an action down 
+       * @param {stic_AwfAction} action The action 
+       * @returns {void} 
        */
       moveDownAction(action) {
         if (!this.canMoveDownAction(action)) return;
@@ -2044,19 +2024,19 @@ class WizardStep3 {
         this.actions.splice(index + 1, 0, actionToMove);
       },
 
-      /**
-       * Genera la etiqueta descriptiva de la condición de una acción
-       * @param {stic_AwfAction} action La acción
-       * @returns {string}
+      /** 
+       * Generates the descriptive label of the condition of an action 
+       * @param {stic_AwfAction} action The action 
+       * @returns {string} 
        */
       getActionConditionLabel(action) {
         if (!action.condition_field) return '';
         
-        // Obtenemos la etiqueta del campo
+        // Get the label of the field
         const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(action.condition_field);
         const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : action.condition_field;
         
-        // Obtenemos el valor formateado
+        // Get the formatted value
         let val = action.condition_value;
         if (fieldDef && (fieldDef.type == 'bool' || fieldDef.type == 'checkbox' || fieldDef.subtype_in_form == 'select_checkbox')) {
           if (val == '1' || val == 'true') {
@@ -2144,6 +2124,9 @@ class WizardStep3 {
   }
 }
 
+/**
+ * Alpine component for the Step 4 of the Wizard: Layout configuration
+ */
 class WizardStep4 {
   static mainStep4xData() {
     return {
@@ -2348,6 +2331,9 @@ class WizardStep4 {
   }
 }
 
+/**
+ * Alpine component for the Step 5 of the Wizard: Code Generation and Publication
+ */
 class WizardStep5 {
   static mainStep5xData() {
     return {

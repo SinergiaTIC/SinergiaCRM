@@ -25,6 +25,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Class representing the configuration of a form, including its data blocks, action flows, and layout.
+ */
 class FormConfig {
     /** @var FormDataBlock[] */
     public array $data_blocks;         // The form's data blocks
@@ -32,10 +35,10 @@ class FormConfig {
     public array $flows;               // The form's action flows
     public ?FormLayout $layout = null; // The form layout
 
-    /**
-     * Crea una instancia de FormConfig a partir de un array JSON.
-     * @param array $data Los datos en formato array
-     * @return FormConfig La instancia creada
+    /** 
+     * Creates a FormConfig instance from a JSON array. 
+     * @param array $data The data in array format 
+     * @return FormConfig The created instance 
      */
     public static function fromJsonArray(array $data): self {
         $dto = new self();

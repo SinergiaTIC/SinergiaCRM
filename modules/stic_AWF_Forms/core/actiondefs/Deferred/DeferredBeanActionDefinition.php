@@ -34,6 +34,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *   - Error management 
  */
 abstract class DeferredBeanActionDefinition extends ServerBeanActionDefinition implements IDeferredAction {
+    /**
+     * Returns the type of the action, which is ActionType::DEFERRED for all classes extending DeferredActionDefinition.
+     * This method is final to ensure that all deferred actions consistently return the correct type which is ActionType::DEFERRED.
+     * @return ActionType The type of the action, which is ActionType::DEFERRED
+     */
     final public function getType(): ActionType {
         return ActionType::DEFERRED;
     }

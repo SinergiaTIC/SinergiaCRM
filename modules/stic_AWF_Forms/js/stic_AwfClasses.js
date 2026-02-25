@@ -463,8 +463,7 @@ class stic_AwfField {
       return [];
     }
     if (this.type_field == 'unlinked') {
-      // TODO: Accept rating for surveys!! (Not working yet)
-      return stic_AwfField.type_in_formList().filter(t => t.id != "rating");
+      return stic_AwfField.type_in_formList();
     }
 
     // text, textarea, number, date, select, hidden

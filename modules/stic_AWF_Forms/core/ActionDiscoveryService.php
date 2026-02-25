@@ -25,8 +25,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Service class responsible for discovering available actions by scanning predefined directories.
+ * It handles the loading of action definitions, ensuring that custom overrides are respected.
+ */
 class ActionDiscoveryService {
-    /** @var string[] Rutas para la búsqueda de acciones */
+    /** @var string[] Paths to scan for action definitions */
     private static array $basePaths = [
         'modules/stic_AWF_Forms/actions/',
         'custom/modules/stic_AWF_Forms/actions/',
@@ -89,5 +93,4 @@ class ActionDiscoveryService {
         return array_values($discoveredActions);
     }
 
-    
 }

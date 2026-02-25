@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Class representing a data block with the filled form data
+ * Class representing the resolved data of a form's Data Block, including the mapping of form fields to CRM fields and their values.
  */
 class DataBlockResolved {
     public FormDataBlock $dataBlock;     // The Data Block configuration
@@ -75,7 +75,7 @@ class DataBlockResolved {
             $fieldName = null;
             $isUnlinked = false;
 
-            // Identificamos si el campo pertenece al bloque o es detached
+            // Identify if the field belongs to the block or is detached
             if (str_starts_with($formKey, $blockPrefix)) {
                 $fieldName = substr($formKey, strlen($blockPrefix));
             } else if (str_starts_with($formKey, $detachedPrefix)) {
@@ -83,7 +83,7 @@ class DataBlockResolved {
                 $isUnlinked = true;
             }
 
-            // Si hemos encontrado un campo para este bloque:
+            // If the field belongs to this block, process it
             if ($fieldName) {
                 // Find the field configuration to determine its type; otherwise assume text
                 $definition = $config->fields[$fieldName] ?? null;
@@ -130,10 +130,20 @@ class DataBlockResolved {
 
     }
 
+    /**
+     * Gets the resolved field data for a given CRM field name. Returns null if the field is not present in the form.
+     * @param string $fieldName The CRM field name to retrieve
+     * @return ?DataBlockFieldResolved The resolved field data, or null if not found
+     */
     public function getFieldValue($fieldName): ?DataBlockFieldResolved {
         return $this->formData[$fieldName] ?? null;
     }
 
+    /**
+     * Gets the resolved field data for a given detached field name. Returns null if the field is not present in the form.
+     * @param string $fieldName The detached field name to retrieve
+     * @return ?DataBlockFieldResolved The resolved field data, or null if not found
+     */
     public function getDetachedFieldValue($fieldName): ?DataBlockFieldResolved {
         return $this->detachedData[$fieldName] ?? null;
     }
