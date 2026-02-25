@@ -167,8 +167,8 @@ $mod_strings = array(
     'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE' => 'Project',
     // Calculated Fields for Job Applications
     'LBL_PANEL_STIC_JOB_APPLICATIONS_COUNT' => 'Job applications',
-    'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL' => 'Total job applications',
-    'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION' => 'Expected presentations',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL' => 'Total',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION' => 'Expected',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_PRESENTED' => 'Presented',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_PENDING_INTERVIEW' => 'Pending interview',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_INTERVIEWED' => 'Interviewed',
@@ -176,8 +176,8 @@ $mod_strings = array(
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED' => 'Rejected or closed',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW' => 'Under review',
     'LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT' => 'Job offer {0} closes today',
-    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => 'The closing date of job offer {0} is today and its status is not Closed. Review the offer here: {1}',
-    'LBL_NOTIFICATION_TEMPLATE' => 'Notification Template',
-    'LBL_NOTIFICATION_TEMPLATE_EMAILTEMPLATE_ID' => 'Notification Template (ID)',
-    'LBL_NOTIFICATION_TEMPLATE_INFO' => 'Email template to be used for sending notifications regarding status changes related to this job offer. If no template is selected, the default SinergiaCRM template for job offer notifications will be used.',
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => 'The closing date of job offer {0} is today and its status is not Closed. Review the offer at: {1}',
+    'LBL_NOTIFICATION_TEMPLATE' => 'Notification template',
+    'LBL_NOTIFICATION_TEMPLATE_EMAILTEMPLATE_ID' => 'Notification template (ID)',
+    'LBL_NOTIFICATION_TEMPLATE_INFO' => 'Email template for sending notifications about status changes related to this job offer. If no one is selected, the default template will apply.',
 );
