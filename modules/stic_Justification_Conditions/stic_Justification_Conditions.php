@@ -47,6 +47,7 @@ class stic_Justification_Conditions extends Basic
 
     public function save($check_notify = false)
     {
+        require_once 'SticIncludes/utils.php';
         global $current_language;
         $allocationsModStrings = return_module_language($current_language, 'stic_Allocations'); // can not be $mod_strings because of different contexts (specially inline edition)
 
