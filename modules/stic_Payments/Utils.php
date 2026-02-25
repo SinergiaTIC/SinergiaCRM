@@ -260,6 +260,7 @@ class stic_PaymentsUtils
         $paymentBean->allocated_percentage = $allocatedPercentage;
             
         return true;
+    }
     /**
      * Get the M182 Issuing Organization keys for the current user
      *
