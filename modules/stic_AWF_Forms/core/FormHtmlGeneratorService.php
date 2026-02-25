@@ -970,7 +970,7 @@ JS;
 
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
-        $asterisk = $field->required_in_form ? " <span class='awf-required'>*</span>" : '';
+        $asterisk = $field->required_in_form ? "<span class='awf-required'>*</span>" : '';
 
         $validationsAttr = " @blur='validateInput(\$el)' @input='resetError(\$el)'";
         if (!empty($field->validations)) {
@@ -1130,10 +1130,17 @@ JS;
             if ($isFloating) {
                 // Floating order: Input, Label
                 $html .= $controlHtml .$this->newLine();
-                $html .= "<label for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
+                $html .= "<label for='f_{$inputName}'>" . $this->newLine('+'); 
+                $html .= $label . $this->newLine();
+                $html .= $asterisk . $this->newLine();
+                $html .= "</label>" . $this->newLine('-');
+        
             } else {
                 // Default order: Label, Input
-                $html .= "<label for='f_{$inputName}' class='form-label'>{$label} {$asterisk}</label>" .$this->newLine();
+                $html .= "<label for='f_{$inputName}' class='form-label'>" . $this->newLine('+'); 
+                $html .= $label . $this->newLine();
+                $html .= $asterisk . $this->newLine();
+                $html .= "</label>" . $this->newLine('-');
                 $html .= $controlHtml .$this->newLine();
             }
             $html .= $description .$this->newLine();
@@ -1165,11 +1172,8 @@ JS;
 
         $subtype = !empty($field->subtype_in_form) ? $field->subtype_in_form : 'rating_stars';
         $isRequired = $field->required_in_form;
-        $requiredHtml = $isRequired ? ' <span class="awf-required">*</span>' : '';
+        $requiredHtml = $isRequired ? '<span class="awf-required">*</span>' : '';
         
-        $iconStarFill = stic_AWFUtils::getRawSvgIcon('star_fill');
-        $iconStarEmpty = stic_AWFUtils::getRawSvgIcon('star_empty');
-
         // AlpineJS logic
         $alpineLogic = <<<'JS'
 {
@@ -1217,18 +1221,18 @@ JS;
         $safeAlpine = htmlspecialchars($alpineLogic, ENT_QUOTES, 'UTF-8');
         $html = '<div class="awf-field mb-3" x-data="' . $safeAlpine. '">' . $this->newLine('+');
         if ($label) {
-            $html .= "<label for='f_{$name}' class='form-label'>{$label}{$requiredHtml}</label>" . $this->newLine();
+            $html .= "<label for='f_{$name}' class='form-label'>" . $this->newLine('+'); 
+            $html .= $label . $this->newLine();
+            $html .= $requiredHtml . $this->newLine();
+            $html .= "</label>" . $this->newLine('-');
         }
 
         // Phantom input for HTML5 validation
         $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms');
         $requiredAttr = $isRequired ? 'required' : '';
-        $html .= <<<HTML
-<input type="text" x-ref="input" name="$name" id="f_$name" :value="val" $requiredAttr tabindex="-1"
-       style="opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;"
-       oninvalid="this.setCustomValidity('$errorMsg')" oninput="this.setCustomValidity('')">
-HTML;
-        $html .= $this->newLine();
+        $html .= "<input type='text' x-ref=\"input\" name='{$name}' id='f_{$name}' :value=\"val\" $requiredAttr tabindex='-1'" .
+                 "style='opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;'" .
+                 "oninvalid=\"this.setCustomValidity('{$errorMsg}')\" oninput=\"this.setCustomValidity('')\"> " . $this->newLine();
 
         // --- CONTROLS ZONE ---
        
@@ -1283,14 +1287,12 @@ HTML;
                     $showFill    = "(hover > 0 ? hover : val) === $val";
                     $showEmpty   = "(hover > 0 ? hover : val) !== $val";
                 }
-                
-                $html .= <<<HTML
-<button type="button" class="btn p-0 text-decoration-none border-0 d-inline-flex align-items-center justify-content-center"
-        :style="$alpineStyle" @click="setVal($val)" @mouseover="hover=$val" @mouseleave="hover=0">
-    <span x-show="$showFill">$iconFill</span>
-    <span x-show="$showEmpty">$iconEmpty</span>
-</button>
-HTML;
+
+                $html .= "<button type='button' class='btn p-0 text-decoration-none border-0 d-inline-flex align-items-center justify-content-center' ".
+                         ":style=\"{$alpineStyle}\" @click=\"setVal({$val})\" @mouseover=\"hover=$val\" @mouseleave=\"hover=0\">". $this->newLine('+');
+                $html .= "<span x-show=\"{$showFill}\">{$iconFill}</span>". $this->newLine();
+                $html .= "<span x-show=\"{$showEmpty}\">{$iconEmpty}</span>". $this->newLine();
+                $html .= "</button>". $this->newLine('-');
             }
             $html .= "</div>".$this->newLine('-');
         }
