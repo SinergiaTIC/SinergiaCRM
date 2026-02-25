@@ -25,7 +25,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * Abstract class representing a deferred action definition, which is a type of server action that is executed asynchronously after the form submission.
+ * This class implements the IDeferredAction interface and extends the ServerActionDefinition class, 
+ * providing a common structure for all deferred actions while enforcing the implementation of the getType method to return ActionType::
+ */
 abstract class DeferredActionDefinition extends ServerActionDefinition implements IDeferredAction {
+    /**
+     * Returns the type of the action, which is ActionType::DEFERRED for all classes extending DeferredActionDefinition.
+     * This method is final to ensure that all deferred actions consistently return the correct type which is ActionType::DEFERRED.
+     * @return ActionType The type of the action, which is ActionType::DEFERRED
+     */
     final public function getType(): ActionType {
         return ActionType::DEFERRED;
     }

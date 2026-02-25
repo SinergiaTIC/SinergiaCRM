@@ -3936,6 +3936,8 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_checkbox'
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_switch'] = '🎚️ Interruptor';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_stars'] = '⭐ Estrellas';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] = '🙂 Caras';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semáforo';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Pulgares';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10 (NPS)';
 
 // Advanced Web Forms: configuration->data_block->field->value_type

@@ -25,7 +25,7 @@ if (! defined('sugarEntry') || ! sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-// Cargamos todas las clases necesarias para el proceso de Acciones
+// Load all the necessary classes for the Actions process
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
@@ -60,13 +60,13 @@ class ExampleAction extends HookActionDefinition
      */
     public function __construct()
     {
-        // We indicate whether the action is active or not.
+        // Indicate whether the action is active or not.
         $this->isActive = true;
 
-        // We indicate whether the user can select this action in the wizard when creating a form.
+        // Indicate whether the user can select this action in the wizard when creating a form.
         $this->isUserSelectable = true;
 
-        // We indicate the category of the action (from the list stic_awf_forms_action_definition_category_list)
+        // Indicate the category of the action (from the list stic_awf_forms_action_definition_category_list)
         $this->category = 'data';
 
         // The prefix to use for multi-language labels used by the application

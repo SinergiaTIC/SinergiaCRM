@@ -60,6 +60,10 @@ class ParameterResolverService {
 
     /**
      * Resolves a single parameter using the full context
+     * @param ActionParameterDefinition $def The parameter definition
+     * @param ?FormActionParameter $config The parameter configuration (can be null)
+     * @param ExecutionContext $context The execution context
+     * @return mixed The resolved value, or null if it can not be resolved
      */
     private function resolveSingleParam(ActionParameterDefinition $def, ?FormActionParameter $config, ExecutionContext $context): mixed {
         // Handle missing parameter configuration
@@ -97,6 +101,14 @@ class ParameterResolverService {
         return null;
     }
 
+    /**
+     * Resolves a fixed value parameter, applying the corresponding data type casting.
+     * If the value is null, it uses the default value from the definition.
+     * @param ActionParameterDefinition $def The parameter definition
+     * @param ?string $value The parameter value from configuration (can be null)
+     * @param ExecutionContext $context The execution context (used for date parsing)
+     * @return mixed The resolved and casted value, or null if it can not be resolved
+     */
     private function resolveFixedValue(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): mixed {
         $valueToCast = $value !== null ? $value : $def->defaultValue;
         if ($valueToCast === null) {
@@ -121,7 +133,7 @@ class ParameterResolverService {
             case ActionDataType::DATETIME:
             case ActionDataType::TIME:
                 $baseTimestamp = (int)$context->submissionTimestamp;
-                // strtotime gestiona fechas fijas ("2025-10-31") y relativas ("today", "+1 day")
+                // Use strtotime to parse both fixed dates ("2025-10-31") and relative dates ("today", "+1 day")
                 $parsedTime = @strtotime($valueToCast, $baseTimestamp);
                 if ($parsedTime === false) {
                     $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Can not parse date '{$valueToCast}' with base timestamp '{$baseTimestamp}'.");
@@ -146,6 +158,13 @@ class ParameterResolverService {
         return $valueToCast;
     }
 
+    /**
+     * Resolves a parameter of type Data Block, returning the corresponding DataBlockResolved object.
+     * @param ActionParameterDefinition $def The parameter definition
+     * @param ?string $value The parameter value from configuration (can be null)
+     * @param ExecutionContext $context The execution context
+     * @return ?DataBlockResolved The resolved Data Block, or null if it can not be resolved
+     */
     private function resolveDataBlock(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?DataBlockResolved {
         $dataBlockId = $value !== null ? $value : $def->defaultValue;
         if ($dataBlockId === null) {
@@ -177,6 +196,15 @@ class ParameterResolverService {
         return new BeanReference($parts[0], $parts[1]);
     }
 
+    /**
+     * Resolves a parameter of type FIELD, which points to a form field. The value is the form key of the field (ex: "Block.field1").
+     * Returns a DataBlockFieldResolved object with the field definition and the value filled from form
+     * If the field is not found in form data, it looks if it's a fixed value field in the DataBlock and uses that value instead.
+     * @param ActionParameterDefinition $def The parameter definition
+     * @param ?string $value The parameter value from configuration (can be null)
+     * @param ExecutionContext $context The execution context (used to access form data and configuration)
+     * @return ?DataBlockFieldResolved The resolved
+     */
     private function resolveFormField(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?DataBlockFieldResolved {
         $formKey = $value !== null ? $value : $def->defaultValue;
         if ($formKey === null || $formKey == '') {
@@ -225,6 +253,14 @@ class ParameterResolverService {
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $finalValue);
     }
 
+    /**
+     * Resolves a parameter of type OPTION_SELECTOR, which allows to select between different options with different resolution logic. The selected option is in 'selectedOption' and the value can be used as input for resolution.
+     * @param ActionParameterDefinition $def The parameter definition
+     * @param ?string $selectedOption The selected option name (can be null)
+     * @param ?string $value The parameter value from configuration (can be null)
+     * @param ExecutionContext $context The execution context (used to access form data and configuration)
+     * @return ?OptionSelectorResolved The resolved option, or null if it can not be
+     */
     private function resolveOptionSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?OptionSelectorResolved {
         if ($selectedOption === null) {
             $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Selected option is null");

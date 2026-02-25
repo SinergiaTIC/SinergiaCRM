@@ -94,12 +94,14 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         return [$paramSource, $paramTemplate];
     }
 
+
     /**
-     * Ejecuta la acción definida por esta definición.
-     *
-     * @param ExecutionContext $context Contexto de ejecución de la acción
-     * @param FormAction $actionConfig Configuración de la acción del formulario
-     * @return ActionResult Resultado de la ejecución de la acción
+     * Executes the action: Sends an email to the assigned user of a record, using a specified email template.
+     * The source record for determining the assigned user can be configured through different options (form, Data Block, fixed record, related field).
+     * The email is sent using the context of the source record, allowing the template to pull relevant data.
+     * @param ExecutionContext $context The execution context of the action, containing form data and other relevant information.
+     * @param FormAction $actionConfig The configuration of the action, including resolved parameters.
+     * @return ActionResult The result of the action execution, including status and messages.
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult {
         /** @var ?BeanReference $templateRef */
@@ -108,7 +110,7 @@ class SendEmailToAssignedAction extends HookActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Email template parameter is missing.");
         }
 
-        // Usuario asignado a notificar
+        // User assigned to notify
         $assignedUserId = null;
         $sourceBean = null;
 
@@ -148,7 +150,7 @@ class SendEmailToAssignedAction extends HookActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not determine assigned user or source record.");
         }
 
-        // Obtenemos el email del Bean.
+        // Get the assigned user email
         $user = BeanFactory::getBean('Users', $assignedUserId);
         if (!$user) {
              return new ActionResult(ResultStatus::ERROR, $actionConfig, "Assigned user not found (ID: {$assignedUserId}).");
@@ -158,7 +160,7 @@ class SendEmailToAssignedAction extends HookActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Assigned user '{$user->user_name}' does not have a valid 'email1' field.");
         }
 
-        // Enviamos el email usando la plantilla y $sourceBean como contexto
+        // Send the email using the template and the source bean as context
         try {
             stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $sourceBean, $context, $sourceBean);
         } catch (\Exception $e) {

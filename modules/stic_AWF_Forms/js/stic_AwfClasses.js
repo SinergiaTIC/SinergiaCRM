@@ -463,8 +463,7 @@ class stic_AwfField {
       return [];
     }
     if (this.type_field == 'unlinked') {
-      // TODO: Accept rating for surveys!! (Not working yet)
-      return stic_AwfField.type_in_formList().filter(t => t.id != "rating");
+      return stic_AwfField.type_in_formList();
     }
 
     // text, textarea, number, date, select, hidden
@@ -908,6 +907,7 @@ class stic_AwfActionParameter {
       name: '',                // Parameter name
       text: '',                // Parameter text
       type: '',                // Parameter type: value, field, dataBlock, crmRecord, optionSelector
+      dataType: '',            // Data type for value parameters: text, number, date, etc.
       required: false,         // Indicates if the parameter is required
       value: '',               // Parameter value
       value_text: '',          // Text to display for the parameter value

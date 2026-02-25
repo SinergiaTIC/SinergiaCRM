@@ -355,24 +355,30 @@
                                                             <!-- Type: Value, DataType: select -->
                                                             <template x-if="paramDef.dataType === 'select'">
                                                                 <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" :required="paramDef.required">
-                                                                    <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                    <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                                                     <template x-for="opt in paramDef.options">
-                                                                        <option :value="opt.value" x-text="opt.text"></option>
+                                                                        <option :value="opt.value" x-text="opt.text" :selected="opt.value == param.value"></option>
                                                                     </template>
                                                                 </select>
                                                             </template>
                                                         </div>
                                                     </template>
 
-                                                    <!-- Type: field, field_list -->
-                                                    <template x-if="['field', 'field_list'].includes(paramDef.type)">
-                                                        <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" 
-                                                                :multiple="paramDef.type=='field_list'" :required="paramDef.required">
-                                                            <template x-if="paramDef.type=='field'">
-                                                                <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                            </template>
+                                                    <!-- Type: field-->
+                                                    <template x-if="paramDef.type == 'field'">
+                                                        <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" :required="paramDef.required">
+                                                            <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                                             <template x-for="field in $store.actionEditor.getSupportedFieldsList(paramDef.supportedDataTypes)" :key="field.id">
-                                                                <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)"></option>
+                                                                <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="field.id == param.value"></option>
+                                                            </template>
+                                                        </select>
+                                                    </template>
+
+                                                    <!-- Type: field_list -->
+                                                    <template x-if="paramDef.type == 'field_list'">
+                                                        <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" multiple :required="paramDef.required">
+                                                            <template x-for="field in $store.actionEditor.getSupportedFieldsList(paramDef.supportedDataTypes)" :key="field.id">
+                                                                <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="param.value && param.value.includes(field.id)"></option>
                                                             </template>
                                                         </select>
                                                     </template>
@@ -382,9 +388,9 @@
                                                         <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" 
                                                                 @change="param.value_text = $event.target.options[$event.target.selectedIndex].text"
                                                                 :required="paramDef.required">
-                                                            <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                            <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                                             <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(paramDef.supportedModules)" :key="block.id">
-                                                                <option :value="block.id" x-text="block.text"></option>
+                                                                <option :value="block.id" x-text="block.text" :selected="block.id == param.value"></option>
                                                             </template>
                                                         </select>
                                                     </template>
@@ -453,15 +459,21 @@
                                                                     </div>
                                                                 </template>
 
-                                                                <!-- Resolved Type: field, field_list-->
-                                                                <template x-if="activeOpt && ['field', 'field_list'].includes(activeOpt.resolvedType)">
-                                                                    <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" 
-                                                                            :multiple="activeOpt.resolvedType=='field_list'" :required="paramDef.required">
-                                                                        <template x-if="activeOpt.resolvedType=='field'">
-                                                                            <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                                        </template>
+                                                                <!-- Resolved Type: field -->
+                                                                <template x-if="activeOpt && activeOpt.resolvedType == 'field'">
+                                                                    <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" :required="paramDef.required">
+                                                                        <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                                                         <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes)" :key="field.id">
-                                                                            <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)"></option>
+                                                                            <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="field.id == param.value"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                </template>
+
+                                                                <!-- Resolved Type: field_list-->
+                                                                <template x-if="activeOpt && activeOpt.resolvedType == 'field_list'">
+                                                                    <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" multiple :required="paramDef.required">
+                                                                        <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes)" :key="field.id">
+                                                                            <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="param.value && param.value.includes(field.id)"></option>
                                                                         </template>
                                                                     </select>
                                                                 </template>
@@ -471,9 +483,9 @@
                                                                     <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" 
                                                                             @change="param.value_text = $event.target.options[$event.target.selectedIndex].text"
                                                                             :required="paramDef.required">
-                                                                        <option value="" disabled selected x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                        <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                                                         <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(activeOpt.supportedModules)" :key="block.id">
-                                                                            <option :value="block.id" x-text="block.text"></option>
+                                                                            <option :value="block.id" x-text="block.text" :selected="block.id == param.value"></option>
                                                                         </template>
                                                                     </select>
                                                                 </template>

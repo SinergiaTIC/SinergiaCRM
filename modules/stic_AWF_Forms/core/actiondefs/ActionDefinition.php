@@ -40,6 +40,11 @@ enum ActionType: string {
     case GROUP         = 'Group';
 }
 
+/**
+ * Abstract class representing a generic action definition, which serves as the base for all specific action types in the form system.
+ * This class defines common properties and methods that all action definitions share, such as activation status, user selection capability, and supported modules.
+ * It also includes abstract methods that must be implemented by subclasses to specify the parameters and type of the action.
+ */
 abstract class ActionDefinition {
     public bool $isActive = false;
     public bool $isUserSelectable = true;
@@ -53,7 +58,8 @@ abstract class ActionDefinition {
     public array $supportedFieldSubTypes = []; // stic_awf_forms_field_subtype_in_form_list
     public int $order = 0;
 
-    protected string $baseLabel = 'LBL_CUSTOM_ACTION';
+    protected string $baseLabel = 'LBL_CUSTOM_ACTION'; // Base label for translations, subclasses should set this to their specific base label
+
     /**
      * Translates a subkey to the current language (using the baseLabel of the action and the stic_AWF_Forms module)
      * @param string $subkey The subkey to translate

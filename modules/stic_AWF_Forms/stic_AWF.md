@@ -6,7 +6,7 @@ Que la información recibida por esta vía quede directamente incorporada al CRM
 
 Anteriormente, SinergiaCRM contaba con tres tipos distintos de asistentes estáticos para la creación de formularios, vinculados y limitados a operativas y módulos muy concretos. Además, los formularios web que había solo permitían descargar el código HTML de un formulario con un formato básico, que siempre requería ser retocado manualmente para poder colgarlo en un sitio web público.
 
-Con el nuevo sistema de **Formularios Web Avanzados**, se rompen estas limitaciones tecnológicas para ofrecer una herramienta integral, altamente versátil, reutilizable y flexible. El objetivo de este nuevo sistema es permitir la captura de información compleja desde el exterior y automatizar flujos de trabajo sin necesidad de desarrollos a medida. Entre las principales novedades y aportaciones de este sistema destacan:
+El nuevo sistema de **Formularios Web Avanzados** ofrece una herramienta integral, altamente versátil, reutilizable y flexible. El objetivo de este nuevo sistema es permitir la captura de información compleja desde el exterior y automatizar flujos de trabajo sin necesidad de desarrollos a medida. Entre las principales novedades y aportaciones de este sistema destacan:
 
 * **Persistencia y edición**: Los formularios ahora se guardan en el sistema y se pueden editar en cualquier momento, lo que favorece su reutilización sin tener que crearlos desde cero.
 
@@ -54,7 +54,7 @@ Antes de crear el primer formulario, es útil conocer cómo se organiza la infor
 La creación y configuración de un formulario se realiza de forma guiada a través de un asistente visual (wizard) dividido en 5 pasos:
 
 ### Paso 1: Información general ###
-En este primer paso se definirá la identidad del formulario. Se podrán indicar los datos básicos como su Nombre, la persona asignada y la descripción del formulario.
+En este primer paso se definirá la identidad del formulario. Se podrán indicar los datos básicos como su Nombre, la **persona asignada** (quien, además de ser responsable del formulario, será a quien se asignen por defecto los nuevos registros creados si el envío es externo) y la descripción.
 
 ### Paso 2: Estructura y campos ###
 Aquí se decidirá qué información se quiere pedir a los usuarios. La selección de esta información se realiza mediante la adición de bloques de datos, que pueden ser de dos tipos principales dependiendo de su integración con el sistema:
@@ -64,7 +64,7 @@ Aquí se decidirá qué información se quiere pedir a los usuarios. La selecci�
 * **Bloques de datos no enlazados**: Son contenedores de campos diseñados para recopilar información en el formulario, pero que **no están vinculados a ningún módulo del CRM**. Como consecuencia, los datos introducidos en este tipo de bloques quedarán guardados de forma independiente y exclusiva dentro del registro global de la "Respuesta". Son ideales para realizar encuestas, recopilar información temporal, hacer valoraciones o incluir casillas de aceptación de condiciones.
 
 #### Secciones de los Bloques de datos ####
-En el asistente, los bloques de datos están difinidos en distintas secciones. Estas secciones pueden ser distintas según el tipo de bloque (enlazado o no enlazado).
+En el asistente, los bloques de datos están definidos en distintas secciones. Estas secciones pueden ser distintas según el tipo de bloque (enlazado o no enlazado).
 
 ##### Campos #####
 Esta sección aparece en ambos bloques, enlazados y no enlazados
@@ -83,13 +83,61 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
     * Datos bancarios y de contacto: IBAN y Teléfono (con validación de longitud para España o prefijos internacionales).
     * Ubicación: Código Postal (formato de España).
     * Límites y rangos: Comprobación de Edad (mínima y máxima a partir de una fecha de nacimiento) y límites numéricos (valor mínimo/máximo).
-    * Otros: Direcciones web (URL), casillas de marcación obligatoria ( indispensable para aceptar términos y condiciones), y validación libre mediante expresiones regulares (*Regex*).
+    * Otros: Direcciones web (URL), casillas de marcación obligatoria (ideales para aceptar términos y condiciones), y validación libre mediante expresiones regulares (*Regex*).
 
   * **Condicionalidad de las validaciones**: Se pueden configurar reglas simples para que un validador solo se ejecute si otro campo del formulario contiene un valor específico (por ejemplo, validar el campo "número de identificación" como "NIE" solo si el campo "Tipo de identificación" es "nie", o si una casilla específica está marcada). También es posible personalizar el mensaje de error exacto que verá el usuario si la validación falla.
 
 * **Valores fijos (solo en bloques enlazados)**: Son valores constantes y ocultos que no se muestran al usuario final, pero que el sistema guardará en el CRM al crear el registro. Por ejemplo, en una inscripción, puedes definir por defecto el estado de la inscripción como "Confirmado" o vincularlo a un "Evento" específico sin que el usuario tenga que seleccionarlo.
 
-  * **Fechas relativas**: En el caso de los campos de tipo fecha, el sistema permite configurar valores dinámicos relativos al momento del envío: *Hoy*, *Ahora*, *Dentro de un día*, *Dentro de una semana*, *Dentro de un mes*, *Último día de este mes* o *Primer día del próximo mes*, pero también es posible utilizar expresiones en inglés (como '*+2 weeks*', o '*first day of next week*'), el sistema calculará la fecha exacta partiendo del momento en que se reciba la respuesta.
+  * **Fechas relativas**: En el caso de los campos de tipo fecha, el sistema permite configurar valores dinámicos relativos al momento del envío: *Hoy*, *Ahora*, *Dentro de un día*, *Dentro de una semana*, *Dentro de un mes*, *Último día de este mes* o *Primer día del próximo mes*. También es posible utilizar expresiones en inglés (como '*+2 weeks*', o '*first Monday of next month*'). El sistema calculará la fecha exacta partiendo del momento en que se reciba la respuesta.
+
+* **Selección de los campos a utilizar**: Al añadir un campo que representa un valor en el registro (ya sea un campo normal "En el formulario" o un "Valor fijo"), el listado de campos disponibles mostrará por defecto únicamente aquellos que son visibles en la vista de edición o detalle del propio módulo en el CRM. Sin embargo, si se activa la opción *"Mostrar todos los campos"*, el listado revelará la totalidad de los campos del módulo. Esto resulta de gran utilidad si se desea operar con campos que se han ocultado expresamente desde Estudio (por ejemplo, los campos del bloque "Incorpora" en la ficha de Personas).
+
+* **Gestión avanzada de opciones y campos booleanos**: Cuando un campo requiere que el usuario escoja entre distintos valores (al seleccionar el Tipo de entrada *"Opciones predeterminadas"*), el sistema ofrece un alto nivel de configuración:
+
+  * **Campos con opciones (Desplegables/Selección de opción)**: El sistema cargará los valores del CRM por defecto. Si se activa la opción de *"Personalizar opciones"*, es posible modificar el comportamiento de esta lista en el formulario: permite cambiar el orden y el texto visible (nombre) de los elementos, y gestionar su visibilidad para ocultar aquellos elementos que no se deseen ofrecer en el formulario.
+
+  * **Campos relacionados**: Si el campo es del tipo Relacionado (apunta a un registro de otro módulo del CRM), se podrá seleccionar y definir explícitamente qué registros exactos (elementos) aparecerán listados para que el usuario seleccione uno de ellos. Esto es útil para permitir seleccionar en el formulario el curso (Evento) al que se inscribirá de entre los activos, por ejemplo.
+
+  * **Campos no enlazados**: Al no depender de la estructura del CRM, en los campos virtuales o no enlazados se puede definir desde cero el listado completo de todas las opciones predeterminadas.
+  
+  * **Campos booleanos (Sí/No)**: Si el campo del CRM es de tipo Booleano, la herramienta permite elegir cómo representarlo gráficamente: puede mostrarse como un *Desplegable* con las opciones de "Sí" y "No", como una *Casilla de selección (Checkbox)* única, o bien como un *Interruptor (Switch)* visual.
+
+###### Tipos de entrada y Editores visuales (Subtipos) ######
+El sistema adapta el tipo de control visual en el formulario en función del tipo de dato, permitiendo decidir cómo se presenta la información de forma precisa. Los grandes **Tipos de entrada** dictan el comportamiento general, y para cada uno existen diferentes **Tipos de editor (Subtipos)** para afinar la experiencia de usuario:
+
+* **➖ Texto**: Entradas de una sola línea.
+  * **🔤 Texto simple**: Campo de texto estándar.
+  * **✉️ Correo electrónico**: Valida el formato email y habilita teclados específicos en dispositivos móviles.
+  * **📞 Teléfono**: Habilita el teclado numérico telefónico en dispositivos móviles.
+  * **🔗 Dirección URL**: Formato específico para enlaces web.
+  * **🔒 Contraseña**: Oculta los caracteres a medida que el usuario escribe.
+
+* **☰ Texto largo**: Áreas de texto para descripciones extensas.
+  * **📃 Párrafo**: Área de texto ampliada (Textarea).
+    
+* **#️⃣ Numérico**: Entradas restringidas a números.
+  * **🔢 Numérico**: Control estándar de entrada numérica.
+
+* **🗓️ Selección de tiempo**: Controles nativos para escoger fechas u horas.
+  * **📅 Fecha**: Selector de día, mes y año.
+  * **⏱️ Hora**: Selector de hora y minutos.
+  * **📅⏱️ Fecha y hora**: Selector combinado.
+  
+* **▼ Opciones predeterminadas**: Muestra un conjunto cerrado de opciones entre las que el visitante debe elegir.
+  * **🔻 Desplegable**: Clásica lista de selección colapsada (Combo box).
+  * **📑 Desplegable múltiple**: Lista de selección que permite escoger más de una opción a la vez.
+  * **🔘 Selección de opción**: Muestra todas las opciones directamente en pantalla con botones de radio (*Radio buttons*), permitiendo escoger solo una.
+  * **☑️ Selección múltiple**: Muestra casillas de verificación (*Checkboxes*) independientes para seleccionar varias opciones simultáneamente.
+  * **◻️ Casilla de selección**: Un único *Checkbox* simple (ideal para booleanos o aceptaciones de términos).
+  * **🎚️ Interruptor**: Un control visual estilo "Switch" (encendido/apagado para booleanos).
+
+* **🏅 Valoración (Próximamente)**: Controles visuales pensados para encuestas y recolección de *feedback*.
+  * **⭐ Estrellas**: Valoración por número de estrellas.
+  * **🙂 Caras**: Valoración a través de Emojis interactivos.
+  * **🔟 Escala 0-10 (NPS)**: Barra estándar de escala Net Promoter Score.
+  
+* **🕵️ Oculto**: El campo no se muestra gráficamente en el formulario, pero su valor se almacena y acompaña silenciosamente a la respuesta enviada.
 
 ##### Detección de duplicados ##### 
 Esta sección solo aparece en los bloques enlazados
@@ -110,7 +158,7 @@ Esta sección solo aparece en los bloques enlazados
 
 Esta sección es fundamental cuando el formulario interactúa con más de un módulo del CRM. Sirve para definir cómo se conectan los registros generados entre sí dentro de la base de datos.
 
-* Al definir una relación, se indicará su tipo de relación con que enlazar el bloque de datos actual y el bloque de datos destino de la relación. Al hacerlo, el sistema creará automáticamente las acciones "por detrás" para enlazar ambos registros una vez se guarde la respuesta.
+* Al definir una relación, se seleccionará el tipo de vínculo exacto y el bloque de datos destino de la relación. Al hacerlo, el sistema creará automáticamente las acciones "por detrás" para enlazar ambos registros una vez se guarde la respuesta.
 
 * Ejemplo práctico: Imaginemos un formulario de inscripción de una persona a un evento. En esta sección de Relaciones se indicará que ambos bloques (Persona e Inscripción) están unidos. Así, cuando el usuario envíe el formulario, el sistema no solo creará los dos registros por separado, sino que automáticamente generará el vínculo formal entre ambos dentro del CRM.
 
@@ -134,22 +182,23 @@ En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic 
 
 * **Un sistema escalable y ampliable**: La arquitectura de este sistema de acciones está diseñada exclusivamente por código y de forma totalmente desacoplada del "core" del CRM. Esto significa que el ecosistema de acciones es **fácilmente ampliable**: permite desarrollar a medida nuevas acciones o integraciones para entidades concretas y sumarlas al catálogo general.
 
-* **Catálogo actual de Acciones**: Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a los flujos:
-  * **Guardar registro (Automática)**: Crea o actualiza un registro a partir de un bloque de datos definido en el paso anterior.
+#### Catálogo actual de Acciones ####
+Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a los flujos:
+* **Guardar registro (Automática)**: Crea o actualiza un registro a partir de un bloque de datos. Cuenta con un sistema de **asignación inteligente**: si el formulario se rellena con una sesión activa en el CRM, el registro se asignará a dicho trabajador. Si es un envío externo, se asignará a la persona responsable del formulario (o al administrador del sistema en su defecto).
 
-  * **Enlazar registros (Automática)**: Enlaza dos registros del CRM según las relaciones definidas en el paso anterior.
+* **Enlazar registros (Automática)**: Enlaza dos registros del CRM según las relaciones definidas en el paso anterior.
 
-  * **Enviar notificación por correo**: Envía un email personalizado a partir de una plantilla del CRM, permitiendo procesarla con los datos del bloque.
+* **Enviar notificación por correo**: Envía un email personalizado a partir de una plantilla del CRM, permitiendo procesarla con los datos del bloque.
 
-  * **Enviar notificación al usuario asignado**: Permite enviar un email de aviso (usando una plantilla del CRM) al trabajador o usuario interno responsable del registro que se acaba de crear o actualizar o de cualquier otro referenciado (por ejemplo, el evento de la inscripción).
+* **Enviar notificación al usuario asignado**: Permite enviar un email de aviso (usando una plantilla del CRM) al trabajador o usuario interno responsable del registro que se acaba de crear o actualizar o de cualquier otro referenciado (por ejemplo, el evento de la inscripción).
 
-  * **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
+* **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
 
-  * **Verificar sesión activa y permisos**: Bloquea el procesamiento del formulario si no hay una sesión activa del CRM o el usuario no tiene permisos para crear los registros asociados al formulario
+* **Verificar sesión activa y permisos**: Bloquea el acceso y el procesamiento del formulario si no hay una sesión activa en el CRM o si el usuario no dispone de permisos explícitos de edición/creación para **todos y cada uno de los módulos** involucrados en los bloques de datos del formulario.
 
-  * **Mostrar página con resumen de respuestas (Final)**: Redirige al usuario a una página que contiene el resumen de todas sus respuestas al formulario.
+* **Mostrar página con resumen de respuestas (Final)**: Redirige al usuario a una página que contiene el resumen de todas sus respuestas al formulario.
 
-  * **Redireccionar a página (Final)**: Redirige al usuario a una página web externa una vez procesados los datos.
+* **Redireccionar a página (Final)**: Redirige al usuario a una página web externa una vez procesados los datos.
 
 ### Paso 4: Maquetación ###
 Llega el momento de darle forma visual al formulario, separando por completo su diseño de la lógica estructural definida en los pasos anteriores. Este paso cuenta con un **editor visual con previsualización en tiempo real**, lo que permite comprobar exactamente cómo quedará el formulario final a medida que se diseña y se aplican los cambios.
@@ -160,12 +209,8 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
 * **Secciones y contenedores visuales**: El formulario se estructura organizando los campos en diferentes **"Secciones"**, que actúan como contenedores visuales. Una sección puede incluir campos de uno o más bloques de datos. A nivel visual, estas secciones ofrecen mucha versatilidad:
 
-  * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado para resaltar un conjunto de datos).
-
   * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado).
   
-  * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables.
-
   * **Título**: Se puede definir si la sección muestra un título visible para estructurar el contenido o si queda oculto.
 
   * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella.
@@ -180,6 +225,8 @@ Entre las opciones de diseño y maquetación disponibles destacan:
   
   * **Campos y etiquetas**: Personalización del diseño visual de los campos y la disposición de las etiquetas, incluyendo el soporte para **Etiquetas Flotantes** (animación donde la etiqueta se integra dentro del propio campo).
 
+  * **Textos de estado y mensajes**: Permite personalizar los mensajes que verán los visitantes si intentan acceder al formulario cuando este no es público o cuando se envíen los datos si no hay ninguna redirección definida.
+
   * **CSS Personalizado**: Para necesidades más avanzadas, el sistema permite inyectar código CSS propio para aplicar ajustes de diseño a medida y sin límites. Esta opción solo se mostrará si el usuario es un Administrador.
 
 ### Paso 5: Resumen y publicación ###
@@ -191,13 +238,13 @@ Este es el último paso del asistente, destinado a revisar el resultado final, e
 
   * **Público**: El formulario está activo y publicado; por lo tanto, permite recibir y registrar respuestas de forma normal.
 
-  * **Cerrado**: El formulario se desactiva y ya no acepta más respuestas (ideal cuando finaliza una campaña o se llena un aforo).
-
- Aquellas personas que intenten acceder a un formulario que no esté en estado **"Público"** verán un mensaje informativo indicando que el formulario está cerrado, impidiendo enviar respuestas. En el caso que se saltase esta restricción y se recibiese una respuesta, esta se guardará y marcará, pero no se procesará.
-.
+  * **Cerrado**: El formulario se desactiva y ya no acepta más respuestas (ideal cuando finaliza una campaña o se llena un aforo). 
+  
 * **Programación de la publicación**: Si el formulario se encuentra en estado "Público", de forma opcional se puede programar una **fecha y hora de inicio y de fin** de la publicación. Esto permite automatizar la apertura y cierre del formulario sin necesidad de intervención manual.
 
-* **Previsualización**: Antes de compartirlo, se dispone de un botón para previsualizar el formulario generado. Esto permite comprobar de forma exacta cómo lo verán los usuarios finales y cómo funciona su disposición visual.
+* **Bloqueo visual y de seguridad**: Cuando un formulario no sea **"Público"** o esté fuera de las fechas programadas para su apertura, el sistema bloqueará automáticamente su uso mostrando una capa superpuesta (*overlay*) transparente que impide rellenar los campos y enviar respuestas, acompañada de un mensaje central informativo indicando que el formulario está cerrado (cuyo título y texto son totalmente configurables desde el asistente de maquetación). En el caso de que se saltase esta restricción visual y se recibiese una respuesta, esta se guardará y marcará en el sistema, pero no se procesará en ningún caso.
+
+* **Previsualización**: Antes de compartirlo, se dispone de un botón para previsualizar el formulario generado. Esta vista previa genera una réplica interactiva en un entorno seguro que desactiva los botones de envío reales (evitando generar registros de prueba en el CRM). Además, incluye una barra de herramientas superior que permite emular el estado del formulario, pudiendo comprobar de forma interactiva cómo se verá y cómo se comportará tanto cuando está activo como cuando no acepta respuestas.
 
 * **Opciones de publicación**: Una vez listo, el sistema ofrece diferentes vías para difundir y hacer accesible el formulario:
 
@@ -224,7 +271,7 @@ A diferencia de sistemas anteriores, los Formularios Web Avanzados ofrecen una a
 
 * **Respuestas**: Desde la vista de detalle de un formulario se pueden consultar todas las respuestas que este ha recibido a lo largo del tiempo. Cada registro de respuesta guarda la información de forma íntegra e incluye datos técnicos y de contexto:
 
-  * **Estado**: Indica la situación del ciclo de vida en la que se encuentra el envío (por ejemplo: *Pendiente*, *Procesando*, *En espera*, *Procesada*, *Rechazada* *No deseada*, o *Error*). Cabe destacar que, dependiendo de la configuración y de los flujos del formulario, puede que no se utilicen todos los estados.
+  * **Estado**: Indica la situación del ciclo de vida en la que se encuentra el envío (por ejemplo: *Pendiente*, *Procesando*, *En espera*, *Procesada*, *Rechazada*, *No deseada*, o *Error*). Cabe destacar que, dependiendo de la configuración y de los flujos del formulario, puede que no se utilicen todos los estados.
   
   * **Origen y contexto técnico**: Registra la URL exacta de la página desde la cual se envió el formulario, el navegador y sistema operativo del usuario, y su dirección IP.
   
@@ -256,12 +303,16 @@ El nuevo sistema ofrece un grado de flexibilidad adicional para perfiles técnic
 
 * **Extensibilidad mediante código**: El ecosistema de formularios no está limitado a lo preestablecido. Tanto las acciones (automatismos) como las validaciones están diseñadas con una arquitectura desacoplada que permite definirlas íntegramente por código. Esto resulta vital para entidades que requieran desarrollar reglas de negocio a medida o validaciones muy específicas y sumarlas al catálogo estándar de acciones de su CRM.
 
-* **Pre-rellenado mediante URL**: El formulario está preparado para capturar valores pasados directamente como parámetros en la dirección URL. Posibles usos: Es una opción extremadamente útil para campañas de email marketing, donde el usuario al hacer clic en un enlace ya encuentra sus datos personales básicos (nombre, email) pre-rellenados, reduciendo la fricción y mejorando radicalmente las tasas de conversión.
+* **Pre-rellenado mediante URL**: El formulario está preparado para capturar valores pasados directamente como parámetros en la dirección URL. 
+  * *Casos de uso*: Es una opción extremadamente útil para campañas de email marketing, donde el usuario al hacer clic en un enlace ya encuentra sus datos personales básicos (nombre, email) pre-rellenados, reduciendo la fricción y mejorando radicalmente las tasas de conversión.
 
-* **Campos ocultos**: Se incorpora un nuevo tipo de campo de formulario: el campo oculto. Posibles usos: Este campo no es visible para el visitante, pero permite registrar y enviar al CRM información de contexto, como identificadores de seguimiento, códigos de origen de la campaña, o valores fijos invisibles requeridos para el procesado.
+* **Campos ocultos**: Se incorpora un nuevo tipo de campo de formulario: el campo oculto.
+  * *Casos de uso*: Resulta ideal para no interferir en la visión del visitante, pero permite registrar y enviar al CRM información de contexto, como identificadores de seguimiento, códigos de origen de la campaña, o valores fijos invisibles requeridos para el procesado.
 
-* **Edición HTML e inyección de nuevos campos**: El sistema genera un código HTML que puede ser descargado y editado libremente para su inserción externa. Si se respeta la nomenclatura, el CRM entenderá perfectamente cualquier nuevo campo añadido manualmente en el código sin romper el formulario. Para añadir nuevos campos mapeados al CRM se usa el patrón `NombreBloque.NombreCampoCRM` y, para datos de uso exclusivo en la respuesta (campos no enlazados), el patrón `_detached.NombreBloque.NombreCampo`. Posibles usos: Aporta libertad total para crear diseños web a medida, maquetaciones altamente personalizadas, o inyectar campos interactivos por JavaScript.
+* **Edición HTML e inyección de nuevos campos**: El sistema genera un código HTML que puede ser descargado y editado libremente para su inserción externa. Si se respeta la nomenclatura, el CRM entenderá perfectamente cualquier nuevo campo añadido manualmente en el código sin romper el formulario. Para añadir nuevos campos mapeados al CRM se usa el patrón `NombreBloque.NombreCampoCRM` y, para datos de uso exclusivo en la respuesta (campos no enlazados), el patrón `_detached.NombreBloque.NombreCampo`.
+  * *Casos de uso*: Aporta libertad total para crear diseños web a medida, maquetaciones altamente personalizadas, o inyectar campos interactivos por JavaScript.
 
-* **Formularios de alta complejos para uso interno (Verificar Sesión)**: Combinando la flexibilidad de diseño con la acción de **"Verificar sesión activa y permisos"**, los formularios avanzados pueden convertirse en una potente herramienta de uso interno. Esta acción garantiza que únicamente el personal con sesión iniciada en el CRM pueda acceder a ellos. Además, la URL generada puede añadirse como un enlace directo en el menú principal del CRM, dotando al equipo de atajos para operativas complejas de entrada de datos de forma mucho más ágil que utilizando la interfaz estándar. Por ejemplo, permite diseñar una única pantalla de alta rápida que agrupe la creación simultánea de una Persona, de una Organización y de la relación automática entre ambos registros.
+* **Formularios de alta complejos para uso interno (Verificar Sesión y Permisos)**: Combinando la flexibilidad de diseño con la acción de **"Verificar sesión activa y permisos"**, los formularios avanzados pueden convertirse en una potente herramienta de uso interno. Esta acción garantiza que únicamente el personal con una sesión iniciada en el CRM y con los permisos de rol adecuados para crear/editar en todos los módulos implicados pueda acceder a ellos. 
+  * *Casos de uso*: La URL generada puede añadirse como un enlace directo en el menú principal de navegación del CRM, dotando al equipo de atajos para operativas de entrada de datos de forma mucho más ágil que utilizando la interfaz estándar. Por ejemplo, permite diseñar una única pantalla de alta rápida que agrupe visualmente la creación de una Persona, de una Organización y genere la relación automática entre ambos registros. Además, gracias a la **asignación inteligente**, todos los registros creados quedarán automáticamente asignados al trabajador que ha rellenado el formulario, manteniendo intacta la autoría de los datos introducidos.
 
 
