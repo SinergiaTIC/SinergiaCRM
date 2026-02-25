@@ -32,8 +32,8 @@ require_once 'modules/stic_Payment_Commitments/stic_Payment_Commitments.php';
 class PaymentRouterAction extends DeferredBeanActionDefinition implements ITerminalAction
 {
     public function __construct() {
-        $this->isActive = true;
-        $this->isUserSelectable = true;
+        $this->isActive = false;
+        $this->isUserSelectable = false;
         $this->category = 'integration';
         $this->baseLabel = 'LBL_PAYMENT_ROUTER_ACTION';
     }
