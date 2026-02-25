@@ -45,7 +45,7 @@ class DataBlockFieldResolved {
         // Normalize the value so it can be mapped to the Database
         if ($value instanceof \DateTime) {
             global $timedate;
-            $type = $config->type ?? 'datetime'; 
+            $type = $config?->type ?? 'datetime'; 
             if ($type === 'date') {
                 $this->value = $timedate->asDbDate($value);
             } elseif ($type === 'time') {

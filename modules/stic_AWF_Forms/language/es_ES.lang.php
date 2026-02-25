@@ -491,6 +491,7 @@ $mod_strings = array (
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de Pago',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos con el Compromiso de Pago para realizar su pago en la plataforma externa.',
 
+
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
@@ -517,6 +518,16 @@ $mod_strings = array (
   'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'Validador de NIE',
   'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIE español válido',
   'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no es válido',
+
+  // CatSalutCipValidatorAction
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_TITLE' => 'Validador de CIP de CatSalut',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un CIP (Código de Identificación Personal) de CatSalut válido',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIP no es válido',
+
+  // NafValidatorAction
+  'LBL_NAF_VALIDATOR_ACTION_TITLE' => 'Validador de NAF',
+  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NAF (Número de Afiliación a la Seguridad Social) válido',
+  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NAF no es válido',
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador Numérico',

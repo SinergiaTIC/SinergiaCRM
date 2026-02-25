@@ -73,4 +73,13 @@ class EmailValidatorAction extends ValidatorActionDefinition {
 }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) {
+            return true;
+        }
+
+        $email = trim((string) $value);
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
 }

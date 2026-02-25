@@ -73,4 +73,22 @@ class DniValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) {
+            return true;
+        }
+
+        $dni = trim(strtoupper((string) $value));
+        if (preg_match('/^[XYZ]?\d{5,8}[A-Z]$/', $dni) !== 1) {
+            return false;
+        }
+        $numberString = substr($dni, 0, -1);
+        $numberString = str_replace(['X', 'Y', 'Z'], ['0', '1', '2'], $numberString);
+        $lett = substr($dni, -1);
+        $mod = (int) $numberString % 23;
+        $letterMap = "TRWAGMYFPDXBNJZSQVHLCKET";
+
+        return $letterMap[$mod] === $lett;
+    }
 }

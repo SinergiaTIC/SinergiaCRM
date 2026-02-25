@@ -58,7 +58,7 @@ class stic_AWFUtils {
             // Boolean
             case 'bool':
             case 'checkbox':
-                $lowerValue = strtolower(trim($valueToCast));
+                $lowerValue = strtolower(trim((string)$valueToCast));
                 return !($lowerValue === 'false' || $lowerValue === '0' || $lowerValue === 'off' || $lowerValue === '');
 
             // Numerics
@@ -780,14 +780,18 @@ class stic_AWFUtils {
     }
 
     /** 
-     * Parse a link in Markdown 
+     * Parse a link in Markdown format [text](url) and convert it to an HTML anchor tag.
+     * We allow a whitelist of URL schemes (http, https, mailto, tel, sms) and also relative links or anchors starting with /, ? or #.
+     * For security reasons, all links will have target="_blank" and rel="noopener noreferrer" to prevent tabnabbing. 
      * @param string $text The text to parse 
      * @return string The parsed text (in html) 
      */
     public static function parseAnchorMarkdown(string $text): string {
         if (empty($text)) return '';
 
-        $pattern = '/\[([^\]]+)\]\(([^\)]+)\)/';
+        // Whitelist: we allow http://, https://, mailto:, tel:, sms:
+        // We also allow relative links or anchors that start with /, ? or #.
+        $pattern = '/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:|sms:|[#\/\?])[^\)]+)\)/i';
         $replacement = '<a href="$2" target="_blank" rel="noopener noreferrer" class="awf-link" title="$1">$1</a>';
         
         $html = preg_replace($pattern, $replacement, $text);

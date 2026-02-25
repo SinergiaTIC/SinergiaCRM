@@ -85,7 +85,7 @@ class ServerActionFlowExecutor {
                         $this->context->responseBean->save();
                     }
                     
-                    $GLOBALS['log']->info("Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $actionResult->message);
+                    $GLOBALS['log']->info("Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
 
                     // Return $lastResult to finish: the engine will be put on hold
                     return $lastResult; 

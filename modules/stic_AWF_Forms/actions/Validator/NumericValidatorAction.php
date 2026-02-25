@@ -105,4 +105,29 @@ class NumericValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if ($value === null || $value === '') {
+            return true;
+        }
+
+        $sanitizedValue = str_replace(',', '.', (string) $value);
+        if (!is_numeric($sanitizedValue)) {
+            return false;
+        }
+        $num = (float)$sanitizedValue;
+
+        // Range Validation
+        if (isset($params['min']) && $params['min'] !== '') {
+            if ($num < (float) $params['min']) {
+                return false;
+            }
+        }
+        if (isset($params['max']) && $params['max'] !== '') {
+            if ($num > (float) $params['max']) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -256,10 +256,12 @@ class stic_AwfDataBlock {
 
   fixFieldName(field) {
     let index = 0;
+    let originalName = field.name;
     let name = field.name;
-    while(this.fields.filter((f) => f.name === field.name).length==2) {
+
+    while(this.fields.filter((f) => f.name === field.name).length > 1) {
       index++;
-      name = `${fieldName}_${index}`;
+      name = `${originalName}_${index}`;
     }
     field.name = name;
     return name;

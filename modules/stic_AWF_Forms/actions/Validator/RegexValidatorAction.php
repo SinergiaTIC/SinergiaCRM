@@ -66,4 +66,10 @@ class RegexValidatorAction extends ValidatorActionDefinition {
             }
         }";
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) return true;
+        if (empty($params['pattern'])) return true;
+        return preg_match($params['pattern'], (string)$value) === 1;
+    }
 }

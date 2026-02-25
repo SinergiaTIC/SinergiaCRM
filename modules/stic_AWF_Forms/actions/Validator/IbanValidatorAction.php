@@ -103,4 +103,14 @@ class IbanValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) {
+            return true;
+        }
+        $iban = trim((string)$value);
+
+        require_once 'SticInclude/Utils.php';
+        return SticUtils::checkIBAN($iban, false);
+    }
 }

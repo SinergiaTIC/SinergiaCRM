@@ -78,4 +78,21 @@ class UrlValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) {
+            return true;
+        }
+        $stringValue = (string)$value;
+
+        $pattern = '/^(https?:\/\/)?' . // protocol
+                   '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|' . // domain name
+                   '((\d{1,3}\.){3}\d{1,3}))' . // OR ip (v4) address
+                   '(:\d+)?(\/[-a-z\d%_.~+]*)*' . // port and path
+                   '(\?[;&a-z\d%_.~+=-]*)?' . // query string
+                   '(#[-a-z\d_]*)?$/i'; // fragment locator
+
+        // preg_match returns 1 if there is a match, 0 if not, or false on error
+        return preg_match($pattern, $stringValue) === 1;
+    }
 }

@@ -28,14 +28,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
- * NieValidatorAction
+ * CatSalutCipValidatorAction
  *
- * Action that validates a NIE (Spanish foreigners ID)
+ * Action that validates a CIP from CatSalut (Catalan Health Service Personal Identification Code)
  */
-class NieValidatorAction extends ValidatorActionDefinition {
+class CatSalutCipValidatorAction extends ValidatorActionDefinition {
     public function __construct() {
         $this->isActive = true;
-        $this->baseLabel = 'LBL_NIE_VALIDATOR_ACTION';
+        $this->baseLabel = 'LBL_CATSALUT_CIP_VALIDATOR_ACTION';
         $this->supportedDataTypes = [ActionDataType::TEXT];
     }
 
@@ -51,44 +51,18 @@ class NieValidatorAction extends ValidatorActionDefinition {
     public function getValidationJS(): string {
         return <<<JS
         (value, params, formElement) => {
-            if (!value) return true; 
-            
-            value = value.toUpperCase().trim();
-
-            const isValidNIE = (nie) => {
-                const regex = /^[XYZ]\d{7,8}[A-Z]$/;
-                if (regex.test(nie) === true) {
-                    let number = nie.substr(0, nie.length - 1);
-                    number = number.replace("X", 0).replace("Y", 1).replace("Z", 2);
-                    const lett = nie.substr(nie.length - 1, 1);
-                    number = number % 23;
-                    const letter = "TRWAGMYFPDXBNJZSQVHLCKET";
-                    return letter.substring(number, number + 1) === lett;
-                }
-                return false;
-            };
-            
-            // Check NIE
-            return isValidNIE(value);
+            if (!value) return true;
+            const cip = value.toUpperCase().trim();
+            const regex = /^[A-Z]{4}\d{10}$/;
+            return regex.test(cip);
         }
 JS;
     }
 
     public function validateBackend(mixed $value, array $params): bool {
-        if (empty($value)) {
-            return true;
-        }
-
-        $nie = trim(strtoupper((string)$value));
-        if (preg_match('/^[XYZ]\d{7,8}[A-Z]$/', $nie) !== 1) {
-            return false;
-        }
-        $numberString = substr($nie, 0, -1);
-        $numberString = str_replace(['X', 'Y', 'Z'], ['0', '1', '2'], $numberString);
-        $lett = substr($nie, -1);
-        $mod = (int) $numberString % 23;
-        $letterMap = "TRWAGMYFPDXBNJZSQVHLCKET";
-
-        return $letterMap[$mod] === $lett;
+        if (empty($value)) return true;
+        
+        $cip = trim(strtoupper((string) $value));
+        return preg_match('/^[A-Z]{4}\d{10}$/', $cip) === 1;
     }
 }

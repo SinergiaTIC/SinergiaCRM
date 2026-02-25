@@ -59,4 +59,8 @@ class TrueValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        return in_array($value, [true, 'true', '1', 1, 'on'], true);
+    }
 }

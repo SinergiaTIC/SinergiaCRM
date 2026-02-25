@@ -63,6 +63,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $scalarFields = [];
             $emailValues = [];
             $skipRule = false;
+            $candidateIds = null;
 
             $foundBean = null;
             $tempBean = BeanFactory::newBean($module);

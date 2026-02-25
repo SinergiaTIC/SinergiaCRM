@@ -95,4 +95,37 @@ class AgeValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) {
+            return true;
+        }
+        try {
+            $birthDate = new \DateTime((string) $value);
+            $today = new \DateTime('today');
+            if ($birthDate > $today) {
+                return false;
+            }
+            $age = $today->diff($birthDate)->y;
+
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        // Validate minimum (if defined)
+        if (isset($params['min_years']) && $params['min_years'] !== '') {
+            if ($age < (int)$params['min_years']) {
+                return false;
+            }
+        }
+
+        // Validate maximum (if defined)
+        if (isset($params['max_years']) && $params['max_years'] !== '') {
+            if ($age > (int)$params['max_years']) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

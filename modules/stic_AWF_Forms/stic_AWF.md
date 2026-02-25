@@ -75,13 +75,14 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
   
   * **Campos no enlazados en bloques vinculados**: Dentro de un bloque de datos que sí va a generar un registro en el CRM (ej. "Inscripción"), es posible añadir campos "virtuales" o no vinculados. Son ideales para recabar información que solo tiene sentido en el contexto del envío (como casillas de consentimientos concretos para esa operación, valoraciones temporales o comentarios) y que formarán parte de la "Respuesta", pero no "ensuciarán" ni modificarán la ficha de la base de datos principal.
   
-  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. El sistema incluye un **amplio catálogo de validadores predefinidos**:
+  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. Para ofrecer la máxima fiabilidad y evitar que envíos manipulados omitan los controles, **todas las validaciones se ejecutan por partida doble**: de forma interactiva en el navegador (JavaScript) para una experiencia de usuario fluida, y de forma estricta en el servidor (PHP) antes de procesar y guardar la respuesta. El sistema incluye un **amplio catálogo de validadores predefinidos**:
     * Formato de Email.
-    * Documentos de identidad: DNI, NIE y CIF.
+    * Documentos de identidad y salud: DNI, NIE, CIF, NAF (Número de Afiliación a la Seguridad Social) y CIP (Código de Identificación Personal de CatSalut).
     * Datos bancarios y de contacto: IBAN y Teléfono (con validación de longitud para España o prefijos internacionales).
     * Ubicación: Código Postal (formato de España).
     * Límites y rangos: Comprobación de Edad (mínima y máxima a partir de una fecha de nacimiento) y límites numéricos (valor mínimo/máximo).
-    * Otros: Direcciones web (URL), casillas de marcación obligatoria (ideales para aceptar términos y condiciones), y validación libre mediante expresiones regulares (*Regex*).
+    * Otros: Direcciones web (URL), casillas de marcación obligatoria (indispensable para aceptar términos y condiciones), y validación libre mediante expresiones regulares (Regex).
+
 
   * **Condicionalidad de las validaciones**: Se pueden configurar reglas simples para que un validador solo se ejecute si otro campo del formulario contiene un valor específico (por ejemplo, validar el campo "número de identificación" como "NIE" solo si el campo "Tipo de identificación" es "nie", o si una casilla específica está marcada). También es posible personalizar el mensaje de error exacto que verá el usuario si la validación falla.
 

@@ -40,6 +40,7 @@ class ExecutionContext {
     public float $submissionTimestamp;
 
     public string $defaultAssignedUserId;
+    public ?string $visitorUserId = null;
 
     /**
      * Constructor for ExecutionContext.

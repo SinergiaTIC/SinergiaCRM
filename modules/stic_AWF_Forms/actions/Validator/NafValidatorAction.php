@@ -28,14 +28,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
- * NieValidatorAction
+ * NafValidatorAction
  *
- * Action that validates a NIE (Spanish foreigners ID)
+ * Action that validates a NAF, Número de Afiliado a la Seguridad Social (Spanish Social Security Affiliate Number)
  */
-class NieValidatorAction extends ValidatorActionDefinition {
+class NafValidatorAction extends ValidatorActionDefinition {
     public function __construct() {
         $this->isActive = true;
-        $this->baseLabel = 'LBL_NIE_VALIDATOR_ACTION';
+        $this->baseLabel = 'LBL_NAF_VALIDATOR_ACTION';
         $this->supportedDataTypes = [ActionDataType::TEXT];
     }
 
@@ -51,44 +51,31 @@ class NieValidatorAction extends ValidatorActionDefinition {
     public function getValidationJS(): string {
         return <<<JS
         (value, params, formElement) => {
-            if (!value) return true; 
-            
-            value = value.toUpperCase().trim();
+            if (!value) return true;
 
-            const isValidNIE = (nie) => {
-                const regex = /^[XYZ]\d{7,8}[A-Z]$/;
-                if (regex.test(nie) === true) {
-                    let number = nie.substr(0, nie.length - 1);
-                    number = number.replace("X", 0).replace("Y", 1).replace("Z", 2);
-                    const lett = nie.substr(nie.length - 1, 1);
-                    number = number % 23;
-                    const letter = "TRWAGMYFPDXBNJZSQVHLCKET";
-                    return letter.substring(number, number + 1) === lett;
-                }
-                return false;
-            };
+            const naf = value.replace(/[^0-9]/g, '');
+            if (naf.length !== 12) return false;
+
+            const numberPart = naf.substring(0, 10);
+            const controlDigit = naf.substring(10, 12);
+            const validControl = (BigInt(numberPart) % 97n).toString().padStart(2, '0');
             
-            // Check NIE
-            return isValidNIE(value);
+            return validControl === controlDigit;
         }
 JS;
     }
 
     public function validateBackend(mixed $value, array $params): bool {
-        if (empty($value)) {
-            return true;
-        }
+        if (empty($value)) return true;
 
-        $nie = trim(strtoupper((string)$value));
-        if (preg_match('/^[XYZ]\d{7,8}[A-Z]$/', $nie) !== 1) {
+        $naf = preg_replace('/[^0-9]/', '', (string) $value);
+        if (strlen($naf) !== 12) {
             return false;
         }
-        $numberString = substr($nie, 0, -1);
-        $numberString = str_replace(['X', 'Y', 'Z'], ['0', '1', '2'], $numberString);
-        $lett = substr($nie, -1);
-        $mod = (int) $numberString % 23;
-        $letterMap = "TRWAGMYFPDXBNJZSQVHLCKET";
+        $numberPart = substr($naf, 0, 10);
+        $controlDigit = substr($naf, 10, 2);
 
-        return $letterMap[$mod] === $lett;
+        $calculatedControl = str_pad((string) ((int)$numberPart % 97), 2, '0', STR_PAD_LEFT);
+        return $calculatedControl === $controlDigit;
     }
 }

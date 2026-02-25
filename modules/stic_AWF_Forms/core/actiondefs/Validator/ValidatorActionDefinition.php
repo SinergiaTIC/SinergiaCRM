@@ -63,8 +63,17 @@ abstract class ValidatorActionDefinition extends ActionDefinition
     abstract public function getValidationJS(): string;
 
     /**
+     * Executes the validation on the server side to prevent JS bypasses.
+     * @param mixed $value The submitted value
+     * @param array $params Action parameters
+     * @return bool True if valid, false otherwise
+     */
+    abstract public function validateBackend(mixed $value, array $params): bool;
+
+    /**
      * Returns the default error message of the validation
      * @return string Default error message 
      */
     abstract public function getDefaultErrorMessage(): string;
+    
 }   

@@ -42,10 +42,14 @@ class WebhookHandler
         // 2. Obtenir dades crues
         $rawData = $_POST; // O file_get_contents('php://input') depenent del proveïdor
 
+        // IEPA!!
+        // TODO: Revisar lògica i implementar!!
         // 3. Buscar el Ticket (Això és la part delicada, cada proveïdor envia l'ID diferent)
         // Caldria un "WebhookDiscovery" o que el propi Handler sàpiga extreure l'ID segons el 'source'.
         $externalId = $this->extractExternalId($source, $rawData);
         
+        // IEPA!!
+        // TODO: Revisar lògica i implementar!!
         $ticket = $this->findTicket($externalId);
         if (!$ticket) {
             http_response_code(404);

@@ -94,4 +94,46 @@ class CifValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) {
+            return true;
+        }
+        $cif = trim(strtoupper((string) $value));
+
+        $cifRegEx1 = '/^[ABEH][0-9]{8}$/';
+        $cifRegEx2 = '/^[KPQS][0-9]{7}[A-J]$/';
+        $cifRegEx3 = '/^[CDFGJLMNRUVW][0-9]{7}[0-9A-J]$/';
+
+        if (preg_match($cifRegEx1, $cif) || preg_match($cifRegEx2, $cif) || preg_match($cifRegEx3, $cif)) {
+            $control = $cif[strlen($cif) - 1];
+
+            $sum_A = 0;
+            $sum_B = 0;
+            for ($i = 1; $i < 8; $i++) {
+                if ($i % 2 === 0) {
+                    $sum_A += (int) $cif[$i];
+                } else {
+                    $t = (string) ((int) $cif[$i] * 2);
+                    $p = 0;
+                    for ($j = 0; $j < strlen($t); $j++) {
+                        $p += (int) $t[$j];
+                    }
+                    $sum_B += $p;
+                }
+            }
+            $sum_C = (string) ($sum_A + $sum_B);
+            $lastDigitOfC = (int) $sum_C[strlen($sum_C) - 1];
+            $sum_D = (10 - $lastDigitOfC) % 10;
+            $letters = "JABCDEFGHI";
+
+            if (is_numeric($control)) {
+                return (int) $control === $sum_D;
+            } else {
+                return strtoupper($control) === $letters[$sum_D];
+            }
+        }
+
+        return false;
+    }
 }

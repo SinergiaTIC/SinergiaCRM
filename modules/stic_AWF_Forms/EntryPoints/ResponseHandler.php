@@ -74,7 +74,7 @@ class ResponseHandler
         // Anti-Spam Detection 
         // 1- Honeypot: Hidden field that bots usually fill in
         if (!$isSpam) {
-            if (isset($cleanData['awf_honey_pot'])&& !empty($cleanData['awf_honey_pot'])) {
+            if (isset($cleanData['awf_honey_pot']) && $cleanData['awf_honey_pot'] !== '') {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Honeypot protection");
                 $isSpam = true;
                 $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_AWF_Responses');
@@ -238,6 +238,7 @@ class ResponseHandler
 
         // Execution Context
         $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
+        $context->visitorUserId = $realUserId;
 
         // Html Summary
         $htmlSummary = '';
@@ -466,11 +467,13 @@ class ResponseHandler
      */
     private function checkDuplicateSubmission(string $formId, string $hash): bool {
         global $db;
+        $safeFormId = $db->quote($formId);
+
         $query = "SELECT count(response.id) as count FROM stic_AWF_Responses response
                     INNER JOIN stic_awf_forms_stic_awf_responses_c form_response
                         ON form_response.stic_awf_forms_stic_awf_responsesresponses_idb = response.id
                   WHERE
-                    form_response.stic_awf_forms_stic_awf_responsesforms_ida = '{$formId}'
+                    form_response.stic_awf_forms_stic_awf_responsesforms_ida = '{$safeFormId}'
                     AND form_response.deleted = 0
                     AND response.response_hash = '{$hash}'
                     AND response.deleted = 0";
@@ -732,6 +735,29 @@ class ResponseHandler
                         }
                         break;
                 }
+
+                // BACKEND VALIDATION FOR CUSTOM VALIDATORS
+                if (!empty($formField->validations)) {
+                    foreach ($formField->validations as $valConfig) {
+                        // Check condition (if any)
+                        if (!empty($valConfig->condition_field) && isset($data[str_replace('.', '_', $valConfig->condition_field)])) {
+                            if ($data[str_replace('.', '_', $valConfig->condition_field)] != $valConfig->condition_value) {
+                                continue; // The condition is not met, skip this validation
+                            }
+                        }
+                        $validatorDef = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
+                        foreach ($validatorDef as $def) {
+                            if ($def->getName() === $valConfig->validator && $def instanceof ValidatorActionDefinition) {
+                                if (!$def->validateBackend($value, $valConfig->params)) {
+                                    $errorMsg = !empty($valConfig->message) ? $valConfig->message : $def->getDefaultErrorMessage();
+                                    $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': " . $errorMsg;
+                                    $errors['errors'][$inputKeyInForm] = $errorMsg;
+                                    break 2; // If a validation fails: stop processing that field.
+                                }
+                            }
+                        }
+                    }
+                }                
             }
         }
 

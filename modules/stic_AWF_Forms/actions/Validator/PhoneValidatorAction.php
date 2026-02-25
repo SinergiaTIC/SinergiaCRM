@@ -80,4 +80,16 @@ class PhoneValidatorAction extends ValidatorActionDefinition {
         }
 JS;
     }
+
+    public function validateBackend(mixed $value, array $params): bool {
+        if (empty($value)) {
+            return true;
+        }
+
+        $cleanNumber = preg_replace('/[^0-9]/', '', (string)$value);
+        if (strlen($cleanNumber) < 9) {
+            return false;
+        }
+        return true;
+    }
 }
