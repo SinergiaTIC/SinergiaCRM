@@ -31,13 +31,11 @@ El nuevo sistema de **Formularios Web Avanzados** ofrece una herramienta integra
 ### Próximamente ###
 * **Procesos diferidos y asíncronos**: El sistema está preparado para el futuro y la integración externa, permitiendo el tratamiento asíncrono de respuestas para evitar sobrecargas del servidor en picos de uso. Además, permite gestionar **"procesos diferidos"**, como la espera de confirmación de una pasarela de pago externa o la validación de una entrada mediante código QR.
 
-* **Archivos adjuntos**: Habilitará la opción de que los usuarios puedan subir y adjuntar documentos físicos directamente a través del formulario.
+* **Archivos adjuntos**: Habilitará la opción de que los usuarios puedan subir y adjuntar archivos o documentos digitales directamente a través del formulario.
 
 * **Grupos de bloques de datos repetibles**: Se incorpora el concepto de "Grupo", un contenedor que agrupa uno o más bloques de datos relacionados entre sí. Su característica principal es que puede definirse como "repetible", permitiendo que el conjunto de campos que contiene aparezca múltiples veces en un mismo formulario. Esta funcionalidad será ideal para simplificar operativas complejas, como recoger los datos de varios participantes a la vez en una única inscripción grupal.
 
 * **Mayor flexibilidad en diseño y maquetación**: Se ampliarán las opciones visuales para organizar la información de forma más dinámica, permitiendo agrupar campos mediante pestañas, dividir formularios extensos en múltiples páginas y añadir otros elementos interactivos.
-
-* **Nuevos tipos de editores para encuestas**: Se incorporarán nuevos formatos de campos especialmente pensados para recoger valoraciones y datos de encuestas, como controles de puntuación (estrellas, emojis...).
 
 
 ## Conceptos Clave ##
@@ -132,11 +130,13 @@ El sistema adapta el tipo de control visual en el formulario en función del tip
   * **◻️ Casilla de selección**: Un único *Checkbox* simple (ideal para booleanos o aceptaciones de términos).
   * **🎚️ Interruptor**: Un control visual estilo "Switch" (encendido/apagado para booleanos).
 
-* **🏅 Valoración (Próximamente)**: Controles visuales pensados para encuestas y recolección de *feedback*.
-  * **⭐ Estrellas**: Valoración por número de estrellas.
-  * **🙂 Caras**: Valoración a través de Emojis interactivos.
-  * **🔟 Escala 0-10 (NPS)**: Barra estándar de escala Net Promoter Score.
-  
+* **🏅 Valoración (Solo en campos no enlazados)**: Controles visuales pensados para encuestas y recolección de *feedback*. Exclusivos de los campos no enlazados, guardan internamente su valor como un número entero.
+    *   **⭐ Estrellas**: Valoración clásica del 1 al 5.
+    *   **🙂 Caras**: Valoración del 1 al 5 a través de Emojis.
+    *   **🚦 Semáforo**: Valoración rápida de 3 niveles (rojo, amarillo, verde).
+    *   **👍 Pulgares**: Valoración binaria de aprobación o rechazo (arriba/abajo).
+    *   **🔟 Escala 0-10 (NPS)**: Barra estándar de escala *Net Promoter Score*.
+
 * **🕵️ Oculto**: El campo no se muestra gráficamente en el formulario, pero su valor se almacena y acompaña silenciosamente a la respuesta enviada.
 
 ##### Detección de duplicados ##### 
@@ -191,6 +191,8 @@ Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a
 * **Enviar notificación por correo**: Envía un email personalizado a partir de una plantilla del CRM, permitiendo procesarla con los datos del bloque.
 
 * **Enviar notificación al usuario asignado**: Permite enviar un email de aviso (usando una plantilla del CRM) al trabajador o usuario interno responsable del registro que se acaba de crear o actualizar o de cualquier otro referenciado (por ejemplo, el evento de la inscripción).
+  
+  * **Variable mágica para plantillas de correo (`{::form_summary::}`)**: En las plantillas de email utilizadas por estas acciones, se puede incluir la etiqueta especial `{::form_summary::}` dentro del cuerpo del mensaje. Al procesar el envío, el sistema detectará y sustituirá automáticamente esta variable por un resumen completo y formateado (en HTML o texto plano) que contiene todos los campos y datos introducidos por el usuario en el formulario. Resulta ideal para automatizar correos de confirmación o resguardos de inscripción.
 
 * **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
 
@@ -279,7 +281,7 @@ A diferencia de sistemas anteriores, los Formularios Web Avanzados ofrecen una a
   
   * **Datos y ejecución**: Muestra un resumen con la respuesta original recibida debidamente formateada de forma legible, así como el registro de ejecución de las acciones y los mensajes de error en caso de que el procesado haya fallado.
 
-* **Detalles de respuestas**: Cada respuesta cuenta con un listado estructurado de "detalles". Este componente guarda las respuestas de forma desglosada y está pensado específicamente para facilitar el análisis estadístico y la extracción de métricas, siendo la pieza fundamental para aquellos formularios orientados a encuestas o estudios.
+* **Detalles de respuestas**: Cada respuesta cuenta con un listado estructurado de "detalles". Este componente guarda las respuestas de forma desglosada y está pensado específicamente para facilitar el análisis estadístico y la extracción de métricas. Además, para facilitar los informes y la comparativa de datos cruzados, los campos de valoración para encuestas (estrellas, emojis, NPS, etc.) normalizan su puntuación de forma automática y la guardan unificada en una escala del 0 al 100 en el campo *"Valor entero de la respuesta"*.
 
 * **Vínculos (Trazabilidad en el CRM)**: Es el módulo encargado de documentar de forma granular qué impacto exacto ha tenido una respuesta dentro de la base de datos. Cada respuesta tiene uno o varios "Vínculos" asociados. Un vínculo informa de manera precisa sobre:
 
