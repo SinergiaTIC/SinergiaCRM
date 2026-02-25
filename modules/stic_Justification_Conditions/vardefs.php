@@ -25,19 +25,6 @@ $dictionary['stic_Justification_Conditions'] = array(
     'table' => 'stic_justification_conditions',
     'audited' => true,
     'fields' => array(
-        'id' => array(
-            'name' => 'id',
-            'type' => 'id',
-        ),
-        'name' => array(
-            'name' => 'name',
-            'type' => 'name',
-            'dbType' => 'varchar',
-            'len' => 255,
-            'unified_search' => true,
-            'required' => false,
-            'vname' => 'LBL_NAME',
-        ),
         'active' => array(
             'name' => 'active',
             'type' => 'bool',
@@ -254,10 +241,9 @@ $dictionary['stic_Justification_Conditions'] = array(
         //     'join_key_rhs' => 'opportunita6e5ditions_idb',
         // ),
     ),
-    'indices' => array(
-        array('name' => 'idx_stic_justification_conditions_pk', 'type' => 'primary', 'fields' => array('id')),
-        array('name' => 'idx_stic_justification_conditions_name', 'type' => 'index', 'fields' => array('name')),
-    ),
+    'optimistic_locking' => 1,
+    'unified_search' => true,
+    'unified_search_default_enabled' => true,
 );
 
 if (!class_exists('VardefManager')) {

@@ -25,19 +25,6 @@ $dictionary['stic_Justifications'] = array(
     'table' => 'stic_justifications',
     'audited' => true,
     'fields' => array(
-        'id' => array(
-            'name' => 'id',
-            'type' => 'id',
-        ),
-        'name' => array(
-            'name' => 'name',
-            'type' => 'name',
-            'dbType' => 'varchar',
-            'len' => 255,
-            'unified_search' => true,
-            'required' => false,
-            'vname' => 'LBL_NAME',
-        ),
         'status' => array(
             'name' => 'status',
             'type' => 'enum',
@@ -286,10 +273,9 @@ $dictionary['stic_Justifications'] = array(
     ),
     'relationships' => array(
     ),
-    'indices' => array(
-        array('name' => 'idx_stic_justifications_pk', 'type' => 'primary', 'fields' => array('id')),
-        array('name' => 'idx_stic_justifications_name', 'type' => 'index', 'fields' => array('name')),
-    ),
+    'optimistic_locking' => 1,
+    'unified_search' => true,
+    'unified_search_default_enabled' => true,
 );
 
 if (!class_exists('VardefManager')) {
