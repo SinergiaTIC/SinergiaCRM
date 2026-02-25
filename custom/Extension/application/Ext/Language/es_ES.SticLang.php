@@ -180,8 +180,8 @@ $app_list_strings['moduleList']['stic_AWF_Response_Details'] = 'Detalles de resp
 $app_list_strings['moduleList']['stic_AWF_Responses'] = 'Respuestas a formularios';
 $app_list_strings['moduleList']['stic_AWF_Links'] = 'Vínculos de formularios';
 $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularios Web Avanzados';
-$app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de Formularios';
-$app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificaciones externas de Formularios';
+$app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
+$app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificaciones externas de formularios';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -3911,17 +3911,17 @@ $app_list_strings['stic_awf_forms_field_type_field_list']['hidden'] = 'Valor fij
 // Advanced Web Forms Response Details: answer_form_type
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['text'] = '➖ Texto';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['textarea'] = '☰ Texto largo';
-$app_list_strings['stic_awf_forms_field_type_in_form_list']['number'] = '#️⃣ Numérico';
-$app_list_strings['stic_awf_forms_field_type_in_form_list']['date'] = '🗓️ Selección de tiempo';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['number'] = '#️⃣ Numérica';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['date'] = '🗓️ Temporal';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['select'] = '▼ Opciones predeterminadas';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['rating'] = '🏅 Valoración';
-$app_list_strings['stic_awf_forms_field_type_in_form_list']['hidden'] = '🕵️ Oculto';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['hidden'] = '🕵️ Oculta';
 
 // Advanced Web Forms: configuration->data_block->field->subtype_in_form
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text'] = '🔤 Texto simple';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_email'] = '✉️ Correo electrónico';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_tel'] = '📞 Teléfono';
-$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_url'] = '🔗 Dirección URL';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_url'] = '🔗 Enlace';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_password'] = '🔒 Contraseña';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['textarea'] = '📃 Párrafo';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['number'] = '🔢 Numérico';
@@ -3964,7 +3964,7 @@ $app_list_strings['stic_awf_forms_layout_theme_input_style_list']['flat'] = 'Pla
 $app_list_strings['stic_awf_forms_layout_theme_input_style_list']['filled'] = 'Relleno (material)';
 
 // Advanced Web Forms: configuration->layout->theme->form_width
-$app_list_strings['stic_awf_forms_layout_theme_form_width_list']['100%'] = 'Total (100%)';
+$app_list_strings['stic_awf_forms_layout_theme_form_width_list']['100%'] = 'Completo (100%)';
 $app_list_strings['stic_awf_forms_layout_theme_form_width_list']['1200px'] = 'Muy ancho (1200px)';
 $app_list_strings['stic_awf_forms_layout_theme_form_width_list']['800px'] = 'Estándar (800px)';
 $app_list_strings['stic_awf_forms_layout_theme_form_width_list']['600px'] = 'Estrecho / Móvil (600px)';
@@ -3975,7 +3975,7 @@ $app_list_strings['stic_awf_forms_layout_theme_field_spacing_list']['0.5rem'] = 
 $app_list_strings['stic_awf_forms_layout_theme_field_spacing_list']['1rem'] = 'Normal';
 $app_list_strings['stic_awf_forms_layout_theme_field_spacing_list']['1.5rem'] = 'Espacioso';
 
-// Advanced Web Forms: ActionDefinition->category (categories for Advanced Web Forms actions)
+// Advanced Web Forms: ActionDefinition->category
 $app_list_strings['stic_awf_forms_action_definition_category_list']['security'] = '🔒 Seguridad';
 $app_list_strings['stic_awf_forms_action_definition_category_list']['data'] = '📦 Datos';
 $app_list_strings['stic_awf_forms_action_definition_category_list']['communication'] = '💬 Comunicación';
@@ -3984,7 +3984,7 @@ $app_list_strings['stic_awf_forms_action_definition_category_list']['integration
 $app_list_strings['stic_awf_forms_action_definition_category_list']['files'] = '📁 Ficheros';
 $app_list_strings['stic_awf_forms_action_definition_category_list']['validation'] = '🛡️ Validación';
 
-// Advanced Web Forms: Relative dates for action parameters and field values in Advanced Web Forms
+// Advanced Web Forms: Relative dates
 $app_list_strings['stic_awf_forms_date_relative_list']['today'] = 'Hoy (fecha actual)';
 $app_list_strings['stic_awf_forms_date_relative_list']['now'] = 'Ahora (fecha y hora actuales)';
 $app_list_strings['stic_awf_forms_date_relative_list']['+1_day'] = 'Dentro de un día';
@@ -4003,7 +4003,7 @@ $app_list_strings['stic_awf_responses_status_list']['rejected'] = 'Rechazada';
 $app_list_strings['stic_awf_responses_status_list']['spam'] = 'No deseada';
 $app_list_strings['stic_awf_responses_status_list']['error'] = 'Error';
 
-// Advanced Web Forms Links: record_action (action taken with a record due to a response)
+// Advanced Web Forms Links: record_action
 $app_list_strings['stic_awf_links_record_action_list']['created'] = 'Creado';
 $app_list_strings['stic_awf_links_record_action_list']['updated'] = 'Actualizado';
 $app_list_strings['stic_awf_links_record_action_list']['enriched'] = 'Ampliado';
