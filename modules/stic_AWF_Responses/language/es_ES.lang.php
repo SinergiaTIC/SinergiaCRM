@@ -85,7 +85,7 @@ $mod_strings = array (
   'LBL_FORM_URL' => 'URL del formulario',
   'LBL_USER_AGENT' => 'Navegador y sistema operativo',
   'LBL_REMOTE_IP' => 'Dirección IP',
-  'LBL_RAW_PAYLOAD' => 'Respuesta recibida',
+  'LBL_RAW_PAYLOAD' => 'Respuesta json (no visible)',
   'LBL_RESPONSE_HASH' => 'Hash de la respuesta',
   'LBL_HTML_SUMMARY' => 'Respuesta',
   'LBL_STATUS' => 'Estado',
@@ -112,22 +112,22 @@ $mod_strings = array (
   'LBL_BUTTON_GO_BACK_AND_FIX' => 'Volver a editar el formulario',
 
   // Internal processing errors
-  'LBL_RESPONSE_NO_PUBLIC_STATUS' => 'Respuesta recibida con el formulario sin publicar',
-  'LBL_RESPONSE_HONEYPOT_SPAM' => 'Respuesta no deseada: se ha rellenado el campo trampa oculto',
-  'LBL_RESPONSE_TIMETRAP_SPAM' => 'Respuesta no deseada: se ha rellenado el formulario demasiado rápido',
-  'LBL_RESPONSE_USERAGENT_SPAM' => 'Respuesta no deseada: se ha enviado el formulario desde una herramienta de programación',
+  'LBL_RESPONSE_NO_PUBLIC_STATUS' => 'Respuesta recibida con el formulario sin publicar.',
+  'LBL_RESPONSE_HONEYPOT_SPAM' => 'Respuesta no deseada: se ha rellenado el campo trampa oculto.',
+  'LBL_RESPONSE_TIMETRAP_SPAM' => 'Respuesta no deseada: se ha rellenado el formulario demasiado rápido.',
+  'LBL_RESPONSE_USERAGENT_SPAM' => 'Respuesta no deseada: el formulario ha sido enviado por una aplicación.',
   'LBL_ERROR_FORM_CONFIG' => 'Error en la configuración del formulario',
   'LBL_ERROR_GENERATING_HTML_SUMMARY' => 'Error generando resumen de la respuesta en formato tabla',
 
   // User-facing validation errors
-  'LBL_ERROR_REQUIRED_FIELD' => 'Es un campo obligatorio',
-  'LBL_ERROR_INTEGER_FIELD' => 'El valor debe ser un número entero',
-  'LBL_ERROR_NUMERIC_FIELD' => 'El valor debe ser numérico',
-  'LBL_ERROR_DATE_FIELD' => 'El valor debe ser una fecha válida',
-  'LBL_ERROR_BOOL_FIELD' => 'El valor debe ser verdadero o falso',
-  'LBL_ERROR_ENUM_FIELD' => 'Opción no válida para el desplegable',
-  'LBL_ERROR_EMAIL_FIELD' => 'El valor debe ser una dirección de correo válida',
-  'LBL_ERROR_VALUE_FIELD' => 'El valor no es válido para el campo',
+  'LBL_ERROR_REQUIRED_FIELD' => 'Es un campo obligatorio.',
+  'LBL_ERROR_INTEGER_FIELD' => 'El valor debe ser un número entero.',
+  'LBL_ERROR_NUMERIC_FIELD' => 'El valor debe ser numérico.',
+  'LBL_ERROR_DATE_FIELD' => 'El valor debe ser una fecha válida.',
+  'LBL_ERROR_BOOL_FIELD' => 'El valor debe ser verdadero o falso.',
+  'LBL_ERROR_ENUM_FIELD' => 'Opción no válida para el desplegable.',
+  'LBL_ERROR_EMAIL_FIELD' => 'El valor debe ser una dirección de correo válida.',
+  'LBL_ERROR_VALUE_FIELD' => 'El valor no es válido para el campo.',
   
   // Subpanels
   'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Links_TITLE' => 'Vínculos de la respuesta al formulario',
