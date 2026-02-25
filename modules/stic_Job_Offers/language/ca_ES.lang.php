@@ -167,8 +167,8 @@ $mod_strings = array(
     'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE' => 'Projecte',
     // Calculated Fields for Job Applications
     'LBL_PANEL_STIC_JOB_APPLICATIONS_COUNT' => 'Candidatures',
-    'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL' => 'Candidatures totals',
-    'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION' => 'Previstes presentació',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL' => 'Totals',
+    'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION' => 'Previstes',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_PRESENTED' => 'Presentades',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_PENDING_INTERVIEW' => 'Pendents entrevista',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_INTERVIEWED' => 'Entrevistades',
@@ -176,8 +176,8 @@ $mod_strings = array(
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED' => 'Rebutjades o tancades',
     'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW' => 'En revisió',
     'LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT' => "L'oferta {0} tanca avui",
-    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => "La data de tancament de l'oferta {0} és avui i el seu estat no és Tancada. Revisa l'oferta aquí: {1}",
+    'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY' => "La data de tancament de l'oferta {0} és avui i el seu estat no és 'Tancada'. Podeu revisar-la a: {1}",
     'LBL_NOTIFICATION_TEMPLATE' => 'Plantilla de notificació',
     'LBL_NOTIFICATION_TEMPLATE_EMAILTEMPLATE_ID' => 'Plantilla de notificació (ID)',
-    'LBL_NOTIFICATION_TEMPLATE_INFO' => 'Plantilla de correu que s\'utilitzarà per enviar notificacions respecte als canvis d\'estat relacionats amb aquesta oferta laboral. Si no se selecciona cap plantilla, s\'utilitzarà la plantilla per defecte de SinergiaCRM per a les notificacions d\'ofertes laborals.',
+    'LBL_NOTIFICATION_TEMPLATE_INFO' => "Plantilla de correu que es farà servir per enviar notificacions dels canvis d'estat relacionats amb aquesta oferta laboral. Si no se'n selecciona cap, es farà servir la plantilla per defecte.",
 );
