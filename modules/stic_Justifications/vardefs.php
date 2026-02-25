@@ -282,3 +282,8 @@ if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('stic_Justifications', 'stic_Justifications', array('basic', 'assignable', 'security_groups'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Justifications']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Justifications']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Justifications']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
