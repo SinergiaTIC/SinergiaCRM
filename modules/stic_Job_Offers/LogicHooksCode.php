@@ -65,6 +65,7 @@ class stic_Job_OffersLogicHooks
 
         require_once 'modules/stic_Job_Offers/Utils.php';
         stic_Job_OffersUtils::notifyClosingDateIfNeeded($bean);
+        stic_Job_OffersUtils::notifyStatusChange($bean);
     }
 
     /**
