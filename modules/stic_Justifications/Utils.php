@@ -336,7 +336,7 @@ class stic_JustificationsUtils {
         }
         $sql = "
             SELECT group_concat(project_opportunities_1opportunities_idb separator \"','\") as opportunitiesList
-            FROM projects_opportunities_1_c po 
+            FROM project_opportunities_1_c po 
             WHERE project_opportunities_1project_ida = " . $db->quoted($projectId) . " 
             AND deleted = 0
             GROUP BY project_opportunities_1project_ida 
