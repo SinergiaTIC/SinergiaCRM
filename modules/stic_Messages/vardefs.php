@@ -288,7 +288,7 @@ $dictionary['stic_Messages'] = array(
             'link' => 'stic_conversations_stic_messages',
             'table' => 'stic_conversations',
             'module' => 'stic_Conversations',
-            'rname' => 'subject',
+            'rname' => 'name',
             'required' => false,
         ),
         'stic_conversations_ida' => array (
