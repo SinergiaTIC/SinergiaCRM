@@ -29,7 +29,9 @@ El nuevo sistema de **Formularios Web Avanzados** ofrece una herramienta integra
 * **Lógica y automatismos fácilmente ampliables**: A través de las **"Acciones"**, se puede configurar la lógica del formulario de forma visual. Este sistema de acciones está totalmente desacoplado del "core" del CRM, lo que hace que sean fácilmente ampliables y favorece el desarrollo a medida de nuevas integraciones según crezcan las necesidades de la entidad.
 
 ### Próximamente ###
-* **Procesos diferidos y asíncronos**: El sistema está preparado para el futuro y la integración externa, permitiendo el tratamiento asíncrono de respuestas para evitar sobrecargas del servidor en picos de uso. Además, permite gestionar **"procesos diferidos"**, como la espera de confirmación de una pasarela de pago externa o la validación de una entrada mediante código QR.
+* **Procesamiento asíncrono**: El sistema está preparado para permitir el tratamiento asíncrono de respuestas. Esto permitirá guardar las respuestas temporalmente y procesarlas en segundo plano, ideal para evitar sobrecargas del servidor en formularios con picos de uso muy altos.
+
+* **Procesos diferidos**: De forma totalmente independiente al procesamiento, el sistema permitirá gestionar acciones en espera de eventos externos, como la espera de confirmación de una pasarela de pago (TPV) o la validación de una entrada mediante código QR.
 
 * **Archivos adjuntos**: Habilitará la opción de que los usuarios puedan subir y adjuntar archivos o documentos digitales directamente a través del formulario.
 
@@ -59,7 +61,7 @@ Aquí se decidirá qué información se quiere pedir a los usuarios. La selecci�
 
 * **Bloques de datos (enlazados)**: Son unidades de información que están conectadas directamente a un módulo específico del CRM (por ejemplo, "Personas", "Inscripciones" u "Organizaciones"). El propósito de estos bloques es que los datos recopilados sirvan para **crear o actualizar un registro real** dentro del sistema. Al estar enlazados a un módulo, permiten definir validaciones propias del CRM, configurar reglas para la detección y gestión de duplicados, y establecer valores fijos u ocultos.
 
-* **Bloques de datos no enlazados**: Son contenedores de campos diseñados para recopilar información en el formulario, pero que **no están vinculados a ningún módulo del CRM**. Como consecuencia, los datos introducidos en este tipo de bloques quedarán guardados de forma independiente y exclusiva dentro del registro global de la "Respuesta". Son ideales para realizar encuestas, recopilar información temporal, hacer valoraciones o incluir casillas de aceptación de condiciones.
+* **Bloques de datos no enlazados**: Son contenedores diseñados para recopilar información en el formulario, pero que **no están vinculados a ningún módulo del CRM**. Como consecuencia, los datos introducidos quedarán guardados de forma independiente y exclusiva dentro del registro global de la "Respuesta". A diferencia de los bloques enlazados (que permiten mezclar campos del CRM con campos virtuales), **un bloque no enlazado solo puede contener campos no enlazados**. Son ideales para realizar encuestas, recopilar información temporal, hacer valoraciones o incluir casillas de aceptación de condiciones.
 
 #### Secciones de los Bloques de datos ####
 En el asistente, los bloques de datos están definidos en distintas secciones. Estas secciones pueden ser distintas según el tipo de bloque (enlazado o no enlazado).
@@ -73,7 +75,11 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
 
   * **Textos de ayuda y Enlaces**: Cada campo permite añadir un texto de ayuda o descripción para guiar al usuario. Además, el asistente incluye una herramienta específica para insertar fácilmente enlaces a páginas externas (ideales para acompañar a las casillas de aceptación de Políticas de Privacidad o Condiciones de Uso).
   
-  * **Campos no enlazados en bloques vinculados**: Dentro de un bloque de datos que sí va a generar un registro en el CRM (ej. "Inscripción"), es posible añadir campos "virtuales" o no vinculados. Son ideales para recabar información que solo tiene sentido en el contexto del envío (como casillas de consentimientos concretos para esa operación, valoraciones temporales o comentarios) y que formarán parte de la "Respuesta", pero no "ensuciarán" ni modificarán la ficha de la base de datos principal.
+  * **Campos no enlazados (virtuales)**: Son campos que no alteran la base de datos principal, sino que su valor vive exclusivamente en el registro de la "Respuesta" enviada. Existen en dos contextos:
+    1. **Dentro de un Bloque no enlazado**: Donde, por la naturaleza del bloque, todos los campos creados son obligatoriamente de este tipo.
+
+    2. **Dentro de un Bloque enlazado**: Convivirán junto a los campos normales del CRM. Posibles usos: Son ideales para recabar información que solo tiene sentido en el contexto del envío (como una casilla de "Acepto las condiciones", comentarios adicionales o valoraciones temporales) evitando que estos datos "ensucien" la ficha de la Persona o Inscripción en el CRM.
+
   
   * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. Para ofrecer la máxima fiabilidad y evitar que envíos manipulados omitan los controles, **todas las validaciones se ejecutan por partida doble**: de forma interactiva en el navegador (JavaScript) para una experiencia de usuario fluida, y de forma estricta en el servidor (PHP) antes de procesar y guardar la respuesta. El sistema incluye un **amplio catálogo de validadores predefinidos**:
     * Formato de Email.
