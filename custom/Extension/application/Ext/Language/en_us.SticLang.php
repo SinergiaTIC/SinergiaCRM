@@ -3886,8 +3886,9 @@ $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transfer';
 
 // Conversations: Types
-$app_list_strings['stic_conversations_types_list']['technical_support'] = 'Technical support';
-$app_list_strings['stic_conversations_types_list']['general_information'] = 'General information';
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Type 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Type 2';
 
 // SuiteCRM Core modifications
 
