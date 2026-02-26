@@ -64,4 +64,5 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos xerais',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
   'LBL_STIC_MESSAGES_SUBPANEL_TITLE' => 'Mensajes',
+  'LBL_CONTACT_NAME' => 'Persona',
 );

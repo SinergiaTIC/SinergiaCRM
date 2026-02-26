@@ -98,11 +98,20 @@ array (
         array (
           0 => 
           array (
+            'name' => 'contact_name',
+            'label' => 'LBL_CONTACT_NAME',
+          ),
+          1 => '',
+        ),
+        3 => 
+        array (
+          0 => 
+          array (
             'name' => 'subject',
             'label' => 'LBL_SUBJECT',
           ),
         ),
-        3 => 
+        4 => 
         array (
           0 => 'description',
         ),

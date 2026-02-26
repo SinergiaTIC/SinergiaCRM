@@ -48,6 +48,10 @@ $dashletData['stic_ConversationsDashlet']['searchFields'] = array (
   array (
     'default' => '',
   ),
+  'contact_name' => 
+  array (
+    'default' => '',
+  ),
   'created_by_name' => 
   array (
     'default' => '',
@@ -98,6 +102,15 @@ $dashletData['stic_ConversationsDashlet']['columns'] = array (
     'width' => '10%',
     'default' => true,
     'name' => 'type',
+  ),
+  'contact_name' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_CONTACT_NAME',
+    'id' => 'CONTACTS_IDA',
+    'width' => '10%',
+    'default' => true,
   ),
   'assigned_user_name' => 
   array (

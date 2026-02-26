@@ -251,3 +251,6 @@ $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_
 $mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'Àrea Privada";
+
+// Converses
+$mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Converses';

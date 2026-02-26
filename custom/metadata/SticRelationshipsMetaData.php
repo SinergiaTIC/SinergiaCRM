@@ -8012,3 +8012,34 @@ $dictionary["stic_conversations_stic_messages"] = array (
       ),
     ),
 );
+
+$dictionary["contacts_stic_conversations"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array (
+        'contacts_stic_conversations' => array (
+            'lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Conversations',
+            'rhs_table' => 'stic_conversations',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'contacts_stic_conversations_c',
+            'join_key_lhs' => 'contacts_ida',
+            'join_key_rhs' => 'stic_conversations_idb',
+        ),
+    ),
+    'table' => 'contacts_stic_conversations_c',
+    'fields' => array (
+        array ('name' => 'id', 'type' => 'varchar', 'len' => 36),
+        array ('name' => 'date_modified', 'type' => 'datetime'),
+        array ('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => true),
+        array ('name' => 'contacts_ida', 'type' => 'varchar', 'len' => 36),
+        array ('name' => 'stic_conversations_idb', 'type' => 'varchar', 'len' => 36),
+    ),
+    'indices' => array (
+        array ('name' => 'contacts_stic_conversationsspk', 'type' => 'primary', 'fields' => array ('id')),
+        array ('name' => 'contacts_stic_conversations_ida1', 'type' => 'index', 'fields' => array ('contacts_ida')),
+        array ('name' => 'contacts_stic_conversations_alt', 'type' => 'alternate_key', 'fields' => array ('stic_conversations_idb')),
+    ),
+);

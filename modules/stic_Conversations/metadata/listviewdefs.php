@@ -57,6 +57,15 @@ array (
     'width' => '10%',
     'default' => true,
   ),
+  'CONTACT_NAME' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_CONTACT_NAME',
+    'id' => 'CONTACTS_IDA',
+    'width' => '10%',
+    'default' => true,
+  ),
   'ASSIGNED_USER_NAME' => 
   array (
     'width' => '9%',

@@ -63,6 +63,16 @@ array (
         'default' => true,
         'name' => 'type',
       ),
+      'contact_name' => 
+      array (
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_CONTACT_NAME',
+        'id' => 'CONTACTS_IDA',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'contact_name',
+      ),
       'assigned_user_id' => 
       array (
         'name' => 'assigned_user_id',
@@ -87,6 +97,13 @@ array (
         'default' => true,
         'width' => '10%',
       ),
+      'favorites_only' => array(
+        'name' => 'favorites_only',
+        'label' => 'LBL_FAVORITES_FILTER',
+        'type' => 'bool',
+        'default' => true,
+        'width' => '10%',
+    ),
     ),
     'advanced_search' => 
     array (
@@ -120,6 +137,16 @@ array (
         'width' => '10%',
         'default' => true,
         'name' => 'type',
+      ),
+      'contact_name' => 
+      array (
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_CONTACT_NAME',
+        'width' => '10%',
+        'default' => true,
+        'id' => 'CONTACTS_IDA',
+        'name' => 'contact_name',
       ),
       'description' => 
       array (
@@ -201,6 +228,13 @@ array (
         'width' => '10%',
         'name' => 'current_user_only',
       ),
+      'favorites_only' => array(
+        'name' => 'favorites_only',
+        'label' => 'LBL_FAVORITES_FILTER',
+        'type' => 'bool',
+        'default' => true,
+        'width' => '10%',
+    ),
     ),
   ),
   'templateMeta' => 

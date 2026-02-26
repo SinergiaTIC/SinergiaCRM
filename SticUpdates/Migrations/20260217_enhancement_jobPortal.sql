@@ -64,3 +64,15 @@ CREATE TABLE IF NOT EXISTS `stic_conversations_stic_messages_c` (
   KEY `stic_conversations_stic_messages_ida1` (`stic_conversations_ida`),
   KEY `stic_conversations_stic_messages_alt` (`stic_messages_idb`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Create relationship table for Contacts-Conversations
+CREATE TABLE IF NOT EXISTS `contacts_stic_conversations_c` (
+  `id` varchar(36) NOT NULL,
+  `date_modified` datetime DEFAULT NULL,
+  `deleted` tinyint(1) DEFAULT '0',
+  `contacts_ida` varchar(36) DEFAULT NULL,
+  `stic_conversations_idb` varchar(36) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `contacts_stic_conversations_ida1` (`contacts_ida`),
+  KEY `contacts_stic_conversations_alt` (`stic_conversations_idb`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

@@ -36,6 +36,7 @@ $popupMeta = array(
         'subject' => 'stic_conversations.subject',
         'type' => 'stic_conversations.type',
         'assigned_user_id' => 'stic_conversations.assigned_user_id',
+        'contact_name' => 'stic_conversations.contact_name',
     ),
     'searchInputs' => array(
         1 => 'name',
@@ -43,6 +44,7 @@ $popupMeta = array(
         5 => 'subject',
         6 => 'type',
         7 => 'assigned_user_id',
+        8 => 'contact_name',
     ),
     'searchdefs' => array(
         'code' =>
@@ -71,6 +73,15 @@ $popupMeta = array(
             'label' => 'LBL_TYPE',
             'width' => '10%',
             'name' => 'type',
+        ),
+        'contact_name' => 
+        array (
+            'type' => 'relate',
+            'link' => true,
+            'label' => 'LBL_CONTACT_NAME',
+            'id' => 'CONTACTS_IDA',
+            'width' => '10%',
+            'name' => 'contact_name',
         ),
         'assigned_user_id' =>
         array(
@@ -121,6 +132,15 @@ $popupMeta = array(
             'width' => '10%',
             'default' => true,
             'name' => 'type',
+        ),
+        'CONTACT_NAME' => 
+        array (
+            'type' => 'relate',
+            'link' => true,
+            'label' => 'LBL_CONTACT_NAME',
+            'id' => 'CONTACTS_IDA',
+            'width' => '10%',
+            'default' => true,
         ),
         'ASSIGNED_USER_NAME' =>
         array(
