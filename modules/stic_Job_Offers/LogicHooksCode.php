@@ -51,7 +51,7 @@ class stic_Job_OffersLogicHooks
     }
 
     /**
-     * Notify assigned user when applications_end_date is today and offer is not closed.
+     * Notify assigned user when applications_end_date was yesterday and offer is not closed
      *
      * @param SugarBean $bean The stic_Job_Offers bean
      * @param string $event The hook event
@@ -93,7 +93,7 @@ class stic_Job_OffersLogicHooks
     }
 
     /**
-     * Trigger counts update for Job Applications relationship.
+     * Trigger counts update for Job Applications relationship
      *
      * @param SugarBean $bean
      * @param array $arguments

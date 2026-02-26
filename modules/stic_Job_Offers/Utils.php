@@ -106,7 +106,7 @@ class stic_Job_OffersUtils
     }
 
     /**
-     * Notify assigned user when applications_end_date is today and offer is not closed
+     * Notify assigned user when applications_end_date was yesterday and offer is not closed
      *
      * @param SugarBean $bean
      * @return void
@@ -120,6 +120,7 @@ class stic_Job_OffersUtils
         }
 
         $today = $timedate ? $timedate->nowDbDate() : date('Y-m-d');
+        $yesterday = date('Y-m-d', strtotime($today . ' -1 day'));
         $endDate = !empty($bean->applications_end_date)
             ? date('Y-m-d', strtotime($bean->applications_end_date))
             : null;
@@ -134,7 +135,7 @@ class stic_Job_OffersUtils
             'closed',
         );
 
-        if ($endDate !== $today || in_array($bean->status, $closedStatuses, true)) {
+        if ($endDate !== $yesterday || in_array($bean->status, $closedStatuses, true)) {
             return;
         }
 
@@ -142,9 +143,9 @@ class stic_Job_OffersUtils
             ? date('Y-m-d', strtotime($bean->fetched_row['applications_end_date']))
             : null;
         $prevStatus = $bean->fetched_row['status'] ?? null;
-        $wasOpenToday = ($prevEndDate === $today) && !in_array($prevStatus, $closedStatuses, true);
+        $wasOpenYesterday = ($prevEndDate === $yesterday) && !in_array($prevStatus, $closedStatuses, true);
 
-        if ($wasOpenToday) {
+        if ($wasOpenYesterday) {
             return;
         }
 
@@ -193,12 +194,12 @@ class stic_Job_OffersUtils
 
         $subjectTemplate = translate('LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT', 'stic_Job_Offers');
         if ($subjectTemplate === 'LBL_JOB_OFFER_CLOSE_DATE_TODAY_SUBJECT') {
-            $subjectTemplate = 'The offer {0} closes today';
+            $subjectTemplate = 'The offer "{0}" closed yesterday';
         }
 
         $bodyTemplate = translate('LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY', 'stic_Job_Offers');
         if ($bodyTemplate === 'LBL_JOB_OFFER_CLOSE_DATE_TODAY_BODY') {
-            $bodyTemplate = 'The offer {0} closes today. Please review the offer details: {1}';
+            $bodyTemplate = 'The closing date of offer "{0}" was yesterday and its status is not Closed. Review the offer at: {1}';
         }
 
         $url = rtrim($sugar_config['site_url'], '/') . "/index.php?module={$bean->module_name}&action=DetailView&record={$bean->id}";
