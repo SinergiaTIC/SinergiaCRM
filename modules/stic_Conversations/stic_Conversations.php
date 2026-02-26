@@ -27,7 +27,7 @@ class stic_Conversations extends Basic
     public $new_schema = true;
     public $module_dir = 'stic_Conversations';
     public $object_name = 'stic_Conversations';
-    public $table_name = 'stic_Conversations';
+    public $table_name = 'stic_conversations';
     public $importable = false;
 
     public $id;

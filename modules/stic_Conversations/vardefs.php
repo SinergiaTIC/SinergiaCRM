@@ -22,7 +22,7 @@
  */
 
 $dictionary['stic_Conversations'] = array(
-  'table' => 'stic_Conversations',
+  'table' => 'stic_conversations',
   'audited' => true,
   'inline_edit' => true,
   'duplicate_merge' => true,
@@ -107,6 +107,26 @@ $dictionary['stic_Conversations'] = array(
       'bean_name' => false,
       'side' => 'right',
       'vname' => 'LBL_STIC_MESSAGES_SUBPANEL_TITLE',
+    ),
+    'contact_id' => array(
+      'name' => 'contact_id',
+      'vname' => 'LBL_CONTACT_ID',
+      'type' => 'id',
+      'source' => 'non-db',
+      'comment' => 'Contact ID inherited from related messages',
+    ),
+    'contact_name' => array(
+      'name' => 'contact_name',
+      'vname' => 'LBL_CONTACT_NAME',
+      'type' => 'relate',
+      'module' => 'Contacts',
+      'bean_name' => 'Contact',
+      'id_name' => 'contact_id',
+      'rname' => 'name',
+      'source' => 'non-db',
+      'link' => false,
+      'reportable' => true,
+      'comment' => 'Contact name inherited from related messages',
     ),
   ),
   'relationships' => array(),
