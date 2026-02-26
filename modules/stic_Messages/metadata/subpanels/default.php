@@ -37,7 +37,7 @@ $subpanel_layout = array(
     'list_fields' => array(
         'name' => array(
             'vname' => 'LBL_NAME',
-            'widget_class' => 'SubPanelDetailViewLink', // Esto hace que el nombre sea clickeable
+            'widget_class' => 'SubPanelDetailViewLink',
             'width' => '20%',
         ),
         'parent_name' => array(
@@ -70,8 +70,6 @@ $subpanel_layout = array(
             'vname' => 'LBL_ASSIGNED_TO_NAME',
             'width' => '5%',
         ),
-        
-        // --- Botones de Acción ---
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubPanelEditButton',
