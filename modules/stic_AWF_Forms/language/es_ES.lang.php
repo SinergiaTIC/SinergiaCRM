@@ -225,19 +225,19 @@ $mod_strings = array (
   'LBL_DUPLICATE_CHECK' => 'Detección de duplicados',
   'LBL_DUPLICATE_CHECK_ADD' => 'Añadir detección de duplicados',
   'LBL_DUPLICATE_FIELDS' => 'Campos a verificar',
-  'LBL_DUPLICATE_FIELDS_SEL_FIELDS' => 'Seleccionar campos...',
+  'LBL_DUPLICATE_FIELDS_SEL_FIELDS' => 'Seleccionar campo(s)...',
   'LBL_ONDUPLICATE_ACTION' => 'Acción en caso de duplicado',
 
   // DataBlock -> Relationships
   'LBL_RELATIONSHIP' => 'Relación',
-  'LBL_RELATIONSHIPS' => 'Relaciones',
+  'LBL_RELATIONSHIPS' => 'Relaciones entre bloques de datos',
   'LBL_RELATIONSHIP_ADD' => 'Añadir relación',
-  'LBL_RELATIONSHIP_NEW' => 'Nueva relación entre Bloques de Datos',  
+  'LBL_RELATIONSHIP_NEW' => 'Nueva relación entre bloques de datos',  
   'LBL_RELATIONSHIPS_DESC' => 'Las relaciones definidas entre los Bloques de datos',
   'LBL_RELATIONSHIP_NO_MODULE_RELATED' => 'Sin módulo relacionado',
-  'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nuevo Bloque de datos',
-  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloque de datos Inicial',
-  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloque de datos Destino',
+  'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nuevo bloque de datos',
+  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloque de datos origen',
+  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloque de datos destino',
 
   // Flows
   'LBL_FLOWS' => 'Flujos de acciones',
