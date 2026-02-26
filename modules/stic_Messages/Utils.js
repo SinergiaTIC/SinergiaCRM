@@ -209,6 +209,51 @@ switch (sticViewType) {
       // Supress bottom margin
       infoElement.parent().css('margin-bottom', '0px');
 
+      // --- Recipient: show/hide relation fields and autofill phone ---
+
+      // Map: recipient value -> relate field name, ID field name, module, phone field
+      var recipientMap = {
+        'Contacts':  { relate: 'stic_messages_contacts_name',  id: 'stic_messages_contactscontacts_ida',   module: 'Contacts',  phoneField: 'phone_mobile' },
+        'Accounts':  { relate: 'stic_messages_accounts_name',  id: 'stic_messages_accountsaccounts_ida',   module: 'Accounts',  phoneField: 'phone_office' },
+        'Leads':     { relate: 'stic_messages_leads_name',     id: 'stic_messages_leadsleads_ida',          module: 'Leads',     phoneField: 'phone_mobile' },
+        'Employees': { relate: 'stic_messages_employees_name', id: 'stic_messages_employeesemployees_ida',  module: 'Employees', phoneField: 'phone_mobile' },
+      };
+
+      function getRelateContainer(fieldName) {
+        var $container = $('[data-field="' + fieldName + '"]');
+        if ($container.length) return $container;
+        return $('#' + fieldName).closest('tr');
+      }
+
+      function applyRecipientVisibility(recipientValue) {
+        // Default to Contacts if empty
+        if (!recipientValue || !recipientMap[recipientValue]) {
+          recipientValue = 'Contacts';
+          $('#recipient').val('Contacts');
+        }
+        $.each(recipientMap, function(key, cfg) {
+          var $container = getRelateContainer(cfg.relate);
+          if (key === recipientValue) {
+            $container.show();
+          } else {
+            $container.hide();
+            // Clear hidden fields of inactive relations
+            $('#' + cfg.relate).val('');
+            $('#' + cfg.id).val('');
+          }
+        });
+      }
+
+      // Apply on load
+      var currentRecipient = $('#recipient').val();
+      applyRecipientVisibility(currentRecipient);
+
+      // Apply on recipient change
+      $('#recipient').on('change', function() {
+        applyRecipientVisibility($(this).val());
+        // Clear phone when switching recipient
+        $('#phone').val('');
+      });
 
     });
 
@@ -218,6 +263,29 @@ switch (sticViewType) {
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
     var messageType = $("#type").val();
+
+    // Show/hide relation fields based on recipient value (same logic as EditView)
+    (function() {
+      var recipientDetailMap = {
+        'Contacts':  'stic_messages_contacts_name',
+        'Accounts':  'stic_messages_accounts_name',
+        'Leads':     'stic_messages_leads_name',
+        'Employees': 'stic_messages_employees_name',
+      };
+      var recipientValue = $('[data-field="recipient"] .fieldValue, [name="recipient"]').text().trim()
+                        || $('[data-field="recipient"]').text().trim();
+      if (!recipientValue) recipientValue = 'Contacts';
+      $.each(recipientDetailMap, function(key, fieldName) {
+        var $container = $('[data-field="' + fieldName + '"]');
+        if (!$container.length) $container = $('[data-field="' + fieldName.replace(/_name$/, '') + '"]');
+        if (!$container.length) return;
+        if (key === recipientValue) {
+          $container.closest('tr').show();
+        } else {
+          $container.closest('tr').hide();
+        }
+      });
+    })();
     
     // Define button content - Don't show retry button for WhatsAppWeb messages
     if ($("#status").val() != 'sent' && messageType !== 'WhatsAppWeb') {

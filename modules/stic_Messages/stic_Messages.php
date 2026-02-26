@@ -107,6 +107,26 @@ class stic_Messages extends Basic
             $this->phone = $this->fetched_row['phone'];
         }
 
+        // Autofill phone from the active recipient relation if phone is empty
+        if (empty($this->phone) && !empty($this->recipient)) {
+            $recipientPhoneMap = [
+                'Contacts'  => ['idField' => 'stic_messages_contactscontacts_ida',  'module' => 'Contacts',  'phoneField' => 'phone_mobile'],
+                'Accounts'  => ['idField' => 'stic_messages_accountsaccounts_ida',  'module' => 'Accounts',  'phoneField' => 'phone_office'],
+                'Leads'     => ['idField' => 'stic_messages_leadsleads_ida',         'module' => 'Leads',     'phoneField' => 'phone_mobile'],
+                'Employees' => ['idField' => 'stic_messages_employeesemployees_ida', 'module' => 'Employees', 'phoneField' => 'phone_mobile'],
+            ];
+            if (isset($recipientPhoneMap[$this->recipient])) {
+                $cfg = $recipientPhoneMap[$this->recipient];
+                $relatedId = $this->{$cfg['idField']} ?? ($_REQUEST[$cfg['idField']] ?? null);
+                if (!empty($relatedId)) {
+                    $relatedBean = BeanFactory::getBean($cfg['module'], $relatedId);
+                    if ($relatedBean && !empty($relatedBean->{$cfg['phoneField']})) {
+                        $this->phone = $relatedBean->{$cfg['phoneField']};
+                    }
+                }
+            }
+        }
+
         // If there is nothing in the message field, assume the template body
         if (empty($this->message) && !empty($this->template_id)) {
             $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
@@ -121,8 +141,26 @@ class stic_Messages extends Basic
 
         if ($this->status === 'sent') {
             $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
-    
+
             $processedText = $this->replaceTemplateVariables($this->message, $bean);
+
+            // Also replace variables from recipient relation beans (Contact, Account, Lead, Employee)
+            $recipientBeanMap = [
+                'Contacts'  => ['idField' => 'stic_messages_contactscontacts_ida',  'module' => 'Contacts'],
+                'Accounts'  => ['idField' => 'stic_messages_accountsaccounts_ida',  'module' => 'Accounts'],
+                'Leads'     => ['idField' => 'stic_messages_leadsleads_ida',         'module' => 'Leads'],
+                'Employees' => ['idField' => 'stic_messages_employeesemployees_ida', 'module' => 'Employees'],
+            ];
+            foreach ($recipientBeanMap as $cfg) {
+                $relatedId = $this->{$cfg['idField']} ?? ($_REQUEST[$cfg['idField']] ?? null);
+                if (!empty($relatedId)) {
+                    $relatedBean = BeanFactory::getBean($cfg['module'], $relatedId);
+                    if ($relatedBean) {
+                        $processedText = $this->replaceTemplateVariables($processedText, $relatedBean);
+                    }
+                }
+            }
+
             $this->message = $processedText;
         }
 

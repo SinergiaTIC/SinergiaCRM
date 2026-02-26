@@ -53,10 +53,12 @@ array(
                 ),
                 1 => array(
                     0 => array(
-                        'name' => 'parent_name',
-                        'label' => 'LBL_LIST_RELATED_TO',
+                        'name' => 'recipient',
+                        'studio' => 'visible',
+                        'label' => 'LBL_RECIPIENT',
+
                     ),
-                    1 => array (
+                    1 => array(
                         'name' => 'phone',
                         'studio' => 'visible',
                         'label' => 'LBL_PHONE',
@@ -64,29 +66,54 @@ array(
                 ),
                 2 => array(
                     0 => array(
-                        'name' => 'sender',
-                        'comment' => 'Sender',
-                        'label' => 'LBL_SENDER',
+                        'name' => 'stic_messages_contacts_name',
                     ),
                     1 => array(
+                        'name' => 'stic_messages_accounts_name',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'stic_messages_leads_name',
+                    ),
+                    1 => array(
+                        'name' => 'stic_messages_employees_name',
+                    ),
+                ),
+
+                4 => array(
+                    0 => array(
+                        'name' => 'parent_name',
+                        'label' => 'LBL_LIST_RELATED_TO',
+                    ),
+                    1 => array (
                         'name' => 'template_id',
                         'studio' => 'visible',
                         'label' => 'LBL_TEMPLATE',
                     ),
                 ),
-                3 => array(
+                5 => array(
+                    0 => array(
+                        'name' => 'sender',
+                        'comment' => 'Sender',
+                        'label' => 'LBL_SENDER',
+                    ),
+                    1 => array(
+                    ),
+                ),
+                6 => array(
                     0 => array(
                         'name' => 'info',
                     ),
                 ),
-                4 => array(
+                7 => array(
                     0 => array(
                         'name' => 'message',
                         'comment' => 'Full text of the message',
                         'label' => 'LBL_MESSAGE',
                     ),
                 ),
-                5 => array(
+                8 => array(
                     0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
@@ -97,12 +124,6 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_STATUS',
                     ),
-                ),
-                6 => array(
-                    0 => array(
-
-                    ),
-                    1 => array(),
                 ),
             ),
         ),
