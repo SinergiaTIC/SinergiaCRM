@@ -189,24 +189,6 @@ if (!$test) {
     $campaign->db->query($delete_query);
 }
 
-// STIC-Custom 20260225 ART - Adaptation for the Job Portal in the Private Area
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/916
-//Return to the DetailView of the Job Offer if the campaign was launched from a Job Offer
-if ($_REQUEST['return_module'] == "stic_Job_Offers" && !empty($_REQUEST['return_id'])) {
-    $_REQUEST['record'] = $_REQUEST['return_id'];
-    $_REQUEST['module'] = "stic_Job_Offers";
-    $_REQUEST['action'] = "DetailView";
-// From inline edit
-} elseif ($_REQUEST['current_module'] == "stic_Job_Offers" && !empty($_REQUEST['id'])) {
-    $_REQUEST['return_module'] = $_REQUEST['current_module'];
-    $_REQUEST['return_action'] = $_REQUEST['view'];
-    $_REQUEST['return_id'] = $_REQUEST['id'];
-    $_REQUEST['module'] = "stic_Job_Offers";
-    $_REQUEST['action'] = "DetailView";
-    $_REQUEST['record'] = $_REQUEST['id'];
-}
-// END STIC Custom
-
 $return_module=isset($_REQUEST['return_module'])?$_REQUEST['return_module']:'Campaigns';
 $return_action=isset($_REQUEST['return_action'])?$_REQUEST['return_action']:'DetailView';
 $return_id=$_REQUEST['record'];
