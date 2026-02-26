@@ -52,3 +52,15 @@ WHERE o.deleted = 0;
 -- Job Offers notification template field (emailtemplate_id)
 ALTER TABLE `stic_job_offers`
 	ADD COLUMN IF NOT EXISTS `emailtemplate_id` CHAR(36) NULL;
+
+-- Create relationship table for Conversations-Messages
+CREATE TABLE IF NOT EXISTS `stic_conversations_stic_messages_c` (
+  `id` varchar(36) NOT NULL,
+  `date_modified` datetime DEFAULT NULL,
+  `deleted` tinyint(1) DEFAULT '0',
+  `stic_conversations_ida` varchar(36) DEFAULT NULL,
+  `stic_messages_idb` varchar(36) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `stic_conversations_stic_messages_ida1` (`stic_conversations_ida`),
+  KEY `stic_conversations_stic_messages_alt` (`stic_messages_idb`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

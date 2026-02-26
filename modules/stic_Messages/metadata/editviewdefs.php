@@ -76,17 +76,22 @@ array(
                 ),
                 3 => array(
                     0 => array(
-                        'name' => 'info',
+                        'name' => 'stic_conversations_stic_messages_name',
                     ),
                 ),
                 4 => array(
+                    0 => array(
+                        'name' => 'info',
+                    ),
+                ),
+                5 => array(
                     0 => array(
                         'name' => 'message',
                         'comment' => 'Full text of the message',
                         'label' => 'LBL_MESSAGE',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
@@ -98,7 +103,7 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
 
                     ),

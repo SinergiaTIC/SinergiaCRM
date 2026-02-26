@@ -85,13 +85,18 @@ array(
                     ),
                 ),
                 3 => array(
+                    0 => array (
+                        'name' => 'stic_conversations_stic_messages_name',
+                    ),
+                ),
+                4 => array(
                     0 => array(
                         'name' => 'message',
                         'comment' => 'Full text of the message',
                         'label' => 'LBL_MESSAGE',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
@@ -100,7 +105,7 @@ array(
                     1 => array(
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'status',
                         'studio' => 'visible',
@@ -111,7 +116,7 @@ array(
                         'label' => 'LBL_SENT_DATE',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
                         'name' => 'response',
                         'studio' => 'visible',

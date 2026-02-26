@@ -63,4 +63,5 @@ $mod_strings = array (
   'LBL_TYPE' => 'Tipus',
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
+  'LBL_STIC_MESSAGES_SUBPANEL_TITLE' => 'Missatges',
 );
