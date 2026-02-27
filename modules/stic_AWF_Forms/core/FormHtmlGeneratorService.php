@@ -224,7 +224,7 @@ class FormHtmlGeneratorService {
         if ($iconCss !== "")  $html .= "\n".$iconCss;
         if ($chevronCss !== "")  $html .= "\n".$chevronCss;
         if ($browserIconFix !== "")  $html .= "\n".$browserIconFix;
-        $html .= "\n</style>" .$this->newLine();
+        $html .= $this->newLine()."</style>".$this->newLine();
     
         return $html;
     }
@@ -250,239 +250,16 @@ class FormHtmlGeneratorService {
         $closedFormTitle = htmlspecialchars($layout->closed_form_title);
         $closedFormText = $layout->closed_form_text;
 
-        // Alpine logic: Combine status, initial check if Form is active and sending form data in a single object
-
-        $jsCheckStatus = "";
-        if (!$isPreview) {
-            $jsCheckStatus = "
-                fetch('{$checkUrl}')
-                .then(r => r.json())
-                .then(d => {
-                    this.isActive = d.active;
-                    this.message = this.message == '' ? d.message : this.message;
-                }).catch(e => console.error(e));
-            ";
-        }
-
-        $safeMessage = json_encode($closedFormText);
-        $alpineData = <<<JS
-        {
-            isActive: true,
-            loadTime: 0,
-            message: {$safeMessage},
-            submitting: false,
-            serverErrors: {},
-            
-            init() {
-                this.loadTime = Math.floor(Date.now() / 1000);
-                {$jsCheckStatus}
-                this.prefillFromUrl();
-            },
-
-            // Auto fill fields from URL
-            prefillFromUrl() {
-                try {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const ignore = ['entryPoint', 'id', 'module', 'action', 'ajax_validation_only'];
-
-                    urlParams.forEach((value, key) => {
-                        if (ignore.includes(key)) return;
-
-                        // Look for inputs ONLY within our form (scoped)
-                        const form = this.\$refs.form;
-                        if (!form) return;
-
-                        // Flexible selector: exact name, or ending in _name (Sugar style), or .name
-                        const selector = `[name='\${key}'], [name$='_\${key}'], [name$='.\${key}']`;
-                        const inputs = form.querySelectorAll(selector);
-
-                        inputs.forEach(input => {
-                            if (!input.value && input.type !== 'hidden') {
-                                input.value = value;
-                                input.dispatchEvent(new Event('input', { bubbles: true }));
-                                input.dispatchEvent(new Event('change', { bubbles: true }));
-                            }
-                        });
-                    });
-                } catch (e) {
-                    console.warn('AWF Prefill Error:', e);
-                }
-            },
-
-            // Reset input errors
-            resetError(input) {
-                if (!input) return;
-                
-                input.setCustomValidity('');
-                input.classList.remove('is-invalid');
-                
-                // Hide error message
-                const parent = input.parentElement;
-                if (parent) {
-                    const feedback = parent.querySelector('.invalid-feedback');
-                    if (feedback) {
-                        feedback.style.display = 'none';
-                        feedback.textContent = ''; 
-                    }
-                }
-            },
-
-            // Validate single input
-            validateInput(input) {
-                // Clear previous errors
-                this.resetError(input);
-                this.serverErrors = {};
-
-                let customErrorMessage = '';
-                const form = input.closest('form');
-
-                // Custom validation rules from data-awf-validations
-                if (input.dataset.awfValidations) {
-                    try {
-                        const rules = JSON.parse(input.dataset.awfValidations);
-                        for (const rule of rules) {
-                            // Check condition
-                            if (rule.condition_field && rule.condition_field !== '') {
-                                // Find the condition input within the same form
-                                const condInputId = 'f_' + rule.condition_field;
-                                const condInput = form.querySelector('[id="' + condInputId + '"]');
-                                // If condition not met, skip this rule
-                                if (condInput && condInput.value != rule.condition_value) {
-                                    continue;
-                                }
-                            }
-
-                            // Execute validator
-                            const validatorFn = AWF_Validators[rule.validator];
-                            if (validatorFn) {
-                                let valueToValidate = input.value;
-                                if (input.type === 'checkbox') {
-                                    valueToValidate = input.checked;
-                                }
-                                if (!validatorFn(valueToValidate, rule.params, form)) {
-                                    // Mark input as invalid
-                                    customErrorMessage = rule.message || 'Validation error';
-                                    input.setCustomValidity(customErrorMessage);
-                                    break; 
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Validation error parsing rules', e);
-                    }
-                }
-
-                // Check native and custom validity (custom via setCustomValidity)
-                if (!input.checkValidity()) {
-                    input.classList.add('is-invalid');
-
-                    // Error message: if custom error, use it; else use native browser message
-                    const finalMessage = customErrorMessage || input.validationMessage;
-
-                    // Show error message in invalid-feedback div
-                    const parent = input.parentElement;
-                    let feedback = parent.querySelector('.invalid-feedback');
-                    if (!feedback) {
-                        feedback = document.createElement('div');
-                        feedback.className = 'invalid-feedback';
-                        parent.appendChild(feedback);
-                    }
-                    feedback.textContent = finalMessage;
-                    feedback.style.display = 'block';
-                    return false;
-                }
-                return true;
-            },
-
-            // Show server error message
-            showServerError(fieldId, message) {
-                const input = document.getElementById('f_'+fieldId);
-                if (!input) return;
-
-                input.classList.add('is-invalid');
-
-                const parent = input.parentElement;
-                let feedback = parent.querySelector('.invalid-feedback');
-                if (!feedback) {
-                    feedback = document.createElement('div');
-                    feedback.className = 'invalid-feedback';
-                    parent.appendChild(feedback);
-                }
-                
-                feedback.textContent = message;
-                feedback.style.display = 'block';
-            },
-
-            submitForm(formElement) {
-                if (this.submitting) return;
-                
-                let formValid = true;
-                this.serverErrors = {};
-
-                // Client Validation (Alpine/HTML5)
-                const inputs = formElement.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    if (input.willValidate && !this.validateInput(input)) {
-                        formValid = false;
-                    }
-                });
-                if (!formValid) {
-                    formElement.classList.add('was-validated');
-                    
-                    // Scroll to first invalid field
-                    const firstError = formElement.querySelector('.is-invalid');
-                    if (firstError) {
-                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        firstError.focus({ preventScroll: true });
-                    }
-                    return;
-                }
-
-                // Activate spinner
-                this.submitting = true;
-
-                // Server Validation (AJAX)
-                const formData = new FormData(formElement);
-                formData.append('ajax_validation_only', '1');
-
-                fetch(formElement.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Do real Submit
-                        formElement.submit();
-                    } else {
-                        // Deactivate spinner
-                        this.submitting = false;
-                        
-                        // Show errors
-                        this.serverErrors = data.errors || {};
-                        const errorIds = Object.keys(this.serverErrors);
-                        if (errorIds.length > 0) {
-                            errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
-                        } else {
-                            // Do real Submit
-                            formElement.submit();
-                        }
-                    }
-                })
-                .catch(err => {
-                    console.error('Validation Error', err);
-                    formElement.submit();
-                });
-            }
-        }
-JS;
-
-        $safeAlpineData = htmlspecialchars($alpineData, ENT_QUOTES, 'UTF-8');
+        $jsConfig = json_encode([
+            'checkUrl' => $isPreview ? '' : $checkUrl,
+            'closedFormText' => $closedFormText,
+            'isPreview' => $isPreview
+        ]);
+        $safeConfig = htmlspecialchars($jsConfig, ENT_QUOTES, 'UTF-8');
 
         $html = "";
         // Begin awf-main-card (wrapper)
-        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"{$safeAlpineData}\">" .$this->newLine('+');
+        $html .= "<div class='awf-main-card p-4 p-md-5 my-4' x-data=\"awfForm({$safeConfig})\">" .$this->newLine('+');
         {
             // Begin awf-relative-wrapper (overlay Wrapper)
             $html .= "<div class='awf-relative-wrapper'>" .$this->newLine('+');
@@ -937,52 +714,11 @@ JS;
         $isRequired = $field->required_in_form;
         $asterisk = $isRequired ? '<span class="awf-required" aria-hidden="true">*</span>' : '';
         
-        // AlpineJS logic
-        $alpineLogic = <<<'JS'
-{
-    val: null,
-    hover: 0, 
-    setVal(v) {
-        this.val = v; 
-        $nextTick(() => { 
-            this.$refs.input.dispatchEvent(new Event('input', {bubbles:true}));
-            this.$refs.input.dispatchEvent(new Event('change', {bubbles:true}));
-        });
-    },
-    npsClass(i) { // Standard NPS colors
-        if(this.val !== i) return 'btn-outline-secondary opacity-75';
-        if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
-        if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
-        return 'btn-success text-white border-success shadow-sm';
-    },
-    starContainerStyle(i) {
-        const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
-        let curr = this.hover > 0 ? this.hover : this.val;
-        let active = curr >= i;
-        if (active) return baseStyle + ' transform: scale(2.2); color: #ffc107; opacity: 1; z-index: 2;';
-        return baseStyle + ' transform: scale(1.2); color: #ccc; opacity: 0.7; z-index: 1;';
-    },
-    emojiStyle(i, isLight = false) {
-        const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
-        let curr = this.hover > 0 ? this.hover : this.val;
-        let active = curr === i; 
+        $isLight = ($subtype === 'rating_lights');
+        $isLightStr = $isLight ? 'true' : 'false';
         
-        let colors = {1: '#dc3545', 2: '#fd7e14', 3: '#ffc107', 4: '#20c997', 5: '#198754'};
-        let color = colors[i] || '#6c757d';
-        
-        if (active) {
-            return baseStyle + ` transform: scale(2.2); color: ${color}; opacity: 1; z-index: 2;`;
-        }
-        
-        let inactiveColor = isLight ? color : '#adb5bd';
-        let opacity = isLight ? '0.3' : '1';
-        
-        return baseStyle + ` transform: scale(1.2); color: ${inactiveColor}; opacity: ${opacity}; z-index: 1;`;
-    }
-}
-JS;
-        $safeAlpine = htmlspecialchars($alpineLogic, ENT_QUOTES, 'UTF-8');
-        $html = '<div class="awf-field mb-3" x-data="' . $safeAlpine. '">' . $this->newLine('+');
+        $html = "";
+        $html = "<div class='awf-field mb-3' x-data=\"awfRating('{$subtype}', {$isLightStr})\">" . $this->newLine('+');
         {
             // Label
             if ($label) {
@@ -1054,7 +790,7 @@ JS;
                             $showEmpty   = "(hover ? hover : val) < $val";
                         } else {
                             $lightStr    = $isLight ? 'true' : 'false';
-                            $alpineStyle = "emojiStyle($val, $lightStr)";
+                            $alpineStyle = "emojiStyle($val)";
                             $showFill    = "(hover > 0 ? hover : val) === $val";
                             $showEmpty   = "(hover > 0 ? hover : val) !== $val";
                         }
@@ -1104,8 +840,12 @@ JS;
         // == VALIDATORS ==
         // Get used validators
         $usedValidators = [];
+        $hasRating = false;
         foreach ($config->data_blocks as $block) {
             foreach ($block->fields as $field) {
+                if ($field->type_in_form === 'rating') {
+                    $hasRating = true;
+                }
                 if (!empty($field->validations)) {
                     foreach ($field->validations as $val) {
                         $usedValidators[$val->validator] = true;
@@ -1128,7 +868,7 @@ JS;
             }
             $jsValidators .= "};\n";
             if ($hasDefinitions) {
-                $js .= "<script>\n{$jsValidators}\n</script>" . $this->newLine();
+                $js .= "<script>\n// --- VALIDATORS ---\n{$jsValidators}".$this->newLine()."</script>".$this->newLine();
             }
         }
 
@@ -1148,7 +888,7 @@ JS;
                         $assets = $def->getFrontendAssets($formAction->parameters, $config, $formId);
                         if (!empty($assets['script'])) {
                             foreach ($assets['script'] as $scriptContent) {
-                                $js .= "<script>\n{$scriptContent}\n</script>" . $this->newLine();
+                                $js .= "<script>\n// --- UI ACTIONS ---\n{$scriptContent}".$this->newLine()."</script>".$this->newLine();
                             }
                         }
                     }
@@ -1156,14 +896,226 @@ JS;
             }
         }
 
+        // == ALPINE CORE COMPONENTS ==
+        $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating).$this->newLine()."</script>" . $this->newLine();
+
         // == CUSTOM JS ==
         // Add custom JS from layout
         $customJs = $this->decode($config->layout->custom_js);
         if (!empty($customJs)) {
-            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});\n</script>" .$this->newLine();
+            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});".$this->newLine()."</script>" .$this->newLine();
         }
         return $js;
     }
+
+    /**
+     * Declares the reusable Alpine.js global components
+     */
+    private function getAlpineComponentsJs(bool $hasRating): string {
+        $js = <<<'JS'
+// --- Alpine.js COMPONENTS ---
+document.addEventListener('alpine:init', () => {
+
+  // Main Component of the Form
+  Alpine.data('awfForm', (config) => ({
+    isActive: true,
+    loadTime: 0,
+    message: config.closedFormText,
+    submitting: false,
+    serverErrors: {},
+    
+    init() {
+      this.loadTime = Math.floor(Date.now() / 1000);
+      if (!config.isPreview && config.checkUrl) {
+        fetch(config.checkUrl).then(r => r.json()).then(d => {
+          this.isActive = d.active;
+          this.message = this.message === config.closedFormText ? d.message : this.message;
+        }).catch(e => console.error(e));
+      }
+      this.prefillFromUrl();
+    },
+    
+    prefillFromUrl() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const ignore = ['entryPoint', 'id', 'module', 'action', 'ajax_validation_only'];
+        urlParams.forEach((value, key) => {
+          if (ignore.includes(key)) return;
+          const form = this.$refs.form;
+          if (!form) return;
+          
+          const selector = `[name='${key}'], [name$='_${key}'], [name$='.${key}']`;
+          const inputs = form.querySelectorAll(selector);
+          inputs.forEach(input => {
+            if (!input.value && input.type !== 'hidden') {
+              input.value = value;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          });
+        });
+      } catch (e) { console.warn('AWF Prefill Error:', e); }
+    },
+
+    resetError(input) {
+      if (!input) return;
+      input.setCustomValidity('');
+      input.classList.remove('is-invalid');
+      const parent = input.parentElement;
+      if (parent) {
+        const feedback = parent.querySelector('.invalid-feedback');
+        if (feedback) {
+          feedback.style.display = 'none';
+          feedback.textContent = ''; 
+        }
+      }
+    },
+
+    validateInput(input) {
+      this.resetError(input);
+      this.serverErrors = {};
+      let customErrorMessage = '';
+      const form = input.closest('form');
+      if (!form) return true;
+      if (input.dataset.awfValidations) {
+        try {
+          const rules = JSON.parse(input.dataset.awfValidations);
+          for (const rule of rules) {
+            if (rule.condition_field && rule.condition_field !== '') {
+              const condInput = form.querySelector('[id="f_' + rule.condition_field + '"]');
+              if (condInput && condInput.value != rule.condition_value) continue;
+            }
+            const validatorFn = AWF_Validators[rule.validator];
+            if (validatorFn) {
+              let valueToValidate = input.type === 'checkbox' ? input.checked : input.value;
+              if (!validatorFn(valueToValidate, rule.params, form)) {
+                customErrorMessage = rule.message || 'Validation error';
+                input.setCustomValidity(customErrorMessage);
+                break; 
+              }
+            }
+          }
+        } catch (e) { console.error('Validation error parsing rules', e); }
+      }
+      if (!input.checkValidity()) {
+        input.classList.add('is-invalid');
+        const finalMessage = customErrorMessage || input.validationMessage;
+        const parent = input.parentElement;
+        let feedback = parent.querySelector('.invalid-feedback') || document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        parent.appendChild(feedback);
+        feedback.textContent = finalMessage;
+        feedback.style.display = 'block';
+        return false;
+      }
+      return true;
+    },
+
+    showServerError(fieldId, message) {
+      const input = document.getElementById('f_'+fieldId);
+      if (!input) return;
+      input.classList.add('is-invalid');
+      const parent = input.parentElement;
+      let feedback = parent.querySelector('.invalid-feedback') || document.createElement('div');
+      feedback.className = 'invalid-feedback';
+      parent.appendChild(feedback);
+      feedback.textContent = message;
+      feedback.style.display = 'block';
+    },
+
+    submitForm(formElement) {
+      if (this.submitting) return;
+      let formValid = true;
+      this.serverErrors = {};
+      
+      formElement.querySelectorAll('input, select, textarea').forEach(input => {
+        if (input.willValidate && !this.validateInput(input)) formValid = false;
+      });
+      if (!formValid) {
+        formElement.classList.add('was-validated');
+        const firstError = formElement.querySelector('.is-invalid');
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstError.focus({ preventScroll: true });
+        }
+        return;
+      }
+
+      this.submitting = true;
+      const formData = new FormData(formElement);
+      formData.append('ajax_validation_only', '1');
+      
+      fetch(formElement.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+      .then(response => response.json()).then(data => {
+        if (data.status === 'success') {
+          formElement.submit();
+        } else {
+          this.submitting = false;
+          this.serverErrors = data.errors || {};
+          const errorIds = Object.keys(this.serverErrors);
+          if (errorIds.length > 0) {
+            errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
+          } else {
+            formElement.submit();
+          }
+        }
+      }).catch(err => {
+        console.error('Validation Error', err);
+        formElement.submit();
+      });
+    }
+  }));
+JS;
+        if ($hasRating) {
+            $js .= "\n\n" . <<<'JS'
+  // Component for Rating Fields
+  Alpine.data('awfRating', (subtype, isLight) => ({
+    val: null,
+    hover: 0,
+    subtype: subtype,
+    isLight: isLight,
+    
+    setVal(v) {
+      this.val = v;
+      this.$nextTick(() => { 
+        if (this.$refs.input) {
+          this.$refs.input.dispatchEvent(new Event('input', {bubbles:true}));
+          this.$refs.input.dispatchEvent(new Event('change', {bubbles:true}));
+        }
+      });
+    },
+    npsClass(i) { 
+      if(this.val !== i) return 'btn-outline-secondary opacity-75';
+      if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
+      if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
+      return 'btn-success text-white border-success shadow-sm';
+    },
+    starContainerStyle(i) {
+      const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
+      let curr = this.hover > 0 ? this.hover : this.val;
+      let active = curr >= i;
+      if (active) return baseStyle + ' transform: scale(2.2); color: #ffc107; opacity: 1; z-index: 2;';
+      return baseStyle + ' transform: scale(1.2); color: #ccc; opacity: 0.7; z-index: 1;';
+    },
+    emojiStyle(i) {
+      const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
+      let curr = this.hover > 0 ? this.hover : this.val;
+      let active = curr === i; 
+      let colors = {1: '#dc3545', 2: '#fd7e14', 3: '#ffc107', 4: '#20c997', 5: '#198754'};
+      let color = colors[i] || '#6c757d';
+      if (active) {
+        return baseStyle + ` transform: scale(2.2); color: ${color}; opacity: 1; z-index: 2;`;
+      }
+      let inactiveColor = this.isLight ? color : '#adb5bd';
+      let opacity = this.isLight ? '0.3' : '1';
+      return baseStyle + ` transform: scale(1.2); color: ${inactiveColor}; opacity: ${opacity}; z-index: 1;`;
+    }
+  }));
+JS;
+        }
+        $js .= "\n});";
+        return $js;
+    }    
 
     /**
      * Helper to decode Base64 safely
