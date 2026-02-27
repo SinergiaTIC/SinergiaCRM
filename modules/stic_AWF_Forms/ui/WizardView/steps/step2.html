@@ -897,7 +897,7 @@
                     <div class="row align-items-end">
                       <div class="col-3">
                         <label for="validation_Validator" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALIDATOR')"></label>
-                        <stic-select options="availableValidatorsForSelect" model="validation.validator" @change="validation.params = {}"></stic-select>
+                        <stic-select options="availableValidatorsForSelect" model="validation.validator" @change="validation.params = {}; validation.message = '';"></stic-select>
                       </div>
                       <template x-if="selectedValidatorDefinition">
                         <div class="col-9 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center" style="height:35px !important;">
