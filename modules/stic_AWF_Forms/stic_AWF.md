@@ -149,17 +149,28 @@ El sistema adapta el tipo de control visual en el formulario en función del tip
 * **🕵️ Oculto**: El campo no se muestra gráficamente en el formulario, pero su valor se almacena y acompaña silenciosamente a la respuesta enviada.
 
 ##### Detección de duplicados ##### 
-Esta sección solo aparece en los bloques enlazados
+*(Esta sección solo aparece en los bloques enlazados)*
 
-Es posible definir las reglas para detectar si la persona, organización o registro ya existe en el CRM (por ejemplo, comprobando de forma combinada el Email y el DNI). Si el sistema detecta que el registro ya existe, se debe elegir que hacer con los duplicados entre 4 acciones concretas:
+El sistema permite definir reglas precisas para detectar si el registro (persona, organización, inscripción, etc.) ya existe en el CRM antes de crearlo. Destacan dos características fundamentales en su funcionamiento:
+
+* **Reglas múltiples y secuenciales**: Es posible configurar más de una regla de detección para un mismo bloque. El sistema las evaluará en el orden en que se hayan definido. En el momento en que una regla detecte una coincidencia, el sistema aplicará la acción configurada para esa regla y dejará de evaluar las siguientes. **Importante:** Las reglas son totalmente independientes. Si una regla falla y el sistema evalúa la siguiente, lo hará fijándose *únicamente* en los campos de esta nueva regla (ignorando si hay discrepancias en otros campos del formulario).
+
+* **Salvaguarda de campos vacíos**: Para evitar falsos positivos (por ejemplo, que el sistema asuma que dos personas son la misma solo porque ambas dejaron el campo *Email* en blanco), el sistema ignorará automáticamente cualquier regla si el visitante no ha rellenado todos los campos implicados en ella durante el envío del formulario.
+
+*Casos de uso y estrategia*: Esta flexibilidad permite crear búsquedas en cascada muy robustas, pero deben diseñarse cuidadosamente para evitar fusiones indeseadas. Un ejemplo seguro para un bloque de "Persona" sería:
+1. **Regla 1 (Email + DNI)** -> Acción: *Actualizar*. (Si el visitante indica ambos datos y coinciden con la base de datos, es indudablemente la misma persona: se sobrescribe su ficha con los datos más recientes).
+
+2. **Regla 2 (Email)** -> Acción: *Ampliar* o *Ignorar*. (Si la regla 1 ha fallado, por ejemplo, porque el usuario no indicó su DNI, el sistema buscará solo por Email. Al encontrarlo, la acción 'Ampliar' asegura que solo se rellenarán los datos que estuvieran vacíos en el CRM, evitando sobrescribir información crítica en caso de que dos familiares compartan el mismo correo electrónico).
+
+Por cada regla definida, se debe elegir entre 4 comportamientos si se detecta que el registro ya existe:
 
 * **Actualizar (Sobrescribir)**: Reemplaza los datos existentes en el CRM por los nuevos datos introducidos en el formulario.
 
 * **Ampliar**: Añade la información nueva del formulario solo en aquellos campos que en el CRM estuvieran vacíos, respetando los datos que ya existían.
-    
+
 * **Ignorar**: Ignora por completo los datos recibidos en ese bloque para no modificar el registro original del CRM.
-    
-* **Error**: Detiene el procesado y genera un error (útil cuando un formulario solo debería aceptar registros estrictamente nuevos).
+
+* **Error**: Detiene el procesado y genera un error (útil cuando un formulario solo debería aceptar registros estrictamente nuevos, como el alta de una nueva sede).
 
 
 ##### Relaciones ##### 
