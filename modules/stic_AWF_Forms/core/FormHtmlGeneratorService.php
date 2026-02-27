@@ -97,7 +97,7 @@ class FormHtmlGeneratorService {
         $htmlRaw = "<div id='{$wrapperId}'>" .$this->newLine('+');
         {
             // Styles and Content
-            $htmlRaw .= $this->generateCss($layout, $wrapperId);
+            $htmlRaw .= $this->generateCss($config, $wrapperId);
             $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
             $htmlRaw .= $this->generateJs($config, $formId);
         }
@@ -108,398 +108,125 @@ class FormHtmlGeneratorService {
 
 
     /**
-     * Generates the CSS styles for the form based on the theme defined in the layout configuration.
-     * It includes styles for colors, spacing, grid layout, input styles, icons, and specific fixes for browser behaviors and Bootstrap validation marks.
-     * 
-     * @param FormLayout $layout The form layout configuration containing the theme and custom CSS
-     * @param string $wrapperId The ID of the wrapper div, used for scoping the CSS to this form instance
-     * @return string The generated CSS styles as a string
+     * Generates the CSS styles for the form conditionally based on the elements it contains.
+     * * @param FormConfig $config The full form configuration
+     * @param string $wrapperId The ID of the wrapper div
+     * @return string The generated CSS styles
      */
-    private function generateCss(FormLayout $layout, string $wrapperId): string {
+    private function generateCss(FormConfig $config, string $wrapperId): string {
+        $layout = $config->layout;
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
         $btnTextColor = $this->getContrastColor($theme->primary_color);
 
-        // Grid
+        // Pre-càlcul: Quines icones i funcionalitats s'estan fent servir realment?
+        $usedSubtypes = [];
+        $hasCollapsible = false;
+
+        foreach ($layout->structure as $section) {
+            if (!empty($section->isCollapsible)) {
+                $hasCollapsible = true;
+            }
+            foreach ($section->elements as $element) {
+                if ($element->type === 'datablock' && isset($config->data_blocks[$element->ref_id])) {
+                    $block = $config->data_blocks[$element->ref_id];
+                    foreach ($block->fields as $field) {
+                        $usedSubtypes[$field->subtype_in_form ?? 'text'] = true;
+                    }
+                }
+            }
+        }
+
+        // Grid i Variables Base
         $secCols   = intval($theme->sections_per_row ?? 1);
         $fieldCols = intval($theme->fields_per_row ?? 1);
-        
         $secMinPx   = '350px'; 
         $fieldMinPx = '200px';
 
-        // Shadows
-        $shadows = [
-            'none' => 'none', 
-            'sm' => '0 .125rem .25rem rgba(0,0,0,.075)',
-            'normal' => '0 .5rem 1rem rgba(0,0,0,.15)', 
-            'lg' => '0 1rem 3rem rgba(0,0,0,.175)'
-        ];
+        $shadows = ['none' => 'none', 'sm' => '0 .125rem .25rem rgba(0,0,0,.075)', 'normal' => '0 .5rem 1rem rgba(0,0,0,.15)', 'lg' => '0 1rem 3rem rgba(0,0,0,.175)'];
         $shadowVal = $shadows[$theme->shadow_intensity] ?? $shadows['normal'];
-
-        // Spacing and Height
         $fieldSpacing = $theme->field_spacing ?? '1rem';
         $sectionHeight = ($theme->equal_height_sections ?? true) ? '100%' : 'auto';
-
-        // Label Weight Bold
         $labelWeightVal = ($theme->label_weight_bold ?? false) ? '700' : '400';
-
-        // Submit Full Width
         $submitWidthVal = ($theme->submit_full_width ?? false) ? '100%' : 'auto';
 
-        // Input Style: 'standard', 'flat', 'filled'
+        // Input Style
         $inputStyle = $theme->input_style ?? 'standard';
-        $inputCssProps = "";
-        $selectCssProps = "";
-        $inputFocusCssProps = "";
-        $floatingLabelFix = "";
+        $inputCssProps = ""; $selectCssProps = ""; $inputFocusCssProps = ""; $floatingLabelFix = "";
 
         switch ($inputStyle) {
             case 'flat':
-                $inputCssProps = "
-  border-width: 0 0 1px 0;
-  border-radius: 0;
-  background-color: transparent;
-  padding-left: 0;
-                ";
+                $inputCssProps = "border-width: 0 0 1px 0; border-radius: 0; background-color: transparent; padding-left: 0;";
                 $inputFocusCssProps = "box-shadow: none; border-bottom-width: 2px;";
                 $floatingLabelFix = "background-color: transparent !important;";
                 $selectCssProps = "background-position: right 0.75rem center;";
                 break;
             case 'filled':
-                $inputCssProps = "
-  border-width: 0 0 1px 0;
-  border-radius: 4px 4px 0 0;
-  background-color: rgba(0,0,0, 0.04);
-                ";
+                $inputCssProps = "border-width: 0 0 1px 0; border-radius: 4px 4px 0 0; background-color: rgba(0,0,0, 0.04);";
                 $inputFocusCssProps = "box-shadow: none; background-color: rgba(0,0,0, 0.06); border-bottom-width: 2px;";
                 $floatingLabelFix = "background-color: transparent !important;";
                 $selectCssProps = "background-position: right 0.75rem center;";
                 break;
-            case 'standard':
-            default:
-                $inputCssProps = "";
-                $inputFocusCssProps = "";
-                $floatingLabelFix = "";
-                break;
         }
 
-        if ($inputCssProps!="") {
-            $inputCssProps = "/* Text fields: Inputs / Selects / Textarea */
-#{$wrapperId} .form-control,
-#{$wrapperId} .form-select {
-{$inputCssProps}
-}
-            ";
-        }
-        if ($selectCssProps!="") {
-            $selectCssProps = "#{$wrapperId} .form-select { 
-  {$selectCssProps}
-}
-            ";
-        }
-        if ($floatingLabelFix!="") {
-            $floatingLabelFix = "#{$wrapperId} .form-floating > .form-control:focus ~ label::after,
-#{$wrapperId} .form-floating > .form-control:not(:placeholder-shown) ~ label::after,
-#{$wrapperId} .form-floating > .form-select ~ label::after {
-{$floatingLabelFix}
-}
-            ";
+        if ($inputCssProps !== "") $inputCssProps = "/* Text fields */\n#{$wrapperId} .form-control,\n#{$wrapperId} .form-select {\n{$inputCssProps}\n}\n";
+        if ($selectCssProps !== "") $selectCssProps = "#{$wrapperId} .form-select { \n  {$selectCssProps}\n}\n";
+        if ($floatingLabelFix !== "") $floatingLabelFix = "#{$wrapperId} .form-floating > .form-control:focus ~ label::after,\n#{$wrapperId} .form-floating > .form-control:not(:placeholder-shown) ~ label::after,\n#{$wrapperId} .form-floating > .form-select ~ label::after {\n{$floatingLabelFix}\n}\n";
+
+        // Icon code is only injected if there are fields that require it.
+        $iconRules = $this->getSvgIconsData($usedSubtypes);
+        $iconCss = str_replace('%WRAPPER_ID%', $wrapperId, implode("\n", $iconRules));
+        $chevronCss = $hasCollapsible ? $this->getChevronCss($wrapperId) : "";
+
+        $browserIconFix = "";
+        if (isset($usedSubtypes['date']) || isset($usedSubtypes['date_time']) || isset($usedSubtypes['date_datetime'])) {
+            $browserIconFix = "\n/* Hide native Webkit icons */\n#{$wrapperId} .awf-icon-date::-webkit-calendar-picker-indicator, #{$wrapperId} .awf-icon-date-time::-webkit-calendar-picker-indicator, #{$wrapperId} .awf-icon-date-datetime::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 75%; position: absolute; right: 0; top: 0; width: auto; z-index: 10; }\n#{$wrapperId} .awf-icon-date, #{$wrapperId} .awf-icon-date-time, #{$wrapperId} .awf-icon-date-datetime { position: relative; }\n";
         }
 
-        // Adapt Bootstrap validation marks
-        $validationFix = "
-/* Remove Bootstrap positive validation */
-#{$wrapperId} .was-validated .form-control:valid,
-#{$wrapperId} .was-validated .form-select:valid,
-#{$wrapperId} .was-validated .form-check-input:valid {
-  border-color: var(--bs-border-color);
-  background-image: none;
-  box-shadow: none;
-}
-/* Adjust Bootstrap negative validation mark */
-#{$wrapperId} .was-validated .form-control:invalid,
-#{$wrapperId} .was-validated .form-select:invalid {
-  background-image: none !important;
-  border-color: #dc3545;
-}";
-
-        // Icons
-        $iconRules = $this->getSvgIconsData();
-        $iconCss = implode("\n", $iconRules);
-        $iconCss = str_replace('%WRAPPER_ID%', $wrapperId, $iconCss);
-        $chevronCss = $this->getChevronCss($wrapperId);
-
-        $browserIconFix = "
-/* Hide native Webkit icons (Chrome/Edge/Safari) */
-#{$wrapperId} .awf-icon-date::-webkit-calendar-picker-indicator,
-#{$wrapperId} .awf-icon-date-time::-webkit-calendar-picker-indicator,
-#{$wrapperId} .awf-icon-date-datetime::-webkit-calendar-picker-indicator {
-  background: transparent;
-  bottom: 0;
-  color: transparent;
-  cursor: pointer;
-  height: auto;
-  left: 75%;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: auto;
-  z-index: 10;
-}
-        
-#{$wrapperId} .awf-icon-date, 
-#{$wrapperId} .awf-icon-date-time, 
-#{$wrapperId} .awf-icon-date-datetime {
-  position: relative; 
-}
-";
-
-        return "<style>
-#{$wrapperId} {
-  /* Bootstrap Vars */
-  --bs-primary: {$theme->primary_color};
-  --bs-primary-rgb: {$primaryRgb};
-  --bs-body-bg: {$theme->form_bg_color};
-  --bs-body-color: {$theme->text_color};
-  --bs-border-color: {$theme->border_color};
-  --bs-border-radius: {$theme->border_radius_controls}px;
-  --bs-body-font-family: {$theme->font_family};
-  --bs-btn-border-radius: {$theme->border_radius_controls}px;
-
-  /* Stic Vars */
-  --awf-page-bg: {$theme->page_bg_color};
-  --awf-max-width: {$theme->form_width};
-  --awf-box-shadow: {$shadowVal};
-  --awf-border-width: {$theme->border_width}px;
-  --awf-sec-cols: {$secCols};
-  --awf-sec-min-px: {$secMinPx};
-  --awf-field-cols: {$fieldCols};
-  --awf-field-min-px: {$fieldMinPx};
-  --awf-card-radius: {$theme->border_radius_container}px;
-  --awf-field-spacing: {$fieldSpacing};
-  --awf-section-height: {$sectionHeight};
-  --awf-label-weight: {$labelWeightVal};
-  --awf-submit-width: {$submitWidthVal};
-
-  /* Base Styles */
-  background-color: var(--awf-page-bg);
-  font-family: var(--bs-body-font-family);
-  color: var(--bs-body-color);
-  font-size: {$theme->font_size}px;
-  line-height: 1.5;
-  padding: 2rem 1rem;
-  min-height: 100vh;
-}
-        
-/* Use wraper sizes in Bootstrap components*/
-#{$wrapperId} .form-control,
-#{$wrapperId} .form-select,
-#{$wrapperId} .btn,
-#{$wrapperId} .input-group-text, 
-#{$wrapperId} .form-check-input,
-#{$wrapperId} .form-check-label {
-  font-size: 1em;
-}
-#{$wrapperId} .form-control:focus,
-#{$wrapperId} .form-select:focus,
-#{$wrapperId} .form-check-input:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
-}
-#{$wrapperId} .form-check-input:checked {
-  background-color: var(--bs-primary);
-  border-color: var(--bs-primary);
-}
-#{$wrapperId} .btn-primary {
-  --bs-btn-bg: var(--bs-primary);
-  --bs-btn-border-color: var(--bs-primary);
-  --bs-btn-hover-bg: var(--bs-primary);
-  --bs-btn-hover-border-color: var(--bs-primary);
-  --bs-btn-color: {$btnTextColor}; 
-  --bs-btn-active-bg: var(--bs-primary);
-  --bs-btn-active-border-color: var(--bs-primary);
-  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
-  color: var(--bs-btn-color);
-}
+        $html = "<style>
+#{$wrapperId} { --bs-primary: {$theme->primary_color}; --bs-primary-rgb: {$primaryRgb}; --bs-body-bg: {$theme->form_bg_color}; --bs-body-color: {$theme->text_color}; --bs-border-color: {$theme->border_color}; --bs-border-radius: {$theme->border_radius_controls}px; --bs-body-font-family: {$theme->font_family}; --bs-btn-border-radius: {$theme->border_radius_controls}px; --awf-page-bg: {$theme->page_bg_color}; --awf-max-width: {$theme->form_width}; --awf-box-shadow: {$shadowVal}; --awf-border-width: {$theme->border_width}px; --awf-sec-cols: {$secCols}; --awf-sec-min-px: {$secMinPx}; --awf-field-cols: {$fieldCols}; --awf-field-min-px: {$fieldMinPx}; --awf-card-radius: {$theme->border_radius_container}px; --awf-field-spacing: {$fieldSpacing}; --awf-section-height: {$sectionHeight}; --awf-label-weight: {$labelWeightVal}; --awf-submit-width: {$submitWidthVal}; background-color: var(--awf-page-bg); font-family: var(--bs-body-font-family); color: var(--bs-body-color); font-size: {$theme->font_size}px; line-height: 1.5; padding: 2rem 1rem; min-height: 100vh; }
+#{$wrapperId} .form-control, #{$wrapperId} .form-select, #{$wrapperId} .btn, #{$wrapperId} .input-group-text, #{$wrapperId} .form-check-input, #{$wrapperId} .form-check-label { font-size: 1em; }
+#{$wrapperId} .form-control:focus, #{$wrapperId} .form-select:focus, #{$wrapperId} .form-check-input:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); }
+#{$wrapperId} .form-check-input:checked { background-color: var(--bs-primary); border-color: var(--bs-primary); }
+#{$wrapperId} .btn-primary { --bs-btn-bg: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-color: {$btnTextColor}; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); color: var(--bs-btn-color); }
 #{$wrapperId} .btn-primary:hover { filter: brightness(0.9); }
-#{$wrapperId} .btn-primary:active, 
-#{$wrapperId} .btn-primary.active { 
-  filter: brightness(0.85);
-  background-color: var(--bs-primary) !important;
-  border-color: var(--bs-primary) !important;
-}
-#{$wrapperId} h1, #{$wrapperId} .h1 { font-size: 2.5em; }
-#{$wrapperId} h2, #{$wrapperId} .h2 { font-size: 2em; }
-#{$wrapperId} h3, #{$wrapperId} .h3 { font-size: 1.75em; }
-#{$wrapperId} h4, #{$wrapperId} .h4 { font-size: 1.5em; }
-#{$wrapperId} h5, #{$wrapperId} .h5 { font-size: 1.25em; }
-#{$wrapperId} h6, #{$wrapperId} .h6 { font-size: 1em; }
-            
-/* Specific settings */
-#{$wrapperId} .form-label { margin-bottom: 0; }
-#{$wrapperId} .btn { border-radius: var(--bs-border-radius); }
-#{$wrapperId} .card-header { font-size: 1em; }
-#{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; }
-#{$wrapperId} .extra-small { font-size: 0.75em; }
-
-/* Main Card */
-#{$wrapperId} .awf-main-card {
-  width: 100%;
-  max-width: var(--awf-max-width);
-  min-width: 350px;
-  margin: 0 auto;
-  background-color: var(--bs-body-bg);
-  border: var(--awf-border-width) solid var(--bs-border-color);
-  border-radius: var(--awf-card-radius);
-  box-shadow: var(--awf-box-shadow);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Preview ribbon */
-#{$wrapperId} .awf-preview-ribbon {
-  position: absolute;
-  top: 5px;
-  right: -95px;
-  transform: rotate(45deg);
-  background-color: #dc3545;
-  color: #ffffff;
-  padding: 5px 40px;
-  font-size: 14px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 10px 5px rgba(0,0,0,0.3);
-  z-index: 1050;
-  pointer-events: none; 
-  user-select: none;
-}
-
-/* Grids */
-#{$wrapperId} .awf-grid-sections {
-  display: grid; 
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(max(var(--awf-sec-min-px), calc((100% - (1.5rem * (var(--awf-sec-cols) - 1))) / var(--awf-sec-cols))), 1fr));
-}
-#{$wrapperId} .awf-grid-fields {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(max(var(--awf-field-min-px), calc((100% - (1rem * (var(--awf-field-cols) - 1))) / var(--awf-field-cols))), 1fr));
-}
-
-/* Lock overlay */
-#{$wrapperId} .awf-overlay {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(5px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-radius: var(--bs-border-radius);
-}
-#{$wrapperId} .awf-overlay-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  border: 1px solid var(--bs-border-color);
-  max-width: 80%;
-}
+#{$wrapperId} .btn-primary:active, #{$wrapperId} .btn-primary.active { filter: brightness(0.85); background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; }
+#{$wrapperId} h1, #{$wrapperId} .h1 { font-size: 2.5em; } #{$wrapperId} h2, #{$wrapperId} .h2 { font-size: 2em; } #{$wrapperId} h3, #{$wrapperId} .h3 { font-size: 1.75em; } #{$wrapperId} h4, #{$wrapperId} .h4 { font-size: 1.5em; } #{$wrapperId} h5, #{$wrapperId} .h5 { font-size: 1.25em; } #{$wrapperId} h6, #{$wrapperId} .h6 { font-size: 1em; }
+#{$wrapperId} .form-label { margin-bottom: 0; } #{$wrapperId} .btn { border-radius: var(--bs-border-radius); } #{$wrapperId} .card-header { font-size: 1em; } #{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; } #{$wrapperId} .extra-small { font-size: 0.75em; }
+#{$wrapperId} .awf-main-card { width: 100%; max-width: var(--awf-max-width); min-width: 350px; margin: 0 auto; background-color: var(--bs-body-bg); border: var(--awf-border-width) solid var(--bs-border-color); border-radius: var(--awf-card-radius); box-shadow: var(--awf-box-shadow); position: relative; overflow: hidden; }
+#{$wrapperId} .awf-preview-ribbon { position: absolute; top: 5px; right: -95px; transform: rotate(45deg); background-color: #dc3545; color: #ffffff; padding: 5px 40px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 5px rgba(0,0,0,0.3); z-index: 1050; pointer-events: none; user-select: none; }
+#{$wrapperId} .awf-grid-sections { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(max(var(--awf-sec-min-px), calc((100% - (1.5rem * (var(--awf-sec-cols) - 1))) / var(--awf-sec-cols))), 1fr)); }
+#{$wrapperId} .awf-grid-fields { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(max(var(--awf-field-min-px), calc((100% - (1rem * (var(--awf-field-cols) - 1))) / var(--awf-field-cols))), 1fr)); }
+#{$wrapperId} .awf-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: var(--bs-border-radius); }
+#{$wrapperId} .awf-overlay-content { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--bs-border-color); max-width: 80%; }
 #{$wrapperId} .awf-relative-wrapper { position: relative; min-height: 300px;}
-
-/* Form Fields */
 #{$wrapperId} .awf-field { margin-bottom: var(--awf-field-spacing); }
-
-/* Help Text */
-#{$wrapperId} .awf-help-text {
-  font-size: 0.85em;   /* small */
-  color: #6c757d;    /* text-muted */
-  font-style: italic;  /* fst-italic */
-  margin-top: 0.25rem;
-}
-
-/* Sections */
-#{$wrapperId} .awf-section-card {
-  background-color: var(--bs-body-bg);
-  border: 1px solid var(--bs-border-color);
-  border-radius: calc(var(--awf-card-radius) - 2px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  height: var(--awf-section-height);
-}
-/* Header Sections */
-#{$wrapperId} .awf-section-card .card-header {
-  background-color: rgba(0, 0, 0, 0.03);
-  color: var(--bs-body-color);
-  font-weight: bold;
-  border-bottom: 1px solid var(--bs-border-color);
-}
+#{$wrapperId} .awf-help-text { font-size: 0.85em; color: #6c757d; font-style: italic; margin-top: 0.25rem; }
+#{$wrapperId} .awf-section-card { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: calc(var(--awf-card-radius) - 2px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); height: var(--awf-section-height); }
+#{$wrapperId} .awf-section-card .card-header { background-color: rgba(0, 0, 0, 0.03); color: var(--bs-body-color); font-weight: bold; border-bottom: 1px solid var(--bs-border-color); }
 #{$wrapperId} .awf-section-card .card-header:first-child { border-radius: var(--awf-card-radius) var(--awf-card-radius) 0 0; }
-#{$wrapperId} .awf-section-panel {
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  height: var(--awf-section-height);
-}
-
-/* Section Title: Panel */
-#{$wrapperId} .awf-section-title-panel {
-  font-size: 1.25em;      /* h5 */
-  margin-bottom: 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-/* Section Title: Card */
-#{$wrapperId} .awf-section-title-card {
-  font-weight: 700;      /* fw-bold */
-  margin: 0;
-}
-
-/* Form Footer */
-#{$wrapperId} .awf-footer {
-  margin-top: 3rem;       /* mt-5 */
-  padding-top: 1rem;      /* pt-3 */
-  border-top: 1px solid var(--bs-border-color);
-  font-size: 0.875em;     /* small */
-  color: #6c757d;       /* text-muted */
-  text-align: center;
-}
-
-/* Required Asterisc */
-#{$wrapperId} .awf-required {
-  color: #dc3545;       /* text-danger */
-  font-weight: bold;
-}
-
-/* Labels */
+#{$wrapperId} .awf-section-panel { border: none; background: transparent; box-shadow: none; height: var(--awf-section-height); }
+#{$wrapperId} .awf-section-title-panel { font-size: 1.25em; margin-bottom: 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bs-border-color); }
+#{$wrapperId} .awf-section-title-card { font-weight: 700; margin: 0; }
+#{$wrapperId} .awf-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--bs-border-color); font-size: 0.875em; color: #6c757d; text-align: center; }
+#{$wrapperId} .awf-required { color: #dc3545; font-weight: bold; }
 #{$wrapperId} label, #{$wrapperId} .form-label, #{$wrapperId} .form-check-label { font-weight: var(--awf-label-weight); }
-
-{$inputCssProps}
-#{$wrapperId} .form-control:focus, 
-#{$wrapperId} .form-select:focus { 
-  border-color: var(--bs-primary); 
-  {$inputFocusCssProps} 
-}
-{$selectCssProps}
-{$floatingLabelFix}
-
-/* Submit Button */
+#{$wrapperId} .form-control:focus, #{$wrapperId} .form-select:focus { border-color: var(--bs-primary); {$inputFocusCssProps} }
 #{$wrapperId} .awf-submit-btn { width: var(--awf-submit-width); }
 #{$wrapperId} .awf-submit-container { width: 100%; text-align: " . ($submitWidthVal === '100%' ? 'center' : 'right') . "; }
-
-/* User-provided custom CSS */
-{$customCss}
-
-/* Icons */
-{$iconCss}
-{$chevronCss}
-{$browserIconFix}
-{$validationFix}
-</style>" .$this->newLine();
+#{$wrapperId} .was-validated .form-control:valid, #{$wrapperId} .was-validated .form-select:valid, #{$wrapperId} .was-validated .form-check-input:valid { border-color: var(--bs-border-color); background-image: none; box-shadow: none; }
+#{$wrapperId} .was-validated .form-control:invalid, #{$wrapperId} .was-validated .form-select:invalid { background-image: none !important; border-color: #dc3545; }";
+        if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
+        if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
+        if ($floatingLabelFix !== "") $html .= "\n".$floatingLabelFix;
+        if ($customCss !== "")  $html .= "\n".$customCss;
+        if ($iconCss !== "")  $html .= "\n".$iconCss;
+        if ($chevronCss !== "")  $html .= "\n".$chevronCss;
+        if ($browserIconFix !== "")  $html .= "\n".$browserIconFix;
+        $html .= "\n</style>" .$this->newLine();
+    
+        return $html;
     }
 
     /**
@@ -817,7 +544,7 @@ JS;
                 }
 
                 // Begin Form
-                $html .= "<form {$formAttributes} {$alpineSubmit} class='needs-validation'>" .$this->newLine('+');
+                $html .= "<form x-ref='form' {$formAttributes} {$alpineSubmit} class='needs-validation'>" .$this->newLine('+');
                 {
                     // Honeypot: Invisible anti-spam
                     $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" .$this->newLine('+');
@@ -838,6 +565,7 @@ JS;
                     {
                         foreach ($layout->structure as $section) {
                             $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
+                            $sectionPanelId = "awf_sect_" . md5($section->title ?? uniqid());
 
                             // Collapsible logic
                             $isCollapsible = !empty($section->isCollapsible);
@@ -854,7 +582,8 @@ JS;
 
                                     if ($isCollapsible) {
                                         $cursorStyle = "cursor: pointer;"; 
-                                        $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click='open = !open'>" .$this->newLine('+');
+                                        $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' " .
+                                                              "@click='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
                                         {
                                             $toggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" .$this->newLine();
                                         }
@@ -884,7 +613,7 @@ JS;
                                     }
                                 }
                                 
-                                $showAttr = $isCollapsible ? "x-show='open' x-transition" : "";
+                                $showAttr = $isCollapsible ? "id='{$sectionPanelId}' x-show='open' x-transition" : "";
                                 $html .= "<div class='card-body' {$showAttr}>" .$this->newLine('+');
                                 {
                                     $html .= "<div class='awf-grid-fields'>" .$this->newLine('+');
@@ -970,7 +699,7 @@ JS;
 
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
-        $asterisk = $field->required_in_form ? "<span class='awf-required'>*</span>" : '';
+        $asterisk = $field->required_in_form ? "<span class='awf-required' aria-hidden='true'>*</span>" : '';
 
         $validationsAttr = " @blur='validateInput(\$el)' @input='resetError(\$el)'";
         if (!empty($field->validations)) {
@@ -992,9 +721,12 @@ JS;
         }
 
         $description = "";
+        $ariaDescribedBy = "";
         if ($field->description != '') {
             $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
-            $description = "<div class='form-text awf-help-text'>{$parsedDesc}</div>";
+            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+            $ariaDescribedBy = "aria-describedby='{$helpId}'";
         }
 
         // --- SPECIAL CASES (Single Checkbox / Switch) with own representation ---
@@ -1003,9 +735,18 @@ JS;
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr} {$validationsAttr} >" .$this->newLine();
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
-                $html .= $description .$this->newLine();
+                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
+                $html .= "<label class='form-check-label' for='f_{$inputName}'>" . $this->newLine('+');
+                {
+                    $html .= $label . $this->newLine();
+                    if ($asterisk !== '') {
+                        $html .= $asterisk . $this->newLine();
+                    }
+                }
+                $html .= "</label>" . $this->newLine('-');
+                if ($description !== '') {
+                    $html .= $description .$this->newLine();
+                }
             }
             $html .= "</div>" .$this->newLine('-');
             return $html;
@@ -1014,9 +755,18 @@ JS;
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$requiredAttr} {$validationsAttr}>" .$this->newLine();
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>{$label} {$asterisk}</label>" .$this->newLine();
-                $html .= $description .$this->newLine();
+                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
+                $html .= "<label class='form-check-label' for='f_{$inputName}'>" . $this->newLine('+');
+                {
+                    $html .= $label . $this->newLine();
+                    if ($asterisk !== '') {
+                        $html .= $asterisk . $this->newLine();
+                    }
+                }
+                $html .= "</label>" . $this->newLine('-');
+                if ($description !== '') {
+                    $html .= $description .$this->newLine();
+                }
             }
             $html .= "</div>" .$this->newLine('-');
             return $html;
@@ -1051,7 +801,7 @@ JS;
             // Text Areas
             if ($field->type_in_form == 'textarea') {
                 $controlHtml .= "<textarea {$validationsAttr} name='{$inputName}' class='form-control' id='f_{$inputName}' ".
-                                "placeholder='{$placeholder}' style='height: 100px' {$requiredAttr}></textarea>" .$this->newLine();
+                                "placeholder='{$placeholder}' style='height: 100px' {$ariaDescribedBy} {$requiredAttr}></textarea>" .$this->newLine();
 
             // Selects & Lists
             } else if ($field->type_in_form == 'select') {
@@ -1088,7 +838,7 @@ JS;
                     $finalName = $inputName . ($isMultipleSelect ? '[]' : '');
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select {$validationsAttr} name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$requiredAttr}>" .$this->newLine('+');
+                    $controlHtml .= "<select {$validationsAttr} name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine('+');
                     {
                         // Empty option only if not muliple
                         if (!$isMultipleSelect) {
@@ -1124,26 +874,36 @@ JS;
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
                 $controlHtml .= "<input {$validationsAttr} type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' ".
-                                "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$requiredAttr}>" .$this->newLine();
+                                "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine();
             }
 
             if ($isFloating) {
                 // Floating order: Input, Label
                 $html .= $controlHtml .$this->newLine();
                 $html .= "<label for='f_{$inputName}'>" . $this->newLine('+'); 
-                $html .= $label . $this->newLine();
-                $html .= $asterisk . $this->newLine();
+                {
+                    $html .= $label . $this->newLine();
+                    if ($asterisk !== '') {
+                        $html .= $asterisk . $this->newLine();
+                    }
+                }
                 $html .= "</label>" . $this->newLine('-');
         
             } else {
                 // Default order: Label, Input
-                $html .= "<label for='f_{$inputName}' class='form-label'>" . $this->newLine('+'); 
-                $html .= $label . $this->newLine();
-                $html .= $asterisk . $this->newLine();
+                $html .= "<label for='f_{$inputName}' class='form-label'>" . $this->newLine('+');
+                {
+                    $html .= $label . $this->newLine();
+                    if ($asterisk !== '') {
+                        $html .= $asterisk . $this->newLine();
+                    }
+                }
                 $html .= "</label>" . $this->newLine('-');
                 $html .= $controlHtml .$this->newLine();
             }
-            $html .= $description .$this->newLine();
+            if ($description !== '') {
+                $html .= $description .$this->newLine();
+            }
         }
         $html .= "</div>" .$this->newLine('-');
 
@@ -1164,15 +924,18 @@ JS;
         $name = htmlspecialchars($inputName);
         $label = htmlspecialchars($field->label ?? '');
         $description = "";
+        $ariaDescribedBy = "";
         
         if (!empty($field->description)) {
             $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
-            $description = "<div class='form-text awf-help-text'>{$parsedDesc}</div>";
+            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+            $ariaDescribedBy = "aria-describedby='{$helpId}'";
         }
 
         $subtype = !empty($field->subtype_in_form) ? $field->subtype_in_form : 'rating_stars';
         $isRequired = $field->required_in_form;
-        $requiredHtml = $isRequired ? '<span class="awf-required">*</span>' : '';
+        $asterisk = $isRequired ? '<span class="awf-required" aria-hidden="true">*</span>' : '';
         
         // AlpineJS logic
         $alpineLogic = <<<'JS'
@@ -1220,105 +983,118 @@ JS;
 JS;
         $safeAlpine = htmlspecialchars($alpineLogic, ENT_QUOTES, 'UTF-8');
         $html = '<div class="awf-field mb-3" x-data="' . $safeAlpine. '">' . $this->newLine('+');
-        if ($label) {
-            $html .= "<label for='f_{$name}' class='form-label'>" . $this->newLine('+'); 
-            $html .= $label . $this->newLine();
-            $html .= $requiredHtml . $this->newLine();
-            $html .= "</label>" . $this->newLine('-');
-        }
-
-        // Phantom input for HTML5 validation
-        $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms');
-        $requiredAttr = $isRequired ? 'required' : '';
-        $html .= "<input type='text' x-ref=\"input\" name='{$name}' id='f_{$name}' :value=\"val\" $requiredAttr tabindex='-1'" .
-                 "style='opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;'" .
-                 "oninvalid=\"this.setCustomValidity('{$errorMsg}')\" oninput=\"this.setCustomValidity('')\"> " . $this->newLine();
-
-        // --- CONTROLS ZONE ---
-       
-        // STARS, EMOJIS, THUMBS, LIGHTS
-        if ($subtype === 'rating_stars' || $subtype === 'rating_emoji' || $subtype === 'rating_thumbs' || $subtype === 'rating_lights') {
-            $emojis = [];
-            $isCumulative = false;
-            $isLight = false;
-
-            if ($subtype === 'rating_stars') {
-                $isCumulative = true;
-                $starEmpty = stic_AWFUtils::getRawSvgIcon('star_empty');
-                $starFill  = stic_AWFUtils::getRawSvgIcon('star_fill');
-                for ($i = 1; $i <= 5; $i++) {
-                    $emojis[$i] = ['empty' => $starEmpty, 'fill' => $starFill];
+        {
+            // Label
+            if ($label) {
+                $html .= "<label for='f_{$name}' class='form-label'>" . $this->newLine('+');
+                {
+                    $html .= $label . $this->newLine();
+                    if ($asterisk !== '') {
+                        $html .= $asterisk . $this->newLine();
+                    }
                 }
-            } elseif ($subtype === 'rating_emoji') {
-                $emojis = [
-                    1 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_angry_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_angry_fill')],
-                    2 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_frown_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_frown_fill')],
-                    3 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_neutral_empty'), 'fill' => stic_AWFUtils::getRawSvgIcon('emoji_neutral_fill')],
-                    4 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_smile_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_smile_fill')],
-                    5 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_laugh_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_laugh_fill')]
-                ];
-            } elseif ($subtype === 'rating_thumbs') {
-                $emojis = [
-                    1 => ['empty' => stic_AWFUtils::getRawSvgIcon('thumb_down_empty'), 'fill' => stic_AWFUtils::getRawSvgIcon('thumb_down_fill')],
-                    5 => ['empty' => stic_AWFUtils::getRawSvgIcon('thumb_up_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('thumb_up_fill')]
-                ];
-            } elseif ($subtype === 'rating_lights') {
-                $isLight = true;
-                $circle = stic_AWFUtils::getRawSvgIcon('circle_fill');
-                $emojis = [
-                    1 => ['empty' => $circle, 'fill' => $circle],
-                    3 => ['empty' => $circle, 'fill' => $circle],
-                    5 => ['empty' => $circle, 'fill' => $circle]
-                ];
+                $html .= "</label>" . $this->newLine('-');
             }
 
-            $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine('+');
-            foreach ($emojis as $val => $icons) {
-                $iconEmpty = $icons['empty'];
-                $iconFill = $icons['fill'];
+            // Phantom input for HTML5 validation
+            $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms');
+            $requiredAttr = $isRequired ? 'required' : '';
+            $html .= "<input type='text' x-ref=\"input\" name='{$name}' id='f_{$name}' :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
+                    "style='opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;'" .
+                    "oninvalid=\"this.setCustomValidity('{$errorMsg}')\" oninput=\"this.setCustomValidity('')\"> " . $this->newLine();
 
-                if ($isCumulative) {
-                    $alpineStyle = "starContainerStyle($val)";
-                    $showFill    = "(hover ? hover : val) >= $val";
-                    $showEmpty   = "(hover ? hover : val) < $val";
-                } else {
-                    $lightStr    = $isLight ? 'true' : 'false';
-                    $alpineStyle = "emojiStyle($val, $lightStr)";
-                    $showFill    = "(hover > 0 ? hover : val) === $val";
-                    $showEmpty   = "(hover > 0 ? hover : val) !== $val";
+            // --- CONTROLS ZONE ---
+        
+            // STARS, EMOJIS, THUMBS, LIGHTS
+            if ($subtype === 'rating_stars' || $subtype === 'rating_emoji' || $subtype === 'rating_thumbs' || $subtype === 'rating_lights') {
+                $emojis = [];
+                $isCumulative = false;
+                $isLight = false;
+
+                if ($subtype === 'rating_stars') {
+                    $isCumulative = true;
+                    $starEmpty = stic_AWFUtils::getRawSvgIcon('star_empty');
+                    $starFill  = stic_AWFUtils::getRawSvgIcon('star_fill');
+                    for ($i = 1; $i <= 5; $i++) {
+                        $emojis[$i] = ['empty' => $starEmpty, 'fill' => $starFill];
+                    }
+                } elseif ($subtype === 'rating_emoji') {
+                    $emojis = [
+                        1 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_angry_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_angry_fill')],
+                        2 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_frown_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_frown_fill')],
+                        3 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_neutral_empty'), 'fill' => stic_AWFUtils::getRawSvgIcon('emoji_neutral_fill')],
+                        4 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_smile_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_smile_fill')],
+                        5 => ['empty' => stic_AWFUtils::getRawSvgIcon('emoji_laugh_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('emoji_laugh_fill')]
+                    ];
+                } elseif ($subtype === 'rating_thumbs') {
+                    $emojis = [
+                        1 => ['empty' => stic_AWFUtils::getRawSvgIcon('thumb_down_empty'), 'fill' => stic_AWFUtils::getRawSvgIcon('thumb_down_fill')],
+                        5 => ['empty' => stic_AWFUtils::getRawSvgIcon('thumb_up_empty'),   'fill' => stic_AWFUtils::getRawSvgIcon('thumb_up_fill')]
+                    ];
+                } elseif ($subtype === 'rating_lights') {
+                    $isLight = true;
+                    $circle = stic_AWFUtils::getRawSvgIcon('circle_fill');
+                    $emojis = [
+                        1 => ['empty' => $circle, 'fill' => $circle],
+                        3 => ['empty' => $circle, 'fill' => $circle],
+                        5 => ['empty' => $circle, 'fill' => $circle]
+                    ];
                 }
 
-                $html .= "<button type='button' class='btn p-0 text-decoration-none border-0 d-inline-flex align-items-center justify-content-center' ".
-                         ":style=\"{$alpineStyle}\" @click=\"setVal({$val})\" @mouseover=\"hover=$val\" @mouseleave=\"hover=0\">". $this->newLine('+');
-                $html .= "<span x-show=\"{$showFill}\">{$iconFill}</span>". $this->newLine();
-                $html .= "<span x-show=\"{$showEmpty}\">{$iconEmpty}</span>". $this->newLine();
-                $html .= "</button>". $this->newLine('-');
-            }
-            $html .= "</div>".$this->newLine('-');
-        }
-        
-        // NPS
-        elseif ($subtype === 'rating_nps') {
-            $html .= "<div class='d-flex w-100 gap-1 mt-2'>" . $this->newLine('+');
-            for ($i = 0; $i <= 10; $i++) {
-                $html .= <<<HTML
-<button type="button" class="btn btn-sm flex-fill p-0 fw-bold" style="min-width: 0;" :class="npsClass($i)" @click="setVal($i)">$i</button>
-HTML;
-            }
-            $html .= "</div>".$this->newLine('-');
-        }
+                $html .= "<div class='d-flex flex-wrap gap-3 mt-2 align-items-center'>" . $this->newLine('+');
+                {
+                    foreach ($emojis as $val => $icons) {
+                        $ariaLabel = htmlspecialchars(sprintf(translate('LBL_RATE_ARIA', 'stic_AWF_Forms'), $val));
+                        $iconEmpty = $icons['empty'];
+                        $iconFill = $icons['fill'];
 
-        if ($description) {
-            $html .= $description . $this->newLine();
+                        if ($isCumulative) {
+                            $alpineStyle = "starContainerStyle($val)";
+                            $showFill    = "(hover ? hover : val) >= $val";
+                            $showEmpty   = "(hover ? hover : val) < $val";
+                        } else {
+                            $lightStr    = $isLight ? 'true' : 'false';
+                            $alpineStyle = "emojiStyle($val, $lightStr)";
+                            $showFill    = "(hover > 0 ? hover : val) === $val";
+                            $showEmpty   = "(hover > 0 ? hover : val) !== $val";
+                        }
+
+                        $html .= "<button type='button' class='btn p-0 text-decoration-none border-0 d-inline-flex align-items-center justify-content-center' ".
+                                 "aria-label=\"{$ariaLabel}\" ".
+                                 ":style=\"{$alpineStyle}\" @click=\"setVal({$val})\" @mouseover=\"hover=$val\" @mouseleave=\"hover=0\">". $this->newLine('+');
+                        {
+                            $html .= "<span x-show=\"{$showFill}\">{$iconFill}</span>". $this->newLine();
+                            $html .= "<span x-show=\"{$showEmpty}\">{$iconEmpty}</span>". $this->newLine();
+                        }
+                        $html .= "</button>". $this->newLine('-');
+                    }
+                }
+                $html .= "</div>".$this->newLine('-');
+            }
+            
+            // NPS
+            elseif ($subtype === 'rating_nps') {
+                $html .= "<div class='d-flex w-100 gap-1 mt-2'>" . $this->newLine('+');
+                {
+                    for ($i = 0; $i <= 10; $i++) {
+                        $ariaLabel = htmlspecialchars(sprintf(translate('LBL_RATE_ARIA', 'stic_AWF_Forms'), $i));
+                        $html .= "<button type='button' class='btn btn-sm flex-fill p-0 fw-bold' style='min-width: 0;' aria-label=\"{$ariaLabel}\" ".
+                                          ":class=\"npsClass({$i})\" @click=\"setVal({$i})\">{$i}</button>". $this->newLine();
+                    }
+                }
+                $html .= "</div>".$this->newLine('-');
+            }
+
+            if ($description) {
+                $html .= $description . $this->newLine();
+            }
+            
+            // Error message
+            if ($isRequired) {
+                $html .= "<div class='invalid-feedback' x-show=\"!val && \$el.closest('form').classList.contains('was-validated')\" style='display:block'>{$errorMsg}</div>". $this->newLine();
+            }
         }
-        
-        // Error message
-        if ($isRequired) {
-            $html .= <<<HTML
-<div class="invalid-feedback" x-show="!val && \$el.closest('form').classList.contains('was-validated')" style="display:block">$errorMsg</div>
-HTML;
-        }
-        $html .= "</div>" . $this->newLine('-'); 
+        $html .= "</div>". $this->newLine('-'); 
         return $html;
     }
 
@@ -1471,9 +1247,10 @@ HTML;
      * This method returns an associative array where the keys are the subtype identifiers and the values are the corresponding SVG strings.
      * The icons are styled with a default color and can be used in the form controls to visually indicate the type of input expected (e.g., an envelope icon for email fields).
      * 
+     * @param array $usedSubtypes An optional array of subtypes that are actually used in the form, allowing for optimization by only including necessary icons. If empty, all supported icons will be returned.
      * @return array An associative array mapping field subtypes to their corresponding SVG icon strings, used for rendering icons in form controls
      */
-    private function getSvgIconsData(): array {
+    private function getSvgIconsData(array $usedSubtypes = []): array {
         // Icon color
         $hexColor = '#6c757d';
         
@@ -1490,22 +1267,16 @@ HTML;
 
         $cssRules = [];
         foreach ($definitions as $type => $svg) {
-            $svgColored = str_replace('currentColor', $hexColor, $svg);
-            $encoded = base64_encode($svgColored);
-            $className = 'awf-icon-' . str_replace('_', '-', $type);
-            $dataUri = "data:image/svg+xml;base64,{$encoded}";
-            
-            // CSS definition
-            $cssRules[] = "
-#%WRAPPER_ID% .{$className} {
-  background-image: url(\"{$dataUri}\");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1rem 1rem;
-  padding-right: 2.5rem !important;
-}";
+            // Only process if the form uses this input subtype
+            if (empty($usedSubtypes) || isset($usedSubtypes[$type])) {
+                $svgColored = str_replace('currentColor', $hexColor, $svg);
+                $encoded = base64_encode($svgColored);
+                $className = 'awf-icon-' . str_replace('_', '-', $type);
+                $dataUri = "data:image/svg+xml;base64,{$encoded}";
+                
+                $cssRules[] = "\n#%WRAPPER_ID% .{$className} { background-image: url(\"{$dataUri}\"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1rem 1rem; padding-right: 2.5rem !important; }";
+            }
         }
-
         return $cssRules;
     }
 

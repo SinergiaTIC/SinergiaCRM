@@ -390,6 +390,8 @@ $mod_strings = array (
 
   'LBL_COPY_TO_CLIPBOARD_DONE' => 'Copiado al portapapeles',
 
+  'LBL_RATE_ARIA' => 'Valora con un %s',
+
   // Errors
   'LBL_ERROR_DATABLOCK_IS_INVALID' => 'El bloque de datos tiene errores',
   'LBL_ERROR_DATABLOCK_NAME' => 'El nombre interno del bloque de datos está vacío',
