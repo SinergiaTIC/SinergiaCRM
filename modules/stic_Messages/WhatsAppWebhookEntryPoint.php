@@ -39,6 +39,11 @@ class WhatsAppWebhookEntryPoint
             // Initial log for debugging
             $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: Processing started');
             $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: POST data = ' . print_r($_POST, true));
+            // Diagnostic info: current user and request environment
+            $currentUserId = isset($GLOBALS['current_user']) && !empty($GLOBALS['current_user']->id) ? $GLOBALS['current_user']->id : 'none';
+            $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: current_user id = ' . $currentUserId);
+            $method = $_SERVER['REQUEST_METHOD'] ?? 'cli';
+            $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: Request method = ' . $method);
 
             // Validate that necessary data is present
             if (!$this->validateWebhookData()) {
@@ -67,7 +72,13 @@ class WhatsAppWebhookEntryPoint
             }
 
             // Create the incoming message record
+            $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: Creating stic_Messages bean');
             $message = BeanFactory::newBean('stic_Messages');
+            if ($message) {
+                $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: newBean class = ' . get_class($message));
+            } else {
+                $GLOBALS['log']->error('WhatsAppWebhookEntryPoint: BeanFactory::newBean returned null/false');
+            }
             $message->name = $this->generateMessageName($parentInfo, $from);
             $message->type = 'WhatsApp';
             $message->direction = 'inbound';
@@ -85,6 +96,7 @@ class WhatsAppWebhookEntryPoint
             }
 
             // Save the message
+            $GLOBALS['log']->info('WhatsAppWebhookEntryPoint: About to save message');
             $messageId = $message->save();
 
             $GLOBALS['log']->info("WhatsAppWebhookEntryPoint: Message saved with ID: $messageId");

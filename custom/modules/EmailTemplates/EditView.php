@@ -279,25 +279,34 @@ $xtpl->assign("TYPE_OPTIONS", get_select_options_with_id($app_list_strings['reco
 //$xtpl->assign("DEFAULT_MODULE","Accounts");
 
 // Prepare WhatsApp select options and current values
-$approval_selected = isset($focus->STIC_WHATSAPP_STATUS_c) ? $focus->STIC_WHATSAPP_STATUS_c : '';
-$language_selected = isset($focus->stic_whatsapp_language_c) ? $focus->stic_whatsapp_language_c : '';
-// approval status uses its dedicated list
+$approval_selected  = isset($focus->stic_whatsapp_status_c)   ? $focus->stic_whatsapp_status_c   : '';
+$language_selected  = isset($focus->stic_whatsapp_language_c)  ? $focus->stic_whatsapp_language_c  : '';
+$category_selected  = isset($focus->stic_whatsapp_category_c)  ? $focus->stic_whatsapp_category_c  : '';
+$twilio_id          = isset($focus->stic_whatsapp_twilio_id_c) ? $focus->stic_whatsapp_twilio_id_c : '';
+
+// Status
 if (!empty($app_list_strings['stic_whatsapp_status_list'])) {
     $xtpl->assign('STIC_WHATSAPP_STATUS_OPTIONS', get_select_options_with_id($app_list_strings['stic_whatsapp_status_list'], $approval_selected));
 } else {
-    $xtpl->assign('STIC_WHATSAPP_STATUS_OPTIONS', "");
+    $xtpl->assign('STIC_WHATSAPP_STATUS_OPTIONS', '');
 }
-// language uses stic_languages_list
+
+// Language
 if (!empty($app_list_strings['stic_languages_list'])) {
     $xtpl->assign('STIC_WHATSAPP_LANGUAGE_OPTIONS', get_select_options_with_id($app_list_strings['stic_languages_list'], $language_selected));
 } else {
-    $xtpl->assign('STIC_WHATSAPP_LANGUAGE_OPTIONS', "");
+    $xtpl->assign('STIC_WHATSAPP_LANGUAGE_OPTIONS', '');
 }
-// Also assign simple values if needed
-$xtpl->assign('STIC_WHATSAPP_STATUS', $approval_selected);
-$xtpl->assign('STIC_WHATSAPP_LANGUAGE', $language_selected);
-$xtpl->assign('LBL_STIC_WHATSAPP_CATEGORY', $app_list_strings['stic_whatsapp_category_list'][$language_selected] ?? '');
 
+// Category
+if (!empty($app_list_strings['stic_whatsapp_category_list'])) {
+    $xtpl->assign('STIC_WHATSAPP_CATEGORY_OPTIONS', get_select_options_with_id($app_list_strings['stic_whatsapp_category_list'], $category_selected));
+} else {
+    $xtpl->assign('STIC_WHATSAPP_CATEGORY_OPTIONS', '');
+}
+
+// Twilio ID (campo de texto, readonly)
+$xtpl->assign('STIC_WHATSAPP_TWILIO_ID', htmlspecialchars($twilio_id, ENT_QUOTES));
 if (isset($focus->body)) {
     $xtpl->assign("BODY", $focus->body);
 } else {

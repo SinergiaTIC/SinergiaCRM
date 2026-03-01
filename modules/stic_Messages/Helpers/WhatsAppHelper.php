@@ -76,11 +76,11 @@ class WhatsAppHelper implements stic_MessagesHelper {
         return $this;
     }
 
-    public function sendMessage(?string $sender, string $message, string $phone, ?string $templateSid = null): array
+    public function sendMessage(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = []): array
     {
         $phone = $this->formatPhoneNumber($phone);
         
-        $result = $this->apiCall($sender, $message, $phone, $templateSid);
+        $result = $this->apiCall($sender, $message, $phone, $templateSid, $beans);
         
         $resultArray = json_decode($result, true);
         
@@ -107,7 +107,7 @@ class WhatsAppHelper implements stic_MessagesHelper {
         }
     }
 
-    protected function apiCall(?string $sender, string $message, string $phone, ?string $templateSid = null): string
+    protected function apiCall(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = []): string
     {
         if (!$this->isConfigured()) {
             return json_encode([
@@ -132,27 +132,10 @@ class WhatsAppHelper implements stic_MessagesHelper {
         ];
 
         if (!empty($templateSid)) {
-            // When using a Twilio WhatsApp template (ContentSid), send contentVariables
-            // so Twilio can perform the template interpolation server-side.
             $postData['ContentSid'] = $templateSid;
-
-            // contentVariables must be a JSON string. Prefer to send a JSON object
-            // with variables if the message field already contains valid JSON. Otherwise
-            // send an empty object so Twilio receives a well-formed contentVariables value.
-            $trimmed = trim($message);
-            $contentVariables = '{}';
-            if ($trimmed !== '') {
-                // If the message already contains valid JSON (object or array), use it as-is.
-                // Otherwise, do NOT wrap the template body as a positional variable; send
-                // an empty object so Twilio receives a well-formed contentVariables value.
-                if (($trimmed[0] === '{' || $trimmed[0] === '[') && json_decode($trimmed) !== null) {
-                    $contentVariables = $trimmed;
-                } else {
-                    // Send empty object instead of wrapping the whole body as variable
-                    $contentVariables = '{}';
-                }
-            }
-            $postData['ContentVariables'] = $contentVariables;
+            $postData['ContentVariables'] = !empty($beans)
+                ? json_encode($this->buildTwilioContentVariables($message, $beans))
+                : '{}';
         } else {
             if (strpos($message, 'HX') === 0) {
                 $postData['ContentSid'] = $message;
@@ -228,5 +211,40 @@ class WhatsAppHelper implements stic_MessagesHelper {
         if (empty($this->token)) $errors[] = 'Auth Token ausente';
         if (empty($this->twilioNumber)) $errors[] = 'Número Twilio ausente';
         return $errors;
+    }
+
+    /**
+     * Extracts $variable placeholders from the template body, resolves them
+     * against the provided beans, and returns a Twilio contentVariables array:
+     * ["1" => "value1", "2" => "value2", ...]
+     *
+     * @param string $templateBody Raw template body with $variable placeholders
+     * @param array  $beans        Ordered list of SugarBean objects to resolve against
+     * @return array
+     */
+    protected function buildTwilioContentVariables(string $templateBody, array $beans): array
+    {
+        preg_match_all('/\$([a-zA-Z_][a-zA-Z0-9_]*)/', $templateBody, $matches);
+        $placeholders = array_unique($matches[1] ?? []);
+
+        if (empty($placeholders)) {
+            return [];
+        }
+
+        $contentVariables = [];
+        $index = 1;
+        foreach ($placeholders as $placeholder) {
+            foreach ($beans as $bean) {
+                $testText = '$' . $placeholder;
+                $result = stic_Messages::replaceTemplateVariables($testText, $bean);
+                if ($result !== $testText && $result !== '') {
+                    $contentVariables[(string)$index] = $result;
+                    $index++;
+                    break;
+                }
+            }
+        }
+
+        return $contentVariables;
     }
 }

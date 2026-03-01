@@ -141,26 +141,8 @@ class stic_Messages extends Basic
 
         if ($this->status === 'sent') {
             $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
-
+    
             $processedText = $this->replaceTemplateVariables($this->message, $bean);
-
-            // Also replace variables from recipient relation beans (Contact, Account, Lead, Employee)
-            $recipientBeanMap = [
-                'Contacts'  => ['idField' => 'stic_messages_contactscontacts_ida',  'module' => 'Contacts'],
-                'Accounts'  => ['idField' => 'stic_messages_accountsaccounts_ida',  'module' => 'Accounts'],
-                'Leads'     => ['idField' => 'stic_messages_leadsleads_ida',         'module' => 'Leads'],
-                'Employees' => ['idField' => 'stic_messages_employeesemployees_ida', 'module' => 'Employees'],
-            ];
-            foreach ($recipientBeanMap as $cfg) {
-                $relatedId = $this->{$cfg['idField']} ?? ($_REQUEST[$cfg['idField']] ?? null);
-                if (!empty($relatedId)) {
-                    $relatedBean = BeanFactory::getBean($cfg['module'], $relatedId);
-                    if ($relatedBean) {
-                        $processedText = $this->replaceTemplateVariables($processedText, $relatedBean);
-                    }
-                }
-            }
-
             $this->message = $processedText;
         }
 
@@ -288,9 +270,34 @@ class stic_Messages extends Basic
             }
         }
 
+        // Collect beans (parent + recipient relations) and pass to the helper.
+        // Each provider helper can use them as needed (e.g. Twilio builds contentVariables from them).
+        $beans = [];
+        if (!empty($this->parent_type) && !empty($this->parent_id)) {
+            $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+            if ($parentBean) {
+                $beans[] = $parentBean;
+            }
+        }
+        $recipientBeanMap = [
+            'Contacts'  => ['idField' => 'stic_messages_contactscontacts_ida',  'module' => 'Contacts'],
+            'Accounts'  => ['idField' => 'stic_messages_accountsaccounts_ida',  'module' => 'Accounts'],
+            'Leads'     => ['idField' => 'stic_messages_leadsleads_ida',         'module' => 'Leads'],
+            'Employees' => ['idField' => 'stic_messages_employeesemployees_ida', 'module' => 'Employees'],
+        ];
+        foreach ($recipientBeanMap as $cfg) {
+            $relatedId = $this->{$cfg['idField']} ?? ($_REQUEST[$cfg['idField']] ?? null);
+            if (!empty($relatedId)) {
+                $relatedBean = BeanFactory::getBean($cfg['module'], $relatedId);
+                if ($relatedBean) {
+                    $beans[] = $relatedBean;
+                }
+            }
+        }
+
         if ($messageHelper !== null) {
             if ($file === 'WhatsApp') {
-                $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone, $templateSid);
+                $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone, $templateSid, $beans);
             } else {
                 $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
             }
