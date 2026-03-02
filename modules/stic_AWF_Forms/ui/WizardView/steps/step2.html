@@ -853,24 +853,26 @@
                         <!-- Apply condition -->
                         <div class="col-3 form-switch">
                           <label for="validation_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_APPLY_CONDITION')"></label>
-                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="validation_ApplyCondition" x-model="store.applyCondition"/>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="validation_ApplyCondition" x-model="store.applyCondition"
+                                 @change="store.updateApplyCondition(store.applyCondition)" />
                         </div>
                         <!-- Condition field -->
-                        <template x-if="store.applyCondition">
+                        <template x-if="store.applyCondition && store.validation.conditions && store.validation.conditions.length > 0">
                           <div class="col-4">
                             <label for="validation_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD_NAME')"></label>
                             <stic-select id="validation_ConditionField" x-bind:disabled="store.availableFieldsInForm.length<=1"
-                                         options="store.availableFieldsInFormForSelect" model="validation.conditions[0].field_name" 
-                                         @change="validation.conditions[0].value = ''"></stic-select>
+                                         options="store.availableFieldsInFormForSelect" model="store.validation.conditions[0].field_name" 
+                                         @change="store.updateActiveConditionFieldDef(store.validation.conditions[0].field_name);"></stic-select>
                           </div>
                         </template>
                         <!-- Condition value -->
-                        <template x-if="store.applyCondition && validation.conditions[0].field_name != '' && store.activeConditionFieldDef">
+                        <template x-if="store.applyCondition && store.validation.conditions && store.validation.conditions.length > 0 && 
+                                        store.validation.conditions[0].field_name != '' && store.activeConditionFieldDef">
                           <div class="col-3">
                             <label for="validation_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_VALUE')"></label>
                             <!-- Boolean -->
                             <template x-if="store.isBooleanCondition">
-                              <select id="validation_ConditionValue" class="form-select" x-model="validation.conditions[0].value">
+                              <select id="validation_ConditionValue" class="form-select" x-model="store.validation.conditions[0].value">
                                 <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
                                 <option value="1" x-text="utils.translate('LBL_YES')"></option>
                                 <option value="0" x-text="utils.translate('LBL_NO')"></option>

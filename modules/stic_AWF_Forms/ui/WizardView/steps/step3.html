@@ -55,7 +55,7 @@
                             <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
                                  data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
                                 <!-- Condition -->
-                                <template x-if="action.conditions[0].field_name">
+                                <template x-if="action.conditions && action.conditions.length > 0 && action.conditions[0].field_name">
                                     <span class="badge rounded-pill bg-warning-subtle text-dark me-2" :title="utils.translate('LBL_ACTION_CONDITION_TEXT')">
                                         <i class="suitepicon suitepicon-action-confirm"></i>
                                         <span x-text="getActionConditionLabel(action)">
@@ -119,7 +119,7 @@
                                             <!-- Name -->
                                             <td>
                                                 <strong :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></strong>
-                                                <template x-if="action.conditions[0].field_name">
+                                                <template x-if="action.conditions && action.conditions.length > 0 && action.conditions[0].field_name">
                                                     <div class="small text-muted fst-italic">
                                                         <span x-text="utils.translateForFieldLabel('LBL_CONDITION_SUMMARY') + ' ' + getActionConditionLabel(action)"></span>
                                                     </div>
@@ -272,19 +272,21 @@
                                         <!-- Apply condition -->
                                         <div class="col-3 form-switch">
                                             <label for="action_ApplyCondition" class="form-label" x-text="utils.translateForFieldLabel('LBL_APPLY_CONDITION')"></label>
-                                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="action_ApplyCondition" x-model="$store.actionEditor.applyCondition"/>
+                                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="action_ApplyCondition" x-model="$store.actionEditor.applyCondition"
+                                                   @change="$store.actionEditor.updateApplyCondition($store.actionEditor.applyCondition)"/>
                                         </div>
                                         <!-- Condition field -->
-                                        <template x-if="$store.actionEditor.applyCondition">
+                                        <template x-if="$store.actionEditor.applyCondition && $store.actionEditor.action.conditions && $store.actionEditor.action.conditions.length > 0">
                                             <div class="col-4">
                                                 <label for="action_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD_NAME')"></label>
                                                 <stic-select id="action_ConditionField" x-bind:disabled="$store.actionEditor.availableFieldsInForm.length<=1"
                                                              options="$store.actionEditor.availableFieldsInFormForSelect" model="$store.actionEditor.action.conditions[0].field_name" 
-                                                             @change="$store.actionEditor.action.conditions[0].value = ''"></stic-select>
+                                                             @change="$store.actionEditor.updateActiveConditionFieldDef($store.actionEditor.action.conditions[0].field_name);"></stic-select>
                                             </div>
                                         </template>
                                         <!-- Condition value -->
-                                        <template x-if="$store.actionEditor.applyCondition && $store.actionEditor.action.conditions[0].field_name != '' && $store.actionEditor.activeConditionFieldDef">
+                                        <template x-if="$store.actionEditor.applyCondition && $store.actionEditor.action.conditions && $store.actionEditor.action.conditions.length > 0 && 
+                                                        $store.actionEditor.action.conditions[0].field_name != '' && $store.actionEditor.activeConditionFieldDef">
                                             <div class="col-3">
                                             <label for="action_ConditionValue" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_VALUE')"></label>
                                             <!-- Boolean -->
@@ -301,10 +303,10 @@
                                             </template>
                                             <!-- Text -->
                                             <template x-if="!$store.actionEditor.isBooleanCondition && $store.actionEditor.activeConditionFieldDef?.type_in_form != 'select'">
-                                                <input id="action_ConditionValue" :type="conditionInputType" class="form-control" x-model="$store.actionEditor.action.conditions[0].value">
+                                                <input id="action_ConditionValue" :type="$store.actionEditor.conditionInputType" class="form-control" x-model="$store.actionEditor.action.conditions[0].value">
                                             </template>
                                             </div>
-                                        </template>                                         
+                                        </template>
                                     </div>
                                 </div>
                             </div>
