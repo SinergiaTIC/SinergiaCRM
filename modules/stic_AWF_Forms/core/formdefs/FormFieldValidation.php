@@ -34,7 +34,7 @@ class FormFieldValidation {
     public array $params;                // Parameters (ex: ['pattern' => '...'])
     
     /** @var FormCondition[] */
-    public array $conditions;            // Conditions to execute the validation (all must be accomplished)
+    public array $conditions = [];            // Conditions to execute the validation (all must be accomplished)
 
     /**
      * Creates an instance of FormFieldValidation from a JSON array.

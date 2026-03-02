@@ -40,7 +40,7 @@ class FormAction {
     private array $resolvedParameters = []; // Resolved parameters, with the final value
 
     /** @var FormCondition[] */
-    public array $conditions;        // Conditions to execute the validation (all must be accomplished)
+    public array $conditions = [];        // Conditions to execute the validation (all must be accomplished)
 
     // For deferred actions
     public ?string $flow_success_id = null; // Flow to execute if the deferred action returns successfully
