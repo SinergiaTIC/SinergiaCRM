@@ -798,4 +798,47 @@ class stic_AWFUtils {
 
         return nl2br($html);
     }
+
+    /**
+     * Evaluates an array of conditions against the provided form data.
+     * Assumes an implicit AND between all conditions.
+     * @param array|null $conditions Array of condition DTOs (field_name, operator, value)
+     * @param array $formData The submitted form data
+     * @return bool True if all conditions are met or if no conditions exist, false otherwise
+     */
+    public static function evaluateConditions(?array $conditions, array $formData): bool {
+        if (empty($conditions)) {
+            return true;
+        }
+
+        foreach ($conditions as $cond) {
+            if (empty($cond->field_name)) {
+                continue; // Prevent errors if an empty condition slipped through
+            }
+
+            $fieldKey = $cond->field_name; // Ex: "Contact0.newsletter"
+            $phpKey = str_replace('.', '_', $fieldKey); // Convert field name to PHP key format
+            $expectedValue = $cond->value;
+            $submittedValue = $formData[$phpKey] ?? null;
+
+            $isMatch = is_array($submittedValue) 
+                ? in_array($expectedValue, $submittedValue)
+                : ($submittedValue == $expectedValue);
+
+            // Evaluate based on the operator
+            switch ($cond->operator) {
+                case 'Equal_To':
+                    if (!$isMatch) return false;
+                    break;
+                case 'Not_Equal_To':
+                    if ($isMatch) return false;
+                    break;
+                // Future operators (>, <, IN, etc.) go here
+                default:
+                    return false; // Unknown operator fails safely
+            }
+        }
+
+        return true; // All conditions passed
+    }
 }

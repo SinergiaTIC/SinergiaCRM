@@ -39,8 +39,8 @@ class FormAction {
 
     private array $resolvedParameters = []; // Resolved parameters, with the final value
 
-    public string $condition_field = '';    // The field that conditions the execution
-    public string $condition_value = '';    // The value required to execute the action
+    /** @var FormCondition[] */
+    public array $conditions;        // Conditions to execute the validation (all must be accomplished)
 
     // For deferred actions
     public ?string $flow_success_id = null; // Flow to execute if the deferred action returns successfully
@@ -63,9 +63,12 @@ class FormAction {
         $dto->description = $data['description'];
         $dto->requisite_actions = $data['requisite_actions'] ?? [];
 
-        // Conditions
-        $dto->condition_field = $data['condition_field'] ?? '';
-        $dto->condition_value = $data['condition_value'] ?? '';
+        // Condition
+        if (isset($data['conditions'])) {
+            foreach ($data['conditions'] as $conditionData) {
+                $dto->conditions[] = FormCondition::fromJsonArray($conditionData);
+            }
+        }
 
         // Deferred actions
         $dto->flow_success_id = $data['flow_success_id'] ?? '';

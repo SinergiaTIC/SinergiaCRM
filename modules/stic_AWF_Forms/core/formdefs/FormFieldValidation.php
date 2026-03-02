@@ -33,9 +33,8 @@ class FormFieldValidation {
     public string $message;              // Custom error message
     public array $params;                // Parameters (ex: ['pattern' => '...'])
     
-    // Condition to apply the validation (if field_x has value y)
-    public string $condition_field;
-    public string $condition_value;
+    /** @var FormCondition[] */
+    public array $conditions;            // Conditions to execute the validation (all must be accomplished)
 
     /**
      * Creates an instance of FormFieldValidation from a JSON array.
@@ -53,8 +52,11 @@ class FormFieldValidation {
         $dto->params = $data['params'] ?? [];
         
         // Condition
-        $dto->condition_field = $data['condition_field'] ?? '';
-        $dto->condition_value = $data['condition_value'] ?? '';
+        if (isset($data['conditions'])) {
+            foreach ($data['conditions'] as $conditionData) {
+                $dto->conditions[] = FormCondition::fromJsonArray($conditionData);
+            }
+        }
 
         return $dto;
     }

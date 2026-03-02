@@ -25,20 +25,24 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/FormConfig.php";
+class FormCondition {
+    public string $field_name;          // Field name to evaluate
+    public string $operator;            // Operator (Equal_To)
+    public string $value;               // Value to compare
+    
 
-include_once __DIR__."/FormDataBlock.php";
-include_once __DIR__."/FormValueOption.php";
-include_once __DIR__."/FormDataBlockField.php";
-include_once __DIR__."/FormCondition.php";
-include_once __DIR__."/FormFieldValidation.php";
-include_once __DIR__."/FormDuplicateRule.php";
+    /**
+     * Creates an instance of FormCondition from a JSON array.
+     * @param array $data The data in array format
+     * @return FormCondition The created instance
+     */
+    public static function fromJsonArray(array $data): self {
+        $dto = new self();
 
-include_once __DIR__."/FormFlow.php";
-include_once __DIR__."/FormAction.php";
-include_once __DIR__."/FormActionParameter.php";
-
-include_once __DIR__."/FormLayout.php";
-include_once __DIR__."/FormTheme.php";
-include_once __DIR__."/FormLayoutSection.php";
-include_once __DIR__."/FormLayoutElement.php";
+        $dto->field_name = $data['field_name'] ?? '';
+        $dto->operator = $data['operator'] ?? '';
+        $dto->value = $data['value'] ?? '';
+        
+        return $dto;
+    }
+}

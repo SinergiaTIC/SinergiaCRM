@@ -487,8 +487,7 @@ class FormHtmlGeneratorService {
                     'validator' => $val->validator,
                     'message' => $val->message,
                     'params' => $val->params,
-                    'condition_field' => $val->condition_field ?? '',
-                    'condition_value' => $val->condition_value ?? ''
+                    'conditions' => $val->conditions ?? [],
                 ];
             }
             if (!empty($rules)) {
@@ -981,10 +980,20 @@ document.addEventListener('alpine:init', () => {
         try {
           const rules = JSON.parse(input.dataset.awfValidations);
           for (const rule of rules) {
-            if (rule.condition_field && rule.condition_field !== '') {
-              const condInput = form.querySelector('[id="f_' + rule.condition_field + '"]');
-              if (condInput && condInput.value != rule.condition_value) continue;
+            let conditionsMet = true;
+              if (rule.conditions && rule.conditions.length > 0) {
+                for (const cond of rule.conditions) {
+                  if (!cond.field_name) continue;
+                  const condInput = form.querySelector('[id="f_' + cond.field_name + '"]');
+                  if (!condInput) continue;
+                    
+                  const isMatch = (condInput.value == cond.value);
+                  if (cond.operator === 'Equal_To' && !isMatch) { conditionsMet = false; break; }
+                  if (cond.operator === 'Not_Equal_To' && isMatch) { conditionsMet = false; break; }
+                }
             }
+            if (!conditionsMet) continue;
+
             const validatorFn = AWF_Validators[rule.validator];
             if (validatorFn) {
               let valueToValidate = input.type === 'checkbox' ? input.checked : input.value;

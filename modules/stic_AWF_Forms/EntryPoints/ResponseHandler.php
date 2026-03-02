@@ -739,12 +739,11 @@ class ResponseHandler
                 // BACKEND VALIDATION FOR CUSTOM VALIDATORS
                 if (!empty($formField->validations)) {
                     foreach ($formField->validations as $valConfig) {
-                        // Check condition (if any)
-                        if (!empty($valConfig->condition_field) && isset($data[str_replace('.', '_', $valConfig->condition_field)])) {
-                            if ($data[str_replace('.', '_', $valConfig->condition_field)] != $valConfig->condition_value) {
-                                continue; // The condition is not met, skip this validation
-                            }
+                        // Check conditions (if any)
+                        if (!stic_AWFUtils::evaluateConditions($valConfig->conditions, $data)) {
+                            continue; // Conditions are not met, skip this validation
                         }
+                       
                         $validatorDef = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
                         foreach ($validatorDef as $def) {
                             if ($def->getName() === $valConfig->validator && $def instanceof ValidatorActionDefinition) {

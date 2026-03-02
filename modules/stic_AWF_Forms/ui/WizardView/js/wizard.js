@@ -483,14 +483,16 @@ class WizardStep2 {
             * @returns {string} 
             */
             getConditionLabel(validation) {
-              if (!validation.condition_field) return '';
+              if (!validation.conditions || validation.conditions.length === 0) return '';
+              const cond = validation.conditions[0];
+              if (!cond.field_name) return '';
               
               // Get the label of the condition field
-              const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(validation.condition_field);
-              const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : validation.condition_field;
+              const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(cond.field_name);
+              const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : cond.field_name;
 
               // Get the formatted value of the condition value, especially for boolean fields
-              let val = validation.condition_value;
+              let val = cond.value;
               if (fieldDef && (fieldDef.type == 'bool' || fieldDef.type == 'checkbox' || fieldDef.subtype_in_form == 'select_checkbox')) {
                 if (val == '1' || val == 'true') {
                   val = utils.translate('LBL_YES');
@@ -660,18 +662,22 @@ class WizardStep2 {
 
             init() {
               Alpine.effect(() => {
-                const fieldName = this.validation?.condition_field;
-                this.updateActiveConditionFieldDef(fieldName);
-              });
-              
-              Alpine.effect(() => {
-                if (this.applyCondition === false && this.validation) {
-                  if (this.validation.condition_field !== '' || this.validation.condition_value !== '') {
-                    this.validation.condition_field = '';
-                    this.validation.condition_value = '';
+                if (this.applyCondition === true && this.validation) {
+                  if (!this.validation.conditions) this.validation.conditions = [];
+                  if (this.validation.conditions.length === 0) {
+                    this.validation.conditions.push(new stic_AwfCondition()); 
+                  }
+                } else if (this.applyCondition === false && this.validation) {
+                  if (this.validation.conditions && this.validation.conditions.length > 0) {
+                    this.validation.conditions = [];
                     this._activeConditionFieldDef = null;
                   }
                 }
+              });
+
+              Alpine.effect(() => {
+                const fieldName = (this.validation?.conditions?.length > 0) ? this.validation.conditions[0].field_name : null;
+                this.updateActiveConditionFieldDef(fieldName);
               });
 
               Alpine.effect(() => {
@@ -694,10 +700,10 @@ class WizardStep2 {
                   this._activeConditionFieldDef = newDef;
                   // Reactivar el valor si es un select para que refresque las opciones
                   if (this._activeConditionFieldDef && this._activeConditionFieldDef.type_in_form === 'select') {
-                    const currentValue = this.validation.condition_value;
+                    const currentValue = this.validation.conditions[0]?.value;
                     if (currentValue) {
                       setTimeout(() => { 
-                        if(this.validation) this.validation.condition_value = currentValue; 
+                        if(this.validation && this.validation.conditions.length > 0) this.validation.conditions[0].value = currentValue;
                       }, 50);
                     }
                   }
@@ -706,9 +712,9 @@ class WizardStep2 {
             },
 
             syncConditionState() {
-              if (this.validation && this.validation.condition_field) {
+              if (this.validation && this.validation.conditions && this.validation.conditions.length > 0) {
                 this.applyCondition = true;
-                this.updateActiveConditionFieldDef(this.validation.condition_field);
+                this.updateActiveConditionFieldDef(this.validation.conditions[0].field_name);
               } else {
                 this.applyCondition = false;
                 this._activeConditionFieldDef = null;
@@ -1496,19 +1502,25 @@ class WizardStep3 {
               // Load all user selectable action definitions
               this.allDefinitions = utils.getDefinedActions().filter(a => a.isUserSelectable && a.isActive && 
                                                                      (a.type == 'Hook' || a.type == 'Deferred'));
-              
+             
               Alpine.effect(() => {
-                const fieldName = this.action?.condition_field;
-                this.updateActiveConditionFieldDef(fieldName);
-              });
-              Alpine.effect(() => {
+                if (this.applyCondition === true && this.action) {
+                  if (!this.action.conditions) this.action.conditions = [];
+                  if (this.action.conditions.length === 0) {
+                    this.action.conditions.push(new stic_AwfCondition()); 
+                  }
+                }
                 if (this.applyCondition === false && this.action) {
-                  if (this.action.condition_field !== '' || this.action.condition_value !== '') {
-                    this.action.condition_field = '';
-                    this.action.condition_value = '';
+                  if (this.action.conditions && this.action.conditions.length > 0) {
+                    this.action.conditions = [];
                     this._activeConditionFieldDef = null;
                   }
                 }
+              });
+
+              Alpine.effect(() => {
+                const fieldName = (this.action?.conditions?.length > 0) ? this.action.conditions[0].field_name : null;
+                this.updateActiveConditionFieldDef(fieldName);
               });
             },
 
@@ -1896,10 +1908,10 @@ class WizardStep3 {
                   this._activeConditionFieldDef = newDef;
                   // If it's a select, force reactivity to get the correct value
                   if (this._activeConditionFieldDef && this._activeConditionFieldDef.type_in_form === 'select') {
-                    const currentValue = this.action.condition_value;
+                    const currentValue = this.action.conditions[0]?.value;
                     if (currentValue) {
                       setTimeout(() => { 
-                        if(this.action) this.action.condition_value = currentValue; 
+                        if(this.action) this.action.conditions[0].value = currentValue; 
                       }, 50);
                     }
                   }
@@ -1911,9 +1923,9 @@ class WizardStep3 {
              * Synchronizes the status of the condition according to the action data 
              */
             syncConditionState() {
-              if (this.action && this.action.condition_field) {
+              if (this.action && this.action.conditions && this.action.conditions.length > 0) {
                 this.applyCondition = true;
-                this.updateActiveConditionFieldDef(this.action.condition_field);
+                this.updateActiveConditionFieldDef(this.action.conditions[0].field_name);
               } else {
                 this.applyCondition = false;
                 this._activeConditionFieldDef = null;
@@ -2030,14 +2042,16 @@ class WizardStep3 {
        * @returns {string} 
        */
       getActionConditionLabel(action) {
-        if (!action.condition_field) return '';
-        
-        // Get the label of the field
-        const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(action.condition_field);
-        const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : action.condition_field;
+        if (!action.conditions || action.conditions.length === 0) return '';
+        const cond = action.conditions[0];
+        if (!cond.field_name) return '';
+
+        // Get the label of the condition field
+        const fieldDef = this.formConfig.getFieldDefinitionByHtmlName(cond.field_name);
+        const label = fieldDef ? utils.fromFieldLabelText(fieldDef.label || fieldDef.text_original) : cond.field_name;
         
         // Get the formatted value
-        let val = action.condition_value;
+        let val = action.cond.value;
         if (fieldDef && (fieldDef.type == 'bool' || fieldDef.type == 'checkbox' || fieldDef.subtype_in_form == 'select_checkbox')) {
           if (val == '1' || val == 'true') {
             val = utils.translate('LBL_YES');

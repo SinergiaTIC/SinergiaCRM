@@ -753,19 +753,22 @@ class stic_AwfField {
 
 class stic_AwfFieldValidation {
   constructor(data = {}) {
+    // 1. Set default values
     Object.assign(this, {
       name: '',         // Validation name
       validator: '',    // Name of the validation action (ex: RegexValidatorAction)
       message: '',      // Custom error message
       params: {},       // Parameters (ex: { pattern: '...' })
-      
-      // Simple condition to execute the validation (the field contains this value)
-      condition_field: '',
-      condition_value: '',
+      conditions: [],   // Conditions to execute the validation (all must be accomplished)
 
       is_automatic: false, // Indicates if the validation is automatic
     });
+
+    // 2. Overwrite with provided data
     Object.assign(this, data);
+
+    // 3. Map sub-objects and arrays to their classes
+    this.conditions = (data.conditions || this.conditions).map(c => new stic_AwfCondition(c));
   }
 
   isValid() {
@@ -858,6 +861,28 @@ class stic_AwfFlow {
   }
 }
 
+class stic_AwfCondition {
+    constructor(data = {}) {
+      // 1. Set default values
+      Object.assign(this, {
+        field_name: '',          // Field name to evaluate
+        operator: 'Equal_To',    // Operator 
+        value: '',               // Value to compare
+    });
+
+    // 2. Overwrite with provided data
+    Object.assign(this, data);
+
+    // 3. Map sub-objects
+    }
+
+    isEmpty() {
+        return this.field_name === '' || this.value === '';
+    }
+
+    // TODO: Expand the list of operators (see: stic_custom_views_operator_list) 
+}
+
 class stic_AwfAction {
   constructor(data = {}) {
     // 1. Set default values
@@ -874,8 +899,7 @@ class stic_AwfAction {
       is_automatic: false,      // Indicates if the action is automatic
       is_terminal: false,       // Indicates if the action is terminal
       order: 0,                 // Execution order of the action
-      condition_field: '',      // Field for the execution condition
-      condition_value: '',      // Value for the execution condition
+      conditions: [],           // Conditions to execute the action (all must be accomplished)
     });
 
     // 2. Overwrite with provided data
@@ -883,6 +907,7 @@ class stic_AwfAction {
 
     // 3. Map sub-objects and arrays to their classes
     this.parameters = (data.parameters || this.parameters).map(a => new stic_AwfActionParameter(a));
+    this.conditions = (data.conditions || this.conditions).map(c => new stic_AwfCondition(c));
   }
 
   get is_fixed_order() {

@@ -50,16 +50,14 @@ class ServerActionFlowExecutor {
             foreach ($actions as $actionConfig) {
                 $lastActionConfig = $actionConfig;
 
-                // Check the Condition (if any)
-                if (!empty($actionConfig->condition_field)) {
-                    if (!$this->checkCondition($actionConfig, $this->context)) {
-                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Skipping action '{$actionConfig->text}' because condition failed.");
-                        
-                        // Record the action as skipped
-                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
-                        $this->context->addActionResult($skippedResult);
-                        continue; 
-                    }
+                // Check the Conditions (if any)
+                if(!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Skipping action '{$actionConfig->text}' because condition failed.");
+                    
+                    // Record the action as skipped
+                    $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
+                    $this->context->addActionResult($skippedResult);
+                    continue; 
                 }
 
                 // Find the action executor (throws if not found)
@@ -123,30 +121,4 @@ class ServerActionFlowExecutor {
         return $lastResult;
     }
 
-    /**
-     * Checks if the condition is met to execute an action.
-     * @param FormAction $action The action to check
-     * @param ExecutionContext $context The execution context
-     * @return bool True if the condition is met or there is no condition, false otherwise
-     */
-    private function checkCondition(FormAction $action, ExecutionContext $context): bool {
-        $fieldKey = $action->condition_field; // Ex: "Contact0.newsletter"
-        $expectedValue = $action->condition_value;
-
-        // Convert the logical key to PHP key (replacing '.' with '_')
-        $phpKey = str_replace('.', '_', $fieldKey);
-
-        // Look for the submitted value in the form
-        if (!isset($context->formData[$phpKey])) {
-            $submittedValue = $context->formData[$phpKey];
-        } else {
-            $submittedValue = '0'; // We assume false if it has not arrived from the form
-        }
-
-        // Check if the submitted value matches the expected one
-        if (is_array($submittedValue)) {
-            return in_array($expectedValue, $submittedValue);
-        }
-        return $submittedValue == $expectedValue;
-    }
 }

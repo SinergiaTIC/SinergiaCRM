@@ -275,7 +275,7 @@ $mod_strings = array (
   'LBL_CONDITION' => 'Condición para la ejecución',
   'LBL_CONDITION_SUMMARY' => 'Condición',
   'LBL_APPLY_CONDITION' => 'Condicionar al valor de otro campo',
-  'LBL_CONDITION_FIELD' => 'Campo',
+  'LBL_CONDITION_FIELD_NAME' => 'Campo',
   'LBL_CONDITION_VALUE' => 'Valor',
 
   // Layout 
