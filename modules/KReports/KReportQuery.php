@@ -911,6 +911,7 @@ class KReportQuery {
                // STIC Custom 20251003 EPS - Fixing behaviour when Nothing selected in role
                // https://github.com/SinergiaTIC/SinergiaCRM/pull/889
                // STIC-Custom 20260303 EPS - if user is admin, role must not be checked
+               // https://github.com/SinergiaTIC/SinergiaCRM/pull/1002
                // if ($actionPermission == ACL_ALLOW_NONE) {
                ACLAction::getUserActions($current_user->id, true); //, $root_bean->module_dir, 'module', $access_check);
                $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
@@ -1082,7 +1083,8 @@ class KReportQuery {
                                  }
                                  
                               }
-                              // STIC-Custom 20260303 EPS - if user is admin, role must not be checked
+                              // STIC-Custom 20260303 EPS - if user is admin, role must not be checked, but must be applied for every node in the path
+                              // https://github.com/SinergiaTIC/SinergiaCRM/pull/1002
                               ACLAction::getUserActions($current_user->id, true); //, $root_bean->module_dir, 'module', $access_check);
                               $actionPermission = $_SESSION['ACL'][$current_user->id][$this->joinSegments[$thisPath]['object']->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
                               if (!is_admin($current_user) && $actionPermission == ACL_ALLOW_NONE) {
