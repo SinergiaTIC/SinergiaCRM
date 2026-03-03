@@ -627,6 +627,10 @@ class ResponseHandler
                 $inputKey = str_replace(".", "_", $inputKeyInForm);
                 $value = $data[$inputKey] ?? null;
                 $label = rtrim($formField->label, ":");
+                
+                if ($formField->type == 'relate') {
+                    continue; // Skip relate fields
+                }
 
                 // Validation of required field (Required) (in Form)
                 if ($formField->required_in_form) {
