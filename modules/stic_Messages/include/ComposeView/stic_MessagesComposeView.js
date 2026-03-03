@@ -178,22 +178,6 @@ function applyParent(parentData) {
   }
 }
 
-// Autofill phone from recipient relation fields (Contacts, Accounts, Leads, Employees)
-var recipientRelationMap = {
-  'stic_messages_contactscontacts_ida':   'Contacts',
-  'stic_messages_accountsaccounts_ida':   'Accounts',
-  'stic_messages_leadsleads_ida':         'Leads',
-  'stic_messages_employeesemployees_ida': 'Employees',
-};
-$.each(recipientRelationMap, function(idField, moduleType) {
-  YAHOO.util.Event.addListener(idField, 'change', function() {
-    var relatedId = $('#' + idField).val();
-    if (relatedId) {
-      getParentAsync(relatedId, moduleType, applyParent);
-    }
-  });
-});
-
 function getParentAsync(parentId, parentType, callbackFunction) {
   $.ajax({
     url: "index.php?module=stic_Messages&action=getParentPhone",

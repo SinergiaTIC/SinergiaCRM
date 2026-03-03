@@ -107,25 +107,6 @@ class stic_Messages extends Basic
             $this->phone = $this->fetched_row['phone'];
         }
 
-        // Autofill phone from the active recipient relation if phone is empty
-        if (empty($this->phone) && !empty($this->recipient)) {
-            $recipientPhoneMap = [
-                'Contacts'  => ['idField' => 'stic_messages_contactscontacts_ida',  'module' => 'Contacts',  'phoneField' => 'phone_mobile'],
-                'Accounts'  => ['idField' => 'stic_messages_accountsaccounts_ida',  'module' => 'Accounts',  'phoneField' => 'phone_office'],
-                'Leads'     => ['idField' => 'stic_messages_leadsleads_ida',         'module' => 'Leads',     'phoneField' => 'phone_mobile'],
-                'Employees' => ['idField' => 'stic_messages_employeesemployees_ida', 'module' => 'Employees', 'phoneField' => 'phone_mobile'],
-            ];
-            if (isset($recipientPhoneMap[$this->recipient])) {
-                $cfg = $recipientPhoneMap[$this->recipient];
-                $relatedId = $this->{$cfg['idField']} ?? ($_REQUEST[$cfg['idField']] ?? null);
-                if (!empty($relatedId)) {
-                    $relatedBean = BeanFactory::getBean($cfg['module'], $relatedId);
-                    if ($relatedBean && !empty($relatedBean->{$cfg['phoneField']})) {
-                        $this->phone = $relatedBean->{$cfg['phoneField']};
-                    }
-                }
-            }
-        }
 
         // If there is nothing in the message field, assume the template body
         if (empty($this->message) && !empty($this->template_id)) {
@@ -270,34 +251,16 @@ class stic_Messages extends Basic
             }
         }
 
-        // Collect beans (parent + recipient relations) and pass to the helper.
-        // Each provider helper can use them as needed (e.g. Twilio builds contentVariables from them).
-        $beans = [];
-        if (!empty($this->parent_type) && !empty($this->parent_id)) {
-            $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
-            if ($parentBean) {
-                $beans[] = $parentBean;
-            }
-        }
-        $recipientBeanMap = [
-            'Contacts'  => ['idField' => 'stic_messages_contactscontacts_ida',  'module' => 'Contacts'],
-            'Accounts'  => ['idField' => 'stic_messages_accountsaccounts_ida',  'module' => 'Accounts'],
-            'Leads'     => ['idField' => 'stic_messages_leadsleads_ida',         'module' => 'Leads'],
-            'Employees' => ['idField' => 'stic_messages_employeesemployees_ida', 'module' => 'Employees'],
-        ];
-        foreach ($recipientBeanMap as $cfg) {
-            $relatedId = $this->{$cfg['idField']} ?? ($_REQUEST[$cfg['idField']] ?? null);
-            if (!empty($relatedId)) {
-                $relatedBean = BeanFactory::getBean($cfg['module'], $relatedId);
-                if ($relatedBean) {
-                    $beans[] = $relatedBean;
-                }
-            }
-        }
-
         if ($messageHelper !== null) {
-            if ($file === 'WhatsApp') {
-                $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone, $templateSid, $beans);
+            if ($file === 'WhatsAppHelper') {
+                // If we have a template, pass the original template body to the helper
+                // so placeholders can be detected and resolved to content variables.
+                $messageForHelper = $this->message;
+                if (!empty($templateBean) && !empty($templateBean->body)) {
+                    $messageForHelper = $templateBean->body;
+                }
+
+                $returnCode = $messageHelper->sendMessage($this->sender, $messageForHelper, $this->phone, $templateSid, $beans);
             } else {
                 $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
             }

@@ -133,9 +133,10 @@ class WhatsAppHelper implements stic_MessagesHelper {
 
         if (!empty($templateSid)) {
             $postData['ContentSid'] = $templateSid;
-            $postData['ContentVariables'] = !empty($beans)
-                ? json_encode($this->buildTwilioContentVariables($message, $beans))
-                : '{}';
+
+            // Build ContentVariables and force JSON object even if empty to satisfy Twilio's expected format.
+            $vars = $this->buildTwilioContentVariables($message, $beans);
+            $postData['ContentVariables'] = json_encode((object) $vars);
         } else {
             if (strpos($message, 'HX') === 0) {
                 $postData['ContentSid'] = $message;
