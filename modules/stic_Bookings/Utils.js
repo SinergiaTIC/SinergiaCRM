@@ -147,7 +147,7 @@ addToValidateCallback(
     var repeatBookingCheckbox = document.getElementById('periodic_booking');
     var repeatType = document.getElementById('repeat_type');
    
-    if (!repeatBookingCheckbox || !repeatBookingCheckbox.checked) {
+    if (!repeatBookingCheckbox || !repeatBookingCheckbox.checked || repeatBookingCheckbox.disabled) {
       return true;
     }
    
