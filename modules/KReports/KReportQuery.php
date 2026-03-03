@@ -910,15 +910,19 @@ class KReportQuery {
                }
                // STIC Custom 20251003 EPS - Fixing behaviour when Nothing selected in role
                // https://github.com/SinergiaTIC/SinergiaCRM/pull/889
+               // STIC-Custom 20260303 EPS - if user is admin, role must not be checked
+               // if ($actionPermission == ACL_ALLOW_NONE) {
+               ACLAction::getUserActions($current_user->id, true); //, $root_bean->module_dir, 'module', $access_check);
                $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
-               if ($actionPermission == ACL_ALLOW_NONE) {
+               if (!is_admin($current_user) && $actionPermission == ACL_ALLOW_NONE) {
+               // END STIC Custom 20260303 EPS
                   if (empty($this->whereString)) {
                      $this->whereString = " ( 0 = 1 ) ";
                   } else {
                      $this->whereString .= " AND ( 0 = 1 ) ";
                   }
                }
-               // END STIC Custom
+               // END STIC Custom 20251003 EPS
 
                break;
          }
