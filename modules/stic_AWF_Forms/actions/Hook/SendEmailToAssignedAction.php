@@ -86,7 +86,6 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         $paramTemplate = new ActionParameterDefinition();
         $paramTemplate->name = 'email_template';
         $paramTemplate->text = $this->translate('TEMPLATE_TEXT');
-        $paramTemplate->description = $this->translate('TEMPLATE_DESC'); 
         $paramTemplate->type = ActionParameterType::CRM_RECORD;
         $paramTemplate->supportedModules = ['EmailTemplates'];
         $paramTemplate->required = true;

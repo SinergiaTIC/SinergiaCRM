@@ -26,12 +26,8 @@
 <main x-data="WizardStep2.mainStep2xData();">
   <div x-data="WizardStep2.addDataBlockModulexData(formConfig);">
     <!-- No Data Block Configured -->
-    <div x-show="formConfig.data_blocks.length === 0" class="text-center p-5 border rounded bg-light">
-      <h2 class="mb-3">
-        <span class="suitepicon suitepicon-module-fields me-2 align-middle"></span>
-        <span id="wizard-section-title" x-text="utils.translate('LBL_WIZARD_TITLE_STEP2')"></span>
-      </h2>
-      <h3 x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START')"></h3>
+    <div x-show="formConfig.data_blocks.length === 0" class="text-center p-3 border rounded bg-light">
+      <h2 class="mb-4" x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START')"></h2>
       <p x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START_DESC')"></p>
       <div class="d-flex justify-content-center gap-3 mt-3">
         <!-- Button: Add Datablock -->
@@ -225,6 +221,12 @@
                                           :title="utils.translate('LBL_BUTTON_EDIT')">
                                     <span class="suitepicon suitepicon-action-edit"></span>
                                   </button>
+                                  <template x-if="field.type_field === 'unlinked'">
+                                    <button type="button" class="btn" @click="duplicateField(field);" 
+                                            :title="utils.translate('LBL_BUTTON_DUPLICATE')">
+                                      <span>X2</span>
+                                    </button>                                    
+                                  </template>
                                   <template x-if="field.isFieldInForm()">
                                     <div class="input-group" role="group">
                                       <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
@@ -313,8 +315,6 @@
               <!-- Relationships Definition -->
               <template x-if="item && item.module">
                 <div :id="`dataBlockRels${item.id}`">
-                  <!-- Description -->
-                  <p x-text="utils.translate('LBL_RELATIONSHIPS_DESC')"></p>
                   <!-- Button -->
                   <button type="button" class="btn mb-2" @click="$store.relCreator.openCreate(item)" x-text="utils.translate('LBL_RELATIONSHIP_ADD')"></button>
 
@@ -904,7 +904,7 @@
                       <template x-if="selectedValidatorDefinition">
                         <div class="col-9 bg-info bg-opacity-10 border border-info rounded small d-flex align-items-center" style="height:35px !important;">
                           <i class="suitepicon suitepicon-action-info me-2 flex-shrink-0"></i>
-                          <span id="wizard-section-desc" x-text="selectedValidatorDefinition?.description??''"></span>
+                          <span x-text="selectedValidatorDefinition?.description??''"></span>
                         </div>
                       </template>
                     </div>

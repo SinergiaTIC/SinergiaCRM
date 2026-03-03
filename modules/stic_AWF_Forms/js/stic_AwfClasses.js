@@ -247,9 +247,9 @@ class stic_AwfDataBlock {
   suggestFieldName(fieldName) {
     let index = 0;
     let name = fieldName;
-    while(this.fields.some((f) => f.name === fieldName)) {
+    while(this.fields.some((f) => f.name === name)) {
       index++;
-      name = `${fieldName}_${index}`;
+      name = `${fieldName}${index}`;
     }
     return name;
   }
@@ -257,14 +257,12 @@ class stic_AwfDataBlock {
   fixFieldName(field) {
     let index = 0;
     let originalName = field.name;
-    let name = field.name;
 
     while(this.fields.filter((f) => f.name === field.name).length > 1) {
       index++;
-      name = `${originalName}_${index}`;
+      field.name = `${originalName}${index}`;
     }
-    field.name = name;
-    return name;
+    return field.name;
   }
 
   /**
@@ -1482,7 +1480,7 @@ class stic_AwfConfiguration {
    */
   addUnlinkedDataBlock(text) {
     // Generate a secure unique name
-    let baseName = "_NoModule_";
+    let baseName = "NoModuleBlock";
     let index = 0;
     let name = `${baseName}${index}`;
 

@@ -419,7 +419,6 @@ class WizardStep2 {
               }
               return str;
             },
-            
           });
         }
 
@@ -1088,14 +1087,15 @@ class WizardStep2 {
             return;
           }
           if (newName != oldName) {
+            if (this.field.type_field == 'unlinked') {
+              this.dataBlock.fixFieldName(this.field);
+              return;
+            }
             this.field.updateWithFieldInformation(this.selectedFieldInfo);
             if (this.field.type_field == 'fixed' || this.isInFormSelectableValues) {
               this.field.setValueOptions(utils.getFieldOptions(this.selectedFieldInfo));
             } else {
               this.field.setValueOptions();
-            }
-            if (this.field.type_field == 'unlinked') {
-              this.dataBlock.fixFieldName(this.field);
             }
             this.configValueOptions = false;
             this.optionValuesRelated = '';
@@ -1104,7 +1104,10 @@ class WizardStep2 {
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
           if (this.field.type_field == 'unlinked') {
-            this.field.name = stic_AwfConfiguration.cleanName(newText);
+            let newName = stic_AwfConfiguration.cleanName(newText);
+            if (newName != this.field.name) {
+              this.field.name = this.dataBlock.suggestFieldName(newName);
+            }
             this.field.label = utils.toFieldLabelText(newText);
           }
         });
@@ -1142,15 +1145,19 @@ class WizardStep2 {
         this.$watch('availableSubtypesInForm', (newArray) => {
           if (!this.field) return;
           if (this.isEdit) { 
-            // Force reactive
-            const currentValue = this.field.subtype_in_form; 
-            setTimeout(() => {
-              this.field.subtype_in_form = ''; 
-              this.field.subtype_in_form = currentValue;
-            }, 50);
-          } else {
-            this.field.subtype_in_form = newArray[0]?.id ?? '';
-          }
+            const currentValue = this.field.subtype_in_form;
+            const isValid = newArray.some(s => s.id === currentValue);
+            if (isValid) {
+              // Force reactive if current subtype is valid for current type
+              setTimeout(() => {
+                this.field.subtype_in_form = ''; 
+                this.field.subtype_in_form = currentValue;
+              }, 50);
+              return;
+            }
+          } 
+          // Set default value for subtype_in_form
+          this.field.subtype_in_form = newArray[0]?.id ?? '';
         });
         this.$watch('field.value_type', (newType, oldType) => {
           if (!this.field) return;
@@ -1353,6 +1360,19 @@ class WizardStep2 {
             return !field.isFieldInForm();
         }
         return true;
+      },
+
+      duplicateField(field) {
+        if (!field) return;
+
+        const index = this.dataBlock.fields.findIndex(f => f.name === field.name);
+        if (index === -1) return;
+
+        const clonedData = JSON.parse(JSON.stringify(field));
+
+        const newField = new stic_AwfField(clonedData);
+        this.dataBlock.fields.splice(index + 1, 0, newField);
+        this.dataBlock.fixFieldName(newField);
       },
 
       canShowFieldColumn(column) {

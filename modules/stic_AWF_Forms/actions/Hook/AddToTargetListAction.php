@@ -74,7 +74,6 @@ class AddToTargetListAction extends HookBeanActionDefinition {
         $paramLPO = new ActionParameterDefinition();
         $paramLPO->name = 'target_list_record';
         $paramLPO->text = $this->translate('TARGET_LIST_RECORD_TEXT');
-        $paramLPO->description = $this->translate('TARGET_LIST_RECORD_DESC');
         $paramLPO->type = ActionParameterType::CRM_RECORD;
         $paramLPO->supportedModules = ['ProspectLists'];
         $paramLPO->required = true;

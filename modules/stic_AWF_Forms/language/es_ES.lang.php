@@ -130,6 +130,7 @@ $mod_strings = array (
   'LBL_BUTTON_DELETE' => 'Eliminar',
   'LBL_BUTTON_MOVE_UP' => 'Mover arriba',
   'LBL_BUTTON_MOVE_DOWN' => 'Mover abajo',
+  'LBL_BUTTON_DUPLICATE' => 'Duplicar',
   'LBL_BUTTON_RELOAD' => 'Recargar',
   'LBL_BUTTON_COPY' => 'Copiar',
   'LBL_BUTTON_OPEN' => 'Abrir',
@@ -181,7 +182,6 @@ $mod_strings = array (
   'LBL_FIELDS_SHOW_ALL' => 'Mostrar todos los campos',
   'LBL_FIELDS_SHOW_ALL_DESC' => 'Incluir en el desplegable todos los campos del módulo aunque no se muestren en las vistas de edición o detalle.',
   'LBL_FIELD_LABEL' => 'Etiqueta',
-  'LBL_FIELD_REQUIRED' => 'Obligado',
   'LBL_FIELD_REQUIRED_IN_FORM' => 'Campo obligatorio',
   'LBL_FIELD_IN_FORM' => 'En el formulario',
   'LBL_FIELD_TYPE_IN_FORM' => 'Tipo de entrada',
@@ -233,7 +233,6 @@ $mod_strings = array (
   'LBL_RELATIONSHIPS' => 'Relaciones entre bloques de datos',
   'LBL_RELATIONSHIP_ADD' => 'Añadir relación',
   'LBL_RELATIONSHIP_NEW' => 'Nueva relación entre bloques de datos',  
-  'LBL_RELATIONSHIPS_DESC' => 'Las relaciones definidas entre los Bloques de datos',
   'LBL_RELATIONSHIP_NO_MODULE_RELATED' => 'Sin módulo relacionado',
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nuevo bloque de datos',
   'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloque de datos origen',
@@ -433,16 +432,14 @@ $mod_strings = array (
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_TEXT' => 'Destinatario',
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indica el bloque de datos que contiene el destinatario que se va a añadir a la Lista de Público Objetivo',
   'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Lista de Público Objetivo (LPO)',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_DESC' => 'Indica la Lista de Público Objetivo a la que añadir el destinatario.',
-
+  
   // SendEmailToDataBlockAction
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar correo al remitente del formulario',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico al registro procesado (persona, interesado, usuario u organización) contenido en un bloque de datos',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el destinatario del correo electrónico',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_DESC' => 'Indica la plantilla de correo electrónico que se utilizará para enviar el correo',
-
+  
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
@@ -453,8 +450,7 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RECORD_TEXT' => 'Registro fijo',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RELATE_TEXT' => 'Campo relacionado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TEMPLATE_DESC' => 'Indica la plantilla de correo electrónico que se utilizará para enviar el correo',
-
+  
   // RedirectAction
   'LBL_REDIRECT_ACTION_TITLE' => 'Ir a una página web',
   'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página web concreta',

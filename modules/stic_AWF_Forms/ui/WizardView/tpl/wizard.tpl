@@ -72,12 +72,13 @@
             </div>
         </div>
 
-        <div class="px-4 mb-1">
-            <h2 class="d-flex mb-0">
-                <span id="wizard-step-icon"></span>
+        <div class="px-4 mb-1" x-init="utils.setInlineHelpQtip()">
+            <h2 class="d-flex">
+                <span id="wizard-step-icon" class="inline-help"></span>
                 <span id='wizard-section-title'></span>
+                <i class="inline-help glyphicon glyphicon-info-sign" style="font-size: 0.7em; margin: 0.3em;"></i>
+                <div id='wizard-section-desc' class="inline-help-content" style="display:none;"></div>
             </h2>
-            <p id='wizard-section-desc' class="text-muted mb-0 small"></p>
         </div>
     </div>
 
