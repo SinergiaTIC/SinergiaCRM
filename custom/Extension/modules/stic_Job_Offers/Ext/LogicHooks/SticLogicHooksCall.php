@@ -28,6 +28,3 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'before_save');
 // Notify assigned user when close date is today and offer is not closed
 $hook_array['after_save'][] = array(100, 'after_save', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_save');
-// Update application counts on relationship changes
-$hook_array['after_relationship_add'][] = array(100, 'after_relationship_add', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_relationship_add');
-$hook_array['after_relationship_delete'][] = array(100, 'after_relationship_delete', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_relationship_delete');
