@@ -1080,7 +1080,19 @@ class KReportQuery {
                                  } else {
                                     $this->whereString .= ' AND ' . $group_where;
                                  }
+                                 
                               }
+                              // STIC-Custom 20260303 EPS - if user is admin, role must not be checked
+                              ACLAction::getUserActions($current_user->id, true); //, $root_bean->module_dir, 'module', $access_check);
+                              $actionPermission = $_SESSION['ACL'][$current_user->id][$this->joinSegments[$thisPath]['object']->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
+                              if (!is_admin($current_user) && $actionPermission == ACL_ALLOW_NONE) {
+                                 if (empty($this->whereString)) {
+                                    $this->whereString = " ( 0 = 1 ) ";
+                                 } else {
+                                    $this->whereString .= " AND ( 0 = 1 ) ";
+                                 }
+                              }
+                              // END STIC Custom 20260303 EPS
                               break;
                         }
                      }
