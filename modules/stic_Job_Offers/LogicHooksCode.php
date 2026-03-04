@@ -35,14 +35,14 @@ class stic_Job_OffersLogicHooks
 
         // Check if status is changing and store previous status
         if (!empty($bean->id)) {
-            $previousStatus = $bean->fetched_row['status'] ?? null;
-            if (empty($previousStatus)) {
-                // Get from database if fetched_row is empty
-                $db = DBManagerFactory::getInstance();
-                $query = "SELECT status FROM stic_job_offers WHERE id = '{$db->quote($bean->id)}' LIMIT 1";
-                $result = $db->query($query);
-                if ($row = $db->fetchByAssoc($result)) {
-                    $previousStatus = $row['status'];
+            $hasFetchedStatus = isset($bean->fetched_row)
+                && is_array($bean->fetched_row)
+                && array_key_exists('status', $bean->fetched_row);
+            $previousStatus = $hasFetchedStatus ? $bean->fetched_row['status'] : null;
+            if (!$hasFetchedStatus) {
+                $storedBean = BeanFactory::getBean('stic_Job_Offers', $bean->id);
+                if (!empty($storedBean) && !empty($storedBean->id)) {
+                    $previousStatus = $storedBean->status ?? null;
                 }
             }
             // Store previous status in bean for use in after_save

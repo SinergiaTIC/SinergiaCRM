@@ -88,10 +88,9 @@ class stic_Job_ApplicationsUtils
      *
      * @param SugarBean $bean
      * @param bool $checkChanges
-     * @param bool $allowRequest
      * @return void
      */
-    public static function updateRelatedOffersApplicationsCounts($bean, $checkChanges, $allowRequest = true)
+    public static function updateRelatedOffersApplicationsCounts($bean, $checkChanges)
     {
         if (empty($bean) || empty($bean->id)) {
             return;
@@ -103,9 +102,6 @@ class stic_Job_ApplicationsUtils
 
         $previousOfferId = $bean->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? null;
         $offerId = self::getRelatedOfferId($bean);
-        if (empty($offerId) && $allowRequest) {
-            $offerId = self::getOfferIdFromRequest();
-        }
 
         $offerIds = array_filter(array_unique(array($offerId, $previousOfferId)));
 
@@ -130,33 +126,11 @@ class stic_Job_ApplicationsUtils
         }
 
         if ($bean->load_relationship('stic_job_applications_stic_job_offers')) {
-            $ids = $bean->stic_job_applications_stic_job_offers->get();
-            if (!empty($ids)) {
-                return reset($ids) ?: null;
+            $relatedOffers = $bean->stic_job_applications_stic_job_offers->getBeans();
+            if (!empty($relatedOffers)) {
+                $firstOffer = reset($relatedOffers);
+                return !empty($firstOffer->id) ? $firstOffer->id : null;
             }
-        }
-
-        return null;
-    }
-
-    /**
-     * Try to get offer id from request when created from subpanel
-     *
-     * @return string|null
-     */
-    protected static function getOfferIdFromRequest()
-    {
-        if (empty($_REQUEST)) {
-            return null;
-        }
-
-        if (!empty($_REQUEST['stic_job_applications_stic_job_offersstic_job_offers_ida'])) {
-            return $_REQUEST['stic_job_applications_stic_job_offersstic_job_offers_ida'];
-        }
-
-        if (!empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] === 'stic_Job_Offers'
-            && !empty($_REQUEST['parent_id'])) {
-            return $_REQUEST['parent_id'];
         }
 
         return null;

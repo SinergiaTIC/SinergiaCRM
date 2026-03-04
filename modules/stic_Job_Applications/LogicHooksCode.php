@@ -40,17 +40,17 @@ class stic_Job_ApplicationsLogicHooks
         }
 
         // Check if status is changing
-        $previousStatus = $bean->fetched_row['status'] ?? null;
+        $hasFetchedStatus = isset($bean->fetched_row)
+            && is_array($bean->fetched_row)
+            && array_key_exists('status', $bean->fetched_row);
+        $previousStatus = $hasFetchedStatus ? $bean->fetched_row['status'] : null;
         $GLOBALS['log']->info("Status from fetched_row: " . ($previousStatus ?? 'NULL'));
-        
-        if (empty($previousStatus)) {
-            // Get from database if fetched_row is empty
-            $db = DBManagerFactory::getInstance();
-            $query = "SELECT status FROM stic_job_applications WHERE id = '{$db->quote($bean->id)}' LIMIT 1";
-            $result = $db->query($query);
-            if ($row = $db->fetchByAssoc($result)) {
-                $previousStatus = $row['status'];
-                $GLOBALS['log']->info("Status from DB: " . ($previousStatus ?? 'NULL'));
+
+        if (!$hasFetchedStatus) {
+            $storedBean = BeanFactory::getBean('stic_Job_Applications', $bean->id);
+            if (!empty($storedBean) && !empty($storedBean->id)) {
+                $previousStatus = $storedBean->status ?? null;
+                $GLOBALS['log']->info("Status from stored bean: " . ($previousStatus ?? 'NULL'));
             }
         }
 
@@ -73,7 +73,7 @@ class stic_Job_ApplicationsLogicHooks
         }
 
         require_once 'modules/stic_Job_Applications/Utils.php';
-        stic_Job_ApplicationsUtils::updateRelatedOffersApplicationsCounts($bean, true, true);
+        stic_Job_ApplicationsUtils::updateRelatedOffersApplicationsCounts($bean, true);
         stic_Job_ApplicationsUtils::notifyStatusChange($bean);
     }
 
@@ -87,7 +87,7 @@ class stic_Job_ApplicationsLogicHooks
     public function after_delete(&$bean, $event, $arguments)
     {
         require_once 'modules/stic_Job_Applications/Utils.php';
-        stic_Job_ApplicationsUtils::updateRelatedOffersApplicationsCounts($bean, false, false);
+        stic_Job_ApplicationsUtils::updateRelatedOffersApplicationsCounts($bean, false);
     }
 
     /**
