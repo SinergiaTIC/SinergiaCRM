@@ -25,7 +25,8 @@ class stic_BookingsLogicHooks {
     
     public function formatAllDayDates($bean, $event, $arguments) {
         // Only apply this logic when we are in the subpanel, to avoid affecting the date display in the main view and edit view of the booking, where we want to show the real start and end date with time, even for all day events. If you want to apply this logic everywhere, just remove this IF.
-        if (isset($_REQUEST['action']) && $_REQUEST['action'] !== 'SubPanelViewer') {
+        if (!((isset($_REQUEST['action']) && $_REQUEST['action'] === 'SubPanelViewer') || 
+              (isset($_REQUEST['module']) && $_REQUEST['module'] === 'stic_Resources' && isset($_REQUEST['action']) && $_REQUEST['action'] === 'DetailView') )) {
             return;
         }
 
