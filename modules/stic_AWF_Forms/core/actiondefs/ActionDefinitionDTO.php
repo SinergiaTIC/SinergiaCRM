@@ -38,6 +38,7 @@ class ActionDefinitionDTO {
     public bool $isUserSelectable;
     public bool $isAutomatic;
     public bool $isTerminal;
+    public bool $defaultContinueOnError;
 
     public string $category;
     public string $type;
@@ -68,6 +69,7 @@ class ActionDefinitionDTO {
         $this->title = $def->getTitle();
         $this->description = $def->getDescription();
         $this->type = $def->getType()->value;
+        $this->defaultContinueOnError = $def->defaultContinueOnError;
         
         if ($def instanceof ValidatorActionDefinition) {
             $this->defaultErrorMessage = $def->getDefaultErrorMessage();

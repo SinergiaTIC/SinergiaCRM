@@ -42,6 +42,8 @@ class FormAction {
     /** @var FormCondition[] */
     public array $conditions = [];        // Conditions to execute the validation (all must be accomplished)
 
+    public bool $continue_on_error = false; // Indicates if the flow should continue if this action fails (throws an exception or returns an error result)
+
     // For deferred actions
     public ?string $flow_success_id = null; // Flow to execute if the deferred action returns successfully
     public ?string $flow_error_id = null;   // Flow to execute if the deferred action returns with an error
@@ -62,6 +64,7 @@ class FormAction {
         $dto->text = $data['text'];
         $dto->description = $data['description'];
         $dto->requisite_actions = $data['requisite_actions'] ?? [];
+        $dto->continue_on_error = !empty($data['continue_on_error']);
 
         // Condition
         if (isset($data['conditions'])) {

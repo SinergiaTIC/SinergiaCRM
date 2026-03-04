@@ -52,7 +52,7 @@ class ServerActionFlowExecutor {
 
                 // Check the Conditions (if any)
                 if(!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Skipping action '{$actionConfig->text}' because condition failed.");
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
                     
                     // Record the action as skipped
                     $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
@@ -83,7 +83,7 @@ class ServerActionFlowExecutor {
                         $this->context->responseBean->save();
                     }
                     
-                    $GLOBALS['log']->info("Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
 
                     // Return $lastResult to finish: the engine will be put on hold
                     return $lastResult; 
@@ -91,6 +91,14 @@ class ServerActionFlowExecutor {
 
                 // Error detection
                 if ($lastResult->isError()) {
+                    // If the action is marked to continue on error, we log the error but we continue with the next actions of the flow.
+                    if ($actionConfig->continue_on_error) {
+                        $lastResult->status = ResultStatus::SKIPPED;
+                        $lastResult->message = "Ignored Error: " . $lastResult->message;
+                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
+                        continue; 
+                    }
+
                     // If there's an error flow: immediately switch to the error flow
                     if ($errorFlowConfig !== null) {
                         return $this->executeFlow($errorFlowConfig);

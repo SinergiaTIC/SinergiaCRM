@@ -1711,6 +1711,7 @@ class WizardStep3 {
                     description: def.description,
                     category: def.category,
                     is_terminal: def.isTerminal,
+                    continue_on_error: def.defaultContinueOnError || false,
                     order: defaultOrder,
                     is_user_selectable: true
                 });

@@ -52,6 +52,7 @@ abstract class ActionDefinition {
    
     public string $category;
     public ActionScope $scope = ActionScope::FORM;
+    public bool $defaultContinueOnError = false; // Default value for the "Continue on Error" property of the action
     /** @var string[] */
     public array $supportedModules = [];       // moduleList
     /** @var string[] */

@@ -269,6 +269,8 @@ $mod_strings = array (
   'LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION' => 'Opción',
   'LBL_ACTION_PARAM_MISSING_MESSAGE' => 'Hay parámetros obligatorios sin valor. Revise la configuración de la acción y asigne valores a los parámetros requeridos antes de guardar.',
   'LBL_ACTION_CONDITION_TEXT' => 'Esta acción solo se ejecutará si se cumple la condición.',
+  'LBL_ACTION_CONTINUE_ON_ERROR' => 'Continuar en caso de error',
+  'LBL_ACTION_CONTINUE_ON_ERROR_DESC' => 'Si se activa, el flujo continuará incluso si esta acción falla.',
 
   // Conditions (Datablock field validations & Actions)
   'LBL_CONDITION' => 'Condición para la ejecución',

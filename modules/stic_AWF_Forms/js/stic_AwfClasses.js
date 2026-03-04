@@ -898,6 +898,7 @@ class stic_AwfAction {
       is_terminal: false,       // Indicates if the action is terminal
       order: 0,                 // Execution order of the action
       conditions: [],           // Conditions to execute the action (all must be accomplished)
+      continue_on_error: false, // Indicates if the flow should continue if this action fails
     });
 
     // 2. Overwrite with provided data
@@ -1554,6 +1555,7 @@ class stic_AwfConfiguration {
       is_user_selectable: actionDef.isUserSelectable,
       is_automatic: actionDef.isAutomatic,
       is_terminal: actionDef.isTerminal,
+      continue_on_error: actionDef.defaultContinueOnError || false,
       order: defaultOrder,
     });
 
