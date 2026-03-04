@@ -190,7 +190,7 @@ class stic_SignaturesUtils
      *
      * @param string $signatureId The ID of the signature.
      * @param array|string $mainModuleIds An array or single value of main module IDs.
-     * @return array An array of unique signer data (id => ['module', 'sourceModule', 'sourceId', 'signerPath', 'onBehalfOfId', 'id', 'name', 'email', 'phone']).
+     * @return array An associative array of signers with their details, keyed by a combination of signer ID and related record ID.
      */
     public static function getSignatureSigners($signatureId, $mainModuleIds)
     {
@@ -268,9 +268,9 @@ class stic_SignaturesUtils
 
             // Process each signer and add to the unique list
             foreach ($signers as $signer) {
-                // Ensure signer ID is unique in the list
-                if (!isset($signersIdList[$signer->id])) {
-                    $signersIdList[$signer->id] = [
+                // Ensure <signerId_relatedRecordId> is unique in the list 
+                if (!isset($signersIdList["{$signer->id}_{$mainModuleBean->id}"])) {
+                    $signersIdList["{$signer->id}_{$mainModuleBean->id}"] = [
                         'module' => $signerModule,
                         'sourceModule' => $mainModule,
                         'sourceId' => $mainModuleId,

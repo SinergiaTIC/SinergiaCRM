@@ -79,23 +79,33 @@ $destSigners = stic_SignaturesUtils::getSignatureSigners($signatureId, $recordId
 
 // Query the database directly to find existing stic_Signers records
 // associated with the current signatureId to prevent duplicates.
-$SQL = "SELECT ss.parent_id as id
+$existingSigners = array();
+
+// TODO: this value should be obtained from the signature record, allowing the same signer to be added multiple times if needed or not 
+$allowSameSignerMultipleTimes = true; // Set to true if you want to allow the same signer to be added multiple times for the same signature
+
+if (!$allowSameSignerMultipleTimes == true) {
+    $SQL = "SELECT ss.parent_id as id
             FROM stic_signatures s
             JOIN stic_signatures_stic_signers_c ssssc ON s.id = ssssc.stic_signatures_stic_signersstic_signatures_ida AND ssssc.deleted = 0
             JOIN stic_signers ss ON ss.id = ssssc.stic_signatures_stic_signersstic_signers_idb AND ss.deleted = 0
             WHERE s.deleted = 0
             AND s.id = '{$signatureId}'";
-$result = DBManagerFactory::getInstance()->query($SQL, true);
-$existingSigners = array();
-while ($row = DBManagerFactory::getInstance()->fetchByAssoc($result, false)) {
-    $existingSigners[] = $row['id'];
+    $result = DBManagerFactory::getInstance()->query($SQL, true);
+
+    while ($row = DBManagerFactory::getInstance()->fetchByAssoc($result, false)) {
+        $existingSigners[] = $row['id'];
+    }
 }
 
 $okCounter = 0;
 $koCounter = 0;
 
-// Process each destination signer
+// Process each destination signer.
+// The $destSigners array is expected to have keys in the format of "signerId_relatedRecordId" to ensure uniqueness.
 foreach ($destSigners as $destSignerId => $destSigner) {
+    
+    $destSignerId = explode('_', $destSignerId)[0]; // Extract the actual signer ID from the key
     $destSignerBean = BeanFactory::getBean($destSigner['module'], $destSignerId);
     if (!$destSignerBean) {
         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not obtain signer data for ID: " . $destSignerId);
