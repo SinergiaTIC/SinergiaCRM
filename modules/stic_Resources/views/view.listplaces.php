@@ -68,6 +68,7 @@ class stic_ResourcesViewListPlaces extends ViewList
                     e.stopImmediatePropagation(); // Avoid interference with other scripts
                     window.location.href = 'index.php?module=stic_Resources&action=listplaces&query=true&clear_query=true';
                 });
+                
                 // The small cross on the button
                 var clearButtons = $('.glyphicon-remove');
                 clearButtons.attr('onclick', '');
