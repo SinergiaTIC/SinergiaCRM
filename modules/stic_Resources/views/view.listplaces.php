@@ -65,8 +65,6 @@ class stic_ResourcesViewListPlaces extends ViewList
                 clearButtons.on('click', function(e) {
                     e.preventDefault();
                     e.stopImmediatePropagation(); // Evita interferències amb altres scripts
-                    // Defineix aquí la teva URL de destí
-                    // Per exemple, anar a un layout concret o passar paràmetres extres
                     window.location.href = 'index.php?module=stic_Resources&action=listplaces&query=true&clear_query=true';
                 });
             
