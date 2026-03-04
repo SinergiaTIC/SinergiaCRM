@@ -82,13 +82,15 @@ class ResponseHandler
         }
         // 2- TimeTrap: Normally bots submit the form immediately and/or without executing JS
         if (!$isSpam) {
-            $submissionTs = (int)($_POST['awf_submission_ts'] ?? 0);
-            $currentTs = time();
-            $duration = $currentTs - $submissionTs;
-            if ($submissionTs === 0 || $duration < 2) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Timetrap protection");
+            $currentTs = microtime(true);
+            $submissionTs = (float)($_POST['awf_submission_ts'] ?? $currentTs);
+            $duration = round($currentTs - $submissionTs, 2);
+            if ($submissionTs === 0 || $duration < 2.0) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Timetrap protection. Duration: {$duration}s");
                 $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_TIMETRAP_SPAM', 'stic_AWF_Responses');
+                $responseDescription = translate('LBL_RESPONSE_TIMETRAP_SPAM', 'stic_AWF_Responses'). " ({$duration}s)";
+            } else {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form valid submission. Time to complete: {$duration}s");
             }
         }
         // 3- UserAgent: Some bots don't impersonate browsers

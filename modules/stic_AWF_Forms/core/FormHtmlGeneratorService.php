@@ -924,7 +924,7 @@ document.addEventListener('alpine:init', () => {
     serverErrors: {},
     
     init() {
-      this.loadTime = Math.floor(Date.now() / 1000);
+      this.loadTime = (Date.now() / 1000).toFixed(3);
       if (!config.isPreview && config.checkUrl) {
         fetch(config.checkUrl).then(r => r.json()).then(d => {
           this.isActive = d.active;
