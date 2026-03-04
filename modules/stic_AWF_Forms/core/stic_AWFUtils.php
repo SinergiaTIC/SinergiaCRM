@@ -109,7 +109,7 @@ class stic_AWFUtils {
      * Generate a summary in HTML with all the data of the form based on the Layout. 
      * 
      * @param ExecutionContext $context The context that contains the data. 
-     * @param array $options Display options ['showTitle' => bool, 'useFlex' => bool, 'includeCss' => bool] 
+     * @param array $options Display options ['title' => string, 'useFlex' => bool, 'includeCss' => bool] 
      * @return string An HTML string with the summary table. 
      */
     public static function generateSummaryHtml(ExecutionContext $context, array $options = []): string
@@ -119,7 +119,7 @@ class stic_AWFUtils {
         $formData = $context->formData;
 
         // Default options
-        $showTitle = $options['showTitle'] ?? true;
+        $title = $options['title'] ?? '';
         $useFlex = $options['useFlex'] ?? false;
         $includeCss = $options['includeCss'] ?? true;
 
@@ -157,8 +157,8 @@ class stic_AWFUtils {
             $html .= $css;
         }
         $html .= "<div class='awf-summary-container'>";
-        if ($showTitle) {
-            $html .= "<h1>".translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_AWF_Responses')."</h1>";
+        if ($title != '') {
+            $html .= "<h1>".htmlspecialchars($title)."</h1>";
         }
         $html .= "<div class='awf-sections-wrapper'>";
 
@@ -347,13 +347,18 @@ class stic_AWFUtils {
      * Generates a plain-text summary with all form data based on the Layout.
      *
      * @param ExecutionContext $context The context containing the data.
+     * @param array $options Display options ['title' => string] 
      * @return string A plain-text string with the summary.
      */
-    public static function generateSummaryText(ExecutionContext $context): string
+    public static function generateSummaryText(ExecutionContext $context, array $options = []): string
     {
+        $text = "";
+
         // Main title
-        $title = translate('LBL_RESPONSE_SUMMARY_DATA', 'stic_AWF_Responses');
-        $text = $title . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
+        $title = $options['title'] ?? '';
+        if ($title != '') {
+            $text .= mb_strtoupper($title) . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
+        }
         
         $layout = $context->formConfig->layout;
         $formData = $context->formData; 

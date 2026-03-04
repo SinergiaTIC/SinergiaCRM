@@ -468,6 +468,8 @@ $mod_strings = array (
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de datos',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página en la que se muestran los datos facilitados',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_TEXT' => 'Título de la página',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_DEFAULT' => 'Resumen de los datos facilitados',
 
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa y permisos',

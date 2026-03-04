@@ -49,7 +49,16 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
      */
     public function getParameters(): array
     {
-        return [];
+        // The title of the summary page (optional)
+        $paramTitle = new ActionParameterDefinition();
+        $paramTitle->name = 'title';
+        $paramTitle->text = $this->translate('TITLE_TEXT'); 
+        $paramTitle->defaultValue = $this->translate('TITLE_DEFAULT');
+        $paramTitle->type = ActionParameterType::VALUE;
+        $paramTitle->dataType = ActionDataType::TEXT;
+        $paramTitle->required = false;
+
+        return [$paramTitle];
     }
 
     /**
@@ -57,7 +66,10 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        $summaryHtml = stic_AWFUtils::generateSummaryHtml($context);
+        // Get the parameters
+        $title = $actionConfig->getResolvedParameter('title');
+
+        $summaryHtml = stic_AWFUtils::generateSummaryHtml($context, ['title' => $title]);
         
         $result = new ActionResult(ResultStatus::OK, $actionConfig, "Redirecting to Summary Page");
         $result->setData(array (

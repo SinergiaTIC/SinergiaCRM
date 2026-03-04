@@ -98,8 +98,7 @@ $mod_strings = array (
 
   // General
   'LBL_FIELD' => 'Campo',
-  'LBL_RESPONSE_SUMMARY_DATA' => 'Resumen de respuestas',
-
+  
   // Generic response messages
   'LBL_DUPLICATE_RESPONSE_TITLE' => 'Aviso',
   'LBL_DUPLICATE_RESPONSE_MSG' => 'Esta respuesta ya ha sido enviada y procesada anteriormente.',
