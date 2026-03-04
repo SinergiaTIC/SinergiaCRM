@@ -245,7 +245,7 @@ class ResponseHandler
         // Html Summary
         $htmlSummary = '';
         try {
-            $htmlSummary = stic_AWFUtils::generateSummaryHtml($context, ['showTitle' => false, 'useFlex' => true, 'includeCss' => false]);
+            $htmlSummary = stic_AWFUtils::generateSummaryHtml($context, ['useFlex' => true, 'includeCss' => false]);
         } catch (Exception $e) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error generating HTML snapshot for response {$responseBean->id}: " . $e->getMessage());
             $htmlSummary = "<div class='alert alert-danger'>". translate('LBL_ERROR_GENERATING_HTML_SUMMARY', 'stic_AWF_Responses') ."</div>";

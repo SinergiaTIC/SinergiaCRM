@@ -41,6 +41,8 @@ El nuevo sistema de **Formularios Web Avanzados** ofrece una herramienta integra
 
 * **Mayor flexibilidad en diseño y maquetación**: Se ampliarán las opciones visuales para organizar la información de forma más dinámica, permitiendo agrupar campos mediante pestañas, dividir formularios extensos en múltiples páginas y añadir otros elementos interactivos.
 
+* **Condiciones lógicas avanzadas**: Se habilitará el soporte para múltiples condiciones combinadas y nuevos operadores lógicos (más allá de la igualdad estricta) para dotar de mayor inteligencia a la decisión de cuándo ejecutar una acción o validación concreta.
+
 
 ## Conceptos Clave ##
 Antes de crear el primer formulario, es útil conocer cómo se organiza la información en el sistema de Formularios Web Avanzados:
@@ -83,9 +85,10 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
     2. **Dentro de un Bloque enlazado**: Convivirán junto a los campos normales del CRM. Posibles usos: Son ideales para recabar información que solo tiene sentido en el contexto del envío (como una casilla de "Acepto las condiciones", comentarios adicionales o valoraciones temporales) evitando que estos datos "ensucien" la ficha de la Persona o Inscripción en el CRM.
 
   
-  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. Para ofrecer la máxima fiabilidad y evitar que envíos manipulados omitan los controles, **todas las validaciones se ejecutan por partida doble**: de forma interactiva en el navegador (JavaScript) para una experiencia de usuario fluida, y de forma estricta en el servidor (PHP) antes de procesar y guardar la respuesta. El sistema incluye un **amplio catálogo de validadores predefinidos**:
+  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. Para ofrecer la máxima fiabilidad y evitar que envíos manipulados omitan los controles, **todas las validaciones se ejecutan por partida doble**: de forma interactiva en el navegador (JavaScript) para una experiencia de usuario fluida, y de forma estricta en el servidor (PHP) antes de procesar y guardar la respuesta. **Para agilizar la configuración, el sistema asigna validadores automáticamente** al detectar ciertos tipos de campos (por ejemplo, al añadir un campo de email, su validador se vincula solo). El sistema incluye un **amplio catálogo de validadores predefinidos**:
+
     * Formato de Email.
-    * Documentos de identidad y salud: DNI, NIE, CIF, NAF (Número de Afiliación a la Seguridad Social) y CIP (Código de Identificación Personal de CatSalut).
+    * Documentos de identidad y salud: DNI, NIE, CIF, NUSS (Número de Afiliación a la Seguridad Social) y CIP (Código de Identificación Personal de CatSalut).
     * Datos bancarios y de contacto: IBAN y Teléfono (con validación de longitud para España o prefijos internacionales).
     * Ubicación: Código Postal (formato de España).
     * Límites y rangos: Comprobación de Edad (mínima y máxima a partir de una fecha de nacimiento) y límites numéricos (valor mínimo/máximo).
@@ -194,9 +197,12 @@ En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic 
 
 * **Acciones automáticas (Persistencia garantizada)**: Al añadir bloques de datos en el paso anterior del asistente, el sistema añade **automáticamente** al flujo principal las acciones necesarias para guardar los datos en el CRM ("Guardar registro") y vincularlos entre sí ("Enlazar registros"). Gracias a esto, no es necesario preocuparse por la persistencia de la información; el sistema garantiza que los registros se crearán, actualizarán y relacionarán solos según las reglas definidas. Estas acciones base no se pueden eliminar, pero sí reordenar.
 
-* **Acciones definidas por el usuario**: Más allá de guardar los datos, se pueden enriquecer los flujos añadiendo y encadenando nuevas acciones configurables. Cada acción introducida permite establecer parámetros específicos basándose en los propios datos introducidos en el formulario o en registros del CRM. 
+* **Acciones definidas por el usuario**: Más allá de guardar los datos, se pueden enriquecer los flujos añadiendo y encadenando nuevas acciones configurables. Cada acción introducida permite establecer parámetros específicos basándose en los propios datos introducidos en el formulario o en registros del CRM.
 
   * **Condiciones de ejecución**: La ejecución de cualquier acción se puede condicionar a los datos introducidos por el usuario. Por ejemplo, se puede configurar que la acción de "Añadir a LPO" (suscripción a newsletter) solo se ejecute si el usuario ha marcado previamente la casilla de "Deseo recibir información" en el formulario.
+
+  * **Tolerancia a fallos (Continuar en caso de error)**: En la configuración de cada acción se puede habilitar esta opción de seguridad. Si se activa y la acción falla de forma aislada (por ejemplo, una caída temporal del servidor de correo al enviar una notificación), el sistema ignorará el fallo, no saltará al flujo de error y permitirá que el resto del formulario termine de procesarse con éxito.
+
 
 * **Acciones finales**: Es clave destacar un tipo especial de acciones llamadas "Finales". Una acción final es aquella que, una vez ejecutada, **pierde el control del proceso y finaliza el flujo de acciones por completo**, impidiendo que se ejecute ninguna otra acción posterior. Se utilizan para operaciones de cierre, como redirigir al usuario a una página web externa o mostrar un mensaje final.
 
@@ -208,12 +214,8 @@ Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a
 
 * **Enlazar registros (Automática)**: Enlaza dos registros del CRM según las relaciones definidas en el paso anterior.
 
-* **Enviar notificación por correo**: Envía un email personalizado a partir de una plantilla del CRM, permitiendo procesarla con los datos del bloque.
-
-* **Enviar notificación al usuario asignado**: Permite enviar un email de aviso (usando una plantilla del CRM) al trabajador o usuario interno responsable del registro que se acaba de crear o actualizar o de cualquier otro referenciado (por ejemplo, el evento de la inscripción).
+* **Enviar notificación por correo / al usuario asignado**: Permite enviar un email personalizado a una dirección o al trabajador responsable utilizando las plantillas del CRM. **Novedad destacada:** El sistema procesa la plantilla inyectando la información de **todos los registros implicados en la respuesta**. Es decir, si un formulario crea a la vez una "Persona" y una "Inscripción", la plantilla de correo podrá interpretar dinámicamente variables de ambos módulos simultáneamente (siempre que sean módulos distintos), dotando a las comunicaciones de un contexto mucho más rico sin configuraciones adicionales.
   
-  * **Variable mágica para plantillas de correo (`{::form_summary::}`)**: En las plantillas de email utilizadas por estas acciones, se puede incluir la etiqueta especial `{::form_summary::}` dentro del cuerpo del mensaje. Al procesar el envío, el sistema detectará y sustituirá automáticamente esta variable por un resumen completo y formateado (en HTML o texto plano) que contiene todos los campos y datos introducidos por el usuario en el formulario. Resulta ideal para automatizar correos de confirmación o resguardos de inscripción.
-
 * **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
 
 * **Verificar sesión activa y permisos**: Bloquea el acceso y el procesamiento del formulario si no hay una sesión activa en el CRM o si el usuario no dispone de permisos explícitos de edición/creación para **todos y cada uno de los módulos** involucrados en los bloques de datos del formulario.

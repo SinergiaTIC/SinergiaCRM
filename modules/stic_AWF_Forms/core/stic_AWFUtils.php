@@ -623,24 +623,48 @@ class stic_AWFUtils {
         // Get attachments from the template
         $attachments = $emailTemplate->getAttachments() ?: [];
 
-        // Check if we need the form summary
-        // Magic variable {::form_summary::} that will be replaced by the form HTML summary
-        $needsSummaryHtml = strpos((string)$emailTemplate->body_html, '{::form_summary::}') !== false;
-        $needsSummaryText = strpos((string)$emailTemplate->body, '{::form_summary::}') !== false;
 
-        if ($needsSummaryHtml) {
-            $summaryHtml = self::generateSummaryHtml($context);
-            $emailTemplate->body_html = str_replace('{::form_summary::}', $summaryHtml, (string)$emailTemplate->body_html);
+        // Prepare the array of Beans for the parser
+        $beansForTemplate = [];
+        // The main Context Bean (the recipient)
+        if ($contextBean && isset($contextBean->module_dir)) {
+            $beansForTemplate[] = $contextBean;
         }
-        if ($needsSummaryText) {
-            $summaryText = self::generateSummaryText($context);
-            $emailTemplate->body = str_replace('{::form_summary::}', $summaryText, (string)$emailTemplate->body);
+        // The Response Bean (to access $stic_awf_responses_html_summary)
+        if ($context->responseBean) {
+            $beansForTemplate[] = $context->responseBean;
         }
 
-        // Parse the template with the context bean to replace variables
-        $subject = $emailTemplate->parse_template_bean($emailTemplate->subject, $contextBean->module_dir, $contextBean);
-        $bodyHtml = $emailTemplate->parse_template_bean($emailTemplate->body_html, $contextBean->module_dir, $contextBean);
-        $bodyText = $emailTemplate->parse_template_bean($emailTemplate->body, $contextBean->module_dir, $contextBean);
+        // Add all other generated Beans from the form context (DataBlocks)
+        // We only add them if a bean of that module hasn't been added yet to avoid unpredictable overwrites
+        $loadedModules = array_map(function($b) { return $b->module_dir; }, $beansForTemplate);
+        foreach ($context->actionResults as $result) {
+            foreach ($result->modifiedBeans as $modBean) {
+                // Ignore skipped beans to avoid send data that is not in the CRM
+                if ($modBean->modificationType === BeanModificationType::SKIPPED) continue;
+
+                // Ignore beans from modules that are already loaded to avoid unpredictable overwrites in the template parser
+                if (in_array($modBean->moduleName, $loadedModules)) continue;
+
+                $loadedBean = $modBean->getBean();
+                if ($loadedBean) {
+                    $beansForTemplate[] = $loadedBean;
+                    $loadedModules[] = $modBean->moduleName;
+                }
+            }
+        }
+
+        // Parse the email template using all relevant beans
+        require_once 'SticInclude/Utils.php';
+        $parsedOutput = SticUtils::parseEmailTemplate($templateId, $beansForTemplate);
+        if (empty($parsedOutput)) {
+            throw new \Exception("Email template empty after parsing: '{$templateId}'.");
+        }
+        
+        $subject = $parsedOutput['subject'] ?? '';
+        $bodyHtml = $parsedOutput['body_html'] ?? '';
+        $bodyText = $parsedOutput['body'] ?? '';
+        // Determine final body and decode HTML entities safely
         $body = $bodyHtml;
         if (!empty($bodyHtml)) {
             $body = html_entity_decode($bodyHtml, ENT_QUOTES, 'UTF-8');
