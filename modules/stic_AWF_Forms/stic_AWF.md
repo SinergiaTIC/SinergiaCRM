@@ -79,7 +79,7 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
 
   * **Textos de ayuda y Enlaces**: Cada campo permite añadir un texto de ayuda o descripción para guiar al usuario. Además, el asistente incluye una herramienta específica para insertar fácilmente enlaces a páginas externas (ideales para acompañar a las casillas de aceptación de Políticas de Privacidad o Condiciones de Uso).
   
-  * **Campos no enlazados (virtuales)**: Son campos que no alteran la base de datos principal, sino que su valor vive exclusivamente en el registro de la "Respuesta" enviada. Existen en dos contextos:
+  * **Campos no enlazados (virtuales)**: Son campos que no alteran la base de datos principal, sino que su valor vive exclusivamente en el registro de la "Respuesta" enviada. Para agilizar la creación de formularios (especialmente cuando se configuran opciones personalizadas o controles de encuestas), **el asistente permite duplicar estos campos** con un solo clic, generando una copia exacta de toda su configuración. Existen en dos contextos:
     1. **Dentro de un Bloque no enlazado**: Donde, por la naturaleza del bloque, todos los campos creados son obligatoriamente de este tipo.
 
     2. **Dentro de un Bloque enlazado**: Convivirán junto a los campos normales del CRM. Posibles usos: Son ideales para recabar información que solo tiene sentido en el contexto del envío (como una casilla de "Acepto las condiciones", comentarios adicionales o valoraciones temporales) evitando que estos datos "ensucien" la ficha de la Persona o Inscripción en el CRM.
@@ -91,7 +91,7 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
     * Documentos de identidad y salud: DNI, NIE, CIF, NUSS (Número de Afiliación a la Seguridad Social) y CIP (Código de Identificación Personal de CatSalut).
     * Datos bancarios y de contacto: IBAN y Teléfono (con validación de longitud para España o prefijos internacionales).
     * Ubicación: Código Postal (formato de España).
-    * Límites y rangos: Comprobación de Edad (mínima y máxima a partir de una fecha de nacimiento) y límites numéricos (valor mínimo/máximo).
+    * Límites y rangos: Comprobación de Edad (mínima y máxima a partir de una fecha de nacimiento), límites numéricos (valor mínimo/máximo) y longitud de texto (número mínimo y/o máximo de caracteres).
     * Otros: Direcciones web (URL), casillas de marcación obligatoria (indispensable para aceptar términos y condiciones), y validación libre mediante expresiones regulares (Regex).
 
 
