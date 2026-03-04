@@ -1,7 +1,4 @@
 <?php 
- //WARNING: The contents of this file are auto-generated
-
-
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -23,6 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
 $dictionary['EmailTemplate']['fields']['stic_whatsapp_twilio_id_c'] = array(
     'name' => 'stic_whatsapp_twilio_id_c',
     'vname' => 'LBL_STIC_WHATSAPP_TWILIO_ID',
@@ -70,28 +68,6 @@ $dictionary['EmailTemplate']['fields']['stic_whatsapp_status_c'] = array(
     'readonly' => true,
 );
 
-$dictionary['EmailTemplate']['fields']['stic_whatsapp_language_c'] = array(
-    'name' => 'stic_whatsapp_language_c',
-    'vname' => 'LBL_STIC_WHATSAPP_LANGUAGE',
-    'type' => 'enum',
-    'options' => 'stic_languages_list',
-    'source' => 'custom_fields',
-    'required' => false,
-    'massupdate' => '0',
-    'default' => 'es',
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'true',
-    'duplicate_merge' => 'enabled',
-    'duplicate_merge_dom_value' => '1',
-    'audited' => false,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'enabled',
-    'len' => 10,
-    'size' => '20',
-);
 
 $dictionary['EmailTemplate']['fields']['stic_whatsapp_category_c'] = array(
     'name' => 'stic_whatsapp_category_c',
@@ -116,45 +92,4 @@ $dictionary['EmailTemplate']['fields']['stic_whatsapp_category_c'] = array(
     'size' => '20',
 );
 
-$dictionary['EmailTemplate']['fields']['stic_whatsapp_last_sync_c'] = array(
-    'name' => 'stic_whatsapp_last_sync_c',
-    'vname' => 'LBL_STIC_WHATSAPP_LAST_SYNC',
-    'type' => 'datetime',
-    'source' => 'custom_fields',
-    'required' => false,
-    'massupdate' => '0',
-    'default' => null,
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'false',
-    'duplicate_merge' => 'enabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'enabled',
-    'readonly' => true,
-);
-
-$dictionary['EmailTemplate']['fields']['stic_whatsapp_rejection_reason_c'] = array(
-    'name' => 'stic_whatsapp_rejection_reason_c',
-    'vname' => 'LBL_STIC_WHATSAPP_REJECTION_REASON',
-    'type' => 'text',
-    'source' => 'custom_fields',
-    'required' => false,
-    'massupdate' => '0',
-    'default' => null,
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'false',
-    'duplicate_merge' => 'enabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'reportable' => false,
-    'unified_search' => false,
-    'merge_filter' => 'enabled',
-    'readonly' => true,
-);
 ?>

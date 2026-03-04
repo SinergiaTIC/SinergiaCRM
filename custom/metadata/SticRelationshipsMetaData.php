@@ -7964,6 +7964,4 @@ $dictionary["project_stic_assessments"] = array (
         ),
       ),
     ),
-
-
 );

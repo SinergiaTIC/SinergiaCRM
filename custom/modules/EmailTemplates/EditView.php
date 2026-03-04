@@ -280,7 +280,6 @@ $xtpl->assign("TYPE_OPTIONS", get_select_options_with_id($app_list_strings['reco
 
 // Prepare WhatsApp select options and current values
 $approval_selected  = isset($focus->stic_whatsapp_status_c)   ? $focus->stic_whatsapp_status_c   : '';
-$language_selected  = isset($focus->stic_whatsapp_language_c)  ? $focus->stic_whatsapp_language_c  : '';
 $category_selected  = isset($focus->stic_whatsapp_category_c)  ? $focus->stic_whatsapp_category_c  : '';
 $twilio_id          = isset($focus->stic_whatsapp_twilio_id_c) ? $focus->stic_whatsapp_twilio_id_c : '';
 
@@ -289,13 +288,6 @@ if (!empty($app_list_strings['stic_whatsapp_status_list'])) {
     $xtpl->assign('STIC_WHATSAPP_STATUS_OPTIONS', get_select_options_with_id($app_list_strings['stic_whatsapp_status_list'], $approval_selected));
 } else {
     $xtpl->assign('STIC_WHATSAPP_STATUS_OPTIONS', '');
-}
-
-// Language
-if (!empty($app_list_strings['stic_languages_list'])) {
-    $xtpl->assign('STIC_WHATSAPP_LANGUAGE_OPTIONS', get_select_options_with_id($app_list_strings['stic_languages_list'], $language_selected));
-} else {
-    $xtpl->assign('STIC_WHATSAPP_LANGUAGE_OPTIONS', '');
 }
 
 // Category

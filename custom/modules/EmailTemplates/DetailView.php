@@ -1,20 +1,12 @@
 <?php
 /**
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
- *
+ * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
  * Copyright (C) 2013 - 2023 SinergiaTIC Association
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -88,11 +80,7 @@ echo getClassicModuleTitle($focus->module_dir, $params, true);
 
 $GLOBALS['log']->info("EmailTemplate detail view");
 
-// STIC-Custom AAM - Usar HTML custom con get_custom_file_if_exists,
-// igual que hace el EditView. Así apuntamos a nuestro DetailView.html
-// en custom/modules/EmailTemplates/ si existe, o al del core si no.
 $xtpl = new XTemplate(get_custom_file_if_exists('modules/EmailTemplates/DetailView.html'));
-// END STIC-Custom
 
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
@@ -189,25 +177,17 @@ $xtpl->assign("DESCRIPTION", $focus->description);
 // STIC-Custom AAM - Asignaciones campos WhatsApp
 $stic_type_val     = isset($focus->type)                             ? $focus->type                             : '';
 $stic_status_val   = isset($focus->stic_whatsapp_status_c)           ? $focus->stic_whatsapp_status_c           : '';
-$stic_language_val = isset($focus->stic_whatsapp_language_c)         ? $focus->stic_whatsapp_language_c         : '';
 $stic_category_val = isset($focus->stic_whatsapp_category_c)         ? $focus->stic_whatsapp_category_c         : '';
 $stic_twilio_id    = isset($focus->stic_whatsapp_twilio_id_c)        ? $focus->stic_whatsapp_twilio_id_c        : '';
-$stic_last_sync    = isset($focus->stic_whatsapp_last_sync_c)        ? $focus->stic_whatsapp_last_sync_c        : '';
-$stic_rejection    = isset($focus->stic_whatsapp_rejection_reason_c) ? $focus->stic_whatsapp_rejection_reason_c : '';
 
 $stic_status_label   = !empty($app_list_strings['stic_whatsapp_status_list'][$stic_status_val])
                             ? $app_list_strings['stic_whatsapp_status_list'][$stic_status_val]    : $stic_status_val;
-$stic_language_label = !empty($app_list_strings['stic_languages_list'][$stic_language_val])
-                            ? $app_list_strings['stic_languages_list'][$stic_language_val]         : $stic_language_val;
 $stic_category_label = !empty($app_list_strings['stic_whatsapp_category_list'][$stic_category_val])
                             ? $app_list_strings['stic_whatsapp_category_list'][$stic_category_val] : $stic_category_val;
 
 $xtpl->assign('STIC_WHATSAPP_STATUS_LABEL',      htmlspecialchars($stic_status_label,   ENT_QUOTES));
-$xtpl->assign('STIC_WHATSAPP_LANGUAGE_LABEL',    htmlspecialchars($stic_language_label, ENT_QUOTES));
 $xtpl->assign('STIC_WHATSAPP_CATEGORY_LABEL',    htmlspecialchars($stic_category_label, ENT_QUOTES));
 $xtpl->assign('STIC_WHATSAPP_TWILIO_ID',         htmlspecialchars($stic_twilio_id,      ENT_QUOTES));
-$xtpl->assign('STIC_WHATSAPP_LAST_SYNC',         htmlspecialchars($stic_last_sync,      ENT_QUOTES));
-$xtpl->assign('STIC_WHATSAPP_REJECTION_REASON',  htmlspecialchars($stic_rejection,      ENT_QUOTES));
 $xtpl->assign('TYPE_RAW',                        htmlspecialchars($stic_type_val,        ENT_QUOTES));
 // END STIC-Custom
 
