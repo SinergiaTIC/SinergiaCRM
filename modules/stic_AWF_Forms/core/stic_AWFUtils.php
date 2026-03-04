@@ -642,8 +642,10 @@ class stic_AWFUtils {
         $bodyHtml = $emailTemplate->parse_template_bean($emailTemplate->body_html, $contextBean->module_dir, $contextBean);
         $bodyText = $emailTemplate->parse_template_bean($emailTemplate->body, $contextBean->module_dir, $contextBean);
         $body = $bodyHtml;
-        if (empty($bodyHtml)) {
-            $body = nl2br($bodyText);
+        if (!empty($bodyHtml)) {
+            $body = html_entity_decode($bodyHtml, ENT_QUOTES, 'UTF-8');
+        } else {
+            $body = nl2br(html_entity_decode($bodyText, ENT_QUOTES, 'UTF-8'));
         }
 
         // Initialize the mailer
