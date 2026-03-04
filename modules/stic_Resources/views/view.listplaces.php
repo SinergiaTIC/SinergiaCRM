@@ -60,11 +60,20 @@ class stic_ResourcesViewListPlaces extends ViewList
                 $('.moduleTitle').html('<h2>{$mod_strings['LBL_PLACES']}</h2>');
 
                 // Clear filter in Places must mantain the user in the places list not returning to resources list
+                // The big button
                 var clearButtons = $('.clearSearchIcon');
                 clearButtons.attr('onclick', '');
                 clearButtons.on('click', function(e) {
                     e.preventDefault();
-                    e.stopImmediatePropagation(); // Evita interferències amb altres scripts
+                    e.stopImmediatePropagation(); // Avoid interference with other scripts
+                    window.location.href = 'index.php?module=stic_Resources&action=listplaces&query=true&clear_query=true';
+                });
+                // The small cross on the button
+                var clearButtons = $('.glyphicon-remove');
+                clearButtons.attr('onclick', '');
+                clearButtons.on('click', function(e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation(); // Avoid interference with other scripts
                     window.location.href = 'index.php?module=stic_Resources&action=listplaces&query=true&clear_query=true';
                 });
             
