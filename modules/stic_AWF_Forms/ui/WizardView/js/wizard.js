@@ -576,10 +576,6 @@ class WizardStep2 {
              */
             close() {
               this.isOpen = false;
-              this.dataBlock = null;
-              this.field = null;
-              this.original_name = '';
-              this.needDeleteOld = false;
             },
 
             /** 
@@ -612,6 +608,8 @@ class WizardStep2 {
 
             applyCondition: false,                  // Indicates if condition applies
             _activeConditionFieldDef: null,         // Definition of the active condition field
+
+            _originalValidator: null,               // Original validator to detect changes and reset params
 
             get formConfig() { return window.alpineComponent.formConfig; },
 
@@ -684,6 +682,15 @@ class WizardStep2 {
                 }
             },
 
+            onValidatorChange() {
+              // Only reset parameters if the user makes a REAL CHANGE of validator
+              if (this.validation && this.validation.validator !== this._originalValidator) {
+                  this.validation.params = {};
+                  this.validation.message = '';
+                  this._originalValidator = this.validation.validator; 
+              }
+            },
+
             updateActiveConditionFieldDef(fieldName) {
               if (!fieldName || fieldName === '') {
                 this._activeConditionFieldDef = null;
@@ -752,6 +759,8 @@ class WizardStep2 {
               this.field = field;
               this.validation = new stic_AwfFieldValidation(validation || {name:`${utils.newId('validation_')}` });
               this._activeConditionFieldDef = null;
+              this._originalValidator = this.validation.validator;
+
               this.isOpen = true;
               this.syncConditionState();
             },
@@ -761,8 +770,6 @@ class WizardStep2 {
              */
             close() {
               this.isOpen = false;
-              this.field = null;
-              this.validation = null;
             },
 
             /** 
@@ -792,7 +799,6 @@ class WizardStep2 {
 
             close() {
               this.isOpen = false;
-              this.targetField = null;
             },
 
             insert() {
@@ -846,9 +852,6 @@ class WizardStep2 {
              */
             close() {
               this.isOpen = false;
-              this.dataBlock = null;
-              this.availableRels = [];
-              this.selectedRelName = '';
             },
 
             /** 
@@ -1325,7 +1328,7 @@ class WizardStep2 {
       get availableValidatorsForSelect() { return this.availableValidators.map(a => ({ id: a.name, label: a.title })); },
 
       get selectedValidatorDefinition() {
-        if (!this.validation.validator) return null;
+        if (!this.validation || !this.validation.validator) return null;
         return utils.getDefinedActions().find(a => a.name === this.validation.validator);
       },
     };
@@ -1597,6 +1600,7 @@ class WizardStep3 {
               this.selectedActionDefName = '';
 
               // We pre-select the first available category
+              this.selectedCategory = '';
               const cats = this.availableCategories;
               if (cats.length > 0) this.selectedCategory = cats[0].id;
 
@@ -1614,7 +1618,7 @@ class WizardStep3 {
               this.isEdit = true;
               this.flow = flow;
               this.original_id = action.id;
-
+              
               this.currentStep = 2;
 
               // Retrieve definition and visual state
@@ -1813,12 +1817,6 @@ class WizardStep3 {
              */
             close() {
               this.isOpen = false;
-              this.flow = null;
-              this.original_id = '';
-              this.selectedCategory = '';
-              this.action = null;
-              this.definition = null;
-              this.isTerminalFilter = false;
             },
 
             /** 
