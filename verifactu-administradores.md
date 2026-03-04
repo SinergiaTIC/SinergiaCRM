@@ -70,9 +70,7 @@ La anulación solo es posible cuando:
 
 La anulación es irreversible. Debe usarse solo cuando la factura no debería existir.
 
-> **Nota técnica:** Tras una anulación exitosa, el sistema sobreescribe `verifactu_hash_c` de la factura anulada con el hash del `CancellationRecord`. Esto garantiza que la siguiente factura a enviar encadene correctamente con el último registro real enviado a AEAT (el de anulación), manteniendo la integridad de la cadena Verifactu.
->
-> ⚠️ **Pendiente de verificar:** Este comportamiento se deduce de la fórmula de cálculo de hash del `CancellationRecord` de la librería `josemmo/verifactu-php` (que incluye la `Huella` del registro anterior), pero **no ha sido probado contra la plataforma AEAT**. Se recomienda validarlo en el entorno de preproducción antes de asumir que es correcto.
+> **Nota técnica:** Tras una anulación exitosa, el sistema sobreescribe `verifactu_hash_c` de la factura anulada con el hash del `CancellationRecord`, actualiza `verifactu_submitted_at_c` con la fecha/hora del envío y añade en el campo **Descripción** un bloque "Auditoría Verifactu" con el hash y CSV originales. Así, la siguiente factura encadena siempre con el último registro realmente comunicado a AEAT (incluida la anulación) y se conserva evidencia para auditorías.
 
 ## 8. Operaciones por línea
 En las líneas de producto se puede indicar el **tipo de operación AEAT** mediante el campo correspondiente en AOS_Products_Quotes. Esto permite detallar la naturaleza fiscal de cada línea.
@@ -81,7 +79,7 @@ En las líneas de producto se puede indicar el **tipo de operación AEAT** media
 - **Rechazos AEAT**: revisar NIF/CIF, datos obligatorios del cliente o certificado.
 - **Sin respuesta**: comprobar conectividad y entorno configurado.
 - **Errores de firma**: renovar el certificado o verificar su validez.
-- **Error «fecha anterior a la última registrada»**: el sistema bloquea el envío si la `invoice_date` de la factura es anterior a la de la última factura con hash en la cadena. Corrija la fecha o registre primero las facturas intermedias. Las facturas anuladas **sí se tienen en cuenta** al buscar la última registrada, ya que su `verifactu_hash_c` contiene el hash del `CancellationRecord` (⚠️ comportamiento pendiente de verificar contra AEAT — ver sección 7).
+- **Error «fecha anterior a la última registrada»**: el sistema bloquea el envío si la `invoice_date` de la factura es anterior a la fecha del último registro aceptado (se ordena por `verifactu_submitted_at_c` y, como respaldo, por fecha/número). Corrija la fecha o registre primero las facturas intermedias. Las anulaciones también cuentan, porque tras enviarlas `verifactu_hash_c` pasa a ser el hash del `CancellationRecord` y `verifactu_submitted_at_c` refleja su envío.
 
 ## 10. Buenas prácticas
 - Mantener el certificado actualizado antes de su caducidad.

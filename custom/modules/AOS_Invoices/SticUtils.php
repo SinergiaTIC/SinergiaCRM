@@ -935,14 +935,19 @@ class AOS_InvoicesUtils
                     i.number,
                     i.invoice_date,
                     c.verifactu_hash_c,
-                    c.verifactu_aeat_status_c
+                    c.verifactu_aeat_status_c,
+                    c.verifactu_submitted_at_c
                 FROM aos_invoices i
                 INNER JOIN aos_invoices_cstm c ON i.id = c.id_c
                 WHERE i.deleted = 0
                   AND i.id != '" . $db->quote($currentInvoiceId) . "'
                   AND c.verifactu_hash_c IS NOT NULL
                   AND c.verifactu_hash_c != ''
-                ORDER BY i.invoice_date DESC, i.number DESC
+                ORDER BY
+                    CASE WHEN c.verifactu_submitted_at_c IS NULL THEN 1 ELSE 0 END ASC,
+                    c.verifactu_submitted_at_c DESC,
+                    i.invoice_date DESC,
+                    i.number DESC
                 LIMIT 1
             ";
 
@@ -956,8 +961,9 @@ class AOS_InvoicesUtils
                 $invoice->number = $row['number'];
                 $invoice->invoice_date = $row['invoice_date'];
                 $invoice->verifactu_hash_c = $row['verifactu_hash_c'];
+                $invoice->verifactu_submitted_at_c = $row['verifactu_submitted_at_c'];
 
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Found previous invoice: ' . $invoice->number);
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Found previous invoice: ' . $invoice->number . ' (submitted at: ' . ($invoice->verifactu_submitted_at_c ?? 'N/A') . ')');
 
                 return $invoice;
             }
@@ -1242,6 +1248,10 @@ class AOS_InvoicesUtils
                 throw new Exception('Invoice must have verifactu hash and previous hash');
             }
 
+            $originalHash = $invoiceBean->verifactu_hash_c;
+            $originalCsv = $invoiceBean->verifactu_csv_c;
+            $originalSubmittedAt = $invoiceBean->verifactu_submitted_at_c ?? null;
+
             // --- Get configuration ---
             // Load certificate utilities
             require_once 'custom/include/SticCertificateUtils.php';
@@ -1365,10 +1375,31 @@ class AOS_InvoicesUtils
             // next invoice in the chain links to this cancellation record and not
             // to the original registration record hash. This keeps the Verifactu
             // chain intact: RegistroAlta → RegistroAnulación → next RegistroAlta.
+            $auditLines = [];
+            $auditLines[] = '=== Auditoria Verifactu ===';
+            $auditLines[] = 'Fecha: ' . (new DateTimeImmutable())->format('Y-m-d H:i:s');
+            $auditLines[] = 'Operacion: Anulacion';
+            $auditLines[] = 'Hash original: ' . (!empty($originalHash) ? $originalHash : 'N/D');
+            $auditLines[] = 'CSV original: ' . (!empty($originalCsv) ? $originalCsv : 'N/D');
+            if (!empty($originalSubmittedAt)) {
+                $auditLines[] = 'Fecha envio original: ' . $originalSubmittedAt;
+            }
+            $auditLines[] = 'Hash anulacion: ' . $cancellationRecord->hash;
+            $auditLines[] = 'CSV anulacion: ' . ($response->csv ?? 'N/D');
+
+            $existingDescription = (string) ($invoiceBean->description ?? '');
+            $descriptionSeparator = $existingDescription === '' ? '' : "\n\n";
+            $invoiceBean->description = $existingDescription . $descriptionSeparator . implode("\n", $auditLines);
+
             $invoiceBean->verifactu_hash_c = $cancellationRecord->hash;
             $invoiceBean->verifactu_aeat_status_c = 'cancelled';
             $invoiceBean->verifactu_aeat_response_c = 'Factura anulada en AEAT. CSV: ' . $response->csv;
             $invoiceBean->verifactu_csv_c = $response->csv;
+            if (isset($response->submittedAt)) {
+                $invoiceBean->verifactu_submitted_at_c = $response->submittedAt->format('Y-m-d H:i:s');
+            } else {
+                $invoiceBean->verifactu_submitted_at_c = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+            }
             $invoiceBean->save();
 
             return [

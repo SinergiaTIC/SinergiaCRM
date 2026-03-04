@@ -57,7 +57,7 @@ La anulación se utiliza cuando una factura **no debería existir**. Es irrevers
 1. Abrir la factura con estado AEAT **Aceptada**.
 2. Usar la acción **Anular factura**.
 3. Confirmar la operación.
-4. El estado pasará a **Anulada**.
+4. El estado pasará a **Anulada** y, en la descripción de la factura, se añadirá un bloque "Auditoría Verifactu" con el hash y el CSV originales y los datos de la anulación para futuras comprobaciones.
 
 ### 7.3. Diferencias con rectificativa
 - **Rectificativa**: corrige datos creando una nueva factura.
@@ -80,6 +80,7 @@ Para enviar facturas a AEAT es imprescindible un **certificado digital** válido
 - Emitir solo facturas definitivas.
 - **Respetar el orden de fechas**: no es posible enviar a AEAT una factura con fecha anterior a la última ya registrada. 
 - Usar **rectificativas** para correcciones, y **anulación** solo en casos excepcionales.
+- Si anulas una factura que no es la última, espera a que el estado cambie a **Anulada** antes de enviar la siguiente: el sistema enlazará automáticamente con el hash de la anulación más reciente, sin pasos manuales.
 - Confirmar que el PDF contiene el QR antes de enviar a cliente.
 
 ## 11. Preguntas frecuentes
