@@ -89,7 +89,7 @@ $selectedActions = array(
 
 // Clear and rebuild database
 VardefManager::clearVardef();
-global $beanList, $beanFiles, $moduleList;
+global $beanList, $beanFiles, $moduleList, $current_language;
 $mi->rebuild_all(true);
 require_once('modules/Administration/QuickRepairAndRebuild.php');
 $mod_strings = return_module_language($current_language, 'Administration');
@@ -109,7 +109,7 @@ try {
     $rac->repairDatabase();
     $rac->repairDatabase();
     // repairDatabase function doesn't sync vardefs indexes .
-    include("modules/Administration/RepairIndex.php");
+    // include("modules/Administration/RepairIndex.php");
 } catch (Exception $e) {
     ob_clean();
     $errors[] = 'Database error during sync: ' . $e->getMessage();

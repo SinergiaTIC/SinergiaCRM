@@ -248,6 +248,11 @@ function outputJsonResponseScripts($status, $errors, $infos) {
 // It does not run multiple files automatically; the caller must indicate which file to execute.
 
 // Require the `file` parameter: nothing will be executed without it.
+// If the script is called by other source.
+if (basename($_SERVER['SCRIPT_FILENAME']) !== basename(__FILE__)) {  
+    return;  
+}  
+
 if (!isset($_REQUEST['file'])) {
     return;
 }
