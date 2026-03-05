@@ -336,7 +336,7 @@ YAHOO.util.Event.onDOMReady(function(){
 <script src='{sugar_getjspath file="modules/Calendar/fullcalendar/locale-all.js"}'></script>
 
 {* STIC-Custom - JBL - 20260305 - Solve js console errors *}
-{* https://github.com/SinergiaTIC/SinergiaCRM/pull/???? *}
+{* https://github.com/SinergiaTIC/SinergiaCRM/pull/1008 *}
 <script src='{sugar_getjspath file="modules/Reminders/Reminders.js"}'></script>
 {* END STIC-Custom *}
 
