@@ -108,6 +108,7 @@ try {
     // We repair database twice to make sure all the queries are executed.
     $rac->repairDatabase();
     $rac->repairDatabase();
+    // TODO - There are errors within the MySQL Manager that repair indexes.
     // repairDatabase function doesn't sync vardefs indexes .
     // include("modules/Administration/RepairIndex.php");
 } catch (Exception $e) {
