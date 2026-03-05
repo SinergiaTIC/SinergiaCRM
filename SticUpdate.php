@@ -36,6 +36,8 @@ if (!defined('sugarEntry')) {
 require_once 'include/entryPoint.php';
 require_once 'modules/Administration/QuickRepairAndRebuild.php';
 require_once 'SticRunScripts.php';
+require_once 'SticInclude/Utils.php';
+
 
 // Initialize global variables
 global $sugar_config, $current_user, $db;
@@ -46,7 +48,7 @@ $infos = [];
 if (!(isset($sugar_config['stic_maintenance_mode_enabled']) && filter_var($sugar_config['stic_maintenance_mode_enabled'], FILTER_VALIDATE_BOOLEAN))) {
     http_response_code(503);
     $errors[] = "stic_maintenance_mode_enabled is not enabled in configuration. Exiting.";
-    outputJsonResponse('error', $errors, $infos);
+    SticUtils::outputJsonResponse('error', $errors, $infos);
     exit;
 }
 
@@ -149,11 +151,10 @@ if (class_exists('DBManagerFactory')) {
 
 // Output results
 if (count($errors)) {
-    outputJsonResponse('error', $errors, $infos);
+    SticUtils::outputJsonResponse('error', $errors, $infos);
     exit;
 }
-
-outputJsonResponse('success', [], $infos);
+SticUtils::outputJsonResponse('success', [], $infos);
 exit;
 
 /**
@@ -189,29 +190,4 @@ function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
             SticRunScripts::executeScript($script, $infos, $errors);
         }
     }
-}
-
-/**
- * Output a JSON response with proper HTTP headers and buffer cleanup.
- *
- * Ensures clean output by ending and clearing any existing output buffers
- * before sending the JSON response.
- *
- * @param string $status Status of the operation ('success' or 'error')
- * @param array  $errors Array of error messages
- * @param array  $infos  Array of information/success messages
- *
- * @return void
- */
-function outputJsonResponse($status, $errors, $infos) {
-    @ob_end_clean();
-    ob_start();
-    ob_clean();
-    header('Content-Type: application/json');
-    echo json_encode([
-        'status' => $status,
-        'errors' => $errors,
-        'infos' => $infos,
-    ]);
-    ob_flush();
 }

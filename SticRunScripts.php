@@ -36,6 +36,7 @@
  * 2. Directly from other files using static methods: SticRunScripts::executeScript($file, $infos, $errors)
  */
 
+require_once 'SticInclude/Utils.php';
 /**
  * Class SticRunScripts
  * Handles execution of SQL and PHP scripts with proper validation and error handling.
@@ -217,32 +218,6 @@ class SticRunScripts {
         }
     }
 }
-
-/**
- * Output a JSON response with proper HTTP headers and buffer cleanup.
- *
- * Ensures clean output by ending and clearing any existing output buffers
- * before sending the JSON response.
- *
- * @param string $status Status of the operation ('success' or 'error')
- * @param array  $errors Array of error messages
- * @param array  $infos  Array of information/success messages
- *
- * @return void
- */
-function outputJsonResponseScripts($status, $errors, $infos) {
-    @ob_end_clean();
-    ob_start();
-    ob_clean();
-    header('Content-Type: application/json');
-    echo json_encode([
-        'status' => $status,
-        'errors' => $errors,
-        'infos' => $infos,
-    ]);
-    ob_flush();
-}
-
 // ******* MAIN SCRIPT *******
 // This script executes a single update script or SQL migration specified by the `file` request parameter.
 // It does not run multiple files automatically; the caller must indicate which file to execute.
@@ -278,7 +253,7 @@ if ($result === true) {
 
 // Output results using standardized JSON response function
 if (count($errors) > 0) {
-    outputJsonResponseScripts('error', $errors, $infos);
+    SticUtils::outputJsonResponse('error', $errors, $infos);
 } else {
-    outputJsonResponseScripts('success', $errors, $infos);
+    SticUtils::outputJsonResponse('success', $errors, $infos);
 }

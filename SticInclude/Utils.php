@@ -892,4 +892,29 @@ EOQ;
         return $parsedTemplate;
     }
 
+    /**
+     * Output a JSON response with proper HTTP headers and buffer cleanup.
+     *
+     * Ensures clean output by ending and clearing any existing output buffers
+     * before sending the JSON response.
+     *
+     * @param string $status Status of the operation ('success' or 'error')
+     * @param array  $errors Array of error messages
+     * @param array  $infos  Array of information/success messages
+     *
+     * @return void
+     */
+    public static function outputJsonResponse($status, $errors, $infos) {
+        @ob_end_clean();
+        ob_start();
+        ob_clean();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => $status,
+            'errors' => $errors,
+            'infos' => $infos,
+        ]);
+        ob_flush();
+    }
+
 }
