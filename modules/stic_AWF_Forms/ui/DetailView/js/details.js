@@ -37,7 +37,7 @@ function DetailsForm() {
       // Set config object
       let jsonString = "{}";
       if (this.bean?.configuration) {
-        jsonString = utils.decodeHTMLString(this.bean.configuration);
+        jsonString = this.bean.configuration;
       }
       try {
         this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);

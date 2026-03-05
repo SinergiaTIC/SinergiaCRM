@@ -165,7 +165,9 @@ class ResponseHandler
         }
 
         // Load the configuration
-        $configData = json_decode(html_entity_decode($formBean->configuration), true);
+        $jsonConfig = $formBean->configuration;
+        $jsonConfig = html_entity_decode($jsonConfig, ENT_QUOTES, 'UTF-8');
+        $configData = json_decode($jsonConfig, true);
         if (!$configData) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form Configuration not found. ID: $formId");
             $this->terminateRawError("Invalid Form Configuration.");

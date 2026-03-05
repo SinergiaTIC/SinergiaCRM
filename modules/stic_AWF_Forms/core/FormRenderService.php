@@ -51,8 +51,8 @@ class FormRenderService {
             }
 
             $jsonConfig = $bean->configuration;
-            $decodedJson = html_entity_decode($jsonConfig);
-            $configData = json_decode($decodedJson, true);
+            $jsonConfig = html_entity_decode($jsonConfig, ENT_QUOTES, 'UTF-8');
+            $configData = json_decode($jsonConfig, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 $errorMsg = json_last_error_msg();

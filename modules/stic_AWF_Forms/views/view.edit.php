@@ -117,6 +117,10 @@ class stic_AWF_FormsViewEdit extends ViewEdit
         $beanArray = $this->bean->toArray();
         $beanArray['assigned_user_id'] = $this->bean->assigned_user_id;
         $beanArray['assigned_user_name'] = $this->bean->assigned_user_name;
+        // Decode HTML in PHP to pass pure JSON to JS and avoid breaking escapes (\").
+        if (!empty($this->bean->configuration)) {
+            $beanArray['configuration'] = html_entity_decode($this->bean->configuration, ENT_QUOTES, 'UTF-8');
+        }
         $this->ss->assign('beanJson', json_encode($beanArray));
 
         echo $this->ss->fetch('modules/stic_AWF_Forms/ui/WizardView/tpl/wizard.tpl');

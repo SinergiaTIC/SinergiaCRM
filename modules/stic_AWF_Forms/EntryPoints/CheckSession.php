@@ -90,7 +90,9 @@ if (!empty($current_user) && !empty($current_user->id)) {
 
     // Look for modules associated with the form and verify permissions
     $response['permissions'] = true;
-    $configData = json_decode(html_entity_decode($bean->configuration), true);
+    $jsonConfig = $bean->configuration;
+    $jsonConfig = html_entity_decode($jsonConfig, ENT_QUOTES, 'UTF-8');
+    $configData = json_decode($jsonConfig, true);
     if ($configData && isset($configData['data_blocks'])) {
         foreach ($configData['data_blocks'] as $block) {
             $module = $block['module'] ?? '';

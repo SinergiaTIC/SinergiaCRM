@@ -143,15 +143,17 @@ function wizardForm() {
       // Set config object
       let jsonString = "{}";
       if (this.bean?.configuration) {
-        jsonString = utils.decodeHTMLString(this.bean.configuration);
+        jsonString = this.bean.configuration;
       }
       try {
         this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);
       } catch (e) {
         console.error("Error parsing JSON:", e);
         console.log("Bad JSON String:", jsonString);
-        // Fallback to empty config if parsing fails
+        // Fallback to empty config if parsing fails: Lock save
+        alert("⚠️ Error crític: No s'ha pogut carregar la configuració correctament. El formulari es mostrarà buit i s'ha bloquejat el desat automàtic per evitar pèrdues de dades.");
         this.formConfig = new stic_AwfConfiguration();
+        this.isReadOnly = true;
       }
 
       // Load current Step
@@ -283,6 +285,7 @@ class WizardNavigation {
   }
 
   static async autoSave() {
+    if (window.alpineComponent.isReadOnly) return;
     window.alpineComponent.formConfig.syncLayoutWithDataBlocks();
 
     const response = await fetch("index.php?module=stic_AWF_Forms&action=saveDraft", {
@@ -349,7 +352,8 @@ function set_wizard_assigned_user(popup_reply_data) {
 function handle_open_popup(popup_reply_data) {
   if (popup_reply_data.name_to_value_array) {
     Object.entries(popup_reply_data.name_to_value_array).forEach(el => {
-      $(`#${el[0]}`).val(el[1]);
+      let decodedVal = typeof el[1] === 'string' ? utils.decodeHTMLString(el[1]) : el[1];
+      $(`#${el[0]}`).val(decodedVal);
       $(`#${el[0]}`)[0].dispatchEvent(new Event('input', { bubbles: true }));
     })
   }
