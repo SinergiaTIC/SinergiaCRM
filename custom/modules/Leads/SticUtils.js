@@ -86,9 +86,15 @@ switch (viewType()) {
         id: "bt_pdf_email_detailview",
         title: SUGAR.language.get("app_strings", "LBL_EMAIL_PDF_ACTION_BUTTON"),
         onclick: "showPopupPdfEmail()"
+      },
+      whatsappConversation: {
+        id: "bt_whatsapp_conversation_detailview",
+        title: SUGAR.language.get("stic_Messages", "LBL_WHATSAPP_CONVERSATION_BUTTON"),
+        onclick: "openWhatsAppConversation('" + recordId + "', '" + module + "')"
       }
     };
     createDetailViewButton(buttons.pdfEmail);
+    createDetailViewButton(buttons.whatsappConversation);
     break;
 
   case "list":

@@ -150,7 +150,7 @@ $dictionary['stic_Messages'] = array(
             'dbType' => 'varchar',
             'required' => false,
             'group' => 'parent_name',
-            'options' => 'parent_type_display',
+            'options' => 'stic_messages_parent_type_display',
             'len' => 255,
             'comment' => 'The Sugar object to which the call is related'
         ),
@@ -163,7 +163,7 @@ $dictionary['stic_Messages'] = array(
             'type' => 'parent',
             'group' => 'parent_name',
             'source' => 'non-db',
-            'options' => 'parent_type_display',
+            'options' => 'stic_messages_parent_type_display',
         ),
         'parent_id' => array(
             'name' => 'parent_id',

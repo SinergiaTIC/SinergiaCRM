@@ -408,5 +408,91 @@ class stic_MessagesController extends SugarController
         exit;
     }
 
+    public function action_conversation() {
+        $parentId   = $_REQUEST['parent_id']   ?? '';
+        $parentType = $_REQUEST['parent_type'] ?? 'Contacts';
+        $parentName = html_entity_decode(
+            urldecode($_REQUEST['parent_name'] ?? ''), ENT_QUOTES, 'UTF-8'
+        );
 
+        if (empty($parentId)) die('Missing parent_id');
+
+        $db = DBManagerFactory::getInstance();
+        $parentIdSafe = $db->quote($parentId);
+
+        $contactPhone = '';
+        $contactBean = BeanFactory::getBean($parentType, $parentId);
+        if ($contactBean) {
+            require_once('modules/stic_Messages/Utils.php');
+            $contactPhone = stic_MessagesUtils::getPhoneForMessage($contactBean);
+        }
+        $sql = "SELECT id, message, type, status, date_entered, sender, phone,
+                    template_id
+                FROM stic_messages
+                WHERE parent_id = '{$parentIdSafe}'
+                AND deleted = 0
+                AND type IN ('WhatsAppHelper', 'received')
+                ORDER BY date_entered ASC";
+
+        $result = $db->query($sql);
+        $messages = [];
+        while ($row = $db->fetchByAssoc($result)) {
+            $messages[] = $row;
+        }
+
+        // Calculate 24h window:
+        // Buscar el mensaje más reciente que sea:
+        $lastWindowEvent = null;
+
+        foreach (array_reverse($messages) as $msg) {
+            if ($msg['type'] === 'received') {
+                $lastWindowEvent = $msg['date_entered'];
+                break;
+            }
+            if ($msg['type'] === 'WhatsAppHelper' && !empty($msg['template_id'])) {
+                $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
+                if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
+                    $lastWindowEvent = $msg['date_entered'];
+                    break;
+                }
+            }
+        }
+
+        // < 24h since $lastWindowEvent)
+        $windowOpen    = false;
+        $windowMessage = null;
+
+        if ($lastWindowEvent) {
+            $eventTs = (new DateTime($lastWindowEvent, new DateTimeZone('UTC')))->getTimestamp();
+            $nowTs   = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
+            $diffSeconds = $nowTs - $eventTs;
+            $diffH   = ($diffSeconds) / 3600;
+
+            if ($diffH < 24) {
+                $windowOpen    = true;
+                $secondsLeft = (24 * 3600) - $diffSeconds;
+                $hoursLeft   = floor($secondsLeft / 3600);
+                $minutesLeft = floor(($secondsLeft % 3600) / 60);
+                $windowMessage = "Ventana abierta — cierra en {$hoursLeft}h {$minutesLeft}m";
+            } else {
+                $lastEventFormatted = $GLOBALS['timedate']->to_display_date_time($lastWindowEvent);
+                $windowMessage = "Ventana cerrada desde {$lastEventFormatted}";
+            }
+        } else {
+            $windowMessage = "Sin conversación previa — solo puedes enviar plantillas verificadas";
+        }
+
+        require_once('modules/stic_Messages/views/view.conversation.php');
+        $view = new stic_MessagesViewConversation();
+        $view->messages      = $messages;
+        $view->parentName    = $parentName;
+        $view->parentId      = $parentId;
+        $view->parentType    = $parentType;
+        $view->contactPhone  = $contactPhone;
+        $view->windowOpen    = $windowOpen;
+        $view->windowMessage = $windowMessage;
+        $view->display();
+        sugar_cleanup();
+        exit();
+    }    
 }

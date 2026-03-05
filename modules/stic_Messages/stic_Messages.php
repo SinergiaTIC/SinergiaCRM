@@ -149,22 +149,29 @@ class stic_Messages extends Basic
                 $this->response = $response['message'];
                 $this->sent_date = $GLOBALS['timedate']->nowDb();
             } else {
-            if (!empty($this->phone)){
-                $response = $this->sendMessage();
-                if ($response['code'] === self::OK) {
-                    $this->status = 'sent';
-                    $this->response = $response['message'] ?? '';
-                    $this->sent_date = $GLOBALS['timedate']->nowDb();
+                if (empty($this->phone) && !empty($this->parent_type) && !empty($this->parent_id)) {
+                    require_once('modules/stic_Messages/Utils.php');
+                    $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+                    if ($parentBean) {
+                        $this->phone = stic_MessagesUtils::getPhoneForMessage($parentBean);
+                    }
+                }
+                if (!empty($this->phone)){
+                    $response = $this->sendMessage();
+                    if ($response['code'] === self::OK) {
+                        $this->status = 'sent';
+                        $this->response = $response['message'] ?? '';
+                        $this->sent_date = $GLOBALS['timedate']->nowDb();
+                    }
+                    else {
+                        $this->status = 'error';
+                        $this->response = $response['message'] ?? '';
+                    }
                 }
                 else {
                     $this->status = 'error';
-                    $this->response = $response['message'] ?? '';
+                    $this->response = 'No phone number';
                 }
-            }
-            else {
-                $this->status = 'error';
-                $this->response = 'No phone number';
-            }
             }
         }
 
@@ -253,8 +260,15 @@ class stic_Messages extends Basic
 
         if ($messageHelper !== null) {
             if ($file === 'WhatsAppHelper') {
-                // If we have a template, pass the original template body to the helper
-                // so placeholders can be detected and resolved to content variables.
+                // Build the beans array from the parent record so placeholders can be resolved
+                $beans = [];
+                if (!empty($this->parent_type) && !empty($this->parent_id)) {
+                    $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+                    if ($parentBean) {
+                        $beans[] = $parentBean;
+                    }
+                }
+
                 $messageForHelper = $this->message;
                 if (!empty($templateBean) && !empty($templateBean->body)) {
                     $messageForHelper = $templateBean->body;
