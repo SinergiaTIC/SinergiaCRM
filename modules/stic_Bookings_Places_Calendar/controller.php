@@ -62,8 +62,6 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                 sb.id AS booking_id,
                 sb.code AS booking_code,
                 sb.name AS booking_name,
-                // sb.start_date,
-                // sb.end_date,
                 CONVERT_TZ(sb.start_date, '+00:00', '$user_tz_name') as start_date, 
                 CONVERT_TZ(sb.end_date, '+00:00', '$user_tz_name') as end_date,
                 sb.all_day,
