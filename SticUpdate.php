@@ -156,10 +156,10 @@ if (count($errors)) {
 }
 
 // Set version and update alerts if they are in params.
-if ((isset($_REQUEST['change_version']) && filter_var($_REQUEST['change_version'], FILTER_VALIDATE_BOOLEAN)) && isset($_REQUEST['scripts_version'])) {
+if (isset($_REQUEST['sinergiacrm_version'])) {
     require_once 'modules/Configurator/Configurator.php';
     $configurator = new Configurator();
-    $configurator->config['sinergiacrm_version'] = $_REQUEST['scripts_version'];
+    $configurator->config['sinergiacrm_version'] = $_REQUEST['sinergiacrm_version'];
     if (isset($_REQUEST['show_update_alert'])) {
         $configurator->config['stic_show_update_alert'] = $_REQUEST['show_update_alert'];
     }
