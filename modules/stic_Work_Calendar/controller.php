@@ -294,12 +294,12 @@ class stic_Work_CalendarController extends SugarController
 
         $focus = $seed;
         if ($focus->bean_implements('ACL')) {
-            if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
+            if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
                 ACLController::displayNoAccess();
                 sugar_die('');
             }
 
-            $accessWhere = $focus->buildAccessWhere('export');
+            $accessWhere = $focus->buildAccessWhere('list');
             if (!empty($accessWhere)) {
                 $where_clauses .= empty($where_clauses) ? $accessWhere : ' AND ' . $accessWhere;
             }

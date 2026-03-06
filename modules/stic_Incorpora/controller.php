@@ -101,12 +101,12 @@ class stic_IncorporaController extends SugarController
 
         $focus = BeanFactory::getBean($this->returnModule);
         if ($focus->bean_implements('ACL')) {
-            if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
+            if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
                 ACLController::displayNoAccess();
                 sugar_die('');
             }
 
-            $accessWhere = $focus->buildAccessWhere('export');
+            $accessWhere = $focus->buildAccessWhere('list');
             $where .= ' AND ' . $accessWhere;
         }
 

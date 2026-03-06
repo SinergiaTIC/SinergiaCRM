@@ -50,12 +50,12 @@ class stic_GoalsController extends SugarController {
 
             $focus = BeanFactory::newBean('stic_Goals');
             if ($focus->bean_implements('ACL')) {
-                if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
+                if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
                     ACLController::displayNoAccess();
                     sugar_die('');
                 }
 
-                $accessWhere = $focus->buildAccessWhere('export');
+                $accessWhere = $focus->buildAccessWhere('list');
                 if (!empty($accessWhere)) {
                     $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
                 }
