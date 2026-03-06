@@ -85,24 +85,28 @@ array(
                     ),
                 ),
                 3 => array(
-                    0 => array (
-                        'name' => 'stic_conversations_stic_messages_name',
-                    ),
-                ),
-                4 => array(
                     0 => array(
                         'name' => 'message',
                         'comment' => 'Full text of the message',
                         'label' => 'LBL_MESSAGE',
                     ),
                 ),
-                5 => array(
+                4 => array(
                     0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
                         'label' => 'LBL_TYPE',
                     ),
                     1 => array(
+                    ),
+                ),
+                5 => array(
+                    0 => array(
+                        'name' => 'new_conversation',
+                        'label' => 'LBL_NEW_CONVERSATION',
+                    ),
+                    1 => array (
+                        'name' => 'stic_conversations_stic_messages_name',
                     ),
                 ),
                 6 => array(
