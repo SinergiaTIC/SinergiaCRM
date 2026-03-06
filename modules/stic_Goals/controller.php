@@ -105,6 +105,21 @@ class stic_GoalsController extends SugarController {
                 include 'modules/stic_Goals/Utils.php';
                 $where = generateAllWhereClausesFromGoalsPopup();
             }
+            
+            $focus = BeanFactory::newBean('stic_Goals');
+            
+            if ($focus->bean_implements('ACL')) {
+                if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
+                    ACLController::displayNoAccess();
+                    sugar_die('');
+                }
+
+                $accessWhere = $focus->buildAccessWhere('list');
+                if (!empty($accessWhere)) {
+                    $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
+                }
+            }
+
             $entireListSQL = "SELECT distinct id FROM stic_goals WHERE deleted=0 AND id != '{$currentGoalId}'";
             if (!empty($where)) {
                 $entireListSQL = $entireListSQL . ' AND ' . $where;
