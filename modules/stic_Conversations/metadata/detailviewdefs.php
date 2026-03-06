@@ -111,6 +111,14 @@ array (
         ),
         4 => 
         array (
+          0 => 
+          array (
+            'name' => 'first_message',
+            'label' => 'LBL_FIRST_MESSAGE',
+          ),
+        ),
+        5 => 
+        array (
           0 => 'description',
         ),
       ),

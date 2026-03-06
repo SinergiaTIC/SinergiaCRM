@@ -65,4 +65,6 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_STIC_MESSAGES_SUBPANEL_TITLE' => 'Messages',
   'LBL_CONTACT_NAME' => 'Contact',
+  'LBL_FIRST_MESSAGE' => 'First message',
+  'LBL_FIRST_MESSAGE_STIC_MESSAGES_ID' => 'First message (ID)',
 );
