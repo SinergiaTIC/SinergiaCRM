@@ -45,7 +45,8 @@ INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modi
 ('b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'Ajuts - Càlcul de registre actiu/inactiu', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 0, 30),
 ('3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 'Registre horari - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 0, 90),
 ('7acc83f4-f72e-10d5-969c-660bcb36cb56', 'Registre horari - Revisió de les hores treballades durant la setmana anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95),
-('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95);
+('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95),
+('02546e06-37d2-ffad-868b-685bc852ebdb', "Documents - Actualitzar l'estat de documents relacionats amb el voluntariat", NOW(), NOW(), '1', '1', NULL, 0, '1', NOW(), '02546e06-37d2-ffad-868b-685bc852ebdb', 0, 100);
 
 INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
 ('16085edd-15a4-e6df-c869-5b406a4611ed', NOW(), 0, 'f512af92-7518-4bbe-b583-5b43bc6223da', '7386c4b1-bcc2-4f6f-be88-7e2a2e5778b5'),

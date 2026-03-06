@@ -65,3 +65,5 @@ $mod_strings['LBL_THUMBNAIL_NAME_HELP'] = "El text d'aquest camp, limitat a 40 c
 $mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_CREATE_IMAGE'] = "Heu d'emplenar el camp ";
 
 $mod_strings['LNK_CAMPAIGN_LIST'] = 'Campanyes';
+$mod_strings['LNK_NEW_EMAIL_TEMPLATE'] = 'Nova Plantilla de Correu';
+$mod_strings['LNK_EMAIL_TEMPLATE_LIST'] = 'Mostra les Plantilles de Correu';

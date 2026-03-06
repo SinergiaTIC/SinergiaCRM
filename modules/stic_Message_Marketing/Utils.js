@@ -57,6 +57,13 @@ switch (viewType()) {
       addEditCreateTemplateLinks();
       $("#select_all").on("click", toggle_message_for);
       toggle_message_for();
+
+      (function removeWhatsappOption() {
+        var $type = $("#type");
+        if ($type.length) {
+          $type.find('option[value="WhatsAppWeb"]').remove();
+        }
+      })();
     });
     if (viewType() == "quickcreate") {
       // Disabling the "Campaign" field relationship

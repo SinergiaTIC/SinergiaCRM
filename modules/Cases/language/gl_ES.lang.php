@@ -130,4 +130,5 @@ $mod_strings = array(
     'LBL_CREATOR_PORTAL' => 'URL do Portal', //PR 5426
     'LBL_SUGGESTION' => 'Suxestión', //PR 5426
     'LBL_UNKNOWN_CONTACT' => 'Persoa descoñecida',
+
 );

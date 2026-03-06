@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-// Cadeas xerais da aplicación
+// Cadenas generales de la aplicación
 $app_strings['LBL_STIC_MAIL_RETURN_REASON'] = 'Motivo de devolución do correo';
 $app_strings['LBL_STIC_NOT_EDITABLE_INLINE'] = 'Este campo non se pode editar online.';
 $app_strings['LBL_STIC_AUTOFILL_FIELDS_INFO'] = "Se se deixa en branco, este campo encherase automaticamente.";
@@ -31,6 +31,12 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "A validación d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Engadir Organizacións e Persoas a unha lista de público obxectivo';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronización Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Enviar PDF por correo';
+$app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Añadir al proceso de firma';
+$app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccione un proceso de firma';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Ver firmas relacionadas';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Firmas relacionadas';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Se muestran las firmas relacionadas con este registro del módulo';
+$app_strings['LBL_NO_SIGNATURES_FOUND'] = 'Non se atoparon firmas relacionadas';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validar a importación';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'Ocurreu un erro';
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Ver na vista de lista';
@@ -39,7 +45,7 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM foi desenvolv
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software libre. Permítese a súa redistribución e/ou modificación baixo os termos da Licenza Pública Xeral Affero de GNU versión 3, publicada pola Free Software Foundation, incluíndo calquera permiso adicional indicado no encabezamento do código fonte.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
 
-// Creación de rexistro horario vía cabeceira
+// Creación de registro horario vía cabecera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crear registro';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Crearase un rexistro horario coa seguinte información';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Cerrar registro'; 
@@ -65,7 +71,7 @@ $app_strings['LBL_STIC_UPDATE_ALERT_INFO'] = 'No caso de observar algún comport
 $app_strings['LBL_STIC_UPDATE_ALERT_CLOSE'] = 'Ocultar a mensaxe e non volver a mostrala ata a seguinte actualización';
 $app_strings['LBL_STIC_UPDATE_ALERT_LINK'] = 'Detalles da actualización';
 
-// Cadeas do menú principal
+// Cadenas del menú principal
 $app_strings['LBL_GROUPTAB_MAIN'] = 'Principal';
 $app_strings['LBL_GROUPTAB_ACTIVITIES'] = 'Actividades';
 $app_strings['LBL_GROUPTAB_ECONOMY'] = 'Economía';
@@ -88,7 +94,7 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
 // Subtema personalizado para entidades
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 
-// Enlaces globais de SinergiaCRM
+// Enlaces globales de SinergiaCRM
 $app_strings['LBL_STIC_FORUMS_LINK'] = 'Foros de SinergiaTIC';
 $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaTIC';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
@@ -108,13 +114,13 @@ $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicar�
 // Campos de filtro en relaciones muchos a muchos
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grupo de seguridad';
 
-// Módulos propios de SinergiaCRM e módulos de SuiteCRM renombrados
+// Módulos propios de SinergiaCRM y módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizacións';
 $app_list_strings['moduleList']['Contacts'] = 'Persoas';
 $app_list_strings['moduleList']['Leads'] = 'Interesados';
 $app_list_strings['moduleList']['Opportunities'] = 'Subvencións';
 $app_list_strings['moduleList']['AOS_PDF_Templates'] = 'Plantillas PDF';
-$app_list_strings['moduleList']['FP_events'] = 'Eventos-FP'; // Rename the module to avoid conflicts with SinergiaTIC Events module
+$app_list_strings['moduleList']['FP_events'] = 'Eventos-FP'; // Change the name of this module to avoid confusion with stic_Events
 $app_list_strings['moduleList']['stic_Accounts_Relationships'] = 'Relacións con Organizacións';
 $app_list_strings['moduleList']['stic_Attendances'] = 'Asistencias';
 $app_list_strings['moduleList']['stic_Contacts_Relationships'] = 'Relacións con Persoas';
@@ -161,6 +167,9 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accións';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizacións';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicións';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
+$app_list_strings['moduleList']['stic_Signature_Log'] = 'Registro de firmas';
+$app_list_strings['moduleList']['stic_Signatures'] = 'Firmas';
+$app_list_strings['moduleList']['stic_Signers'] = 'Firmantes';
 $app_list_strings['moduleList']['stic_Message_Marketing'] = 'Envíos de mensajes';
 $app_list_strings['moduleList']['stic_MessagesMan'] = 'Cola de mensajes';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
@@ -208,16 +217,19 @@ $app_list_strings['moduleListSingular']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleListSingular']['stic_Training'] = 'Formación';
 $app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['moduleListSingular']['stic_Skills'] = 'Competencia';
+$app_list_strings['moduleListSingular']['stic_Messages'] = 'Mensaje';
 $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalizada';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
-$app_list_strings['moduleListSingular']['stic_Messages'] = 'Mensaje';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
 $app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Envío de mensajes';
 $app_list_strings['moduleListSingular']['stic_MessagesMan'] = 'Cola de mensajes';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaza';
+$app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Registro de firma';
+$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
+$app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmante';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacción';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producto financiero';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
@@ -257,7 +269,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
-$app_list_strings['parent_type_display']['stic_Skstic_Messagesills'] = 'Mensajes';
+$app_list_strings['parent_type_display']['stic_Messages'] = 'Mensajes';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
 $app_list_strings['parent_type_display']['stic_Message_Marketing'] = 'Envíos de mensajes';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
@@ -307,6 +319,8 @@ $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organiza
 $app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Envíos de mensajes';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['record_type_display']['stic_Places'] = 'Plazas';
+$app_list_strings['record_type_display']['stic_Signatures'] = 'Firmas';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productos financieros';
 
@@ -352,12 +366,17 @@ $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Or
 $app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Envíos de mensajes';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
-
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmas';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productos financieros';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
+$app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmas';
+
+// Categorías para la creación dinamica de Listas de público objetivo
+$app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -559,6 +578,12 @@ $app_list_strings['stic_boolean_list'][''] = '';
 $app_list_strings['stic_boolean_list']['1'] = 'Si';
 $app_list_strings['stic_boolean_list']['0'] = 'Non';
 
+// Valores booleanos triestado (Sí/No/Na)
+$app_list_strings['stic_yes_no_na_list'][''] = '';
+$app_list_strings['stic_yes_no_na_list']['yes'] = 'Sí';
+$app_list_strings['stic_yes_no_na_list']['no'] = 'No';
+$app_list_strings['stic_yes_no_na_list']['not_applicable'] = 'No procede';
+
 // Géneros
 $app_list_strings['stic_genders_list'][''] = '';
 $app_list_strings['stic_genders_list']['male'] = 'Masculino';
@@ -598,7 +623,7 @@ $app_list_strings['stic_postal_mail_return_reasons_list']['wrong_address'] = 'En
 $app_list_strings['stic_postal_mail_return_reasons_list']['deceased'] = 'Falecido';
 $app_list_strings['stic_postal_mail_return_reasons_list']['rejected'] = 'Rexeitado';
 
-// Sectores profesionais
+// Sectores profesionales
 $app_list_strings['stic_professional_sectors_list'][''] = '';
 $app_list_strings['stic_professional_sectors_list']['financial'] = 'Servizos financeiros';
 $app_list_strings['stic_professional_sectors_list']['it'] = 'Tecnoloxías da información';
@@ -627,7 +652,7 @@ $app_list_strings['stic_colors_list']['0080FF'] = 'Turquesa';
 $app_list_strings['stic_colors_list']['7FFFD4'] = 'Augamarina';
 $app_list_strings['stic_colors_list']['00FFFF'] = 'Cian';
 
-// Organizacións: Categorías
+// Organizaciones: Categorías
 $app_list_strings['stic_accounts_categories_list'][''] = '';
 $app_list_strings['stic_accounts_categories_list']['administration'] = 'Administración pública';
 $app_list_strings['stic_accounts_categories_list']['company'] = 'Empresa';
@@ -636,7 +661,7 @@ $app_list_strings['stic_accounts_categories_list']['media'] = 'Medio de comunica
 $app_list_strings['stic_accounts_categories_list']['npo'] = 'ONL';
 $app_list_strings['stic_accounts_categories_list']['university'] = 'Universidade';
 
-// Organizacións: Subcategorías
+// Organizaciones: Subcategorías
 $app_list_strings['stic_accounts_subcategories_list'][''] = '';
 $app_list_strings['stic_accounts_subcategories_list']['administration_city'] = 'Concello';
 $app_list_strings['stic_accounts_subcategories_list']['administration_consortium'] = 'Consorcio';
@@ -656,21 +681,21 @@ $app_list_strings['stic_accounts_subcategories_list']['npo_federation'] = 'Feder
 $app_list_strings['stic_accounts_subcategories_list']['npo_politics'] = 'Partido político';
 $app_list_strings['stic_accounts_subcategories_list']['npo_professionals'] = 'Colexio profesional';
 
-// Organizacións: Tipos de enderezos
+// Organizaciones: Tipos de direcciones
 $app_list_strings['stic_accounts_addresses_types_list'][''] = '';
 $app_list_strings['stic_accounts_addresses_types_list']['headquarters'] = 'Sede';
 $app_list_strings['stic_accounts_addresses_types_list']['delegation'] = 'Delegación';
 $app_list_strings['stic_accounts_addresses_types_list']['billing'] = 'Facturación';
 $app_list_strings['stic_accounts_addresses_types_list']['other'] = 'Outros';
 
-// Persoas/Interesados: Tipos de identificación
+// Personas/Interesados: Tipos de identificación
 $app_list_strings['stic_contacts_identification_types_list'][''] = '';
 $app_list_strings['stic_contacts_identification_types_list']['nie'] = 'NIE';
 $app_list_strings['stic_contacts_identification_types_list']['nif'] = 'NIF';
 $app_list_strings['stic_contacts_identification_types_list']['passport'] = 'Pasaporte';
 $app_list_strings['stic_contacts_identification_types_list']['other'] = 'Outros';
 
-// Persoas/Interesados: Situación profesional
+// Personas/Interesados: Situación profesional
 $app_list_strings['stic_contacts_employment_status_list'][''] = '';
 $app_list_strings['stic_contacts_employment_status_list']['freelance'] = 'Autónomo/a';
 $app_list_strings['stic_contacts_employment_status_list']['employee'] = 'Empregado/a';
@@ -678,14 +703,14 @@ $app_list_strings['stic_contacts_employment_status_list']['unemployed'] = 'Desem
 $app_list_strings['stic_contacts_employment_status_list']['student'] = 'Estudante';
 $app_list_strings['stic_contacts_employment_status_list']['retired'] = 'Xubilado/a';
 
-// Persoas/Interesados: Tipos de enderezos
+// Personas/Interesados: Tipos de direcciones
 $app_list_strings['stic_contacts_addresses_types_list'][''] = '';
 $app_list_strings['stic_contacts_addresses_types_list']['home'] = 'Domicilio particular';
 $app_list_strings['stic_contacts_addresses_types_list']['workplace'] = 'Traballo';
 $app_list_strings['stic_contacts_addresses_types_list']['residence'] = 'Residencia';
 $app_list_strings['stic_contacts_addresses_types_list']['other'] = 'Outros';
 
-// Persoas/Interesados: Axentes derivadores
+// Personas/Interesados: Agentes derivadores
 $app_list_strings['stic_contacts_referral_agents_list'][''] = '';
 $app_list_strings['stic_contacts_referral_agents_list']['family'] = 'Familia';
 $app_list_strings['stic_contacts_referral_agents_list']['own_initiative'] = 'Propia iniciativa';
@@ -699,7 +724,7 @@ $app_list_strings['stic_sepe_education_levels_list']['10'] = 'Nivel básico';
 $app_list_strings['stic_sepe_education_levels_list']['20'] = 'Estudos secundarios';
 $app_list_strings['stic_sepe_education_levels_list']['30'] = 'Estudos post-secundarios';
 
-// Relacións con Organizacións: Tipos de relacións
+// Relaciones con Organizaciones: Tipos de relaciones
 $app_list_strings['stic_accounts_relationships_types_list'][''] = '';
 $app_list_strings['stic_accounts_relationships_types_list']['customer'] = 'Cliente';
 $app_list_strings['stic_accounts_relationships_types_list']['donor'] = 'Doador';
@@ -707,39 +732,40 @@ $app_list_strings['stic_accounts_relationships_types_list']['funder'] = 'Financi
 $app_list_strings['stic_accounts_relationships_types_list']['supplier'] = 'Proveedor';
 $app_list_strings['stic_accounts_relationships_types_list']['member'] = 'Socio';
 
-// Relacións con Organizacións: Roles en proxectos
+// Relaciones con Organizaciones: Roles en proyectos
 $app_list_strings['stic_accounts_relationships_project_roles_list'][''] = '';
 $app_list_strings['stic_accounts_relationships_project_roles_list']['coordinator'] = 'Coordinador';
 $app_list_strings['stic_accounts_relationships_project_roles_list']['participant'] = 'Participante';
 
-// Relacións con Organizacións: Motivos de finalización das relacións
+// Relaciones con Organizaciones: Motivos de finalización de las relaciones
 $app_list_strings['stic_accounts_relationships_end_reasons_list'][''] = '';
 $app_list_strings['stic_accounts_relationships_end_reasons_list']['disagreement'] = 'Desacordo';
 $app_list_strings['stic_accounts_relationships_end_reasons_list']['economy'] = 'Razóns económicas';
 $app_list_strings['stic_accounts_relationships_end_reasons_list']['other'] = 'Outros';
 
-// Relacións con Persoas: Tipos de relacións
+// Relaciones con Personas: Tipos de relaciones
 $app_list_strings['stic_contacts_relationships_types_list'][''] = '';
 $app_list_strings['stic_contacts_relationships_types_list']['donor'] = 'Doador';
 $app_list_strings['stic_contacts_relationships_types_list']['board_directors'] = 'Xunta directiva / Padroado';
 $app_list_strings['stic_contacts_relationships_types_list']['member'] = 'Socio/a';
 $app_list_strings['stic_contacts_relationships_types_list']['employee'] = 'Traballador/a';
 $app_list_strings['stic_contacts_relationships_types_list']['beneficiary'] = 'Usuario/a de servizos';
+$app_list_strings['stic_contacts_relationships_types_list']['pre-volunteer'] = 'Prevoluntario/a';
 $app_list_strings['stic_contacts_relationships_types_list']['volunteer'] = 'Voluntario/a';
 
-// Relacións con Persoas: Roles en proxectos
+// Relaciones con Personas: Roles en proyectos
 $app_list_strings['stic_contacts_relationships_project_roles_list'][''] = '';
 $app_list_strings['stic_contacts_relationships_project_roles_list']['coordinator'] = 'Coordinador';
 $app_list_strings['stic_contacts_relationships_project_roles_list']['technician'] = 'Técnico';
 $app_list_strings['stic_contacts_relationships_project_roles_list']['user'] = 'Usuario';
 $app_list_strings['stic_contacts_relationships_project_roles_list']['volunteer'] = 'Voluntario';
 
-// Relacións con Persoas: Motivos de finalización das relacións
+// Relaciones con Personas: Motivos de finalización de las relaciones
 $app_list_strings['stic_contacts_relationships_end_reasons_list'][''] = '';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['decease'] = 'Defunción';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['disagreement'] = 'Desacordo';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['economy'] = 'Razóns económicas';
-$app_list_strings['stic_contacts_relationships_end_reasons_list']['persoal'] = 'Razóns personais';
+$app_list_strings['stic_contacts_relationships_end_reasons_list']['personal'] = 'Razóns personais';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['other'] = 'Outros';
 
 // Oportunidades: Tipos
@@ -760,14 +786,14 @@ $app_list_strings['stic_opportunities_status_list']['justified'] = 'Xustificada'
 $app_list_strings['stic_opportunities_status_list']['denied'] = 'Denegada';
 $app_list_strings['stic_opportunities_status_list']['cancelled'] = 'Descartada';
 
-// Oportunidades: Documentos utilizados habitualmente neste contexto
+// Oportunidades: Documentos utilizados habitualmente en este contexto
 $app_list_strings['stic_opportunities_documents_list'][''] = '';
 $app_list_strings['stic_opportunities_documents_list']['tax_obligations'] = 'Certificado obligacións tributarias';
 $app_list_strings['stic_opportunities_documents_list']['project'] = 'Documento de proxecto';
 $app_list_strings['stic_opportunities_documents_list']['estatutes'] = 'Estatutos';
 $app_list_strings['stic_opportunities_documents_list']['annual_report'] = 'Memoria anual';
 
-// Proxectos: Estados
+// Proyectos: Estados
 $app_list_strings['stic_projects_status_list'][''] = '';
 $app_list_strings['stic_projects_status_list']['idea'] = 'Idea';
 $app_list_strings['stic_projects_status_list']['planning'] = 'Planificación';
@@ -775,11 +801,32 @@ $app_list_strings['stic_projects_status_list']['active'] = 'Activo';
 $app_list_strings['stic_projects_status_list']['closed'] = 'Cerrado';
 $app_list_strings['stic_projects_status_list']['cancelled'] = 'Descartado';
 
-// Proxectos: Ubicacións
+// Proyectos: Ubicaciones
 $app_list_strings['stic_project_locations_list'][''] = '';
 $app_list_strings['stic_project_locations_list']['sample_value_1'] = 'Valor de exemplo 1';
 $app_list_strings['stic_project_locations_list']['sample_value_2'] = 'Valor de exemplo 2';
 $app_list_strings['stic_project_locations_list']['sample_value_3'] = 'Valor de exemplo 3';
+
+// Documentos: Categorías
+$app_list_strings['stic_documents_categories_list'][''] = '';
+$app_list_strings['stic_documents_categories_list']['identification'] = 'Identificación';
+$app_list_strings['stic_documents_categories_list']['certificate'] = 'Certificado';
+$app_list_strings['stic_documents_categories_list']['insurance'] = 'Seguro';
+
+// Documentos: Subcategorías 
+$app_list_strings['stic_documents_subcategories_list'][''] = '';
+$app_list_strings['stic_documents_subcategories_list']['identification_nif'] = 'NIF';
+$app_list_strings['stic_documents_subcategories_list']['identification_nie'] = 'NIE';
+$app_list_strings['stic_documents_subcategories_list']['identification_passport'] = 'Pasaporte';
+$app_list_strings['stic_documents_subcategories_list']['identification_other'] = 'Otros';
+$app_list_strings['stic_documents_subcategories_list']['certificate_disability'] = 'Discapacidad';
+$app_list_strings['stic_documents_subcategories_list']['certificate_dependency'] = 'Dependencia';
+$app_list_strings['stic_documents_subcategories_list']['certificate_residence'] = 'Empadronamiento';
+$app_list_strings['stic_documents_subcategories_list']['certificate_sexual_offences'] = 'Delitos sexuales';
+$app_list_strings['stic_documents_subcategories_list']['certificate_other'] = 'Otros';
+$app_list_strings['stic_documents_subcategories_list']['insurance_volunteering'] = 'Voluntariado';
+$app_list_strings['stic_documents_subcategories_list']['insurance_travel'] = 'Viaje';
+$app_list_strings['stic_documents_subcategories_list']['insurance_other'] = 'Otros';
 
 // Compromisos de pago: Periodicidades
 $app_list_strings['stic_payments_periodicities_list'][''] = '';
@@ -791,7 +838,7 @@ $app_list_strings['stic_payments_periodicities_list']['half_yearly'] = 'Semestra
 $app_list_strings['stic_payments_periodicities_list']['annual'] = 'Anual';
 $app_list_strings['stic_payments_periodicities_list']['punctual'] = 'Puntual';
 
-// Compromisos de pago: Destinatarios (que recibirán os fondos)
+// Compromisos de pago: Destinatarios (que recibirán los fondos)
 $app_list_strings['stic_payments_targets_list'][''] = '';
 $app_list_strings['stic_payments_targets_list']['general'] = 'Xeral';
 $app_list_strings['stic_payments_targets_list']['organization'] = 'Organización';
@@ -799,7 +846,7 @@ $app_list_strings['stic_payments_targets_list']['individual'] = 'Persoa';
 $app_list_strings['stic_payments_targets_list']['project'] = 'Proxecto';
 $app_list_strings['stic_payments_targets_list']['other'] = 'Outros';
 
-// Compromisos de pago/Pagos: lista para clasificación personalizada (a reencher polo usuario do CRM)
+// Compromisos de pago/Pagos: lista para clasificación personalizada (a rellenar por el usuario del CRM)
 $app_list_strings['stic_payments_custom_sorting_list'][''] = '';
 $app_list_strings['stic_payments_custom_sorting_list']['sample_value_1'] = 'Valor de exemplo 1';
 $app_list_strings['stic_payments_custom_sorting_list']['sample_value_2'] = 'Valor de exemplo 2';
@@ -894,7 +941,7 @@ $app_list_strings['stic_remittances_status_list']['open'] = 'Aberta';
 $app_list_strings['stic_remittances_status_list']['generated'] = 'Xerada';
 $app_list_strings['stic_remittances_status_list']['sent'] = 'Enviada';
 
-// Remesas: IBANes (a reencher polo usuario do CRM)
+// Remesas: IBANes (a rellenar por el usuario del CRM)
 $app_list_strings['stic_remittances_ibans_list'][''] = '';
 $app_list_strings['stic_remittances_ibans_list']['ESXX00000000000000000000'] = 'O Meu IBAN (exemplo)';
 
@@ -924,7 +971,19 @@ $app_list_strings['stic_events_discard_reasons_list']['economic'] = 'Económico'
 $app_list_strings['stic_events_discard_reasons_list']['disinterest'] = 'Desinterese';
 $app_list_strings['stic_events_discard_reasons_list']['other'] = 'Outros';
 
-// Inscricións: Estados
+// Eventos: Modalidades de voluntariado
+$app_list_strings['stic_events_volunteer_modes_list'][''] = '';
+$app_list_strings['stic_events_volunteer_modes_list']['no_volunteering'] = 'Sin voluntariado';
+$app_list_strings['stic_events_volunteer_modes_list']['mixed'] = 'Mixta';
+$app_list_strings['stic_events_volunteer_modes_list']['volunteering'] = 'Voluntariado';
+
+// Eventos: Público objetivo
+$app_list_strings['stic_events_target_audiences_list'][''] = '';
+$app_list_strings['stic_events_target_audiences_list']['service_users'] = 'Usuario/a de servicios';
+$app_list_strings['stic_events_target_audiences_list']['volunteering'] = 'Voluntariado';
+$app_list_strings['stic_events_target_audiences_list']['institutional_relations'] = 'Relaciones institucionales';
+
+// Inscripciones: Estados
 $app_list_strings['stic_registrations_status_list'][''] = '';
 $app_list_strings['stic_registrations_status_list']['uninvited'] = 'Non invitado';
 $app_list_strings['stic_registrations_status_list']['invited'] = 'Invitado';
@@ -935,32 +994,32 @@ $app_list_strings['stic_registrations_status_list']['participates'] = 'Participa
 $app_list_strings['stic_registrations_status_list']['not_participate'] = 'Non participa';
 $app_list_strings['stic_registrations_status_list']['dropped'] = 'Baixa';
 
-// Inscricións: Tipos de participación
+// Inscripciones: Tipos de participación
 $app_list_strings['stic_registrations_participation_types_list'][''] = '';
 $app_list_strings['stic_registrations_participation_types_list']['attendant'] = 'Asistente';
 $app_list_strings['stic_registrations_participation_types_list']['organizer'] = 'Organizador';
 $app_list_strings['stic_registrations_participation_types_list']['speaker'] = 'Poñente';
 $app_list_strings['stic_registrations_participation_types_list']['vip'] = 'VIP';
 
-// Inscricións: Motivos de rexeitamento
+// Inscripciones: Motivos de rechazo
 $app_list_strings['stic_registrations_rejection_reasons_list'][''] = '';
-$app_list_strings['stic_registrations_rejection_reasons_list']['axenda'] = 'Axenda';
+$app_list_strings['stic_registrations_rejection_reasons_list']['agenda'] = 'Axenda';
 $app_list_strings['stic_registrations_rejection_reasons_list']['not_interested'] = 'Non interesa';
 $app_list_strings['stic_registrations_rejection_reasons_list']['price'] = 'Prezo';
 
-// Inscricións: Motivos de non participación
+// Inscripciones: Motivos de no participación
 $app_list_strings['stic_registrations_not_participating_reasons_list'][''] = '';
-$app_list_strings['stic_registrations_not_participating_reasons_list']['axenda'] = 'Axenda';
+$app_list_strings['stic_registrations_not_participating_reasons_list']['agenda'] = 'Axenda';
 $app_list_strings['stic_registrations_not_participating_reasons_list']['sickness'] = 'Enfermidade';
 $app_list_strings['stic_registrations_not_participating_reasons_list']['forgotten'] = 'Esquezemento';
 
-// Sesións: Tipos de actividades (a reencher polo usuario do CRM)
+// Sesiones: Tipos de actividades (a rellenar por el usuario del CRM)
 $app_list_strings['stic_sessions_activity_types_list'][''] = '';
 $app_list_strings['stic_sessions_activity_types_list']['sample_value_1'] = 'Valor de exemplo 1';
 $app_list_strings['stic_sessions_activity_types_list']['sample_value_2'] = 'Valor de exemplo 2';
 $app_list_strings['stic_sessions_activity_types_list']['sample_value_3'] = 'Valor de exemplo 3';
 
-// Sesións: Días da semana
+// Sesiones: Días de la semana
 $app_list_strings['stic_weekdays_list'][''] = '';
 $app_list_strings['stic_weekdays_list']['1'] = 'Luns';
 $app_list_strings['stic_weekdays_list']['2'] = 'Martes';
@@ -982,12 +1041,12 @@ $app_list_strings['stic_attendances_payment_exceptions_list'][''] = '';
 $app_list_strings['stic_attendances_payment_exceptions_list']['include'] = 'Incluir';
 $app_list_strings['stic_attendances_payment_exceptions_list']['exclude'] = 'Excluir';
 
-// Valoracións: Ámbitos
+// Valoraciones: Ámbitos
 $app_list_strings['stic_assessments_areas_list'][''] = '';
 $app_list_strings['stic_assessments_areas_list']['area1'] = 'Exemplo ámbito 1';
 $app_list_strings['stic_assessments_areas_list']['area2'] = 'Exemplo ámbito 2';
 
-// Valoracións: Momentos
+// Valoraciones: Momentos
 $app_list_strings['stic_assessments_moments_list'][''] = '';
 $app_list_strings['stic_assessments_moments_list']['previous'] = 'Previo';
 $app_list_strings['stic_assessments_moments_list']['initial'] = 'Inicial/Ingreso';
@@ -995,12 +1054,12 @@ $app_list_strings['stic_assessments_moments_list']['followup'] = 'Seguimento';
 $app_list_strings['stic_assessments_moments_list']['closing'] = 'Final/Saída';
 $app_list_strings['stic_assessments_moments_list']['after'] = 'Post saída';
 
-// Valoracións: Alcance
+// Valoraciones: Alcance
 $app_list_strings['stic_assessments_scope_list'][''] = '';
 $app_list_strings['stic_assessments_scope_list']['complete'] = 'Completo';
 $app_list_strings['stic_assessments_scope_list']['partial'] = 'Parcial';
 
-// Valoracións: Recomendacións
+// Valoraciones: Recomendaciones
 $app_list_strings['stic_assessments_recommendations_list'][''] = '';
 $app_list_strings['stic_assessments_recommendations_list']['project1'] = 'Exemplo proxecto/servizo 1';
 $app_list_strings['stic_assessments_recommendations_list']['project2'] = 'Exemplo proxecto/servizo 2';
@@ -1008,7 +1067,7 @@ $app_list_strings['stic_assessments_recommendations_list']['continuity'] = 'Cont
 $app_list_strings['stic_assessments_recommendations_list']['no_continuity'] = 'Non continuidade';
 $app_list_strings['stic_assessments_recommendations_list']['goals_review'] = 'Revisión dos obxectivos';
 
-// Valoracións: Estados
+// Valoraciones: Estados
 $app_list_strings['stic_assessments_status_list'][''] = '';
 $app_list_strings['stic_assessments_status_list']['planned'] = 'Prevista';
 $app_list_strings['stic_assessments_status_list']['progress'] = 'En curso';
@@ -1017,7 +1076,13 @@ $app_list_strings['stic_assessments_status_list']['completed'] = 'Completada';
 $app_list_strings['stic_assessments_status_list']['referred'] = 'Derivada';
 $app_list_strings['stic_assessments_status_list']['discarded'] = 'Descartada';
 
-// Obxectivos: Orígenes
+// Valoraciones: Tipos
+$app_list_strings['stic_assesments_types_list'][''] = '';
+$app_list_strings['stic_assesments_types_list']['service_user'] = 'Usuario/a servicio';
+$app_list_strings['stic_assesments_types_list']['volunteering'] = 'Voluntariado';
+$app_list_strings['stic_assesments_types_list']['other'] = 'Otros';
+
+// Objetivos: Orígenes
 $app_list_strings['stic_goals_origins_list'][''] = '';
 $app_list_strings['stic_goals_origins_list']['assessment'] = 'Valoración';
 $app_list_strings['stic_goals_origins_list']['professional'] = 'Proposta profesional';
@@ -1026,26 +1091,26 @@ $app_list_strings['stic_goals_origins_list']['event'] = 'Vinculado a un evento';
 $app_list_strings['stic_goals_origins_list']['project'] = 'Vinculado a un proxecto';
 $app_list_strings['stic_goals_origins_list']['converted'] = 'Convertido doutro obxectivo';
 
-// Obxectivos: Niveis
+// Objetivos: Niveles
 $app_list_strings['stic_goals_levels_list'][''] = '';
 $app_list_strings['stic_goals_levels_list']['basic'] = 'Básico';
 $app_list_strings['stic_goals_levels_list']['secondary'] = 'Secundario';
 $app_list_strings['stic_goals_levels_list']['priority'] = 'Prioritario';
 $app_list_strings['stic_goals_levels_list']['other'] = 'Outros';
 
-// Obxectivos: Ámbitos
+// Objetivos: Ámbitos
 $app_list_strings['stic_goals_areas_list'][''] = '';
 $app_list_strings['stic_goals_areas_list']['area1'] = 'Exemplo ámbito 1';
 $app_list_strings['stic_goals_areas_list']['area2'] = 'Exemplo ámbito 2';
 
-// Obxectivos: Subámbitos
+// Objetivos: Subámbitos
 $app_list_strings['stic_goals_subareas_list'][''] = '';
 $app_list_strings['stic_goals_subareas_list']['area1_subarea1'] = 'Exemplo subámbito 1.1';
 $app_list_strings['stic_goals_subareas_list']['area1_subarea2'] = 'Exemplo subámbito 1.2';
 $app_list_strings['stic_goals_subareas_list']['area2_subarea1'] = 'Exemplo subámbito 2.1';
 $app_list_strings['stic_goals_subareas_list']['area2_subarea2'] = 'Exemplo subámbito 2.2';
 
-// Obxectivos: Estados
+// Objetivos: Estados
 $app_list_strings['stic_goals_status_list'][''] = '';
 $app_list_strings['stic_goals_status_list']['planned'] = 'Previsto';
 $app_list_strings['stic_goals_status_list']['pending'] = 'Pendente de validación';
@@ -1057,7 +1122,7 @@ $app_list_strings['stic_goals_status_list']['high_achievement'] = '3 - Logro alt
 $app_list_strings['stic_goals_status_list']['discarded'] = 'Descartado';
 $app_list_strings['stic_goals_status_list']['converted'] = 'Convertido noutro obxectivo';
 
-// Entorno persoal: Tipos de relacións
+// Entorno personal: Tipos de relaciones
 $app_list_strings['stic_personal_environment_relationships_list'][''] = '';
 $app_list_strings['stic_personal_environment_relationships_list']['father'] = 'Pai';
 $app_list_strings['stic_personal_environment_relationships_list']['mother'] = 'Nai';
@@ -1077,13 +1142,13 @@ $app_list_strings['stic_personal_environment_relationships_list']['work_partner'
 $app_list_strings['stic_personal_environment_relationships_list']['sports'] = 'Espazo/Organización deportiva';
 $app_list_strings['stic_personal_environment_relationships_list']['culture'] = 'Espazo/Organización cultural';
 
-// Entorno persoal: Convivencia
+// Entorno personal: Convivencia
 $app_list_strings['stic_personal_environment_coexistence_list'][''] = '';
 $app_list_strings['stic_personal_environment_coexistence_list']['coexistence'] = 'Convive';
 $app_list_strings['stic_personal_environment_coexistence_list']['no_coexistence'] = 'Non convive';
 $app_list_strings['stic_personal_environment_coexistence_list']['deceased'] = 'Falecido/a';
 
-// Seguimentos: Asistentes
+// Seguimientos: Asistentes
 $app_list_strings['stic_followups_attendees_list'][''] = '';
 $app_list_strings['stic_followups_attendees_list']['user'] = 'Persoa atendida';
 $app_list_strings['stic_followups_attendees_list']['service_referent'] = 'Referente do servizo';
@@ -1093,7 +1158,7 @@ $app_list_strings['stic_followups_attendees_list']['family'] = 'Familia';
 $app_list_strings['stic_followups_attendees_list']['educational_referent'] = 'Referente educativo';
 $app_list_strings['stic_followups_attendees_list']['public_admin_referent'] = 'Referente administración pública';
 
-// Seguimentos: Estados
+// Seguimientos: Estados
 $app_list_strings['stic_followups_status_list'][''] = '';
 $app_list_strings['stic_followups_status_list']['pending'] = 'Pendente de programar';
 $app_list_strings['stic_followups_status_list']['referred_from'] = 'Derivado desde';
@@ -1102,7 +1167,7 @@ $app_list_strings['stic_followups_status_list']['planned'] = 'Programado';
 $app_list_strings['stic_followups_status_list']['done'] = 'Realizado';
 $app_list_strings['stic_followups_status_list']['not_done'] = 'Non realizado';
 
-// Seguimentos: Tipos
+// Seguimientos: Tipos
 $app_list_strings['stic_followups_types_list'][''] = '';
 $app_list_strings['stic_followups_types_list']['interview1'] = 'Entrevista inicial';
 $app_list_strings['stic_followups_types_list']['interview2'] = 'Entrevista de saída';
@@ -1113,13 +1178,13 @@ $app_list_strings['stic_followups_types_list']['work'] = 'Seguimento laboral';
 $app_list_strings['stic_followups_types_list']['tutoring'] = 'Titoría';
 $app_list_strings['stic_followups_types_list']['other'] = 'Outros';
 
-// Seguimentos: Subtipos
+// Seguimientos: Subtipos
 $app_list_strings['stic_followups_subtypes_list'][''] = '';
 $app_list_strings['stic_followups_subtypes_list']['procedure_document'] = 'Xestión documental';
 $app_list_strings['stic_followups_subtypes_list']['procedure_employmentoffice'] = 'Alta oficina de emprego';
 $app_list_strings['stic_followups_subtypes_list']['procedure_supplies'] = 'Alta de suministro';
 
-// Seguimentos: Canales
+// Seguimientos: Canales
 $app_list_strings['stic_followups_channels_list'][''] = '';
 $app_list_strings['stic_followups_channels_list']['face_inside'] = 'Presencial na entidade';
 $app_list_strings['stic_followups_channels_list']['face_outside'] = 'Presencial fóra da entidade';
@@ -1172,6 +1237,31 @@ $app_list_strings['stic_job_offer_origin_list']['incorpora'] = 'Incorpora';
 $app_list_strings['stic_job_offer_origin_list']['infojobs'] = 'Infojobs';
 $app_list_strings['stic_job_offer_origin_list']['orientation'] = 'Orientación';
 $app_list_strings['stic_job_offer_origin_list']['other'] = 'Outros';
+
+// Ofertas laborales: Tipo de oferta 
+$app_list_strings['stic_job_offers_types_list'][''] = '';
+$app_list_strings['stic_job_offers_types_list']['job'] = 'Trabajo';
+$app_list_strings['stic_job_offers_types_list']['external'] = 'Externo';
+$app_list_strings['stic_job_offers_types_list']['volunteering'] = 'Voluntariado';
+
+// Ofertas laborales: Modalidad de la oferta
+$app_list_strings['stic_job_offers_modes_list'][''] = '';
+$app_list_strings['stic_job_offers_modes_list']['on_site'] = 'Presencial';
+$app_list_strings['stic_job_offers_modes_list']['remote'] = 'Teletrabajo';
+$app_list_strings['stic_job_offers_modes_list']['hybrid'] = 'Híbrido';
+
+// Ofertas laborales: Ámbito territorial
+$app_list_strings['stic_territorial_scopes_list'][''] = '';
+$app_list_strings['stic_territorial_scopes_list']['local'] = 'Local';
+$app_list_strings['stic_territorial_scopes_list']['district'] = 'Comarcal';
+$app_list_strings['stic_territorial_scopes_list']['provincial'] = 'Provincial';
+$app_list_strings['stic_territorial_scopes_list']['regional'] = 'Autonómico';
+$app_list_strings['stic_territorial_scopes_list']['national'] = 'Estatal';
+
+// Ofertas laborales: Temporalidad
+$app_list_strings['stic_job_offers_temporalities_list'][''] = '';
+$app_list_strings['stic_job_offers_temporalities_list']['permanent'] = 'Indefinida';
+$app_list_strings['stic_job_offers_temporalities_list']['temporary'] = 'Temporal';
 
 // Candidaturas: Estados
 $app_list_strings['stic_job_applications_status_list'][''] = '';
@@ -1251,7 +1341,7 @@ $app_list_strings['stic_sepe_file_types_list']['annual_accd'] = 'ACCD anual';
 $app_list_strings['stic_incorpora_activity_sector_list'][''] = '';
 $app_list_strings['stic_incorpora_activity_sector_list']['AGRICULT'] = 'Agricultura';
 $app_list_strings['stic_incorpora_activity_sector_list']['INDUSTRIA'] = 'Industria';
-$app_list_strings['stic_incorpora_activity_sector_list']['SERVIZOS'] = 'Servizos';
+$app_list_strings['stic_incorpora_activity_sector_list']['SERVICIOS'] = 'Servizos';
 $app_list_strings['stic_incorpora_activity_sector_list']['COMEERCIO'] = 'Comercio (Obsoleto)';
 $app_list_strings['stic_incorpora_addr_street_type_list'][''] = '';
 $app_list_strings['stic_incorpora_addr_street_type_list']['1'] = 'Rúa';
@@ -2443,8 +2533,8 @@ $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_33_les
 $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_65'] = '>=65%';
 $app_list_strings['stic_incorpora_disability_degree_list']['less_33'] = '<33%';
 $app_list_strings['stic_incorpora_economic_benefit_list'][''] = '';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non';
-$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Prestaciones y subsidios por desocupación';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desemprego (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['CESE_ACT'] = 'Prestación por cese de actividad de trabajadores autónomos';
 $app_list_strings['stic_incorpora_economic_benefit_list']['SEG_SOCIAL'] = 'Prestaciones económicas de la Seguridad Social';
 $app_list_strings['stic_incorpora_economic_benefit_list']['PRES_IMV'] = 'Ingreso Mínimo Vital';
@@ -3234,7 +3324,7 @@ $app_list_strings['stic_resources_places_users_list']['adults'] = 'Adultos';
 $app_list_strings['stic_resources_places_users_list']['families'] = 'Familias';
 $app_list_strings['stic_resources_places_users_list']['minors'] = 'Menores';
 
-// Recursos: Tipos de géneros de las plazas
+// Recursos: Tipos de género de las plazas
 $app_list_strings['stic_resources_places_gender_list'][''] = '';
 $app_list_strings['stic_resources_places_gender_list']['men'] = 'Hombres';
 $app_list_strings['stic_resources_places_gender_list']['women'] = 'Mujeres';
@@ -3350,14 +3440,14 @@ $app_list_strings['stic_journal_types_list']['educational_measure'] = 'Medida ed
 $app_list_strings['stic_journal_types_list']['infringement'] = 'Infracción';
 $app_list_strings['stic_journal_types_list']['other'] = 'Outro';
 
-// Diario: Quendas
+// Diario: Turnos
 $app_list_strings['stic_journal_turns_list'][''] = '';
 $app_list_strings['stic_journal_turns_list']['morning'] = 'Mañá';
 $app_list_strings['stic_journal_turns_list']['afternoon'] = 'Tarde';
 $app_list_strings['stic_journal_turns_list']['night'] = 'Noite';
 $app_list_strings['stic_journal_turns_list']['weekend'] = 'Fin de semana';
 
-// Diario: Tipos de tarefas
+// Diario: Tipos de tareas
 $app_list_strings['stic_journal_tasks_list']['house_cleaning'] = 'Limpeza de casa';
 $app_list_strings['stic_journal_tasks_list']['bathroom_cleaning'] = 'Limpeza de baños';
 $app_list_strings['stic_journal_tasks_list']['shopping'] = 'Compras';
@@ -3373,13 +3463,13 @@ $app_list_strings['stic_journal_task_scopes_list']['household'] = 'Doméstico';
 $app_list_strings['stic_journal_task_scopes_list']['educational'] = 'Educativo';
 $app_list_strings['stic_journal_task_scopes_list']['workplace'] = 'Laboral';
 
-// Diario: Cumprimento da tarefa
+// Diario: Cumplimiento de la tarea
 $app_list_strings['stic_journal_task_fulfillments_list'][''] = '';
 $app_list_strings['stic_journal_task_fulfillments_list']['yes'] = 'Si';
 $app_list_strings['stic_journal_task_fulfillments_list']['no'] = 'Non';
 $app_list_strings['stic_journal_task_fulfillments_list']['partial'] = 'Parcial';
 
-// Diario: Gravidade da tarefa ou infracción
+// Diario: Gravedad de la tarea o infracción
 $app_list_strings['stic_journal_seriousness_list'][''] = '';
 $app_list_strings['stic_journal_seriousness_list']['slight'] = 'Leve';
 $app_list_strings['stic_journal_seriousness_list']['average'] = 'Media';
@@ -3462,13 +3552,13 @@ $app_list_strings['stic_training_status_list']['in_progress'] = 'En curso';
 $app_list_strings['stic_training_status_list']['finished'] = 'Finalizada';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Baixa';
 
-// Formación: Dispoñible ao entrar en contacto coa organización
+// Formación: Disponible al entrar en contacto con la entidad
 $app_list_strings['stic_training_previous_list'][''] = '';
 $app_list_strings['stic_training_previous_list']['yes'] = 'Sí';
 $app_list_strings['stic_training_previous_list']['no'] = 'Non';
 $app_list_strings['stic_training_previous_list']['in_progress'] = 'En curso';
 
-// Formación: Orixe da beca
+// Formación: Origen de la beca
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
 $app_list_strings['stic_training_grant_origins_list']['private'] = 'Privada';
 $app_list_strings['stic_training_grant_origins_list']['public'] = 'Pública';
@@ -3481,7 +3571,7 @@ $app_list_strings['stic_work_experience_contract_types_list']['internship'] = 'P
 $app_list_strings['stic_work_experience_contract_types_list']['self_employed'] = 'Autónomo';
 $app_list_strings['stic_work_experience_contract_types_list']['without_contract'] = 'Sen contrato';
 
-// Experiencia laboral: Tipo de xornada
+// Experiencia laboral: Tipo de jornada
 $app_list_strings['stic_work_experience_workday_types_list'][''] = '';
 $app_list_strings['stic_work_experience_workday_types_list']['full_time'] = 'Xornada completa';
 $app_list_strings['stic_work_experience_workday_types_list']['splitted_full_time'] = 'Xornada completa partida';
@@ -3516,7 +3606,7 @@ $app_list_strings['stic_skills_languages_list']['chinese'] = 'Chino';
 $app_list_strings['stic_skills_languages_list']['arabic'] = 'Árabe';
 $app_list_strings['stic_skills_languages_list']['other'] = 'Outros';
 
-// Competencias: Nivel do idioma
+// Competencias: Nivel del idioma
 $app_list_strings['stic_skills_language_levels_list'][''] = '';
 $app_list_strings['stic_skills_language_levels_list']['a1'] = 'A1';
 $app_list_strings['stic_skills_language_levels_list']['a2'] = 'A2';
@@ -3543,8 +3633,15 @@ $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DA
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
+// Competencias: Momentos de evaluación
+$app_list_strings['stic_skills_evaluation_stages_list'][''] = '';
+$app_list_strings['stic_skills_evaluation_stages_list']['initial'] = 'Inicial';
+$app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Intermedio';
+$app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
+
 // Mensajes: Tipo
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
 
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
@@ -3571,12 +3668,12 @@ $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de deta
 $app_list_strings['stic_custom_views_views_list']['editview'] = 'Vista de edición';
 $app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Vista de creación rápida';
 
-// Vistas personalizadas: Tipos de Accións
+// Vistas personalizadas: Tipos de acciones
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Campo';
 $app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panel';
 $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Pestana';
 
-// Vistas personalizadas: Accións
+// Vistas personalizadas: Acciones
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Só lectura';
 $app_list_strings['stic_custom_views_action_list']['required'] = 'Obrigado';
@@ -3590,7 +3687,7 @@ $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subliñado';
 $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estilo CSS';
 $app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Texto da etiqueta';
 
-// Vistas personalizadas: Seccións de elementos
+// Vistas personalizadas: Secciones de elementos
 $app_list_strings['stic_custom_views_element_list']['field'] = 'Todo o campo';
 $app_list_strings['stic_custom_views_element_list']['field_label'] = 'Só a etiqueta';
 $app_list_strings['stic_custom_views_element_list']['field_input'] = 'Só a casilla';
@@ -3661,10 +3758,67 @@ $app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
 $app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inicio de suplantación';
 $app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fin de suplantación';
 
-// SinergiaDA: Niveis de acceso dos usuarios
+// Firmas: Estados
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Borrador';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Abierto';
+$app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanente';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausado';
+$app_list_strings['stic_signatures_status_list']['completed'] = 'Completado';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelado';
+
+// Firmas: Métodos de autenticación
+$app_list_strings['stic_signatures_auth_methods_list'][''] = '';
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enlace único';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código de un solo uso (por SMS o correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Código de un solo uso (por correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = 'Código de un solo uso (por SMS)';
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Teléfono';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Número de identificación';
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Fecha de nacimiento';
+
+// Firmas: Tipos
+// $app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+// $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (personalizada)';
+// $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
+
+// Firmas: Modos
+$app_list_strings['stic_signatures_modes_list'][''] = '';
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Botón';
+
+// Firmas: En nombre de...
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, solamente un representante';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, todos los representantes';
+
+// Firmantes: Estados
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecesario';
+
+// Registo de Firmas: Acciones
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Documento aceptado mediante botón de aceptación';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Documento asinado con sinatura manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Asinante engadido á sinatura';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Código dun só uso enviado por correo electrónico ao asinante';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Código dun só uso enviado por teléfono ao asinante';
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código dun só uso verificado polo asinante';
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado ao asinante';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'El firmante ha accedido al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF asinado descargado';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF asinado enviado por correo electrónico';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Sinatura caducada';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Documento firmado por outra persoa autorizada';
+$app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'O documento foi descargado internamente';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos os asinantes completaron a sinatura do documento';
+// SinergiaDA: Niveles de acceso de los usuarios
 $app_list_strings['sda_users_access_list']['0'] = 'Sen acceso';
 $app_list_strings['sda_users_access_list']['1'] = 'Acceso completo';
-// $app_list_strings['sda_users_access_list']['2'] = 'Acceso de só lectura';
+// $app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; // Disabled for the moment
 
 // Productos financieros: Tipos de productos
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';
@@ -3738,7 +3892,7 @@ $app_strings['LBL_EMAIL_QC_LEADS'] = 'Interesado';
 $app_strings['LBL_EMAIL_QC_CONTACTS'] = 'Persoa';
 $app_strings['LBL_EMAIL_QC_OPPORTUNITIES'] = 'Subvención';
 
-// Oportunidades: Roles das persoas neste contexto
+// Oportunidades: Roles de las personas en este contexto
 $app_list_strings['opportunity_relationship_type_dom'][''] = '';
 $app_list_strings['opportunity_relationship_type_dom']['Primary Decision Maker'] = 'Decisor principal';
 $app_list_strings['opportunity_relationship_type_dom']['Technical Decision Maker'] = 'Decisor técnico';
@@ -3746,7 +3900,7 @@ $app_list_strings['opportunity_relationship_type_dom']['Technical Evaluator'] = 
 $app_list_strings['opportunity_relationship_type_dom']['organization_manager'] = 'Xestor da entidade';
 $app_list_strings['opportunity_relationship_type_dom']['Other'] = 'Outros';
 
-// Registro de Campañas: Tipo de actividade
+// Registro de Campañas: Tipo de actividad
 $app_list_strings['campainglog_activity_type_dom'][''] = '';
 $app_list_strings['campainglog_activity_type_dom']['targeted'] = 'Mensaxe enviado';
 $app_list_strings['campainglog_activity_type_dom']['send error'] = 'Mensaxe non enviado (outras causas)';
@@ -3827,7 +3981,6 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
-$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 
 // Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -3835,7 +3988,7 @@ $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
-$app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
+$app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
 // Elementos añadidos al Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tarefas';

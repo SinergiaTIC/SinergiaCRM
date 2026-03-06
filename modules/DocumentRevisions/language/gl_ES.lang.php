@@ -75,7 +75,7 @@ $mod_strings = array(
     'LBL_SEARCH_FORM_TITLE' => 'Busca de Documentos',
     'LBL_REVISIONS' => 'Revisións',
 
-    //erro messages
+    //error messages
     'ERR_FILENAME' => 'Nome de Arquivo',
     'ERR_DOC_VERSION' => 'Versión de Documento',
     'ERR_DELETE_CONFIRM' => '¿Desexa eliminar esta versión do documento?',

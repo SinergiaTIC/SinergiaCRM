@@ -157,6 +157,56 @@ img.right_icon {
     position: static;
 }
 
+/* STIC Custom 20260105 ART - Resizable columns in Studio  */
+/* https://github.com/SinergiaTIC/SinergiaCRM/pull/984 */
+
+#mblayout .yui-dt-hd th.yui-dt-asc,
+#mblayout .yui-dt-hd th.yui-dt-desc {
+    background: #f6f6f6;
+}
+
+#mblayout .yui-dt th,
+#mblayout .yui-dt td {
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#mblayout .yui-dt .yui-dt-liner {
+    padding: 4px 6px;
+}
+
+#mblayout .yui-dt td .yui-dt-liner {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#mblayout .yui-dt-scrollable .yui-dt-hd {
+    background-color: transparent !important;
+}
+
+#mblayout .yui-dt-resizerliner {
+    padding: 0 !important;
+}
+
+#mblayout th .yui-dt-resizeable {
+    position: static !important;
+}
+
+#mblayout th .yui-dt-sortable {
+    font-weight: bold !important;
+}
+
+#mblayout #field_table .yui-dt-bd,
+#mblayout #relGrid .yui-dt-bd {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* END STIC Custom */
+
 input[disabled], select[disabled] {
     background-color: #EEE;
 }

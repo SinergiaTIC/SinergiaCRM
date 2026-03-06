@@ -125,7 +125,7 @@ $mod_strings = array(
     'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
     'LBL_TOTAL_AMOUNT' => 'Tarifa total',
     'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa copago',
-    
+
     // Reservas periódicas
     'LBL_CREATE_PERIODIC_RECORDS' => 'Crear registros periódicos',
     'LBL_CANCEL_BUTTON' => 'Cancelar',

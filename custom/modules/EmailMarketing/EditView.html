@@ -181,8 +181,11 @@
                                         onclick="toggle_message_for(this);" id="all_prospect_lists"
                                         {ALL_PROSPECT_LISTS_CHECKED}
                                         name='all_prospect_lists'>{MOD.LBL_ALL_PROSPECT_LISTS}</span></td>
-                            <td scope="row"><span>&nbsp;</span></td>
-                            <td><span>&nbsp;</span></td>
+                            <?php // STIC-Custom 20251202 MHP - Add display HTML field to marketing email ?>
+                            <?php // https://github.com/SinergiaTIC/SinergiaCRM/pull/770 ?>
+                            <td scope="row"><span>{MOD.LBL_STIC_DISPLAY_HTML}</span></td>
+                            <td><span><input type="checkbox" id="stic_display_html_c" name="stic_display_html_c" {displayHTML}></span></td>
+                            <?php // END STIC-Custom ?>
                         </tr>
                         <tr>
                             <td scope="row"><span>&nbsp;</span></td>

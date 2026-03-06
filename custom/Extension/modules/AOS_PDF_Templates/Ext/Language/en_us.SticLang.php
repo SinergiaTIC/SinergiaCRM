@@ -22,3 +22,5 @@
  */
 
 $mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Use this link to download the PDF file:<br>';
+$mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Authorized Signer';
+$mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Authorized Signers';

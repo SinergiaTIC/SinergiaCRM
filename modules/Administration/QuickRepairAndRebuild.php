@@ -441,7 +441,10 @@ class RepairAndClear
                 }
             }
         } else {
-            if (in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
+            // STIC-Custom AAM 20260305 - Fixing null module_list
+            // if (in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
+            if (in_array(translate('LBL_ALL_MODULES'), $this->module_list ?? [])) {
+            // END STIC-Custom
                 foreach ($beanFiles as $bean => $file) {
                     if (file_exists($file)) {
                         require_once $file;

@@ -81,7 +81,7 @@ $mod_strings['LBL_ACCOUNT_IDENTIFICATION_NUMBER_ERROR'] = 'O número de identifi
 $mod_strings['LBL_STIC_PERSONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_PERSONAL_ENVIRONMENT_TITLE']='Relacións da contorna persoal das que a organización forma parte';
 $mod_strings['LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE'] = 'Centros';
 
-// Cadeas Inserción Laboral
+// Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
 $mod_strings['LBL_STIC_PANEL_INCORPORA_AGREEMENTS'] = 'Convenios Incorpora';
 $mod_strings['LBL_STIC_PANEL_INCORPORA_ADDRESS'] = 'Ubicación / Enderezo Incorpora';
@@ -148,7 +148,7 @@ $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_STIC_GROUP_OPPORTUNITIE
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direccións de correo";
 
-// Cadeas adaptadas de Contas a Organizacións
+// Cadenas adaptadas de Cuentas a Organizaciones
 $mod_strings['ERR_DELETE_RECORD'] = 'Debe especificar un número de rexistro para eliminar a Organización.';
 $mod_strings['LBL_ACCOUNT'] = 'Organización:';
 $mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Persoas';
@@ -174,11 +174,11 @@ $mod_strings['MSG_DUPLICATE'] = 'O rexistro que está a punto de crear podería 
 $mod_strings['MSG_SHOW_DUPLICATES'] = 'O rexistro que está a punto de crear podería ser un duplicado doutra organización existente. Os rexistros de organización con nomes similares lístanse a continuación. Para confirmar a creación desta organización faga clic en Gardar. En caso contrario, pulse Cancelar.';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizacións';
 
-// Cadeas Axudas
+// Cadenas Ayudas
 $mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 
-// Cadeas Formación
+// Cadenas Formación
 $mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Formación';
 
-// Cadeas Experiencia laboral
+// Cadenas Experiencia laboral
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiencia laboral';

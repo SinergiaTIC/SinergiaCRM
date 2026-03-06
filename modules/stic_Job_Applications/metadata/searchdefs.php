@@ -205,6 +205,38 @@ array(
                 'default' => true,
                 'name' => 'motivations',
             ),
+            'previous_experience' => array (
+                'type' => 'varchar',
+                'label' => 'LBL_PREVIOUS_EXPERIENCE',
+                'width' => '10%',
+                'default' => false,
+                'name' => 'previous_experience',
+            ),
+            'available_days' => array (
+                'type' => 'multienum',
+                'studio' => 'visible',
+                'label' => 'LBL_AVAILABLE_DAYS',
+                'width' => '10%',
+                'default' => false,
+                'name' => 'available_days',
+            ),
+            'available_time' => array (
+                'type' => 'varchar',
+                'label' => 'LBL_AVAILABLE_TIME',
+                'width' => '10%',
+                'default' => false,
+                'name' => 'available_time',
+            ),
+            'account' => 
+            array (
+                'type' => 'relate',
+                'link' => true,
+                'label' => 'LBL_ACCOUNT',
+                'id' => 'accaunt_id',
+                'width' => '10%',
+                'default' => false,
+                'name' => 'account',
+            ),
             'preinsertion_observations' => array(
                 'type' => 'text',
                 'studio' => 'visible',

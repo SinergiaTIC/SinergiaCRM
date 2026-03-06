@@ -132,7 +132,7 @@ class checkRPRelationshipStatus extends DataCheckFunction
 				GROUP BY
 					c.id
 				HAVING
-					(actuales != activas) -- 2) Secondly, we join a query that returns people who have something indicated in type of relationship, but who have no related record in redk_relacion contacts, or that is deleted = 0
+					(actuales != activas) -- 2) Secondly, we join a query that returns people who have something indicated in type of relationship, but who have no related record in stic_Contacts_Relationships or that is deleted
 				UNION
 				SELECT
 					id AS persona,

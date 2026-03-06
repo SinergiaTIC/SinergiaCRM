@@ -653,6 +653,37 @@ $listViewDefs['Contacts'] = array (
       'width' => '10%',
       'default' => false,
     ),
+    'STIC_CONFIDENTIALITY_AGREEMENT_C' => 
+    array (
+      'type' => 'bool',
+      'default' => false,
+      'studio' => 'visible',
+      'label' => 'LBL_STIC_CONFIDENTIALITY_AGREEMENT',
+      'width' => '10%',
+    ),
+    'STIC_CONDUCT_CODE_C' => 
+    array (
+      'type' => 'bool',
+      'default' => false,
+      'studio' => 'visible',
+      'label' => 'LBL_STIC_CONDUCT_CODE',
+      'width' => '10%',
+    ),
+    'STIC_OCCUPATIONAL_SAFETY_C' => 
+    array (
+      'type' => 'bool',
+      'default' => false,
+      'studio' => 'visible',
+      'label' => 'LBL_STIC_OCCUPATIONAL_SAFETY',
+      'width' => '10%',
+    ),
+    'STIC_TIME_AVAILABILITY' => 
+    array (
+      'type' => 'varchar',
+      'label' => 'LBL_STIC_TIME_AVAILABILITY',
+      'width' => '10%',
+      'default' => false,
+    ),
     'DESCRIPTION' => 
     array (
       'type' => 'text',

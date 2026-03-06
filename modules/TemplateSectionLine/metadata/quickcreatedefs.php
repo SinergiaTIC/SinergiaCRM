@@ -141,14 +141,15 @@ array(
           1 => 'assigned_user_name',          
         ),
         1 => array(
+          // 0 => array(
+          //   'name' => 'grp',
+          //   'label' => 'LBL_GRP',
+          // ),
           0 => array(
-            'name' => 'grp',
-            'label' => 'LBL_GRP',
-          ),
-          1 => array(
             'name' => 'ord',
             'label' => 'LBL_ORD',
-        ),
+          ),
+          1 => array(),
         ),
         3 => array(
           0 => 'description',

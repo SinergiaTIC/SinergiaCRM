@@ -92,7 +92,7 @@ $mod_strings = array (
   'LBL_PERIODIC_WORK_CALENDAR_TITLE' => 'Xerar Calendario laboral',
   'LBL_WORK_CALENDAR_DURATION' => 'Duración do rexistro de Calendario laboral',
   'LBL_ERROR_IN_VALIDATION' => 'Hai un erro no valor indicado no campo Data e hora de finalización.',
-  'LBL_END_DATE_ERROR' => 'A Data e hora de finalización debe ser posterior á Data e hora de inicio.',
+  'LBL_END_DATE_ERROR' => 'A data e hora de finalización debe ser posterior á data e hora de inicio.',
   
   // Resumen del asistente de creación de registros de Calendario laboral
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'Resumo:',

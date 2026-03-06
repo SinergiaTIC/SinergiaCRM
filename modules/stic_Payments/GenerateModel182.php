@@ -110,14 +110,14 @@ function model182T2($data) {
     // In this case the field "NIF of declared person" must be filled with blank spaces instead of zeros.
     $text .= SticUtils::fillLeft($data['nif_declarado'], $data['nif_declarado'] == '' ? ' ' : 0, 9);
     $text .= ($data['nif_representante_legal'] == '' ? SticUtils::fillLeft($data['nif_representante_legal'], " ", 9) : SticUtils::fillLeft($data['nif_representante_legal'], 0, 9));
-    $text .= SticUtils::fillRigth(trim($data['nombre_fiscal']) ? trim($data['nombre_fiscal']) : (trim(trim(trim($data['declarado_apellido_1']) . " " . trim($data['declarado_apellido_2'])) . " " . trim($data['declarado_nombre']))), " ", 40);
+    $text .= SticUtils::fillRigth(trim($data['nombre_fiscal'] ?? '') ? trim($data['nombre_fiscal'] ?? '') : (trim(trim(trim(($data['declarado_apellido_1'] ?? '')) . " " . trim(($data['declarado_apellido_2'] ?? ''))) . " " . trim(($data['declarado_nombre'] ?? '')))), " ", 40);
     $text .= SticUtils::fillLeft($data['declarado_provincia'], 0, 2);
     $text .= SticUtils::fillLeft($data['clave'], " ", 1);
     $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion']), 0, 5);
     $text .= SticUtils::fillLeft(convertAmount($data['importe_donacion']), 0, 13);
     $text .= SticUtils::fillLeft($data['kind'], " ", 1);
     $text .= SticUtils::fillLeft($data['deduccion_com_autonoma'], 0, 2);
-    $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion_com_autonoma']), 0, 5);
+    $text .= SticUtils::fillLeft(convertAmount((float)str_replace(',','.',$data['por_deduccion_com_autonoma'])), 0, 5);
     $text .= SticUtils::fillLeft($data['naturaleza_declarado'], " ", 1);
     $text .= ' 0000';
     $text .= SticUtils::fillLeft("", " ", 21);
@@ -306,6 +306,10 @@ foreach ($contacts as $id) {
         // We keep the total amount of donations for each exercise and type of payment
         $historicalPayments[$row['periodo']][$row['payment_type']] = $row['total_donation'];
         
+        // Initialize totals if not set
+        $historicalPayments[$row['periodo']]['kind_total'] ??= 0;
+        $historicalPayments[$row['periodo']]['monetary_total'] ??= 0;
+        
         // We accumulate totals separately for kind and monetary donations
         if ($row['payment_type'] === 'kind') {
             $historicalPayments[$row['periodo']]['kind_total'] = $row['total_donation'];
@@ -402,17 +406,26 @@ foreach ($accounts as $id) {
     while ($row = $db->fetchByAssoc($paymentsResult)) {
         // We keep the total amount of donations for each exercise and type of payment
         $historicalPayments[$row['periodo']][$row['payment_type']] = $row['total_donation'];
+        // Initialize total if not set
+        $historicalPayments[$row['periodo']]['total'] ??= 0;
         // We accumulate the total total per year to assess whether it is a recurring donor.
         $historicalPayments[$row['periodo']]['total'] += $row['total_donation'];
     }
 
     // 4.2.2 Add to the array the payments of the year of the declaration, previously calculated
+    $historicalPayments[$lastyear]['total'] ??= 0;
     foreach ($yearPayments[$id] as $claveTipoPago => $paymentTypeValue) {
         $historicalPayments[$lastyear][$claveTipoPago] = $paymentTypeValue;
         $historicalPayments[$lastyear]['total'] += $paymentTypeValue;
     }
 
     // 4.2.3 Check if the account can be considered a recurring donor according to the regulation
+    // Initialize all year totals
+    $historicalPayments[$lastyear]['total'] ??= 0;
+    $historicalPayments[$twoYearsAgo]['total'] ??= 0;
+    $historicalPayments[$threeYearsAgo]['total'] ??= 0;
+    $historicalPayments[$fourYearsAgo]['total'] ??= 0;
+    
     $recurrence = false;
     if ($historicalPayments[$lastyear]['total'] > 0
         && $historicalPayments[$twoYearsAgo]['total'] >= $historicalPayments[$threeYearsAgo]['total'] 
@@ -433,12 +446,20 @@ foreach ($accounts as $id) {
 $declarantIdentification = $m182Vars["GENERAL_ORGANIZATION_ID".$sufixSetting];
 $donationKey = $m182Vars["M182_CLAVE_DONATIVO".$sufixSetting];
 $year = $lastyear;
+$total = 0;
 
 // Create an array to save records formatted according to the regulations
 $model182T2 = array();
 
 // 5.1 Contacts
 foreach ($contacts as $id) {
+    // Initialize array keys for contacts
+    $id[$year]['kind'] ??= 0;
+    $id[$year]['total'] ??= 0;
+    $id[$year]['monetary_total'] ??= 0;
+    $id[$year]['donation'] ??= 0;
+    $id[$year]['fee'] ??= 0;
+    $id['recurrente'] ??= false;
 
     $contactRow = null;
     $contactSQL = "SELECT * FROM contacts c LEFT JOIN contacts_cstm cc ON c.id = cc.id_c WHERE c.id = '" . $id['id'] . "' AND c.deleted = 0";
@@ -648,6 +669,13 @@ foreach ($contacts as $id) {
 
 // 5.2. Accounts
 foreach ($accounts as $id) {
+    // Initialize array keys for account
+    $id[$year]['kind'] ??= 0;
+    $id[$year]['total'] ??= 0;
+    $id[$year]['monetary_total'] ??= 0;
+    $id[$year]['donation'] ??= 0;
+    $id[$year]['fee'] ??= 0;
+    $id['recurrente'] ??= false;
 
     $accountRow = null;
     $accountSQL = "SELECT * FROM accounts a LEFT JOIN accounts_cstm ac ON a.id = ac.id_c  WHERE  a.id = '" . $id['id'] . "' AND a.deleted = 0";
@@ -769,6 +797,15 @@ $m182['patrimonio_protegido_apellido_2'] = '';
 $m182['patrimonio_protegido_nombre'] = '';
 $linea1 = model182T1($m182);
 
+
+
+// flush();
+// echo $linea1; // Header record (declarant)
+$xmlFile = $linea1;
+foreach ($model182T2 as $linea) {
+    $xmlFile .= model182T2($linea); // Declared records
+}
+
 // 5.4. Creation of the file to download
 header("Content-Type: application/force-download");
 header("Content-type: application/octet-stream");
@@ -776,11 +813,7 @@ header("Content-Disposition: attachment; filename=\"modelo_182_" . $m182['ejerci
 // disable content type sniffing in MSIE
 header("X-Content-Type-Options: nosniff");
 header("Expires: 0");
-
 ob_clean();
-flush();
-echo $linea1; // Header record (declarant)
-foreach ($model182T2 as $linea) {
-    echo model182T2($linea); // Declared records
-}
+
+echo $xmlFile;
 die();
