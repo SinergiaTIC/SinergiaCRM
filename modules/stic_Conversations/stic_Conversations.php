@@ -71,19 +71,22 @@ class stic_Conversations extends Basic
      */
     public function save($check_notify = false) {
         
-        global $app_list_strings, $sugar_config;
+        global $app_list_strings, $db;
 
-        // Generate progressive code only once
-        if (empty($this->code)) {
-            if (!empty($sugar_config['dbconfig']['db_type']) && $sugar_config['dbconfig']['db_type'] === 'mssql') {
-                $this->code = $this->db->getOne("SELECT MAX(CAST(code as INT))+1 FROM {$this->table_name} WHERE deleted = 0");
-            } else {
-                $this->code = $this->db->getOne("SELECT MAX(CAST(code as UNSIGNED))+1 FROM {$this->table_name} WHERE deleted = 0");
-            }
-
-            if (empty($this->code)) {
-                $this->code = 1;
-            }
+        // Generate progressive code
+        if (!$currentNum = $this->code) {
+            $query = "SELECT code
+                FROM stic_conversations
+                ORDER BY code DESC LIMIT 1";
+                $result = $db->query($query, true);
+                $row = $db->fetchByAssoc($result);
+                $lastNum = $row['code'];
+                if (!isset($lastNum) || empty($lastNum)) {
+                    $lastNum = 0;
+                }
+                $currentNum = $lastNum + 1;
+            // Format code
+            $this->code = str_pad($currentNum, 4, "0", STR_PAD_LEFT);
         }
 
         // Create name if empty
@@ -91,6 +94,8 @@ class stic_Conversations extends Basic
             $typeLabel = $this->type;
             if (!empty($this->type) && !empty($app_list_strings['stic_conversations_types_list'][$this->type])) {
                 $typeLabel = $app_list_strings['stic_conversations_types_list'][$this->type];
+            } else {
+                $this->name = $this->code . ' - ' . $this->subject;
             }
 
             $this->name = $this->code . ' - ' . $typeLabel . ' - ' . $this->subject;

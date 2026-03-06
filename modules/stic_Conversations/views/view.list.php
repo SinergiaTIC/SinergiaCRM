@@ -21,15 +21,39 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+require_once 'include/MVC/View/views/view.list.php';
+require_once 'SticInclude/Views.php';
+require_once 'modules/stic_Conversations/stic_ConversationsListViewSmarty.php';
 
-global $mod_strings, $app_strings, $sugar_config;
+class stic_ConversationsViewList extends ViewList
+{
 
-// if (ACLController::checkAccess('stic_Conversations', 'edit', true)) {
-//     $module_menu[] = array('index.php?module=stic_Conversations&action=EditView&return_module=stic_Conversations&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Conversations');
-// }
-if (ACLController::checkAccess('stic_Conversations', 'list', true)) {
-    $module_menu[] = array('index.php?module=stic_Conversations&action=index&return_module=stic_Conversations&return_action=DetailView', $mod_strings['LNK_LIST'], 'View', 'stic_Conversations');
+    public function __construct()
+    {
+        parent::__construct();
+
+    }
+
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+        // Write here you custom code
+        // Use a custom ListViewSmarty to hide the "Duplicate" action in the list view menu
+        $this->lv = new stic_ConversationsListViewSmarty();
+
+    }
+
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+
+        // Write here you custom code
+        // echo getVersionedScript("modules/stic_Conversations/Utils.js");
+    }
+
 }

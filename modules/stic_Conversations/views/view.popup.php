@@ -21,15 +21,35 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+require_once 'include/MVC/View/views/view.popup.php';
+require_once 'SticInclude/Views.php';
 
-global $mod_strings, $app_strings, $sugar_config;
+#[\AllowDynamicProperties]
+class stic_ConversationsViewPopup extends ViewPopup
+{
 
-// if (ACLController::checkAccess('stic_Conversations', 'edit', true)) {
-//     $module_menu[] = array('index.php?module=stic_Conversations&action=EditView&return_module=stic_Conversations&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Conversations');
-// }
-if (ACLController::checkAccess('stic_Conversations', 'list', true)) {
-    $module_menu[] = array('index.php?module=stic_Conversations&action=index&return_module=stic_Conversations&return_action=DetailView', $mod_strings['LNK_LIST'], 'View', 'stic_Conversations');
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function preDisplay()
+    {
+
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+    }
+    public function display()
+    {
+
+        parent::display();
+
+        SticViews::display($this);
+
+        // Write here you custom code
+        echo getVersionedScript("modules/stic_Conversations/Utils.js");
+    }
+
 }

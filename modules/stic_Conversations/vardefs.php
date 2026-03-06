@@ -79,7 +79,7 @@ $dictionary['stic_Conversations'] = array(
       'name' => 'type',
       'vname' => 'LBL_TYPE',
       'type' => 'enum',
-      'massupdate' => 0,
+      'massupdate' => 1,
       'no_default' => false,
       'comments' => '',
       'help' => '',
@@ -149,3 +149,6 @@ if (!class_exists('VardefManager')) {
   require_once('include/SugarObjects/VardefManager.php');
 }
 VardefManager::createVardef('stic_Conversations', 'stic_Conversations', array('basic', 'assignable', 'security_groups'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Conversations']['fields']['name']['required'] = '0'; // Name is not required in this module
