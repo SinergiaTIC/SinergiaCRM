@@ -100,7 +100,4 @@ $mod_strings = array(
     'LBL_START_DATE_CONTRACT_START_DATE_ERROR' => 'Start date must be equal or before Contract start date',
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => 'Contract start date must be equal or after Start date',
     'LBL_WORK_EXPERIENCE_SUBJECT' => 'Job application accepted',
-    // Status change notifications
-    'LBL_JOB_APPLICATION_STATUS_CHANGE_SUBJECT' => 'Application status change for job offer {0}',
-    'LBL_JOB_APPLICATION_STATUS_CHANGE_BODY' => 'The status of an application for job offer {0} has changed to {1}. Review the application details: {2}',
 );

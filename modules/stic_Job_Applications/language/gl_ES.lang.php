@@ -100,7 +100,4 @@ $mod_strings = array(
     'LBL_START_DATE_CONTRACT_START_DATE_ERROR' => 'A data de alta debe ser anterior á data de inicio de contrato',
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => 'A data de inicio de contrato debe ser posterior á data de alta',
     'LBL_WORK_EXPERIENCE_SUBJECT' => 'Candidatura aceptada',
-    // Notificaciones de cambio de estado
-    'LBL_JOB_APPLICATION_STATUS_CHANGE_SUBJECT' => 'Cambio de estado en una candidatura de la oferta {0}',
-    'LBL_JOB_APPLICATION_STATUS_CHANGE_BODY' => 'El estado de una candidatura de la oferta {0} ha cambiado a {1}. Puede revisar los detalles de la candidatura: {2}',
 );

@@ -51,7 +51,7 @@ class stic_Job_OffersLogicHooks
     }
 
     /**
-     * Notify assigned user when applications_end_date was yesterday and offer is not closed
+     * Notify when the status of the job offer changes
      *
      * @param SugarBean $bean The stic_Job_Offers bean
      * @param string $event The hook event
@@ -64,7 +64,6 @@ class stic_Job_OffersLogicHooks
         }
 
         require_once 'modules/stic_Job_Offers/Utils.php';
-        stic_Job_OffersUtils::notifyClosingDateIfNeeded($bean);
         stic_Job_OffersUtils::notifyStatusChange($bean);
     }
 }
