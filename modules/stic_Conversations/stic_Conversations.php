@@ -94,11 +94,10 @@ class stic_Conversations extends Basic
             $typeLabel = $this->type;
             if (!empty($this->type) && !empty($app_list_strings['stic_conversations_types_list'][$this->type])) {
                 $typeLabel = $app_list_strings['stic_conversations_types_list'][$this->type];
+                $this->name = $this->code . ' - ' . $typeLabel . ' - ' . $this->subject;
             } else {
                 $this->name = $this->code . ' - ' . $this->subject;
             }
-
-            $this->name = $this->code . ' - ' . $typeLabel . ' - ' . $this->subject;
         }
         
         // Call the generic save() function from the SugarBean class

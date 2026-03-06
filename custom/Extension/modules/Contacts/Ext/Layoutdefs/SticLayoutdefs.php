@@ -495,8 +495,8 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_financial_products_contacts'] =
     'title_key' => 'LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE',
     'get_subpanel_data' => 'contacts_stic_conversations',
     'top_buttons' => array (
-        array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-        array('widget_class' => 'SubPanelTopSelectButton', 'mode' => 'MultiSelect'),
+        // array('widget_class' => 'SubPanelTopButtonQuickCreate'),
+        // array('widget_class' => 'SubPanelTopSelectButton', 'mode' => 'MultiSelect'),
     ),
  );
 
