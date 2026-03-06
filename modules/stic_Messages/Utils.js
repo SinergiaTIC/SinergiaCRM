@@ -154,6 +154,7 @@ switch (sticViewType) {
             $('#sender').css('border-color', '');
           }
         }
+        toggleParentTypeForConversation();
       });
 
       // On page load, if type is WhatsAppWeb, force status to 'sent' and set sender
@@ -204,6 +205,29 @@ switch (sticViewType) {
       // Supress bottom margin
       infoElement.parent().css('margin-bottom', '0px');
 
+      // Toggle conversation fields visibility and validation based on type and new conversation checkbox
+      toggleConversationFieldsByType();
+      toggleParentTypeForConversation();
+      $('#type').on('change', toggleConversationFieldsByType);
+      $('#new_conversation[type="checkbox"]').on('change', toggleConversationFieldsByType);
+
+      // Conversations messages are always sent and cannot be edited
+      if(messageType === 'conversation'  && $('#EditView input[name="record"]').val()) {
+          var $newConversationCheckbox = $('#new_conversation[type="checkbox"]');
+          var $conversationName = $('#stic_conversations_stic_messages_name');
+
+          $newConversationCheckbox.prop('disabled', true);
+
+          $conversationName.prop('disabled', true);
+          $conversationName.attr('readonly', true);
+          $conversationName.css('background', '#F8F8F8');
+          $conversationName.css('border-color', '#E2E7EB');
+
+          $('#btn_stic_conversations_stic_messages_name').prop('disabled', true);
+          $('#btn_clr_stic_conversations_stic_messages_name').prop('disabled', true);
+          $('#btn_stic_conversations_stic_messages_name').hide();
+          $('#btn_clr_stic_conversations_stic_messages_name').hide();
+      }
 
     });
 
@@ -213,6 +237,12 @@ switch (sticViewType) {
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
     var messageType = $("#type").val();
+
+    // If message is not of type conversation, hide conversation field and new conversation checkbox
+    if (messageType !== 'conversation') {
+      $('div[data-field="new_conversation"]').hide();
+      $('div[data-field="stic_conversations_stic_messages_name"]').hide();
+    }
     
     // Define button content - Don't show retry button for WhatsAppWeb messages
     if ($("#status").val() != 'sent' && messageType !== 'WhatsAppWeb') {
@@ -493,3 +523,99 @@ function updateMessageBox (args) {
       mb.remove();
     });
   }
+
+var phoneInitiallyRequired = null;
+
+// Function to clear conversation selection and related fields
+function clearConversationSelection() {
+  $('#stic_conversations_stic_messages_name').val('');
+  $('#stic_conversations_ida').val('');
+}
+
+// Function to toggle visibility and validation of conversation fields based on type and new conversation checkbox
+function toggleConversationFieldsByType() {
+  var formName = getFormName();
+  var isConversationType = $('#type').val() === 'conversation';
+  var $newConversationCheckbox = $('#new_conversation[type="checkbox"]');
+  var isNewConversationChecked = $newConversationCheckbox.is(':checked');
+  var conversationLabel = SUGAR.language.get(module, 'LBL_STIC_CONVERSATIONS_STIC_MESSAGES');
+  var phoneLabel = SUGAR.language.get(module, 'LBL_PHONE');
+
+  if (!$newConversationCheckbox.length || !$('#stic_conversations_stic_messages_name').length || !$('#phone').length) {
+    return;
+  }
+
+  if (phoneInitiallyRequired === null && typeof getRequiredStatus === 'function') {
+    phoneInitiallyRequired = getRequiredStatus('phone');
+  }
+
+  var $newConversationRow = $newConversationCheckbox.closest('.edit-view-row-item');
+  var $conversationRow = $('#stic_conversations_stic_messages_name').closest('.edit-view-row-item');
+  var $phoneRequiredMark = $('#phone').closest('.edit-view-row-item').find('.label .required');
+
+  if (isConversationType) {
+    $newConversationRow.show();
+    addRequiredMark('new_conversation');
+
+    removeFromValidate(formName, 'phone');
+    removeRequiredMark('phone');
+    $phoneRequiredMark.hide();
+
+    if (isNewConversationChecked) {
+      $conversationRow.hide();
+      removeFromValidate(formName, 'stic_conversations_stic_messages_name');
+      removeRequiredMark('stic_conversations_stic_messages_name');
+      clearConversationSelection();
+    } else {
+      $conversationRow.show();
+      removeFromValidate(formName, 'stic_conversations_stic_messages_name');
+      addToValidate(formName, 'stic_conversations_stic_messages_name', 'relate', true, conversationLabel);
+      addRequiredMark('stic_conversations_stic_messages_name');
+    }
+  } else {
+    $newConversationRow.hide();
+    $conversationRow.hide();
+
+    $newConversationCheckbox.prop('checked', false);
+    clearConversationSelection();
+
+    removeFromValidate(formName, 'stic_conversations_stic_messages_name');
+    removeRequiredMark('stic_conversations_stic_messages_name');
+    removeFromValidate(formName, 'new_conversation');
+    removeRequiredMark('new_conversation');
+
+    if (phoneInitiallyRequired === true) {
+      $phoneRequiredMark.show();
+      removeRequiredMark('phone');
+      removeFromValidate(formName, 'phone');
+      if (typeof getRequiredStatus === 'function' && !getRequiredStatus('phone')) {
+        addToValidate(formName, 'phone', 'phone', true, phoneLabel);
+      }
+    }
+  }
+}
+// Function to toggle parent type field based on conversation type and mass update
+function toggleParentTypeForConversation() {
+  var isConversationType = $('#type').val() === 'conversation';
+  var $parentType = $('#parent_type');
+
+  if (!$parentType.length) {
+    return;
+  }
+
+  if (isConversationType) {
+    if ($parentType.val() !== 'Contacts') {
+      $parentType.val('Contacts').trigger('change');
+    }
+
+    $parentType.prop('disabled', true);
+    $parentType.attr('readonly', true);
+    $parentType.css('background', '#F8F8F8');
+    $parentType.css('border-color', '#E2E7EB');
+  } else if (!$('#mass_ids').val()) {
+    $parentType.prop('disabled', false);
+    $parentType.attr('readonly', false);
+    $parentType.css('background', '');
+    $parentType.css('border-color', '');
+  }
+}

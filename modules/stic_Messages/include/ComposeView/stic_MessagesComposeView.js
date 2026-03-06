@@ -162,6 +162,85 @@ function checkStatus() {
 
 YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
 
+// Function to check if an existing conversation is selected
+function isExistingConversationSelected() {
+  return (
+    $('#type').val() === 'conversation'
+    && !$('#new_conversation').is(':checked')
+    && $('#stic_conversations_ida').val() !== ''
+  );
+}
+
+// Function to apply conversation data to the form fields
+function applyConversationData(conversationData) {
+  if (!conversationData) {
+    return;
+  }
+
+  if (conversationData.sender) {
+    $('#sender').val(conversationData.sender);
+  }
+
+  if (conversationData.parent_type) {
+    $('#parent_type').val(conversationData.parent_type);
+  }
+
+  if (conversationData.parent_id) {
+    $('#parent_id').val(conversationData.parent_id).trigger('change');
+  }
+
+  if (typeof conversationData.parent_name !== 'undefined') {
+    $('#parent_name').val(conversationData.parent_name);
+  }
+}
+
+// Function to fetch conversation data asynchronously
+function getConversationDataAsync(conversationId, callbackFunction) {
+  $.ajax({
+    url: 'index.php?module=stic_Messages&action=getConversationData',
+    type: 'post',
+    dataType: 'json',
+    data: {
+      conversationId: conversationId,
+    },
+    success: function(resultado) {
+      if (resultado.code === 'OK') {
+        callbackFunction(resultado.data);
+      }
+    },
+  });
+}
+
+// Function to load selected conversation data into the form
+function loadSelectedConversationData() {
+  if (!isExistingConversationSelected()) {
+    return;
+  }
+
+  var conversationId = $('#stic_conversations_ida').val();
+  getConversationDataAsync(conversationId, applyConversationData);
+}
+
+// Function to check if the popup selection is for a conversation
+function isConversationPopupSelection(popupReplyData) {
+  if (!popupReplyData || !popupReplyData.name_to_value_array) {
+    return false;
+  }
+
+  return typeof popupReplyData.name_to_value_array.stic_conversations_ida !== 'undefined';
+}
+
+if (typeof window.set_return === 'function') {
+  var sticMessagesOriginalSetReturn = window.set_return;
+  window.set_return = function(popupReplyData) {
+    sticMessagesOriginalSetReturn(popupReplyData);
+
+    if (isConversationPopupSelection(popupReplyData)) {
+      loadSelectedConversationData();
+    }
+  };
+}
+
 function parentIdChanged() {
   let parentId = $('#parent_id').val();
   let parentType = $('#parent_type').val();
@@ -203,6 +282,9 @@ function getParentAsync(parentId, parentType, callbackFunction) {
 }
 
 $(function () {
+  $('#stic_conversations_ida').on('change', loadSelectedConversationData);
+  $('#new_conversation, #type').on('change', loadSelectedConversationData);
+
   const myButtons = $('[id="SAVE"]');
   saveMessage = function (event) {
     event.preventDefault();
@@ -246,6 +328,14 @@ $(function () {
                 txt.innerHTML = html;
                 return txt.value;
             };
+
+            if (res && res.success === false) {
+              showMessageBox(
+                res.title || SUGAR.language.get('stic_Messages', 'LBL_ERROR'),
+                res.detail || SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT')
+              );
+              return;
+            }
             
             // Check if this is a WhatsAppWeb message using explicit type field
             if (res.type === 'WhatsAppWeb') {

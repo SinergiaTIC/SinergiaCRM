@@ -147,6 +147,11 @@ class stic_Messages extends Basic
                 $this->status = 'sent';
                 $this->response = $response['message'];
                 $this->sent_date = $GLOBALS['timedate']->nowDb();
+            } elseif ($this->type === 'conversation') {
+                // Conversation type is handled internally, without external provider
+                $this->status = 'sent';
+                $this->response = 'Conversation message saved';
+                $this->sent_date = $GLOBALS['timedate']->nowDb();
             } else {
             if (!empty($this->phone)){
                 $response = $this->sendMessage();

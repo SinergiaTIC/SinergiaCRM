@@ -40,12 +40,6 @@ $subpanel_layout = array(
             'widget_class' => 'SubPanelDetailViewLink',
             'width' => '20%',
         ),
-        'parent_name' => array(
-            'vname' => 'LBL_LIST_RELATED_TO',
-            'dynamic_module' => 'parent_type',
-            'id' => 'parent_id',
-            'width' => '15%',
-        ),
         'phone' => array(
             'vname' => 'LBL_PHONE',
             'width' => '10%',
