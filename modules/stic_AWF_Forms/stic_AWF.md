@@ -214,15 +214,19 @@ Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a
 
 * **Enlazar registros (Automática)**: Enlaza dos registros del CRM según las relaciones definidas en el paso anterior.
 
-* **Enviar notificación por correo / al usuario asignado**: Permite enviar un email personalizado a una dirección o al trabajador responsable utilizando las plantillas del CRM. **Novedad destacada:** El sistema procesa la plantilla inyectando la información de **todos los registros implicados en la respuesta**. Es decir, si un formulario crea a la vez una "Persona" y una "Inscripción", la plantilla de correo podrá interpretar dinámicamente variables de ambos módulos simultáneamente (siempre que sean módulos distintos), dotando a las comunicaciones de un contexto mucho más rico sin configuraciones adicionales.
-  
+* **Enviar notificación por correo / al usuario asignado**: Permite enviar emails automatizados utilizando las plantillas del CRM. Esta acción cubre dos grandes escenarios:
+  * *Correos de respuesta al usuario (Auto-respondedor)*: Se puede enviar un correo de confirmación, agradecimiento o resguardo directamente a la persona visitante que ha rellenado el formulario (leyendo el email del registro recién creado).
+  * *Avisos internos*: Se puede notificar a una dirección interna o al trabajador responsable del registro asignado.
+  * **Novedad destacada:** En ambos casos, el sistema procesa la plantilla inyectando la información de **todos los registros implicados en la respuesta**. Es decir, si un formulario crea a la vez una "Persona" y una "Inscripción", la plantilla de correo podrá interpretar dinámicamente variables de ambos módulos simultáneamente (siempre que sean módulos distintos), dotando a las comunicaciones de un contexto mucho más rico sin configuraciones adicionales.
+
+
 * **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
 
 * **Verificar sesión activa y permisos**: Bloquea el acceso y el procesamiento del formulario si no hay una sesión activa en el CRM o si el usuario no dispone de permisos explícitos de edición/creación para **todos y cada uno de los módulos** involucrados en los bloques de datos del formulario.
 
 * **Mostrar página con resumen de respuestas (Final)**: Redirige al usuario a una página que contiene el resumen de todas sus respuestas al formulario.
 
-* **Redireccionar a página (Final)**: Redirige al usuario a una página web externa una vez procesados los datos.
+* **Redireccionar a página (Final)**: Redirige al usuario a una página web externa una vez procesados los datos. Esta acción permite adjuntar datos recopilados en el formulario y enviarlos a la URL de destino (utilizando los métodos estándar GET o POST).
 
 ### Paso 4: Maquetación ###
 Llega el momento de darle forma visual al formulario, separando por completo su diseño de la lógica estructural definida en los pasos anteriores. Este paso cuenta con un **editor visual con previsualización en tiempo real**, lo que permite comprobar exactamente cómo quedará el formulario final a medida que se diseña y se aplican los cambios.
