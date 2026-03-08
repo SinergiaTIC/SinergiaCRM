@@ -178,7 +178,7 @@ $mod_strings = array(
     'LBL_PORTAL_UNNECESSARY_TEXT' => 'Non é necesario que asine este documento, xa foi asinado por outra persoa autorizada.',
     'LBL_PORTAL_SIGNATURE_EXPIRED_MESSAGE' => 'O período para asinar este documento expirou. Data de caducidad:',
     'LBL_PORTAL_SIGNATURE_NOT_ACTIVATED_MESSAGE' => 'O período para asinar este documento aínda non comezou. A sinatura estará dispoñible a partir de:',
-    'LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE' => 'El proceso de firma de este documento está cerrado y no es posible firmarlo.',
+    'LBL_PORTAL_SIGNATURE_CLOSED_MESSAGE' => 'O proceso de sinatura deste documento está cerrado e non é posible asinalo.',
 
     // Audit page
     'LBL_AUDIT_PAGE_TITLE' => 'Páxina de auditoría da sinatura',
@@ -195,27 +195,19 @@ $mod_strings = array(
     'LBL_AUDIT_PAGE_EVENTS_LOG_TITLE' => 'Rexistro de eventos',
 
     // Labels for popupHelps
-    'LBL_AUTH_METHOD_HELP' => '<ul><li><strong>Enlace único:</strong> El firmante accede al documento mediante un enlace. <li><strong>Código de un solo uso (por SMS o correo electrónico):</strong> El firmante debe introducir un código de verificación enviado por SMS o correo electrónico. <li><strong>Teléfono, número de identificación o fecha de nacimiento:</strong> El firmante debe indicar los datos seleccionados para poder firmar.</ul>', 
-    'LBL_SIGNATURE_MODE_HELP' => '<ul><li><strong>Manuscrita:</strong> El firmante dibuja su firma utilizando el ratón o la pantalla táctil. <li><strong>Botón:</strong> El firmante sólo tiene que pulsar el botón de aceptación.</ul>', 
-    'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>No (valor por defecto):</strong> El firmante actúa en su propio nombre. <li><strong>Sí, sólo un representante:</strong> Sólo tiene que firmar un representante del titular de la firma. <li><strong>Sí, todos los representantes</strong> Deben firmar todos los representantes del titular.</ul>', 
-    'LBL_ACTIVATION_DATE_HELP' => 'Fecha a partir de la cual se podrá firmar. Antes de esa fecha el portal de firmas no lo permitirá.', 
-    'LBL_EXPIRATION_DATE_HELP' => 'Fecha límite para firmar. Después de esta fecha el portal de firmas no lo permitirá, pero sí se podrá consultar si el documento está firmado.', 
-    'LBL_STATUS_HELP' => 'El proceso admite firmas a través del portal de firmas cuando está en estado Abierto o Permanente. Cualquier otro estado no permitirá firmar aunque se esté dentro del período habilitado para ello. 
-                        <ul>
-                            <li><b>Borrador</b>: El proceso de firma está en preparación.</li> 
-                            <li><b>Abierto</b>: El proceso admite firmas a través del portal.</li> 
-                            <li><b>Permanente</b>: Similar a Abierto, se aplica a procesos de firma sin fecha de finalización. Se podrá firmar a través del portal mientras no se cambie el estado.</li> 
-                            <li><b>Pausado</b>: Interrumpe temporalmente la recogida de firmas a través del portal.</li> 
-                            <li><b>Completado</b>: Se establece automáticamente en procesos abiertos cuando todos los firmantes han firmado.</li> 
-                            <li><b>Cancelado</b>: Interrumpe definitivamente el proceso de firma.</li> 
-                        </ul>', 
-    'LBL_PDF_AUDIT_PAGE_HELP' => 'Permite indicar si es necesario incluir una página de auditoría al final del documento firmado. La página de auditoría contiene información detallada sobre el proceso de firma, incluyendo datos de los firmantes, fechas y horas de las firmas y un registro de eventos relacionados con el proceso.', 
-    'LBL_TYPE_HELP' => 'Tipo de firma a configurar. Actualmente sólo está disponible la opción Individual.', 
-    'LBL_PDF_TEMPLATE_HELP' => 'Plantilla PDF que se utilizará como documento para firmar. La plantilla debe estar diseñada previamente en el módulo de Plantillas PDF y contener los campos de firma necesarios.', 
-    'LBL_MAIN_MODULE_HELP' => 'Módulo de SinergiaCRM al que se asociará el proceso de firma. Se extrae automáticamente  del módulo principal de la plantilla PDF seleccionada.',
-    'LBL_SIGNER_PATH_HELP' => 'Permite elegir la ruta a seguir desde el módulo principal de la firma hasta el módulo de los firmantes (Personas o Usuarios).', 
-    'LBL_EMAIL_TEMPLATE_HELP' => 'Plantilla de correo para notificar a los firmantes sobre el proceso de firma. Debe incluir la información necesaria para que el firmante pueda acceder al portal de firma y completar el proceso. Si no se indica lo contrario, se utiliza  la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla por defecto</a>.', 
-    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correo para enviar el documento firmado a los firmantes. Si no se indica lo contrario, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">plantilla por defecto</a>.', 
-    'LBL_EMAIL_TEMPLATE_OTP_HELP' => 'Plantilla de correo para enviar el código de un solo uso al correo electrónico de los firmantes. Si no se indica lo contrario, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView">plantilla por defecto</a>.', 
-    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'Plantilla de mensaje SMS para enviar el código de un solo uso al teléfono de los firmantes. Si no se indica lo contrario, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView">plantilla por defecto</a>.',
+    'LBL_AUTH_METHOD_HELP' => '<ul><li><strong>Enlace único:</strong> O asinante accede ao documento mediante un enlace. <li><strong>Código dun só uso (por SMS ou correo electrónico):</strong> O asinante debe introducir un código de verificación enviado por SMS ou correo electrónico. <li><strong>Teléfono, número de identificación ou data de nacemento:</strong> O asinante debe indicar os datos seleccionados para poder asinar.</ul>', 
+    'LBL_SIGNATURE_MODE_HELP' => '<ul><li><strong>Manuscrita:</strong> O asinante debuxa a súa sinatura utilizando o rato ou a pantalla táctil. <li><strong>Botón:</strong> O asinante só ten que pulsar o botón de aceptación.</ul>', 
+    'LBL_ON_BEHALF_OF_HELP' => '<ul><li><strong>Non (valor por defecto):</strong> O asinante actúa no seu propio nome. <li><strong>Si, só un representante:</strong> Só ten que asinar un representante do titular da sinatura. <li><strong>Si, todos os representantes</strong> Deben asinar todos os representantes do titular.</ul>', 
+    'LBL_ACTIVATION_DATE_HELP' => 'Data a partir da cal se poderá asinar. Antes desa data o portal de sinaturas non o permitirá.', 
+    'LBL_EXPIRATION_DATE_HELP' => 'Data límite para asinar. Despois desta data o portal de sinaturas non o permitirá, pero si se poderá consultar se o documento está asinado.', 
+    'LBL_STATUS_HELP' => 'O proceso admite sinaturas a través do portal de sinaturas cando está en estado Aberto ou Permanente. Calquera outro estado non permitirá asinar aínda que se estea dentro do período habilitado para elo. ', 
+    'LBL_PDF_AUDIT_PAGE_HELP' => 'Permite indicar se é necesario incluír unha páxina de auditoría ao final do documento asinado. A páxina de auditoría contén información detallada sobre o proceso de sinatura, incluíndo datos dos asinantes, datas e horas das sinaturas e un rexistro de eventos relacionados co proceso.', 
+    'LBL_TYPE_HELP' => 'Tipo de sinatura a configurar. Actualmente só está dispoñible a opción Individual.', 
+    'LBL_PDF_TEMPLATE_HELP' => 'Persoal PDF que se utilizará como documento para asinar. A plantilla debe estar deseñada previamente no módulo de Plantillas PDF e conter os campos de sinatura necesarios.', 
+    'LBL_MAIN_MODULE_HELP' => 'Módulo de SinergiaCRM ao que se asociará o proceso de sinatura. Extráese automaticamente  do módulo principal da Plntilla PDF seleccionada.',
+    'LBL_SIGNER_PATH_HELP' => 'Permite elixir a ruta para seguir desde o módulo principal da sinatura ata o módulo dos asinantes (Persoas ou Usuarios).', 
+    'LBL_EMAIL_TEMPLATE_HELP' => 'Plantilla de correo para notificar aos asinantes sobre o proceso de sinatura. Debe incluír a información necesaria para que o asinante poida acceder ao portal de sinatura e completar o proceso. Se non se indica o contrario, utilízase  a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70330&action=DetailView">plantilla por defecto.', 
+    'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correo para enviar o documento asinado aos asinantes. Se non se indica o contrario, utilízase a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">Plantilla por defecto.', 
+    'LBL_EMAIL_TEMPLATE_OTP_HELP' => 'Plantilla de correo para enviar o código dun só uso ao correo electrónico dos asinantes. Se non se indica o contrario, utilízase a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView">Plantilla por defecto.', 
+    'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'Plantilla de mensaxe SMS para enviar o código dun só uso ao teléfono dos asinantes. Se non se indica o contrario, utilízase a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView">Plantilla por defecto.',
 );
