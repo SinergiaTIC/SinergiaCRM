@@ -154,6 +154,17 @@ if (count($errors)) {
     SticUtils::outputJsonResponse('error', $errors, $infos);
     exit;
 }
+
+// Set version and update alerts if they are in params.
+if (isset($_REQUEST['sinergiacrm_version'])) {
+    require_once 'modules/Configurator/Configurator.php';
+    $configurator = new Configurator();
+    $configurator->config['sinergiacrm_version'] = $_REQUEST['sinergiacrm_version'];
+    if (isset($_REQUEST['show_update_alert'])) {
+        $configurator->config['stic_show_update_alert'] = filter_var($_REQUEST['show_update_alert'], FILTER_VALIDATE_BOOLEAN);
+    }
+    $configurator->saveConfig();
+}
 SticUtils::outputJsonResponse('success', [], $infos);
 exit;
 
