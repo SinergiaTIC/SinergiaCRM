@@ -161,7 +161,7 @@ if (isset($_REQUEST['sinergiacrm_version'])) {
     $configurator = new Configurator();
     $configurator->config['sinergiacrm_version'] = $_REQUEST['sinergiacrm_version'];
     if (isset($_REQUEST['show_update_alert'])) {
-        $configurator->config['stic_show_update_alert'] = $_REQUEST['show_update_alert'];
+        $configurator->config['stic_show_update_alert'] = filter_var($_REQUEST['show_update_alert'], FILTER_VALIDATE_BOOLEAN);
     }
     $configurator->saveConfig();
 }
