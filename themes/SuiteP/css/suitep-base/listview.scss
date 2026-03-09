@@ -3600,6 +3600,7 @@ ul.clickMenu > li > span.searchAppliedAlert {
 }
 
 // STIC-Custom OC - 20260309 - Async count loading spinner
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
 .async-spinner {
   display: inline-block;
   width: 14px;
@@ -3620,3 +3621,4 @@ ul.clickMenu > li > span.searchAppliedAlert {
     transform: rotate(360deg);
   }
 }
+// END STIC-Custom OC

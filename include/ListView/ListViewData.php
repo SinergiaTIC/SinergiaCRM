@@ -268,6 +268,8 @@ class ListViewData
         SugarVCR::erase($seed->module_dir);
         $this->seed =& $seed;
         // STIC-Custom OC - 20260309 - Check if async count is enabled
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+        // $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         $useAsyncCount = !empty($GLOBALS['sugar_config']['async_list_count']);
         // totalCounted is false when async is enabled (count will be loaded via AJAX)
         $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']) && !$useAsyncCount;

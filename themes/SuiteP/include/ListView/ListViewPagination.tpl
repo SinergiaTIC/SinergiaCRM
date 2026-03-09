@@ -41,7 +41,9 @@
 
 
 
- *}
+*}
+
+
 {assign var="alt_start" value=$navStrings.start}
 {assign var="alt_next" value=$navStrings.next}
 {assign var="alt_prev" value=$navStrings.previous}
@@ -90,9 +92,11 @@
 						{/if}
 					</td>
 					<td nowrap='nowrap' width="1%" class="paginationActionButtons">
-{* STIC-Custom OC - 20260309 - Async count loading *}
+						{* STIC-Custom OC - 20260309 - Async count loading *}
+						{* https://github.com/SinergiaTIC/SinergiaCRM/pull/1014 *}
+						{* <div class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} {$navStrings.of} {if $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.lastOffsetOnPage != $pageData.offsets.total}+{/if}{/if})</div> *}
 						<div class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} {$navStrings.of} {if $pageData.offsets.asyncCountPending}<span class="async-count-loading async-spinner" data-module="{$pageData.bean.moduleDir}" data-offset="{$pageData.offsets.current}"></span>{elseif $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.lastOffsetOnPage != $pageData.offsets.total}+{/if}{/if})</div>
-{* END STIC-Custom OC *}
+						{* END STIC-Custom OC *}
 					</td>
 					<td nowrap='nowrap' align="right" class='paginationActionButtons' width="1%">
 						{if $pageData.urls.nextPage}

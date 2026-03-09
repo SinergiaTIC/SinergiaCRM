@@ -5142,6 +5142,7 @@ $(document).ready(function(){
 // END STIC
 
 // STIC-Custom OC - 20260309 - Async count loading for list views
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
 function loadAsyncListCount() {
     var asyncCountElements = document.querySelectorAll('.async-count-loading');
     if (!asyncCountElements.length) return;
@@ -5174,6 +5175,6 @@ function loadAsyncListCount() {
 // Load async counts on page ready
 document.addEventListener('DOMContentLoaded', function() {
     // Delay slightly to prioritize main content loading
-    setTimeout(loadAsyncListCount, 100);
+    setTimeout(loadAsyncListCount, 200);
 });
 // END STIC-Custom OC

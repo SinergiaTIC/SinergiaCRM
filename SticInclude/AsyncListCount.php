@@ -26,7 +26,6 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-sleep(5);
 global $current_user;
 
 $module = $_GET['module'] ?? '';
@@ -35,8 +34,8 @@ $where = $_GET['where'] ?? '';
 // Validate module
 if (empty($module)) {
     @ob_end_clean();
-        ob_start();
-        ob_clean();
+    ob_start();
+    ob_clean();
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'error' => 'Module not specified']);
     return;
@@ -45,8 +44,8 @@ if (empty($module)) {
 $bean = BeanFactory::getBean($module);
 if (!$bean) {
     @ob_end_clean();
-        ob_start();
-        ob_clean();
+    ob_start();
+    ob_clean();
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'error' => 'Invalid module']);
     return;
@@ -62,8 +61,8 @@ $result = $db->query($countQuery);
 $row = $db->fetchByAssoc($result);
 $total = intval($row['c'] ?? $row['count'] ?? 0);
 @ob_end_clean();
-        ob_start();
-        ob_clean();
+ob_start();
+ob_clean();
 header('Content-Type: application/json');
 echo json_encode(['success' => true, 'total' => $total]);
 // END STIC-Custom OC
