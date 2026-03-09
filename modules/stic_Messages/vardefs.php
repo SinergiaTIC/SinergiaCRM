@@ -281,7 +281,7 @@ $dictionary['stic_Messages'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => true,
+            'inline_edit' => false,
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
@@ -311,6 +311,7 @@ $dictionary['stic_Messages'] = array(
             'module' => 'stic_Conversations',
             'rname' => 'name',
             'required' => false,
+            'inline_edit' => false,
         ),
         'stic_conversations_ida' => array (
             'name' => 'stic_conversations_ida',
