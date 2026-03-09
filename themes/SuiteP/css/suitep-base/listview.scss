@@ -3598,3 +3598,25 @@ ul.clickMenu > li > span.searchAppliedAlert {
     display: inline-block;
   }
 }
+
+// STIC-Custom OC - 20260309 - Async count loading spinner
+.async-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-left: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: $primary;
+  animation: async-spinner-rotate 1.5s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes async-spinner-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
