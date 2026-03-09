@@ -5159,7 +5159,7 @@ function loadAsyncListCount() {
                     var response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         el.innerHTML = response.total;
-                        el.classList.remove('async-count-loading');
+                        el.classList.remove('async-count-loading', 'async-spinner');
                         el.classList.add('async-count-loaded');
                     }
                 } catch (e) {
