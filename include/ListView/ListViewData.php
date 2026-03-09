@@ -269,10 +269,13 @@ class ListViewData
         $this->seed =& $seed;
         // STIC-Custom OC - 20260309 - Check if async count is enabled
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
-        // $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         $useAsyncCount = !empty($GLOBALS['sugar_config']['async_list_count']);
+        // When async is enabled, also enable disable_count_query for efficiency (limit + 1 trick)
+        if ($useAsyncCount) {
+            $GLOBALS['sugar_config']['disable_count_query'] = true;
+        }
         // totalCounted is false when async is enabled (count will be loaded via AJAX)
-        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']) && !$useAsyncCount;
+        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         // END STIC-Custom OC
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
         if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup') {
