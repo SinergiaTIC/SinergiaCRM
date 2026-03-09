@@ -915,11 +915,6 @@ class KReportQuery {
                // if ($actionPermission == ACL_ALLOW_NONE) {
                if (!is_admin($current_user)) {
                   $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
-                  if ($actionPermission == null) {
-                     // If null then the ACL cache is not yet loaded, so we load it and check again
-                     ACLAction::getUserActions($current_user->id, true); //, $root_bean->module_dir, 'module', $access_check);
-                     $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
-                  }
                   if ($actionPermission == ACL_ALLOW_NONE) {
                   // END STIC Custom 20260303 EPS
                      if (empty($this->whereString)) {
@@ -1092,11 +1087,6 @@ class KReportQuery {
                               // STIC-Custom 20260303 EPS - if user is admin, role must not be checked, but must be applied for every node in the path
                               // https://github.com/SinergiaTIC/SinergiaCRM/pull/1002
                               $actionPermission = $_SESSION['ACL'][$current_user->id][$this->joinSegments[$thisPath]['object']->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
-                              if ($actionPermission == null) {
-                                 // If null then the ACL cache is not yet loaded, so we load it and check again
-                                 ACLAction::getUserActions($current_user->id, true); //, $root_bean->module_dir, 'module', $access_check);
-                                 $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? null; 
-                              }
                               if (!is_admin($current_user) && $actionPermission == ACL_ALLOW_NONE) {
                                  if (empty($this->whereString)) {
                               if (!is_admin($current_user)) {
