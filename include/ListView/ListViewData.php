@@ -267,7 +267,11 @@ class ListViewData
         require_once 'include/SearchForm/SearchForm2.php';
         SugarVCR::erase($seed->module_dir);
         $this->seed =& $seed;
-        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
+        // STIC-Custom OC - 20260309 - Check if async count is enabled
+        $useAsyncCount = !empty($GLOBALS['sugar_config']['async_list_count']);
+        // totalCounted is false when async is enabled (count will be loaded via AJAX)
+        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']) && !$useAsyncCount;
+        // END STIC-Custom OC
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
         if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup') {
             $_SESSION['MAILMERGE_MODULE'] = $seed->module_dir;
@@ -536,6 +540,9 @@ class ListViewData
         //join url parameters from array to a string
         $pageData['urls'] = $this->generateURLS($pageData['queries']);
         $pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);
+        // STIC-Custom OC - 20260309 - Add flag to indicate async count is pending
+        $pageData['offsets']['asyncCountPending'] = $useAsyncCount && !$totalCounted;
+        // END STIC-Custom OC
         $pageData['bean'] = array('objectName' => $seed->object_name, 'moduleDir' => $seed->module_dir, 'moduleName' => strtr($seed->module_dir, $module_names));
         $pageData['stamp'] = $this->stamp;
         $pageData['access'] = array('view' => $this->seed->ACLAccess('DetailView'), 'edit' => $this->seed->ACLAccess('EditView'));

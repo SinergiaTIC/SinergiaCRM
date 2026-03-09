@@ -89,7 +89,9 @@
 						{/if}
 					</td>
 					<td nowrap='nowrap' width="1%" class="paginationActionButtons">
-						<div class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} {$navStrings.of} {if $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.lastOffsetOnPage != $pageData.offsets.total}+{/if}{/if})</div>
+{* STIC-Custom OC - 20260309 - Async count loading *}
+						<div class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} {$navStrings.of} {if $pageData.offsets.asyncCountPending}<span class="async-count-loading" data-module="{$pageData.bean.moduleDir}" data-offset="{$pageData.offsets.current}" style="display:inline-block;width:14px;height:14px;margin-left:5px;border:2px solid rgba(0,0,0,0.1);border-radius:50%;border-top-color:#378CBE;animation:swal2-rotate-loading 1.5s linear infinite;vertical-align:middle;"></span>{elseif $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.lastOffsetOnPage != $pageData.offsets.total}+{/if}{/if})</div>
+{* END STIC-Custom OC *}
 					</td>
 					<td nowrap='nowrap' align="right" class='paginationActionButtons' width="1%">
 						{if $pageData.urls.nextPage}

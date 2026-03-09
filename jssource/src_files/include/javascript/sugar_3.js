@@ -5140,3 +5140,40 @@ $(document).ready(function(){
   });
 })
 // END STIC
+
+// STIC-Custom OC - 20260309 - Async count loading for list views
+function loadAsyncListCount() {
+    var asyncCountElements = document.querySelectorAll('.async-count-loading');
+    if (!asyncCountElements.length) return;
+
+    asyncCountElements.forEach(function(el) {
+        var module = el.dataset.module;
+        var offset = el.dataset.offset || 0;
+        var url = 'index.php?entryPoint=asyncListCount&module=' + encodeURIComponent(module) + '&offset=' + encodeURIComponent(offset);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        el.innerHTML = response.total;
+                        el.classList.remove('async-count-loading');
+                        el.classList.add('async-count-loaded');
+                    }
+                } catch (e) {
+                    console.error('Error parsing async count response:', e);
+                }
+            }
+        };
+        xhr.send();
+    });
+}
+
+// Load async counts on page ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Delay slightly to prioritize main content loading
+    setTimeout(loadAsyncListCount, 100);
+});
+// END STIC-Custom OC

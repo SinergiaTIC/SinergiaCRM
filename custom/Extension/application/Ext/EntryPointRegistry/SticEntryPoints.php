@@ -53,5 +53,8 @@ $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/s
 $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
 $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
 
+// Async list count for ListView
+$entry_point_registry['asyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
+
 
 
