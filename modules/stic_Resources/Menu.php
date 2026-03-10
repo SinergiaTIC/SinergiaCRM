@@ -52,8 +52,10 @@ if ($current_action != 'listplaces') {
         $module_menu[] = array("index.php?module=Import&action=Step1&import_module=stic_Resources&return_module=stic_Resources&return_action=index", $app_strings['LBL_IMPORT'], "Import", 'stic_Resources');
     }
     
-    if (ACLController::checkAccess('stic_Bookings_Calendar', 'list', true)) {
-        $module_menu[] = array("index.php?module=stic_Bookings_Calendar&action=index&return_module=stic_Bookings&return_action=index", translate('LBL_ACTION_VIEW_BOOKINGS_CALENDAR', 'stic_Bookings_Calendar'), "Schedule");
+    if (in_array('stic_Bookings_Calendar', $displayTabs)) {
+        if (ACLController::checkAccess('stic_Bookings_Calendar', 'list', true)) {
+            $module_menu[] = array("index.php?module=stic_Bookings_Calendar&action=index&return_module=stic_Bookings&return_action=index", translate('LBL_ACTION_VIEW_BOOKINGS_CALENDAR', 'stic_Bookings_Calendar'), "Schedule");
+        }
     }
 } 
 else {
@@ -70,8 +72,10 @@ else {
         $module_menu[] = array("index.php?module=Import&action=Step1&import_module=stic_Resources&return_module=stic_Resources&return_action=index", $app_strings['LBL_IMPORT'], "Import", 'stic_Resources');
     }
     
-    if (ACLController::checkAccess('stic_Bookings_Places_Calendar', 'list', true)) {
-        $module_menu[] = array("index.php?module=stic_Bookings_Places_Calendar&action=index&return_module=stic_Bookings&return_action=index", translate('LBL_ACTION_VIEW_BOOKINGS_PLACES_CALENDAR', 'stic_Bookings_Places_Calendar'), "Schedule");
+    if (in_array('stic_Bookings_Places_Calendar', $displayTabs)) {
+        if (ACLController::checkAccess('stic_Bookings_Places_Calendar', 'list', true)) {
+            $module_menu[] = array("index.php?module=stic_Bookings_Places_Calendar&action=index&return_module=stic_Bookings&return_action=index", translate('LBL_ACTION_VIEW_BOOKINGS_PLACES_CALENDAR', 'stic_Bookings_Places_Calendar'), "Schedule");
+        }
     }
 
 }
