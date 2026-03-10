@@ -94,3 +94,22 @@ $mod_strings['LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE'] = 'Noti
 
 // Cadenes Ajuts
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';
+
+// Cadenes per a la relació amb Condicions de Justificació
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE'] = 'Condicions de Justificació';
+
+// Cadenes per a la relació amb Justificacions
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Justificacions';
+
+// Cadenes per a la relació amb Propostes d'Imputació
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Propostes d\'Imputació';
+
+// Cadenes per a la relació amb Imputacions
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Imputacions';
+    
+// Panell de justificació
+$mod_strings['LBL_JUSTIFICATION'] = 'Justificació';
+$mod_strings['LBL_JUSTIFIED_AMOUNT'] = 'Import Justificat';
+$mod_strings['LBL_JUSTIFIED_PERCENTAGE'] = 'Percentatge Justificat';
+$mod_strings['LBL_START_DATE'] = 'Data d\'Inici';
+$mod_strings['LBL_END_DATE'] = 'Data de Fi';

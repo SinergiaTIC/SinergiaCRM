@@ -103,6 +103,8 @@ class stic_Payments extends Basic
         include_once 'SticInclude/Utils.php';
         include_once 'modules/stic_Payments/Utils.php';
 
+        global $current_language;
+
         // Get payment commitment bean. Depending on the context (editview, subpanel, workflow, etc.)
         // stic_paymebfe2itments_ida will be an string that contains the id of the related payment
         // commitment or will be an object of type Link2, so let's manage it properly.
@@ -146,9 +148,57 @@ class stic_Payments extends Basic
         $tempFetchedRow = $this->fetched_row ?? null;
 
 
+        if (!isset($this->justification_date) || empty($this->justification_date)) {
+            $this->justification_date = $this->payment_date;
+        }
+
+        $isBlocked = filter_var(($this->blocked ?? false), FILTER_VALIDATE_BOOLEAN);
+        $isAllocated = filter_var(($this->allocated ?? false), FILTER_VALIDATE_BOOLEAN);
+        // If record is blocked, no updates are allowed
+        if ($tempFetchedRow && $tempFetchedRow['blocked'] && $isBlocked) {
+            $this->showError('LBL_BLOCKED_PAYMENT_CANNOT_BE_MODIFIED');
+            return false;
+        }
+
+        $anyamountChanged = $this->anyAmountChanged(); // Check must be done before involing parent:save()
+
+        if ($isAllocated && $tempFetchedRow && !$tempFetchedRow['allocated']) {
+            // If changing from not allocated to allocated, validate allocations from payment (dry run)
+            $this->generateAllocationsFromPayment(true);
+        }
+
+        // If payment is allocated and any amount field has changed, validate allocations from payment (dry run)
+        if ($isAllocated && $anyamountChanged) {
+            $this->updateAllocationsFromPayment(true);
+        }
+
+        // If changing from allocated to not allocated, delete allocations from payment
+        if (!empty($tempFetchedRow['allocated']) && $tempFetchedRow['allocated'] && !$isAllocated) {
+            require_once 'modules/stic_Allocations/Utils.php';
+            $anyBlocked = stic_AllocationsUtils::paymentHasBlockedAllocations($this);
+            if ($anyBlocked) {
+                $this->showError('LBL_CANNOT_DEALLOCATE_PAYMENT_BLOCKED_ALLOCATIONS');
+                return false;
+            }
+        }
+
+        
         // Call the generic save() function from the SugarBean class
         parent::save();
 
+        // If changing from not allocated to allocated, generate allocations from payment
+        if (empty($tempFetchedRow['allocated']) && $isAllocated) {
+            $this->generateAllocationsFromPayment();
+            stic_PaymentsUtils::updateAllocationPercentage($this);
+        }
+
+        // If payment is allocated and any amount field has changed, update allocations from payment
+        if (!empty($tempFetchedRow['allocated']) && $isAllocated && $anyamountChanged) {
+            require_once 'modules/stic_Allocations/Utils.php';
+            $hasValidatedAllocations = stic_AllocationsUtils::paymentHasValidatedAllocations($this);
+            $this->updateAllocationsFromPayment(false);
+            stic_PaymentsUtils::updateAllocationPercentage($this);
+        }
 
         if (isset($PCBean) && isset($userDate)) {
         
@@ -165,7 +215,45 @@ class stic_Payments extends Basic
                 stic_Payment_CommitmentsUtils::setPaidAnnualizedFee($PCBean);
             }
         }
+
+        // If changing from allocated to not allocated, delete allocations from payment
+        if (!empty($tempFetchedRow['allocated']) && $tempFetchedRow['allocated'] && !$isAllocated) {
+            $this->deleteAllocationsFromPayment();
+            stic_PaymentsUtils::updateAllocationPercentage($this);
+        }
     }
+
+
+    protected function anyAmountChanged() {
+        // filter from $this->field_defs only the fields of type 'currency' or 'decimal'
+        foreach ($this->field_defs as $fieldName => $fieldDef) {
+            if (isset($fieldDef['type']) && ($fieldDef['type'] == 'currency' || $fieldDef['type'] == 'decimal')) {
+                // check if the field value has changed
+                $currentValue = SticUtils::unformatDecimal($this->$fieldName);
+                $previousValue = SticUtils::unformatDecimal($this->fetched_row[$fieldName] ?? 0);
+                if ($currentValue != $previousValue) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected function deleteAllocationsFromPayment() {
+        require_once 'modules/stic_Allocations/Utils.php';
+        stic_AllocationsUtils::deleteAllocationsFromPayment($this);
+    }
+
+    protected function generateAllocationsFromPayment($dryrun = false) {
+        require_once 'modules/stic_Allocations/Utils.php';
+        return stic_AllocationsUtils::createAllocationsFromPayment($this, $dryrun);
+    }
+
+    protected function updateAllocationsFromPayment($dryrun = false) {
+        require_once 'modules/stic_Allocations/Utils.php';
+        return stic_AllocationsUtils::updateAllocationsFromPayment($this, $dryrun);
+    }
+
 
     /**
      * Overriding SugarBean save_relationship_changes function to insert additional logic:
@@ -249,4 +337,40 @@ class stic_Payments extends Basic
 
         parent::call_custom_logic($event, $arguments);
     }
+
+
+    protected function showError($labelId) {
+        
+        global $current_language, $paymentAlertIssued;
+        $paymentsModStrings = return_module_language($current_language, 'stic_Payments'); // can not be $mod_strings because of different contexts (specially inline edition)
+
+        if (($paymentAlertIssued ?? false) === true) {
+            return; // Avoid showing multiple alerts in the same request
+        }
+
+        if (!empty($_REQUEST['sugar_body_only']) || !empty($_REQUEST['to_pdf'])) {
+            // // This is an AJAX request
+            $errorMsg = $paymentsModStrings[$labelId];
+            $jsMsg = json_encode($errorMsg);
+            // 2. Output a script to alert the user
+            echo "<script>alert($jsMsg);</script>";
+            echo "<script>location.reload();</script>";
+            // 4. Stop execution
+            exit();
+        }
+        SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $paymentsModStrings[$labelId] . '</div>');
+        $paymentAlertIssued = true;
+    }
+
+    public function mark_deleted($id) {
+
+        if($this->blocked) {
+            $this->showError('LBL_BLOCKED_PAYMENT_CANNOT_BE_DELETED');
+            return false;
+        }
+        
+        parent::mark_deleted($id);
+    }
+
+
 }

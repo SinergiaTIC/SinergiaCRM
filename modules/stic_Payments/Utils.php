@@ -212,6 +212,55 @@ class stic_PaymentsUtils
         }
         return true;
     }
+
+    public static function blockPayment($paymentBean) {
+        if (!$paymentBean->blocked) {
+            $paymentBean->blocked = 1;
+            $paymentBean->save();
+        }
+    }
+
+    public static function updateAllocationPercentage(&$paymentBean)
+    {
+        $db = DBManagerFactory::getInstance();
+
+        // First, retrieve the allocated amount
+        $selectSql = "
+            SELECT
+            ROUND((SUM(stic_allocations.amount) / stic_payments.amount) * 100, 2) as allocated_percentage
+            FROM
+            stic_allocations
+            JOIN stic_payments_stic_allocations_c ON stic_allocations.id = stic_payments_stic_allocationsstic_allocations_idb
+            JOIN stic_payments on stic_payments.id = stic_payments_stic_allocationsstic_payments_ida
+            WHERE stic_payments_stic_allocations_c.deleted = 0
+            AND stic_allocations.deleted = 0
+            AND stic_payments_stic_allocationsstic_payments_ida = {$db->quoted($paymentBean->id)}";
+        
+        $selectResult = $db->query($selectSql);
+        if ($selectResult === false) {
+            $GLOBALS['log']->fatal(__METHOD__ . ": Error executing SELECT query [{$selectSql}]");
+            return false;
+        }
+        
+        $row = $db->fetchByAssoc($selectResult);
+        $allocatedPercentage = round($row['allocated_percentage'] ?? 0);
+        
+        // Then, update the payment with the calculated percentage
+        $sql = "
+            UPDATE stic_payments
+            SET allocated_percentage = $allocatedPercentage
+            WHERE id = {$db->quoted($paymentBean->id)}";
+        
+        $result = $db->query($sql);
+        if ($result === false) {
+            $GLOBALS['log']->fatal(__METHOD__ . ": Error executing SQL query [{$sql}]");
+            return false;
+        }
+
+        $paymentBean->allocated_percentage = $allocatedPercentage;
+            
+        return true;
+    }
     /**
      * Get the M182 Issuing Organization keys for the current user
      *

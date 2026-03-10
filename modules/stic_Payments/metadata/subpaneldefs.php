@@ -132,6 +132,21 @@ $layout_defs["stic_Payments"]["subpanel_setup"]['stic_payments_stic_attendances'
     ),
 );
 
+$layout_defs["stic_Payments"]["subpanel_setup"]['stic_payments_stic_allocations'] = array(
+    'order' => 110,
+    'module' => 'stic_Allocations',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_entered',
+    'title_key' => 'LBL_STIC_PAYMENTS_STIC_ALLOCATIONS_FROM_STIC_PAYMENTS_TITLE',
+    'get_subpanel_data' => 'stic_allocations',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+    ),
+);
+
 $layout_defs['stic_Payments']['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
     'order' => 900,

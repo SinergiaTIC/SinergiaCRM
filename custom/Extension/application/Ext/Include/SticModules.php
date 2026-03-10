@@ -65,6 +65,11 @@ $moduleList[] = 'stic_Messages';
 $moduleList[] = 'stic_Bookings_Places_Calendar';
 $moduleList[] = 'stic_Places';
 $moduleList[] = 'stic_Group_Opportunities';
+$moduleList[] = 'stic_Allocation_Proposals';
+$moduleList[] = 'stic_Allocations';
+$moduleList[] = 'stic_Ledger_Accounts';
+$moduleList[] = 'stic_Justifications';
+$moduleList[] = 'stic_Justification_Conditions';
 $moduleList[] = 'stic_Signatures';
 $moduleList[] = 'stic_Signers';
 $moduleList[] = 'stic_Signature_Log';
@@ -127,6 +132,11 @@ $beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
 $beanList['stic_MessagesMan'] = 'stic_MessagesMan';
 $beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
 $beanList['stic_Places'] = 'stic_Places';
+$beanList['stic_Allocation_Proposals'] = 'stic_Allocation_Proposals';
+$beanList['stic_Allocations'] = 'stic_Allocations';
+$beanList['stic_Ledger_Accounts'] = 'stic_Ledger_Accounts';
+$beanList['stic_Justifications'] = 'stic_Justifications';
+$beanList['stic_Justification_Conditions'] = 'stic_Justification_Conditions';
 $beanList['stic_Transactions'] = 'stic_Transactions';
 $beanList['stic_Financial_Products'] = 'stic_Financial_Products';
 
@@ -183,6 +193,12 @@ $beanFiles['stic_Message_Marketing'] = 'modules/stic_Message_Marketing/stic_Mess
 $beanFiles['stic_MessagesMan'] = 'modules/stic_MessagesMan/stic_MessagesMan.php';
 $beanFiles['stic_Bookings_Places_Calendar'] = 'modules/stic_Bookings_Places_Calendar/stic_Bookings_Places_Calendar.php';
 $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
+$beanFiles['stic_Allocation_Proposals'] = 'modules/stic_Allocation_Proposals/stic_Allocation_Proposals.php';
+$beanFiles['stic_Allocations'] = 'modules/stic_Allocations/stic_Allocations.php';
+$beanFiles['stic_Ledger_Accounts'] = 'modules/stic_Ledger_Accounts/stic_Ledger_Accounts.php';
+$beanFiles['stic_Justifications'] = 'modules/stic_Justifications/stic_Justifications.php';
+$beanFiles['stic_Justification_Conditions'] = 'modules/stic_Justification_Conditions/stic_Justification_Conditions.php';
+
 $beanFiles['stic_Transactions'] = 'modules/stic_Transactions/stic_Transactions.php';
 $beanFiles['stic_Financial_Products'] = 'modules/stic_Financial_Products/stic_Financial_Products.php';
 
