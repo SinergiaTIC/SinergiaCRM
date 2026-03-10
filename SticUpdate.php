@@ -108,6 +108,7 @@ $rac->rebuildAuditTables();
 $db->setDieOnError(true);
 try {
     // We repair database twice to make sure all the queries are executed.
+    $rac->execute = true;
     $rac->repairDatabase();
     $rac->repairDatabase();
     // TODO - There are errors within the MySQL Manager that repair indexes.
