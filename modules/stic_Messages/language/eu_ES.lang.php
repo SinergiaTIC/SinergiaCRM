@@ -88,5 +88,5 @@ $mod_strings = array (
   'LBL_INFO_TXT' => 'Si el mensaje supera los 160 caracteres se dividirá en tantas partes como sea necesario, con los efectos que esto pueda tener sobre el número de mensajes enviados y, por tanto, facturables.',
   'LBL_STIC_CONVERSATIONS_STIC_MESSAGES' => 'Conversación',
   'LBL_NEW_CONVERSATION' => 'Nueva conversación',
-  'LBL_NEW_CONVERSATION_HELP' => 'Al marcar esta casilla, confirma que se creará una nueva conversación. Si la desactiva, deberá de seleccionar una conversación existente.',
+  'LBL_NEW_CONVERSATION_HELP' => 'Si marca la casilla se creará una nueva conversación. En caso contrario, será necesario seleccionar una conversación existente.',
 );
