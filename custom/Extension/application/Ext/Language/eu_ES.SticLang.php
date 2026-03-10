@@ -3820,11 +3820,11 @@ $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Otra persona autorizada ha firmado el documento';
 $app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'El documento ha sido descargado internamente';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos los firmantes han firmado';
+
 // SinergiaDA: Niveles de acceso de los usuarios
 $app_list_strings['sda_users_access_list']['0'] = 'Sin acceso';
 $app_list_strings['sda_users_access_list']['1'] = 'Acceso completo';
-// $app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; // Disabled for the moment
-
+$app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; 
 // Productos financieros: Tipos de productos
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';
 $app_list_strings['stic_financial_products_types_list']['savings_account'] = 'Cuenta de ahorro';

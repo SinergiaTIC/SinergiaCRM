@@ -3823,7 +3823,7 @@ $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'All si
 // SinergiaDA: Users access levels
 $app_list_strings['sda_users_access_list']['0'] = 'No access';
 $app_list_strings['sda_users_access_list']['1'] = 'Full access';
-// $app_list_strings['sda_users_access_list']['2'] = 'Read-only access';
+$app_list_strings['sda_users_access_list']['2'] = 'Read-only access';
 
 // Financial Products: Product types
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Current account';
