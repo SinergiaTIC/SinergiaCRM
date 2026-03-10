@@ -51,4 +51,4 @@ $mod_strings['LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_DOCUMENTS_ACCOUNTS_NAME'] = 'Organización';
-$mod_strings['LBL_STIC_DOCUMENTS_CONTACTS_NAME'] = 'Persona';
+$mod_strings['LBL_STIC_DOCUMENTS_CONTACTS_NAME'] = 'Persoa';
