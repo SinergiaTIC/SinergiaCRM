@@ -176,6 +176,7 @@ $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario d
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['moduleList']['stic_Assets'] = 'Activos';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversaciones';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
@@ -233,6 +234,7 @@ $app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
 $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmante';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacción';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producto financiero';
+$app_list_strings['moduleListSingular']['stic_Assets'] = 'Activo';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
@@ -278,6 +280,7 @@ $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Cal
 $app_list_strings['parent_type_display']['stic_Places'] = 'Plazas';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['parent_type_display']['stic_Assets'] = 'Activos';
 $app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizaciones';
@@ -326,6 +329,7 @@ $app_list_strings['record_type_display']['stic_Signatures'] = 'Firmas';
 $app_list_strings['record_type_display']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['record_type_display']['stic_Assets'] = 'Activos';
 $app_list_strings['record_type_display']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
@@ -374,6 +378,7 @@ $app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmas';
 $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productos financieros';
+$app_list_strings['record_type_display_notes']['stic_Assets'] = 'Activos';
 $app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvenciones';
@@ -3827,10 +3832,11 @@ $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Otra persona autorizada ha firmado el documento';
 $app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'El documento ha sido descargado internamente';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos los firmantes han firmado';
+
 // SinergiaDA: Niveles de acceso de los usuarios
 $app_list_strings['sda_users_access_list']['0'] = 'Sin acceso';
 $app_list_strings['sda_users_access_list']['1'] = 'Acceso completo';
-// $app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; // Disabled for the moment
+$app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; 
 
 // Productos financieros: Tipos de productos
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';
@@ -3886,6 +3892,37 @@ $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal
 $app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'En ventanilla';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectivo';
 $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferencia';
+
+// Gestión patrimonial: Tipos
+$app_list_strings['stic_asset_managment_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_types_list']['housing'] = 'Vivienda';
+$app_list_strings['stic_asset_managment_types_list']['premises'] = 'Local';
+$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Aparcamiento';
+$app_list_strings['stic_asset_managment_types_list']['land'] = 'Terreno';
+$app_list_strings['stic_asset_managment_types_list']['vehicle'] = 'Vehículo';
+$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Joya';
+$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Activo financiero';
+$app_list_strings['stic_asset_managment_types_list']['other'] = 'Otros';
+
+// Gestión patrimonial: Titularidades
+$app_list_strings['stic_asset_managment_ownerships_list'][''] = '';
+$app_list_strings['stic_asset_managment_ownerships_list']['property'] = 'Propiedad';
+$app_list_strings['stic_asset_managment_ownerships_list']['usufruct'] = 'Usufructo';
+$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Alquiler';
+
+// Gestión patrimonial: Estado de ocupación
+$app_list_strings['stic_asset_managment_occupancy_status_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['occupied'] = 'Ocupado';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['empty'] = 'Vacío';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Otros';
+
+// Gestión patrimonial: Tipos de ocupante
+$app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Persona asistida';
+$app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Uso familiar';
+$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Alquiler de mercado';
+$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Alquiler social';
+$app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Ocupación irregular';
 
 // Conversaciones: Tipos
 $app_list_strings['stic_conversations_types_list'][''] = '';
