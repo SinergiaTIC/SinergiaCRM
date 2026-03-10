@@ -3824,7 +3824,7 @@ $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Todos 
 // SinergiaDA: Niveles de acceso de los usuarios
 $app_list_strings['sda_users_access_list']['0'] = 'Sin acceso';
 $app_list_strings['sda_users_access_list']['1'] = 'Acceso completo';
-$app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; // Disabled for the moment
+$app_list_strings['sda_users_access_list']['2'] = 'Acceso de solo lectura'; 
 
 // Productos financieros: Tipos de productos
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Cuenta corriente';
