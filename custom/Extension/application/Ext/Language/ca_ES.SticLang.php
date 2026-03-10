@@ -3815,10 +3815,11 @@ $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Una altra persona autoritzada ha firmat el document';
 $app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'El document ha estat descarregat internament';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Tots els firmants han firmat';
+
 // SinergiaDA: Nivells d'accés dels usuaris
 $app_list_strings['sda_users_access_list']['0'] = 'Sense accés';
 $app_list_strings['sda_users_access_list']['1'] = 'Accés complet';
-// $app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura'; 
+$app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura'; 
 
 // Productes financers: Tipus de productes
 $app_list_strings['stic_financial_products_types_list']['current_account'] = 'Compte corrent';
