@@ -5,14 +5,14 @@
 # SinergiaCRM
 
 ![Version (latest by date)](https://img.shields.io/github/v/release/SinergiaTIC/SinergiaCRM?label=Version)
-[![Wiki](https://img.shields.io/badge/Information-Wiki-lightgray)](https://wikisuite.sinergiacrm.org)
+[![Wiki](https://img.shields.io/badge/Information-Wiki-lightgray)](https://wiki.sinergiatic.org)
 [![LICENSE](https://img.shields.io/badge/License-AGPL_v3-orange.svg)](./LICENSE.txt)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5)](https://twitter.com/SinergiaCRM)
 [![Twitter](https://img.shields.io/twitter/follow/sinergiacrm?style=social&label=Follow)](https://twitter.com/SinergiaCRM)
 [![YouTube](https://img.shields.io/badge/Youtube-FF0000)](https://www.youtube.com/@SinergiaCRM)
 
-[Website](https://www.sinergiacrm.org) | 
-[Manual de uso](https://wikisuite.sinergiacrm.org/index.php?title=Manual_de_SinergiaCRM) |
+[Website](https://www.sinergiatic.org) | 
+[Manual de uso](https://wiki.sinergiatic.org/index.php?title=Manual_de_SinergiaCRM) |
 [Manual de instalación](https://github.com/SinergiaTIC/SinergiaCRM/wiki)
 
 [Español](#Español) | [Català](#Català) | [English](#English)
@@ -22,13 +22,13 @@
 
 ## Acerca de SinergiaCRM
 
-[SinergiaCRM](https://www.sinergiacrm.org/es) es una iniciativa de la Asociación SinergiaTIC, una entidad sin ánimo de lucro cuya misión es potenciar la capacidad de las organizaciones no lucrativas de adoptar estratégicamente y utilizar eficientemente las Tecnologías de la Información y la Comunicación (TIC). SinergiaCRM se basa en [SuiteCRM](https://github.com/suitecrm/suitecrm), que a su vez deriva de SugarCRM CE.
+[SinergiaCRM](https://www.sinergiatic.org/es) es una iniciativa de la Asociación SinergiaTIC, una entidad sin ánimo de lucro cuya misión es potenciar la capacidad de las organizaciones no lucrativas de adoptar estratégicamente y utilizar eficientemente las Tecnologías de la Información y la Comunicación (TIC). SinergiaCRM se basa en [SuiteCRM](https://github.com/suitecrm/suitecrm), que a su vez deriva de SugarCRM CE.
 
 ## Seguridad
 
 #### Informar sobre vulnerabilidades
 
-En SinergiaCRM la seguridad es una prioridad. Si has identificado una vulnerabilidad o algún riesgo para la seguridad en nuestro código, te agredeceremos que nos informes de ello lo antes posible enviando un correo electrónico a [info@sinergiacrm.org](mailto:info@sinergiacrm.org). En tu informe incluye, por favor, la siguiente información:
+En SinergiaCRM la seguridad es una prioridad. Si has identificado una vulnerabilidad o algún riesgo para la seguridad en nuestro código, te agredeceremos que nos informes de ello lo antes posible enviando un correo electrónico a [info@sinergiatic.org](mailto:info@sinergiatic.org). En tu informe incluye, por favor, la siguiente información:
 
 - Descripción detallada del problema.
 - Pasos para reproducir la vulnerabilidad.
@@ -48,13 +48,13 @@ SinergiaCRM se distribuye bajo la [Licencia Pública General Affero de GNU (AGPL
 
 ## Quant a SinergiaCRM
 
-[SinergiaCRM](https://www.sinergiacrm.org/ca) és una iniciativa de l'Associació SinergiaTIC, una entitat sense ànim de lucre que té per missió potenciar la capacitat de les organitzacions no lucratives d'adoptar estratègicament i utilitzar eficientment les Tecnologies de la Informació i la Comunicació (TIC). SinergiaCRM es basa en [SuiteCRM](https://github.com/suitecrm/suitecrm), que a la vegada deriva de SugarCRM CE.
+[SinergiaCRM](https://www.sinergiatic.org/ca) és una iniciativa de l'Associació SinergiaTIC, una entitat sense ànim de lucre que té per missió potenciar la capacitat de les organitzacions no lucratives d'adoptar estratègicament i utilitzar eficientment les Tecnologies de la Informació i la Comunicació (TIC). SinergiaCRM es basa en [SuiteCRM](https://github.com/suitecrm/suitecrm), que a la vegada deriva de SugarCRM CE.
 
 ## Seguretat
 
 #### Informa'ns sobre vulnerabilitats
 
-A SinergiaCRM la seguretat és una prioritat. Si has identificat una vulnerabilitat o algun risc per a la seguretat al nostre codi, t'agrairem que ens n'informis tan aviat com puguis enviant-nos un correu electrònic a [info@sinergiacrm.org](mailto:info@sinergiacrm.org). Al teu informe inclou-hi, si us plau, la següent informació:
+A SinergiaCRM la seguretat és una prioritat. Si has identificat una vulnerabilitat o algun risc per a la seguretat al nostre codi, t'agrairem que ens n'informis tan aviat com puguis enviant-nos un correu electrònic a [info@sinergiatic.org](mailto:info@sinergiatic.org). Al teu informe inclou-hi, si us plau, la següent informació:
 
 - Descripció detallada del problema.
 - Passos per reproduir la vulnerabilitat.
@@ -74,13 +74,13 @@ SinergiaCRM es distribueix sota la [Llicència Pública General Affero de GNU (A
 
 ## About SinergiaCRM
 
-[SinergiaCRM](https://www.sinergiacrm.org) is an initiative of the SinergiaTIC Association, a non-profit organization that seeks to enhance the capacity of non-profit organizations to strategically adopt and efficiently use Information and Communication Technologies (ICT). SinergiaCRM is based on [SuiteCRM](https://github.com/suitecrm/suitecrm), which in turn is derived from SugarCRM CE.
+[SinergiaCRM](https://www.sinergiatic.org) is an initiative of the SinergiaTIC Association, a non-profit organization that seeks to enhance the capacity of non-profit organizations to strategically adopt and efficiently use Information and Communication Technologies (ICT). SinergiaCRM is based on [SuiteCRM](https://github.com/suitecrm/suitecrm), which in turn is derived from SugarCRM CE.
 
 ## Security
 
 #### Vulnerability report
 
-In SinergiaCRM security is a priority. If you have identified any vulnerability or security risk in our code, we would appreciate it if you report it as soon as possible by sending an email to [info@sinergiacrm.org](mailto:info@sinergiacrm.org). Please include the following information in your report:
+In SinergiaCRM security is a priority. If you have identified any vulnerability or security risk in our code, we would appreciate it if you report it as soon as possible by sending an email to [info@sinergiatic.org](mailto:info@sinergiatic.org). Please include the following information in your report:
 
 - Detailed description of the issue.
 - Steps to reproduce the vulnerability.
