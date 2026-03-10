@@ -156,6 +156,10 @@ if (empty($GLOBALS["SticTabStructure"])) {
                         ),
                     ),
                 ),
+                6 => array(
+                    'id' => 'stic_Assets',
+                ),
+
             ),
         ),
         4 => array(
