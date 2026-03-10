@@ -68,7 +68,13 @@ class stic_MessagesController extends SugarController
             }, $idsArray, $phonesArray);
         }
         else {
+            $this->applyConversationSubpanelDefaults($this->bean);
             $this->prepareConversationDataForMessage($this->bean);
+            // Subpanel conversations to validate
+            if (!$this->validateConversationRequiredFields($this->bean)) {
+                echo json_encode(array('success' => false, 'number_found' => false));
+                exit;
+            }
             $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
             $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
             if ($shouldStoreFirstMessage) {
@@ -146,6 +152,12 @@ class stic_MessagesController extends SugarController
         }
         else {
             $oldStatus = $this->bean->fetched_row['status']??'';
+
+            // Subpanel conversations to validate
+            $this->applyConversationSubpanelDefaults($this->bean);
+            if (!$this->validateConversationRequiredFields($this->bean)) {
+                $this->returnConversationRequiredFieldsError($mod_strings);
+            }
 
             $conversationValidation = $this->prepareConversationDataForMessage($this->bean);
             if (!$conversationValidation['success']) {
@@ -438,6 +450,25 @@ class stic_MessagesController extends SugarController
             return array('success' => true);
         }
 
+        // Conversations can only be related to Contacts.
+        $messageBean->parent_type = 'Contacts';
+
+        if (empty($messageBean->parent_id) && !empty($_REQUEST['parent_id'])) {
+            $messageBean->parent_id = $_REQUEST['parent_id'];
+        }
+
+        if (empty($messageBean->parent_name) && !empty($_REQUEST['parent_name'])) {
+            $messageBean->parent_name = $_REQUEST['parent_name'];
+        }
+
+        if (!empty($messageBean->parent_id)) {
+            $contactBean = BeanFactory::getBean('Contacts', $messageBean->parent_id);
+            if (empty($contactBean) || empty($contactBean->id)) {
+                $messageBean->parent_id = '';
+                $messageBean->parent_name = '';
+            }
+        }
+
         $newConversation = !empty($_REQUEST['new_conversation']) || !empty($messageBean->new_conversation);
         $messageBean->new_conversation = $newConversation ? 1 : 0;
 
@@ -457,6 +488,71 @@ class stic_MessagesController extends SugarController
         }
 
         return array('success' => true);
+    }
+
+    /**
+     * Check if current save comes from Conversations subpanel quickcreate
+     */
+    protected function isConversationSubpanelSaveRequest()
+    {
+        return (
+            !empty($_REQUEST['return_module'])
+            && $_REQUEST['return_module'] === 'stic_Conversations'
+            && !empty($_REQUEST['return_id'])
+        );
+    }
+
+    /**
+     * Force subpanel conversation defaults
+     */
+    protected function applyConversationSubpanelDefaults($messageBean)
+    {
+        if (!$this->isConversationSubpanelSaveRequest()) {
+            return;
+        }
+
+        $messageBean->type = 'conversation';
+        $messageBean->parent_type = 'Contacts';
+        $messageBean->new_conversation = 0;
+
+        if (empty($messageBean->stic_conversations_ida)) {
+            $messageBean->stic_conversations_ida = $_REQUEST['return_id'];
+        }
+
+        if (empty($_REQUEST['stic_conversations_ida'])) {
+            $_REQUEST['stic_conversations_ida'] = $messageBean->stic_conversations_ida;
+        }
+
+        if (!empty($messageBean->stic_conversations_ida) && (empty($messageBean->parent_id) || empty($messageBean->parent_name))) {
+            $conversationBean = BeanFactory::getBean('stic_Conversations', $messageBean->stic_conversations_ida);
+            if (!empty($conversationBean) && !empty($conversationBean->id) && $conversationBean->load_relationship('contacts_stic_conversations')) {
+                $contactIds = $conversationBean->contacts_stic_conversations->get();
+                if (!empty($contactIds) && !empty($contactIds[0])) {
+                    $contactBean = BeanFactory::getBean('Contacts', $contactIds[0]);
+                    if (!empty($contactBean) && !empty($contactBean->id)) {
+                        $messageBean->parent_id = $contactBean->id;
+                        $contactName = trim(($contactBean->first_name ?? '') . ' ' . ($contactBean->last_name ?? ''));
+                        $messageBean->parent_name = !empty($contactName) ? $contactName : ($contactBean->name ?? '');
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Validate required fields for conversation messages
+     */
+    protected function validateConversationRequiredFields($messageBean)
+    {
+        $type = $messageBean->type ?? ($_REQUEST['type'] ?? '');
+        if ($type !== 'conversation') {
+            return true;
+        }
+
+        $sender = trim((string)($messageBean->sender ?? ($_REQUEST['sender'] ?? '')));
+        $message = trim((string)($messageBean->message ?? ($_REQUEST['message'] ?? '')));
+
+        return ($sender !== '' && $message !== '');
     }
 
     /**
@@ -527,6 +623,27 @@ class stic_MessagesController extends SugarController
     }
 
     /**
+     * Return JSON validation error for required conversation fields
+     */
+    protected function returnConversationRequiredFieldsError($mod_strings)
+    {
+        global $app_strings;
+
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(array(
+            'success' => false,
+            'type' => 'sms',
+            'title' => $mod_strings['LBL_ERROR'],
+            'detail' => $app_strings['ERR_MISSING_REQUIRED_FIELDS'],
+        ));
+        exit;
+    }
+
+    /**
      * Get latest non-deleted message from conversation
      */
     protected function getLatestConversationMessage($conversationBean)
@@ -561,7 +678,7 @@ class stic_MessagesController extends SugarController
      */
     protected function fillConversationParentFromContact($conversationBean, &$data)
     {
-        if (!empty($data['parent_id']) || !empty($data['parent_type'])) {
+        if (!empty($data['parent_id']) && !empty($data['parent_name'])) {
             return;
         }
 
@@ -578,7 +695,8 @@ class stic_MessagesController extends SugarController
         if (!empty($contactBean) && !empty($contactBean->id)) {
             $data['parent_id'] = $contactBean->id;
             $data['parent_type'] = 'Contacts';
-            $data['parent_name'] = $contactBean->name;
+            $contactName = trim(($contactBean->first_name ?? '') . ' ' . ($contactBean->last_name ?? ''));
+            $data['parent_name'] = !empty($contactName) ? $contactName : ($contactBean->name ?? '');
         }
     }
 
@@ -603,6 +721,8 @@ class stic_MessagesController extends SugarController
         $response['code'] = 'No data';
         $response['data'] = array(
             'sender' => '',
+            'conversation_id' => '',
+            'conversation_name' => '',
             'parent_id' => '',
             'parent_type' => '',
             'parent_name' => '',
@@ -612,6 +732,9 @@ class stic_MessagesController extends SugarController
             $conversationBean = BeanFactory::getBean('stic_Conversations', $conversationId);
 
             if (!empty($conversationBean) && !empty($conversationBean->id)) {
+                $response['data']['conversation_id'] = $conversationBean->id;
+                $response['data']['conversation_name'] = $conversationBean->name ?? '';
+
                 $latestMessage = $this->getLatestConversationMessage($conversationBean);
                 if ($latestMessage) {
                     $response['data']['sender'] = $latestMessage->sender ?? '';

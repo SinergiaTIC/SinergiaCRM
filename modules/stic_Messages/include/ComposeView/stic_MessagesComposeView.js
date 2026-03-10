@@ -314,6 +314,13 @@ $(function () {
         return indexed_array;
       }
       var formData = getFormDataAsObject($("#EditView"));
+
+      if ($('#type').val() === 'conversation') {
+        formData.parent_type = 'Contacts';
+        formData.parent_id = $('#parent_id').val() || '';
+        formData.parent_name = $('#parent_name').val() || '';
+      }
+
       formData.action='SavePopUp';
 
       $.ajax({

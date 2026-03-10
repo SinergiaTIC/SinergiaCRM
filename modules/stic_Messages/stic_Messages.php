@@ -172,6 +172,9 @@ class stic_Messages extends Basic
             }
         }
 
+        if ($this->type === 'conversation') {
+            $this->parent_type = 'Contacts';
+        }
         // Save the bean
         parent::save($check_notify);
         return $this->id;
