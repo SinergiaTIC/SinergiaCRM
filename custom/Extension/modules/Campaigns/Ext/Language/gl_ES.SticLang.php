@@ -90,17 +90,17 @@ $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os corre
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
 $mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Incluir un enlace en el mensaje para ver el contenido en el navegador';
-$mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los mensajes a enviar se añadirán automáticamente a la cola de envío.';
+$mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
 
-$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Envíos de mensajes';
-$mod_strings['LBL_SEND_MESSAGES'] = 'Enviar mensajes';
-$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Enviar mensajes de prueba';
+$mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Envíos de mensaxes';
+$mod_strings['LBL_SEND_MESSAGES'] = 'Enviar mensaxes';
+$mod_strings['LBL_SEND_MESSAGES_TEST'] = 'Enviar mensaxes de proba';
 
 $mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cola de correo electrónico';
-$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de mensajes';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de Mensaxes';
 
-$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nueva sección de plantilla';
-$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Ver secciones de plantilla';
-$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convertir enlaces del mensaje en URL de seguimiento';
-$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' URL de seguimiento han sido creadas y se ha actualizado el contenido de la plantilla.';
-$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'No se ha creado ninguna URL de seguimiento.';
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nova sección de plantilla';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Ver seccións de plantilla';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convertir enlaces da mensaxe en URL de seguemento';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_RESULTS'] = ' URL de seguemento foron creadas e actualizouse o contido da plantilla.';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS_MESSAGE_NO_RESULTS'] = 'Non se creou ningunha URL de seguemento.';
