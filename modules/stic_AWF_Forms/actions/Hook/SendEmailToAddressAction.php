@@ -28,49 +28,32 @@ if (!defined('sugarEntry') || !sugarEntry) {
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
 /**
- * SendEmailToDataBlockAction
+ * SendEmailToAddressAction
  *
- * Action that sends an email to the processed record (Person, Prospect, User or Organization) contained in a Data Block.
+ * Action that sends an email to a custom address.
  */
-class SendEmailToDataBlockAction extends HookBeanActionDefinition {
+class SendEmailToAddressAction extends HookActionDefinition {
     public function __construct() {
         $this->isActive = true;
         $this->isUserSelectable = true;
         $this->defaultContinueOnError = true;
         $this->category = 'communication';
-        $this->baseLabel = 'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION';
+        $this->baseLabel = 'LBL_SEND_EMAIL_TO_ADDRESS_ACTION';
     }
 
     /**
-     * Modules supported by the action
+     * Defines the parameters that will be displayed in the wizard.
      */
-    protected function getSupportedModules(): array {
-        return ['Contacts', 'Users', 'Prospects', 'Leads', 'Accounts'];
-    }
-
-    /**
-     * Name of the parameter containing the data block.
-     * @return string
-     */
-    protected function getDataBlockParameterText(): string {
-        return $this->translate('RECIPIENT_BLOCK_TEXT');
-    }
-
-    /**
-     * The description (help text) of the data block parameter.
-     * @return string
-     */
-    protected function getDataBlockParameterDescription(): string {
-        return $this->translate('RECIPIENT_BLOCK_DESC');
-    }
-
-    /**
-     * getCustomParameters()
-     * Definition of the ADDITIONAL parameters needed for the action
-     * The parameter of the main Data Block is requested by the parent class.
-     */
-    protected function getCustomParameters(): array
+    public function getParameters(): array
     {
+        // The email address to send
+        $paramEmail = new ActionParameterDefinition();
+        $paramEmail->name = 'email';
+        $paramEmail->text = $this->translate('EMAIL_TEXT'); 
+        $paramEmail->type = ActionParameterType::VALUE;
+        $paramEmail->dataType = ActionDataType::EMAIL;
+        $paramEmail->required = true;
+
         // The email template to use
         $paramTemplate = new ActionParameterDefinition();
         $paramTemplate->name = 'email_template';
@@ -79,13 +62,19 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
         $paramTemplate->supportedModules = ['EmailTemplates'];
         $paramTemplate->required = true;
 
-        return [$paramTemplate];
+        return [$paramEmail, $paramTemplate];
     }
 
-
-    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
+    /**
+     * Executes the send email logic.
+     */
+    public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        // Get additional parameters (ParameterResolver ensures they are not null because they are required)
+        $emailAddress = $actionConfig->getResolvedParameter('email');
+        // Validate that the email is correct
+        if (empty($emailAddress) || !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Email parameter is not valid or missing ('{$emailAddress}').");
+        }
         
         /** @var ?BeanReference $templateRef */
         $templateRef = $actionConfig->getResolvedParameter('email_template');
@@ -93,24 +82,15 @@ class SendEmailToDataBlockAction extends HookBeanActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Email template parameter is missing.");
         }
 
-        // Get email from Bean. We assume the standard field 'email1'
-        $emailAddress = $bean->email1 ?? null;
-        // Validate that the email is correct
-        if (empty($emailAddress) || !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "DataBlock '{$block->dataBlock->name}' does not have a valid 'email1' field ('{$emailAddress}').");
-        }
-
         // Send the email
         try {
-            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $context, $bean);
+            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $context);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error sending email: " . $e->getMessage());
         }
 
         // Result notification
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Email sent to: {$emailAddress}");
-        $dataToLog = ['email_sent_to' => $emailAddress, 'template_id' => $templateRef->beanId];
-        $actionResult->registerActionMetadata($bean, $dataToLog);
         
         return $actionResult;
     }

@@ -77,6 +77,7 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
   'LBL_stic_AWF_Responses_SUBPANEL_TITLE' => 'Respuestas a formularios',
   'LBL_NEW_FORM_TITLE' => 'Nueva Respuesta a formulario',
+  'LBL_EMPTY' => 'Vacío',
    
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',

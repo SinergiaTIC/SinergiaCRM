@@ -62,28 +62,34 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         $optFormOwner->text = $this->translate('OPT_OWNER_TEXT');
         $optFormOwner->resolvedType = ActionParameterType::EMPTY; // Does not require additional value
         
-        // Option B: A Data Block (e.g.: The assigned from the created Contact)
+        // Option B: The assigned to the response 
+        $optResponse = new ActionSelectorOptionDefinition();
+        $optResponse->name = 'opt_response';
+        $optResponse->text = $this->translate('OPT_RESPONSE_TEXT');
+        $optResponse->resolvedType = ActionParameterType::EMPTY; // Does not require additional value
+
+        // Option C: A Data Block (e.g.: The assigned from the created Contact)
         $optBlock = new ActionSelectorOptionDefinition();
         $optBlock->name = 'opt_datablock';
         $optBlock->text = $this->translate('OPT_DATABLOCK_TEXT');
         $optBlock->resolvedType = ActionParameterType::DATA_BLOCK;
 
-        // Option C: A Fixed Record (e.g.: The assigned from Event X)
+        // Option D: A Fixed Record (e.g.: The assigned from Event X)
         $optRecord = new ActionSelectorOptionDefinition();
         $optRecord->name = 'opt_record';
         $optRecord->text = $this->translate('OPT_RECORD_TEXT');
         $optRecord->resolvedType = ActionParameterType::CRM_RECORD;
         
-        // Option D: A Related Field (e.g.: The assigned from the record selected in a Relate field)
+        // Option E: A Related Field (e.g.: The assigned from the record selected in a Relate field)
         $optField = new ActionSelectorOptionDefinition();
         $optField->name = 'opt_field';
         $optField->text = $this->translate('OPT_RELATE_TEXT');
         $optField->resolvedType = ActionParameterType::FIELD;
         $optField->supportedDataTypes = [ActionDataType::RELATE];
 
-        $paramSource->selectorOptions = [$optFormOwner, $optBlock, $optRecord, $optField];
+        $paramSource->selectorOptions = [$optFormOwner, $optResponse, $optBlock, $optRecord, $optField];
 
-        // --- La Plantilla de Email ---
+        // --- Email Template ---
         $paramTemplate = new ActionParameterDefinition();
         $paramTemplate->name = 'email_template';
         $paramTemplate->text = $this->translate('TEMPLATE_TEXT');
@@ -121,20 +127,24 @@ class SendEmailToAssignedAction extends HookActionDefinition {
                 // Option A: The Form owner
                 $sourceBean = BeanFactory::getBean('stic_AWF_Forms', $context->formId);
 
+            } else if ($selector->selectedOptionName === 'opt_response') {
+                // Option B: The assigned to the response
+                $sourceBean = BeanFactory::getBean('stic_AWF_Responses', $context->responseId);
+
             } else if ($selector->selectedOptionName === 'opt_datablock') {
-                // Option B: A Data Block (ex: The assigned of the created Contact)
+                // Option C: A Data Block (ex: The assigned of the created Contact)
                 /** @var DataBlockResolved $block */
                 $block = $selector->resolvedValue;
                 $sourceBean = $block->dataBlock->getBeanReference()?->getBean();
                
             } else if ($selector->selectedOptionName === 'opt_record') {
-                // Option C: A Fixed Record (ex: The assigned of Event X)
+                // Option D: A Fixed Record (ex: The assigned of Event X)
                 /** @var BeanReference $recordRef */
                 $recordRef = $selector->resolvedValue;
                 $sourceBean = $recordRef?->getBean();
                 
             } else if ($selector->selectedOptionName === 'opt_field') {
-                // Option D: A Related Field (ex: The assigned of the record selected in a Relate field)
+                // Option E: A Related Field (ex: The assigned of the record selected in a Relate field)
                 /** @var DataBlockFieldResolved $fieldResolved */
                 $fieldResolved = $selector->resolvedValue;
                 /** @var BeanReference $recordRef */
@@ -162,7 +172,7 @@ class SendEmailToAssignedAction extends HookActionDefinition {
 
         // Send the email using the template and the source bean as context
         try {
-            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $sourceBean, $context, $sourceBean);
+            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $context, $sourceBean);
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         }

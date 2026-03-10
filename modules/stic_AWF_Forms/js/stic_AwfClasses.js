@@ -466,27 +466,37 @@ class stic_AwfField {
       return stic_AwfField.type_in_formList();
     }
 
+    let availableTypes = [];
+
     // text, textarea, number, date, select, hidden
     if (this.type == "enum" || this.type == "radioenum" || this.type == "multienum" || this.type == "bool" || this.type == "checkbox") {
-      return stic_AwfField.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
+      availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
+    } 
+    else if (this.type == "relate") {
+      availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
     }
-    if (this.type == "relate") {
-      return stic_AwfField.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
+    else if (this.type == "date" || this.type == "time" || this.type == "datetime" || this.type == "datetimecombo") {
+      availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "date" || t.id == "hidden");
     }
-    if (this.type == "date" || this.type == "time" || this.type == "datetime" || this.type == "datetimecombo") {
-      return stic_AwfField.type_in_formList().filter(t => t.id == "date" || t.id == "hidden");
+    else if (this.type == "int" || this.type == "float" || this.type == "double" || this.type == "decimal") {
+      availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "number" || t.id == "select" || t.id == "hidden");
     }
-    if (this.type == "int" || this.type == "float" || this.type == "double" || this.type == "decimal") {
-      return stic_AwfField.type_in_formList().filter(t => t.id == "number" || t.id == "select" || t.id == "hidden");
+    else if (this.type == "json" || this.type == "textarea" || this.type == "longtext") {
+      availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "textarea" || t.id == "hidden");
     }
-    if (this.type == "json" || this.type == "textarea" || this.type == "longtext") {
-      return stic_AwfField.type_in_formList().filter(t => t.id == "textarea" || t.id == "hidden");
+    else if (this.type == "name" || this.type == "phone" || this.type == "email" || this.type == "url" || 
+             this.type == "password" || this.type == "encrypt") {
+      availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "text" || t.id == "select" || t.id == "hidden");
     }
-    if (this.type == "name" || this.type == "phone" || this.type == "email" || this.type == "url" || 
-        this.type == "password" || this.type == "encrypt") {
-      return stic_AwfField.type_in_formList().filter(t => t.id == "text" || t.id == "select" || t.id == "hidden");
+    else  {
+      availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number" || t.id == "select" || t.id == "hidden");
     }
-    return stic_AwfField.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number" || t.id == "select" || t.id == "hidden");
+    
+    if (this.required) {
+      availableTypes = availableTypes.filter(t => t.id !== "hidden");
+    }
+
+    return availableTypes;
   }
 
   getTypeInActions() {

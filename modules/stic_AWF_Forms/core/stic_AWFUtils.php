@@ -109,7 +109,7 @@ class stic_AWFUtils {
      * Generate a summary in HTML with all the data of the form based on the Layout. 
      * 
      * @param ExecutionContext $context The context that contains the data. 
-     * @param array $options Display options ['title' => string, 'useFlex' => bool, 'includeCss' => bool] 
+     * @param array $options Display options ['title' => string, 'includeCss' => bool] 
      * @return string An HTML string with the summary table. 
      */
     public static function generateSummaryHtml(ExecutionContext $context, array $options = []): string
@@ -120,57 +120,38 @@ class stic_AWFUtils {
 
         // Default options
         $title = $options['title'] ?? '';
-        $useFlex = $options['useFlex'] ?? false;
         $includeCss = $options['includeCss'] ?? true;
 
-        $fontFamily = $theme->font_family ?? 'system-ui, -apple-system, sans-serif';
-        $fontSize = $theme->font_size ?? 16;
-        $primaryColor = $theme->primary_color ?? '#0d6efd';
-        $textColor = $theme->text_color ?? '#212529';
-        $borderColor = $theme->border_color ?? '#dee2e6';
-        $formWidth = $useFlex ? '100%' : ($theme->form_width ?? '800px');
+        $fontFamily = 'system-ui, -apple-system, sans-serif';
+        $fontSize = 16;
+        $textColor = '#212529';
+        $borderColor = '#dee2e6';
+        
+        if ($includeCss) {
+            $fontFamily = $theme->font_family ?? $fontFamily;
+            $fontSize = $theme->font_size ?? $fontSize;
+            $textColor = $theme->text_color ?? $textColor;
+            $borderColor = $theme->border_color ?? $borderColor;
+        }
+        $formWidth = $theme->form_width ?? '800px';
         
         $html = '';
-        if ($includeCss) {
-            $css = "
-            <style>
-                .awf-summary-container {font-family: {$fontFamily};font-size: {$fontSize}px;color: {$textColor};max-width: {$formWidth};margin: 0 auto;line-height: 1.5;}
-                .awf-summary-title {color: {$primaryColor};border-bottom: 2px solid {$primaryColor};padding-bottom: 10px;margin-bottom: 20px;font-size: 1.5em;}
-                .awf-summary-section-title {color: {$theme->text_color};background-color: {$theme->page_bg_color};padding: 8px 12px;margin-top: 25px;margin-bottom: 5px;font-size: 1.2em;font-weight: bold;border-bottom: 2px solid {$borderColor};}
-                .awf-summary-table {width: 100%;border-collapse: collapse;margin-bottom: 0px;}
-                .awf-summary-table td {padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;}
-                .awf-summary-label {width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);}
-                .awf-summary-value {width: 65%;}
-                " . ($useFlex ? "
-                .awf-sections-wrapper { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
-                .awf-section-item { 
-                    flex: 1 1 250px;
-                    min-width: 250px; 
-                    border: 1px solid {$borderColor}; 
-                    border-radius: 6px; 
-                    overflow: hidden; 
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                }
-                .awf-summary-section-title { margin-top: 0; margin-bottom: 0; border-top: 0; }
-                " : "") . "
-            </style>";
-            $html .= $css;
-        }
-        $html .= "<div class='awf-summary-container'>";
+
+        $html .= "<div style=\"font-family: {$fontFamily};font-size: {$fontSize}px;color: {$textColor};width: {$formWidth};margin: 0 auto;line-height: 1.5;\">";
         if ($title != '') {
-            $html .= "<h1>".htmlspecialchars($title)."</h1>";
+            $html .= "<h1>" . htmlspecialchars($title) . "</h1>";
         }
-        $html .= "<div class='awf-sections-wrapper'>";
+        $html .= "<div>";
 
         // Iterate through sections (layout)
         foreach ($layout->structure as $section) {
-            $html .= "<div class='awf-section-item'>";
+            $html .= "<div style=\"margin-bottom: 25px; border: 1px solid {$borderColor}; border-radius: 6px; overflow: hidden; background-color: #fff;\">";
 
             // If the section has a title and should be displayed
             if ($section->showTitle && !empty($section->title)) {
-                $html .= "<div class='awf-summary-section-title'>" . htmlspecialchars($section->title) . "</div>";
+                $html .= "<div style=\"color: {$theme->text_color};background-color: {$theme->page_bg_color};padding: 8px 12px;margin: 0;font-size: 1.2em;font-weight: bold;border-bottom: 2px solid {$borderColor};\">" . htmlspecialchars($section->title) . "</div>";
             }
-            $html .= "<table class='awf-summary-table'>";
+            $html .= "<table style=\"width: 100%;border-collapse: collapse;margin-bottom: 0px;\">";
             $hasFields = false;
 
             // Elements of the section (data blocks)
@@ -207,7 +188,7 @@ class stic_AWFUtils {
                         $isHtmlValue = true; 
                         
                         if ($value === '' || $value === null) {
-                            $displayValue = '<em style="color:#9aa0a6;">['.translate('LBL_EMPTY', 'stic_AWF_Responses').']</em>';
+                            $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
                         } else {
                             $displayValue = '<div style="display:inline-flex; gap:10px; align-items:center; font-size:1.5em; line-height:1;">';
                             
@@ -293,8 +274,44 @@ class stic_AWFUtils {
                             }
                             $displayValue .= '</div>';
                         }
+                    }
+                    // Boolean (checkboxes and Switches)
+                    elseif ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox' || in_array($fieldDef->subtype_in_form, ['select_checkbox', 'select_switch'])) {
+                        global $app_strings;
+                        $isTrue = ($value === '1' || $value === 'on' || $value === 'true' || $value === true);
+                        $yesStr = $app_strings['LBL_YES'] ?? 'Yes';
+                        $noStr  = $app_strings['LBL_NO'] ?? 'No';
+                        
+                        if ($isTrue) {
+                            $displayValue = "<span style='color: #198754; font-weight: bold;'>✓ {$yesStr}</span>";
+                        } else {
+                            $displayValue = "<span style='color: #dc3545;'>✗ {$noStr}</span>";
+                        }
+                        $isHtmlValue = true; // Do not scape the string
+                    }
+                    // Dates and times
+                    elseif (in_array($fieldDef->type, ['date', 'datetime', 'datetimecombo']) || in_array($fieldDef->subtype_in_form, ['date', 'date_time', 'date_datetime'])) {
+                        if ($value === '' || $value === null) {
+                            $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
+                            $isHtmlValue = true;
+                        } else {
+                            global $timedate;
+                            try {
+                                $dt = new \DateTime($value);
+                                if ($fieldDef->type === 'date' || $fieldDef->subtype_in_form === 'date') {
+                                    $displayValue = $timedate->asUserDate($dt);
+                                } elseif ($fieldDef->subtype_in_form === 'date_time') {
+                                    $displayValue = $timedate->asUserTime($dt);
+                                } else {
+                                    $displayValue = $timedate->asUser($dt);
+                                }
+                            } catch (\Exception $e) {
+                                $displayValue = $value; 
+                            }
+                        }
+                    }
                     // Enum and multienum with value options: we display the text instead of the value
-                    } elseif (!empty($fieldDef->value_options)) {
+                    elseif (!empty($fieldDef->value_options)) {
                         // Helper function to find the text of a value
                         $findLabel = function($val) use ($fieldDef) {
                             foreach ($fieldDef->value_options as $opt) {
@@ -309,8 +326,9 @@ class stic_AWFUtils {
                         } else {
                             $displayValue = $findLabel($value);
                         }
+                    } 
                     // For other fields, we display the value directly (after converting arrays to strings)
-                    } else {
+                    else {
                         if (is_array($value)) {
                             $value = implode(', ', $value);
                         }
@@ -323,8 +341,8 @@ class stic_AWFUtils {
                     }
 
                     $html .= "<tr>";
-                    $html .= "<td class='awf-summary-label'>" . htmlspecialchars($fieldDef->label) . "</td>";
-                    $html .= "<td class='awf-summary-value'>" . $displayValue . "</td>";
+                    $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);\">" . htmlspecialchars($fieldDef->label) . "</td>";
+                    $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 65%;\">" . $displayValue . "</td>";
                     $html .= "</tr>";
                     $hasFields = true;
                 }
@@ -600,15 +618,13 @@ class stic_AWFUtils {
      * 
      * @param string $toAddress Recipient's email address. 
      * @param string $templateId ID of the mail template to use. 
-     * @param SugarBean $contextBean The bean that serves as context for the template. 
      * @param ExecutionContext $context The execution context of the form. 
-     * @param ?SugarBean $parentBeanForArchive (Optional) Parent bean to archive mail. If not provided, $contextBean will be used. 
+     * @param ?SugarBean $parentBeanForArchive (Optional) Parent bean to archive mail. 
      * @throws \Exception If there are errors in the submission or in the template. 
      */
     public static function sendTemplateEmail(
         string $toAddress, 
         string $templateId, 
-        SugarBean $contextBean, 
         ExecutionContext $context, 
         ?SugarBean $parentBeanForArchive = null
     ): void 
@@ -627,8 +643,8 @@ class stic_AWFUtils {
         // Prepare the array of Beans for the parser
         $beansForTemplate = [];
         // The main Context Bean (the recipient)
-        if ($contextBean && isset($contextBean->module_dir)) {
-            $beansForTemplate[] = $contextBean;
+        if ($parentBeanForArchive && isset($parentBeanForArchive->module_dir)) {
+            $beansForTemplate[] = $parentBeanForArchive;
         }
         // The Response Bean (to access $stic_awf_responses_html_summary)
         if ($context->responseBean) {
@@ -707,12 +723,13 @@ class stic_AWFUtils {
 
         // After sending, archive the email in the CRM
         // If the parent is not specified, we use the context
-        $parentBean = $parentBeanForArchive ?? $contextBean;
-        try {
-            self::archiveEmail($subject, $body, $systemFromAddress, $toAddress, $parentBean, $attachments);
-        } catch (\Exception $e) {
-            // If the archive fails, we do not stop the process but we record it in the log
-            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.':  Email sent but error archiving: ' . $e->getMessage());
+        if ($parentBeanForArchive != null) {
+            try {
+                self::archiveEmail($subject, $body, $systemFromAddress, $toAddress, $parentBeanForArchive, $attachments);
+            } catch (\Exception $e) {
+                // If the archive fails, we do not stop the process but we record it in the log
+                $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.':  Email sent but error archiving: ' . $e->getMessage());
+            }
         }
     }
 
