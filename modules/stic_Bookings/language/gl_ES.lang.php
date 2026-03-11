@@ -81,7 +81,7 @@ $mod_strings = array(
 
     // Recursos de la reserva
     'LBL_RESOURCES' => 'Recursos',
-    'LBL_PLACES' => 'Plazas',
+    'LBL_PLACES' => 'Prazas',
     'LBL_RESOURCES_NAME' => 'Nome',
     'LBL_RESOURCES_STATUS' => 'Estado',
     'LBL_RESOURCES_TYPE' => 'Tipo',
@@ -90,8 +90,8 @@ $mod_strings = array(
     'LBL_RESOURCES_HOURLY_RATE' => 'Tarifa horaria',
     'LBL_RESOURCES_DAILY_RATE' => 'Tarifa diaria',
     'LBL_RESOURCES_CENTER' => 'Centro',
-    'LBL_RESOURCES_GENDER' => 'Género de la plaza',
-    'LBL_RESOURCES_PLACE_TYPE' => 'Tipo de plaza',
+    'LBL_RESOURCES_GENDER' => 'Xénero da praza',
+    'LBL_RESOURCES_PLACE_TYPE' => 'Tipo de praza',
     'LBL_RESOURCES_USER_TYPE' => 'Tipo de usuario',
     'LBL_RESOURCES_AMOUNT_DAY_OCCUPIED' => 'Importe por plaza ocupada',
     'LBL_RESOURCES_AMOUNT_DAY_UNOCCUPIED' => 'Importe por plaza desocupada',
