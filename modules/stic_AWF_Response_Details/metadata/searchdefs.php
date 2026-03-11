@@ -47,18 +47,11 @@ $searchdefs[$module_name] = array(
     ),
     'layout' => array(
         'basic_search' => array(
-            'question_sort_order' => array(
-                'name' => 'question_sort_order',
-            ),
             'question_section' => array(
                 'name' => 'question_section',
             ),
             'question_label' => array(
                 'name' => 'question_label',
-            ),
-            'question_help_text' => array(
-                'name' => 'question_help_text',
-                'type' => 'varchar',
             ),
             'answer_text' => array(
                 'name' => 'answer_text',

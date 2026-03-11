@@ -44,15 +44,22 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $module_name = 'stic_AWF_Links';
 $listViewDefs[$module_name] = array(
-    'SEQUENCE_NUMBER' => array(
-        'width' => '5',
-        'label' => 'LBL_SEQUENCE_NUMBER',
-        'default' => false,
-    ),
     'NAME' => array(
         'label' => 'LBL_NAME',
         'default' => true,
         'link' => true
+    ),
+    'STIC_C271_LINKS_NAME' => array(
+        'label' => 'LBL_RESPONSE',
+        'module' => 'stic_AWF_Responses',
+        'id' => 'STIC_AWF_RESPONSES_STIC_AWF_LINKSRESPONSES_IDA',
+        'link' => true,
+        'default' => true
+    ),
+    'SEQUENCE_NUMBER' => array(
+        'width' => '5',
+        'label' => 'LBL_SEQUENCE_NUMBER',
+        'default' => false,
     ),
     'RECORD_ACTION' => array(
         'label' => 'LBL_RECORD_ACTION',

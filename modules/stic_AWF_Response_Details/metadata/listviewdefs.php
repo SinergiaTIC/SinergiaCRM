@@ -44,10 +44,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $module_name = 'stic_AWF_Response_Details';
 $listViewDefs[$module_name] = array(
+    'FORM' => array(
+        'width' => '15',
+        'label' => 'LBL_FORM',
+        'module' => 'stic_AWF_Forms',
+        'id' => 'STIC_AWF_FORMS_ID_C',
+        'link' => true,
+        'default' => true
+    ),
+    'RESPONSE' => array(
+        'width' => '15',
+        'label' => 'LBL_RESPONSE',
+        'module' => 'stic_AWF_Responses',
+        'id' => 'STIC_AWF_RESPONSES_ID_C',
+        'link' => true,
+        'default' => true
+    ),
     'QUESTION_SORT_ORDER' => array(
         'width' => '10',
         'label' => 'LBL_QUESTION_SORT_ORDER',
-        'default' => true,
+        'default' => false,
     ),
     'QUESTION_KEY' => array(
         'width' => '10',
@@ -67,7 +83,7 @@ $listViewDefs[$module_name] = array(
     'QUESTION_HELP_TEXT' => array(
         'width' => '10',
         'label' => 'LBL_QUESTION_HELP_TEXT',
-        'default' => true,
+        'default' => false,
     ),
     'ANSWER_VALUE' => array(
         'width' => '10',
@@ -89,20 +105,6 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_ANSWER_FORM_TYPE',
         'default' => false,
     ),
-    // 'FORM' => array(
-    //     'width' => '9',
-    //     'label' => 'LBL_FORM',
-    //     'module' => 'stic_AWF_Forms',
-    //     'id' => 'FORM_ID',
-    //     'default' => true
-    // ),
-    // 'RESPONSE' => array(
-    //     'width' => '9',
-    //     'label' => 'LBL_RESPONSE',
-    //     'module' => 'stic_AWF_Responses',
-    //     'id' => 'RESPONSE_ID',
-    //     'default' => true
-    // ),
     'DATE_ENTERED' => array(
         'type' => 'datetime',
         'label' => 'LBL_DATE_ENTERED',

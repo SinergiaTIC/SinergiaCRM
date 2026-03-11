@@ -358,7 +358,7 @@ class ResponseHandler
                 $this->saveLinks($responseBean, $context);
 
                 // Generate analytical response details
-                $this->generateResponseDetails($responseBean, $formConfig, $cleanData);
+                $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
 
                 // Update status and generate execution log
                 $hasErrors = false;
@@ -797,10 +797,11 @@ class ResponseHandler
     /**
      * Generates response details for storage and subsequent analysis.
      * @param SugarBean $responseBean Response bean
+     * @param SugarBean $formBean Form bean
      * @param FormConfig $formConfig Form configuration
      * @param array $submittedData Data sent in the submission
      */
-    private function generateResponseDetails(SugarBean $responseBean, FormConfig $formConfig, array $submittedData): void {
+    private function generateResponseDetails(SugarBean $responseBean, SugarBean $formBean, FormConfig $formConfig, array $submittedData): void {
         global $app_strings;
 
         // Global counter
@@ -862,7 +863,7 @@ class ResponseHandler
                 // Create analytical response bean
                 $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
                 $detailBean->stic_awf_responses_id_c = $responseBean->id;
-                $detailBean->stic_awf_forms_id_c = $formConfig->id ?? ''; 
+                $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 
                 $detailBean->assigned_user_id = $responseBean->assigned_user_id;
                 
                 $detailBean->question_key = $block->name . '.' . $field->name;

@@ -90,7 +90,7 @@ $mod_strings = array (
   'LBL_FORM_ID' => 'ID del formulario',
   'LBL_FORM' => 'Formulario',
   'LBL_RESPONSE_ID' => 'ID de la respuesta',
-  'LBL_RESPONSE' => 'response',
+  'LBL_RESPONSE' => 'Respuesta al formulario',
 
   'LBL_STIC_AWF_RESPONSE_DETAILS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSE_DETAILS_TITLE' => 'Detalles de respuesta a formulario',
 );

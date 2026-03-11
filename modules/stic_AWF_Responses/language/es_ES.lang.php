@@ -82,6 +82,7 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
   // Module fields
+  'LBL_FORM' => 'Formulario',
   'LBL_FORM_URL' => 'URL del formulario',
   'LBL_CLEAN_REFERRER' => 'Página de origen',
   'LBL_USER_AGENT' => 'Navegador y sistema operativo',
@@ -91,7 +92,7 @@ $mod_strings = array (
   'LBL_HTML_SUMMARY' => 'Respuesta',
   'LBL_STATUS' => 'Estado',
   'LBL_EXECUTION_LOG' => 'Registro de ejecución',
-
+  
   // Execution log: action results
   'LBL_EXECUTION_ITEM_OK' => '✅ [OK]',
   'LBL_EXECUTION_ITEM_SKIPPED' => '⏭️ [OMITIDO]',

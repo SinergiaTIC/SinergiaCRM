@@ -55,6 +55,14 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_CLEAN_REFERRER',
         'default' => true,
     ),
+    'STIC_1BB8PONSES_NAME' => array(
+        'width' => '15',
+        'label' => 'LBL_FORM',
+        'module' => 'stic_AWF_Forms',
+        'id' => 'STIC_AWF_FORMS_STIC_AWF_RESPONSESFORMS_IDA',
+        'link' => true,
+        'default' => true
+    ),
     'FORM_URL' => array(
         'width' => '30',
         'label' => 'LBL_FORM_URL',
