@@ -178,6 +178,7 @@ $app_list_strings['moduleList']['stic_Places'] = 'Places';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transactions';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['moduleList']['stic_Assets'] = 'Assets';
+$app_list_strings['moduleList']['stic_Conversations'] = 'Conversations';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -233,6 +234,7 @@ $app_list_strings['moduleListSingular']['stic_Places'] = 'Places';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transaction';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Financial Product';
 $app_list_strings['moduleListSingular']['stic_Assets'] = 'Asset';
+$app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversation';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -278,6 +280,7 @@ $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transactions';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Assets';
+$app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversations';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
@@ -326,6 +329,7 @@ $app_list_strings['record_type_display']['stic_Signers'] = 'Signers';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transactions';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Assets';
+$app_list_strings['record_type_display']['stic_Conversations'] = 'Conversations';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
@@ -374,10 +378,15 @@ $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Signers';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transactions';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Assets';
+$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversations';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Signatures';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Job applications';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Job offers';
+$app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversations';
+$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Messages';
 
 // Categories for Target Lists dynamic creation 
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -1233,6 +1242,7 @@ $app_list_strings['stic_job_offers_status_list']['closed_covered'] = 'Closed (co
 $app_list_strings['stic_job_offers_status_list']['closed_partially_covered'] = 'Closed (partially covered)';
 $app_list_strings['stic_job_offers_status_list']['closed_not_covered'] = 'Closed (not covered)';
 $app_list_strings['stic_job_offers_status_list']['reopened'] = 'Reopened';
+$app_list_strings['stic_job_offers_status_list']['review'] = 'Under review';
 
 // Job offers: Origins
 $app_list_strings['stic_job_offer_origin_list'][''] = '';
@@ -1275,6 +1285,7 @@ $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'P
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Interviewed';
 $app_list_strings['stic_job_applications_status_list']['accepted'] = 'Accepted';
 $app_list_strings['stic_job_applications_status_list']['rejected_closed'] = 'Rejected or closed';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'Under review';
 
 // Job applications: Rejection reasons
 $app_list_strings['stic_job_applications_rejection_reasons_list'][''] = '';
@@ -3646,6 +3657,7 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Messages: Type
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['conversation'] = 'Conversation';
 
 // Messages: Direction
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
@@ -3910,6 +3922,11 @@ $app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Famil
 $app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Market rent';
 $app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Social rent';
 $app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Irregular occupation';
+
+// Conversations: Types
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Type 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Type 2';
 
 // SuiteCRM Core modifications
 

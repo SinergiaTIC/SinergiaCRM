@@ -156,3 +156,8 @@ $mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Training'
 
 // Work experience strings
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Work experience';
+
+// Private Area strings
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Private Area User';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private Area Password';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable Private Area';

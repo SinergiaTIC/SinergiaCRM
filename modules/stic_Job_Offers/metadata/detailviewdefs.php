@@ -54,10 +54,13 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_EDITVIEW_PANEL8' => 
-                array (
-                'newTab' => true,
-                'panelDefault' => 'expanded',
+                'LBL_PANEL_STIC_JOB_APPLICATIONS_COUNT' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
+                'LBL_EDITVIEW_PANEL8' => array (
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
                 ),
                 'LBL_EDITVIEW_PANEL2' => array(
                     'newTab' => true,
@@ -114,7 +117,17 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                3 => array (
+                3 => 
+                array (
+                    0 => '',
+                    1 => 
+                    array (
+                        'name' => 'notification_template',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE',
+                    ),
+                ),
+                4 => array (
                     0 => 
                     array (
                         'name' => 'type',
@@ -128,7 +141,7 @@ array(
                         'label' => 'LBL_TERRITORIAL_SCOPE',
                     ),
                 ),
-                4 => array (
+                5 => array (
                     0 => 
                     array (
                         'name' => 'offer_origin',
@@ -141,7 +154,7 @@ array(
                         'label' => 'LBL_OFFERED_POSITIONS',
                     ),
                 ),
-                5 => array (
+                6 => array (
                     0 => 
                     array (
                         'name' => 'process_start_date',
@@ -153,7 +166,7 @@ array(
                         'label' => 'LBL_PROCESS_END_DATE',
                     ),
                 ),
-                6 => array (
+                7 => array (
                     0 => 
                     array (
                         'name' => 'applications_start_date',
@@ -165,7 +178,7 @@ array(
                         'label' => 'LBL_APPLICATIONS_END_DATE',
                     ),
                 ),
-                7 => array (
+                8 => array (
                     0 => 
                     array (
                         'name' => 'offer_code',
@@ -178,7 +191,7 @@ array(
                         'label' => 'LBL_OFFER_MODE',
                     ),
                 ),
-                8 => array (
+                9 => array (
                     0 => 
                     array (
                         'name' => 'weekdays',
@@ -191,7 +204,7 @@ array(
                         'label' => 'LBL_TIMETABLE',
                     ),
                 ),
-                9 => array (
+                10 => array (
                     0 => 
                     array (
                         'name' => 'evaluation',
@@ -204,7 +217,7 @@ array(
                         'label' => 'LBL_RESPONSIBLE',
                     ),
                 ),
-                10 => array (
+                11 => array (
                     0 => 
                     array (
                         'name' => 'center',
@@ -216,7 +229,7 @@ array(
                         'name' => 'project_stic_job_offers_name',
                     ),
                 ),
-                11 => array (
+                12 => array (
                     0 => 'description',
                 ),
             ),
@@ -289,6 +302,51 @@ array(
                         'label' => 'LBL_WORKDAY_TYPE',
                     ),
                     1 => array(
+                    ),
+                ),
+            ),
+            'lbl_panel_stic_job_applications_count' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'stic_job_applications_count_total',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'stic_job_applications_count_accepted',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_ACCEPTED',
+                    ),
+                    1 => array(
+                        'name' => 'stic_job_applications_count_rejected_closed',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'stic_job_applications_count_review',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW',
+                    ),
+                    1 => '',
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'stic_job_applications_count_pending_interview',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_PENDING_INTERVIEW',
+                    ),
+                    1 => array(
+                        'name' => 'stic_job_applications_count_interviewed',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_INTERVIEWED',
+                    ),
+                ),
+                4 => array(
+                    0 => array(
+                        'name' => 'stic_job_applications_count_expected_presentation',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION',
+                    ),
+                    1 => array(
+                        'name' => 'stic_job_applications_count_presented',
+                        'label' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_PRESENTED',
                     ),
                 ),
             ),

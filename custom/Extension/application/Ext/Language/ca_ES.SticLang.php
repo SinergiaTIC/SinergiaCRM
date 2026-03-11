@@ -177,6 +177,7 @@ $app_list_strings['moduleList']['stic_Signers'] = 'Firmants';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['moduleList']['stic_Assets'] = 'Actius';
+$app_list_strings['moduleList']['stic_Conversations'] = 'Converses';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -234,6 +235,7 @@ $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmant';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacció';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producte financer';
 $app_list_strings['moduleListSingular']['stic_Assets'] = 'Actiu';
+$app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversa';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -279,6 +281,7 @@ $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Actius';
+$app_list_strings['parent_type_display']['stic_Conversations'] = 'Converses';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -327,6 +330,7 @@ $app_list_strings['record_type_display']['stic_Signers'] = 'Firmants';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Actius';
+$app_list_strings['record_type_display']['stic_Conversations'] = 'Converses';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -375,10 +379,15 @@ $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmants';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Actius';
+$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Converses';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmes';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidatures';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertes laborals';
+$app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Converses';
+$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Missatges';
 
 // Creació dinàmica de Llistes de públic objectiu
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -1234,6 +1243,7 @@ $app_list_strings['stic_job_offers_status_list']['closed_covered'] = 'Tancada (c
 $app_list_strings['stic_job_offers_status_list']['closed_partially_covered'] = 'Tancada (coberta parcialment)';
 $app_list_strings['stic_job_offers_status_list']['closed_not_covered'] = 'Tancada (no coberta)';
 $app_list_strings['stic_job_offers_status_list']['reopened'] = 'Reoberta';
+$app_list_strings['stic_job_offers_status_list']['review'] = 'En revisió';
 
 // Ofertes laborals: Orígens
 $app_list_strings['stic_job_offer_origin_list'][''] = '';
@@ -1276,6 +1286,7 @@ $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'P
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Entrevistada';
 $app_list_strings['stic_job_applications_status_list']['accepted'] = 'Acceptada';
 $app_list_strings['stic_job_applications_status_list']['rejected_closed'] = 'Rebutjada o tancada';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'En revisió';
 
 // Candidatures: Raons de rebuig de la candidatura
 $app_list_strings['stic_job_applications_rejection_reasons_list'][''] = '';
@@ -3647,6 +3658,7 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Missatges: Tipus
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['conversation'] = 'Conversa';
 
 // Missatges: Direcció
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
@@ -3911,6 +3923,11 @@ $app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Famí
 $app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Lloguer de mercat';
 $app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Lloguer social';
 $app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Irregular';
+
+// Converses: Tipus
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipus 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipus 2';
 
 // Modificacions del core de SuiteCRM
 

@@ -177,6 +177,7 @@ $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['moduleList']['stic_Assets'] = 'Activos';
+$app_list_strings['moduleList']['stic_Conversations'] = 'Conversaciones';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -234,6 +235,7 @@ $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmante';
 $app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacción';
 $app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producto financiero';
 $app_list_strings['moduleListSingular']['stic_Assets'] = 'Activo';
+$app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -279,6 +281,7 @@ $app_list_strings['parent_type_display']['stic_Places'] = 'Plazas';
 $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Activos';
+$app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display']['Contacts'] = 'Personas';
@@ -327,6 +330,7 @@ $app_list_strings['record_type_display']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Activos';
+$app_list_strings['record_type_display']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Personas';
@@ -375,10 +379,14 @@ $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Activos';
+$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvenciones';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
 $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmas';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidaturas';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborales';
+$app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversaciones';
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -1234,6 +1242,7 @@ $app_list_strings['stic_job_offers_status_list']['closed_covered'] = 'Cerrada (c
 $app_list_strings['stic_job_offers_status_list']['closed_partially_covered'] = 'Cerrada (cubierta parcialmente)';
 $app_list_strings['stic_job_offers_status_list']['closed_not_covered'] = 'Cerrada (sin cubrir)';
 $app_list_strings['stic_job_offers_status_list']['reopened'] = 'Reabierta';
+$app_list_strings['stic_job_offers_status_list']['review'] = 'En revisión';
 
 // Ofertas laborales: Orígenes
 $app_list_strings['stic_job_offer_origin_list'][''] = '';
@@ -1276,6 +1285,7 @@ $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'P
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Entrevistada';
 $app_list_strings['stic_job_applications_status_list']['accepted'] = 'Aceptada';
 $app_list_strings['stic_job_applications_status_list']['rejected_closed'] = 'Rechazada o cerrada';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'En revisión';
 
 // Candidaturas: Motivos de rechazo
 $app_list_strings['stic_job_applications_rejection_reasons_list'][''] = '';
@@ -3647,6 +3657,7 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Mensajes: Tipos
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['conversation'] = 'Conversación';
 
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
@@ -3911,6 +3922,11 @@ $app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Uso f
 $app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Alquiler de mercado';
 $app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Alquiler social';
 $app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Ocupación irregular';
+
+// Conversaciones: Tipos
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipo 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipo 2';
 
 // Modificaciones del core de SuiteCRM
 

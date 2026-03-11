@@ -82,4 +82,87 @@ class stic_Job_ApplicationsUtils
         $workBean->achieved=true;
         $workBean->save();
     }
+
+    /**
+     * Decide whether to update counts and collect related offer ids
+     *
+     * @param SugarBean $bean
+     * @param bool $checkChanges
+     * @return void
+     */
+    public static function updateRelatedOffersApplicationsCounts($bean, $checkChanges)
+    {
+        if (empty($bean) || empty($bean->id)) {
+            return;
+        }
+
+        $previousStatus = $bean->fetched_row['status'] ?? null;
+        $currentStatus = $bean->status ?? null;
+        $statusChanged = empty($bean->fetched_row) || $previousStatus !== $currentStatus;
+
+        $previousOfferId = $bean->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? null;
+        $offerId = self::getRelatedOfferId($bean);
+
+        $offerIds = array_filter(array_unique(array($offerId, $previousOfferId)));
+
+        if ($checkChanges && !$statusChanged && empty($previousOfferId)) {
+            return;
+        }
+
+        self::updateOfferCountsByIds($offerIds);
+    }
+
+    /**
+    * Collect related offer id from the bean
+     *
+     * @param SugarBean $bean
+     * @return string|null
+     */
+    protected static function getRelatedOfferId($bean)
+    {
+        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)
+            && !($bean->stic_job_applications_stic_job_offersstic_job_offers_ida instanceof Link2)) {
+            return $bean->stic_job_applications_stic_job_offersstic_job_offers_ida;
+        }
+
+        if ($bean->load_relationship('stic_job_applications_stic_job_offers')) {
+            $relatedOffers = $bean->stic_job_applications_stic_job_offers->getBeans();
+            if (!empty($relatedOffers)) {
+                $firstOffer = reset($relatedOffers);
+                return !empty($firstOffer->id) ? $firstOffer->id : null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Update counts for the given offer ids
+     *
+     * @param array $offerIds
+     * @return void
+     */
+    public static function updateOfferCountsByIds($offerIds)
+    {
+        if (empty($offerIds)) {
+            return;
+        }
+
+        require_once 'modules/stic_Job_Offers/Utils.php';
+        foreach (array_filter(array_unique($offerIds)) as $offerId) {
+            stic_Job_OffersUtils::updateApplicationsCounts($offerId);
+        }
+    }
+
+    /**
+     * Check whether the relationship belongs to Job Offers
+     *
+     * @param array $arguments
+     * @return bool
+     */
+    public static function isOfferRelationship($arguments)
+    {
+        return !empty($arguments['relationship'])
+            && $arguments['relationship'] === 'stic_job_applications_stic_job_offers';
+    }
 }

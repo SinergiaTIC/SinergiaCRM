@@ -59,11 +59,27 @@ class stic_MessagesController extends SugarController
                 $this->bean->parent_id = $id;
                 $this->bean->parent_type = $_REQUEST['return_module'];
                 $this->bean->phone = $phone;
-                $this->bean->save(!empty($this->bean->notify_on_save));  
+                $this->prepareConversationDataForMessage($this->bean);
+                $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
+                $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
+                if ($shouldStoreFirstMessage) {
+                    $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $messageId);
+                }
             }, $idsArray, $phonesArray);
         }
         else {
-            $this->bean->save(!empty($this->bean->notify_on_save));
+            $this->applyConversationSubpanelDefaults($this->bean);
+            $this->prepareConversationDataForMessage($this->bean);
+            // Subpanel conversations to validate
+            if (!$this->validateConversationRequiredFields($this->bean)) {
+                echo json_encode(array('success' => false, 'number_found' => false));
+                exit;
+            }
+            $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
+            $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
+            if ($shouldStoreFirstMessage) {
+                $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $messageId);
+            }
             // header('Content-Type: application/json');
             // $this->bean->response
             // echo "{'status': 200, 'message': 'ok'}";
@@ -83,14 +99,22 @@ class stic_MessagesController extends SugarController
             $idsArray = explode(';', $_REQUEST['mass_ids']);
             $phonesArray = explode(',', $_REQUEST['phone']);
 
-            array_map(function($id, $phone) {
+            array_map(function($id, $phone) use ($mod_strings) {
                 $newBean = BeanFactory::newBean('stic_Messages');
                 $this->bean = $newBean;
                 $this->pre_save();
                 $this->bean->parent_id = $id;
                 $this->bean->parent_type = $_REQUEST['return_module'];
                 $this->bean->phone = $phone;
-                $this->bean->save(!empty($this->bean->notify_on_save));  
+                $conversationValidation = $this->prepareConversationDataForMessage($this->bean);
+                if (!$conversationValidation['success']) {
+                    $this->returnConversationValidationError($mod_strings);
+                }
+                $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
+                $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
+                if ($shouldStoreFirstMessage) {
+                    $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $messageId);
+                }
             }, $idsArray, $phonesArray);
             // If mass send and type is WhatsAppWeb, return an open_url built from the phones/message
             if (isset($_REQUEST['type']) && $_REQUEST['type'] === 'WhatsAppWeb') {
@@ -128,7 +152,23 @@ class stic_MessagesController extends SugarController
         }
         else {
             $oldStatus = $this->bean->fetched_row['status']??'';
+
+            // Subpanel conversations to validate
+            $this->applyConversationSubpanelDefaults($this->bean);
+            if (!$this->validateConversationRequiredFields($this->bean)) {
+                $this->returnConversationRequiredFieldsError($mod_strings);
+            }
+
+            $conversationValidation = $this->prepareConversationDataForMessage($this->bean);
+            if (!$conversationValidation['success']) {
+                $this->returnConversationValidationError($mod_strings);
+            }
+
+            $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
             $id = $this->bean->save(!empty($this->bean->notify_on_save));
+            if ($shouldStoreFirstMessage) {
+                $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $id);
+            }
 
             if (isset($this->bean->type) && $this->bean->type === 'WhatsAppWeb') {
                 $phone = isset($this->bean->phone) ? preg_replace('/\D+/', '', $this->bean->phone) : '';
@@ -375,5 +415,344 @@ class stic_MessagesController extends SugarController
         die;
     }
 
+
+    /**
+     * Create and return a conversation id for the current message
+     */
+    protected function createConversationForMessage($messageBean)
+    {
+        global $current_user;
+
+        $conversationBean = BeanFactory::newBean('stic_Conversations');
+        $conversationBean->subject = mb_substr(trim(strip_tags((string)$messageBean->message)), 0, 255);
+        $conversationBean->assigned_user_id = !empty($messageBean->assigned_user_id) ? $messageBean->assigned_user_id : $current_user->id;
+
+        if (!empty($messageBean->parent_type) && $messageBean->parent_type === 'Contacts' && !empty($messageBean->parent_id)) {
+            $conversationBean->contact_name = $messageBean->parent_name;
+            $conversationBean->contacts_ida = $messageBean->parent_id;
+        }
+
+        $conversationBean->save();
+        return $conversationBean->id;
+    }
+
+    /**
+     * Normalize conversation data before saving a message
+     */
+    protected function prepareConversationDataForMessage($messageBean)
+    {
+        $type = $messageBean->type ?? ($_REQUEST['type'] ?? '');
+
+        if ($type !== 'conversation') {
+            $messageBean->new_conversation = 0;
+            $messageBean->stic_conversations_stic_messages_name = '';
+            $messageBean->stic_conversations_ida = '';
+            return array('success' => true);
+        }
+
+        // Conversations can only be related to Contacts.
+        $messageBean->parent_type = 'Contacts';
+
+        if (empty($messageBean->parent_id) && !empty($_REQUEST['parent_id'])) {
+            $messageBean->parent_id = $_REQUEST['parent_id'];
+        }
+
+        if (empty($messageBean->parent_name) && !empty($_REQUEST['parent_name'])) {
+            $messageBean->parent_name = $_REQUEST['parent_name'];
+        }
+
+        if (!empty($messageBean->parent_id)) {
+            $contactBean = BeanFactory::getBean('Contacts', $messageBean->parent_id);
+            if (empty($contactBean) || empty($contactBean->id)) {
+                $messageBean->parent_id = '';
+                $messageBean->parent_name = '';
+            }
+        }
+
+        $newConversation = !empty($_REQUEST['new_conversation']) || !empty($messageBean->new_conversation);
+        $messageBean->new_conversation = $newConversation ? 1 : 0;
+
+        if ($newConversation) {
+            if (empty($messageBean->stic_conversations_ida)) {
+                $messageBean->stic_conversations_ida = $this->createConversationForMessage($messageBean);
+            }
+            return array('success' => true);
+        }
+
+        if (empty($messageBean->stic_conversations_ida) && !empty($_REQUEST['stic_conversations_ida'])) {
+            $messageBean->stic_conversations_ida = $_REQUEST['stic_conversations_ida'];
+        }
+
+        if (empty($messageBean->stic_conversations_ida)) {
+            return array('success' => false);
+        }
+
+        return array('success' => true);
+    }
+
+    /**
+     * Check if current save comes from Conversations subpanel quickcreate
+     */
+    protected function isConversationSubpanelSaveRequest()
+    {
+        return (
+            !empty($_REQUEST['return_module'])
+            && $_REQUEST['return_module'] === 'stic_Conversations'
+            && !empty($_REQUEST['return_id'])
+        );
+    }
+
+    /**
+     * Force subpanel conversation defaults
+     */
+    protected function applyConversationSubpanelDefaults($messageBean)
+    {
+        if (!$this->isConversationSubpanelSaveRequest()) {
+            return;
+        }
+
+        $messageBean->type = 'conversation';
+        $messageBean->parent_type = 'Contacts';
+        $messageBean->new_conversation = 0;
+
+        if (empty($messageBean->stic_conversations_ida)) {
+            $messageBean->stic_conversations_ida = $_REQUEST['return_id'];
+        }
+
+        if (empty($_REQUEST['stic_conversations_ida'])) {
+            $_REQUEST['stic_conversations_ida'] = $messageBean->stic_conversations_ida;
+        }
+
+        if (!empty($messageBean->stic_conversations_ida) && (empty($messageBean->parent_id) || empty($messageBean->parent_name))) {
+            $conversationBean = BeanFactory::getBean('stic_Conversations', $messageBean->stic_conversations_ida);
+            if (!empty($conversationBean) && !empty($conversationBean->id) && $conversationBean->load_relationship('contacts_stic_conversations')) {
+                $contactIds = $conversationBean->contacts_stic_conversations->get();
+                if (!empty($contactIds) && !empty($contactIds[0])) {
+                    $contactBean = BeanFactory::getBean('Contacts', $contactIds[0]);
+                    if (!empty($contactBean) && !empty($contactBean->id)) {
+                        $messageBean->parent_id = $contactBean->id;
+                        $contactName = trim(($contactBean->first_name ?? '') . ' ' . ($contactBean->last_name ?? ''));
+                        $messageBean->parent_name = !empty($contactName) ? $contactName : ($contactBean->name ?? '');
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Validate required fields for conversation messages
+     */
+    protected function validateConversationRequiredFields($messageBean)
+    {
+        $type = $messageBean->type ?? ($_REQUEST['type'] ?? '');
+        if ($type !== 'conversation') {
+            return true;
+        }
+
+        $sender = trim((string)($messageBean->sender ?? ($_REQUEST['sender'] ?? '')));
+        $message = trim((string)($messageBean->message ?? ($_REQUEST['message'] ?? '')));
+
+        return ($sender !== '' && $message !== '');
+    }
+
+    /**
+     * Check whether first message must be stored in conversation
+     */
+    protected function shouldStoreFirstMessage($messageBean)
+    {
+        $type = $messageBean->type ?? ($_REQUEST['type'] ?? '');
+        $conversationId = $messageBean->stic_conversations_ida ?? '';
+
+        if ($type !== 'conversation' || empty($conversationId)) {
+            return false;
+        }
+
+        $conversationBean = BeanFactory::getBean('stic_Conversations', $conversationId);
+        if (empty($conversationBean) || empty($conversationBean->id)) {
+            return false;
+        }
+
+        if (!empty($conversationBean->stic_messages_id)) {
+            return false;
+        }
+
+        if ($conversationBean->load_relationship('stic_conversations_stic_messages')) {
+            $messageIds = $conversationBean->stic_conversations_stic_messages->get();
+            return empty($messageIds);
+        }
+
+        return true;
+    }
+
+    /**
+     * Persist first message id in conversation when empty
+     */
+    protected function storeFirstMessageInConversation($conversationId, $messageId)
+    {
+        if (empty($conversationId) || empty($messageId)) {
+            return;
+        }
+
+        $conversationBean = BeanFactory::getBean('stic_Conversations', $conversationId);
+        if (empty($conversationBean) || empty($conversationBean->id)) {
+            return;
+        }
+
+        if (empty($conversationBean->stic_messages_id)) {
+            $conversationBean->stic_messages_id = $messageId;
+            $conversationBean->save();
+        }
+    }
+
+    /**
+     * Return JSON validation error for conversation-related saves
+     */
+    protected function returnConversationValidationError($mod_strings)
+    {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Content-Type: application/json');
+        echo json_encode(array(
+            'success' => false,
+            'type' => 'sms',
+            'title' => $mod_strings['LBL_ERROR'],
+            'detail' => $mod_strings['LBL_NEW_CONVERSATION_HELP'],
+        ));
+        exit;
+    }
+
+    /**
+     * Return JSON validation error for required conversation fields
+     */
+    protected function returnConversationRequiredFieldsError($mod_strings)
+    {
+        global $app_strings;
+
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(array(
+            'success' => false,
+            'type' => 'sms',
+            'title' => $mod_strings['LBL_ERROR'],
+            'detail' => $app_strings['ERR_MISSING_REQUIRED_FIELDS'],
+        ));
+        exit;
+    }
+
+    /**
+     * Get latest non-deleted message from conversation
+     */
+    protected function getLatestConversationMessage($conversationBean)
+    {
+        if (!$conversationBean->load_relationship('stic_conversations_stic_messages')) {
+            return null;
+        }
+
+        $latestMessage = null;
+        $latestMessageTs = -1;
+        $relatedMessages = $conversationBean->stic_conversations_stic_messages->getBeans();
+
+        foreach ($relatedMessages as $relatedMessage) {
+            if (empty($relatedMessage) || !empty($relatedMessage->deleted)) {
+                continue;
+            }
+
+            $currentTs = !empty($relatedMessage->date_entered) ? strtotime($relatedMessage->date_entered) : false;
+            $currentTs = $currentTs !== false ? $currentTs : -1;
+
+            if ($currentTs > $latestMessageTs) {
+                $latestMessage = $relatedMessage;
+                $latestMessageTs = $currentTs;
+            }
+        }
+
+        return $latestMessage;
+    }
+
+    /**
+     * Fill parent data from linked contact when missing
+     */
+    protected function fillConversationParentFromContact($conversationBean, &$data)
+    {
+        if (!empty($data['parent_id']) && !empty($data['parent_name'])) {
+            return;
+        }
+
+        if (!$conversationBean->load_relationship('contacts_stic_conversations')) {
+            return;
+        }
+
+        $contactIds = $conversationBean->contacts_stic_conversations->get();
+        if (empty($contactIds) || empty($contactIds[0])) {
+            return;
+        }
+
+        $contactBean = BeanFactory::getBean('Contacts', $contactIds[0]);
+        if (!empty($contactBean) && !empty($contactBean->id)) {
+            $data['parent_id'] = $contactBean->id;
+            $data['parent_type'] = 'Contacts';
+            $contactName = trim(($contactBean->first_name ?? '') . ' ' . ($contactBean->last_name ?? ''));
+            $data['parent_name'] = !empty($contactName) ? $contactName : ($contactBean->name ?? '');
+        }
+    }
+
+    /**
+     * Check if response contains enough conversation data
+     */
+    protected function hasConversationData($data)
+    {
+        return !empty($data['sender'])
+            || !empty($data['parent_id'])
+            || !empty($data['parent_type'])
+            || !empty($data['parent_name']);
+    }
+
+    /**
+     * AJAX endpoint to retrieve sender/parent from conversation
+     */
+    public function action_getConversationData() {
+        $conversationId = $_POST['conversationId'] ?? '';
+
+        $response = array();
+        $response['code'] = 'No data';
+        $response['data'] = array(
+            'sender' => '',
+            'conversation_id' => '',
+            'conversation_name' => '',
+            'parent_id' => '',
+            'parent_type' => '',
+            'parent_name' => '',
+        );
+
+        if (!empty($conversationId)) {
+            $conversationBean = BeanFactory::getBean('stic_Conversations', $conversationId);
+
+            if (!empty($conversationBean) && !empty($conversationBean->id)) {
+                $response['data']['conversation_id'] = $conversationBean->id;
+                $response['data']['conversation_name'] = $conversationBean->name ?? '';
+
+                $latestMessage = $this->getLatestConversationMessage($conversationBean);
+                if ($latestMessage) {
+                    $response['data']['sender'] = $latestMessage->sender ?? '';
+                    $response['data']['parent_id'] = $latestMessage->parent_id ?? '';
+                    $response['data']['parent_type'] = $latestMessage->parent_type ?? '';
+                    $response['data']['parent_name'] = $latestMessage->parent_name ?? '';
+                }
+
+                $this->fillConversationParentFromContact($conversationBean, $response['data']);
+
+                if ($this->hasConversationData($response['data'])) {
+                    $response['code'] = 'OK';
+                }
+            }
+        }
+
+        echo json_encode($response);
+        exit;
+    }
 
 }
