@@ -47,16 +47,87 @@ $searchdefs[$module_name] = array(
     ),
     'layout' => array(
         'basic_search' => array(
-            'name',
-            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
+            'name' => array(
+                'name' => 'name',
+            ),
+            'clean_referrer' => array(
+                'name' => 'clean_referrer',
+                'type' => 'varchar',
+            ),
+            'status' => array(
+                'name' => 'status',
+            ),
+            'remote_ip' => array(
+                'name' => 'remote_ip',
+                'type' => 'varchar',
+            ), 
+            'date_entered' => array(
+                'name' => 'date_entered',
+                'type' => 'datetime',
+            ),
+            array(
+                'name' => 'assigned_user_id',
+                'type' => 'enum',
+                'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
+            ),
         ),
         'advanced_search' => array(
-            'name',
+            'name' => array(
+                'name' => 'name',
+            ),
+            'clean_referrer' => array(
+                'name' => 'clean_referrer',
+                'type' => 'varchar',
+            ),
+            'status' => array(
+                'name' => 'status',
+            ),
+            'remote_ip' => array(
+                'name' => 'remote_ip',
+                'type' => 'varchar',
+            ), 
+            'form_url' => array(
+                'name' => 'form_url',
+                'type' => 'varchar',
+            ),
+            'user_agent' => array(
+                'name' => 'user_agent',
+                'type' => 'varchar',
+            ),
+            'response_hash' => array(
+                'name' => 'response_hash',
+                'type' => 'varchar',
+            ),
+            'date_entered' => array(
+                'name' => 'date_entered',
+                'label' => 'LBL_DATE_ENTERED',
+                'type' => 'datetime',
+            ),
             array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
                 'type' => 'enum',
                 'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
             ),
         ),
     ),

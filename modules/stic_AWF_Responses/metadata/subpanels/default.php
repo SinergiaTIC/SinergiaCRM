@@ -59,12 +59,16 @@ $subpanel_layout = array(
             'vname' => 'LBL_STATUS',
             'width' => '20%',
         ),
-        'form_url' => array(
-            'vname' => 'LBL_FORM_URL',
-            'width' => '40%',
+        'clean_referrer' => array(
+            'vname' => 'LBL_CLEAN_REFERRER',
+            'width' => '20%',
         ),
-        'date_modified' => array(
-            'vname' => 'LBL_DATE_MODIFIED',
+        'remote_ip' => array(
+            'vname' => 'LBL_REMOTE_IP',
+            'width' => '20%',
+        ),
+        'date_entered' => array(
+            'vname' => 'LBL_DATE_ENTERED',
             'width' => '20%',
         ),
     ),

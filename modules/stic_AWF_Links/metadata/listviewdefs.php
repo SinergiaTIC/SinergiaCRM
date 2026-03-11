@@ -47,28 +47,50 @@ $listViewDefs[$module_name] = array(
     'SEQUENCE_NUMBER' => array(
         'width' => '5',
         'label' => 'LBL_SEQUENCE_NUMBER',
-        'default' => true,
+        'default' => false,
     ),
     'NAME' => array(
-        'width' => '32',
         'label' => 'LBL_NAME',
         'default' => true,
         'link' => true
     ),
-    'PARENT_NAME' => array(
-        'width' => '5',
-        'label' => 'LBL_FLEX_RELATE',
-        'default' => false,
-    ),
     'RECORD_ACTION' => array(
-        'width' => '10',
         'label' => 'LBL_RECORD_ACTION',
+        'default' => true,
+    ),
+    'PARENT_TYPE_TRANSLATED' => array(
+        'width' => '15%',
+        'label' => 'LBL_PARENT_TYPE',
+        'default' => true,
+        'sortable' => false,
+        'related_fields' => array('parent_type'), 
+    ),
+    'PARENT_NAME' => array(
+        'type' => 'parent',
+        'studio' => 'visible',
+        'label' => 'LBL_FLEX_RELATE',
+        'link' => true,
+        'sortable' => false,
+        'ACLTag' => 'PARENT',
+        'dynamic_module' => 'PARENT_TYPE',
+        'id' => 'PARENT_ID',
+        'related_fields' => array(
+            0 => 'parent_id',
+            1 => 'parent_type',
+        ),
+        'width' => '10%',
         'default' => true,
     ),
     'SUBMITTED_DATA' => array(
         'width' => '30',
         'label' => 'LBL_SUBMITTED_DATA',
         'default' => false,
+    ),
+    'DATE_ENTERED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_ENTERED',
+        'width' => '10%',
+        'default' => true,
     ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',

@@ -75,7 +75,6 @@ $mod_strings = array (
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Detalles de respuestas a formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_stic_AWF_Forms_ANSWERS_SUBPANEL_TITLE' => 'Detalles de respuestas a formularios',
   'LBL_NEW_FORM_TITLE' => 'Nuevo Detalle de respuesta a formulario',
 
   'LBL_QUESTION_SORT_ORDER' => 'Orden',

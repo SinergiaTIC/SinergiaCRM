@@ -47,16 +47,80 @@ $searchdefs[$module_name] = array(
     ),
     'layout' => array(
         'basic_search' => array(
-            'name',
-            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
+            'name' => array(
+                'name' => 'name',
+            ),
+            'record_action' => array(
+                'name' => 'record_action',
+            ),
+            'parent_name' => array(
+                'type' => 'parent',
+                'label' => 'LBL_LIST_RELATED_TO',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'parent_name',
+            ),
+            'date_entered' => array(
+                'name' => 'date_entered',
+                'type' => 'datetime',
+            ),
+            array(
+                'name' => 'assigned_user_id',
+                'type' => 'enum',
+                'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
+            ),
         ),
         'advanced_search' => array(
-            'name',
+            'name' => array(
+                'name' => 'name',
+            ),
+            'sequence_number' => array(
+                'name' => 'sequence_number',
+            ),
+            'record_action' => array(
+                'name' => 'record_action',
+            ), 
+            'parent_name' => array(
+                'type' => 'parent',
+                'label' => 'LBL_LIST_RELATED_TO',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'parent_name',
+            ),
+            'submitted_data' => array(
+                'name' => 'submitted_data',
+                'type' => 'varchar',
+            ), 
+            'date_entered' => array(
+                'name' => 'date_entered',
+                'label' => 'LBL_DATE_ENTERED',
+                'type' => 'datetime',
+            ),
             array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
                 'type' => 'enum',
                 'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
             ),
         ),
     ),

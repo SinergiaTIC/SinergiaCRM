@@ -79,40 +79,42 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_ANSWER_TEXT',
         'default' => true,
     ),
-    'ANSWER_FORM_TYPE' => array(
-        'width' => '10',
-        'label' => 'LBL_ANSWER_FORM_TYPE',
-        'default' => false,
-    ), 
     'ANSWER_INTEGER' => array(
         'width' => '10',
         'label' => 'LBL_ANSWER_INTEGER',
         'default' => false,
     ),
-    // 'FORM_NAME' => array(
+    'ANSWER_FORM_TYPE' => array(
+        'width' => '10',
+        'label' => 'LBL_ANSWER_FORM_TYPE',
+        'default' => false,
+    ),
+    // 'FORM' => array(
     //     'width' => '9',
-    //     'label' => 'LBL_FORM_NAME',
+    //     'label' => 'LBL_FORM',
     //     'module' => 'stic_AWF_Forms',
     //     'id' => 'FORM_ID',
     //     'default' => true
     // ),
-    // 'RESPONSE_NAME' => array(
+    // 'RESPONSE' => array(
     //     'width' => '9',
-    //     'label' => 'LBL_RESPONSE_NAME',
+    //     'label' => 'LBL_RESPONSE',
     //     'module' => 'stic_AWF_Responses',
     //     'id' => 'RESPONSE_ID',
     //     'default' => true
     // ),
-    'DATE_MODIFIED' => array(
-        'type' => 'datetime',
-        'label' => 'LBL_DATE_MODIFIED',
-        'width' => '10%',
-        'default' => false,
-    ),
     'DATE_ENTERED' => array(
         'type' => 'datetime',
         'label' => 'LBL_DATE_ENTERED',
         'width' => '10%',
-        'default' => false,
+        'default' => true,
+    ),
+    'ASSIGNED_USER_NAME' => array(
+        'link' => true,
+        'type' => 'relate',
+        'label' => 'LBL_ASSIGNED_TO_NAME',
+        'id' => 'ASSIGNED_USER_ID',
+        'width' => '9%',
+        'default' => true,
     ),
 );

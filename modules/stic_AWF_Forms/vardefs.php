@@ -240,7 +240,7 @@ $dictionary['stic_AWF_Forms'] = array(
     'inline_edit' => false,
     'reportable' => true,
     'massupdate' => false,
-  ),  
+  ),
 ),
     'relationships' => array (
 ),
@@ -256,7 +256,7 @@ $dictionary["stic_AWF_Forms"]["fields"]["stic_69c1s_responses"] = array (
   'module' => 'stic_AWF_Responses',
   'bean_name' => false,
   'side' => 'right',
-  'vname' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Responses_TITLE',
+  'vname' => 'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE',
 );
 
 if (!class_exists('VardefManager')) {

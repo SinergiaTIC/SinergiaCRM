@@ -18,7 +18,7 @@ $layout_defs["stic_AWF_Forms"]["subpanel_setup"]['stic_69c1s_responses'] = array
   'subpanel_name' => 'default',
   'sort_order' => 'asc',
   'sort_by' => 'id',
-  'title_key' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Responses_TITLE',
+  'title_key' => 'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE',
   'get_subpanel_data' => 'stic_69c1s_responses',
   'top_buttons' => array (),
 );  

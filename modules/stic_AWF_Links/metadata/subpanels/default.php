@@ -63,13 +63,23 @@ $subpanel_layout = array(
             'vname' => 'LBL_RECORD_ACTION',
             'width' => '20%',
         ),
+        'parent_id' => array(
+            'usage' => 'query_only',
+        ),
         'parent_type' => array(
+            'usage' => 'query_only',
+        ),
+        'parent_type_translated' => array(
             'vname' => 'LBL_PARENT_TYPE',
             'width' => '30%',
-        ),
+            'related_fields' => array('parent_type'),
+        ),        
         'parent_name' => array(
             'vname' => 'LBL_FLEX_RELATE',
             'width' => '30%',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'target_module_key' => 'parent_type',
+            'target_record_key' => 'parent_id',
         ),
     ),
 );

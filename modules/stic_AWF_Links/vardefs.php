@@ -109,9 +109,7 @@ $dictionary['stic_AWF_Links'] = array(
     'required' => false,
     'name' => 'parent_type',
     'vname' => 'LBL_PARENT_TYPE',
-    // 'type' => 'parent_type',
-    'type' => 'enum',
-    'options' => 'moduleList',
+    'type' => 'parent_type',
     'massupdate' => 0,
     'no_default' => false,
     'comments' => '',
@@ -128,6 +126,15 @@ $dictionary['stic_AWF_Links'] = array(
     'size' => '20',
     'dbType' => 'varchar',
     'studio' => 'hidden',
+  ),
+  'parent_type_translated' => 
+  array(
+    'name' => 'parent_type_translated',
+    'vname' => 'LBL_PARENT_TYPE',
+    'type' => 'varchar',
+    'source' => 'non-db',
+    'studio' => false,
+    'inline_edit' => false,
   ),
   'parent_id' => 
   array (
@@ -227,7 +234,7 @@ $dictionary["stic_AWF_Links"]["fields"]["stic_1c31forms_links"] = array (
   'source' => 'non-db',
   'module' => 'stic_AWF_Responses',
   'bean_name' => false,
-  'vname' => 'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Responses_TITLE',
+  'vname' => 'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_RESPONSES_TITLE',
   'id_name' => 'stic_awf_responses_stic_awf_linksresponses_ida',
 );
 $dictionary["stic_AWF_Links"]["fields"]["stic_c271_links_name"] = array (
@@ -235,7 +242,7 @@ $dictionary["stic_AWF_Links"]["fields"]["stic_c271_links_name"] = array (
   'type' => 'relate',
   'source' => 'non-db',
   'inline_edit' => false,
-  'vname' => 'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Responses_TITLE',
+  'vname' => 'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_RESPONSES_TITLE',
   'save' => true,
   'id_name' => 'stic_awf_responses_stic_awf_linksresponses_ida',
   'link' => 'stic_1c31forms_links',
@@ -250,7 +257,7 @@ $dictionary["stic_AWF_Links"]["fields"]["stic_awf_responses_stic_awf_linksrespon
   'source' => 'non-db',
   'reportable' => false,
   'side' => 'right',
-  'vname' => 'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Links_TITLE',
+  'vname' => 'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE',
 );
 
 if (!class_exists('VardefManager')) {

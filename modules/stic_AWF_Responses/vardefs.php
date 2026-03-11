@@ -44,13 +44,13 @@ $dictionary['stic_AWF_Responses'] = array(
     'inline_edit' => false,
     'duplicate_merge' => false,
     'fields' => array (
-  'form_url' => 
+  'form_url' =>
   array (
     'required' => false,
     'name' => 'form_url',
     'vname' => 'LBL_FORM_URL',
     'type' => 'text',
-    'massupdate' => 0,
+    'massupdate' => false,
     'no_default' => false,
     'comments' => '',
     'help' => '',
@@ -64,8 +64,17 @@ $dictionary['stic_AWF_Responses'] = array(
     'merge_filter' => 'disabled',
     'size' => '20',
     'studio' => 'visible',
-    'rows' => '4',
-    'cols' => '20',
+  ),
+  'clean_referrer' => array(
+    'name' => 'clean_referrer',
+    'vname' => 'LBL_CLEAN_REFERRER',
+    'type' => 'text',
+    'studio' => 'visible',
+    'reportable' => true,
+    'duplicate_merge' => 'disabled',
+    'inline_edit' => false,
+    'reportable' => true,
+    'massupdate' => false,
   ),
   'user_agent' => 
   array (
@@ -87,8 +96,6 @@ $dictionary['stic_AWF_Responses'] = array(
     'merge_filter' => 'disabled',
     'size' => '20',
     'studio' => 'visible',
-    'rows' => '4',
-    'cols' => '20',
   ),
   'remote_ip' => 
   array (
@@ -110,8 +117,6 @@ $dictionary['stic_AWF_Responses'] = array(
     'merge_filter' => 'disabled',
     'size' => '20',
     'studio' => 'visible',
-    'rows' => '4',
-    'cols' => '20',
   ),
   'raw_payload' => 
   array (
@@ -133,8 +138,6 @@ $dictionary['stic_AWF_Responses'] = array(
     'merge_filter' => 'disabled',
     'size' => '20',
     'studio' => 'visible',
-    'rows' => '4',
-    'cols' => '20',
   ),
   'response_hash' => 
   array (
@@ -234,7 +237,7 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_1c31forms_links"] = array (
   'module' => 'stic_AWF_Links',
   'bean_name' => false,
   'side' => 'right',
-  'vname' => 'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Links_TITLE',
+  'vname' => 'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE',
 );
 
 $dictionary["stic_AWF_Responses"]["fields"]["stic_69c1s_responses"] = array (
@@ -244,7 +247,7 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_69c1s_responses"] = array (
   'source' => 'non-db',
   'module' => 'stic_AWF_Forms',
   'bean_name' => false,
-  'vname' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Forms_TITLE',
+  'vname' => 'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_FORMS_TITLE',
   'id_name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
 );
 $dictionary["stic_AWF_Responses"]["fields"]["stic_1bb8ponses_name"] = array (
@@ -252,7 +255,7 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_1bb8ponses_name"] = array (
   'type' => 'relate',
   'source' => 'non-db',
   'inline_edit' => false,
-  'vname' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Forms_TITLE',
+  'vname' => 'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_FORMS_TITLE',
   'save' => true,
   'id_name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
   'link' => 'stic_69c1s_responses',
@@ -267,7 +270,7 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_awf_forms_stic_awf_responsesfo
   'source' => 'non-db',
   'reportable' => false,
   'side' => 'right',
-  'vname' => 'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Responses_TITLE',
+  'vname' => 'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE',
 );
 
 $dictionary['stic_AWF_Responses']['fields']['details_link'] = array(

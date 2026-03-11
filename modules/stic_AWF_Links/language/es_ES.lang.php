@@ -75,7 +75,6 @@ $mod_strings = array (
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Vínculos de formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_stic_AWF_Links_SUBPANEL_TITLE' => 'Vínculos de formularios',
   'LBL_NEW_FORM_TITLE' => 'Nuevo Vínculo de formulario',
 
   'LBL_DEFAULT_PANEL' => 'Datos generales',
@@ -102,5 +101,5 @@ $mod_strings = array (
   'LBL_FIELD_CHANGE_SKIPPED_DUPLICATE' => 'Saltado por duplicado',
   'LBL_FIELD_CHANGE_UNCHANGED' => 'Sin cambios',
 
-  'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Responses_TITLE' => 'Respuesta a formulario',
+  'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_RESPONSES_TITLE' => 'Respuesta a formulario',
 );

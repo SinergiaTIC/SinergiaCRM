@@ -67,6 +67,12 @@ class stic_AWF_Responses extends Basic
     public $response_hash;
     public $status;
     public $execution_log;
+    public $remote_ip;
+    public $form_url;
+    public $clean_referrer;
+    public $user_agent;
+    public $html_summary;
+    public $processing_mode;
 
     public $is_automated_save = false;
 	

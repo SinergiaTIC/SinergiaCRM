@@ -75,7 +75,6 @@ $mod_strings = array (
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Formularios Web Avanzados',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_stic_AWF_Forms_SUBPANEL_TITLE' => 'Formularios Web Avanzados',
   'LBL_NEW_FORM_TITLE' => 'Nuevo Formulario Web Avanzado',
 
   'LBL_DEFAULT_PANEL' => 'Datos generales',
@@ -407,7 +406,7 @@ $mod_strings = array (
   'LBL_OK_FIELD_IS_VALID' => 'El campo es correcto',
 
   // -- SUBPANELS --
-  'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Responses_TITLE' => 'Respuestas a formularios',
+  'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE' => 'Respuestas a formularios',
 
   // -- HOOK ACTIONS --
   // Generic 

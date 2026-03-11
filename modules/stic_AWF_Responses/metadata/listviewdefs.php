@@ -50,19 +50,29 @@ $listViewDefs[$module_name] = array(
         'default' => true,
         'link' => true
     ),
+    'CLEAN_REFERRER' => array(
+        'width' => '30',
+        'label' => 'LBL_CLEAN_REFERRER',
+        'default' => true,
+    ),
     'FORM_URL' => array(
         'width' => '30',
         'label' => 'LBL_FORM_URL',
+        'default' => false,
+    ),
+    'STATUS' => array(
+        'width' => '30',
+        'label' => 'LBL_STATUS',
+        'default' => true,
+    ),
+    'REMOTE_IP' => array(
+        'width' => '30',
+        'label' => 'LBL_REMOTE_IP',
         'default' => true,
     ),
     'USER_AGENT' => array(
         'width' => '30',
         'label' => 'LBL_USER_AGENT',
-        'default' => false,
-    ),
-    'REMOTE_IP' => array(
-        'width' => '30',
-        'label' => 'LBL_REMOTE_IP',
         'default' => false,
     ),
     'RAW_PAYLOAD' => array(
@@ -74,11 +84,6 @@ $listViewDefs[$module_name] = array(
         'width' => '30',
         'label' => 'LBL_RESPONSE_HASH',
         'default' => false,
-    ),
-    'STATUS' => array(
-        'width' => '30',
-        'label' => 'LBL_STATUS',
-        'default' => true,
     ),
     'DATE_ENTERED' => array(
         'type' => 'datetime',

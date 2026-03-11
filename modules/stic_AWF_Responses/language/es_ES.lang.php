@@ -75,7 +75,6 @@ $mod_strings = array (
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Respuestas a formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_stic_AWF_Responses_SUBPANEL_TITLE' => 'Respuestas a formularios',
   'LBL_NEW_FORM_TITLE' => 'Nueva Respuesta a formulario',
   'LBL_EMPTY' => 'Vacío',
    
@@ -84,6 +83,7 @@ $mod_strings = array (
 
   // Module fields
   'LBL_FORM_URL' => 'URL del formulario',
+  'LBL_CLEAN_REFERRER' => 'Página de origen',
   'LBL_USER_AGENT' => 'Navegador y sistema operativo',
   'LBL_REMOTE_IP' => 'Dirección IP',
   'LBL_RAW_PAYLOAD' => 'Respuesta json (no visible)',
@@ -130,7 +130,7 @@ $mod_strings = array (
   'LBL_ERROR_VALUE_FIELD' => 'El valor no es válido para el campo.',
   
   // Subpanels
-  'LBL_stic_AWF_Responses_stic_AWF_Links_FROM_stic_AWF_Links_TITLE' => 'Vínculos de la respuesta al formulario',
-  'LBL_stic_AWF_Forms_stic_AWF_Responses_FROM_stic_AWF_Forms_TITLE' => 'Formulario Web Avanzado',
+  'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE' => 'Vínculos de la respuesta al formulario',
+  'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_FORMS_TITLE' => 'Formulario Web Avanzado',
   'LBL_ANSWERS_SUBPANEL_TITLE' => 'Detalles de la respuesta',
 );

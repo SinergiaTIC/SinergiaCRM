@@ -48,15 +48,21 @@ $viewdefs [$module_name] = array (
         ),
         2 => array (
           0 => array (
-            'name' => 'parent_name',
-            'label' => 'LBL_FLEX_RELATE',
-          ),
-          1 => array (
             'name' => 'record_action',
             'label' => 'LBL_RECORD_ACTION',
           ),
         ),
         3 => array (
+          0 => array (
+            'name' => 'parent_type_translated',
+            'label' => 'LBL_PARENT_TYPE',
+          ),
+          1 => array (
+            'name' => 'parent_name',
+            'label' => 'LBL_FLEX_RELATE',
+          ),
+        ),
+        4 => array (
           0 => array (
             'name' => 'submitted_data_html',
             'label' => 'LBL_SUBMITTED_DATA',

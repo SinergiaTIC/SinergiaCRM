@@ -47,16 +47,93 @@ $searchdefs[$module_name] = array(
     ),
     'layout' => array(
         'basic_search' => array(
-            'name',
-            array('name' => 'current_user_only', 'label' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
+            'question_sort_order' => array(
+                'name' => 'question_sort_order',
+            ),
+            'question_section' => array(
+                'name' => 'question_section',
+            ),
+            'question_label' => array(
+                'name' => 'question_label',
+            ),
+            'question_help_text' => array(
+                'name' => 'question_help_text',
+                'type' => 'varchar',
+            ),
+            'answer_text' => array(
+                'name' => 'answer_text',
+                'type' => 'varchar',
+            ),
+            'date_entered' => array(
+                'name' => 'date_entered',
+                'type' => 'datetime',
+            ),
+            array(
+                'name' => 'assigned_user_id',
+                'type' => 'enum',
+                'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
+            ),
         ),
         'advanced_search' => array(
-            'name',
+            'question_sort_order' => array(
+                'name' => 'question_sort_order',
+            ),
+            'question_key' => array(
+                'name' => 'question_key',
+            ),
+            'question_section' => array(
+                'name' => 'question_section',
+            ),
+            'question_label' => array(
+                'name' => 'question_label',
+            ),
+            'question_help_text' => array(
+                'name' => 'question_help_text',
+                'type' => 'varchar',
+            ),
+            'answer_text' => array(
+                'name' => 'answer_text',
+                'type' => 'varchar',
+            ),
+            'answer_value' => array(
+                'name' => 'answer_value',
+            ),
+            'answer_integer' => array(
+                'name' => 'answer_integer',
+            ),
+            'answer_form_type' => array(
+                'name' => 'answer_form_type',
+            ),
+            'date_entered' => array(
+                'name' => 'date_entered',
+                'label' => 'LBL_DATE_ENTERED',
+                'type' => 'datetime',
+            ),
             array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
                 'type' => 'enum',
                 'function' => array('name' => 'get_user_array', 'params' => array(false))
+            ),
+            'current_user_only' => array(
+                'name' => 'current_user_only',
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
             ),
         ),
     ),

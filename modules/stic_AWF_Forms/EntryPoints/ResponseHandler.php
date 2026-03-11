@@ -106,6 +106,16 @@ class ResponseHandler
         $formUrl = $_POST['awf_form_url'] ?? $_SERVER['HTTP_REFERER'] ?? '';
         $formUrl = substr(strip_tags($formUrl), 0, 255);
 
+        // Clean URL
+        $cleanUrl = '';
+        if (!empty($formUrl)) {
+            $parsedUrl = parse_url($formUrl);
+            $scheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+            $host = $parsedUrl['host'] ?? '';
+            $path = $parsedUrl['path'] ?? '';
+            $cleanUrl = $scheme . $host . $path;
+        }
+
         // Data sanitization
         unset($cleanData['module']);
         unset($cleanData['action']);
@@ -235,6 +245,7 @@ class ResponseHandler
         $responseBean->response_hash = $responseHash;
         $responseBean->remote_ip = $remoteIp;
         $responseBean->form_url = $formUrl;
+        $responseBean->clean_referrer = $cleanUrl;
         $responseBean->user_agent = $userAgent;
         $responseBean->description = $responseDescription;
         $responseBean->assigned_user_id = $formBean->assigned_user_id;

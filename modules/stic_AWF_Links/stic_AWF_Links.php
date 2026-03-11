@@ -71,6 +71,8 @@ class stic_AWF_Links extends Basic
     public $submitted_data;
 
     public $is_automated_save = false;
+    
+    public $parent_type_translated;
 	
     public function bean_implements($interface)
     {
