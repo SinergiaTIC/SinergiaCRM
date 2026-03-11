@@ -395,6 +395,9 @@ class ExampleAction extends HookActionDefinition
         $result->registerBeanModification($newBean, BeanModificationType::CREATED);
 
         // Option B: If we had modified the bean of the 'target_block'
+        // $dataToLog = [
+        //      ['key' => 'target_list_record', 'label' => $this->translate('TARGET_LIST_RECORD_TEXT'), 'value' => $lpoRef->beanId],
+        // ];
         // $actionResult->registerActionMetadata($bean, $dataToLog);
 
         return $result;

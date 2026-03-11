@@ -118,20 +118,26 @@ class ActionResult {
      * Used when the action does not modify physical fields of the Bean, but rather performs context operations.
      *
      * @param SugarBean $bean The bean on which the action was performed
-     * @param array $metadata Simple dictionary key => value with the info to record
+     * @param array $metadata Array of associative arrays [['key' => string, 'label' => string, 'value' => mixed]]
      */
     public function registerActionMetadata(SugarBean $bean, array $metadata): void
     {
         require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
 
         $logData = [];
-        foreach ($metadata as $key => $value) {
-            // Wrap the flat data in a FieldModification object with APPLIED state.
-            $logData[$key] = new FieldModification($key, FieldModificationStatus::APPLIED, $value);
+        foreach ($metadata as $metaItem) {
+            if (!is_array($metaItem) || !isset($metaItem['key'])) continue;
+            
+            $key = $metaItem['key'];
+            $value = $metaItem['value'];
+            $label = $metaItem['label'];
+
+            // Wrap the data in a FieldModification object with APPLIED state and custom label.
+            $logData[$key] = new FieldModification($key, FieldModificationStatus::APPLIED, $value, null, $label);
         }
 
-        // Consider all these actions as an UPDATE of the record context
-        $modifiedBean = new BeanModified($bean->id, $bean->module_name, BeanModificationType::UPDATED, $logData);
+        // Save actions as a METADATA injection in the record context
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, BeanModificationType::METADATA, $logData);
         
         $this->addModifiedBean($modifiedBean);
     }

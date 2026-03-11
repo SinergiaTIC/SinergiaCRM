@@ -47,11 +47,10 @@ function getLinkDataHtml($focus, $field, $value, $view) {
     }
     
     // Color of the main badge (of the header)
-    $badgeColor = '#6c757d'; 
+    $badgeColor = '#6c757d'; // skipped, metadata
     if ($focus->record_action === 'created') $badgeColor = '#198754'; 
     if ($focus->record_action === 'updated') $badgeColor = '#0d6efd'; 
     if ($focus->record_action === 'enriched') $badgeColor = '#0dc5fd'; 
-    if ($focus->record_action === 'skipped') $badgeColor = '#6c757d'; 
     
     // Related record name
     $recordName = $focus->parent_name;
@@ -170,27 +169,55 @@ function getLinkDataHtml($focus, $field, $value, $view) {
             }
         }
 
+        // Separate Normal CRM Fields from Action Metadata
+        $normalFields = [];
+        $metadataFields = [];
         foreach ($data as $key => $valData) {
             if ($key === 'id' || $key === 'date_modified') continue;
+            
+            $isMetadata = !isset($fieldDefs[$key]);
+            if ($isMetadata) {
+                $metadataFields[$key] = $valData;
+            } else {
+                $normalFields[$key] = $valData;
+            }
+        }
+
+        // Merge back with a logical separator in between
+        $allFields = array_merge($normalFields, ['_SEPARATOR_' => true], $metadataFields);
+
+        foreach ($allFields as $key => $valData) {
+            // Render the visual separator if needed
+            if ($key === '_SEPARATOR_') {
+                 if (!empty($normalFields) && !empty($metadataFields)) {
+                     $html .= "<tr><td colspan='3' style='padding: 0; height: 6px; background-color: #f1f3f4; border-top: 1px solid #dee2e6; border-bottom: 1px solid #dee2e6;'></td></tr>";
+                 }
+                 continue;
+            }
 
             $status = 'applied';
             $val = $valData;
             $oldVal = null;
-
+            $metaLabel = null;
             if (is_array($valData) && isset($valData['status'])) {
                 $status = $valData['status'];
                 $val = $valData['value'];
                 $oldVal = $valData['oldValue'] ?? $valData['old_value'] ?? null;
+                $metaLabel = $valData['label'] ?? null;
             }
-
             $isMetadata = !isset($fieldDefs[$key]);
 
+            // Label resolution
             $label = $key;
             if (!$isMetadata && isset($fieldDefs[$key]['vname'])) {
                 $label = translate($fieldDefs[$key]['vname'], $module);
                 $label = rtrim($label, ':');
             } elseif ($isMetadata) {
-                $label = ucwords(str_replace('_', ' ', trim($key, '_')));
+                if (!empty($metaLabel)) {
+                    $label = $metaLabel;
+                } else {
+                    $label = ucwords(str_replace('_', ' ', trim($key, '_')));
+                }
             }
 
             $displayVal = $formatVal($val);
@@ -249,10 +276,11 @@ function getLinkDataHtml($focus, $field, $value, $view) {
                         </div>
                       </th>";
             // Second and Third column
-            $html .= "<td class='awf-col-enviat'>{$sentHtml}</td>";
+            $html .= "<td class='awf-col-sent'>{$sentHtml}</td>";
             $html .= "<td class='awf-col-final'>{$finalHtml}</td>";
             $html .= "</tr>";
         }
+        
         $html .= '</tbody></table>';
     }
 

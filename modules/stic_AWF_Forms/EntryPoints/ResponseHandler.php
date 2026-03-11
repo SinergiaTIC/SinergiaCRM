@@ -541,25 +541,37 @@ class ResponseHandler
                     $consolidatedBeans[$key] = [
                         'module' => $modBean->moduleName,
                         'id' => $modBean->beanId,
-                        'type' => $modBean->modificationType, // (CREATED, UPDATED, ENRICHED, SKIPPED)
+                        'type' => $modBean->modificationType, // (CREATED, UPDATED, ENRICHED, SKIPPED, METADATA)
                         'data' => $modBean->submittedData
                     ];
                 } else {
                     // It already exists, we merge
                     $currentEntry = &$consolidatedBeans[$key];
 
-                    // Merge of action type performed. Priority: CREATED > UPDATED > ENRICHED
-                    if ($modBean->modificationType === BeanModificationType::CREATED) {
+                    // Merge of action type performed. Priority: CREATED > UPDATED > ENRICHED > SKIPPED > METADATA
+                    $oldType = $currentEntry['type'];
+                    $newType = $modBean->modificationType;
+
+                    if ($newType === BeanModificationType::CREATED) {
+                        // CREATED wins over absolutely everything
                         $currentEntry['type'] = BeanModificationType::CREATED;
-                    } elseif ($currentEntry['type'] !== BeanModificationType::CREATED && $modBean->modificationType === BeanModificationType::UPDATED) {
+                    } 
+                    elseif ($newType === BeanModificationType::UPDATED && $oldType !== BeanModificationType::CREATED) {
+                        // UPDATED wins over all except CREATED
                         $currentEntry['type'] = BeanModificationType::UPDATED;
-                    } elseif ($currentEntry['type'] === BeanModificationType::SKIPPED && $modBean->modificationType !== BeanModificationType::SKIPPED) {
-                        // If it was SKIPPED and now it is another action, we update it
-                        $currentEntry['type'] = $modBean->modificationType;
+                    } 
+                    elseif ($newType === BeanModificationType::ENRICHED && !in_array($oldType, [BeanModificationType::CREATED, BeanModificationType::UPDATED])) {
+                        // ENRICHED wins over all except CREATED and UPDATED
+                        $currentEntry['type'] = BeanModificationType::ENRICHED;
                     }
+                    elseif ($oldType === BeanModificationType::METADATA && $newType !== BeanModificationType::METADATA) {
+                        // If we only had METADATA, any physical action (even SKIPPED) overrides it
+                        $currentEntry['type'] = $newType;
+                    }
+                    // Notice: If oldType is SKIPPED and newType is METADATA, no condition matches, so we preserve the SKIPPED state.
 
                     // Merge of touched data: We accumulate the fields (not SKIPPED)
-                    if ($modBean->modificationType !== BeanModificationType::SKIPPED && !empty($modBean->submittedData)) {
+                    if ($newType !== BeanModificationType::SKIPPED && !empty($modBean->submittedData)) {
                         foreach ($modBean->submittedData as $fieldName => $fieldMod) {
                             if (!isset($currentEntry['data'][$fieldName])) {
                                 $currentEntry['data'][$fieldName] = $fieldMod;
@@ -570,11 +582,11 @@ class ResponseHandler
                                 
                                 // If the new status is APPLIED, it overwrites whatever was there.
                                 if ($fieldMod->status === FieldModificationStatus::APPLIED) {
-                                     $currentEntry['data'][$fieldName] = $fieldMod;
+                                    $currentEntry['data'][$fieldName] = $fieldMod;
                                 } 
                                 // If the new state is IGNORED_ENRICH, it only wins if the old state was UNCHANGED
                                 elseif ($fieldMod->status === FieldModificationStatus::IGNORED_ENRICH && $existingMod->status === FieldModificationStatus::UNCHANGED) {
-                                     $currentEntry['data'][$fieldName] = $fieldMod;
+                                    $currentEntry['data'][$fieldName] = $fieldMod;
                                 }
                                 // In any other case (eg: the old one was APPLIED and the new one is UNCHANGED), do nothing and keep the old one
                             }
@@ -851,6 +863,7 @@ class ResponseHandler
                 $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
                 $detailBean->stic_awf_responses_id_c = $responseBean->id;
                 $detailBean->stic_awf_forms_id_c = $formConfig->id ?? ''; 
+                $detailBean->assigned_user_id = $responseBean->assigned_user_id;
                 
                 $detailBean->question_key = $block->name . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;

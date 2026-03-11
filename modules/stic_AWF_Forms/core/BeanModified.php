@@ -30,6 +30,7 @@ enum BeanModificationType: string {
     case UPDATED  = 'updated';
     case ENRICHED = 'enriched';
     case SKIPPED  = 'skipped';
+    case METADATA = 'metadata';
 }
 
 /**
