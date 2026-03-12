@@ -38,4 +38,3 @@ $mod_strings['LBL_BILLING_CONTACT'] = 'Persona';
 $mod_strings['LBL_OPPORTUNITY'] = 'Subvención';
 $mod_strings['LBL_DUE_DATE_ERROR'] = 'La fecha de vencimiento debe ser igual o posterior a la fecha de facturación.';
 $mod_strings['LBL_INVOICE_DATE_ERROR'] = 'La fecha de facturación debe ser igual o anterior a la fecha de vencimiento.';
-$mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'] = 'No es posible enviar la factura a la AEAT: su fecha de expedición (%s) es anterior a la de la última factura ya registrada en la cadena Verifactu (nº %s, fecha %s).';
