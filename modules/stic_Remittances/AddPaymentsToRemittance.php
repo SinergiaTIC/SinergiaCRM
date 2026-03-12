@@ -52,6 +52,21 @@ function addPaymentsToRemittance() {
         $idList = implode("','", $ids);
         $where = " AND id in ('{$idList}')";
     }
+
+    $focus = BeanFactory::newBean('stic_Payments');
+    // Check ACL access
+    if ($focus->bean_implements('ACL')) {
+        if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
+            ACLController::displayNoAccess();
+            sugar_die('');
+        }
+
+        $accessWhere = $focus->buildAccessWhere('list');
+        $where .= ' AND ' . $accessWhere;
+    }
+
+
+
     $sql .= $where;
     // Retrieve selected payments from db
     $paymentsQuery = $db->query($sql);
