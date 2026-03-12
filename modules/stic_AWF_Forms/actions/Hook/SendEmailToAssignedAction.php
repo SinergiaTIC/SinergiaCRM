@@ -1,0 +1,182 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+// Prevents directly accessing this file from a web browser
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+include_once "modules/stic_AWF_Forms/actions/coreActions.php";
+
+/**
+ * SendEmailToAssignedAction
+ *
+ * Sends an email to the ASSIGNED USER of a record.
+ * The source record can be the form, a Data Block (newly created) or a Fixed Record (e.g.: the Event).
+ */
+class SendEmailToAssignedAction extends HookActionDefinition {
+
+    public function __construct() {
+        $this->isActive = true;
+        $this->isUserSelectable = true;
+        $this->defaultContinueOnError = true;
+        $this->category = 'communication';
+        $this->baseLabel = 'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION';
+    }
+
+    /**
+     * Returns the parameters defined for the action
+     * @return ActionParameterDefinition[] The parameters of the action
+     */
+    public function getParameters(): array {
+        // --- The Source of the Assignee (SELECTOR) ---
+        $paramSource = new ActionParameterDefinition();
+        $paramSource->name = 'record_source_selector';
+        $paramSource->text = $this->translate('SOURCE_TEXT');
+        $paramSource->description = $this->translate('SOURCE_DESC');
+        $paramSource->type = ActionParameterType::OPTION_SELECTOR;
+        $paramSource->required = true;
+
+        // Option A: The form owner
+        $optFormOwner = new ActionSelectorOptionDefinition();
+        $optFormOwner->name = 'opt_form_owner';
+        $optFormOwner->text = $this->translate('OPT_OWNER_TEXT');
+        $optFormOwner->resolvedType = ActionParameterType::EMPTY; // Does not require additional value
+        
+        // Option B: The assigned to the response 
+        $optResponse = new ActionSelectorOptionDefinition();
+        $optResponse->name = 'opt_response';
+        $optResponse->text = $this->translate('OPT_RESPONSE_TEXT');
+        $optResponse->resolvedType = ActionParameterType::EMPTY; // Does not require additional value
+
+        // Option C: A Data Block (e.g.: The assigned from the created Contact)
+        $optBlock = new ActionSelectorOptionDefinition();
+        $optBlock->name = 'opt_datablock';
+        $optBlock->text = $this->translate('OPT_DATABLOCK_TEXT');
+        $optBlock->resolvedType = ActionParameterType::DATA_BLOCK;
+
+        // Option D: A Fixed Record (e.g.: The assigned from Event X)
+        $optRecord = new ActionSelectorOptionDefinition();
+        $optRecord->name = 'opt_record';
+        $optRecord->text = $this->translate('OPT_RECORD_TEXT');
+        $optRecord->resolvedType = ActionParameterType::CRM_RECORD;
+        
+        // Option E: A Related Field (e.g.: The assigned from the record selected in a Relate field)
+        $optField = new ActionSelectorOptionDefinition();
+        $optField->name = 'opt_field';
+        $optField->text = $this->translate('OPT_RELATE_TEXT');
+        $optField->resolvedType = ActionParameterType::FIELD;
+        $optField->supportedDataTypes = [ActionDataType::RELATE];
+
+        $paramSource->selectorOptions = [$optFormOwner, $optResponse, $optBlock, $optRecord, $optField];
+
+        // --- Email Template ---
+        $paramTemplate = new ActionParameterDefinition();
+        $paramTemplate->name = 'email_template';
+        $paramTemplate->text = $this->translate('TEMPLATE_TEXT');
+        $paramTemplate->type = ActionParameterType::CRM_RECORD;
+        $paramTemplate->supportedModules = ['EmailTemplates'];
+        $paramTemplate->required = true;
+
+        return [$paramSource, $paramTemplate];
+    }
+
+
+    /**
+     * Executes the action: Sends an email to the assigned user of a record, using a specified email template.
+     * The source record for determining the assigned user can be configured through different options (form, Data Block, fixed record, related field).
+     * The email is sent using the context of the source record, allowing the template to pull relevant data.
+     * @param ExecutionContext $context The execution context of the action, containing form data and other relevant information.
+     * @param FormAction $actionConfig The configuration of the action, including resolved parameters.
+     * @return ActionResult The result of the action execution, including status and messages.
+     */
+    public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult {
+        /** @var ?BeanReference $templateRef */
+        $templateRef = $actionConfig->getResolvedParameter('email_template');
+        if (!$templateRef) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Email template parameter is missing.");
+        }
+
+        // User assigned to notify
+        $assignedUserId = null;
+        $sourceBean = null;
+
+        /** @var ?OptionSelectorResolved $selector */
+        $selector = $actionConfig->getResolvedParameter('record_source_selector');
+        if ($selector) {
+            if ($selector->selectedOptionName === 'opt_form_owner') {
+                // Option A: The Form owner
+                $sourceBean = BeanFactory::getBean('stic_AWF_Forms', $context->formId);
+
+            } else if ($selector->selectedOptionName === 'opt_response') {
+                // Option B: The assigned to the response
+                $sourceBean = BeanFactory::getBean('stic_AWF_Responses', $context->responseId);
+
+            } else if ($selector->selectedOptionName === 'opt_datablock') {
+                // Option C: A Data Block (ex: The assigned of the created Contact)
+                /** @var DataBlockResolved $block */
+                $block = $selector->resolvedValue;
+                $sourceBean = $block->dataBlock->getBeanReference()?->getBean();
+               
+            } else if ($selector->selectedOptionName === 'opt_record') {
+                // Option D: A Fixed Record (ex: The assigned of Event X)
+                /** @var BeanReference $recordRef */
+                $recordRef = $selector->resolvedValue;
+                $sourceBean = $recordRef?->getBean();
+                
+            } else if ($selector->selectedOptionName === 'opt_field') {
+                // Option E: A Related Field (ex: The assigned of the record selected in a Relate field)
+                /** @var DataBlockFieldResolved $fieldResolved */
+                $fieldResolved = $selector->resolvedValue;
+                /** @var BeanReference $recordRef */
+                $recordRef = new BeanReference($fieldResolved->dataBlockField?->related_module, $fieldResolved->value);
+                $sourceBean = $recordRef?->getBean();
+            }
+        }
+        if ($sourceBean) {
+            $assignedUserId = $sourceBean->assigned_user_id ?? null;
+        }
+
+        if (empty($assignedUserId) || !$sourceBean) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not determine assigned user or source record.");
+        }
+
+        // Get the assigned user email
+        $user = BeanFactory::getBean('Users', $assignedUserId);
+        if (!$user) {
+             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Assigned user not found (ID: {$assignedUserId}).");
+        }
+        $emailAddress = $user->email1; 
+        if (empty($emailAddress)) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Assigned user '{$user->user_name}' does not have a valid 'email1' field.");
+        }
+
+        // Send the email using the template and the source bean as context
+        try {
+            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $context, $sourceBean);
+        } catch (\Exception $e) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
+        }
+
+        return new ActionResult(ResultStatus::OK, $actionConfig, "Email sent to: {$user->user_name} ({$emailAddress})");
+    }
+}
