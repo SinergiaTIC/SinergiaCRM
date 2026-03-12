@@ -416,6 +416,7 @@ $mod_strings = array (
   // SaveRecordAction
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro a partir de los datos del formulario',
+  'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
 
   // RelateRecordsAction
   'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',

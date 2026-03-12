@@ -183,57 +183,32 @@ function getLinkDataHtml($focus, $field, $value, $view) {
             }
         }
 
-        // Merge back with a logical separator in between
-        $allFields = array_merge($normalFields, ['_SEPARATOR_' => true], $metadataFields);
+        // Fields from CRM
+        if (!empty($normalFields)) {
+            foreach ($normalFields as $key => $valData) {
+                $status = 'applied';
+                $val = $valData;
+                $oldVal = null;
 
-        foreach ($allFields as $key => $valData) {
-            // Render the visual separator if needed
-            if ($key === '_SEPARATOR_') {
-                 if (!empty($normalFields) && !empty($metadataFields)) {
-                     $html .= "<tr><td colspan='3' style='padding: 0; height: 6px; background-color: #f1f3f4; border-top: 1px solid #dee2e6; border-bottom: 1px solid #dee2e6;'></td></tr>";
-                 }
-                 continue;
-            }
-
-            $status = 'applied';
-            $val = $valData;
-            $oldVal = null;
-            $metaLabel = null;
-            if (is_array($valData) && isset($valData['status'])) {
-                $status = $valData['status'];
-                $val = $valData['value'];
-                $oldVal = $valData['oldValue'] ?? $valData['old_value'] ?? null;
-                $metaLabel = $valData['label'] ?? null;
-            }
-            $isMetadata = !isset($fieldDefs[$key]);
-
-            // Label resolution
-            $label = $key;
-            if (!$isMetadata && isset($fieldDefs[$key]['vname'])) {
-                $label = translate($fieldDefs[$key]['vname'], $module);
-                $label = rtrim($label, ':');
-            } elseif ($isMetadata) {
-                if (!empty($metaLabel)) {
-                    $label = $metaLabel;
-                } else {
-                    $label = ucwords(str_replace('_', ' ', trim($key, '_')));
+                if (is_array($valData) && isset($valData['status'])) {
+                    $status = $valData['status'];
+                    $val = $valData['value'];
+                    $oldVal = $valData['oldValue'] ?? $valData['old_value'] ?? null;
                 }
-            }
 
-            $displayVal = $formatVal($val);
-            $displayOld = $formatVal($oldVal);
-            
-            $statusIcon = "";
-            $finalHtml = "";
-            $sentHtml = $displayVal; 
-            $rowClass = "";
+                $label = $key;
+                if (isset($fieldDefs[$key]['vname'])) {
+                    $label = translate($fieldDefs[$key]['vname'], $module);
+                    $label = rtrim($label, ':');
+                }
 
-            if ($isMetadata) {
-                $rowClass = "awf-row-info";
-                $statusIcon = "<span class='awf-tiny-icon awf-icon-info' title='". translate('LBL_FIELD_METADATA', 'stic_AWF_Links') ."'>i</span>";
-                $sentHtml = "<span style='color: #adb5bd;'>&mdash;</span>";
-                $finalHtml = "<span class='awf-final-val'>{$displayVal}</span>";
-            } else {
+                $displayVal = $formatVal($val);
+                $displayOld = $formatVal($oldVal);
+                
+                $statusIcon = "";
+                $finalHtml = "";
+                $rowClass = "";
+
                 switch($status) {
                     case 'applied':
                         $rowClass = "awf-row-success";
@@ -264,24 +239,72 @@ function getLinkDataHtml($focus, $field, $value, $view) {
                         $finalHtml = "<span class='awf-final-val'>{$displayOld}</span>";
                         break;
                 }
+
+                $html .= "<tr class='{$rowClass}'>";
+                $html .= "<th>
+                            {$statusIcon}
+                            <div class='awf-field-info'>
+                                <span>{$label}</span>
+                                <span class='awf-field-tech'>{$key}</span>
+                            </div>
+                          </th>";
+                $html .= "<td class='awf-col-sent'>{$displayVal}</td>"; // El valor que venia del formulari
+                $html .= "<td class='awf-col-final'>{$finalHtml}</td>"; // Com ha quedat finalment a la BD
+                $html .= "</tr>";
+            }
+        } else {
+            // If for some reason there are no normal fields, we add an empty row to avoid breaking the table.
+            $html .= "<tr><td colspan='3' style='text-align:center; color:#999; font-style:italic;'>".translate('LBL_NO_MODIFIED_DATA', 'stic_AWF_Links')."</td></tr>";
+        }
+
+        // Close the main table
+        $html .= "</tbody></table>";
+
+        // Actions and additional information
+        if (!empty($metadataFields)) {
+            $html .= "<div class='awf-additional-info' style='margin-top: 15px; margin-bottom: 0px;'>";
+            $html .= "<h4 style='font-size: 12px; font-weight: bold; color: #6c757d; border-bottom: 2px solid #e9ecef; padding-bottom: 6px; margin-bottom: 0;'>";
+            $html .= translate('LBL_ADDITIONAL_INFO', 'stic_AWF_Links');
+            $html .= "</h4>";
+            
+            $html .= '<table class="awf-link-table">';
+            $html .= '<thead><tr>';
+            $html .= '<th>'. translate('LBL_RECORD_ACTION', 'stic_AWF_Links') .'</th>';
+            $html .= '<th class="awf-col-sent">'. translate('LBL_DESCRIPTION', 'stic_AWF_Links') .'</th>';
+            $html .= '<th class="awf-col-final">'. translate('LBL_FINAL_VALUE', 'stic_AWF_Links') .'</th>';
+            $html .= '</tr></thead>';
+            $html .= '<tbody>';
+        
+            foreach ($metadataFields as $key => $valData) {
+                $val = $valData;
+                $metaLabel = null;
+                $actionName = '-';
+
+                if (is_array($valData) && isset($valData['status'])) {
+                    $val = $valData['value'];
+                    $metaLabel = $valData['label'] ?? null;
+                    $actionName = $valData['actionName'] ?? '-';
+                }
+
+                if (empty($metaLabel)) {
+                    $metaLabel = ucwords(str_replace('_', ' ', trim($key, '_')));
+                }
+
+                $displayVal = $formatVal($val);
+
+                $html .= "<tr class='awf-row-info'>";
+                // Action
+                $html .= "<th>{$actionName}</th>";
+                // Description
+                $html .= "<td>{$metaLabel}</td>";
+                // Value
+                $html .= "<td>{$displayVal}</td>";
+                $html .= "</tr>";
             }
 
-            $html .= "<tr class='{$rowClass}'>";
-            // First column: Small floating icon, Field and Technical Name
-            $html .= "<th>
-                        {$statusIcon}
-                        <div class='awf-field-info'>
-                            <span>{$label}</span>
-                            <span class='awf-field-tech'>{$key}</span>
-                        </div>
-                      </th>";
-            // Second and Third column
-            $html .= "<td class='awf-col-sent'>{$sentHtml}</td>";
-            $html .= "<td class='awf-col-final'>{$finalHtml}</td>";
-            $html .= "</tr>";
+            $html .= "</tbody></table>";
+            $html .= "</div>";
         }
-        
-        $html .= '</tbody></table>';
     }
 
     $html .= "</div>";

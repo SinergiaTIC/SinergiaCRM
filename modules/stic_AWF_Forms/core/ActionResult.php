@@ -124,6 +124,11 @@ class ActionResult {
     {
         require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
 
+        $actionText = null;
+        if ($this->actionConfig) {
+            $actionText = $this->actionConfig->text ?? $this->actionConfig->title ?? $this->actionConfig->name;
+        }
+
         $logData = [];
         foreach ($metadata as $metaItem) {
             if (!is_array($metaItem) || !isset($metaItem['key'])) continue;
@@ -133,7 +138,7 @@ class ActionResult {
             $label = $metaItem['label'];
 
             // Wrap the data in a FieldModification object with APPLIED state and custom label.
-            $logData[$key] = new FieldModification($key, FieldModificationStatus::APPLIED, $value, null, $label);
+            $logData[$key] = new FieldModification($key, FieldModificationStatus::APPLIED, $value, null, $label, $actionText);
         }
 
         // Save actions as a METADATA injection in the record context

@@ -31,6 +31,7 @@ enum BeanModificationType: string {
     case ENRICHED = 'enriched';
     case SKIPPED  = 'skipped';
     case METADATA = 'metadata';
+    case UNCHANGED = 'unchanged';
 }
 
 /**

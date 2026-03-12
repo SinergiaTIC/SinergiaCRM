@@ -43,14 +43,16 @@ class FieldModification
     public mixed $value;
     public mixed $oldValue;
     public ?string $label;
+    public ?string $actionName;
 
-    public function __construct(string $fieldName, FieldModificationStatus $status, mixed $value, mixed $oldValue = null, ?string $label = null)
+    public function __construct(string $fieldName, FieldModificationStatus $status, mixed $value, mixed $oldValue = null, ?string $label = null, ?string $actionName = null)
     {
         $this->fieldName = $fieldName;
         $this->status = $status;
         $this->value = $value;
         $this->oldValue = $oldValue;
         $this->label = $label;
+        $this->actionName = $actionName;
     }
 
     public function wasApplied(): bool

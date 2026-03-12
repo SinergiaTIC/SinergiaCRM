@@ -156,8 +156,24 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             }
 
             if ($foundBean !== null) {
+                if (!empty($foundBean->id)) {
+                    $foundBean->retrieve($foundBean->id);
+                }
                 $bean = $foundBean; // Duplicate found
                 $onDuplicateAction = $rule->on_duplicate;
+
+                $fieldLabels = [];
+                foreach ($rule->fields as $fName) {
+                    $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                    if ($fieldDef) {
+                        $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
+                        $fieldLabels[] = rtrim($label, ': ');
+                    } else {
+                        $fieldLabels[] = $fName;
+                    }
+                }
+                $matchedRuleFields = implode(', ', $fieldLabels);
+
                 break; // Stop searching, we found one
             }
         }
@@ -209,11 +225,31 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             }
         }
 
+        // Find out if the record has actually been modified
+        $hasPhysicalChanges = false;
+        foreach ($modifications as $key => $mod) {
+            if ($mod->status === FieldModificationStatus::APPLIED) {
+                $hasPhysicalChanges = true;
+                break;
+            }
+        }
+        if (!$hasPhysicalChanges && in_array($modificationType, [BeanModificationType::UPDATED, BeanModificationType::ENRICHED])) {
+            $modificationType = BeanModificationType::UNCHANGED;
+        }
+
         // Logging and Return
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig);
         
         // Register the modification (or non-modification)
         $actionResult->registerBeanModificationFromBlock($bean, $block, $modificationType, $modifications);
+
+        // Set matched rule as metadata
+        if (isset($matchedRuleFields) && $matchedRuleFields !== null) {
+            $dataToLog = [
+                ['key' => 'duplicate_rule_matched', 'label' => $this->translate('DUPLICATE_RULE_MATCHED_TEXT'), 'value' => $matchedRuleFields],
+            ];
+            $actionResult->registerActionMetadata($bean, $dataToLog);
+        }
 
         return $actionResult;
     }
@@ -257,7 +293,14 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
             $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
 
-            $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            if ($this->isEmailField($bean, $targetField)) {
+                if ($targetField === 'email') {
+                    $targetField = 'email1';
+                }
+                $oldValue = $bean->$targetField ?? null;
+            } else {
+                $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            }
             
             if ($oldValue != $newValue) {
                 $bean->$targetField = $newValue;
