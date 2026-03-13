@@ -3646,6 +3646,7 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Messages: Type
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
 
 // Messages: Direction
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
@@ -3985,6 +3986,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'WhatsApp';
 
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -3993,6 +3995,20 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notification';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
+
+// Email Templates: Whatsapp category types
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Marketing';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utility';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Authentication';
+
+// Email Templates: Whatsapp status types
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Draft';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = 'pending';
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Approved';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rejected';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Unsubmitted';
 
 // Elements added to History panel
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tasks';

@@ -60,7 +60,8 @@ class stic_Messages extends Basic
     public $parent_id;
     public $status;
     public $response;
-
+    public $media_note_id;
+    public $media_url;
 
     public function bean_implements($interface)
     {
@@ -107,6 +108,7 @@ class stic_Messages extends Basic
             $this->phone = $this->fetched_row['phone'];
         }
 
+
         // If there is nothing in the message field, assume the template body
         if (empty($this->message) && !empty($this->template_id)) {
             $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
@@ -137,6 +139,17 @@ class stic_Messages extends Basic
         if ($this->type === 'WhatsAppWeb' && $this->status === 'draft') {
             $this->status = 'sent';
         }
+        // Resolve media_note_id from $_REQUEST if not already set
+        if (empty($this->media_note_id)) {
+            $this->media_note_id = $_REQUEST['media_note_id'] ?? '';
+        }
+
+        // If a Note was pre-created during upload and there is an attachment,
+        // build a signed public URL for Twilio before calling sendMessage()
+        if (!empty($this->media_note_id)) {
+            $this->media_url = $this->buildSignedMediaUrl($this->media_note_id);
+            $GLOBALS['log']->info('stic_Messages: media_note_id=' . $this->media_note_id . ' signed url=' . $this->media_url);
+        }
 
         // If Message is being created or status changed to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
@@ -148,27 +161,53 @@ class stic_Messages extends Basic
                 $this->response = $response['message'];
                 $this->sent_date = $GLOBALS['timedate']->nowDb();
             } else {
-            if (!empty($this->phone)){
-                $response = $this->sendMessage();
-                if ($response['code'] === self::OK) {
-                    $this->status = 'sent';
-                    $this->response = $response['message'] ?? '';
-                    $this->sent_date = $GLOBALS['timedate']->nowDb();
+                if (empty($this->phone) && !empty($this->parent_type) && !empty($this->parent_id)) {
+                    require_once('modules/stic_Messages/Utils.php');
+                    $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+                    if ($parentBean) {
+                        $this->phone = stic_MessagesUtils::getPhoneForMessage($parentBean);
+                    }
+                }
+                if (!empty($this->phone)){
+                    $response = $this->sendMessage();
+                    if ($response['code'] === self::OK) {
+                        $this->status = 'sent';
+                        $this->response = $response['message'] ?? '';
+                        $this->sent_date = $GLOBALS['timedate']->nowDb();
+                    }
+                    else {
+                        $this->status = 'error';
+                        $this->response = $response['message'] ?? '';
+                    }
                 }
                 else {
                     $this->status = 'error';
-                    $this->response = $response['message'] ?? '';
+                    $this->response = 'No phone number';
                 }
-            }
-            else {
-                $this->status = 'error';
-                $this->response = 'No phone number';
-            }
             }
         }
 
         // Save the bean
+        $GLOBALS['log']->info('stic_Messages::save() — saving bean id=' . ($this->id ?? 'NEW'));
         parent::save($check_notify);
+
+        // After save we have $this->id: link the pre-created Note to this message
+        if (!empty($this->media_note_id)) {
+            $note = BeanFactory::getBean('Notes', $this->media_note_id);
+            if ($note && empty($note->parent_id)) {
+                $note->parent_id = $this->id;
+                // contact_id is a Notes-specific field used by SuiteCRM to show the note
+                // in the Contacts/Leads subpanel. Not applicable to Accounts or Employees.
+                if (in_array($this->parent_type, ['Contacts', 'Leads'])) {
+                    $note->contact_id = $this->parent_id;
+                }
+                $note->save();
+                $GLOBALS['log']->info('stic_Messages: Note ' . $this->media_note_id . ' linked to message ' . $this->id);
+            }
+            $this->media_note_id = null;
+            $this->media_url     = null;
+        }
+
         return $this->id;
     }
 
@@ -228,6 +267,29 @@ class stic_Messages extends Basic
         return $this->name;
     }
 
+    /**
+     * Builds a short-lived signed URL that allows Twilio (or any external caller)
+     * to download the attachment without requiring a SuiteCRM session.
+     *
+     * The URL is valid for WhatsAppMediaEntryPoint::TOKEN_TTL seconds (5 min),
+     * which is more than enough for Twilio to fetch the file.
+     *
+     * @param string $noteId  UUID of the Notes record whose file should be served
+     * @return string         Absolute URL including token and expiry
+     */
+    public function buildSignedMediaUrl(string $noteId): string
+    {
+        $expires = time() + 300; // 5 minutes — matches WhatsAppMediaEntryPoint::TOKEN_TTL
+        $secret  = $GLOBALS['sugar_config']['unique_key'] ?? '';
+        $token   = hash_hmac('sha256', $noteId . $expires, $secret);
+        $siteUrl = rtrim($GLOBALS['sugar_config']['site_url'], '/');
+
+        return $siteUrl . '/index.php?entryPoint=sticWhatsappMedia'
+            . '&note_id=' . urlencode($noteId)
+            . '&expires=' . $expires
+            . '&token='   . urlencode($token);
+    }
+
     public function sendMessage() {
 
         // In the list stic_messages_type_list, the keypart is the name of the file containing the helper class.
@@ -242,8 +304,34 @@ class stic_Messages extends Basic
             $messageHelper = new $file; 
         }
 
+        $templateSid = null;
+        if (!empty($this->template_id)) {
+            $templateBean = BeanFactory::getBean('EmailTemplates', $this->template_id);
+            if ($templateBean) {
+                $templateSid = $templateBean->stic_whatsapp_twilio_id_c ?? null;
+            }
+        }
+
         if ($messageHelper !== null) {
-            $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
+            if ($file === 'WhatsAppHelper') {
+                // Build the beans array from the parent record so placeholders can be resolved
+                $beans = [];
+                if (!empty($this->parent_type) && !empty($this->parent_id)) {
+                    $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+                    if ($parentBean) {
+                        $beans[] = $parentBean;
+                    }
+                }
+
+                $messageForHelper = $this->message;
+                if (!empty($templateBean) && !empty($templateBean->body)) {
+                    $messageForHelper = $templateBean->body;
+                }
+
+                $returnCode = $messageHelper->sendMessage($this->sender, $messageForHelper, $this->phone, $templateSid, $beans, $this->media_url ?? null);
+            } else {
+                $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
+            }
         }
         else {
             $returnCode = self::ERROR_NO_HELPER_CLASS;

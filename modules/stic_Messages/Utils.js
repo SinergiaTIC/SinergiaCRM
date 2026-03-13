@@ -154,6 +154,8 @@ switch (sticViewType) {
             $('#sender').css('border-color', '');
           }
         }
+        // Refresh templates list when type changes
+        try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }
       });
 
       // On page load, if type is WhatsAppWeb, force status to 'sent' and set sender
@@ -172,6 +174,9 @@ switch (sticViewType) {
           $('#sender').val(assignedUserName);
         }
       }
+
+  // On load, refresh templates select according to current type
+  try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }
 
       if($("#mass_ids").val()) {
         $('#parent_name').prop('disabled', true);
@@ -204,6 +209,51 @@ switch (sticViewType) {
       // Supress bottom margin
       infoElement.parent().css('margin-bottom', '0px');
 
+      // --- Recipient: show/hide relation fields and autofill phone ---
+
+      // Map: recipient value -> relate field name, ID field name, module, phone field
+      var recipientMap = {
+        'Contacts':  { relate: 'stic_messages_contacts_name',  id: 'stic_messages_contactscontacts_ida',   module: 'Contacts',  phoneField: 'phone_mobile' },
+        'Accounts':  { relate: 'stic_messages_accounts_name',  id: 'stic_messages_accountsaccounts_ida',   module: 'Accounts',  phoneField: 'phone_office' },
+        'Leads':     { relate: 'stic_messages_leads_name',     id: 'stic_messages_leadsleads_ida',          module: 'Leads',     phoneField: 'phone_mobile' },
+        'Employees': { relate: 'stic_messages_employees_name', id: 'stic_messages_employeesemployees_ida',  module: 'Employees', phoneField: 'phone_mobile' },
+      };
+
+      function getRelateContainer(fieldName) {
+        var $container = $('[data-field="' + fieldName + '"]');
+        if ($container.length) return $container;
+        return $('#' + fieldName).closest('tr');
+      }
+
+      function applyRecipientVisibility(recipientValue) {
+        // Default to Contacts if empty
+        if (!recipientValue || !recipientMap[recipientValue]) {
+          recipientValue = 'Contacts';
+          $('#recipient').val('Contacts');
+        }
+        $.each(recipientMap, function(key, cfg) {
+          var $container = getRelateContainer(cfg.relate);
+          if (key === recipientValue) {
+            $container.show();
+          } else {
+            $container.hide();
+            // Clear hidden fields of inactive relations
+            $('#' + cfg.relate).val('');
+            $('#' + cfg.id).val('');
+          }
+        });
+      }
+
+      // Apply on load
+      var currentRecipient = $('#recipient').val();
+      applyRecipientVisibility(currentRecipient);
+
+      // Apply on recipient change
+      $('#recipient').on('change', function() {
+        applyRecipientVisibility($(this).val());
+        // Clear phone when switching recipient
+        $('#phone').val('');
+      });
 
     });
 
@@ -213,6 +263,29 @@ switch (sticViewType) {
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
     var messageType = $("#type").val();
+
+    // Show/hide relation fields based on recipient value (same logic as EditView)
+    (function() {
+      var recipientDetailMap = {
+        'Contacts':  'stic_messages_contacts_name',
+        'Accounts':  'stic_messages_accounts_name',
+        'Leads':     'stic_messages_leads_name',
+        'Employees': 'stic_messages_employees_name',
+      };
+      var recipientValue = $('[data-field="recipient"] .fieldValue, [name="recipient"]').text().trim()
+                        || $('[data-field="recipient"]').text().trim();
+      if (!recipientValue) recipientValue = 'Contacts';
+      $.each(recipientDetailMap, function(key, fieldName) {
+        var $container = $('[data-field="' + fieldName + '"]');
+        if (!$container.length) $container = $('[data-field="' + fieldName.replace(/_name$/, '') + '"]');
+        if (!$container.length) return;
+        if (key === recipientValue) {
+          $container.closest('tr').show();
+        } else {
+          $container.closest('tr').hide();
+        }
+      });
+    })();
     
     // Define button content - Don't show retry button for WhatsAppWeb messages
     if ($("#status").val() != 'sent' && messageType !== 'WhatsAppWeb') {
@@ -247,6 +320,49 @@ switch (sticViewType) {
 
   default:
     break;
+}
+
+function refreshTemplateOptions() {
+  var messageType = ($('#type').val() || '').toLowerCase();
+  var templateType = 'sms';
+  if (messageType.indexOf('whatsapp') !== -1) {
+    templateType = 'whatsapp';
+  } else if (messageType.indexOf('sms') !== -1) {
+    templateType = 'sms';
+  }
+
+  $.ajax({
+    url: 'index.php?module=stic_Messages&action=FillDynamicListMessageTemplate',
+    method: 'POST',
+    data: { type: templateType },
+    dataType: 'json'
+  }).done(function(res) {
+    if (!res || !res.success) {
+      console.log('No templates response or error', res);
+      return;
+    }
+    var $select = $('#template_id');
+    if ($select.length === 0) return;
+    var current = $select.val();
+    $select.empty();
+    $select.append($('<option>').val('').text(SUGAR.language.get('app_strings', 'LBL_NONE')));
+    if (Array.isArray(res.data)) {
+      res.data.forEach(function(t) {
+        $select.append($('<option>').val(t.id).text(t.name));
+      });
+    } else {
+      for (var id in res.data) {
+        if (!res.data.hasOwnProperty(id)) continue;
+        $select.append($('<option>').val(id).text(res.data[id]));
+      }
+    }
+    if (current) {
+      $select.val(current);
+    }
+    template_change();
+  }).fail(function(xhr) {
+    console.log('Error fetching templates', xhr);
+  });
 }
 
 function onTemplateSelect(args) {
@@ -393,7 +509,14 @@ function addEditCreateTemplateLinks() {
 }
 
 function open_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+
+  if ($("#type").val()== 'WhatsAppHelper') {
+    templateType = 'whatsapp';
+  } else if ($("#type").val()== 'SevenSmsHelper') {
+    templateType = 'sms';
+  }
+
+  URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
   URL += "&inboundEmail=false&show_js=1";
 
   windowName = 'email_template';
@@ -407,7 +530,13 @@ function open_email_template_form() {
 }
 
 function edit_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+  if ($("#type").val()== 'WhatsAppHelper') {
+    templateType = 'whatsapp';
+  } else if ($("#type").val()== 'SevenSmsHelper') {
+    templateType = 'sms';
+  }
+
+  URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
 
   var field = document.getElementById('template_id');
   if (field.options[field.selectedIndex].value != 'undefined') {

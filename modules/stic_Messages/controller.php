@@ -375,5 +375,217 @@ class stic_MessagesController extends SugarController
         die;
     }
 
+    public function action_FillDynamicListMessageTemplate() {
+        // Determine requested type from the client (flexible: accept helper class or 'whatsapp'/'sms')
+        $typeParam = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : '';
 
+        if (strpos($typeParam, 'whatsapp') !== false) {
+            // fillDynamicListMessageTemplate expects 'whatsapphelper' as key in mapping
+            $_REQUEST['type'] = 'whatsapphelper';
+        } elseif (strpos($typeParam, 'sms') !== false) {
+            $_REQUEST['type'] = 'smssevenhelper';
+        } else {
+            // default
+            $_REQUEST['type'] = 'smssevenhelper';
+        }
+
+        // Call the util to populate the app_list_strings
+        require_once 'modules/stic_Messages/Utils.php';
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
+
+        $list = $GLOBALS['app_list_strings']['dynamic_message_template_list'] ?? array();
+
+        // Convert associative array to list of {id,name}
+        $out = array();
+        foreach ($list as $id => $name) {
+            // skip empty key used for 'None'
+            if ($id === '') continue;
+            $out[] = array('id' => $id, 'name' => $name);
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(array('success' => true, 'data' => $out));
+        exit;
+    }
+
+    public function action_conversation() {
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'stic_Messages');
+
+        $parentId   = $_REQUEST['parent_id']   ?? '';
+        $parentType = $_REQUEST['parent_type'] ?? 'Contacts';
+        $parentName = html_entity_decode(
+            urldecode($_REQUEST['parent_name'] ?? ''), ENT_QUOTES, 'UTF-8'
+        );
+
+        if (empty($parentId)) die('Missing parent_id');
+
+        $db = DBManagerFactory::getInstance();
+        $parentIdSafe = $db->quote($parentId);
+
+        $contactPhone = '';
+        $contactBean = BeanFactory::getBean($parentType, $parentId);
+        if ($contactBean) {
+            require_once('modules/stic_Messages/Utils.php');
+            $contactPhone = stic_MessagesUtils::getPhoneForMessage($contactBean);
+        }
+        $sql = "SELECT id, message, type, status, date_entered, sender, phone,
+                    template_id
+                FROM stic_messages
+                WHERE parent_id = '{$parentIdSafe}'
+                AND deleted = 0
+                AND type IN ('WhatsAppHelper', 'received')
+                ORDER BY date_entered ASC";
+
+        $result = $db->query($sql);
+        $messages = [];
+        while ($row = $db->fetchByAssoc($result)) {
+            $messages[] = $row;
+        }
+
+        // Calculate 24h window:
+        // Buscar el mensaje más reciente que sea:
+        $lastWindowEvent = null;
+
+        foreach (array_reverse($messages) as $msg) {
+            if ($msg['type'] === 'received') {
+                $lastWindowEvent = $msg['date_entered'];
+                break;
+            }
+            if ($msg['type'] === 'WhatsAppHelper' && !empty($msg['template_id'])) {
+                $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
+                if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
+                    $lastWindowEvent = $msg['date_entered'];
+                    break;
+                }
+            }
+        }
+
+        // < 24h since $lastWindowEvent)
+        $windowOpen    = false;
+        $windowMessage = null;
+
+        if ($lastWindowEvent) {
+            $eventTs = (new DateTime($lastWindowEvent, new DateTimeZone('UTC')))->getTimestamp();
+            $nowTs   = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
+            $diffSeconds = $nowTs - $eventTs;
+            $diffH   = ($diffSeconds) / 3600;
+
+            if ($diffH < 24) {
+                $windowOpen    = true;
+                $secondsLeft = (24 * 3600) - $diffSeconds;
+                $hoursLeft   = floor($secondsLeft / 3600);
+                $minutesLeft = floor(($secondsLeft % 3600) / 60);
+                $windowMessage = sprintf(
+                    $mod_strings['LBL_CONVERSATION_WINDOW_OPEN'],
+                    $hoursLeft,
+                    $minutesLeft
+                );
+            } else {
+                $lastEventFormatted = $GLOBALS['timedate']->to_display_date_time($lastWindowEvent);
+                $windowMessage = sprintf(
+                    $mod_strings['LBL_CONVERSATION_WINDOW_CLOSED'],
+                    $lastEventFormatted
+                );
+            }
+        } else {
+            $windowMessage = $mod_strings['LBL_CONVERSATION_NO_HISTORY'];
+        }
+
+        // Build URL to create a new stic_Messages record pre-linked to the parent
+        $newMessageUrl = 'index.php?module=stic_Messages&action=EditView'
+            . '&return_module=' . urlencode($parentType)
+            . '&return_id='     . urlencode($parentId)
+            . '&parent_type='   . urlencode($parentType)
+            . '&parent_id='     . urlencode($parentId)
+            . '&parent_name='   . urlencode($parentName);
+
+        require_once('modules/stic_Messages/views/view.conversation.php');
+        $view = new stic_MessagesViewConversation();
+        $view->messages       = $messages;
+        $view->parentName     = $parentName;
+        $view->parentId       = $parentId;
+        $view->parentType     = $parentType;
+        $view->contactPhone   = $contactPhone;
+        $view->windowOpen     = $windowOpen;
+        $view->windowMessage  = $windowMessage;
+        $view->newMessageUrl  = $newMessageUrl;
+        $view->modStrings     = $mod_strings;
+        $view->display();
+        sugar_cleanup();
+        exit();
+    }    
+    public function action_uploadConversationMedia() {
+        header('Content-Type: application/json');
+
+        $allowedMimes = [
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+            'video/mp4', 'video/3gpp',
+            'audio/ogg', 'audio/mpeg', 'audio/mp4', 'audio/amr',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        ];
+
+        if (empty($_FILES['media']) || $_FILES['media']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['success' => false, 'error' => 'No file received']);
+            exit();
+        }
+
+        $file     = $_FILES['media'];
+        $mimeType = mime_content_type($file['tmp_name']);
+
+        if (!in_array($mimeType, $allowedMimes)) {
+            echo json_encode(['success' => false, 'error' => 'Tipo de archivo no soportado por WhatsApp: ' . $mimeType]);
+            exit();
+        }
+
+        $sizeLimit = (strpos($mimeType, 'image/') === 0) ? 5 * 1024 * 1024 : 16 * 1024 * 1024;
+        if ($file['size'] > $sizeLimit) {
+            $limitMb = $sizeLimit / 1024 / 1024;
+            echo json_encode(['success' => false, 'error' => "El archivo supera el límite de {$limitMb}MB"]);
+            exit();
+        }
+
+        // Create the Note immediately — same pattern as SuiteCRM Emails.
+        // parent_id is empty at this point; it will be filled in stic_Messages::save()
+        // once the message record has been persisted.
+        $note                 = BeanFactory::newBean('Notes');
+        $note->parent_type    = 'stic_Messages';
+        $note->parent_id      = '';
+        $note->name           = $file['name'];
+        $note->filename       = $file['name'];
+        $note->file_mime_type = $mimeType;
+        $note->deleted        = 0;
+        $noteId               = $note->save();
+
+        if (empty($noteId)) {
+            echo json_encode(['success' => false, 'error' => 'Error al crear el registro del adjunto']);
+            exit();
+        }
+
+        // Move the uploaded file to upload/{note_id} — the standard SuiteCRM location
+        $destPath = rtrim(getcwd(), '/') . '/upload/' . $noteId;
+        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+            // Roll back the Note if the file could not be moved
+            $note->deleted = 1;
+            $note->save();
+            echo json_encode(['success' => false, 'error' => 'Error al guardar el archivo']);
+            exit();
+        }
+
+        $GLOBALS['log']->info('stic_Messages: attachment uploaded. note_id=' . $noteId . ' file=' . $file['name']);
+
+        echo json_encode([
+            'success' => true,
+            'note_id' => $noteId,
+            'name'    => $file['name'],
+            'mime'    => $mimeType,
+        ]);
+        exit();
+    }
 }

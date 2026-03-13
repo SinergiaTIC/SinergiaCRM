@@ -54,4 +54,7 @@ INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_us
 ('d9f0118c-b752-444d-9057-456b18f9f360', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_API_KEY', '', 'Key to connect with to Seven, obtained from its control panel.'),
 ('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_SENDER', '', 'Sender name that will be shown on sent messages.'),
 ('64b1554a-cf95-423b-ae78-7f75951f3976', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_LIMIT', '100', 'Maximum number of messages allowed in a bulk send.'),
-('e5a26eec-b326-11f0-b8b0-f2de65fe24cb', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_MESSAGES_BULK', '5000', 'Messages per hour on SMS campaigns.');
+('e5a26eec-b326-11f0-b8b0-f2de65fe24cb', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_MESSAGES_BULK', '5000', 'Messages per hour on SMS campaigns.'),
+('000001dd-d75d-9e30-8d08-6968da6fad64', NOW(), NOW(), '1', '1', 0, '1', 'TWILIO', 'TWILIO_SID', '', 'Twilio Account SID used to authenticate API requests.'),
+('00000d23-7940-12ed-1930-6968da3c515e', NOW(), NOW(), '1', '1', 0, '1', 'TWILIO', 'TWILIO_TOKEN', '', 'Twilio Auth Token associated with the Account SID.'),
+('00000bbe-f4c0-5f12-6241-6968db6f394d', NOW(), NOW(), '1', '1', 0, '1', 'TWILIO', 'TWILIO_NUMBER', '', 'Twilio phone number used as sender for outgoing SMS messages.');
