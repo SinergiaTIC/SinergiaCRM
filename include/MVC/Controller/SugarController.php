@@ -795,7 +795,11 @@ class SugarController
                 }
             }
             $_REQUEST = array();
-            $_REQUEST = json_decode(html_entity_decode($temp_req['current_query_by_page']), true);
+            // STIC-Custom 20260223 EPS - json_decode can cause issues with certain characters, so we need to clean up the query before decoding it.
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
+            // $_REQUEST = json_decode(html_entity_decode($temp_req['current_query_by_page']), true);
+            $_REQUEST = json_decode(html_entity_decode($temp_req['current_query_by_page']), true, 512, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG);
+            // END STIC-Custom
             unset($_REQUEST[$seed->module_dir . '2_' . strtoupper($seed->object_name) . '_offset']);//after massupdate, the page should redirect to no offset page
             $storeQuery->saveFromRequest($_REQUEST['module']);
             $_REQUEST = array(

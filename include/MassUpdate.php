@@ -112,7 +112,14 @@ class MassUpdate
         unset($_REQUEST['current_query_by_page']);
         unset($_REQUEST[session_name()]);
         unset($_REQUEST['PHPSESSID']);
-        $query = json_encode($_REQUEST);
+
+        // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
+        // $query = json_encode($_REQUEST);
+        $decoded_request = array_map('html_entity_decode', $_REQUEST);
+        
+        $query = json_encode($decoded_request, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG); 
+        // END STIC
 
         if (!isset($_REQUEST['module'])) {
             LoggerManager::getLogger()->warn('Undefined index: module');
@@ -1643,7 +1650,12 @@ EOQ;
         }
         /* bug 31271: using false to not add all bean fields since some beans - like SavedReports
            can have fields named 'module' etc. which may break the query */
-        $query = json_decode(html_entity_decode($query), true);
+        // STIC-Custom 20260223 EPS - json_decode can cause issues with certain characters, so we need to clean up the query before decoding it.
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
+        // $query = json_decode(html_entity_decode($query), true);
+        $query = json_decode(html_entity_decode($query), true, 512, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG);
+        // $query = $this->repair_suitecrm_json($query);
+        // END STIC
         $searchForm->populateFromArray($query, null, true);
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
@@ -1654,6 +1666,69 @@ EOQ;
             $this->where_clauses = '';
         }
     }
+
+
+// STIC-Custom 20260219 EPS - Added function to clean up the query before decoding it, to prevent issues with certain characters in the query.
+
+function repair_suitecrm_json($json_raw) {
+    // 1. Decodifiquem només les entitats HTML (&quot; -> ")
+    // Important: mantenim la codificació original de la resta
+    $input = html_entity_decode($json_raw, ENT_QUOTES, 'UTF-8');
+    
+    $len = strlen($input);
+    $output = "";
+    $in_value = false;
+
+    for ($i = 0; $i < $len; $i++) {
+        $char = $input[$i];
+        
+        // Mirem si el caràcter següent existeix per detectar patrons
+        $next = ($i + 1 < $len) ? $input[$i+1] : "";
+        $prev = ($i > 0) ? $input[$i-1] : "";
+
+        // DETECTAR INICI DE VALOR: :"
+        if (!$in_value && $char == ':' && $next == '"') {
+            $output .= ':"';
+            $in_value = true;
+            $i++; // Saltem la cometa d'obertura
+            continue;
+        }
+
+        // DETECTAR FINAL DE VALOR O COMETA INTERNA
+        if ($in_value && $char == '"') {
+            // Una cometa NOMÉS tanca el valor si va seguida de coma o tancament de JSON
+            // i si NO està ja escapada per la pròpia SuiteCRM (poc probable però possible)
+            $is_closing = ($next == ',' || $next == '}' || $next == ']');
+            
+            if ($is_closing) {
+                $in_value = false;
+                $output .= '"';
+            } else {
+                // És una cometa de text (com a "X"): l'escapem manualment
+                $output .= '\"';
+            }
+            continue;
+        }
+
+        $output .= $char;
+    }
+
+    // Intentem decodificar. Si falla, podria ser per caràcters de control
+    $decoded = json_decode($output, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        // Si falla, provem una neteja de caràcters de control no imprimibles
+        $output = preg_replace('/[\x00-\x1F\x7F]/u', '', $output);
+        $decoded = json_decode($output, true);
+    }
+
+    return $decoded;
+}
+
+// END STIC
+
+
+
 
     protected function getSearchDefs($module, $metafiles = array())
     {

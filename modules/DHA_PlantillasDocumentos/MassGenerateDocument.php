@@ -658,7 +658,12 @@ EOJS;
       if ($accion == 'DetailView') 
          $html .= "<input type='hidden' name='uid' id='MGD_uid' value='{$this->sugarbean->id}'>\n";  // si estamos en el DetailView, no se rellena por javascript, ya sabemos su valor
       
-      $current_query_by_page = base64_encode(json_encode($_REQUEST));
+      // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
+      // $current_query_by_page = base64_encode(json_encode($_REQUEST));
+      $decoded_request = array_map('html_entity_decode', $_REQUEST);
+      $current_query_by_page = base64_encode(json_encode($decoded_request));
+      // END STIC-Custom
       
       $html .= "<input type='hidden' name='current_query_by_page' id='MGD_current_query_by_page' value='{$current_query_by_page}' />\n";
       
