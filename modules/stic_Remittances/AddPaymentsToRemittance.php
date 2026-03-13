@@ -46,7 +46,7 @@ function addPaymentsToRemittance() {
         if (!empty($retArray['where'])) {
             $where = " AND " . $retArray['where'];
         }
-        
+
         $focus = BeanFactory::newBean('stic_Payments');
         // Check ACL access
         if ($focus->bean_implements('ACL')) {
@@ -57,7 +57,7 @@ function addPaymentsToRemittance() {
 
             $accessWhere = $focus->buildAccessWhere('list');
             if (!empty($accessWhere)) {
-                $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
+                $where .= ' AND ' . $accessWhere;
             }
         }
     } else {

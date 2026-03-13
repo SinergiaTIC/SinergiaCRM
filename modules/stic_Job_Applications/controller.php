@@ -51,7 +51,7 @@ class stic_Job_ApplicationsController extends SugarController
 
                 $accessWhere = $focus->buildAccessWhere('list');
                 if (!empty($accessWhere)) {
-                    $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
+                    $where .= ' AND ' . $accessWhere;
                 }
             }
             $sql .= $where;
