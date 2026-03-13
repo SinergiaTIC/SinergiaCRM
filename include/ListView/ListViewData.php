@@ -274,9 +274,8 @@ class ListViewData
         if ($useAsyncCount) {
             $GLOBALS['sugar_config']['disable_count_query'] = true;
         }
-        // totalCounted is false when async is enabled (count will be loaded via AJAX)
-        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         // END STIC-Custom OC
+        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
         if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup') {
             $_SESSION['MAILMERGE_MODULE'] = $seed->module_dir;
