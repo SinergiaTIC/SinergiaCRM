@@ -76,11 +76,11 @@ class WhatsAppHelper implements stic_MessagesHelper {
         return $this;
     }
 
-    public function sendMessage(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = []): array
+    public function sendMessage(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = [], ?string $mediaUrl = null): array
     {
         $phone = $this->formatPhoneNumber($phone);
         
-        $result = $this->apiCall($sender, $message, $phone, $templateSid, $beans);
+        $result = $this->apiCall($sender, $message, $phone, $templateSid, $beans, $mediaUrl);
         
         $resultArray = json_decode($result, true);
         
@@ -107,7 +107,7 @@ class WhatsAppHelper implements stic_MessagesHelper {
         }
     }
 
-    protected function apiCall(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = []): string
+    protected function apiCall(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = [], ?string $mediaUrl = null): string
     {
         if (!$this->isConfigured()) {
             return json_encode([
@@ -115,8 +115,7 @@ class WhatsAppHelper implements stic_MessagesHelper {
                 'message' => 'Configuración de Twilio incompleta'
             ]);
         }
-
-        if (empty($phone) || (empty($message) && empty($templateSid))) {
+        if (empty($phone) || (empty($message) && empty($templateSid) && empty($mediaUrl))) {
             return json_encode([
                 'success' => false, 
                 'message' => 'Teléfono o mensaje vacíos'
@@ -130,6 +129,9 @@ class WhatsAppHelper implements stic_MessagesHelper {
             'From' => $from,
             'To' => $to
         ];
+        if (!empty($mediaUrl)) {
+            $postData['MediaUrl'] = $mediaUrl;
+        }
 
         if (!empty($templateSid)) {
             $postData['ContentSid'] = $templateSid;

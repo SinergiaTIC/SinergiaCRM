@@ -88,6 +88,12 @@ array(
                 ),
                 5 => array(
                     0 => array(
+                        'name'  => 'attachment_widget',
+                        'label' => 'LBL_ATTACHMENT',
+                    ),
+                ),
+                6 => array(
+                    0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
                         'label' => 'LBL_TYPE',
@@ -98,7 +104,7 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
 
                     ),

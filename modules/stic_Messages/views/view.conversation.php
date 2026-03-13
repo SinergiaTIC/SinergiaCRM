@@ -32,17 +32,24 @@ class stic_MessagesViewConversation extends SugarView {
     public $contactPhone  = '';
     public $windowOpen    = false;
     public $windowMessage = '';
+    public $newMessageUrl = '';
+    public $modStrings    = [];
 
     public function display() {
         $currentUser = $GLOBALS['current_user'];
         $timedate    = $GLOBALS['timedate'];
+
+        // i18n helper — falls back to the key name if the label is missing
+        $lbl = function(string $key): string {
+            return htmlspecialchars($this->modStrings[$key] ?? $key);
+        };
         ?>
         <!DOCTYPE html>
         <html lang="es">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Conversación WhatsApp — <?= htmlspecialchars($this->parentName) ?></title>
+            <title><?= $lbl('LBL_CONVERSATION_TITLE') ?> — <?= htmlspecialchars($this->parentName) ?></title>
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -220,6 +227,101 @@ class stic_MessagesViewConversation extends SugarView {
                     margin: auto;
                     font-size: 14px;
                 }
+                .attach-btn {
+                    background: none;
+                    border: none;
+                    color: #555;
+                    font-size: 22px;
+                    cursor: pointer;
+                    padding: 0 4px;
+                    line-height: 44px;
+                    flex-shrink: 0;
+                }
+                .attach-btn:hover { color: #075e54; }
+
+                .attachment-preview {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    background: #fff;
+                    border-radius: 10px;
+                    padding: 6px 10px;
+                    font-size: 12px;
+                    color: #333;
+                    margin-bottom: 4px;
+                }
+                .attachment-preview .preview-img {
+                    max-height: 48px;
+                    max-width: 48px;
+                    border-radius: 4px;
+                    object-fit: cover;
+                }
+                .attachment-preview .remove-attach {
+                    margin-left: auto;
+                    cursor: pointer;
+                    color: #e53935;
+                    font-size: 16px;
+                    line-height: 1;
+                }
+                .uploading-indicator {
+                    font-size: 11px;
+                    color: #888;
+                    padding: 2px 4px;
+                }
+                /* ── New-message button (window closed) ── */
+                .btn-new-message {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-top: 8px;
+                    padding: 9px 18px;
+                    background: #075e54;
+                    color: #fff;
+                    border: none;
+                    border-radius: 20px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    text-decoration: none;
+                    transition: background .2s;
+                    align-self: center;
+                }
+                .btn-new-message:hover { background: #054d44; }
+                .btn-new-message .btn-icon { font-size: 16px; }
+                .bubble-attachment {
+                    margin-top: 6px;
+                }
+                .attachment-bubble-img {
+                    max-width: 220px;
+                    max-height: 220px;
+                    border-radius: 6px;
+                    display: block;
+                    object-fit: cover;
+                    cursor: pointer;
+                }
+                .attachment-bubble-video {
+                    max-width: 220px;
+                    border-radius: 6px;
+                    display: block;
+                }
+                .attachment-bubble-audio {
+                    width: 200px;
+                    display: block;
+                }
+                .attachment-bubble-file {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 10px;
+                    background: rgba(0,0,0,0.06);
+                    border-radius: 8px;
+                    font-size: 12px;
+                    color: #333;
+                    text-decoration: none;
+                }
+                .attachment-bubble-file:hover {
+                    background: rgba(0,0,0,0.12); 
+                }
             </style>
         </head>
         <body>
@@ -238,7 +340,7 @@ class stic_MessagesViewConversation extends SugarView {
         <!-- Conversation -->
         <div class="wa-body" id="waBody">
         <?php if (empty($this->messages)): ?>
-            <div class="empty-state">No hay mensajes WhatsApp con este contacto.</div>
+            <div class="empty-state"><?= $lbl('LBL_CONVERSATION_NO_MESSAGES') ?></div>
         <?php else:
             $lastDate = null;
             foreach ($this->messages as $msg):
@@ -287,69 +389,156 @@ class stic_MessagesViewConversation extends SugarView {
                         <span class="window-icon">🟢</span>
                         <?= htmlspecialchars($this->windowMessage) ?>
                     </div>
+                    <div id="attachmentPreview" style="display:none;" class="attachment-preview">
+                        <img id="previewImg" class="preview-img" style="display:none;">
+                        <span id="previewIcon" style="font-size:24px;display:none;">📄</span>
+                        <span id="previewName"></span>
+                        <span class="remove-attach" onclick="removeAttachment()" title="<?= $lbl('LBL_CONVERSATION_REMOVE_ATTACHMENT') ?>">✕</span>
+                    </div>
+                    <div id="uploadingIndicator" class="uploading-indicator" style="display:none;">⏳ <?= $lbl('LBL_CONVERSATION_UPLOADING') ?></div>
                     <div class="input-row">
+                        <input type="file" id="mediaFile" style="display:none;"
+                            accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/3gpp,audio/ogg,audio/mpeg,audio/mp4,audio/amr,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            onchange="handleFileSelected(this)">
+                        <button class="attach-btn" onclick="document.getElementById('mediaFile').click()" title="<?= $lbl('LBL_CONVERSATION_ATTACH') ?>">📎</button>
                         <textarea id="msgText"
-                            placeholder="Escribe un mensaje..."
+                            placeholder="<?= $lbl('LBL_CONVERSATION_PLACEHOLDER') ?>"
                             rows="1"
                             onInput="this.style.height='auto';this.style.height=this.scrollHeight+'px';"
                             onKeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}">
                         </textarea>
-                        <button id="sendBtn" onclick="sendMessage()" title="Enviar">➤</button>
+                        <button id="sendBtn" onclick="sendMessage()" title="<?= $lbl('LBL_CONVERSATION_SEND') ?>">➤</button>
                     </div>
                 </div>
             <?php else: ?>
-                <!-- Ventana cerrada: solo informar -->
+                <!-- Ventana cerrada: informar y ofrecer botón al módulo de mensajes -->
                 <div class="footer-inner">
                     <div class="window-status closed">
                         <span class="window-icon">🔴</span>
                         <?= htmlspecialchars($this->windowMessage) ?>
                     </div>
                     <div class="window-closed-hint">
-                        Para iniciar conversación usa una plantilla verificada desde el módulo de mensajes.
+                        <?= $lbl('LBL_CONVERSATION_WINDOW_CLOSED_HINT') ?>
                     </div>
+                    <?php if (!empty($this->newMessageUrl)): ?>
+                    <a href="<?= htmlspecialchars($this->newMessageUrl) ?>" class="btn-new-message">
+                        <span class="btn-icon">✉</span>
+                        <?= $lbl('LBL_CONVERSATION_NEW_MESSAGE_BTN') ?>
+                    </a>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
         <script>
-        // Scroll al final al cargar
-        (function() {
-            var body = document.getElementById('waBody');
-            body.scrollTop = body.scrollHeight;
-        })();
+            var _pendingMediaUrl  = null;
+            var _pendingMediaName = null;
 
-        function sendMessage() {
-            var text    = document.getElementById('msgText').value.trim();
-            var sendBtn = document.getElementById('sendBtn');
-            if (!text) return;
+            // Scroll al final al cargar
+            (function() {
+                document.getElementById('waBody').scrollTop = 9999999;
+            })();
 
-            sendBtn.disabled = true;
+            function handleFileSelected(input) {
+                if (!input.files || !input.files[0]) return;
+                var file = input.files[0];
 
-            var formData = new FormData();
-            formData.append('module',      'stic_Messages');
-            formData.append('action',      'Save');
-            formData.append('type',        'WhatsAppHelper');
-            formData.append('direction',   'outbound');
-            formData.append('status',      'sent');
-            formData.append('message',     text);
-            formData.append('parent_type', '<?= addslashes($this->parentType) ?>');
-            formData.append('parent_id',   '<?= addslashes($this->parentId) ?>');
-            formData.append('sugar_token', '<?= $_SESSION['sugar_token'] ?? '' ?>');
+                document.getElementById('uploadingIndicator').style.display = 'block';
+                document.getElementById('attachmentPreview').style.display  = 'none';
 
-            fetch('index.php', {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-            .then(function(r) { return r.text(); })
-            .then(function() {
-                // Recargar la conversación para mostrar el nuevo mensaje
-                location.reload();
-            })
-            .catch(function(err) {
-                alert('Error al enviar: ' + err);
-                sendBtn.disabled = false;
-            });
-        }
+                var formData = new FormData();
+                formData.append('module', 'stic_Messages');
+                formData.append('action', 'uploadConversationMedia');
+                formData.append('media',  file);
+
+                fetch('index.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    document.getElementById('uploadingIndicator').style.display = 'none';
+                    if (!data.success) {
+                        alert(SUGAR.language.get('stic_Messages', 'LBL_CONVERSATION_ERROR_UPLOAD') + ': ' + (data.error || SUGAR.language.get('stic_Messages', 'LBL_CONVERSATION_ERROR_UNKNOWN')));
+                        input.value = '';
+                        return;
+                    }
+                    _pendingMediaUrl  = data.url;
+                    _pendingMediaName = data.name;
+                    showAttachmentPreview(file, data.name);
+                })
+                .catch(function(err) {
+                    document.getElementById('uploadingIndicator').style.display = 'none';
+                    alert(SUGAR.language.get('stic_Messages', 'LBL_CONVERSATION_ERROR_UPLOAD') + ': ' + err);
+                    input.value = '';
+                });
+            }
+
+            function showAttachmentPreview(file, name) {
+                var preview = document.getElementById('attachmentPreview');
+                var img     = document.getElementById('previewImg');
+                var icon    = document.getElementById('previewIcon');
+
+                document.getElementById('previewName').textContent = name;
+
+                if (file.type.startsWith('image/')) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                        img.style.display  = 'block';
+                        icon.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    img.style.display  = 'none';
+                    icon.style.display = 'block';
+                }
+
+                preview.style.display = 'flex';
+            }
+
+            function removeAttachment() {
+                _pendingMediaUrl  = null;
+                _pendingMediaName = null;
+                document.getElementById('mediaFile').value           = '';
+                document.getElementById('attachmentPreview').style.display = 'none';
+                document.getElementById('previewImg').src            = '';
+            }
+            function sendMessage() {
+                var text    = document.getElementById('msgText').value.trim();
+                var sendBtn = document.getElementById('sendBtn');
+
+                if (!text && !_pendingMediaUrl) return;
+
+                sendBtn.disabled = true;
+
+                var formData = new FormData();
+                formData.append('module',      'stic_Messages');
+                formData.append('action',      'Save');
+                formData.append('type',        'WhatsAppHelper');
+                formData.append('status',      'sent');
+                formData.append('message',     text);
+                formData.append('parent_type', '<?= addslashes($this->parentType) ?>');
+                formData.append('parent_id',   '<?= addslashes($this->parentId) ?>');
+
+                if (_pendingMediaUrl) {
+                    formData.append('media_url',       _pendingMediaUrl);
+                    formData.append('media_note_name', _pendingMediaName);
+                    formData.append('media_note_mime', _pendingMediaMime);  // ← nuevo
+                }
+
+                fetch('index.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(function(r) { return r.text(); })
+                .then(function() { location.reload(); })
+                .catch(function(err) {
+                    alert(SUGAR.language.get('stic_Messages', 'LBL_CONVERSATION_ERROR_SEND') + ': ' + err);
+                    sendBtn.disabled = false;
+                });
+            }
         </script>
 
         </body>

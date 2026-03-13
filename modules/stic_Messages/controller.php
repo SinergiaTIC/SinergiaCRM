@@ -409,6 +409,9 @@ class stic_MessagesController extends SugarController
     }
 
     public function action_conversation() {
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'stic_Messages');
+
         $parentId   = $_REQUEST['parent_id']   ?? '';
         $parentType = $_REQUEST['parent_type'] ?? 'Contacts';
         $parentName = html_entity_decode(
@@ -473,26 +476,116 @@ class stic_MessagesController extends SugarController
                 $secondsLeft = (24 * 3600) - $diffSeconds;
                 $hoursLeft   = floor($secondsLeft / 3600);
                 $minutesLeft = floor(($secondsLeft % 3600) / 60);
-                $windowMessage = "Ventana abierta — cierra en {$hoursLeft}h {$minutesLeft}m";
+                $windowMessage = sprintf(
+                    $mod_strings['LBL_CONVERSATION_WINDOW_OPEN'],
+                    $hoursLeft,
+                    $minutesLeft
+                );
             } else {
                 $lastEventFormatted = $GLOBALS['timedate']->to_display_date_time($lastWindowEvent);
-                $windowMessage = "Ventana cerrada desde {$lastEventFormatted}";
+                $windowMessage = sprintf(
+                    $mod_strings['LBL_CONVERSATION_WINDOW_CLOSED'],
+                    $lastEventFormatted
+                );
             }
         } else {
-            $windowMessage = "Sin conversación previa — solo puedes enviar plantillas verificadas";
+            $windowMessage = $mod_strings['LBL_CONVERSATION_NO_HISTORY'];
         }
+
+        // Build URL to create a new stic_Messages record pre-linked to the parent
+        $newMessageUrl = 'index.php?module=stic_Messages&action=EditView'
+            . '&return_module=' . urlencode($parentType)
+            . '&return_id='     . urlencode($parentId)
+            . '&parent_type='   . urlencode($parentType)
+            . '&parent_id='     . urlencode($parentId)
+            . '&parent_name='   . urlencode($parentName);
 
         require_once('modules/stic_Messages/views/view.conversation.php');
         $view = new stic_MessagesViewConversation();
-        $view->messages      = $messages;
-        $view->parentName    = $parentName;
-        $view->parentId      = $parentId;
-        $view->parentType    = $parentType;
-        $view->contactPhone  = $contactPhone;
-        $view->windowOpen    = $windowOpen;
-        $view->windowMessage = $windowMessage;
+        $view->messages       = $messages;
+        $view->parentName     = $parentName;
+        $view->parentId       = $parentId;
+        $view->parentType     = $parentType;
+        $view->contactPhone   = $contactPhone;
+        $view->windowOpen     = $windowOpen;
+        $view->windowMessage  = $windowMessage;
+        $view->newMessageUrl  = $newMessageUrl;
+        $view->modStrings     = $mod_strings;
         $view->display();
         sugar_cleanup();
         exit();
     }    
+    public function action_uploadConversationMedia() {
+        header('Content-Type: application/json');
+
+        $allowedMimes = [
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+            'video/mp4', 'video/3gpp',
+            'audio/ogg', 'audio/mpeg', 'audio/mp4', 'audio/amr',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        ];
+
+        if (empty($_FILES['media']) || $_FILES['media']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['success' => false, 'error' => 'No file received']);
+            exit();
+        }
+
+        $file     = $_FILES['media'];
+        $mimeType = mime_content_type($file['tmp_name']);
+
+        if (!in_array($mimeType, $allowedMimes)) {
+            echo json_encode(['success' => false, 'error' => 'Tipo de archivo no soportado por WhatsApp: ' . $mimeType]);
+            exit();
+        }
+
+        $sizeLimit = (strpos($mimeType, 'image/') === 0) ? 5 * 1024 * 1024 : 16 * 1024 * 1024;
+        if ($file['size'] > $sizeLimit) {
+            $limitMb = $sizeLimit / 1024 / 1024;
+            echo json_encode(['success' => false, 'error' => "El archivo supera el límite de {$limitMb}MB"]);
+            exit();
+        }
+
+        // Create the Note immediately — same pattern as SuiteCRM Emails.
+        // parent_id is empty at this point; it will be filled in stic_Messages::save()
+        // once the message record has been persisted.
+        $note                 = BeanFactory::newBean('Notes');
+        $note->parent_type    = 'stic_Messages';
+        $note->parent_id      = '';
+        $note->name           = $file['name'];
+        $note->filename       = $file['name'];
+        $note->file_mime_type = $mimeType;
+        $note->deleted        = 0;
+        $noteId               = $note->save();
+
+        if (empty($noteId)) {
+            echo json_encode(['success' => false, 'error' => 'Error al crear el registro del adjunto']);
+            exit();
+        }
+
+        // Move the uploaded file to upload/{note_id} — the standard SuiteCRM location
+        $destPath = rtrim(getcwd(), '/') . '/upload/' . $noteId;
+        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+            // Roll back the Note if the file could not be moved
+            $note->deleted = 1;
+            $note->save();
+            echo json_encode(['success' => false, 'error' => 'Error al guardar el archivo']);
+            exit();
+        }
+
+        $GLOBALS['log']->info('stic_Messages: attachment uploaded. note_id=' . $noteId . ' file=' . $file['name']);
+
+        echo json_encode([
+            'success' => true,
+            'note_id' => $noteId,
+            'name'    => $file['name'],
+            'mime'    => $mimeType,
+        ]);
+        exit();
+    }
 }

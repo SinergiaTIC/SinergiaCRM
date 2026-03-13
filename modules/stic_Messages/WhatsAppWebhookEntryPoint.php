@@ -73,7 +73,9 @@ class WhatsAppWebhookEntryPoint
 
     private function validateWebhookData()
     {
-        foreach (['MessageSid', 'From', 'Body'] as $field) {
+        // Body can legitimately be empty when the incoming message contains
+        // only media (image, audio, document, etc.) with no text.
+        foreach (['MessageSid', 'From'] as $field) {
             if (empty($_POST[$field])) {
                 return false;
             }
