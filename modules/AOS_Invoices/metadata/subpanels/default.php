@@ -49,6 +49,12 @@ $subpanel_layout = array(
       'vname' => 'LBL_STATUS',
       'default' => true,
     ),
+    'verifactu_aeat_status_c' =>
+    array(
+      'width' => '15%',
+      'vname' => 'LBL_VERIFACTU_AEAT_STATUS',
+      'default' => true,
+    ),
     'assigned_user_name' =>
     array(
       'name' => 'assigned_user_name',
