@@ -46,26 +46,26 @@ function addPaymentsToRemittance() {
         if (!empty($retArray['where'])) {
             $where = " AND " . $retArray['where'];
         }
+        
+        $focus = BeanFactory::newBean('stic_Payments');
+        // Check ACL access
+        if ($focus->bean_implements('ACL')) {
+            if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
+                ACLController::displayNoAccess();
+                sugar_die('');
+            }
+
+            $accessWhere = $focus->buildAccessWhere('list');
+            if (!empty($accessWhere)) {
+                $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
+            }
+        }
     } else {
         // If not all payments in the listview were selected then we'll get their ids from the form request var
         $ids = explode(',', $_REQUEST['uid']);
         $idList = implode("','", $ids);
         $where = " AND id in ('{$idList}')";
     }
-
-    $focus = BeanFactory::newBean('stic_Payments');
-    // Check ACL access
-    if ($focus->bean_implements('ACL')) {
-        if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
-            ACLController::displayNoAccess();
-            sugar_die('');
-        }
-
-        $accessWhere = $focus->buildAccessWhere('list');
-        $where .= ' AND ' . $accessWhere;
-    }
-
-
 
     $sql .= $where;
     // Retrieve selected payments from db
