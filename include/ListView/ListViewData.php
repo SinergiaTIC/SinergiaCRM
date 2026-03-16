@@ -263,19 +263,25 @@ class ListViewData
             return null;
         }
         // END STIC Custom
-        global $current_user;
+        global $current_user, $sugar_config;
         require_once 'include/SearchForm/SearchForm2.php';
         SugarVCR::erase($seed->module_dir);
         $this->seed =& $seed;
         // STIC-Custom OC - 20260309 - Check if async count is enabled
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
-        $useAsyncCount = !empty($GLOBALS['sugar_config']['async_list_count']);
+        $useAsyncCount = !empty($sugar_config['async_list_count']);
         // When async is enabled, also enable disable_count_query for efficiency (limit + 1 trick)
+        $originalDisableCountQuery = $sugar_config['disable_count_query'] ?? false;
         if ($useAsyncCount) {
-            $GLOBALS['sugar_config']['disable_count_query'] = true;
+            $sugar_config['disable_count_query'] = true;
         }
         // END STIC-Custom OC
-        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
+        $totalCounted = empty($sugar_config['disable_count_query']);
+        
+        // STIC-Custom OC - 20260309 - Restore original config value
+        $sugar_config['disable_count_query'] = $originalDisableCountQuery;
+        // END STIC-Custom OC
+        
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
         if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup') {
             $_SESSION['MAILMERGE_MODULE'] = $seed->module_dir;
