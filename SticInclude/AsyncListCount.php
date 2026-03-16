@@ -24,7 +24,6 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-sleep(5);
 
 function outputJson($success, $data = null, $error = null) {
     @ob_end_clean();
