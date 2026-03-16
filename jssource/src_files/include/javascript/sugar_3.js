@@ -5172,8 +5172,14 @@ function loadAsyncListCount() {
                     }
                 } catch (e) {
                     console.error('Error parsing async count response:', e);
+                    el.innerHTML = '?';
+                    el.classList.remove('async-count-loading', 'async-spinner');
                 }
             }
+        };
+        xhr.onerror = function() {
+            el.innerHTML = '?';
+            el.classList.remove('async-count-loading', 'async-spinner');
         };
         xhr.send();
     });
