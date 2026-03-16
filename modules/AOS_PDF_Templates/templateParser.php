@@ -30,23 +30,37 @@ use SuiteCRM\Utility\SuiteValidator as SuiteValidator;
 #[\AllowDynamicProperties]
 class templateParser
 {
+    const SUBPANEL_START_PATTERN = '/<!--\$subpanel:([a-z0-9_]+)(:([a-z0-9_]+))?-->/i';
+    const SUBPANEL_END_PATTERN = '/<!--\/\$subpanel:([a-z0-9_]+)(:([a-z0-9_]+))?-->/i';
+    const SUBPANEL_OPTIONS_PATTERN = '/(\w+):(\w+)/';
+
     public static function parse_template($string, $bean_arr)
     {
+        $GLOBALS['log']->fatal('PARSE_TEMPLATE_START: string length=' . strlen($string));
+        $GLOBALS['log']->fatal('PARSE_TEMPLATE_START: bean_arr=' . json_encode(array_keys($bean_arr)));
+        
         foreach ($bean_arr as $bean_name => $bean_id) {
             $focus = BeanFactory::getBean($bean_name, $bean_id);
             $string = templateParser::parse_template_bean($string, $focus->table_name, $focus);
 
             foreach ($focus->field_defs as $focus_name => $focus_arr) {
-                if ($focus_arr['type'] == 'relate') {
+                if (isset($focus_arr['type']) && $focus_arr['type'] == 'relate') {
                     if (isset($focus_arr['module']) && $focus_arr['module'] != '' && $focus_arr['module'] != 'EmailAddress') {
-                        $idName = $focus_arr['id_name'];
+                        $idName = isset($focus_arr['id_name']) ? $focus_arr['id_name'] : null;
+                        if (empty($idName) || !isset($focus->$idName) || empty($focus->$idName)) {
+                            continue;
+                        }
                         $relate_focus = BeanFactory::getBean($focus_arr['module'], $focus->$idName);
-
                         $string = templateParser::parse_template_bean($string, $focus_arr['name'], $relate_focus);
                     }
                 }
             }
         }
+        
+        $string = templateParser::parseSubpanels($string, $bean_arr);
+        
+        $GLOBALS['log']->fatal('PARSE_TEMPLATE_END: string length=' . strlen($string));
+        
         return $string;
     }
 
@@ -315,5 +329,334 @@ class templateParser
             return $date;
         }
     }
-    // END STIC
+
+    /**
+     * Get all subpanel (one-to-many) relationships for a bean
+     *
+     * @param SugarBean $bean
+     * @return array Relationship definitions
+     */
+    public static function getSubpanelRelationships(SugarBean $bean): array
+    {
+        $relationships = array();
+
+        if (!isset($bean->module_dir)) {
+            return $relationships;
+        }
+
+        require_once 'include/SubPanel/SubPanelDefinitions.php';
+        $subPanelDefinitions = new SubPanelDefinitions($bean);
+
+        if (!isset($subPanelDefinitions->layout_defs['subpanel_setup'])) {
+            return $relationships;
+        }
+
+        foreach ($subPanelDefinitions->layout_defs['subpanel_setup'] as $subpanelKey => $subpanelDef) {
+            if (!isset($subpanelDef['module'])) {
+                continue;
+            }
+
+            $module = $subpanelDef['module'];
+            if (empty($module)) {
+                continue;
+            }
+
+            $relatedBean = BeanFactory::newBean($module);
+            if (!$relatedBean) {
+                continue;
+            }
+
+            $fields = array();
+            if (isset($relatedBean->field_defs) && is_array($relatedBean->field_defs)) {
+                foreach ($relatedBean->field_defs as $relFieldName => $relFieldDef) {
+                    if (isset($relFieldDef['name']) && $relFieldDef['name'] !== '') {
+                        if (isset($relFieldDef['reportable']) && !$relFieldDef['reportable']) {
+                            continue;
+                        }
+                        if (isset($relFieldDef['type']) && in_array($relFieldDef['type'], array('id', 'link'))) {
+                            continue;
+                        }
+                        if (isset($relFieldDef['dbType']) && strtolower($relFieldDef['dbType']) === 'id') {
+                            continue;
+                        }
+
+                        $fields[$relFieldName] = isset($relFieldDef['vname']) 
+                            ? translate($relFieldDef['vname'], $module) 
+                            : $relFieldName;
+                    }
+                }
+            }
+
+            if (!empty($fields)) {
+                // Sort fields alphabetically by translated label
+                asort($fields);
+                
+                $subpanelTitleKey = isset($subpanelDef['title_key']) ? $subpanelDef['title_key'] : $subpanelKey;
+                $subpanelTitle = translate($subpanelTitleKey, $bean->module_dir);
+                $relationships[$subpanelKey] = array(
+                    'module' => $module,
+                    'table_name' => $relatedBean->table_name,
+                    'fields' => $fields,
+                    'relationship' => $subpanelKey,
+                    'name' => $subpanelTitle
+                );
+            }
+        }
+        
+        // Sort subpanels alphabetically by name
+        uasort($relationships, function($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+        
+        return $relationships;
+    }
+
+    /**
+     * Parse subpanel/related records loops in template
+     *
+     * @param string $template
+     * @param array $beanArr
+     * @return string
+     */
+    public static function parseSubpanels(string $template, array $beanArr): string
+    {
+        $GLOBALS['log']->fatal('PARSE_SUBPANELS_START: template length=' . strlen($template));
+        $GLOBALS['log']->fatal('PARSE_SUBPANELS_START: pattern=' . self::SUBPANEL_START_PATTERN);
+        
+        $matches = array();
+        
+        if (!preg_match_all(self::SUBPANEL_START_PATTERN, $template, $matches, PREG_OFFSET_CAPTURE)) {
+            $GLOBALS['log']->fatal('PARSE_SUBPANELS: no matches found');
+            return $template;
+        }
+
+        $GLOBALS['log']->fatal('PARSE_SUBPANELS: found ' . count($matches[0]) . ' matches');
+        
+        $result = $template;
+        $offset = 0;
+        
+        $subpanelStacks = array();
+        
+        foreach ($matches[0] as $index => $match) {
+            $fullMatch = $match[0];
+            $matchOffset = $match[1];
+            
+            $subpanelKey = $matches[1][$index][0];
+            $parentKey = isset($matches[3][$index][0]) ? $matches[3][$index][0] : null;
+            
+            $GLOBALS['log']->fatal('START_MATCH: key=' . $subpanelKey . ' parent=' . $parentKey . ' offset=' . $matchOffset . ' match=' . $fullMatch);
+            
+            $subpanelStacks[] = array(
+                'key' => $subpanelKey,
+                'parent' => $parentKey,
+                'offset' => $matchOffset,
+                'full_match' => $fullMatch,
+                'end_offset' => null
+            );
+        }
+        
+        $endMatches = array();
+        $GLOBALS['log']->fatal('END_PATTERN: ' . self::SUBPANEL_END_PATTERN);
+        if (preg_match_all(self::SUBPANEL_END_PATTERN, $template, $endMatches, PREG_OFFSET_CAPTURE)) {
+            $GLOBALS['log']->fatal('END_MATCHES: found ' . count($endMatches[0]));
+            foreach ($endMatches[0] as $index => $match) {
+                $endKey = $endMatches[1][$index][0];
+                $endParent = isset($endMatches[3][$index][0]) ? $endMatches[3][$index][0] : null;
+                $endOffset = $match[1];
+                
+                $GLOBALS['log']->fatal('END_MATCH: key=' . $endKey . ' parent=' . $endParent . ' offset=' . $endOffset . ' match=' . $match[0]);
+                
+                foreach ($subpanelStacks as &$sp) {
+                    if ($sp['key'] === $endKey && $sp['parent'] === $endParent && $sp['end_offset'] === null) {
+                        $sp['end_offset'] = $endOffset + strlen($match[0]);
+                        $GLOBALS['log']->fatal('MATCHED_END: set end_offset=' . $sp['end_offset']);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        usort($subpanelStacks, function($a, $b) {
+            return $b['offset'] - $a['offset'];
+        });
+
+        $GLOBALS['log']->fatal('SUBPANEL_STACKS_COUNT: ' . count($subpanelStacks));
+        
+        foreach ($subpanelStacks as $subpanel) {
+            $GLOBALS['log']->fatal('PROCESS_SUBPANEL: key=' . $subpanel['key'] . ' end_offset=' . $subpanel['end_offset']);
+            if ($subpanel['end_offset'] === null) {
+                $GLOBALS['log']->fatal('PROCESS_SUBPANEL: skipping - no end_offset');
+                continue;
+            }
+            
+            $fullMatch = is_array($subpanel['full_match']) ? ($subpanel['full_match'][0] ?? '') : $subpanel['full_match'];
+            if (empty($fullMatch)) {
+                continue;
+            }
+            
+            $endMatchStr = is_array($endMatches[0][0]) ? ($endMatches[0][0][0] ?? '') : $endMatches[0][0];
+            
+            $GLOBALS['log']->fatal('SUBPANEL_CALC: fullMatch=' . $fullMatch . ' endMatchStr=' . $endMatchStr . ' startOffset=' . $subpanel['offset'] . ' endOffset=' . $subpanel['end_offset']);
+            
+            $loopStart = $subpanel['offset'] + strlen($fullMatch);
+            $loopContentLength = $subpanel['end_offset'] - $subpanel['offset'] - strlen($fullMatch) - strlen($endMatchStr);
+            $loopContent = substr($template, $loopStart, $loopContentLength);
+            
+            $parentKey = $subpanel['parent'];
+            $subpanelKey = $subpanel['key'];
+            
+            $GLOBALS['log']->fatal('SUBPANEL_DEBUG: key=' . $subpanelKey . ' parent=' . $parentKey . ' beanArr=' . json_encode(array_keys($beanArr)));
+            
+            if ($parentKey && isset($beanArr[$parentKey])) {
+                $parentBean = BeanFactory::getBean($parentKey, $beanArr[$parentKey]);
+                if ($parentBean) {
+                    $parsedContent = self::parseNestedSubpanel($loopContent, $parentBean, $subpanelKey);
+                } else {
+                    $parsedContent = '';
+                }
+            } else {
+                $parsedContent = '';
+                
+                foreach ($beanArr as $beanName => $beanId) {
+                    $bean = BeanFactory::getBean($beanName, $beanId);
+                    $GLOBALS['log']->fatal('SUBPANEL_DEBUG: bean=' . $beanName . ' id=' . $beanId . ' beanObj=' . (is_object($bean) ? 'yes' : 'no'));
+                    if ($bean) {
+                        $parsedContent .= self::parseNestedSubpanel($loopContent, $bean, $subpanelKey);
+                    }
+                }
+            }
+            
+            $fullLoopLength = $subpanel['end_offset'] - $subpanel['offset'];
+            $result = substr($result, 0, $subpanel['offset']) . $parsedContent . substr($result, $subpanel['end_offset']);
+        }
+
+        $GLOBALS['log']->fatal('PARSE_SUBPANELS_END: result length=' . strlen($result));
+        
+        return $result;
+    }
+
+    /**
+     * Handle nested subpanel loops
+     *
+     * @param string $template
+     * @param SugarBean $parentBean
+     * @param string $relationshipName
+     * @return string
+     */
+    public static function parseNestedSubpanel(
+        string $template, 
+        SugarBean $parentBean, 
+        string $relationshipName
+    ): string {
+        $GLOBALS['log']->fatal('NESTED_DEBUG: relationship=' . $relationshipName . ' parentBean=' . get_class($parentBean) . ' id=' . $parentBean->id);
+        
+        $relatedBeans = self::getRelatedRecords($parentBean, $relationshipName);
+        
+        $GLOBALS['log']->fatal('NESTED_DEBUG: found ' . count($relatedBeans) . ' related beans');
+        
+        if (empty($relatedBeans)) {
+            return '';
+        }
+
+        $nestedPattern = self::SUBPANEL_START_PATTERN;
+        $hasNested = preg_match($nestedPattern, $template);
+        
+        $result = '';
+        
+        foreach ($relatedBeans as $relatedBean) {
+            $rowContent = $template;
+            
+            if ($hasNested) {
+                $subpanelRelationships = self::getSubpanelRelationships($relatedBean);
+                
+                preg_match_all(self::SUBPANEL_START_PATTERN, $rowContent, $nestedMatches, PREG_OFFSET_CAPTURE);
+                
+                $nestedSubpanels = array();
+                foreach ($nestedMatches[0] as $index => $match) {
+                    $nestedSubpanels[] = array(
+                        'key' => $nestedMatches[1][$index][0],
+                        'offset' => $match[1]
+                    );
+                }
+                
+                usort($nestedSubpanels, function($a, $b) {
+                    return $b['offset'] - $a['offset'];
+                });
+                
+                foreach ($nestedSubpanels as $nested) {
+                    $nestedRelName = $nested['key'];
+                    if (isset($subpanelRelationships[$nestedRelName])) {
+                        $nestedContent = self::parseNestedSubpanel($rowContent, $relatedBean, $nestedRelName);
+                        
+                        if (preg_match('/<!--\$subpanel:' . $nestedRelName . '-->(.*?)<!--\/\$subpanel:' . $nestedRelName . '-->/is', $rowContent, $nestedMatch)) {
+                            $rowContent = str_replace($nestedMatch[0], $nestedContent, $rowContent);
+                        }
+                    }
+                }
+            }
+            
+            $tableName = $relatedBean->table_name;
+            $GLOBALS['log']->fatal('NESTED: parsing with tableName=' . $tableName . ' template=' . substr($rowContent, 0, 200));
+            $rowContent = self::parse_template_bean($rowContent, $tableName, $relatedBean);
+            $GLOBALS['log']->fatal('NESTED: after parse_template_bean=' . substr($rowContent, 0, 200));
+            
+            $result .= $rowContent;
+        }
+
+        $GLOBALS['log']->fatal('NESTED_END: result=' . substr($result, 0, 200));
+        
+        return $result;
+    }
+
+    /**
+     * Get related records via a relationship
+     *
+     * @param SugarBean $bean
+     * @param string $relationship
+     * @return array SugarBean[]
+     */
+    public static function getRelatedRecords(SugarBean $bean, string $relationship): array
+    {
+        $relatedBeans = array();
+        
+        $GLOBALS['log']->fatal('GETRELATED_DEBUG: bean=' . get_class($bean) . ' relationship=' . $relationship);
+        
+        if (!isset($bean->field_defs[$relationship])) {
+            $GLOBALS['log']->fatal('GETRELATED_DEBUG: relationship not in field_defs');
+            return $relatedBeans;
+        }
+        
+        $fieldDef = $bean->field_defs[$relationship];
+        $GLOBALS['log']->fatal('GETRELATED_DEBUG: fieldDef type=' . ($fieldDef['type'] ?? 'none') . ' bean_name=' . ($fieldDef['bean_name'] ?? 'none') . ' module=' . ($fieldDef['module'] ?? 'none'));
+        
+        if (isset($fieldDef['type']) && $fieldDef['type'] === 'link') {
+            if (method_exists($bean, 'get_linked_beans')) {
+                $beanName = isset($fieldDef['bean_name']) ? $fieldDef['bean_name'] : (isset($fieldDef['module']) ? BeanFactory::getBeanName($fieldDef['module']) : null);
+                $GLOBALS['log']->fatal('GETRELATED_DEBUG: calling get_linked_beans beanName=' . $beanName);
+                if ($beanName) {
+                    $relatedBeans = $bean->get_linked_beans($relationship, $beanName, array(), 0, 100);
+                    $GLOBALS['log']->fatal('GETRELATED_DEBUG: got ' . count($relatedBeans) . ' beans');
+                }
+            }
+        }
+        
+        return $relatedBeans;
+    }
+
+    /**
+     * Get available subpanel fields for template editor
+     *
+     * @param string $moduleName
+     * @return array
+     */
+    public static function getSubpanelFieldsForModule(string $moduleName): array
+    {
+        $bean = BeanFactory::getBean($moduleName);
+        
+        if (!$bean) {
+            return array();
+        }
+        
+        return self::getSubpanelRelationships($bean);
+    }
 }

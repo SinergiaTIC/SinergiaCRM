@@ -64,7 +64,7 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
             $mod_options_array = array();
 
             //Getting Fields
-            if (!$beanList[$moduleName]) {
+            if (!$beanList[$moduleName] || !class_exists($beanList[$moduleName])) {
                 continue;
             }
             $module = new $beanList[$moduleName]();
@@ -103,7 +103,7 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                         //         }
                         //     }
                         // } //End loop.
-                        if (!is_null($relate_module_name)) {
+                        if (!is_null($relate_module_name) && class_exists($relate_module_name)) {
                             $relate_module = new $relate_module_name();
 
                             foreach ($relate_module->field_defs as $relate_name => $relate_arr) {
@@ -118,11 +118,12 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
 
                         $options = json_encode($options_array);
 
-                        if ($module_arr['vname'] != 'LBL_DELETED') {
-                            $options_array['$'.$module->table_name.'_'.$name] = translate($module_arr['vname'], $module->module_dir);
-                            $fmod_options_array[$module_arr['vname']] = translate($relate_module->module_dir).' : '.translate($module_arr['vname'], $module->module_dir);
+                        $module_arr_vname = $module_arr['vname'] ?? '';
+                        if ($module_arr_vname && $module_arr_vname != 'LBL_DELETED') {
+                            $options_array['$'.$module->table_name.'_'.$name] = translate($module_arr_vname, $module->module_dir);
+                            $fmod_options_array[$module_arr_vname] = translate($relate_module->module_dir).' : '.translate($module_arr_vname, $module->module_dir);
                         }
-                        $test = $module_arr['vname'];
+                        $test = $module_arr_vname;
                         $insert_fields_js2 .="'$test':$options,\n";
                     }
                 }
@@ -312,7 +313,7 @@ HTML;
 			convert_urls : false,
 			plugin_insertdate_dateFormat : '{DATE '+df+'}',
 			pagebreak_separator : "<div style=\"page-break-before: always;\">&nbsp;</div>",
-			extended_valid_elements : "textblock,barcode[*]",
+			extended_valid_elements : "textblock,barcode[*],!--$--,!/--$--",
 			custom_elements: "textblock",
             setup : function(ed) {
                 ed.addButton('insertsignature', {

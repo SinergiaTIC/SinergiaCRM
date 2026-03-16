@@ -24,3 +24,9 @@
 $mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Feu servir aquest enllaç per descarregar el fitxer PDF:<br>';
 $mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Firmant autoritzat';
 $mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Firmants autoritzats';
+$mod_strings['LBL_SUBPANEL_FIELDS'] = 'Camps de Subpanel (Registres Relacionats)';
+$mod_strings['LBL_SUBPANEL_TYPE'] = 'Subpanel';
+$mod_strings['LBL_SUBPANEL_FIELD'] = 'Camp';
+$mod_strings['LBL_SELECT'] = 'Seleccionar';
+$mod_strings['LBL_INSERT_SUBPANEL_LOOP'] = 'Inserir Bucle';
+$mod_strings['LBL_INSERT_FIELD'] = 'Inserir Camp';

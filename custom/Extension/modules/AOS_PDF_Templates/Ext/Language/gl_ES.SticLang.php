@@ -24,5 +24,9 @@
 $mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Utilice este enlace para descargar o ficheiro PDF:<br>';
 $mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Firmante autorizado';
 $mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Firmantes autorizados';
-
-
+$mod_strings['LBL_SUBPANEL_FIELDS'] = 'Campos de Subpanel (Rexistros Relacionados)';
+$mod_strings['LBL_SUBPANEL_TYPE'] = 'Subpanel';
+$mod_strings['LBL_SUBPANEL_FIELD'] = 'Campo';
+$mod_strings['LBL_SELECT'] = 'Seleccionar';
+$mod_strings['LBL_INSERT_SUBPANEL_LOOP'] = 'Inserir Bucle';
+$mod_strings['LBL_INSERT_FIELD'] = 'Inserir Campo';

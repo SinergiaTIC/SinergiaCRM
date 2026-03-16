@@ -103,12 +103,70 @@ class AOS_PDF_Templates extends AOS_PDF_Templates_sugar
         return $modules;
     }
     // END STIC-Custom    
-     
+    
     public function cleanBean()
     {
+        // Run purification with comment preservation first
+        $this->description = $this->purifyWithSubpanelPreservation($this->description);
+        $this->pdfheader = $this->purifyWithSubpanelPreservation($this->pdfheader);
+        $this->pdffooter = $this->purifyWithSubpanelPreservation($this->pdffooter);
+        
+        // Save the purified content before parent runs
+        $savedDescription = $this->description;
+        $savedPdfheader = $this->pdfheader;
+        $savedPdffooter = $this->pdffooter;
+
         parent::cleanBean();
-        $this->pdfheader = purify_html($this->pdfheader, ['HTML.ForbiddenElements' => ['iframe' => true]]);
-        $this->description = purify_html($this->description, ['HTML.ForbiddenElements' => ['iframe' => true]]);
-        $this->pdffooter = purify_html($this->pdffooter, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+        
+        // Restore our content - parent may have purified again
+        $this->description = $savedDescription;
+        $this->pdfheader = $savedPdfheader;
+        $this->pdffooter = $savedPdffooter;
+    }
+    
+    private function purifyWithSubpanelPreservation($html)
+    {
+        if (empty($html)) {
+            return $html;
+        }
+        
+        // Decode first
+        $html = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        
+        $GLOBALS['log']->fatal('PURIFY_DECODED: ' . $html);
+        
+        // Extract subpanel comments - BOTH start and end tags
+        // Start: <!--$subpanel:xxx-->
+        // End: <!--/$subpanel:xxx-->
+        $subpanelComments = array();
+        $counter = 0;
+        
+        // Match both patterns: <!--$subpanel:...--> AND <!--/$subpanel:...-->
+        $html = preg_replace_callback(
+            '/<!--(?:\/?\$)[a-z_]+:[a-z0-9_]+-->/i',
+            function($match) use (&$subpanelComments, &$counter) {
+                $key = '###SUBPANEL_' . $counter . '###';
+                $subpanelComments[$key] = $match[0];
+                $counter++;
+                return $key;
+            },
+            $html
+        );
+        
+        $GLOBALS['log']->fatal('PURIFY_PLACEHOLDERS: ' . $html . ' | COMMENTS: ' . json_encode($subpanelComments));
+        
+        // Purify
+        $html = purify_html($html, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+        
+        $GLOBALS['log']->fatal('PURIFY_AFTER: ' . $html);
+        
+        // Restore comments
+        foreach ($subpanelComments as $key => $comment) {
+            $html = str_replace($key, $comment, $html);
+        }
+        
+        $GLOBALS['log']->fatal('PURIFY_RESTORED: ' . $html);
+        
+        return $html;
     }
 }

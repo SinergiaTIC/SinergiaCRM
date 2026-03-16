@@ -21,8 +21,12 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Utilice este enlace para descargar el fichero PDF:<br>';
-$mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Firmante autorizado';
-$mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Firmantes autorizados';
-
-
+$mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Erabili esteka hau PDF fitxategia deskargatzeko:<br>';
+$mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Sinatzaile autorizatua';
+$mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Sinatzaile autorizatuak';
+$mod_strings['LBL_SUBPANEL_FIELDS'] = 'Azpipaneleko Eremuak (Erlazionatutako Erregistroak)';
+$mod_strings['LBL_SUBPANEL_TYPE'] = 'Azpipanela';
+$mod_strings['LBL_SUBPANEL_FIELD'] = 'Eremua';
+$mod_strings['LBL_SELECT'] = 'Aukeratu';
+$mod_strings['LBL_INSERT_SUBPANEL_LOOP'] = 'Txertatu Begizta';
+$mod_strings['LBL_INSERT_FIELD'] = 'Txertatu Eremua';

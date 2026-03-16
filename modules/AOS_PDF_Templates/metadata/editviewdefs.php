@@ -339,11 +339,20 @@ array (
         array (
           0 => 
           array (
+            'name' => 'subpanel_fields',
+            'label' => 'LBL_SUBPANEL_FIELDS',
+            'customCode' => '{$SUBPANEL_FIELDS}',
+          ),
+        ),
+        5 => 
+        array (
+          0 => 
+          array (
             'name' => 'description',
             'label' => 'LBL_DESCRIPTION',
           ),
         ),
-        5 => 
+        7 => 
         array (
           0 => 
           array (
@@ -351,7 +360,7 @@ array (
             'label' => 'LBL_HEADER',
           ),
         ),
-        6 => 
+        7 => 
         array (
           0 => 
           array (
