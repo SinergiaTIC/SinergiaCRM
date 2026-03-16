@@ -43,11 +43,18 @@ function outputJson($success, $data = null, $error = null) {
     ob_flush();
 }
 
+global $beanList, $app_list_strings;
+
 $module = $_REQUEST['module'] ?? '';
-$where = html_entity_decode($_REQUEST['where'] ?? '', ENT_QUOTES, 'UTF-8');
+$where = isset($_REQUEST['where']) ? html_entity_decode($_REQUEST['where'], ENT_QUOTES, 'UTF-8') : '';
 
 if (empty($module)) {
     outputJson(false, null, 'Module not specified');
+    return;
+}
+
+if (empty($beanList) || empty($beanList[$module])) {
+    outputJson(false, null, 'Invalid module');
     return;
 }
 
@@ -62,10 +69,15 @@ if (!$bean->ACLAccess('ListView')) {
     return;
 }
 
-$ret_array = $bean->create_new_list_query('', $where, [], [], 0, '', true, $bean, false);
-$countQuery = $bean->create_list_count_query($ret_array['select'] . $ret_array['from'] . $ret_array['where']);
-
 $db = DBManagerFactory::getInstance();
+
+if (!empty($where)) {
+    $where = $db->quote($where);
+}
+
+$ret_array = $bean->create_new_list_query('', $where, [], [], 0, '', true, $bean, false);
+$countQuery = '/*+ MAX_EXECUTION_TIME(10000) */ ' . $bean->create_list_count_query($ret_array['select'] . $ret_array['from'] . $ret_array['where']);
+
 $result = $db->query($countQuery);
 $row = $db->fetchByAssoc($result);
 $total = intval($row['c'] ?? $row['count'] ?? 0);
