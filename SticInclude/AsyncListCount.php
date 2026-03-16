@@ -44,7 +44,7 @@ function outputJson($success, $data = null, $error = null) {
 }
 
 $module = $_REQUEST['module'] ?? '';
-$where = $_REQUEST['where'] ?? '';
+$where = html_entity_decode($_REQUEST['where'] ?? '', ENT_QUOTES, 'UTF-8');
 
 if (empty($module)) {
     outputJson(false, null, 'Module not specified');

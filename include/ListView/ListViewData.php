@@ -552,6 +552,8 @@ class ListViewData
         $pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);
         // STIC-Custom OC - 20260309 - Add flag to indicate async count is pending
         $pageData['offsets']['asyncCountPending'] = $useAsyncCount && !$totalCounted;
+        // Pass WHERE clause for async count to use filters
+        $pageData['offsets']['where'] = $where;
         // END STIC-Custom OC
         $pageData['bean'] = array('objectName' => $seed->object_name, 'moduleDir' => $seed->module_dir, 'moduleName' => strtr($seed->module_dir, $module_names));
         $pageData['stamp'] = $this->stamp;
