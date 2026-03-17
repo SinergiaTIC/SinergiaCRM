@@ -194,6 +194,7 @@ function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
         return;
     }
 
+    ob_start();
     $scripts = file($scriptsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($scripts as $script) {
         $script = trim($script);
@@ -202,4 +203,5 @@ function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
             SticRunScripts::executeScript($script, $infos, $errors);
         }
     }
+    ob_get_clean();
 }
