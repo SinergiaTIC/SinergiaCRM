@@ -2083,8 +2083,11 @@ $dictionary['Account']['fields']['emails_list'] = array(
 // Private Area fields
 $dictionary['Account']['fields']['stic_pa_username_c'] = array(
     'name' => 'stic_pa_username_c',
+    'id' => 'Accountsstic_pa_username_c',
     'vname' => 'LBL_STIC_PA_USERNAME',
     'type' => 'varchar',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
     'len' => '255',
     'inline_edit' => '1',
     'required' => false,
@@ -2100,8 +2103,11 @@ $dictionary['Account']['fields']['stic_pa_username_c'] = array(
 
 $dictionary['Account']['fields']['stic_pa_password_c'] = array(
     'name' => 'stic_pa_password_c',
+    'id' => 'Accountsstic_pa_password_c',
     'vname' => 'LBL_STIC_PA_PASSWORD',
     'type' => 'varchar',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
     'len' => '255',
     'inline_edit' => '1',
     'required' => false,
@@ -2116,8 +2122,11 @@ $dictionary['Account']['fields']['stic_pa_password_c'] = array(
 
 $dictionary['Account']['fields']['stic_pa_enable_c'] = array(
     'name' => 'stic_pa_enable_c',
+    'id' => 'Accountsstic_pa_enable_c',
     'vname' => 'LBL_STIC_PA_ENABLE',
     'type' => 'bool',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
     'default' => '0',
     'inline_edit' => '1',
     'required' => false,
