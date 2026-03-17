@@ -41,9 +41,17 @@ class stic_BookingsViewBookingsAssistantSummary extends SugarView
         if (isset($_SESSION['summary']) && isset($_SESSION['consolidated_summary'])) {
             $this->ss->assign('DATA', $_SESSION['summary']['global']);
             $this->ss->assign('CONSOLIDATED_SUMMARY', json_encode($_SESSION['consolidated_summary']));
+
+            $isAllDay = false;
+            if (!empty($_SESSION['bookings_to_confirm']) && is_array($_SESSION['bookings_to_confirm'])) {
+                $firstBooking = reset($_SESSION['bookings_to_confirm']);
+                $isAllDay = !empty($firstBooking['all_day']) && $firstBooking['all_day'] == '1';
+            }
+            $this->ss->assign('IS_ALL_DAY', $isAllDay ? 'true' : 'false');
         } else {
             $this->ss->assign('DATA', ['totalRecordsProcessed' => 0, 'totalRecordsCreated' => 0, 'totalRecordsNotCreated' => 0]);
             $this->ss->assign('CONSOLIDATED_SUMMARY', json_encode([]));
+            $this->ss->assign('IS_ALL_DAY', 'false');
         }
         
         $this->ss->assign('RECORDS_PER_PAGE', $sugar_config['list_max_entries_per_page']);

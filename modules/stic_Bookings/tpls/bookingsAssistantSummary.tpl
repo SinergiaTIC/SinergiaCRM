@@ -144,6 +144,7 @@
 
 <script>
     var consolidatedSummaryData = {$CONSOLIDATED_SUMMARY};
+    const isAllDayBooking = {$IS_ALL_DAY};
     const pageSize = {$RECORDS_PER_PAGE};
     let createdRecords = [];
     let notCreatedRecords = [];
@@ -297,12 +298,12 @@
 
                 const startDateSpan = document.createElement('span');
                 startDateSpan.className = 'row';
-                startDateSpan.textContent = formatDate(record.startDate) || '';
+                startDateSpan.textContent = formatDate(record.startDate, false) || '';
                 recordRow.appendChild(startDateSpan);
                 
                 const endDateSpan = document.createElement('span');
                 endDateSpan.className = 'row';
-                endDateSpan.textContent = formatDate(record.endDate) || '';
+                endDateSpan.textContent = formatDate(record.endDate, true) || '';
                 recordRow.appendChild(endDateSpan);
 
                                 
@@ -340,12 +341,12 @@
 
                 const startDateSpan = document.createElement('span');
                 startDateSpan.className = 'row';
-                startDateSpan.textContent = formatDate(record.startDate) || '';
+                startDateSpan.textContent = formatDate(record.startDate, false) || '';
                 recordRow.appendChild(startDateSpan);
                 
                 const endDateSpan = document.createElement('span');
                 endDateSpan.className = 'row';
-                endDateSpan.textContent = formatDate(record.endDate) || '';
+                endDateSpan.textContent = formatDate(record.endDate, true) || '';
                 recordRow.appendChild(endDateSpan);
                 
                 const requestedResourcesSpan = document.createElement('span');
@@ -395,8 +396,20 @@
             }
         }
 
-        function formatDate(dateString) {
+        function formatDate(dateString, isEndDate = false) {
             if (!dateString) return '';
+
+            if (isAllDayBooking && typeof dateString === 'string') {
+                const parts = dateString.split(' ');
+                let datePart = parts[0] || '';
+                const timePart = parts[1] || '';
+
+                if (isEndDate && timePart.indexOf('00:00') === 0) {
+                    datePart = subtractOneDayPreservingFormat(datePart);
+                }
+
+                return datePart;
+            }
             
             if (typeof dateString === 'string' && dateString.includes('/')) {
                 return dateString;
@@ -412,6 +425,70 @@
             }
             
             return dateString;
+        }
+
+        function subtractOneDayPreservingFormat(datePart) {
+            if (!datePart) return datePart;
+
+            const separator = datePart.includes('/') ? '/' : (datePart.includes('-') ? '-' : '');
+            if (!separator) return datePart;
+
+            const tokens = datePart.split(separator);
+            if (tokens.length !== 3) return datePart;
+
+            let day, month, year;
+            let format;
+
+            if (tokens[0].length === 4) {
+                // yyyy-mm-dd
+                year = parseInt(tokens[0], 10);
+                month = parseInt(tokens[1], 10);
+                day = parseInt(tokens[2], 10);
+                format = 'YMD';
+            } else {
+                const first = parseInt(tokens[0], 10);
+                const second = parseInt(tokens[1], 10);
+                year = parseInt(tokens[2], 10);
+
+                if (first > 12) {
+                    // dd/mm/yyyy
+                    day = first;
+                    month = second;
+                    format = 'DMY';
+                } else if (second > 12) {
+                    // mm/dd/yyyy
+                    month = first;
+                    day = second;
+                    format = 'MDY';
+                } else {
+                    // Ambiguous: use configured calendar format
+                    const lowerDateFormat = (cal_date_format || '').toLowerCase();
+                    if (lowerDateFormat.indexOf('%d') < lowerDateFormat.indexOf('%m')) {
+                        day = first;
+                        month = second;
+                        format = 'DMY';
+                    } else {
+                        month = first;
+                        day = second;
+                        format = 'MDY';
+                    }
+                }
+            }
+
+            if (!day || !month || !year) return datePart;
+
+            const dateObj = new Date(year, month - 1, day);
+            if (isNaN(dateObj.getTime())) return datePart;
+
+            dateObj.setDate(dateObj.getDate() - 1);
+
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const y = String(dateObj.getFullYear());
+
+            if (format === 'YMD') return [y, m, d].join(separator);
+            if (format === 'DMY') return [d, m, y].join(separator);
+            return [m, d, y].join(separator);
         }
 
         function formatUnavailableResources(unavailableResources) {
