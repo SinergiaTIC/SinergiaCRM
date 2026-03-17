@@ -56,28 +56,19 @@ function additionalDetailsstic_Bookings($fields, ?SugarBean $bean = null, $param
         $fields['USER_END_DATE'] = $fields['END_DATE'];
 
         if ($bean->all_day == '1') {
-            $startDate = explode(' ', $bean->fetched_row['start_date']);
-            if ($startDate[1] > "12:00") {
-                $startDate = $timedate->fromDbDate($startDate[0]);
-                $startDate = $startDate->modify("next day");
-                $startDate = $timedate->asUserDate($startDate, false, $current_user);
-                $fields['USER_START_DATE'] = $startDate;
-            } else {
-                $startDate = $timedate->fromDbDate($startDate[0]);
-                $startDate = $timedate->asUserDate($startDate, false, $current_user);
-                $fields['USER_START_DATE'] = $startDate;
+            if (!empty($fields['USER_START_DATE'])) {
+                $startDate = $timedate->fromUser($fields['USER_START_DATE'], $current_user);
+                if ($startDate) {
+                    $fields['USER_START_DATE'] = $timedate->asUserDate($startDate, false, $current_user);
+                }
             }
-    
-            $endDate = explode(' ', $bean->fetched_row['end_date']);
-            if ($endDate[1] > "12:00") {
-                $endDate = $timedate->fromDbDate($endDate[0]);
-                $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                $fields['USER_END_DATE'] = $endDate;
-            } else {
-                $endDate = $timedate->fromDbDate($endDate[0]);
-                $endDate = $endDate->modify("previous day");
-                $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                $fields['USER_END_DATE'] = $endDate;
+
+            if (!empty($fields['USER_END_DATE'])) {
+                $endDate = $timedate->fromUser($fields['USER_END_DATE'], $current_user);
+                if ($endDate) {
+                    $endDate->modify('previous day');
+                    $fields['USER_END_DATE'] = $timedate->asUserDate($endDate, false, $current_user);
+                }
             }
         }
        

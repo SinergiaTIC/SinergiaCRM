@@ -86,7 +86,10 @@ class stic_BookingsUtils
         }
     
         if ($isAllDay) {
-            return date('Y-m-d ' . ($isStart ? '00:00:00' : '23:59:59'), $timestamp);
+            if ($isStart) {
+                return date('Y-m-d 00:00:00', $timestamp);
+            }
+            return date('Y-m-d 00:00:00', strtotime('+1 day', $timestamp));
         } else {
             return date('Y-m-d H:i:s', $timestamp);
         }
@@ -332,7 +335,8 @@ class stic_BookingsUtils
             $summary['global']['totalRecordsProcessed']++;
             $currentStartDatePhp = $date;
             $currentEndDatePhp = date('Y-m-d H:i:s', strtotime($currentStartDatePhp) + $duration);
-            $availability = self::checkResourcesAvailability($controller, $resourceIds, $currentStartDatePhp, $currentEndDatePhp, $requestData['record'] ?? '0', $availableResourcesInThisBatch);
+            $isAllDay = !empty($requestData['all_day']) && ($requestData['all_day'] == '1' || $requestData['all_day'] === 'on');
+            $availability = self::checkResourcesAvailability($controller, $resourceIds, $currentStartDatePhp, $currentEndDatePhp, $requestData['record'] ?? '0', $availableResourcesInThisBatch, $isAllDay);
 
             if ($availability['allResourcesAvailable']) {
                 self::updateBatchAvailability($availableResourcesInThisBatch, $resourceIds, $currentStartDatePhp, $currentEndDatePhp);
@@ -393,13 +397,13 @@ class stic_BookingsUtils
     /**
      * Checks availability of resources for a specific time slot.
      */
-    private static function checkResourcesAvailability($controller, $resourceIds, $startDate, $endDate, $bookingId, &$availableResourcesInThisBatch)
+    private static function checkResourcesAvailability($controller, $resourceIds, $startDate, $endDate, $bookingId, &$availableResourcesInThisBatch, $allDay = false)
     {
         $resourceAvailability = [];
         $allResourcesAvailable = true;
 
         foreach ($resourceIds as $resourceId) {
-            $availabilityDb = self::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
+            $availabilityDb = self::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId, $allDay);
             $availabilityBatch = self::checkBatchAvailability($availableResourcesInThisBatch, $resourceId, $startDate, $endDate);
             
             $isResourceAvailable = $availabilityDb['resources_allowed'] && $availabilityBatch;
@@ -709,12 +713,15 @@ class stic_BookingsUtils
     }
 
 
-    public static function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId)
+    public static function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId, $allDay = false)
     {
         global $current_user;
 
         $resourcesIds = array();
-        if ($resourceId) {
+        if (is_array($resourceId)) {
+            // If an array of resource ids is provided, check all of them.
+            $resourcesIds = array_filter($resourceId);
+        } else if ($resourceId) {
             // If a single resource id is provided, will only check that resource
             $resourcesIds[] = $resourceId;
         } else if ($bookingId) {
@@ -731,11 +738,54 @@ class stic_BookingsUtils
         }
     
         $db = DBManagerFactory::getInstance();
-        $tzone = $current_user->getPreference('timezone');
-        $dateTimeZone = new DateTimeZone($tzone);
+        $tzone = $current_user->getPreference('timezone') ?: 'UTC';
 
-        $timeZoneOffsetHourStartDate = $startDate ? $dateTimeZone->getOffset(new DateTime($startDate)) / 3600 : 0;
-        $timeZoneOffsetHourEndDate = $endDate ? $dateTimeZone->getOffset(new DateTime($endDate)) / 3600 : 0;
+        $startDateUtc = null;
+        $endDateUtc = null;
+        if ($startDate && $endDate) {
+            try {
+                $startDateForParsing = trim((string) $startDate);
+                $endDateForParsing = trim((string) $endDate);
+
+                if ($allDay) {
+                    // Ignore residual times and force all-day interval limits:
+                    // [start at 00:00, end at 00:00 exclusive].
+                    $startDateOnly = explode(' ', $startDateForParsing)[0];
+                    $endDateOnly = explode(' ', $endDateForParsing)[0];
+
+                    $startDateObj = new DateTime($startDateOnly . ' 00:00:00', new DateTimeZone($tzone));
+                    $endDateObj = new DateTime($endDateOnly . ' 00:00:00', new DateTimeZone($tzone));
+
+                    if ($endDateObj <= $startDateObj) {
+                        $endDateObj->modify('+1 day');
+                    }
+                } else {
+                    // Normalize to full datetime
+                    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDateForParsing)) {
+                        $startDateForParsing .= ' 00:00:00';
+                    } elseif (preg_match('/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/', $startDateForParsing)) {
+                        $startDateForParsing .= ':00';
+                    }
+
+                    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDateForParsing)) {
+                        $endDateForParsing .= ' 00:00:00';
+                    } elseif (preg_match('/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/', $endDateForParsing)) {
+                        $endDateForParsing .= ':00';
+                    }
+
+                    $startDateObj = new DateTime($startDateForParsing, new DateTimeZone($tzone));
+                    $endDateObj = new DateTime($endDateForParsing, new DateTimeZone($tzone));
+                }
+
+                $startDateObj->setTimezone(new DateTimeZone('UTC'));
+                $endDateObj->setTimezone(new DateTimeZone('UTC'));
+
+                $startDateUtc = $startDateObj->format('Y-m-d H:i:s');
+                $endDateUtc = $endDateObj->format('Y-m-d H:i:s');
+            } catch (Exception $e) {
+                $GLOBALS['log']->error(__METHOD__ . ': failed parsing dates for availability check: ' . $e->getMessage());
+            }
+        }
 
         // Check if there are other bookings in the period that include the required resource(s)
         foreach ($resourcesIds as $resourceId) {
@@ -750,9 +800,11 @@ class stic_BookingsUtils
                     AND stic_bookings.id != '" . $bookingId . "'
                     AND stic_bookings.status != 'cancelled'";
 
-            if ($startDate && $endDate) {
-                $query .= " AND TIMESTAMPDIFF(SECOND, DATE_ADD(stic_bookings.start_date, INTERVAL " . $timeZoneOffsetHourStartDate . " HOUR),'" . $endDate . "') > 0
-                            AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', DATE_ADD(stic_bookings.end_date, INTERVAL " . $timeZoneOffsetHourEndDate . " HOUR)) > 0 ";
+            if ($startDateUtc && $endDateUtc) {
+                // Overlap condition in UTC (handles all_day and hourly bookings consistently):
+                // existing.start < new.end AND new.start < existing.end
+                $query .= " AND stic_bookings.start_date < '" . $endDateUtc . "'";
+                $query .= " AND '" . $startDateUtc . "' < stic_bookings.end_date";
             }
 
             if ($res = $db->query($query)) {

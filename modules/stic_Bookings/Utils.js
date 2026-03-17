@@ -223,8 +223,8 @@ switch (viewType()) {
     manualPlannedEndHours = "10";
     manualPlannedEndMinutes = "30";
 
-    // With all_day loadCenterResourcesButtoned the DateTime fields shouldn't display the time section
-    // and the end_date should display one day less
+    // With all_day loadCenterResourcesButtoned the DateTime fields shouldn't display the time section.
+    // The one-day display adjustment is already handled server-side in EditView for exclusive end dates.
     if ($("#all_day", "form").is(":checked")) {
       $("#start_date_hours").val("00");
       $("#start_date_minutes").val("00");
@@ -254,33 +254,6 @@ switch (viewType()) {
       // Hide planned date time sections
       $("#planned_start_date_time_section").parent().hide();
       $("#planned_end_date_time_section").parent().hide();
-      if ($("#end_date_date").val()) {
-        var formatString = cal_date_format
-            .replace(/%/g, "")
-            .toLowerCase()
-            .replace(/y/g, "yy")
-            .replace(/m/g, "mm")
-            .replace(/d/g, "dd");
-        endDate = $.datepicker.parseDate(formatString, $("#end_date_date").val());
-        endDate.setDate(endDate.getDate() - 1);
-        endDateValue = $.datepicker.formatDate(formatString, endDate);
-        $("#end_date_date").val(endDateValue);
-        $("#end_date_date").change();
-
-        if ($("#planned_end_date_date").val()) {
-          plannedEndDate = $.datepicker.parseDate(
-            formatString,
-            $("#planned_end_date_date").val()
-          );
-          plannedEndDate.setDate(plannedEndDate.getDate() - 1);
-          plannedEndDateValue = $.datepicker.formatDate(
-            formatString,
-            plannedEndDate
-          );
-          $("#planned_end_date_date").val(plannedEndDateValue);
-          $("#planned_end_date_date").change();
-        }
-      }
     }
     $("#all_day", "form").on("change", function () {
       if ($("#all_day", "form").is(":checked")) {
@@ -845,26 +818,63 @@ function isResourceAvailable(resourceElement = null) {
   bookingId = $('[name="record"]').val()
     ? $('[name="record"]').val()
     : $(".listview-checkbox", $(".inlineEditActive").closest("tr")).val();
+  var startDateValue;
+  var endDateValue;
   if (
     $("#all_day", "form").is(":checked") ||
     getFieldValue("end_date").indexOf(" ") == -1
   ) {
-    if (getFieldValue("end_date")) {
+    if (getFieldValue("start_date") && getFieldValue("end_date")) {
       var formatString = cal_date_format
         .replace(/%/g, "")
         .toLowerCase()
         .replace(/y/g, "yy")
         .replace(/m/g, "mm")
         .replace(/d/g, "dd");
-      endDate = $.datepicker.parseDate(formatString, getFieldValue("end_date"));
-      endDate.setDate(endDate.getDate() + 1);
-      endDateValue = $.datepicker.formatDate(formatString, endDate);
+
+      // start_date may contain date+time (e.g. "19/03/2026 00:00").
+      // Parse only the date part for all_day checks.
+      var startDateRaw = getFieldValue("start_date");
+      var startDateOnly = startDateRaw.split(" ")[0];
+
+      try {
+        startDate = $.datepicker.parseDate(formatString, startDateOnly);
+      } catch (e) {
+        // Fallback to generic parser if jQuery date parsing fails.
+        startDate = getDateObject(startDateRaw);
+      }
+
+      if (startDate && typeof startDate.setDate === "function") {
+        startDateValue = $.datepicker.formatDate(formatString, startDate);
+      } else {
+        startDateValue = getFieldValue("start_date");
+      }
+
+      // end_date may contain date+time (e.g. "19/03/2026 00:00").
+      // Parse only the date part for all_day checks.
+      var endDateRaw = getFieldValue("end_date");
+      var endDateOnly = endDateRaw.split(" ")[0];
+
+      try {
+        endDate = $.datepicker.parseDate(formatString, endDateOnly);
+      } catch (e) {
+        // Fallback to generic parser if jQuery date parsing fails.
+        endDate = getDateObject(endDateRaw);
+      }
+
+      if (endDate && typeof endDate.setDate === "function") {
+        endDate.setDate(endDate.getDate() + 1);
+        endDateValue = $.datepicker.formatDate(formatString, endDate);
+      } else {
+        endDateValue = getFieldValue("end_date");
+      }
     }
   } else {
+    startDateValue = getFieldValue("start_date");
     endDateValue = getFieldValue("end_date");
   }
   if (
-    getFieldValue("start_date") &&
+    startDateValue &&
     typeof endDateValue !== "undefined" &&
     endDateValue != "" &&
     getFieldValue("status") != "cancelled"
@@ -874,9 +884,11 @@ function isResourceAvailable(resourceElement = null) {
       dataType: "json",
       async: false,
       data: {
-        startDate: dateToYMDHM(getDateObject(getFieldValue("start_date"))),
+        startDate: dateToYMDHM(getDateObject(startDateValue)),
         endDate: dateToYMDHM(getDateObject(endDateValue)),
         resourceId: resourceElement ? $("#" + resourceElement).val() : null,
+        resourceIds: getCurrentResourceIds().join(","),
+        allDay: $("#all_day", "form").is(":checked") ? 1 : 0,
         bookingId: bookingId,
       },
       success: function (res) {
@@ -1119,6 +1131,7 @@ function loadCenterResources(
     data: {
       startDate: dateToYMDHM(startDate),
       endDate: dateToYMDHM(endDate),
+      allDay: $("#all_day", "form").is(":checked") ? 1 : 0,
       centerIds: centerIds,
       resourcePlaceUserType: resourcePlaceUserType,
       resourcePlaceType: resourcePlaceType,

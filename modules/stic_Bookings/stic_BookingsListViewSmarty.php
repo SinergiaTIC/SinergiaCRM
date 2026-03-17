@@ -93,32 +93,15 @@ class stic_BookingsListViewSmarty extends SticListViewSmarty
                 $allDayRows[] = $row['ID'];
                 if ($row['START_DATE']) {
                     $startDate = $timedate->fromUser($row['START_DATE'], $current_user);
-                    $startDate = $timedate->asDb($startDate);
-                    $startDate = explode(' ', $startDate);
-                    if ($startDate[1] > "12:00") {
-                        $startDate = new DateTime($startDate[0]);
-                        $startDate = $startDate->modify("next day");
-                        $startDate = $timedate->asUserDate($startDate, false, $current_user);
-                        $this->data['data'][$key]['START_DATE'] = $startDate;
-                    } else {
-                        $startDate = new DateTime($startDate[0]);
-                        $startDate = $timedate->asUserDate($startDate, false, $current_user);
-                        $this->data['data'][$key]['START_DATE'] = $startDate;
+                    if ($startDate) {
+                        $this->data['data'][$key]['START_DATE'] = $timedate->asUserDate($startDate, false, $current_user);
                     }
                 }
                 if ($row['END_DATE']) {
                     $endDate = $timedate->fromUser($row['END_DATE'], $current_user);
-                    $endDate = $timedate->asDb($endDate);
-                    $endDate = explode(' ', $endDate);
-                    if ($endDate[1] > "12:00") {
-                        $endDate = new DateTime($endDate[0]);
-                        $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                        $this->data['data'][$key]['END_DATE'] = $endDate;
-                    } else {
-                        $endDate = new DateTime($endDate[0]);
-                        $endDate = $endDate->modify("previous day");
-                        $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                        $this->data['data'][$key]['END_DATE'] = $endDate;
+                    if ($endDate) {
+                        $endDate->modify('previous day');
+                        $this->data['data'][$key]['END_DATE'] = $timedate->asUserDate($endDate, false, $current_user);
                     }
                 }
             }

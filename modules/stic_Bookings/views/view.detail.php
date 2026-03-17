@@ -45,55 +45,33 @@ class stic_BookingsViewDetail extends ViewDetail
         // and apply timezone to the dates
 
         if ($this->bean->all_day == '1') {
-            $startDate = explode(' ', $this->bean->fetched_row['start_date']);
-            if ($startDate[1] > "12:00") {
-                $startDate = $timedate->fromDbDate($startDate[0]);
-                $startDate = $startDate->modify("next day");
-                $startDate = $timedate->asUserDate($startDate, false, $current_user);
-                $this->bean->start_date = $startDate;
-            } else {
-                $startDate = $timedate->fromDbDate($startDate[0]);
-                $startDate = $timedate->asUserDate($startDate, false, $current_user);
-                $this->bean->start_date = $startDate;
-            }
-
-            $endDate = explode(' ', $this->bean->fetched_row['end_date']);
-            if ($endDate[1] > "12:00") {
-                $endDate = $timedate->fromDbDate($endDate[0]);
-                $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                $this->bean->end_date = $endDate;
-            } else {
-                $endDate = $timedate->fromDbDate($endDate[0]);
-                $endDate = $endDate->modify("previous day");
-                $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                $this->bean->end_date = $endDate;
-            }
-
-            if (!empty($this->bean->fetched_row['planned_start_date'])) {
-                $plannedStartDate = explode(' ', $this->bean->fetched_row['planned_start_date']);
-                if ($plannedStartDate[1] > "12:00") {
-                    $plannedStartDate = $timedate->fromDbDate($plannedStartDate[0]);
-                    $plannedStartDate = $plannedStartDate->modify("next day");
-                    $plannedStartDate = $timedate->asUserDate($plannedStartDate, false, $current_user);
-                    $this->bean->planned_start_date = $plannedStartDate;
-                } else {
-                    $plannedStartDate = $timedate->fromDbDate($plannedStartDate[0]);
-                    $plannedStartDate = $timedate->asUserDate($plannedStartDate, false, $current_user);
-                    $this->bean->planned_start_date = $plannedStartDate;
+            if (!empty($this->bean->start_date)) {
+                $startDate = $timedate->fromUser($this->bean->start_date, $current_user);
+                if ($startDate) {
+                    $this->bean->start_date = $timedate->asUserDate($startDate, false, $current_user);
                 }
             }
 
-            if(!empty($this->bean->fetched_row['planned_end_date'])){
-                $plannedEndDate = explode(' ', $this->bean->fetched_row['planned_end_date']);
-                if ($plannedEndDate[1] > "12:00") {
-                    $plannedEndDate = $timedate->fromDbDate($plannedEndDate[0]);
-                    $plannedEndDate = $timedate->asUserDate($plannedEndDate, false, $current_user);
-                    $this->bean->planned_end_date = $plannedEndDate;
-                } else {
-                    $plannedEndDate = $timedate->fromDbDate($plannedEndDate[0]);
-                    $plannedEndDate = $plannedEndDate->modify("previous day");
-                    $plannedEndDate = $timedate->asUserDate($plannedEndDate, false, $current_user);
-                    $this->bean->planned_end_date = $plannedEndDate;
+            if (!empty($this->bean->end_date)) {
+                $endDate = $timedate->fromUser($this->bean->end_date, $current_user);
+                if ($endDate) {
+                    $endDate->modify('previous day');
+                    $this->bean->end_date = $timedate->asUserDate($endDate, false, $current_user);
+                }
+            }
+
+            if (!empty($this->bean->planned_start_date)) {
+                $plannedStartDate = $timedate->fromUser($this->bean->planned_start_date, $current_user);
+                if ($plannedStartDate) {
+                    $this->bean->planned_start_date = $timedate->asUserDate($plannedStartDate, false, $current_user);
+                }
+            }
+
+            if (!empty($this->bean->planned_end_date)) {
+                $plannedEndDate = $timedate->fromUser($this->bean->planned_end_date, $current_user);
+                if ($plannedEndDate) {
+                    $plannedEndDate->modify('previous day');
+                    $this->bean->planned_end_date = $timedate->asUserDate($plannedEndDate, false, $current_user);
                 }
             }
         }

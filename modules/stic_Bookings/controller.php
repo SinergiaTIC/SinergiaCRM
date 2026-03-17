@@ -38,11 +38,21 @@ class stic_BookingsController extends SugarController
         $startDate = $_REQUEST['startDate'];
         $endDate = $_REQUEST['endDate'];
         $bookingId = $_REQUEST['bookingId'] ?? null;
-        $resourceRequestId = $_REQUEST['resourceId'];
+        $resourceRequestId = $_REQUEST['resourceId'] ?? null;
+        $allDay = !empty($_REQUEST['allDay']) && ($_REQUEST['allDay'] == '1' || $_REQUEST['allDay'] === 'true');
+        $GLOBALS['log']->debug(__METHOD__ . " allDay=" . ($allDay ? '1' : '0') . ", startDate=" . ($startDate ?? '') . ", endDate=" . ($endDate ?? ''));
+
+        if (empty($resourceRequestId) && !empty($_REQUEST['resourceIds'])) {
+            if (is_array($_REQUEST['resourceIds'])) {
+                $resourceRequestId = $_REQUEST['resourceIds'];
+            } else {
+                $resourceRequestId = array_filter(explode(',', $_REQUEST['resourceIds']));
+            }
+        }
 
         require_once 'modules/stic_Bookings/Utils.php';
 
-        $result = stic_BookingsUtils::checkResourceAvailability($resourceRequestId, $startDate, $endDate, $bookingId);
+        $result = stic_BookingsUtils::checkResourceAvailability($resourceRequestId, $startDate, $endDate, $bookingId, $allDay);
 
         echo json_encode($result);
         return;
@@ -59,6 +69,7 @@ class stic_BookingsController extends SugarController
         $resourceName = isset($_REQUEST['resourceName']) ? $_REQUEST['resourceName'] : '';
         $resourceGender = isset($_REQUEST['resourceGender']) ? $_REQUEST['resourceGender'] : '';
         $numberOfPlaces = isset($_REQUEST['numberOfPlaces']) ? $_REQUEST['numberOfPlaces'] : '';
+        $allDay = !empty($_REQUEST['allDay']) && ($_REQUEST['allDay'] == '1' || $_REQUEST['allDay'] === 'true');
         $existingResourceIds = isset($_REQUEST['existingResourceIds']) ? $_REQUEST['existingResourceIds'] : '';
         $existingResourceIdsArray = !empty($existingResourceIds) ? explode(',', $existingResourceIds) : [];
 
@@ -104,7 +115,7 @@ class stic_BookingsController extends SugarController
                 }
 
 
-                $availability = stic_BookingsUtils::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
+                $availability = stic_BookingsUtils::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId, $allDay);
                 
                 if ($availability['resources_allowed']) {
                     $resourceQuery = "SELECT *

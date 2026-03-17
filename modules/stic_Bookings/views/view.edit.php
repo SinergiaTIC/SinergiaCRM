@@ -107,31 +107,19 @@ class stic_BookingsViewEdit extends ViewEdit
                 $sourceStartDate = '';
                 $sourceEndDate = '';
                 
-                if ($isLoadingFromSession) {
-                    // When loading from session, use the bean properties directly
-                    $sourceStartDate = $this->bean->start_date ?? '';
-                    $sourceEndDate = $this->bean->end_date ?? '';
-                } else {
-                    // When not loading from session, use fetched_row as before
-                    $sourceStartDate = $this->bean->fetched_row['start_date'] ?? '';
-                    $sourceEndDate = $this->bean->fetched_row['end_date'] ?? '';
-                }
+                // Always use bean properties (already converted to user timezone/display format).
+                // Using fetched_row (raw UTC) and splitting date/time may cause off-by-one-day
+                // issues depending on timezone.
+                $sourceStartDate = $this->bean->start_date ?? '';
+                $sourceEndDate = $this->bean->end_date ?? '';
                 
                 // Process start_date
                 if (!empty($sourceStartDate)) {
                     $startDateParts = explode(' ', $sourceStartDate);
                     // Ensure we have the date part
                     if (isset($startDateParts[0])) {
-                        if ($isLoadingFromSession) {
-                            // When loading from session, preserve the exact date format the user entered
-                            // Don't attempt any conversion as the date is already in the user's preferred format
-                            $this->bean->start_date = $startDateParts[0] . ' 00:00';
-                        } else {
-                            // When not loading from session, use the original logic
-                            $startDate = new DateTime($startDateParts[0]);
-                            $startDateDisplay = $timedate->asUserDate($startDate, false, $current_user);
-                            $this->bean->start_date = $startDateDisplay . ' 00:00';
-                        }
+                        // All-day start is always current day at 00:00
+                        $this->bean->start_date = $startDateParts[0] . ' 00:00';
                     } else {
                         // If explode failed or doesn't have expected format, use current date
                         $this->bean->start_date = date('Y-m-d') . ' 00:00';
@@ -147,57 +135,56 @@ class stic_BookingsViewEdit extends ViewEdit
                     // Ensure we have the date part
                     if (isset($endDateParts[0])) {
                         if ($isLoadingFromSession) {
-                            // When loading from session, preserve the exact date format the user entered
-                            // Don't attempt any conversion as the date is already in the user's preferred format
-                            
-                            // TEMPORAL FIX: If this is end_date and all_day, it seems to be off by one day
-                            // so let's add one day to compensate
-                            if (isset($this->bean->all_day) && $this->bean->all_day == '1') {
-                                try {
-                                    // Parse the date using the same format it came in
-                                    $originalFormat = $endDateParts[0];
-                                    
-                                    // Try to determine if it's DD/MM/YYYY or MM/DD/YYYY format
-                                    $parts = explode('/', $originalFormat);
-                                    if (count($parts) == 3) {
-                                        // Create date object and add one day
-                                        $dateObj = DateTime::createFromFormat('d/m/Y', $originalFormat);
-                                        if (!$dateObj) {
-                                            $dateObj = DateTime::createFromFormat('m/d/Y', $originalFormat);
-                                        }
-                                        if ($dateObj) {
-                                            $dateObj->modify('+1 day');
-                                            // Return in the same format as input
-                                            if (DateTime::createFromFormat('d/m/Y', $originalFormat)) {
-                                                $this->bean->end_date = $dateObj->format('d/m/Y') . ' 23:59';
-                                            } else {
-                                                $this->bean->end_date = $dateObj->format('m/d/Y') . ' 23:59';
-                                            }
-                                        } else {
-                                            $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                                        }
-                                    } else {
-                                        $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                                    }
-                                } catch (Exception $e) {
-                                    $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                                }
-                            } else {
-                                $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                            }
+                            // Keep exactly what the user entered in the previous request.
+                            $this->bean->end_date = $endDateParts[0] . ' 00:00';
                         } else {
-                            // When not loading from session, use the original logic
-                            $endDate = new DateTime($endDateParts[0]);
-                            $endDateDisplay = $timedate->asUserDate($endDate, false, $current_user);
-                            $this->bean->end_date = $endDateDisplay . ' 23:59';
+                            // Stored all-day end is exclusive (next day at 00:00).
+                            // For EditView display, show the user-facing end day.
+                            $endDateObj = $timedate->fromUserDate($endDateParts[0], false, $current_user);
+                            if ($endDateObj) {
+                                $endDateObj->modify('previous day');
+                                $this->bean->end_date = $timedate->asUserDate($endDateObj, false, $current_user) . ' 00:00';
+                            } else {
+                                $this->bean->end_date = $endDateParts[0] . ' 00:00';
+                            }
                         }
                     } else {
                         // If explode failed or doesn't have expected format, use current date
-                        $this->bean->end_date = date('Y-m-d') . ' 23:59';
+                        $this->bean->end_date = date('Y-m-d') . ' 00:00';
                     }
                 } else {
                     // If end_date is empty, use current date
-                    // $this->bean->end_date = date('Y-m-d') . ' 23:59';
+                    // $this->bean->end_date = date('Y-m-d') . ' 00:00';
+                }
+
+                // Process planned_start_date
+                $sourcePlannedStartDate = $this->bean->planned_start_date ?? '';
+                if (!empty($sourcePlannedStartDate)) {
+                    $plannedStartDateParts = explode(' ', $sourcePlannedStartDate);
+                    if (isset($plannedStartDateParts[0])) {
+                        $this->bean->planned_start_date = $plannedStartDateParts[0] . ' 00:00';
+                    }
+                }
+
+                // Process planned_end_date
+                $sourcePlannedEndDate = $this->bean->planned_end_date ?? '';
+                if (!empty($sourcePlannedEndDate)) {
+                    $plannedEndDateParts = explode(' ', $sourcePlannedEndDate);
+                    if (isset($plannedEndDateParts[0])) {
+                        if ($isLoadingFromSession) {
+                            $this->bean->planned_end_date = $plannedEndDateParts[0] . ' 00:00';
+                        } else {
+                            // Stored all-day planned_end is exclusive (next day at 00:00).
+                            // For EditView display, show the user-facing end day.
+                            $plannedEndDateObj = $timedate->fromUserDate($plannedEndDateParts[0], false, $current_user);
+                            if ($plannedEndDateObj) {
+                                $plannedEndDateObj->modify('previous day');
+                                $this->bean->planned_end_date = $timedate->asUserDate($plannedEndDateObj, false, $current_user) . ' 00:00';
+                            } else {
+                                $this->bean->planned_end_date = $plannedEndDateParts[0] . ' 00:00';
+                            }
+                        }
+                    }
                 }
             }
         }

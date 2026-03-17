@@ -36,31 +36,16 @@ class stic_BookingsLogicHooks {
             
             if (!empty($bean->start_date)) {
                 $startDate = $timedate->fromUser($bean->start_date, $current_user);
-                $startDateDb = $timedate->asDb($startDate);
-                $parts = explode(' ', $startDateDb);
-                
-                if ($parts[1] > "12:00") {
-                    $dateObj = new DateTime($parts[0]);
-                    $dateObj->modify("next day");
-                    $bean->start_date = $timedate->asUserDate($dateObj, false, $current_user);
-                } else {
-                    $dateObj = new DateTime($parts[0]);
-                    $bean->start_date = $timedate->asUserDate($dateObj, false, $current_user);
+                if ($startDate) {
+                    $bean->start_date = $timedate->asUserDate($startDate, false, $current_user);
                 }
             }
 
             if (!empty($bean->end_date)) {
                 $endDate = $timedate->fromUser($bean->end_date, $current_user);
-                $endDateDb = $timedate->asDb($endDate);
-                $parts = explode(' ', $endDateDb);
-                
-                if ($parts[1] > "12:00") {
-                    $dateObj = new DateTime($parts[0]);
-                    $bean->end_date = $timedate->asUserDate($dateObj, false, $current_user);
-                } else {
-                    $dateObj = new DateTime($parts[0]);
-                    $dateObj->modify("previous day");
-                    $bean->end_date = $timedate->asUserDate($dateObj, false, $current_user);
+                if ($endDate) {
+                    $endDate->modify('previous day');
+                    $bean->end_date = $timedate->asUserDate($endDate, false, $current_user);
                 }
             }
         }
