@@ -336,6 +336,7 @@ class stic_BookingsUtils
             $currentStartDatePhp = $date;
             $currentEndDatePhp = date('Y-m-d H:i:s', strtotime($currentStartDatePhp) + $duration);
             $isAllDay = !empty($requestData['all_day']) && ($requestData['all_day'] == '1' || $requestData['all_day'] === 'on');
+            $summaryStartDate = $isAllDay ? $currentStartDatePhp : $aux[$i];
             $availability = self::checkResourcesAvailability($controller, $resourceIds, $currentStartDatePhp, $currentEndDatePhp, $requestData['record'] ?? '0', $availableResourcesInThisBatch, $isAllDay);
 
             if ($availability['allResourcesAvailable']) {
@@ -346,10 +347,10 @@ class stic_BookingsUtils
                 $bookingRecord = self::createBookingRecord($aux[$i], $duration, $requestData, $resourceIds, $resourceNames, $availability['allResourcesAvailable'], $bookingName, $firstBookingCode, $timedate, $currentUser);
                 $bookingsToConfirm[] = $bookingRecord;
                 self::updateSummaryForCreatedBooking($summary, $resourceIds, $bookingName, $resourceNames, $aux[$i], $duration, $timedate, $currentUser);
-                self::updateAllBookingAttempts($allBookingAttempts, $aux[$i], $duration, $bookingName, $resourceNames, $timedate, $currentUser, 'created');
+                self::updateAllBookingAttempts($allBookingAttempts, $summaryStartDate, $duration, $bookingName, $resourceNames, $timedate, $currentUser, 'created', [], $isAllDay);
             } else {
                 self::updateSummaryForUnavailableBooking($summary, $resourceIds, $resourceNames, $availability['resourceAvailability'], $aux[$i], $duration, $timedate, $currentUser);
-                self::updateAllBookingAttempts($allBookingAttempts, $aux[$i], $duration, '', $resourceNames, $timedate, $currentUser, 'not_created', $availability['resourceAvailability']);
+                self::updateAllBookingAttempts($allBookingAttempts, $summaryStartDate, $duration, '', $resourceNames, $timedate, $currentUser, 'not_created', $availability['resourceAvailability'], $isAllDay);
             }
         }
         
@@ -594,7 +595,7 @@ class stic_BookingsUtils
     /**
      * Updates the consolidated list of all booking attempts.
      */
-    private static function updateAllBookingAttempts(&$allBookingAttempts, $startDateDb, $duration, $bookingName, $resourceNames, $timedate, $currentUser, $status, $resourceAvailability = [])
+    private static function updateAllBookingAttempts(&$allBookingAttempts, $startDateDb, $duration, $bookingName, $resourceNames, $timedate, $currentUser, $status, $resourceAvailability = [], $isAllDay = false)
     {
         if (empty($startDateDb)) {
             return;
@@ -609,14 +610,25 @@ class stic_BookingsUtils
             return;
         }
         
-        $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
-        $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
+        if ($isAllDay) {
+            // Stored all-day end is exclusive (next day 00:00).
+            // For summary display, avoid timezone conversions and show date-only inclusive range.
+            $startDateDbOnly = substr($startDateDb, 0, 10);
+            $endDateInclusiveDbOnly = date('Y-m-d', strtotime($endDateDb . ' -1 day'));
+
+            $startDateDisplay = $timedate->to_display_date($startDateDbOnly, false, $currentUser);
+            $endDateDisplay = $timedate->to_display_date($endDateInclusiveDbOnly, false, $currentUser);
+        } else {
+            $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
+            $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
+        }
         $recordKey = $startDateDisplay . '_' . $endDateDisplay;
 
         $attempt = [
             'status' => $status,
             'startDate' => $startDateDisplay,
             'endDate' => $endDateDisplay,
+            'allDay' => $isAllDay,
             'allRequestedResources' => array_values($resourceNames),
         ];
 

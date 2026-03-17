@@ -397,20 +397,12 @@
 
         function formatDate(dateString) {
             if (!dateString) return '';
-            
-            if (typeof dateString === 'string' && dateString.includes('/')) {
+
+            // Keep server-formatted value as-is to avoid timezone-related day shifts in browser parsing.
+            if (typeof dateString === 'string') {
                 return dateString;
             }
-            
-            try {
-                const date = new Date(dateString);
-                if (!isNaN(date.getTime())) {
-                    return date.toLocaleDateString('es-ES');
-                }
-            } catch (e) {
-                console.log(e);
-            }
-            
+
             return dateString;
         }
 
