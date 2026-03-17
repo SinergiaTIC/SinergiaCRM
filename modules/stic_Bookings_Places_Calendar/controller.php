@@ -243,16 +243,18 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             );
         }
 
-        $query = "SELECT stic_resources_stic_bookingsstic_resources_ida as resource_id,
+        $query = "SELECT DISTINCT stic_resources_stic_bookingsstic_resources_ida as resource_id,
                      CONVERT_TZ(start_date, '+00:00', '$user_tz_name') as start_date, CONVERT_TZ(end_date, '+00:00', '$user_tz_name') as end_date
                     --  start_date, end_date
               FROM stic_bookings
               JOIN stic_resources_stic_bookings_c ON stic_resources_stic_bookingsstic_bookings_idb = stic_bookings.id
               WHERE stic_bookings.deleted = 0
                 AND stic_resources_stic_bookings_c.deleted = 0
+            AND stic_bookings.status != 'cancelled'
                 AND start_date <= '$end_date'
                 AND end_date >= '$start_date'
-                AND stic_bookings.place_booking = 1";
+                AND stic_bookings.place_booking = 1
+            ";
         $result = $db->query($query);
 
         $bookedResources = array();
@@ -263,7 +265,11 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             // if endDate end with 00:00:00, we consider that the place is freed that day
             if (substr($endDate, 11, 8) == '00:00:00') {
                 $endDate = date('Y-m-d', strtotime($endDate . ' -1 day'));
-            }            
+            } else {
+                $endDate = date('Y-m-d', strtotime($endDate));
+            }
+
+            $startDate = date('Y-m-d', strtotime($startDate));
 
             $currentDate = $startDate;
             while ($currentDate <= $endDate && $currentDate <= $end_date) {

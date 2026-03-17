@@ -88,9 +88,10 @@ class stic_BookingsController extends SugarController
         }
         
         foreach ($centerIdsArray as $centerId) {
-            $query = "SELECT stic_resources_stic_centersstic_resources_idb
+            $query = "SELECT DISTINCT stic_resources_stic_centersstic_resources_idb
                       FROM stic_resources_stic_centers_c
-                      WHERE stic_resources_stic_centersstic_centers_ida = '$centerId'";
+                      WHERE stic_resources_stic_centersstic_centers_ida = '$centerId'
+                      AND deleted = 0";
             $result = $db->query($query, true);
             
             while ($row = $db->fetchByAssoc($result)) {
