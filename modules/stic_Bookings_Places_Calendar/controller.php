@@ -78,6 +78,8 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             AND sb.status != 'cancelled'
             AND sb.deleted = 0
             AND sr.deleted = 0
+            AND srsc.deleted = 0
+            AND sc.deleted = 0
             AND srsb.deleted = 0
         ";
 
@@ -222,7 +224,8 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                     stic_centers
                 ON    stic_centers.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_centers_ida and stic_centers.deleted = 0
                 WHERE
-                    stic_resources.deleted = 0 AND stic_resources.type = 'place'";
+                    stic_resources.deleted = 0 AND stic_resources.type = 'place'
+                    AND stic_resources_stic_centers_c.deleted = 0 AND stic_centers.deleted = 0";
         // Filters are added
         if (!empty($filteredResources)) {
             $query .= " AND stic_resources.id IN ('" . implode("','", $filteredResources) . "')";
@@ -347,6 +350,8 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                     r.deleted = 0 
                   AND  
                     r.type = 'place'
+                  AND 
+                    rc.deleted = 0
                 ";
 
         if (!empty($users)) {
