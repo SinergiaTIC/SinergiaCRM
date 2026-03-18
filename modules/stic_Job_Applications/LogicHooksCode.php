@@ -57,6 +57,17 @@ class stic_Job_ApplicationsLogicHooks
         // Store previous status in bean for use in after_save
         $bean->_previous_status = $previousStatus;
         $GLOBALS['log']->info("Stored previous status: " . ($previousStatus ?? 'NULL') . ", current status: " . ($bean->status ?? 'NULL'));
+
+        // Sync related account from selected offer before saving to avoid recursive saves in after_save
+        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)) {
+            $offerBean = BeanFactory::getBean('stic_Job_Offers', $bean->stic_job_applications_stic_job_offersstic_job_offers_ida);
+            if (!empty($offerBean) && !empty($offerBean->id)) {
+                $accountId = $offerBean->stic_job_offers_accountsaccounts_ida ?? null;
+                if (($bean->account_id ?? null) !== $accountId) {
+                    $bean->account_id = $accountId;
+                }
+            }
+        }
     }
 
     /**

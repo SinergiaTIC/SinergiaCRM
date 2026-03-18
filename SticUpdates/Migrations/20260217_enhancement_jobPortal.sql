@@ -49,9 +49,12 @@ SET
 	o.stic_job_applications_count_review = COALESCE(c.review, 0)
 WHERE o.deleted = 0;
 
--- Job Offers notification template field (emailtemplate_id)
+-- Job Offers status change notification template fields
 ALTER TABLE `stic_job_offers`
-	ADD COLUMN IF NOT EXISTS `emailtemplate_id` CHAR(36) NULL;
+	ADD COLUMN IF NOT EXISTS `status_notifications_enabled` TINYINT(1) NOT NULL DEFAULT 0,
+	ADD COLUMN IF NOT EXISTS `emailtemplate_candidates_id` CHAR(36) NULL,
+	ADD COLUMN IF NOT EXISTS `emailtemplate_assigned_user_id` CHAR(36) NULL,
+	ADD COLUMN IF NOT EXISTS `emailtemplate_organization_id` CHAR(36) NULL;
 
 -- Create relationship table for Conversations-Messages
 CREATE TABLE IF NOT EXISTS `stic_conversations_stic_messages_c` (

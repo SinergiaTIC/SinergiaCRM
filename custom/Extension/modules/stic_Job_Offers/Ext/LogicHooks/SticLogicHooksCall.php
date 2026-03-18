@@ -26,5 +26,5 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'before_save');
-// Notify assigned user when close date is today and offer is not closed
+// Notify candidates when the status of the job offer changes
 $hook_array['after_save'][] = array(100, 'after_save', 'modules/stic_Job_Offers/LogicHooksCode.php', 'stic_Job_OffersLogicHooks', 'after_save');

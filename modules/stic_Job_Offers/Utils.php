@@ -125,6 +125,12 @@ class stic_Job_OffersUtils
             return;
         }
 
+        // Check if notifications are enabled for this offer
+        if (!self::areStatusNotificationsEnabled($bean)) {
+            $GLOBALS['log']->info(__METHOD__ . ': notifications disabled for this offer.');
+            return;
+        }
+
         // Create notification campaign for the new status
         $newStatus = $bean->status;
         
@@ -133,6 +139,21 @@ class stic_Job_OffersUtils
             $bean,
             $newStatus
         );
+    }
+
+    /**
+     * Check if status change notifications are enabled for the offer
+     *
+     * @param SugarBean $bean
+     * @return bool
+     */
+    protected static function areStatusNotificationsEnabled($bean)
+    {
+        if (empty($bean)) {
+            return false;
+        }
+
+        return !empty($bean->status_notifications_enabled);
     }
 
     /**
@@ -147,42 +168,190 @@ class stic_Job_OffersUtils
     {
         global $current_user, $timedate;
 
-        $templateId = self::getNotificationTemplateId('job_offers', $parentBean);
+        $candidateTemplateId = self::getNotificationTemplateId('job_offers_candidates', $parentBean);
+        $assignedUserTemplateId = self::getNotificationTemplateId('job_offers_assigned_user', $parentBean);
+        $organizationTemplateId = self::getNotificationTemplateId('job_offers_organization', $parentBean);
         $outboundEmail = self::getDefaultOutboundEmailAccount();
         $inboundEmailId = self::getDefaultInboundEmailId();
+        $assignedUserId = $parentBean->assigned_user_id ?? $current_user->id;
+        $assignedUserName = $parentBean->assigned_user_name ?? $current_user->user_name;
 
-        if (empty($templateId) || empty($outboundEmail)) {
+        if (empty($outboundEmail)) {
             $GLOBALS['log']->error(
-                "Notification campaign not created for {$parentType} {$parentBean->id}: missing template/outbound configuration."
+                "Notification campaign not created for {$parentType} {$parentBean->id}: missing outbound configuration."
             );
             return;
         }
 
         $startDate = $timedate->nowDbDate();
 
-        // Get or create unique prospect list for this offer
-        $lpoBean = self::getOrCreateNotificationLpo($parentBean->id, $parentBean->name, $parentBean->assigned_user_id ?? $current_user->id, $parentBean->assigned_user_name ?? $current_user->user_name);
-        if (empty($lpoBean) || empty($lpoBean->id)) {
+        $notificationSent = false;
+
+        // Send direct email to assigned user
+        if (!empty($assignedUserTemplateId) && !empty($assignedUserId)) {
+            $assignedUserBean = BeanFactory::getBean('Users', $assignedUserId);
+            if (empty($assignedUserBean) || empty($assignedUserBean->id)) {
+                $GLOBALS['log']->error(
+                    "Notification email (assigned user) not sent for {$parentType} {$parentBean->id}: could not load assigned user bean."
+                );
+            } else {
+                if (self::sendNotificationEmail($parentBean, $assignedUserBean, $assignedUserTemplateId, $outboundEmail, 'assigned user')) {
+                    $notificationSent = true;
+                }
+            }
+        }
+
+        // Send direct email to organization
+        if (!empty($organizationTemplateId)) {
+            $organizationId = self::getOfferOrganizationId($parentBean);
+            if (empty($organizationId)) {
+                $GLOBALS['log']->info(
+                    "Notification email (organization) skipped for {$parentType} {$parentBean->id}: no related organization."
+                );
+            } else {
+                $organizationBean = BeanFactory::getBean('Accounts', $organizationId);
+                if (empty($organizationBean) || empty($organizationBean->id)) {
+                    $GLOBALS['log']->error(
+                        "Notification email (organization) not sent for {$parentType} {$parentBean->id}: could not load organization bean."
+                    );
+                } else {
+                    if (self::sendNotificationEmail($parentBean, $organizationBean, $organizationTemplateId, $outboundEmail, 'organization')) {
+                        $notificationSent = true;
+                    }
+                }
+            }
+        }
+
+        // Create candidates campaign
+        if (!empty($candidateTemplateId)) {
+            $candidateLpoBean = self::getOrCreateNotificationLpo(
+                $parentBean->id,
+                $parentBean->name,
+                $assignedUserId,
+                $assignedUserName,
+                'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE'
+            );
+
+            if (!empty($candidateLpoBean) && !empty($candidateLpoBean->id)) {
+                $contactIds = self::getRelatedApplicantsContactIds($parentBean->id);
+                self::updateLpoContacts($candidateLpoBean, $contactIds);
+
+                $candidateCampaign = self::getOrCreateNotificationCampaign(
+                    $parentType,
+                    $parentBean,
+                    $candidateLpoBean,
+                    $candidateTemplateId,
+                    $outboundEmail,
+                    $inboundEmailId,
+                    $startDate,
+                    $newStatus,
+                    'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE'
+                );
+
+                if (!empty($candidateCampaign) && !empty($candidateCampaign->id)) {
+                    $notificationSent = true;
+                } else {
+                    $GLOBALS['log']->error(
+                        "Notification campaign (candidates) could not be created or updated for {$parentType} {$parentBean->id}."
+                    );
+                }
+            } else {
+                $GLOBALS['log']->error(
+                    "Notification campaign not created for {$parentType} {$parentBean->id}: could not get or create candidates prospect list."
+                );
+            }
+        }
+
+        if (!$notificationSent) {
             $GLOBALS['log']->error(
-                "Notification campaign not created for {$parentType} {$parentBean->id}: could not get or create prospect list."
+                "Notification not sent for {$parentType} {$parentBean->id}: no valid templates or recipients."
             );
             return;
         }
 
-        // Update prospect list contacts
-        $contactIds = self::getRelatedApplicantsContactIds($parentBean->id);
-        self::updateLpoContacts($lpoBean, $contactIds, $parentBean->assigned_user_id);
+        $GLOBALS['log']->info("Notification process completed for {$parentType} {$parentBean->id}.");
+    }
 
-        $campaign = self::getOrCreateNotificationCampaign($parentType, $parentBean, $lpoBean, $templateId, $outboundEmail, $inboundEmailId, $startDate, $newStatus);
-
-        if (empty($campaign) || empty($campaign->id)) {
-            $GLOBALS['log']->error(
-                "Notification campaign could not be created or updated for {$parentType} {$parentBean->id}."
-            );
-            return;
+    /**
+     * Send a direct notification email to one recipient bean
+     *
+     * @param SugarBean $offerBean
+     * @param SugarBean $recipientBean
+     * @param string $templateId
+     * @param SugarBean $outboundEmail
+     * @param string $recipientType
+     * @return bool
+     */
+    protected static function sendNotificationEmail($offerBean, $recipientBean, $templateId, $outboundEmail, $recipientType)
+    {
+        // Validate required inputs
+        if (empty($offerBean) || empty($recipientBean) || empty($templateId) || empty($outboundEmail)) {
+            return false;
         }
 
-        $GLOBALS['log']->info("Notification campaign updated for {$parentType} {$parentBean->id}.");
+        $destAddress = '';
+        // Resolve recipient primary email
+        if (!empty($recipientBean->emailAddress)) {
+            $destAddress = $recipientBean->emailAddress->getPrimaryAddress($recipientBean);
+        }
+        if (empty($destAddress) && !empty($recipientBean->email1)) {
+            $destAddress = $recipientBean->email1;
+        }
+
+        if (empty($destAddress)) {
+            $GLOBALS['log']->error(
+                "Notification email ({$recipientType}) not sent for offer {$offerBean->id}: no recipient email address."
+            );
+            return false;
+        }
+
+        require_once 'SticInclude/Utils.php';
+        $parsedMailArray = SticUtils::parseEmailTemplate($templateId, array(
+            $offerBean,
+            $recipientBean,
+        ));
+
+        $subject = $parsedMailArray['subject'] ?? '';
+        $bodyHtml = $parsedMailArray['body_html'] ?? '';
+        $bodyText = $parsedMailArray['body'] ?? '';
+
+        if (empty($subject) || (empty($bodyHtml) && empty($bodyText))) {
+            $GLOBALS['log']->error(
+                "Notification email ({$recipientType}) not sent for offer {$offerBean->id}: parsed template is empty."
+            );
+            return false;
+        }
+
+        require_once 'include/SugarPHPMailer.php';
+        require_once 'modules/Emails/Email.php';
+        $emailObj = new Email();
+        $defaults = $emailObj->getSystemDefaultEmail();
+
+        $mail = new SugarPHPMailer();
+        $mail->setMailerForSystem();
+        $mail->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
+        $mail->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
+        $mail->AddAddress($destAddress);
+        $mail->Subject = $subject;
+        if (!empty($bodyHtml)) {
+            $mail->Body = from_html($bodyHtml);
+            $mail->isHtml(true);
+            $mail->AltBody = from_html($bodyText);
+        } else {
+            $mail->Body = $bodyText;
+            $mail->isHtml(false);
+        }
+        $mail->prepForOutbound();
+
+        if (!$mail->Send()) {
+            $GLOBALS['log']->error(
+                "Notification email ({$recipientType}) send error for offer {$offerBean->id}: " . $mail->ErrorInfo
+            );
+            return false;
+        }
+
+        $GLOBALS['log']->info("Notification email ({$recipientType}) sent for offer {$offerBean->id} to {$destAddress}.");
+        return true;
     }
 
     /**
@@ -197,11 +366,13 @@ class stic_Job_OffersUtils
      * @param string $startDate
      * @return SugarBean|null
      */
-    protected static function getOrCreateNotificationCampaign($parentType, $parentBean, $lpoBean, $templateId, $outboundEmail, $inboundEmailId, $startDate, $newStatus)
+    protected static function getOrCreateNotificationCampaign($parentType, $parentBean, $lpoBean, $templateId, $outboundEmail, $inboundEmailId, $startDate, $newStatus, $recipientType = '')
     {
         global $app_list_strings, $mod_strings;
 
-        $campaignName = "{$app_list_strings['emailTemplates_type_list']['notification']} {$mod_strings['LBL_STATUS']} {$app_list_strings['moduleListSingular'][$parentType]} '{$parentBean->name}' - {$app_list_strings['stic_job_offers_status_list'][$newStatus]} - {$startDate}";
+        $recipientLabelText = self::getRecipientLabel($recipientType);
+        $recipientLabel = empty($recipientLabelText) ? '' : " - {$recipientLabelText}";
+        $campaignName = "{$app_list_strings['emailTemplates_type_list']['notification']} {$mod_strings['LBL_STATUS']} {$app_list_strings['moduleListSingular'][$parentType]} '{$parentBean->name}' - {$app_list_strings['stic_job_offers_status_list'][$newStatus]}{$recipientLabel} - {$startDate}";
 
         $lpoIdFormatted = "^{$lpoBean->id}^";
 
@@ -227,7 +398,26 @@ class stic_Job_OffersUtils
         $campaign->notification_reply_to_name = $outboundEmail->reply_to_name;
         $campaign->notification_reply_to_addr = $outboundEmail->reply_to_addr;
 
-        $campaign->save();
+        // Avoid QueueCampaign redirect when campaign is created inside a logic hook flow.
+        $hadNoRedirectFlag = array_key_exists('stic_no_queue_redirect', $GLOBALS);
+        $previousNoRedirect = $hadNoRedirectFlag ? $GLOBALS['stic_no_queue_redirect'] : null;
+        $GLOBALS['stic_no_queue_redirect'] = true;
+
+        try {
+            $campaign->save();
+        } catch (\Throwable $e) {
+            $GLOBALS['log']->error(
+                "Notification campaign save error for {$parentType} {$parentBean->id}: " . $e->getMessage()
+            );
+            return null;
+        } finally {
+            if (!$hadNoRedirectFlag) {
+                unset($GLOBALS['stic_no_queue_redirect']);
+            } else {
+                $GLOBALS['stic_no_queue_redirect'] = $previousNoRedirect;
+            }
+        }
+
         return !empty($campaign->id) ? $campaign : null;
     }
 
@@ -240,7 +430,7 @@ class stic_Job_OffersUtils
      * @param string $assignedUserName
      * @return SugarBean|null
      */
-    protected static function getOrCreateNotificationLpo($offerId, $offerName, $assignedUserId, $assignedUserName)
+    protected static function getOrCreateNotificationLpo($offerId, $offerName, $assignedUserId, $assignedUserName, $suffix = '')
     {
         global $app_list_strings;
 
@@ -251,8 +441,10 @@ class stic_Job_OffersUtils
         $db = DBManagerFactory::getInstance();
         $offerId = $db->quote($offerId);
 
-        // Use offer name in LPO for better identification, but ensure it's unique by including offer ID
-        $lpoName = "LPO {$app_list_strings['moduleListSingular']['stic_Job_Offers']} '{$offerName}' - ({$offerId})";
+        // Use offer name in LPO for better identification, but ensure it's unique by including offer ID and recipient suffix
+        $suffixText = self::getRecipientLabel($suffix);
+        $suffixPart = empty($suffixText) ? '' : " - {$suffixText}";
+        $lpoName = "LPO {$app_list_strings['moduleListSingular']['stic_Job_Offers']} '{$offerName}' - ({$offerId}){$suffixPart}";
 
         // Try to find existing LPO for this offer
         $query = "SELECT id FROM prospect_lists WHERE name = '{$db->quote($lpoName)}' AND deleted = 0 LIMIT 1";
@@ -277,10 +469,9 @@ class stic_Job_OffersUtils
      *
      * @param SugarBean $lpoBean
      * @param array $contactIds
-     * @param string $assignedUserId
      * @return void
      */
-    protected static function updateLpoContacts($lpoBean, $contactIds, $assignedUserId)
+    protected static function updateLpoContacts($lpoBean, $contactIds)
     {
         if (empty($lpoBean) || empty($lpoBean->id)) {
             return;
@@ -306,19 +497,75 @@ class stic_Job_OffersUtils
             $lpoBean->contacts->add($contactId);
         }
 
-        // Ensure assigned user is in the list
-        if (!empty($assignedUserId)) {
-            if ($lpoBean->load_relationship('users')) {
-                $currentUserIds = $lpoBean->users->get();
-                $currentUserIds = is_array($currentUserIds) ? $currentUserIds : array();
-                if (!in_array($assignedUserId, $currentUserIds, true)) {
-                    $lpoBean->users->add($assignedUserId);
-                }
-            }
-        }
     }
 
+    /**
+     * Translate recipient type key to a visible label
+     *
+     * @param string $recipientType
+     * @return string
+     */
+    protected static function getRecipientLabel($recipientLabelKey)
+    {
+        if (empty($recipientLabelKey)) {
+            return '';
+        }
 
+        return translate($recipientLabelKey, 'stic_Job_Offers');
+    }
+
+    /**
+     * Get related organization id for an offer
+     *
+     * @param SugarBean $offerBean
+     * @return string|null
+     */
+    protected static function getOfferOrganizationId($offerBean)
+    {
+        if (empty($offerBean)) {
+            return null;
+        }
+
+        if (!empty($offerBean->stic_job_offers_accountsaccounts_ida)) {
+            return $offerBean->stic_job_offers_accountsaccounts_ida;
+        }
+
+        if (!empty($offerBean->fetched_row['stic_job_offers_accountsaccounts_ida'])) {
+            return $offerBean->fetched_row['stic_job_offers_accountsaccounts_ida'];
+        }
+
+        if ($offerBean->load_relationship('stic_job_offers_accounts')) {
+            $accountIds = $offerBean->stic_job_offers_accounts->get();
+            if (is_array($accountIds) && !empty($accountIds[0])) {
+                return $accountIds[0];
+            }
+        }
+
+        if (empty($offerBean->id)) {
+            return null;
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $offerId = $db->quote($offerBean->id);
+
+        $query = "SELECT rel.stic_job_offers_accountsaccounts_ida AS account_id
+            FROM stic_job_offers_accounts_c rel
+            INNER JOIN accounts a ON a.id = rel.stic_job_offers_accountsaccounts_ida
+            WHERE rel.deleted = 0
+              AND a.deleted = 0
+              AND rel.stic_job_offers_accountsstic_job_offers_idb = '{$offerId}'
+            ORDER BY rel.date_modified DESC
+            LIMIT 1";
+
+        $result = $db->query($query);
+        if ($row = $db->fetchByAssoc($result)) {
+            if (!empty($row['account_id'])) {
+                return $row['account_id'];
+            }
+        }
+
+        return null;
+    }
 
     /**
     * Get contact ids for applications related to the offer
@@ -367,9 +614,24 @@ class stic_Job_OffersUtils
      */
     protected static function getNotificationTemplateId($templateKey, $parentBean = null)
     {
-        $requestedTemplateId = (!empty($parentBean) && !empty($parentBean->emailtemplate_id))
-            ? $parentBean->emailtemplate_id
-            : null;
+        $requestedTemplateId = null;
+        if (!empty($parentBean)) {
+            switch ($templateKey) {
+                case 'job_offers_assigned_user':
+                    $requestedTemplateId = $parentBean->emailtemplate_assigned_user_id ?? null;
+                    break;
+                case 'job_offers_candidates':
+                    $requestedTemplateId = $parentBean->emailtemplate_candidates_id ?? null;
+                    break;
+                case 'job_offers_organization':
+                    $requestedTemplateId = $parentBean->emailtemplate_organization_id ?? null;
+                    break;
+                case 'job_offers':
+                    $requestedTemplateId = $parentBean->emailtemplate_assigned_user_id ?? null;
+                    break;
+            }
+        }
+
         $validTemplateId = self::getValidNotificationTemplateId($requestedTemplateId);
         if (!empty($validTemplateId)) {
             return $validTemplateId;
@@ -377,6 +639,9 @@ class stic_Job_OffersUtils
 
         $templateIds = array(
             'job_offers' => 'c79e5db6-d89d-487f-a4ff-6e2801f7ade5',
+            'job_offers_assigned_user' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0010',
+            'job_offers_candidates' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0011',
+            'job_offers_organization' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0012',
         );
         $defaultTemplateId = $templateIds[$templateKey] ?? null;
 

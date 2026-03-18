@@ -62,6 +62,10 @@ array(
                     'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_PANEL_NOTIFICATION_TEMPLATES' => array(
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
             ),
             'syncDetailEditViews' => false,
         ),
@@ -97,17 +101,7 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                 ),
-                3 => 
-                array (
-                    0 => '',
-                    1 => 
-                    array (
-                        'name' => 'notification_template',
-                        'studio' => 'visible',
-                        'label' => 'LBL_NOTIFICATION_TEMPLATE',
-                    ),
-                ),
-                4 => array (
+                3 => array (
                     0 => 
                     array (
                         'name' => 'type',
@@ -121,7 +115,7 @@ array(
                         'label' => 'LBL_TERRITORIAL_SCOPE',
                     ),
                 ),
-                5 => array (
+                4 => array (
                     0 => 
                     array (
                         'name' => 'offer_origin',
@@ -134,7 +128,7 @@ array(
                         'label' => 'LBL_OFFERED_POSITIONS',
                     ),
                 ),
-                6 => array (
+                5 => array (
                     0 => 
                     array (
                         'name' => 'process_start_date',
@@ -146,7 +140,7 @@ array(
                         'label' => 'LBL_PROCESS_END_DATE',
                     ),
                 ),
-                7 => array (
+                6 => array (
                     0 => 
                     array (
                         'name' => 'applications_start_date',
@@ -158,7 +152,7 @@ array(
                         'label' => 'LBL_APPLICATIONS_END_DATE',
                     ),
                 ),
-                8 => array (
+                7 => array (
                     0 => 
                     array (
                         'name' => 'offer_code',
@@ -171,7 +165,7 @@ array(
                         'label' => 'LBL_OFFER_MODE',
                     ),
                 ),
-                9 => array (
+                8 => array (
                     0 => 
                     array (
                         'name' => 'weekdays',
@@ -184,7 +178,7 @@ array(
                         'label' => 'LBL_TIMETABLE',
                     ),
                 ),
-                10 => array (
+                9 => array (
                     0 => 
                     array (
                         'name' => 'evaluation',
@@ -197,7 +191,7 @@ array(
                         'label' => 'LBL_RESPONSIBLE',
                     ),
                 ),
-                11 => array (
+                10 => array (
                     0 => 
                     array (
                         'name' => 'center',
@@ -209,8 +203,38 @@ array(
                         'name' => 'project_stic_job_offers_name',
                     ),
                 ),
-                12 => array (
+                11 => array (
                     0 => 'description',
+                ),
+            ),
+            'LBL_PANEL_NOTIFICATION_TEMPLATES' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'status_notifications_enabled',
+                        'studio' => 'visible',
+                        'label' => 'LBL_STATUS_NOTIFICATIONS_ENABLED',
+                    ),
+                    1 => '',
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'notification_template_assigned_user',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER',
+                    ),
+                    1 => array(
+                        'name' => 'notification_template_candidates',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_CANDIDATES',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'notification_template_organization',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION',
+                    ),
+                    1 => '',
                 ),
             ),
             'lbl_editview_panel5' => array(

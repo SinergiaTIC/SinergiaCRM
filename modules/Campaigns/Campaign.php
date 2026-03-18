@@ -369,6 +369,14 @@ class Campaign extends SugarBean
                 }
             }
         }
+
+        // STIC-Custom 20260318 ART- Check if queue processing is disabled to avoid redirection when saving from logic hooks
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/916
+        $isFromJobOffers = (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == "stic_Job_Offers")
+            || (isset($_REQUEST['current_module']) && $_REQUEST['current_module'] == "stic_Job_Offers")
+            || $this->parent_type == 'stic_Job_Offers';
+        // END STIC Custom
+
         if ($isNewCampaign && $this->campaign_type == "Notification") {
             // Save or Update EmailMarketing record
             $emailMarketing = BeanFactory::newBean('EmailMarketing');
@@ -394,24 +402,29 @@ class Campaign extends SugarBean
 
             // Queue Notification campaign
             $_POST['mass'] = array(0 => $emailMarketingId);
-            // STIC-Custom 20260226 ART - Adaptation for the Job Portal in the Private Area
+            $_REQUEST['module'] = "Campaigns";
+            $_REQUEST['record'] = $return_id;
+            $_REQUEST['action'] = "QueueCampaign";
+            $_REQUEST['campaign_id'] = $return_id;
+
+            // STIC-Custom 20260318 ART - Ensure QueueCampaign always receives the Campaign id
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/916
             // Don't change the REQUEST if is coming from Job Offers module
-            // $_REQUEST['module'] = "Campaigns";
-            // $_REQUEST['record'] = $return_id;
             // $_REQUEST['return_action'] = "TrackDetailView";
             // $_REQUEST['return_module'] = "Campaigns";
             // $_REQUEST['return_id'] = $return_id;
-            // $_REQUEST['action'] = "QueueCampaign";
-            // $_REQUEST['campaign_id'] = $return_id;
-            if ((!isset($_REQUEST['return_module']) || $_REQUEST['return_module'] != "stic_Job_Offers") && (!isset($_REQUEST['current_module']) || $_REQUEST['current_module'] != "stic_Job_Offers")) {
-                $_REQUEST['module'] = "Campaigns";
-                $_REQUEST['record'] = $return_id;
+
+            // Preserve redirection to Job Offer detail when called from stic_Job_Offers.
+            if ($isFromJobOffers) {
+                $jobOfferReturnId = !empty($_REQUEST['record']) ? $_REQUEST['record'] : $this->parent_id;
+
+                $_REQUEST['return_action'] = "DetailView";
+                $_REQUEST['return_module'] = "stic_Job_Offers";
+                $_REQUEST['return_id'] = $jobOfferReturnId;
+            } else {
                 $_REQUEST['return_action'] = "TrackDetailView";
                 $_REQUEST['return_module'] = "Campaigns";
                 $_REQUEST['return_id'] = $return_id;
-                $_REQUEST['action'] = "QueueCampaign";
-                $_REQUEST['campaign_id'] = $return_id;
             }
             // END STIC Custom
 
@@ -445,11 +458,28 @@ class Campaign extends SugarBean
             $_POST['mass'] = array(0 => $messageMarketingId);
             $_REQUEST['module'] = "Campaigns";
             $_REQUEST['record'] = $return_id;
-            $_REQUEST['return_action'] = "TrackDetailView";
-            $_REQUEST['return_module'] = "Campaigns";
-            $_REQUEST['return_id'] = $return_id;
             $_REQUEST['action'] = "QueueCampaign";
             $_REQUEST['campaign_id'] = $return_id;
+
+            // STIC-Custom 20260318 ART - Ensure QueueCampaign always receives the Campaign id
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/916
+            // $_REQUEST['return_action'] = "TrackDetailView";
+            // $_REQUEST['return_module'] = "Campaigns";
+            // $_REQUEST['return_id'] = $return_id;
+            // Don't change the REQUEST if is coming from Job Offers module
+
+            if ($isFromJobOffers) {
+                $jobOfferReturnId = !empty($_REQUEST['record']) ? $_REQUEST['record'] : $this->parent_id;
+
+                $_REQUEST['return_action'] = "DetailView";
+                $_REQUEST['return_module'] = "stic_Job_Offers";
+                $_REQUEST['return_id'] = $jobOfferReturnId;
+            } else {
+                $_REQUEST['return_action'] = "TrackDetailView";
+                $_REQUEST['return_module'] = "Campaigns";
+                $_REQUEST['return_id'] = $return_id;
+            }
+            // END STIC Custom
 
             require_once("modules/stic_Message_Marketing/Utils.php");
             stic_Message_MarketingUtils::queueMessages($messageMarketingId);
