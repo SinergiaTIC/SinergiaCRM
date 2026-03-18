@@ -846,8 +846,7 @@ function isResourceAvailable(resourceElement = null) {
   bookingId = $('[name="record"]').val()
     ? $('[name="record"]').val()
     : $(".listview-checkbox", $(".inlineEditActive").closest("tr")).val();
-  debugger;
-    var startDateValue = getFieldValue("start_date");
+  var startDateValue = getFieldValue("start_date");
   if ($("#all_day", "form").is(":checked") && startDateValue) {
     // In all-day bookings, avoid carrying residual time (e.g. 11:00) to SQL checks
     startDateValue = startDateValue.split(" ")[0];

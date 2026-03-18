@@ -78,8 +78,6 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             AND sb.status != 'cancelled'
             AND sb.deleted = 0
             AND sr.deleted = 0
-            AND srsc.deleted = 0
-            AND sc.deleted = 0
             AND srsb.deleted = 0
         ";
 
