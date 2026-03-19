@@ -128,6 +128,12 @@ class stic_Messages extends Basic
 
         $this->assigned_user_id = $current_user->id;
 
+        // Conversation messages are always sent and sender is fixed to current CRM user
+        if ($this->type === 'conversation') {
+            $this->sender = $current_user->name;
+            $this->status = 'sent';
+        }
+
         // For WhatsAppWeb messages, set sender to assigned user name
         if ($this->type === 'WhatsAppWeb') {
             $this->sender = $current_user->name;

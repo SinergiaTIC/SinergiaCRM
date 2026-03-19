@@ -39,6 +39,38 @@ switch (sticViewType) {
       var messageType = $('#type').val();
       
       addEditCreateTemplateLinks();
+
+      // Function to lock sender and status fields to 'sent' when type is WhatsAppWeb or conversation
+      function lockSenderAndStatusToSent() {
+        $('#status').val('sent');
+        $('#status').prop('disabled', true);
+        $('#status').attr('readonly', true);
+        $('#status').css('background', '#F8F8F8');
+        $('#status').css('border-color', '#E2E7EB');
+
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+
+        var assignedUserName = $('#assigned_user_name').val();
+        if (assignedUserName) {
+          $('#sender').val(assignedUserName);
+        }
+      }
+
+      // Function to unlock sender and status fields for new messages that are not of type WhatsAppWeb or conversation
+      function unlockSenderAndStatusForNewMessage() {
+        $('#status').prop('disabled', false);
+        $('#status').attr('readonly', false);
+        $('#status').css('background', '');
+        $('#status').css('border-color', '');
+
+        $('#sender').prop('disabled', false);
+        $('#sender').attr('readonly', false);
+        $('#sender').css('background', '');
+        $('#sender').css('border-color', '');
+      }
       
       // WhatsAppWeb messages are always sent and cannot be edited
       if (messageType === 'WhatsAppWeb' && $('#EditView input[name="record"]').val()) {
@@ -119,59 +151,19 @@ switch (sticViewType) {
         $("#template_id_create_link").addClass("ui-state-disabled");
       }
 
-      // When type changes to WhatsAppWeb, force status to 'sent'
+      // When type changes to WhatsAppWeb or conversation, force status to 'sent' and lock sender
       $('#type').on('change', function() {
-        if ($(this).val() === 'WhatsAppWeb') {
-          $('#status').val('sent');
-          $('#status').prop('disabled', true);
-          $('#status').attr('readonly', true);
-          $('#status').css('background', '#F8F8F8');
-          $('#status').css('border-color', '#E2E7EB');
-          
-          // For WhatsAppWeb, sender is automatically set to assigned user
-          $('#sender').prop('disabled', true);
-          $('#sender').attr('readonly', true);
-          $('#sender').css('background', '#F8F8F8');
-          $('#sender').css('border-color', '#E2E7EB');
-          
-          // Get assigned user name and set it as sender
-          var assignedUserName = $('#assigned_user_name').val();
-          if (assignedUserName) {
-            $('#sender').val(assignedUserName);
-          }
+        if ($(this).val() === 'WhatsAppWeb' || $(this).val() === 'conversation') {
+          lockSenderAndStatusToSent();
         } else if (!$('#EditView input[name="record"]').val()) {
-          // Only enable status and sender if it's a new message and not WhatsAppWeb
-          $('#status').prop('disabled', false);
-          $('#status').attr('readonly', false);
-          $('#status').css('background', '');
-          $('#status').css('border-color', '');
-          
-          // Re-enable sender field for other types
-          if (state === 'draft' || !$('#EditView input[name="record"]').val()) {
-            $('#sender').prop('disabled', false);
-            $('#sender').attr('readonly', false);
-            $('#sender').css('background', '');
-            $('#sender').css('border-color', '');
-          }
+          unlockSenderAndStatusForNewMessage();
         }
         toggleParentTypeForConversation();
       });
 
-      // On page load, if type is WhatsAppWeb, force status to 'sent' and set sender
-      if ($('#type').val() === 'WhatsAppWeb') {
-        $('#status').val('sent');
-        
-        // Disable and set sender for WhatsAppWeb
-        $('#sender').prop('disabled', true);
-        $('#sender').attr('readonly', true);
-        $('#sender').css('background', '#F8F8F8');
-        $('#sender').css('border-color', '#E2E7EB');
-        
-        // Get assigned user name and set it as sender if not already set
-        var assignedUserName = $('#assigned_user_name').val();
-        if (assignedUserName && !$('#sender').val()) {
-          $('#sender').val(assignedUserName);
-        }
+      // On page load, WhatsAppWeb and conversation are always sent and sender is fixed to CRM user
+      if ($('#type').val() === 'WhatsAppWeb' || $('#type').val() === 'conversation') {
+        lockSenderAndStatusToSent();
       }
 
       if($("#mass_ids").val()) {
@@ -686,6 +678,12 @@ function initSubpanelConversationLogic($form) {
     }
 
     $form.find('#type').val('conversation').prop('disabled', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
+    $form.find('#status').val('sent').prop('disabled', true).attr('readonly', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
+    var assignedUserName = $form.find('#assigned_user_name').val();
+    if (assignedUserName) {
+      $form.find('#sender').val(assignedUserName);
+    }
+    $form.find('#sender').prop('disabled', true).attr('readonly', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
     
     if ($form.find('#hidden_type_fixed').length === 0) {
         $form.append('<input type="hidden" id="hidden_type_fixed" name="type" value="conversation">');
