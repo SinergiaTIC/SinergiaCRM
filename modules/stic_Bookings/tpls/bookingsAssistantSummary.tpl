@@ -396,6 +396,7 @@
             }
         }
 
+        // @param isEndDate: if we are formatting endDate and the hour is 00:00, the day must be the day before
         function formatDate(dateString, isEndDate = false) {
             if (!dateString) return '';
 
