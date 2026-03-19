@@ -78,25 +78,27 @@ class stic_Conversations extends Basic
             $query = "SELECT code
                 FROM stic_conversations
                 ORDER BY code DESC LIMIT 1";
-                $result = $db->query($query, true);
-                $row = $db->fetchByAssoc($result);
-                $lastNum = $row['code'];
-                if (!isset($lastNum) || empty($lastNum)) {
-                    $lastNum = 0;
-                }
-                $currentNum = $lastNum + 1;
-            // Format code
-            $this->code = str_pad($currentNum, 4, "0", STR_PAD_LEFT);
+            $result = $db->query($query, true);
+            $row = $db->fetchByAssoc($result);
+            $lastNum = $row['code'];
+            if (!isset($lastNum) || empty($lastNum)) {
+                $lastNum = 0;
+            }
+            $currentNum = $lastNum + 1;
+            $this->code = $currentNum;
         }
 
         // Create name if empty
         if(empty($this->name)) {
             $typeLabel = $this->type;
+            // Format the code for the name
+            $formatCode = str_pad($this->code, 4, "0", STR_PAD_LEFT);
+            
             if (!empty($this->type) && !empty($app_list_strings['stic_conversations_types_list'][$this->type])) {
                 $typeLabel = $app_list_strings['stic_conversations_types_list'][$this->type];
-                $this->name = $this->code . ' - ' . $typeLabel . ' - ' . $this->subject;
+                $this->name = $formatCode . ' - ' . $typeLabel . ' - ' . $this->subject;
             } else {
-                $this->name = $this->code . ' - ' . $this->subject;
+                $this->name = $formatCode . ' - ' . $this->subject;
             }
         }
         
