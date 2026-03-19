@@ -419,12 +419,13 @@ class stic_MessagesController extends SugarController
     /**
      * Create and return a conversation id for the current message
      */
-    protected function createConversationForMessage($messageBean)
+    protected function createConversationForMessage($messageBean, $conversationSubject = '')
     {
         global $current_user;
 
         $conversationBean = BeanFactory::newBean('stic_Conversations');
-        $conversationBean->subject = mb_substr(trim(strip_tags((string)$messageBean->message)), 0, 255);
+        $cleanSubject = trim(strip_tags((string)$conversationSubject));
+        $conversationBean->subject = mb_substr($cleanSubject, 0, 60);
         $conversationBean->assigned_user_id = !empty($messageBean->assigned_user_id) ? $messageBean->assigned_user_id : $current_user->id;
 
         if (!empty($messageBean->parent_type) && $messageBean->parent_type === 'Contacts' && !empty($messageBean->parent_id)) {
@@ -441,10 +442,11 @@ class stic_MessagesController extends SugarController
      */
     protected function prepareConversationDataForMessage($messageBean)
     {
-        $type = $messageBean->type ?? ($_REQUEST['type'] ?? '');
+        $type = $messageBean->type ?? '';
 
         if ($type !== 'conversation') {
             $messageBean->new_conversation = 0;
+            $messageBean->stic_conversation_subject = '';
             $messageBean->stic_conversations_stic_messages_name = '';
             $messageBean->stic_conversations_ida = '';
             return array('success' => true);
@@ -452,14 +454,6 @@ class stic_MessagesController extends SugarController
 
         // Conversations can only be related to Contacts.
         $messageBean->parent_type = 'Contacts';
-
-        if (empty($messageBean->parent_id) && !empty($_REQUEST['parent_id'])) {
-            $messageBean->parent_id = $_REQUEST['parent_id'];
-        }
-
-        if (empty($messageBean->parent_name) && !empty($_REQUEST['parent_name'])) {
-            $messageBean->parent_name = $_REQUEST['parent_name'];
-        }
 
         if (!empty($messageBean->parent_id)) {
             $contactBean = BeanFactory::getBean('Contacts', $messageBean->parent_id);
@@ -469,18 +463,19 @@ class stic_MessagesController extends SugarController
             }
         }
 
-        $newConversation = !empty($_REQUEST['new_conversation']) || !empty($messageBean->new_conversation);
+        $newConversation = !empty($messageBean->new_conversation);
         $messageBean->new_conversation = $newConversation ? 1 : 0;
 
         if ($newConversation) {
+            $conversationSubject = trim((string)($messageBean->stic_conversation_subject ?? ''));
+            if ($conversationSubject === '') {
+                return array('success' => false);
+            }
+
             if (empty($messageBean->stic_conversations_ida)) {
-                $messageBean->stic_conversations_ida = $this->createConversationForMessage($messageBean);
+                $messageBean->stic_conversations_ida = $this->createConversationForMessage($messageBean, $conversationSubject);
             }
             return array('success' => true);
-        }
-
-        if (empty($messageBean->stic_conversations_ida) && !empty($_REQUEST['stic_conversations_ida'])) {
-            $messageBean->stic_conversations_ida = $_REQUEST['stic_conversations_ida'];
         }
 
         if (empty($messageBean->stic_conversations_ida)) {

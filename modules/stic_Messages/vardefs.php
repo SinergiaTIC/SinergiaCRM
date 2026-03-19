@@ -288,6 +288,15 @@ $dictionary['stic_Messages'] = array(
             'len' => '255',
             'size' => '20',
         ),
+        'stic_conversation_subject' => array (
+            'name' => 'stic_conversation_subject',
+            'vname' => 'LBL_LIST_SUBJECT',
+            'type' => 'varchar',
+            'source' => 'non-db',
+            'required' => false,
+            'len' => '60',
+            'inline_edit' => false,
+        ),
         // Relationships
         'stic_conversations_stic_messages' => array (
             'name' => 'stic_conversations_stic_messages',

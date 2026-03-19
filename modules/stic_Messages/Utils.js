@@ -541,6 +541,11 @@ function clearConversationSelection() {
   $('#stic_conversations_ida').val('');
 }
 
+// Function to clear conversation subject field
+function clearConversationSubject() {
+  $('#stic_conversation_subject').val('');
+}
+
 // Function to toggle visibility and validation of conversation fields based on type and new conversation checkbox
 function toggleConversationFieldsByType() {
   var formName = getFormName();
@@ -548,9 +553,18 @@ function toggleConversationFieldsByType() {
   var $newConversationCheckbox = $('#new_conversation[type="checkbox"]');
   var isNewConversationChecked = $newConversationCheckbox.is(':checked');
   var conversationLabel = SUGAR.language.get(module, 'LBL_STIC_CONVERSATIONS_STIC_MESSAGES');
+  var conversationSubjectLabel = SUGAR.language.get(module, 'LBL_LIST_SUBJECT');
   var phoneLabel = SUGAR.language.get(module, 'LBL_PHONE');
 
-  if (!$newConversationCheckbox.length || !$('#stic_conversations_stic_messages_name').length || !$('#phone').length) {
+  var $conversationSubjectRow = $('#stic_conversation_subject').closest('.edit-view-row-item');
+  if (!$conversationSubjectRow.length) {
+    $conversationSubjectRow = $('div[data-field="stic_conversation_subject"]');
+  }
+
+  // Hidden by default; only shown for conversation + new conversation.
+  $conversationSubjectRow.hide();
+
+  if (!$newConversationCheckbox.length || !$('#stic_conversations_stic_messages_name').length || !$('#stic_conversation_subject').length || !$('#phone').length) {
     return;
   }
 
@@ -572,24 +586,48 @@ function toggleConversationFieldsByType() {
 
     if (isNewConversationChecked) {
       $conversationRow.hide();
+      $conversationSubjectRow.show();
+
       removeFromValidate(formName, 'stic_conversations_stic_messages_name');
       removeRequiredMark('stic_conversations_stic_messages_name');
+      removeFromValidate(formName, 'stic_conversation_subject');
+      addToValidate(formName, 'stic_conversation_subject', 'varchar', true, conversationSubjectLabel);
+      addRequiredMark('stic_conversation_subject');
+
+      $('#stic_conversations_ida').val('');
       clearConversationSelection();
+      clearConversationSubject();
+
+      $('#stic_conversations_stic_messages_name').prop('readonly', false).attr('disabled', false);
+      $('#stic_conversation_subject').prop('readonly', false).attr('disabled', false);
+      $('#btn_stic_conversations_stic_messages_name, #btn_clr_stic_conversations_stic_messages_name').hide();
     } else {
       $conversationRow.show();
+      $conversationSubjectRow.hide();
       removeFromValidate(formName, 'stic_conversations_stic_messages_name');
       addToValidate(formName, 'stic_conversations_stic_messages_name', 'relate', true, conversationLabel);
       addRequiredMark('stic_conversations_stic_messages_name');
+
+      removeFromValidate(formName, 'stic_conversation_subject');
+      removeRequiredMark('stic_conversation_subject');
+      clearConversationSubject();
+
+      $('#stic_conversations_stic_messages_name').prop('readonly', false).attr('disabled', false);
+      $('#btn_stic_conversations_stic_messages_name, #btn_clr_stic_conversations_stic_messages_name').show();
     }
   } else {
     $newConversationRow.hide();
     $conversationRow.hide();
+    $conversationSubjectRow.hide();
 
     $newConversationCheckbox.prop('checked', false);
     clearConversationSelection();
+    clearConversationSubject();
 
     removeFromValidate(formName, 'stic_conversations_stic_messages_name');
     removeRequiredMark('stic_conversations_stic_messages_name');
+    removeFromValidate(formName, 'stic_conversation_subject');
+    removeRequiredMark('stic_conversation_subject');
     removeFromValidate(formName, 'new_conversation');
     removeRequiredMark('new_conversation');
 
@@ -666,6 +704,7 @@ function initSubpanelConversationLogic($form) {
     
     $form.find('#stic_conversations_stic_messages_name').attr('readonly', true).css({'background': '#F8F8F8'}).closest('.edit-view-row-item').show();
     $form.find('#stic_conversations_stic_messages_name').attr('disabled', true);
+    $form.find('#stic_conversation_subject').val('').closest('.edit-view-row-item').hide();
     $form.find('#btn_stic_conversations_stic_messages_name, #btn_clr_stic_conversations_stic_messages_name').hide();
     $form.find('#parent_name').attr('readonly', true).css({'background': '#F8F8F8'});
     $form.find('#parent_name').attr('disabled', true);

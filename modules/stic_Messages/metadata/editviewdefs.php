@@ -107,6 +107,11 @@ array(
                         'name' => 'stic_conversations_stic_messages_name',
                     ),
                 ),
+                7 => array(
+                    0 => array(
+                        'name' => 'stic_conversation_subject',
+                    ),
+                ),
             ),
         ),
     ),
