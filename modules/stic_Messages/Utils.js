@@ -712,6 +712,17 @@ function initSubpanelConversationLogic($form) {
 
     // Validate message and sender fields on save
     $form.find('input[name="button"], input[type="submit"]').on('mousedown', function(e) {
+      // Check if the clicked button is a cancel action by looking at its id, title and value attributes
+      var $clickedButton = $(this);
+      var buttonId = ($clickedButton.attr('id') || '').toUpperCase();
+      var buttonTitle = ($clickedButton.attr('title') || '').toLowerCase();
+      var buttonValue = ($clickedButton.val() || '').toLowerCase();
+
+      // Do not validate on Cancel actions
+      if (buttonId === 'CANCEL' || buttonTitle.indexOf('cancel') !== -1 || buttonValue.indexOf('cancel') !== -1) {
+        return true;
+      }
+
         var msgVal = $form.find('#message').val() || '';
         var sndVal = $form.find('#sender').val() || '';
         var errorFound = false;

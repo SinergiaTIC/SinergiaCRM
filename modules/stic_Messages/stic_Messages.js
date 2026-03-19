@@ -235,7 +235,12 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
               title: '',
               width: '80%',
           });
-          applyConversationSubpanelModalDefaults($dialogWrapper);
+          // If the modal is opened from the Conversations subpanel, we need to apply some defaults and hide some fields
+          if (isConversationsMessagesSubpanel) {
+            setTimeout(function() {
+              applyConversationSubpanelModalDefaults($dialogWrapper);
+            }, 0);
+          }
           if (typeof namesList !== 'undefined') {
             $('#namesList').val(namesList);
           }
