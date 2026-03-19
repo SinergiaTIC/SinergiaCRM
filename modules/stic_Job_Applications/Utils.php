@@ -102,10 +102,11 @@ class stic_Job_ApplicationsUtils
 
         $previousOfferId = $bean->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? null;
         $offerId = self::getRelatedOfferId($bean);
+        $offerChanged = empty($bean->fetched_row) || $previousOfferId !== $offerId;
 
         $offerIds = array_filter(array_unique(array($offerId, $previousOfferId)));
 
-        if ($checkChanges && !$statusChanged && empty($previousOfferId)) {
+        if ($checkChanges && !$statusChanged && !$offerChanged) {
             return;
         }
 
