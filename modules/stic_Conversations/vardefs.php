@@ -72,6 +72,7 @@ $dictionary['stic_Conversations'] = array(
       'merge_filter' => 'disabled',
       'len' => '255',
       'size' => '20',
+      'required' => true,
     ),
     'type' =>
     array(
