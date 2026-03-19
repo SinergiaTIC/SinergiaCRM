@@ -59,7 +59,7 @@ class stic_MessagesController extends SugarController
                 $this->bean->parent_id = $id;
                 $this->bean->parent_type = $_REQUEST['return_module'];
                 $this->bean->phone = $phone;
-                $this->prepareConversationDataForMessage($this->bean);
+                $this->prepareConversationDataForMessage();
                 $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
                 $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
                 if ($shouldStoreFirstMessage) {
@@ -68,8 +68,8 @@ class stic_MessagesController extends SugarController
             }, $idsArray, $phonesArray);
         }
         else {
-            $this->applyConversationSubpanelDefaults($this->bean);
-            $this->prepareConversationDataForMessage($this->bean);
+            $this->applyConversationSubpanelDefaults();
+            $this->prepareConversationDataForMessage();
             // Subpanel conversations to validate
             if (!$this->validateConversationRequiredFields($this->bean)) {
                 echo json_encode(array('success' => false, 'number_found' => false));
@@ -106,7 +106,7 @@ class stic_MessagesController extends SugarController
                 $this->bean->parent_id = $id;
                 $this->bean->parent_type = $_REQUEST['return_module'];
                 $this->bean->phone = $phone;
-                $conversationValidation = $this->prepareConversationDataForMessage($this->bean);
+                $conversationValidation = $this->prepareConversationDataForMessage();
                 if (!$conversationValidation['success']) {
                     $this->returnConversationValidationError($mod_strings);
                 }
@@ -154,12 +154,12 @@ class stic_MessagesController extends SugarController
             $oldStatus = $this->bean->fetched_row['status']??'';
 
             // Subpanel conversations to validate
-            $this->applyConversationSubpanelDefaults($this->bean);
+            $this->applyConversationSubpanelDefaults();
             if (!$this->validateConversationRequiredFields($this->bean)) {
                 $this->returnConversationRequiredFieldsError($mod_strings);
             }
 
-            $conversationValidation = $this->prepareConversationDataForMessage($this->bean);
+            $conversationValidation = $this->prepareConversationDataForMessage();
             if (!$conversationValidation['success']) {
                 $this->returnConversationValidationError($mod_strings);
             }
@@ -446,8 +446,9 @@ class stic_MessagesController extends SugarController
     /**
      * Normalize conversation data before saving a message
      */
-    protected function prepareConversationDataForMessage($messageBean)
+    protected function prepareConversationDataForMessage()
     {
+        $messageBean = $this->bean;
         $type = $messageBean->type ?? '';
 
         if ($type !== 'conversation') {
@@ -506,8 +507,9 @@ class stic_MessagesController extends SugarController
     /**
      * Force subpanel conversation defaults
      */
-    protected function applyConversationSubpanelDefaults($messageBean)
+    protected function applyConversationSubpanelDefaults()
     {
+        $messageBean = $this->bean;
         if (!$this->isConversationSubpanelSaveRequest()) {
             return;
         }
