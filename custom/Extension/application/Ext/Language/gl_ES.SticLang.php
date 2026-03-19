@@ -107,6 +107,7 @@ $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Sobrepasouse o límite de mensa
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Enviar mensaxe telefónica';
 $app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificación por correo electrónico';
 $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificación por mensaxe electrónica';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Enviar mensaje (conversación)';
 
 // Envío masivo de correos
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicará aos rexistros da páxina actual. Para envíos masivos recoméndase utilizar o módulo Campañas.';

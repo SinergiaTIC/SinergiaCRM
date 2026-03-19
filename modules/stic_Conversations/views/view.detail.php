@@ -52,6 +52,8 @@ class stic_ConversationsViewDetail extends ViewDetail
         // Write here you custom code
 
         // echo getVersionedScript("modules/stic_Conversations/Utils.js");
+        require_once 'modules/stic_Messages/Utils.php';
+        stic_MessagesUtils::echoIsMessagesModuleActive();
     }
 
 }

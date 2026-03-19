@@ -108,6 +108,7 @@ $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'The limit of messages that can 
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Compose Message';
 $app_strings['LBL_NEW_NOTIFICATION'] = 'New notification by email';
 $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'New notification by message';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Compose message (conversation)';
 
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';

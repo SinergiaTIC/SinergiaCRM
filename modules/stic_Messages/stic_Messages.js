@@ -96,6 +96,39 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         data: paramsPost,
         success: function(data) {
         var panelBody = $('<div class="content">').append(data).find('#EditView').parent();
+        // Check if we are in the context of the Conversations subpanel to apply some defaults to the compose view
+        var sourceModule = $(source).attr('data-module') || '';
+        var isConversationsMessagesSubpanel =
+          paramsPost.relatedModule === 'stic_Conversations'
+          && (
+            sourceModule === 'stic_Conversations'
+            || $(source).closest('#whole_subpanel_stic_conversations_stic_messages').length > 0
+          );
+
+        function applyConversationSubpanelModalDefaults($panel) {
+          if (!isConversationsMessagesSubpanel) {
+            return;
+          }
+
+          var $form = $panel.find('#EditView');
+          if (!$form.length) {
+            return;
+          }
+
+          var conversationId = $(source).attr('data-record-id') || paramsPost.relatedId || '';
+          var conversationName = $(source).attr('data-name') || '';
+
+          if (conversationId) {
+            $form.find('#stic_conversations_ida').val(conversationId);
+          }
+          if (conversationName) {
+            $form.find('#stic_conversations_stic_messages_name').val(conversationName);
+          }
+
+          if (typeof initSubpanelConversationLogic === 'function') {
+            initSubpanelConversationLogic($form);
+          }
+        }
 
         // Hide conversation type when context module is not Contacts
         function applyConversationTypeVisibilityByModule($panel, moduleName) {
@@ -137,11 +170,11 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         var dataName = $(source).attr('data-name');
         // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
           var dataRecordId = $(source).attr('data-record-id');
-        if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
+        if (typeof dataRecordId !== 'undefined' && dataRecordId !== '' && !isConversationsMessagesSubpanel) {
           panelBody.find('#phone').val(dataPhone);
           panelBody.find('#parent_name').val(dataName);
         }
-        else {
+        else if (typeof dataRecordId === 'undefined' || dataRecordId === '') {
           // Mass send messages
           phoneList = '';
           namesList = '';
@@ -196,12 +229,13 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         }
           SUGAR.ajaxUI.hideLoadingPanel();
 
-          $('<div>').append(panelBody).dialog({
+          var $dialogWrapper = $('<div>').append(panelBody).dialog({
               modal: true,
               // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
               title: '',
               width: '80%',
           });
+          applyConversationSubpanelModalDefaults($dialogWrapper);
           if (typeof namesList !== 'undefined') {
             $('#namesList').val(namesList);
           }

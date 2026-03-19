@@ -24,7 +24,7 @@ $layout_defs[$module_name]['subpanel_setup']['stic_conversations_stic_messages']
     'get_subpanel_data' => 'stic_conversations_stic_messages',
     'top_buttons' => 
     array (
-      0 => array ('widget_class' => 'SubPanelTopButtonQuickCreate',),
-      1 => array ('widget_class' => 'SubPanelTopSelectButton', 'mode' => 'MultiSelect',),
+      0 => array ('widget_class' => 'SubPanelEditMessagesButton',),
+    //   1 => array ('widget_class' => 'SubPanelTopSelectButton', 'mode' => 'MultiSelect',),
     ),
 );

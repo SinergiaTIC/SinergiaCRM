@@ -306,6 +306,12 @@ class stic_MessagesController extends SugarController
         // Building and running the query that retrieves all the record that were selected in ListView
         if(!empty($_REQUEST['targetModule'])){
             $bean = BeanFactory::getBean($_REQUEST['targetModule']);
+            // Check if the target module has the necessary configuration to show the phone field in the compose view
+            $messageableModules = stic_MessagesUtils::getMessageableModules();
+            if (empty($bean->module_name) || !in_array($bean->module_name, $messageableModules, true)) {
+                return;
+            }
+
             $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($bean->module_name);
             $nameFieldName = stic_MessagesUtils::getNameFieldNameForMessage($bean->module_name);
             $moduleTable = $bean->table_name;
@@ -700,6 +706,11 @@ class stic_MessagesController extends SugarController
      */
     protected function hasConversationData($data)
     {
+        // If conversation id or name is present, we consider the conversation data valid
+        if (!empty($data['conversation_id']) || !empty($data['conversation_name'])) {
+            return true;
+        }
+
         return !empty($data['sender'])
             || !empty($data['parent_id'])
             || !empty($data['parent_type'])
