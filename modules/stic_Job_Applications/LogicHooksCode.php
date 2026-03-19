@@ -47,9 +47,8 @@ class stic_Job_ApplicationsLogicHooks
         $GLOBALS['log']->info("Status from fetched_row: " . ($previousStatus ?? 'NULL'));
 
         if (!$hasFetchedStatus) {
-            $storedBean = BeanFactory::getBean('stic_Job_Applications', $bean->id);
-            if (!empty($storedBean) && !empty($storedBean->id)) {
-                $previousStatus = $storedBean->status ?? null;
+            if (!empty($bean) && !empty($bean->id)) {
+                $previousStatus = $bean->status ?? null;
                 $GLOBALS['log']->info("Status from stored bean: " . ($previousStatus ?? 'NULL'));
             }
         }
