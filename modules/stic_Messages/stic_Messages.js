@@ -96,6 +96,43 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         data: paramsPost,
         success: function(data) {
         var panelBody = $('<div class="content">').append(data).find('#EditView').parent();
+
+        // Hide conversation type when context module is not Contacts
+        function applyConversationTypeVisibilityByModule($panel, moduleName) {
+          if (moduleName === 'Contacts' || moduleName === 'stic_Conversations') {
+            return;
+          }
+
+          var $typeSelect = $panel.find('select[name="type"]');
+          if (!$typeSelect.length) {
+            return;
+          }
+
+          var $conversationOption = $typeSelect.find('option[value="conversation"]');
+          if (!$conversationOption.length) {
+            return;
+          }
+
+          if ($typeSelect.val() === 'conversation') {
+            var fallbackValue = '';
+            $typeSelect.find('option').each(function () {
+              var value = $(this).val();
+              if (value !== 'conversation') {
+                fallbackValue = value;
+                return false;
+              }
+            });
+
+            if (fallbackValue) {
+              $typeSelect.val(fallbackValue).trigger('change');
+            }
+          }
+
+          $conversationOption.remove();
+        }
+
+        applyConversationTypeVisibilityByModule(panelBody, paramsPost.relatedModule);
+
         var dataPhone = $(source).attr('data-phone');
         var dataName = $(source).attr('data-name');
         // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
