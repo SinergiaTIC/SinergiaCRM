@@ -79,4 +79,21 @@ class stic_Events extends Basic {
         return false;
     }
 
+    public function save($check_notify = false)
+    {
+        if (!isset($this->fetched_row)) {
+            $this->status_not_invited = null;
+            $this->status_confirmed = null;
+            $this->status_invited = null;
+            $this->status_rejected = null;
+            $this->status_maybe = null;
+            $this->status_didnt_take_part = null;
+            $this->status_took_part = null;
+            $this->status_drop_out = null;
+            
+        }
+
+        return parent::save($check_notify);
+    }
+
 }
