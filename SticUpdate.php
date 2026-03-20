@@ -108,6 +108,7 @@ $rac->rebuildAuditTables();
 $db->setDieOnError(true);
 try {
     // We repair database twice to make sure all the queries are executed.
+    $rac->execute = true;
     $rac->repairDatabase();
     $rac->repairDatabase();
     // TODO - There are errors within the MySQL Manager that repair indexes.
@@ -154,6 +155,17 @@ if (count($errors)) {
     SticUtils::outputJsonResponse('error', $errors, $infos);
     exit;
 }
+
+// Set version and update alerts if they are in params.
+if (isset($_REQUEST['sinergiacrm_version'])) {
+    require_once 'modules/Configurator/Configurator.php';
+    $configurator = new Configurator();
+    $configurator->config['sinergiacrm_version'] = $_REQUEST['sinergiacrm_version'];
+    if (isset($_REQUEST['show_update_alert'])) {
+        $configurator->config['stic_show_update_alert'] = filter_var($_REQUEST['show_update_alert'], FILTER_VALIDATE_BOOLEAN);
+    }
+    $configurator->saveConfig();
+}
 SticUtils::outputJsonResponse('success', [], $infos);
 exit;
 
@@ -182,6 +194,7 @@ function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
         return;
     }
 
+    ob_start();
     $scripts = file($scriptsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($scripts as $script) {
         $script = trim($script);
@@ -190,4 +203,5 @@ function runScripts($scriptsVersion, $fileName, &$errors, &$infos) {
             SticRunScripts::executeScript($script, $infos, $errors);
         }
     }
+    ob_get_clean();
 }
