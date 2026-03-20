@@ -280,6 +280,7 @@ class stic_BookingsViewEdit extends ViewEdit
         $config_place_fields_json = json_encode(array_keys($config_place_fields)); 
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);
+        $this->ss->assign('RESOURCES_MOD', return_module_language($current_language, 'stic_Resources'));
 
         echo "<script>
             var config_resource_fields = $config_resource_fields_json;
