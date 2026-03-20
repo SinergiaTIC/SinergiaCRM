@@ -81,6 +81,7 @@ class stic_Events extends Basic {
 
     public function save($check_notify = false)
     {
+        // If is a new record (cloned), reset calculated fields
         if (!isset($this->fetched_row)) {
             $this->status_not_invited = null;
             $this->status_confirmed = null;
