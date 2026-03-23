@@ -37,16 +37,12 @@ $subpanel_layout = array(
     'list_fields' => array(
         'code' => array(
             'vname' => 'LBL_CODE',
-            'width' => '10%',
+            'width' => '5%',
         ),
         'name' => array(
             'vname' => 'LBL_NAME',
             'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '37%',
-        ),
-        'subject' => array(
-            'vname' => 'LBL_SUBJECT',
-            'width' => '10%',
+            'width' => '50%',
         ),
         'type' => array(
             'vname' => 'LBL_TYPE',
@@ -64,13 +60,13 @@ $subpanel_layout = array(
             'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubPanelEditButton',
             'module' => $module_name,
-            'width' => '4%',
+            'width' => '5%',
         ),
         'quickedit_button' => array(
             'vname' => 'LBL_QUICKEDIT_BUTTON',
             'widget_class' => 'SubPanelQuickEditButton',
             'module' => $module_name,
-            'width' => '4%',
+            'width' => '5%',
         ),
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',
