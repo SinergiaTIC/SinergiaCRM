@@ -552,10 +552,9 @@ class stic_MessagesController extends SugarController
             return true;
         }
 
-        $sender = trim((string)($messageBean->sender ?? ($_REQUEST['sender'] ?? '')));
         $message = trim((string)($messageBean->message ?? ($_REQUEST['message'] ?? '')));
 
-        return ($sender !== '' && $message !== '');
+        return ($message !== '');
     }
 
     /**
