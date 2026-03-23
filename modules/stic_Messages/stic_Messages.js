@@ -32,6 +32,10 @@ function onClickMassSendMessagesButton() {
 }
 
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
+    if (source && typeof source.blur === 'function') {
+      source.blur();
+    }
+
     let numRecordsSelected = $(".selectedRecords.value").eq(0).text();
 
     if (numRecordsSelected > getMessagesLimit()) {
@@ -234,6 +238,23 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
               // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
               title: '',
               width: '80%',
+              open: function() {
+                // Focus message field when modal is opened
+                var focusMessageField = function() {
+                  var $messageField = $dialogWrapper.find('#message');
+                  if ($messageField.length) {
+                    $messageField.trigger('focus');
+                  }
+                };
+
+                setTimeout(focusMessageField, 0);
+                $(window).off('focus.sticMessagesModal').on('focus.sticMessagesModal', function() {
+                  setTimeout(focusMessageField, 0);
+                });
+              },
+              close: function() {
+                $(window).off('focus.sticMessagesModal');
+              }
           });
           // If the modal is opened from the Conversations subpanel, we need to apply some defaults and hide some fields
           if (isConversationsMessagesSubpanel) {

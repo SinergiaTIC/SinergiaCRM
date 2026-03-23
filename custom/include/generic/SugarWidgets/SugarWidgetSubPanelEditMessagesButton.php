@@ -70,7 +70,6 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
 
         // Get the module name to determinate the label for the button
         $button = $this->getButtonLabelByModule($bean->module_name ?? '');
-        $accesskey = $button;
 
         $phone = '';
         // Get the phone number to send the message, only if the module of the record has a phone field configured for messages
@@ -84,7 +83,7 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
         ]);
         $jsonData = str_replace("'", "\\'", $jsonData);
         $form = "<input type='button' name='button' id='custom_modal_button' class='button' 
-            title='{$button}' value='{$button}' accesskey='{$accesskey}'
+            title='{$button}' value='{$button}'
             onclick='openMessagesModal(this); return false;'
                  data-phone='{$phone}'
                  data-module='{$bean->module_name}'
