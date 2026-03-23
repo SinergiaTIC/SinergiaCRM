@@ -101,7 +101,7 @@ $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Mensajes: acciones en módulos de destinatarios
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Enviar mensaxe telefónica';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Enviar mensaxe';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Esta operación borrará o contido da mensaxe, ¿quere continuar?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Sobrepasouse o límite de mensaxes que é posible enviar simultaneamente.';
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Enviar mensaxe telefónica';
