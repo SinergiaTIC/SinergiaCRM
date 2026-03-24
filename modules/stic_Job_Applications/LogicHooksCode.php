@@ -32,10 +32,7 @@ class stic_Job_ApplicationsLogicHooks
      */
     public function before_save(&$bean, $event, $arguments)
     {
-        $GLOBALS['log']->info("before_save triggered for application: " . ($bean->id ?? 'NEW'));
-        
         if (empty($bean->id)) {
-            $GLOBALS['log']->info("Skipping status detection - new record");
             return;
         }
 
@@ -44,18 +41,16 @@ class stic_Job_ApplicationsLogicHooks
             && is_array($bean->fetched_row)
             && array_key_exists('status', $bean->fetched_row);
         $previousStatus = $hasFetchedStatus ? $bean->fetched_row['status'] : null;
-        $GLOBALS['log']->info("Status from fetched_row: " . ($previousStatus ?? 'NULL'));
 
         if (!$hasFetchedStatus) {
-            if (!empty($bean) && !empty($bean->id)) {
-                $previousStatus = $bean->status ?? null;
-                $GLOBALS['log']->info("Status from stored bean: " . ($previousStatus ?? 'NULL'));
+            $storedBean = BeanFactory::getBean('stic_Job_Applications', $bean->id);
+            if (!empty($storedBean) && !empty($storedBean->id)) {
+                $previousStatus = $storedBean->status ?? null;
             }
         }
 
         // Store previous status in bean for use in after_save
         $bean->_previous_status = $previousStatus;
-        $GLOBALS['log']->info("Stored previous status: " . ($previousStatus ?? 'NULL') . ", current status: " . ($bean->status ?? 'NULL'));
 
         // Sync related account from selected offer before saving to avoid recursive saves in after_save
         if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)) {
