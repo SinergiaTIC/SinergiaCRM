@@ -72,8 +72,8 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             JOIN stic_bookings sb ON srsb.stic_resources_stic_bookingsstic_bookings_idb = sb.id
             LEFT JOIN stic_resources_stic_centers_c srsc ON sr.id = srsc.stic_resources_stic_centersstic_resources_idb and srsc.deleted = 0
             LEFT JOIN stic_centers sc ON srsc.stic_resources_stic_centersstic_centers_ida = sc.id and sc.deleted = 0
-            WHERE sb.end_date >= '$start_date'
-            AND sb.start_date <= '$end_date'
+            WHERE sb.end_date >= '{$db->quote($start_date)}'
+            AND sb.start_date <= '{$db->quote($end_date)}'
             AND sr.type ='place'
             AND sb.status != 'cancelled'
             AND sb.deleted = 0
@@ -222,7 +222,8 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                     stic_centers
                 ON    stic_centers.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_centers_ida and stic_centers.deleted = 0
                 WHERE
-                    stic_resources.deleted = 0 AND stic_resources.type = 'place'";
+                    stic_resources.deleted = 0 AND stic_resources.type = 'place'
+                    AND stic_resources_stic_centers_c.deleted = 0 AND stic_centers.deleted = 0";
         // Filters are added
         if (!empty($filteredResources)) {
             $query .= " AND stic_resources.id IN ('" . implode("','", $filteredResources) . "')";
@@ -240,16 +241,18 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             );
         }
 
-        $query = "SELECT stic_resources_stic_bookingsstic_resources_ida as resource_id,
+        $query = "SELECT DISTINCT stic_resources_stic_bookingsstic_resources_ida as resource_id,
                      CONVERT_TZ(start_date, '+00:00', '$user_tz_name') as start_date, CONVERT_TZ(end_date, '+00:00', '$user_tz_name') as end_date
                     --  start_date, end_date
               FROM stic_bookings
               JOIN stic_resources_stic_bookings_c ON stic_resources_stic_bookingsstic_bookings_idb = stic_bookings.id
               WHERE stic_bookings.deleted = 0
                 AND stic_resources_stic_bookings_c.deleted = 0
+            AND stic_bookings.status != 'cancelled'
                 AND start_date <= '$end_date'
                 AND end_date >= '$start_date'
-                AND stic_bookings.place_booking = 1";
+                AND stic_bookings.place_booking = 1
+            ";
         $result = $db->query($query);
 
         $bookedResources = array();
@@ -260,7 +263,11 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             // if endDate end with 00:00:00, we consider that the place is freed that day
             if (substr($endDate, 11, 8) == '00:00:00') {
                 $endDate = date('Y-m-d', strtotime($endDate . ' -1 day'));
-            }            
+            } else {
+                $endDate = date('Y-m-d', strtotime($endDate));
+            }
+
+            $startDate = date('Y-m-d', strtotime($startDate));
 
             $currentDate = $startDate;
             while ($currentDate <= $endDate && $currentDate <= $end_date) {
@@ -347,6 +354,8 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                     r.deleted = 0 
                   AND  
                     r.type = 'place'
+                  AND 
+                    rc.deleted = 0
                 ";
 
         if (!empty($users)) {
