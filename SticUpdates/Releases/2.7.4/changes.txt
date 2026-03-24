@@ -1,0 +1,12 @@
+M	config.php
+M	modules/stic_Bookings/Utils.js
+M	modules/stic_Bookings/Utils.php
+M	modules/stic_Bookings/controller.php
+M	modules/stic_Bookings/metadata/additionalDetails.php
+M	modules/stic_Bookings/tpls/bookingsAssistantSummary.tpl
+M	modules/stic_Bookings/views/view.bookingsassistantsummary.php
+M	modules/stic_Bookings/views/view.edit.php
+M	modules/stic_Bookings_Places_Calendar/controller.php
+M	modules/stic_Incorpora/controller.php
+M	modules/stic_Job_Applications/controller.php
+M	modules/stic_Remittances/AddPaymentsToRemittance.php
