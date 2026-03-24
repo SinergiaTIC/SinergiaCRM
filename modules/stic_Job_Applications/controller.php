@@ -65,13 +65,18 @@ class stic_Job_ApplicationsController extends SugarController
             foreach($contactsIds as $contactId) {
                 $jobApplicationBean = BeanFactory::newBean('stic_Job_Applications');
                 $jobApplicationBean->start_date = date('Y-m-d');
-                $jobApplicationBean->status = 'expected_presentation';
+                $jobApplicationBean->status = 'review';
                 $jobApplicationBean->stic_job_applications_contactscontacts_ida = $contactId;
                 $jobApplicationBean->stic_job_applications_stic_job_offersstic_job_offers_ida = $offerId;
                 $jobApplicationBean->assigned_user_id = $current_user->id;
+
+                $contactName = BeanFactory::getBean('Contacts', $contactId)->full_name ?? '';
+                $offerName = BeanFactory::getBean('stic_Job_Offers', $offerId)->name ?? '';
+
+                $jobApplicationBean->name = $contactName . ' - ' . $offerName;
                 $jobApplicationBean->save();
             }
-            SugarApplication::redirect('index.php?module=stic_Job_Applications&action=index&query=true&searchFormTab=advanced_search&status_advanced=expected_presentation&range_start_date_advanced='.date('Y-m-d').'&stic_job_applications_stic_job_offers_name_advanced='.$offerName);
+            SugarApplication::redirect('index.php?module=stic_Job_Applications&action=index&query=true&searchFormTab=advanced_search&status_advanced=review&range_start_date_advanced='.date('Y-m-d').'&stic_job_applications_stic_job_offers_name_advanced=' . rawurlencode($offerName));
         } 
     }
 }
