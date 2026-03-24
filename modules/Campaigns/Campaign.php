@@ -375,6 +375,12 @@ class Campaign extends SugarBean
         $isFromJobOffers = (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == "stic_Job_Offers")
             || (isset($_REQUEST['current_module']) && $_REQUEST['current_module'] == "stic_Job_Offers")
             || $this->parent_type == 'stic_Job_Offers';
+
+        // Preserve original Job Offer id before $_REQUEST['record'] is overwritten with Campaign id
+        $jobOfferReturnId = '';
+        if ($isFromJobOffers) {
+            $jobOfferReturnId = !empty($_REQUEST['record']) ? $_REQUEST['record'] : $this->parent_id;
+        }
         // END STIC Custom
 
         if ($isNewCampaign && $this->campaign_type == "Notification") {
@@ -416,8 +422,6 @@ class Campaign extends SugarBean
 
             // Preserve redirection to Job Offer detail when called from stic_Job_Offers.
             if ($isFromJobOffers) {
-                $jobOfferReturnId = !empty($_REQUEST['record']) ? $_REQUEST['record'] : $this->parent_id;
-
                 $_REQUEST['return_action'] = "DetailView";
                 $_REQUEST['return_module'] = "stic_Job_Offers";
                 $_REQUEST['return_id'] = $jobOfferReturnId;
@@ -469,8 +473,6 @@ class Campaign extends SugarBean
             // Don't change the REQUEST if is coming from Job Offers module
 
             if ($isFromJobOffers) {
-                $jobOfferReturnId = !empty($_REQUEST['record']) ? $_REQUEST['record'] : $this->parent_id;
-
                 $_REQUEST['return_action'] = "DetailView";
                 $_REQUEST['return_module'] = "stic_Job_Offers";
                 $_REQUEST['return_id'] = $jobOfferReturnId;
