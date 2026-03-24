@@ -379,7 +379,8 @@ $app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmas';
 $app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmantes';
 $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transaccións';
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Produtos financeiros';
-$app_list_strings['record_type_display_notes']['stic_Assets'] = 'Activos';$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['record_type_display_notes']['stic_Assets'] = 'Activos';
+$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversaciones';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';

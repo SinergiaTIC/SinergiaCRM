@@ -73,7 +73,6 @@ class stic_Job_ApplicationsController extends SugarController
                 $jobApplicationBean->assigned_user_id = $current_user->id;
 
                 $contactName = BeanFactory::getBean('Contacts', $contactId)->full_name ?? '';
-                $offerName = BeanFactory::getBean('stic_Job_Offers', $offerId)->name ?? '';
 
                 $jobApplicationBean->name = $contactName . ' - ' . $offerName;
                 $jobApplicationBean->save();
