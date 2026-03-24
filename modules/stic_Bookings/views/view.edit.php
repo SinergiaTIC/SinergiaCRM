@@ -103,35 +103,17 @@ class stic_BookingsViewEdit extends ViewEdit
             // and apply timezone to the dates
             if (isset($this->bean->all_day) && $this->bean->all_day == '1') {
                 
-                // Use the appropriate source for dates based on whether we're loading from session
-                $sourceStartDate = '';
-                $sourceEndDate = '';
-                
-                if ($isLoadingFromSession) {
-                    // When loading from session, use the bean properties directly
-                    $sourceStartDate = $this->bean->start_date ?? '';
-                    $sourceEndDate = $this->bean->end_date ?? '';
-                } else {
-                    // When not loading from session, use fetched_row as before
-                    $sourceStartDate = $this->bean->fetched_row['start_date'] ?? '';
-                    $sourceEndDate = $this->bean->fetched_row['end_date'] ?? '';
-                }
+                // Always use bean values to avoid date drift when reopening EditView.
+                $sourceStartDate = $this->bean->start_date ?? '';
+                $sourceEndDate = $this->bean->end_date ?? '';
                 
                 // Process start_date
                 if (!empty($sourceStartDate)) {
                     $startDateParts = explode(' ', $sourceStartDate);
                     // Ensure we have the date part
                     if (isset($startDateParts[0])) {
-                        if ($isLoadingFromSession) {
-                            // When loading from session, preserve the exact date format the user entered
-                            // Don't attempt any conversion as the date is already in the user's preferred format
-                            $this->bean->start_date = $startDateParts[0] . ' 00:00';
-                        } else {
-                            // When not loading from session, use the original logic
-                            $startDate = new DateTime($startDateParts[0]);
-                            $startDateDisplay = $timedate->asUserDate($startDate, false, $current_user);
-                            $this->bean->start_date = $startDateDisplay . ' 00:00';
-                        }
+                        // Preserve current date format (already prepared for current user/view context)
+                        $this->bean->start_date = $startDateParts[0] . ' 00:00';
                     } else {
                         // If explode failed or doesn't have expected format, use current date
                         $this->bean->start_date = date('Y-m-d') . ' 00:00';
@@ -146,58 +128,16 @@ class stic_BookingsViewEdit extends ViewEdit
                     $endDateParts = explode(' ', $sourceEndDate);
                     // Ensure we have the date part
                     if (isset($endDateParts[0])) {
-                        if ($isLoadingFromSession) {
-                            // When loading from session, preserve the exact date format the user entered
-                            // Don't attempt any conversion as the date is already in the user's preferred format
-                            
-                            // TEMPORAL FIX: If this is end_date and all_day, it seems to be off by one day
-                            // so let's add one day to compensate
-                            if (isset($this->bean->all_day) && $this->bean->all_day == '1') {
-                                try {
-                                    // Parse the date using the same format it came in
-                                    $originalFormat = $endDateParts[0];
-                                    
-                                    // Try to determine if it's DD/MM/YYYY or MM/DD/YYYY format
-                                    $parts = explode('/', $originalFormat);
-                                    if (count($parts) == 3) {
-                                        // Create date object and add one day
-                                        $dateObj = DateTime::createFromFormat('d/m/Y', $originalFormat);
-                                        if (!$dateObj) {
-                                            $dateObj = DateTime::createFromFormat('m/d/Y', $originalFormat);
-                                        }
-                                        if ($dateObj) {
-                                            $dateObj->modify('+1 day');
-                                            // Return in the same format as input
-                                            if (DateTime::createFromFormat('d/m/Y', $originalFormat)) {
-                                                $this->bean->end_date = $dateObj->format('d/m/Y') . ' 23:59';
-                                            } else {
-                                                $this->bean->end_date = $dateObj->format('m/d/Y') . ' 23:59';
-                                            }
-                                        } else {
-                                            $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                                        }
-                                    } else {
-                                        $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                                    }
-                                } catch (Exception $e) {
-                                    $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                                }
-                            } else {
-                                $this->bean->end_date = $endDateParts[0] . ' 23:59';
-                            }
-                        } else {
-                            // When not loading from session, use the original logic
-                            $endDate = new DateTime($endDateParts[0]);
-                            $endDateDisplay = $timedate->asUserDate($endDate, false, $current_user);
-                            $this->bean->end_date = $endDateDisplay . ' 23:59';
-                        }
+                        // Preserve current date format and normalize all-day end time to 00:00.
+                        // No day arithmetic here to avoid shifting dates unexpectedly.
+                        $this->bean->end_date = $endDateParts[0] . ' 00:00';
                     } else {
                         // If explode failed or doesn't have expected format, use current date
-                        $this->bean->end_date = date('Y-m-d') . ' 23:59';
+                        $this->bean->end_date = date('Y-m-d') . ' 00:00';
                     }
                 } else {
                     // If end_date is empty, use current date
-                    // $this->bean->end_date = date('Y-m-d') . ' 23:59';
+                    // $this->bean->end_date = date('Y-m-d') . ' 00:00';
                 }
             }
         }
