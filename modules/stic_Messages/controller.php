@@ -207,45 +207,38 @@ class stic_MessagesController extends SugarController
 
         $where = '';
 
-        $db = DBManagerFactory::getInstance();
-        // only messages not sent and with direction outbound can be retried
-        // WhatsAppWeb messages are excluded from retry
-        $sql = "SELECT id,name,`type`,direction,phone,sender,message,status  FROM stic_messages WHERE deleted = 0 and status <> 'sent' and direction = 'outbound' and `type` <> 'WhatsAppWeb'";
-        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
-            require_once 'include/export_utils.php';
-            $retArray = generateSearchWhere('stic_Messages', $_REQUEST['current_query_by_page']);
-            if (!empty($retArray['where'])) {
-                $where = " AND " . $retArray['where'];
-            }
-        } else {
-            $ids = explode(',', $_REQUEST['uid']);
-            $idList = implode("','", $ids);
-            $where = " AND id in ('{$idList}')";
-        }
-
         $focus = BeanFactory::newBean('stic_Messages');
         if ($focus->bean_implements('ACL')) {
             if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
                 ACLController::displayNoAccess();
                 sugar_die('');
             }
-
-            $accessWhere = $focus->buildAccessWhere('export');
-            if (!empty($accessWhere)) {
-                $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
-            }
         }
 
-        $sql .= $where;
-        $result = $db->query($sql);
+        // only messages not sent and with direction outbound can be retried
+        // WhatsAppWeb messages are excluded from retry
+        $baseWhere = "stic_messages.deleted = 0 AND stic_messages.status <> 'sent' AND stic_messages.direction = 'outbound' AND stic_messages.type <> 'WhatsAppWeb'";
 
-        while ($row = $db->fetchByAssoc($result)) {
-            $bean = BeanFactory::getBean('stic_Messages', $row['id']);
-            // Double check to prevent WhatsAppWeb retry
-            if ($bean->type !== 'WhatsAppWeb') {
-                $bean->status = 'sent';
-                $bean->save();
+        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
+            require_once 'include/export_utils.php';
+            $retArray = generateSearchWhere('stic_Messages', $_REQUEST['current_query_by_page']);
+            if (!empty($retArray['where'])) {
+                $where = $baseWhere . " AND " . $retArray['where'];
+            } else {
+                $where = $baseWhere;
             }
+        } else {
+            $ids = explode(',', $_REQUEST['uid']);
+            $idList = implode("','", $ids);
+            $where = $baseWhere . " AND stic_messages.id in ('{$idList}')";
+        }
+
+        $orderBy = 'stic_messages.date_entered DESC';
+        $beans = $focus->get_full_list($orderBy, $where);
+
+        foreach ($beans as $bean) {
+            $bean->status = 'sent';
+            $bean->save();
         }
 
         SugarApplication::redirect("index.php?module=stic_Messages&action=index");
@@ -429,12 +422,12 @@ class stic_MessagesController extends SugarController
             require_once('modules/stic_Messages/Utils.php');
             $contactPhone = stic_MessagesUtils::getPhoneForMessage($contactBean);
         }
-        $sql = "SELECT id, message, type, status, date_entered, sender, phone,
+        $sql = "SELECT id, message, type, status, date_entered, sender, phone, direction,
                     template_id
                 FROM stic_messages
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
-                AND type IN ('WhatsAppHelper', 'received')
+                AND type IN ('WhatsAppHelper', 'WhatsApp', 'received')
                 ORDER BY date_entered ASC";
 
         $result = $db->query($sql);
@@ -448,7 +441,7 @@ class stic_MessagesController extends SugarController
         $lastWindowEvent = null;
 
         foreach (array_reverse($messages) as $msg) {
-            if ($msg['type'] === 'received') {
+            if ($msg['type'] === 'received' || $msg['type'] === 'WhatsApp') {
                 $lastWindowEvent = $msg['date_entered'];
                 break;
             }
