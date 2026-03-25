@@ -42,6 +42,9 @@ class ExecutionContext {
     public string $defaultAssignedUserId;
     public ?string $visitorUserId = null;
 
+    /** @var array Custom data payload used by deferred actions (e.g. webhook context reconstruction) */
+    protected array $customData = [];
+
     /**
      * Constructor for ExecutionContext.
      * @param string $formId ID of the form being processed
@@ -128,6 +131,22 @@ class ExecutionContext {
             }
         }
         return null;
+    }
+
+    /**
+     * Sets the custom data payload (used by deferred/webhook actions).
+     * @param array $data Associative data array
+     */
+    public function setCustomData(array $data): void {
+        $this->customData = $data;
+    }
+
+    /**
+     * Returns the custom data payload.
+     * @return array
+     */
+    public function getCustomData(): array {
+        return $this->customData;
     }
 
 }

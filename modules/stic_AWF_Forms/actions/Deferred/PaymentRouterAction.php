@@ -135,7 +135,45 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
         $paymentBean = $paymentBean->retrieve($paymentBean->id);
 
         // Execute Strategy initiation
-        return $strategy->initiate($context, $actionConfig, $paymentBean);
+        $strategyResult = $strategy->initiate($context, $actionConfig, $paymentBean);
+
+        // If the strategy returns OK immediately (e.g. Offline payment), execute the
+        // Deferred OK flow right away for symmetry so confirmation emails etc. are sent.
+        if ($strategyResult->isOk()) {
+            $this->executeDeferredOkFlow($context, $actionConfig);
+        }
+
+        return $strategyResult;
+    }
+
+    /**
+     * Executes the success flow configured on the action (used when a payment resolves OK immediately).
+     * Falls back to the error flow if the success flow fails.
+     *
+     * @param ExecutionContext $context Execution context
+     * @param FormAction $actionConfig Action configuration containing flow_success_id / flow_error_id
+     */
+    private function executeDeferredOkFlow(ExecutionContext $context, FormAction $actionConfig): void
+    {
+        $successFlowId = $actionConfig->flow_success_id ?? null;
+        $errorFlowId   = $actionConfig->flow_error_id   ?? null;
+
+        $successFlow = ($successFlowId !== null && $successFlowId !== '')
+            ? ($context->formConfig->flows[$successFlowId] ?? null)
+            : null;
+        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
+            ? ($context->formConfig->flows[$errorFlowId] ?? null)
+            : null;
+
+        if ($successFlow === null) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouterAction: No success flow configured (flow_success_id={$successFlowId}). Skipping deferred OK flow.");
+            return;
+        }
+
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouterAction: Executing Deferred OK flow (ID={$successFlowId}).");
+
+        $executor = new ServerActionFlowExecutor($context);
+        $executor->executeFlow($successFlow, $errorFlow);
     }
 
     /**
