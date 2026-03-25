@@ -4048,7 +4048,6 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorado';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tratado';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sin cambios';
 
-// IEPA!!
 // TODO:
 // Define: stic_awf_deferred_tickets_status
 // Define: stic_awf_incoming_events_status
