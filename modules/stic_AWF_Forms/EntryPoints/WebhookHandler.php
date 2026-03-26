@@ -283,7 +283,7 @@ class WebhookHandler
         }
 
         // Parse form configuration
-        $jsonConfig = html_entity_decode($formBean->configuration, ENT_QUOTES, 'UTF-8');
+        $jsonConfig = html_entity_decode($formBean->configuration ?? '', ENT_QUOTES, 'UTF-8');
         $configData = json_decode($jsonConfig, true);
         if (!$configData) {
             throw new Exception("Invalid form configuration for form ID={$formId}");
