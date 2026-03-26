@@ -65,7 +65,7 @@ class stic_Job_Applications extends Basic
         }
         return false;
     }
-	public function save($check_notify = true) 
+	public function save($check_notify = false) 
     {
         // Call the generic save() function from the SugarBean class
         if (empty($this->name)) {
@@ -80,7 +80,17 @@ class stic_Job_Applications extends Basic
             $this->name = $contact_name .' - '.$offer_name;
         }
         
-        $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
+        // If the account_id field is empty and there is a related offer, try to get the account from the offer and set it in the application
+        if (empty($this->account_id) && !empty($this->stic_job_applications_stic_job_offersstic_job_offers_ida)) {
+            $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
+            if (!empty($offerBean) && !empty($offerBean->id)) {
+                $accountId = $offerBean->stic_job_offers_accountsaccounts_ida ?? null;
+                if (!empty($accountId)) {
+                    $this->account_id = $accountId;
+                }
+            }
+        }
+
         // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
         if (!empty($offerBean) && ($offerBean->offer_type == 'volunteering') &&
             $this->assigned_user_id != $offerBean->assigned_user_id) {

@@ -24,47 +24,6 @@
 class stic_Job_ApplicationsLogicHooks
 {
     /**
-     * Detect status change before save and trigger notification
-     *
-     * @param SugarBean $bean The stic_Job_Applications bean
-     * @param string $event The hook event
-     * @param array $arguments Additional arguments
-     */
-    public function before_save(&$bean, $event, $arguments)
-    {
-        if (empty($bean->id)) {
-            return;
-        }
-
-        // Check if status is changing
-        $hasFetchedStatus = isset($bean->fetched_row)
-            && is_array($bean->fetched_row)
-            && array_key_exists('status', $bean->fetched_row);
-        $previousStatus = $hasFetchedStatus ? $bean->fetched_row['status'] : null;
-
-        if (!$hasFetchedStatus) {
-            $storedBean = BeanFactory::getBean('stic_Job_Applications', $bean->id);
-            if (!empty($storedBean) && !empty($storedBean->id)) {
-                $previousStatus = $storedBean->status ?? null;
-            }
-        }
-
-        // Store previous status in bean for use in after_save
-        $bean->_previous_status = $previousStatus;
-
-        // Sync related account from selected offer before saving to avoid recursive saves in after_save
-        if (!empty($bean->stic_job_applications_stic_job_offersstic_job_offers_ida)) {
-            $offerBean = BeanFactory::getBean('stic_Job_Offers', $bean->stic_job_applications_stic_job_offersstic_job_offers_ida);
-            if (!empty($offerBean) && !empty($offerBean->id)) {
-                $accountId = $offerBean->stic_job_offers_accountsaccounts_ida ?? null;
-                if (($bean->account_id ?? null) !== $accountId) {
-                    $bean->account_id = $accountId;
-                }
-            }
-        }
-    }
-
-    /**
      * Update counts when an application is created
      *
      * @param SugarBean $bean The stic_Job_Applications bean

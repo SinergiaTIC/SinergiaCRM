@@ -27,8 +27,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 // Offer counts on create and status change
 $hook_array['after_save'][] = array(100, 'after_save', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'after_save');
-// Status change detection before save
-$hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'before_save');
 // Update offer counts on delete
 $hook_array['after_delete'][] = array(100, 'after_delete', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'after_delete');
 // Update offer counts on relationship changes

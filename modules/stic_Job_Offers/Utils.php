@@ -439,15 +439,26 @@ class stic_Job_OffersUtils
         }
 
         $db = DBManagerFactory::getInstance();
-        $offerId = $db->quote($offerId);
+        $offerIdQuoted = $db->quote($offerId);
 
         // Use offer name in LPO for better identification, but ensure it's unique by including offer ID and recipient suffix
         $suffixText = self::getRecipientLabel($suffix);
         $suffixPart = empty($suffixText) ? '' : " - {$suffixText}";
         $lpoName = "LPO {$app_list_strings['moduleListSingular']['stic_Job_Offers']} '{$offerName}' - ({$offerId}){$suffixPart}";
 
-        // Try to find existing LPO for this offer
-        $query = "SELECT id FROM prospect_lists WHERE name = '{$db->quote($lpoName)}' AND deleted = 0 LIMIT 1";
+        // Try to find existing LPO by stable parts of the name, so renaming offers does not create duplicates
+        $query = "SELECT id
+            FROM prospect_lists
+            WHERE deleted = 0
+              AND name LIKE '%({$offerIdQuoted})%'";
+
+        if (!empty($suffixText)) {
+            $suffixTextQuoted = $db->quote($suffixText);
+            $query .= " AND name LIKE '%{$suffixTextQuoted}%'";
+        }
+
+        $query .= " ORDER BY date_modified DESC LIMIT 1";
+
         $result = $db->query($query);
         if ($row = $db->fetchByAssoc($result)) {
             return BeanFactory::getBean('ProspectLists', $row['id']);
@@ -725,6 +736,76 @@ class stic_Job_OffersUtils
         }
 
         return null;
+    }
+
+    /**
+     * Generate a target list (LPO) with all applicants of a job offer
+     *
+     * @param string $offerId
+     * @param string $label
+     * @return array|false
+     */
+    public static function generateApplicantsLpo($offerId, $label)
+    {
+        global $current_user;
+
+        if (empty($offerId)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Offer ID is empty.');
+            return false;
+        }
+
+        $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
+        if (empty($offerBean) || empty($offerBean->id)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Offer bean not found for ID ' . $offerId);
+            return false;
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $offerIdQuoted = $db->quote($offerId);
+
+        $sqlForContacts = "SELECT DISTINCT sjacc.stic_job_applications_contactscontacts_ida AS contact_id
+            FROM stic_job_applications_stic_job_offers_c sjajoc
+            INNER JOIN stic_job_applications ja
+                ON ja.id = sjajoc.stic_job_applications_stic_job_offersstic_job_applications_idb
+            INNER JOIN stic_job_applications_contacts_c sjacc
+                ON sjacc.stic_job_applications_contactsstic_job_applications_idb = ja.id
+            INNER JOIN contacts c
+                ON c.id = sjacc.stic_job_applications_contactscontacts_ida
+            WHERE sjajoc.deleted = 0
+              AND ja.deleted = 0
+              AND sjacc.deleted = 0
+              AND c.deleted = 0
+              AND sjajoc.stic_job_applications_stic_job_offersstic_job_offers_ida = '{$offerIdQuoted}'";
+
+        $contactsTargets = $db->query($sqlForContacts);
+
+        $lpoName = "{$offerBean->name} - ({$label}) - " . date('d-m-Y');
+        $lpoNameQuoted = $db->quote($lpoName);
+
+        $existingLPO = BeanFactory::getBean('ProspectLists')->get_full_list(
+            '',
+            "prospect_lists.name = '{$lpoNameQuoted}' AND prospect_lists.deleted = 0"
+        );
+
+        if (empty($existingLPO)) {
+            $lpoBean = BeanFactory::newBean('ProspectLists');
+            $lpoBean->name = $lpoName;
+            $lpoBean->list_type = 'default';
+            $lpoBean->assigned_user_id = $offerBean->assigned_user_id ?? $current_user->id;
+            $lpoBean->assigned_user_name = $offerBean->assigned_user_name ?? $current_user->user_name;
+            $lpoBean->save();
+        } else {
+            $lpoBean = array_shift($existingLPO);
+        }
+
+        $lpoBean->load_relationship('contacts');
+        while ($contactTarget = $db->fetchByAssoc($contactsTargets)) {
+            if (!empty($contactTarget['contact_id'])) {
+                $lpoBean->contacts->add($contactTarget['contact_id']);
+            }
+        }
+
+        return ['status' => 'success', 'lpoId' => $lpoBean->id, 'lpoName' => $lpoBean->name];
     }
 
 }

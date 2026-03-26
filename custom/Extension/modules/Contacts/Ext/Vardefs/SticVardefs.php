@@ -2629,9 +2629,10 @@ $dictionary['Contact']['fields']['stic_pa_password_c'] = array(
     'vname' => 'LBL_STIC_PA_PASSWORD',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
-    'type' => 'varchar',
+    'type' => 'encrypt',
     'len' => '255',
-    'inline_edit' => '1',
+    'inline_edit' => '0',
+    'write_only' => true,
     'required' => false,
     'massupdate' => 0,
     'importable' => 'false',
@@ -2640,6 +2641,10 @@ $dictionary['Contact']['fields']['stic_pa_password_c'] = array(
     'reportable' => false,
     'unified_search' => false,
     'merge_filter' => 'disabled',
+    'studio' => array(
+        'detailview' => false,
+        'quickcreate' => false,
+    ),
 );
 
 $dictionary['Contact']['fields']['stic_pa_enable_c'] = array(
