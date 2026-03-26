@@ -80,15 +80,19 @@ class stic_Job_Applications extends Basic
             $this->name = $contact_name .' - '.$offer_name;
         }
         
-        // If the account_id field is empty and there is a related offer, try to get the account from the offer and set it in the application
-        if (empty($this->account_id) && !empty($this->stic_job_applications_stic_job_offersstic_job_offers_ida)) {
-            $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
-            if (!empty($offerBean) && !empty($offerBean->id)) {
-                $accountId = $offerBean->stic_job_offers_accountsaccounts_ida ?? null;
-                if (!empty($accountId)) {
-                    $this->account_id = $accountId;
-                }
-            }
+        $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
+
+        // If is a new record with no account and related offer or if is an existing record with no account or with changed related offer
+        $isNewRecord = empty($this->fetched_row['id']);
+        $currentOfferId = $this->stic_job_applications_stic_job_offersstic_job_offers_ida ?? '';
+        $previousOfferId = $this->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? '';
+        $offerChanged = !$isNewRecord && $previousOfferId !== $currentOfferId;
+
+        if (($isNewRecord && empty($this->account_id) && !empty($currentOfferId))
+            || (!$isNewRecord && (empty($this->account_id) || $offerChanged))) {
+            $this->account_id = (!empty($offerBean) && !empty($offerBean->id))
+                ? ($offerBean->stic_job_offers_accountsaccounts_ida ?? '')
+                : '';
         }
 
         // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
