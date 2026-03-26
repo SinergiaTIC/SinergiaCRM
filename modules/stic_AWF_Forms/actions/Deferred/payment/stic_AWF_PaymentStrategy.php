@@ -27,6 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 require_once "modules/stic_Payment_Commitments/stic_Payment_Commitments.php";
+require_once "modules/stic_Payments/stic_Payments.php";
 require_once "modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php";
 
 abstract class stic_AWF_PaymentStrategy
@@ -116,6 +117,7 @@ abstract class stic_AWF_PaymentStrategy
             'strategy_class'   => static::class,
             'strategy_suffix'  => $this->suffix,
             'payment_id'       => $beanPayment->id,
+            'form_id'          => $context->formId,
             'flow_success_id'  => $actionConfig->flow_success_id,
             'flow_error_id'    => $actionConfig->flow_error_id,
         ];
@@ -215,7 +217,7 @@ abstract class stic_AWF_PaymentStrategy
     * If Offline -> Returns OK.
     * If External platform -> Returns WAIT with data to redirection.
     */
-    abstract public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payment $beanPayment): ActionResult;
+    abstract public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult;
 
     /**
     * Terminal: Execute the output (HTML form, Redirect header...).

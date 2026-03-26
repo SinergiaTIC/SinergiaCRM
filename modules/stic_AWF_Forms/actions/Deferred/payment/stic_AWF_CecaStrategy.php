@@ -25,45 +25,135 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/PaymentStrategy.php";
+include_once __DIR__."/stic_AWF_PaymentStrategy.php";
 
 class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
 {
-    protected string $configType = 'TPVCECA'; 
+    protected string $configType = 'TPVCECA';
     protected string $configKeyPrefix = 'TPVCECA';
 
     /**
-    * Prepare payment.
-    * If Offline -> Returns OK.
-    * If External platform -> Returns WAIT with data to redirection.
-    */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payment $beanPayment): ActionResult
+     * Prepare payment via CECA TPV.
+     * Returns WAIT with form HTML.
+     */
+    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
-        $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
-        $config['SERVER_URL'] = 'https://pgw.ceca.es/tpvweb/tpv/compra.action';
-        $config['SERVER_URL_TEST'] = 'https://tpv.ceca.es/tpvweb/tpv/compra.action';
-        $config['VERSION'] = 'HMAC_SHA256_V1';
-        $config['VERSION_TEST'] = 'HMAC_SHA256_V1';
-
-
+        $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD'));
         
-        return new ActionResult(ResultStatus::WAIT, $actionConfig, "");
+        $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
+        $serverUrl = $isTest 
+            ? 'https://tpv.ceca.es/tpvweb/tpv/compra.action'
+            : 'https://pgw.ceca.es/tpvweb/tpv/compra.action';
+            
+        $orderNumber = $this->generateTransactionCode($beanPayment);
+        
+        $amountCents = number_format($beanPayment->amount * 100, 0, '', '');
+        
+        $formHtml = $this->renderTemplate('CecaFirstStep', [
+            'ACTION' => $serverUrl,
+            'MERCHANT_ID' => $config['MERCHANT_CODE'] ?? '',
+            'ACQUIRER_BIN' => $config['ACQUIRER_BIN'] ?? '',
+            'TERMINAL' => $config['TERMINAL'] ?? '001',
+            'ORDER' => $orderNumber,
+            'AMOUNT' => $amountCents,
+            'CURRENCY' => $config['CURRENCY'] ?? '978',
+            'TRANSACTION_TYPE' => '0',
+            'PAN' => '',
+            'EXPIRY_DATE' => '',
+            'CVV' => '',
+            'SHA256' => $this->generateCecaSignature($config, $orderNumber, $amountCents),
+            'URL_OK' => $this->getReturnUrl('success'),
+            'URL_KO' => $this->getReturnUrl('error'),
+        ]);
+        
+        $this->createTicket($context, $actionConfig, $beanPayment, $orderNumber);
+        
+        return new ActionResult(ResultStatus::WAIT, $actionConfig, '', [
+            'strategy_class' => static::class,
+            'strategy_suffix' => $this->suffix,
+            'ticket_id' => $this->ticket->id ?? '',
+            'payment_id' => $beanPayment->id,
+            'form_html' => $formHtml,
+            'order_number' => $orderNumber,
+        ]);
     }
 
     /**
-    * Terminal: Execute the output (HTML form, Redirect header...).
-    * Only called if initiate() has returned WAIT.
-    */
+     * Terminal: Output CECA form HTML.
+     * Only called if initiate() has returned WAIT.
+     */
     public function performTerminal(ExecutionContext $context, ActionResult $result): void
     {
-
+        $data = $result->getData();
+        if (!empty($data['form_html'])) {
+            echo $data['form_html'];
+        } else {
+            echo '<p>Error: No payment form available</p>';
+        }
     }
 
     /**
-    * WEBHOOK: Resolves action when notification arrives from external event.
-    */ 
+     * WEBHOOK: Resolves action when notification arrives from CECA.
+     */
     public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
     {
+        $rawData = $_POST;
+        
+        $responseCode = $rawData['response_code'] ?? '';
+        $authCode = $rawData['auth_code'] ?? '';
+        
+        $successCodes = ['00', '0000', '000'];
+        
+        if (in_array($responseCode, $successCodes)) {
+            $paymentId = $context->getCustomData()['payment_id'] ?? null;
+            if ($paymentId) {
+                $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
+                if ($paymentBean) {
+                    $this->updatePayment($paymentBean, 'completed', $authCode);
+                }
+            }
+            return new ActionResult(ResultStatus::OK, $result->actionConfig, 'Payment successful', [
+                'auth_code' => $authCode,
+            ]);
+        }
+        
+        require_once 'modules/stic_Web_Forms/Catcher/Include/Payment/lib/CecaResponseCodes.php';
+        $errorMessage = CecaResponseCodes::getMessage($responseCode) ?? 'Payment failed (code: ' . $responseCode . ')';
+        
+        $paymentId = $context->getCustomData()['payment_id'] ?? null;
+        if ($paymentId) {
+            $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
+            if ($paymentBean) {
+                $this->updatePayment($paymentBean, 'failed', null);
+            }
+        }
+        
+        return new ActionResult(ResultStatus::ERROR, $result->actionConfig, $errorMessage);
+    }
 
+    /**
+     * Generate CECA SHA256 signature
+     */
+    private function generateCecaSignature(array $config, string $orderNumber, string $amount): string
+    {
+        $password = $config['PASSWORD'] ?? '';
+        $merchantCode = $config['MERCHANT_CODE'] ?? '';
+        $acquirerBin = $config['ACQUIRER_BIN'] ?? '';
+        $terminal = $config['TERMINAL'] ?? '001';
+        
+        $data = $merchantCode . $acquirerBin . $terminal . $orderNumber . $amount . '978' . '0' . $password;
+        
+        return hash('sha256', $data);
+    }
+
+    /**
+     * Generate a unique transaction code
+     */
+    private function generateTransactionCode(stic_Payment $beanPayment): string
+    {
+        $timestamp = date('ymdHi');
+        $uniqueId = substr($beanPayment->id ?? uniqid(), 0, 8);
+        $code = $timestamp . $uniqueId;
+        return str_pad($code, 12, '0', STR_PAD_LEFT);
     }
 }

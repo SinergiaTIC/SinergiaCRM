@@ -180,3 +180,33 @@ function sticSendPhoneMessages() {
 
     return stic_MessagesManUtils::sendQueuedMessages(false);
 }
+
+// Scheduled task to clean up expired AWF deferred payment tickets
+$job_strings[] = 'stic_AWF_cleanup_expired_tickets';
+
+/**
+ * Cancels deferred payment tickets that have exceeded their expiration date.
+ * Finds tickets with status='pending' AND expiration_date < NOW() and marks them as 'cancelled'.
+ * @return boolean
+ */
+function stic_AWF_cleanup_expired_tickets()
+{
+    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Running task stic_AWF_cleanup_expired_tickets');
+
+    $db = DBManagerFactory::getInstance();
+
+    $sql = "UPDATE stic_AWF_Deferred_Tickets 
+            SET status = 'cancelled', date_modified = " . $db->convert($db->quoted(date('Y-m-d H:i:s')), 'datetime') . "
+            WHERE status = 'pending' 
+            AND expiration_date < " . $db->convert($db->quoted(date('Y-m-d H:i:s')), 'datetime') . "
+            AND deleted = 0";
+
+    $result = $db->query($sql);
+    $affectedRows = $db->getAffectedRowCount();
+
+    if ($affectedRows > 0) {
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cancelled ' . $affectedRows . ' expired deferred payment tickets');
+    }
+
+    return true;
+}
