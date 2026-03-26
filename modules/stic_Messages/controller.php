@@ -506,7 +506,8 @@ class stic_MessagesController extends SugarController
         $view->display();
         sugar_cleanup();
         exit();
-    }    
+    }
+
     public function action_uploadConversationMedia() {
         header('Content-Type: application/json');
 
@@ -543,9 +544,6 @@ class stic_MessagesController extends SugarController
             exit();
         }
 
-        // Create the Note immediately — same pattern as SuiteCRM Emails.
-        // parent_id is empty at this point; it will be filled in stic_Messages::save()
-        // once the message record has been persisted.
         $note                 = BeanFactory::newBean('Notes');
         $note->parent_type    = 'stic_Messages';
         $note->parent_id      = '';
@@ -560,10 +558,8 @@ class stic_MessagesController extends SugarController
             exit();
         }
 
-        // Move the uploaded file to upload/{note_id} — the standard SuiteCRM location
         $destPath = rtrim(getcwd(), '/') . '/upload/' . $noteId;
         if (!move_uploaded_file($file['tmp_name'], $destPath)) {
-            // Roll back the Note if the file could not be moved
             $note->deleted = 1;
             $note->save();
             echo json_encode(['success' => false, 'error' => 'Error al guardar el archivo']);
@@ -574,7 +570,7 @@ class stic_MessagesController extends SugarController
 
         echo json_encode([
             'success' => true,
-            'note_id' => $noteId,
+            'media_note_id' => $noteId,
             'name'    => $file['name'],
             'mime'    => $mimeType,
         ]);

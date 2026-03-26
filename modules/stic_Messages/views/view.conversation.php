@@ -435,8 +435,8 @@ class stic_MessagesViewConversation extends SugarView {
             <?php endif; ?>
         </div>
         <script>
-            var _pendingMediaUrl  = null;
-            var _pendingMediaName = null;
+            var _pendingMediaNoteId = null;
+            var _pendingMediaMime = null;
 
             // Scroll al final al cargar
             (function() {
@@ -468,8 +468,9 @@ class stic_MessagesViewConversation extends SugarView {
                         input.value = '';
                         return;
                     }
-                    _pendingMediaUrl  = data.url;
+                    _pendingMediaNoteId = data.media_note_id;
                     _pendingMediaName = data.name;
+                    _pendingMediaMime = data.mime;
                     showAttachmentPreview(file, data.name);
                 })
                 .catch(function(err) {
@@ -503,8 +504,9 @@ class stic_MessagesViewConversation extends SugarView {
             }
 
             function removeAttachment() {
-                _pendingMediaUrl  = null;
+                _pendingMediaNoteId = null;
                 _pendingMediaName = null;
+                _pendingMediaMime = null;
                 document.getElementById('mediaFile').value           = '';
                 document.getElementById('attachmentPreview').style.display = 'none';
                 document.getElementById('previewImg').src            = '';
@@ -513,7 +515,7 @@ class stic_MessagesViewConversation extends SugarView {
                 var text    = document.getElementById('msgText').value.trim();
                 var sendBtn = document.getElementById('sendBtn');
 
-                if (!text && !_pendingMediaUrl) return;
+                if (!text && !_pendingMediaNoteId) return;
 
                 sendBtn.disabled = true;
 
@@ -526,10 +528,10 @@ class stic_MessagesViewConversation extends SugarView {
                 formData.append('parent_type', '<?= addslashes($this->parentType) ?>');
                 formData.append('parent_id',   '<?= addslashes($this->parentId) ?>');
 
-                if (_pendingMediaUrl) {
-                    formData.append('media_url',       _pendingMediaUrl);
-                    formData.append('media_note_name', _pendingMediaName);
-                    formData.append('media_note_mime', _pendingMediaMime);  // ← nuevo
+                if (_pendingMediaNoteId) {
+                    formData.append('media_note_id',   _pendingMediaNoteId);
+                    formData.append('media_note_name',  _pendingMediaName);
+                    formData.append('media_note_mime',  _pendingMediaMime);
                 }
 
                 fetch('index.php', {
