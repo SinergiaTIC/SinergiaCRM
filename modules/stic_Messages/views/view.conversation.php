@@ -268,7 +268,6 @@ class stic_MessagesViewConversation extends SugarView {
                     color: #888;
                     padding: 2px 4px;
                 }
-                /* ── New-message button (window closed) ── */
                 .btn-new-message {
                     display: inline-flex;
                     align-items: center;

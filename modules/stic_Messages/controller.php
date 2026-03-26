@@ -407,9 +407,6 @@ class stic_MessagesController extends SugarController
 
         $parentId   = $_REQUEST['parent_id']   ?? '';
         $parentType = $_REQUEST['parent_type'] ?? 'Contacts';
-        $parentName = html_entity_decode(
-            urldecode($_REQUEST['parent_name'] ?? ''), ENT_QUOTES, 'UTF-8'
-        );
 
         if (empty($parentId)) die('Missing parent_id');
 
@@ -417,10 +414,12 @@ class stic_MessagesController extends SugarController
         $parentIdSafe = $db->quote($parentId);
 
         $contactPhone = '';
+        $parentName = '';
         $contactBean = BeanFactory::getBean($parentType, $parentId);
         if ($contactBean) {
             require_once('modules/stic_Messages/Utils.php');
             $contactPhone = stic_MessagesUtils::getPhoneForMessage($contactBean);
+            $parentName = $contactBean->name ?? $contactBean->full_name ?? '';
         }
         $sql = "SELECT id, message, type, status, date_entered, sender, phone, direction,
                     template_id
