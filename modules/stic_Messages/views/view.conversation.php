@@ -341,6 +341,19 @@ class stic_MessagesViewConversation extends SugarView {
         <?php if (empty($this->messages)): ?>
             <div class="empty-state"><?= $lbl('LBL_CONVERSATION_NO_MESSAGES') ?></div>
         <?php else:
+            // Pre-load notes for all messages
+            $messageIds = array_column($this->messages, 'id');
+            $notesByMessage = [];
+            if (!empty($messageIds)) {
+                $db = DBManagerFactory::getInstance();
+                $idList = implode("','", array_map([$db, 'quote'], $messageIds));
+                $notesSql = "SELECT id, parent_id, name, filename, file_mime_type FROM notes WHERE parent_id IN ('{$idList}') AND deleted = 0";
+                $notesResult = $db->query($notesSql);
+                while ($note = $db->fetchByAssoc($notesResult)) {
+                    $notesByMessage[$note['parent_id']][] = $note;
+                }
+            }
+            
             $lastDate = null;
             foreach ($this->messages as $msg):
                 $direction = strtolower($msg['direction'] ?? '');
@@ -353,6 +366,7 @@ class stic_MessagesViewConversation extends SugarView {
                 
                 $isOut     = ($direction === 'outbound' || $direction === 'out');
                 $isError   = ($status === 'error');
+                $msgNotes  = $notesByMessage[$msg['id']] ?? [];
 
                 // Fecha del mensaje
                 $msgDate   = $timedate->to_display_date($msg['date_entered']);
@@ -367,6 +381,25 @@ class stic_MessagesViewConversation extends SugarView {
 
             <div class="bubble <?= $isError ? 'error' : ($isOut ? 'out' : 'in') ?>">
                 <div class="text"><?= nl2br(htmlspecialchars($msg['message'] ?? '')) ?></div>
+                <?php if (!empty($msgNotes)): ?>
+                    <?php foreach ($msgNotes as $note): ?>
+                        <?php 
+                        $isImage = strpos($note['file_mime_type'], 'image/') === 0;
+                        $noteUrl = 'index.php?module=Notes&action=DetailView&record=' . $note['id'];
+                        ?>
+                        <?php if ($isImage): ?>
+                            <div class="bubble-attachment">
+                                <img class="attachment-bubble-img" src="upload/<?= $note['id'] ?>" onclick="window.open('<?= $noteUrl ?>')">
+                            </div>
+                        <?php else: ?>
+                            <div class="bubble-attachment">
+                                <a class="attachment-bubble-file" href="upload/<?= $note['id'] ?>" target="_blank">
+                                    📄 <?= htmlspecialchars($note['filename'] ?? $note['name']) ?>
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
                 <div class="meta">
                     <span><?= htmlspecialchars($msgTime) ?></span>
                     <?php if ($isOut): ?>
