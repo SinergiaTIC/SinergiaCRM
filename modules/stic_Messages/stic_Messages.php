@@ -292,6 +292,8 @@ class stic_Messages extends Basic
 
     public function sendMessage() {
 
+        $GLOBALS['log']->info('stic_Messages::sendMessage: type=' . $this->type . ', phone=' . ($this->phone ?? 'empty') . ', media_url=' . ($this->media_url ?? 'null'));
+        
         // In the list stic_messages_type_list, the keypart is the name of the file containing the helper class.
         $messageHelper = null;
         $file = $this->type;

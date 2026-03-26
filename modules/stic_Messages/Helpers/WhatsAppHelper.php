@@ -161,6 +161,8 @@ class WhatsAppHelper implements stic_MessagesHelper {
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+        $GLOBALS['log']->info('WhatsAppHelper apiCall response: httpCode=' . $httpCode . ', response=' . substr($response, 0, 500));
+
         if ($response === false) {
             $errorNumber = curl_errno($ch);
             $errorMessage = curl_error($ch);

@@ -468,9 +468,11 @@ class stic_MessagesViewConversation extends SugarView {
                         input.value = '';
                         return;
                     }
+                    console.log('Upload success, data:', data);
                     _pendingMediaNoteId = data.media_note_id;
                     _pendingMediaName = data.name;
                     _pendingMediaMime = data.mime;
+                    console.log('Variables set:', _pendingMediaNoteId, _pendingMediaName, _pendingMediaMime);
                     showAttachmentPreview(file, data.name);
                 })
                 .catch(function(err) {
@@ -515,7 +517,12 @@ class stic_MessagesViewConversation extends SugarView {
                 var text    = document.getElementById('msgText').value.trim();
                 var sendBtn = document.getElementById('sendBtn');
 
-                if (!text && !_pendingMediaNoteId) return;
+                console.log('sendMessage called, text:', text, '_pendingMediaNoteId:', _pendingMediaNoteId);
+                
+                if (!text && !_pendingMediaNoteId) {
+                    console.log('Early return: no text and no media');
+                    return;
+                }
 
                 sendBtn.disabled = true;
 

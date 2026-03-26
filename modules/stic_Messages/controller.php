@@ -568,12 +568,14 @@ class stic_MessagesController extends SugarController
 
         $GLOBALS['log']->info('stic_Messages: attachment uploaded. note_id=' . $noteId . ' file=' . $file['name']);
 
-        echo json_encode([
+        $response = [
             'success' => true,
             'media_note_id' => $noteId,
             'name'    => $file['name'],
             'mime'    => $mimeType,
-        ]);
+        ];
+        $GLOBALS['log']->info('uploadConversationMedia response: ' . json_encode($response));
+        echo json_encode($response);
         exit();
     }
 }
