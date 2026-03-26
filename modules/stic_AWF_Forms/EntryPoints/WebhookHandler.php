@@ -61,7 +61,8 @@ class WebhookHandler
         // --- 1. Create IncomingEvent log record ---
         $incomingEvent = BeanFactory::newBean('stic_AWF_Incoming_Events');
         $incomingEvent->name = 'AWF Webhook: ' . $source . ' - ' . date('Y-m-d H:i:s');
-        $incomingEvent->token = $source;
+        $incomingEvent->token = $_REQUEST['token'] ?? null;
+        $incomingEvent->source = $source;
         $incomingEvent->raw_payload = $rawBody ?: json_encode($rawData);
         $incomingEvent->status = 'new';
         $incomingEvent->date_received = date('Y-m-d H:i:s');
