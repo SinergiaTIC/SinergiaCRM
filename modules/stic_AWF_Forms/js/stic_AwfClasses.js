@@ -1994,33 +1994,28 @@ class stic_AwfConfiguration {
       action.success_flow_id = okFlowId;
       action.failure_flow_id = errorFlowId;
 
-      let okFlow = this.flows.find(f => f.id === okFlowId);
-      let errFlow = this.flows.find(f => f.id === errorFlowId);
-
       // We create sub-flows if they don't exist
+      let okFlow = this.flows.find(f => f.id === okFlowId);
       if (!okFlow) {
-        this.flows.push(new stic_AwfFlow({
-          id: okFlowId, 
-          name: `${action.name}_Ok`,
-          label: action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_MAIN'),
-        }));
-        this.flows.push(new stic_AwfFlow({ 
-          id: errorFlowId, 
-          name: `${action.name}_Error`,
-          label: action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_ONERROR'),
-        }));
+        okFlow = new stic_AwfFlow({ id: okFlowId, name: `${action.name}_Ok` });
+        this.flows.push(okFlow);
 
         // Look for any action that is terminal and NOT the one we are editing to move it to the new flow
         const terminalIndex = flow.actions.findIndex(a => a.order === 999 && a.id !== (originalId || action.id));
         if (terminalIndex !== -1) {
           const terminalAction = flow.actions.splice(terminalIndex, 1)[0];
-          const okFlow = this.flows.find(f => f.id === okFlowId);
           okFlow.actions.push(terminalAction);
         }
-      } else {
-        okFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_MAIN');
-        errFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_ONERROR');
       }
+
+      let errFlow = this.flows.find(f => f.id === errorFlowId);
+      if (!errFlow) {
+        errFlow = new stic_AwfFlow({ id: errorFlowId, name: `${action.name}_Error` });
+        this.flows.push(errFlow);
+      }
+
+      okFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_MAIN');
+      errFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_ONERROR');
     }
 
     // Insert or update to the flow
