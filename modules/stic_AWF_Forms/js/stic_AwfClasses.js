@@ -909,6 +909,8 @@ class stic_AwfAction {
       order: 0,                 // Execution order of the action
       conditions: [],           // Conditions to execute the action (all must be accomplished)
       continue_on_error: false, // Indicates if the flow should continue if this action fails
+      success_flow_id: null,    // ID of the success flow
+      failure_flow_id: null,    // ID of the failure flow
     });
 
     // 2. Overwrite with provided data
@@ -1263,18 +1265,7 @@ class stic_AwfConfiguration {
   }
 
   _ensureDefaultDataBlocks() {
-    // TODO: Add Detached DataBlock
-    // // Check exists Detached DataBlock
-    // const detachedDataBlockExists = this.data_blocks.some((b) => b.name === "_Detached");
-    // if (!detachedDataBlockExists) {
-    //   this.data_blocks.push(new stic_AwfDataBlock({
-    //     name: "_Detached",
-    //     text: utils.translate("LBL_DATABLOCK_DETACHED"),
-    //     module: "",
-    //     editable_text: false,
-    //     required: true,
-    //   }));
-    // }
+    // No default DataBlocks!
   }
   _ensureDefaultFlows() {
     // Check exists Main Flow
@@ -1298,7 +1289,9 @@ class stic_AwfConfiguration {
         return (order[a.id] ?? 99) - (order[b.id] ?? 99);
     });
   }
-  _ensureDefaultLayout() {}
+  _ensureDefaultLayout() {
+    // No default Layout!!
+  }
 
  /**
    * Gets a suggested text for a new DataBlock for a module
@@ -1539,82 +1532,6 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Add new action to flow
-   *
-   * @param {object} actionDef The Action definition (from ActionDefinitionDTO)
-   * @param {object} params A map of parameters, ex: { 'param_name': { value: 'value', selectedOption: 'opt' } }
-   * @param {string} flowId Id of the flow where action will be added (ex: '0' for main flow)
-   * @returns {stic_AwfAction} The new action
-   */
-  addAction(actionDef, params = {}, flowId = '0') {
-    const flow = this.flows.find(f => f.id == flowId);
-    if (!flow) {
-      console.error(`Flow with ID ${flowId} not found.`);
-      return null;
-    }
-
-    // If it is a terminal action, we assign order to 999
-    const defaultOrder = actionDef.isTerminal ? 999 : (actionDef.order ?? 0);
-
-    const newAction = new stic_AwfAction({
-      name: actionDef.name,
-      title: actionDef.title, 
-      text: actionDef.title,
-      description: actionDef.description,
-      category: actionDef.category,
-      is_user_selectable: actionDef.isUserSelectable,
-      is_automatic: actionDef.isAutomatic,
-      is_terminal: actionDef.isTerminal,
-      continue_on_error: actionDef.defaultContinueOnError || false,
-      order: defaultOrder,
-    });
-
-    const requisiteActions = new Set(); 
-    (actionDef.parameters || []).forEach(paramDef => {      
-      const paramConfig = params[paramDef.name];       
-      const paramValue = paramConfig?.value ?? paramDef.defaultValue;
-      const newParam = new stic_AwfActionParameter({
-        name: paramDef.name,
-        text: paramDef.text,
-        type: paramDef.type,
-        required: paramDef.required,
-        value: paramValue,
-        value_text: paramConfig?.valueText ?? paramValue,
-        selectedOption: paramConfig?.selectedOption ?? '',
-      });
-
-      newAction.parameters.push(newParam);
-
-      // Requisites: If param is Datablock or resolvedType is DataBlock
-      const paramIsDataBlock = (paramDef.type === 'dataBlock') || 
-                               (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
-
-      if (paramIsDataBlock && newParam.value) {
-        const requiredBlock = this.data_blocks.find(b => b.id == newParam.value);
-
-        if (requiredBlock && requiredBlock.save_action_id) {
-          requisiteActions.add(requiredBlock.save_action_id);
-        }
-      }
-    });
-
-    // Assign requisites
-    newAction.requisite_actions = Array.from(requisiteActions);
-
-    // Add Action to flow: Insertion based on order
-    let insertIndex = flow.actions.length;
-    for (let i = 0; i < flow.actions.length; i++) {
-      if ((flow.actions[i].order ?? 0) > newAction.order) {
-        insertIndex = i;
-        break;
-      }
-    }
-    flow.actions.splice(insertIndex, 0, newAction);
-
-    return newAction;
-  }
-
-  /**
    * Deletes a DataBlock, removing all field references to the DataBlock
    * @param {stic_AwfDataBlock} dataBlock 
    */
@@ -1774,7 +1691,6 @@ class stic_AwfConfiguration {
 
     return dataBlock;
   }
-
 
   /**
    * Get all defined Relationships in all modules represented in data_blocks array
@@ -1990,4 +1906,165 @@ class stic_AwfConfiguration {
     });
   }
 
+  /**
+   * Add new action to flow
+   *
+   * @param {object} actionDef The Action definition (from ActionDefinitionDTO)
+   * @param {object} params A map of parameters, ex: { 'param_name': { value: 'value', selectedOption: 'opt' } }
+   * @param {string} flowId Id of the flow where action will be added (ex: '0' for main flow)
+   * @returns {stic_AwfAction} The new action
+   */
+  addAction(actionDef, params = {}, flowId = '0') {
+    debugger;
+    const flow = this.flows.find(f => f.id == flowId);
+    if (!flow) {
+      console.error(`Flow with ID ${flowId} not found.`);
+      return null;
+    }
+
+    // If it is a terminal action, we assign order to 999
+    const defaultOrder = actionDef.isTerminal ? 999 : (actionDef.order ?? 0);
+
+    const newAction = new stic_AwfAction({
+      name: actionDef.name,
+      title: actionDef.title, 
+      text: actionDef.title,
+      description: actionDef.description,
+      category: actionDef.category,
+      is_user_selectable: actionDef.isUserSelectable,
+      is_automatic: actionDef.isAutomatic,
+      is_terminal: actionDef.isTerminal,
+      continue_on_error: actionDef.defaultContinueOnError || false,
+      order: defaultOrder,
+    });
+
+    const requisiteActions = new Set(); 
+    (actionDef.parameters || []).forEach(paramDef => {      
+      const paramConfig = params[paramDef.name];       
+      const paramValue = paramConfig?.value ?? paramDef.defaultValue;
+      const newParam = new stic_AwfActionParameter({
+        name: paramDef.name,
+        text: paramDef.text,
+        type: paramDef.type,
+        required: paramDef.required,
+        value: paramValue,
+        value_text: paramConfig?.valueText ?? paramValue,
+        selectedOption: paramConfig?.selectedOption ?? '',
+      });
+
+      newAction.parameters.push(newParam);
+
+      // Requisites: If param is Datablock or resolvedType is DataBlock
+      const paramIsDataBlock = (paramDef.type === 'dataBlock') || 
+                               (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
+
+      if (paramIsDataBlock && newParam.value) {
+        const requiredBlock = this.data_blocks.find(b => b.id == newParam.value);
+
+        if (requiredBlock && requiredBlock.save_action_id) {
+          requisiteActions.add(requiredBlock.save_action_id);
+        }
+      }
+    });
+
+    // Assign requisites
+    newAction.requisite_actions = Array.from(requisiteActions);
+
+    // Add Action to flow
+    this.upsertAction(newAction, actionDef.type, flow, null);
+
+    return newAction;
+  }
+
+  /**
+   * Central logic for manipulating actions and flows: Insert or Update an action to a Flow
+   * @param {stic_AwfAction} action The Action 
+   * @param {string} actionType The Action definition type (from ActionDefinitionDTO)
+   * @param {stic_AwfFlow} flow the flow where action will be added or updated
+   * @param {string} originalId Id of the action (null if is a new action)
+   */
+  upsertAction(action, actionType, flow, originalId = null) {
+    // Deferred Actions management
+    if (actionType === 'Deferred') {
+      action.is_terminal = true;
+      action.order = 999;
+
+      const okFlowId = `${action.id}_ok`;
+      const errorFlowId = `${action.id}_err`;
+      action.success_flow_id = okFlowId;
+      action.failure_flow_id = errorFlowId;
+
+      let okFlow = this.flows.find(f => f.id === okFlowId);
+      let errFlow = this.flows.find(f => f.id === errorFlowId);
+
+      // We create sub-flows if they don't exist
+      if (!okFlow) {
+        this.flows.push(new stic_AwfFlow({
+          id: okFlowId, 
+          name: `${action.name}_Ok`,
+          label: action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_MAIN'),
+        }));
+        this.flows.push(new stic_AwfFlow({ 
+          id: errorFlowId, 
+          name: `${action.name}_Error`,
+          label: action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_ONERROR'),
+        }));
+
+        // Look for any action that is terminal and NOT the one we are editing to move it to the new flow
+        const terminalIndex = flow.actions.findIndex(a => a.order === 999 && a.id !== (originalId || action.id));
+        if (terminalIndex !== -1) {
+          const terminalAction = flow.actions.splice(terminalIndex, 1)[0];
+          const okFlow = this.flows.find(f => f.id === okFlowId);
+          okFlow.actions.push(terminalAction);
+        }
+      } else {
+        okFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_MAIN');
+        errFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_ONERROR');
+      }
+    }
+
+    // Insert or update to the flow
+    if (!originalId) {
+      // New action: Order-based insertion
+      let insertIndex = flow.actions.length;
+      for (let i = 0; i < flow.actions.length; i++) {
+        if ((flow.actions[i].order ?? 0) > (action.order ?? 0)) {
+          insertIndex = i;
+          break;
+        }
+      }
+      flow.actions.splice(insertIndex, 0, action);
+    } else {
+      // Edit: We update the array reference
+      const index = flow.actions.findIndex(a => a.id == originalId);
+      if (index !== -1) {
+        flow.actions[index] = action;
+      }
+    }
+  }
+
+  removeAction(flowId, actionId) {
+    const flow = this.flows.find(f => f.id == flowId);
+    if (!flow) {
+      console.error(`Flow with ID ${flowId} not found.`);
+      return false;
+    }
+    const action = flow.actions.find(a => a.id == actionId);
+    if (!action) {
+      console.error(`Action with ID ${actionId} not found.`);
+      return false;
+    }
+    if (action.success_flow_id) {
+      const okFlow = this.flows.find(f => f.id === action.success_flow_id);
+      if (okFlow) {
+        // Move the actions to parent flow
+        okFlow.actions.forEach(a => flow.actions.push(a));
+      }
+      // Remove success and error flows
+      this.flows = this.flows.filter(f => f.id !== action.success_flow_id && f.id !== action.failure_flow_id);
+    }
+
+    flow.actions = flow.actions.filter(a => a.id != actionId);
+    return true;
+  }
 }

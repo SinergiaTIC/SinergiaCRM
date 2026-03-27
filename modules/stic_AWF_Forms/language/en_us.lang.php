@@ -226,6 +226,8 @@ $mod_strings = array (
   'LBL_FLOW_RECEIPT' => 'Automatic response',
   'LBL_FLOW_MAIN' => 'Main',
   'LBL_FLOW_ONERROR' => 'Error',
+  'LBL_FLOW_DEFERRED_MAIN' => 'Finished',
+  'LBL_FLOW_DEFERRED_ONERROR' => 'Error',
 
   // Flow -> Action
   'LBL_ACTION' => 'Action',

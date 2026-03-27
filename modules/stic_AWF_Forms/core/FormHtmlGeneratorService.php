@@ -871,7 +871,7 @@ class FormHtmlGeneratorService {
             }
         }
 
-        // == FRONTEND ACTIONS ==
+        // == UI ACTIONS ==
         if (isset($config->flows['0'])) {
             // Load Hook and UI actions to check for IFrontendAction
             $possibleActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::UI]);

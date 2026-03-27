@@ -48,7 +48,7 @@ $mod_strings = array (
   'LBL_ASCENDING' => 'Ascendent',
   'LBL_DESCENDING' => 'Descendent',
 
-'LBL_LIST_FORM_TITLE' => 'Llista de Formularis Web Avançats',
+  'LBL_LIST_FORM_TITLE' => 'Llista de Formularis Web Avançats',
   'LBL_MODULE_NAME' => 'Formularis Web Avançats',
   'LBL_MODULE_TITLE' => 'Formularis Web Avançats',
   'LBL_HOMEPAGE_TITLE' => 'Els meus Formularis Web Avançats',
@@ -226,6 +226,8 @@ $mod_strings = array (
   'LBL_FLOW_RECEIPT' => 'Resposta automàtica',
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
+  'LBL_FLOW_DEFERRED_MAIN' => 'Finalitzada',
+  'LBL_FLOW_DEFERRED_ONERROR' => 'Error',
 
   // Flow -> Action
   'LBL_ACTION' => 'Acció',

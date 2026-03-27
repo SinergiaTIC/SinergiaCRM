@@ -29,11 +29,11 @@ require_once __DIR__.'/payment/stic_AWF_PaymentStrategyFactory.php';
 require_once __DIR__.'/payment/stic_AWF_PaymentStrategy.php';
 require_once 'modules/stic_Payment_Commitments/stic_Payment_Commitments.php';
 
-class PaymentRouterAction extends DeferredBeanActionDefinition implements ITerminalAction
+class PaymentRouterAction extends DeferredBeanActionDefinition 
 {
     public function __construct() {
-        $this->isActive = false;
-        $this->isUserSelectable = false;
+        $this->isActive = true;
+        $this->isUserSelectable = true;
         $this->category = 'integration';
         $this->baseLabel = 'LBL_PAYMENT_ROUTER_ACTION';
     }

@@ -30,7 +30,7 @@ require_once "modules/stic_Web_Forms/Catcher/FormConfig.php";
 
 /**
  * EntryPoint: ReturnHandler
- * Handles the user return from payment gateway after payment attempt.
+ * Handles the user return from external platform (like a payment gateway after payment attempt).
  * Displays appropriate page based on ticket status: success, error, waiting, or cancelled.
  *
  * Flow:
