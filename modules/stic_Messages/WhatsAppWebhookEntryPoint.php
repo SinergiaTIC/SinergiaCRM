@@ -42,6 +42,7 @@ class WhatsAppWebhookEntryPoint
             $messageSid = $_POST['MessageSid'] ?? '';
             $from       = $this->cleanPhoneNumber($_POST['From'] ?? '');
             $body       = $_POST['Body'] ?? '';
+            $numMedia   = (int)($_POST['NumMedia'] ?? 0);
 
             $parentInfo = $this->findContactByPhone($from);
 
@@ -181,6 +182,7 @@ class WhatsAppWebhookEntryPoint
     private function processMedia($message)
     {
         $numMedia = (int)($_POST['NumMedia'] ?? 0);
+        
         if ($numMedia === 0) {
             return;
         }
@@ -188,8 +190,10 @@ class WhatsAppWebhookEntryPoint
         $twilioCredentials = $this->getTwilioCredentials();
 
         for ($i = 0; $i < $numMedia; $i++) {
-            $mediaUrl = $_POST["MediaUrl{$i}"] ?? '';
-            $mediaContentType = $_POST["MediaContentType{$i}"] ?? 'application/octet-stream';
+            $mediaUrlKey = "MediaUrl{$i}";
+            $mediaContentTypeKey = "MediaContentType{$i}";
+            $mediaUrl = $_POST[$mediaUrlKey] ?? '';
+            $mediaContentType = $_POST[$mediaContentTypeKey] ?? 'application/octet-stream';
 
             if (empty($mediaUrl)) {
                 continue;
@@ -201,19 +205,10 @@ class WhatsAppWebhookEntryPoint
 
     private function getTwilioCredentials()
     {
-        $db = DBManagerFactory::getInstance();
-        $result = $db->query("SELECT name, value FROM stic_settings WHERE name IN ('twilio_sid', 'twilio_token')");
+        require_once 'modules/stic_Settings/Utils.php';
         
-        $sid = '';
-        $token = '';
-        
-        while ($row = $db->fetchByAssoc($result)) {
-            if ($row['name'] === 'twilio_sid') {
-                $sid = $row['value'];
-            } elseif ($row['name'] === 'twilio_token') {
-                $token = $row['value'];
-            }
-        }
+        $sid = stic_SettingsUtils::getSetting('twilio_sid') ?? '';
+        $token = stic_SettingsUtils::getSetting('twilio_token') ?? '';
 
         return ['sid' => $sid, 'token' => $token];
     }
@@ -222,17 +217,25 @@ class WhatsAppWebhookEntryPoint
     {
         try {
             $ch = curl_init();
+            if ($ch === false) {
+                $GLOBALS['log']->error("WhatsAppWebhookEntryPoint: curl_init failed");
+                return;
+            }
+            
             curl_setopt($ch, CURLOPT_URL, $mediaUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_USERPWD, $twilioCredentials['sid'] . ':' . $twilioCredentials['token']);
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
 
             $mediaData = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
             curl_close($ch);
-
+            
             if ($httpCode !== 200 || empty($mediaData)) {
-                $GLOBALS['log']->error("WhatsAppWebhookEntryPoint: Failed to download media from {$mediaUrl}, HTTP code: {$httpCode}");
+                $GLOBALS['log']->error("WhatsAppWebhookEntryPoint: Failed to download media from {$mediaUrl}, HTTP code: {$httpCode}, curlError: {$curlError}");
                 return;
             }
 

@@ -148,7 +148,6 @@ class stic_Messages extends Basic
         // build a signed public URL for Twilio before calling sendMessage()
         if (!empty($this->media_note_id)) {
             $this->media_url = $this->buildSignedMediaUrl($this->media_note_id);
-            $GLOBALS['log']->info('stic_Messages: media_note_id=' . $this->media_note_id . ' signed url=' . $this->media_url);
         }
 
         // If Message is being created or status changed to "sent"
@@ -292,8 +291,6 @@ class stic_Messages extends Basic
 
     public function sendMessage() {
 
-        $GLOBALS['log']->info('stic_Messages::sendMessage: type=' . $this->type . ', phone=' . ($this->phone ?? 'empty') . ', media_url=' . ($this->media_url ?? 'null'));
-        
         // In the list stic_messages_type_list, the keypart is the name of the file containing the helper class.
         $messageHelper = null;
         $file = $this->type;
