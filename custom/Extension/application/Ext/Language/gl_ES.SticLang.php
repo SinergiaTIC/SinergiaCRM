@@ -3775,8 +3775,8 @@ $app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancelado';
 // Firmas: Métodos de autenticación
 $app_list_strings['stic_signatures_auth_methods_list'][''] = '';
 $app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enlace único';
-$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código de un solo uso (por SMS o correo electrónico)';
-$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Código de un solo uso (por correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'Código dun só uso (por SMS ou correo electrónico)';
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = 'Código dun só uso (por correo electrónico)';
 $app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = 'Código dun só uso (por SMS)';
 $app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Teléfono';
 $app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = 'Número de identificación';
@@ -3795,8 +3795,8 @@ $app_list_strings['stic_signatures_modes_list']['button'] = 'Botón';
 
 // Firmas: En nombre de...
 $app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'Non';
-$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, solamente un representante';
-$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, todos los representantes';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Si, soamente un representante';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Si, todos os representantes';
 
 // Firmantes: Estados
 $app_list_strings['stic_signers_status_list'][''] = '';
@@ -3813,7 +3813,7 @@ $app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = 'Código dun
 $app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = 'Código dun só uso enviado por teléfono ao asinante';
 $app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código dun só uso verificado polo asinante';
 $app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado ao asinante';
-$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'El firmante ha accedido al portal de firma';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'O asinante accedeu ao portal de sinatura';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF asinado descargado';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF asinado enviado por correo electrónico';
 $app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Sinatura caducada';
@@ -3885,18 +3885,18 @@ $app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_trans
 $app_list_strings['stic_asset_managment_types_list'][''] = '';
 $app_list_strings['stic_asset_managment_types_list']['housing'] = 'Vivenda';
 $app_list_strings['stic_asset_managment_types_list']['premises'] = 'Local';
-$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Aparcamiento';
-$app_list_strings['stic_asset_managment_types_list']['land'] = 'Terreno';
+$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Aparcamento';
+$app_list_strings['stic_asset_managment_types_list']['land'] = 'Terreo';
 $app_list_strings['stic_asset_managment_types_list']['vehicle'] = 'Vehículo';
-$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Joya';
-$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Activo financiero';
+$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Xoia';
+$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Activo financeiro';
 $app_list_strings['stic_asset_managment_types_list']['other'] = 'Outros';
 
 // Gestión patrimonial: Titularidades
 $app_list_strings['stic_asset_managment_ownerships_list'][''] = '';
 $app_list_strings['stic_asset_managment_ownerships_list']['property'] = 'Propiedade';
 $app_list_strings['stic_asset_managment_ownerships_list']['usufruct'] = 'Usufructo';
-$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Alquiler';
+$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Aluguer';
 
 // Gestión patrimonial: Estado de ocupación
 $app_list_strings['stic_asset_managment_occupancy_status_list'][''] = '';
@@ -3908,8 +3908,8 @@ $app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Outr
 $app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
 $app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Persoa asistida';
 $app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Uso familiar';
-$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Alquiler de mercado';
-$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Alquiler social';
+$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Aluguer de mercado';
+$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Aluguer social';
 $app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Ocupación irregular';
 
 // Modificaciones del core de SuiteCRM
