@@ -95,8 +95,8 @@ class stic_Job_Applications extends Basic
                 : '';
         }
 
-        // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
-        if (!empty($offerBean) && ($offerBean->offer_type == 'volunteering') &&
+        // If it is a new record and it relates to an offer, the assigned user of the offer is indicated in the job application
+        if (!empty($offerBean) && !empty($offerBean->assigned_user_id) &&
             $this->assigned_user_id != $offerBean->assigned_user_id) {
             $this->assigned_user_id = $offerBean->assigned_user_id;
         }
