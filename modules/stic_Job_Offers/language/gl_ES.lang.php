@@ -59,6 +59,7 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'Nova Oferta laboral',
     'LBL_STATUS' => 'Estado',
     'LBL_INTERLOCUTOR' => 'Interlocutor',
+    'LBL_INTERLOCUTOR_INFO' => 'Persona de contacto de la organización ofertante con la que se gestiona la oferta.',
     'LBL_JOB_REQUIREMENTS' => 'Requirimento do posto de traballo',
     'LBL_PROCESS_START_DATE' => 'Data inicio proceso',
     'LBL_PROCESS_END_DATE' => 'Data final proceso',
@@ -188,3 +189,4 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION' => 'Plantilla de notificación a organización',
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_EMAILTEMPLATE_ID' => 'Plantilla de notificación a organización (ID)',
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_INFO' => 'Si se deja este campo vacío, se usará la plantilla por defecto para notificar a la organización sobre los cambios de estado relacionados con esta oferta laboral.',
+);

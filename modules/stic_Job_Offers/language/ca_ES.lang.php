@@ -59,6 +59,7 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'Nova Oferta laboral',
     'LBL_STATUS' => 'Estat',
     'LBL_INTERLOCUTOR' => 'Interlocutor',
+    'LBL_INTERLOCUTOR_INFO' => "Persona de contacte de l'organització oferent amb la qual es gestiona l'oferta.",
     'LBL_JOB_REQUIREMENTS' => 'Requeriments del lloc de feina',
     'LBL_PROCESS_START_DATE' => 'Data inici procés',
     'LBL_PROCESS_END_DATE' => 'Data final procés',

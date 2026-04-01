@@ -59,6 +59,7 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'New Job offer',
     'LBL_STATUS' => 'State',
     'LBL_INTERLOCUTOR' => 'Interlocutor',
+    'LBL_INTERLOCUTOR_INFO' => 'Contact person from the offering organization managing the job offer.',
     'LBL_JOB_REQUIREMENTS' => 'Job requirements',
     'LBL_PROCESS_START_DATE' => 'Process start date',
     'LBL_PROCESS_END_DATE' => 'Process end date',

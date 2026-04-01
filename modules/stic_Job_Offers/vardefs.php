@@ -72,6 +72,7 @@ $dictionary['stic_Job_Offers'] = array(
             'source' => 'non-db',
             'name' => 'interlocutor',
             'vname' => 'LBL_INTERLOCUTOR',
+            'popupHelp' => 'LBL_INTERLOCUTOR_INFO',
             'type' => 'relate',
             'massupdate' => 1,
             'no_default' => false,
