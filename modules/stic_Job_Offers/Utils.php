@@ -171,6 +171,10 @@ class stic_Job_OffersUtils
         $candidateTemplateId = self::getNotificationTemplateId('job_offers_candidates', $parentBean);
         $assignedUserTemplateId = self::getNotificationTemplateId('job_offers_assigned_user', $parentBean);
         $organizationTemplateId = self::getNotificationTemplateId('job_offers_organization', $parentBean);
+        $interlocutorId = self::getOfferInterlocutorId($parentBean);
+        $interlocutorTemplateId = !empty($interlocutorId)
+            ? self::getNotificationTemplateId('job_offers_interlocutor', $parentBean)
+            : null;
         $outboundEmail = self::getDefaultOutboundEmailAccount();
         $inboundEmailId = self::getDefaultInboundEmailId();
         $assignedUserId = $parentBean->assigned_user_id ?? $current_user->id;
@@ -220,6 +224,24 @@ class stic_Job_OffersUtils
                     }
                 }
             }
+        }
+
+        // Send direct email to interlocutor
+        if (!empty($interlocutorTemplateId)) {
+            $interlocutorBean = BeanFactory::getBean('Contacts', $interlocutorId);
+            if (empty($interlocutorBean) || empty($interlocutorBean->id)) {
+                $GLOBALS['log']->error(
+                    "Notification email (interlocutor) not sent for {$parentType} {$parentBean->id}: could not load interlocutor bean."
+                );
+            } else {
+                if (self::sendNotificationEmail($parentBean, $interlocutorBean, $interlocutorTemplateId, $outboundEmail, 'interlocutor')) {
+                    $notificationSent = true;
+                }
+            }
+        } elseif (empty($interlocutorId)) {
+            $GLOBALS['log']->info(
+                "Notification email (interlocutor) skipped for {$parentType} {$parentBean->id}: no related interlocutor."
+            );
         }
 
         // Create candidates campaign
@@ -579,6 +601,52 @@ class stic_Job_OffersUtils
     }
 
     /**
+     * Get related interlocutor contact id for an offer
+     *
+     * @param SugarBean $offerBean
+     * @return string|null
+     */
+    protected static function getOfferInterlocutorId($offerBean)
+    {
+        if (empty($offerBean)) {
+            return null;
+        }
+
+        if (!empty($offerBean->contact_id_c)) {
+            return $offerBean->contact_id_c;
+        }
+
+        if (!empty($offerBean->fetched_row['contact_id_c'])) {
+            return $offerBean->fetched_row['contact_id_c'];
+        }
+
+        if (empty($offerBean->id)) {
+            return null;
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $offerId = $db->quote($offerBean->id);
+
+        $query = "SELECT cstm.contact_id_c
+            FROM stic_job_offers_cstm cstm
+            INNER JOIN stic_job_offers o ON o.id = cstm.id_c
+            INNER JOIN contacts c ON c.id = cstm.contact_id_c
+            WHERE o.deleted = 0
+              AND c.deleted = 0
+              AND cstm.id_c = '{$offerId}'
+            LIMIT 1";
+
+        $result = $db->query($query);
+        if ($row = $db->fetchByAssoc($result)) {
+            if (!empty($row['contact_id_c'])) {
+                return $row['contact_id_c'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
     * Get contact ids for applications related to the offer
      *
      * @param string $offerId
@@ -637,6 +705,9 @@ class stic_Job_OffersUtils
                 case 'job_offers_organization':
                     $requestedTemplateId = $parentBean->emailtemplate_organization_id ?? null;
                     break;
+                case 'job_offers_interlocutor':
+                    $requestedTemplateId = $parentBean->emailtemplate_interlocutor_id ?? null;
+                    break;
                 case 'job_offers':
                     $requestedTemplateId = $parentBean->emailtemplate_assigned_user_id ?? null;
                     break;
@@ -653,6 +724,7 @@ class stic_Job_OffersUtils
             'job_offers_assigned_user' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0010',
             'job_offers_candidates' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0011',
             'job_offers_organization' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0012',
+            'job_offers_interlocutor' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0013',
         );
         $defaultTemplateId = $templateIds[$templateKey] ?? null;
 

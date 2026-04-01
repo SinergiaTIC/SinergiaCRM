@@ -179,7 +179,7 @@ $mod_strings = array(
     // Email templates for status change notifications
     'LBL_PANEL_NOTIFICATION_TEMPLATES' => 'Notification templates for status changes',
     'LBL_STATUS_NOTIFICATIONS_ENABLED' => 'Status change notifications',
-    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'When this checkbox is enabled, notifications will be sent to candidates (except those rejected), the organization, and the assigned user whenever a status change occurs in the job offer.',
+    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'When this checkbox is enabled, notifications will be sent to candidates (except those rejected), the organization, the interlocutor, and the assigned user whenever a status change occurs in the job offer.',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER' => 'Notification template for assigned user',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_EMAILTEMPLATE_ID' => 'Notification template for assigned user (ID)',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_INFO' => 'If this field is left empty, the default template will be used to notify the assigned user about status changes related to this job offer.',
@@ -189,4 +189,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION' => 'Notification template for organization',
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_EMAILTEMPLATE_ID' => 'Notification template for organization (ID)',
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_INFO' => 'If this field is left empty, the default template will be used to notify the organization about status changes related to this job offer.',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Notification template for interlocutor',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Notification template for interlocutor (ID)',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => 'If this field is left empty, the default template will be used to notify the interlocutor about status changes related to this job offer.',
 );

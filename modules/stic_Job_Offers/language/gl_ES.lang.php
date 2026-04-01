@@ -179,7 +179,7 @@ $mod_strings = array(
     // Plantillas de notificación de cambios de estado
     'LBL_PANEL_NOTIFICATION_TEMPLATES' => 'Notificaciones por cambios de estado',
     'LBL_STATUS_NOTIFICATIONS_ENABLED' => 'Notificación de cambios de estado',
-    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'Al activar esta casilla se enviarán notificaciones a los candidatos (menos a los rechazados), a la organización y al usuario asignado cada vez que se produzca un cambio de estado en dicha oferta.',
+    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'Al activar esta casilla se enviarán notificaciones a los candidatos (menos a los rechazados), a la organización, al interlocutor y al usuario asignado cada vez que se produzca un cambio de estado en dicha oferta.',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER' => 'Plantilla de notificación al usuario asignado',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_EMAILTEMPLATE_ID' => 'Plantilla de notificación al usuario asignado (ID)',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_INFO' => 'Si se deja este campo vacío, se usará la plantilla por defecto para notificar al usuario asignado sobre los cambios de estado relacionados con esta oferta laboral.',
@@ -189,4 +189,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION' => 'Plantilla de notificación a organización',
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_EMAILTEMPLATE_ID' => 'Plantilla de notificación a organización (ID)',
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_INFO' => 'Si se deja este campo vacío, se usará la plantilla por defecto para notificar a la organización sobre los cambios de estado relacionados con esta oferta laboral.',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Plantilla de notificación a interlocutor',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Plantilla de notificación a interlocutor (ID)',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => 'Si se deja este campo vacío, se usará la plantilla por defecto para notificar al interlocutor sobre los cambios de estado relacionados con esta oferta laboral.',
 );

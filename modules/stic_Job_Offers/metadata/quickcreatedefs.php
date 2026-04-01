@@ -234,7 +234,11 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION',
                     ),
-                    1 => '',
+                    1 => array(
+                        'name' => 'notification_template_interlocutor',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR',
+                    ),
                 ),
             ),
             'lbl_editview_panel5' => array(

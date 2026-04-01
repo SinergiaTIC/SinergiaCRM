@@ -179,7 +179,7 @@ $mod_strings = array(
     // Plantilles de notificació de canvis d'estat
     'LBL_PANEL_NOTIFICATION_TEMPLATES' => "Notificació per a canvis d\'estat",
     'LBL_STATUS_NOTIFICATIONS_ENABLED' => "Notificacions de canvis d\'estat",
-    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => "Quan aquesta casella estigui marcada, s\'enviaran notificacions als candidats (excepte als rebutjats), a l\'organització i a l\'usuari assignat cada vegada que es produeixi un canvi d\'estat en l\'oferta laboral.",
+    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => "Quan aquesta casella estigui marcada, s\'enviaran notificacions als candidats (excepte als rebutjats), a l\'organització, a l\'interlocutor i a l\'usuari assignat cada vegada que es produeixi un canvi d\'estat en l\'oferta laboral.",
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER' => "Plantilla de notificació per a l\'usuari assignat",
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_EMAILTEMPLATE_ID' => "Plantilla de notificació per a l\'usuari assignat (ID)",
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_INFO' => "Si aquest camp es deixa buit, s\'utilitzarà la plantilla per defecte per notificar a l\'usuari assignat sobre els canvis d\'estat relacionats amb aquesta oferta laboral.",
@@ -189,4 +189,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION' => "Plantilla de notificació per a l\'organització",
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_EMAILTEMPLATE_ID' => "Plantilla de notificació per a l\'organització (ID)",
     'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION_INFO' => "Si aquest camp es deixa buit, s\'utilitzarà la plantilla per defecte per notificar a l\'organització sobre els canvis d\'estat relacionats amb aquesta oferta laboral.",
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => "Plantilla de notificació per a l\'interlocutor",
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => "Plantilla de notificació per a l\'interlocutor (ID)",
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => "Si aquest camp es deixa buit, s\'utilitzarà la plantilla per defecte per notificar a l\'interlocutor sobre els canvis d\'estat relacionats amb aquesta oferta laboral.",
 );
