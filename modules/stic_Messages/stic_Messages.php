@@ -126,7 +126,54 @@ class stic_Messages extends Basic
             $this->message = $processedText;
         }
 
-        $this->assigned_user_id = $current_user->id;
+        $assignedUserId = $current_user->id ?? '';
+
+        // For conversation messages, resolve the assignee from related records
+        if ($this->type === 'conversation') {
+            $contactId = '';
+            $conversationBean = null;
+
+            // If the message already points to a Contact, use it first
+            if ($this->parent_type === 'Contacts' && !empty($this->parent_id)) {
+                $contactId = $this->parent_id;
+            }
+
+            // Otherwise, try to get the Contact from the related conversation
+            if (empty($contactId) && !empty($this->stic_conversations_ida)) {
+                $conversationBean = BeanFactory::getBean('stic_Conversations', $this->stic_conversations_ida);
+                if (!empty($conversationBean) && !empty($conversationBean->id) && $conversationBean->load_relationship('contacts_stic_conversations')) {
+                    $contactIds = $conversationBean->contacts_stic_conversations->get();
+                    if (!empty($contactIds) && !empty($contactIds[0])) {
+                        $contactId = $contactIds[0];
+                    }
+                }
+            }
+
+            // If we have a Contact, assign the message to that Contact's assigned user
+            if (!empty($contactId)) {
+                $contactBean = BeanFactory::getBean('Contacts', $contactId);
+                if (!empty($contactBean) && !empty($contactBean->id) && !empty($contactBean->assigned_user_id)) {
+                    $assignedUserId = $contactBean->assigned_user_id;
+                }
+            }
+
+            // Use the conversation assigned user
+            if (empty($assignedUserId) && !empty($this->stic_conversations_ida)) {
+                if (empty($conversationBean) || empty($conversationBean->id)) {
+                    $conversationBean = BeanFactory::getBean('stic_Conversations', $this->stic_conversations_ida);
+                }
+
+                if (!empty($conversationBean) && !empty($conversationBean->id) && !empty($conversationBean->assigned_user_id)) {
+                    $assignedUserId = $conversationBean->assigned_user_id;
+                }
+            }
+
+        }
+
+        // Apply the final assigned user to the message
+        if (!empty($assignedUserId)) {
+            $this->assigned_user_id = $assignedUserId;
+        }
 
         // Conversation messages are always sent and sender is fixed to current CRM user
         if ($this->type === 'conversation') {
