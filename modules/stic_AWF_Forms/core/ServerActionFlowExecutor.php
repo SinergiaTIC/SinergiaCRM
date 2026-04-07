@@ -95,7 +95,7 @@ class ServerActionFlowExecutor {
                     if ($actionConfig->continue_on_error) {
                         $lastResult->status = ResultStatus::SKIPPED;
                         $lastResult->message = "Ignored Error: " . $lastResult->message;
-                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
+                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
                         continue; 
                     }
 

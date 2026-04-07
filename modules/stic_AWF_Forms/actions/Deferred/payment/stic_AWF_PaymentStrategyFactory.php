@@ -73,7 +73,7 @@ class stic_AWF_PaymentStrategyFactory
             require_once __DIR__."/{$strategyClass}.php";
         }
         if (!class_exists($strategyClass)) {
-            $GLOBALS['log']->fatal("PaymentStrategyFactory: Class $strategyClass not found. Fallback to Offline.");
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": stic_AWF_PaymentStrategyFactory: Class $strategyClass not found. Fallback to Offline.");
             $strategyClass = 'stic_AWF_OfflineStrategy';
         }
 

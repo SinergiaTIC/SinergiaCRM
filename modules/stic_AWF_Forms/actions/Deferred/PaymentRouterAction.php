@@ -103,7 +103,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition
         // Get Payment Strategy
         try {
             /** @var stic_AWF_PaymentStrategy $strategy */
-            $strategy = PaymentStrategyFactory::createFromMethodValue($paymentCommitmentBean->payment_method);
+            $strategy = stic_AWF_PaymentStrategyFactory::createFromMethodValue($paymentCommitmentBean->payment_method);
         } catch (Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error getting Payment Strategy for Payment Commitment (ID: {$paymentCommitmentBean->id}): " . $e->getMessage());
         }
@@ -190,10 +190,10 @@ class PaymentRouterAction extends DeferredBeanActionDefinition
 
         // Recover using the Factory
         try {
-            $strategy = PaymentStrategyFactory::createFromStoredData($executionResult->getData());
+            $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($executionResult->getData());
             $strategy->performTerminal($context, $executionResult);
         } catch (Exception $e) {
-            $GLOBALS['log']->fatal("PaymentRouter: " . $e->getMessage());
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouter: " . $e->getMessage());
         }
     }
     
@@ -212,7 +212,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition
         $savedData = $context->getCustomData() ?? []; 
         
         try {
-            $strategy = PaymentStrategyFactory::createFromStoredData($savedData);
+            $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
             return $strategy->resolve($context, $requestData);
         } catch (Exception $e) {
             return new ActionResult(ResultStatus::ERROR, null, "Error processing webhook response: " . $e->getMessage());
