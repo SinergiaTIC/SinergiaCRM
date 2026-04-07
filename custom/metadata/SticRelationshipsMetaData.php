@@ -8180,11 +8180,11 @@ $dictionary["stic_assets_stic_followups"] = array(
     ),
 );
 
-  $dictionary["stic_AWF_Forms_stic_AWF_Responses"] = array (
+  $dictionary["stic_awf_forms_stic_awf_responses"] = array (
     'true_relationship_type' => 'one-to-many',
     'relationships' => 
     array (
-      'stic_AWF_Forms_stic_AWF_Responses' => 
+      'stic_awf_forms_stic_awf_responses' => 
       array (
         'lhs_module' => 'stic_AWF_Forms',
         'lhs_table' => 'stic_AWF_Forms',
@@ -8264,11 +8264,11 @@ $dictionary["stic_assets_stic_followups"] = array(
       ),
     ),
   );
-  $dictionary["stic_AWF_Responses_stic_AWF_Links"] = array (
+  $dictionary["stic_awf_responses_stic_awf_links"] = array (
     'true_relationship_type' => 'one-to-many',
     'relationships' => 
     array (
-      'stic_AWF_Responses_stic_AWF_Links' => 
+      'stic_awf_responses_stic_awf_links' => 
       array (
         'lhs_module' => 'stic_AWF_Responses',
         'lhs_table' => 'stic_AWF_Responses',
