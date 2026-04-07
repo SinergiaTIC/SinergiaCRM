@@ -74,11 +74,6 @@ $moduleList[] = 'stic_Transactions';
 $moduleList[] = 'stic_Financial_Products';
 $moduleList[] = 'stic_Assets';
 $moduleList[] = 'stic_AWF_Forms';
-// $moduleList[] = 'stic_AWF_Responses';
-// $moduleList[] = 'stic_AWF_Response_Details';
-// $moduleList[] = 'stic_AWF_Links';
-// $moduleList[] = 'stic_AWF_Deferred_Tickets';
-// $moduleList[] = 'stic_AWF_Incoming_Events';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
