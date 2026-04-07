@@ -311,17 +311,19 @@
                                 </div>
                             </div>
                             <!-- Continue on Error -->
-                            <div class="card shadow-sm mb-3">
-                                <div class="card-body py-2">
-                                    <div class="form-switch">
-                                        <label class="form-label" for="action_ContinueOnError" x-text="utils.translateForFieldLabel('LBL_ACTION_CONTINUE_ON_ERROR')"></label>
-                                        <input class="form-check-input form-switch" type="checkbox" role="switch" id="action_ContinueOnError" x-model="$store.actionEditor.action.continue_on_error">
-                                    </div>
-                                    <div class="form-text text-muted extra-small fst-italic">
-                                        <span x-text="utils.translate('LBL_ACTION_CONTINUE_ON_ERROR_DESC')"></span>
+                            <template x-if="!$store.actionEditor.action.is_terminal && $store.actionEditor.definition?.type !== 'Deferred'">
+                                <div class="card shadow-sm mb-3">
+                                    <div class="card-body py-2">
+                                        <div class="form-switch">
+                                            <label class="form-label" for="action_ContinueOnError" x-text="utils.translateForFieldLabel('LBL_ACTION_CONTINUE_ON_ERROR')"></label>
+                                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="action_ContinueOnError" x-model="$store.actionEditor.action.continue_on_error">
+                                        </div>
+                                        <div class="form-text text-muted extra-small fst-italic">
+                                            <span x-text="utils.translate('LBL_ACTION_CONTINUE_ON_ERROR_DESC')"></span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>                             
+                            </template>
                             <!-- Action Parameters -->
                             <div class="card shadow-sm">
                                 <div class="card-header" x-text="utils.translate('LBL_ACTION_PARAMETERS')"></div>
