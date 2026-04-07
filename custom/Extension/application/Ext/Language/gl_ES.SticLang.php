@@ -31,6 +31,7 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "A validación d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Engadir Organizacións e Persoas a unha lista de público obxectivo';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronización Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Enviar PDF por correo';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Ver conversación de WhatsApp';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Añadir al proceso de firma';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccione un proceso de firma';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Ver firmas relacionadas';
@@ -3647,14 +3648,16 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Mensajes: Tipos
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
 
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Saída';
 
-// Mensajes: Estados
+// Mensaxes: Estados
 $app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
+$app_list_strings['stic_messages_status_list']['received'] = 'Recibido';
 $app_list_strings['stic_messages_status_list']['error'] = 'Erro';
 
 // Mensajes: Tipos de registros padre

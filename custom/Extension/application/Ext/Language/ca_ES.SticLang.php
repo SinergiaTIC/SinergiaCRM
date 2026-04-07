@@ -31,6 +31,7 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "La validació d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Afegeix Organitzacions i Persones a una llista de públic objectiu';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Veure conversa de WhatsApp';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra les firmes relacionades';
@@ -3647,6 +3648,7 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Missatges: Tipus
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
 
 // Missatges: Direcció
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
@@ -3655,6 +3657,7 @@ $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
 // Missatges: Estats
 $app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
+$app_list_strings['stic_messages_status_list']['received'] = 'Rebut';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
 
 // Missatges: Tipus de registres pare

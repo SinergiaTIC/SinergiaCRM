@@ -28,6 +28,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 use SuiteCRM\Utility\SuiteValidator;
 
 include_once 'include/Exceptions/SugarControllerException.php';
+global $mod_strings;
+
+function sticMessagesGetString($key, $module = 'stic_Messages') {
+    global $mod_strings;
+    return isset($mod_strings[$key]) ? $mod_strings[$key] : $key;
+}
 require_once 'modules/stic_Messages/Utils.php';
 require_once("modules/AOW_WorkFlow/aow_utils.php");
 
@@ -525,7 +531,7 @@ class stic_MessagesController extends SugarController
         ];
 
         if (empty($_FILES['media']) || $_FILES['media']['error'] !== UPLOAD_ERR_OK) {
-            echo json_encode(['success' => false, 'error' => 'No file received']);
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_NO_FILE_RECEIVED')]);
             exit();
         }
 
@@ -533,14 +539,14 @@ class stic_MessagesController extends SugarController
         $mimeType = mime_content_type($file['tmp_name']);
 
         if (!in_array($mimeType, $allowedMimes)) {
-            echo json_encode(['success' => false, 'error' => 'Tipo de archivo no soportado por WhatsApp: ' . $mimeType]);
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_UNSUPPORTED_FILE_TYPE') . ': ' . $mimeType]);
             exit();
         }
 
         $sizeLimit = (strpos($mimeType, 'image/') === 0) ? 5 * 1024 * 1024 : 16 * 1024 * 1024;
         if ($file['size'] > $sizeLimit) {
             $limitMb = $sizeLimit / 1024 / 1024;
-            echo json_encode(['success' => false, 'error' => "El archivo supera el límite de {$limitMb}MB"]);
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_FILE_SIZE_EXCEEDED') . " {$limitMb}MB"]);
             exit();
         }
 
@@ -554,7 +560,7 @@ class stic_MessagesController extends SugarController
         $noteId               = $note->save();
 
         if (empty($noteId)) {
-            echo json_encode(['success' => false, 'error' => 'Error al crear el registro del adjunto']);
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_CREATING_NOTE')]);
             exit();
         }
 
@@ -562,7 +568,7 @@ class stic_MessagesController extends SugarController
         if (!move_uploaded_file($file['tmp_name'], $destPath)) {
             $note->deleted = 1;
             $note->save();
-            echo json_encode(['success' => false, 'error' => 'Error al guardar el archivo']);
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_SAVING_FILE')]);
             exit();
         }
 

@@ -81,6 +81,7 @@ switch (viewType()) {
     break;
 
   case "detail":
+    recordId = $("#formDetailView input[type=hidden][name=record]").val();
     var buttons = {
       pdfEmail: {
         id: "bt_pdf_email_detailview",
@@ -89,7 +90,7 @@ switch (viewType()) {
       },
       whatsappConversation: {
         id: "bt_whatsapp_conversation_detailview",
-        title: SUGAR.language.get("stic_Messages", "LBL_WHATSAPP_CONVERSATION_BUTTON"),
+        title: SUGAR.language.get("app_strings", "LBL_WHATSAPP_CONVERSATION_BUTTON"),
         onclick: "openWhatsAppConversation('" + recordId + "', '" + module + "')"
       }
     };

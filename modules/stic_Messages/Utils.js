@@ -424,7 +424,7 @@ function onClickRetryMessagesButton(recordId) {
   var messageType = $("#type").val();
   
   if(messageType === 'WhatsAppWeb') {
-    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), 'Los mensajes de WhatsApp Web no se pueden reintentar. Ya fueron enviados mediante el cliente.');
+    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_RETRY'));
   }
   else if(status === 'sent') {
     showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));

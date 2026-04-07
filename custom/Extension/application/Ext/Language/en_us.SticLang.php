@@ -31,6 +31,7 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "The field valid
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Add Accounts and Contacts to Target List';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Incorpora synchronization';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Send PDF by email';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'View WhatsApp conversation';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Add to signature process';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Select a signature process';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Show related signatures';
@@ -3655,6 +3656,7 @@ $app_list_strings['stic_messages_direction_list']['outbound'] = 'Outbound';
 // Messages: Status
 $app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Sent';
+$app_list_strings['stic_messages_status_list']['received'] = 'Received';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
 
 // Messages: Parent types

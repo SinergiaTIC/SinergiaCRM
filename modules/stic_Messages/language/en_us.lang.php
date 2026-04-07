@@ -101,5 +101,10 @@ $mod_strings = array (
 'LBL_CONVERSATION_ERROR_UPLOAD' =>  'Error uploading file',
 'LBL_CONVERSATION_ERROR_UNKNOWN' =>  'Unknown error',
 'LBL_CONVERSATION_ERROR_SEND' =>  'Error sending message',
-
+'LBL_ERROR_NO_FILE_RECEIVED' => 'No file received',
+'LBL_ERROR_UNSUPPORTED_FILE_TYPE' => 'File type not supported by WhatsApp',
+'LBL_ERROR_FILE_SIZE_EXCEEDED' => 'File exceeds the limit of',
+'LBL_ERROR_CREATING_NOTE' => 'Error creating attachment record',
+'LBL_ERROR_SAVING_FILE' => 'Error saving file',
+'LBL_WHATSAPP_WEB_READONLY_NOTICE' => 'Warning: WhatsApp Web messages cannot be edited once sent.',
 );
