@@ -151,6 +151,20 @@ class ACLController
                 );
         }
 
+        // STIC-Custom 20260408 PCS - stic_Places is a submodule of stic_Resources - check resources permissions
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        if ($category === 'stic_Places') {
+            return ACLAction::userHasAccess(
+                $current_user->id,
+                'stic_Resources',
+                $action,
+                $type,
+                $is_owner,
+                $in_group
+            );
+        }
+        // END STIC-Custom
+        
         return ACLAction::userHasAccess($current_user->id, $category, $action, $type, $is_owner, $in_group);
     }
 
@@ -232,6 +246,20 @@ class ACLController
                 }
             }
         }
+
+        // STIC-Custom 20260408 PCS - stic_Places inherits from stic_Resources - check resources permissions
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        if (isset($compList['stic_Places'])) {
+            if (!isset($compList['stic_Resources']) || $actions['stic_Resources']['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED) {
+                if ($by_value) {
+                    unset($moduleList[$compList['stic_Places']]);
+                } else {
+                    unset($moduleList['stic_Places']);
+                }
+            }
+        }
+        // END STIC-Custom
+
         if (isset($compList['Calendar']) &&
             !(ACLController::checkModuleAllowed('Calls', $actions)
                 || ACLController::checkModuleAllowed(
