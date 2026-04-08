@@ -64,7 +64,62 @@ class CustomAccountsViewEdit extends AccountsViewEdit
         </script>
     SCRIPT;
 
+        // Render JS to display AP password field as write-only
+        $this->renderPrivateAreaPasswordFieldScript();
+
         echo getVersionedScript("custom/modules/Accounts/SticUtils.js");
+    }
+
+    /**
+     * Render JS to display AP password field as write-only
+     *
+     * @return void
+     */
+    protected function renderPrivateAreaPasswordFieldScript()
+    {
+        global $app_strings;
+
+        $passwordPlaceholder = $app_strings['LBL_PASSWORD_SET_NEW_VALUE_TO_RESET'] ?? '';
+        $hasStoredPassword = !empty($this->bean->stic_pa_password_c) ? 'true' : 'false';
+
+        echo <<<SCRIPT
+        <script>
+            (function () {
+                var hasStoredPassword = {$hasStoredPassword};
+
+                function privateAreaPasswordField() {
+                    var field = document.getElementById('stic_pa_password_c');
+                    if (!field) {
+                        return;
+                    }
+
+                    if (field.type !== 'password') {
+                        try {
+                            field.type = 'password';
+                        } catch (e) {
+                            // Keep silent; some legacy browsers may throw here.
+                        }
+                    }
+
+                    field.value = '';
+                    field.setAttribute('autocomplete', 'new-password');
+                    if (hasStoredPassword) {
+                        field.setAttribute('placeholder', '{$passwordPlaceholder}');
+                    } else {
+                        field.removeAttribute('placeholder');
+                    }
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', privateAreaPasswordField);
+                } else {
+                    privateAreaPasswordField();
+                }
+
+                window.setTimeout(privateAreaPasswordField, 200);
+            })();
+        </script>
+    SCRIPT;
     }
 
 }

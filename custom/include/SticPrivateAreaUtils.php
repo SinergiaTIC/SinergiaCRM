@@ -48,13 +48,35 @@ class SticPrivateAreaUtils
             }
         }
 
-        // Keep plaintext in-memory only for template parsing after save
-        if (empty($bean->stic_pa_password_c)) {
-            $plainPassword = self::generateRandomPassword();
-            $bean->stic_pa_password_c = $plainPassword;
-            $bean->_stic_plain_pa_password = $plainPassword;
+        // Keep plaintext only for email template parsing, never store it in the database
+        $isBeingEnabled = self::isPrivateAreaBeingEnabled($bean);
+        $submittedPassword = (string)($_REQUEST['stic_pa_password_c'] ?? '');
+        $hasSubmittedPassword = (array_key_exists('stic_pa_password_c', $_REQUEST) && $submittedPassword !== '');
+        $beanPasswordValue = (string)($bean->stic_pa_password_c ?? '');
+        $storedPassword = self::getStoredPrivateAreaPassword($bean);
+        $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
+
+        if (!$hasSubmittedPassword) {
+            if ($isBeingEnabled || $storedPassword === '') {
+                $plainPassword = self::generateRandomPassword();
+                $bean->stic_pa_password_c = $bean->encrpyt_before_save($plainPassword);
+                $bean->_stic_plain_pa_password = $plainPassword;
+            } else {
+                $bean->stic_pa_password_c = $bean->encrpyt_before_save($storedPassword);
+                $bean->_stic_plain_pa_password = '';
+            }
         } else {
-            $bean->_stic_plain_pa_password = $bean->stic_pa_password_c;
+            if ($fetchedPassword !== '' && $submittedPassword === $fetchedPassword && $storedPassword !== '') {
+                $bean->stic_pa_password_c = $bean->encrpyt_before_save($storedPassword);
+                $bean->_stic_plain_pa_password = '';
+            } else {
+                $bean->_stic_plain_pa_password = $submittedPassword;
+
+                // Encrypt password only if it has changed or AP is being enabled now
+                if ($beanPasswordValue === $submittedPassword) {
+                    $bean->stic_pa_password_c = $bean->encrpyt_before_save($submittedPassword);
+                }
+            }
         }
 
         // Prevent duplicate AP usernames across Accounts and Contacts
@@ -76,16 +98,25 @@ class SticPrivateAreaUtils
 
         require_once 'modules/stic_Settings/Utils.php';
 
-        // Feature toggle from settings
-        $isEnabled = ((string)stic_SettingsUtils::getSetting('PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE') === '1');
+        // Check if sending credentials email is enabled in settings
+        $sendSettingValue = (string)stic_SettingsUtils::getSetting('PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE');
+        if ($sendSettingValue === '') {
+            // Fallback for missing setting
+            $GLOBALS['log']->error(__METHOD__ . ': Setting PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE is empty. Using default value 1.');
+            $isEnabled = true;
+        } else {
+            $isEnabled = ($sendSettingValue === '1');
+        }
+
         if (!$isEnabled) {
+            $GLOBALS['log']->error(__METHOD__ . ': Credentials email disabled by setting PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE=' . $sendSettingValue);
             return;
         }
 
         // Resolve and validate template
         $templateId = self::getTemplateIdForModule($bean->module_dir ?? '');
         if (empty($templateId)) {
-            $GLOBALS['log']->info(__METHOD__ . ': Template setting is empty. Skipping credentials email.');
+            $GLOBALS['log']->error(__METHOD__ . ': Template setting is empty. Skipping credentials email.');
             return;
         }
 
@@ -98,7 +129,7 @@ class SticPrivateAreaUtils
         // Resolve destination address
         $destAddress = self::getPrimaryEmail($bean);
         if (empty($destAddress)) {
-            $GLOBALS['log']->info(__METHOD__ . ': Destination email is empty. Skipping credentials email.');
+            $GLOBALS['log']->error(__METHOD__ . ': Destination email is empty. Skipping credentials email.');
             return;
         }
 
@@ -107,8 +138,7 @@ class SticPrivateAreaUtils
             $bean->stic_pa_password_c = $bean->_stic_plain_pa_password;
         }
 
-        require_once 'SticInclude/Utils.php';
-        $parsedMailArray = SticUtils::parseEmailTemplate($templateBean->id, array($bean));
+        $parsedMailArray = self::parsePrivateAreaTemplate($templateBean, $bean);
 
         $subject = $parsedMailArray['subject'] ?? '';
         $bodyHtml = $parsedMailArray['body_html'] ?? '';
@@ -149,6 +179,104 @@ class SticPrivateAreaUtils
         }
 
         $GLOBALS['log']->info(__METHOD__ . ': Credentials email sent to ' . $destAddress);
+    }
+
+    /**
+     * Parse credentials template supporting AP placeholders
+     *
+     * @param SugarBean $templateBean
+     * @param SugarBean $bean
+     * @return array
+     */
+    protected static function parsePrivateAreaTemplate($templateBean, $bean)
+    {
+        global $sugar_config;
+
+        $parsedTemplate = [
+            'subject' => $templateBean->subject ?? '',
+            'body' => $templateBean->body ?? '',
+            'body_html' => $templateBean->body_html ?? '',
+        ];
+
+        $modulePrefixes = self::getModuleTemplatePrefixes($bean->module_dir ?? '');
+        $replacementsText = [];
+        $replacementsHtml = [];
+
+        foreach ($bean->field_defs as $fieldName => $def) {
+            $rawValue = $bean->$fieldName ?? '';
+            if (!is_scalar($rawValue)) {
+                $rawValue = '';
+            }
+
+            $textValue = (string)$rawValue;
+            $htmlValue = $textValue;
+
+            if (isset($def['type']) && $def['type'] === 'text') {
+                $htmlValue = nl2br($htmlValue);
+            }
+
+            foreach ($modulePrefixes as $prefix) {
+                $placeholder = '$' . $prefix . '_' . $fieldName;
+                $replacementsText[$placeholder] = $textValue;
+                $replacementsHtml[$placeholder] = $htmlValue;
+            }
+        }
+
+        $name = self::getRecipientName($bean);
+        foreach ($modulePrefixes as $prefix) {
+            $namePlaceholder = '$' . $prefix . '_name';
+            $replacementsText[$namePlaceholder] = $name;
+            $replacementsHtml[$namePlaceholder] = $name;
+        }
+
+        $specialSubstitutions = [
+            '$sugarurl' => $sugar_config['site_url'] ?? '',
+        ];
+
+        foreach ($specialSubstitutions as $placeholder => $value) {
+            if (!is_scalar($value)) {
+                $value = '';
+            }
+            $replacementsText[$placeholder] = (string)$value;
+            $replacementsHtml[$placeholder] = (string)$value;
+        }
+
+        uksort($replacementsText, function ($a, $b) {
+            return strlen($b) - strlen($a);
+        });
+        uksort($replacementsHtml, function ($a, $b) {
+            return strlen($b) - strlen($a);
+        });
+
+        $parsedTemplate['subject'] = str_replace(array_keys($replacementsText), array_values($replacementsText), $parsedTemplate['subject']);
+        $parsedTemplate['body'] = str_replace(array_keys($replacementsText), array_values($replacementsText), $parsedTemplate['body']);
+        $parsedTemplate['body_html'] = str_replace(array_keys($replacementsHtml), array_values($replacementsHtml), $parsedTemplate['body_html']);
+
+        $cleanupPattern = '/\$[a-zA-Z_][a-zA-Z0-9_]*/';
+        $parsedTemplate['subject'] = preg_replace($cleanupPattern, '', $parsedTemplate['subject']);
+        $parsedTemplate['body'] = preg_replace($cleanupPattern, '', $parsedTemplate['body']);
+        $parsedTemplate['body_html'] = preg_replace($cleanupPattern, '', $parsedTemplate['body_html']);
+
+        return $parsedTemplate;
+    }
+
+    /**
+     * Return accepted placeholder prefixes by module
+     *
+     * @param string $module
+     * @return array
+     */
+    protected static function getModuleTemplatePrefixes($module)
+    {
+        if ($module === 'Contacts') {
+            return ['contact', 'contacts'];
+        }
+
+        if ($module === 'Accounts') {
+            return ['contact_account', 'accounts'];
+        }
+
+        return [strtolower((string)$module)];
     }
 
     /**
@@ -280,6 +408,30 @@ class SticPrivateAreaUtils
         }
 
         return '';
+    }
+
+    /**
+     * Get currently stored AP password
+     *
+     * @param SugarBean $bean
+     * @return string
+     */
+    protected static function getStoredPrivateAreaPassword($bean)
+    {
+        $module = $bean->module_dir ?? '';
+        $id = $bean->id ?? '';
+
+        if (empty($module) || empty($id)) {
+            return '';
+        }
+
+        $storedBean = BeanFactory::getBean($module, $id, ['disable_row_level_security' => true]);
+        if (empty($storedBean) || empty($storedBean->id)) {
+            return '';
+        }
+
+        $password = $storedBean->stic_pa_password_c ?? '';
+        return is_scalar($password) ? (string)$password : '';
     }
 
     /**
