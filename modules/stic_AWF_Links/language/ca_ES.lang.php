@@ -52,10 +52,10 @@ $mod_strings = array (
   'LBL_MODULE_NAME' => 'Vincles de formularis',
   'LBL_MODULE_TITLE' => 'Vincles de formularis',
   'LBL_HOMEPAGE_TITLE' => 'Els meus Vincles de formularis',
-  'LNK_NEW_RECORD' => 'Crear Vincle de formulari',
-  'LNK_LIST' => 'Veure Vincles de formularis',
-  'LNK_IMPORT_stic_AWF_Links' => 'Importar Vincles de formularis',
-  'LBL_SEARCH_FORM_TITLE' => 'Cercar Vincles de formularis',
+  'LNK_NEW_RECORD' => 'Crea un Vincle de formulari',
+  'LNK_LIST' => 'Mostra els Vincles de formularis',
+  'LNK_IMPORT_stic_AWF_Links' => 'Importa Vincles de formularis',
+  'LBL_SEARCH_FORM_TITLE' => 'Cerca Vincles de formularis',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
   'LBL_NEW_FORM_TITLE' => 'Nou Vincle de formulari',
@@ -71,7 +71,7 @@ $mod_strings = array (
   'LBL_RECORD_ACTION' => 'Acció',
   'LBL_SUBMITTED_DATA' => 'Dades aplicades',
   
-  'LBL_NO_MODIFIED_DATA' => 'No s’han registrat canvis de dades específics.',
+  'LBL_NO_MODIFIED_DATA' => "No s'han registrat canvis de dades específics.",
   'LBL_NO_NAME' => 'Sense nom',
 
   'LBL_FIELD' => 'Camp',
