@@ -220,9 +220,9 @@ class WebhookHandler
                 WHERE external_transaction_id = '{$safeId}' 
                 AND status = 'pending' 
                 AND deleted = 0";
-        $db->query($sql);
+        $result = $db->query($sql);
 
-        if ($db->getAffectedRowCount() === 0) {
+        if ($db->getAffectedRowCount($result) === 0) {
             // Either already processed or not found
             return null;
         }

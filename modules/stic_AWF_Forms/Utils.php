@@ -507,4 +507,26 @@ class stic_AWF_FormsUtils {
             return '#b5bc31';
         }
     }
+
+    /**
+     * Scheduled task function to cancel expired deferred tickets (status='pending' and expiration_date < now()) by setting status='cancelled'.
+     */
+    public static function cancelExpiredTickets() {
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Running cancelExpiredTickets');
+
+        $db = DBManagerFactory::getInstance();
+        
+        $dateNow = $db->convert($db->quoted(date('Y-m-d H:i:s')), 'datetime');
+        $sql = "UPDATE stic_AWF_Deferred_Tickets
+                SET status = 'cancelled', date_modified = {$dateNow}
+                WHERE status = 'pending' AND expiration_date < {$dateNow} AND deleted = 0";
+        $result = $db->query($sql);
+
+        $affectedRows = $db->getAffectedRowCount($result);
+        if ($affectedRows > 0) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cancelled ' . $affectedRows . ' expired deferred tickets');
+        }
+
+        return true;
+    }
 }
