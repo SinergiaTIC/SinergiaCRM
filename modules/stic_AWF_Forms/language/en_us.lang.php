@@ -60,7 +60,7 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activities',
   'LBL_NEW_FORM_TITLE' => 'New Advanced Web Form',
 
-  'LBL_DEFAULT_PANEL' => 'General data',
+  'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
 
   // -- MODULE FIELDS --
@@ -69,7 +69,7 @@ $mod_strings = array (
   'LBL_END_DATE' => 'End date',
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Processing mode',
-  'LBL_PROCESSING_MODE_DESC' => 'Defines how received responses are managed. In synchronous mode, responses are stored and processed upon receipt. In asynchronous mode, responses are stored upon receipt and processed later through a background process, which may be of interest to optimize system performance in cases of high volume.',
+  'LBL_PROCESSING_MODE_DESC' => 'Defines how received responses are managed. In synchronous mode, responses are stored and processed upon receipt. In asynchronous mode, responses are stored upon receipt and processed later through a background process, which may be of interest to optimize system performance in case of large response influx.',
   'LBL_CONFIGURATION' => 'Configuration',
   'LBL_ANALYTICS_VIEWS' => 'Total views',
   'LBL_ANALYTICS_BLOCKED' => 'Blocked views (not public)',
@@ -94,11 +94,11 @@ $mod_strings = array (
   
   // Steps
   'LBL_WIZARD_TITLE_STEP1' => 'General information',
-  'LBL_WIZARD_DESC_STEP1' => 'Definition of the general properties of the form.',
+  'LBL_WIZARD_DESC_STEP1' => 'Definition of the form general properties.',
   'LBL_WIZARD_TITLE_STEP2' => 'Structure and fields',
-  'LBL_WIZARD_DESC_STEP2' => 'Definition of the form content. Data blocks can be linked to SinergiaCRM modules or function independently. Additionally, it is possible to configure data validations, duplicate detection, etc.',
+  'LBL_WIZARD_DESC_STEP2' => 'Definition of the form content. Data blocks can be linked to SinergiaCRM modules or run on their own. Additionally, it is possible to configure data validation, duplicate detection, etc.',
   'LBL_WIZARD_TITLE_STEP2_START' => 'Start building the form',
-  'LBL_WIZARD_TITLE_STEP2_START_DESC' => 'Configure the data structure here. You can add data blocks connected to a CRM module (e.g., People) or unlinked data blocks to collect information without creating records in CRM modules.',
+  'LBL_WIZARD_TITLE_STEP2_START_DESC' => 'Configure the data structure here. Add data blocks connected to a CRM module (e.g., People) or unlinked data blocks to collect information without creating records in CRM modules.',
   'LBL_WIZARD_TITLE_STEP3' => 'Logic and automation',
   'LBL_WIZARD_DESC_STEP3' => 'Definition of the actions that will be executed when a response is received: create or update records, send emails, redirect to web pages, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Layout',
