@@ -111,7 +111,7 @@ class stic_AWF_FormsController extends SugarController
         header('Content-Type: application/json');
 
         require_once "modules/stic_AWF_Forms/Utils.php";
-        $result = getModuleInformation($_REQUEST['getmodule'], json_decode(html_entity_decode($_REQUEST['getavailablemodules']),true));
+        $result = stic_AWF_FormsUtils::getModuleInformation($_REQUEST['getmodule'], json_decode(html_entity_decode($_REQUEST['getavailablemodules']),true));
         $resultStr = json_encode($result, JSON_UNESCAPED_UNICODE);
         echo $resultStr;
 
@@ -126,7 +126,7 @@ class stic_AWF_FormsController extends SugarController
         header('Content-Type: application/json');
 
         require_once "modules/stic_AWF_Forms/Utils.php";
-        $result = getRecordsTextById($_REQUEST['reqmodule'], json_decode(html_entity_decode($_REQUEST['reqids']),true));
+        $result = stic_AWF_FormsUtils::getRecordsTextById($_REQUEST['reqmodule'], json_decode(html_entity_decode($_REQUEST['reqids']),true));
         $resultStr = json_encode($result, JSON_UNESCAPED_UNICODE);
         echo $resultStr;
 
