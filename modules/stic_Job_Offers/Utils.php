@@ -851,12 +851,16 @@ class stic_Job_OffersUtils
 
         $contactsTargets = $db->query($sqlForContacts);
 
-        $lpoName = "{$offerBean->name} - ({$label}) - " . date('d-m-Y');
-        $lpoNameQuoted = $db->quote($lpoName);
+        // Build a stable LPO name including offer ID so it can be reused
+        $labelQuoted = $db->quote($label);
+        $lpoName = "{$offerBean->name} - ({$offerId}) - ({$label})";
 
+        // Reuse an existing LPO for the same offer, even if offer name changed
         $existingLPO = BeanFactory::getBean('ProspectLists')->get_full_list(
-            '',
-            "prospect_lists.name = '{$lpoNameQuoted}' AND prospect_lists.deleted = 0"
+            'prospect_lists.date_modified DESC',
+            "prospect_lists.deleted = 0
+            AND prospect_lists.name LIKE '%({$offerIdQuoted})%'
+            AND prospect_lists.name LIKE '%({$labelQuoted})%'"
         );
 
         if (empty($existingLPO)) {
