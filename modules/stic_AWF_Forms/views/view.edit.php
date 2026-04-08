@@ -109,8 +109,8 @@ class stic_AWF_FormsViewEdit extends ViewEdit
         $this->ss->assign('title', $this->getModuleTitle(false));
 
         require_once "modules/stic_AWF_Forms/Utils.php";
-        $this->ss->assign('enabledModules', json_encode(getEnabledModules()));
-        $this->ss->assign('mainThemeColor', getCustomBaseColor());
+        $this->ss->assign('enabledModules', json_encode(stic_AWF_FormsUtils::getEnabledModules()));
+        $this->ss->assign('mainThemeColor', stic_AWF_FormsUtils::getCustomBaseColor());
         $this->ss->assign('msgWarnings', $msgWarnings);
         $this->ss->assign('isAdminUser', $GLOBALS['current_user']->is_admin ? true : false);
 
