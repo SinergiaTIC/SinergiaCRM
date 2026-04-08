@@ -135,6 +135,9 @@ class OutboundEmailAccounts extends OutboundEmailAccounts_sugar
         }
 
         $this->mail_smtppass = $this->mail_smtppass ? blowfishDecode(blowfishGetKey('OutBoundEmail'), $this->mail_smtppass) : null;
+        // STIC-Custom 20260407 EPS - Unencrypt fetched password
+        $this->fetched_row['mail_smtppass'] = $this->fetched_row['mail_smtppass'] ? blowfishDecode(blowfishGetKey('OutBoundEmail'), $this->fetched_row['mail_smtppass']) : null;
+        // END STIC
         return $results;
     }
 
@@ -529,10 +532,16 @@ HTML;
 					var smtpssl  = document.getElementById('mail_smtpssl').value;
 					var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
 					var mail_sendtype = 'SMTP';
-                                                                var adminNotifyFromAddress = document.getElementById('smtp_from_addr').value ? document.getElementById('smtp_from_addr').value :'$adminNotifyFromName';
-                                                                var adminNotifyFromName = document.getElementById('smtp_from_name').value ? document.getElementById('smtp_from_name').value : '$adminNotifyFromAddress';
+                    var adminNotifyFromAddress = document.getElementById('smtp_from_addr').value ? document.getElementById('smtp_from_addr').value :'$adminNotifyFromName';
+                    var adminNotifyFromName = document.getElementById('smtp_from_name').value ? document.getElementById('smtp_from_name').value : '$adminNotifyFromAddress';
+                    // STIC-Custom 20260407 EPS - Get mailer name and pass it to test outbound email
+					// var postDataString =
+					// 'mail_type=system&' +
+                    var mail_name = document.getElementById('name').value ? document.getElementById('name').value : '';
+                    debugger;                                                                
 					var postDataString =
-						'mail_type=system&' +
+						'mail_type=' + mail_name + '&' +
+                    // END STIC-Custom                   
 						'mail_sendtype=' + mail_sendtype + '&' +
 						'mail_smtpserver=' + smtpServer + "&" +
 						"mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl + "&" +
