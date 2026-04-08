@@ -61,19 +61,19 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'New Form Response Detail',
 
   'LBL_QUESTION_SORT_ORDER' => 'Order',
-  'LBL_QUESTION_KEY' => 'Question Key',
+  'LBL_QUESTION_KEY' => 'Question key',
   'LBL_QUESTION_LABEL' => 'Label',
-  'LBL_QUESTION_HELP_TEXT' => 'Help Text',
-  'LBL_QUESTION_SECTION' => 'Data Block',
-  'LBL_ANSWER_VALUE' => 'Answer Value',
+  'LBL_QUESTION_HELP_TEXT' => 'Help text',
+  'LBL_QUESTION_SECTION' => 'Data block',
+  'LBL_ANSWER_VALUE' => 'Answer value',
   'LBL_ANSWER_TEXT' => 'Answer',
   'LBL_ANSWER_FORM_TYPE' => 'Type',
-  'LBL_ANSWER_INTEGER' => 'Answer Integer Value',
+  'LBL_ANSWER_INTEGER' => 'Answer integer value',
 
   'LBL_FORM_ID' => 'Form ID',
   'LBL_FORM' => 'Form',
   'LBL_RESPONSE_ID' => 'Response ID',
-  'LBL_RESPONSE' => 'Form Response',
+  'LBL_RESPONSE' => 'Form response',
 
   'LBL_STIC_AWF_RESPONSE_DETAILS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSE_DETAILS_TITLE' => 'Form Response Details',
 );
