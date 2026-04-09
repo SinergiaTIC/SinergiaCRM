@@ -359,9 +359,6 @@ class ResponseHandler
             // Reload response to get updated status
             $responseBean = BeanFactory::getBean('stic_AWF_Responses', $responseBean->id);
             
-            // Generate analytical response details
-            ResponseProcessingService::generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
-            
             // Handle terminal action
             $lastAction = $lastResult->getAction();
             if ($lastAction instanceof ITerminalAction) {
