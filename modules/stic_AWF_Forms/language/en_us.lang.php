@@ -104,7 +104,7 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP4' => 'Layout',
   'LBL_WIZARD_DESC_STEP4' => "Design of the form's appearance. Allows defining the visual style, organizing data blocks, customizing the header and footer of the form, etc.",
   'LBL_WIZARD_TITLE_STEP5' => 'Summary and publication',
-  'LBL_WIZARD_DESC_STEP5' => 'Review and activation of the form. Allows activating the reception of responses, obtaining the public access link, or downloading the HTML code to integrate it into an external website.',
+  'LBL_WIZARD_DESC_STEP5' => 'Review and activation of the form. Allows activating the reception of responses, obtaining the public access link or downloading the HTML code to integrate it into an external website.',
 
   // General buttons
   'LBL_BUTTON_ADD' => 'Add',
@@ -142,7 +142,7 @@ $mod_strings = array (
   'LBL_FIELDS_FORM_TAB' => 'Form',
   'LBL_FIELDS_FORM_TAB_DESC' => 'Fields that will be included in the public form.',
   'LBL_FIELDS_FIXED_TAB' => 'Server',
-  'LBL_FIELDS_FIXED_TAB_DESC' => 'Fields with a preset value that will be incorporated into the data received from the forms.',
+  'LBL_FIELDS_FIXED_TAB_DESC' => 'Fields with a preset value that will be added to the data received from the forms.',
   'LBL_FIELD_FORM' => 'Field in the form',
   'LBL_FIELD_FORM_ADD' => 'Add field',
   'LBL_FIELD_FORM_NEW' => 'New field',
@@ -175,7 +175,7 @@ $mod_strings = array (
   'LBL_FIELD_LINK_TEXT' => 'Link text',
   'LBL_FIELD_LINK_URL' => 'Destination URL',
   'LBL_FIELD_VALUE_TYPE' => 'Value type',
-  'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Associated list',
+  'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Related list',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Customize options',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modified)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Select records',
@@ -249,7 +249,7 @@ $mod_strings = array (
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Module',
   'LBL_ACTION_PARAM_CRM_RECORD_RECORD' => 'Record',
   'LBL_ACTION_PARAM_OPTION_SELECTOR_OPTION' => 'Option',
-  'LBL_ACTION_PARAM_MISSING_MESSAGE' => 'Mandatory parameters are missing values. Review action configuration and assign values to required parameters before saving.',
+  'LBL_ACTION_PARAM_MISSING_MESSAGE' => 'Some required parameters have no value. Review action settings and set values to required parameters before saving.',
   'LBL_ACTION_CONDITION_TEXT' => 'This action will only execute if the condition is met.',
   'LBL_ACTION_CONTINUE_ON_ERROR' => 'Continue on error',
   'LBL_ACTION_CONTINUE_ON_ERROR_DESC' => 'If activated, the flow will continue even if the action fails.',
@@ -413,14 +413,14 @@ $mod_strings = array (
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Add to Target List',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Adds the processed record (person, prospect, user, or organization) to an existing Target List',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Adds the processed record (person, prospect, user or organization) to an existing Target List',
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_TEXT' => 'Recipient',
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indicates the data block containing the recipient to be added to the Target List',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Target List (LPO)',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Target List',
   
   // SendEmailToDataBlockAction
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Send email to form sender',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Sends an email to the processed record (person, prospect, user, or organization) contained in a data block',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Sends an email to the processed record (person, prospect, user or organization) contained in a data block',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Recipient',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indicates the data block containing the email recipient',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Email template',
@@ -454,7 +454,7 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_METHOD_GET_TEXT' => 'GET (data added to redirect URL)',
   'LBL_REDIRECT_ACTION_METHOD_POST_TEXT' => 'POST (data sent via hidden form)',
   'LBL_REDIRECT_ACTION_FIELDS_TEXT' => 'Fields to send',
-  'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Indicates the fields to send to the redirect URL. Leave blank if no data needs to be sent.',
+  'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Indicates the fields to send to the redirect URL. Leave blank if there is no data to send.',
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redirecting...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Click here to continue',
 
@@ -487,7 +487,7 @@ $mod_strings = array (
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
-  'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Regex Validator',
+  'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Regex validator',
   'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Validates a field according to a regular expression',
   'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Regular expression',
   'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Field format is invalid',
