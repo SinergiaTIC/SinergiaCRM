@@ -346,81 +346,42 @@ class ResponseHandler
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
 
         } else {
-            // Sync mode - Execute Flow 0: 'mainFlow' immediately
+            // Sync mode - Call ResponseProcessingService
+            require_once 'modules/stic_AWF_Forms/core/ResponseProcessingService.php';
+            
+            // Update status to processing
             $responseBean->status = 'processing';
             $responseBean->save();
-
-            if ($mainFlow) {
-                // Execute all actions
-                $lastResult = $executor->executeFlow($mainFlow, $errorFlow);
-
-                // Save traceability links (created/modified records)                
-                $this->saveLinks($responseBean, $context);
-
-                // Generate analytical response details
-                $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
-
-                // Update status and generate execution log
-                $hasErrors = false;
-                $logSummary = "[" . date('Y-m-d H:i:s') . "]\n";
-                foreach ($context->actionResults as $result) {
-                    if ($result->isError()) {
-                        $hasErrors = true;
-                        $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
-                    } elseif ($result->isSkipped()) {
-                        $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_AWF_Responses');
-                    } else {
-                        $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
-                    }
-                    $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
-                    $logSummary .= "{$icon} {$actionName}";
-                    if (!empty($result->message)) {
-                        $logSummary .= ": " . $result->message;
-                    }
-                    $logSummary .= "\n";
+            
+            // Process response using the service
+            $lastResult = ResponseProcessingService::processResponse($responseBean->id);
+            
+            // Reload response to get updated status
+            $responseBean = BeanFactory::getBean('stic_AWF_Responses', $responseBean->id);
+            
+            // Generate analytical response details
+            ResponseProcessingService::generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
+            
+            // Handle terminal action
+            $lastAction = $lastResult->getAction();
+            if ($lastAction instanceof ITerminalAction) {
+                try {
+                    $lastAction->performTerminal($context, $lastResult);
+                } catch (\Throwable $t) {
+                    $context->addError($t, $lastResult->actionConfig);
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action: " . $t->getMessage());
                 }
-                $responseBean->execution_log = $logSummary;
-
-                // Update status
-                if ($lastResult->isError()) {
-                    $responseBean->status = 'error';
-                } elseif ($lastResult->isWait()) {
-                    $responseBean->status = 'awaiting_action'; 
-                } else {
-                    $responseBean->status = $hasErrors ? 'error' : 'processed';
-                }
-                $responseBean->save();
-
-                if ($lastResult->isWait()) {
-                    $this->createDeferredTicket($context, $lastResult);
-                }
-
-                // Get last action and check if is Terminal
-                $lastAction = $lastResult->getAction();
-                if ($lastAction instanceof ITerminalAction) {
-                    try {
-                        $lastAction->performTerminal($context, $lastResult);
-                    } catch (\Throwable $t) {
-                        $context->addError($t, $lastResult->actionConfig);
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action in Main flow {$lastResult->actionConfig?->name}: " . $t->getMessage());
-                    }
-                }
-                // No terminal (or error runing terminal): Show generic message
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found or failed in Main flow in form. ID: $formId");
-                if ($hasErrors) {
-                    $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
-                    $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
-                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
-                } else {
-                    $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-                    $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
-                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg); 
-                }
-                
+            }
+            
+            // Render response to user
+            if ($responseBean->status === 'error') {
+                $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
+                $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
+                stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             } else {
-                // If there is no main flow, we show generic message
-                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
-                stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
+                $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+                $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+                stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             }
         }
     }
@@ -792,118 +753,6 @@ class ResponseHandler
         }
 
         return $errors;
-    }
-
-    /**
-     * Generates response details for storage and subsequent analysis.
-     * @param SugarBean $responseBean Response bean
-     * @param SugarBean $formBean Form bean
-     * @param FormConfig $formConfig Form configuration
-     * @param array $submittedData Data sent in the submission
-     */
-    private function generateResponseDetails(SugarBean $responseBean, SugarBean $formBean, FormConfig $formConfig, array $submittedData): void {
-        global $app_strings;
-
-        // Global counter
-        $orderCounter = 1;
-
-        // if (!$responseBean->load_relationship('details_link')) {
-        //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
-        // }
-
-        foreach ($formConfig->data_blocks as $block) {
-            foreach ($block->fields as $field) {
-                $currentOrder = $orderCounter;
-                $orderCounter += 1;
-
-                // Skip fixed fields
-                if ($field->type_field === DataBlockFieldType::FIXED) continue;
-
-                // Input key
-                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached_' : '';
-                $inputKey = $prefix . $block->name . '_' . $field->name;
-                
-                $rawValue = $submittedData[$inputKey] ?? null;
-                
-                // Calculate readable text and value to store
-                $readableText = $rawValue;
-                $storedValue = $rawValue;
-                
-                // List type fields (select, multiselect, radio)
-                if (!empty($field->value_options)) {
-                    if (is_array($rawValue)) {
-                        // Multi-selection
-                        $labels = [];
-                        foreach ($rawValue as $valItem) {
-                            $opt = $this->findOption($field->value_options, $valItem);
-                            $labels[] = $opt ? $opt->text : $valItem;
-                        }
-                        $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Store JSON ["A","B"]
-                        $readableText = implode(', ', $labels); // Text: "Option A, Option B"
-                    } else {
-                        // Single selection
-                        $opt = $this->findOption($field->value_options, $rawValue);
-                        if ($opt) {
-                            $readableText = $opt->text;
-                        }
-                    }
-                } 
-                // Boolean fields (checkbox)
-                elseif ($field->type === 'bool' || $field->type === 'checkbox') {
-                    $isTrue = ($rawValue === '1' || $rawValue === 'on' || $rawValue === 'true' || $rawValue === true);
-                    $readableText = $isTrue ? $app_strings['LBL_YES'] : $app_strings['LBL_NO'];
-                    $storedValue = $isTrue ? '1' : '0';
-                }
-                // Generic arrays that are not lists
-                elseif (is_array($rawValue)) {
-                    $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE);
-                    $readableText = 'Array'; 
-                }
-
-                // Create analytical response bean
-                $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
-                $detailBean->stic_awf_responses_id_c = $responseBean->id;
-                $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 
-                $detailBean->assigned_user_id = $responseBean->assigned_user_id;
-                
-                $detailBean->question_key = $block->name . '.' . $field->name;
-                $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
-                $detailBean->question_label = rtrim($detailBean->question_label, ' :');
-                if (!empty($field->description)) {
-                    $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
-                }
-                $detailBean->question_section = $block->text;
-                
-                $detailBean->question_sort_order = $currentOrder;
-
-                $detailBean->answer_value = (string)$storedValue;
-                $detailBean->answer_text = (string)$readableText;
-                $detailBean->answer_type = $field->type_in_form;
-                
-                // Save the value as integer to facilitate analysis
-                // Special handling for rating fields to normalize them to a 0-100 scale
-                if ($field->type_in_form === 'rating' && is_numeric($rawValue)) {
-                    $rawNum = (float)$rawValue;
-                    
-                    if ($field->subtype_in_form === 'rating_nps') {
-                        // NPS (0-10) -> Scale 0-100
-                        $normalized = $rawNum * 10;
-                    } else {
-                        // Stars, emojis, lights, thumbs (1-5) -> Scale 0-100: 1=20, 2=40, 3=60, 4=80, 5=100
-                        $normalized = $rawNum * 20;
-                    }
-                    // Make sure to store a clean integer limited between 0 and 100
-                    $detailBean->answer_integer = (int)max(0, min(100, round($normalized)));
-                } elseif (!is_array($rawValue) && is_numeric($rawValue)) {
-                    // Save the numeric value if applicable
-                    $detailBean->answer_integer = (int)round((float)$rawValue);
-                } else {
-                    $detailBean->answer_integer = 0;
-                }
-
-                $detailBean->save();
-            }
-        }
     }
 
     /** 

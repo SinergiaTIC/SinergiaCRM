@@ -194,3 +194,23 @@ function sticAWFCancelExpiredTickets() {
 
     return stic_AWF_FormsUtils::cancelExpiredTickets();
 }
+
+// Scheduled task to process async AWF responses
+$job_strings[] = 'sticAWFProcessAsyncResponses';
+
+/**
+ * Processes pending async form responses in batch.
+ * Called by scheduler every minute.
+ * @return boolean
+ */
+function sticAWFProcessAsyncResponses() {
+    require_once 'modules/stic_AWF_Forms/core/AsyncResponseProcessor.php';
+    require_once 'modules/stic_AWF_Forms/core/ResponseProcessingService.php';
+    require_once 'modules/stic_AWF_Forms/core/includes.php';
+    
+    $result = AsyncResponseProcessor::processBatch();
+    
+    $GLOBALS['log']->info("Line " . __LINE__ . ": " . __METHOD__ . ": Async batch complete. Processed: {$result['processed']}, Errors: {$result['errors']}");
+    
+    return $result['processed'] > 0 || $result['errors'] > 0;
+}
