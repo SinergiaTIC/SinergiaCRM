@@ -85,6 +85,4 @@ $mod_strings = array (
   'LBL_FIELD_CHANGE_SKIPPED_DUPLICATE' => 'Saltado por duplicado',
   'LBL_FIELD_CHANGE_UNCHANGED' => 'Sin cambios',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
-  
-  'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_RESPONSES_TITLE' => 'Respuesta a formulario',
 );
