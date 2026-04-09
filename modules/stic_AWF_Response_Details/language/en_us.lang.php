@@ -48,7 +48,7 @@ $mod_strings = array (
   'LBL_ASCENDING' => 'Ascending',
   'LBL_DESCENDING' => 'Descending',
 
-'LBL_LIST_FORM_TITLE' => 'Form Response Details List',
+  'LBL_LIST_FORM_TITLE' => 'Form Response Details List',
   'LBL_MODULE_NAME' => 'Form Response Details',
   'LBL_MODULE_TITLE' => 'Form Response Details',
   'LBL_HOMEPAGE_TITLE' => 'My Form Response Details',

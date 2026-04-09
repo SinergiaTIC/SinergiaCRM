@@ -48,7 +48,7 @@ $mod_strings = array (
   'LBL_ASCENDING' => 'Ascendent',
   'LBL_DESCENDING' => 'Descendent',
 
-'LBL_LIST_FORM_TITLE' => 'Llista de Vincles de formularis',
+  'LBL_LIST_FORM_TITLE' => 'Llista de Vincles de formularis',
   'LBL_MODULE_NAME' => 'Vincles de formularis',
   'LBL_MODULE_TITLE' => 'Vincles de formularis',
   'LBL_HOMEPAGE_TITLE' => 'Els meus Vincles de formularis',
@@ -85,6 +85,4 @@ $mod_strings = array (
   'LBL_FIELD_CHANGE_SKIPPED_DUPLICATE' => 'Saltat per duplicat',
   'LBL_FIELD_CHANGE_UNCHANGED' => 'Sense canvis',
   'LBL_ADDITIONAL_INFO' => 'Informació addicional',
-  
-  'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_RESPONSES_TITLE' => 'Resposta a formulari',
 );

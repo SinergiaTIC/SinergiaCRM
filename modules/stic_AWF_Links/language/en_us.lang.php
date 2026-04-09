@@ -48,7 +48,7 @@ $mod_strings = array (
   'LBL_ASCENDING' => 'Ascending',
   'LBL_DESCENDING' => 'Descending',
 
-'LBL_LIST_FORM_TITLE' => 'Form Links List',
+  'LBL_LIST_FORM_TITLE' => 'Form Links List',
   'LBL_MODULE_NAME' => 'Form Links',
   'LBL_MODULE_TITLE' => 'Form Links',
   'LBL_HOMEPAGE_TITLE' => 'My Form Links',
@@ -85,6 +85,4 @@ $mod_strings = array (
   'LBL_FIELD_CHANGE_SKIPPED_DUPLICATE' => 'Skipped as duplicate',
   'LBL_FIELD_CHANGE_UNCHANGED' => 'No changes',
   'LBL_ADDITIONAL_INFO' => 'Additional information',
-  
-  'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_RESPONSES_TITLE' => 'Form response',
 );

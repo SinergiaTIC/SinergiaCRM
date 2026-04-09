@@ -48,7 +48,7 @@ $mod_strings = array (
   'LBL_ASCENDING' => 'Ascendent',
   'LBL_DESCENDING' => 'Descendent',
 
-'LBL_LIST_FORM_TITLE' => 'Llista de Respostes a formularis',
+  'LBL_LIST_FORM_TITLE' => 'Llista de Respostes a formularis',
   'LBL_MODULE_NAME' => 'Respostes a formularis',
   'LBL_MODULE_TITLE' => 'Respostes a formularis',
   'LBL_HOMEPAGE_TITLE' => 'Les meves Respostes a formularis',
