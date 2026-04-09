@@ -853,25 +853,37 @@ class stic_Job_OffersUtils
 
         // Build a stable LPO name including offer ID so it can be reused
         $labelQuoted = $db->quote($label);
+        $offerNameQuoted = $db->quote($offerBean->name);
         $lpoName = "{$offerBean->name} - ({$offerId}) - ({$label})";
 
-        // Reuse an existing LPO for the same offer, even if offer name changed
-        $existingLPO = BeanFactory::getBean('ProspectLists')->get_full_list(
+        // Reuse LPO with offer ID or without ID
+        $lpoList = BeanFactory::getBean('ProspectLists')->get_full_list(
             'prospect_lists.date_modified DESC',
             "prospect_lists.deleted = 0
-            AND prospect_lists.name LIKE '%({$offerIdQuoted})%'
-            AND prospect_lists.name LIKE '%({$labelQuoted})%'"
+            AND (
+                (
+                    prospect_lists.name LIKE '%({$offerIdQuoted})%'
+                    AND prospect_lists.name LIKE '%({$labelQuoted})%'
+                )
+                OR prospect_lists.name LIKE '{$offerNameQuoted} - ({$labelQuoted}) - %'
+            )"
         );
 
-        if (empty($existingLPO)) {
+        if (!empty($lpoList)) {
+            $lpoBean = array_shift($lpoList);
+
+            // If LPO name does not match exactly, update it to ensure it includes offer ID and label for better identification
+            if ($lpoBean->name !== $lpoName) {
+                $lpoBean->name = $lpoName;
+                $lpoBean->save();
+            }
+        } else {
             $lpoBean = BeanFactory::newBean('ProspectLists');
             $lpoBean->name = $lpoName;
             $lpoBean->list_type = 'default';
             $lpoBean->assigned_user_id = $offerBean->assigned_user_id ?? $current_user->id;
             $lpoBean->assigned_user_name = $offerBean->assigned_user_name ?? $current_user->user_name;
             $lpoBean->save();
-        } else {
-            $lpoBean = array_shift($existingLPO);
         }
 
         $lpoBean->load_relationship('contacts');
