@@ -47,7 +47,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-global $current_user;
+global $current_user, $mod_strings;
 require_once('modules/Campaigns/utils.php');
 
 //if campaign_id is passed then we assume this is being invoked from the campaign module and in a popup.

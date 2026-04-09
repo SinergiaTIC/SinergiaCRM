@@ -438,7 +438,7 @@ class stic_MessagesViewConversation extends SugarView {
                         <input type="file" id="mediaFile" style="display:none;"
                             accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/3gpp,audio/ogg,audio/mpeg,audio/mp4,audio/amr,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             onchange="handleFileSelected(this)">
-                        <button class="attach-btn" onclick="document.getElementById('mediaFile').click()" title="<?= $lbl('LBL_CONVERSATION_ATTACH') ?>">📎</button>
+                        <button class="attach-btn" onclick="document.getElementById('mediaFile').click()" title="<?= $lbl('LBL_ATTACHMENT') ?>">📎</button>
                         <textarea id="msgText"
                             placeholder="<?= $lbl('LBL_CONVERSATION_PLACEHOLDER') ?>"
                             rows="1"

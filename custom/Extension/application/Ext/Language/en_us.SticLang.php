@@ -4007,7 +4007,7 @@ $app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Authentica
 // Email Templates: Whatsapp status types
 $app_list_strings['stic_whatsapp_status_list'][''] = '';
 $app_list_strings['stic_whatsapp_status_list']['draft'] = 'Draft';
-$app_list_strings['stic_whatsapp_status_list']['pending'] = 'pending';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_whatsapp_status_list']['approved'] = 'Approved';
 $app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rejected';
 $app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Unsubmitted';

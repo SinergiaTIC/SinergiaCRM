@@ -4038,5 +4038,18 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensaxes';
 
+// Email Templates: Tipos de categoría WhatsApp
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Marketing';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilidad';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticación';
+
+// Email Templates: Tipos de estado de aprobación WhatsApp
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Borrador';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pendiente de aprobación';
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprobada';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rechazada';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sin enviar';
+
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
