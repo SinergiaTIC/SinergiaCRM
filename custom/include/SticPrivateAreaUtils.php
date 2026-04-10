@@ -52,30 +52,25 @@ class SticPrivateAreaUtils
         $isBeingEnabled = self::isPrivateAreaBeingEnabled($bean);
         $submittedPassword = (string)($_REQUEST['stic_pa_password_c'] ?? '');
         $hasSubmittedPassword = (array_key_exists('stic_pa_password_c', $_REQUEST) && $submittedPassword !== '');
-        $beanPasswordValue = (string)($bean->stic_pa_password_c ?? '');
         $storedPassword = self::getStoredPrivateAreaPassword($bean);
         $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
 
         if (!$hasSubmittedPassword) {
             if ($isBeingEnabled || $storedPassword === '') {
                 $plainPassword = self::generateRandomPassword();
-                $bean->stic_pa_password_c = $bean->encrpyt_before_save($plainPassword);
+                $bean->stic_pa_password_c = $plainPassword;
                 $bean->_stic_plain_pa_password = $plainPassword;
             } else {
-                $bean->stic_pa_password_c = $bean->encrpyt_before_save($storedPassword);
+                $bean->stic_pa_password_c = $storedPassword;
                 $bean->_stic_plain_pa_password = '';
             }
         } else {
             if ($fetchedPassword !== '' && $submittedPassword === $fetchedPassword && $storedPassword !== '') {
-                $bean->stic_pa_password_c = $bean->encrpyt_before_save($storedPassword);
+                $bean->stic_pa_password_c = $storedPassword;
                 $bean->_stic_plain_pa_password = '';
             } else {
                 $bean->_stic_plain_pa_password = $submittedPassword;
-
-                // Encrypt password only if it has changed or AP is being enabled now
-                if ($beanPasswordValue === $submittedPassword) {
-                    $bean->stic_pa_password_c = $bean->encrpyt_before_save($submittedPassword);
-                }
+                $bean->stic_pa_password_c = $submittedPassword;
             }
         }
 

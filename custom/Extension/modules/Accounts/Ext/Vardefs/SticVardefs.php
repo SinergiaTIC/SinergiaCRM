@@ -2120,7 +2120,11 @@ $dictionary['Account']['fields']['stic_pa_password_c'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'studio' => array(
+        'editview' => true,
         'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+        'popupsearch' => false,
         'quickcreate' => false,
     ),
 );
