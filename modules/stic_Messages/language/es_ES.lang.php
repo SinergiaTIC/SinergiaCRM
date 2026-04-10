@@ -59,6 +59,7 @@ $mod_strings = array (
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
   'LBL_STIC_MESSAGES_SUBPANEL_TITLE' => 'Mensaje',
+  'LBL_ATTACHMENTS_SUBPANEL_TITLE' => 'Adjuntos',
   'LBL_NEW_FORM_TITLE' => 'Nuevo Mensaje',
   'LBL_MESSAGE' => 'Mensaje',
   'LBL_TYPE' => 'Tipo',
