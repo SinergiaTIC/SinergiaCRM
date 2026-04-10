@@ -3941,7 +3941,7 @@ $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['error'] = '
 // Advanced Web Forms: configuration->data_block->field->type_field
 $app_list_strings['stic_awf_forms_field_type_field_list']['unlinked'] = 'Unlinked';
 $app_list_strings['stic_awf_forms_field_type_field_list']['form'] = 'Form';
-$app_list_strings['stic_awf_forms_field_type_field_list']['hidden'] = 'Fixed Value';
+$app_list_strings['stic_awf_forms_field_type_field_list']['hidden'] = 'Fixed value';
 
 // Advanced Web Forms: configuration->data_block->field->type_in_form
 // Advanced Web Forms Response Details: answer_form_type
@@ -3963,7 +3963,7 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['textarea'] = '�
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['number'] = '🔢 Numeric';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date'] = '📅 Date';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date_time'] = '⏱️ Time';
-$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date_datetime'] = '📅⏱️ Date and Time';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date_datetime'] = '📅⏱️ Date and time';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select'] = '🔻 Dropdown';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_multiple'] = '📑 Multi-select dropdown';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_checkbox_list'] = '☑️ Checkbox list';
@@ -3974,13 +3974,13 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_stars'] =
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] = '🙂 Emojis';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Traffic lights';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Thumbs up/down';
-$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 0-10 Scale (NPS)';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 0-10 Scale';
 
 // Advanced Web Forms: configuration->data_block->field->value_type
 $app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
 $app_list_strings['stic_awf_forms_field_value_type_list']['selectable'] = 'Selectable';
-$app_list_strings['stic_awf_forms_field_value_type_list']['fixed'] = 'Fixed Value';
-$app_list_strings['stic_awf_forms_field_value_type_list']['dataBlock'] = 'Data Block';
+$app_list_strings['stic_awf_forms_field_value_type_list']['fixed'] = 'Fixed value';
+$app_list_strings['stic_awf_forms_field_value_type_list']['dataBlock'] = 'Data block';
 
 // Advanced Web Forms: configuration->layout->structure->containerType
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel'] = 'Panel (simple)';
@@ -3997,7 +3997,7 @@ $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['lg'] = '
 // Advanced Web Forms: configuration->layout->theme->input_style
 $app_list_strings['stic_awf_forms_layout_theme_input_style_list']['standard'] = 'Standard (border)';
 $app_list_strings['stic_awf_forms_layout_theme_input_style_list']['flat'] = 'Flat (underline only)';
-$app_list_strings['stic_awf_forms_layout_theme_input_style_list']['filled'] = 'Filled (Material Design)';
+$app_list_strings['stic_awf_forms_layout_theme_input_style_list']['filled'] = 'Filled (Material design)';
 
 // Advanced Web Forms: configuration->layout->theme->form_width
 $app_list_strings['stic_awf_forms_layout_theme_form_width_list']['100%'] = 'Full width (100%)';
@@ -4033,7 +4033,7 @@ $app_list_strings['stic_awf_forms_date_relative_list']['custom'] = 'Custom...';
 // Advanced Web Forms Responses: status
 $app_list_strings['stic_awf_responses_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_awf_responses_status_list']['processing'] = 'Processing';
-$app_list_strings['stic_awf_responses_status_list']['awaiting_action'] = 'Awaiting Action';
+$app_list_strings['stic_awf_responses_status_list']['awaiting_action'] = 'Awaiting action';
 $app_list_strings['stic_awf_responses_status_list']['processed'] = 'Processed';
 $app_list_strings['stic_awf_responses_status_list']['rejected'] = 'Rejected';
 $app_list_strings['stic_awf_responses_status_list']['spam'] = 'Spam';
@@ -4044,7 +4044,7 @@ $app_list_strings['stic_awf_links_record_action_list']['created'] = 'Created';
 $app_list_strings['stic_awf_links_record_action_list']['updated'] = 'Updated';
 $app_list_strings['stic_awf_links_record_action_list']['enriched'] = 'Enriched';
 $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Skipped';
-$app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Processed (Metadata)';
+$app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Processed';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Unchanged';
 
 // SuiteCRM Core modifications

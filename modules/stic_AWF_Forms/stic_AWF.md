@@ -2,47 +2,75 @@
 ## Introducción ##
 Los formularios web son uno de los canales habituales a través de los que una entidad recibe información de su base social: donativos, altas de socios, recogidas de firmas, suscripciones a boletines electrónicos, inscripciones a eventos, peticiones de servicios, etc.
 
-Que la información recibida por esta vía quede directamente incorporada al CRM de la entidad supone unos beneficios notables, puesto que evita cualquier proceso de traspaso o de registro manual de los datos recibidos y mejora la calidad de la información que entra en la aplicación, al poder aprovechar los mecanismos de detección de duplicados y otras funcionalidades del sistema.
+Que la información recibida por esta vía quede directamente incorporada al CRM de la entidad supone unos beneficios notables, puesto que evita cualquier proceso de traspaso o de registro manual de los datos recibidos y mejora la calidad de la información que entra en la aplicación.
 
-Anteriormente, SinergiaCRM contaba con tres tipos distintos de asistentes estáticos para la creación de formularios, vinculados y limitados a operativas y módulos muy concretos. Además, los formularios web que había solo permitían descargar el código HTML de un formulario con un formato básico, que siempre requería ser retocado manualmente para poder colgarlo en un sitio web público.
+El sistema de **Formularios Web Avanzados** ofrece una herramienta integral, altamente versátil, reutilizable y flexible. El objetivo de este sistema es permitir la captura de información compleja desde el exterior y automatizar flujos de trabajo de forma autónoma, ágil y sin necesidad de desarrollos a medida.
 
-El nuevo sistema de **Formularios Web Avanzados** ofrece una herramienta integral, altamente versátil, reutilizable y flexible. El objetivo de este nuevo sistema es permitir la captura de información compleja desde el exterior y automatizar flujos de trabajo sin necesidad de desarrollos a medida. Entre las principales novedades y aportaciones de este sistema destacan:
+## Escenarios de Uso y Beneficios Operativos
+El sistema de Formularios Web Avanzados permite configurar la captación de datos y automatizar su registro en el CRM. A continuación, se detallan los principales escenarios de uso:
 
-* **Persistencia y edición**: Los formularios ahora se guardan en el sistema y se pueden editar en cualquier momento, lo que favorece su reutilización sin tener que crearlos desde cero.
+### Captación y automatización de procesos en un solo paso ###
+* **El escenario:** La entidad necesita publicar un formulario para captar nuevo voluntariado o sumar personas a su base social. Al recibir los datos, se requiere registrar a la persona en el CRM, dejar constancia de su tipo de vinculación con la entidad, incluirla en una lista de distribución para futuras comunicaciones, enviarle un mensaje de bienvenida y notificar al equipo encargado.
+* **La aportación del sistema:** Permite configurar un formulario que encadena todas estas acciones. Al enviarse, el sistema ejecuta secuencialmente:
+    1. Crea o actualiza el registro en el módulo de Personas.
+    2. Crea un registro en el módulo de Relaciones con Personas indicando que el "Tipo de relación" con la entidad es de "Voluntario/a".
+    3. Relaciona ambos registros entre sí.
+    4. Añade a la persona a la Lista de Público Objetivo (LPO) predefinida.
+    5. Dispara el envío del correo electrónico de bienvenida a la persona inscrita.
+    6. Envía un correo de notificación al equipo responsable en el CRM.
 
-* **Opciones de publicación flexibles**: El formulario puede residir directamente en el CRM generando una URL accesible públicamente sin necesidad de descargarlo. También ofrece opciones para insertarlo como un iframe en la web corporativa o descargar el código.
+### Universalidad de módulos y operativas a medida ###
+* **El escenario:** Las entidades gestionan operativas muy diversas y a menudo utilizan módulos personalizados (como "Peticiones de Material", "Adopciones", "Incidencias" o "Proyectos") que requieren capturar información desde el exterior.
+* **La aportación del sistema:** Permite construir formularios sobre **cualquier módulo del CRM**, incluyendo los creados a medida por la entidad desde el área de administración (Estudio). Además, facilita recoger datos de varios módulos a la vez (por ejemplo, permitir que un visitante registre una "Incidencia" y que el sistema la vincule automáticamente a un "Centro" y a la "Persona" que informa).
 
-* **Control de acceso y caducidad programada**: Se puede controlar fácilmente si el formulario es público (para aceptar respuestas) o si está cerrado. Además, permite programar de forma automática la fecha y hora de inicio y fin de su visibilidad pública.
+### Crecimiento orgánico de la base de datos ###
+* **El escenario:** Recibir nueva información desde la web supone el reto de mantener el histórico de los contactos intacto, especialmente cuando las personas comparten datos (como familiares con un mismo correo electrónico) o dejan campos clave en blanco.
+* **La aportación del sistema:** Incorpora un sistema de **detección de duplicados en cascada**. Permite definir reglas de coincidencia de forma independiente para cada tipo de registro (ej. buscar a la persona por DNI, y si no lo ha introducido, buscarla por Email). La acción **"Ampliar"** rellena solo los campos vacíos del CRM respetando los datos existentes.
 
-* **Diseño responsivo y personalizable**: La maquetación visual se separa de la lógica estructural. El diseño es responsivo y se ve perfectamente tanto en dispositivos móviles como en pantallas grandes. Además, es muy personalizable (colores, estilos, inyección de CSS propio) para que se adapte por completo a la estética de la entidad.
+### Mejora de la participación en campañas ###
+* **El escenario:** Al enviar comunicaciones masivas por correo (ej. boletines para captar firmas, apoyo o actualización de datos), si la persona llega a un formulario completamente vacío, existe el riesgo de que abandone el proceso por tener que rellenar información que la entidad ya posee.
+* **La aportación del sistema:** Permite el pre-rellenado mediante URL. Cuando la persona hace clic en el correo, aterriza en el formulario con sus datos personales (nombre, email, etc.) ya cumplimentados, facilitando la participación.
 
-* **Accesibilidad Web (A11y)**: El código generado de forma automática incluye de serie atributos semánticos e información de accesibilidad (etiquetas ARIA), garantizando que los formularios sean inclusivos y puedan ser utilizados por personas que emplean lectores de pantalla u otras tecnologías de asistencia.
+### Comunicaciones automáticas enriquecidas ###
+* **El escenario:** Tras rellenar una solicitud o inscripción, es necesario enviar una confirmación a la persona inscrita con los detalles de su petición.
+* **La aportación del sistema:** El equipo técnico de la entidad puede diseñar plantillas de correo electrónico corporativas y asignarlas al formulario. El sistema envía automáticamente estas plantillas como respuesta inmediata, inyectando de forma dinámica la información de los registros que se acaban de crear. Así, la persona recibe un correo con un formato atractivo que incluye sus datos personales y los detalles específicos de la solicitud o evento, cuyo contenido y estética define la entidad a medida.
 
-* **Universalidad (Cualquier módulo del CRM)**: Ya no se está limitado a crear formularios para módulos predefinidos. Ahora es posible diseñar formularios basados en cualquier módulo del CRM, incluyendo aquellos módulos personalizados creados por la entidad desde el Constructor (Estudio).
+### Uso como interfaz interna para operaciones complejas ###
+* **El escenario:** En el trabajo diario, el equipo a menudo necesita dar de alta registros relacionados navegando por diferentes pantallas del CRM (ej. crear una persona, luego crear su organización, y finalmente vincularlos).
+* **La aportación del sistema:** Los formularios también pueden usarse de forma interna como herramientas de entrada de datos. Se puede diseñar un formulario avanzado y restringirlo por seguridad para que solo sea accesible por el personal con una sesión iniciada en el CRM y con los permisos de rol adecuados para la creación en todos los módulos implicados. Así, el equipo dispone de una pantalla única para introducir datos complejos, quedando la autoría del registro asignada automáticamente a la persona usuaria responsable. La URL generada del formulario puede añadirse como un enlace directo en el menú principal de navegación del CRM.
 
-* **Gestión de registros múltiples (Bloques de datos)**: Un único formulario puede generar y actualizar múltiples registros (del mismo módulo o no) a la vez en el CRM aplicando lógicas diferenciadas.
+### Escalabilidad tecnológica y arquitectura abierta ###
+* **El escenario:** Las entidades desarrollan reglas de negocio específicas o necesitan integraciones particulares.
+* **La aportación del sistema:** Cuenta con una arquitectura modular y desacoplada del CRM. Permite a los desarrolladores programar **nuevas acciones y automatismos a medida** mediante código. Estos nuevos componentes se integran y aparecen en el asistente visual, permitiendo al equipo utilizarlos en cualquier formulario.
 
-* **Validación de datos y Control anti-spam integrado**: Incorpora validación de datos para asegurar que la información (correos, DNI, IBAN, etc.) es correcta. Asimismo, cuenta con un sistema de filtros anti-spam integrados (como el honeypot y el control de tiempos de rellenado) para evitar respuestas automatizadas de bots sin depender de herramientas externas.
+### Despliegue y autonomía técnica ###
+* **El escenario:** Se necesita publicar un formulario con la imagen corporativa, disponer de él rápidamente o reutilizar campañas pasadas asegurando que sea accesible para todo el mundo.
+* **La aportación del sistema:** Los formularios se guardan en el sistema, lo que permite editarlos, duplicarlos y reutilizarlos. El sistema incluye un editor visual para adaptar la estética, colores, tipografías y logotipos. El resultado es un **formulario responsivo y accesible** (basado en Bootstrap 5 y etiquetas semánticas ARIA) que garantiza una experiencia de usuario óptima en diferentes dispositivos (móviles, tabletas o pantallas de escritorio) y permite la navegación mediante tecnologías de asistencia (como lectores de pantalla). El propio CRM puede generar una URL pública y alojar el formulario, o proporcionar el código HTML o Iframe para incrustarlo en una web externa.
 
-* **Detección de duplicados avanzada y a medida**: El sistema de detección de duplicados se configura de forma precisa para cada registro a guardar, permitiendo decidir qué acción realizar si el registro ya existe: Actualizar, Ampliar, Ignorar o generar un Error.
+### Auditoría y trazabilidad total ###
+* **El escenario:** Se requiere auditar qué registros del CRM fueron alterados por un envío concreto de un formulario web o analizar estadísticamente las respuestas.
+* **La aportación del sistema:** Registra cada respuesta recibida en la base de datos. A través del módulo de "Vínculos", proporciona una trazabilidad que permite auditar qué información introdujo el visitante y qué acciones exactas desencadenó (qué registros concretos se crearon, actualizaron o ignoraron). Además, incorpora un componente específico para el análisis estadístico y la extracción de métricas de las respuestas recogidas.
 
-* **Trazabilidad total, historial y análisis de respuestas**: Se registra íntegramente cada respuesta recibida, **incluso aquellas que no llegan a procesarse** (ya sea porque el sistema las detecta como spam o porque el formulario está cerrado). A través de los **"Vínculos"**, se mantiene una trazabilidad total que permite auditar qué registros exactos del CRM han sido afectados. Además, se incorpora un módulo específico de detalles para facilitar el **análisis** estadístico de cada una de las respuestas recogidas (ideal para encuestas y métricas).
 
-* **Lógica y automatismos fácilmente ampliables**: A través de las **"Acciones"**, se puede configurar la lógica del formulario de forma visual. Este sistema de acciones está totalmente desacoplado del "core" del CRM, lo que hace que sean fácilmente ampliables y favorece el desarrollo a medida de nuevas integraciones según crezcan las necesidades de la entidad.
+## Seguridad e Integridad de los Datos
+Los Formularios Web Avanzados incorporan funcionalidades de seguridad nativas para proteger el CRM de ataques, correo basura y preservar la calidad de la información.
 
-### Próximamente ###
-* **Procesamiento asíncrono**: El sistema está preparado para permitir el tratamiento asíncrono de respuestas. Esto permitirá guardar las respuestas temporalmente y procesarlas en segundo plano, ideal para evitar sobrecargas del servidor en formularios con picos de uso muy altos.
+### Protección Anti-Spam Integrada e Invisible ###
+El sistema bloquea ataques automatizados mediante filtros invisibles, sin depender de servicios de terceros ni requerir interacción adicional por parte del visitante:
+* **Campo trampa (Honeypot):** Se inyecta automáticamente un campo oculto en el diseño del formulario que los humanos no ven. Si un bot lo rellena, el sistema detecta el engaño y descarta el envío.
+* **Control de tiempo (TimeTrap):** El sistema monitoriza el tiempo de respuesta y bloquea automáticamente cualquier envío realizado de forma antinatural (en menos de 2 segundos).
+* **Filtro de firmas (User-Agent):** Se bloquean las peticiones provenientes de herramientas de programación utilizadas habitualmente para lanzar ataques masivos analizando la firma tecnológica del navegador (User-Agent) en el momento del envío.
 
-* **Procesos diferidos**: De forma totalmente independiente al procesamiento, el sistema permitirá gestionar acciones en espera de eventos externos, como la espera de confirmación de una pasarela de pago (TPV) o la validación de una entrada mediante código QR.
+### Validación de Datos a Doble Capa y a Medida ###
+Para asegurar que la información que entra es válida (ej. que un correo está bien escrito, o un DNI o teléfono tienen el formato correcto), el sistema verifica los datos por partida doble:
+* **En el navegador:** Avisa a la persona rápidamente si hay un error de formato antes de enviar los datos.
+* **En el servidor (CRM):** Antes de guardar la información, el sistema re-verifica los datos de forma estricta para asegurar el cumplimiento de las reglas de validación.
+* **Validadores extensibles:** La arquitectura del sistema permite a los desarrolladores **programar validadores personalizados por código** para cubrir requisitos de calidad de datos exclusivos de la entidad, sumándose estos al catálogo estándar.
 
-* **Archivos adjuntos**: Habilitará la opción de que los usuarios puedan subir y adjuntar archivos o documentos digitales directamente a través del formulario.
+### Salvaguardas de Integridad ante Duplicados ###
+El sistema evalúa los campos configurados y aplica estrategias de resolución de duplicados.
 
-* **Grupos de bloques de datos repetibles**: Se incorpora el concepto de "Grupo", un contenedor que agrupa uno o más bloques de datos relacionados entre sí. Su característica principal es que puede definirse como "repetible", permitiendo que el conjunto de campos que contiene aparezca múltiples veces en un mismo formulario. Esta funcionalidad será ideal para simplificar operativas complejas, como recoger los datos de varios participantes a la vez en una única inscripción grupal.
-
-* **Mayor flexibilidad en diseño y maquetación**: Se ampliarán las opciones visuales para organizar la información de forma más dinámica, permitiendo agrupar campos mediante pestañas, dividir formularios extensos en múltiples páginas y añadir otros elementos interactivos.
-
-* **Condiciones lógicas avanzadas**: Se habilitará el soporte para múltiples condiciones combinadas y nuevos operadores lógicos (más allá de la igualdad estricta) para dotar de mayor inteligencia a la decisión de cuándo ejecutar una acción o validación concreta.
-
+Como medida de seguridad arquitectónica, **si un formulario llega con un campo clave en blanco, el sistema ignora esa regla de duplicidad**. Esto evita falsos positivos (como que el CRM fusione a dos personas distintas en una sola ficha, solo porque ninguna de las dos indicó su correo electrónico al rellenar el formulario).
 
 ## Conceptos Clave ##
 Antes de crear el primer formulario, es útil conocer cómo se organiza la información en el sistema de Formularios Web Avanzados:
@@ -85,7 +113,7 @@ Aquí se define qué datos componen el bloque. Al configurar los campos, se orga
     2. **Dentro de un Bloque enlazado**: Convivirán junto a los campos normales del CRM. Posibles usos: Son ideales para recabar información que solo tiene sentido en el contexto del envío (como una casilla de "Acepto las condiciones", comentarios adicionales o valoraciones temporales) evitando que estos datos "ensucien" la ficha de la Persona o Inscripción en el CRM.
 
   
-  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. Para ofrecer la máxima fiabilidad y evitar que envíos manipulados omitan los controles, **todas las validaciones se ejecutan por partida doble**: de forma interactiva en el navegador (JavaScript) para una experiencia de usuario fluida, y de forma estricta en el servidor (PHP) antes de procesar y guardar la respuesta. **Para agilizar la configuración, el sistema asigna validadores automáticamente** al detectar ciertos tipos de campos (por ejemplo, al añadir un campo de email, su validador se vincula solo). El sistema incluye un **amplio catálogo de validadores predefinidos**:
+  * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. **Para agilizar la configuración, el sistema asigna validadores automáticamente** al detectar ciertos tipos de campos (por ejemplo, al añadir un campo de email, su validador se vincula solo). El sistema incluye un **amplio catálogo de validadores predefinidos**:
 
     * Formato de Email.
     * Documentos de identidad y salud: DNI, NIE, CIF, NUSS (Número de Afiliación a la Seguridad Social) y CIP (Código de Identificación Personal de CatSalut).
@@ -177,7 +205,7 @@ Por cada regla definida, se debe elegir entre 4 comportamientos si se detecta qu
 
 
 ##### Relaciones ##### 
-Esta sección solo aparece en los bloques enlazados
+*(Esta sección solo aparece en los bloques enlazados)*
 
 Esta sección es fundamental cuando el formulario interactúa con más de un módulo del CRM. Sirve para definir cómo se conectan los registros generados entre sí dentro de la base de datos.
 
@@ -283,9 +311,9 @@ Este es el último paso del asistente, destinado a revisar el resultado final, e
   * **Descargar código**: Permite descargar el código HTML generado para realizar inserciones manuales o integraciones más específicas en plataformas externas.
 
 ## Análisis y Métricas de Rendimiento
-Además de capturar datos, el formulario web es una herramienta de medición de impacto. Desde la vista de detalle o panel de control del formulario, se centraliza toda la información estadística y de rendimiento de la campaña:
+Además de capturar datos, el formulario web es una herramienta de medición de impacto. Desde la vista de detalle del formulario, se centraliza toda la información estadística y de rendimiento de la campaña:
 
-* **Información general y disponibilidad**: Muestra de un vistazo el *Estado* actual (*Borrador*, *Público* o *Cerrado*) y el *Modo de procesamiento* (Síncrono o Asíncrono). Si el formulario es público, refleja también las *Fechas de inicio y fin* programadas para su apertura y cierre automáticos.
+* **Información general y disponibilidad**: Muestra de un vistazo el *Estado* actual (*Borrador*, *Público* o *Cerrado*), y si el formulario es público, refleja también las *Fechas de inicio y fin* programadas para su apertura y cierre automáticos.
 
 * **Tráfico y métricas SEO**: Se contabilizan las *Visitas totales* que recibe el formulario. Asimismo, se registra el número de *Visitas bloqueadas*, que corresponden a intentos de acceso mediante la URL pública cuando el formulario se encuentra cerrado.
 
@@ -317,22 +345,11 @@ A diferencia de sistemas anteriores, los Formularios Web Avanzados ofrecen una a
   
   * **Datos aplicados**: Muestra un desglose del subconjunto de datos que se aplicó a dicho registro, indicando los campos afectados, el valor que se recibió desde el formulario y cómo ha cambiado dicho valor en el CRM (el salto desde el valor que tenía originalmente hasta el nuevo valor asignado).
 
-### Protección Anti-Spam Integrada ###
-Para garantizar la calidad de los datos y evitar envíos automatizados indeseados sin depender de molestos servicios de terceros (como los captchas tradicionales), el sistema incorpora tres capas de seguridad invisibles y transparentes para el usuario final:
-
-* **Honeypot (Campo trampa)**: El sistema inyecta automáticamente un campo oculto en el diseño del formulario. Este campo es invisible para los usuarios humanos, pero los bots de spam, al analizar el código de la página, suelen rellenarlo. Si al procesar la respuesta el CRM detecta que este campo contiene datos, clasifica el envío como spam y lo descarta.
-
-* **TimeTrap (Control de tiempo)**: Se monitoriza el tiempo exacto que transcurre desde que se carga el formulario hasta que se envía. Dado que los bots procesan y envían la información de forma casi instantánea, cualquier respuesta enviada en un intervalo inferior a 2 segundos es detectada y bloqueada como automatizada.
-
-* **Filtro de User-Agent**: El sistema analiza la firma tecnológica del navegador (User Agent) en el momento del envío. Esto permite bloquear por defecto todas aquellas peticiones que provienen de scripts o herramientas de programación conocidas por automatizar ataques (como cURL, rutinas de Python, Postman, Wget, etc.), aceptando únicamente peticiones de navegadores reales.
-
 ## Opciones Avanzadas
 El nuevo sistema ofrece un grado de flexibilidad adicional para perfiles técnicos y administradores, permitiendo adaptar los formularios a casos de uso muy específicos que van más allá de la configuración estándar del asistente:
 
 * **Extensibilidad mediante código**: El ecosistema de formularios no está limitado a lo preestablecido. Tanto las acciones (automatismos) como las validaciones están diseñadas con una arquitectura desacoplada que permite definirlas íntegramente por código. Esto resulta vital para entidades que requieran desarrollar reglas de negocio a medida o validaciones muy específicas y sumarlas al catálogo estándar de acciones de su CRM.
-
-* **Pre-rellenado mediante URL**: El formulario está preparado para capturar valores pasados directamente como parámetros en la dirección URL. 
-  * *Casos de uso*: Es una opción extremadamente útil para campañas de email marketing, donde el usuario al hacer clic en un enlace ya encuentra sus datos personales básicos (nombre, email) pre-rellenados, reduciendo la fricción y mejorando radicalmente las tasas de conversión.
+  * *Guía para desarrolladores*: El propio código del módulo incluye una plantilla exhaustiva de ejemplo y documentación técnica para los programadores. Se puede consultar en el archivo `modules/stic_AWF_Forms/actions/Hook/ExampleAction.php`.
 
 * **Campos ocultos (vs Campos de servidor)**: Los formularios web avanzados incorporan los campos ocultos (`<input type="hidden">`). A diferencia de los "Campos de servidor" (que se configuran y viven de forma segura exclusivamente en el servidor del CRM), los campos ocultos sí se inyectan en el código HTML del formulario.
   * *Casos de uso*: Son ideales para capturar información de contexto dinámica que no requiere intervención visual del usuario, como leer parámetros pasados por la URL (ej: `?origen=newsletter_abril`), capturar identificadores de seguimiento, o permitir que un script externo de la web rellene el campo automáticamente antes de enviar la respuesta.
@@ -340,8 +357,15 @@ El nuevo sistema ofrece un grado de flexibilidad adicional para perfiles técnic
 * **Edición HTML e inyección de nuevos campos**: El sistema genera un código HTML **limpio, indentado y optimizado para su legibilidad**, el cual puede ser descargado y editado libremente para su inserción en plataformas externas. Si se respeta la nomenclatura, el CRM entenderá perfectamente cualquier nuevo campo añadido manualmente en el código sin romper el formulario. Para añadir nuevos campos mapeados al CRM se usa el patrón `NombreBloque.NombreCampoCRM` y, para datos de uso exclusivo en la respuesta (campos no enlazados), el patrón `_detached.NombreBloque.NombreCampo`.
     * *Casos de uso*: Al generar un código limpio, resulta sencillo para un *webmaster* o desarrollador leerlo y modificarlo, aportando libertad total para crear diseños web a medida, maquetaciones altamente personalizadas, o inyectar campos interactivos por JavaScript.
 
+## Próximamente (Evolución del sistema) ##
+* **Procesamiento asíncrono**: El sistema permitirá el tratamiento asíncrono de respuestas: guardará las respuestas temporalmente para procesarlas en segundo plano, ideal para evitar sobrecargas del servidor en formularios con picos de uso muy altos.
 
-* **Formularios de alta complejos para uso interno (Verificar Sesión y Permisos)**: Combinando la flexibilidad de diseño con la acción de **"Verificar sesión activa y permisos"**, los formularios avanzados pueden convertirse en una potente herramienta de uso interno. Esta acción garantiza que únicamente el personal con una sesión iniciada en el CRM y con los permisos de rol adecuados para crear/editar en todos los módulos implicados pueda acceder a ellos. 
-  * *Casos de uso*: La URL generada puede añadirse como un enlace directo en el menú principal de navegación del CRM, dotando al equipo de atajos para operativas de entrada de datos de forma mucho más ágil que utilizando la interfaz estándar. Por ejemplo, permite diseñar una única pantalla de alta rápida que agrupe visualmente la creación de una Persona, de una Organización y genere la relación automática entre ambos registros. Además, gracias a la **asignación inteligente**, todos los registros creados quedarán automáticamente asignados al trabajador que ha rellenado el formulario, manteniendo intacta la autoría de los datos introducidos.
+* **Procesos diferidos**: De forma totalmente independiente al procesamiento, el sistema permitirá gestionar acciones en espera de eventos externos, como la espera de confirmación de una pasarela de pago, la validación de una entrada mediante código QR o la aprobación manual de una solicitud.
 
+* **Archivos adjuntos**: Existirá la opción de que los usuarios puedan subir y adjuntar archivos o documentos digitales directamente a través del formulario.
 
+* **Grupos de bloques de datos repetibles**: Se incorporará el concepto de "Grupo", un contenedor que agrupa uno o más bloques de datos relacionados entre sí. Su característica principal es que podrá definirse como "repetible", permitiendo que el conjunto de campos que contiene aparezca múltiples veces en un mismo formulario. Esta funcionalidad será ideal para simplificar operativas complejas, como recoger los datos de varios participantes a la vez en una única inscripción grupal.
+
+* **Mayor flexibilidad en diseño y maquetación**: Se ampliarán las opciones visuales para organizar la información de forma más dinámica, permitiendo agrupar campos mediante pestañas, dividir formularios extensos en múltiples páginas y añadir otros elementos interactivos.
+
+* **Condiciones lógicas avanzadas**: Se creará el soporte para múltiples condiciones combinadas y nuevos operadores lógicos (más allá de la igualdad estricta) para dotar de mayor inteligencia a la decisión de cuándo ejecutar una acción o validación concreta.

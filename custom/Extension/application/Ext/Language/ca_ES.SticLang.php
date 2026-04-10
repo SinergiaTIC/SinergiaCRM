@@ -3934,9 +3934,9 @@ $app_list_strings['stic_awf_forms_status_list']['public'] = 'Públic';
 $app_list_strings['stic_awf_forms_status_list']['closed'] = 'Tancat';
 
 // Advanced Web Forms: configuration->data_block->duplicate_detection->on_duplicate
-$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['enrich'] = 'Ampliar';
-$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['update'] = 'Actualitzar';
-$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['skip'] = 'Ignorar';
+$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['enrich'] = 'Amplia';
+$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['update'] = 'Actualitza';
+$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['skip'] = 'Ignora';
 $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['error'] = 'Error';
 
 // Advanced Web Forms: configuration->data_block->field->type_field
@@ -3968,14 +3968,14 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date_datetime'] 
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select'] = '🔻 Desplegable';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_multiple'] = '📑 Desplegable múltiple';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_checkbox_list'] = '☑️ Selecció múltiple';
-$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_radio'] = '🔘 Selecció d’opció';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_radio'] = "🔘 Selecció d'opció";
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_checkbox'] = '◻️ Casella de selecció';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_switch'] = '🎚️ Interruptor';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_stars'] = '⭐ Estrelles';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] = '🙂 Cares';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semàfor';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Polzes';
-$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10 (NPS)';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10';
 
 // Advanced Web Forms: configuration->data_block->field->value_type
 $app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
@@ -3990,7 +3990,7 @@ $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tabs']
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['accordion'] = 'Acordió';
 
 // Advanced Web Forms: configuration->layout->theme->shadow_intensity
-$app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['none'] = 'Sense ombrejat (pla)';
+$app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['none'] = 'Sense ombra (pla)';
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['sm'] = 'Subtil';
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['normal'] = 'Normal';
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['lg'] = 'Elevat (flotant)';
@@ -4024,11 +4024,11 @@ $app_list_strings['stic_awf_forms_action_definition_category_list']['validation'
 // Advanced Web Forms: Relative dates
 $app_list_strings['stic_awf_forms_date_relative_list']['today'] = 'Avui (data actual)';
 $app_list_strings['stic_awf_forms_date_relative_list']['now'] = 'Ara (data i hora actuals)';
-$app_list_strings['stic_awf_forms_date_relative_list']['+1_day'] = 'D’aquí a un dia';
-$app_list_strings['stic_awf_forms_date_relative_list']['+1_week'] = 'D’aquí a una setmana';
-$app_list_strings['stic_awf_forms_date_relative_list']['+1_month'] = 'D’aquí a un mes';
-$app_list_strings['stic_awf_forms_date_relative_list']['last_day_of_this_month'] = 'Últim dia d’aquest mes';
-$app_list_strings['stic_awf_forms_date_relative_list']['first_day_of_next_month'] = 'Primer dia del mes vinent';
+$app_list_strings['stic_awf_forms_date_relative_list']['+1_day'] = "D'aquí a un dia";
+$app_list_strings['stic_awf_forms_date_relative_list']['+1_week'] = "D'aquí a una setmana";
+$app_list_strings['stic_awf_forms_date_relative_list']['+1_month'] = "D'aquí a un mes";
+$app_list_strings['stic_awf_forms_date_relative_list']['last_day_of_this_month'] = "El darrer dia d'aquest mes";
+$app_list_strings['stic_awf_forms_date_relative_list']['first_day_of_next_month'] = 'El primer dia del mes que ve';
 $app_list_strings['stic_awf_forms_date_relative_list']['custom'] = 'Personalitzada...';
 
 // Advanced Web Forms Responses: status
