@@ -58,10 +58,23 @@ class SticPrivateAreaUtils
         if (!$hasSubmittedPassword) {
             if ($isBeingEnabled || $storedPassword === '') {
                 $plainPassword = self::generateRandomPassword();
-                $bean->stic_pa_password_c = $plainPassword;
+                
+                // Plain text for the email template, not stored in the database
                 $bean->_stic_plain_pa_password = $plainPassword;
+                
+                // Assign both the new encrypted field and the old one for compatibility with existing plugins
+                $bean->stic_pa_password_c = $plainPassword;
+                // The new field stores the MD5 hash
+                $bean->stic_pa_password_encrypted_c = md5($plainPassword);
+                
             } else {
                 $bean->stic_pa_password_c = $storedPassword;
+                
+                // If the new encrypted field is empty but we have a stored password, populate the new field for existing records that are being updated without changing their password
+                if (empty($bean->stic_pa_password_encrypted_c) && $storedPassword !== '') {
+                    $bean->stic_pa_password_encrypted_c = md5($storedPassword);
+                }
+                
                 $bean->_stic_plain_pa_password = '';
             }
         } else {
@@ -70,7 +83,10 @@ class SticPrivateAreaUtils
                 $bean->_stic_plain_pa_password = '';
             } else {
                 $bean->_stic_plain_pa_password = $submittedPassword;
+                
+                // Assign both the new encrypted field and the old one for compatibility with existing plugins
                 $bean->stic_pa_password_c = $submittedPassword;
+                $bean->stic_pa_password_encrypted_c = md5($submittedPassword);
             }
         }
 

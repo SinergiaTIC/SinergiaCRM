@@ -252,6 +252,7 @@ $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_
 $mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario Área Privada';
 $mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña Área Privada';
 $mod_strings['LBL_STIC_PA_ENABLE'] = 'Activar Área Privada';
+$mod_strings['LBL_STIC_PA_PASSWORD_ENCRYPTED'] = 'Contraseña AP Encriptada (MD5)';
 
 // Conversaciones
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversaciones';

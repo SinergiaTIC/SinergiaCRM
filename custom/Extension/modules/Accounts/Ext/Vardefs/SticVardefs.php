@@ -2147,3 +2147,31 @@ $dictionary['Account']['fields']['stic_pa_enable_c'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
 );
+
+$dictionary['Account']['fields']['stic_pa_password_encrypted_c'] = array(
+    'name' => 'stic_pa_password_encrypted_c',
+    'id' => 'Accountsstic_pa_password_encrypted_c',
+    'vname' => 'LBL_STIC_PA_PASSWORD_ENCRYPTED',
+    'type' => 'varchar',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'len' => '255',
+    'inline_edit' => '0',
+    'write_only' => true,
+    'required' => false,
+    'massupdate' => 0,
+    'importable' => 'false',
+    'duplicate_merge' => 'disabled',
+    'audited' => false,
+    'reportable' => false,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+        'popupsearch' => false,
+        'quickcreate' => false,
+    ),
+);

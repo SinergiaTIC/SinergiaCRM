@@ -161,3 +161,4 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 $mod_strings['LBL_STIC_PA_USERNAME'] = 'Private Area User';
 $mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private Area Password';
 $mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable Private Area';
+$mod_strings['LBL_STIC_PA_PASSWORD_ENCRYPTED'] = 'Private Area Password Encrypted (MD5)';

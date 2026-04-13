@@ -2670,6 +2670,34 @@ $dictionary['Contact']['fields']['stic_pa_enable_c'] = array(
     'merge_filter' => 'disabled',
 );
 
+$dictionary['Contact']['fields']['stic_pa_password_encrypted_c'] = array(
+    'name' => 'stic_pa_password_encrypted_c',
+    'id' => 'Contactsstic_pa_password_encrypted_c',
+    'vname' => 'LBL_STIC_PA_PASSWORD_ENCRYPTED',
+    'type' => 'varchar',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'len' => '255',
+    'inline_edit' => '0',
+    'write_only' => true,
+    'required' => false,
+    'massupdate' => 0,
+    'importable' => 'false',
+    'duplicate_merge' => 'disabled',
+    'audited' => false,
+    'reportable' => false,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+        'popupsearch' => false,
+        'quickcreate' => false,
+    ),
+);
+
 // Financial Products Relationships
 $dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array(
     'name' => 'stic_financial_products_contacts',

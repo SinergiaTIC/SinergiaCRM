@@ -77,6 +77,7 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsstic_pa_password_c', 'Accounts', 'stic_pa_password_c'),
 ('Accountsstic_pa_username_c', 'Accounts', 'stic_pa_username_c'),
 ('Accountsstic_pa_enable_c', 'Accounts', 'stic_pa_enable_c'),
+('Accountsstic_pa_password_encrypted_c', 'Accounts', 'stic_pa_password_encrypted_c'),
 -- Emails Marketing
 ('EmailMarketingstic_display_html_c', 'EmailMarketing', 'stic_display_html_c'),
 -- Campaigns
@@ -179,6 +180,7 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsstic_pa_password_c', 'Contacts', 'stic_pa_password_c'),
 ('Contactsstic_pa_username_c', 'Contacts', 'stic_pa_username_c'),
 ('Contactsstic_pa_enable_c', 'Contacts', 'stic_pa_enable_c'),
+('Contactsstic_pa_password_encrypted_c', 'Contacts', 'stic_pa_password_encrypted_c'),
 -- Leads
 ('Leadsstic_acquisition_channel_c','Leads','stic_acquisition_channel_c'),
 ('Leadsstic_alt_address_county_c','Leads','stic_alt_address_county_c'),
