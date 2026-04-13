@@ -98,7 +98,6 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP2' => 'Structure and fields',
   'LBL_WIZARD_DESC_STEP2' => 'Definition of the form content. Data blocks can be linked to SinergiaCRM modules or run on their own. Additionally, it is possible to configure data validation, duplicate detection, etc.',
   'LBL_WIZARD_TITLE_STEP2_START' => 'Start building the form',
-  'LBL_WIZARD_TITLE_STEP2_START_DESC' => 'Configure the data structure here. Add data blocks connected to a CRM module (e.g., People) or unlinked data blocks to collect information without creating records in CRM modules.',
   'LBL_WIZARD_TITLE_STEP3' => 'Logic and automation',
   'LBL_WIZARD_DESC_STEP3' => 'Definition of the actions that will be executed when a response is received: create or update records, send emails, redirect to web pages, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Layout',

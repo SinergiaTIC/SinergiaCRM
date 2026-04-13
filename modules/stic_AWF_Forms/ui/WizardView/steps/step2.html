@@ -28,7 +28,6 @@
     <!-- No Data Block Configured -->
     <div x-show="formConfig.data_blocks.length === 0" class="text-center p-3 border rounded bg-light">
       <h2 class="mb-4" x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START')"></h2>
-      <p x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START_DESC')"></p>
       <div class="d-flex justify-content-center gap-3 mt-3">
         <!-- Button: Add Datablock -->
         <button type="button" class="btn w-auto" @click="creatingDataBlock=true;" :title="utils.translate('LBL_DATABLOCK_ADD_TITLE')">
