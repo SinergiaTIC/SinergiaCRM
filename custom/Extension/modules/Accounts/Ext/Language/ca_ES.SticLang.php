@@ -188,4 +188,4 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 $mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'Àrea Privada";
-$mod_strings['LBL_STIC_PA_PASSWORD_ENCRYPTED'] = "Contrasenya de l'Àrea Privada Encriptada (MD5)";
+$mod_strings['LBL_STIC_PA_PASSWORD_ENCRYPTED'] = "Contrasenya encriptada (MD5) de l'Àrea Privada";
