@@ -231,7 +231,14 @@ class stic_MessagesUtils {
     public static function fillDynamicListMessageTemplate()
     {
         $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
-        $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='sms'", 0, -99, -99);
+
+            $typeRequest = $_REQUEST['type'] ?? 'sms';
+            $typeMap = [
+                'smssevenhelper' => 'sms',
+                'whatsapphelper' => 'whatsapp'
+            ];
+            $type = $typeMap[$typeRequest] ?? 'sms';
+        $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='$type'", 0, -99, -99);
 
         $dynamic_email_template_list = array("" => translate("LBL_NONE", "app_strings"));
 

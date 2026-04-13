@@ -199,7 +199,7 @@ $(function() {
       
       // Add a notice
       if ($('#EditView .whatsapp-readonly-notice').length === 0) {
-        $('#EditView').prepend('<div class="whatsapp-readonly-notice" style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px;"><strong>Aviso:</strong> Los mensajes de WhatsApp Web no pueden ser editados una vez enviados.</div>');
+        $('#EditView').prepend('<div class="whatsapp-readonly-notice" style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px;">' + SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_READONLY_NOTICE') + '</div>');
       }
     }
   }

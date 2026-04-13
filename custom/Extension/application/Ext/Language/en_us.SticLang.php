@@ -31,6 +31,7 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "The field valid
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Add Accounts and Contacts to Target List';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Incorpora synchronization';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Send PDF by email';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'View WhatsApp conversation';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Add to signature process';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Select a signature process';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Show related signatures';
@@ -3646,6 +3647,7 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Messages: Type
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
 
 // Messages: Direction
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
@@ -3654,6 +3656,7 @@ $app_list_strings['stic_messages_direction_list']['outbound'] = 'Outbound';
 // Messages: Status
 $app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Sent';
+$app_list_strings['stic_messages_status_list']['received'] = 'Received';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
 
 // Messages: Parent types
@@ -3985,6 +3988,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'WhatsApp';
 
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -3993,6 +3997,20 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notification';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
+
+// Email Templates: Whatsapp category types
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Marketing';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utility';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Authentication';
+
+// Email Templates: Whatsapp status types
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Draft';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pending';
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Approved';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rejected';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Unsubmitted';
 
 // Elements added to History panel
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tasks';

@@ -53,5 +53,6 @@ $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/s
 $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
 $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
 
-
-
+// These entry points are used by the Stic Messages module
+$entry_point_registry['sticMessagesTwilioResponse'] = array('file' => 'modules/stic_Messages/WhatsAppWebhookEntryPoint.php', 'auth' => false);
+$entry_point_registry['sticWhatsappMedia'] = array('file' => 'modules/stic_Messages/WhatsAppMediaEntryPoint.php', 'auth' => false);

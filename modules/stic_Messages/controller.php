@@ -28,6 +28,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 use SuiteCRM\Utility\SuiteValidator;
 
 include_once 'include/Exceptions/SugarControllerException.php';
+global $mod_strings;
+
+function sticMessagesGetString($key, $module = 'stic_Messages') {
+    global $mod_strings;
+    return isset($mod_strings[$key]) ? $mod_strings[$key] : $key;
+}
 require_once 'modules/stic_Messages/Utils.php';
 require_once("modules/AOW_WorkFlow/aow_utils.php");
 
@@ -207,45 +213,38 @@ class stic_MessagesController extends SugarController
 
         $where = '';
 
-        $db = DBManagerFactory::getInstance();
-        // only messages not sent and with direction outbound can be retried
-        // WhatsAppWeb messages are excluded from retry
-        $sql = "SELECT id,name,`type`,direction,phone,sender,message,status  FROM stic_messages WHERE deleted = 0 and status <> 'sent' and direction = 'outbound' and `type` <> 'WhatsAppWeb'";
-        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
-            require_once 'include/export_utils.php';
-            $retArray = generateSearchWhere('stic_Messages', $_REQUEST['current_query_by_page']);
-            if (!empty($retArray['where'])) {
-                $where = " AND " . $retArray['where'];
-            }
-        } else {
-            $ids = explode(',', $_REQUEST['uid']);
-            $idList = implode("','", $ids);
-            $where = " AND id in ('{$idList}')";
-        }
-
         $focus = BeanFactory::newBean('stic_Messages');
         if ($focus->bean_implements('ACL')) {
             if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
                 ACLController::displayNoAccess();
                 sugar_die('');
             }
-
-            $accessWhere = $focus->buildAccessWhere('export');
-            if (!empty($accessWhere)) {
-                $where .= empty($where) ? $accessWhere : ' AND ' . $accessWhere;
-            }
         }
 
-        $sql .= $where;
-        $result = $db->query($sql);
+        // only messages not sent and with direction outbound can be retried
+        // WhatsAppWeb messages are excluded from retry
+        $baseWhere = "stic_messages.deleted = 0 AND stic_messages.status <> 'sent' AND stic_messages.direction = 'outbound' AND stic_messages.type <> 'WhatsAppWeb'";
 
-        while ($row = $db->fetchByAssoc($result)) {
-            $bean = BeanFactory::getBean('stic_Messages', $row['id']);
-            // Double check to prevent WhatsAppWeb retry
-            if ($bean->type !== 'WhatsAppWeb') {
-                $bean->status = 'sent';
-                $bean->save();
+        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
+            require_once 'include/export_utils.php';
+            $retArray = generateSearchWhere('stic_Messages', $_REQUEST['current_query_by_page']);
+            if (!empty($retArray['where'])) {
+                $where = $baseWhere . " AND " . $retArray['where'];
+            } else {
+                $where = $baseWhere;
             }
+        } else {
+            $ids = explode(',', $_REQUEST['uid']);
+            $idList = implode("','", $ids);
+            $where = $baseWhere . " AND stic_messages.id in ('{$idList}')";
+        }
+
+        $orderBy = 'stic_messages.date_entered DESC';
+        $beans = $focus->get_full_list($orderBy, $where);
+
+        foreach ($beans as $bean) {
+            $bean->status = 'sent';
+            $bean->save();
         }
 
         SugarApplication::redirect("index.php?module=stic_Messages&action=index");
@@ -375,5 +374,212 @@ class stic_MessagesController extends SugarController
         die;
     }
 
+    public function action_FillDynamicListMessageTemplate() {
+        // Determine requested type from the client (flexible: accept helper class or 'whatsapp'/'sms')
+        $typeParam = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : '';
 
+        if (strpos($typeParam, 'whatsapp') !== false) {
+            // fillDynamicListMessageTemplate expects 'whatsapphelper' as key in mapping
+            $_REQUEST['type'] = 'whatsapphelper';
+        } elseif (strpos($typeParam, 'sms') !== false) {
+            $_REQUEST['type'] = 'smssevenhelper';
+        } else {
+            // default
+            $_REQUEST['type'] = 'smssevenhelper';
+        }
+
+        // Call the util to populate the app_list_strings
+        require_once 'modules/stic_Messages/Utils.php';
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
+
+        $list = $GLOBALS['app_list_strings']['dynamic_message_template_list'] ?? array();
+
+        // Convert associative array to list of {id,name}
+        $out = array();
+        foreach ($list as $id => $name) {
+            // skip empty key used for 'None'
+            if ($id === '') continue;
+            $out[] = array('id' => $id, 'name' => $name);
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(array('success' => true, 'data' => $out));
+        exit;
+    }
+
+    public function action_conversation() {
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'stic_Messages');
+
+        $parentId   = $_REQUEST['parent_id']   ?? '';
+        $parentType = $_REQUEST['parent_type'] ?? 'Contacts';
+
+        if (empty($parentId)) die('Missing parent_id');
+
+        $db = DBManagerFactory::getInstance();
+        $parentIdSafe = $db->quote($parentId);
+
+        $contactPhone = '';
+        $parentName = '';
+        $contactBean = BeanFactory::getBean($parentType, $parentId);
+        if ($contactBean) {
+            require_once('modules/stic_Messages/Utils.php');
+            $contactPhone = stic_MessagesUtils::getPhoneForMessage($contactBean);
+            $parentName = $contactBean->name ?? $contactBean->full_name ?? '';
+        }
+        $sql = "SELECT id, message, type, status, date_entered, sender, phone, direction,
+                    template_id
+                FROM stic_messages
+                WHERE parent_id = '{$parentIdSafe}'
+                AND deleted = 0
+                AND type IN ('WhatsAppHelper', 'WhatsApp', 'received')
+                ORDER BY date_entered ASC";
+
+        $result = $db->query($sql);
+        $messages = [];
+        while ($row = $db->fetchByAssoc($result)) {
+            $messages[] = $row;
+        }
+
+        // Calculate 24h window:
+        // Buscar el mensaje más reciente que sea:
+        $lastWindowEvent = null;
+
+        foreach (array_reverse($messages) as $msg) {
+            if ($msg['type'] === 'received' || $msg['type'] === 'WhatsApp') {
+                $lastWindowEvent = $msg['date_entered'];
+                break;
+            }
+            if ($msg['type'] === 'WhatsAppHelper' && !empty($msg['template_id'])) {
+                $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
+                if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
+                    $lastWindowEvent = $msg['date_entered'];
+                    break;
+                }
+            }
+        }
+
+        // < 24h since $lastWindowEvent)
+        $windowOpen    = false;
+        $windowMessage = null;
+
+        if ($lastWindowEvent) {
+            $eventTs = (new DateTime($lastWindowEvent, new DateTimeZone('UTC')))->getTimestamp();
+            $nowTs   = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
+            $diffSeconds = $nowTs - $eventTs;
+            $diffH   = ($diffSeconds) / 3600;
+
+            if ($diffH < 24) {
+                $windowOpen    = true;
+                $secondsLeft = (24 * 3600) - $diffSeconds;
+                $hoursLeft   = floor($secondsLeft / 3600);
+                $minutesLeft = floor(($secondsLeft % 3600) / 60);
+                $windowMessage = sprintf(
+                    $mod_strings['LBL_CONVERSATION_WINDOW_OPEN'],
+                    $hoursLeft,
+                    $minutesLeft
+                );
+            } else {
+                $lastEventFormatted = $GLOBALS['timedate']->to_display_date_time($lastWindowEvent);
+                $windowMessage = sprintf(
+                    $mod_strings['LBL_CONVERSATION_WINDOW_CLOSED'],
+                    $lastEventFormatted
+                );
+            }
+        } else {
+            $windowMessage = $mod_strings['LBL_CONVERSATION_NO_HISTORY'];
+        }
+
+        // Build URL to create a new stic_Messages record pre-linked to the parent
+        $newMessageUrl = 'index.php?module=stic_Messages&action=EditView'
+            . '&return_module=' . urlencode($parentType)
+            . '&return_id='     . urlencode($parentId)
+            . '&parent_type='   . urlencode($parentType)
+            . '&parent_id='     . urlencode($parentId)
+            . '&parent_name='   . urlencode($parentName);
+
+        require_once('modules/stic_Messages/views/view.conversation.php');
+        $view = new stic_MessagesViewConversation();
+        $view->messages       = $messages;
+        $view->parentName     = $parentName;
+        $view->parentId       = $parentId;
+        $view->parentType     = $parentType;
+        $view->contactPhone   = $contactPhone;
+        $view->windowOpen     = $windowOpen;
+        $view->windowMessage  = $windowMessage;
+        $view->newMessageUrl  = $newMessageUrl;
+        $view->modStrings     = $mod_strings;
+        $view->display();
+        sugar_cleanup();
+        exit();
+    }
+
+    public function action_uploadConversationMedia() {
+        header('Content-Type: application/json');
+
+        $allowedMimes = [
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+            'video/mp4', 'video/3gpp',
+            'audio/ogg', 'audio/mpeg', 'audio/mp4', 'audio/amr',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        ];
+
+        if (empty($_FILES['media']) || $_FILES['media']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_NO_FILE_RECEIVED')]);
+            exit();
+        }
+
+        $file     = $_FILES['media'];
+        $mimeType = mime_content_type($file['tmp_name']);
+
+        if (!in_array($mimeType, $allowedMimes)) {
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_UNSUPPORTED_FILE_TYPE') . ': ' . $mimeType]);
+            exit();
+        }
+
+        $sizeLimit = (strpos($mimeType, 'image/') === 0) ? 5 * 1024 * 1024 : 16 * 1024 * 1024;
+        if ($file['size'] > $sizeLimit) {
+            $limitMb = $sizeLimit / 1024 / 1024;
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_FILE_SIZE_EXCEEDED') . " {$limitMb}MB"]);
+            exit();
+        }
+
+        $note                 = BeanFactory::newBean('Notes');
+        $note->parent_type    = 'stic_Messages';
+        $note->parent_id      = '';
+        $note->name           = $file['name'];
+        $note->filename       = $file['name'];
+        $note->file_mime_type = $mimeType;
+        $note->deleted        = 0;
+        $noteId               = $note->save();
+
+        if (empty($noteId)) {
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_CREATING_NOTE')]);
+            exit();
+        }
+
+        $destPath = rtrim(getcwd(), '/') . '/upload/' . $noteId;
+        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+            $note->deleted = 1;
+            $note->save();
+            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_SAVING_FILE')]);
+            exit();
+        }
+
+        $GLOBALS['log']->info('stic_Messages: attachment uploaded. note_id=' . $noteId . ' file=' . $file['name']);
+
+        echo json_encode([
+            'success' => true,
+            'media_note_id' => $noteId,
+            'name'    => $file['name'],
+            'mime'    => $mimeType,
+        ]);
+        exit();
+    }
 }
