@@ -103,6 +103,7 @@ $rac->clearDashlets();
 $rac->clearVardefs();
 $rac->clearJsLangFiles();
 $rac->rebuildAuditTables();
+$rac->clearThemeCache();
 
 // Enable throwing exceptions for database errors.
 $db->setDieOnError(true);
