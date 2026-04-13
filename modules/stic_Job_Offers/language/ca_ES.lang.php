@@ -179,7 +179,7 @@ $mod_strings = array(
     // Plantilles de notificació de canvis d'estat
     'LBL_PANEL_NOTIFICATION_TEMPLATES' => 'Notificacions',
     'LBL_STATUS_NOTIFICATIONS_ENABLED' => "Notificacions de canvis d'estat",
-    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => "Quan la casella estigui marcada s'enviaran notificacions als candidats no rebutjats, a l'organització, a l'interlocutor i a l'usuari assignat cada vegada que es produeixi un canvi d'estat en l'oferta.",
+    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => "Quan la casella estigui marcada, cada vegada que es produeixi un canvi d'estat en l'oferta s'enviaran notificacions als candidats no rebutjats, a l'interlocutor de l'organització oferent i a l'usuari assignat.",
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER' => "Plantilla de notificació per a l'usuari assignat",
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_EMAILTEMPLATE_ID' => "Plantilla de notificació per a l'usuari assignat (ID)",
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_INFO' => "Plantilla que es farà servir per notificar els canvis d'estat de l'oferta a l'usuari assignat. Si el camp es deixa buit s'utilitzarà la plantilla per defecte.",
