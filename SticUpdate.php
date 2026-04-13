@@ -139,6 +139,9 @@ if (!filter_var($_REQUEST['skipCssRebuild'] ?? false, FILTER_VALIDATE_BOOLEAN)) 
     include_once('SticInclude/SticCustomScss.php');
 }
 
+// Restore Roles and ACLs to ensure non-admin users can access modules
+require_once 'modules/ACL/install_actions.php';
+
 // Cleanup application resources
 sugar_cleanup(false);
 
