@@ -140,7 +140,9 @@ if (!filter_var($_REQUEST['skipCssRebuild'] ?? false, FILTER_VALIDATE_BOOLEAN)) 
 }
 
 // Restore Roles and ACLs to ensure non-admin users can access modules
+ob_start();
 require_once 'modules/ACL/install_actions.php';
+ob_clean();
 
 // Cleanup application resources
 sugar_cleanup(false);
