@@ -49,6 +49,7 @@ A	SticInclude/vendor/bootstrap/js/bootstrap.min.js.map
 A	SticInclude/vendor/quill/README
 A	SticInclude/vendor/quill/quill.min.js
 A	SticInclude/vendor/quill/quill.snow.css
+A	SticUpdates/Releases/release/2.8.0/changes.txt
 M	config.php
 M	custom/Extension/application/Ext/EntryPointRegistry/SticEntryPoints.php
 M	custom/Extension/application/Ext/Include/SticModules.php
@@ -330,8 +331,6 @@ M	themes/SuiteP/css/Dusk/style.css
 M	themes/SuiteP/css/Night/style.css
 M	themes/SuiteP/css/Noon/style.css
 M	themes/SuiteP/css/Stic/style.css
-M	themes/SuiteP/css/SticCustom/CustomPalette.scss
-M	themes/SuiteP/css/SticCustom/style.css
 M	themes/SuiteP/css/suitep-base/suitepicon-glyphs.scss
 M	themes/SuiteP/css/suitep-base/suitepicon.eot
 M	themes/SuiteP/css/suitep-base/suitepicon.html
@@ -340,4 +339,3 @@ M	themes/SuiteP/css/suitep-base/suitepicon.svg
 M	themes/SuiteP/css/suitep-base/suitepicon.ttf
 M	themes/SuiteP/css/suitep-base/suitepicon.woff
 M	themes/SuiteP/css/suitep-base/suitepicon.woff2
-A	themes/suitepicons.php
