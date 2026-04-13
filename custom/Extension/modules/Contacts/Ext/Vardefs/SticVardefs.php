@@ -2603,10 +2603,10 @@ $dictionary['Contact']['fields']['stic_time_availability_c'] = array(
 );
 
 // Private Area fields
-$dictionary['Contact']['fields']['stic_pa_username_c'] = array(
-    'name' => 'stic_pa_username_c',
-    'id' => 'Contactsstic_pa_username_c',
-    'vname' => 'LBL_STIC_PA_USERNAME',
+$dictionary['Contact']['fields']['stic_portal_username_c'] = array(
+    'name' => 'stic_portal_username_c',
+    'id' => 'Contactsstic_portal_username_c',
+    'vname' => 'LBL_STIC_PORTAL_USERNAME',
     'type' => 'varchar',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
@@ -2623,10 +2623,10 @@ $dictionary['Contact']['fields']['stic_pa_username_c'] = array(
     'merge_filter' => 'disabled',
 );
 
-$dictionary['Contact']['fields']['stic_pa_password_c'] = array(
-    'name' => 'stic_pa_password_c',
-    'id' => 'Contactsstic_pa_password_c',
-    'vname' => 'LBL_STIC_PA_PASSWORD',
+$dictionary['Contact']['fields']['stic_portal_password_c'] = array(
+    'name' => 'stic_portal_password_c',
+    'id' => 'Contactsstic_portal_password_c',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
     'type' => 'encrypt',
@@ -2651,10 +2651,10 @@ $dictionary['Contact']['fields']['stic_pa_password_c'] = array(
     ),
 );
 
-$dictionary['Contact']['fields']['stic_pa_enable_c'] = array(
-    'name' => 'stic_pa_enable_c',
-    'id' => 'Contactsstic_pa_enable_c',
-    'vname' => 'LBL_STIC_PA_ENABLE',
+$dictionary['Contact']['fields']['stic_portal_enable_c'] = array(
+    'name' => 'stic_portal_enable_c',
+    'id' => 'Contactsstic_portal_enable_c',
+    'vname' => 'LBL_STIC_PORTAL_ENABLE',
     'type' => 'bool',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
@@ -2668,34 +2668,6 @@ $dictionary['Contact']['fields']['stic_pa_enable_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-);
-
-$dictionary['Contact']['fields']['stic_pa_password_encrypted_c'] = array(
-    'name' => 'stic_pa_password_encrypted_c',
-    'id' => 'Contactsstic_pa_password_encrypted_c',
-    'vname' => 'LBL_STIC_PA_PASSWORD_ENCRYPTED',
-    'type' => 'varchar',
-    'custom_module' => 'Contacts',
-    'source' => 'custom_fields',
-    'len' => '255',
-    'inline_edit' => '0',
-    'write_only' => true,
-    'required' => false,
-    'massupdate' => 0,
-    'importable' => 'false',
-    'duplicate_merge' => 'disabled',
-    'audited' => false,
-    'reportable' => false,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'studio' => array(
-        'editview' => false,
-        'detailview' => false,
-        'listview' => false,
-        'searchview' => false,
-        'popupsearch' => false,
-        'quickcreate' => false,
-    ),
 );
 
 // Financial Products Relationships

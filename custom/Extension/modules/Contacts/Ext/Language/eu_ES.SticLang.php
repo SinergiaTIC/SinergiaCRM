@@ -249,10 +249,9 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Egungo proiektua';
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
 
 // Cadenas Área Privada
-$mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario Área Privada';
-$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña Área Privada';
-$mod_strings['LBL_STIC_PA_ENABLE'] = 'Activar Área Privada';
-$mod_strings['LBL_STIC_PA_PASSWORD_ENCRYPTED'] = 'Contraseña AP Encriptada (MD5)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME'] = 'Usuario Área Privada';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD'] = 'Contraseña Área Privada';
+$mod_strings['LBL_STIC_PORTAL_ENABLE'] = 'Activar Área Privada';
 
 // Conversaciones
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversaciones';

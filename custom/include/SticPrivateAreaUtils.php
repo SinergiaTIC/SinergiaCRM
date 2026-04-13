@@ -28,82 +28,74 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class SticPrivateAreaUtils
 {
     /**
-     * Prepare private area credentials when AP is enabled
+     * Prepare portal credentials when Portal is enabled
      *
      * @param SugarBean $bean
      * @return void
      */
     public static function processBeforeSave($bean)
     {
-        // Skip credential logic when Private Area is disabled
-        if (!self::isPrivateAreaEnabledNow($bean)) {
+        // Skip credential logic when Portal is disabled
+        if (!self::isPortalEnabledNow($bean)) {
             return;
         }
 
         // Default username to primary email when empty
-        if (empty($bean->stic_pa_username_c)) {
+        if (empty($bean->stic_portal_username_c)) {
             $primaryEmail = self::getPrimaryEmail($bean);
             if (!empty($primaryEmail)) {
-                $bean->stic_pa_username_c = $primaryEmail;
+                $bean->stic_portal_username_c = $primaryEmail;
             }
         }
 
-        // Keep plaintext only for email template parsing, never store it in the database
-        $isBeingEnabled = self::isPrivateAreaBeingEnabled($bean);
-        $submittedPassword = (string)($_REQUEST['stic_pa_password_c'] ?? '');
-        $hasSubmittedPassword = (array_key_exists('stic_pa_password_c', $_REQUEST) && $submittedPassword !== '');
-        $storedPassword = self::getStoredPrivateAreaPassword($bean);
-        $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
+        $isBeingEnabled = self::isPortalBeingEnabled($bean);
+        $submittedPassword = (string)($_REQUEST['stic_portal_password_c'] ?? '');
+        $hasSubmittedPassword = (array_key_exists('stic_portal_password_c', $_REQUEST) && $submittedPassword !== '');
+        $storedPasswordHash = self::getStoredPortalPassword($bean);
+        $fetchedPasswordHash = (string)($bean->fetched_row['stic_portal_password_c'] ?? '');
 
         if (!$hasSubmittedPassword) {
-            if ($isBeingEnabled || $storedPassword === '') {
+            // Generate a new password if enabling for the first time or if somehow it's empty
+            if ($isBeingEnabled || $storedPasswordHash === '') {
                 $plainPassword = self::generateRandomPassword();
                 
                 // Plain text for the email template, not stored in the database
                 $bean->_stic_plain_pa_password = $plainPassword;
                 
-                // Assign both the new encrypted field and the old one for compatibility with existing plugins
-                $bean->stic_pa_password_c = $plainPassword;
-                // The new field stores the MD5 hash
-                $bean->stic_pa_password_encrypted_c = md5($plainPassword);
+                // The database field stores ONLY the MD5 hash
+                $bean->stic_portal_password_c = md5($plainPassword);
                 
             } else {
-                $bean->stic_pa_password_c = $storedPassword;
-                
-                // If the new encrypted field is empty but we have a stored password, populate the new field for existing records that are being updated without changing their password
-                if (empty($bean->stic_pa_password_encrypted_c) && $storedPassword !== '') {
-                    $bean->stic_pa_password_encrypted_c = md5($storedPassword);
-                }
-                
+                // Keep existing hash, do not trigger email template variable
+                $bean->stic_portal_password_c = $storedPasswordHash;
                 $bean->_stic_plain_pa_password = '';
             }
         } else {
-            if ($fetchedPassword !== '' && $submittedPassword === $fetchedPassword && $storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
+            // If the user submitted a password, check if it's the hidden UI mask/fetched value
+            if ($fetchedPasswordHash !== '' && $submittedPassword === $fetchedPasswordHash && $storedPasswordHash !== '') {
+                $bean->stic_portal_password_c = $storedPasswordHash;
                 $bean->_stic_plain_pa_password = '';
             } else {
+                // Admin manually entered a new password in plain text
                 $bean->_stic_plain_pa_password = $submittedPassword;
-                
-                // Assign both the new encrypted field and the old one for compatibility with existing plugins
-                $bean->stic_pa_password_c = $submittedPassword;
-                $bean->stic_pa_password_encrypted_c = md5($submittedPassword);
+                $bean->stic_portal_password_c = md5($submittedPassword);
             }
         }
 
-        // Prevent duplicate AP usernames across Accounts and Contacts
-        self::assertUniquePrivateAreaUsername($bean);
+        // Prevent duplicate Portal usernames across Accounts and Contacts
+        self::assertUniquePortalUsername($bean);
     }
 
     /**
-     * Send credentials email after enabling private area
+     * Send credentials email after enabling portal
      *
      * @param SugarBean $bean
      * @return void
      */
     public static function processAfterSave($bean)
     {
-        // Send only when AP has just been enabled (0 -> 1)
-        if (!self::isPrivateAreaBeingEnabled($bean)) {
+        // Send only when Portal has just been enabled (0 -> 1)
+        if (!self::isPortalBeingEnabled($bean)) {
             return;
         }
 
@@ -112,7 +104,6 @@ class SticPrivateAreaUtils
         // Check if sending credentials email is enabled in settings
         $sendSettingValue = (string)stic_SettingsUtils::getSetting('PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE');
         if ($sendSettingValue === '') {
-            // Fallback for missing setting
             $GLOBALS['log']->error(__METHOD__ . ': Setting PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE is empty. Using default value 1.');
             $isEnabled = true;
         } else {
@@ -144,12 +135,13 @@ class SticPrivateAreaUtils
             return;
         }
 
-        // Make plaintext password available for merge fields
+        // Expose plaintext password to the template parser via the database field name variable 
+        // (so $contact_stic_portal_password_c in email template shows the plain password)
         if (!empty($bean->_stic_plain_pa_password)) {
-            $bean->stic_pa_password_c = $bean->_stic_plain_pa_password;
+            $bean->stic_portal_password_c = $bean->_stic_plain_pa_password;
         }
 
-        $parsedMailArray = self::parsePrivateAreaTemplate($templateBean, $bean);
+        $parsedMailArray = self::parsePortalTemplate($templateBean, $bean);
 
         $subject = $parsedMailArray['subject'] ?? '';
         $bodyHtml = $parsedMailArray['body_html'] ?? '';
@@ -193,13 +185,13 @@ class SticPrivateAreaUtils
     }
 
     /**
-     * Parse credentials template supporting AP placeholders
+     * Parse credentials template supporting Portal placeholders
      *
      * @param SugarBean $templateBean
      * @param SugarBean $bean
      * @return array
      */
-    protected static function parsePrivateAreaTemplate($templateBean, $bean)
+    protected static function parsePortalTemplate($templateBean, $bean)
     {
         global $sugar_config;
 
@@ -291,49 +283,49 @@ class SticPrivateAreaUtils
     }
 
     /**
-     * Detect transition stic_pa_enable_c from false to true
+     * Detect transition stic_portal_enable_c from false to true
      *
      * @param SugarBean $bean
      * @return bool
      */
-    protected static function isPrivateAreaBeingEnabled($bean)
+    protected static function isPortalBeingEnabled($bean)
     {
-        $current = (bool)($bean->stic_pa_enable_c ?? false);
-        $previous = (bool)($bean->fetched_row['stic_pa_enable_c'] ?? false);
+        $current = (bool)($bean->stic_portal_enable_c ?? false);
+        $previous = (bool)($bean->fetched_row['stic_portal_enable_c'] ?? false);
 
         return $current && !$previous;
     }
 
     /**
-     * Check if AP is enabled in current bean values
+     * Check if Portal is enabled in current bean values
      *
      * @param SugarBean $bean
      * @return bool
      */
-    protected static function isPrivateAreaEnabledNow($bean)
+    protected static function isPortalEnabledNow($bean)
     {
-        return (bool)($bean->stic_pa_enable_c ?? false);
+        return (bool)($bean->stic_portal_enable_c ?? false);
     }
 
     /**
-     * Ensure AP username is unique across Contacts and Accounts
+     * Ensure Portal username is unique across Contacts and Accounts
      *
      * @param SugarBean $bean
      * @return void
      * @throws RuntimeException
      */
-    protected static function assertUniquePrivateAreaUsername($bean)
+    protected static function assertUniquePortalUsername($bean)
     {
-        $username = trim((string)($bean->stic_pa_username_c ?? ''));
+        $username = trim((string)($bean->stic_portal_username_c ?? ''));
         if (empty($username)) {
             return;
         }
 
-        if (!self::hasPrivateAreaUsernameDuplicate($username, $bean->id ?? '')) {
+        if (!self::hasPortalUsernameDuplicate($username, $bean->id ?? '')) {
             return;
         }
 
-        $message = "Private Area username '{$username}' is already in use by another enabled record. Please use a unique username.";
+        $message = "Portal username '{$username}' is already in use by another enabled record. Please use a unique username.";
         $GLOBALS['log']->error(__METHOD__ . ': ' . $message);
         throw new \RuntimeException($message);
     }
@@ -345,7 +337,7 @@ class SticPrivateAreaUtils
      * @param string $currentId
      * @return bool
      */
-    protected static function hasPrivateAreaUsernameDuplicate($username, $currentId = '')
+    protected static function hasPortalUsernameDuplicate($username, $currentId = '')
     {
         global $db;
 
@@ -355,21 +347,21 @@ class SticPrivateAreaUtils
         $sql = "
             SELECT 1
             FROM (
-                                SELECT c.id AS id
+                SELECT c.id AS id
                 FROM contacts c
                 INNER JOIN contacts_cstm cc ON cc.id_c = c.id
                 WHERE c.deleted = 0
-                  AND cc.stic_pa_enable_c = 1
-                  AND cc.stic_pa_username_c = '{$usernameQuoted}'
+                  AND cc.stic_portal_enable_c = 1
+                  AND cc.stic_portal_username_c = '{$usernameQuoted}'
 
                 UNION ALL
 
-                                SELECT a.id AS id
+                SELECT a.id AS id
                 FROM accounts a
                 INNER JOIN accounts_cstm ac ON ac.id_c = a.id
                 WHERE a.deleted = 0
-                  AND ac.stic_pa_enable_c = 1
-                  AND ac.stic_pa_username_c = '{$usernameQuoted}'
+                  AND ac.stic_portal_enable_c = 1
+                  AND ac.stic_portal_username_c = '{$usernameQuoted}'
             ) x
             WHERE x.id <> '{$currentIdQuoted}'
             LIMIT 1
@@ -422,12 +414,12 @@ class SticPrivateAreaUtils
     }
 
     /**
-     * Get currently stored AP password
+     * Get currently stored Portal password (Hash)
      *
      * @param SugarBean $bean
      * @return string
      */
-    protected static function getStoredPrivateAreaPassword($bean)
+    protected static function getStoredPortalPassword($bean)
     {
         $module = $bean->module_dir ?? '';
         $id = $bean->id ?? '';
@@ -441,7 +433,7 @@ class SticPrivateAreaUtils
             return '';
         }
 
-        $password = $storedBean->stic_pa_password_c ?? '';
+        $password = $storedBean->stic_portal_password_c ?? '';
         return is_scalar($password) ? (string)$password : '';
     }
 
