@@ -136,7 +136,9 @@ runScripts($scriptsVersion, 'post_install.txt', $errors, $infos);
 // Apply custom SCSS theme settings (configurable via skipCssRebuild parameter, defaults to false)
 if (!filter_var($_REQUEST['skipCssRebuild'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
     $_REQUEST['keepUserTheme'] = 1;
+    ob_start();
     include_once('SticInclude/SticCustomScss.php');
+    ob_clean();
 }
 
 // Restore Roles and ACLs to ensure non-admin users can access modules
