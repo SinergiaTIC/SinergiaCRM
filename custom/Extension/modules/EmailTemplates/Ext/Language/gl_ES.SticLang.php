@@ -21,9 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$mod_strings['ERROR_USER_INTERFACE'] = 'Ha ocurrido un error y el contenido no se puede mostrar.';
-$mod_strings['LNK_NEW_RECORD'] = 'Crear Sección de plantilla';
-$mod_strings['LNK_LIST'] = 'Ver Secciones de plantilla';
+$mod_strings['ERROR_USER_INTERFACE'] = 'Aconteceu un erro e o contido non se pode mostrar';
+$mod_strings['LNK_NEW_RECORD'] = 'Crear sección de plantilla';
+$mod_strings['LNK_LIST'] = 'Ver seccións de plantilla';
 $mod_strings['LNK_CAMPAIGN_LIST'] = 'Campañas';
 
 $mod_strings['LBL_STIC_WHATSAPP_STATUS'] = 'Estado de Aprobación WhatsApp';

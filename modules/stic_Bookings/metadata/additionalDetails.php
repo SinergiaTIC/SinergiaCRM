@@ -37,8 +37,8 @@ function additionalDetailsstic_Bookings($fields, ?SugarBean $bean = null, $param
 
     } else {
         global $current_language,$timedate, $current_user;
-        $fields['RESOURCE_NAME'] = $_REQUEST['resource_name'];
-        $fields['RESOURCE_ID'] = $_REQUEST['resource_id'];
+        $fields['RESOURCE_NAME'] = $_REQUEST['resource_name'] ?? null;
+        $fields['RESOURCE_ID'] = $_REQUEST['resource_id'] ?? null;
     
         if ($bean->load_relationship('stic_resources_stic_bookings')) {
             $resourcesBeans = $bean->stic_resources_stic_bookings->getBeans();
