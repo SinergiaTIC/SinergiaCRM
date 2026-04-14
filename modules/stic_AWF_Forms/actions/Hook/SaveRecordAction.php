@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
+include_once "modules/stic_AWF_Forms/Utils.php";
 
 /**
  * SaveRecordAction
@@ -78,7 +79,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     $skipRule = false;
                     break; // Move to the next rule
                 }
-                if ($this->isEmailField($tempBean, $fieldName)) {
+                if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName], $fieldName)) {
                     $emailValues[] = $fieldValue;
                 } else {
                     $scalarFields[$fieldName] = $fieldValue;
@@ -254,24 +255,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         return $actionResult;
     }
 
-    private function isEmailField($bean, $fieldName) 
-    {
-        if (isset($bean->field_defs[$fieldName]) &&
-            isset($bean->field_defs[$fieldName]['type']) &&
-            $bean->field_defs[$fieldName]['type'] === 'email') {
-            return true;
-        }
-        if (isset($bean->field_defs[$fieldName]) &&
-            isset($bean->field_defs[$fieldName]['type']) &&
-            $bean->field_defs[$fieldName]['type'] === 'varchar' && 
-            isset($bean->field_defs[$fieldName]['source']) &&
-            $bean->field_defs[$fieldName]['source'] === 'non-db' &&
-            strpos($fieldName, 'email') !== false) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Fills a bean with all form data (overwrites).
      * @param SugarBean $bean The bean to update
@@ -293,7 +276,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
             $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
 
-            if ($this->isEmailField($bean, $targetField)) {
+            if (stic_AWF_FormsUtils::isEmailField($bean->field_defs[$targetField], $targetField)) {
                 if ($targetField === 'email') {
                     $targetField = 'email1';
                 }
