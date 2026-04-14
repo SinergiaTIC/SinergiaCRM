@@ -136,7 +136,9 @@ class OutboundEmailAccounts extends OutboundEmailAccounts_sugar
 
         $this->mail_smtppass = $this->mail_smtppass ? blowfishDecode(blowfishGetKey('OutBoundEmail'), $this->mail_smtppass) : null;
         // STIC-Custom 20260407 EPS - Unencrypt fetched password
-        $this->fetched_row['mail_smtppass'] = $this->fetched_row['mail_smtppass'] ? blowfishDecode(blowfishGetKey('OutBoundEmail'), $this->fetched_row['mail_smtppass']) : null;
+        if (is_array($this->fetched_row)) {
+            $this->fetched_row['mail_smtppass'] = $this->fetched_row['mail_smtppass'] ? blowfishDecode(blowfishGetKey('OutBoundEmail'), $this->fetched_row['mail_smtppass']) : null;
+        }
         // END STIC
         return $results;
     }
@@ -538,7 +540,6 @@ HTML;
 					// var postDataString =
 					// 'mail_type=system&' +
                     var mail_name = document.getElementById('name').value ? document.getElementById('name').value : '';
-                    debugger;                                                                
 					var postDataString =
 						'mail_type=' + mail_name + '&' +
                     // END STIC-Custom                   
