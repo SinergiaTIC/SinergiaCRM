@@ -123,6 +123,11 @@ class stic_AWF_FormsUtils {
                         continue;
                     }
 
+                    $isEmail = self::isEmailField($arr, $fieldName);
+                    $merge_filter = $arr['merge_filter'] ?? ''; 
+                    if ($isEmail) {
+                        $merge_filter = 'enabled';
+                    }
                     // In source Module: Set fields information
                     if ($moduleOrigName == $moduleName) {
                         // Add field information
@@ -135,7 +140,7 @@ class stic_AWF_FormsUtils {
                             'default' => $arr['default'] ?? null,
                             'options' => $arr['options'] ?? '',
                             'module' => $arr['module'] ?? '',
-                            'merge_filter' => $arr['merge_filter'] ?? '', // 'enabled', 'disabled', 'selected', ''
+                            'merge_filter' => $merge_filter, // 'enabled', 'disabled', 'selected', ''
                             'inViews' => false,
                         ];
 
@@ -248,6 +253,22 @@ class stic_AWF_FormsUtils {
         });
 
         return $result;
+    }
+
+    /**
+     * Determines if a given field definition corresponds to a CRM Email field.
+     */
+    public static function isEmailField($fieldDef, $fieldName) 
+    {
+        if (isset($fieldDef['type']) && $fieldDef['type'] === 'email') {
+            return true;
+        }
+        if (isset($fieldDef['type']) && $fieldDef['type'] === 'varchar' && 
+            isset($fieldDef['source']) && $fieldDef['source'] === 'non-db' &&
+            strpos($fieldName, 'email') !== false) {
+            return true;
+        }
+        return false;
     }
 
     /**
