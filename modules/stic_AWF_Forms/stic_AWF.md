@@ -93,7 +93,8 @@ Aquí se decidirá qué información se quiere pedir a los usuarios. La selecci�
 
 * **Bloques de datos (enlazados)**: Son unidades de información que están conectadas directamente a un módulo específico del CRM (por ejemplo, "Personas", "Inscripciones" u "Organizaciones"). El propósito de estos bloques es que los datos recopilados sirvan para **crear o actualizar un registro real** dentro del sistema. Al estar enlazados a un módulo, permiten definir validaciones propias del CRM, configurar reglas para la detección y gestión de duplicados, y establecer campos de servidor u ocultos.
 
-* **Bloques de datos no enlazados**: Son contenedores diseñados para recopilar información en el formulario, pero que **no están vinculados a ningún módulo del CRM**. Como consecuencia, los datos introducidos quedarán guardados de forma independiente y exclusiva dentro del registro global de la "Respuesta". A diferencia de los bloques enlazados (que permiten mezclar campos del CRM con campos virtuales), **un bloque no enlazado solo puede contener campos no enlazados**. Son ideales para realizar encuestas, recopilar información temporal, hacer valoraciones o incluir casillas de aceptación de condiciones.
+* **Bloques de datos no enlazados**: Son contenedores diseñados para recopilar información en el formulario, pero que **no están vinculados a ningún módulo del CRM**. Como consecuencia, los datos introducidos quedarán guardados de forma independiente y exclusiva dentro del registro global de la "Respuesta". **Importante: Esta información no se volcará en la ficha de la Persona ni alterará ningún registro del CRM.** A diferencia de los bloques enlazados (que permiten mezclar campos del CRM con campos virtuales), un bloque no enlazado solo puede contener campos no enlazados. Son ideales para realizar encuestas, recopilar información temporal, hacer valoraciones o incluir casillas de aceptación de condiciones.
+
 
 #### Secciones de los Bloques de datos ####
 En el asistente, los bloques de datos están definidos en distintas secciones. Estas secciones pueden ser distintas según el tipo de bloque (enlazado o no enlazado).
@@ -104,14 +105,13 @@ Esta sección aparece en ambos bloques, enlazados y no enlazados
 Aquí se define qué datos componen el bloque. Al configurar los campos, se organiza la información en dos pestañas principales:
 
 * **Formulario**: Son los campos visibles que el visitante podrá rellenar. Por cada campo se puede configurar su etiqueta (nombre visible), si es obligatorio, el tipo de entrada (texto, desplegable, fecha, etc.) y el texto de fondo (*placeholder*).
+  * **Buena práctica de configuración:** Es altamente recomendable establecer siempre **al menos un campo como obligatorio** en cada bloque de datos enlazado (por ejemplo, el Nombre o el Email). Si todos los campos de un bloque se configuran como opcionales y el visitante los deja en blanco, el sistema procesará el bloque igualmente y creará un registro vacío en el CRM.
 
   * **Textos de ayuda y Enlaces**: Cada campo permite añadir un texto de ayuda o descripción para guiar al usuario. Además, el asistente incluye una herramienta específica para insertar fácilmente enlaces a páginas externas (ideales para acompañar a las casillas de aceptación de Políticas de Privacidad o Condiciones de Uso).
-  
-  * **Campos no enlazados (virtuales)**: Son campos que no alteran la base de datos principal, sino que su valor vive exclusivamente en el registro de la "Respuesta" enviada. Para agilizar la creación de formularios (especialmente cuando se configuran opciones personalizadas o controles de encuestas), **el asistente permite duplicar estos campos** con un solo clic, generando una copia exacta de toda su configuración. Existen en dos contextos:
+
+  * **Campos no enlazados (virtuales)**: Son campos que no alteran la base de datos principal, sino que su valor vive exclusivamente en el registro de la "Respuesta" enviada (es decir, **no se guardarán en el perfil de la persona ni en los módulos del CRM**). Para agilizar la creación de formularios (especialmente cuando se configuran opciones personalizadas o controles de encuestas), el asistente permite duplicar estos campos con un solo clic, generando una copia exacta de toda su configuración. Existen en dos contextos:
     1. **Dentro de un Bloque no enlazado**: Donde, por la naturaleza del bloque, todos los campos creados son obligatoriamente de este tipo.
-
     2. **Dentro de un Bloque enlazado**: Convivirán junto a los campos normales del CRM. Posibles usos: Son ideales para recabar información que solo tiene sentido en el contexto del envío (como una casilla de "Acepto las condiciones", comentarios adicionales o valoraciones temporales) evitando que estos datos "ensucien" la ficha de la Persona o Inscripción en el CRM.
-
   
   * **Validaciones**: Adicionalmente, se pueden vincular acciones de validación a campos específicos para garantizar la calidad de los datos introducidos. **Para agilizar la configuración, el sistema asigna validadores automáticamente** al detectar ciertos tipos de campos (por ejemplo, al añadir un campo de email, su validador se vincula solo). El sistema incluye un **amplio catálogo de validadores predefinidos**:
 
