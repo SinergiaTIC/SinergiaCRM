@@ -81,22 +81,8 @@ class stic_Job_Applications extends Basic
         }
         
         $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
-
-        // If is a new record with no account and related offer or if is an existing record with no account or with changed related offer
-        $isNewRecord = empty($this->fetched_row['id']);
-        $currentOfferId = $this->stic_job_applications_stic_job_offersstic_job_offers_ida ?? '';
-        $previousOfferId = $this->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? '';
-        $offerChanged = !$isNewRecord && $previousOfferId !== $currentOfferId;
-
-        if (($isNewRecord && empty($this->account_id) && !empty($currentOfferId))
-            || (!$isNewRecord && (empty($this->account_id) || $offerChanged))) {
-            $this->account_id = (!empty($offerBean) && !empty($offerBean->id))
-                ? ($offerBean->stic_job_offers_accountsaccounts_ida ?? '')
-                : '';
-        }
-
-        // If it is a new record and it relates to an offer, the assigned user of the offer is indicated in the job application
-        if (!empty($offerBean) && !empty($offerBean->assigned_user_id) &&
+        // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
+        if (!empty($offerBean) && ($offerBean->offer_type == 'volunteering') &&
             $this->assigned_user_id != $offerBean->assigned_user_id) {
             $this->assigned_user_id = $offerBean->assigned_user_id;
         }
