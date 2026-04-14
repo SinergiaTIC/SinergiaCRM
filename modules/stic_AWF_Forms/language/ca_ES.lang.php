@@ -98,7 +98,6 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura i camps',
   'LBL_WIZARD_DESC_STEP2' => 'Definició del contingut del formulari. Els blocs de dades poden vincular-se a mòduls de SinergiaCRM o funcionar de forma independent. A més, és possible configurar validacions de dades, detecció de duplicats, etc.',
   'LBL_WIZARD_TITLE_STEP2_START' => 'Comenceu a construir el formulari',
-  'LBL_WIZARD_TITLE_STEP2_START_DESC' => "Configura aquí l'estructura de dades. Pots afegir blocs de dades connectats a algun mòdul del CRM (ex: Persones) o blocs de dades no enllaçats per recopilar informació sense crear registres en mòduls del CRM.",
   'LBL_WIZARD_TITLE_STEP3' => 'Lògica i automatismes',
   'LBL_WIZARD_DESC_STEP3' => "Definició de les accions que s'executaran quan es rebi una resposta: crear o actualitzar registres, enviar correus electrònics, redireccionar a pàgines web, etc.",
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetació',

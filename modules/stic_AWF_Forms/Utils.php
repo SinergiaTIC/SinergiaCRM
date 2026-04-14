@@ -123,6 +123,11 @@ class stic_AWF_FormsUtils {
                         continue;
                     }
 
+                    $isEmail = self::isEmailField($arr, $fieldName);
+                    $merge_filter = $arr['merge_filter'] ?? ''; 
+                    if ($isEmail) {
+                        $merge_filter = 'enabled';
+                    }
                     // In source Module: Set fields information
                     if ($moduleOrigName == $moduleName) {
                         // Add field information
@@ -135,7 +140,7 @@ class stic_AWF_FormsUtils {
                             'default' => $arr['default'] ?? null,
                             'options' => $arr['options'] ?? '',
                             'module' => $arr['module'] ?? '',
-                            'merge_filter' => $arr['merge_filter'] ?? '', // 'enabled', 'disabled', 'selected', ''
+                            'merge_filter' => $merge_filter, // 'enabled', 'disabled', 'selected', ''
                             'inViews' => false,
                         ];
 
@@ -248,6 +253,22 @@ class stic_AWF_FormsUtils {
         });
 
         return $result;
+    }
+
+    /**
+     * Determines if a given field definition corresponds to a CRM Email field.
+     */
+    public static function isEmailField($fieldDef, $fieldName) 
+    {
+        if (isset($fieldDef['type']) && $fieldDef['type'] === 'email') {
+            return true;
+        }
+        if (isset($fieldDef['type']) && $fieldDef['type'] === 'varchar' && 
+            isset($fieldDef['source']) && $fieldDef['source'] === 'non-db' &&
+            strpos($fieldName, 'email') !== false) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -506,27 +527,5 @@ class stic_AWF_FormsUtils {
         } else {
             return '#b5bc31';
         }
-    }
-
-    /**
-     * Scheduled task function to cancel expired deferred tickets (status='pending' and expiration_date < now()) by setting status='cancelled'.
-     */
-    public static function cancelExpiredTickets() {
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Running cancelExpiredTickets');
-
-        $db = DBManagerFactory::getInstance();
-        
-        $dateNow = $db->convert($db->quoted(date('Y-m-d H:i:s')), 'datetime');
-        $sql = "UPDATE stic_AWF_Deferred_Tickets
-                SET status = 'cancelled', date_modified = {$dateNow}
-                WHERE status = 'pending' AND expiration_date < {$dateNow} AND deleted = 0";
-        $result = $db->query($sql);
-
-        $affectedRows = $db->getAffectedRowCount($result);
-        if ($affectedRows > 0) {
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cancelled ' . $affectedRows . ' expired deferred tickets');
-        }
-
-        return true;
     }
 }

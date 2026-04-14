@@ -53,50 +53,50 @@ $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Xerar Calendario laboral';
 
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Inicio de sesión alternativo</h3>';
-$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'La dirección de correo electrónico ';
-$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' no pertenece a ningún usuario de SinergiaCRM. Si considera que se trata de un error, contacte con un administrador.';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'O enderezo de correo electrónico ';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' non pertence a ningún usuario de SinergiaCRM. Se considera que se trata dun erro, contacte cun administrador.';
 
 // Autenticación OAuth - Google
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Iniciar sesión con Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_TITLE'] = 'Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE'] = 'Habilitar autenticación con Google';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = "Esta opción habilita la autenticación con Google. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>Más información</a>.";
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'ID de cliente';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = "ID de la aplicación registrada en Google API Console. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>Más información</a>.";
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Secreto de cliente';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = "Secreto de la aplicación registrada en Google API Console. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>Más información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = "Esta opción habilita a autenticación con Google. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>Más información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'ID del Cliente';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = "ID da aplicación rexistrada en Google API Console. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>Máis información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Secreto de Cliente';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = "Secreto da aplicación rexistrada en Google API Console. <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>Máis información</a>.";
 
 // Autenticación OAuth - Microsoft
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT'] = 'Iniciar sesión con Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TITLE'] = 'Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = 'Habilitar autenticación con Microsoft';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "Esta opción habilita la autenticación con Microsoft. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Más información</a>.";
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'ID de cliente';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Más información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "Esta opción habilita a autenticación con Microsoft. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Máis información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'ID de Cliente';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID da aplicación rexistrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Máis información</a>.";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de tenant';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID de tenant de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Más información</a>.";
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'URI de redirección';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = "URI de redirección de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Más información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID de tenant da aplicación rexistrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Máis información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'URI de Redirección';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = "URI de redirección da aplicación rexistrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Máis información</a>.";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Ámbitos';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbitos de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent' target='_blank'>Más información</a>.";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbitos da aplicación rexistrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent' target='_blank'>Máis información</a>.";
 
 // Emulación de usuarios - Usuario emulador
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emular usuario';
 $mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Emulación de usuario';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = '¡Atención! Está emulando al usuario: ';
-$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Para volver a su propio usuario haga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí</a>.';
-$mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuario original';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = '¡Atención! Está emulando ao usuario: ';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Para volver ao seu propio usuario faga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí</a>.';
+$mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuario orixinal';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuario emulado';
 $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalizar emulación';
 
 // Emulación de usuarios - Usuario emulado
 $mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'Emulación de usuario';
-$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador está emulando su usuario.';
-$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'Un administrador ha finalizado la emulación de su usuario.';
+$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador está emulando o seu usuario.';
+$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'Un administrador finalizou a emulación do seu usuario.';
 $mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
 
 // Emulación de usuarios - Monitorización
-$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación do usuario ';
 $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
 
 // Modelo 182

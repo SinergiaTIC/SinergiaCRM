@@ -98,7 +98,6 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
   'LBL_WIZARD_DESC_STEP2' => 'Definición del contenido del formulario. Los bloques de datos pueden vincularse a módulos de SinergiaCRM o funcionar de forma independiente. Además, es posible configurar validaciones de datos, detección de duplicados, etc.',
   'LBL_WIZARD_TITLE_STEP2_START' => 'Empiece a construir el formulario',
-  'LBL_WIZARD_TITLE_STEP2_START_DESC' => 'Configura aquí la estructura de datos. Puedes añadir bloques de datos conectados a algún módulo del CRM (ej: Personas) o bloques de datos no enlazados para recopilar información sin crear registros en modúlos del CRM.',
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_DESC_STEP3' => 'Definición de las acciones que se ejecutarán cuando se reciba una respuesta: crear o actualizar registros, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',

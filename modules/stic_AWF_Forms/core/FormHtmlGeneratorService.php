@@ -1010,6 +1010,7 @@ document.addEventListener('alpine:init', () => {
             panel.style.display = 'none';
           }
         });
+
       } catch (e) { console.warn('AWF Prefill Error:', e); }
     },
 

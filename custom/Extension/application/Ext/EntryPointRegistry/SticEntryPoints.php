@@ -61,5 +61,3 @@ $entry_point_registry['stic_AWF_checkSession'] = array('file' => 'modules/stic_A
 $entry_point_registry['stic_AWF_webhookHanlder'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/WebhookHandler.php', 'auth' => false);
 $entry_point_registry['stic_AWF_ReturnHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ReturnHandler.php', 'auth' => false);
 
-
-
