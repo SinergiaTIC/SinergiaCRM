@@ -2603,10 +2603,10 @@ $dictionary['Contact']['fields']['stic_time_availability_c'] = array(
 );
 
 // Private Area fields
-$dictionary['Contact']['fields']['stic_portal_username_c'] = array(
-    'name' => 'stic_portal_username_c',
-    'id' => 'Contactsstic_portal_username_c',
-    'vname' => 'LBL_STIC_PORTAL_USERNAME',
+$dictionary['Contact']['fields']['stic_pa_username_c'] = array(
+    'name' => 'stic_pa_username_c',
+    'id' => 'Contactsstic_pa_username_c',
+    'vname' => 'LBL_STIC_PA_USERNAME',
     'type' => 'varchar',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
@@ -2623,10 +2623,10 @@ $dictionary['Contact']['fields']['stic_portal_username_c'] = array(
     'merge_filter' => 'disabled',
 );
 
-$dictionary['Contact']['fields']['stic_portal_password_c'] = array(
-    'name' => 'stic_portal_password_c',
-    'id' => 'Contactsstic_portal_password_c',
-    'vname' => 'LBL_STIC_PORTAL_PASSWORD',
+$dictionary['Contact']['fields']['stic_pa_password_c'] = array(
+    'name' => 'stic_pa_password_c',
+    'id' => 'Contactsstic_pa_password_c',
+    'vname' => 'LBL_STIC_PA_PASSWORD',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
     'type' => 'encrypt',
@@ -2651,10 +2651,10 @@ $dictionary['Contact']['fields']['stic_portal_password_c'] = array(
     ),
 );
 
-$dictionary['Contact']['fields']['stic_portal_enable_c'] = array(
-    'name' => 'stic_portal_enable_c',
-    'id' => 'Contactsstic_portal_enable_c',
-    'vname' => 'LBL_STIC_PORTAL_ENABLE',
+$dictionary['Contact']['fields']['stic_pa_enable_c'] = array(
+    'name' => 'stic_pa_enable_c',
+    'id' => 'Contactsstic_pa_enable_c',
+    'vname' => 'LBL_STIC_PA_ENABLE',
     'type' => 'bool',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',

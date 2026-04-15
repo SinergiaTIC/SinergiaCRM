@@ -1,11 +1,11 @@
 -- Create new fields in Accounts and Contacts in field_meta_data table
 INSERT IGNORE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
-('Accountsstic_portal_password_c', 'Accounts', 'stic_portal_password_c'),
-('Accountsstic_portal_username_c', 'Accounts', 'stic_portal_username_c'),
-('Accountsstic_portal_enable_c', 'Accounts', 'stic_portal_enable_c'),
-('Contactsstic_portal_password_c', 'Contacts', 'stic_portal_password_c'),
-('Contactsstic_portal_username_c', 'Contacts', 'stic_portal_username_c'),
-('Contactsstic_portal_enable_c', 'Contacts', 'stic_portal_enable_c');
+('Accountsstic_pa_password_c', 'Accounts', 'stic_pa_password_c'),
+('Accountsstic_pa_username_c', 'Accounts', 'stic_pa_username_c'),
+('Accountsstic_pa_enable_c', 'Accounts', 'stic_pa_enable_c'),
+('Contactsstic_pa_password_c', 'Contacts', 'stic_pa_password_c'),
+('Contactsstic_pa_username_c', 'Contacts', 'stic_pa_username_c'),
+('Contactsstic_pa_enable_c', 'Contacts', 'stic_pa_enable_c');
 
 -- Job Offers application counters new fields
 ALTER TABLE `stic_job_offers`
@@ -83,11 +83,11 @@ CREATE TABLE IF NOT EXISTS `contacts_stic_conversations_c` (
 
 -- 	Create relationships for Accounts and Contacts for the new portal username, password and enable fields
 ALTER TABLE `accounts_cstm` 
-    ADD COLUMN IF NOT EXISTS `stic_portal_password_c` VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_username_c` VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_enable_c` TINYINT(1) DEFAULT 0 NULL;
+    ADD COLUMN IF NOT EXISTS `stic_pa_password_c` VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_pa_username_c` VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_pa_enable_c` TINYINT(1) DEFAULT 0 NULL;
 
 ALTER TABLE `contacts_cstm` 
-    ADD COLUMN IF NOT EXISTS `stic_portal_password_c` VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_username_c` VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_enable_c` TINYINT(1) DEFAULT 0 NULL;
+    ADD COLUMN IF NOT EXISTS `stic_pa_password_c` VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_pa_username_c` VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_pa_enable_c` TINYINT(1) DEFAULT 0 NULL;
