@@ -668,7 +668,7 @@ EOJS;
             $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
          }
       });
-      $current_query_by_page = base64_encode(json_encode($decoded_request));
+      $current_query_by_page = base64_encode(json_encode($decoded_request, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG));
       // END STIC-Custom
       
       $html .= "<input type='hidden' name='current_query_by_page' id='MGD_current_query_by_page' value='{$current_query_by_page}' />\n";
