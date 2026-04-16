@@ -661,7 +661,13 @@ EOJS;
       // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
       // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
       // $current_query_by_page = base64_encode(json_encode($_REQUEST));
-      $decoded_request = array_map('html_entity_decode', $_REQUEST);
+      // $decoded_request = array_map('html_entity_decode', $_REQUEST);
+      $decoded_request = $_REQUEST;
+      array_walk_recursive($decoded_request, function(&$value) {
+         if (is_string($value)) {
+            $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+         }
+      });
       $current_query_by_page = base64_encode(json_encode($decoded_request));
       // END STIC-Custom
       
