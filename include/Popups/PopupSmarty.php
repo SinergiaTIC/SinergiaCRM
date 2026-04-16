@@ -268,7 +268,12 @@ class PopupSmarty extends ListViewSmarty
         // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
         // $this->th->ss->assign('current_query', htmlentities(json_encode(($_REQUEST))));
-        $decoded_request = array_map('html_entity_decode', $_REQUEST);
+        $decoded_request = $_REQUEST;
+        array_walk_recursive($decoded_request, function(&$value) {
+            if (is_string($value)) {
+                $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            }
+        });
         $this->th->ss->assign('current_query', htmlentities(json_encode($decoded_request, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)));
         // END STIC-Custom
         $this->th->ss->assign('customFields', $this->customFieldDefs);
