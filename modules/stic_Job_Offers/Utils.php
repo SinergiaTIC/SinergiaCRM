@@ -170,7 +170,6 @@ class stic_Job_OffersUtils
 
         $candidateTemplateId = self::getNotificationTemplateId('job_offers_candidates', $parentBean);
         $assignedUserTemplateId = self::getNotificationTemplateId('job_offers_assigned_user', $parentBean);
-        $organizationTemplateId = self::getNotificationTemplateId('job_offers_organization', $parentBean);
         $interlocutorId = self::getOfferInterlocutorId($parentBean);
         $interlocutorTemplateId = !empty($interlocutorId)
             ? self::getNotificationTemplateId('job_offers_interlocutor', $parentBean)
@@ -201,27 +200,6 @@ class stic_Job_OffersUtils
             } else {
                 if (self::sendNotificationEmail($parentBean, $assignedUserBean, $assignedUserTemplateId, $outboundEmail, 'assigned user')) {
                     $notificationSent = true;
-                }
-            }
-        }
-
-        // Send direct email to organization
-        if (!empty($organizationTemplateId)) {
-            $organizationId = self::getOfferOrganizationId($parentBean);
-            if (empty($organizationId)) {
-                $GLOBALS['log']->info(
-                    "Notification email (organization) skipped for {$parentType} {$parentBean->id}: no related organization."
-                );
-            } else {
-                $organizationBean = BeanFactory::getBean('Accounts', $organizationId);
-                if (empty($organizationBean) || empty($organizationBean->id)) {
-                    $GLOBALS['log']->error(
-                        "Notification email (organization) not sent for {$parentType} {$parentBean->id}: could not load organization bean."
-                    );
-                } else {
-                    if (self::sendNotificationEmail($parentBean, $organizationBean, $organizationTemplateId, $outboundEmail, 'organization')) {
-                        $notificationSent = true;
-                    }
                 }
             }
         }
@@ -548,59 +526,6 @@ class stic_Job_OffersUtils
     }
 
     /**
-     * Get related organization id for an offer
-     *
-     * @param SugarBean $offerBean
-     * @return string|null
-     */
-    protected static function getOfferOrganizationId($offerBean)
-    {
-        if (empty($offerBean)) {
-            return null;
-        }
-
-        if (!empty($offerBean->stic_job_offers_accountsaccounts_ida)) {
-            return $offerBean->stic_job_offers_accountsaccounts_ida;
-        }
-
-        if (!empty($offerBean->fetched_row['stic_job_offers_accountsaccounts_ida'])) {
-            return $offerBean->fetched_row['stic_job_offers_accountsaccounts_ida'];
-        }
-
-        if ($offerBean->load_relationship('stic_job_offers_accounts')) {
-            $accountIds = $offerBean->stic_job_offers_accounts->get();
-            if (is_array($accountIds) && !empty($accountIds[0])) {
-                return $accountIds[0];
-            }
-        }
-
-        if (empty($offerBean->id)) {
-            return null;
-        }
-
-        $db = DBManagerFactory::getInstance();
-        $offerId = $db->quote($offerBean->id);
-
-        $query = "SELECT rel.stic_job_offers_accountsaccounts_ida AS account_id
-            FROM stic_job_offers_accounts_c rel
-            INNER JOIN accounts a ON a.id = rel.stic_job_offers_accountsaccounts_ida
-            WHERE rel.deleted = 0
-              AND a.deleted = 0
-              AND rel.stic_job_offers_accountsstic_job_offers_idb = '{$offerId}'
-            ORDER BY rel.date_modified DESC
-            LIMIT 1";
-
-        $result = $db->query($query);
-        if ($row = $db->fetchByAssoc($result)) {
-            if (!empty($row['account_id'])) {
-                return $row['account_id'];
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Get related interlocutor contact id for an offer
      *
      * @param SugarBean $offerBean
@@ -702,9 +627,6 @@ class stic_Job_OffersUtils
                 case 'job_offers_candidates':
                     $requestedTemplateId = $parentBean->emailtemplate_candidates_id ?? null;
                     break;
-                case 'job_offers_organization':
-                    $requestedTemplateId = $parentBean->emailtemplate_organization_id ?? null;
-                    break;
                 case 'job_offers_interlocutor':
                     $requestedTemplateId = $parentBean->emailtemplate_interlocutor_id ?? null;
                     break;
@@ -723,8 +645,7 @@ class stic_Job_OffersUtils
             'job_offers' => 'c79e5db6-d89d-487f-a4ff-6e2801f7ade5',
             'job_offers_assigned_user' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0010',
             'job_offers_candidates' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0011',
-            'job_offers_organization' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0012',
-            'job_offers_interlocutor' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0013',
+            'job_offers_interlocutor' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0012',
         );
         $defaultTemplateId = $templateIds[$templateKey] ?? null;
 

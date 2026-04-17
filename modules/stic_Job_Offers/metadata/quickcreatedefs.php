@@ -223,22 +223,18 @@ array(
                         'label' => 'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER',
                     ),
                     1 => array(
-                        'name' => 'notification_template_candidates',
-                        'studio' => 'visible',
-                        'label' => 'LBL_NOTIFICATION_TEMPLATE_CANDIDATES',
-                    ),
-                ),
-                2 => array(
-                    0 => array(
-                        'name' => 'notification_template_organization',
-                        'studio' => 'visible',
-                        'label' => 'LBL_NOTIFICATION_TEMPLATE_ORGANIZATION',
-                    ),
-                    1 => array(
                         'name' => 'notification_template_interlocutor',
                         'studio' => 'visible',
                         'label' => 'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR',
                     ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'notification_template_candidates',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_CANDIDATES',
+                    ),
+                    1 => array(),
                 ),
             ),
             'lbl_editview_panel5' => array(
