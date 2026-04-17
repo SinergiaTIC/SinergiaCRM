@@ -31,6 +31,26 @@ $searchFields['stic_Conversations'] = array (
   array (
     'query_type' => 'default',
   ),
+  'contact_name' =>
+  array (
+    'query_type' => 'format',
+    'operator' => 'subquery',
+    'subquery' => "SELECT contacts_stic_conversations_c.stic_conversations_idb FROM contacts_stic_conversations_c INNER JOIN contacts ON contacts.id = contacts_stic_conversations_c.contacts_ida AND contacts.deleted = 0 WHERE contacts_stic_conversations_c.deleted = 0 AND (contacts.first_name LIKE '%{0}%' OR contacts.last_name LIKE '%{0}%')",
+    'db_field' =>
+    array (
+      0 => 'id',
+    ),
+  ),
+  'CONTACTS_IDA' =>
+  array (
+    'query_type' => 'format',
+    'operator' => 'subquery',
+    'subquery' => "SELECT contacts_stic_conversations_c.stic_conversations_idb FROM contacts_stic_conversations_c WHERE contacts_stic_conversations_c.deleted = 0 AND contacts_stic_conversations_c.contacts_ida = '{0}'",
+    'db_field' =>
+    array (
+      0 => 'id',
+    ),
+  ),
   'current_user_only' => 
   array (
     'query_type' => 'default',

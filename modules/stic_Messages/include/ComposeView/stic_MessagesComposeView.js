@@ -186,11 +186,17 @@ function applyConversationData(conversationData) {
   }
 
   if (conversationData.parent_id) {
+    $('#stic_conversations_ida').data('parent-id', conversationData.parent_id);
     $('#parent_id').val(conversationData.parent_id).trigger('change');
+  } else {
+    $('#stic_conversations_ida').data('parent-id', '');
+    $('#parent_id').val('').trigger('change');
   }
 
-  if (typeof conversationData.parent_name !== 'undefined') {
+  if (typeof conversationData.parent_name !== 'undefined' && conversationData.parent_name !== null) {
     $('#parent_name').val(conversationData.parent_name);
+  } else if (!conversationData.parent_id) {
+    $('#parent_name').val('');
   }
 }
 
@@ -230,6 +236,26 @@ function isConversationPopupSelection(popupReplyData) {
   return typeof popupReplyData.name_to_value_array.stic_conversations_ida !== 'undefined';
 }
 
+// Function to check if the popup selection is for a parent (contact)
+function isParentPopupSelection(popupReplyData) {
+  if (!popupReplyData || !popupReplyData.name_to_value_array) {
+    return false;
+  }
+
+  return typeof popupReplyData.name_to_value_array.parent_id !== 'undefined';
+}
+
+function clearConversationSelectionGlobal(triggerChange) {
+  $('#stic_conversations_stic_messages_name').val('');
+  $('#stic_conversations_ida').val('');
+  $('#stic_conversations_ida').data('parent-id', '');
+  if (triggerChange) {
+    $('#stic_conversations_ida').trigger('change');
+  }
+}
+
+var sticMessagesSkipParentClear = false;
+
 if (typeof window.set_return === 'function') {
   var sticMessagesOriginalSetReturn = window.set_return;
   window.set_return = function(popupReplyData) {
@@ -237,6 +263,19 @@ if (typeof window.set_return === 'function') {
 
     if (isConversationPopupSelection(popupReplyData)) {
       loadSelectedConversationData();
+    } else if (isParentPopupSelection(popupReplyData)) {
+      var isConversationType = $('#type').val() === 'conversation';
+      var isNewConversation = $('#new_conversation').is(':checked');
+      var conversationId = $('#stic_conversations_ida').val() || '';
+      var conversationParentId = $('#stic_conversations_ida').data('parent-id') || '';
+      var newParentId = popupReplyData.name_to_value_array.parent_id || '';
+
+      if (isConversationType && !isNewConversation && conversationId && (!conversationParentId || newParentId !== conversationParentId)) {
+        sticMessagesSkipParentClear = true;
+        clearConversationSelectionGlobal(true);
+      }
+
+      $('#parent_id').trigger('change');
     }
   };
 }
@@ -282,8 +321,112 @@ function getParentAsync(parentId, parentType, callbackFunction) {
 }
 
 $(function () {
+  // Function to clear conversation selection fields
+  function clearConversationSelectionFields(triggerChange) {
+    $('#stic_conversations_stic_messages_name').val('');
+    $('#stic_conversations_ida').val('');
+    if (triggerChange) {
+      $('#stic_conversations_ida').trigger('change');
+    }
+  }
+
+  // Function to bind synchronization between conversation parent and conversation selection
+  function bindConversationParentSync() {
+    $('#parent_id').on('change', function () {
+      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+        return;
+      }
+
+      var parentId = $('#parent_id').val() || '';
+      var conversationId = $('#stic_conversations_ida').val() || '';
+      var conversationParentId = $('#stic_conversations_ida').data('parent-id') || '';
+
+      if (!conversationId) {
+        return;
+      }
+
+      if (!parentId || parentId !== conversationParentId) {
+        $('#stic_conversations_ida').data('parent-id', '');
+        clearConversationSelectionFields(true);
+      }
+    });
+
+    $('#stic_conversations_ida').on('change', function () {
+      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+        return;
+      }
+
+      if (!$('#stic_conversations_ida').val()) {
+        $('#stic_conversations_ida').data('parent-id', '');
+        sticMessagesSkipParentClear = false;
+      }
+    });
+
+    $('#btn_clr_parent_name').on('click', function () {
+      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+        return;
+      }
+
+      $('#stic_conversations_ida').data('parent-id', '');
+      clearConversationSelectionFields(true);
+    });
+
+    $('#btn_clr_stic_conversations_stic_messages_name').on('click', function () {
+      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+        return;
+      }
+
+      $('#stic_conversations_ida').data('parent-id', '');
+    });
+  }
+
+  // Function to build the initial filter for the conversation popup based on the selected parent
+  function buildConversationPopupFilter() {
+    var parentType = $('#parent_type').val();
+    var parentId = $('#parent_id').val();
+
+    if (parentType !== 'Contacts' || !parentId) {
+      return '';
+    }
+
+    var encodedId = encodeURIComponent(parentId);
+
+    return '&CONTACTS_IDA=' + encodedId;
+  }
+
+  // Function to open the conversation selection popup with the appropriate filter
+  function openConversationPopupWithFilter(event) {
+    if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+      return true;
+    }
+
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var formName = (typeof getFormName === 'function' && getFormName()) || 'EditView';
+    var popupRequestData = {
+      call_back_function: 'set_return',
+      form_name: formName,
+      field_to_name_array: {
+        id: 'stic_conversations_ida',
+        name: 'stic_conversations_stic_messages_name',
+      },
+    };
+
+    var initialFilter = buildConversationPopupFilter();
+    open_popup('stic_Conversations', 600, 400, initialFilter, true, false, popupRequestData, 'single', false);
+    return false;
+  }
+
   $('#stic_conversations_ida').on('change', loadSelectedConversationData);
   $('#new_conversation, #type').on('change', loadSelectedConversationData);
+  $('#btn_stic_conversations_stic_messages_name')
+    .removeAttr('onclick')
+    .off('click')
+    .on('click', openConversationPopupWithFilter);
+
+  bindConversationParentSync();
 
   const myButtons = $('[id="SAVE"]');
   saveMessage = function (event) {
