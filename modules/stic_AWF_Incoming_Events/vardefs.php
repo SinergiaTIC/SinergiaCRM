@@ -39,7 +39,7 @@
  */
 
 $dictionary['stic_AWF_Incoming_Events'] = array(
-    'table' => 'stic_AWF_Incoming_Events',
+    'table' => 'stic_awf_incoming_events',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,

@@ -39,7 +39,7 @@
  */
 
 $dictionary['stic_AWF_Forms'] = array(
-    'table' => 'stic_AWF_Forms',
+    'table' => 'stic_awf_forms',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,

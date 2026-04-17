@@ -44,7 +44,7 @@ class stic_AWF_Links extends Basic
     public $new_schema = true;
     public $module_dir = 'stic_AWF_Links';
     public $object_name = 'stic_AWF_Links';
-    public $table_name = 'stic_AWF_Links';
+    public $table_name = 'stic_awf_links';
     public $importable = false;
 
     public $id;
