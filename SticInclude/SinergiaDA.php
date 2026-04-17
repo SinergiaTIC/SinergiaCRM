@@ -245,6 +245,13 @@ class ExternalReporting
             $modulesList['SurveyQuestionResponses'] = 'SurveyQuestionResponses';
         }
 
+        // If stic_AWF_Forms module is enabled, we automatically activate the related Response modules
+        if (in_array('stic_AWF_Forms', $modulesList)) {
+            $modulesList['stic_AWF_Responses'] = 'stic_AWF_Responses';
+            $modulesList['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
+        }
+
+
         natsort($modulesList);
 
         foreach ($modulesList as $moduleName) {
