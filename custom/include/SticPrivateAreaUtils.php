@@ -60,9 +60,11 @@ class SticPrivateAreaUtils
             $bean->_stic_plain_pa_password = $generatedPassword;
             $bean->stic_pa_password_c = $generatedPassword;
         } elseif (!$hasSubmittedPassword) {
-            // Keep existing password when it was not changed in the form.
+            // Keep existing password when it was not changed in the form
             $bean->_stic_plain_pa_password = '';
-            if ($storedPassword !== '') {
+            if ($fetchedPassword !== '') {
+                $bean->stic_pa_password_c = $fetchedPassword;
+            } elseif ($storedPassword !== '') {
                 $bean->stic_pa_password_c = $storedPassword;
             }
         } else {
