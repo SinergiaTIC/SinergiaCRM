@@ -429,6 +429,7 @@ class ExternalReporting
                     case 'none':
                     case 'ColourPicker':
                     case 'collection':
+                    case 'longtext':                        
                         continue 2;
                         break;
                     case 'relate':
