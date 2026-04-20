@@ -330,12 +330,58 @@ $(function () {
     }
   }
 
+  // Function to update quicksearch filter for conversations based on selected contact
+  function updateConversationQuickSearchFilter() {
+    if (typeof sqs_objects === 'undefined' || !sqs_objects) {
+      return;
+    }
+
+    var parentId = $('#parent_id').val() || '';
+    var parentType = $('#parent_type').val() || '';
+    var isConversationType = $('#type').val() === 'conversation';
+    var mustFilterByContact = isConversationType && parentType === 'Contacts' && parentId !== '';
+
+    for (var key in sqs_objects) {
+      if (!sqs_objects.hasOwnProperty(key)) {
+        continue;
+      }
+
+      var obj = sqs_objects[key];
+      if (!obj || !obj.modules) {
+        continue;
+      }
+
+      var isConversationsModule = obj.modules.indexOf('stic_Conversations') !== -1;
+      if (!isConversationsModule) {
+        continue;
+      }
+
+      var targetsConversationField = obj.populate_list &&
+        (obj.populate_list.indexOf('stic_conversations_stic_messages_name') !== -1 ||
+         obj.populate_list.indexOf('stic_conversations_ida') !== -1);
+
+      if (!targetsConversationField) {
+        continue;
+      }
+
+      if (mustFilterByContact) {
+        obj.stic_contact_filter_id = parentId;
+      } else if (typeof obj.stic_contact_filter_id !== 'undefined') {
+        delete obj.stic_contact_filter_id;
+      }
+    }
+  }
+
   // Function to bind synchronization between conversation parent and conversation selection
   function bindConversationParentSync() {
+    updateConversationQuickSearchFilter();
+
     $('#parent_id').on('change', function () {
       if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
         return;
       }
+
+      updateConversationQuickSearchFilter();
 
       var parentId = $('#parent_id').val() || '';
       var conversationId = $('#stic_conversations_ida').val() || '';
@@ -378,6 +424,15 @@ $(function () {
 
       $('#stic_conversations_ida').data('parent-id', '');
     });
+
+    $('#btn_clr_parent_name').on('click', function() {
+      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+        return;
+      }
+      setTimeout(function() {
+        updateConversationQuickSearchFilter();
+      }, 100);
+    });
   }
 
   // Function to build the initial filter for the conversation popup based on the selected parent
@@ -419,7 +474,49 @@ $(function () {
     return false;
   }
 
-  $('#stic_conversations_ida').on('change', loadSelectedConversationData);
+  var lastConversationId = '';
+
+  function handleConversationSelectionFromQuickSearch() {
+    var conversationId = $('#stic_conversations_ida').val() || '';
+    if (conversationId && conversationId !== lastConversationId) {
+      lastConversationId = conversationId;
+      loadSelectedConversationData();
+    }
+  }
+
+  $('#stic_conversations_ida').on('change', handleConversationSelectionFromQuickSearch);
+
+  $('#stic_conversations_stic_messages_name').on('blur', function() {
+    var originalValue = $(this).data('original-value') || '';
+    var currentValue = $(this).val() || '';
+    if (currentValue !== originalValue && currentValue !== '') {
+      var conversationId = $('#stic_conversations_ida').val();
+      if (conversationId) {
+        handleConversationSelectionFromQuickSearch();
+      }
+    }
+    $(this).data('original-value', currentValue);
+  });
+
+  $('#stic_conversations_stic_messages_name').on('focus', function() {
+    $(this).data('original-value', $(this).val());
+    updateConversationQuickSearchFilter();
+  });
+
+  $('#btn_clr_stic_conversations_stic_messages_name').on('click', function() {
+    setTimeout(function() {
+      lastConversationId = '';
+      updateConversationQuickSearchFilter();
+    }, 100);
+  });
+
+  setInterval(function() {
+    var conversationId = $('#stic_conversations_ida').val() || '';
+    if (conversationId && conversationId !== lastConversationId) {
+      handleConversationSelectionFromQuickSearch();
+    }
+  }, 500);
+
   $('#new_conversation, #type').on('change', loadSelectedConversationData);
   $('#btn_stic_conversations_stic_messages_name')
     .removeAttr('onclick')
