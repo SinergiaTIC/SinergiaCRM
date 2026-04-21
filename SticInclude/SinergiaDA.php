@@ -491,6 +491,7 @@ class ExternalReporting
                                 if (in_array($fieldV['alias'], $usedAlias)) {
                                     $relName = $fieldV['link'];
                                     $fieldV['alias'] = $this->sanitizeText("{$fieldV['alias']}_{$relName}");
+                                    $fieldV['alias'] = substr($fieldV['alias'], 0, 64);
                                 }
                                 $usedAlias[] = $fieldV['alias'];
 
