@@ -86,174 +86,27 @@ class stic_MessagesViewEdit extends ViewEdit
         echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
         echo getVersionedScript("modules/stic_Messages/Utils.js");
 
-        // Attachment show/hide logic + upload handler
+        // Attachment widget JS
         echo $this->_buildAttachmentScript($mod_strings);
     }
 
     /**
-     * Builds the HTML for the attachment widget (hidden by default, shown for WhatsApp types).
+     * Builds the HTML for the attachment widget.
+     * Now uses external HTML file.
      */
     private function _buildAttachmentWidget(array $mod_strings): string
     {
-        $lblAttach  = htmlspecialchars($mod_strings['LBL_ATTACHMENT']             ?? 'Attachment');
-        $lblRemove  = htmlspecialchars($mod_strings['LBL_ATTACHMENT_REMOVE']      ?? 'Remove');
-        $lblUploading = htmlspecialchars($mod_strings['LBL_CONVERSATION_UPLOADING'] ?? 'Uploading…');
-
-        return <<<HTML
-<div id="stic_attachment_widget" style="display:none;">
-    <input type="hidden" id="media_note_id" name="media_note_id" value="">
-
-    <input type="file" id="stic_media_file" style="display:none;"
-        accept="image/jpeg,image/png,image/gif,image/webp,
-                video/mp4,video/3gpp,
-                audio/ogg,audio/mpeg,audio/mp4,audio/amr,
-                application/pdf,
-                application/msword,
-                application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                application/vnd.ms-excel,
-                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-
-    <div id="stic_attach_btn_row" style="display:flex;align-items:center;gap:10px;">
-        <button type="button" class="button" id="stic_attach_btn"
-                onclick="document.getElementById('stic_media_file').click();">
-            📎 {$lblAttach}
-        </button>
-        <span id="stic_attach_uploading" style="display:none;font-size:11px;color:#888;">
-            ⏳ {$lblUploading}
-        </span>
-    </div>
-
-    <div id="stic_attach_preview" style="display:none;margin-top:6px;
-         padding:6px 10px;background:#f5f5f5;border-radius:6px;
-         font-size:12px;display:none;align-items:center;gap:8px;">
-        <span id="stic_attach_icon" style="font-size:20px;">📄</span>
-        <img  id="stic_attach_img" style="max-height:48px;max-width:48px;
-              border-radius:4px;object-fit:cover;display:none;">
-        <span id="stic_attach_name" style="flex:1;"></span>
-        <a href="#" id="stic_attach_remove"
-           style="color:#e53935;font-size:13px;text-decoration:none;"
-           onclick="sticRemoveAttachment();return false;">✕ {$lblRemove}</a>
-    </div>
-</div>
-HTML;
+        ob_start();
+        include 'modules/stic_Messages/include/Attachment/stic_MessagesAttachment.tpl';
+        return ob_get_clean();
     }
 
     /**
      * Builds the inline JS for the attachment widget.
+     * Now loads external CSS and JS files instead of inline code.
      */
     private function _buildAttachmentScript(array $mod_strings): string
     {
-        $errorUpload  = json_encode($mod_strings['LBL_CONVERSATION_ERROR_UPLOAD']  ?? 'Error uploading file');
-        $errorUnknown = json_encode($mod_strings['LBL_CONVERSATION_ERROR_UNKNOWN'] ?? 'Unknown error');
-
-        // WhatsApp helper class names that should show the attachment widget
-        $whatsappTypes = json_encode(['WhatsAppHelper', 'WhatsAppWeb']);
-
-        return <<<JS
-<script>
-(function () {
-    var WHATSAPP_TYPES = {$whatsappTypes};
-
-    // ── Show/hide widget based on type field ──────────────────────────────
-    function sticToggleAttachment() {
-        var typeEl  = document.getElementById('type');
-        var widget  = document.getElementById('stic_attachment_widget');
-        if (!typeEl || !widget) return;
-        var val = typeEl.value || '';
-        if (WHATSAPP_TYPES.indexOf(val) !== -1) {
-            widget.style.display = 'block';
-        } else {
-            widget.style.display = 'none';
-            sticRemoveAttachment();          // clear any pending file
-        }
-    }
-
-    // Run on load and on every change of the type dropdown
-    document.addEventListener('DOMContentLoaded', function () {
-        sticToggleAttachment();
-        var typeEl = document.getElementById('type');
-        if (typeEl) typeEl.addEventListener('change', sticToggleAttachment);
-    });
-
-    // ── File selected ─────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', function () {
-        var fileInput = document.getElementById('stic_media_file');
-        if (!fileInput) return;
-        fileInput.addEventListener('change', function () {
-            if (!this.files || !this.files[0]) return;
-            var file = this.files[0];
-
-            document.getElementById('stic_attach_uploading').style.display = 'inline';
-            document.getElementById('stic_attach_btn').disabled = true;
-
-            var formData = new FormData();
-            formData.append('module', 'stic_Messages');
-            formData.append('action', 'uploadConversationMedia');
-            formData.append('media',  file);
-
-            fetch('index.php', {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                document.getElementById('stic_attach_uploading').style.display = 'none';
-                document.getElementById('stic_attach_btn').disabled = false;
-
-                if (!data.success) {
-                    alert({$errorUpload} + ': ' + (data.error || {$errorUnknown}));
-                    fileInput.value = '';
-                    return;
-                }
-
-                // Store note_id — the only field the form needs to submit
-                document.getElementById('media_note_id').value = data.note_id;
-
-                sticShowAttachPreview(file, data.name);
-            })
-            .catch(function (err) {
-                document.getElementById('stic_attach_uploading').style.display = 'none';
-                document.getElementById('stic_attach_btn').disabled = false;
-                alert({$errorUpload} + ': ' + err);
-                fileInput.value = '';
-            });
-        });
-    });
-
-    // ── Preview ───────────────────────────────────────────────────────────
-    window.sticShowAttachPreview = function (file, name) {
-        document.getElementById('stic_attach_name').textContent = name;
-        var img  = document.getElementById('stic_attach_img');
-        var icon = document.getElementById('stic_attach_icon');
-        if (file.type.startsWith('image/')) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                img.src = e.target.result;
-                img.style.display  = 'inline-block';
-                icon.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            img.style.display  = 'none';
-            icon.style.display = 'inline-block';
-        }
-        var preview = document.getElementById('stic_attach_preview');
-        preview.style.display = 'flex';
-    };
-
-    // ── Remove ────────────────────────────────────────────────────────────
-    window.sticRemoveAttachment = function () {
-        document.getElementById('media_note_id').value = '';
-        var fi = document.getElementById('stic_media_file');
-        if (fi) fi.value = '';
-        var preview = document.getElementById('stic_attach_preview');
-        if (preview) preview.style.display = 'none';
-        var img = document.getElementById('stic_attach_img');
-        if (img) { img.src = ''; img.style.display = 'none'; }
-    };
-})();
-</script>
-JS;
+        return getVersionedScript('modules/stic_Messages/include/Attachment/stic_MessagesAttachment.js');
     }
 }
