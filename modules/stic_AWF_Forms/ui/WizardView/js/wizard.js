@@ -967,11 +967,21 @@ class WizardStep2 {
         if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
         return Object.entries(STIC.enabledModules).map(([key, value]) => ({ id: key, label: value.text }));
       },
-      get isValid() { 
-        return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
+      get canSaveNewBlock() { 
+        const moduleOk = this.newDataBlock.module && String(this.newDataBlock.module).trim() !== '';
+        const textOk = this.newDataBlock.text && String(this.newDataBlock.text).trim() !== '';
+        return moduleOk && textOk;
       },
       get isValidUnlinked() { 
         return this.newUnlinkedDataBlock.text.trim() != '';
+      },
+
+      init() {
+        this.$watch('newDataBlock.module', (value) => {
+          if (value) {
+            this.newDataBlock.text = this.formConfig.suggestDataBlockText(value);
+          }
+        });
       },
 
       handleAddDatablockModule() {
