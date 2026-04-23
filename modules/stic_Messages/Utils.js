@@ -53,7 +53,16 @@ switch (sticViewType) {
         $('#sender').css('background', '#F8F8F8');
         $('#sender').css('border-color', '#E2E7EB');
 
-        var assignedUserName = $('#assigned_user_name').val();
+        syncSenderWithAssignedUserIfConversation();
+      }
+
+      // Keep sender synchronized with assigned user when type is conversation
+      function syncSenderWithAssignedUserIfConversation() {
+        if ($('#type').val() !== 'conversation') {
+          return;
+        }
+
+        var assignedUserName = ($('#assigned_user_name').val() || '').trim();
         if (assignedUserName) {
           $('#sender').val(assignedUserName);
         }
@@ -165,6 +174,29 @@ switch (sticViewType) {
       if ($('#type').val() === 'WhatsAppWeb' || $('#type').val() === 'conversation') {
         lockSenderAndStatusToSent();
       }
+
+      // Keep sender synced with assigned user for conversation type
+      function bindAssignedUserChanges() {
+        var $assignedUserName = $('#assigned_user_name');
+        var $assignedUserId = $('#assigned_user_id');
+        var lastAssignedUserName = $assignedUserName.val() || '';
+
+        $assignedUserName.add($assignedUserId).on('change keyup blur', syncSenderWithAssignedUserIfConversation);
+
+        $('#btn_assigned_user_name, #btn_clr_assigned_user_name').on('click', function() {
+          setTimeout(syncSenderWithAssignedUserIfConversation, 300);
+        });
+
+        setInterval(function() {
+          var currentName = $assignedUserName.val() || '';
+          if (currentName !== lastAssignedUserName) {
+            lastAssignedUserName = currentName;
+            syncSenderWithAssignedUserIfConversation();
+          }
+        }, 500);
+      }
+
+      bindAssignedUserChanges();
 
       if($("#mass_ids").val()) {
         $('#parent_name').prop('disabled', true);
