@@ -118,16 +118,16 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
 
                         $options = json_encode($options_array);
 
-                        // STIC Custom 20260420 - Avoid "Undefined array key 'vname'" when field definition is not correct
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        // STIC-Custom 20260420 ART - Avoid "Undefined array key 'vname'" when field definition is not correct
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1059
                         // if ($module_arr['vname'] != 'LBL_DELETED') {
                         if (isset($module_arr['vname']) && $module_arr['vname'] != 'LBL_DELETED') {
                         // END STIC Custom
                             $options_array['$'.$module->table_name.'_'.$name] = translate($module_arr['vname'], $module->module_dir);
                             $fmod_options_array[$module_arr['vname']] = translate($relate_module->module_dir).' : '.translate($module_arr['vname'], $module->module_dir);
                         }
-                        // STIC Custom 20260420 - Avoid "Undefined array key 'vname'" when field definition is not correct
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        // STIC-Custom 20260420 ART - Avoid "Undefined array key 'vname'" when field definition is not correct
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1059
                         // $test = $module_arr['vname'];
                         // $insert_fields_js2 .="'$test':$options,\n";
                         if (isset($module_arr['vname'])) {
