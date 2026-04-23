@@ -96,6 +96,8 @@ switch (viewType()) {
       }
     });
 
+    setupPrivateAreaPasswordField();
+
     break;
 
   case "detail":
@@ -155,4 +157,67 @@ function onClickIncorporaSyncButton() {
   document.MassUpdate.action.value='fromMassUpdate';
   document.MassUpdate.module.value='stic_Incorpora';
   document.MassUpdate.submit();
+}
+
+/**
+ * Function to hide or show the placeholders and the value of the private area password field
+ */
+function privateAreaPasswordField() {
+  var field = document.getElementById("stic_pa_password_c");
+  if (!field) {
+    return;
+  }
+
+  if (!field.hasAttribute("data-stic-had-password")) {
+    var isValueSet = field.getAttribute("data-is-value-set") === "true";
+    var hasRenderedPlaceholder = !!(field.getAttribute("placeholder") || "").trim();
+    var hasRenderedValue = !!field.value;
+    field.setAttribute("data-stic-had-password", (isValueSet || hasRenderedPlaceholder || hasRenderedValue) ? "true" : "false");
+  }
+
+  var hasStoredPassword = field.getAttribute("data-stic-had-password") === "true";
+  var currentPlaceholder = field.getAttribute("placeholder") || "";
+  var placeholder =
+    SUGAR.language.get("app_strings", "LBL_PASSWORD_SET_NEW_VALUE_TO_RESET") ||
+    (SUGAR.language.languages &&
+      SUGAR.language.languages.app_strings &&
+      SUGAR.language.languages.app_strings.LBL_PASSWORD_SET_NEW_VALUE_TO_RESET) ||
+    currentPlaceholder;
+
+  if (field.type !== "password") {
+    try {
+      field.type = "password";
+    } catch (e) {
+      // Keep silent; some legacy browsers may throw here
+    }
+  }
+
+  field.value = "";
+  field.setAttribute("autocomplete", "new-password");
+
+  if (hasStoredPassword) {
+    field.setAttribute("placeholder", placeholder);
+  } else {
+    field.removeAttribute("placeholder");
+  }
+}
+
+/**
+ * Function to setup the private area password field when the DOM is loaded and when the field is rendered in the form
+ */
+function setupPrivateAreaPasswordField() {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", privateAreaPasswordField);
+  } else {
+    privateAreaPasswordField();
+  }
+
+  var observer = new MutationObserver(function(mutations, obs) {
+    var field = document.getElementById("stic_pa_password_c");
+    if (field) {
+      privateAreaPasswordField();
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
 }
