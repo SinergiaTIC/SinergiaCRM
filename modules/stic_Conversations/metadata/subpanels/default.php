@@ -62,17 +62,5 @@ $subpanel_layout = array(
             'module' => $module_name,
             'width' => '5%',
         ),
-        'quickedit_button' => array(
-            'vname' => 'LBL_QUICKEDIT_BUTTON',
-            'widget_class' => 'SubPanelQuickEditButton',
-            'module' => $module_name,
-            'width' => '5%',
-        ),
-        'remove_button' => array(
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
-            'module' => $module_name,
-            'width' => '5%',
-        ),
     ),
 );
