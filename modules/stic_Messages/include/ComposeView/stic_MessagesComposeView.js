@@ -177,7 +177,17 @@ function applyConversationData(conversationData) {
     return;
   }
 
-  if (conversationData.sender) {
+  if (conversationData.assigned_user_id) {
+    $('#assigned_user_id').val(conversationData.assigned_user_id).trigger('change');
+  }
+
+  if (typeof conversationData.assigned_user_name !== 'undefined' && conversationData.assigned_user_name !== null) {
+    $('#assigned_user_name').val(conversationData.assigned_user_name).trigger('change');
+  }
+
+  if (conversationData.assigned_user_name) {
+    $('#sender').val(conversationData.assigned_user_name);
+  } else if (conversationData.sender) {
     $('#sender').val(conversationData.sender);
   }
 

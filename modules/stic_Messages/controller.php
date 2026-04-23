@@ -728,6 +728,8 @@ class stic_MessagesController extends SugarController
         $response['code'] = 'No data';
         $response['data'] = array(
             'sender' => '',
+            'assigned_user_id' => '',
+            'assigned_user_name' => '',
             'conversation_id' => '',
             'conversation_name' => '',
             'parent_id' => '',
@@ -741,6 +743,8 @@ class stic_MessagesController extends SugarController
             if (!empty($conversationBean) && !empty($conversationBean->id)) {
                 $response['data']['conversation_id'] = $conversationBean->id;
                 $response['data']['conversation_name'] = $conversationBean->name ?? '';
+                $response['data']['assigned_user_id'] = $conversationBean->assigned_user_id ?? '';
+                $response['data']['assigned_user_name'] = $conversationBean->assigned_user_name ?? '';
 
                 $latestMessage = $this->getLatestConversationMessage($conversationBean);
                 if ($latestMessage) {
@@ -748,6 +752,14 @@ class stic_MessagesController extends SugarController
                     $response['data']['parent_id'] = $latestMessage->parent_id ?? '';
                     $response['data']['parent_type'] = $latestMessage->parent_type ?? '';
                     $response['data']['parent_name'] = $latestMessage->parent_name ?? '';
+
+                    if (empty($response['data']['assigned_user_id']) && !empty($latestMessage->assigned_user_id)) {
+                        $response['data']['assigned_user_id'] = $latestMessage->assigned_user_id;
+                    }
+
+                    if (empty($response['data']['assigned_user_name']) && !empty($latestMessage->assigned_user_name)) {
+                        $response['data']['assigned_user_name'] = $latestMessage->assigned_user_name;
+                    }
                 }
 
                 $this->fillConversationParentFromContact($conversationBean, $response['data']);
