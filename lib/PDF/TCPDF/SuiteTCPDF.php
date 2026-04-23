@@ -50,7 +50,7 @@ class SuiteTCPDF extends TCPDF
     public function setHtmlHeader($htmlHeader): void
     {
         // STIC-Custom 20260421 ART - Allow to use {PAGENO} variable in the header
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1066
         $htmlHeader = str_replace('{PAGENO}', $this->getAliasNumPage(), $htmlHeader);
 
         $htmlHeader = preg_replace_callback(
