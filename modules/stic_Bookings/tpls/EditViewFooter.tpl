@@ -138,10 +138,10 @@
         </div>
         <div class="filter-actions grouped-buttons">
             <button id="loadCenterResourcesButton" type="button" class="button">
-                {$RESOURCES_MOD.LBL_ADD_BUTTON}
+                {$MOD.LBL_ADD_BUTTON}
             </button>
             <button id="resetResourcesButton" type="button" class="button">
-                {$RESOURCES_MOD.LBL_UNDO_BUTTON}
+                {$MOD.LBL_UNDO_BUTTON}
             </button>
             <button id="deleteResourcesButton" type="button" class="button">
                 {$APP.LBL_DELETE_BUTTON}
@@ -163,7 +163,7 @@
     </tr>
 </table>
 <div style="padding-top: 2px">
-    <input type="button" class="button" value="{$RESOURCES_MOD.LBL_RESOURCES_ADD}" id="addResourceLine" />
+    <input type="button" class="button" value="{$MOD.LBL_RESOURCES_ADD}" id="addResourceLine" />
 </div>
 <br>
 {literal}
