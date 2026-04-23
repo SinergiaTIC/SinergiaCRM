@@ -220,12 +220,20 @@ class stic_BookingsViewEdit extends ViewEdit
             jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
         }
         echo getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
+        $moduleName = 'stic_Bookings';
+        if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
+            require_once 'include/language/jsLanguage.php';
+            jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
+        }
+        echo getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
 
         global $mod_strings, $app_strings;
         SticViews::display($this);
         
-        $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
-        $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
+
+        require_once 'modules/stic_Bookings/Utils.php';
+        $config_resource_fields = stic_BookingsUtils::getConfigResourceFields();
+        $config_place_fields = stic_BookingsUtils::getConfigPlaceFields();
     
 
         global $sugar_config, $current_language, $app_list_strings, $current_user;
@@ -456,7 +464,7 @@ SCRIPT;
     {
         global $app_list_strings;
 
-        $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
+        $config_resource_fields = stic_BookingsUtils::getConfigResourceFields();
 
         $parsedResources = array();
         foreach ($resourcesBeanArray as $resourceBean) {
