@@ -53,19 +53,19 @@ array(
                 ),
 
                 'LBL_ADDRESS_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_OWNERSHIP_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_INSURANCES_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_UTILITIES_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_PANEL_RECORD_DETAILS' => array(
