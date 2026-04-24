@@ -5152,7 +5152,7 @@ function loadAsyncListCount() {
         var offset = el.dataset.offset || 0;
         var where = el.dataset.where || '';
         
-        var url = 'index.php?entryPoint=asyncListCount&module=' + encodeURIComponent(module) + '&offset=' + encodeURIComponent(offset);
+        var url = 'index.php?entryPoint=sticAsyncListCount&module=' + encodeURIComponent(module) + '&offset=' + encodeURIComponent(offset);
         
         // Add WHERE clause for filtering
         if (where) {
