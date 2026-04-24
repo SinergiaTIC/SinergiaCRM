@@ -45,7 +45,7 @@ class AccountsLogicHooks
 
         // This code is added to process Private Area logic hooks after save
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/916
-        include_once 'custom/include/SticPrivateAreaUtils.php';
+        include_once 'SticInclude/SticPrivateAreaUtils.php';
         SticPrivateAreaUtils::processAfterSave($bean);
     }
 
@@ -59,7 +59,7 @@ class AccountsLogicHooks
 
         // This code is added to process Private Area logic hooks before save
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/916
-        include_once 'custom/include/SticPrivateAreaUtils.php';
+        include_once 'SticInclude/SticPrivateAreaUtils.php';
         SticPrivateAreaUtils::processBeforeSave($bean);
     }
 }
