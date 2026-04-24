@@ -186,7 +186,7 @@ class Task extends SugarBean
         }
 
         // STIC-Custom 20260424 ART - Fix parent name not showing in task list view when parent is deleted
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1077
         if (empty($this->parent_id)) {
             $this->parent_name = '';
             return;
@@ -201,7 +201,7 @@ class Task extends SugarBean
             $query = "SELECT first_name, last_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";
         } else {
             // STIC-Custom 20260424 ART - Fix parent name not showing in task list view when parent is deleted
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1077
             // if (is_subclass_of($parent, 'File')) {
             if (is_subclass_of($parent, 'File') && $parent->table_name != 'notes') {
             // END STIC-Custom
@@ -229,7 +229,7 @@ class Task extends SugarBean
             $this->parent_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']));
         } else {
             // STIC-Custom 20260424 ART - Fix parent name not showing in task list view when parent is deleted
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1077
             // if (is_subclass_of($parent, 'File') && $row != null) {
             if (is_subclass_of($parent, 'File') && $parent->table_name != 'notes' && $row != null) {
             // END STIC-Custom
