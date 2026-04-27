@@ -422,6 +422,7 @@ class ExternalReporting
                     case 'none':
                     case 'ColourPicker':
                     case 'collection':
+                    case 'encrypt':
                         continue 2;
                         break;
                     case 'relate':
@@ -2204,7 +2205,7 @@ class ExternalReporting
         if ($result !== false) {
             if ($result->num_rows > 0) {
                 while ($row = $db->fetchByassoc($result)) {
-                    $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE {$row['column_name']} = '{$row['table']}';";
+                    $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE `{$columnName}` = '{$row['table']}';";
 
                     $deleteResult = $db->query($queryDelete);
 
