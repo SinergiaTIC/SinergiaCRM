@@ -100,5 +100,5 @@ $mod_strings = array(
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => 'La fecha de inicio de contrato debe ser igual o posterior a la fecha de alta',
     'LBL_WORK_EXPERIENCE_SUBJECT' => 'Candidatura aceptada',
     'LBL_INTERLOCUTOR' => 'Interlocutor',
-    'LBL_INTERLOCUTOR_HELP' => 'Persona de contacto relacionada con la oferta laboral a la que se ha presentado la candidatura.',
+    'LBL_INTERLOCUTOR_HELP' => 'Persona de contacto de la organización ofertante.',
 );
