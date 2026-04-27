@@ -44,7 +44,7 @@ class stic_AWF_Deferred_Tickets extends Basic
     public $new_schema = true;
     public $module_dir = 'stic_AWF_Deferred_Tickets';
     public $object_name = 'stic_AWF_Deferred_Tickets';
-    public $table_name = 'stic_AWF_Deferred_Tickets';
+    public $table_name = 'stic_awf_deferred_tickets';
     public $importable = false;
 
     public $id;

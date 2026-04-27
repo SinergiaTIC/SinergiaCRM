@@ -1020,8 +1020,7 @@
                 <!-- Data Block name -->
                 <div class="col-6">
                   <stic-field-text class="col-6" x-model="newDataBlock.text" label="LBL_DATABLOCK_NAME"
-                                  x-effect="newDataBlock.text=formConfig.suggestDataBlockText(newDataBlock.module)"
-                                  keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
+                                   keydown.esc="$('#cancelAddDataBlockModuleButton').click();"></stic-field-text>
                 </div>
               </div>
             </form>
@@ -1031,7 +1030,7 @@
             <button type="button" class="col-2 btn btn-secondary" id="cancelAddDataBlockModuleButton" @click="creatingDataBlock = false;" 
                     x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
             <button type="button" class="col-2 btn btn-primary" id="addDataBlockModuleButton" @click="handleAddDatablockModule();" 
-                    x-bind:disabled="!isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
+                    x-bind:disabled="!canSaveNewBlock" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
           </div>
         </div>
       </div>
