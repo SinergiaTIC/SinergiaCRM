@@ -422,7 +422,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             // replacing GET method by POST.
             // STIC#670
             // STIC-Custom 20260427 JBL - Config for redirection method in web forms (Lead or Person capture) (POST or GET)
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1079
             // ------------------------------------------------------------
             // // Check if the headers have been sent, or if the redirect url is greater than 2083 characters (IE max URL length)
             // // and use a javascript form submission if that is the case.
