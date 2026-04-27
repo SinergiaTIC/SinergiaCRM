@@ -674,6 +674,11 @@ $sugar_config = array(
                 'redirectUri' => '',
                 'scopes' => '',
             ),
-    )
+    ),
+    // END STIC-Custom
+
+    // STIC-Custom 20260427 JBL - Config for redirection method in web forms (Lead or Person capture) (POST or GET)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+    'stic_webFormsRedirectMethod' => 'POST', // Possible values: 'POST' or 'GET'
     // END STIC-Custom
 );
