@@ -101,5 +101,5 @@ $mod_strings = array(
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => 'Contract start date must be equal or after Start date',
     'LBL_WORK_EXPERIENCE_SUBJECT' => 'Job application accepted',
     'LBL_INTERLOCUTOR' => 'Interlocutor',
-    'LBL_INTERLOCUTOR_HELP' => 'Contact person related to the job offer for which the application has been submitted.',
+    'LBL_INTERLOCUTOR_HELP' => 'Contact person of the hiring account.',
 );
