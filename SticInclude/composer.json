@@ -1,0 +1,18 @@
+{
+    "name": "sinergiatic/stic-include",
+    "description": "Dependencies for SinergiaCRM Verifactu Integration",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/SinergiaTIC/Verifactu-PHP"
+        }
+    ],
+    "require": {
+        "josemmo/verifactu-php": "dev-main",
+        "symfony/validator": "^7.3",
+        "symfony/translation": "^7.3"
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    }
+}
