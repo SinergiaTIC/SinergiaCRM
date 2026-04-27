@@ -395,7 +395,7 @@ $dictionary['stic_Job_Applications'] = array(
             'reportable' => true,
             'unified_search' => false,
             'duplicate_merge' => 'disabled',
-            'studio' => 'visible',
+            'studio' => false,
         ),
         'interlocutor_id' => array(
             'required' => false,

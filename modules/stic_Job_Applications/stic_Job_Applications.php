@@ -66,18 +66,6 @@ class stic_Job_Applications extends Basic
         return false;
     }
 
-	public function fill_in_additional_detail_fields()
-    {
-        parent::fill_in_additional_detail_fields();
-        $this->syncInterlocutorFromOffer();
-    }
-
-	public function fill_in_additional_list_fields()
-    {
-        parent::fill_in_additional_list_fields();
-        $this->syncInterlocutorFromOffer();
-    }
-
     public function save($check_notify = false) 
     {
         // Call the generic save() function from the SugarBean class
@@ -168,29 +156,33 @@ class stic_Job_Applications extends Basic
      */
     protected function syncInterlocutorFromOffer($offerBean = null)
     {
-        // If interlocutor was selected in the application itself, keep that value
-        $currentInterlocutorId = (string)($this->interlocutor_id ?? '');
-        if (!empty($currentInterlocutorId)) {
-            $interlocutorBean = BeanFactory::getBean('Contacts', $currentInterlocutorId);
-            if (!empty($interlocutorBean) && !empty($interlocutorBean->id)) {
-                $this->interlocutor = $interlocutorBean->name ?? trim(($interlocutorBean->first_name ?? '') . ' ' . ($interlocutorBean->last_name ?? ''));
-            }
-            return;
-        }
-
         if (empty($offerBean) || empty($offerBean->id)) {
             $offerId = $this->getRelatedOfferId();
 
             if (empty($offerId)) {
-                $this->interlocutor_id = '';
-                $this->interlocutor = '';
+                $currentInterlocutorId = (string)($this->interlocutor_id ?? '');
+                if (!empty($currentInterlocutorId)) {
+                    $interlocutorBean = BeanFactory::getBean('Contacts', $currentInterlocutorId);
+                    if (!empty($interlocutorBean) && !empty($interlocutorBean->id)) {
+                        $this->interlocutor = $interlocutorBean->name ?? trim(($interlocutorBean->first_name ?? '') . ' ' . ($interlocutorBean->last_name ?? ''));
+                    }
+                } else {
+                    $this->interlocutor = '';
+                }
                 return;
             }
 
             $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
             if (empty($offerBean) || empty($offerBean->id)) {
-                $this->interlocutor_id = '';
-                $this->interlocutor = '';
+                $currentInterlocutorId = (string)($this->interlocutor_id ?? '');
+                if (!empty($currentInterlocutorId)) {
+                    $interlocutorBean = BeanFactory::getBean('Contacts', $currentInterlocutorId);
+                    if (!empty($interlocutorBean) && !empty($interlocutorBean->id)) {
+                        $this->interlocutor = $interlocutorBean->name ?? trim(($interlocutorBean->first_name ?? '') . ' ' . ($interlocutorBean->last_name ?? ''));
+                    }
+                } else {
+                    $this->interlocutor = '';
+                }
                 return;
             }
         }
