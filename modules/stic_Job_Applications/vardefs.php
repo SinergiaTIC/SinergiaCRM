@@ -399,7 +399,6 @@ $dictionary['stic_Job_Applications'] = array(
         ),
         'interlocutor_id' => array(
             'required' => false,
-            'source' => 'non-db',
             'name' => 'interlocutor_id',
             'vname' => '',
             'type' => 'id',
@@ -413,6 +412,8 @@ $dictionary['stic_Job_Applications'] = array(
             'reportable' => false,
             'unified_search' => false,
             'duplicate_merge' => 'disabled',
+            'duplicate_merge_dom_value' => 0,
+            'merge_filter' => 'disabled',
         ),
         'stic_job_applications_activities_calls' =>
         array(

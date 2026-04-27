@@ -168,6 +168,16 @@ class stic_Job_Applications extends Basic
      */
     protected function syncInterlocutorFromOffer($offerBean = null)
     {
+        // If interlocutor was selected in the application itself, keep that value
+        $currentInterlocutorId = (string)($this->interlocutor_id ?? '');
+        if (!empty($currentInterlocutorId)) {
+            $interlocutorBean = BeanFactory::getBean('Contacts', $currentInterlocutorId);
+            if (!empty($interlocutorBean) && !empty($interlocutorBean->id)) {
+                $this->interlocutor = $interlocutorBean->name ?? trim(($interlocutorBean->first_name ?? '') . ' ' . ($interlocutorBean->last_name ?? ''));
+            }
+            return;
+        }
+
         if (empty($offerBean) || empty($offerBean->id)) {
             $offerId = $this->getRelatedOfferId();
 
