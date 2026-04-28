@@ -175,9 +175,14 @@ class stic_Messages extends Basic
             $this->assigned_user_id = $assignedUserId;
         }
 
-        // Conversation messages are always sent and sender is fixed to current CRM user
+        // Conversation messages: set direction and sender
         if ($this->type === 'conversation') {
-            $this->sender = $current_user->name;
+            if (empty($this->id) && empty($this->fetched_row['id'])) {
+                $this->direction = !empty($current_user->id) ? 'outbound' : 'inbound';
+            }
+            if (!empty($current_user->id)) {
+                $this->sender = $current_user->name;
+            }
             $this->status = 'sent';
         }
 
