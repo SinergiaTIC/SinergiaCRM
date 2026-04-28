@@ -186,4 +186,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES' => "Plantilla de notificació per als candidats",
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES_EMAILTEMPLATE_ID' => "Plantilla de notificació per als candidats (ID)",
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES_INFO' => "Plantilla que es farà servir per notificar els canvis d'estat de l'oferta als candidats no rebutjats. Si el camp es deixa buit s'utilitzarà la plantilla per defecte.",
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Plantilla de notificació a interlocutor (Candidatura presentada)',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Plantilla de notificació a interlocutor (ID) - Candidatura presentada',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => "Plantilla que es farà servir per notificar a l'interlocutor quan la candidatura d'un candidat relacionat amb aquesta oferta canviï a 'Presentada'. Si el camp es deixa buit s'utilitzarà la plantilla per defecte",
 );

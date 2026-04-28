@@ -186,4 +186,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES' => 'Notification template for candidates',
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES_EMAILTEMPLATE_ID' => 'Notification template for candidates (ID)',
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES_INFO' => 'Template that will be used to notify the non rejected candidates about job offer status changes. If the field is left empty, the default template will be used.',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Notification template for interlocutor (Application submitted)',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Notification template for interlocutor (ID) - Application submitted',
+    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => 'Template that will be used to notify the interlocutor when the application of a candidate related to this offer changes to "Submitted". If the field is left empty, the default template will be used.',
 );

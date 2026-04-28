@@ -228,6 +228,14 @@ array(
                         'label' => 'LBL_NOTIFICATION_TEMPLATE_CANDIDATES',
                     ),
                 ),
+                2 => array(
+                    0 => array(
+                        'name' => 'notification_template_interlocutor',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR',
+                    ),
+                    1 => array(),
+                ),
             ),
             'lbl_editview_panel5' => array(
                 0 => array(
