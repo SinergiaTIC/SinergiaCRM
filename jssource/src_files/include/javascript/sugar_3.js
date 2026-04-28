@@ -5140,3 +5140,54 @@ $(document).ready(function(){
   });
 })
 // END STIC
+
+// STIC-Custom OC - 20260309 - Async count loading for list views
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+function loadAsyncListCount() {
+    var asyncCountElements = document.querySelectorAll('.async-count-loading');
+    if (!asyncCountElements.length) return;
+
+    asyncCountElements.forEach(function(el) {
+        var module = el.dataset.module;
+        var offset = el.dataset.offset || 0;
+        var where = el.dataset.where || '';
+        
+        var url = 'index.php?entryPoint=sticAsyncListCount&module=' + encodeURIComponent(module) + '&offset=' + encodeURIComponent(offset);
+        
+        // Add WHERE clause for filtering
+        if (where) {
+            url += '&where=' + encodeURIComponent(where);
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        el.innerHTML = response.total;
+                        el.classList.remove('async-count-loading', 'async-spinner');
+                        el.classList.add('async-count-loaded');
+                    }
+                } catch (e) {
+                    console.error('Error parsing async count response:', e);
+                    el.innerHTML = '?';
+                    el.classList.remove('async-count-loading', 'async-spinner');
+                }
+            }
+        };
+        xhr.onerror = function() {
+            el.innerHTML = '?';
+            el.classList.remove('async-count-loading', 'async-spinner');
+        };
+        xhr.send();
+    });
+}
+
+// Load async counts on page ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Delay slightly to prioritize main content loading
+    setTimeout(loadAsyncListCount, 200);
+});
+// END STIC-Custom OC

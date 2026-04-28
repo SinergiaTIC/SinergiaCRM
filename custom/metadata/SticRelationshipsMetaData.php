@@ -8187,10 +8187,10 @@ $dictionary["stic_assets_stic_followups"] = array(
       'stic_awf_forms_stic_awf_responses' => 
       array (
         'lhs_module' => 'stic_AWF_Forms',
-        'lhs_table' => 'stic_AWF_Forms',
+        'lhs_table' => 'stic_awf_forms',
         'lhs_key' => 'id',
         'rhs_module' => 'stic_AWF_Responses',
-        'rhs_table' => 'stic_AWF_Responses',
+        'rhs_table' => 'stic_awf_responses',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
         'join_table' => 'stic_awf_forms_stic_awf_responses_c',
@@ -8271,10 +8271,10 @@ $dictionary["stic_assets_stic_followups"] = array(
       'stic_awf_responses_stic_awf_links' => 
       array (
         'lhs_module' => 'stic_AWF_Responses',
-        'lhs_table' => 'stic_AWF_Responses',
+        'lhs_table' => 'stic_awf_responses',
         'lhs_key' => 'id',
         'rhs_module' => 'stic_AWF_Links',
-        'rhs_table' => 'stic_AWF_Links',
+        'rhs_table' => 'stic_awf_links',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
         'join_table' => 'stic_awf_responses_stic_awf_links_c',

@@ -286,7 +286,7 @@ class ResponseHandler
             // Update spam counter
             $db = DBManagerFactory::getInstance();
             $safeId = $db->quote($formId);
-            $db->query("UPDATE stic_AWF_Forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
+            $db->query("UPDATE stic_awf_forms SET analytics_spam = analytics_spam + 1 WHERE id = '$safeId'");
             
             stic_AWFUtils::renderGenericSpamResponse();
             return;
@@ -303,7 +303,7 @@ class ResponseHandler
         // Update valid responses counter
         $db = DBManagerFactory::getInstance();
         $safeId = $db->quote($formId);
-        $db->query("UPDATE stic_AWF_Forms SET analytics_submissions = analytics_submissions + 1 WHERE id = '$safeId'");
+        $db->query("UPDATE stic_awf_forms SET analytics_submissions = analytics_submissions + 1 WHERE id = '$safeId'");
 
         // Execution flow
         $executor = new ServerActionFlowExecutor($context);
@@ -442,7 +442,7 @@ class ResponseHandler
         global $db;
         $safeFormId = $db->quote($formId);
 
-        $query = "SELECT count(response.id) as count FROM stic_AWF_Responses response
+        $query = "SELECT count(response.id) as count FROM stic_awf_responses response
                     INNER JOIN stic_awf_forms_stic_awf_responses_c form_response
                         ON form_response.stic_awf_forms_stic_awf_responsesresponses_idb = response.id
                   WHERE

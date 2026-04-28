@@ -674,6 +674,11 @@ $sugar_config = array(
                 'redirectUri' => '',
                 'scopes' => '',
             ),
-    )
+    ),
+    // END STIC-Custom
+
+    // STIC-Custom 20260424 AAM - Async ListView count
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+    'stic_async_list_count' => false, 
     // END STIC-Custom
 );
