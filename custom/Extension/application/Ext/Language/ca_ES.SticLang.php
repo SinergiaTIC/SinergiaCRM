@@ -1296,12 +1296,12 @@ $app_list_strings['stic_job_offers_temporalities_list']['temporary'] = 'Temporal
 // Candidatures: Estats
 $app_list_strings['stic_job_applications_status_list'][''] = '';
 $app_list_strings['stic_job_applications_status_list']['expected_presentation'] = 'Prevista presentació';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'En revisió';
 $app_list_strings['stic_job_applications_status_list']['presented'] = 'Presentada';
 $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'Pendent entrevista';
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Entrevistada';
 $app_list_strings['stic_job_applications_status_list']['accepted'] = 'Acceptada';
 $app_list_strings['stic_job_applications_status_list']['rejected_closed'] = 'Rebutjada o tancada';
-$app_list_strings['stic_job_applications_status_list']['review'] = 'En revisió';
 
 // Candidatures: Raons de rebuig de la candidatura
 $app_list_strings['stic_job_applications_rejection_reasons_list'][''] = '';
