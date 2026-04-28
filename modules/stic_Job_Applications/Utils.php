@@ -166,4 +166,212 @@ class stic_Job_ApplicationsUtils
         return !empty($arguments['relationship'])
             && $arguments['relationship'] === 'stic_job_applications_stic_job_offers';
     }
+
+    /**
+     * Notify offer interlocutor when application status changes to Presented
+     *
+     * @param SugarBean $jobApplicationBean
+     * @return void
+     */
+    public static function notifyInterlocutorOnPresented($jobApplicationBean)
+    {
+        if (empty($jobApplicationBean) || empty($jobApplicationBean->id)) {
+            return;
+        }
+
+        $currentStatus = $jobApplicationBean->status ?? null;
+        if ($currentStatus !== 'presented') {
+            return;
+        }
+
+        $previousStatus = $jobApplicationBean->fetched_row['status'] ?? null;
+        if (!empty($previousStatus) && $previousStatus === $currentStatus) {
+            return;
+        }
+
+        $offerId = self::getRelatedOfferId($jobApplicationBean);
+        if (empty($offerId)) {
+            return;
+        }
+
+        $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
+        if (empty($offerBean) || empty($offerBean->id)) {
+            return;
+        }
+
+        $interlocutorId = $offerBean->contact_id_c ?? '';
+        if (empty($interlocutorId)) {
+            return;
+        }
+
+        $interlocutorBean = BeanFactory::getBean('Contacts', $interlocutorId);
+        if (empty($interlocutorBean) || empty($interlocutorBean->id)) {
+            return;
+        }
+
+        $templateId = self::getInterlocutorNotificationTemplateId($offerBean);
+        if (empty($templateId)) {
+            return;
+        }
+
+        $outboundEmail = self::getDefaultOutboundEmailAccount();
+        if (empty($outboundEmail)) {
+            $GLOBALS['log']->error(__METHOD__ . ': missing outbound configuration.');
+            return;
+        }
+
+        self::sendInterlocutorNotificationEmail(
+            $jobApplicationBean,
+            $offerBean,
+            $interlocutorBean,
+            $templateId,
+            $outboundEmail
+        );
+    }
+
+    /**
+     * Resolve the interlocutor notification template id
+     *
+     * @param SugarBean $offerBean
+     * @return string|null
+     */
+    protected static function getInterlocutorNotificationTemplateId($offerBean)
+    {
+        $templateId = $offerBean->emailtemplate_interlocutor_id ?? null;
+        if (empty($templateId)) {
+            $templateId = '4f2c7b91-0c3e-4a2b-9b3e-7c4a9b1e9001';
+        }
+
+        return self::getValidNotificationTemplateId($templateId);
+    }
+
+    /**
+     * Validate notification email template id
+     *
+     * @param string|null $templateId
+     * @return string|null
+     */
+    protected static function getValidNotificationTemplateId($templateId)
+    {
+        if (empty($templateId)) {
+            return null;
+        }
+
+        $templateBean = BeanFactory::getBean('EmailTemplates', $templateId);
+        if (!empty($templateBean) && !empty($templateBean->id) && empty($templateBean->deleted)) {
+            return $templateBean->id;
+        }
+
+        return null;
+    }
+
+    /**
+     * Send notification email to interlocutor
+     *
+     * @param SugarBean $jobApplicationBean
+     * @param SugarBean $offerBean
+     * @param SugarBean $recipientBean
+     * @param string $templateId
+     * @param SugarBean $outboundEmail
+     * @return bool
+     */
+    protected static function sendInterlocutorNotificationEmail($jobApplicationBean, $offerBean, $recipientBean, $templateId, $outboundEmail)
+    {
+        if (empty($jobApplicationBean) || empty($offerBean) || empty($recipientBean) || empty($templateId) || empty($outboundEmail)) {
+            return false;
+        }
+
+        $destAddress = '';
+        if (!empty($recipientBean->emailAddress)) {
+            $destAddress = $recipientBean->emailAddress->getPrimaryAddress($recipientBean);
+        }
+        if (empty($destAddress) && !empty($recipientBean->email1)) {
+            $destAddress = $recipientBean->email1;
+        }
+
+        if (empty($destAddress)) {
+            $GLOBALS['log']->error(
+                "Interlocutor notification not sent for application {$jobApplicationBean->id}: no recipient email address."
+            );
+            return false;
+        }
+
+        require_once 'SticInclude/Utils.php';
+        $parsedMailArray = SticUtils::parseEmailTemplate($templateId, array(
+            $jobApplicationBean,
+            $offerBean,
+            $recipientBean,
+        ));
+
+        $subject = $parsedMailArray['subject'] ?? '';
+        $bodyHtml = $parsedMailArray['body_html'] ?? '';
+        $bodyText = $parsedMailArray['body'] ?? '';
+
+        if (empty($subject) || (empty($bodyHtml) && empty($bodyText))) {
+            $GLOBALS['log']->error(
+                "Interlocutor notification not sent for application {$jobApplicationBean->id}: parsed template is empty."
+            );
+            return false;
+        }
+
+        require_once 'include/SugarPHPMailer.php';
+        require_once 'modules/Emails/Email.php';
+        $emailObj = new Email();
+        $defaults = $emailObj->getSystemDefaultEmail();
+
+        $mail = new SugarPHPMailer();
+        $mail->setMailerForSystem();
+        $mail->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
+        $mail->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
+        $mail->AddAddress($destAddress);
+        $mail->Subject = $subject;
+        if (!empty($bodyHtml)) {
+            $mail->Body = from_html($bodyHtml);
+            $mail->isHtml(true);
+            $mail->AltBody = from_html($bodyText);
+        } else {
+            $mail->Body = $bodyText;
+            $mail->isHtml(false);
+        }
+        $mail->prepForOutbound();
+
+        if (!$mail->Send()) {
+            $GLOBALS['log']->error(
+                "Interlocutor notification send error for application {$jobApplicationBean->id}: " . $mail->ErrorInfo
+            );
+            return false;
+        }
+
+        $GLOBALS['log']->info("Interlocutor notification sent for application {$jobApplicationBean->id} to {$destAddress}.");
+        return true;
+    }
+
+    /**
+     * Get first available outbound email account (system)
+     *
+     * @return OutboundEmailAccounts|null
+     */
+    protected static function getDefaultOutboundEmailAccount()
+    {
+        if (!class_exists('InboundEmail')) {
+            require_once 'modules/InboundEmail/InboundEmail.php';
+        }
+        $ie = new InboundEmail();
+        $user = $GLOBALS['current_user'] ?? null;
+        $defaultOutboundId = $user ? $ie->getUsersDefaultOutboundServerId($user) : '';
+
+        if (!empty($defaultOutboundId)) {
+            $defaultOutbound = BeanFactory::getBean('OutboundEmailAccounts', $defaultOutboundId);
+            if (!empty($defaultOutbound) && !empty($defaultOutbound->id)) {
+                return $defaultOutbound;
+            }
+        }
+
+        $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
+        $outboundEmails = $outboundEmailsFocus->get_full_list("", "type != 'user'");
+        if (!empty($outboundEmails)) {
+            return array_shift($outboundEmails);
+        }
+        return null;
+    }
 }
