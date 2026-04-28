@@ -72,6 +72,7 @@ function wizardForm() {
       Alpine.data('quillEditor', (initialContent, onUpdate) => ({
         editor: null,
         content: initialContent,
+        initialized: false,
         
         init() {
           if (typeof Quill === 'undefined') {
@@ -79,7 +80,27 @@ function wizardForm() {
             return;
           }
 
+          if (this.$refs.editor.offsetHeight > 0) {
+            this.initQuill();
+            return;
+          }
+
+          const accordionCollapse = this.$refs.editor.closest('.accordion-collapse');
+          if (accordionCollapse) {
+            accordionCollapse.addEventListener('shown.bs.collapse', () => {
+              requestAnimationFrame(() => {
+                this.initQuill();
+              });
+            }, { once: true });
+          } else {
+            this.initQuill();
+          }
+        },
+
+        initQuill() {
           // Initialize Quill to use inline styles
+          this.initialized = true;
+
           const Align = Quill.import('attributors/style/align');
           const Background = Quill.import('attributors/style/background');
           const Color = Quill.import('attributors/style/color');
