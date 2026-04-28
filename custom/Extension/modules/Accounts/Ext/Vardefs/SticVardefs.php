@@ -2146,4 +2146,5 @@ $dictionary['Account']['fields']['stic_pa_enable_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
+    'popupHelp' => 'LBL_STIC_PA_ENABLE_HELP',
 );

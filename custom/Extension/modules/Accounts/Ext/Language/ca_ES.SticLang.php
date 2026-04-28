@@ -188,3 +188,4 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 $mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'Àrea Privada";
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = "Al activar aquesta opció, s'habilitarà l'accés a l'Àrea Privada per a aquesta organització. Si es desactiva aquesta opció, s'eliminarà l'usuari associat a aquesta organització i es revocarà l'accés a l'Àrea Privada. A més, per poder procedir amb l'enviament de les credencials d'accés a l'Àrea Privada, és necessari que s'activi la configuració 'PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE'. En cas contrari, no es podran enviar les credencials d'accés a l'Àrea Privada.";
