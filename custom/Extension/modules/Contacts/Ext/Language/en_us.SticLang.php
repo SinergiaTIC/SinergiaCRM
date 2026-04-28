@@ -193,7 +193,7 @@ $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_
 $mod_strings['LBL_STIC_PA_USERNAME'] = 'Private Area user';
 $mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private Area password';
 $mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable Private Area';
-$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'When this option is enabled, access to the Private Area will be granted for this person. If this option is disabled, the user associated with this person will be removed and access to the Private Area will be revoked. Additionally, to proceed with sending the access credentials to the Private Area, the "PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE" configuration must be enabled. Otherwise, the access credentials cannot be sent.';
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'When this option is enabled, access to the Private Area will be granted for this person. If this option is disabled, the password associated with this person will be removed and access to the Private Area will be revoked. Additionally, to proceed with sending the access credentials to the Private Area, the "PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE" configuration must be enabled. Otherwise, the access credentials cannot be sent.';
 
 // Conversations
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversations';

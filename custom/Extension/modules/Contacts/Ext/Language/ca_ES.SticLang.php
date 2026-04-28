@@ -252,7 +252,7 @@ $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_
 $mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'Àrea Privada";
 $mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'Àrea Privada";
-$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = "Al activar aquesta opció, s'habilitarà l'accés a l'Àrea Privada per a aquesta persona. Si es desactiva aquesta opció, s'eliminarà l'usuari associat a aquesta persona i es revocarà l'accés a l'Àrea Privada. A més, per poder procedir amb l'enviament de les credencials d'accés a l'Àrea Privada, és necessari que s'activi la configuració 'PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE'. En cas contrari, no es podran enviar les credencials d'accés a l'Àrea Privada.";
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = "Al activar aquesta opció, s'habilitarà l'accés a l'Àrea Privada per a aquesta persona. Si es desactiva aquesta opció, s'eliminarà la contrasenya associada a aquesta persona i es revocarà l'accés a l'Àrea Privada. A més, per poder procedir amb l'enviament de les credencials d'accés a l'Àrea Privada, és necessari que s'activi la configuració 'PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE'. En cas contrari, no es podran enviar les credencials d'accés a l'Àrea Privada.";
 
 // Converses
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Converses';
