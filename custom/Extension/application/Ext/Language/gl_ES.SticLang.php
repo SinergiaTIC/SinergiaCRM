@@ -4067,6 +4067,10 @@ $app_list_strings['stic_conversations_types_list'][''] = '';
 $app_list_strings['stic_conversations_types_list']['type1'] = 'Tipo 1';
 $app_list_strings['stic_conversations_types_list']['type2'] = 'Tipo 2';
 
+// TODO:
+// Define: stic_awf_deferred_tickets_status
+// Define: stic_awf_incoming_events_status
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)
@@ -4173,6 +4177,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 
 // Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';

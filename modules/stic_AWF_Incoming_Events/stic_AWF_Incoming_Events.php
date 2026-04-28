@@ -44,7 +44,7 @@ class stic_AWF_Incoming_Events extends Basic
     public $new_schema = true;
     public $module_dir = 'stic_AWF_Incoming_Events';
     public $object_name = 'stic_AWF_Incoming_Events';
-    public $table_name = 'stic_AWF_Incoming_Events';
+    public $table_name = 'stic_awf_incoming_events';
     public $importable = false;
 
     public $id;

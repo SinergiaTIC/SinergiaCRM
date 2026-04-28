@@ -39,7 +39,7 @@
  */
 
 $dictionary['stic_AWF_Deferred_Tickets'] = array(
-    'table' => 'stic_AWF_Deferred_Tickets',
+    'table' => 'stic_awf_deferred_tickets',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,

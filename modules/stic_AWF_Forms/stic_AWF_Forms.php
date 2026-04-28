@@ -26,7 +26,7 @@ class stic_AWF_Forms extends Basic
     public $new_schema = true;
     public $module_dir = 'stic_AWF_Forms';
     public $object_name = 'stic_AWF_Forms';
-    public $table_name = 'stic_AWF_Forms';
+    public $table_name = 'stic_awf_forms';
     public $importable = false;
 
     public $id;

@@ -967,11 +967,21 @@ class WizardStep2 {
         if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
         return Object.entries(STIC.enabledModules).map(([key, value]) => ({ id: key, label: value.text }));
       },
-      get isValid() { 
-        return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
+      get canSaveNewBlock() { 
+        const moduleOk = this.newDataBlock.module && String(this.newDataBlock.module).trim() !== '';
+        const textOk = this.newDataBlock.text && String(this.newDataBlock.text).trim() !== '';
+        return moduleOk && textOk;
       },
       get isValidUnlinked() { 
         return this.newUnlinkedDataBlock.text.trim() != '';
+      },
+
+      init() {
+        this.$watch('newDataBlock.module', (value) => {
+          if (value) {
+            this.newDataBlock.text = this.formConfig.suggestDataBlockText(value);
+          }
+        });
       },
 
       handleAddDatablockModule() {
@@ -1446,7 +1456,7 @@ class WizardStep2 {
       },
 
       get fieldsToDuplicate() {
-        return this.dataBlock.fields.filter(f => f.type_field!='unlinked' && f.type!='relate' && (f.merge_filter == 'enabled' || f.merge_filter == 'selected'));
+        return this.dataBlock.fields.filter(f => f.type_field!='unlinked' && f.type!='relate');
       },
 
     }
