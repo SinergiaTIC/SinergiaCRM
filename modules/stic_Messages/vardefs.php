@@ -165,6 +165,17 @@ $dictionary['stic_Messages'] = array(
             'source' => 'non-db',
             'options' => 'stic_messages_parent_type_display',
         ),
+        'parent_contact_name' => array(
+            'name' => 'parent_contact_name',
+            'type' => 'relate',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_RELATED_TO',
+            'id_name' => 'parent_id',
+            'module' => 'Contacts',
+            'table' => 'contacts',
+            'rname' => 'name',
+            'required' => false,
+        ),
         'parent_id' => array(
             'name' => 'parent_id',
             'vname' => 'LBL_LIST_RELATED_TO_ID',

@@ -157,6 +157,11 @@ class stic_Messages extends Basic
                 }
             }
 
+            // Ensure parent points to the resolved Contact for notifications
+            if (empty($this->parent_id) && !empty($contactId)) {
+                $this->parent_id = $contactId;
+            }
+
             // Use the conversation assigned user
             if (empty($assignedUserId) && !empty($this->stic_conversations_ida)) {
                 if (empty($conversationBean) || empty($conversationBean->id)) {
