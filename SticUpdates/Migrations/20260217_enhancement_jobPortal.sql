@@ -83,14 +83,3 @@ ALTER TABLE `contacts_cstm`
     ADD COLUMN IF NOT EXISTS `stic_pa_password_c` VARCHAR(255) NULL,
     ADD COLUMN IF NOT EXISTS `stic_pa_username_c` VARCHAR(255) NULL,
     ADD COLUMN IF NOT EXISTS `stic_pa_enable_c` TINYINT(1) DEFAULT 0 NULL;
-
--- Set interlocutor_id in job applications from related offer interlocutor. If related offer has no interlocutor, keep application interlocutor_id empty
-UPDATE `stic_job_applications` ja
-LEFT JOIN stic_job_applications_stic_job_offers_c rel
-	ON rel.stic_job_applications_stic_job_offersstic_job_applications_idb = ja.id
-	AND rel.deleted = 0
-LEFT JOIN stic_job_offers o
-	ON o.id = rel.stic_job_applications_stic_job_offersstic_job_offers_ida
-	AND o.deleted = 0
-SET ja.interlocutor_id = COALESCE(o.contact_id_c, '')
-WHERE ja.deleted = 0;

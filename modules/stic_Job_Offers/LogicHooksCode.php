@@ -65,44 +65,5 @@ class stic_Job_OffersLogicHooks
 
         require_once 'modules/stic_Job_Offers/Utils.php';
         stic_Job_OffersUtils::notifyStatusChange($bean);
-
-        $hasFetchedInterlocutor = isset($bean->fetched_row)
-            && is_array($bean->fetched_row)
-            && array_key_exists('contact_id_c', $bean->fetched_row);
-        $previousInterlocutorId = $hasFetchedInterlocutor ? (string)$bean->fetched_row['contact_id_c'] : '';
-        $currentInterlocutorId = (string)($bean->contact_id_c ?? '');
-
-        // Keep job applications interlocutor aligned with offer interlocutor when it changes
-        if ($previousInterlocutorId !== $currentInterlocutorId) {
-            $this->syncApplicationsInterlocutorFromOffer($bean->id, $currentInterlocutorId);
-        }
-    }
-
-    /**
-     * Sync interlocutor_id in related job applications from offer contact_id_c
-     *
-     * @param string $offerId
-     * @param string $interlocutorId
-     * @return void
-     */
-    protected function syncApplicationsInterlocutorFromOffer($offerId, $interlocutorId)
-    {
-        if (empty($offerId)) {
-            return;
-        }
-
-        $db = DBManagerFactory::getInstance();
-        $safeOfferId = $db->quote((string)$offerId);
-        $safeInterlocutorId = $db->quote((string)$interlocutorId);
-
-        $query = "UPDATE stic_job_applications ja
-            INNER JOIN stic_job_applications_stic_job_offers_c rel
-                ON rel.stic_job_applications_stic_job_offersstic_job_applications_idb = ja.id
-               AND rel.deleted = 0
-               AND rel.stic_job_applications_stic_job_offersstic_job_offers_ida = '{$safeOfferId}'
-            SET ja.interlocutor_id = '{$safeInterlocutorId}'
-            WHERE ja.deleted = 0";
-
-        $db->query($query);
     }
 }
