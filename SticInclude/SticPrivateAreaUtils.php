@@ -99,16 +99,16 @@ class SticPrivateAreaUtils
         require_once 'modules/stic_Settings/Utils.php';
 
         // Check if sending credentials email is enabled in settings
-        $sendSettingValue = (string)stic_SettingsUtils::getSetting('PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE');
+        $sendSettingValue = (string)stic_SettingsUtils::getSetting('PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE');
         if ($sendSettingValue === '') {
-            $GLOBALS['log']->error(__METHOD__ . ': Setting PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE is empty. Using default value 1.');
+            $GLOBALS['log']->error(__METHOD__ . ': Setting PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE is empty. Using default value 1.');
             $isEnabled = true;
         } else {
             $isEnabled = ($sendSettingValue === '1');
         }
 
         if (!$isEnabled) {
-            $GLOBALS['log']->error(__METHOD__ . ': Credentials email disabled by setting PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE=' . $sendSettingValue);
+            $GLOBALS['log']->error(__METHOD__ . ': Credentials email disabled by setting PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE=' . $sendSettingValue);
             return;
         }
 
@@ -375,11 +375,11 @@ class SticPrivateAreaUtils
         require_once 'modules/stic_Settings/Utils.php';
 
         if ($module === 'Contacts') {
-            return stic_SettingsUtils::getSetting('PRIVATE_AREA_CREDENTIALS_TEMPLATE_CONTACTS') ?: null;
+            return stic_SettingsUtils::getSetting('PRIVATEAREA_CREDENTIALS_TEMPLATE_CONTACTS') ?: null;
         }
 
         if ($module === 'Accounts') {
-            return stic_SettingsUtils::getSetting('PRIVATE_AREA_CREDENTIALS_TEMPLATE_ACCOUNTS') ?: null;
+            return stic_SettingsUtils::getSetting('PRIVATEAREA_CREDENTIALS_TEMPLATE_ACCOUNTS') ?: null;
         }
 
         return null;

@@ -131,9 +131,9 @@ REPLACE INTO aow_actions (id, name, date_entered, date_modified, modified_user_i
 
 -- Setting for sending Private Area credentials email
 REPLACE INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_user_id`, `created_by`, `deleted`, `assigned_user_id`, `type`, `name`, `value`, `description`) VALUES
-('f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11', NOW(), NOW(), '1', '1', 0, '1', 'PRIVATE_AREA', 'PRIVATE_AREA_SEND_CREDENTIALS_ON_ENABLE', '0', 'Enable automatic Private Area credentials email when stic_pa_enable_c is activated (0 = No, 1 = Yes)'),
-('4ef9497d-6511-4a87-9467-01ca8ac99f20', NOW(), NOW(), '1', '1', 0, '1', 'PRIVATE_AREA', 'PRIVATE_AREA_CREDENTIALS_TEMPLATE_CONTACTS', '6e6f5a91-2cb9-4f42-bf26-0a13b2f1c101', 'Notification email template ID used to send Private Area credentials for Contacts'),
-('8a2014ed-569d-44ad-b03a-f39420aa7ef6', NOW(), NOW(), '1', '1', 0, '1', 'PRIVATE_AREA', 'PRIVATE_AREA_CREDENTIALS_TEMPLATE_ACCOUNTS', '6e6f5a91-2cb9-4f42-bf26-0a13b2f1c102', 'Notification email template ID used to send Private Area credentials for Accounts');
+('f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11', NOW(), NOW(), '1', '1', 0, '1', 'PRIVATEAREA', 'PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE', '0', 'Enable automatic Private Area credentials email when stic_pa_enable_c is activated (0 = No, 1 = Yes)'),
+('4ef9497d-6511-4a87-9467-01ca8ac99f20', NOW(), NOW(), '1', '1', 0, '1', 'PRIVATEAREA', 'PRIVATEAREA_CREDENTIALS_TEMPLATE_CONTACTS', '6e6f5a91-2cb9-4f42-bf26-0a13b2f1c101', 'Notification email template ID used to send Private Area credentials for Contacts'),
+('8a2014ed-569d-44ad-b03a-f39420aa7ef6', NOW(), NOW(), '1', '1', 0, '1', 'PRIVATEAREA', 'PRIVATEAREA_CREDENTIALS_TEMPLATE_ACCOUNTS', '6e6f5a91-2cb9-4f42-bf26-0a13b2f1c102', 'Notification email template ID used to send Private Area credentials for Accounts');
 
 -- Job applications - Notification - New application
 REPLACE INTO aow_workflow (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, flow_module, flow_run_on, status, run_when, multiple_runs, run_on_import) VALUES
