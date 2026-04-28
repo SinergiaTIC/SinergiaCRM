@@ -186,7 +186,4 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES' => 'Plantilla de notificación a candidatos',
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES_EMAILTEMPLATE_ID' => 'Plantilla de notificación a candidatos (ID)',
     'LBL_NOTIFICATION_TEMPLATE_CANDIDATES_INFO' => 'Si se deja este campo vacío, se usará la plantilla por defecto para notificar a los candidatos sobre los cambios de estado relacionados con esta oferta laboral.',
-    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Plantilla de notificación a interlocutor',
-    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Plantilla de notificación a interlocutor (ID)',
-    'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => 'Si se deja este campo vacío, se usará la plantilla por defecto para notificar al interlocutor sobre los cambios de estado relacionados con esta oferta laboral.',
 );
