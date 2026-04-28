@@ -36,12 +36,12 @@ class SticNewsDashlet extends Dashlet {
         $language = $GLOBALS['current_language'];
         switch($language) {
             case 'ca_ES':
-                $this->defaultURL = 'https://sinergiacrm.org/develop/ca/actualitat-sinergiacrm-news/';
+                $this->defaultURL = 'https://www.sinergiatic.org/actualitat-sinergiacrm-news/';
                 break;
             case 'es_ES':
             case 'en_us':
             default:
-                $this->defaultURL = 'https://sinergiacrm.org/develop/es/actualidad-sinergiacrm-news/';
+                $this->defaultURL = 'https://www.sinergiatic.org/es/actualidad-sinergiacrm-news/';
                 break;
         }
         $this->isConfigurable = false; // Dashlet won't be configurable
