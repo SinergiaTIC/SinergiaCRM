@@ -220,13 +220,90 @@ class stic_Job_ApplicationsUtils
             return;
         }
 
-        self::sendInterlocutorNotificationEmail(
+        self::sendNotificationEmail(
             $jobApplicationBean,
             $offerBean,
             $interlocutorBean,
             $templateId,
-            $outboundEmail
+            $outboundEmail,
+            'presented interlocutor'
         );
+    }
+
+    /**
+     * Notify assigned user and interlocutor when a candidate cancels from the portal
+     *
+     * @param SugarBean $jobApplicationBean
+     * @return void
+     */
+    public static function notifyOnPortalCancellation($jobApplicationBean)
+    {
+        if (empty($jobApplicationBean) || empty($jobApplicationBean->id)) {
+            return;
+        }
+
+        $currentStatus = $jobApplicationBean->status ?? null;
+        if ($currentStatus !== 'rejected_closed') {
+            return;
+        }
+
+        $previousStatus = $jobApplicationBean->fetched_row['status'] ?? null;
+        if (!empty($previousStatus) && $previousStatus === $currentStatus) {
+            return;
+        }
+
+        $rejectionReason = $jobApplicationBean->rejection_reason ?? null;
+        if ($rejectionReason !== 'resignation') {
+            return;
+        }
+
+        $offerId = self::getRelatedOfferId($jobApplicationBean);
+        if (empty($offerId)) {
+            return;
+        }
+
+        $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
+        if (empty($offerBean) || empty($offerBean->id)) {
+            return;
+        }
+
+        $outboundEmail = self::getDefaultOutboundEmailAccount();
+        if (empty($outboundEmail)) {
+            $GLOBALS['log']->error(__METHOD__ . ': missing outbound configuration.');
+            return;
+        }
+
+        $assignedUserId = $jobApplicationBean->assigned_user_id ?? '';
+        if (!empty($assignedUserId)) {
+            $assignedUserBean = BeanFactory::getBean('Users', $assignedUserId);
+            $assignedTemplateId = self::getPortalCancellationAssignedUserTemplateId($offerBean);
+            if (!empty($assignedUserBean) && !empty($assignedUserBean->id) && !empty($assignedTemplateId)) {
+                self::sendNotificationEmail(
+                    $jobApplicationBean,
+                    $offerBean,
+                    $assignedUserBean,
+                    $assignedTemplateId,
+                    $outboundEmail,
+                    'portal cancellation (assigned user)'
+                );
+            }
+        }
+
+        $interlocutorId = $offerBean->contact_id_c ?? '';
+        if (!empty($interlocutorId)) {
+            $interlocutorBean = BeanFactory::getBean('Contacts', $interlocutorId);
+            $interlocutorTemplateId = self::getPortalCancellationInterlocutorTemplateId($offerBean);
+            if (!empty($interlocutorBean) && !empty($interlocutorBean->id) && !empty($interlocutorTemplateId)) {
+                self::sendNotificationEmail(
+                    $jobApplicationBean,
+                    $offerBean,
+                    $interlocutorBean,
+                    $interlocutorTemplateId,
+                    $outboundEmail,
+                    'portal cancellation (interlocutor)'
+                );
+            }
+        }
     }
 
     /**
@@ -246,36 +323,47 @@ class stic_Job_ApplicationsUtils
     }
 
     /**
-     * Validate notification email template id
+     * Resolve portal cancellation template id for assigned user
      *
-     * @param string|null $templateId
      * @return string|null
      */
-    protected static function getValidNotificationTemplateId($templateId)
+    protected static function getPortalCancellationAssignedUserTemplateId($offerBean)
     {
+        $templateId = $offerBean->emailtemplate_cancelled_assigned_user_id ?? null;
         if (empty($templateId)) {
-            return null;
+            $templateId = '4f2c7b91-0c3e-4a2b-9b3e-7c4a9b1e9002';
         }
 
-        $templateBean = BeanFactory::getBean('EmailTemplates', $templateId);
-        if (!empty($templateBean) && !empty($templateBean->id) && empty($templateBean->deleted)) {
-            return $templateBean->id;
-        }
-
-        return null;
+        return self::getValidNotificationTemplateId($templateId);
     }
 
     /**
-     * Send notification email to interlocutor
+     * Resolve portal cancellation template id for interlocutor
+     *
+     * @return string|null
+     */
+    protected static function getPortalCancellationInterlocutorTemplateId($offerBean)
+    {
+        $templateId = $offerBean->emailtemplate_cancelled_interlocutor_id ?? null;
+        if (empty($templateId)) {
+            $templateId = '4f2c7b91-0c3e-4a2b-9b3e-7c4a9b1e9003';
+        }
+
+        return self::getValidNotificationTemplateId($templateId);
+    }
+
+    /**
+     * Send notification email to a recipient
      *
      * @param SugarBean $jobApplicationBean
      * @param SugarBean $offerBean
      * @param SugarBean $recipientBean
      * @param string $templateId
      * @param SugarBean $outboundEmail
+     * @param string $contextLabel
      * @return bool
      */
-    protected static function sendInterlocutorNotificationEmail($jobApplicationBean, $offerBean, $recipientBean, $templateId, $outboundEmail)
+    protected static function sendNotificationEmail($jobApplicationBean, $offerBean, $recipientBean, $templateId, $outboundEmail, $contextLabel)
     {
         if (empty($jobApplicationBean) || empty($offerBean) || empty($recipientBean) || empty($templateId) || empty($outboundEmail)) {
             return false;
@@ -291,7 +379,7 @@ class stic_Job_ApplicationsUtils
 
         if (empty($destAddress)) {
             $GLOBALS['log']->error(
-                "Interlocutor notification not sent for application {$jobApplicationBean->id}: no recipient email address."
+                "Notification not sent for application {$jobApplicationBean->id} ({$contextLabel}): no recipient email address."
             );
             return false;
         }
@@ -309,7 +397,7 @@ class stic_Job_ApplicationsUtils
 
         if (empty($subject) || (empty($bodyHtml) && empty($bodyText))) {
             $GLOBALS['log']->error(
-                "Interlocutor notification not sent for application {$jobApplicationBean->id}: parsed template is empty."
+                "Notification not sent for application {$jobApplicationBean->id} ({$contextLabel}): parsed template is empty."
             );
             return false;
         }
@@ -337,13 +425,33 @@ class stic_Job_ApplicationsUtils
 
         if (!$mail->Send()) {
             $GLOBALS['log']->error(
-                "Interlocutor notification send error for application {$jobApplicationBean->id}: " . $mail->ErrorInfo
+                "Notification send error for application {$jobApplicationBean->id} ({$contextLabel}): " . $mail->ErrorInfo
             );
             return false;
         }
 
-        $GLOBALS['log']->info("Interlocutor notification sent for application {$jobApplicationBean->id} to {$destAddress}.");
+        $GLOBALS['log']->info("Notification sent for application {$jobApplicationBean->id} ({$contextLabel}) to {$destAddress}.");
         return true;
+    }
+
+    /**
+     * Validate notification email template id
+     *
+     * @param string|null $templateId
+     * @return string|null
+     */
+    protected static function getValidNotificationTemplateId($templateId)
+    {
+        if (empty($templateId)) {
+            return null;
+        }
+
+        $templateBean = BeanFactory::getBean('EmailTemplates', $templateId);
+        if (!empty($templateBean) && !empty($templateBean->id) && empty($templateBean->deleted)) {
+            return $templateBean->id;
+        }
+
+        return null;
     }
 
     /**

@@ -189,4 +189,10 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Plantilla de notificació a interlocutor (Candidatura presentada)',
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Plantilla de notificació a interlocutor (ID) - Candidatura presentada',
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => "Plantilla que es farà servir per notificar a l'interlocutor quan la candidatura d'un candidat relacionat amb aquesta oferta canviï a 'Presentada'. Si el camp es deixa buit s'utilitzarà la plantilla per defecte",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER' => "Plantilla de notificació per cancel·lació (usuari assignat)",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_EMAILTEMPLATE_ID' => "Plantilla de notificació per cancel·lació (ID) - Usuari assignat",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_INFO' => "Plantilla que s\'utilitzarà per notificar a l\'usuari assignat quan el candidat cancel·li una candidatura. Si el camp es deixa buit s\'utilitzarà la plantilla per defecte",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR' => "Plantilla de notificació per cancel·lació (interlocutor)",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_EMAILTEMPLATE_ID' => "Plantilla de notificació per cancel·lació (ID) - Interlocutor",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_INFO' => "Plantilla que s\'utilitzarà per notificar a l\'interlocutor quan el candidat cancel·li una candidatura. Si el camp es deixa buit s\'utilitzarà la plantilla per defecte",
 );

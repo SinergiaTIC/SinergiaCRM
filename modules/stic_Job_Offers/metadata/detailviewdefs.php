@@ -256,6 +256,18 @@ array(
                     ),
                     1 => array(),
                 ),
+                3 => array(
+                    0 => array(
+                        'name' => 'notification_template_cancelled_assigned_user',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER',
+                    ),
+                    1 => array(
+                        'name' => 'notification_template_cancelled_interlocutor',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR',
+                    ),
+                ),
             ),
             'lbl_editview_panel5' => array(
                 0 => array(

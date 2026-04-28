@@ -189,4 +189,10 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Notification template for interlocutor (Application submitted)',
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Notification template for interlocutor (ID) - Application submitted',
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => 'Template that will be used to notify the interlocutor when the application of a candidate related to this offer changes to "Submitted". If the field is left empty, the default template will be used.',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER' => 'Notification template for cancellation (assigned user)',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_EMAILTEMPLATE_ID' => 'Notification template for cancellation (ID) - Assigned user',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_INFO' => 'Template that will be used to notify the assigned user when the candidate cancels an application. If the field is left empty, the default template will be used',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR' => 'Notification template for cancellation (interlocutor)',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Notification template for cancellation (ID) - Interlocutor',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_INFO' => 'Template that will be used to notify the interlocutor when the candidate cancels an application. If the field is left empty, the default template will be used',
 );

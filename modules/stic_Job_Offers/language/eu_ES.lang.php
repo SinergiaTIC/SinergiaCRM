@@ -189,4 +189,10 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR' => 'Plantilla de notificación a interlocutor (Candidatura presentada)',
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Plantilla de notificación a interlocutor (ID) - Candidatura presentada',
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_INFO' => 'Plantilla que se utilizará para notificar al interlocutor cuando la candidatura de un candidato relacionado con esta oferta cambie a "Presentada". Si el campo se deja vacío se utilizará la plantilla por defecto',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER' => 'Plantilla de notificación por cancelación (usuario asignado)',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_EMAILTEMPLATE_ID' => 'Plantilla de notificación por cancelación(ID) - Usuario asignado',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_INFO' => 'Plantilla que se utilizará para notificar al usuario asignado cuando el candidato cancele una candidatura. Si el campo se deja vacío se utilizará la plantilla por defecto',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR' => 'Plantilla de notificación por cancelación (interlocutor)',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_EMAILTEMPLATE_ID' => 'Plantilla de notificación por cancelación(ID) - Interlocutor',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_INFO' => 'Plantilla que se utilizará para notificar al interlocutor cuando el candidato cancele una candidatura. Si el campo se deja vacío se utilizará la plantilla por defecto',
 );
