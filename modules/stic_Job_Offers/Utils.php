@@ -420,9 +420,10 @@ class stic_Job_OffersUtils
         $offerIdQuoted = $db->quote($offerId);
 
         // Use offer name in LPO for better identification, but ensure it's unique by including offer ID and recipient suffix
+        $offerNameDecoded = html_entity_decode((string)$offerName, ENT_QUOTES);
         $suffixText = self::getRecipientLabel($suffix);
         $suffixPart = empty($suffixText) ? '' : " - {$suffixText}";
-        $lpoName = "LPO {$app_list_strings['moduleListSingular']['stic_Job_Offers']} '{$offerName}' - ({$offerId}){$suffixPart}";
+        $lpoName = "LPO {$app_list_strings['moduleListSingular']['stic_Job_Offers']} '{$offerNameDecoded}' - ({$offerId}){$suffixPart}";
 
         // Try to find existing LPO by stable parts of the name, so renaming offers does not create duplicates
         $query = "SELECT id
@@ -666,7 +667,7 @@ class stic_Job_OffersUtils
      * @param string $label
      * @return array|false
      */
-    public static function generateApplicantsLpo($offerId, $label)
+    public static function generateApplicantsLpo($offerId, $label, $type = '')
     {
         global $current_user;
 
@@ -698,12 +699,18 @@ class stic_Job_OffersUtils
               AND c.deleted = 0
               AND sjajoc.stic_job_applications_stic_job_offersstic_job_offers_ida = '{$offerIdQuoted}'";
 
+        if ($type === 'stic_Job_Offers__active_applicants') {
+            $rejectedStatus = $db->quote('rejected_closed');
+            $sqlForContacts .= " AND (ja.status IS NULL OR ja.status <> '{$rejectedStatus}')";
+        }
+
         $contactsTargets = $db->query($sqlForContacts);
 
         // Build a stable LPO name including offer ID so it can be reused
         $labelQuoted = $db->quote($label);
-        $offerNameQuoted = $db->quote($offerBean->name);
-        $lpoName = "{$offerBean->name} - ({$offerId}) - ({$label})";
+        $offerNameDecoded = html_entity_decode((string)$offerBean->name, ENT_QUOTES);
+        $offerNameQuoted = $db->quote($offerNameDecoded);
+        $lpoName = "LPO {$GLOBALS['app_list_strings']['moduleListSingular']['stic_Job_Offers']} '{$offerNameDecoded}' - ({$offerId}) - {$label}";
 
         // Reuse LPO with offer ID or without ID
         $lpoList = BeanFactory::getBean('ProspectLists')->get_full_list(
@@ -712,7 +719,7 @@ class stic_Job_OffersUtils
             AND (
                 (
                     prospect_lists.name LIKE '%({$offerIdQuoted})%'
-                    AND prospect_lists.name LIKE '%({$labelQuoted})%'
+                    AND prospect_lists.name LIKE '%{$labelQuoted}%'
                 )
                 OR prospect_lists.name LIKE '{$offerNameQuoted} - ({$labelQuoted}) - %'
             )"
