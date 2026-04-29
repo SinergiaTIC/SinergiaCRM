@@ -184,10 +184,18 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           namesList = '';
           idsList = '';
           targetCount = 0;
+          totalRecords = 0;
+          singleRecordName = '';
+          singleRecordId = '';
           panelBody.find('.phone-compose-view-to-list').each(function () {
             dataPhone = $(this).attr('data-record-phone');
             dataId = $(this).attr('data-record-id');
             dataName = $(this).attr('data-record-name');
+            totalRecords++;
+            if (totalRecords === 1) {
+              singleRecordName = dataName;
+              singleRecordId = dataId;
+            }
             if (dataPhone !== '') {
               if (targetCount > 0 ){
                 phoneList += ',';
@@ -201,6 +209,12 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             }
           });
           panelBody.find('#phone').val(phoneList);
+          if (totalRecords === 1) {
+            setTimeout(function() {
+              panelBody.find('#parent_name').val(singleRecordName);
+              panelBody.find('#parent_id').val(singleRecordId);
+            }, 200);
+          }
           function replacePhoneField(panelBody) {
             var originalPhone = panelBody.find('#phone');
             if (!originalPhone) return; // Exit if the original phone input doesn't exist
