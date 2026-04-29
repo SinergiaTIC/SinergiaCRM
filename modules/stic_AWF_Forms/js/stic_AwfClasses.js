@@ -925,7 +925,10 @@ class stic_AwfAction {
   }
 
   isValid() {
-    return this.parameters.every(param => !param.required || (param.value !== null && param.value !== ''));
+    return this.parameters.every(param => {
+      if (!param.required) return true;
+      return param.value !== null && param.value !== '';
+    });
   }
 
   static category_in_formList(asString = false){
