@@ -151,7 +151,7 @@ function wizardForm() {
         console.error("Error parsing JSON:", e);
         console.log("Bad JSON String:", jsonString);
         // Fallback to empty config if parsing fails: Lock save
-        alert("⚠️ Error crític: No s'ha pogut carregar la configuració correctament. El formulari es mostrarà buit i s'ha bloquejat el desat automàtic per evitar pèrdues de dades.");
+        alert(utils.translate('LBL_WIZARD_FORM_CORRUPTED_WARNING_MESSAGE'));
         this.formConfig = new stic_AwfConfiguration();
         this.isReadOnly = true;
       }
