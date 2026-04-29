@@ -179,7 +179,7 @@ $mod_strings = array(
     // Plantillas de notificación de cambios de estado
     'LBL_PANEL_NOTIFICATION_TEMPLATES' => 'Notificaciones por cambios de estado',
     'LBL_STATUS_NOTIFICATIONS_ENABLED' => 'Notificación de cambios de estado',
-    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'Al activar esta casilla se enviarán notificaciones a los candidatos (menos a los rechazados), a la organización, al interlocutor y al usuario asignado cada vez que se produzca un cambio de estado en dicha oferta.',
+    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'Cuando la casilla esté marcada, se activarán las notificaciones configuradas en las plantillas inferiores. Se enviarán avisos al usuario asignado, a los candidatos o al interlocutor cada vez que se produzca un cambio de estado en la oferta o en la candidatura (incluyendo presentación de candidaturas y cancelaciones).',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER' => 'Plantilla de notificación al usuario asignado',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_EMAILTEMPLATE_ID' => 'Plantilla de notificación al usuario asignado (ID)',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_INFO' => 'Si se deja este campo vacío, se usará la plantilla por defecto para notificar al usuario asignado sobre los cambios de estado relacionados con esta oferta laboral.',

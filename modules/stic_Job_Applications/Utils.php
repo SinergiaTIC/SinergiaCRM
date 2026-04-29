@@ -199,6 +199,10 @@ class stic_Job_ApplicationsUtils
             return;
         }
 
+        if (empty($offerBean->status_notifications_enabled)) {
+            return;
+        }
+
         $interlocutorId = $offerBean->contact_id_c ?? '';
         if (empty($interlocutorId)) {
             return;
@@ -264,6 +268,10 @@ class stic_Job_ApplicationsUtils
 
         $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
         if (empty($offerBean) || empty($offerBean->id)) {
+            return;
+        }
+
+        if (empty($offerBean->status_notifications_enabled)) {
             return;
         }
 

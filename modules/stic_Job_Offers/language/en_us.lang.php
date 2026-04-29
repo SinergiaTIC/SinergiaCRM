@@ -179,7 +179,7 @@ $mod_strings = array(
     // Email templates for status change notifications
     'LBL_PANEL_NOTIFICATION_TEMPLATES' => 'Notifications',
     'LBL_STATUS_NOTIFICATIONS_ENABLED' => 'Status change notifications',
-    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'When the checkbox is enabled, whenever a status change occurs in the job offer notifications will be sent to non rejected candidates, to the interlocutor of the hiring account and to the assigned user.',
+    'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO' => 'When this checkbox is enabled, the notifications configured in the templates below will be activated. Notifications will be sent to the assigned user, the candidates, or the interlocutor whenever there is a status change in the offer or the application (including the submission of applications and cancelations).',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER' => 'Notification template for assigned user',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_EMAILTEMPLATE_ID' => 'Notification template for assigned user (ID)',
     'LBL_NOTIFICATION_TEMPLATE_ASSIGNED_USER_INFO' => 'Template that will be used to notify the assigned user about job offer status changes. If the field is left empty, the default template will be used.',
