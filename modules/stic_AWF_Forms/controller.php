@@ -46,10 +46,12 @@ class stic_AWF_FormsController extends SugarController
                 }
                 $value = $data['bean'][$fieldName];
                 if (($fieldName === 'start_date' || $fieldName === 'end_date') && !empty($value)) {
-                    // Convert the frontend format to DB: 2026-02-28T14:30 -> 2026-02-28 14:30:00
-                    $value = str_replace('T', ' ', $value);
-                    if (strlen($value) === 16) { // YYYY-MM-DD HH:MM
-                        $value .= ':00';
+                    global $current_user;
+                    // Date is in user's local timezone and frontend format, convert to UTC for DB storage
+                    $dateObj = DateTime::createFromFormat('Y-m-d\TH:i', $value, new DateTimeZone($current_user->getPreference('timezone')));
+                    if ($dateObj !== false) {
+                        $dateObj->setTimezone(new DateTimeZone('UTC'));
+                        $value = $dateObj->format('Y-m-d H:i:s');
                     }
                 }
                 $bean->$fieldName = $value;
@@ -93,7 +95,7 @@ class stic_AWF_FormsController extends SugarController
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $bean = $this->_saveBeanFromData($data);
-            $redirectUrl = 'index.php?module=stic_AWF_Forms&action=index';
+            $redirectUrl = 'index.php?module=stic_AWF_Forms&action=DetailView&record=' . $bean->id;
             echo json_encode(['success' => true, 'id' => $bean->id, 'redirectUrl' => $redirectUrl]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
