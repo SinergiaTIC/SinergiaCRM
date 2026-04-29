@@ -185,6 +185,14 @@ class Task extends SugarBean
             return;
         }
 
+        // STIC-Custom 20260424 ART - Fix parent name not showing in task list view when parent is deleted
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1077
+        if (empty($this->parent_id)) {
+            $this->parent_name = '';
+            return;
+        }
+        // END STIC-Custom
+
         $beanType = $beanList[$this->parent_type];
         require_once($beanFiles[$beanType]);
         $parent = new $beanType();
@@ -192,7 +200,11 @@ class Task extends SugarBean
         if (is_subclass_of($parent, 'Person')) {
             $query = "SELECT first_name, last_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";
         } else {
-            if (is_subclass_of($parent, 'File')) {
+            // STIC-Custom 20260424 ART - Fix parent name not showing in task list view when parent is deleted
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1077
+            // if (is_subclass_of($parent, 'File')) {
+            if (is_subclass_of($parent, 'File') && $parent->table_name != 'notes') {
+            // END STIC-Custom
                 $query = "SELECT document_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";
             } else {
                 $query = "SELECT name ";
@@ -216,7 +228,11 @@ class Task extends SugarBean
         if (is_subclass_of($parent, 'Person') && $row != null) {
             $this->parent_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']));
         } else {
-            if (is_subclass_of($parent, 'File') && $row != null) {
+            // STIC-Custom 20260424 ART - Fix parent name not showing in task list view when parent is deleted
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1077
+            // if (is_subclass_of($parent, 'File') && $row != null) {
+            if (is_subclass_of($parent, 'File') && $parent->table_name != 'notes' && $row != null) {
+            // END STIC-Custom
                 $this->parent_name = $row['document_name'];
             } elseif ($row != null) {
                 $this->parent_name = stripslashes($row['name']);

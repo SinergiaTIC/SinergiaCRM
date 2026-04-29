@@ -97,10 +97,10 @@ function toDecimal(original,precision){precision=(precision==null)?2:precision;n
 return temp+'.00';if((temp*10)%10==0)
 return temp+'0';return temp}
 function isInteger(s){if(typeof num_grp_sep!='undefined'&&typeof dec_sep!='undefined'){s=unformatNumberNoParse(s,num_grp_sep,dec_sep).toString();}
-return /^[+-]?[0-9]*$/.test(s);}
+return/^[+-]?[0-9]*$/.test(s);}
 function isDecimal(s){if(typeof s=="string"&&s=="")
 return true;if(typeof num_grp_sep!='undefined'&&typeof dec_sep!='undefined'){s=unformatNumberNoParse(s,num_grp_sep,dec_sep).toString();}
-return /^[+-]?[0-9]*\.?[0-9]*$/.test(s);}
+return/^[+-]?[0-9]*\.?[0-9]*$/.test(s);}
 function isNumeric(s){return isDecimal(s);}
 if(typeof date_reg_positions!="object")var date_reg_positions={'Y':1,'m':2,'d':3};if(typeof date_reg_format!="string")var date_reg_format='([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})';function isDate(dtStr){if(dtStr.length==0){return true;}
 myregexp=new RegExp(date_reg_format)
@@ -134,7 +134,7 @@ return false
 return true}
 function isFloat(floatStr){if(floatStr.length==0){return true;}
 if(!(typeof(num_grp_sep)=='undefined'||typeof(dec_sep)=='undefined')){floatStr=unformatNumberNoParse(floatStr,num_grp_sep,dec_sep).toString();}
-return /^(-)?[0-9\.]+$/.test(floatStr);}
+return/^(-)?[0-9\.]+$/.test(floatStr);}
 function isDBName(str){if(str.length==0){return true;}
 if(!/^[a-zA-Z][a-zA-Z\_0-9]*$/.test(str))
 return false
@@ -629,3 +629,6 @@ if(time_match[1]<10){time_match[1]='0'+time_match[1];}
 return date_match[date_reg_positions['Y']]+"-"+date_match[date_reg_positions['m']]+"-"+date_match[date_reg_positions['d']]+' '+time_match[1]+':'+time_match[2]+':00';}
 return'';}
 $(document).ready(function(){$('button#searchbutton').on('click',function(){setTimeout(()=>{$(this).parent('li').find('input#query_string').focus();},200);});})
+function loadAsyncListCount(){var asyncCountElements=document.querySelectorAll('.async-count-loading');if(!asyncCountElements.length)return;asyncCountElements.forEach(function(el){var module=el.dataset.module;var offset=el.dataset.offset||0;var where=el.dataset.where||'';var url='index.php?entryPoint=sticAsyncListCount&module='+encodeURIComponent(module)+'&offset='+encodeURIComponent(offset);if(where){url+='&where='+encodeURIComponent(where);}
+var xhr=new XMLHttpRequest();xhr.open('GET',url,true);xhr.onreadystatechange=function(){if(xhr.readyState===4&&xhr.status===200){try{var response=JSON.parse(xhr.responseText);if(response.success){el.innerHTML=response.total;el.classList.remove('async-count-loading','async-spinner');el.classList.add('async-count-loaded');}}catch(e){console.error('Error parsing async count response:',e);el.innerHTML='?';el.classList.remove('async-count-loading','async-spinner');}}};xhr.onerror=function(){el.innerHTML='?';el.classList.remove('async-count-loading','async-spinner');};xhr.send();});}
+document.addEventListener('DOMContentLoaded',function(){setTimeout(loadAsyncListCount,200);});

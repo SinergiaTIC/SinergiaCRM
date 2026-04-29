@@ -68,18 +68,35 @@ function wizardForm() {
         this.formConfig.prepareProcessingMode(newMode);
       });
 
-      // Quill Component Editor
-      Alpine.data('quillEditor', (initialContent, onUpdate) => ({
+      // Quill Editor Modal Component
+      Alpine.data('quillEditorModal', () => ({
         editor: null,
-        content: initialContent,
-        
+
         init() {
+          this.$watch('$store.htmlEditor.isOpen', (isOpen) => {
+            if (isOpen) {
+              this.$nextTick(() => this.initQuill());
+            } else if (this.editor) {
+              this.editor = null;
+              window._quillModalEditor = null;
+              const toolbar = this.$refs.editor.previousElementSibling;
+              if (toolbar && toolbar.classList.contains('ql-toolbar')) {
+                toolbar.remove();
+              }
+              this.$refs.editor.className = '';
+              this.$refs.editor.innerHTML = '';
+            }
+          });
+        },
+
+        initQuill() {
           if (typeof Quill === 'undefined') {
             console.error("Quill JS not loaded");
             return;
           }
 
-          // Initialize Quill to use inline styles
+          this.$refs.editor.innerHTML = '';
+
           const Align = Quill.import('attributors/style/align');
           const Background = Quill.import('attributors/style/background');
           const Color = Quill.import('attributors/style/color');
@@ -94,13 +111,17 @@ function wizardForm() {
 
           const toolbarOptions = [
             [{'header': [1, 2, 3, false] }], 
-                
             ['bold', 'italic', 'underline', 'strike'],
             [{'list': 'ordered'}, { 'list': 'bullet' }],
             [{'align': [] }],
             [{'color': [] }, { 'background': [] }],
             ['link', 'image', 'clean'],
           ];
+
+          const content = Alpine.store('htmlEditor').content;
+          if (content) {
+            this.$refs.editor.innerHTML = content;
+          }
 
           this.editor = new Quill(this.$refs.editor, {
             theme: 'snow',
@@ -111,29 +132,58 @@ function wizardForm() {
             }
           });
 
-          // Load initial content
-          if (this.content) {
-            try {
-                this.editor.clipboard.dangerouslyPasteHTML(0, this.content);
-            } catch (e) {
-                console.warn("Error loading HTML in Quill:", e);
-                // Fallback: Plain text
-                this.editor.setText(this.content);
-            }
-          }
-
-          // Save to Model
-          this.editor.on('text-change', () => {
-            let html = this.editor.root.innerHTML;
-            if (html === '<p><br></p>') html = '';
-            this.content = html;
-            
-            if (typeof onUpdate === 'function') {
-              onUpdate(html);
-            }
-          });
+          window._quillModalEditor = this.editor;
         }
       }));
+
+      // Store for HTML Editor Modal
+      if (!Alpine.store('htmlEditor')) {
+        Alpine.store('htmlEditor', {
+          isOpen: false,
+          type: '',
+          content: '',
+          originalContent: '',
+
+          get title() {
+            if (this.type === 'header') {
+              return utils.translate('LBL_LAYOUT_HEADER');
+            }
+            return utils.translate('LBL_LAYOUT_FOOTER');
+          },
+
+          get formConfig() {
+            return window.alpineComponent.formConfig;
+          },
+
+          open(type) {
+            this.type = type;
+            this.content = type === 'header' ? this.formConfig.layout.header_html : this.formConfig.layout.footer_html;
+            this.originalContent = this.content;
+            this.isOpen = true;
+          },
+
+          save() {
+            const quill = window._quillModalEditor;
+            if (quill) {
+              let html = quill.root.innerHTML;
+              if (html === '<p><br></p>') html = '';
+              this.content = html;
+            }
+
+            if (this.type === 'header') {
+              this.formConfig.layout.header_html = this.content;
+            } else {
+              this.formConfig.layout.footer_html = this.content;
+            }
+
+            this.isOpen = false;
+          },
+
+          cancel() {
+            this.isOpen = false;
+          }
+        });
+      }
     },
 
     async initWizard() {
@@ -151,7 +201,7 @@ function wizardForm() {
         console.error("Error parsing JSON:", e);
         console.log("Bad JSON String:", jsonString);
         // Fallback to empty config if parsing fails: Lock save
-        alert("⚠️ Error crític: No s'ha pogut carregar la configuració correctament. El formulari es mostrarà buit i s'ha bloquejat el desat automàtic per evitar pèrdues de dades.");
+        alert(utils.translate('LBL_WIZARD_FORM_CORRUPTED_WARNING_MESSAGE'));
         this.formConfig = new stic_AwfConfiguration();
         this.isReadOnly = true;
       }
@@ -967,11 +1017,21 @@ class WizardStep2 {
         if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
         return Object.entries(STIC.enabledModules).map(([key, value]) => ({ id: key, label: value.text }));
       },
-      get isValid() { 
-        return this.newDataBlock.module.trim() != '' && this.newDataBlock.text.trim() != '';
+      get canSaveNewBlock() { 
+        const moduleOk = this.newDataBlock.module && String(this.newDataBlock.module).trim() !== '';
+        const textOk = this.newDataBlock.text && String(this.newDataBlock.text).trim() !== '';
+        return moduleOk && textOk;
       },
       get isValidUnlinked() { 
         return this.newUnlinkedDataBlock.text.trim() != '';
+      },
+
+      init() {
+        this.$watch('newDataBlock.module', (value) => {
+          if (value) {
+            this.newDataBlock.text = this.formConfig.suggestDataBlockText(value);
+          }
+        });
       },
 
       handleAddDatablockModule() {
@@ -1446,7 +1506,7 @@ class WizardStep2 {
       },
 
       get fieldsToDuplicate() {
-        return this.dataBlock.fields.filter(f => f.type_field!='unlinked' && f.type!='relate' && (f.merge_filter == 'enabled' || f.merge_filter == 'selected'));
+        return this.dataBlock.fields.filter(f => f.type_field!='unlinked' && f.type!='relate');
       },
 
     }

@@ -372,12 +372,16 @@
                                 </div>
                                 <div id="LayoutHeader_Content" class="accordion-collapse collapse" aria-labelledby="LayoutHeader_Header">
                                     <div id="LayoutHeader_Body" class="accordion-body"> 
-                                        <div class="bg-white text-dark"> 
-                                            <div x-data="quillEditor(formConfig.layout.header_html, (html) => formConfig.layout.header_html = html)">
-                                                <div class="bg-white border rounded overflow-hidden">
-                                                    <div x-ref="editor" style="height: 175px;"></div>
-                                                </div>
+                                        <div class="border rounded p-2 bg-light">
+                                            <div class="d-flex justify-content-end mb-2">
+                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')" @click="$store.htmlEditor.open('header')">
+                                                    <span class="suitepicon suitepicon-action-edit"></span>
+                                                </button>
+                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')" @click="formConfig.layout.header_html = ''">
+                                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                                </button>
                                             </div>
+                                            <div x-html="formConfig.layout.header_html"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -535,15 +539,19 @@
                                 </div>
                                 <div id="LayoutFooter_Content" class="accordion-collapse collapse" aria-labelledby="LayoutFooter_Header">
                                     <div id="LayoutFooter_Body" class="accordion-body"> 
-                                        <div class="bg-white text-dark"> 
-                                            <div x-data="quillEditor(formConfig.layout.footer_html, (html) => formConfig.layout.footer_html = html)">
-                                                <div class="bg-white border rounded overflow-hidden">
-                                                    <div x-ref="editor" style="height: 175px;"></div>
-                                                </div>
+                                        <div class="border rounded p-2 bg-light">
+                                            <div class="d-flex justify-content-end mb-2">
+                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_EDIT')" @click="$store.htmlEditor.open('footer')">
+                                                    <span class="suitepicon suitepicon-action-edit"></span>
+                                                </button>
+                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')" @click="formConfig.layout.footer_html = ''">
+                                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                                </button>
                                             </div>
+                                            <div x-html="formConfig.layout.footer_html"></div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                     </div>
@@ -578,6 +586,28 @@
 
                     </div>
                 </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Header/Footer HTML -->
+    <div x-show="$store.htmlEditor.isOpen" x-cloak class="custom-modal-wrapper">
+        <div class="custom-modal-backdrop" @click="$store.htmlEditor.cancel()"></div>
+        <div class="custom-modal-dialog" role="dialog" aria-modal="true" style="max-width: 900px;">
+            <div class="custom-modal-content">
+                <div class="custom-modal-header">
+                    <h3 class="modal-title" x-text="$store.htmlEditor.title"></h3>
+                    <button type="button" class="btn-close" @click="$store.htmlEditor.cancel()"></button>
+                </div>
+                <div class="custom-modal-body">
+                    <div x-data="quillEditorModal()">
+                        <div x-ref="editor" style="min-height: 300px;"></div>
+                    </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="col-2 btn btn-secondary" @click="$store.htmlEditor.cancel()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL')"></button>
+                    <button type="button" class="col-2 btn btn-primary" @click="$store.htmlEditor.save()" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL')"></button>
+                </div>
             </div>
         </div>
     </div>
