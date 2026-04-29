@@ -128,7 +128,6 @@ $beanList['stic_Signature_Log'] = 'stic_Signature_Log';
 $beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
 $beanList['stic_MessagesMan'] = 'stic_MessagesMan';
 $beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
-$beanList['stic_Places'] = 'stic_Places';
 $beanList['stic_Transactions'] = 'stic_Transactions';
 $beanList['stic_Financial_Products'] = 'stic_Financial_Products';
 $beanList['stic_Assets'] = 'stic_Assets';
