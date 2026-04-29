@@ -93,7 +93,7 @@ class stic_AWF_FormsController extends SugarController
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $bean = $this->_saveBeanFromData($data);
-            $redirectUrl = 'index.php?module=stic_AWF_Forms&action=index';
+            $redirectUrl = 'index.php?module=stic_AWF_Forms&action=DetailView&record=' . $bean->id;
             echo json_encode(['success' => true, 'id' => $bean->id, 'redirectUrl' => $redirectUrl]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
