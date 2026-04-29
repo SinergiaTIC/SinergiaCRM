@@ -80,7 +80,8 @@ class SticPrivateAreaUtils
         }
 
         // Prevent duplicate Portal usernames across Accounts and Contacts
-        self::assertUniquePortalUsername($bean);
+        // TODO: Encrypt password functionality
+        // self::assertUniquePortalUsername($bean);
     }
 
     /**
@@ -307,6 +308,7 @@ class SticPrivateAreaUtils
      * @param SugarBean $bean
      * @return void
      * @throws RuntimeException
+     * TODO: Encrypt password functionality
      */
     protected static function assertUniquePortalUsername($bean)
     {
@@ -330,6 +332,7 @@ class SticPrivateAreaUtils
      * @param string $username
      * @param string $currentId
      * @return bool
+     * TODO: Encrypt password functionality
      */
     protected static function hasPortalUsernameDuplicate($username, $currentId = '')
     {
