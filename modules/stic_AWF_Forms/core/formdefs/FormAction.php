@@ -44,6 +44,9 @@ class FormAction {
 
     public bool $continue_on_error = false; // Indicates if the flow should continue if this action fails (throws an exception or returns an error result)
 
+    public ?string $success_flow_id = null; // ID of the success flow
+    public ?string $failure_flow_id = null; // ID of the failure flow
+
     // For deferred actions
     public ?string $flow_success_id = null; // Flow to execute if the deferred action returns successfully
     public ?string $flow_error_id = null;   // Flow to execute if the deferred action returns with an error
@@ -65,6 +68,8 @@ class FormAction {
         $dto->description = $data['description'];
         $dto->requisite_actions = $data['requisite_actions'] ?? [];
         $dto->continue_on_error = !empty($data['continue_on_error']);
+        $dto->success_flow_id = $data['success_flow_id'] ?? null;
+        $dto->failure_flow_id = $data['failure_flow_id'] ?? null;
 
         // Condition
         if (isset($data['conditions'])) {

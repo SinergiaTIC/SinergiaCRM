@@ -36,9 +36,8 @@ class stic_AWF_PaymentStrategyFactory
         'bizum' => 'stic_AWF_RedsysStrategy',    // RedSys Bizum
         'stripe' => 'stic_AWF_StripeStrategy',   // Stripe
         'card' => 'stic_AWF_RedsysStrategy',     // RedSys Card
-        'ceca_card' => 'stic_AWF_CecaStrategy', 
+        'ceca_card' => 'stic_AWF_CecaStrategy',  // CECA Card
         'paypal' => 'stic_AWF_PaypalStrategy',   // PayPal
-
     );
 
     /**
@@ -74,7 +73,7 @@ class stic_AWF_PaymentStrategyFactory
             require_once __DIR__."/{$strategyClass}.php";
         }
         if (!class_exists($strategyClass)) {
-            $GLOBALS['log']->fatal("PaymentStrategyFactory: Class $strategyClass not found. Fallback to Offline.");
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": stic_AWF_PaymentStrategyFactory: Class $strategyClass not found. Fallback to Offline.");
             $strategyClass = 'stic_AWF_OfflineStrategy';
         }
 
@@ -101,11 +100,14 @@ class stic_AWF_PaymentStrategyFactory
         if (!$strategyClass) {
             throw new Exception("Payment strategy class not defined in stored data.");
         }
-        if (file_exists(__DIR__."/{$strategyClass}.php")) {
-            require_once __DIR__."/{$strategyClass}.php";
-        }
-        if (!class_exists($strategyClass)) {
-            throw new Exception("Unknown payment strategy class in stored data.");
+        
+        // Handle full class name: "stic_AWF_RedsysStrategy" -> "stic_AWF_RedsysStrategy.php"
+        $filePath = __DIR__ . '/' . $strategyClass . '.php';
+        
+        if (file_exists($filePath)) {
+            require_once $filePath;
+        } elseif (!class_exists($strategyClass)) {
+            throw new Exception("Unknown payment strategy class in stored data: " . $strategyClass);
         }
 
         /** @var stic_AWF_PaymentStrategy $strategy */

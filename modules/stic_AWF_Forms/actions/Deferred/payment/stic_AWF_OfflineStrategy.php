@@ -25,8 +25,44 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+include_once __DIR__."/stic_AWF_PaymentStrategy.php";
 
-class stic_AWF_PaymentMethodParser
+/**
+ * Offline payment strategy.
+ * Used for bank transfers, cash and other payment methods that do not require
+ * redirection to an external gateway. Returns OK immediately so the flow
+ * continues without waiting for an external webhook.
+ */
+class stic_AWF_OfflineStrategy extends stic_AWF_PaymentStrategy
 {
+    /**
+     * Initiates an offline payment: sets the payment status to 'pending' and
+     * returns OK so PaymentRouterAction triggers the Deferred OK flow immediately.
+     */
+    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
+    {
+        $beanPayment->status = 'pending';
+        $beanPayment->save();
 
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF OfflineStrategy: Payment {$beanPayment->id} set to pending (offline).");
+
+        return new ActionResult(ResultStatus::OK, $actionConfig, 'Offline payment registered');
+    }
+
+    /**
+     * No-op: Offline payments never reach the terminal step.
+     */
+    public function performTerminal(ExecutionContext $context, ActionResult $result): void
+    {
+        // Offline payments return OK immediately, so this is never called.
+    }
+
+    /**
+     * No-op: Offline payments do not receive webhooks.
+     */
+    public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
+    {
+        // Offline payments return OK immediately, so this is never called.
+        return new ActionResult(ResultStatus::OK, null, 'Offline: no webhook expected');
+    }
 }

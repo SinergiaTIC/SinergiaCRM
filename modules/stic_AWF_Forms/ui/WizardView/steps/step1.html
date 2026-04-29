@@ -46,14 +46,14 @@
 
       <div class="row">
         <!-- Processing mode -->
-        <!-- <stic-field-select
-          class="col-6"
-          x-model="bean.processing_mode"
-          label="LBL_PROCESSING_MODE"
-          map="utils.getList('stic_awf_forms_processing_mode_list', false)"
-          map-text="text"
-          map-value="id"
-        ></stic-field-select> -->
+        <div class="col-6">
+          <label for="processing_mode" class="form-label" x-text="utils.translateForFieldLabel('LBL_PROCESSING_MODE')"></label>
+          <select id="processing_mode" class="form-select" x-model="bean.processing_mode">
+            <template x-for="item in utils.getList('stic_awf_forms_processing_mode_list')" :key="item.id">
+              <option :value="item.id" x-text="item.text" :selected="item.id == bean.processing_mode"></option>
+            </template>
+          </select>
+        </div>
       </div>
 
       <!-- Description -->

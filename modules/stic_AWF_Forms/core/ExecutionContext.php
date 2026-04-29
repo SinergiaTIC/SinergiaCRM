@@ -42,6 +42,9 @@ class ExecutionContext {
     public string $defaultAssignedUserId;
     public ?string $visitorUserId = null;
 
+    /** @var array Custom data payload used by deferred actions (e.g. webhook context reconstruction) */
+    protected array $customData = [];
+
     /**
      * Constructor for ExecutionContext.
      * @param string $formId ID of the form being processed
@@ -72,11 +75,11 @@ class ExecutionContext {
         $key = $result->actionConfig?->id;
         if ($key === null) {
             $key = 'unknown_' . count($this->actionResults);
-            $GLOBALS['log']->warn("Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
         }
         $this->actionResults[$key] = $result;
         if($result->isError()) {
-            $GLOBALS['log']->error("Action '{$result->actionConfig?->name}' resulted in ERROR: " . $result->message);
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Action '{$result->actionConfig?->name}' resulted in ERROR: " . $result->message);
         }
     }
 
@@ -92,7 +95,7 @@ class ExecutionContext {
         $errorResult = new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         $this->addActionResult($errorResult);
 
-        $GLOBALS['log']->error("AWF Execution Exception: " . $e->getMessage());
+        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF Execution Exception: " . $e->getMessage());
         $GLOBALS['log']->error($e->getTraceAsString());
         
         return $errorResult;
@@ -128,6 +131,22 @@ class ExecutionContext {
             }
         }
         return null;
+    }
+
+    /**
+     * Sets the custom data payload (used by deferred/webhook actions).
+     * @param array $data Associative data array
+     */
+    public function setCustomData(array $data): void {
+        $this->customData = $data;
+    }
+
+    /**
+     * Returns the custom data payload.
+     * @return array
+     */
+    public function getCustomData(): array {
+        return $this->customData;
     }
 
 }

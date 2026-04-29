@@ -1532,6 +1532,15 @@ class WizardStep3 {
 
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
+        this.$watch('formConfig.flows', (flows) => {
+            flows.forEach(flow => {
+                flow.actions.forEach(action => {
+                    if (action.success_flow_id || action.failure_flow_id) {
+                      this.formConfig.upsertAction(action, "Deferred", flow, action.id);
+                    }
+                });
+            });
+        }, { deep: true });
 
         // Store for the Action Editor management
         if (!Alpine.store('actionEditor')) {
@@ -1625,7 +1634,7 @@ class WizardStep3 {
              * @returns {Array} List of available categories 
              */
             get availableCategories() {
-              const validActions = this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter);
+              const validActions = this.allDefinitions.filter(d => (d.type == 'Deferred' && !this.isTerminalFilter) || d.isTerminal == this.isTerminalFilter);
               const uniqueCatIds = [...new Set(validActions.map(a => a.category))];
               return stic_AwfAction.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
             },
@@ -1636,7 +1645,7 @@ class WizardStep3 {
              */
             get filteredActions() {
                 if (!this.selectedCategory) return [];
-                return this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter && d.category == this.selectedCategory);
+                return this.allDefinitions.filter(d => ((d.type == 'Deferred' && !this.isTerminalFilter) || d.isTerminal == this.isTerminalFilter) && d.category == this.selectedCategory);
             },
 
             get isValid() {
@@ -1890,11 +1899,9 @@ class WizardStep3 {
              */
             saveChanges() {
               const form = document.getElementById('ModalActionConfigForm');
-              if (form) {
-                  // Execute the native function to check input validity and show errors
-                  if (!form.reportValidity()) {
-                      return; // Si no es valido, abortamos el proceso
-                  }
+              // Execute the native function to check input validity and show errors
+              if (form && !form.reportValidity()) {
+                return; // Si no es valido, abortamos el proceso
               }
               if (!this.isValid) {
                 alert(utils.translate('LBL_ACTION_PARAM_MISSING_MESSAGE'));
@@ -1904,23 +1911,12 @@ class WizardStep3 {
               // Recalculate action before saving
               this._recalculateAction(this.action, this.definition);
 
-              if (this.isNewAction) {
-                // Add Action to flow: Insertion based on order
-                let insertIndex = this.flow.actions.length;
-                for (let i = 0; i < this.flow.actions.length; i++) {
-                  if ((this.flow.actions[i].order ?? 0) > (this.action.order ?? 0)) {
-                    insertIndex = i;
-                    break;
-                  }
-                }
-                this.flow.actions.splice(insertIndex, 0, this.action);
-              } else {
-                // Update existing Action in flow
-                const index = this.flow.actions.findIndex(a => a.id == this.original_id);
-                if (index !== -1) {
-                  this.flow.actions[index] = this.action;
-                }
-              }
+              this.formConfig.upsertAction(
+                this.action, 
+                this.definition.type, 
+                this.flow, 
+                this.isNewAction ? null : this.original_id
+              );
               this.close();
             },
 
@@ -2041,7 +2037,7 @@ class WizardStep3 {
        * @return {void} 
        */
       removeAction(action) {
-        this.flow.actions = this.flow.actions.filter(a => a.id != action.id);
+        this.formConfig.removeAction(this.flow.id, action.id)
       },
 
       /**

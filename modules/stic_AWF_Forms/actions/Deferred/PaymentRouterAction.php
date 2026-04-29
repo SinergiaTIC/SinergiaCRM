@@ -29,11 +29,11 @@ require_once __DIR__.'/payment/stic_AWF_PaymentStrategyFactory.php';
 require_once __DIR__.'/payment/stic_AWF_PaymentStrategy.php';
 require_once 'modules/stic_Payment_Commitments/stic_Payment_Commitments.php';
 
-class PaymentRouterAction extends DeferredBeanActionDefinition implements ITerminalAction
+class PaymentRouterAction extends DeferredBeanActionDefinition 
 {
     public function __construct() {
-        $this->isActive = false;
-        $this->isUserSelectable = false;
+        $this->isActive = true;
+        $this->isUserSelectable = true;
         $this->category = 'integration';
         $this->baseLabel = 'LBL_PAYMENT_ROUTER_ACTION';
     }
@@ -103,7 +103,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
         // Get Payment Strategy
         try {
             /** @var stic_AWF_PaymentStrategy $strategy */
-            $strategy = PaymentStrategyFactory::createFromMethodValue($paymentCommitmentBean->payment_method);
+            $strategy = stic_AWF_PaymentStrategyFactory::createFromMethodValue($paymentCommitmentBean->payment_method);
         } catch (Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error getting Payment Strategy for Payment Commitment (ID: {$paymentCommitmentBean->id}): " . $e->getMessage());
         }
@@ -135,7 +135,45 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
         $paymentBean = $paymentBean->retrieve($paymentBean->id);
 
         // Execute Strategy initiation
-        return $strategy->initiate($context, $actionConfig, $paymentBean);
+        $strategyResult = $strategy->initiate($context, $actionConfig, $paymentBean);
+
+        // If the strategy returns OK immediately (e.g. Offline payment), execute the
+        // Deferred OK flow right away for symmetry so confirmation emails etc. are sent.
+        if ($strategyResult->isOk()) {
+            $this->executeDeferredOkFlow($context, $actionConfig);
+        }
+
+        return $strategyResult;
+    }
+
+    /**
+     * Executes the success flow configured on the action (used when a payment resolves OK immediately).
+     * Falls back to the error flow if the success flow fails.
+     *
+     * @param ExecutionContext $context Execution context
+     * @param FormAction $actionConfig Action configuration containing flow_success_id / flow_error_id
+     */
+    private function executeDeferredOkFlow(ExecutionContext $context, FormAction $actionConfig): void
+    {
+        $successFlowId = $actionConfig->flow_success_id ?? null;
+        $errorFlowId   = $actionConfig->flow_error_id   ?? null;
+
+        $successFlow = ($successFlowId !== null && $successFlowId !== '')
+            ? ($context->formConfig->flows[$successFlowId] ?? null)
+            : null;
+        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
+            ? ($context->formConfig->flows[$errorFlowId] ?? null)
+            : null;
+
+        if ($successFlow === null) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouterAction: No success flow configured (flow_success_id={$successFlowId}). Skipping deferred OK flow.");
+            return;
+        }
+
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouterAction: Executing Deferred OK flow (ID={$successFlowId}).");
+
+        $executor = new ServerActionFlowExecutor($context);
+        $executor->executeFlow($successFlow, $errorFlow);
     }
 
     /**
@@ -152,10 +190,10 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
 
         // Recover using the Factory
         try {
-            $strategy = PaymentStrategyFactory::createFromStoredData($executionResult->getData());
+            $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($executionResult->getData());
             $strategy->performTerminal($context, $executionResult);
         } catch (Exception $e) {
-            $GLOBALS['log']->fatal("PaymentRouter: " . $e->getMessage());
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouter: " . $e->getMessage());
         }
     }
     
@@ -174,7 +212,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
         $savedData = $context->getCustomData() ?? []; 
         
         try {
-            $strategy = PaymentStrategyFactory::createFromStoredData($savedData);
+            $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
             return $strategy->resolve($context, $requestData);
         } catch (Exception $e) {
             return new ActionResult(ResultStatus::ERROR, null, "Error processing webhook response: " . $e->getMessage());
