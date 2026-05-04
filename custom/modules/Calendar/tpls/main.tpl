@@ -335,7 +335,6 @@ YAHOO.util.Event.onDOMReady(function(){
 <script src='{sugar_getjspath file="modules/Calendar/fullcalendar/fullcalendar.min.js"}'></script>
 <script src='{sugar_getjspath file="modules/Calendar/fullcalendar/locale-all.js"}'></script>
 
-
 <div id='calendarContainer'></div>
 {* STIC-Custom 20210927 AAM - Adding Shared Day option
 STIC#422  
