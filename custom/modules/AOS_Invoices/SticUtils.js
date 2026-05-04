@@ -88,8 +88,8 @@ switch (viewType()) {
       },
     };
 
-    // Rectified invoice button: only enabled if invoice is emitted
-    if (STIC.record.status != 'emitted') {
+    // Rectified invoice button: enabled if invoice is emitted, Paid, or Unpaid
+    if (STIC.record.status != 'emitted' && STIC.record.status != 'Paid' && STIC.record.status != 'Unpaid') {
       buttons.createRectifiedInvoice.disabled = 'disabled';
       buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";
     }
