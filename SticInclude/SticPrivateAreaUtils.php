@@ -35,6 +35,13 @@ class SticPrivateAreaUtils
      */
     public static function processBeforeSave($bean)
     {
+        // When Portal is being disabled, clear credentials
+        if (!self::isPortalEnabledNow($bean) && self::wasPortalEnabled($bean)) {
+            $bean->stic_pa_password_c = '';
+            $bean->_stic_plain_pa_password = '';
+            return;
+        }
+
         // Skip credential logic when Portal is disabled
         if (!self::isPortalEnabledNow($bean)) {
             return;
@@ -289,6 +296,17 @@ class SticPrivateAreaUtils
         $previous = (bool)($bean->fetched_row['stic_pa_enable_c'] ?? false);
 
         return $current && !$previous;
+    }
+
+    /**
+     * Check if Portal was enabled in the previously stored values
+     *
+     * @param SugarBean $bean
+     * @return bool
+     */
+    protected static function wasPortalEnabled($bean)
+    {
+        return (bool)($bean->fetched_row['stic_pa_enable_c'] ?? false);
     }
 
     /**
