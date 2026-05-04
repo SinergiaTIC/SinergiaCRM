@@ -81,6 +81,7 @@ $mod_strings['LBL_VERIFACTU_REQUIRE_ORG_OR_PERSON'] = 'Debe seleccionar una Orga
 $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX'] = 'BORRADOR-';
 $mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT'] = 'La factura no puede ser enviada a la AEAT. El estado debe ser "Emitida" y el estado AEAT debe ser diferente de "Aceptada".';
 $mod_strings['LBL_MISSING_SETTINGS'] = 'Faltan configuraciones obligatorias: contraseña del certificado (GENERAL_CERTIFICATE_PASSWORD), certificado de sello de entidad (GENERAL_CERTIFICATE_ENTITY_SEAL), NIF de la organización (GENERAL_ORGANIZATION_ID) o  nombre de la organización (GENERAL_ORGANIZATION_NAME). Por favor, revise las configuraciones de SinergiaCRM.';
+$mod_strings['LBL_STATUS_HELP'] = 'Estados del ciclo de vida de la factura:<br><b>Borrador:</b> editable, no enviada a AEAT<br><b>Emitida:</b> enviada o lista para envio a la AEAT<br><b>Cancelado:</b> anulada<br><br>Los estados "Pagado" y "No Pagado" indican el estado de cobro y son independientes del envío a AEAT.';
 
 // Rectified invoice labels
 $mod_strings['LBL_VERIFACTU_IS_RECTIFIED'] = '¿Es factura rectificativa?';
