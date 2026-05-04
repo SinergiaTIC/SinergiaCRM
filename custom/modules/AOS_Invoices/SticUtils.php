@@ -333,7 +333,7 @@ class AOS_InvoicesUtils
      */
     public static function sendToAeat($invoiceBean)
     {
-        global $mod_strings, $sugar_config;
+        global $db, $mod_strings, $sugar_config;
         // Allow sending if: status is 'emitted' AND (aeat_status is empty/pending/rejected, but NOT 'accepted')
         $aeatStatus = $invoiceBean->verifactu_aeat_status_c ?? '';
         if (
@@ -565,26 +565,44 @@ class AOS_InvoicesUtils
             $previousHash = null;
             $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
 
-            if ($previousInvoice) {
-                $previousInvoiceDate = self::parseDateToImmutable($previousInvoice->invoice_date);
-
-                // Validate chronological order: the invoice being sent must not have
-                // an issue date earlier than the last already-registered invoice.
-                // AEAT rejects records that break the chain's date ordering.
-                if ($issueDate < $previousInvoiceDate) {
-                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice date (' . $issueDate->format('Y-m-d') . ') is earlier than last registered invoice date (' . $previousInvoiceDate->format('Y-m-d') . ', #' . $previousInvoice->number . '). Sending blocked.');
+            // === Step 2.1: Validate chronological order by SERIES ===
+            // Get last invoice from the SAME series for date validation
+            $seriesName = $invoiceBean->stic_invoice_type_c;
+            $seriesLastInvoiceQuery = "SELECT id, number, invoice_date 
+                FROM aos_invoices 
+                INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c 
+                WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
+                AND aos_invoices.deleted = 0 
+                AND aos_invoices.id != " . $db->quoted($invoiceBean->id) . "
+                AND aos_invoices_cstm.verifactu_aeat_status_c = 'accepted'
+                AND aos_invoices.invoice_date IS NOT NULL
+                ORDER BY aos_invoices.invoice_date DESC, aos_invoices.number DESC LIMIT 1";
+            
+            $seriesLastInvoice = $db->fetchOne($seriesLastInvoiceQuery);
+            
+            if ($seriesLastInvoice && !empty($seriesLastInvoice['invoice_date'])) {
+                $seriesLastInvoiceDate = self::parseDateToImmutable($seriesLastInvoice['invoice_date']);
+                
+                // Validate chronological order by series
+                if ($issueDate < $seriesLastInvoiceDate) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice date (' . $issueDate->format('Y-m-d') . ') is earlier than last registered invoice date for series ' . $seriesName . ' (' . $seriesLastInvoiceDate->format('Y-m-d') . ', #' . $seriesLastInvoice['number'] . '). Sending blocked.');
                     SugarApplication::appendErrorMessage('<p class="msg-error">'.
                         sprintf(
                             $mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'],
                             $issueDate->format('d/m/Y'),
-                            $previousInvoice->number,
-                            $previousInvoiceDate->format('d/m/Y')
+                            $seriesLastInvoice['number'],
+                            $seriesLastInvoiceDate->format('d/m/Y')
                         ).
                         '</p>'
                     );
                     SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
                     return;
                 }
+            }
+            // === End Step 2.1 ===
+
+            if ($previousInvoice) {
+                $previousInvoiceDate = self::parseDateToImmutable($previousInvoice->invoice_date);
 
                 $previousInvoiceId = new InvoiceIdentifier();
                 $previousInvoiceId->issuerId = $issuerNif;
@@ -592,7 +610,7 @@ class AOS_InvoicesUtils
                 $previousInvoiceId->issueDate = $previousInvoiceDate;
                 $previousHash = $previousInvoice->verifactu_hash_c ?? null;
 
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Chaining to previous invoice: ' . $previousInvoice->number . ' (Hash: ' . ($previousHash ?? 'N/A') . ')');
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Chaining to previous invoice (global): ' . $previousInvoice->number . ' (Hash: ' . ($previousHash ?? 'N/A') . ')');
             } else {
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': No previous invoice found, this will be the first in the chain');
             }
@@ -1306,6 +1324,67 @@ class AOS_InvoicesUtils
 
         $GLOBALS['log']->debug("extractNumericPart - Pattern did not match, returning '0'");
         return '0';
+    }
+
+    /**
+     * Validate chronological order of invoice date per series
+     * 
+     * Problem: Incidences 4.2, 4.3, 4.20 - Date validation only runs at send time and doesn't consider series
+     * 
+     * @param SugarBean $bean The invoice bean
+     * @return bool True if valid, false if error (error message set in bean)
+     */
+    public static function validateChronologicalOrder($bean)
+    {
+        global $db, $sugar_config, $mod_strings;
+
+        // Only validate if invoice has a date and series
+        if (empty($bean->invoice_date) || empty($bean->stic_invoice_type_c)) {
+            return true;
+        }
+
+        // Get the series from the bean
+        $seriesName = $bean->stic_invoice_type_c;
+        
+        // Get the current invoice date
+        $currentDate = strtotime($bean->invoice_date);
+        
+        // Find the last issued invoice from the same series (excluding cancelled)
+        $query = "SELECT aos_invoices.id, aos_invoices.invoice_date
+                  FROM aos_invoices
+                  INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
+                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
+                  AND aos_invoices.deleted = 0
+                  AND aos_invoices.id != " . $db->quoted($bean->id) . "
+                  AND aos_invoices_cstm.verifactu_aeat_status_c = 'accepted'
+                  AND aos_invoices_cstm.verifactu_aeat_status_c != 'cancelled'
+                  AND aos_invoices.invoice_date IS NOT NULL
+                  ORDER BY aos_invoices.invoice_date DESC
+                  LIMIT 1";
+
+        $GLOBALS['log']->debug("validateChronologicalOrder - Query: $query");
+
+        $lastInvoice = $db->fetchOne($query);
+
+        if (!empty($lastInvoice) && !empty($lastInvoice['invoice_date'])) {
+            $lastDate = strtotime($lastInvoice['invoice_date']);
+            
+            // If current invoice date is earlier than the last issued invoice
+            if ($currentDate < $lastDate) {
+                $lastDateFormatted = date('d/m/Y', $lastDate);
+                $currentDateFormatted = date('d/m/Y', $currentDate);
+                
+                $errorMsg = $mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST'] 
+                    ?? "La fecha de expedición ({$currentDateFormatted}) es anterior a la última factura emitida de la serie {$seriesName} ({$lastDateFormatted}).";
+                
+                $GLOBALS['log']->error("Line " . __LINE__ . ": " . __METHOD__ . ": " . $errorMsg);
+                
+                return $errorMsg;
+            }
+        }
+
+        $GLOBALS['log']->debug("validateChronologicalOrder - Date validation passed for series: $seriesName, date: " . date('d/m/Y', $currentDate));
+        return true;
     }
 
     /**

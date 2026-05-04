@@ -113,6 +113,38 @@ class AOS_InvoicesHook
         }
         // === End Step 1.1 ===
 
+        // === Step 2.1: Validate chronological order by series ===
+        // Only validate if Verifactu is active (not pending status) and not a duplicate
+        if (!$isDuplicate && !empty($bean->verifactu_aeat_status_c) && $bean->verifactu_aeat_status_c !== 'pending') {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            $validationResult = AOS_InvoicesUtils::validateChronologicalOrder($bean);
+            
+            if ($validationResult !== true) {
+                // Load mod_strings if not already loaded
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                
+                // Format the error message with actual values
+                $currentDateFormatted = date('d/m/Y', strtotime($bean->invoice_date));
+                $seriesName = $bean->stic_invoice_type_c;
+                $lastDateFormatted = ''; // Extract from the result if available
+                
+                // For now, use a simpler message
+                $errorMsg = $mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST'] 
+                    ?? "La fecha de expedición ({$currentDateFormatted}) es anterior a la última factura emitida de la serie {$seriesName}.";
+                
+                SugarApplication::appendErrorMessage($errorMsg);
+                
+                // Redirect to detail view
+                if (!empty($bean->id)) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
+                }
+                die();
+            }
+        }
+        // === End Step 2.1 ===
+
         // If duplicating a record, set status to 'draft' and clear Verifactu fields
         if (
             (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') // for mass duplicate
