@@ -365,18 +365,52 @@ class AOS_InvoicesUtils
                 throw new Exception("Could not extract NIF or holder name from certificate. Please verify the certificate is valid.");
             }
 
-            // === Step 1.3: Generate real invoice number at AEAT send time ===
-            // Replace temporary draft number with real generated number
-            $draftPrefix = $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX'] ?? 'BORRADOR-';
-            if (!empty($invoiceBean->number) && strpos($invoiceBean->number, $draftPrefix) === 0) {
-                require_once 'custom/modules/AOS_Invoices/SticUtils.php';
-                $realNumber = AOS_InvoicesUtils::generateNextInvoiceNumber($invoiceBean->stic_invoice_type_c, $invoiceBean);
-                if (!empty($realNumber)) {
-                    $invoiceBean->number = $realNumber;
-                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Generated real invoice number: ' . $realNumber);
-                } else {
-                    throw new Exception("Could not generate invoice number for series: " . $invoiceBean->stic_invoice_type_c);
+            // === Step 1.3: Generate real invoice number at AEAT send time (in memory only) ===
+            // Generate number in a local variable - will be saved only if AEAT sends successfully
+            $generatedInvoiceNumber = null;
+            
+            // Get the key value from bean
+            $seriesKey = $invoiceBean->stic_invoice_type_c;
+            
+            // Map dropdown key values to config keys AND display values
+            // Config uses "Factura normal", "Factura rectificativa" as keys
+            $seriesMapping = [
+                'factura_no' => ['config' => 'Factura normal', 'display' => 'Factura normal'],
+                'factura_si' => ['config' => 'Factura rectificativa', 'display' => 'Factura rectificativa']
+            ];
+            
+            // Default to using key as display value if not found
+            $seriesConfigKey = $seriesKey;
+            $seriesDbValue = $seriesKey; // Use key for DB query initially
+            
+            if (isset($seriesMapping[$seriesKey])) {
+                $seriesConfigKey = $seriesMapping[$seriesKey]['config'];
+                $seriesDbValue = $seriesMapping[$seriesKey]['display'];
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Mapped key "' . $seriesKey . '" to config: ' . $seriesConfigKey . ', DB value: ' . $seriesDbValue);
+            }
+            
+            // Keep original for debug
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Series key: "' . $seriesKey . '", Config: "' . $seriesConfigKey . '", DB: "' . $seriesDbValue . '"');
+            
+            // If config key not found in mapping, use first available series as fallback
+            if (!isset($seriesMapping[$seriesKey]) && empty($sugar_config['aos']['invoices']['series'][$seriesConfigKey])) {
+                $availableSeries = array_keys($sugar_config['aos']['invoices']['series'] ?? []);
+                if (!empty($availableSeries)) {
+                    $seriesConfigKey = $availableSeries[0];
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Using fallback series: ' . $seriesConfigKey);
                 }
+            }
+            
+            if (!empty($sugar_config['aos']['invoices']['series'][$seriesConfigKey])) {
+                require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+                $generatedInvoiceNumber = AOS_InvoicesUtils::generateNextInvoiceNumber($seriesConfigKey, $invoiceBean, $seriesDbValue);
+                if (!empty($generatedInvoiceNumber)) {
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Generated invoice number (in memory): ' . $generatedInvoiceNumber);
+                } else {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to generate invoice number for series: ' . $seriesConfigKey);
+                }
+            } else {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Could not find series configuration');
             }
             // === End Step 1.3 ===
 
@@ -484,7 +518,8 @@ class AOS_InvoicesUtils
             $client->setProduction($useProduction);
 
             // Extract invoice data from bean and create registration record
-            $invoiceNumber = $invoiceBean->number;
+            // Use generated number (in memory) instead of bean value
+            $invoiceNumber = !empty($generatedInvoiceNumber) ? $generatedInvoiceNumber : $invoiceBean->number;
 
             // Use parseDateToImmutable to handle both Y-m-d (DB) and display formats
             // (e.g. d/m/Y, d.m.Y) that BeanFactory may return depending on context.
@@ -909,6 +944,16 @@ class AOS_InvoicesUtils
             $successMessage .= '. <a href="#" onclick="document.getElementById(\'aeat-response-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">' . $mod_strings['LBL_AEAT_SHOW_DETAILS'] . '</a>';
             $successMessage .= '<div id="aeat-response-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedResponse) . '</pre></div>';
 
+            // === Step 1.3: Save generated number only if AEAT send was accepted ===
+            if (!empty($generatedInvoiceNumber) && $invoiceBean->verifactu_aeat_status_c === 'accepted') {
+                $invoiceBean->number = $generatedInvoiceNumber;
+                // Keep display value, not config key
+                $invoiceBean->stic_invoice_type_c = $seriesDbValue;
+                $invoiceBean->save();
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saved generated invoice number: ' . $generatedInvoiceNumber);
+            }
+            // === End Step 1.3 ===
+
             SugarApplication::appendSuccessMessage($successMessage);
 
             return true;
@@ -1100,21 +1145,25 @@ class AOS_InvoicesUtils
     /**
      * Generate the next invoice number based on the serial format
      *
-     * @param string $format The serial format (e.g., 'YYYY-0000', 'YY-000', 'FACT-0000')
+     * @param string $seriesConfigKey The config key (e.g., 'factura_normal')
      * @param SugarBean $bean The invoice bean
+     * @param string $seriesDbValue The database value for query (e.g., 'Factura normal')
      * @return string The generated invoice number
      */
-    public static function generateNextInvoiceNumber($seriesName, $bean)
+    public static function generateNextInvoiceNumber($seriesConfigKey, $bean, $seriesDbValue = null)
     {
         global $db, $sugar_config;
 
-        // Get series configuration from sugar_config
-        if (empty($sugar_config['aos']['invoices']['series'][$seriesName])) {
-            $GLOBALS['log']->error("generateNextInvoiceNumber - Series '$seriesName' not found in configuration");
+        // Use display value for DB query if provided, otherwise use config key
+        $seriesForQuery = $seriesDbValue ?? $seriesConfigKey;
+
+        // Get series configuration from sugar_config using config key
+        if (empty($sugar_config['aos']['invoices']['series'][$seriesConfigKey])) {
+            $GLOBALS['log']->error("generateNextInvoiceNumber - Series '$seriesConfigKey' not found in configuration");
             return '';
         }
 
-        $seriesConfig = $sugar_config['aos']['invoices']['series'][$seriesName];
+        $seriesConfig = $sugar_config['aos']['invoices']['series'][$seriesConfigKey];
         $format = $seriesConfig['format'];
         $initialNumber = isset($seriesConfig['initialNumber']) ? (int) $seriesConfig['initialNumber'] : 1;
 
@@ -1123,7 +1172,7 @@ class AOS_InvoicesUtils
         $year = date('Y', strtotime($invoiceDate));
         $yearTwoDigits = substr($year, -2);
 
-        $GLOBALS['log']->debug("generateNextInvoiceNumber - Series: $seriesName, Format: $format, Initial: $initialNumber, Year: $year");
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - ConfigKey: $seriesConfigKey, DBValue: $seriesForQuery, Format: $format, Initial: $initialNumber, Year: $year");
 
         // Build a pattern to search for invoices with the same format and year
         $searchPattern = self::buildInvoiceNumber($format, 0, $year, $yearTwoDigits);
@@ -1138,20 +1187,24 @@ class AOS_InvoicesUtils
 
         // Find all invoice numbers with the same series (invoice type) and year
         // Note: stic_invoice_type_c is in aos_invoices_cstm table
+        // Include all invoices that have been sent to AEAT (both accepted and rejected)
+        // This prevents generating the same number when re-sending failed invoices
         $query = "SELECT aos_invoices.number
                   FROM aos_invoices
                   INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
-                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
+                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesForQuery) . "
                   AND aos_invoices.deleted = 0
                   AND aos_invoices.number IS NOT NULL
                   AND aos_invoices.number != ''
                   AND aos_invoices.number LIKE " . $db->quoted($searchPattern) . "
+                  AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected')
                   ORDER BY aos_invoices.number DESC
                   LIMIT 1";
 
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Query: $query");
 
         $lastNumber = $db->getOne($query);
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - ConfigKey: $seriesConfigKey, DBValue: $seriesForQuery, Year: $year, SearchPattern: $searchPattern, LastNumber found: " . ($lastNumber ?? 'NONE'));
         $nextNumber = $initialNumber; // Start with the configured initial number
 
         if (!empty($lastNumber)) {

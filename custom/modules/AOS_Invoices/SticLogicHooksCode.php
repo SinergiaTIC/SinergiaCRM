@@ -27,6 +27,18 @@ class AOS_InvoicesHook
     {
         global $sugar_config, $mod_strings;
 
+        // === Step 1.3: Clear number on duplicate to avoid AEAT duplicate error ===
+        // When duplicating, SuiteCRM copies all fields including number
+        // We must reset it so a new number is generated at send time
+        $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') 
+            || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true');
+        
+        if ($isDuplicate && !empty($bean->number)) {
+            $GLOBALS['log']->debug(__METHOD__ . ': Clearing number on duplicate. Original number was: ' . $bean->number);
+            $bean->number = '';
+        }
+        // === End Step 1.3 ===
+
         // === Step 1.1: Block edition of invoices accepted by AEAT ===
         // If the invoice is already accepted by AEAT, only non-tax fields can be edited
         if (!empty($bean->fetched_row['verifactu_aeat_status_c']) && 
@@ -179,19 +191,6 @@ class AOS_InvoicesHook
                 $bean->stic_invoice_type_c = $seriesNames[0];
             }
         }
-
-        // === Step 1.3: Assign temporary number at creation, real number at AEAT send time ===
-        // If it's a new invoice (no number yet), assign a temporary draft number
-        // The real number will be generated when sending to AEAT
-        if (empty($bean->number)) {
-            global $mod_strings;
-            if (empty($mod_strings)) {
-                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
-            }
-            $draftPrefix = $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX'] ?? 'BORRADOR-';
-            $bean->number = $draftPrefix . $bean->id;
-        }
-        // === End Step 1.3 ===
 
         // Auto-generate name if not provided: <Organization/Person name> - <Date/Time>
         if (empty($bean->name)) {
