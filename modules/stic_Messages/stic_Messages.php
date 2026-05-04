@@ -178,15 +178,26 @@ class stic_Messages extends Basic
         // Apply the final assigned user to the message
         if (!empty($assignedUserId)) {
             $this->assigned_user_id = $assignedUserId;
+            // Ensure assigned_user_name is populated for notifications
+            if (empty($this->assigned_user_name)) {
+                $userBean = BeanFactory::getBean('Users', $assignedUserId);
+                if (!empty($userBean) && !empty($userBean->name)) {
+                    $this->assigned_user_name = $userBean->name;
+                }
+            }
         }
 
         // Conversation messages: set direction and sender
         if ($this->type === 'conversation') {
             if (empty($this->id) && empty($this->fetched_row['id'])) {
-                $this->direction = !empty($current_user->id) ? 'outbound' : 'inbound';
-            }
-            if (!empty($current_user->id)) {
-                $this->sender = $current_user->name;
+                if ($this->direction === 'inbound') {
+                    $this->sender = 'sticpa';
+                } else {
+                    if (!empty($current_user->id)) {
+                        $this->sender = $current_user->name;
+                    }
+                    $this->direction = 'outbound';
+                }
             }
             $this->status = 'sent';
         }
@@ -237,9 +248,39 @@ class stic_Messages extends Basic
 
         if ($this->type === 'conversation') {
             $this->parent_type = 'Contacts';
+
+            // Store conversation subject on the bean for workflow notifications before save
+            if (empty($this->stic_conversations_subject) && !empty($this->stic_conversations_ida)) {
+                $convBean = BeanFactory::getBean('stic_Conversations', $this->stic_conversations_ida);
+                if (!empty($convBean) && !empty($convBean->id) && !empty($convBean->subject)) {
+                    $this->stic_conversations_subject = $convBean->subject;
+                }
+            }
         }
         // Save the bean
         parent::save($check_notify);
+
+        // For conversation messages, ensure the M:M relationship is created in the join table
+        if ($this->type === 'conversation' && !empty($this->stic_conversations_ida)) {
+            $this->load_relationship('stic_conversations_stic_messages');
+            if (!empty($this->stic_conversations_stic_messages)) {
+                $this->stic_conversations_stic_messages->add($this->stic_conversations_ida);
+            }
+
+            // If conversation has no subject, use the message text as subject
+            $conversationId = is_array($this->stic_conversations_ida) ? reset($this->stic_conversations_ida) : $this->stic_conversations_ida;
+            if (!empty($conversationId)) {
+                $convBean = BeanFactory::getBean('stic_Conversations', $conversationId);
+                if (!empty($convBean) && !empty($convBean->id) && empty($convBean->subject)) {
+                    $cleanSubject = trim(strip_tags((string)$this->message));
+                    if ($cleanSubject !== '') {
+                        $convBean->subject = mb_substr($cleanSubject, 0, 60);
+                        $convBean->save();
+                    }
+                }
+            }
+        }
+
         return $this->id;
     }
 
