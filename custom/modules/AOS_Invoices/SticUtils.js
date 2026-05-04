@@ -42,10 +42,29 @@ addToValidateCallback(getFormName(), "due_date", "date", false, SUGAR.language.g
   return checkStartAndEndDatesCoherence("invoice_date", "due_date");
 });
 
+// Validation: Organization or Person is required - add to validate and callback
+addToValidate(getFormName(), "billing_account_id", "varchar", false, SUGAR.language.get(module, "LBL_VERIFACTU_REQUIRE_ORG_OR_PERSON"));
+addToValidateCallback(getFormName(), "billing_account_id", "varchar", false, SUGAR.language.get(module, "LBL_VERIFACTU_REQUIRE_ORG_OR_PERSON"), function () {
+  var accountId = $("#billing_account_id").val();
+  var contactId = $("#billing_contact_id").val();
+  return (accountId || contactId) ? true : false;
+});
+
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "edit":
   case "quickcreate":
+    // Ensure validation is attached when form is ready
+    $(document).ready(function() {
+      addToValidate(getFormName(), "billing_account_id", "varchar", false, SUGAR.language.get(module, "LBL_VERIFACTU_REQUIRE_ORG_OR_PERSON"));
+      addToValidateCallback(getFormName(), "billing_account_id", "varchar", false, SUGAR.language.get(module, "LBL_VERIFACTU_REQUIRE_ORG_OR_PERSON"), function () {
+        var accountId = $("#billing_account_id").val();
+        var contactId = $("#billing_contact_id").val();
+        return (accountId || contactId) ? true : false;
+      });
+      // Mark name as auto-generated field
+      setAutofill(["name"]);
+    });
     break;
 
   // 'customCode' => '{if !empty($fields.verifactu_submitted_at_c.value) && empty($fields.verifactu_is_rectified_c.value)}<input type="button" class="button" value="{$MOD.LBL_CREATE_RECTIFIED_INVOICE}" onclick="window.location.href=\'index.php?module=AOS_Invoices&action=CreateRectifiedInvoice&record={$fields.id.value}\';" />{/if}',

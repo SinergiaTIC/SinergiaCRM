@@ -20,6 +20,9 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+// Make name field not required (auto-generated from Organization/Person + DateTime)
+$dictionary['AOS_Invoices']['fields']['name']['required'] = false;
+
 $dictionary['AOS_Invoices']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 
 // Mass update fields definition:

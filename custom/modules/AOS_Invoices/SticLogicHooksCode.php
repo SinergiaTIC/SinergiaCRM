@@ -23,7 +23,6 @@
 
 class AOS_InvoicesHook
 {
-
     public function before_save($bean, $event, $arguments)
     {
         global $sugar_config, $mod_strings;
@@ -64,14 +63,14 @@ class AOS_InvoicesHook
                     'verifactu_rectified_base_c', 'verifactu_rectified_date_c'
                 );
                 
-                // Detectar qué campos han sido modificados
+                // Detect which fields have been modified
                 $modifiedFields = array();
                 foreach ($protectedFields as $field) {
-                    // Comparar valor actual con valor original
+                    // Compare current value with original value
                     $currentValue = isset($bean->$field) ? $bean->$field : null;
                     $originalValue = isset($bean->fetched_row[$field]) ? $bean->fetched_row[$field] : null;
                     
-                    // Normalizar para comparación
+                    // Normalize for comparison
                     $currentNormalized = ($currentValue === null || $currentValue === '') ? null : $currentValue;
                     $originalNormalized = ($originalValue === null || $originalValue === '') ? null : $originalValue;
                     
@@ -181,11 +180,44 @@ class AOS_InvoicesHook
             }
         }
 
-        // Generate the next invoice number based on the invoice type (series)
-        if (empty($bean->number) && !empty($bean->stic_invoice_type_c)) {
-            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
-            $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_invoice_type_c, $bean);
+        // === Step 1.3: Assign temporary number at creation, real number at AEAT send time ===
+        // If it's a new invoice (no number yet), assign a temporary draft number
+        // The real number will be generated when sending to AEAT
+        if (empty($bean->number)) {
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            $draftPrefix = $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX'] ?? 'BORRADOR-';
+            $bean->number = $draftPrefix . $bean->id;
         }
+        // === End Step 1.3 ===
+
+        // Auto-generate name if not provided: <Organization/Person name> - <Date/Time>
+        if (empty($bean->name)) {
+            $clientName = '';
+            
+            // Get Organization name
+            if (!empty($bean->billing_account)) {
+                $clientName = $bean->billing_account;
+            }
+            // Or get Person name
+            elseif (!empty($bean->billing_contact)) {
+                $clientName = $bean->billing_contact;
+            }
+            
+            if (!empty($clientName)) {
+                $dateTime = date('Y-m-d H:i');
+                $bean->name = $clientName . ' - ' . $dateTime;
+            }
+        }
+
+        // Generate the next invoice number based on the invoice type (series) - DEPRECATED by Step 1.3
+        // Now numbers are assigned at AEAT send time, not at creation
+        // if (empty($bean->number) && !empty($bean->stic_invoice_type_c)) {
+        //     require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        //     $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_invoice_type_c, $bean);
+        // }
     }
 
     
@@ -225,7 +257,7 @@ class AOS_InvoicesHook
         if (!empty($bean->verifactu_aeat_status_c) && 
             in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
             
-            // Cargar mod_strings si no está cargado
+            // Load mod_strings if not already loaded
             if (empty($mod_strings)) {
                 $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
             }

@@ -365,6 +365,21 @@ class AOS_InvoicesUtils
                 throw new Exception("Could not extract NIF or holder name from certificate. Please verify the certificate is valid.");
             }
 
+            // === Step 1.3: Generate real invoice number at AEAT send time ===
+            // Replace temporary draft number with real generated number
+            $draftPrefix = $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX'] ?? 'BORRADOR-';
+            if (!empty($invoiceBean->number) && strpos($invoiceBean->number, $draftPrefix) === 0) {
+                require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+                $realNumber = AOS_InvoicesUtils::generateNextInvoiceNumber($invoiceBean->stic_invoice_type_c, $invoiceBean);
+                if (!empty($realNumber)) {
+                    $invoiceBean->number = $realNumber;
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Generated real invoice number: ' . $realNumber);
+                } else {
+                    throw new Exception("Could not generate invoice number for series: " . $invoiceBean->stic_invoice_type_c);
+                }
+            }
+            // === End Step 1.3 ===
+
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data loaded - NIF: ' . $issuerNif . ', Name: ' . $issuerName);
 
             // Get certificate type (entity seal or representative) from certificate itself
@@ -1382,7 +1397,7 @@ class AOS_InvoicesUtils
             // Store the CancellationRecord hash in verifactu_hash_c so that the
             // next invoice in the chain links to this cancellation record and not
             // to the original registration record hash. This keeps the Verifactu
-            // chain intact: RegistroAlta → RegistroAnulación → next RegistroAlta.
+            // chain intact: RegistrationAlta -> RegistrationAnulacion -> next RegistrationAlta.
             $auditLines = [];
             $auditLines[] = '=== Auditoria Verifactu ===';
             $auditLines[] = 'Fecha: ' . (new DateTimeImmutable())->format('Y-m-d H:i:s');
