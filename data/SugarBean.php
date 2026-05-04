@@ -3897,7 +3897,7 @@ class SugarBean
             if ($data['type'] == 'parent') {
                 //See if we need to join anything by inspecting the where clause
                 // STIC-Custom 20260504 JBL - Fix regex to support table names with underscores (e.g. project_task)
-                // ttps://github.com/SinergiaTIC/SinergiaCRM/pull/???
+                // ttps://github.com/SinergiaTIC/SinergiaCRM/pull/1100
                 // Old regex only allowed one optional underscore, causing ProjectTask_project_task
                 // to be parsed as module=ProjectTask_project, table=task (wrong)
                 // $match = preg_match(
