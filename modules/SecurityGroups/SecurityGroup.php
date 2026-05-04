@@ -172,13 +172,54 @@ class SecurityGroup extends SecurityGroup_sugar
         ) {
             $query .= ' and acl_roles_actions.access_override = 80  ';
         }
-        $GLOBALS['log']->debug("SecuritySuite: groupHasAccess $query");
+        $GLOBALS['log']->fatal("SecuritySuite: groupHasAccess $query");
         $result = $db->query($query);
         $row = $db->fetchByAssoc($result);
         if (isset($row) && $row['results'] > 0) {
             return true;
         }
-
+        // STIC-Custom 20260204 EPS - xxx
+        if (!empty($action)
+            && isset($sugar_config['securitysuite_strict_rights'])
+        && $sugar_config['securitysuite_strict_rights'] == true
+        ) {
+            // If group doesn't have a role assigned granitng the action, check if there is any role assigned to the group and if no role is assigned, check generic user role
+            $query = "select count(securitygroups.id) as results
+                from securitygroups
+                inner join securitygroups_users on securitygroups.id = securitygroups_users.securitygroup_id
+                    and securitygroups_users.deleted = 0
+                    and securitygroups_users.user_id = '$current_user->id'
+                inner join securitygroups_records on securitygroups.id = securitygroups_records.securitygroup_id
+                    and securitygroups_records.deleted = 0
+                    and securitygroups_records.record_id = '$quotedId'
+                    and securitygroups_records.module = '$module'
+                left join securitygroups_acl_roles on securitygroups.id = securitygroups_acl_roles.securitygroup_id	and securitygroups_acl_roles.deleted = 0
+                where
+                    securitygroups.deleted = 0
+                    and securitygroups_acl_roles.id is not null"; // No role assigned to the group
+            $result = $db->query($query);
+            $row = $db->fetchByAssoc($result);
+            if (isset($row) && $row['results'] > 0) {
+                // If exists role assigned to group, return false (strict rights mandate that action must be explicitly assigned)
+                return false;
+            }
+            // If there is no role assigned to group, check if generic user role has the action assigned
+            $query = "select count(aa.id) as results
+                from acl_roles_users aru
+                join acl_roles_actions ara on ara.role_id = aru.role_id
+                join acl_actions aa on aa.id = ara.action_id
+                where aru.user_id = '$current_user->id'
+                and aa.name = '$action'	
+                and aa.category = '$module'
+                and ara.access_override in (80, 90)"; // Generic user role
+            $result = $db->query($query);
+            $row = $db->fetchByAssoc($result);
+            if (isset($row) && $row['results'] > 0) {
+                // If generic user role has the action assigned, return true
+                return true;
+            }
+        }
+        // END STIC
         return false;
     }
 
