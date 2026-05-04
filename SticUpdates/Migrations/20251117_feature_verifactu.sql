@@ -13,4 +13,12 @@ REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('AOS_Invoicesverifactu_is_rectified_c', 'AOS_Invoices', 'verifactu_is_rectified_c'),
 ('AOS_Invoicesverifactu_rectified_type_c', 'AOS_Invoices', 'verifactu_rectified_type_c'),
 ('AOS_Invoicesverifactu_rectified_base_c', 'AOS_Invoices', 'verifactu_rectified_base_c'),
-('AOS_Invoicesverifactu_rectified_date_c', 'AOS_Invoices', 'verifactu_rectified_date_c');
+('AOS_Invoicesverifactu_rectified_date_c', 'AOS_Invoices', 'verifactu_rectified_date_c'),
+('AOS_Invoicesverifactu_cancel_hash_c', 'AOS_Invoices', 'verifactu_cancel_hash_c'),
+('AOS_Invoicesverifactu_audit_log_c', 'AOS_Invoices', 'verifactu_audit_log_c'),
+('AOS_Invoicesverifactu_previous_status_c', 'AOS_Invoices', 'verifactu_previous_status_c');
+
+-- Add columns to aos_invoices_cstm table
+ALTER TABLE aos_invoices_cstm ADD COLUMN verifactu_cancel_hash_c VARCHAR(64) NULL COMMENT 'Hash del CancellationRecord (anulación)';
+ALTER TABLE aos_invoices_cstm ADD COLUMN verifactu_audit_log_c TEXT NULL COMMENT 'Log técnico de operaciones Verifactu';
+ALTER TABLE aos_invoices_cstm ADD COLUMN verifactu_previous_status_c VARCHAR(20) NULL COMMENT 'Estado anterior antes de envío AEAT';
