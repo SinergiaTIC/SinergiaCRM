@@ -334,13 +334,14 @@ class AOS_InvoicesUtils
     public static function sendToAeat($invoiceBean)
     {
         global $mod_strings, $sugar_config;
+        // Allow sending if: status is 'emitted' AND (aeat_status is empty/pending/rejected, but NOT 'accepted')
+        $aeatStatus = $invoiceBean->verifactu_aeat_status_c ?? '';
         if (
             empty($invoiceBean->status ?? '') ||
-            empty($invoiceBean->verifactu_aeat_status_c ?? '') ||
             $invoiceBean->status !== 'emitted' ||
-            $invoiceBean->verifactu_aeat_status_c === 'accepted') {
+            $aeatStatus === 'accepted') {
 
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($invoiceBean->verifactu_aeat_status_c ?? 'N/A'));
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($aeatStatus ?: 'N/A'));
             SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']);
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             return;

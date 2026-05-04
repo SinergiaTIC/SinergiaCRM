@@ -22,3 +22,15 @@
  */
 $mod_strings['LBL_DEFAULT_PANEL'] = 'Datos generales';
 $mod_strings['LBL_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
+
+// Verifactu - Tipo de operación por línea
+$mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE'] = 'Tipo de operación';
+$mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE_HELP'] = 'Clasificación de la operación según la AEAT: S1 (Sujeta), S2 (Sujeta - ISP), N1 (No sujeta), N2 (No sujeta - reglas localización)';
+
+$app_list_strings['stic_products_quotes_operation_type_list'] = array(
+    '' => '',
+    'S1' => 'S1 - Sujeta',
+    'S2' => 'S2 - Sujeta (ISP)',
+    'N1' => 'N1 - No sujeta',
+    'N2' => 'N2 - No sujeta (localización)',
+);

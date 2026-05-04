@@ -28,3 +28,5 @@ $hook_array = array();
 $hook_array['after_save'] = array();
 $hook_array['after_save'][] = array(1, 'after_save', 'custom/modules/AOS_Invoices/SticLogicHooksCode.php', 'AOS_InvoicesHook', 'after_save');
 $hook_array['before_save'][] = array(1, 'before_save', 'custom/modules/AOS_Invoices/SticLogicHooksCode.php', 'AOS_InvoicesHook', 'before_save');
+$hook_array['before_delete'] = array();
+$hook_array['before_delete'][] = array(1, 'before_delete', 'custom/modules/AOS_Invoices/SticLogicHooksCode.php', 'AOS_InvoicesHook', 'before_delete');
