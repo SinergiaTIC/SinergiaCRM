@@ -34,10 +34,32 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
     public function preDisplay()
     {
         parent::preDisplay();
-
+        
         SticViews::preDisplay($this);
+        
+        $this->bean->field_defs['name']['inline_edit'] = false;
 
-        // Write here the SinergiaCRM code that must be executed for this module and view
+        // Add banner for accepted/emitted invoices
+        $bean = $this->bean;
+        if (!empty($bean->verifactu_aeat_status_c) && 
+            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
+
+            // Hide edit and delete buttons
+            $this->dv->defs['form']['hideButtons'] = true;
+            
+            // Add warning banner
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            
+            $bannerMessage = $mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'] ?? 
+                'Esta factura ha sido enviada a la AEAT y no puede ser modificada. Para realizar cambios debe crear una factura rectificativa.';
+            
+            echo '<div class="alert alert-warning" style="margin: 10px 0; padding: 12px; border-left: 4px solid #f0ad4e; background-color: #fcf8e3;">
+                <strong><span class="suitepicon suitepicon-action-warning"></span> ' . $bannerMessage . '</strong>
+            </div>';
+        }
     }
 
     public function display()
@@ -46,6 +68,19 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
 
         SticViews::display($this);
 
+        $bean = $this->bean;
+        if (!empty($bean->verifactu_aeat_status_c) && 
+            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
+            
+            // Disable inline editing
+            echo '<script>
+            $(document).ready(function() {
+                $(".inlineEditIcon").hide();
+                $(".inlineEdit").unbind("dblclick");
+            });
+            </script>';
+        }
+        
         // Write here the SinergiaCRM code that must be executed for this module and view
         echo getVersionedScript("custom/modules/AOS_Invoices/SticUtils.js");
     }

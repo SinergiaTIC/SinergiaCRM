@@ -936,6 +936,7 @@ class AOS_InvoicesUtils
                     i.number,
                     i.invoice_date,
                     c.verifactu_hash_c,
+                    c.verifactu_cancel_hash_c,
                     c.verifactu_aeat_status_c,
                     c.verifactu_submitted_at_c
                 FROM aos_invoices i
@@ -961,7 +962,13 @@ class AOS_InvoicesUtils
                 $invoice->id = $row['id'];
                 $invoice->number = $row['number'];
                 $invoice->invoice_date = $row['invoice_date'];
-                $invoice->verifactu_hash_c = $row['verifactu_hash_c'];
+                // If previous invoice was cancelled, use the cancellation hash for chaining
+                if ($row['verifactu_aeat_status_c'] === 'cancelled' && !empty($row['verifactu_cancel_hash_c'])) {
+                    $invoice->verifactu_hash_c = $row['verifactu_cancel_hash_c'];
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Using cancellation hash from previous invoice (was cancelled)');
+                } else {
+                    $invoice->verifactu_hash_c = $row['verifactu_hash_c'];
+                }
                 $invoice->verifactu_submitted_at_c = $row['verifactu_submitted_at_c'];
 
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Found previous invoice: ' . $invoice->number . ' (submitted at: ' . ($invoice->verifactu_submitted_at_c ?? 'N/A') . ')');
@@ -1390,9 +1397,17 @@ class AOS_InvoicesUtils
 
             $existingDescription = (string) ($invoiceBean->description ?? '');
             $descriptionSeparator = $existingDescription === '' ? '' : "\n\n";
-            $invoiceBean->description = $existingDescription . $descriptionSeparator . implode("\n", $auditLines);
-
-            $invoiceBean->verifactu_hash_c = $cancellationRecord->hash;
+            // Store audit log in the dedicated field instead of description
+            $auditTimestamp = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+            $auditLog = $invoiceBean->verifactu_audit_log_c ?? '';
+            if (!empty($auditLog)) {
+                $auditLog .= "\n";
+            }
+            $auditLog .= "[{$auditTimestamp}] Cancellation sent to AEAT. CSV: {$response->csv}. Cancellation hash: {$cancellationRecord->hash}. Original hash preserved: {$invoiceBean->verifactu_hash_c}";
+            $invoiceBean->verifactu_audit_log_c = $auditLog;
+            
+            // Preserve original hash and store cancellation hash in separate field
+            $invoiceBean->verifactu_cancel_hash_c = $cancellationRecord->hash;
             $invoiceBean->verifactu_aeat_status_c = 'cancelled';
             $invoiceBean->verifactu_aeat_response_c = 'Factura anulada en AEAT. CSV: ' . $response->csv;
             $invoiceBean->verifactu_csv_c = $response->csv;

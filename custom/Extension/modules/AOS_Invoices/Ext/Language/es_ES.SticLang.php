@@ -62,6 +62,7 @@ $mod_strings['LBL_VERIFACTU_PREVIOUS_STATUS'] = 'Estado anterior al envío';
 $mod_strings['LBL_VERIFACTU_PREVIOUS_STATUS_HELP'] = 'Estado de la factura antes de ser enviada a la AEAT. Se utiliza para preservar el estado original (por ejemplo, "Pagada") después del envío.';
 $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'] = 'No se puede modificar una factura ya aceptada por la AEAT. Debe crear una factura rectificativa si necesita corregir datos.';
 $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ERROR'] = 'No se puede eliminar una factura que ha sido enviada a la AEAT. Debe crear una anulación desde la factura original.';
+$mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'] = 'Esta factura ha sido enviada a la AEAT y no puede ser modificada ni eliminada. Para realizar cambios debe crear una factura rectificativa.';
 $mod_strings['LBL_VERIFACTU_CSV'] = 'Codigo seguro de verificación';
 $mod_strings['LBL_VERIFACTU_CSV_HELP'] = 'Código devuelto por AEAT tras el envío de la factura. Este código único permite verificar la autenticidad de la factura en el sistema de la AEAT.';
 $mod_strings['LBL_STIC_INVOICE_TYPE'] = 'Tipo de factura';
