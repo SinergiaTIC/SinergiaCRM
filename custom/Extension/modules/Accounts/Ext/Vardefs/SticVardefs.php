@@ -2127,6 +2127,7 @@ $dictionary['Account']['fields']['stic_pa_password_c'] = array(
         'popupsearch' => false,
         'quickcreate' => false,
     ),
+    'popupHelp' => 'LBL_STIC_PA_PASSWORD_HELP',
 );
 
 $dictionary['Account']['fields']['stic_pa_enable_c'] = array(
