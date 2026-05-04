@@ -84,6 +84,8 @@ $mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT'] = 'La factura no p
 $mod_strings['LBL_MISSING_SETTINGS'] = 'Faltan configuraciones obligatorias: contraseña del certificado (GENERAL_CERTIFICATE_PASSWORD), certificado de sello de entidad (GENERAL_CERTIFICATE_ENTITY_SEAL), NIF de la organización (GENERAL_ORGANIZATION_ID) o  nombre de la organización (GENERAL_ORGANIZATION_NAME). Por favor, revise las configuraciones de SinergiaCRM.';
 $mod_strings['LBL_STATUS_HELP'] = 'Estados del ciclo de vida de la factura:<br><b>Borrador:</b> editable, no enviada a AEAT<br><b>Emitida:</b> enviada o lista para envio a la AEAT<br><b>Cancelado:</b> anulada<br><br>Los estados "Pagado" y "No Pagado" indican el estado de cobro y son independientes del envío a AEAT.';
 $mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST'] = 'La fecha de expedición ({0}) es anterior a la última factura emitida de la serie {1} ({2}).';
+$mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'] = 'Error de configuración: El formato de serie';
+$mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS'] = 'contiene caracteres inválidos. Solo se permiten: A-Z, 0-9, guión (-), guión bajo (_), barra (/), punto (.) y espacio.';
 
 // Rectified invoice labels
 $mod_strings['LBL_VERIFACTU_IS_RECTIFIED'] = '¿Es factura rectificativa?';

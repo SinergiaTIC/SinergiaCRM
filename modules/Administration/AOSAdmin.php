@@ -112,6 +112,21 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 continue; // Skip this series
             }
             
+            // === Step 2.2: Validate series format characters ===
+            // Allowed: A-Z, 0-9, hyphen (-), underscore (_), slash (/), dot (.), space, Y, 0
+            // Valid placeholders: YYYY, YY, and sequences of 0s (0000, 000, 00)
+            if (!empty($format)) {
+                if (preg_match('/[a-z]/', $format)) {
+                    $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_LOWERCASE'];
+                    continue;
+                }
+                if (preg_match('/[^A-Z0-9\-_\/. ]/', $format)) {
+                    $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'];
+                    continue;
+                }
+            }
+            // === End Step 2.2 ===
+            
             // Validate initial number: must be 1 or greater
             if ($initialNumber < 1) {
                 $validationErrors[] = "El número inicial de la serie '{$name}' debe ser 1 o superior.";

@@ -407,6 +407,20 @@ class AOS_InvoicesUtils
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Bean value: "' . $seriesKey . '", Config key: "' . ($seriesConfigKey ?? 'NULL') . '", DB value: "' . ($seriesDbValue ?? 'NULL') . '"');
             
             if (!empty($sugar_config['aos']['invoices']['series'][$seriesConfigKey])) {
+                // === Step 2.2: Validate series format when loading config ===
+                $seriesFormat = $sugar_config['aos']['invoices']['series'][$seriesConfigKey]['format'] ?? '';
+                try {
+                    self::validateSeriesFormat($seriesFormat);
+                } catch (Exception $e) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid series format: ' . $e->getMessage());
+                    $errorMsg = ($mod_strings['LBL_AOS_SERIES_FORMAT_INVALID']) . 
+                                ' "' . $seriesFormat . '" ' . 
+                                ($mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS']);
+                    SugarApplication::appendErrorMessage($errorMsg);
+                    return;
+                }
+                // === End Step 2.2 ===
+                
                 require_once 'custom/modules/AOS_Invoices/SticUtils.php';
                 $generatedInvoiceNumber = AOS_InvoicesUtils::generateNextInvoiceNumber($seriesConfigKey, $invoiceBean, $seriesDbValue);
                 if (!empty($generatedInvoiceNumber)) {
@@ -1234,6 +1248,15 @@ class AOS_InvoicesUtils
 
         $GLOBALS['log']->debug("generateNextInvoiceNumber - ConfigKey: $seriesConfigKey, DBValue: $seriesForQuery, Format: $format, Initial: $initialNumber, Year: $year");
 
+        // === Step 2.2: Validate series format ===
+        try {
+            self::validateSeriesFormat($format);
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("generateNextInvoiceNumber - " . $e->getMessage());
+            return '';
+        }
+        // === End Step 2.2 ===
+
         // Build a pattern to search for invoices with the same format and year
         $searchPattern = self::buildInvoiceNumber($format, 0, $year, $yearTwoDigits);
         // Replace the numeric part with % for SQL LIKE search
@@ -1280,6 +1303,51 @@ class AOS_InvoicesUtils
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Generated number: '$generatedNumber'");
 
         return $generatedNumber;
+    }
+
+    /**
+     * Validate series format - only allow valid characters
+     * 
+     * Problem: Normative non-compliance 4.23 - format characters not validated
+     * 
+     * Allowed characters: A-Z, 0-9, hyphen (-), underscore (_), slash (/), dot (.)
+     * Allowed placeholders: YYYY, YY, 000+ (numeric sequence)
+     * 
+     * @param string $format The format pattern to validate
+     * @return bool True if valid, throws Exception if invalid
+     * @throws Exception If format contains invalid characters
+     */
+    public static function validateSeriesFormat($format)
+    {
+        // Check for invalid characters: allow only A-Z, 0-9, hyphen, underscore, slash, dot, Y, 0
+        // Also check for lowercase letters
+        if (preg_match('/[a-z]/', $format)) {
+            throw new Exception("El formato de serie no puede contener letras minúsculas. Formato: $format");
+        }
+        
+        // Check for invalid special characters (anything except Y, 0-9, hyphen, underscore, slash, dot, space)
+        if (preg_match('/[^A-Z0-9\-_\/. ]/', $format)) {
+            throw new Exception("El formato de serie contiene caracteres inválidos. Solo se permiten: A-Z, 0-9, guión (-), guión bajo (_), barra (/), punto (.) y espacio. Formato: $format");
+        }
+        
+        // Check for spaces at the beginning
+        if (preg_match('/^ /', $format)) {
+            throw new Exception("El formato de serie no puede empezar con un espacio. Formato: $format");
+        }
+        
+        // Note: YYYY and YY are valid placeholders for 4-digit and 2-digit year
+        // The general character validation above handles invalid characters
+        
+        // Validate numeric placeholders (0 sequence)
+        preg_match_all('/0+/', $format, $matches);
+        foreach ($matches[0] as $numericPlaceholder) {
+            if (strlen($numericPlaceholder) > 4) {
+                throw new Exception("El formato de serie no puede tener más de 4 dígitos en la secuencia numérica. Formato: $format");
+            }
+        }
+        
+        $GLOBALS['log']->debug("validateSeriesFormat - Format '$format' is valid");
+        return true;
     }
 
     /**
