@@ -44,6 +44,14 @@ class SticPrivateAreaUtils
 
         // Skip credential logic when Portal is disabled
         if (!self::isPortalEnabledNow($bean)) {
+            $storedPassword = self::getStoredPortalPassword($bean);
+            $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
+            $bean->_stic_plain_pa_password = '';
+            if ($fetchedPassword !== '') {
+                $bean->stic_pa_password_c = $fetchedPassword;
+            } elseif ($storedPassword !== '') {
+                $bean->stic_pa_password_c = $storedPassword;
+            }
             return;
         }
 
