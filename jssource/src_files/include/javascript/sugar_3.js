@@ -5169,6 +5169,15 @@ function loadAsyncListCount() {
                         el.innerHTML = response.total;
                         el.classList.remove('async-count-loading', 'async-spinner');
                         el.classList.add('async-count-loaded');
+
+                        // Update Select All links onclick with the correct total count
+                        var selectAllLinks = document.querySelectorAll('a[name="selectall"]');
+                        selectAllLinks.forEach(function(link) {
+                            var onclick = link.getAttribute('onclick');
+                            if (onclick) {
+                                link.setAttribute('onclick', onclick.replace(/check_entire_list\(([^,]+),([^,]+),([^,]+),[\d]+\)/, 'check_entire_list($1,$2,$3,' + response.total + ')'));
+                            }
+                        });
                     }
                 } catch (e) {
                     console.error('Error parsing async count response:', e);
