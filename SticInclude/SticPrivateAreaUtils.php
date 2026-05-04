@@ -154,7 +154,7 @@ class SticPrivateAreaUtils
         $bodyHtml = $parsedMailArray['body_html'] ?? '';
         $bodyText = $parsedMailArray['body'] ?? '';
 
-        if (empty($subject) || (empty($bodyHtml) && empty($bodyText))) {
+        if (empty($bodyHtml) && empty($bodyText)) {
             $GLOBALS['log']->error(__METHOD__ . ': Parsed credentials template is empty.');
             return;
         }
