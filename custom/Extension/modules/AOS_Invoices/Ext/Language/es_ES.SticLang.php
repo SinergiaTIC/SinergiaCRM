@@ -67,6 +67,7 @@ $mod_strings['LBL_VERIFACTU_CSV'] = 'Codigo seguro de verificación';
 $mod_strings['LBL_VERIFACTU_CSV_HELP'] = 'Código devuelto por AEAT tras el envío de la factura. Este código único permite verificar la autenticidad de la factura en el sistema de la AEAT.';
 $mod_strings['LBL_STIC_INVOICE_TYPE'] = 'Tipo de factura';
 $mod_strings['LBL_STIC_INVOICE_TYPE_HELP'] = 'Clasificación de la factura según su naturaleza. Deben ser configuradas en el apartado de Administración -> Ajustes AOP.';
+$mod_strings['LBL_NUMBER_HELP'] = 'El número de factura se asigna automáticamente en el momento del envío a la AEAT. Si el envío no es exitoso, el número queda vacío para poder reintentarlo.';
 $mod_strings['LBL_VERIFACTU_SUBMITTED_AT'] = 'Fecha de envío a Verifactu';
 $mod_strings['LBL_VERIFACTU_SUBMITTED_AT_HELP'] = 'Fecha y hora en que esta factura fue enviada al sistema Verifactu para su validación y registro ante la AEAT.';
 

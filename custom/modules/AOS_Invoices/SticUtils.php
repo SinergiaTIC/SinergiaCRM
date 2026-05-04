@@ -372,34 +372,39 @@ class AOS_InvoicesUtils
             // Get the key value from bean
             $seriesKey = $invoiceBean->stic_invoice_type_c;
             
-            // Map dropdown key values to config keys AND display values
-            // Config uses "Factura normal", "Factura rectificativa" as keys
-            $seriesMapping = [
-                'factura_no' => ['config' => 'Factura normal', 'display' => 'Factura normal'],
-                'factura_si' => ['config' => 'Factura rectificativa', 'display' => 'Factura rectificativa']
-            ];
+            // Get available series from config dynamically
+            $availableSeries = array_keys($sugar_config['aos']['invoices']['series'] ?? []);
             
-            // Default to using key as display value if not found
-            $seriesConfigKey = $seriesKey;
-            $seriesDbValue = $seriesKey; // Use key for DB query initially
+            // Use config key directly for both config and DB query
+            // The dropdown should return the config key directly
+            $seriesConfigKey = null;
+            $seriesDbValue = null;
             
-            if (isset($seriesMapping[$seriesKey])) {
-                $seriesConfigKey = $seriesMapping[$seriesKey]['config'];
-                $seriesDbValue = $seriesMapping[$seriesKey]['display'];
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Mapped key "' . $seriesKey . '" to config: ' . $seriesConfigKey . ', DB value: ' . $seriesDbValue);
-            }
-            
-            // Keep original for debug
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Series key: "' . $seriesKey . '", Config: "' . $seriesConfigKey . '", DB: "' . $seriesDbValue . '"');
-            
-            // If config key not found in mapping, use first available series as fallback
-            if (!isset($seriesMapping[$seriesKey]) && empty($sugar_config['aos']['invoices']['series'][$seriesConfigKey])) {
-                $availableSeries = array_keys($sugar_config['aos']['invoices']['series'] ?? []);
-                if (!empty($availableSeries)) {
+            // Check if bean value matches a config key
+            if (in_array($seriesKey, $availableSeries)) {
+                $seriesConfigKey = $seriesKey;
+                $seriesDbValue = $seriesKey;
+            } else {
+                // Try to find matching series (fallback for backwards compatibility)
+                // Check if the bean value matches any config key
+                foreach ($availableSeries as $configKey) {
+                    // Direct match
+                    if ($configKey === $seriesKey) {
+                        $seriesConfigKey = $configKey;
+                        $seriesDbValue = $configKey;
+                        break;
+                    }
+                }
+                
+                // If still not found, use first available series as fallback
+                if (empty($seriesConfigKey) && !empty($availableSeries)) {
                     $seriesConfigKey = $availableSeries[0];
-                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Using fallback series: ' . $seriesConfigKey);
+                    $seriesDbValue = $availableSeries[0];
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Series "' . $seriesKey . '" not found in config, using fallback: ' . $seriesConfigKey);
                 }
             }
+            
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Bean value: "' . $seriesKey . '", Config key: "' . ($seriesConfigKey ?? 'NULL') . '", DB value: "' . ($seriesDbValue ?? 'NULL') . '"');
             
             if (!empty($sugar_config['aos']['invoices']['series'][$seriesConfigKey])) {
                 require_once 'custom/modules/AOS_Invoices/SticUtils.php';
@@ -413,6 +418,18 @@ class AOS_InvoicesUtils
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Could not find series configuration');
             }
             // === End Step 1.3 ===
+
+            // === Step 1.6: Log to audit before sending ===
+            if (!empty($generatedInvoiceNumber)) {
+                $preAuditTimestamp = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+                $preAuditLog = $invoiceBean->verifactu_audit_log_c ?? '';
+                if (!empty($preAuditLog)) {
+                    $preAuditLog .= "\n";
+                }
+                $preAuditLog .= "[{$preAuditTimestamp}] Preparing to send invoice to AEAT. Generated number: {$generatedInvoiceNumber}, Series: {$seriesConfigKey}";
+                $invoiceBean->verifactu_audit_log_c = $preAuditLog;
+            }
+            // === End Step 1.6 ===
 
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate data loaded - NIF: ' . $issuerNif . ', Name: ' . $issuerName);
 
@@ -927,6 +944,31 @@ class AOS_InvoicesUtils
                 $invoiceBean->save(false);
 
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice updated with AEAT response data');
+
+                // === Step 1.6: Add to audit log ===
+                $auditTimestamp = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+                $auditLog = $invoiceBean->verifactu_audit_log_c ?? '';
+                if (!empty($auditLog)) {
+                    $auditLog .= "\n";
+                }
+
+                $invoiceNumberForLog = $generatedInvoiceNumber ?? $invoiceBean->number ?? 'N/A';
+                $hashForLog = $invoiceBean->verifactu_hash_c ?? 'N/A';
+                $statusForLog = $invoiceBean->verifactu_aeat_status_c ?? 'unknown';
+                $responseForLog = $invoiceBean->verifactu_aeat_response_c ?? 'N/A';
+
+                if ($statusForLog === 'accepted') {
+                    $qrForLog = $invoiceBean->verifactu_check_url_c ?? 'N/A';
+                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT. Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: ACCEPTED. QR: {$qrForLog}";
+                } elseif ($statusForLog === 'rejected') {
+                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT. Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: REJECTED. Response: {$responseForLog}";
+                } else {
+                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT. Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: {$statusForLog}";
+                }
+
+                $invoiceBean->verifactu_audit_log_c = $auditLog;
+                $invoiceBean->save(false);
+                // === End Step 1.6 ===
             }
 
             // Format response for display
@@ -947,10 +989,10 @@ class AOS_InvoicesUtils
             // === Step 1.3: Save generated number only if AEAT send was accepted ===
             if (!empty($generatedInvoiceNumber) && $invoiceBean->verifactu_aeat_status_c === 'accepted') {
                 $invoiceBean->number = $generatedInvoiceNumber;
-                // Keep display value, not config key
-                $invoiceBean->stic_invoice_type_c = $seriesDbValue;
+                // Save the exact config key (e.g., "Factura normal"), not the dropdown key (e.g., "factura_no")
+                $invoiceBean->stic_invoice_type_c = $seriesConfigKey;
                 $invoiceBean->save();
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saved generated invoice number: ' . $generatedInvoiceNumber);
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saved generated invoice number: ' . $generatedInvoiceNumber . ', Series: ' . $seriesConfigKey);
             }
             // === End Step 1.3 ===
 

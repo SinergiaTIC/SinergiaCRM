@@ -28,6 +28,9 @@ $dictionary['AOS_Invoices']['fields']['description']['rows'] = '2'; // Make text
 // Mass update fields definition:
 $dictionary['AOS_Invoices']['fields']['billing_account']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['billing_contact']['massupdate'] = 1;
+
+// Number field - Add popupHelp to explain when number is assigned
+$dictionary['AOS_Invoices']['fields']['number']['popupHelp'] = 'LBL_NUMBER_HELP';
 $dictionary['AOS_Invoices']['fields']['billing_address_street']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['billing_address_city']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['billing_address_state']['massupdate'] = 1;

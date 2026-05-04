@@ -633,6 +633,13 @@ array(
                         'label' => 'LBL_DATE_MODIFIED',
                     ),
                 ),
+                2 => array(
+                    0 => array(
+                        'name' => 'verifactu_audit_log_c',
+                        'label' => 'LBL_VERIFACTU_AUDIT_LOG',
+                        'type' => 'text',
+                    ),
+                ),
             ),
         ),
     ),
