@@ -200,8 +200,11 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         }
 
         // Add text to original invoice description to reference rectification
-        $originalInvoice->description .= "\n {$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']} {$rectifiedInvoice->number}";
-        $originalInvoice->save();
+        // Skip if original is already accepted by AEAT (description update is not critical)
+        if (empty($originalInvoice->verifactu_aeat_status_c) || $originalInvoice->verifactu_aeat_status_c !== 'accepted') {
+            $originalInvoice->description .= "\n {$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']} {$rectifiedInvoice->number}";
+            $originalInvoice->save();
+        }
 
         // Copy line item groups from original invoice
         $originalToRectifiedGroupIds = [];

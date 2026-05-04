@@ -44,9 +44,11 @@ class AOS_InvoicesHook
         if (!empty($bean->fetched_row['verifactu_aeat_status_c']) && 
             $bean->fetched_row['verifactu_aeat_status_c'] === 'accepted') {
             
-            // Check if it's a duplicate (in which case it's allowed)
+            // Check if it's a duplicate or creating a rectified invoice (both are allowed)
             $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') 
-                || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true');
+                || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true')
+                // Allow if this is a new rectified invoice (action=CreateRectifiedInvoice)
+                || ($_REQUEST['action'] === 'CreateRectifiedInvoice');
             
             if (!$isDuplicate) {
                 // List of NON-tax fields that CAN be edited
