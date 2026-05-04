@@ -156,3 +156,9 @@ $mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Training'
 
 // Work experience strings
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Work experience';
+
+// Private Area strings
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Private Area user';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private Area password';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable Private Area';
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'When this option is enabled, access to the Private Area will be granted for this organization. If this option is disabled, the password associated with this organization will be removed, and access to the Private Area will be revoked. Additionally, to proceed with sending the access credentials to the Private Area, the "PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE" configuration must be enabled. Otherwise, the access credentials cannot be sent.';
