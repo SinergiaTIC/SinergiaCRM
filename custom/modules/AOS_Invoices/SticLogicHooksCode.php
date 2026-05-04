@@ -172,6 +172,28 @@ class AOS_InvoicesHook
         }
         // === End Step 2.3 ===
 
+        // === Step 2.5: Validate max length (60 chars) for series + number ===
+        if (!empty($bean->stic_invoice_type_c) && !empty($bean->number)) {
+            $series = $bean->stic_invoice_type_c;
+            $number = $bean->number;
+            $combinedLength = strlen($series) + strlen($number);
+            
+            if ($combinedLength > 60) {
+                $GLOBALS['log']->error(__METHOD__ . ': Step 2.5 - Combined length exceeds 60 characters: ' . $combinedLength);
+                
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                
+                $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_NUMBER_TOO_LONG'];
+                
+                SugarApplication::appendErrorMessage($errorMsg);
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                die();
+            }
+        }
+        // === End Step 2.5 ===
+
         // If duplicating a record, set status to 'draft' and clear Verifactu fields
         if (
             (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') // for mass duplicate
