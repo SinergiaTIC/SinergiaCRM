@@ -78,6 +78,7 @@ switch (viewType()) {
     });
 
     setupPrivateAreaPasswordField();
+    setupPrivateAreaFields();
 
     break;
 
@@ -272,6 +273,16 @@ function privateAreaPasswordField() {
   } else {
     field.removeAttribute("placeholder");
   }
+
+  var checkbox = document.getElementById('stic_pa_enable_c');
+  if (checkbox) {
+    field.disabled = !checkbox.checked;
+    if (!checkbox.checked) {
+      $(field).attr('readonly', true).css({'background-color': '#eeeeee', 'color': '#999999'});
+    } else {
+      $(field).removeAttr('readonly').css({'background-color': '', 'color': ''});
+    }
+  }
 }
 
 /**
@@ -292,4 +303,31 @@ function setupPrivateAreaPasswordField() {
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
+}
+
+/**
+ * Function to enable or disable private area password field based on stic_pa_enable_c
+ */
+function setupPrivateAreaFields() {
+  var checkbox = document.getElementById('stic_pa_enable_c');
+  var password = document.getElementById('stic_pa_password_c');
+
+  if (!checkbox || !password) {
+    return;
+  }
+
+  var togglePassword = function() {
+    var isEnabled = checkbox.checked;
+    password.disabled = !isEnabled;
+    if (!isEnabled) {
+      password.value = '';
+      password.removeAttribute('required');
+      $(password).attr('readonly', true).css({'background-color': '#eeeeee', 'color': '#999999'});
+    } else {
+      $(password).removeAttr('readonly').css({'background-color': '', 'color': ''});
+    }
+  };
+
+  togglePassword();
+  checkbox.addEventListener('change', togglePassword);
 }
