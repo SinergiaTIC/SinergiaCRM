@@ -1302,6 +1302,51 @@ class AOS_InvoicesUtils
         $generatedNumber = self::buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits);
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Generated number: '$generatedNumber'");
 
+        // === Step 2.4: Validate uniqueness for formats without year ===
+        // Check if format contains year (YYYY or YY)
+        $hasYear = (strpos($format, 'YYYY') !== false || strpos($format, 'YY') !== false);
+
+        if (!$hasYear) {
+            $GLOBALS['log']->debug("generateNextInvoiceNumber - Format without year detected, checking uniqueness");
+            
+            // Keep incrementing until we find a unique number
+            $maxAttempts = 1000;
+            $attempt = 0;
+            
+            while ($attempt < $maxAttempts) {
+                // Check if this number already exists for this series (excluding pending/cancelled)
+                $checkQuery = "SELECT COUNT(*) as cnt
+                              FROM aos_invoices
+                              INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
+                              WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesForQuery) . "
+                              AND aos_invoices.number = " . $db->quoted($generatedNumber) . "
+                              AND aos_invoices.deleted = 0
+                              AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected', 'emitted')";
+                
+                $exists = $db->getOne($checkQuery);
+                
+                if (empty($exists)) {
+                    // Number is unique, break the loop
+                    break;
+                }
+                
+                // Number already exists, increment and try again
+                $nextNumber++;
+                $generatedNumber = self::buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits);
+                $attempt++;
+                
+                $GLOBALS['log']->debug("generateNextInvoiceNumber - Number '$generatedNumber' exists, trying next: $nextNumber");
+            }
+            
+            if ($attempt >= $maxAttempts) {
+                $GLOBALS['log']->error("generateNextInvoiceNumber - Could not find unique number after $maxAttempts attempts");
+                return '';
+            }
+            
+            $GLOBALS['log']->debug("generateNextInvoiceNumber - Unique number found after $attempt attempts: '$generatedNumber'");
+        }
+        // === End Step 2.4 ===
+
         return $generatedNumber;
     }
 
