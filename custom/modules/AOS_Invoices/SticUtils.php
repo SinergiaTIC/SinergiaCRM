@@ -1351,6 +1351,67 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Validate series type consistency with invoice type
+     * 
+     * Problem: Normative non-compliance 4.25 - Allow creating rectified invoice with normal series and vice versa
+     * 
+     * @param SugarBean $bean The invoice bean
+     * @return bool True if valid, error message if invalid
+     */
+    public static function validateSeriesType($bean)
+    {
+        global $sugar_config, $mod_strings;
+
+        // Only validate if invoice has series and isRectified flag
+        if (empty($bean->stic_invoice_type_c)) {
+            return true;
+        }
+
+        $seriesKey = $bean->stic_invoice_type_c;
+        $isRectified = !empty($bean->verifactu_is_rectified_c);
+
+        // Map dropdown key to config key
+        $seriesMapping = [
+            'factura_no' => 'Factura Normal',
+            'factura_si' => 'Factura rectificativa',
+            'Factura Normal' => 'Factura Normal',
+            'Factura rectificativa' => 'Factura rectificativa'
+        ];
+        
+        // Convert bean key to config key
+        $seriesName = isset($seriesMapping[$seriesKey]) ? $seriesMapping[$seriesKey] : $seriesKey;
+        
+        $GLOBALS['log']->debug("validateSeriesType - Bean key: '$seriesKey', Config key: '$seriesName', isRectified: " . ($isRectified ? 'true' : 'false'));
+
+        // Get series config
+        if (empty($sugar_config['aos']['invoices']['series'][$seriesName])) {
+            $GLOBALS['log']->debug("validateSeriesType - Series '$seriesName' not found in config, skipping validation");
+            return true;
+        }
+
+        $seriesConfig = $sugar_config['aos']['invoices']['series'][$seriesName];
+        $seriesIsRectified = !empty($seriesConfig['isRectified']);
+        
+        $GLOBALS['log']->debug("validateSeriesType - Series config: isRectified=" . ($seriesIsRectified ? 'true' : 'false'));
+
+        // Check consistency
+        if ($isRectified && !$seriesIsRectified) {
+            $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_RECTIFIED'] 
+                ?? "No puede seleccionar la serie '{$seriesName}' para una factura rectificativa. Esta serie no está configurada como serie rectificativa.";
+            return $errorMsg;
+        }
+
+        if (!$isRectified && $seriesIsRectified) {
+            $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_NORMAL'] 
+                ?? "No puede seleccionar la serie '{$seriesName}' para una factura normal. Esta serie está configurada como serie rectificativa.";
+            return $errorMsg;
+        }
+
+        $GLOBALS['log']->debug("validateSeriesType - Series type validation passed: seriesIsRectified=" . ($seriesIsRectified ? 'true' : 'false') . ", invoiceIsRectified=" . ($isRectified ? 'true' : 'false'));
+        return true;
+    }
+
+    /**
      * Extract the numeric part from an invoice number based on the format
      *
      * @param string $invoiceNumber The invoice number (e.g., '2024-0015')

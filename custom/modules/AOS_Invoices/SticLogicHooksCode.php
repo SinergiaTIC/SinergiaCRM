@@ -145,6 +145,31 @@ class AOS_InvoicesHook
         }
         // === End Step 2.1 ===
 
+        // === Step 2.3: Validate series type consistency ===
+        // Only validate if not a duplicate
+        $GLOBALS['log']->debug(__METHOD__ . ': Step 2.3 - isDuplicate=' . ($isDuplicate ? 'true' : 'false') . ', isRectified=' . ($bean->verifactu_is_rectified_c ?? 'null') . ', series=' . ($bean->stic_invoice_type_c ?? 'null'));
+        
+        if (!$isDuplicate) {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            $seriesValidationResult = AOS_InvoicesUtils::validateSeriesType($bean);
+            
+            if ($seriesValidationResult !== true) {
+                $GLOBALS['log']->error(__METHOD__ . ': Step 2.3 - Validation failed: ' . $seriesValidationResult);
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                
+                SugarApplication::appendErrorMessage($seriesValidationResult);
+                
+                // Redirect to detail view
+                if (!empty($bean->id)) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
+                }
+                die();
+            }
+        }
+        // === End Step 2.3 ===
+
         // If duplicating a record, set status to 'draft' and clear Verifactu fields
         if (
             (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') // for mass duplicate

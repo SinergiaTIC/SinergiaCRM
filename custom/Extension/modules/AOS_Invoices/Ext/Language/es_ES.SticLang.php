@@ -86,6 +86,8 @@ $mod_strings['LBL_STATUS_HELP'] = 'Estados del ciclo de vida de la factura:<br><
 $mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST'] = 'La fecha de expedición ({0}) es anterior a la última factura emitida de la serie {1} ({2}).';
 $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'] = 'Error de configuración: El formato de serie';
 $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS'] = 'contiene caracteres inválidos. Solo se permiten: A-Z, 0-9, guión (-), guión bajo (_), barra (/), punto (.) y espacio.';
+$mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_RECTIFIED'] = 'No puede seleccionar la serie seleccionada para una factura rectificativa.';
+$mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_NORMAL'] = 'No puede seleccionar la serie seleccionada para una factura normal.';
 
 // Rectified invoice labels
 $mod_strings['LBL_VERIFACTU_IS_RECTIFIED'] = '¿Es factura rectificativa?';
