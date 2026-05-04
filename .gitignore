@@ -8,7 +8,7 @@ upload/*
 # Ignore some files and directories from the custom directory.
 # custom/
 custom/history/*
-custom/blowfish/*
+# custom/blowfish/*
 custom/modulebuilder/*
 custom/working/*
 custom/modules/*/Ext/
@@ -97,6 +97,7 @@ themes/SuiteP/css/*.map
 themes/SuiteP/css/*/*.map
 themes/SuiteP/css/*/color-palette.css
 themes/SuiteP/css/*/variables.css
+themes/SuiteP/css/SticCustom/style.css
 tests/_output/*
 
 
