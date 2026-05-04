@@ -293,7 +293,7 @@ class stic_Job_OffersUtils
         $bodyHtml = $parsedMailArray['body_html'] ?? '';
         $bodyText = $parsedMailArray['body'] ?? '';
 
-        if (empty($subject) || (empty($bodyHtml) && empty($bodyText))) {
+        if (empty($bodyHtml) && empty($bodyText)) {
             $GLOBALS['log']->error(
                 "Notification email ({$recipientType}) not sent for offer {$offerBean->id}: parsed template is empty."
             );
