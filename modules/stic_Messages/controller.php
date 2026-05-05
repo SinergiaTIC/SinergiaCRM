@@ -60,11 +60,7 @@ class stic_MessagesController extends SugarController
                 $this->bean->parent_type = $_REQUEST['return_module'];
                 $this->bean->phone = $phone;
                 $this->prepareConversationDataForMessage();
-                $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
-                $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
-                if ($shouldStoreFirstMessage) {
-                    $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $messageId);
-                }
+                $this->bean->save(!empty($this->bean->notify_on_save));
             }, $idsArray, $phonesArray);
         }
         else {
@@ -75,11 +71,7 @@ class stic_MessagesController extends SugarController
                 echo json_encode(array('success' => false, 'number_found' => false));
                 exit;
             }
-            $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
-            $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
-            if ($shouldStoreFirstMessage) {
-                $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $messageId);
-            }
+            $this->bean->save(!empty($this->bean->notify_on_save));
             // header('Content-Type: application/json');
             // $this->bean->response
             // echo "{'status': 200, 'message': 'ok'}";
@@ -110,11 +102,7 @@ class stic_MessagesController extends SugarController
                 if (!$conversationValidation['success']) {
                     $this->returnConversationValidationError($mod_strings);
                 }
-                $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
-                $messageId = $this->bean->save(!empty($this->bean->notify_on_save));
-                if ($shouldStoreFirstMessage) {
-                    $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $messageId);
-                }
+                $this->bean->save(!empty($this->bean->notify_on_save));
             }, $idsArray, $phonesArray);
             // If mass send and type is WhatsAppWeb, return an open_url built from the phones/message
             if (isset($_REQUEST['type']) && $_REQUEST['type'] === 'WhatsAppWeb') {
@@ -164,11 +152,7 @@ class stic_MessagesController extends SugarController
                 $this->returnConversationValidationError($mod_strings);
             }
 
-            $shouldStoreFirstMessage = $this->shouldStoreFirstMessage($this->bean);
             $id = $this->bean->save(!empty($this->bean->notify_on_save));
-            if ($shouldStoreFirstMessage) {
-                $this->storeFirstMessageInConversation($this->bean->stic_conversations_ida, $id);
-            }
 
             if (isset($this->bean->type) && $this->bean->type === 'WhatsAppWeb') {
                 $phone = isset($this->bean->phone) ? preg_replace('/\D+/', '', $this->bean->phone) : '';
@@ -555,55 +539,6 @@ class stic_MessagesController extends SugarController
         $message = trim((string)($messageBean->message ?? ($_REQUEST['message'] ?? '')));
 
         return ($message !== '');
-    }
-
-    /**
-     * Check whether first message must be stored in conversation
-     */
-    protected function shouldStoreFirstMessage($messageBean)
-    {
-        $type = $messageBean->type ?? ($_REQUEST['type'] ?? '');
-        $conversationId = $messageBean->stic_conversations_ida ?? '';
-
-        if ($type !== 'conversation' || empty($conversationId)) {
-            return false;
-        }
-
-        $conversationBean = BeanFactory::getBean('stic_Conversations', $conversationId);
-        if (empty($conversationBean) || empty($conversationBean->id)) {
-            return false;
-        }
-
-        if (!empty($conversationBean->stic_messages_id)) {
-            return false;
-        }
-
-        if ($conversationBean->load_relationship('stic_conversations_stic_messages')) {
-            $messageIds = $conversationBean->stic_conversations_stic_messages->get();
-            return empty($messageIds);
-        }
-
-        return true;
-    }
-
-    /**
-     * Persist first message id in conversation when empty
-     */
-    protected function storeFirstMessageInConversation($conversationId, $messageId)
-    {
-        if (empty($conversationId) || empty($messageId)) {
-            return;
-        }
-
-        $conversationBean = BeanFactory::getBean('stic_Conversations', $conversationId);
-        if (empty($conversationBean) || empty($conversationBean->id)) {
-            return;
-        }
-
-        if (empty($conversationBean->stic_messages_id)) {
-            $conversationBean->stic_messages_id = $messageId;
-            $conversationBean->save();
-        }
     }
 
     /**
