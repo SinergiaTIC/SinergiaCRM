@@ -28,6 +28,7 @@ require_once "modules/stic_AWF_Forms/core/includes.php";
 require_once "modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php";
 require_once "modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php";
 require_once "modules/stic_AWF_Forms/actions/Deferred/PaymentRouterAction.php";
+require_once "include/SugarQueue/SugarJobQueue.php";
 
 /**
  * EntryPoint: WebhookHandler
@@ -177,13 +178,6 @@ class WebhookHandler
             if ($ticket) {
                 $ticket->status = 'resolved';
                 $ticket->save();
-                if ($context !== null) {
-                    try {
-                        $this->resumeFlow($ticket, $context, true);
-                    } catch (Exception $e) {
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to resume success flow: " . $e->getMessage());
-                    }
-                }
             }
 
             if ($incomingEvent->status !== 'processed') {
@@ -215,14 +209,23 @@ class WebhookHandler
 
         } else {
             if ($ticket) {
-                $ticket->status = 'failed';
+                $maxRetries = 3;
+                $retryCount = intval($ticket->retry_count ?? 0) + 1;
+                $ticket->retry_count = $retryCount;
+                $ticket->last_error_message = $result->message ?? 'Unknown error';
+
+                if ($retryCount < $maxRetries) {
+                    $ticket->status = 'pending';
+                    $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket [{$ticket->id}] failed (attempt {$retryCount}/{$maxRetries}). Reset to pending for retry.");
+                } else {
+                    $ticket->status = 'failed';
+                    $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket [{$ticket->id}] permanently failed after {$maxRetries} attempts. Error: " . ($result->message ?? 'Unknown'));
+                    $this->createAdminAlert($ticket, $result->message ?? 'Unknown error');
+                }
                 $ticket->save();
-                if ($context !== null) {
-                    try {
-                        $this->resumeFlow($ticket, $context, false);
-                    } catch (Exception $e) {
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to resume error flow: " . $e->getMessage());
-                    }
+
+                if ($ticket->status === 'failed') {
+                    $this->enqueueDeferredFlow($ticket->id, false);
                 }
             }
 
@@ -236,6 +239,62 @@ class WebhookHandler
             // Return 200 even for rejected payments — the webhook itself was processed correctly.
             http_response_code(200);
             echo "Processed with error: " . ($result->message ?? 'Unknown error');
+        }
+    }
+
+    /**
+     * Enqueues a deferred flow for async execution via SuiteCRM job queue.
+     * This ensures the webhook returns HTTP 200 immediately without waiting
+     * for the flow (emails, PDFs, etc.) to complete.
+     *
+     * @param string $ticketId The deferred ticket ID
+     * @param bool $isSuccess Whether to run the success or error flow
+     */
+    private function enqueueDeferredFlow(string $ticketId, bool $isSuccess): void
+    {
+        try {
+            $job = BeanFactory::newBean('SchedulersJobs');
+            $job->name = 'AWF Deferred Flow - Ticket ' . $ticketId;
+            $job->target = 'sticAWFResumeDeferredFlow';
+            $job->data = json_encode([
+                'ticket_id' => $ticketId,
+                'is_success' => $isSuccess,
+            ]);
+            $job->assigned_user_id = $GLOBALS['current_user']->id ?? '1';
+
+            $queue = new SugarJobQueue();
+            $jobId = $queue->submitJob($job);
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Enqueued deferred flow Job ID={$jobId} for ticket {$ticketId} (success=" . ($isSuccess ? 'true' : 'false') . ")");
+        } catch (Exception $e) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to enqueue deferred flow for ticket {$ticketId}: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Creates an alert Task in the CRM when a deferred payment ticket permanently fails,
+     * so an administrator can perform manual reconciliation.
+     */
+    private function createAdminAlert(stic_AWF_Deferred_Tickets $ticket, string $errorMessage): void
+    {
+        try {
+            $task = BeanFactory::newBean('Tasks');
+            $task->name = '[AWF] Deferred payment failed - Ticket ' . $ticket->id;
+            $task->status = 'Not Started';
+            $task->priority = 'High';
+            $task->description = "A deferred payment ticket has permanently failed after maximum retries.\n\n"
+                . "Ticket ID: {$ticket->id}\n"
+                . "External Transaction ID: " . ($ticket->external_transaction_id ?? 'N/A') . "\n"
+                . "Error: {$errorMessage}\n"
+                . "Retry count: " . ($ticket->retry_count ?? 0) . "\n\n"
+                . "The donor may have already paid at the gateway. Manual reconciliation is required.";
+            $task->parent_type = 'stic_AWF_Deferred_Tickets';
+            $task->parent_id = $ticket->id;
+            $task->assigned_user_id = '1';
+            $task->save();
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Created admin alert Task ID={$task->id} for failed ticket {$ticket->id}");
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to create admin alert task: " . $e->getMessage());
         }
     }
 

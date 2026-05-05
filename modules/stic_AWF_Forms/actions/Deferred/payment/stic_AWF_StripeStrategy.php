@@ -209,6 +209,11 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
             return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Payment not found for Stripe session');
         }
 
+        if (self::isAlreadyProcessed($paymentBean)) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$paymentBean->id}] already processed (status={$paymentBean->status}). Duplicate webhook acknowledged.");
+            return new ActionResult(ResultStatus::OK, $result->actionConfig, 'Already processed');
+        }
+
         $this->updatePayment($paymentBean, 'paid', [
             'authCode' => $session->payment_intent ?? '',
             'amount' => $session->amount_total / 100,
@@ -338,7 +343,7 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
         $transactionCode = $session->metadata['transaction_code'] ?? null;
         if (!empty($transactionCode)) {
             $paymentBean = BeanFactory::getBean('stic_Payments');
-            $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => intval($transactionCode)));
+            $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transactionCode));
             if ($paymentBean && !empty($paymentBean->id)) {
                 return $paymentBean;
             }
@@ -430,6 +435,7 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
     {
         $timestamp = date('ymdHi');
         $uniqueId = substr($beanPayment->id ?? uniqid(), 0, 8);
-        return $timestamp . $uniqueId;
+        $code = $timestamp . $uniqueId;
+        return substr($code, 0, 12);
     }
 }

@@ -113,10 +113,13 @@ abstract class stic_AWF_PaymentStrategy
         $ticket->handler_action_id = $actionConfig->id;
         $ticket->expiration_date = date('Y-m-d H:i:s', strtotime('+30 days'));
 
+        $ticket->save();
+
         $contextData = [
             'strategy_class'   => static::class,
             'strategy_suffix'  => $this->suffix,
             'payment_id'       => $beanPayment->id,
+            'ticket_id'        => $ticket->id,
             'form_id'          => $context->formId,
             'flow_success_id'  => $actionConfig->flow_success_id,
             'flow_error_id'    => $actionConfig->flow_error_id,
@@ -140,12 +143,35 @@ abstract class stic_AWF_PaymentStrategy
      */
     protected function updatePayment(stic_Payments $beanPayment, string $status, array $options = []): void
     {
+        global $db;
+        $safeId = $db->quote($beanPayment->id);
+        $safeStatus = $db->quote($status);
+
+        $sql = "UPDATE stic_payments SET status = '{$safeStatus}'";
+        if (isset($options['authCode'])) {
+            $sql .= ", banking_concept = '" . $db->quote((string)$options['authCode']) . "'";
+        }
+        if (isset($options['gatewayLog'])) {
+            $log = $db->quote(($beanPayment->gateway_log ?? '') . '##### ' . $options['gatewayLog']);
+            $sql .= ", gateway_log = '" . $log . "'";
+        }
+        if (isset($options['gatewayRejectionReason'])) {
+            $sql .= ", gateway_rejection_reason = '" . $db->quote($options['gatewayRejectionReason']) . "'";
+        }
+        if (isset($options['amount'])) {
+            $sql .= ", amount = " . floatval($options['amount']);
+        }
+        $sql .= " WHERE id = '{$safeId}' AND status = 'pending' AND deleted = 0";
+        $result = $db->query($sql);
+
+        if ($db->getAffectedRowCount($result) === 0) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Atomic update skipped for payment [{$beanPayment->id}]. Status is no longer 'pending' (concurrent webhook detected).");
+            return;
+        }
+
         $beanPayment->status = $status;
         if (isset($options['authCode'])) {
             $beanPayment->banking_concept = (string)$options['authCode'];
-        }
-        if (isset($options['gatewayLog'])) {
-            $beanPayment->gateway_log = ($beanPayment->gateway_log ?? '') . '##### ' . $options['gatewayLog'];
         }
         if (isset($options['gatewayRejectionReason'])) {
             $beanPayment->gateway_rejection_reason = $options['gatewayRejectionReason'];
@@ -153,7 +179,6 @@ abstract class stic_AWF_PaymentStrategy
         if (isset($options['amount'])) {
             $beanPayment->amount = $options['amount'];
         }
-        $beanPayment->save();
     }
 
     /**
@@ -171,6 +196,20 @@ abstract class stic_AWF_PaymentStrategy
             $PCBean->save(false);
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment commitment [{$PCBean->id}] has been deactivated (end_date = today) because the first payment has been rejected by the gateway.");
         }
+    }
+
+    /**
+     * Checks if a payment bean is already in a terminal processed state.
+     * Used for idempotency: if the payment is already paid/rejected, the webhook
+     * is a duplicate and should be acknowledged without re-processing.
+     *
+     * @param stic_Payments $paymentBean The payment bean to check
+     * @return bool True if the payment is already in a terminal state
+     */
+    protected static function isAlreadyProcessed(stic_Payments $paymentBean): bool
+    {
+        $terminalStatuses = ['paid', 'not_remitted', 'rejected_gateway', 'rejected_manual', 'cancelled'];
+        return in_array($paymentBean->status ?? '', $terminalStatuses, true);
     }
 
     /**
@@ -202,8 +241,6 @@ abstract class stic_AWF_PaymentStrategy
 
     /**
      * Returns the webhook callback URL for a given payment source.
-     * NOTE: The key 'stic_AWF_webhookHanlder' intentionally preserves the existing typo
-     * for backward compatibility with the registered entry point.
      *
      * @param string $source The payment source identifier (e.g. 'redsys', 'stripe')
      * @return string The full callback URL
@@ -212,7 +249,7 @@ abstract class stic_AWF_PaymentStrategy
     {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_webhookHanlder&source=' . urlencode($source);
+        return $siteUrl . '/index.php?entryPoint=stic_AWF_webhookHandler&source=' . urlencode($source);
     }
 
     /**

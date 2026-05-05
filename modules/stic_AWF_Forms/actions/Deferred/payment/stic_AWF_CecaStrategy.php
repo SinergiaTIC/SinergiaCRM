@@ -64,6 +64,9 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
         $acquirerBin = str_pad($config['ACQUIRER_BIN'] ?? '', 10, '0', STR_PAD_LEFT);
         $terminal = str_pad($config['TERMINAL'] ?? '001', 8, '0', STR_PAD_LEFT);
         
+        $okURL = $this->getReturnUrl('success');
+        $koURL = $this->getReturnUrl('error');
+
         $formHtml = $this->renderTemplate('CecaFirstStep', [
             'ACTION' => $serverUrl,
             'MERCHANT_ID' => $merchantCode,
@@ -76,9 +79,9 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
             'PAN' => '',
             'EXPIRY_DATE' => '',
             'CVV' => '',
-            'SHA256' => $this->generateCecaSignature($password, $merchantCode, $acquirerBin, $terminal, $orderNumber, $amountCents, $config['CURRENCY'] ?? '978'),
-            'URL_OK' => $this->getReturnUrl('success'),
-            'URL_KO' => $this->getReturnUrl('error'),
+            'SHA256' => $this->generateCecaSignature($password, $merchantCode, $acquirerBin, $terminal, $orderNumber, $amountCents, $config['CURRENCY'] ?? '978', $okURL, $koURL),
+            'URL_OK' => $okURL,
+            'URL_KO' => $koURL,
         ]);
         
         $this->createTicket($context, $actionConfig, $beanPayment, $orderNumber);
@@ -129,6 +132,11 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
         if (!$paymentBean) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve payment with ID {$paymentId}.");
             return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Payment not found');
+        }
+
+        if (self::isAlreadyProcessed($paymentBean)) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$paymentId}] already processed (status={$paymentBean->status}). Duplicate webhook acknowledged.");
+            return new ActionResult(ResultStatus::OK, $result->actionConfig, 'Already processed');
         }
 
         $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
@@ -199,10 +207,10 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
      * Generate CECA SHA256 signature for payment initiation.
      * Format: PASSWORD + MERCHANT_CODE + ACQUIRER_BIN + TERMINAL + ORDER + AMOUNT + CURRENCY + "0"
      */
-    private function generateCecaSignature(string $password, string $merchantCode, string $acquirerBin, string $terminal, string $orderNumber, string $amount, string $currency): string
+    private function generateCecaSignature(string $password, string $merchantCode, string $acquirerBin, string $terminal, string $orderNumber, string $amount, string $currency, string $okURL, string $koURL): string
     {
-        $data = $password . $merchantCode . $acquirerBin . $terminal . $orderNumber . $amount . $currency . '0';
-        return hash('sha256', $data);
+        $data = $password . $merchantCode . $acquirerBin . $terminal . $orderNumber . $amount . $currency . '2' . 'SHA2' . $okURL . $koURL;
+        return strtolower(hash('sha256', $data));
     }
 
     /**
@@ -213,6 +221,6 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
         $timestamp = date('ymdHi');
         $uniqueId = substr($beanPayment->id ?? uniqid(), 0, 8);
         $code = $timestamp . $uniqueId;
-        return str_pad($code, 12, '0', STR_PAD_LEFT);
+        return substr($code, 0, 12);
     }
 }

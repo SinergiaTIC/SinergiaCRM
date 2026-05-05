@@ -122,14 +122,22 @@ class PaymentRouterAction extends DeferredBeanActionDefinition
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error getting Payments from Payment Commitment (ID: {$paymentCommitmentBean->id})");
         } 
 
-        $paymentBean = reset($payments); // Get the first element in the array
+        $paymentBean = null;
+        foreach ($payments as $p) {
+            if ($p->status == 'pending' || $p->status == 'not_remitted') {
+                $paymentBean = $p;
+                break;
+            }
+        }
+        if (!$paymentBean) {
+            $paymentBean = reset($payments);
+        }
 
-        // IEPA!!
-        // if ($fp->payment_method == 'card' || $fp->payment_method == 'paypal' || $fp->payment_method == 'bizum') {
-        //     // POS/Paypal payments must be set as pending
-        //     $payment->status = 'pending';
-        //     $payment->save(); // Save the changes
-        // }
+        $paymentMethod = $paymentCommitmentBean->payment_method;
+        if ($paymentMethod == 'card' || substr($paymentMethod, 0, 5) == 'card_' || $paymentMethod == 'paypal' || $paymentMethod == 'bizum' || substr($paymentMethod, 0, 5) == 'bizum' || $paymentMethod == 'stripe' || substr($paymentMethod, 0, 7) == 'stripe_') {
+            $paymentBean->status = 'pending';
+            $paymentBean->save();
+        }
 
         // Reload the object since otherwise will not have reported the id (mysteries of sugar)
         $paymentBean = $paymentBean->retrieve($paymentBean->id);
@@ -212,9 +220,61 @@ class PaymentRouterAction extends DeferredBeanActionDefinition
         try {
             $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
             $result = new ActionResult(ResultStatus::WAIT, null, '', $savedData);
-            return $strategy->resolve($context, $result);
+            $resolveResult = $strategy->resolve($context, $result);
+
+            if ($resolveResult->isOk()) {
+                $this->enqueueDeferredFlow($context, true);
+            } elseif ($resolveResult->isError()) {
+                $this->enqueueDeferredFlow($context, false);
+            }
+
+            return $resolveResult;
         } catch (Exception $e) {
             return new ActionResult(ResultStatus::ERROR, null, "Error processing webhook response: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Enqueues the deferred flow for async execution via SuiteCRM job queue.
+     * This ensures the webhook returns HTTP 200 immediately without waiting
+     * for the flow (emails, PDFs, etc.) to complete, preventing gateway timeouts.
+     *
+     * @param ExecutionContext $context The execution context
+     * @param bool $isSuccess Whether to run the success or error flow
+     */
+    private function enqueueDeferredFlow(ExecutionContext $context, bool $isSuccess): void
+    {
+        $customData = $context->getCustomData() ?? [];
+        $ticketId = $customData['ticket_id'] ?? null;
+
+        if (empty($ticketId)) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": No ticket_id in context data. Falling back to synchronous flow execution.");
+            if ($isSuccess) {
+                $this->executeDeferredOkFlow($context);
+            }
+            return;
+        }
+
+        try {
+            require_once 'include/SugarQueue/SugarJobQueue.php';
+            $job = BeanFactory::newBean('SchedulersJobs');
+            $job->name = 'AWF Deferred Flow - Ticket ' . $ticketId;
+            $job->target = 'sticAWFResumeDeferredFlow';
+            $job->data = json_encode([
+                'ticket_id' => $ticketId,
+                'is_success' => $isSuccess,
+            ]);
+            $job->assigned_user_id = $GLOBALS['current_user']->id ?? '1';
+
+            $queue = new SugarJobQueue();
+            $jobId = $queue->submitJob($job);
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Enqueued deferred flow Job ID={$jobId} for ticket {$ticketId} (success=" . ($isSuccess ? 'true' : 'false') . ")");
+        } catch (Exception $e) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to enqueue deferred flow for ticket {$ticketId}. Falling back to sync: " . $e->getMessage());
+            if ($isSuccess) {
+                $this->executeDeferredOkFlow($context);
+            }
         }
     }
 

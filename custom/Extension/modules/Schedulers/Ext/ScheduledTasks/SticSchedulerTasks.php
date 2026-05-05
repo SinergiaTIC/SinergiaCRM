@@ -214,3 +214,121 @@ function sticAWFProcessAsyncResponses() {
     
     return $result['processed'] > 0 || $result['errors'] > 0;
 }
+
+// Job function to resume deferred flows asynchronously
+$job_strings[] = 'sticAWFResumeDeferredFlow';
+
+/**
+ * Resumes a deferred form flow (success or error) for a ticket.
+ * Called by the SuiteCRM job queue after a payment webhook resolves.
+ * Expected $data format: {"ticket_id": "xxx", "is_success": true}
+ * @param string $data JSON-encoded job data
+ * @return boolean
+ */
+function sticAWFResumeDeferredFlow($data) {
+    $jobData = json_decode($data, true);
+    if (empty($jobData['ticket_id'])) {
+        $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Missing ticket_id in job data");
+        return false;
+    }
+
+    require_once 'modules/stic_AWF_Forms/core/includes.php';
+    require_once 'modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php';
+
+    $ticket = BeanFactory::getBean('stic_AWF_Deferred_Tickets', $jobData['ticket_id']);
+    if (!$ticket || empty($ticket->id)) {
+        $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket not found: {$jobData['ticket_id']}");
+        return false;
+    }
+
+    $isSuccess = !empty($jobData['is_success']);
+
+    $responseBean = BeanFactory::getBean('stic_AWF_Responses', $ticket->stic_awf_responses_id_c);
+    if (empty($responseBean) || empty($responseBean->id)) {
+        $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Response not found for ticket {$ticket->id}");
+        return false;
+    }
+
+    $responseBean->load_relationship('stic_69c1s_responses');
+    $formId = null;
+    if (!empty($responseBean->stic_69c1s_responses)) {
+        $relatedForms = $responseBean->stic_69c1s_responses->getBeans();
+        if (!empty($relatedForms)) {
+            $formBeanRel = reset($relatedForms);
+            $formId = $formBeanRel->id;
+        }
+    }
+
+    if (empty($formId)) {
+        $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Cannot determine form ID for ticket {$ticket->id}");
+        return false;
+    }
+
+    $formBean = BeanFactory::getBean('stic_AWF_Forms', $formId);
+    if (empty($formBean) || empty($formBean->id)) {
+        $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Form not found: {$formId}");
+        return false;
+    }
+
+    $jsonConfig = html_entity_decode($formBean->configuration ?? '', ENT_QUOTES, 'UTF-8');
+    $configData = json_decode($jsonConfig, true);
+    if (!$configData) {
+        $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Invalid form config for form {$formId}");
+        return false;
+    }
+    $formConfig = FormConfig::fromJsonArray($configData);
+    $formData = json_decode($responseBean->raw_payload, true) ?: [];
+
+    $context = new ExecutionContext(
+        $formBean->id,
+        $responseBean->id,
+        $formData,
+        $formConfig,
+        null,
+        $responseBean->assigned_user_id,
+        $responseBean
+    );
+
+    $contextData = json_decode($ticket->context_data, true) ?: [];
+    $context->setCustomData($contextData);
+
+    $successFlowId = $contextData['flow_success_id'] ?? null;
+    $errorFlowId   = $contextData['flow_error_id']   ?? null;
+
+    $successFlow = ($successFlowId !== null && $successFlowId !== '')
+        ? ($formConfig->flows[$successFlowId] ?? null)
+        : null;
+    $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
+        ? ($formConfig->flows[$errorFlowId] ?? null)
+        : null;
+
+    if ($isSuccess) {
+        if ($successFlow === null) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": No success flow for ticket {$ticket->id}");
+            return true;
+        }
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred success flow for ticket {$ticket->id}");
+        $executor = new ServerActionFlowExecutor($context);
+        $executor->executeFlow($successFlow, $errorFlow);
+
+        if ($context->responseBean) {
+            $context->responseBean->status = 'processed';
+            $context->responseBean->save();
+        }
+    } else {
+        if ($errorFlow === null) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": No error flow for ticket {$ticket->id}");
+            return true;
+        }
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred error flow for ticket {$ticket->id}");
+        $executor = new ServerActionFlowExecutor($context);
+        $executor->executeFlow($errorFlow);
+
+        if ($context->responseBean) {
+            $context->responseBean->status = 'error';
+            $context->responseBean->save();
+        }
+    }
+
+    return true;
+}

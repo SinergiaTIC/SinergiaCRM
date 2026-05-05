@@ -89,7 +89,32 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
         if ($isRecurring) {
             $templateVars['CMD'] = '_xclick-subscriptions';
             $templateVars['A3'] = number_format($beanPayment->amount, 2, '.', '');
-            $templateVars['P3'] = '1';
+
+            $PCBean = self::getPaymentCommitment($beanPayment);
+            $monthsCount = 1;
+            if ($PCBean && !empty($PCBean->periodicity)) {
+                switch ($PCBean->periodicity) {
+                    case 'monthly':
+                        $monthsCount = 1;
+                        break;
+                    case 'bimonthly':
+                        $monthsCount = 2;
+                        break;
+                    case 'quarterly':
+                        $monthsCount = 3;
+                        break;
+                    case 'four_monthly':
+                        $monthsCount = 4;
+                        break;
+                    case 'half_yearly':
+                        $monthsCount = 6;
+                        break;
+                    case 'annual':
+                        $monthsCount = 12;
+                        break;
+                }
+            }
+            $templateVars['P3'] = (string)$monthsCount;
             $templateVars['T3'] = 'M';
             $templateVars['SRC'] = '1';
             $templateVars['SRA'] = '1';
@@ -176,6 +201,11 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
         if (empty($paymentBean)) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve payment from PayPal IPN. subscr_id: " . ($ipnMessage['subscr_id'] ?? 'null') . " | custom: " . ($ipnMessage['custom'] ?? 'null'));
             return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Payment not found');
+        }
+
+        if (self::isAlreadyProcessed($paymentBean)) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$paymentBean->id}] already processed (status={$paymentBean->status}). Duplicate IPN acknowledged.");
+            return new ActionResult(ResultStatus::OK, $result->actionConfig, 'Already processed');
         }
 
         if ($paymentStatus == 'Completed') {
@@ -267,11 +297,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
 
         $req = 'cmd=_notify-validate';
         foreach ($myPost as $key => $value) {
-            if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() == 1) {
-                $value = urlencode(stripslashes($value));
-            } else {
-                $value = urlencode($value);
-            }
+            $value = urlencode($value);
             $req .= "&$key=$value";
         }
 
@@ -347,7 +373,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
         $transactionCode = $ipnMessage['custom'] ?? '';
         if (!empty($transactionCode)) {
             $paymentBean = BeanFactory::getBean('stic_Payments');
-            $paymentBean->retrieve_by_string_fields(array('transaction_code' => intval($transactionCode)));
+            $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transactionCode));
             if ($paymentBean && !empty($paymentBean->id)) {
                 return $paymentBean;
             }
@@ -374,7 +400,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     private function getPaymentCommitmentByIPNTransactionCode(string $transactionCode): ?stic_Payment_Commitments
     {
         global $db;
-        $safeCode = $db->quote(intval($transactionCode));
+        $safeCode = $db->quote($transactionCode);
 
         $pcIdSql = "SELECT rel.stic_paymebfe2itments_ida
                     FROM stic_payments p
@@ -402,6 +428,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     {
         $timestamp = date('ymdHi');
         $uniqueId = substr($beanPayment->id ?? uniqid(), 0, 8);
-        return $timestamp . $uniqueId;
+        $code = $timestamp . $uniqueId;
+        return substr($code, 0, 12);
     }
 }

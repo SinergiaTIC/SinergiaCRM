@@ -62,9 +62,31 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
         $password = $isTest ? ($config['PASSWORD_TEST'] ?? '') : ($config['PASSWORD'] ?? '');
 
         $orderNumber = $this->generateTransactionCode($beanPayment);
-        
+
+        $PCBean = self::getPaymentCommitment($beanPayment);
+        $paymentMethod = $beanPayment->payment_method ?? $actionConfig->data['payment_method'] ?? '';
+        $isCardPayment = ($paymentMethod == 'card' || substr($paymentMethod, 0, 5) == 'card_');
+        $isRecurring = !empty($actionConfig->data['recurring']) && $actionConfig->data['recurring'] != 'punctual';
+
+        $amount = number_format($beanPayment->amount * 100, 0, '', '');
+
+        $isCardRecurring = $isCardPayment && $PCBean && $PCBean->periodicity != 'punctual';
+        if ($isCardRecurring) {
+            if (!empty($PCBean->first_payment_date) && preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $PCBean->first_payment_date)) {
+                $dateObj = DateTime::createFromFormat('d/m/Y', $PCBean->first_payment_date);
+                if ($dateObj !== false) {
+                    $PCBean->first_payment_date = $dateObj->format('Y-m-d');
+                }
+            }
+
+            if (!empty($PCBean->first_payment_date) && $PCBean->first_payment_date > date('Y-m-d')) {
+                $amount = '0';
+                $orderNumber = substr($orderNumber, 0, 8) . '-AUT';
+            }
+        }
+
         $redsys = new RedsysAPI();
-        $redsys->setParameter("DS_MERCHANT_AMOUNT", number_format($beanPayment->amount * 100, 0, '', ''));
+        $redsys->setParameter("DS_MERCHANT_AMOUNT", $amount);
         $redsys->setParameter("DS_MERCHANT_ORDER", $orderNumber);
         $redsys->setParameter("DS_MERCHANT_MERCHANTCODE", $config['MERCHANT_CODE'] ?? '');
         $redsys->setParameter("DS_MERCHANT_CURRENCY", $config['CURRENCY'] ?? '978');
@@ -74,13 +96,20 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
         $redsys->setParameter("DS_MERCHANT_URL", $this->getCallbackUrl('redsys'));
         $redsys->setParameter("DS_MERCHANT_URLKO", $this->getReturnUrl('error'));
         $redsys->setParameter("DS_MERCHANT_URLOK", $this->getReturnUrl('success'));
-        
-        $paymentMethod = $beanPayment->payment_method ?? $actionConfig->data['payment_method'] ?? '';
+
         if (strpos($paymentMethod, 'bizum') === 0) {
             $redsys->setParameter('DS_MERCHANT_PAYMETHODS', 'z');
+            $isCardRecurring = false;
+            $isRecurring = false;
         }
-        
-        if (!empty($actionConfig->data['recurring']) && $actionConfig->data['recurring'] != 'punctual') {
+
+        if ($isCardRecurring) {
+            $redsys->setParameter('DS_MERCHANT_IDENTIFIER', 'REQUIRED');
+            $redsys->setParameter("DS_MERCHANT_COF_INI", "S");
+            $redsys->setParameter("DS_MERCHANT_COF_TYPE", "R");
+        }
+
+        if ($isRecurring) {
             $redsys->setParameter("DS_MERCHANT_COFRANQUICIA", 'CRC');
             $redsys->setParameter("DS_MERCHANT_DCOFRANQUICIA", '3');
         }
@@ -153,6 +182,11 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
         if (!$paymentBean) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve payment with ID {$paymentId}.");
             return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Payment not found');
+        }
+
+        if (self::isAlreadyProcessed($paymentBean)) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$paymentId}] already processed (status={$paymentBean->status}). Duplicate webhook acknowledged.");
+            return new ActionResult(ResultStatus::OK, $result->actionConfig, 'Already processed');
         }
 
         $config = $this->getConfigValues(array('PASSWORD', 'PASSWORD_TEST', 'TEST'));
@@ -230,6 +264,6 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
         $timestamp = date('ymdHi');
         $uniqueId = substr($beanPayment->id ?? uniqid(), 0, 8);
         $code = $timestamp . $uniqueId;
-        return str_pad($code, 12, '0', STR_PAD_LEFT);
+        return substr($code, 0, 12);
     }
 }
