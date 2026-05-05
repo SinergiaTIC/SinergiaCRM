@@ -279,8 +279,16 @@ class ListViewDisplay
             $pageTotal = $total;
         }
 
-        // STIC-Custom AAM - 20260309 - Async count pending: render spinner in Select All label
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+        // STIC-Custom AAM - 20260505 - Async count pending: render spinner in Select All label
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1104
+        // $total_label = "";
+        // if (!empty($GLOBALS['sugar_config']['disable_count_query']) && $GLOBALS['sugar_config']['disable_count_query'] === true && $total > $pageTotal) {
+        //     $this->show_plus = true;
+        //     $total_label =  $pageTotal.'+';
+        //     $total = $pageTotal;
+        // } else {
+        //     $total_label = $total;
+        // }
         $asyncCountPending = !empty($this->data['pageData']['offsets']['asyncCountPending']);
         $asyncModule = $this->data['pageData']['offsets']['moduleDir'] ?? $this->data['pageData']['bean']['moduleDir'] ?? '';
         $asyncWhere = $this->data['pageData']['offsets']['where'] ?? '';
@@ -304,9 +312,9 @@ class ListViewDisplay
         } else {
             $asyncSpinner = '';
         }
-        // END STIC-Custom AAM
 
         $entireListLabel = $asyncSpinner ? $asyncSpinner : "&nbsp;&#x28;{$total_label}&#x29;&#x200E;";
+        // END STIC-Custom AAM
 
         $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $app_strings['LBL_CLOSEINLINE']);
         $selectObjectSpan = $this->buildSelectedObjectsSpan();

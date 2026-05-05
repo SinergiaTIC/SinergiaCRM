@@ -5169,7 +5169,8 @@ function loadAsyncListCount() {
                         el.innerHTML = response.total;
                         el.classList.remove('async-count-loading', 'async-spinner');
                         el.classList.add('async-count-loaded');
-
+                        // STIC-Custom AAM - 20260505 - Async count pending: render spinner in Select All label
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1104
                         // Update Select All links onclick with the correct total count
                         var selectAllLinks = document.querySelectorAll('a[name="selectall"]');
                         selectAllLinks.forEach(function(link) {
@@ -5178,6 +5179,7 @@ function loadAsyncListCount() {
                                 link.setAttribute('onclick', onclick.replace(/check_entire_list\(([^,]+),([^,]+),([^,]+),[\d]+\)/, 'check_entire_list($1,$2,$3,' + response.total + ')'));
                             }
                         });
+                        // END STIC-Custom AAM
                     }
                 } catch (e) {
                     console.error('Error parsing async count response:', e);
