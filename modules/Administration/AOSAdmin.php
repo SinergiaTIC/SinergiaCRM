@@ -133,6 +133,13 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 continue; // Skip this series
             }
             
+            // === Step 2.6: Validate series name uniqueness (check before adding to array) ===
+            if (!empty($name) && isset($invoiceSeries[$name])) {
+                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_DUPLICATE_NAME'];
+                continue; // Skip this duplicate
+            }
+            // === End Step 2.6 ===
+            
             // Only save non-empty formats and names that passed validation
             if (!empty($format) && !empty($name)) {
                 $invoiceSeries[$name] = array(

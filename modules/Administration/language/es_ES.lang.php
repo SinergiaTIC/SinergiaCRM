@@ -888,6 +888,7 @@ $mod_strings = array(
     'LBL_AOS_SERIES_FORMAT_INVALID' => 'El formato de serie contiene caracteres inválidos. Solo se permiten: A-Z, 0-9, guión (-), guión bajo (_), barra (/), punto (.) y espacio.',
     'LBL_AOS_SERIES_FORMAT_LOWERCASE' => 'El formato de serie no puede contener letras minúsculas.',
     'LBL_AOS_SERIES_FORMAT_SPACE_START' => 'El formato de serie no puede empezar con un espacio.',
+    'LBL_AOS_SERIES_DUPLICATE_NAME' => 'El nombre de serie ya existe. Los nombres deben ser únicos.',
     'LBL_CHANGE_SETTINGS' => 'Cambiar ajustes de Advanced OpenSales',
     'LBL_CHANGE_SETTINGS_AOD' => 'Cambiar ajustes para DescubrimientoAbierto Avanzado',
     'LBL_CHANGE_SETTINGS_AOP' => 'Cambiar ajustes de PortalAbierto Avanzado',

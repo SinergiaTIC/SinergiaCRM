@@ -1457,6 +1457,38 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Step 2.6: Validate series names uniqueness in configuration
+     *
+     * Since series are defined in config_override.php as an array with keys as series names,
+     * duplicates would silently overwrite previous entries. This method logs a warning
+     * if duplicate series names are detected.
+     *
+     * @return bool True if no duplicates found, false if duplicates exist
+     */
+    public static function validateSeriesUniqueness()
+    {
+        global $sugar_config;
+        
+        if (empty($sugar_config['aos']['invoices']['series'])) {
+            return true;
+        }
+        
+        $series = $sugar_config['aos']['invoices']['series'];
+        $seriesNames = array_keys($series);
+        $uniqueNames = array_unique($seriesNames);
+        
+        if (count($seriesNames) !== count($uniqueNames)) {
+            $duplicates = array_diff_assoc($seriesNames, $uniqueNames);
+            $duplicateList = implode(', ', array_keys($duplicates));
+            $GLOBALS['log']->error("validateSeriesUniqueness - Duplicate series names detected in config_override.php: [$duplicateList]. Series keys must be unique - duplicates will silently overwrite previous entries.");
+            return false;
+        }
+        
+        $GLOBALS['log']->debug("validateSeriesUniqueness - All " . count($seriesNames) . " series names are unique");
+        return true;
+    }
+
+    /**
      * Extract the numeric part from an invoice number based on the format
      *
      * @param string $invoiceNumber The invoice number (e.g., '2024-0015')

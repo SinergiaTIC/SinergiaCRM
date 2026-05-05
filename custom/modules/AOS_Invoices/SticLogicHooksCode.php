@@ -268,6 +268,11 @@ class AOS_InvoicesHook
         if (empty($bean->stic_invoice_type_c)) {
             // Get first series from config
             if (!empty($sugar_config['aos']['invoices']['series']) && is_array($sugar_config['aos']['invoices']['series'])) {
+                // === Step 2.6: Validate series uniqueness ===
+                require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+                AOS_InvoicesUtils::validateSeriesUniqueness();
+                // === End Step 2.6 ===
+                
                 $seriesNames = array_keys($sugar_config['aos']['invoices']['series']);
                 $bean->stic_invoice_type_c = $seriesNames[0];
             }
