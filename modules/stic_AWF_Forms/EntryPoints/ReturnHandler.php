@@ -70,9 +70,7 @@ class ReturnHandler
         $formBean = null;
         $formId = null;
 
-        if (!empty($ticket->form_id)) {
-            $formId = $ticket->form_id;
-        } elseif (!empty($ticket->stic_awf_responses_id_c)) {
+        if (!empty($ticket->stic_awf_responses_id_c)) {
             $responseBean = BeanFactory::getBean('stic_AWF_Responses', $ticket->stic_awf_responses_id_c);
             if ($responseBean && !empty($responseBean->id)) {
                 $responseBean->load_relationship('stic_69c1s_responses');

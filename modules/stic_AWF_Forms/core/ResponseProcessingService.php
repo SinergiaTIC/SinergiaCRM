@@ -117,7 +117,8 @@ class ResponseProcessingService
             $responseBean->status = 'error';
         } elseif ($lastResult->isWait()) {
             $responseBean->status = 'awaiting_action';
-            self::createDeferredTicket($context, $lastResult);
+            // Note: Deferred tickets are created by the individual strategy's createTicket() method
+            // (e.g. PaymentStrategy::createTicket()). No duplicate ticket should be created here.
         } else {
             $responseBean->status = $hasErrors ? 'error' : 'processed';
         }
@@ -126,6 +127,16 @@ class ResponseProcessingService
         $GLOBALS['log']->info("Line " . __LINE__ . ": " . __METHOD__ . ": Response processed: {$responseId}, status: {$responseBean->status}");
 
         return $lastResult;
+    }
+
+    private static function findOption(array $options, $value)
+    {
+        foreach ($options as $opt) {
+            if ($opt->value == $value) {
+                return $opt;
+            }
+        }
+        return null;
     }
 
     /**
@@ -213,48 +224,6 @@ class ResponseProcessingService
         }
     }
 
-    /**
-     * Create a deferred ticket for async processing.
-     */
-    private static function createDeferredTicket(ExecutionContext $context, ActionResult $lastResult): void
-    {
-        $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
-        $ticket->name = "Deferred: " . $context->formId . " - " . date('Y-m-d H:i');
-        $ticket->status = 'pending';
-
-        $data = $lastResult->getData();
-        $ticket->form_id = $context->formId;
-        $ticket->response_id = $context->responseId;
-
-        $token = bin2hex(random_bytes(16));
-        $ticket->token_hash = $token;
-
-        if (!empty($data['external_transaction_id'])) {
-            $ticket->external_transaction_id = $data['external_transaction_id'];
-        }
-
-        $contextData = [
-            'response_id' => $context->responseId,
-            'form_id' => $context->formId,
-        ];
-        if (!empty($data['strategy_class'])) {
-            $contextData['strategy_class'] = $data['strategy_class'];
-        }
-        if (!empty($data['strategy_suffix'])) {
-            $contextData['strategy_suffix'] = $data['strategy_suffix'];
-        }
-        if (!empty($data['payment_id'])) {
-            $contextData['payment_id'] = $data['payment_id'];
-        }
-
-        $ticket->context_data = json_encode($contextData);
-        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime('+30 days'));
-
-        $ticket->save();
-
-        $GLOBALS['log']->info("Line " . __LINE__ . ": " . __METHOD__ . ": Created deferred ticket: {$ticket->id} for response: {$context->responseId}");
-    }
-
         /**
      * Generates response details for storage and subsequent analysis.
      * @param SugarBean $responseBean Response bean
@@ -296,14 +265,14 @@ class ResponseProcessingService
                         // Multi-selection
                         $labels = [];
                         foreach ($rawValue as $valItem) {
-                            $opt = $this->findOption($field->value_options, $valItem);
+                            $opt = self::findOption($field->value_options, $valItem);
                             $labels[] = $opt ? $opt->text : $valItem;
                         }
                         $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Store JSON ["A","B"]
                         $readableText = implode(', ', $labels); // Text: "Option A, Option B"
                     } else {
                         // Single selection
-                        $opt = $this->findOption($field->value_options, $rawValue);
+                        $opt = self::findOption($field->value_options, $rawValue);
                         if ($opt) {
                             $readableText = $opt->text;
                         }

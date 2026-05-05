@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 include_once __DIR__."/stic_AWF_PaymentStrategy.php";
+require_once "modules/stic_Payments/stic_Payments.php";
 
 /**
  * Offline payment strategy.
@@ -35,16 +36,26 @@ include_once __DIR__."/stic_AWF_PaymentStrategy.php";
  */
 class stic_AWF_OfflineStrategy extends stic_AWF_PaymentStrategy
 {
+    public static function getSourceName(): string
+    {
+        return 'offline';
+    }
+
+    public static function extractExternalId(array $rawData, string $rawBody): ?string
+    {
+        return null;
+    }
     /**
      * Initiates an offline payment: sets the payment status to 'pending' and
      * returns OK so PaymentRouterAction triggers the Deferred OK flow immediately.
      */
     public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
-        $beanPayment->status = 'pending';
-        $beanPayment->save();
+        // Offline payments (bank transfer, cash, direct debit) keep their default status
+        // (not_remitted as set by the Payment Commitment hook on creation).
+        // No gateway interaction needed; return OK immediately so the flow continues.
 
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF OfflineStrategy: Payment {$beanPayment->id} set to pending (offline).");
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF OfflineStrategy: Payment {$beanPayment->id} processed as offline (status: {$beanPayment->status}).");
 
         return new ActionResult(ResultStatus::OK, $actionConfig, 'Offline payment registered');
     }

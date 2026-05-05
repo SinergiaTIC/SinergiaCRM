@@ -119,5 +119,52 @@ class stic_AWF_PaymentStrategyFactory
         }
 
         return $strategy;
-    }    
+    }
+
+    /**
+     * Creates a strategy instance from a webhook source identifier.
+     * Used by WebhookHandler when no ticket is found (e.g. Stripe recurring events).
+     *
+     * @param string $source The source identifier from the webhook URL (e.g. 'stripe', 'redsys')
+     * @return stic_AWF_PaymentStrategy The strategy instance, or null if source is unknown
+     */
+    public static function createFromSource(string $source): ?stic_AWF_PaymentStrategy
+    {
+        // Try each known strategy class to find one matching the source
+        $strategyClasses = [
+            'stic_AWF_RedsysStrategy',
+            'stic_AWF_CecaStrategy',
+            'stic_AWF_StripeStrategy',
+            'stic_AWF_PaypalStrategy',
+        ];
+
+        foreach ($strategyClasses as $strategyClass) {
+            $filePath = __DIR__ . '/' . $strategyClass . '.php';
+            if (file_exists($filePath)) {
+                require_once $filePath;
+            }
+            if (class_exists($strategyClass) && $strategyClass::getSourceName() === $source) {
+                return new $strategyClass();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extracts the external transaction ID using the strategy that matches the given source.
+     *
+     * @param string $source The source identifier from the webhook URL
+     * @param array $rawData POST data array
+     * @param string $rawBody Raw request body
+     * @return string|null The external transaction ID or null
+     */
+    public static function extractExternalIdBySource(string $source, array $rawData, string $rawBody): ?string
+    {
+        $strategy = self::createFromSource($source);
+        if ($strategy !== null) {
+            return $strategy::extractExternalId($rawData, $rawBody);
+        }
+        return null;
+    }
 }

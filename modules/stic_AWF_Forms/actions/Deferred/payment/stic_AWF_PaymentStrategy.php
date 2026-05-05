@@ -132,21 +132,57 @@ abstract class stic_AWF_PaymentStrategy
     }
 
     /**
-     * Updates the payment status (and optionally a metadata field) and saves the bean.
+     * Updates the payment status and related fields, then saves the bean.
      *
      * @param stic_Payments $beanPayment The payment bean
-     * @param string $status The new status value
-     * @param mixed $authCode Optional authorization code / external reference to store in description
+     * @param string $status The new status value (paid, not_remitted, rejected_gateway, pending, etc.)
+     * @param array $options Optional fields: authCode, gatewayLog, gatewayRejectionReason, amount
      */
-    protected function updatePayment(stic_Payments $beanPayment, string $status, $authCode = null): void
+    protected function updatePayment(stic_Payments $beanPayment, string $status, array $options = []): void
     {
         $beanPayment->status = $status;
-        if ($authCode !== null) {
-            // stic_Payments does not have a dedicated authorization_code field,
-            // so we store it in banking_concept as an external reference.
-            $beanPayment->banking_concept = (string)$authCode;
+        if (isset($options['authCode'])) {
+            $beanPayment->banking_concept = (string)$options['authCode'];
+        }
+        if (isset($options['gatewayLog'])) {
+            $beanPayment->gateway_log = ($beanPayment->gateway_log ?? '') . '##### ' . $options['gatewayLog'];
+        }
+        if (isset($options['gatewayRejectionReason'])) {
+            $beanPayment->gateway_rejection_reason = $options['gatewayRejectionReason'];
+        }
+        if (isset($options['amount'])) {
+            $beanPayment->amount = $options['amount'];
         }
         $beanPayment->save();
+    }
+
+    /**
+     * Disable related payment commitment by setting end_date when a recurring payment is rejected.
+     * Matches stic_Web_Forms PaymentBO::disablePaymentCommitment() behavior.
+     *
+     * @param stic_Payments $paymentBean The rejected payment bean
+     */
+    protected static function disablePaymentCommitment(stic_Payments $paymentBean): void
+    {
+        require_once 'SticInclude/Utils.php';
+        $PCBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
+        if ($PCBean && $PCBean->periodicity != 'punctual') {
+            $PCBean->end_date = date('Y-m-d');
+            $PCBean->save(false);
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment commitment [{$PCBean->id}] has been deactivated (end_date = today) because the first payment has been rejected by the gateway.");
+        }
+    }
+
+    /**
+     * Get the related Payment Commitment bean from a Payment bean.
+     *
+     * @param stic_Payments $paymentBean The payment bean
+     * @return stic_Payment_Commitments|false The related PC bean or false
+     */
+    protected static function getPaymentCommitment(stic_Payments $paymentBean)
+    {
+        require_once 'SticInclude/Utils.php';
+        return SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
     }
 
     /**
@@ -213,6 +249,22 @@ abstract class stic_AWF_PaymentStrategy
     }
 
     /**
+     * Returns the webhook source identifier for this strategy.
+     * Used by WebhookHandler to route incoming webhooks to the correct strategy.
+     */
+    abstract public static function getSourceName(): string;
+
+    /**
+     * Extracts the external transaction ID from the raw webhook request data.
+     * Each gateway sends the ID in a different location/format.
+     *
+     * @param array $rawData POST data array
+     * @param string $rawBody Raw request body (for JSON-based gateways)
+     * @return string|null The external transaction ID or null if not found
+     */
+    abstract public static function extractExternalId(array $rawData, string $rawBody): ?string;
+
+    /**
     * Prepare payment.
     * If Offline -> Returns OK.
     * If External platform -> Returns WAIT with data to redirection.
@@ -227,6 +279,9 @@ abstract class stic_AWF_PaymentStrategy
 
     /**
     * WEBHOOK: Resolves action when notification arrives from external event.
+    * Can be called with or without a Deferred Ticket:
+    * - With ticket: context->getCustomData() contains strategy_class, payment_id, etc.
+    * - Without ticket: context is minimal; strategy handles recurring events directly.
     */ 
     abstract public function resolve(ExecutionContext $context, ActionResult $result): ActionResult;
 }

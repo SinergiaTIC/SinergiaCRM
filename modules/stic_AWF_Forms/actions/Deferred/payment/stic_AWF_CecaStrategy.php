@@ -32,13 +32,23 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
     protected string $configType = 'TPVCECA';
     protected string $configKeyPrefix = 'TPVCECA';
 
+    public static function getSourceName(): string
+    {
+        return 'ceca';
+    }
+
+    public static function extractExternalId(array $rawData, string $rawBody): ?string
+    {
+        return $rawData['Num_operacion'] ?? null;
+    }
+
     /**
      * Prepare payment via CECA TPV.
      * Returns WAIT with form HTML.
      */
     public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
-        $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD'));
+        $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
         
         $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
         $serverUrl = $isTest 
@@ -48,12 +58,17 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
         $orderNumber = $this->generateTransactionCode($beanPayment);
         
         $amountCents = number_format($beanPayment->amount * 100, 0, '', '');
+
+        $password = $isTest ? ($config['PASSWORD_TEST'] ?? '') : ($config['PASSWORD'] ?? '');
+        $merchantCode = str_pad($config['MERCHANT_CODE'] ?? '', 9, '0', STR_PAD_LEFT);
+        $acquirerBin = str_pad($config['ACQUIRER_BIN'] ?? '', 10, '0', STR_PAD_LEFT);
+        $terminal = str_pad($config['TERMINAL'] ?? '001', 8, '0', STR_PAD_LEFT);
         
         $formHtml = $this->renderTemplate('CecaFirstStep', [
             'ACTION' => $serverUrl,
-            'MERCHANT_ID' => $config['MERCHANT_CODE'] ?? '',
-            'ACQUIRER_BIN' => $config['ACQUIRER_BIN'] ?? '',
-            'TERMINAL' => $config['TERMINAL'] ?? '001',
+            'MERCHANT_ID' => $merchantCode,
+            'ACQUIRER_BIN' => $acquirerBin,
+            'TERMINAL' => $terminal,
             'ORDER' => $orderNumber,
             'AMOUNT' => $amountCents,
             'CURRENCY' => $config['CURRENCY'] ?? '978',
@@ -61,7 +76,7 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
             'PAN' => '',
             'EXPIRY_DATE' => '',
             'CVV' => '',
-            'SHA256' => $this->generateCecaSignature($config, $orderNumber, $amountCents),
+            'SHA256' => $this->generateCecaSignature($password, $merchantCode, $acquirerBin, $terminal, $orderNumber, $amountCents, $config['CURRENCY'] ?? '978'),
             'URL_OK' => $this->getReturnUrl('success'),
             'URL_KO' => $this->getReturnUrl('error'),
         ]);
@@ -94,62 +109,106 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
 
     /**
      * WEBHOOK: Resolves action when notification arrives from CECA.
+     * Matches stic_Web_Forms PaymentController::actionCECAResponse() + PaymentBO::proccessTPVCECAResponse() behavior.
      */
     public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
     {
-        $rawData = $_POST;
-        
-        $responseCode = $rawData['response_code'] ?? '';
-        $authCode = $rawData['auth_code'] ?? '';
-        
-        $successCodes = ['00', '0000', '000'];
-        
-        if (in_array($responseCode, $successCodes)) {
-            $paymentId = $context->getCustomData()['payment_id'] ?? null;
-            if ($paymentId) {
-                $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
-                if ($paymentBean) {
-                    $this->updatePayment($paymentBean, 'completed', $authCode);
-                }
-            }
-            return new ActionResult(ResultStatus::OK, $result->actionConfig, 'Payment successful', [
-                'auth_code' => $authCode,
-            ]);
+        $requestData = $_REQUEST;
+
+        if (!isset($requestData['Num_operacion'])) {
+            return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Missing Num_operacion');
         }
-        
-        require_once 'modules/stic_Web_Forms/Catcher/Include/Payment/lib/CecaResponseCodes.php';
-        $errorMessage = CecaResponseCodes::getMessage($responseCode) ?? 'Payment failed (code: ' . $responseCode . ')';
-        
+
         $paymentId = $context->getCustomData()['payment_id'] ?? null;
-        if ($paymentId) {
-            $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
-            if ($paymentBean) {
-                $this->updatePayment($paymentBean, 'failed', null);
-            }
+        if (!$paymentId) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": No payment_id in context data.");
+            return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Missing payment_id');
         }
-        
-        return new ActionResult(ResultStatus::ERROR, $result->actionConfig, $errorMessage);
+
+        $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
+        if (!$paymentBean) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve payment with ID {$paymentId}.");
+            return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Payment not found');
+        }
+
+        $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
+        $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
+        $password = $isTest ? ($config['PASSWORD_TEST'] ?? '') : ($config['PASSWORD'] ?? '');
+
+        $merchantCode = str_pad($config['MERCHANT_CODE'] ?? '', 9, '0', STR_PAD_LEFT);
+        $acquirerBin = str_pad($config['ACQUIRER_BIN'] ?? '', 10, '0', STR_PAD_LEFT);
+        $terminal = str_pad($config['TERMINAL'] ?? '001', 8, '0', STR_PAD_LEFT);
+
+        if (empty($password)) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": TPVCECA PASSWORD not configured.");
+            return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'CECA password not configured');
+        }
+
+        $receivedSignature = $requestData['Firma'] ?? '';
+        $signSourceString = 
+            $password 
+            . ($requestData['MerchantID'] ?? '') 
+            . ($requestData['AcquirerBIN'] ?? '') 
+            . ($requestData['TerminalID'] ?? '') 
+            . $requestData['Num_operacion'] 
+            . ($requestData['Importe'] ?? '') 
+            . ($config['CURRENCY'] ?? '978') 
+            . ($requestData['Exponente'] ?? '') 
+            . ($requestData['Referencia'] ?? $requestData['Codigo_error'] ?? '');
+
+        if (strlen(trim($signSourceString)) > 0) {
+            $computedSignature = strtolower(hash('sha256', $signSourceString));
+        } else {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Empty signature source string.");
+            return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Invalid CECA signature data');
+        }
+
+        if ($computedSignature != $receivedSignature) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": CECA signature mismatch. Computed [{$computedSignature}] vs received [{$receivedSignature}].");
+            return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Invalid signature');
+        }
+
+        if (!empty($requestData['Referencia'])) {
+            $this->updatePayment($paymentBean, 'paid', [
+                'authCode' => $requestData['Referencia'],
+                'gatewayLog' => print_r($requestData, true),
+            ]);
+
+            return new ActionResult(ResultStatus::OK, $result->actionConfig, 'Payment successful', [
+                'referencia' => $requestData['Referencia'],
+            ]);
+        } elseif (!empty($requestData['Codigo_error'])) {
+            require_once 'modules/stic_Web_Forms/Catcher/Include/Payment/lib/CecaResponseCodes.php';
+            $errorCode = $requestData['Codigo_error'];
+            $errorMsg = !empty($cecaResponseCode[$errorCode]) ? $errorCode . ' - ' . $cecaResponseCode[$errorCode] : $errorCode;
+
+            $this->updatePayment($paymentBean, 'rejected_gateway', [
+                'gatewayRejectionReason' => $errorMsg,
+                'gatewayLog' => print_r($requestData, true),
+            ]);
+
+            self::disablePaymentCommitment($paymentBean);
+
+            return new ActionResult(ResultStatus::ERROR, $result->actionConfig, $errorMsg);
+        }
+
+        return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Missing Referencia and Codigo_error');
     }
 
     /**
-     * Generate CECA SHA256 signature
+     * Generate CECA SHA256 signature for payment initiation.
+     * Format: PASSWORD + MERCHANT_CODE + ACQUIRER_BIN + TERMINAL + ORDER + AMOUNT + CURRENCY + "0"
      */
-    private function generateCecaSignature(array $config, string $orderNumber, string $amount): string
+    private function generateCecaSignature(string $password, string $merchantCode, string $acquirerBin, string $terminal, string $orderNumber, string $amount, string $currency): string
     {
-        $password = $config['PASSWORD'] ?? '';
-        $merchantCode = $config['MERCHANT_CODE'] ?? '';
-        $acquirerBin = $config['ACQUIRER_BIN'] ?? '';
-        $terminal = $config['TERMINAL'] ?? '001';
-        
-        $data = $merchantCode . $acquirerBin . $terminal . $orderNumber . $amount . '978' . '0' . $password;
-        
+        $data = $password . $merchantCode . $acquirerBin . $terminal . $orderNumber . $amount . $currency . '0';
         return hash('sha256', $data);
     }
 
     /**
      * Generate a unique transaction code
      */
-    private function generateTransactionCode(stic_Payment $beanPayment): string
+    private function generateTransactionCode(stic_Payments $beanPayment): string
     {
         $timestamp = date('ymdHi');
         $uniqueId = substr($beanPayment->id ?? uniqid(), 0, 8);

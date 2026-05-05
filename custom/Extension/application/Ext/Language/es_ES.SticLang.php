@@ -4051,6 +4051,7 @@ $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sin cambi
 // Advanced Web Forms Deferred Tickets: status
 $app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
 $app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendiente';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Procesando';
 $app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resuelto';
 $app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Fallido';
 $app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancelado';

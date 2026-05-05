@@ -207,13 +207,12 @@ class PaymentRouterAction extends DeferredBeanActionDefinition
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult
     {
-        // Recover data from Ticket (from context)
-        // TODO: Afegir i recuperar dades del context!!
         $savedData = $context->getCustomData() ?? []; 
         
         try {
             $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
-            return $strategy->resolve($context, $requestData);
+            $result = new ActionResult(ResultStatus::WAIT, null, '', $savedData);
+            return $strategy->resolve($context, $result);
         } catch (Exception $e) {
             return new ActionResult(ResultStatus::ERROR, null, "Error processing webhook response: " . $e->getMessage());
         }

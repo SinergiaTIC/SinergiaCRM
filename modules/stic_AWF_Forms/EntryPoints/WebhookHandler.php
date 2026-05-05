@@ -31,31 +31,31 @@ require_once "modules/stic_AWF_Forms/actions/Deferred/PaymentRouterAction.php";
 
 /**
  * EntryPoint: WebhookHandler
- * Receives and processes webhook responses from payment gateways (Redsys, Stripe, PayPal, CECA).
+ * Receives and processes webhook responses from payment gateways.
  *
- * Flow:
- *   1. Determine the payment source from the request
- *   2. Create an IncomingEvent log record (status=new)
- *   3. Extract the external transaction ID
- *   4. Atomically find and lock the Deferred Ticket (status pending→processing)
- *   5. Rebuild the ExecutionContext from the ticket
- *   6. Call PaymentRouterAction::processWebhook()
- *   7. Update the ticket status and resume the form flow
- *   8. Update the IncomingEvent log record (status=processed/error/ignored)
+ * This entry point is fully gateway-agnostic. All gateway-specific logic
+ * (signature verification, response parsing, event handling) lives in the
+ * individual payment strategy classes. The WebhookHandler only:
+ *   1. Creates an IncomingEvent log record
+ *   2. Extracts the external transaction ID (delegated to the strategy)
+ *   3. Atomically finds and locks the Deferred Ticket
+ *   4. Rebuilds the ExecutionContext from the ticket
+ *   5. Calls PaymentRouterAction::processWebhook() → strategy->resolve()
+ *   6. Updates the ticket status and resumes the form flow
+ *
+ * When no ticket is found (e.g. Stripe recurring events), the strategy's
+ * resolve() method handles it directly.
  */
 class WebhookHandler
 {
     public function run(): void
     {
         global $current_user;
-        // Run as system user so permission checks do not interfere with processing
         $current_user = BeanFactory::newBean('Users');
         $current_user->getSystemUser();
 
         $source  = $_REQUEST['source'] ?? '';
         $rawData = $_POST;
-
-        // For Stripe and some providers the body arrives as raw JSON
         $rawBody = file_get_contents('php://input');
 
         // --- 1. Create IncomingEvent log record ---
@@ -70,8 +70,8 @@ class WebhookHandler
 
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Received webhook from source='{$source}'. IncomingEvent ID={$incomingEvent->id}");
 
-        // --- 2. Extract the external transaction ID ---
-        $externalId = $this->extractExternalId($source, $rawData, $rawBody);
+        // --- 2. Extract external transaction ID (delegated to strategy) ---
+        $externalId = stic_AWF_PaymentStrategyFactory::extractExternalIdBySource($source, $rawData, $rawBody);
 
         if (empty($externalId)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Could not extract external transaction ID for source='{$source}'");
@@ -89,17 +89,25 @@ class WebhookHandler
         // --- 3. Atomically find and lock the Deferred Ticket ---
         $ticket = $this->findTicket($externalId);
 
-        if (!$ticket) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Ticket not found or already processed for externalId='{$externalId}'");
-            $incomingEvent->status = 'ignored';
-            $incomingEvent->last_error_message = "Ticket not found or already processed";
-            $incomingEvent->date_processed = date('Y-m-d H:i:s');
-            $incomingEvent->save();
-            http_response_code(200);
-            die("Already processed");
+        // --- 4. Build context and resolve ---
+        $context = null;
+        if ($ticket) {
+            $result = $this->processWithTicket($ticket, $rawData, $rawBody, $incomingEvent, $context);
+        } else {
+            $result = $this->processWithoutTicket($source, $rawData, $rawBody, $incomingEvent);
         }
 
-        // --- 4. Rebuild ExecutionContext ---
+        // --- 5. Handle result ---
+        $this->handleResult($result, $ticket, $incomingEvent, $context);
+    }
+
+    /**
+     * Process a webhook when a matching Deferred Ticket exists.
+     * Rebuilds the execution context from the ticket, then delegates
+     * to PaymentRouterAction::processWebhook() which calls strategy->resolve().
+     */
+    private function processWithTicket(stic_AWF_Deferred_Tickets $ticket, array $rawData, string $rawBody, $incomingEvent, ?ExecutionContext &$outContext): ActionResult
+    {
         try {
             $context = $this->rebuildContext($ticket);
         } catch (Exception $e) {
@@ -114,107 +122,132 @@ class WebhookHandler
             die("Internal error");
         }
 
-        // --- 5. Instantiate PaymentRouterAction and call processWebhook ---
+        // Inject rawBody into context for strategies that need it
+        $customData = $context->getCustomData();
+        $customData['_rawBody'] = $rawBody;
+        $context->setCustomData($customData);
+
+        $outContext = $context;
+
         $actionDefinition = new PaymentRouterAction();
-        $result = $actionDefinition->processWebhook($context, $rawData);
+        return $actionDefinition->processWebhook($context, $rawData);
+    }
 
-        // --- 6. Handle result ---
-        if ($result->isOk()) {
-            $ticket->status = 'resolved';
-            $ticket->save();
+    /**
+     * Process a webhook when no matching Deferred Ticket exists.
+     * Creates a strategy from the source identifier and calls resolve() directly.
+     * This handles events like Stripe subscription/invoice events that occur
+     * after the initial checkout and have no associated ticket.
+     */
+    private function processWithoutTicket(string $source, array $rawData, string $rawBody, $incomingEvent): ActionResult
+    {
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: No ticket found for source='{$source}'. Delegating to strategy directly.");
 
-            $this->resumeFlow($ticket, $context, true);
-
-            $incomingEvent->status = 'processed';
+        $strategy = stic_AWF_PaymentStrategyFactory::createFromSource($source);
+        if ($strategy === null) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Unknown source '{$source}' and no ticket found.");
+            $incomingEvent->status = 'ignored';
+            $incomingEvent->last_error_message = "Ticket not found or already processed";
             $incomingEvent->date_processed = date('Y-m-d H:i:s');
             $incomingEvent->save();
+            http_response_code(200);
+            die("Already processed");
+        }
+
+        $context = new ExecutionContext('', '', [], new FormConfig(), null, '');
+        $context->setCustomData(['_rawBody' => $rawBody]);
+
+        $result = $strategy->resolve($context, new ActionResult(ResultStatus::WAIT, null, '', []));
+
+        $incomingEvent->status = $result->isOk() ? 'processed' : 'error';
+        $incomingEvent->last_error_message = $result->message ?? '';
+        $incomingEvent->date_processed = date('Y-m-d H:i:s');
+        $incomingEvent->save();
+
+        return $result;
+    }
+
+    /**
+     * Handles the ActionResult from strategy->resolve(), updating ticket,
+     * resuming flows, and sending the HTTP response.
+     */
+    private function handleResult(ActionResult $result, ?stic_AWF_Deferred_Tickets $ticket, $incomingEvent, ?ExecutionContext $context): void
+    {
+        if ($result->isOk()) {
+            if ($ticket) {
+                $ticket->status = 'resolved';
+                $ticket->save();
+                if ($context !== null) {
+                    try {
+                        $this->resumeFlow($ticket, $context, true);
+                    } catch (Exception $e) {
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to resume success flow: " . $e->getMessage());
+                    }
+                }
+            }
+
+            if ($incomingEvent->status !== 'processed') {
+                $incomingEvent->status = 'processed';
+                $incomingEvent->date_processed = date('Y-m-d H:i:s');
+                $incomingEvent->save();
+            }
 
             http_response_code(200);
             echo "OK";
 
         } elseif ($result->isWait()) {
-            // Intermediate state (e.g. Stripe async_payment_pending)
-            // Keep ticket as pending, update context_data if strategy provided new data
-            $ticket->status = 'pending';
-            if (!empty($result->getData())) {
-                $ticket->context_data = json_encode($result->getData());
+            if ($ticket) {
+                $ticket->status = 'pending';
+                if (!empty($result->getData())) {
+                    $ticket->context_data = json_encode($result->getData());
+                }
+                $ticket->save();
             }
-            $ticket->save();
 
-            $incomingEvent->status = 'processed';
-            $incomingEvent->date_processed = date('Y-m-d H:i:s');
-            $incomingEvent->save();
+            if ($incomingEvent->status !== 'processed') {
+                $incomingEvent->status = 'processed';
+                $incomingEvent->date_processed = date('Y-m-d H:i:s');
+                $incomingEvent->save();
+            }
 
             http_response_code(200);
             echo "OK, Updated";
 
         } else {
-            $ticket->status = 'failed';
-            $ticket->save();
+            if ($ticket) {
+                $ticket->status = 'failed';
+                $ticket->save();
+                if ($context !== null) {
+                    try {
+                        $this->resumeFlow($ticket, $context, false);
+                    } catch (Exception $e) {
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to resume error flow: " . $e->getMessage());
+                    }
+                }
+            }
 
-            $this->resumeFlow($ticket, $context, false);
+            if ($incomingEvent->status !== 'error') {
+                $incomingEvent->status = 'processed';
+                $incomingEvent->last_error_message = $result->message ?? 'Payment rejected';
+                $incomingEvent->date_processed = date('Y-m-d H:i:s');
+                $incomingEvent->save();
+            }
 
-            $incomingEvent->status = 'error';
-            $incomingEvent->last_error_message = $result->message ?? 'Unknown error';
-            $incomingEvent->date_processed = date('Y-m-d H:i:s');
-            $incomingEvent->save();
-
-            http_response_code(400);
-            echo "Error: " . ($result->message ?? 'Unknown error');
-        }
-    }
-
-    /**
-     * Extracts the external transaction ID from the raw webhook data.
-     * Each payment gateway sends it in a different location.
-     *
-     * @param string $source Payment gateway source identifier
-     * @param array $rawData POST data array
-     * @param string $rawBody Raw request body (for JSON-based gateways like Stripe)
-     * @return string|null The external transaction ID or null if not found
-     */
-    private function extractExternalId(string $source, array $rawData, string $rawBody = ''): ?string
-    {
-        switch ($source) {
-            case 'redsys':
-            case 'bizum':
-                // Redsys sends a base64-encoded JSON in Ds_MerchantParameters
-                $params = $rawData['Ds_MerchantParameters'] ?? '';
-                if (empty($params)) return null;
-                $decoded = json_decode(base64_decode(strtr($params, '-_', '+/')), true);
-                return $decoded['Ds_Order'] ?? null;
-
-            case 'stripe':
-                // Stripe sends a JSON body with the event object
-                $payload = json_decode($rawBody, true);
-                return $payload['data']['object']['id'] ?? null;
-
-            case 'paypal':
-                // PayPal IPN sends transaction data as POST; custom field holds our reference
-                return $rawData['custom'] ?? null;
-
-            case 'ceca':
-                return $rawData['Num_operacion'] ?? null;
-
-            default:
-                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Unknown source '{$source}'");
-                return null;
+            // Return 200 even for rejected payments — the webhook itself was processed correctly.
+            http_response_code(200);
+            echo "Processed with error: " . ($result->message ?? 'Unknown error');
         }
     }
 
     /**
      * Atomically finds and locks the Deferred Ticket using an UPDATE...WHERE status='pending'.
      * This prevents race conditions when the same webhook arrives multiple times.
-     *
-     * @param string $externalId The external transaction ID
-     * @return stic_AWF_Deferred_Tickets|null The ticket bean or null if not found/already processed
      */
     private function findTicket(string $externalId): ?stic_AWF_Deferred_Tickets
     {
         global $db;
         $safeId = $db->quote($externalId);
 
-        // Atomic update: only succeeds if the ticket is still in 'pending' state
         $sql = "UPDATE stic_AWF_Deferred_Tickets 
                 SET status = 'processing' 
                 WHERE external_transaction_id = '{$safeId}' 
@@ -223,11 +256,9 @@ class WebhookHandler
         $result = $db->query($sql);
 
         if ($db->getAffectedRowCount($result) === 0) {
-            // Either already processed or not found
             return null;
         }
 
-        /** @var stic_AWF_Deferred_Tickets $ticket */
         $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
         $ticket->retrieve_by_string_fields(['external_transaction_id' => $externalId, 'deleted' => '0']);
 
@@ -236,25 +267,17 @@ class WebhookHandler
 
     /**
      * Rebuilds the ExecutionContext from data stored in the Deferred Ticket.
-     *
-     * @param stic_AWF_Deferred_Tickets $ticket The deferred ticket bean
-     * @return ExecutionContext The rebuilt execution context
-     * @throws Exception If the response or form cannot be loaded
      */
     private function rebuildContext(stic_AWF_Deferred_Tickets $ticket): ExecutionContext
     {
-        // Load the Response bean
         $responseBean = BeanFactory::getBean('stic_AWF_Responses', $ticket->stic_awf_responses_id_c);
         if (empty($responseBean) || empty($responseBean->id)) {
             throw new Exception("Response not found for ticket ID={$ticket->id}, response_id={$ticket->stic_awf_responses_id_c}");
         }
 
-        // Load the Form bean from the response-form relationship
-        // The form ID is stored via the relationship table; retrieve via relationship
         $responseBean->load_relationship('stic_69c1s_responses');
         $formId = null;
         if (!empty($responseBean->stic_69c1s_responses)) {
-            // Try getting the form ID from the relationship
             $relatedForms = $responseBean->stic_69c1s_responses->getBeans();
             if (!empty($relatedForms)) {
                 $formBeanRel = reset($relatedForms);
@@ -262,7 +285,6 @@ class WebhookHandler
             }
         }
 
-        // Fallback: query the join table directly
         if (empty($formId)) {
             global $db;
             $safeResponseId = $db->quote($responseBean->id);
@@ -283,7 +305,6 @@ class WebhookHandler
             throw new Exception("Form not found. ID={$formId}");
         }
 
-        // Parse form configuration
         $jsonConfig = html_entity_decode($formBean->configuration ?? '', ENT_QUOTES, 'UTF-8');
         $configData = json_decode($jsonConfig, true);
         if (!$configData) {
@@ -291,10 +312,8 @@ class WebhookHandler
         }
         $formConfig = FormConfig::fromJsonArray($configData);
 
-        // Parse form data from the raw payload stored in the response
         $formData = json_decode($responseBean->raw_payload, true) ?: [];
 
-        // Build the context
         $context = new ExecutionContext(
             $formBean->id,
             $responseBean->id,
@@ -305,7 +324,6 @@ class WebhookHandler
             $responseBean
         );
 
-        // Inject ticket's context_data so PaymentRouterAction::processWebhook() can read strategy_class etc.
         $contextData = json_decode($ticket->context_data, true) ?: [];
         $context->setCustomData($contextData);
 
@@ -314,10 +332,6 @@ class WebhookHandler
 
     /**
      * Executes the success or error deferred flow using the flow IDs stored in the ticket's context_data.
-     *
-     * @param stic_AWF_Deferred_Tickets $ticket The resolved/failed ticket
-     * @param ExecutionContext $context The rebuilt execution context
-     * @param bool $isSuccess True if payment was successful, false if failed
      */
     private function resumeFlow(stic_AWF_Deferred_Tickets $ticket, ExecutionContext $context, bool $isSuccess): void
     {
@@ -342,7 +356,6 @@ class WebhookHandler
             $executor = new ServerActionFlowExecutor($context);
             $executor->executeFlow($successFlow, $errorFlow);
 
-            // Update response status
             if ($context->responseBean) {
                 $context->responseBean->status = 'processed';
                 $context->responseBean->save();
@@ -356,7 +369,6 @@ class WebhookHandler
             $executor = new ServerActionFlowExecutor($context);
             $executor->executeFlow($errorFlow);
 
-            // Update response status
             if ($context->responseBean) {
                 $context->responseBean->status = 'error';
                 $context->responseBean->save();
@@ -365,6 +377,5 @@ class WebhookHandler
     }
 }
 
-// Handler execution
 $handler = new WebhookHandler();
 $handler->run();
