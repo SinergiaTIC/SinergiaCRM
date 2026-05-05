@@ -25,7 +25,7 @@
 
 <div class="right-aligned-container">
   <div id="repeat_options" style="display: none;">
-    <h2 id="resourcesTitle">{$MOD.LBL_PERIODIC_BOOKING}</h2>
+    <h2 id="repeatTitle">{$MOD.LBL_PERIODIC_BOOKING}</h2>
     <table class="BookingRepeatForm" width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
             <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>

@@ -68,7 +68,6 @@ $mod_strings = array(
     'LBL_RETRIBUTION' => 'Retribución',
     'LBL_RETRIBUTION_CONDITIONS' => 'Condiciones retribución',
     'LBL_OFFER_CODE' => 'Código oferta',
-    'LBL_OFFER_CODE' => 'Código oferta',
     'LBL_OFFER_TYPE' => 'Tipo',
     'LBL_OFFER_MODE' => 'Modalidad',
     'LBL_WEEKDAYS' => 'Días de la semana',
@@ -79,7 +78,7 @@ $mod_strings = array(
     'LBL_RESPONSIBLE' => 'Responsable',
     'LBL_TEMPORALITY' => 'Temporalidad',
     'LBL_GOALS' => 'Objetivos',
-    'LBL_EXPECTED_DURATION' => 'Duración prevista',    
+    'LBL_EXPECTED_DURATION' => 'Duración prevista',
     'LBL_POSITION_TYPE' => 'Tipo de cargo',
     'LBL_CONTRACT_TYPE' => 'Tipo de contrato',
     'LBL_WORKDAY_TYPE' => 'Tipo de jornada',
@@ -164,5 +163,5 @@ $mod_strings = array(
     'LBL_SEPE_COVERED_DATE_ERROR' => 'La Fecha oferta cubierta (SEPE) debe ser igual o posterior a la Fecha activación (SEPE).',
     'LBL_STIC_PROFESSIONAL_PROFILE_HELP' => "Este campo existe tanto en el módulo de Personas como en el de Ofertas y se utiliza para enlazar unas y otras. Las tipologías de perfiles se pueden gestionar en la lista 'stic_professional_profile_list' del Editor de listas desplegables.",
     'LBL_INC_INCORPORA_RECORD_HELP' => "Cuando este campo esté activado todos los campos que son obligatorios para hacer un alta en Incorpora se marcarán con el carácter <span style='color:red;'>#</span>.",
-        'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE' => 'Proyecto',
+    'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE' => 'Proyecto',
 );

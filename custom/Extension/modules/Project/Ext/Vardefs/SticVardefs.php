@@ -228,4 +228,4 @@ $dictionary["Project"]["fields"]["project_stic_allocations"] = array (
     'vname' => 'LBL_PROJECT_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE',
 );
 
-$dictionary['Project']['unified_search_default_enabled'] = true;
+$dictionary['Project']['audited'] = true;

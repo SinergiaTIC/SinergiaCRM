@@ -102,6 +102,7 @@ $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de modelos de proxe
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Xerar Candidaturas';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione unha oferta laboral na ventá emerxente';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
+$mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -165,10 +166,10 @@ $mod_strings['LBL_SEPE_DISABILITY'] = 'Indicador discapacidade (SEPE)';
 $mod_strings['LBL_SEPE_EDUCATION_LEVEL'] = 'Nivel formativo (SEPE)';
 $mod_strings['LBL_SEPE_IMMIGRANT'] = 'Indicador inmigrante (SEPE)';
 $mod_strings['LBL_SEPE_INSERTION_DIFFICULTIES'] = 'Indicador colectivo dificultades inserción (SEPE)';
-$mod_strings['LBL_STIC_CONFIDENTIALITY_AGREEMENT'] = 'Acuerdo de confidencialidad';
-$mod_strings['LBL_STIC_CONDUCT_CODE'] = 'Código de conducta';
+$mod_strings['LBL_STIC_CONFIDENTIALITY_AGREEMENT'] = 'Acordo de confidencialidade';
+$mod_strings['LBL_STIC_CONDUCT_CODE'] = 'Código de conduta';
 $mod_strings['LBL_STIC_OCCUPATIONAL_SAFETY'] = 'PRL';
-$mod_strings['LBL_STIC_TIME_AVAILABILITY'] = 'Disponibilidad horaria';
+$mod_strings['LBL_STIC_TIME_AVAILABILITY'] = 'Dispoñibilidade horaria';
 $mod_strings['LBL_STIC_JOB_APPLICATIONS_CONTACTS_FROM_STIC_JOB_APPLICATIONS_TITLE'] = 'Candidaturas';
 $mod_strings['LBL_STIC_PROFESSIONAL_PROFILE'] = 'Perfil do traballador';
 $mod_strings['LBL_STIC_SEPE_ACTIONS_CONTACTS_FROM_STIC_SEPE_ACTIONS_TITLE'] = 'Accións SEPE';
@@ -241,8 +242,8 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competencias';
 
 // Campos de filtro en relaciones muchos a muchos
-$mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Lista de público objectivo';
-$mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';
+$mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Lista de Público Obxectivo';
+$mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proxecto actual';
 
 // Productos financieros
-$mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
+$mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Produtos financeiros';

@@ -611,8 +611,8 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '2.7.0', 
-    'js_custom_version' => 29,
+    'sinergiacrm_version' => '2.9.0', 
+    'js_custom_version' => 36,
     'stic_show_update_alert' => 1,
     // END STIC
 
@@ -674,6 +674,11 @@ $sugar_config = array(
                 'redirectUri' => '',
                 'scopes' => '',
             ),
-    )
+    ),
+    // END STIC-Custom
+
+    // STIC-Custom 20260424 AAM - Async ListView count
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+    'stic_async_list_count' => false, 
     // END STIC-Custom
 );

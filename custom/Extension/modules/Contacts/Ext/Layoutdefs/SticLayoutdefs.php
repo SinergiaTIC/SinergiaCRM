@@ -485,6 +485,29 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_financial_products_contacts'] =
     ),
   );
 
+// stic_Assets subpanel
+$layout_defs["Contacts"]["subpanel_setup"]['stic_assets_contacts'] = array (
+  'order' => 100,
+  'module' => 'stic_Assets',
+  'subpanel_name' => 'default',
+  'sort_order' => 'asc',
+  'sort_by' => 'id',
+  'title_key' => 'LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE',
+  'get_subpanel_data' => 'stic_assets_contacts',
+  'top_buttons' => 
+  array (
+    0 => 
+    array (
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+    ),
+    1 => 
+    array (
+      'widget_class' => 'SubPanelTopSelectButton',
+      'mode' => 'MultiSelect',
+    ),
+  ),
+);
+
 $layout_defs['Contacts']['subpanel_setup']['leads']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Contacts']['subpanel_setup']['opportunities']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Contacts']['subpanel_setup']['documents']['override_subpanel_name'] = 'SticDefault';
