@@ -3672,7 +3672,7 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Mensajes: Tipos
 $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
-$app_list_strings['stic_messages_type_list']['conversation'] = 'Conversación';
+$app_list_strings['stic_messages_type_list']['private_area'] = 'Área Privada';
 
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';

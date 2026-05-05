@@ -129,7 +129,7 @@ class stic_Messages extends Basic
         $assignedUserId = $current_user->id ?? '';
 
         // For conversation messages, resolve the assignee from related records
-        if ($this->type === 'conversation') {
+        if ($this->type === 'private_area') {
             $contactId = '';
             $conversationBean = null;
 
@@ -188,7 +188,7 @@ class stic_Messages extends Basic
         }
 
         // Conversation messages: set direction and sender
-        if ($this->type === 'conversation') {
+        if ($this->type === 'private_area') {
             if (empty($this->id) && empty($this->fetched_row['id'])) {
                 if ($this->direction === 'inbound') {
                     $this->sender = 'sticpa';
@@ -221,7 +221,7 @@ class stic_Messages extends Basic
                 $this->status = 'sent';
                 $this->response = $response['message'];
                 $this->sent_date = $GLOBALS['timedate']->nowDb();
-            } elseif ($this->type === 'conversation') {
+            } elseif ($this->type === 'private_area') {
                 // Conversation type is handled internally, without external provider
                 $this->status = 'sent';
                 $this->response = 'Conversation message saved';
@@ -246,7 +246,7 @@ class stic_Messages extends Basic
             }
         }
 
-        if ($this->type === 'conversation') {
+        if ($this->type === 'private_area') {
             $this->parent_type = 'Contacts';
 
             // Store conversation subject on the bean for workflow notifications before save
@@ -261,7 +261,7 @@ class stic_Messages extends Basic
         parent::save($check_notify);
 
         // For conversation messages, ensure the M:M relationship is created in the join table
-        if ($this->type === 'conversation' && !empty($this->stic_conversations_ida)) {
+        if ($this->type === 'private_area' && !empty($this->stic_conversations_ida)) {
             $this->load_relationship('stic_conversations_stic_messages');
             if (!empty($this->stic_conversations_stic_messages)) {
                 $this->stic_conversations_stic_messages->add($this->stic_conversations_ida);

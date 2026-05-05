@@ -435,7 +435,7 @@ class stic_MessagesController extends SugarController
         $messageBean = $this->bean;
         $type = $messageBean->type ?? '';
 
-        if ($type !== 'conversation') {
+        if ($type !== 'private_area') {
             $messageBean->new_conversation = 0;
             $messageBean->stic_conversation_subject = '';
             $messageBean->stic_conversations_stic_messages_name = '';
@@ -498,7 +498,7 @@ class stic_MessagesController extends SugarController
             return;
         }
 
-        $messageBean->type = 'conversation';
+        $messageBean->type = 'private_area';
         $messageBean->parent_type = 'Contacts';
         $messageBean->new_conversation = 0;
 
@@ -532,7 +532,7 @@ class stic_MessagesController extends SugarController
     protected function validateConversationRequiredFields($messageBean)
     {
         $type = $messageBean->type ?? ($_REQUEST['type'] ?? '');
-        if ($type !== 'conversation') {
+        if ($type !== 'private_area') {
             return true;
         }
 

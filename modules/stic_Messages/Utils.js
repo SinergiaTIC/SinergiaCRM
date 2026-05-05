@@ -58,7 +58,7 @@ switch (sticViewType) {
 
       // Keep sender synchronized with assigned user when type is conversation
       function syncSenderWithAssignedUserIfConversation() {
-        if ($('#type').val() !== 'conversation') {
+        if ($('#type').val() !== 'private_area') {
           return;
         }
 
@@ -162,7 +162,7 @@ switch (sticViewType) {
 
       // When type changes to WhatsAppWeb or conversation, force status to 'sent' and lock sender
       $('#type').on('change', function() {
-        if ($(this).val() === 'WhatsAppWeb' || $(this).val() === 'conversation') {
+        if ($(this).val() === 'WhatsAppWeb' || $(this).val() === 'private_area') {
           lockSenderAndStatusToSent();
         } else if (!$('#EditView input[name="record"]').val()) {
           unlockSenderAndStatusForNewMessage();
@@ -171,7 +171,7 @@ switch (sticViewType) {
       });
 
       // On page load, WhatsAppWeb and conversation are always sent and sender is fixed to CRM user
-      if ($('#type').val() === 'WhatsAppWeb' || $('#type').val() === 'conversation') {
+      if ($('#type').val() === 'WhatsAppWeb' || $('#type').val() === 'private_area') {
         lockSenderAndStatusToSent();
       }
 
@@ -236,7 +236,7 @@ switch (sticViewType) {
       $('#new_conversation[type="checkbox"]').on('change', toggleConversationFieldsByType);
 
       // Conversations messages are always sent and cannot be edited
-      if(messageType === 'conversation'  && $('#EditView input[name="record"]').val()) {
+      if(messageType === 'private_area'  && $('#EditView input[name="record"]').val()) {
           var $newConversationCheckbox = $('#new_conversation[type="checkbox"]');
           var $conversationName = $('#stic_conversations_stic_messages_name');
 
@@ -272,7 +272,7 @@ switch (sticViewType) {
     var messageType = $("#type").val();
 
     // If message is not of type conversation, hide conversation field and new conversation checkbox
-    if (messageType !== 'conversation') {
+    if (messageType !== 'private_area') {
       $('div[data-field="new_conversation"]').hide();
       $('div[data-field="stic_conversations_stic_messages_name"]').hide();
     }
@@ -573,7 +573,7 @@ function clearConversationSubject() {
 // Function to toggle visibility and validation of conversation fields based on type and new conversation checkbox
 function toggleConversationFieldsByType() {
   var formName = getFormName();
-  var isConversationType = $('#type').val() === 'conversation';
+  var isConversationType = $('#type').val() === 'private_area';
   var $newConversationCheckbox = $('#new_conversation[type="checkbox"]');
   var isNewConversationChecked = $newConversationCheckbox.is(':checked');
   var conversationLabel = SUGAR.language.get(module, 'LBL_STIC_CONVERSATIONS_STIC_MESSAGES');
@@ -667,7 +667,7 @@ function toggleConversationFieldsByType() {
 }
 // Function to toggle parent type field based on conversation type and mass update
 function toggleParentTypeForConversation() {
-  var isConversationType = $('#type').val() === 'conversation';
+  var isConversationType = $('#type').val() === 'private_area';
   var $parentType = $('#parent_type');
 
   if (!$parentType.length) {
@@ -709,7 +709,7 @@ function initSubpanelConversationLogic($form) {
       }
     }
 
-    $form.find('#type').val('conversation').prop('disabled', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
+    $form.find('#type').val('private_area').prop('disabled', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
     $form.find('#status').val('sent').prop('disabled', true).attr('readonly', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
     var assignedUserName = $form.find('#assigned_user_name').val();
     if (assignedUserName) {

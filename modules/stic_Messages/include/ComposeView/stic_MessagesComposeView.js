@@ -165,7 +165,7 @@ YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
 // Function to check if an existing conversation is selected
 function isExistingConversationSelected() {
   return (
-    $('#type').val() === 'conversation'
+    $('#type').val() === 'private_area'
     && !$('#new_conversation').is(':checked')
     && $('#stic_conversations_ida').val() !== ''
   );
@@ -274,7 +274,7 @@ if (typeof window.set_return === 'function') {
     if (isConversationPopupSelection(popupReplyData)) {
       loadSelectedConversationData();
     } else if (isParentPopupSelection(popupReplyData)) {
-      var isConversationType = $('#type').val() === 'conversation';
+      var isConversationType = $('#type').val() === 'private_area';
       var isNewConversation = $('#new_conversation').is(':checked');
       var conversationId = $('#stic_conversations_ida').val() || '';
       var conversationParentId = $('#stic_conversations_ida').data('parent-id') || '';
@@ -348,7 +348,7 @@ $(function () {
 
     var parentId = $('#parent_id').val() || '';
     var parentType = $('#parent_type').val() || '';
-    var isConversationType = $('#type').val() === 'conversation';
+    var isConversationType = $('#type').val() === 'private_area';
     var mustFilterByContact = isConversationType && parentType === 'Contacts' && parentId !== '';
 
     for (var key in sqs_objects) {
@@ -387,7 +387,7 @@ $(function () {
     updateConversationQuickSearchFilter();
 
     $('#parent_id').on('change', function () {
-      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+      if ($('#type').val() !== 'private_area' || $('#new_conversation').is(':checked')) {
         return;
       }
 
@@ -408,7 +408,7 @@ $(function () {
     });
 
     $('#stic_conversations_ida').on('change', function () {
-      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+      if ($('#type').val() !== 'private_area' || $('#new_conversation').is(':checked')) {
         return;
       }
 
@@ -419,7 +419,7 @@ $(function () {
     });
 
     $('#btn_clr_parent_name').on('click', function () {
-      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+      if ($('#type').val() !== 'private_area' || $('#new_conversation').is(':checked')) {
         return;
       }
 
@@ -428,7 +428,7 @@ $(function () {
     });
 
     $('#btn_clr_stic_conversations_stic_messages_name').on('click', function () {
-      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+      if ($('#type').val() !== 'private_area' || $('#new_conversation').is(':checked')) {
         return;
       }
 
@@ -436,7 +436,7 @@ $(function () {
     });
 
     $('#btn_clr_parent_name').on('click', function() {
-      if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+      if ($('#type').val() !== 'private_area' || $('#new_conversation').is(':checked')) {
         return;
       }
       setTimeout(function() {
@@ -461,7 +461,7 @@ $(function () {
 
   // Function to open the conversation selection popup with the appropriate filter
   function openConversationPopupWithFilter(event) {
-    if ($('#type').val() !== 'conversation' || $('#new_conversation').is(':checked')) {
+    if ($('#type').val() !== 'private_area' || $('#new_conversation').is(':checked')) {
       return true;
     }
 
@@ -565,7 +565,7 @@ $(function () {
       }
       var formData = getFormDataAsObject($("#EditView"));
 
-      if ($('#type').val() === 'conversation') {
+      if ($('#type').val() === 'private_area') {
         formData.parent_type = 'Contacts';
         formData.parent_id = $('#parent_id').val() || '';
         formData.parent_name = $('#parent_name').val() || '';

@@ -150,11 +150,11 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             return;
           }
 
-          if ($typeSelect.val() === 'conversation') {
+          if ($typeSelect.val() === 'private_area') {
             var fallbackValue = '';
             $typeSelect.find('option').each(function () {
               var value = $(this).val();
-              if (value !== 'conversation') {
+              if (value !== 'private_area') {
                 fallbackValue = value;
                 return false;
               }
