@@ -210,9 +210,9 @@ array(
             'LBL_PANEL_NOTIFICATION_TEMPLATES' => array(
                 0 => array(
                     0 => array(
-                        'name' => 'status_notifications_enabled',
+                        'name' => 'notification_status',
                         'studio' => 'visible',
-                        'label' => 'LBL_STATUS_NOTIFICATIONS_ENABLED',
+                        'label' => 'LBL_NOTIFICATIONS_STATUS',
                     ),
                     1 => '',
                 ),

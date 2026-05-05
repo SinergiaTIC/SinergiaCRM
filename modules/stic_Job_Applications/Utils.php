@@ -199,7 +199,7 @@ class stic_Job_ApplicationsUtils
             return;
         }
 
-        if (empty($offerBean->status_notifications_enabled)) {
+        if (empty($offerBean->notification_status)) {
             return;
         }
 
@@ -271,7 +271,7 @@ class stic_Job_ApplicationsUtils
             return;
         }
 
-        if (empty($offerBean->status_notifications_enabled)) {
+        if (empty($offerBean->notification_status)) {
             return;
         }
 

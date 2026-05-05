@@ -1985,9 +1985,9 @@ $dictionary['stic_Job_Offers'] = array(
             'vname' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE',
         ),
         // Calculated Fields for Job Applications
-        'stic_job_applications_count_total' => array(
-            'name' => 'stic_job_applications_count_total',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_TOTAL',
+        'job_applications_total' => array(
+            'name' => 'job_applications_total',
+            'vname' => 'LBL_JOB_APPLICATIONS_TOTAL',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2005,9 +2005,9 @@ $dictionary['stic_Job_Offers'] = array(
             'audited' => false,
             'inline_edit' => false,
         ),
-        'stic_job_applications_count_expected_presentation' => array(
-            'name' => 'stic_job_applications_count_expected_presentation',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_EXPECTED_PRESENTATION',
+        'job_applications_expected_presentation' => array(
+            'name' => 'job_applications_expected_presentation',
+            'vname' => 'LBL_JOB_APPLICATIONS_EXPECTED_PRESENTATION',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2025,9 +2025,9 @@ $dictionary['stic_Job_Offers'] = array(
             'audited' => false,
             'inline_edit' => false,
         ),
-        'stic_job_applications_count_presented' => array(
-            'name' => 'stic_job_applications_count_presented',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_PRESENTED',
+        'job_applications_presented' => array(
+            'name' => 'job_applications_presented',
+            'vname' => 'LBL_JOB_APPLICATIONS_PRESENTED',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2045,9 +2045,9 @@ $dictionary['stic_Job_Offers'] = array(
             'audited' => false,
             'inline_edit' => false,
         ),
-        'stic_job_applications_count_pending_interview' => array(
-            'name' => 'stic_job_applications_count_pending_interview',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_PENDING_INTERVIEW',
+        'job_applications_pending_interview' => array(
+            'name' => 'job_applications_pending_interview',
+            'vname' => 'LBL_JOB_APPLICATIONS_PENDING_INTERVIEW',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2065,9 +2065,9 @@ $dictionary['stic_Job_Offers'] = array(
             'audited' => false,
             'inline_edit' => false,
         ),
-        'stic_job_applications_count_interviewed' => array(
-            'name' => 'stic_job_applications_count_interviewed',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_INTERVIEWED',
+        'job_applications_interviewed' => array(
+            'name' => 'job_applications_interviewed',
+            'vname' => 'LBL_JOB_APPLICATIONS_INTERVIEWED',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2085,9 +2085,9 @@ $dictionary['stic_Job_Offers'] = array(
             'audited' => false,
             'inline_edit' => false,
         ),
-        'stic_job_applications_count_accepted' => array(
-            'name' => 'stic_job_applications_count_accepted',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_ACCEPTED',
+        'job_applications_accepted' => array(
+            'name' => 'job_applications_accepted',
+            'vname' => 'LBL_JOB_APPLICATIONS_ACCEPTED',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2105,9 +2105,9 @@ $dictionary['stic_Job_Offers'] = array(
             'audited' => false,
             'inline_edit' => false,
         ),
-        'stic_job_applications_count_rejected_closed' => array(
-            'name' => 'stic_job_applications_count_rejected_closed',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_REJECTED_CLOSED',
+        'job_applications_rejected_closed' => array(
+            'name' => 'job_applications_rejected_closed',
+            'vname' => 'LBL_JOB_APPLICATIONS_REJECTED_CLOSED',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2125,9 +2125,9 @@ $dictionary['stic_Job_Offers'] = array(
             'audited' => false,
             'inline_edit' => false,
         ),
-        'stic_job_applications_count_review' => array(
-            'name' => 'stic_job_applications_count_review',
-            'vname' => 'LBL_STIC_JOB_APPLICATIONS_COUNT_REVIEW',
+        'job_applications_review' => array(
+            'name' => 'job_applications_review',
+            'vname' => 'LBL_JOB_APPLICATIONS_REVIEW',
             'type' => 'int',
             'len' => '11',
             'readonly' => true,
@@ -2146,15 +2146,15 @@ $dictionary['stic_Job_Offers'] = array(
             'inline_edit' => false,
         ),
         // Notification fields for status changes
-        'status_notifications_enabled' =>
+        'notification_status' =>
         array(
-            'name' => 'status_notifications_enabled',
-            'vname' => 'LBL_STATUS_NOTIFICATIONS_ENABLED',
+            'name' => 'notification_status',
+            'vname' => 'LBL_NOTIFICATIONS_STATUS',
             'type' => 'bool',
             'default' => '0',
             'required' => false,
             'massupdate' => 1,
-            'popupHelp' => 'LBL_STATUS_NOTIFICATIONS_ENABLED_INFO',
+            'popupHelp' => 'LBL_NOTIFICATIONS_STATUS_INFO',
             'audited' => false,
             'reportable' => true,
             'importable' => 'true',

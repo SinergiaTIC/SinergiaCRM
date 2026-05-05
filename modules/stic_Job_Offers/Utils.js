@@ -129,7 +129,7 @@ switch (viewType()) {
       window.sticJobOffersInlineSavePatched = true;
       var originalHandleSave = window.handleSave;
       window.handleSave = function(field, id, moduleName, type) {
-        if (moduleName === "stic_Job_Offers" && field === "status_notifications_enabled" && type === "bool") {
+        if (moduleName === "stic_Job_Offers" && field === "notification_status" && type === "bool") {
           var value = getInputValue(field, type);
           if (typeof value === "undefined") {
             value = "";

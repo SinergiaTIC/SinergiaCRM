@@ -38,7 +38,7 @@ class stic_Job_OffersUtils
         $db = DBManagerFactory::getInstance();
         $offerId = $db->quote($offerId);
 
-        $statusPrefix = 'stic_job_applications_count_';
+        $statusPrefix = 'job_applications_';
         $statuses = array();
         $offerBean = BeanFactory::newBean('stic_Job_Offers');
         $fieldDefs = $offerBean->field_defs ?? array();
@@ -83,10 +83,10 @@ class stic_Job_OffersUtils
         }
 
         $fields = array(
-            'stic_job_applications_count_total' => $totalCount,
+            'job_applications_total' => $totalCount,
         );
         foreach ($counts as $status => $count) {
-            $fields['stic_job_applications_count_' . $status] = $count;
+            $fields['job_applications_' . $status] = $count;
         }
 
         $setParts = array();
@@ -153,7 +153,7 @@ class stic_Job_OffersUtils
             return false;
         }
 
-        return !empty($bean->status_notifications_enabled);
+        return !empty($bean->notification_status);
     }
 
     /**

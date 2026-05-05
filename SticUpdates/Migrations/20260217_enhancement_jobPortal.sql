@@ -9,14 +9,14 @@ INSERT IGNORE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 
 -- Job Offers application counters new fields
 ALTER TABLE `stic_job_offers`
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_total` INT(11) DEFAULT 0 NULL,
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_expected_presentation` INT(11) DEFAULT 0 NULL,
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_presented` INT(11) DEFAULT 0 NULL,
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_pending_interview` INT(11) DEFAULT 0 NULL,
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_interviewed` INT(11) DEFAULT 0 NULL,
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_accepted` INT(11) DEFAULT 0 NULL,
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_rejected_closed` INT(11) DEFAULT 0 NULL,
-	ADD COLUMN IF NOT EXISTS `stic_job_applications_count_review` INT(11) DEFAULT 0 NULL;
+	ADD COLUMN IF NOT EXISTS `job_applications_total` INT(11) DEFAULT 0 NULL,
+	ADD COLUMN IF NOT EXISTS `job_applications_expected_presentation` INT(11) DEFAULT 0 NULL,
+	ADD COLUMN IF NOT EXISTS `job_applications_presented` INT(11) DEFAULT 0 NULL,
+	ADD COLUMN IF NOT EXISTS `job_applications_pending_interview` INT(11) DEFAULT 0 NULL,
+	ADD COLUMN IF NOT EXISTS `job_applications_interviewed` INT(11) DEFAULT 0 NULL,
+	ADD COLUMN IF NOT EXISTS `job_applications_accepted` INT(11) DEFAULT 0 NULL,
+	ADD COLUMN IF NOT EXISTS `job_applications_rejected_closed` INT(11) DEFAULT 0 NULL,
+	ADD COLUMN IF NOT EXISTS `job_applications_review` INT(11) DEFAULT 0 NULL;
 
 -- Recalculate Job application counts for existing offers
 UPDATE `stic_job_offers` o
@@ -39,14 +39,14 @@ LEFT JOIN (
 	GROUP BY rel.stic_job_applications_stic_job_offersstic_job_offers_ida
 ) c ON c.offer_id = o.id
 SET
-	o.stic_job_applications_count_total = COALESCE(c.total, 0),
-	o.stic_job_applications_count_expected_presentation = COALESCE(c.expected_presentation, 0),
-	o.stic_job_applications_count_presented = COALESCE(c.presented, 0),
-	o.stic_job_applications_count_pending_interview = COALESCE(c.pending_interview, 0),
-	o.stic_job_applications_count_interviewed = COALESCE(c.interviewed, 0),
-	o.stic_job_applications_count_accepted = COALESCE(c.accepted, 0),
-	o.stic_job_applications_count_rejected_closed = COALESCE(c.rejected_closed, 0),
-	o.stic_job_applications_count_review = COALESCE(c.review, 0)
+	o.job_applications_total = COALESCE(c.total, 0),
+	o.job_applications_expected_presentation = COALESCE(c.expected_presentation, 0),
+	o.job_applications_presented = COALESCE(c.presented, 0),
+	o.job_applications_pending_interview = COALESCE(c.pending_interview, 0),
+	o.job_applications_interviewed = COALESCE(c.interviewed, 0),
+	o.job_applications_accepted = COALESCE(c.accepted, 0),
+	o.job_applications_rejected_closed = COALESCE(c.rejected_closed, 0),
+	o.job_applications_review = COALESCE(c.review, 0)
 WHERE o.deleted = 0;
 
 -- Create relationship table for Conversations-Messages
