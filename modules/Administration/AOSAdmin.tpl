@@ -64,6 +64,26 @@
     var invoiceSeriesLineNumber = 0;
     var existingSeries = [];
     
+    // Series with accepted invoices (populated from PHP to block removal)
+    var seriesWithInvoices = {if isset($series_with_invoices)}{$series_with_invoices|json_encode}{else}[]{/if};
+    
+    // Check for success message from save - passed as PHP variable
+    var saveSuccess = {if isset($smarty.get.saved) && $smarty.get.saved == 1}true{else}false{/if};
+    {literal}
+    if (saveSuccess) {
+        // Remove query param to avoid showing on refresh
+        var url = window.location.href.replace(/[?&]saved=1/, '');
+        window.history.replaceState({}, '', url);
+        
+        // Create auto-dismiss success message
+        var msg = document.createElement('div');
+        msg.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:#fff;padding:15px 25px;border-radius:4px;z-index:9999;font-weight:bold;box-shadow:0 2px 10px rgba(0,0,0,0.2);';
+        msg.innerHTML = MOD_LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS;
+        document.body.appendChild(msg);
+        setTimeout(function() { msg.style.opacity = '0'; setTimeout(function() { msg.remove(); }, 500); }, 3000);
+    }
+    {/literal}
+    
     {if isset($config.aos.invoices.series) && is_array($config.aos.invoices.series)}
         {foreach from=$config.aos.invoices.series key=name item=seriesData}
     existingSeries.push({ldelim} format: "{$seriesData.format}", initialNumber: "{$seriesData.initialNumber}", name: "{$name|escape:'javascript'}", isRectified: {if isset($seriesData.isRectified) && $seriesData.isRectified}true{else}false{/if} {rdelim});
@@ -77,6 +97,10 @@
     var MOD_LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION = "{$MOD.LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION}";
     var MOD_LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION = "{$MOD.LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION}";
     var MOD_LBL_AOS_INVOICE_SERIES_REMOVE = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE}";
+    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE_CONFIRM = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE_CONFIRM}";
+    var MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP = "{$MOD.LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP}";
+    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED}";
+    var MOD_LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS = "{$MOD.LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS}";
     
     {literal}
     function addInvoiceSeriesLine(format, initialNumber, name, isRectified) {
@@ -90,30 +114,44 @@
         var row = tbody.insertRow(-1);
         row.id = 'invoice_series_line_' + lineNum;
         
+        // Check if this series has invoices in current year - if so, disable it
+        var hasInvoices = name && seriesWithInvoices.indexOf(name) !== -1;
+        // Attenuated styles for blocked series (0.6 opacity, not-allowed cursor)
+        var blockedStyle = hasInvoices ? 'background:#f5f5f5;color:#666;opacity:0.6;cursor:not-allowed;' : '';
+        var disabledAttr = hasInvoices ? 'readonly="readonly"' : '';
+        
+        // Add tooltip to row if blocked
+        if (hasInvoices) { row.title = MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP; }
+        
         // Name cell
         var cell1 = row.insertCell(0);
         cell1.style.padding = '2px';
         cell1.innerHTML = '<input type="text" name="invoice_series_name[' + lineNum + ']" ' +
                          'id="invoice_series_name_' + lineNum + '" ' +
                          'value="' + name + '" ' +
-                         'style="width: 95%;" ' +
+                         'style="width: 95%;' + blockedStyle + '" ' +
                          'maxlength="50" ' +
                          'required ' +
+                         disabledAttr + ' ' +
                          'placeholder="' + MOD_LBL_AOS_INVOICE_SERIES_NAME_PLACEHOLDER + '" ' +
                          'title="' + MOD_LBL_AOS_INVOICE_SERIES_NAME_REQUIRED + '">' +
                          '<input type="hidden" name="invoice_series_original_name[' + lineNum + ']" ' +
                          'value="' + name + '">';
         
-        // Rectified series radio button cell
+        // Rectified series radio button cell - hide if series is blocked
         var cell2 = row.insertCell(1);
         cell2.style.textAlign = 'center';
         cell2.style.padding = '2px';
-        var checkedAttr = isRectified ? 'checked' : '';
-        cell2.innerHTML = '<input type="radio" name="invoice_series_rectified" ' +
-                         'id="invoice_series_rectified_' + lineNum + '" ' +
-                         'value="' + lineNum + '" ' +
-                         checkedAttr + ' ' +
-                         'title="{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_HELP}{literal}">';
+        if (hasInvoices) {
+            cell2.innerHTML = '<span style="color:#888;font-size:12px;">-</span>';
+        } else {
+            var checkedAttr = isRectified ? 'checked' : '';
+            cell2.innerHTML = '<input type="radio" name="invoice_series_rectified" ' +
+                             'id="invoice_series_rectified_' + lineNum + '" ' +
+                             'value="' + lineNum + '" ' +
+                             checkedAttr + ' ' +
+                             'title="{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_HELP}{literal}">';
+        }
         
         // Format cell
         var cell3 = row.insertCell(2);
@@ -121,10 +159,11 @@
         cell3.innerHTML = '<input type="text" name="invoice_series_format[' + lineNum + ']" ' +
                          'id="invoice_series_format_' + lineNum + '" ' +
                          'value="' + format + '" ' +
-                         'style="width: 95%;" ' +
+                         'style="width: 95%;' + blockedStyle + '" ' +
                          'placeholder="' + MOD_LBL_AOS_INVOICE_SERIES_FORMAT_PLACEHOLDER + '" ' +
                          'pattern="[A-Za-z0\\-/_ ]+" ' +
                          'title="' + MOD_LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION + '" ' +
+                         disabledAttr + ' ' +
                          'onkeyup="updateInvoiceSeriesExample(' + lineNum + ')" ' +
                          'oninput="validateSeriesFormat(this)">';
         
@@ -134,9 +173,10 @@
         cell4.innerHTML = '<input type="number" name="invoice_series_initial[' + lineNum + ']" ' +
                          'id="invoice_series_initial_' + lineNum + '" ' +
                          'value="' + initialNumber + '" ' +
-                         'style="width: 95%;" ' +
+                         'style="width: 95%;' + blockedStyle + '" ' +
                          'min="1" ' +
                          'required ' +
+                         disabledAttr + ' ' +
                          'title="' + MOD_LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION + '" ' +
                          'onchange="updateInvoiceSeriesExample(' + lineNum + ')">';
         
@@ -149,9 +189,11 @@
         var cell6 = row.insertCell(5);
         cell6.style.textAlign = 'center';
         cell6.style.padding = '2px';
-        cell6.innerHTML = '<button type="button" class="button suitepicon suitepicon-action-clear" onclick="removeInvoiceSeriesLine(' + lineNum + '); return false;" ' +
+        var blockedIcon = hasInvoices ? '<i class="inline-help glyphicon glyphicon-info-sign" style="color:#888;font-size:16px;cursor:help;"></i><span class="inline-help-content" style="display:none;">' + MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP + '</span>' : 
+                         '<button type="button" class="button suitepicon suitepicon-action-clear" onclick="removeInvoiceSeriesLine(' + lineNum + '); return false;" ' +
                          'title="' + MOD_LBL_AOS_INVOICE_SERIES_REMOVE + '">' +
                          '</button>';
+        cell6.innerHTML = blockedIcon;
         
         updateInvoiceSeriesExample(lineNum);
         updateInvoiceSeriesCount();
@@ -160,6 +202,21 @@
     function removeInvoiceSeriesLine(lineNum) {
         var row = document.getElementById('invoice_series_line_' + lineNum);
         if (row) {
+            // Get the series name from the input
+            var nameInput = row.querySelector('input[name^="invoice_series_name"]');
+            var seriesName = nameInput ? nameInput.value : '';
+            
+            // Check if this series has accepted invoices
+            if (seriesName && typeof seriesWithInvoices !== 'undefined' && seriesWithInvoices.indexOf(seriesName) !== -1) {
+                alert(MOD_LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED);
+                return false;
+            }
+            
+            // Confirm before removing
+            if (!confirm(MOD_LBL_AOS_INVOICE_SERIES_REMOVE_CONFIRM)) {
+                return false;
+            }
+            
             row.parentNode.removeChild(row);
             updateInvoiceSeriesCount();
         }
@@ -267,6 +324,11 @@
     } else {
         // Add one empty line by default
         addInvoiceSeriesLine();
+    }
+    
+    // Initialize qtip for inline-help elements after loading series
+    if (typeof setInlineHelpQtip === 'function') {
+        setInlineHelpQtip();
     }
     {/literal}
     </script>

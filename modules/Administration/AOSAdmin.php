@@ -140,6 +140,22 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             }
             // === End Step 2.6 ===
             
+            // === Step 2.7: Check if format can be modified (block if accepted invoices exist) ===
+            // Only validate if: name is not empty AND format changed AND series exists in config
+            if (!empty($name) && !empty(trim($format)) && isset($sugar_config['aos']['invoices']['series'][$name])) {
+                $currentFormat = trim($sugar_config['aos']['invoices']['series'][$name]['format'] ?? '');
+                $newFormat = trim($format);
+                // Only block if format actually changed
+                if ($currentFormat !== '' && $currentFormat !== $newFormat) {
+                    require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+                    if (!AOS_InvoicesUtils::canModifySeriesFormat($name)) {
+                        $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_LOCKED'];
+                        continue;
+                    }
+                }
+            }
+            // === End Step 2.7 ===
+            
             // Only save non-empty formats and names that passed validation
             if (!empty($format) && !empty($name)) {
                 $invoiceSeries[$name] = array(
@@ -148,15 +164,6 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                     'isRectified' => $isRectified
                 );
             }
-        }
-        
-        // If there are validation errors, show them and don't save
-        if (!empty($validationErrors)) {
-            foreach ($validationErrors as $error) {
-                SugarApplication::appendErrorMessage($error);
-            }
-            SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin');
-            exit();
         }
         
         // Read current config_override.php
@@ -169,6 +176,41 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             '',
             $configContent
         );
+        
+        // === Step 2.7: Block series removal if has accepted invoices ===
+        // Only check removal if there are series in the POST (user is actively saving changes)
+        // If $invoiceSeries is empty, skip this check (no changes to validate)
+        if (!empty($invoiceSeries)) {
+            $existingSeries = $sugar_config['aos']['invoices']['series'] ?? array();
+            $newSeriesNames = array_map('trim', array_keys($invoiceSeries));
+            
+            foreach ($existingSeries as $existingName => $existingData) {
+                $trimmedName = trim($existingName);
+                $isInNewList = in_array($trimmedName, $newSeriesNames);
+                
+                // Only block if series was explicitly removed from form (not present in POST at all)
+                if (!$isInNewList) {
+                    // Series is being removed - check if it has accepted invoices
+                    require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+                    if (!AOS_InvoicesUtils::canModifySeriesFormat($existingName)) {
+                        $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_LOCKED'];
+                        // Restore config content for display
+                        $configContent = file_get_contents($configFile);
+                        break;
+                    }
+                }
+            }
+        }
+        // === End Step 2.7 ===
+        
+        // If there are validation errors, show them and don't save
+        if (!empty($validationErrors)) {
+            foreach ($validationErrors as $error) {
+                SugarApplication::appendErrorMessage($error);
+            }
+            SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin');
+            exit();
+        }
         
         // Build new series configuration lines
         $newSeriesLines = '';
@@ -193,8 +235,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
     }
     // END STIC CUSTOM 
 
-
-    SugarApplication::redirect('index.php?module=Administration&action=index');
+    // Stay on AOSAdmin page after save
+    SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin&saved=1');
     exit();
 }
 
@@ -205,6 +247,26 @@ $sugar_smarty->assign('LANGUAGES', get_languages());
 $sugar_smarty->assign("JAVASCRIPT", get_set_focus_js());
 $sugar_smarty->assign('config', $sugar_config);
 $sugar_smarty->assign('error', $errors);
+
+// Get series that have accepted invoices in current year (to block edition/removal in UI)
+$db = DBManagerFactory::getInstance();
+$currentYear = date('Y');
+$seriesWithInvoicesQuery = "SELECT DISTINCT cstm.stic_invoice_type_c 
+                            FROM aos_invoices_cstm cstm
+                            INNER JOIN aos_invoices inv ON inv.id = cstm.id_c
+                            WHERE cstm.verifactu_aeat_status_c = 'accepted' 
+                            AND cstm.stic_invoice_type_c IS NOT NULL 
+                            AND cstm.stic_invoice_type_c != '' 
+                            AND inv.deleted = 0
+                            AND YEAR(inv.invoice_date) = " . (int)$currentYear;
+$seriesWithInvoicesResult = $db->query($seriesWithInvoicesQuery);
+$seriesWithInvoices = array();
+while ($row = $db->fetchByAssoc($seriesWithInvoicesResult)) {
+    if (!empty($row['stic_invoice_type_c'])) {
+        $seriesWithInvoices[] = $row['stic_invoice_type_c'];
+    }
+}
+$sugar_smarty->assign('series_with_invoices', $seriesWithInvoices);
 
 
 $buttons = <<<EOQ

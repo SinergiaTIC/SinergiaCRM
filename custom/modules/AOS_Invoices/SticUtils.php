@@ -1489,6 +1489,41 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Step 2.7: Check if series format can be modified
+     *
+     * Block format modification if there are already issued invoices (accepted by AEAT)
+     * for this series. According to Verifactu regulations, format should remain consistent.
+     *
+     * @param string $seriesName The series name to check
+     * @return bool True if format can be modified, false if blocked
+     */
+    public static function canModifySeriesFormat($seriesName)
+    {
+        global $db;
+        
+        if (empty($seriesName)) {
+            return true;
+        }
+        
+        $query = "SELECT COUNT(*) as cnt
+                  FROM aos_invoices
+                  INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
+                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
+                  AND aos_invoices.deleted = 0
+                  AND aos_invoices_cstm.verifactu_aeat_status_c = 'accepted'";
+        
+        $count = $db->getOne($query);
+        
+        if (!empty($count)) {
+            $GLOBALS['log']->error("canModifySeriesFormat - Cannot modify series '$seriesName': $count invoices already accepted by AEAT");
+            return false;
+        }
+        
+        $GLOBALS['log']->debug("canModifySeriesFormat - Series '$seriesName' can be modified: no accepted invoices");
+        return true;
+    }
+
+    /**
      * Extract the numeric part from an invoice number based on the format
      *
      * @param string $invoiceNumber The invoice number (e.g., '2024-0015')

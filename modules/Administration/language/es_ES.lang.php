@@ -889,6 +889,7 @@ $mod_strings = array(
     'LBL_AOS_SERIES_FORMAT_LOWERCASE' => 'El formato de serie no puede contener letras minúsculas.',
     'LBL_AOS_SERIES_FORMAT_SPACE_START' => 'El formato de serie no puede empezar con un espacio.',
     'LBL_AOS_SERIES_DUPLICATE_NAME' => 'El nombre de serie ya existe. Los nombres deben ser únicos.',
+    'LBL_AOS_SERIES_FORMAT_LOCKED' => 'No se puede modificar el formato de la serie porque ya existen facturas aceptadas por la AEAT.',
     'LBL_CHANGE_SETTINGS' => 'Cambiar ajustes de Advanced OpenSales',
     'LBL_CHANGE_SETTINGS_AOD' => 'Cambiar ajustes para DescubrimientoAbierto Avanzado',
     'LBL_CHANGE_SETTINGS_AOP' => 'Cambiar ajustes de PortalAbierto Avanzado',
