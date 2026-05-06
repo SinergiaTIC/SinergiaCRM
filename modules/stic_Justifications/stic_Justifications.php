@@ -45,6 +45,8 @@ class stic_Justifications extends Basic
 
     public function save($check_notify = false)
     {
+        require_once 'SticInclude/Utils.php';
+        require_once 'modules/stic_Justifications/Utils.php';
         global $current_language;
         $justificationsModStrings = return_module_language($current_language, 'stic_Justifications'); // can not be $mod_strings because of different contexts (specially inline edition)     
 
