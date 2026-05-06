@@ -273,6 +273,18 @@ $dictionary['stic_AWF_Deferred_Tickets'] = array(
 ),
     'relationships' => array (
 ),
+    'indices' => array (
+        array (
+            'name' => 'idx_token_hash',
+            'type' => 'index',
+            'fields' => array ('token_hash'),
+        ),
+        array (
+            'name' => 'idx_status',
+            'type' => 'index',
+            'fields' => array ('status'),
+        ),
+    ),
     'optimistic_locking' => true,
     'unified_search' => true,
 );

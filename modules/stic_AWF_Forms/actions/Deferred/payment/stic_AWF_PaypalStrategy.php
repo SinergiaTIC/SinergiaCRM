@@ -68,11 +68,14 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
 
         $isRecurring = !empty($actionConfig->data['recurring']) && $actionConfig->data['recurring'] != 'punctual';
         $cmd = $isRecurring ? '_xclick-subscriptions' : '_xclick';
-        
+
+        require_once 'modules/Currencies/Currency.php';
+        $cleanAmount = unformat_number($beanPayment->amount);
+
         $templateVars = [
             'PAYPAL_URL' => $paypalUrl,
             'PAYPAL_ID' => $paypalId,
-            'AMOUNT' => number_format($beanPayment->amount, 2, '.', ''),
+            'AMOUNT' => number_format($cleanAmount, 2, '.', ''),
             'CURRENCY' => 'EUR',
             'CMD' => $cmd,
             'BUSINESS' => $paypalId,
@@ -88,7 +91,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
 
         if ($isRecurring) {
             $templateVars['CMD'] = '_xclick-subscriptions';
-            $templateVars['A3'] = number_format($beanPayment->amount, 2, '.', '');
+            $templateVars['A3'] = number_format($cleanAmount, 2, '.', '');
 
             $PCBean = self::getPaymentCommitment($beanPayment);
             $monthsCount = 1;

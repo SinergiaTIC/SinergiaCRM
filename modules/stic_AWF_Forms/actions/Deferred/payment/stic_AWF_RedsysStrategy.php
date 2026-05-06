@@ -68,7 +68,9 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
         $isCardPayment = ($paymentMethod == 'card' || substr($paymentMethod, 0, 5) == 'card_');
         $isRecurring = !empty($actionConfig->data['recurring']) && $actionConfig->data['recurring'] != 'punctual';
 
-        $amount = number_format($beanPayment->amount * 100, 0, '', '');
+        require_once 'modules/Currencies/Currency.php';
+        $cleanAmount = unformat_number($beanPayment->amount);
+        $amount = number_format($cleanAmount * 100, 0, '', '');
 
         $isCardRecurring = $isCardPayment && $PCBean && $PCBean->periodicity != 'punctual';
         if ($isCardRecurring) {
@@ -107,9 +109,7 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
             $redsys->setParameter('DS_MERCHANT_IDENTIFIER', 'REQUIRED');
             $redsys->setParameter("DS_MERCHANT_COF_INI", "S");
             $redsys->setParameter("DS_MERCHANT_COF_TYPE", "R");
-        }
-
-        if ($isRecurring) {
+        } elseif ($isRecurring) {
             $redsys->setParameter("DS_MERCHANT_COFRANQUICIA", 'CRC');
             $redsys->setParameter("DS_MERCHANT_DCOFRANQUICIA", '3');
         }
