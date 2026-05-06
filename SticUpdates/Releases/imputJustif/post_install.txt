@@ -1,5 +1,0 @@
-SticUpdates/Languages/ca/20251218_feature_LedgerGroupsData.sql
-SticUpdates/Languages/en/20251218_feature_LedgerGroupsData.sql
-SticUpdates/Languages/es/20251218_feature_LedgerGroupsData.sql
-SticUpdates/Languages/gl/20251218_feature_LedgerGroupsData.sql
-SticUpdates/Languages/eu/20251218_feature_LedgerGroupsData.sql
