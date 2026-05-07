@@ -53,6 +53,10 @@ $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/s
 $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
 $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
 
+// These entry points are used by the Stic Messages module
+$entry_point_registry['sticMessagesTwilioResponse'] = array('file' => 'modules/stic_Messages/WhatsAppWebhookEntryPoint.php', 'auth' => false);
+$entry_point_registry['sticWhatsappMedia'] = array('file' => 'modules/stic_Messages/WhatsAppMediaEntryPoint.php', 'auth' => false);
+
 // Entry points used by Stic Advanced Web Forms
 $entry_point_registry['stic_AWF_checkStatus'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckStatus.php', 'auth' => false);
 $entry_point_registry['stic_AWF_renderForm'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/RenderForm.php', 'auth' => false);
@@ -62,8 +66,3 @@ $entry_point_registry['stic_AWF_webhookHanlder'] = array('file' => 'modules/stic
 
 // Entry point for async ListView count
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
-
-
-// These entry points are used by the Stic Messages module
-$entry_point_registry['sticMessagesTwilioResponse'] = array('file' => 'modules/stic_Messages/WhatsAppWebhookEntryPoint.php', 'auth' => false);
-$entry_point_registry['sticWhatsappMedia'] = array('file' => 'modules/stic_Messages/WhatsAppMediaEntryPoint.php', 'auth' => false);
