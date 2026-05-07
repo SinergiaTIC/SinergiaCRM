@@ -449,7 +449,7 @@ class stic_AWF_FormsUtils {
             $enabled[$key] = ["name" => $key, "text" => $text, "textSingular" => $textSingular, "inStudio" => false, "icon" => ""];
         }
 
-        // Fill inStudio information (only for admin/developer users)
+        // Complete information from Studio
         require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
         $sb = new StudioBrowser();
         $nodes = $sb->getNodes();
