@@ -75,6 +75,10 @@ class stic_MessagesViewEdit extends ViewEdit
     {
         global $mod_strings;
         $this->bean->info = "<p class='msg-warning'><span style='font-style: italic;'>⚠️{$mod_strings['LBL_INFO_TXT']}.</span></p>";
+
+        // Inject attachment widget HTML into the attachment_widget field placeholder
+        $this->bean->attachment_widget = $this->_buildAttachmentWidget($mod_strings);
+
         parent::display();
 
         SticViews::display($this);
@@ -82,7 +86,27 @@ class stic_MessagesViewEdit extends ViewEdit
         echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
         echo getVersionedScript("modules/stic_Messages/Utils.js");
 
-        // Write here you custom code
+        // Attachment widget JS
+        echo $this->_buildAttachmentScript($mod_strings);
+    }
 
+    /**
+     * Builds the HTML for the attachment widget.
+     * Now uses external HTML file.
+     */
+    private function _buildAttachmentWidget(array $mod_strings): string
+    {
+        ob_start();
+        include 'modules/stic_Messages/include/Attachment/stic_MessagesAttachment.tpl';
+        return ob_get_clean();
+    }
+
+    /**
+     * Builds the inline JS for the attachment widget.
+     * Now loads external CSS and JS files instead of inline code.
+     */
+    private function _buildAttachmentScript(array $mod_strings): string
+    {
+        return getVersionedScript('modules/stic_Messages/include/Attachment/stic_MessagesAttachment.js');
     }
 }

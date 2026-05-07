@@ -74,6 +74,9 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsinc_state_c', 'Accounts', 'inc_state_c'),
 ('Accountsinc_municipality_c', 'Accounts', 'inc_municipality_c'),
 ('Accountsinc_town_c', 'Accounts', 'inc_town_c'),
+('Accountsstic_pa_password_c', 'Accounts', 'stic_pa_password_c'),
+('Accountsstic_pa_username_c', 'Accounts', 'stic_pa_username_c'),
+('Accountsstic_pa_enable_c', 'Accounts', 'stic_pa_enable_c'),
 -- Emails Marketing
 ('EmailMarketingstic_display_html_c', 'EmailMarketing', 'stic_display_html_c'),
 -- Campaigns
@@ -173,6 +176,9 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsstic_conduct_code_c', 'Contacts', 'stic_conduct_code_c'),
 ('Contactsstic_occupational_safety_c', 'Contacts', 'stic_occupational_safety_c'),
 ('Contactsstic_time_availability_c', 'Contacts', 'stic_time_availability_c'),
+('Contactsstic_pa_password_c', 'Contacts', 'stic_pa_password_c'),
+('Contactsstic_pa_username_c', 'Contacts', 'stic_pa_username_c'),
+('Contactsstic_pa_enable_c', 'Contacts', 'stic_pa_enable_c'),
 -- Leads
 ('Leadsstic_acquisition_channel_c','Leads','stic_acquisition_channel_c'),
 ('Leadsstic_alt_address_county_c','Leads','stic_alt_address_county_c'),
@@ -205,6 +211,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Opportunitiesstic_type_c', 'Opportunities', 'stic_type_c'),
 ('Opportunitiesstic_opportunity_url_c', 'Opportunities', 'stic_opportunity_url_c'),
 ('Opportunitiesstic_additional_information_c', 'Opportunities', 'stic_additional_information_c'),
+('Opportunitiesstic_confidentiality_agreement_c', 'Opportunities', 'stic_end_date_c'),
+('Opportunitiesstic_conduct_code_c', 'Opportunities', 'stic_start_date_c'),
+('Opportunitiesstic_occupational_safety_c', 'Opportunities', 'stic_justified_percentage_c'),
+('Opportunitiesstic_time_availability_c', 'Opportunities', 'stic_justified_amount_c'),
 -- FP_Event_Locations
 ('FP_Event_Locationsstic_address_county_c','FP_Event_Locations','stic_address_county_c'),
 ('FP_Event_Locationsstic_address_region_c','FP_Event_Locations','stic_address_region_c'),

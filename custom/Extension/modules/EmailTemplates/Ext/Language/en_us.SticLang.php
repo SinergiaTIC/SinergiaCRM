@@ -25,3 +25,7 @@ $mod_strings['ERROR_USER_INTERFACE'] = 'An error has occurred and the content ca
 $mod_strings['LNK_NEW_RECORD'] = 'Create a Template Section';
 $mod_strings['LNK_LIST'] = 'View Template Sections';
 $mod_strings['LNK_CAMPAIGN_LIST'] = 'Campaigns';
+
+$mod_strings['LBL_STIC_WHATSAPP_STATUS'] = 'WhatsApp Approval Status';
+$mod_strings['LBL_STIC_WHATSAPP_CATEGORY'] = 'WhatsApp Category';
+$mod_strings['LBL_STIC_WHATSAPP_TWILIO_ID'] = 'Twilio ID';

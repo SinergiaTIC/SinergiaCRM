@@ -67,3 +67,22 @@ $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Grants';
 // Strings for Group Opportunities
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Granted accounts';
 $mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Load participants';
+
+// Strings for Justification Conditions relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATION_CONDITIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE'] = 'Justification Conditions';
+
+// Strings for Justifications relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATIONS_TITLE'] = 'Justifications';
+
+// Strings for Allocation Proposals relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Allocation Proposals';
+
+// Strings for Allocations relationship
+$mod_strings['LBL_OPPORTUNITIES_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Allocations';
+    
+// Justification tab labels
+$mod_strings['LBL_JUSTIFICATION'] = 'Justification';
+$mod_strings['LBL_JUSTIFIED_AMOUNT'] = 'Justified Amount';
+$mod_strings['LBL_JUSTIFIED_PERCENTAGE'] = 'Justified Percentage';
+$mod_strings['LBL_START_DATE'] = 'Start Date';
+$mod_strings['LBL_END_DATE'] = 'End Date';
