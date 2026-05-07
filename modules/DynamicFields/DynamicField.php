@@ -443,22 +443,10 @@ class DynamicField
         if ($this->bean->hasCustomFields() && isset($this->bean->id)) {
             $query = '';
 
-            // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Check if record exists BEFORE building queries
-            // to prevent duplicate key errors and ensure UPDATE path is used when record already exists. 
-            // PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
-            if (!$isUpdate) {
-                $checkExists = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
-                if ($this->bean->db && $this->bean->db->getOne($checkExists)) {
-                    $isUpdate = true;
-                }
-            }
-            // END STIC-CUSTOM
-
-            if ($isUpdate) {
-                $query = 'UPDATE ' . $this->bean->table_name . '_cstm SET ';
-            }
             $queryInsert = 'INSERT INTO ' . $this->bean->table_name . '_cstm (id_c';
             $values = "('" . $this->bean->id . "'";
+            $onDuplicate = '';
+            $firstDup = true;
             $first = true;
             foreach ($this->bean->field_defs as $name => $field) {
                 if (empty($field['source']) || $field['source'] != 'custom_fields') {
@@ -509,6 +497,12 @@ class DynamicField
                     $first = false;
                     $queryInsert .= " ,$name";
                     $values .= " ,$quote" . $this->db->quote($val) . $quote;
+                    if ($firstDup) {
+                        $onDuplicate .= "$name=VALUES($name)";
+                    } else {
+                        $onDuplicate .= ",$name=VALUES($name)";
+                    }
+                    $firstDup = false;
                 }
             }
             if ($isUpdate) {
@@ -518,11 +512,12 @@ class DynamicField
             $queryInsert .= " ) VALUES $values )";
 
             if (!$first) {
-                // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Decision already made at top of save()
+                // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Use INSERT ... ON DUPLICATE KEY UPDATE
+                // to avoid duplicate key errors when record already exists in _cstm without extra SELECT query
                 if ($isUpdate) {
                     $this->db->query($query);
                 } else {
-                    $this->db->query($queryInsert);
+                    $this->db->query($queryInsert . " ON DUPLICATE KEY UPDATE $onDuplicate");
                 }
                 // END STIC-CUSTOM
             }
