@@ -506,8 +506,16 @@ class DynamicField
             $queryInsert .= " ) VALUES $values )";
 
             if (!$first) {
+                // STIC-Custom 20250707 JBL - Fix for Issue #1106: Always check if record exists in _cstm before INSERT
+                // Even when $isUpdate is false, verify the record doesn't exist to prevent duplicate key error
                 if (!$isUpdate) {
-                    $this->db->query($queryInsert);
+                    $checkQueryExists = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
+                    if ($this->bean->db && $this->bean->db->getOne($checkQueryExists)) {
+                        // Record exists in _cstm but $isUpdate was false - do UPDATE instead
+                        $this->bean->db->query($query);
+                    } else {
+                        $this->bean->db->query($queryInsert);
+                    }
                 } else {
                     $checkQuery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
                     if ($this->db->getOne($checkQuery)) {
@@ -516,6 +524,7 @@ class DynamicField
                         $this->db->query($queryInsert);
                     }
                 }
+                // END STIC Custom
             }
         }
     }

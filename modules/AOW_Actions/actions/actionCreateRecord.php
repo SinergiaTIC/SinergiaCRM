@@ -475,7 +475,19 @@ class actionCreateRecord extends actionBase
         // STIC#960
         $record->not_use_rel_in_req = true;
         // END STIC-Custom
+
+        // STIC-Custom 20250707 JBL - Fix for Issue #1106: Preserve date_entered after save
+        // When saving existing records, date_entered gets unset in SugarBean::save()
+        // We need to preserve it to avoid losing the audit timestamp
+        $oldDateEntered = $record->date_entered;
+        // END STIC Custom
         $record->save($check_notify);
+
+        // STIC-Custom 20250707 JBL - Restore date_entered after save if it was cleared
+        if ($record->id && empty($record->date_entered) && !empty($oldDateEntered)) {
+            $record->date_entered = $oldDateEntered;
+        }
+        // END STIC Custom
 
         if ($was_deleted) {
             $record->mark_deleted($record->id);
