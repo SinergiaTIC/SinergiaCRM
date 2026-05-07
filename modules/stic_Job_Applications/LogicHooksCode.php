@@ -38,8 +38,7 @@ class stic_Job_ApplicationsLogicHooks
 
         require_once 'modules/stic_Job_Applications/Utils.php';
         stic_Job_ApplicationsUtils::updateRelatedOffersApplicationsCounts($bean, true);
-        stic_Job_ApplicationsUtils::notifyInterlocutorOnPresented($bean);
-        stic_Job_ApplicationsUtils::notifyOnPortalCancellation($bean);
+        stic_Job_ApplicationsUtils::notifyOnStatusChange($bean);
     }
 
     /**

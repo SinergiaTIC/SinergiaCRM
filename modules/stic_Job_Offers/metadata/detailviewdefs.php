@@ -262,9 +262,21 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_PRESENTED',
                     ),
-                    1 => array(),
+                    1 => array(
+                        'name' => 'notification_template_accepted_interlocutor',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_ACCEPTED',
+                    ),
                 ),
                 4 => array(
+                    0 => array(
+                        'name' => 'notification_template_rejected_interlocutor',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_REJECTED',
+                    ),
+                    1 => array(),
+                ),
+                5 => array(
                     0 => array(
                         'name' => 'notification_template_cancelled_assigned_user',
                         'studio' => 'visible',
