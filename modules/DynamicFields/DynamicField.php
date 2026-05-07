@@ -442,6 +442,17 @@ class DynamicField
     {
         if ($this->bean->hasCustomFields() && isset($this->bean->id)) {
             $query = '';
+
+            // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Check if record exists BEFORE building queries
+            // to prevent duplicate key errors and ensure UPDATE path is used when record already exists. PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
+            if (!$isUpdate) {
+                $checkExists = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
+                if ($this->bean->db && $this->bean->db->getOne($checkExists)) {
+                    $isUpdate = true;
+                }
+            }
+            // END STIC-CUSTOM
+
             if ($isUpdate) {
                 $query = 'UPDATE ' . $this->bean->table_name . '_cstm SET ';
             }
@@ -506,25 +517,13 @@ class DynamicField
             $queryInsert .= " ) VALUES $values )";
 
             if (!$first) {
-                // STIC-Custom 20250707 JBL - Fix for Issue #1106: Always check if record exists in _cstm before INSERT
-                // Even when $isUpdate is false, verify the record doesn't exist to prevent duplicate key error
-                if (!$isUpdate) {
-                    $checkQueryExists = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
-                    if ($this->bean->db && $this->bean->db->getOne($checkQueryExists)) {
-                        // Record exists in _cstm but $isUpdate was false - do UPDATE instead
-                        $this->bean->db->query($query);
-                    } else {
-                        $this->bean->db->query($queryInsert);
-                    }
+                // STIC-Custom 20260507 - Fix for Issue #1106: Decision already made at top of save()
+                if ($isUpdate) {
+                    $this->db->query($query);
                 } else {
-                    $checkQuery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
-                    if ($this->db->getOne($checkQuery)) {
-                        $this->db->query($query);
-                    } else {
-                        $this->db->query($queryInsert);
-                    }
+                    $this->db->query($queryInsert);
                 }
-                // END STIC Custom
+                // END STIC-Custom
             }
         }
     }
