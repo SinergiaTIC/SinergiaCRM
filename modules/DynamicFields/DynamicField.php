@@ -444,7 +444,8 @@ class DynamicField
             $query = '';
 
             // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Check if record exists BEFORE building queries
-            // to prevent duplicate key errors and ensure UPDATE path is used when record already exists. PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
+            // to prevent duplicate key errors and ensure UPDATE path is used when record already exists. 
+            // PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
             if (!$isUpdate) {
                 $checkExists = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
                 if ($this->bean->db && $this->bean->db->getOne($checkExists)) {
@@ -517,13 +518,13 @@ class DynamicField
             $queryInsert .= " ) VALUES $values )";
 
             if (!$first) {
-                // STIC-Custom 20260507 - Fix for Issue #1106: Decision already made at top of save()
+                // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Decision already made at top of save()
                 if ($isUpdate) {
                     $this->db->query($query);
                 } else {
                     $this->db->query($queryInsert);
                 }
-                // END STIC-Custom
+                // END STIC-CUSTOM
             }
         }
     }
