@@ -5,3 +5,9 @@ SticUpdates/Languages/es/20260225_enhancement_jobportal_notifications.sql
 SticUpdates/Languages/gl/20260225_enhancement_jobportal_notifications.sql
 SticUpdates/Languages/eu/20260225_enhancement_jobportal_notifications.sql
 SticUpdates/Migrations/20251218_feature_Imputacion_Justificacion.sql
+SticUpdates/Migrations/20260420_feature_whatsappEmailTemplate.sql
+SticUpdates/Languages/ca/20250302_feature_whatsapp.sql
+SticUpdates/Languages/en/20250302_feature_whatsapp.sql
+SticUpdates/Languages/es/20250302_feature_whatsapp.sql
+SticUpdates/Languages/gl/20250302_feature_whatsapp.sql
+SticUpdates/Languages/eu/20250302_feature_whatsapp.sql
