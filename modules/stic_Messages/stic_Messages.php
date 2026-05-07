@@ -299,6 +299,7 @@ class stic_Messages extends Basic
                     }
                 }
             }
+        }
         // After save we have $this->id: link the pre-created Note to this message
         if (!empty($this->media_note_id)) {
             $note = BeanFactory::getBean('Notes', $this->media_note_id);
