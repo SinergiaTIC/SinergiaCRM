@@ -170,6 +170,7 @@ class stic_Job_OffersUtils
 
         $candidateTemplateId = self::getNotificationTemplateId('job_offers_candidates', $parentBean);
         $assignedUserTemplateId = self::getNotificationTemplateId('job_offers_assigned_user', $parentBean);
+        $interlocutorTemplateId = self::getNotificationTemplateId('job_offers_interlocutor', $parentBean);
         $outboundEmail = self::getDefaultOutboundEmailAccount();
         $inboundEmailId = self::getDefaultInboundEmailId();
         $assignedUserId = $parentBean->assigned_user_id ?? $current_user->id;
@@ -186,64 +187,96 @@ class stic_Job_OffersUtils
 
         $notificationSent = false;
 
+        $closedStatuses = array('closed_covered', 'closed_partially_covered', 'closed_not_covered');
+        $openStatuses = array('open', 'selection_process', 'reopened');
+
         // Send direct email to assigned user
-        if (!empty($assignedUserTemplateId) && !empty($assignedUserId)) {
-            $assignedUserBean = BeanFactory::getBean('Users', $assignedUserId);
-            if (empty($assignedUserBean) || empty($assignedUserBean->id)) {
-                $GLOBALS['log']->error(
-                    "Notification email (assigned user) not sent for {$parentType} {$parentBean->id}: could not load assigned user bean."
-                );
-            } else {
-                if (self::sendNotificationEmail($parentBean, $assignedUserBean, $assignedUserTemplateId, $outboundEmail, 'assigned user')) {
-                    $notificationSent = true;
+        if(in_array($newStatus, $closedStatuses)){
+            if (!empty($assignedUserTemplateId) && !empty($assignedUserId)) {
+                $assignedUserBean = BeanFactory::getBean('Users', $assignedUserId);
+                if (empty($assignedUserBean) || empty($assignedUserBean->id)) {
+                    $GLOBALS['log']->error(
+                        "Notification email (assigned user) not sent for {$parentType} {$parentBean->id}: could not load assigned user bean."
+                    );
+                } else {
+                    if($assignedUserId != $parentBean->modified_user_id){
+                        if (self::sendNotificationEmail($parentBean, $assignedUserBean, $assignedUserTemplateId, $outboundEmail, 'assigned user')) {
+                            $notificationSent = true;
+                        }
+                    }
                 }
             }
-        }
 
-        // Create candidates campaign
-        if (!empty($candidateTemplateId)) {
-            $candidateLpoBean = self::getOrCreateNotificationLpo(
-                $parentBean->id,
-                $parentBean->name,
-                $assignedUserId,
-                $assignedUserName,
-                'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE'
-            );
-
-            if (!empty($candidateLpoBean) && !empty($candidateLpoBean->id)) {
-                $contactIds = self::getRelatedApplicantsContactIds($parentBean->id);
-                self::updateLpoContacts($candidateLpoBean, $contactIds);
-
-                $candidateCampaign = self::getOrCreateNotificationCampaign(
-                    $parentType,
-                    $parentBean,
-                    $candidateLpoBean,
-                    $candidateTemplateId,
-                    $outboundEmail,
-                    $inboundEmailId,
-                    $startDate,
-                    $newStatus,
+            // Create candidates campaign
+            if (!empty($candidateTemplateId)) {
+                $candidateLpoBean = self::getOrCreateNotificationLpo(
+                    $parentBean->id,
+                    $parentBean->name,
+                    $assignedUserId,
+                    $assignedUserName,
                     'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE'
                 );
 
-                if (!empty($candidateCampaign) && !empty($candidateCampaign->id)) {
-                    $notificationSent = true;
+                if (!empty($candidateLpoBean) && !empty($candidateLpoBean->id)) {
+                    $contactIds = self::getRelatedApplicantsContactIds($parentBean->id);
+                    self::updateLpoContacts($candidateLpoBean, $contactIds);
+
+                    $candidateCampaign = self::getOrCreateNotificationCampaign(
+                        $parentType,
+                        $parentBean,
+                        $candidateLpoBean,
+                        $candidateTemplateId,
+                        $outboundEmail,
+                        $inboundEmailId,
+                        $startDate,
+                        $newStatus,
+                        'LBL_STIC_JOB_APPLICATIONS_STIC_JOB_OFFERS_FROM_STIC_JOB_APPLICATIONS_TITLE'
+                    );
+
+                    if (!empty($candidateCampaign) && !empty($candidateCampaign->id)) {
+                        $notificationSent = true;
+                    } else {
+                        $GLOBALS['log']->error(
+                            "Notification campaign (candidates) could not be created or updated for {$parentType} {$parentBean->id}."
+                        );
+                    }
                 } else {
                     $GLOBALS['log']->error(
-                        "Notification campaign (candidates) could not be created or updated for {$parentType} {$parentBean->id}."
+                        "Notification campaign not created for {$parentType} {$parentBean->id}: could not get or create candidates prospect list."
                     );
                 }
-            } else {
+            }
+
+            if (!$notificationSent) {
                 $GLOBALS['log']->error(
-                    "Notification campaign not created for {$parentType} {$parentBean->id}: could not get or create candidates prospect list."
+                    "Notification not sent for {$parentType} {$parentBean->id}: no valid templates or recipients."
                 );
+                return;
             }
         }
 
-        if (!$notificationSent) {
-            $GLOBALS['log']->error(
-                "Notification not sent for {$parentType} {$parentBean->id}: no valid templates or recipients."
-            );
+        if ($parentBean->assigned_user_id === $parentBean->modified_user_id) {
+            if (in_array($newStatus, $closedStatuses) || in_array($newStatus, $openStatuses)) {
+                $interlocutorId = $parentBean->contact_id_c ?? '';
+                if (!empty($interlocutorId) && !empty($interlocutorTemplateId)) {
+                    $interlocutorBean = BeanFactory::getBean('Contacts', $interlocutorId);
+                    if (empty($interlocutorBean) || empty($interlocutorBean->id)) {
+                        $GLOBALS['log']->error(
+                            "Notification email (interlocutor) not sent for {$parentType} {$parentBean->id}: could not load interlocutor bean."
+                        );
+                    } else {
+                        if (self::sendNotificationEmail($parentBean, $interlocutorBean, $interlocutorTemplateId, $outboundEmail, 'interlocutor')) {
+                            $notificationSent = true;
+                        }
+                    }
+                }
+
+                if (!$notificationSent) {
+                    $GLOBALS['log']->error(
+                        "Notification not sent for {$parentType} {$parentBean->id}: no valid interlocutor template or recipient."
+                    );
+                }
+            }
             return;
         }
 
@@ -560,8 +593,8 @@ class stic_Job_OffersUtils
                 case 'job_offers_candidates':
                     $requestedTemplateId = $parentBean->emailtemplate_candidates_id ?? null;
                     break;
-                case 'job_offers':
-                    $requestedTemplateId = $parentBean->emailtemplate_assigned_user_id ?? null;
+                case 'job_offers_interlocutor':
+                    $requestedTemplateId = $parentBean->emailtemplate_interlocutor_id ?? null;
                     break;
             }
         }
@@ -572,9 +605,9 @@ class stic_Job_OffersUtils
         }
 
         $templateIds = array(
-            'job_offers' => 'c79e5db6-d89d-487f-a4ff-6e2801f7ade5',
             'job_offers_assigned_user' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0010',
             'job_offers_candidates' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0011',
+            'job_offers_interlocutor' => '1a2d6f10-8e32-4f8a-9a11-3b1b7c2a0012',
         );
         $defaultTemplateId = $templateIds[$templateKey] ?? null;
 

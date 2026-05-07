@@ -322,7 +322,7 @@ class stic_Job_ApplicationsUtils
      */
     protected static function getInterlocutorNotificationTemplateId($offerBean)
     {
-        $templateId = $offerBean->emailtemplate_interlocutor_id ?? null;
+        $templateId = $offerBean->emailtemplate_presented_interlocutor_id ?? null;
         if (empty($templateId)) {
             $templateId = '4f2c7b91-0c3e-4a2b-9b3e-7c4a9b1e9001';
         }
