@@ -1042,3 +1042,24 @@ function addQtipFunctionality(selector, module, label) {
     }
   });
 }
+/**
+ * Opens a WhatsApp conversation window for a given record.
+ * Can be called from any module included in stic_Messages messageable modules.
+ *
+ * @param {String} recordId   The bean id
+ * @param {String} parentType The module name (Contacts, Leads, Accounts, Employees...)
+ */
+function openWhatsAppConversation(recordId, parentType) {
+    var parentName = $("#formDetailView input[type=hidden][name=full_name]").val()
+                  || $("h1.module-title-text").text().trim()
+                  || '';
+    var url = 'index.php?module=stic_Messages&action=conversation'
+            + '&parent_id='   + encodeURIComponent(recordId)
+            + '&parent_type=' + encodeURIComponent(parentType)
+            + '&parent_name=' + encodeURIComponent(parentName);
+    window.open(
+        url,
+        'whatsapp_conv_' + recordId,
+        'width=480,height=700,resizable=yes,scrollbars=yes'
+    );
+}

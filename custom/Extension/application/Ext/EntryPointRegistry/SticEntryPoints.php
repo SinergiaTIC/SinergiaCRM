@@ -64,3 +64,6 @@ $entry_point_registry['stic_AWF_webhookHanlder'] = array('file' => 'modules/stic
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
 
 
+// These entry points are used by the Stic Messages module
+$entry_point_registry['sticMessagesTwilioResponse'] = array('file' => 'modules/stic_Messages/WhatsAppWebhookEntryPoint.php', 'auth' => false);
+$entry_point_registry['sticWhatsappMedia'] = array('file' => 'modules/stic_Messages/WhatsAppMediaEntryPoint.php', 'auth' => false);

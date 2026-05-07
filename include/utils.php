@@ -3190,7 +3190,11 @@ function get_bean_select_array(
     $focus = new $bean_name();
     $user_array = array();
 
-    $key = ($bean_name == 'EmailTemplate') ? $bean_name : $bean_name . $display_columns . $where . $order_by;
+    // STIC-Custom 20260407 PCS - Include WHERE in cache key to differentiate between different template types (SMS, WhatsApp, etc.)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/995
+    // $key = ($bean_name == 'EmailTemplate') ? $bean_name : $bean_name . $display_columns . $where . $order_by;
+    $key = $bean_name . $display_columns . $where . $order_by;
+    // END STIC-Custom
     $user_array = get_register_value('select_array', $key);
     if (!$user_array) {
         $db = DBManagerFactory::getInstance();

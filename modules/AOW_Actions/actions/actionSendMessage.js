@@ -34,6 +34,93 @@ function show_edit_template_link(field, ln) {
     }
 }
 
+function filterTemplatesByType(lineNum) {
+    // Try to find the type select - SuiteCRM may escape brackets
+    var typeSelect = document.getElementById('aow_actions_param[' + lineNum + '][type]') 
+                  || document.getElementById('aow_actions_param\\[' + lineNum + '\\]\\[type\\]');
+    var templateSelect = document.getElementById('aow_actions_param_email_template' + lineNum);
+    
+    if (!typeSelect || !templateSelect) {
+        return;
+    }
+    
+    var selectedType = typeSelect.value;
+    
+    // Get template arrays from hidden fields
+    var smsTemplates = {};
+    var whatsappTemplates = {};
+    var sevenTemplates = {};
+    
+    try {
+        var smsField = document.getElementById('aow_sms_templates');
+        var waField = document.getElementById('aow_whatsapp_templates');
+        var sevenField = document.getElementById('aow_seven_templates');
+        
+        if (smsField && smsField.value) smsTemplates = JSON.parse(smsField.value);
+        if (waField && waField.value) whatsappTemplates = JSON.parse(waField.value);
+        if (sevenField && sevenField.value) sevenTemplates = JSON.parse(sevenField.value);
+    } catch(e) {
+        return;
+    }
+    
+    // Determine which templates to show based on type
+    var templatesToShow = {};
+    
+    if (selectedType === 'SevenSmsHelper' || selectedType === 'SMS' || selectedType === 'sms' || selectedType === 'smssevenhelper') {
+        templatesToShow = { ...smsTemplates, ...sevenTemplates };
+    } else if (selectedType === 'WhatsAppHelper' || selectedType === 'WhatsApp' || selectedType === 'whatsapp' || selectedType === 'whatsapphelper') {
+        templatesToShow = whatsappTemplates;
+    } else {
+        templatesToShow = { ...smsTemplates, ...whatsappTemplates, ...sevenTemplates };
+    }
+    
+    // Clear all options
+    templateSelect.innerHTML = '';
+    
+    // Store current selection
+    var currentValue = templateSelect.value;
+    
+    // Add "None" option first
+    var noneOpt = document.createElement('option');
+    noneOpt.value = 'None';
+    noneOpt.text = '--None--';
+    templateSelect.add(noneOpt);
+    
+    // Add filtered options (skip empty keys from PHP templates)
+    for (var id in templatesToShow) {
+        if (templatesToShow.hasOwnProperty(id) && id !== '' && templatesToShow[id] !== '') {
+            var opt = document.createElement('option');
+            opt.value = id;
+            opt.text = templatesToShow[id];
+            templateSelect.add(opt);
+        }
+    }
+    
+    // Try to restore previous selection if still valid
+    if (currentValue && templatesToShow.hasOwnProperty(currentValue)) {
+        templateSelect.value = currentValue;
+    }
+    
+    // Update edit link visibility
+    show_edit_template_link(templateSelect, lineNum);
+}
+
+function initTemplateFilter(lineNum) {
+    // Try to find the type select - SuiteCRM may escape brackets
+    var typeSelect = document.getElementById('aow_actions_param[' + lineNum + '][type]') 
+                  || document.getElementById('aow_actions_param\\[' + lineNum + '\\]\\[type\\]');
+    
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            filterTemplatesByType(lineNum);
+        });
+        // Run on page load with delay to ensure hidden fields are rendered
+        setTimeout(function() {
+            filterTemplatesByType(lineNum);
+        }, 500);
+    }
+}
+
 function refresh_email_template_list(template_id, template_name) {
     refresh_template_list(template_id, template_name,currentln);
 }
