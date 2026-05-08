@@ -59,3 +59,81 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+
+/* FIX MODULE AND RECORD - Handle duplicate and edit scenarios */
+(function() {
+  var hasClickedCancel = false;
+
+  function fixModule() {
+    if (!document.EditView) { return; }
+    
+    // Always force the correct module
+    if (document.EditView.module) { 
+      document.EditView.module.value = "Project"; 
+    }
+    
+    // Check if we are in duplicate mode
+    var isDuplicate = document.EditView.duplicateId && document.EditView.duplicateId.value !== '';
+    
+    // Only fix record if not in duplicate mode or if user has clicked Cancel
+    if (document.EditView.record) {
+      if (!isDuplicate || hasClickedCancel) {
+        // Edit mode or duplicate was cancelled, use return_id or URL to get record ID
+        if (!document.EditView.record.value) {
+          if (document.EditView.return_id && document.EditView.return_id.value) {
+            document.EditView.record.value = document.EditView.return_id.value;
+          } else {
+            var urlParams = new URLSearchParams(window.location.search);
+            var recordFromUrl = urlParams.get('record');
+            if (recordFromUrl) {
+              document.EditView.record.value = recordFromUrl;
+            }
+          }
+        }
+      } else {
+        // In duplicate mode and not cancelled, clear record to create new
+        document.EditView.record.value = '';
+      }
+    }
+  }
+
+  // Run on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      fixModule();
+      setupEventHandlers();
+    });
+  } else {
+    fixModule();
+    setupEventHandlers();
+  }
+
+  function setupEventHandlers() {
+    if (!document.EditView) { return; }
+
+    // Also run on page show
+    window.addEventListener("pageshow", fixModule);
+
+    // Clear duplicate state when Cancel is clicked
+    var cancelButtons = document.querySelectorAll('input[value*="Cancel"], button[id*="CANCEL"]');
+    cancelButtons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        hasClickedCancel = true;
+      });
+    });
+
+    // Handle form submit
+    document.EditView.addEventListener('submit', function(e) {
+      fixModule();
+    });
+
+    // Override formSubmitCheck if exists
+    if (typeof window.formSubmitCheck === "function") {
+      var originalFormSubmitCheck = window.formSubmitCheck;
+      window.formSubmitCheck = function() {
+        fixModule();
+        return originalFormSubmitCheck.apply(this, arguments);
+      };
+    }
+  }
+})();
