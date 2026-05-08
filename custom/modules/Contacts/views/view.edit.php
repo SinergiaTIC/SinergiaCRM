@@ -59,6 +59,7 @@ class CustomContactsViewEdit extends ContactsViewEdit
         <script>STIC.incorporaRequiredFieldsArray = $incorporaRequiredFieldsArray;</script>
     SCRIPT;
 
+        echo getVersionedScript("SticInclude/js/Utils.js");
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
     }
 }
