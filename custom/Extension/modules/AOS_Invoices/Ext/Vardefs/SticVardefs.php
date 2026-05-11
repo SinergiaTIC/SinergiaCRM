@@ -207,45 +207,37 @@ $dictionary['AOS_Invoices']['fields']['verifactu_aeat_response_c'] = array(
 );
 
 // ID field for the related invoice (used for both cancellations and rectifications)
+// Following the pattern of contact_id_c for repersona_c in Contacts module
 $dictionary['AOS_Invoices']['fields']['verifactu_cancel_id_c'] = array(
-    'id' => 'AOS_Invoicesverifactu_cancel_id_c',
     'name' => 'verifactu_cancel_id_c',
     'vname' => 'LBL_VERIFACTU_CANCEL_ID',
-    'custom_module' => 'AOS_Invoices',
-    'source' => 'custom_fields',
-    'comments' => '',
-    'help' => '',
     'type' => 'id',
-    'required' => 0,
-    'audited' => 1,
-    'unified_search' => 0,
-    'inline_edit' => 0,
-    'importable' => 1,
-    'massupdate' => 0,
-    'reportable' => 0,
+    'required' => false,
+    'source' => 'custom_fields',
+    'importable' => true,
+    'reportable' => false,
     'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => 0,
     'merge_filter' => 'disabled',
+    'len' => 36,
+    'size' => 20,
     'studio' => 'visible',
+    'custom_module' => 'AOS_Invoices',
 );
 
 // Relate field to display and navigate to the related invoice
+// Following the pattern of repersona_c in Contacts module
 $dictionary['AOS_Invoices']['fields']['verifactu_cancel_name_c'] = array(
     'name' => 'verifactu_cancel_name_c',
     'vname' => 'LBL_VERIFACTU_CANCEL_NAME',
     'type' => 'relate',
     'source' => 'non-db',
     'id_name' => 'verifactu_cancel_id_c',
-    'ext2' => 'AOS_Invoices',
     'module' => 'AOS_Invoices',
-    'rname' => 'number',
-    'table' => 'aos_invoices',
+    'ext2' => 'AOS_Invoices',
+    'rname' => 'name',
     'quicksearch' => 'enabled',
     'studio' => 'visible',
     'required' => false,
-    'audited' => false,
-    'reportable' => true,
-    'massupdate' => false,
     'importable' => true,
     'duplicate_merge' => 'disabled',
     'len' => 255,
