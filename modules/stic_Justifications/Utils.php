@@ -322,7 +322,7 @@ class stic_JustificationsUtils {
 
         // explore relationship M:N projects_opportunities
         $sql = "
-            SELECT group_concat(opportunity_id separator \"','\") as opportunitiesList
+            SELECT group_concat(opportunity_id) as opportunitiesList
             FROM projects_opportunities po 
             WHERE project_id = " . $db->quoted($projectId) . " 
             AND deleted = 0
@@ -332,10 +332,11 @@ class stic_JustificationsUtils {
         $result = $db->getOne($sql);
 
         if(!empty($result)) {
-            $endResult =  "'" . $result . "'";
+            $arrayIds = explode(',', $result);
+            $endResult =  "'" . implode("','", $arrayIds) . "'";
         }
         $sql = "
-            SELECT group_concat(project_opportunities_1opportunities_idb separator \"','\") as opportunitiesList
+            SELECT group_concat(project_opportunities_1opportunities_idb) as opportunitiesList
             FROM project_opportunities_1_c po 
             WHERE project_opportunities_1project_ida = " . $db->quoted($projectId) . " 
             AND deleted = 0
@@ -345,7 +346,8 @@ class stic_JustificationsUtils {
         $result = $db->getOne($sql);
 
         if(!empty($result)) {
-            $result1N =  "'" . $result . "'";
+            $arrayIds = explode(',', $result);
+            $result1N =  "'" . implode("','", $arrayIds) . "'";
             $endResult = empty($endResult) ? $result1N : $endResult . "," . $result1N;
         }
 
