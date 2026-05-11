@@ -46,6 +46,28 @@
 require_once('include/SugarFields/Fields/Text/SugarFieldText.php');
 class CustomSugarFieldText extends SugarFieldText
 {
+    /**
+     * Fixing DetailView for Text fields with HTML editor, to avoid double escaping and double nl2br when the field is rendered in DetailView.
+     */
+    public function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
+    {
+        $editor = $vardef['editor'] ?? '';
+
+        if (!isset($displayParams['nl2br'])) {
+            $displayParams['nl2br'] = ($editor != "html");
+        }
+
+        if (!isset($displayParams['htmlescape']) && $editor != "html") {
+            $displayParams['htmlescape'] = true;
+        }
+
+        if (!isset($displayParams['url2html'])) {
+            $displayParams['url2html'] = ($editor != "html");
+        }
+
+        return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
+
     public function setup($parentFieldArray, $vardef, $displayParams, $tabindex, $twopass = true)
     {
         parent::setup($parentFieldArray, $vardef, $displayParams, $tabindex, $twopass);
