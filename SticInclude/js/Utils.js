@@ -30,20 +30,26 @@ validationDependencies = {};
 
 /**
  * Add parent css stylesheets to iframe wysiwyg fields (only in detail view)
+ * Also inject revert styles to undo Bootstrap resets inside the iframe
  */
 function setStylesToWysywigIframe() {
   if (viewType() == "detail") {
-    $("link[rel=stylesheet]").each(function () {
-      $(".detail-view-row-item iframe")
-        .contents()
-        .find("head")
-        .append(
+    $(".detail-view-row-item iframe").each(function () {
+      var $head = $(this).contents().find("head");
+      $("link[rel=stylesheet]").each(function () {
+        $head.append(
           $("<link>", {
             rel: "stylesheet",
             href: $(this).attr("href"),
             type: "text/css"
           })
         );
+      });
+      $head.append(
+        $("<style>", { type: "text/css" }).text(
+          "body > *, body > * *, body > * *::before, body > * *::after { all: revert; }"
+        )
+      );
     });
     // after (500ms) appends stylesheets, show the iframe element, previously hidden by css
     setTimeout(() => {

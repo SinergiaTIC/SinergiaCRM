@@ -1187,25 +1187,23 @@ table.view th.depend-not-exist div:before {
 }
 
 // Fix for text and wysiwyg fields in detail view, to set best spacing and list visibility
-.detail-view-field[type="text"] .sugar_field,
+.detail-view-field[type="text"] .sugar_field.html-editor-content,
+.detail-view-field[type="text"] .sugar_field.html-editor-content *,
+.detail-view-field[type="text"] .sugar_field.html-editor-content *::before,
+.detail-view-field[type="text"] .sugar_field.html-editor-content *::after {
+  all: revert;
+}
+
+.detail-view-field[type="text"] .sugar_field.html-editor-content {
+  font-family: inherit;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  word-wrap: break-word;
+}
+
 .detail-view-field[type="wysiwyg"] iframe {
-  p {
-    margin: 0 0 10px 0;
-  }
-  ul, ol {
-    margin-bottom: 10px;
-    padding-left: 30px;
-    list-style-position: outside;
-  }
-  ul {
-    list-style-type: disc;
-  }
-  ol {
-    list-style-type: decimal;
-  }
-  li {
-    list-style-type: inherit;
-  }
+  height: auto !important;
 }
 
 /* CONVERT LEADS FIXED */
