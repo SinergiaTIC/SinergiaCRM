@@ -35,10 +35,16 @@ class SticPrivateAreaUtils
      */
     public static function processBeforeSave($bean)
     {
-        // When Portal is being disabled, clear credentials
+        // When Portal is being disabled, keep credentials intact
         if (!self::isPortalEnabledNow($bean) && self::wasPortalEnabled($bean)) {
-            $bean->stic_pa_password_c = '';
+            $storedPassword = self::getStoredPortalPassword($bean);
+            $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
             $bean->_stic_plain_pa_password = '';
+            if ($fetchedPassword !== '') {
+                $bean->stic_pa_password_c = $fetchedPassword;
+            } elseif ($storedPassword !== '') {
+                $bean->stic_pa_password_c = $storedPassword;
+            }
             return;
         }
 
@@ -70,10 +76,18 @@ class SticPrivateAreaUtils
         $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
 
         if ($isBeingEnabled && !$hasSubmittedPassword) {
-            // On enable, generate a new password automatically when none was provided
-            $generatedPassword = self::generateRandomPassword();
-            $bean->_stic_plain_pa_password = $generatedPassword;
-            $bean->stic_pa_password_c = $generatedPassword;
+            // On enable, generate only when no existing password is stored
+            if ($fetchedPassword !== '') {
+                $bean->stic_pa_password_c = $fetchedPassword;
+                $bean->_stic_plain_pa_password = '';
+            } elseif ($storedPassword !== '') {
+                $bean->stic_pa_password_c = $storedPassword;
+                $bean->_stic_plain_pa_password = '';
+            } else {
+                $generatedPassword = self::generateRandomPassword();
+                $bean->_stic_plain_pa_password = $generatedPassword;
+                $bean->stic_pa_password_c = $generatedPassword;
+            }
         } elseif (!$hasSubmittedPassword) {
             // Keep existing password when it was not changed in the form
             $bean->_stic_plain_pa_password = '';

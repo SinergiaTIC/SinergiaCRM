@@ -241,16 +241,20 @@ function privateAreaPasswordField() {
     return;
   }
 
-  if (!field.hasAttribute("data-stic-had-password")) {
-    var isValueSet = field.getAttribute("data-is-value-set") === "true";
-    var hasRenderedPlaceholder = !!(field.getAttribute("placeholder") || "").trim();
-    var hasRenderedValue = !!field.value;
-    field.setAttribute("data-stic-had-password", (isValueSet || hasRenderedPlaceholder || hasRenderedValue) ? "true" : "false");
-  }
-
-  var hasStoredPassword = field.getAttribute("data-stic-had-password") === "true";
+  var config = window.STIC && window.STIC.privateAreaPassword;
+  var isValueSet = field.getAttribute("data-is-value-set") === "true";
+  var hasRenderedPlaceholder = !!(field.getAttribute("placeholder") || "").trim();
+  var hasRenderedValue = !!field.value;
+  var hasStoredPassword =
+    (config && typeof config.hasStoredPassword === "boolean" ? config.hasStoredPassword : false) ||
+    isValueSet ||
+    hasRenderedPlaceholder ||
+    hasRenderedValue ||
+    field.getAttribute("data-stic-had-password") === "true";
+  field.setAttribute("data-stic-had-password", hasStoredPassword ? "true" : "false");
   var currentPlaceholder = field.getAttribute("placeholder") || "";
   var placeholder =
+    (config && config.placeholder) ||
     SUGAR.language.get("app_strings", "LBL_PASSWORD_SET_NEW_VALUE_TO_RESET") ||
     (SUGAR.language.languages &&
       SUGAR.language.languages.app_strings &&
@@ -325,6 +329,9 @@ function setupPrivateAreaFields() {
       $(password).attr('readonly', true).css({'background-color': '#eeeeee', 'color': '#999999'});
     } else {
       $(password).removeAttr('readonly').css({'background-color': '', 'color': ''});
+    }
+    if (typeof privateAreaPasswordField === 'function') {
+      privateAreaPasswordField();
     }
   };
 
