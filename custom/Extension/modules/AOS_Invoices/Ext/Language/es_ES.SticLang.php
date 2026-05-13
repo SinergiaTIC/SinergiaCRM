@@ -64,6 +64,7 @@ $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'] = 'No se puede modificar una fact
 $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ERROR'] = 'La factura %s no se ha podido eliminar porque ha sido enviada a la AEAT. Debe crear una anulación desde la factura original.';
 $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_MESSAGE'] = 'No se puede eliminar una factura que ha sido enviada a la AEAT.';
 $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'] = 'No se puede continuar porque la selección incluye facturas que ya han sido enviadas a la AEAT: %s. Debe crear una anulación desde la factura original.';
+$mod_strings['LBL_VERIFACTU_CANNOT_EDIT_SENT'] = 'No se puede editar una factura que ha sido enviada a la AEAT. Se ha redirigido a la vista de detalle.';
 $mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'] = 'Esta factura ha sido enviada a la AEAT y no puede ser modificada ni eliminada. Para realizar cambios debe crear una factura rectificativa.';
 $mod_strings['LBL_VERIFACTU_CSV'] = 'Codigo seguro de verificación';
 $mod_strings['LBL_VERIFACTU_CSV_HELP'] = 'Código devuelto por AEAT tras el envío de la factura. Este código único permite verificar la autenticidad de la factura en el sistema de la AEAT.';

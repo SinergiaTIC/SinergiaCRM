@@ -31,6 +31,28 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
     {
         parent::action_delete();
     }
+
+    /**
+     * Block edit of invoices sent to AEAT.
+     */
+    public function action_edit()
+    {
+        global $mod_strings;
+
+        $recordId = $_REQUEST['record'] ?? '';
+        if (!empty($recordId)) {
+            $invoiceBean = BeanFactory::getBean('AOS_Invoices', $recordId);
+            if (!empty($invoiceBean->id) && !empty($invoiceBean->verifactu_submitted_at_c)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Attempt to edit invoice sent to AEAT: ' . $recordId);
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_CANNOT_EDIT_SENT']));
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $recordId);
+                return;
+            }
+        }
+
+        parent::action_edit();
+    }
+
     public function action_sendToAEAT()
     {
         global $mod_strings;
@@ -38,7 +60,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         $invoiceBean = BeanFactory::getBean('AOS_Invoices', $_REQUEST['invoiceId'] ?? '');
         if(empty($invoiceBean->id)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice not found with ID ' . ($_REQUEST['invoiceId'] ?? 'N/A'));
-            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_NOT_FOUND']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_INVOICE_NOT_FOUND']));
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
             return;
         }
@@ -69,7 +91,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         $originalId = $_REQUEST['record'] ?? '';
 
         if (empty($originalId)) {
-            SugarApplication::appendErrorMessage($mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED']));
             SugarApplication::redirect("index.php?module=AOS_Invoices&action=index");
             return;
         }
@@ -78,14 +100,14 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         $originalInvoice = BeanFactory::getBean('AOS_Invoices', $originalId);
 
         if (empty($originalInvoice->id)) {
-            SugarApplication::appendErrorMessage($mod_strings['LBL_ORIGINAL_INVOICE_NOT_FOUND']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_ORIGINAL_INVOICE_NOT_FOUND']));
             SugarApplication::redirect("index.php?module=AOS_Invoices&action=index");
             return;
         }
 
         // Verify the invoice has been sent to AEAT
         if (empty($originalInvoice->verifactu_submitted_at_c)) {
-            SugarApplication::appendErrorMessage($mod_strings['LBL_ORIGINAL_INVOICE_MUST_BE_SENT_TO_AEAT']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_ORIGINAL_INVOICE_MUST_BE_SENT_TO_AEAT']));
             SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
             return;
         }
@@ -93,7 +115,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         // Verify the invoice has customer data (required for rectified invoices of type R1)
         // Error 1189: F1/F3/R1/R2/R3/R4 require Destinatarios block
         if (empty($originalInvoice->billing_account_id) && empty($originalInvoice->billing_contact_id)) {
-            SugarApplication::appendErrorMessage($mod_strings['LBL_ORIGINAL_INVOICE_NO_CUSTOMER_DATA']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_ORIGINAL_INVOICE_NO_CUSTOMER_DATA']));
             SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
             return;
         }
@@ -338,7 +360,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         }
         
         // Add success message
-        SugarApplication::appendSuccessMessage($mod_strings['LBL_RECTIFIED_INVOICE_CREATED_SUCCESS']);
+        SugarApplication::appendSuccessMessage(AOS_InvoicesUtils::getStyledSuccessAlert($mod_strings['LBL_RECTIFIED_INVOICE_CREATED_SUCCESS']));
 
         // Redirect to EditView of the new rectified invoice
         SugarApplication::redirect("index.php?module=AOS_Invoices&action=EditView&record={$rectifiedInvoice->id}");
@@ -364,7 +386,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         
         if (empty($invoiceId)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': No invoice ID specified');
-            SugarApplication::appendErrorMessage($mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED']));
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
             return;
         }
@@ -374,7 +396,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         
         if (empty($invoiceBean->id)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice not found with ID: ' . $invoiceId);
-            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_NOT_FOUND']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_INVOICE_NOT_FOUND']));
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
             return;
         }
@@ -382,7 +404,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         // Validate invoice can be cancelled
         if ($invoiceBean->verifactu_aeat_status_c !== 'accepted') {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice not accepted by AEAT: ' . $invoiceId);
-            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_NOT_ACCEPTED_BY_AEAT']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_INVOICE_NOT_ACCEPTED_BY_AEAT']));
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             return;
         }
@@ -393,9 +415,9 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
 
         // Show result message
         if ($result['success']) {
-            SugarApplication::appendSuccessMessage($mod_strings['LBL_INVOICE_CANCELLED_SUCCESS'] . ' - CSV: ' . $result['csv']);
+            SugarApplication::appendSuccessMessage(AOS_InvoicesUtils::getStyledSuccessAlert($mod_strings['LBL_INVOICE_CANCELLED_SUCCESS'] . ' - CSV: ' . $result['csv']));
         } else {
-            SugarApplication::appendErrorMessage($result['message']);
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($result['message']));
         }
 
         // Redirect back to invoice

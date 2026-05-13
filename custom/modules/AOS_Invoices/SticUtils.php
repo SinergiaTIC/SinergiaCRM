@@ -342,7 +342,7 @@ class AOS_InvoicesUtils
             $aeatStatus === 'accepted') {
 
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($aeatStatus ?: 'N/A'));
-            SugarApplication::appendErrorMessage($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']);
+            SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']));
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             return;
         }
@@ -413,10 +413,10 @@ class AOS_InvoicesUtils
                     self::validateSeriesFormat($seriesFormat);
                 } catch (Exception $e) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid series format: ' . $e->getMessage());
-                    $errorMsg = ($mod_strings['LBL_AOS_SERIES_FORMAT_INVALID']) . 
-                                ' "' . $seriesFormat . '" ' . 
+                    $errorMsg = ($mod_strings['LBL_AOS_SERIES_FORMAT_INVALID']) .
+                                ' "' . $seriesFormat . '" ' .
                                 ($mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS']);
-                    SugarApplication::appendErrorMessage($errorMsg);
+                    SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMsg));
                     return;
                 }
                 // === End Step 2.2 ===
@@ -464,7 +464,7 @@ class AOS_InvoicesUtils
 
             if ($certificateType === null) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Cannot determine certificate type (entity seal or representative).');
-                SugarApplication::appendErrorMessage("<div class=\"alert alert-danger\">{$mod_strings['LBL_MISSING_SETTINGS']}</div>");
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_MISSING_SETTINGS']));
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             }
 
@@ -600,15 +600,14 @@ class AOS_InvoicesUtils
                 // Validate chronological order by series
                 if ($issueDate < $seriesLastInvoiceDate) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice date (' . $issueDate->format('Y-m-d') . ') is earlier than last registered invoice date for series ' . $seriesName . ' (' . $seriesLastInvoiceDate->format('Y-m-d') . ', #' . $seriesLastInvoice['number'] . '). Sending blocked.');
-                    SugarApplication::appendErrorMessage('<p class="msg-error">'.
+                    SugarApplication::appendErrorMessage(self::getStyledErrorAlert(
                         sprintf(
                             $mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'],
                             $issueDate->format('d/m/Y'),
                             $seriesLastInvoice['number'],
                             $seriesLastInvoiceDate->format('d/m/Y')
-                        ).
-                        '</p>'
-                    );
+                        )
+                    ));
                     SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
                     return;
                 }
@@ -783,8 +782,8 @@ class AOS_InvoicesUtils
                 } else {
                     $errorMsg .= 'Seleccione un cliente (Organización o Persona) con NIF informado.';
                 }
-                
-                SugarApplication::appendErrorMessage($errorMsg);
+
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMsg));
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $invoiceBean->id);
                 return;
             }
@@ -794,7 +793,7 @@ class AOS_InvoicesUtils
             $invoiceTypeValidation = self::validateInvoiceType($invoiceBean);
             if ($invoiceTypeValidation !== true) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice type validation failed: ' . $invoiceTypeValidation);
-                SugarApplication::appendErrorMessage($invoiceTypeValidation);
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($invoiceTypeValidation));
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $invoiceBean->id);
                 return;
             }
@@ -1071,7 +1070,7 @@ class AOS_InvoicesUtils
             }
             // === End Step 1.3 ===
 
-            SugarApplication::appendSuccessMessage($successMessage);
+            SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($successMessage));
 
             return true;
 
@@ -1085,7 +1084,7 @@ class AOS_InvoicesUtils
             $errorMessage = $mod_strings['LBL_AEAT_SEND_ERROR'] . ' <a href="#" onclick="document.getElementById(\'aeat-error-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">' . $mod_strings['LBL_AEAT_SHOW_DETAILS'] . '</a>';
             $errorMessage .= '<div id="aeat-error-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedError) . '</pre></div>';
 
-            SugarApplication::appendErrorMessage($errorMessage);
+            SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMessage));
 
             return false;
         }
@@ -1960,4 +1959,39 @@ class AOS_InvoicesUtils
         }
     }
 
+    /**
+     * Get styled alert HTML for error messages.
+     *
+     * @param string $message The error message
+     * @return string Styled alert HTML
+     */
+    public static function getStyledErrorAlert($message)
+    {
+        return '<div class="alert alert-danger" style="margin: 10px 0; padding: 12px; border-left: 4px solid #d9534f; background-color: #f2dede;">' . $message . '</div>';
+    }
+
+    /**
+     * Get styled alert HTML for success messages.
+     *
+     * @param string $message The success message
+     * @return string Styled alert HTML
+     */
+    public static function getStyledSuccessAlert($message)
+    {
+        return '<div class="alert alert-success" style="margin: 10px 0; padding: 12px; border-left: 4px solid #5cb85c; background-color: #dff0d8;">' . $message . '</div>';
+    }
+
+}
+
+/**
+ * Helper function to show styled error message and redirect.
+ *
+ * @param string $message The error message
+ * @param string $redirectUrl URL to redirect to (default: index page)
+ */
+function sticShowErrorAndRedirect($message, $redirectUrl = 'index.php?module=AOS_Invoices&action=index')
+{
+    SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($message));
+    header('Location: ' . $redirectUrl);
+    exit;
 }

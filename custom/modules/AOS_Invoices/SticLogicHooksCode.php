@@ -104,10 +104,10 @@ class AOS_InvoicesHook
                         $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
                     }
                     
-                    $errorMsg = $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'] ?? 
+                    $errorMsg = $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'] ??
                         'No se puede modificar una factura ya aceptada por AEAT. Debe crear una factura rectificativa.';
-                    
-                    SugarApplication::appendErrorMessage($errorMsg);
+
+                    SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
                     
 // Redirect to detail view
                     if (!empty($bean->id)) {
@@ -137,10 +137,10 @@ class AOS_InvoicesHook
                 $lastDateFormatted = ''; // Extract from the result if available
                 
                 // For now, use a simpler message
-                $errorMsg = $mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST'] 
+                $errorMsg = $mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST']
                     ?? "La fecha de expedición ({$currentDateFormatted}) es anterior a la última factura emitida de la serie {$seriesName}.";
-                
-                SugarApplication::appendErrorMessage($errorMsg);
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
                 
                 // Redirect to detail view
                 if (!empty($bean->id)) {
@@ -164,8 +164,8 @@ class AOS_InvoicesHook
                 if (empty($mod_strings)) {
                     $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
                 }
-                
-                SugarApplication::appendErrorMessage($seriesValidationResult);
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($seriesValidationResult));
                 
                 // Redirect to detail view
                 if (!empty($bean->id)) {
@@ -184,14 +184,14 @@ class AOS_InvoicesHook
             
             if ($combinedLength > 60) {
                 $GLOBALS['log']->error(__METHOD__ . ': Step 2.5 - Combined length exceeds 60 characters: ' . $combinedLength);
-                
+
                 if (empty($mod_strings)) {
                     $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
                 }
-                
+
                 $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_NUMBER_TOO_LONG'];
-                
-                SugarApplication::appendErrorMessage($errorMsg);
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
                 die();
             }
@@ -216,11 +216,11 @@ class AOS_InvoicesHook
                     if (empty($mod_strings)) {
                         $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
                     }
-                    
-                    $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'] ?? 
+
+                    $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'] ??
                         'No se puede cambiar la serie de una factura que ya ha sido enviada a AEAT.';
-                    
-                    SugarApplication::appendErrorMessage($errorMsg);
+
+                    SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
                     SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
                     die();
                 } else {
@@ -292,8 +292,8 @@ class AOS_InvoicesHook
             if (!empty($errors)) {
                 $errorMsg = $mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'];
                 $errorMsg .= '<br><strong>' . $mod_strings['LBL_MISSING_FIELDS'] . ':</strong> ' . implode(', ', $errors);
-                
-                SugarApplication::appendErrorMessage($errorMsg);
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
                 
                 // Redirect back to edit view
                 if (!empty($bean->id)) {
@@ -393,12 +393,14 @@ class AOS_InvoicesHook
                 $invoiceInfo
             );
 
+            $styledMsg = '<div class="alert alert-danger" style="margin: 10px 0; padding: 12px; border-left: 4px solid #d9534f; background-color: #f2dede;">' . $errorMsg . '</div>';
+
             if (!empty($_REQUEST['ajax'])) {
                 echo json_encode(['success' => false, 'message' => $errorMsg]);
                 exit;
             }
 
-            SugarApplication::appendErrorMessage($errorMsg);
+            SugarApplication::appendErrorMessage($styledMsg);
             header('Location: index.php?module=AOS_Invoices&action=index');
             exit;
         }
