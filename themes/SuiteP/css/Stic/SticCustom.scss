@@ -1187,6 +1187,7 @@ table.view th.depend-not-exist div:before {
 }
 
 // Fix for text and wysiwyg fields in detail view, to set best spacing and list visibility
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1113
 .detail-view-field[type="text"] .sugar_field,
 .detail-view-field[type="wysiwyg"] iframe {
   p {

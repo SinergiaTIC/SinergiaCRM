@@ -61,6 +61,7 @@ class HtmlSanitizer
         $baseConfigs['Attr.EnableID'] = true;
         $baseConfigs['Attr.IDPrefix'] = 'sugar_text_';
         // STIC-Custom AAM 20260511 - Allow iframe tag and attributes for HTML fields, to allow embedding of external content like videos, maps, etc.
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1113
         $baseConfigs['Attr.AllowedFrameTargets'] = array('_blank' => true, '_self' => true, '_parent' => true, '_top' => true);
         // END STIC-Custom
         

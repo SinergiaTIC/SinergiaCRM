@@ -48,6 +48,7 @@ class CustomSugarFieldText extends SugarFieldText
 {
     /**
      * Fixing DetailView for Text fields with HTML editor, to avoid double escaping and double nl2br when the field is rendered in DetailView.
+     * https://github.com/SinergiaTIC/SinergiaCRM/pull/1113
      */
     public function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
     {
