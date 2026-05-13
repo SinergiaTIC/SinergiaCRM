@@ -75,10 +75,10 @@ switch (viewType()) {
     // Check if we are in duplicate mode
     var isDuplicate = document.EditView.duplicateId && document.EditView.duplicateId.value !== '';
     
-    // Only fix record if not in duplicate mode or if user has clicked Cancel
+    // Track Cancel button click to prevent duplicate creation
     if (document.EditView.record) {
       if (!isDuplicate || hasClickedCancel) {
-        // Edit mode or duplicate was cancelled, use return_id or URL to get record ID
+        // Edit mode or Cancel was clicked, use return_id or URL to get record ID
         if (!document.EditView.record.value) {
           if (document.EditView.return_id && document.EditView.return_id.value) {
             document.EditView.record.value = document.EditView.return_id.value;
@@ -114,7 +114,7 @@ switch (viewType()) {
     // Also run on page show
     window.addEventListener("pageshow", fixModule);
 
-    // Clear duplicate state when Cancel is clicked
+    // Track Cancel button click to prevent duplicate creation
     var cancelButtons = document.querySelectorAll('input[value*="Cancel"], button[id*="CANCEL"]');
     cancelButtons.forEach(function(btn) {
       btn.addEventListener('click', function() {
