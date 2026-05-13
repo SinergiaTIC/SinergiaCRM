@@ -55,6 +55,11 @@ class ViewSticManageCertificate extends SugarView
         if ($certExists) {
             // Get metadata using utility class
             $metadata = SticCertificateUtils::getCertificateMetadata();
+            $GLOBALS['log']->debug('ViewSticManageCertificate - METADATA: ' . print_r($metadata, true));
+            
+            // Get certificate components
+            $components = SticCertificateUtils::getCertificateComponents();
+            $GLOBALS['log']->debug('ViewSticManageCertificate - COMPONENTS: ' . ($components ? 'found (len: ' . strlen($components['certificate']) . ')' : 'null'));
             
             // Format upload date for display
             if (!empty($metadata['upload_date'])) {
@@ -68,6 +73,10 @@ class ViewSticManageCertificate extends SugarView
             $extractedNif = SticCertificateUtils::getCertificateNif();
             $extractedName = SticCertificateUtils::getCertificateHolderName();
             $isEntitySeal = SticCertificateUtils::isEntitySeal();
+            
+            $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NIF: ' . ($extractedNif ?? 'NULL'));
+            $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NAME: ' . ($extractedName ?? 'NULL'));
+            $GLOBALS['log']->debug('ViewSticManageCertificate - IS_ENTITY_SEAL: ' . ($isEntitySeal ?? 'NULL'));
         }
 
         // Debug: Log extracted values

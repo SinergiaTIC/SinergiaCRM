@@ -31,22 +31,314 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class SticCertificateUtils
 {
     /**
-     * Base path for certificate files
+     * Base path for certificate files (fallback for backward compatibility)
      */
     const CERT_DIR = 'custom/certificates/';
-    
+
     /**
-     * Path to the certificate metadata file
+     * Path to the certificate metadata file (fallback for backward compatibility)
      */
     const METADATA_FILE_PATH = 'custom/certificates/cert_metadata.json';
 
     /**
-     * Get the certificate and private key components (decrypted and ready to use)
-     * NO PASSWORD NEEDED - components are extracted and stored separately at upload time
+     * Config category for certificate storage
+     */
+    const CONFIG_CATEGORY = 'SticCertificates';
+
+    /**
+     * Config keys for certificate components
+     */
+    const CONFIG_KEY_PRIVATE_KEY = 'private_key';
+    const CONFIG_KEY_CERTIFICATE = 'certificate';
+    const CONFIG_KEY_CA_CHAIN = 'ca_chain';
+    const CONFIG_KEY_METADATA = 'metadata';
+
+    /**
+     * Save certificate components to config table
+     *
+     * @param array $components Array with 'private_key', 'certificate', 'ca_chain'
+     * @param array $metadata Array with certificate metadata
+     * @return bool Success status
+     */
+    public static function saveCertificateToConfig($components, $metadata = array())
+    {
+        global $db;
+
+        try {
+            // Save private key
+            self::saveConfigValue(self::CONFIG_KEY_PRIVATE_KEY, $components['private_key'] ?? '');
+
+            // Save certificate
+            self::saveConfigValue(self::CONFIG_KEY_CERTIFICATE, $components['certificate'] ?? '');
+
+            // Save CA chain
+            self::saveConfigValue(self::CONFIG_KEY_CA_CHAIN, $components['ca_chain'] ?? '');
+
+            // Save metadata as JSON
+            self::saveConfigValue(self::CONFIG_KEY_METADATA, json_encode($metadata));
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate saved to config table successfully.');
+            return true;
+
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error saving certificate to config: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Load certificate components from config table
+     * Handles both encrypted (legacy) and unencrypted (new) formats
+     *
+     * @return array|null Array with 'private_key', 'certificate', 'ca_chain', or null if not found
+     */
+    public static function loadCertificateFromConfig()
+    {
+        $privateKey = self::loadConfigValue(self::CONFIG_KEY_PRIVATE_KEY);
+        $certificate = self::loadConfigValue(self::CONFIG_KEY_CERTIFICATE);
+        $caChain = self::loadConfigValue(self::CONFIG_KEY_CA_CHAIN);
+
+        if (empty($privateKey) || empty($certificate)) {
+            return null;
+        }
+
+        // Try to detect if data is encrypted (starts with valid PEM header after base64 decode)
+        // If not valid PEM, try to decrypt
+        $privateKey = self::ensureDecrypted($privateKey, 'private_key');
+        $certificate = self::ensureDecrypted($certificate, 'certificate');
+        $caChain = !empty($caChain) ? self::ensureDecrypted($caChain, 'ca_chain') : '';
+
+        return array(
+            'private_key' => $privateKey,
+            'certificate' => $certificate,
+            'ca_chain' => $caChain,
+        );
+    }
+
+    /**
+     * Ensure data is decrypted (PEM format). If encrypted, decrypt it.
+     *
+     * @param string $data The data to check/decrypt
+     * @param string $type Type of data ('private_key', 'certificate', 'ca_chain')
+     * @return string Decrypted data in PEM format
+     */
+    private static function ensureDecrypted($data, $type)
+    {
+        // Check if data appears to be valid PEM format
+        if (self::isValidPem($data)) {
+            return $data;
+        }
+
+        // Data might be encrypted - try to decrypt
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $type . ' appears encrypted, attempting decryption.');
+
+        try {
+            require_once 'include/Pear/Crypt_Blowfish/Blowfish.php';
+            global $sugar_config;
+            $key = $sugar_config['unique_key'];
+
+            $bf = new Crypt_Blowfish($key);
+
+            // Decrypt (data is base64 encoded before encryption)
+            $decoded = base64_decode($data);
+            if ($decoded !== false) {
+                $decrypted = $bf->decrypt($decoded);
+                if ($decrypted !== false && self::isValidPem($decrypted)) {
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $type . ' decrypted successfully.');
+                    return $decrypted;
+                }
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error decrypting ' . $type . ': ' . $e->getMessage());
+        }
+
+        // If decryption failed or data is not valid PEM, return original
+        return $data;
+    }
+
+    /**
+     * Check if data appears to be valid PEM format
+     *
+     * @param string $data The data to check
+     * @return bool True if data looks like valid PEM
+     */
+    private static function isValidPem($data)
+    {
+        if (empty($data) || !is_string($data)) {
+            return false;
+        }
+
+        // Check for PEM headers
+        if (strpos($data, '-----BEGIN ') !== false && strpos($data, '-----END ') !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Load certificate metadata from config table
+     *
+     * @return array|null Certificate metadata or null if not found
+     */
+    public static function loadMetadataFromConfig()
+    {
+        $metadataJson = self::loadConfigValue(self::CONFIG_KEY_METADATA);
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Raw metadata from config, length: ' . strlen($metadataJson ?? ''));
+        
+        if (empty($metadataJson)) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata is empty');
+            return null;
+        }
+
+        // Try to parse as JSON directly (new format)
+        $decoded = json_decode($metadataJson, true);
+        if ($decoded !== null) {
+            return $decoded;
+        }
+        
+        // Try with HTML entity decode (data might have been stored with HTML entities)
+        $decoded = json_decode(html_entity_decode($metadataJson, ENT_QUOTES, 'UTF-8'), true);
+        if ($decoded !== null) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata parsed successfully after html_entity_decode');
+            return $decoded;
+        }
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata is not valid JSON, attempting decryption.');
+
+        // Metadata might be encrypted (legacy format) - try to decrypt
+        try {
+            require_once 'include/Pear/Crypt_Blowfish/Blowfish.php';
+            global $sugar_config;
+            $key = $sugar_config['unique_key'];
+
+            $bf = new Crypt_Blowfish($key);
+
+            // Decrypt (data is base64 encoded before encryption)
+            $decodedData = base64_decode($metadataJson);
+            if ($decodedData !== false) {
+                $decrypted = $bf->decrypt($decodedData);
+                if ($decrypted !== false) {
+                    $decoded = json_decode($decrypted, true);
+                    if ($decoded !== null) {
+                        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata decrypted successfully.');
+                        return $decoded;
+                    } else {
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Decrypted data is not valid JSON: ' . substr($decrypted, 0, 200));
+                    }
+                } else {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Blowfish decryption returned false');
+                }
+            } else {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Base64 decode failed');
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error decrypting metadata: ' . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Delete certificate from config table
+     *
+     * @return bool Success status
+     */
+    public static function deleteCertificateFromConfig()
+    {
+        global $db;
+
+        try {
+            // Delete all certificate config entries
+            $db->query("DELETE FROM config WHERE category = " . $db->quoted(self::CONFIG_CATEGORY));
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate deleted from config table.');
+            return true;
+
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error deleting certificate from config: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Check if certificate exists in config table
+     *
+     * @return bool
+     */
+    public static function certificateExistsInConfig()
+    {
+        $privateKey = self::loadConfigValue(self::CONFIG_KEY_PRIVATE_KEY);
+        $certificate = self::loadConfigValue(self::CONFIG_KEY_CERTIFICATE);
+        
+        return !empty($privateKey) && !empty($certificate);
+    }
+
+    /**
+     * Save a single config value
+     *
+     * @param string $name Config name
+     * @param string $value Config value
+     */
+    private static function saveConfigValue($name, $value)
+    {
+        global $db;
+
+        // Delete existing value first
+        $db->query("DELETE FROM config WHERE category = " . $db->quoted(self::CONFIG_CATEGORY) . " AND name = " . $db->quoted($name));
+
+        // Insert new value
+        $db->query("INSERT INTO config (category, name, value) VALUES (" . $db->quoted(self::CONFIG_CATEGORY) . ", " . $db->quoted($name) . ", " . $db->quoted($value) . ")");
+    }
+
+    /**
+     * Load a single config value
+     *
+     * @param string $name Config name
+     * @return string|null Config value or null if not found
+     */
+    private static function loadConfigValue($name)
+    {
+        global $db;
+
+        $result = $db->getOne("SELECT value FROM config WHERE category = " . $db->quoted(self::CONFIG_CATEGORY) . " AND name = " . $db->quoted($name));
+        
+        return $result !== false ? $result : null;
+    }
+
+    /**
+     * Get the certificate and private key components (ready to use)
+     * Components are stored in config table without encryption
      *
      * @return array|null Array with 'certificate', 'private_key', 'ca_chain' (all in PEM format), or null if not found
      */
     public static function getCertificateComponents()
+    {
+        // Try to load from config first
+        $components = self::loadCertificateFromConfig();
+
+        // Fallback to file system for backward compatibility (with decryption)
+        if ($components === null) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate not found in config, trying file system fallback.');
+            $components = self::getCertificateComponentsFromFiles();
+        }
+
+        if ($components === null) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components not found in config or files.');
+            return null;
+        }
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components loaded successfully.');
+        return $components;
+    }
+
+    /**
+     * Get certificate components from file system (fallback for backward compatibility)
+     * Files are stored encrypted with Blowfish, so we need to decrypt them
+     *
+     * @return array|null Array with 'certificate', 'private_key', 'ca_chain', or null if not found
+     */
+    private static function getCertificateComponentsFromFiles()
     {
         $privateKeyFile = self::CERT_DIR . 'private_key_encrypted.bin';
         $certificateFile = self::CERT_DIR . 'certificate_encrypted.bin';
@@ -68,17 +360,17 @@ class SticCertificateUtils
             require_once 'include/Pear/Crypt_Blowfish/Blowfish.php';
             global $sugar_config;
             $key = $sugar_config['unique_key'];
-            
+
             $bf = new Crypt_Blowfish($key);
-            
-            // Decrypt private key (do NOT trim - preserve exact PEM format)
+
+            // Decrypt private key
             $privateKeyData = base64_decode($encryptedPrivateKey);
             $privateKey = $bf->decrypt($privateKeyData);
-            
-            // Decrypt certificate (do NOT trim - preserve exact PEM format)
+
+            // Decrypt certificate
             $certificateData = base64_decode($encryptedCertificate);
             $certificate = $bf->decrypt($certificateData);
-            
+
             // Decrypt CA chain if exists
             $caChain = '';
             if (!empty($encryptedCaChain)) {
@@ -86,7 +378,7 @@ class SticCertificateUtils
                 $caChain = $bf->decrypt($caChainData);
             }
 
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components decrypted successfully.');
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate components decrypted from files.');
 
             return array(
                 'private_key' => $privateKey,
@@ -95,7 +387,7 @@ class SticCertificateUtils
             );
 
         } catch (Exception $e) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error decrypting certificate components: ' . $e->getMessage());
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error decrypting certificate components from files: ' . $e->getMessage());
             return null;
         }
     }
@@ -134,6 +426,12 @@ class SticCertificateUtils
      */
     public static function certificateExists()
     {
+        // Check config first
+        if (self::certificateExistsInConfig()) {
+            return true;
+        }
+
+        // Fallback to file system
         $privateKeyFile = self::CERT_DIR . 'private_key_encrypted.bin';
         $certificateFile = self::CERT_DIR . 'certificate_encrypted.bin';
         return file_exists($privateKeyFile) && file_exists($certificateFile) && file_exists(self::METADATA_FILE_PATH);
@@ -146,6 +444,13 @@ class SticCertificateUtils
      */
     public static function getCertificateMetadata()
     {
+        // Try to load from config first
+        $metadata = self::loadMetadataFromConfig();
+        if ($metadata !== null) {
+            return $metadata;
+        }
+
+        // Fallback to file system
         if (!file_exists(self::METADATA_FILE_PATH)) {
             return null;
         }
