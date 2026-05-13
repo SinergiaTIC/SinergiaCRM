@@ -65,16 +65,16 @@ class SticCertificateUtils
         global $db;
 
         try {
-            // Save private key
-            self::saveConfigValue(self::CONFIG_KEY_PRIVATE_KEY, $components['private_key'] ?? '');
+            // Encrypt and save private key
+            self::saveConfigValue(self::CONFIG_KEY_PRIVATE_KEY, self::encryptData($components['private_key'] ?? ''));
 
-            // Save certificate
-            self::saveConfigValue(self::CONFIG_KEY_CERTIFICATE, $components['certificate'] ?? '');
+            // Encrypt and save certificate
+            self::saveConfigValue(self::CONFIG_KEY_CERTIFICATE, self::encryptData($components['certificate'] ?? ''));
 
-            // Save CA chain
-            self::saveConfigValue(self::CONFIG_KEY_CA_CHAIN, $components['ca_chain'] ?? '');
+            // Encrypt and save CA chain
+            self::saveConfigValue(self::CONFIG_KEY_CA_CHAIN, self::encryptData($components['ca_chain'] ?? ''));
 
-            // Save metadata as JSON
+            // Save metadata as JSON (not encrypted)
             self::saveConfigValue(self::CONFIG_KEY_METADATA, json_encode($metadata));
 
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate saved to config table successfully.');
@@ -113,6 +113,28 @@ class SticCertificateUtils
             'certificate' => $certificate,
             'ca_chain' => $caChain,
         );
+    }
+
+    /**
+     * Encrypt data using Blowfish with base64 encoding
+     *
+     * @param string $data The data to encrypt (PEM format)
+     * @return string Encrypted data (base64 encoded)
+     */
+    private static function encryptData($data)
+    {
+        if (empty($data)) {
+            return '';
+        }
+
+        require_once 'include/Pear/Crypt_Blowfish/Blowfish.php';
+        global $sugar_config;
+        $key = $sugar_config['unique_key'];
+
+        $bf = new Crypt_Blowfish($key);
+        $encrypted = $bf->encrypt($data);
+
+        return base64_encode($encrypted);
     }
 
     /**
@@ -184,10 +206,8 @@ class SticCertificateUtils
     public static function loadMetadataFromConfig()
     {
         $metadataJson = self::loadConfigValue(self::CONFIG_KEY_METADATA);
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Raw metadata from config, length: ' . strlen($metadataJson ?? ''));
         
         if (empty($metadataJson)) {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata is empty');
             return null;
         }
 
@@ -200,40 +220,7 @@ class SticCertificateUtils
         // Try with HTML entity decode (data might have been stored with HTML entities)
         $decoded = json_decode(html_entity_decode($metadataJson, ENT_QUOTES, 'UTF-8'), true);
         if ($decoded !== null) {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata parsed successfully after html_entity_decode');
             return $decoded;
-        }
-
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata is not valid JSON, attempting decryption.');
-
-        // Metadata might be encrypted (legacy format) - try to decrypt
-        try {
-            require_once 'include/Pear/Crypt_Blowfish/Blowfish.php';
-            global $sugar_config;
-            $key = $sugar_config['unique_key'];
-
-            $bf = new Crypt_Blowfish($key);
-
-            // Decrypt (data is base64 encoded before encryption)
-            $decodedData = base64_decode($metadataJson);
-            if ($decodedData !== false) {
-                $decrypted = $bf->decrypt($decodedData);
-                if ($decrypted !== false) {
-                    $decoded = json_decode($decrypted, true);
-                    if ($decoded !== null) {
-                        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Metadata decrypted successfully.');
-                        return $decoded;
-                    } else {
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Decrypted data is not valid JSON: ' . substr($decrypted, 0, 200));
-                    }
-                } else {
-                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Blowfish decryption returned false');
-                }
-            } else {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Base64 decode failed');
-            }
-        } catch (Exception $e) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error decrypting metadata: ' . $e->getMessage());
         }
 
         return null;
