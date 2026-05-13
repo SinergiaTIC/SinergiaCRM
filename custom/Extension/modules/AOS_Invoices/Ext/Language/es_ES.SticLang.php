@@ -90,6 +90,9 @@ $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS'] = 'contiene caracteres inv
 $mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_RECTIFIED'] = 'No puede seleccionar la serie seleccionada para una factura rectificativa.';
 $mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_NORMAL'] = 'No puede seleccionar la serie seleccionada para una factura normal.';
 $mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'] = 'No se puede cambiar la serie de una factura que ya ha sido enviada a AEAT. Debe crear una factura rectificativa si necesita usar una diferente.';
+$mod_strings['LBL_VERIFACTU_INVOICE_TYPE_RECTIFIED_MISMATCH'] = 'La factura está marcada como rectificativa pero la serie seleccionada ({0}) no es una serie rectificativa. Seleccione una serie rectificativa o desmarque la opción "¿Es factura rectificativa?".';
+$mod_strings['LBL_VERIFACTU_INVOICE_TYPE_NORMAL_MISMATCH'] = 'La factura no está marcada como rectificativa pero la serie seleccionada ({0}) es una serie rectificativa. Seleccione una serie normal o marque la opción "¿Es factura rectificativa?".';
+$mod_strings['LBL_VERIFACTU_CUSTOMER_NIF_REQUIRED'] = 'El cliente (Organización o Persona) no tiene informado el NIF. Por favor, edite el cliente y complete el campo NIF antes de enviar la factura a AEAT.';
 
 // Rectified invoice labels
 $mod_strings['LBL_VERIFACTU_IS_RECTIFIED'] = '¿Es factura rectificativa?';

@@ -757,6 +757,49 @@ class AOS_InvoicesUtils
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': No customer info found for invoice - this will cause error 1189 for R1 invoices');
             }
 
+            // === Validate customer NIF is informed ===
+            if (empty($customerNif)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Customer NIF is not informed - blocking send');
+                
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                
+                // Build link to customer edit view
+                $customerLink = '';
+                $customerType = '';
+                if (!empty($invoiceBean->billing_account_id)) {
+                    $customerLink = '<a href="index.php?module=Accounts&action=EditView&record=' . $invoiceBean->billing_account_id . '" target="_blank">';
+                    $customerType = 'la Organización';
+                } elseif (!empty($invoiceBean->billing_contact_id)) {
+                    $customerLink = '<a href="index.php?module=Contacts&action=EditView&record=' . $invoiceBean->billing_contact_id . '" target="_blank">';
+                    $customerType = 'la Persona';
+                }
+                
+                $errorMsg = 'El cliente (' . $customerType . ') no tiene informado el NIF. ';
+                if ($customerLink) {
+                    $errorMsg .= $customerLink . 'Haga clic aquí para editar el cliente</a> ';
+                    $errorMsg .= 'y complete el campo NIF antes de enviar la factura a AEAT.';
+                } else {
+                    $errorMsg .= 'Seleccione un cliente (Organización o Persona) con NIF informado.';
+                }
+                
+                SugarApplication::appendErrorMessage($errorMsg);
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $invoiceBean->id);
+                return;
+            }
+            // === End customer NIF validation ===
+
+            // === Step 2.10: Validate invoice type coherence ===
+            $invoiceTypeValidation = self::validateInvoiceType($invoiceBean);
+            if ($invoiceTypeValidation !== true) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice type validation failed: ' . $invoiceTypeValidation);
+                SugarApplication::appendErrorMessage($invoiceTypeValidation);
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $invoiceBean->id);
+                return;
+            }
+            // === End Step 2.10 ===
+
             // Prepare rectified invoice data (if applicable)
             $isRectified = !empty($invoiceBean->verifactu_is_rectified_c);
             $rectifiedType = $invoiceBean->verifactu_rectified_type_c ?? null;
@@ -1624,6 +1667,51 @@ class AOS_InvoicesUtils
         }
 
         $GLOBALS['log']->debug("validateChronologicalOrder - Date validation passed for series: $seriesName, date: " . date('d/m/Y', $currentDate));
+        return true;
+    }
+
+    /**
+     * Step 2.10: Validate coherence between invoice type and rectification flag
+     * 
+     * Rules:
+     * - If verifactu_is_rectified_c = 1, series must have isRectified = true
+     * - If verifactu_is_rectified_c = 0 or empty, series must have isRectified = false
+     * 
+     * @param object $bean The invoice bean
+     * @return bool|string True if valid, error message string if invalid
+     */
+    public static function validateInvoiceType($bean)
+    {
+        global $mod_strings, $sugar_config;
+
+        $isRectified = !empty($bean->verifactu_is_rectified_c);
+        $seriesName = $bean->stic_invoice_type_c ?? '';
+
+        // Get the series configuration
+        $seriesConfig = $sugar_config['aos']['invoices']['series'][$seriesName] ?? null;
+        
+        if (empty($seriesConfig)) {
+            $GLOBALS['log']->error(__METHOD__ . ': Series not found in config: ' . $seriesName);
+            return true; // Let other validation handle this
+        }
+
+        $seriesIsRectified = !empty($seriesConfig['isRectified']);
+
+        if ($isRectified && !$seriesIsRectified) {
+            // Invoice is marked as rectified but series is not rectified
+            $GLOBALS['log']->error(__METHOD__ . ': Rectified invoice uses non-rectified series: ' . $seriesName);
+            return $mod_strings['LBL_VERIFACTU_INVOICE_TYPE_RECTIFIED_MISMATCH']
+                ?? "La factura está marcada como rectificativa pero la serie seleccionada ({$seriesName}) no es una serie rectificativa. Seleccione una serie rectificativa o desmarque la opción '¿Es factura rectificativa?'.";
+        }
+
+        if (!$isRectified && $seriesIsRectified) {
+            // Invoice is not rectified but series is rectified
+            $GLOBALS['log']->error(__METHOD__ . ': Normal invoice uses rectified series: ' . $seriesName);
+            return $mod_strings['LBL_VERIFACTU_INVOICE_TYPE_NORMAL_MISMATCH']
+                ?? "La factura no está marcada como rectificativa pero la serie seleccionada ({$seriesName}) es una serie rectificativa. Seleccione una serie normal o marque la opción '¿Es factura rectificativa?'.";
+        }
+
+        $GLOBALS['log']->debug(__METHOD__ . ': Invoice type validation passed - isRectified: ' . ($isRectified ? 'yes' : 'no') . ', series: ' . $seriesName . ', seriesIsRectified: ' . ($seriesIsRectified ? 'yes' : 'no'));
         return true;
     }
 
