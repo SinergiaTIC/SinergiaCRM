@@ -45,10 +45,14 @@ class AOS_InvoicesHook
             $bean->fetched_row['verifactu_aeat_status_c'] === 'accepted') {
             
             // Check if it's a duplicate or creating a rectified invoice (both are allowed)
-            $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') 
+            $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1')
                 || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true')
                 // Allow if this is a new rectified invoice (action=CreateRectifiedInvoice)
-                || ($_REQUEST['action'] === 'CreateRectifiedInvoice');
+                || ($_REQUEST['action'] === 'CreateRectifiedInvoice')
+                // Allow if this is a cancellation operation
+                || ($_REQUEST['action'] === 'CancelInvoice')
+                // Allow if bean has a flag indicating cancellation in progress
+                || (!empty($bean->_is_cancellation) && $bean->_is_cancellation === true);
             
             if (!$isDuplicate) {
                 // List of NON-tax fields that CAN be edited
@@ -193,6 +197,43 @@ class AOS_InvoicesHook
             }
         }
         // === End Step 2.5 ===
+
+        // === Step 2.8: Regenerate number when series changes ===
+        // If the invoice has NOT been sent to AEAT (pending), allow series change and reset number
+        // If the invoice HAS been sent to AEAT (not pending), block series change
+        if (!$isDuplicate && !empty($bean->fetched_row['id'])) {
+            $currentSeries = $bean->stic_invoice_type_c;
+            $originalSeries = $bean->fetched_row['stic_invoice_type_c'] ?? null;
+            
+            $aeatStatus = $bean->verifactu_aeat_status_c ?? 'pending';
+            $hasBeenSent = !empty($bean->verifactu_submitted_at_c);
+            
+            $GLOBALS['log']->debug(__METHOD__ . ': Step 2.8 - Current series: ' . ($currentSeries ?? 'null') . ', Original series: ' . ($originalSeries ?? 'null') . ', AEAT status: ' . $aeatStatus . ', Submitted: ' . ($hasBeenSent ? 'yes' : 'no'));
+            
+            if (!empty($originalSeries) && $currentSeries !== $originalSeries) {
+                if ($hasBeenSent || $aeatStatus === 'accepted' || $aeatStatus === 'emitted') {
+                    // Invoice has been sent to AEAT - block series change
+                    if (empty($mod_strings)) {
+                        $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                    }
+                    
+                    $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'] ?? 
+                        'No se puede cambiar la serie de una factura que ya ha sido enviada a AEAT.';
+                    
+                    SugarApplication::appendErrorMessage($errorMsg);
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                    die();
+                } else {
+                    // Invoice not yet sent - allow series change and reset number
+                    // The number will be regenerated at send time (Step 1.3)
+                    if (!empty($bean->number) && strpos($bean->number, 'BORRADOR-') !== 0) {
+                        $GLOBALS['log']->info(__METHOD__ . ': Step 2.8 - Series changed from "' . $originalSeries . '" to "' . $currentSeries . '". Resetting number for regeneration at send time.');
+                        $bean->number = '';
+                    }
+                }
+            }
+        }
+        // === End Step 2.8 ===
 
         // If duplicating a record, set status to 'draft' and clear Verifactu fields
         if (

@@ -83,6 +83,14 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             return;
         }
 
+        // Verify the invoice has customer data (required for rectified invoices of type R1)
+        // Error 1189: F1/F3/R1/R2/R3/R4 require Destinatarios block
+        if (empty($originalInvoice->billing_account_id) && empty($originalInvoice->billing_contact_id)) {
+            SugarApplication::appendErrorMessage($mod_strings['LBL_ORIGINAL_INVOICE_NO_CUSTOMER_DATA']);
+            SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
+            return;
+        }
+
         // Create a new invoice (rectified)
         $rectifiedInvoice = BeanFactory::newBean('AOS_Invoices');
 

@@ -89,6 +89,7 @@ $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'] = 'Error de configuración: El for
 $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS'] = 'contiene caracteres inválidos. Solo se permiten: A-Z, 0-9, guión (-), guión bajo (_), barra (/), punto (.) y espacio.';
 $mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_RECTIFIED'] = 'No puede seleccionar la serie seleccionada para una factura rectificativa.';
 $mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_NORMAL'] = 'No puede seleccionar la serie seleccionada para una factura normal.';
+$mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'] = 'No se puede cambiar la serie de una factura que ya ha sido enviada a AEAT. Debe crear una factura rectificativa si necesita usar una diferente.';
 
 // Rectified invoice labels
 $mod_strings['LBL_VERIFACTU_IS_RECTIFIED'] = '¿Es factura rectificativa?';
@@ -117,6 +118,7 @@ $mod_strings['LBL_INVOICE_NOT_FOUND'] = 'Factura no encontrada';
 $mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED'] = 'No se especificó la factura original.';
 $mod_strings['LBL_ORIGINAL_INVOICE_NOT_FOUND'] = 'No se encontró la factura original.';
 $mod_strings['LBL_ORIGINAL_INVOICE_MUST_BE_SENT_TO_AEAT'] = 'La factura original debe estar enviada a AEAT para poder rectificarla.';
+$mod_strings['LBL_ORIGINAL_INVOICE_NO_CUSTOMER_DATA'] = 'La factura original no tiene datos del destinatario (Organización o Persona). Las facturas rectificativas de sustitución requieren esta información. Por favor, edite la factura original para añadir los datos del cliente.';
 $mod_strings['LBL_CANNOT_RECTIFY_RECTIFIED_INVOICE'] = 'No se puede crear una factura rectificativa de otra factura rectificativa.';
 $mod_strings['LBL_RECTIFIED_INVOICE_CREATED_SUCCESS'] = 'Factura rectificativa creada correctamente. Recuerde completar el tipo y base de rectificación antes de guardar.';
 

@@ -1061,9 +1061,8 @@ class AOS_InvoicesUtils
         try {
             // Query to find the most recent invoice that was sent to AEAT
             // and has a verifactu hash stored (custom fields are in aos_invoices_cstm table).
-            // Cancelled invoices ARE included because after a successful cancellation
-            // their verifactu_hash_c is overwritten with the CancellationRecord hash,
-            // which is the correct predecessor for the next invoice in the chain.
+            // Cancelled invoices ARE included because they store the cancellation hash
+            // in verifactu_cancel_hash_c, and we use that for proper chain linking.
             $query = "
                 SELECT
                     i.id,
@@ -1724,10 +1723,9 @@ class AOS_InvoicesUtils
             $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
 
             // --- Get previous record in chain (for chaining) ---
-            // Uses getPreviousInvoice() which searches by invoice_date and requires
-            // a non-null verifactu_hash_c, guaranteeing a valid chain predecessor.
-            // Cancelled invoices are included because after cancellation their
-            // verifactu_hash_c contains the CancellationRecord hash (the real last link).
+            // Uses getPreviousInvoice() which searches by submitted_at date.
+            // For cancelled invoices, it uses verifactu_cancel_hash_c (not verifactu_hash_c)
+            // to maintain proper chain linking.
             $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
 
             $previousInvoiceId = null;
@@ -1809,10 +1807,10 @@ class AOS_InvoicesUtils
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cancellation sent to AEAT. CSV: ' . $response->csv);
 
             // --- Update invoice with cancellation info ---
-            // Store the CancellationRecord hash in verifactu_hash_c so that the
-            // next invoice in the chain links to this cancellation record and not
-            // to the original registration record hash. This keeps the Verifactu
-            // chain intact: RegistrationAlta -> RegistrationAnulacion -> next RegistrationAlta.
+            // Store the CancellationRecord hash in verifactu_cancel_hash_c (NOT in verifactu_hash_c).
+            // This preserves the original registration hash for audit purposes.
+            // The getPreviousInvoice() method uses verifactu_cancel_hash_c for cancelled invoices
+            // to maintain proper Verifactu chain: RegistrationAlta -> RegistrationAnulacion -> next RegistrationAlta.
             $auditLines = [];
             $auditLines[] = '=== Auditoria Verifactu ===';
             $auditLines[] = 'Fecha: ' . (new DateTimeImmutable())->format('Y-m-d H:i:s');
@@ -1835,6 +1833,9 @@ class AOS_InvoicesUtils
             }
             $auditLog .= "[{$auditTimestamp}] Cancellation sent to AEAT. CSV: {$response->csv}. Cancellation hash: {$cancellationRecord->hash}. Original hash preserved: {$invoiceBean->verifactu_hash_c}";
             $invoiceBean->verifactu_audit_log_c = $auditLog;
+            
+            // Mark this as a cancellation operation to bypass edit blocking in before_save
+            $invoiceBean->_is_cancellation = true;
             
             // Preserve original hash and store cancellation hash in separate field
             $invoiceBean->verifactu_cancel_hash_c = $cancellationRecord->hash;
