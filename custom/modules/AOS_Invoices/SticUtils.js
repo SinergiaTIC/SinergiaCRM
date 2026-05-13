@@ -118,6 +118,11 @@ switch (viewType()) {
     createDetailViewButton(buttons.createRectifiedInvoice);
     createDetailViewButton(buttons.cancelInvoice);
 
+    // Disable delete button for invoices already sent to AEAT
+    if (STIC.record.verifactu_aeat_status_c === 'accepted' || STIC.record.verifactu_aeat_status_c === 'emitted') {
+      disableDeleteButton();
+    }
+
     break;
 
   case "list":
@@ -146,6 +151,36 @@ function sendToAEAT() {
     }
   }
   window.location = 'index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=' + STIC.record.id + '&set=emitted';
+}
+
+// Disable delete button in detail view when invoice is already sent to AEAT
+function disableDeleteButton() {
+  // Find the delete button in the action menu
+  var deleteButton = document.querySelector('[name="Delete"]');
+  if (deleteButton) {
+    deleteButton.disabled = true;
+    deleteButton.style.cursor = 'not-allowed';
+    deleteButton.style.opacity = '0.5';
+    deleteButton.onclick = function() {
+      alert(SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_BLOCK_DELETE_MESSAGE") || 'No se puede eliminar una factura que ha sido enviada a la AEAT.');
+      return false;
+    };
+  }
+  
+  // Also disable any other delete links/buttons in the dropdown menu
+  var menuItems = document.querySelectorAll('.dropdown-menu li a');
+  menuItems.forEach(function(item) {
+    var href = item.getAttribute('href') || '';
+    if (href.indexOf('action=delete') !== -1 || href.indexOf('delete.php') !== -1) {
+      item.style.cursor = 'not-allowed';
+      item.style.opacity = '0.5';
+      item.onclick = function(e) {
+        e.preventDefault();
+        alert(SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_BLOCK_DELETE_MESSAGE") || 'No se puede eliminar una factura que ha sido enviada a la AEAT.');
+        return false;
+      };
+    }
+  });
 }
 
 // === Step 2.3: Filter series dropdown based on isRectified flag ===

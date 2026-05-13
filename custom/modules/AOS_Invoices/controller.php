@@ -24,6 +24,13 @@
 require_once 'modules/AOS_Invoices/controller.php';
 class CustomAOS_InvoicesController extends AOS_InvoicesController
 {
+    /**
+     * Override delete action (uses before_delete hook for blocking logic).
+     */
+    public function action_delete()
+    {
+        parent::action_delete();
+    }
     public function action_sendToAEAT()
     {
         global $mod_strings;
@@ -394,4 +401,5 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         // Redirect back to invoice
         SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
     }
-}
+
+    }

@@ -374,30 +374,33 @@ class AOS_InvoicesHook
         AOS_InvoicesUtils::sendToAeat($bean);
     }
 
-    // === Step 1.1: Block deletion of issued/accepted invoices ===
+// === Step 1.1: Block deletion of issued/accepted invoices ===
     public function before_delete($bean, $event, $arguments)
     {
         global $mod_strings;
-        
-        // Only block if invoice has been sent to AEAT (accepted or emitted)
-        if (!empty($bean->verifactu_aeat_status_c) && 
+
+        if (!empty($bean->verifactu_aeat_status_c) &&
             in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
-            
-            // Load mod_strings if not already loaded
+
             if (empty($mod_strings)) {
                 $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
             }
-            
-            $errorMsg = $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ERROR'] ?? 
-                'No se puede eliminar una factura que ha sido enviada a la AEAT. Debe crear una anulación.';
-            
-            SugarApplication::appendErrorMessage($errorMsg);
-            
-            // Redirect to detail view
-            if (!empty($bean->id)) {
-                SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
+
+            $invoiceInfo = !empty($bean->number) ? $bean->number : $bean->id;
+            $errorMsg = sprintf(
+                $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'] ??
+                'No se puede continuar porque la selección incluye facturas que ya han sido enviadas a la AEAT: %s.',
+                $invoiceInfo
+            );
+
+            if (!empty($_REQUEST['ajax'])) {
+                echo json_encode(['success' => false, 'message' => $errorMsg]);
+                exit;
             }
-            die();
+
+            SugarApplication::appendErrorMessage($errorMsg);
+            header('Location: index.php?module=AOS_Invoices&action=index');
+            exit;
         }
     }
     // === End Step 1.1 ===
