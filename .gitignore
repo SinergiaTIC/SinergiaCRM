@@ -8,7 +8,7 @@ upload/*
 # Ignore some files and directories from the custom directory.
 # custom/
 custom/history/*
-# custom/blowfish/*
+custom/blowfish/*
 custom/modulebuilder/*
 custom/working/*
 custom/modules/*/Ext/
