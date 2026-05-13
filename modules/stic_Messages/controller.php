@@ -375,22 +375,18 @@ class stic_MessagesController extends SugarController
     }
 
     public function action_FillDynamicListMessageTemplate() {
-        // Determine requested type from the client (flexible: accept helper class or 'whatsapp'/'sms')
         $typeParam = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : '';
 
         if (strpos($typeParam, 'whatsapp') !== false) {
-            // fillDynamicListMessageTemplate expects 'whatsapphelper' as key in mapping
-            $_REQUEST['type'] = 'whatsapphelper';
+            $helperType = 'whatsapphelper';
         } elseif (strpos($typeParam, 'sms') !== false) {
-            $_REQUEST['type'] = 'smssevenhelper';
+            $helperType = 'smssevenhelper';
         } else {
-            // default
-            $_REQUEST['type'] = 'smssevenhelper';
+            $helperType = 'smssevenhelper';
         }
 
-        // Call the util to populate the app_list_strings
         require_once 'modules/stic_Messages/Utils.php';
-        stic_MessagesUtils::fillDynamicListMessageTemplate();
+        stic_MessagesUtils::fillDynamicListMessageTemplate($helperType);
 
         $list = $GLOBALS['app_list_strings']['dynamic_message_template_list'] ?? array();
 

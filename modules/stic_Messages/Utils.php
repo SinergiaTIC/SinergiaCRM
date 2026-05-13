@@ -228,16 +228,20 @@ class stic_MessagesUtils {
         echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
     }
 
-    public static function fillDynamicListMessageTemplate()
+    public static function fillDynamicListMessageTemplate($type = null)
     {
         $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
 
+        if ($type === null) {
             $typeRequest = $_REQUEST['type'] ?? 'sms';
-            $typeMap = [
-                'smssevenhelper' => 'sms',
-                'whatsapphelper' => 'whatsapp'
-            ];
-            $type = $typeMap[$typeRequest] ?? 'sms';
+        } else {
+            $typeRequest = strtolower($type);
+        }
+        $typeMap = [
+            'smssevenhelper' => 'sms',
+            'whatsapphelper' => 'whatsapp'
+        ];
+        $type = $typeMap[$typeRequest] ?? 'sms';
         $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='$type'", 0, -99, -99);
 
         $dynamic_email_template_list = array("" => translate("LBL_NONE", "app_strings"));
