@@ -249,11 +249,11 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Projecte actual';
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productes financers';
 
 // Cadenes Àrea Privada
-$mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'Àrea Privada";
-$mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'Àrea Privada";
-$mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'Àrea Privada";
-$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = "Al activar aquesta opció, s'habilitarà l'accés a l'Àrea Privada per a aquesta persona. Si es desactiva aquesta opció, es revocarà l'accés a l'Àrea Privada. A més, per poder procedir amb l'enviament de les credencials d'accés a l'Àrea Privada, és necessari que s'activi la configuració 'PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE'. En cas contrari, no es podran enviar les credencials d'accés a l'Àrea Privada.";
-$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = "Es podrà introduir/canviar la contrasenya de l'Àrea Privada només si l'opció d'\"Activar Àrea Privada\" està habilitada.";
+$mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'àrea privada";
+$mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'àrea privada";
+$mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'àrea privada";
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = "Per tal que la persona pugui accedir a l'àrea privada cal que aquest camp estigui marcat. Si no ho està, no s'hi podrà accedir encara que es disposi de nom d'usuari i contrasenya. En marcar aquest camp, si el paràmetre de configuració <a href='index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11' target='_blank'>PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> està activat, s'enviaran automàticament a la persona les credencials d'accés. En cas contrari, caldrà fer-ho de forma manual.";
+$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = "Per tal de poder editar la contrasenya cal que el camp 'Activa l'àrea privada' estigui marcat.";
 
 // Converses
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Converses';
