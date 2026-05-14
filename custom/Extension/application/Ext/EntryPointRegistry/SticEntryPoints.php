@@ -59,7 +59,9 @@ $entry_point_registry['stic_AWF_renderForm'] = array('file' => 'modules/stic_AWF
 $entry_point_registry['stic_AWF_responseHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ResponseHandler.php', 'auth' => false);
 $entry_point_registry['stic_AWF_checkSession'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckSession.php', 'auth' => false);
 $entry_point_registry['stic_AWF_webhookHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/WebhookHandler.php', 'auth' => false);
-$entry_point_registry['stic_AWF_ReturnHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ReturnHandler.php', 'auth' => false);// Entry point for async ListView count
+$entry_point_registry['stic_AWF_ReturnHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ReturnHandler.php', 'auth' => false);
+
+// Entry point for async ListView count
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
 
 
