@@ -520,55 +520,6 @@ function removeDocumentsFromFS()
         }
     };
 
-    // Function to remove a directory or file from the filesystem and update database entry
-    $deleteFromFilesystem = function ($relativePath, $entryId = null) use ($tableName, $db, $cleanupEmptyParentFolders) {
-        $fullPath = 'upload://deleted/' . $relativePath; // Get full path
-        $isSuccess = false;
-
-        // If it is a directory, try to remove it recursively
-        if (is_dir($fullPath)) {
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to remove directory: ' . $fullPath);
-
-            try {
-                $isSuccess = rmdir_recursive($fullPath); // Recursively remove directory
-
-                if ($isSuccess) {
-                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Successfully removed directory: ' . $fullPath);
-
-                    $cleanupEmptyParentFolders($relativePath); // Clean up parent folders
-                }
-            } catch (Exception $e) {
-                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Error removing directory ' . $fullPath . ':' . $e->getMessage());
-                return false;
-            }
-
-        // If it is a file, delete it and cleanup parent folders
-        } elseif (is_file($fullPath)) {
-            // Path is a file
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to delete file: ' . $fullPath);
-            $isSuccess = @unlink($fullPath); // Delete file
-
-            if ($isSuccess) {
-                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Successfully deleted file: ' . $fullPath);
-
-                $cleanupEmptyParentFolders($relativePath); // Clean up parent folders
-            } else {
-                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to delete file: ' . $fullPath);
-            }
-        } else {
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': No directory or file found at: ' . $fullPath);
-        }
-
-        // If deletion was successful, remove the record from the tracking table
-        if ($isSuccess && $entryId) {
-            $db->query("DELETE FROM $tableName WHERE id = " . $db->quoted($entryId));
-
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed entry from $tableName: ' . $entryId);
-        }
-
-        return $isSuccess;
-    };
-
     // Fetch up to 100 rows pending removal
     $resource = $db->limitQuery("SELECT * FROM $tableName WHERE 1=1 ORDER BY date_modified ASC", 0, 100);
     $return = true;
@@ -607,23 +558,59 @@ function removeDocumentsFromFS()
     
             $directory = $bean->deleteFileDirectory();
         }
-    
-        if (!empty($directory)) {
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to remove directory for bean: ' . $directory);
 
-            if (!$deleteFromFilesystem($directory, $entryId)) {
-                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to remove directory for bean ID: ' . $beanId);
+        // Build full path and handle file/directory removal
+        $fullPath = 'upload://deleted/' . $directory;
 
+        // Check if the path is a directory (folder with deleted documents)
+        if (is_dir($fullPath)) {
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to remove directory: ' . $fullPath);
+
+            try {
+                // Recursively remove the directory and all its contents
+                if (rmdir_recursive($fullPath)) {
+                    // Clean up any empty parent directories under upload/deleted/
+                    $cleanupEmptyParentFolders($directory);
+                    // Remove the corresponding entry from the tracking table
+                    $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed directory and entry: ' . $entryId);
+                } else {
+                    // Directory removal failed (permissions or other filesystem error)
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to remove directory: ' . $fullPath);
+                    $return = false;
+                    // Update timestamp to retry removal in next scheduler run
+                    $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
+                }
+            } catch (Exception $e) {
+                // Exception during directory removal (e.g., filesystem error)
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Error removing directory: ' . $e->getMessage());
                 $return = false;
+                // Update timestamp to retry removal in next scheduler run
+                $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
+            }
+        // Check if the path is a standalone file (single deleted document)
+        } elseif (is_file($fullPath)) {
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to delete file: ' . $fullPath);
 
-                // Update last attempt timestamp
+            if (@unlink($fullPath)) {
+                // Clean up any empty parent directories under upload/deleted/
+                $cleanupEmptyParentFolders($directory);
+                // Remove the corresponding entry from the tracking table
+                $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed file and entry: ' . $entryId);
+            } else {
+                // File deletion failed (permissions or other filesystem error)
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to delete file: ' . $fullPath);
+                $return = false;
+                // Update timestamp to retry removal in next scheduler run
                 $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
             }
         } else {
-            // No directory to delete, just remove entry
+            // No directory or file found - orphan entry in database (file already deleted manually or missing)
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': No directory or file found at: ' . $fullPath . '. Removing orphan entry.');
+            // Remove the orphan entry without marking as failure
             $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
-
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed entry from ' . $tableName . ': ' . $entryId);
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed orphan entry: ' . $entryId);
         }
         // END STIC Custom
     }
