@@ -35,6 +35,8 @@ $mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
 $mod_strings['LBL_LEADS_DOCUMENTS_1_FROM_LEADS_TITLE'] = 'Interesados';
 $mod_strings['LBL_OVERVIEW_PANEL'] = 'Datos generales';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
+$mod_strings['LBL_STIC_CATEGORY'] = 'Categoría';
+$mod_strings['LBL_STIC_SUBCATEGORY'] = 'Subcategoría';
 $mod_strings['LBL_STIC_SHARED_DOCUMENT_LINK'] = 'Enlace externo';
 $mod_strings['LBL_STIC_SESSIONS_DOCUMENTS_FROM_STIC_SESSIONS_TITLE'] = 'Sesión';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizaciones';
@@ -45,6 +47,7 @@ $mod_strings['LBL_STIC_JOB_OFFERS_DOCUMENTS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofer
 $mod_strings['LBL_PROSPECTS_DOCUMENTS_1_FROM_PROSPECTS_TITLE'] = 'Público Objetivo';
 $mod_strings['LBL_STIC_FAMILIES_DOCUMENTS_FROM_STIC_FAMILIES_TITLE'] = 'Unidades familiares';
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organizaciones subvencionadas';
+$mod_strings['LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_DOCUMENTS_ACCOUNTS_NAME'] = 'Organización';

@@ -66,6 +66,12 @@ array(
         'width' => '10%',
         'default' => true,
     ),
+    'AUTHORIZED_SIGNER' => array(
+        'studio' => 'visible',
+        'label' => 'LBL_AUTHORIZED_SIGNER',
+        'width' => '10%',
+        'default' => true,
+    ),
     'START_DATE' => array(
         'type' => 'date',
         'label' => 'LBL_START_DATE',

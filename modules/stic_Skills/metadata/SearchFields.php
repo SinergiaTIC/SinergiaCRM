@@ -48,7 +48,17 @@ $searchFields[$module_name] = array(
         'enable_range_search' => true,
         'is_date_field' => true
     ),
-
+    'range_evaluation_date' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'start_range_evaluation_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'end_range_evaluation_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
     'range_date_entered' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
     'start_range_date_entered' => array(
         'query_type' => 'default',

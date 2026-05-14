@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings = array (
+$mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Asignado a',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ASSIGNED_TO' => 'Asignado a',
@@ -108,7 +108,7 @@ $mod_strings = array (
     'LBL_M182_MISSING_SETTINGS' => 'Os seguintes parámetros de configuración non existen ou non teñen valor; revíseos antes de continuar',
     'LBL_M182_MISSING_FIELDS' => 'Os seguintes campos non existen ou non son do tipo decimal; revíseos antes de continuar',
     'LBL_M182_MISSING_FIELDS_WRONG_TYPE' => '- Existe pero non é do tipo decimal.',
-    'LBL_NO_PAYMENT_COMMITMENTS' => 'O compromiso de pago é obrigatorio.',
+    'LBL_NO_PAYMENT_COMMITMENT' => 'O compromiso de pago é obrigatorio.',
     'LBL_BANK_ACCOUNT_SHOULD_BE_EMPTY_ERROR' => 'Se se indica unha conta bancaria, o medio de pago debe ser domiciliación ou transferencia emitida.',
     'LBL_NO_BANK_ACCOUNT_ERROR' => 'Se o medio de pago é domiciliación ou transferencia emitida, é necesario indicar unha conta bancaria (IBAN) válida.',
     'LBL_ADD_PAYMENTS_TO_REMITTANCE_INFO_ALERT' => 'Seleccione unha remesa na ventá emerxente',
@@ -138,7 +138,7 @@ $mod_strings = array (
 <b>- Asistencias procesadas:</b> número de asistencias que puideron ser contabilizadas dentro dos seus pagos de referencia.<br><br>
 <b>- Asistencias con alerta:</b> número de asistencias que non puideron ser contabilizadas dentro dos seus pagos de referencia porque non teñen valor nin en <i>Estado</i> nin en <i>Excepción de pago</i>. Estas asistencias aparecen no cadro <i>Asistencias con alerta</i>.<br><br>',
     'LBL_AGGREGATED_WARNING_ATTENDANCES_LOG_TITLE_INFO' => 'As asistencias que aparecen neste cadro non teñen valor indicado nin no campo <i>Estado</i> nin no campo <i>Excepción de pago</i>, polo que non puideron ser contabilizadas dentro dos seus pagos de referencia. Xunto a cada asistencia hai un botón que permite enviar un recordatorio de <i>Asistencias pendentes de revisión</i> ao usuario asignado correspondente.',
-        'LBL_AGGREGATED_WARNING_PAYMENTS_LOG_TITLE_INFO' => 'Os pagos que aparecen neste cuadro, a pesar de ter as características correctas para a súa inclusión no proceso, non teñen ningunha asistencia vinculada dentro do período a analizar ou, directamente, non teñen ningunha inscrición vinculada. Recoméndase revisalos e aplicar, no seu caso, as correccións adecuadas onde sexa necesario.',
+    'LBL_AGGREGATED_WARNING_PAYMENTS_LOG_TITLE_INFO' => 'Os pagos que aparecen neste cuadro, a pesar de ter as características correctas para a súa inclusión no proceso, non teñen ningunha asistencia vinculada dentro do período a analizar ou, directamente, non teñen ningunha inscrición vinculada. Recoméndase revisalos e aplicar, no seu caso, as correccións adecuadas onde sexa necesario.',
     'LBL_AGGREGATED_NOTIFICATION_EMAIL_SUBJECT' => 'Tes asistencias pendentes de revisión',
     'LBL_AGGREGATED_NOTIFICATION_EMAIL_BODY' => 'Apreciado/a: <br><br>No CRM hai asistencias do mes pasado ou anteriores ás que non lle asignaches estado. Agradecémosche que o antes posible lles indiques o estado adecuado para que se poida realizar o proceso de cálculo dos pagos asociados.<br><br>Moitas grazas.',
     'LBL_AGGREGATED_NOTIFICATION_BUTTON_SEND' => 'Enviar un correo',
@@ -147,5 +147,5 @@ $mod_strings = array (
     'LBL_AGGREGATED_NOTIFICATION_BUTTON_SENDING_ISSUE' => 'Erro de envío',
     'LBL_AGGREGATED_NOTIFICATION_BUTTON_SERVER_ERROR' => 'Erro do servidor',
     'LBL_AGGREGATED_RETURN_BUTTON' => 'Volver ao módulo',
-    'LBL_AGGREGATED_REFRESH_BUTTON' => 'Repetir o proceso',   
+    'LBL_AGGREGATED_REFRESH_BUTTON' => 'Repetir o proceso',
 );

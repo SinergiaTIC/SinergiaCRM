@@ -33,11 +33,23 @@ $dashletData['stic_Job_OffersDashlet']['searchFields'] = array (
   array (
     'default' => '',
   ),
+  'offer_type' => 
+  array (
+    'default' => '',
+  ),
   'professional_profile' => 
   array (
     'default' => '',
   ),
   'status' => 
+  array (
+    'default' => '',
+  ),
+  'offer_mode' => 
+  array (
+    'default' => '',
+  ),
+  'territorial_scope' => 
   array (
     'default' => '',
   ),
@@ -148,6 +160,91 @@ $dashletData['stic_Job_OffersDashlet']['columns'] = array (
     'label' => 'LBL_INTERLOCUTOR',
     'id' => 'CONTACT_ID_C',
     'link' => true,
+    'width' => '10%',
+    'default' => false,
+  ),
+  'OFFER_TYPE' => array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_OFFER_TYPE',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'OFFER_MODE' => array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_OFFER_MODE',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'TERRITORIAL_SCOPE' => array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_TERRITORIAL_SCOPE',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'TIMETABLE' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_TIMETABLE',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'WEEKDAYS' => array (
+    'type' => 'multienum',
+    'default' => false,
+    'studio' => 'visible',
+    'label' => 'LBL_WEEKDAYS',
+    'width' => '10%',
+  ),
+  'EVALUATION' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_EVALUATION',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'RESPONSIBLE' => array (
+    'type' => 'relate',
+    'studio' => 'visible',
+    'label' => 'LBL_RESPONSIBLE',
+    'id' => 'RESPONSIBLE_ID',
+    'link' => true,
+    'width' => '10%',
+    'default' => false,
+  ),
+  'CENTER' => array (
+    'type' => 'relate',
+    'studio' => 'visible',
+    'label' => 'LBL_CENTER',
+    'id' => 'CENTER_ID',
+    'link' => true,
+    'width' => '10%',
+    'default' => false,
+  ),
+  'PROJECT_STIC_JOB_OFFERS_NAME' => array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_PROJECT_TITLE',
+    'id' => 'PROJECT_STIC_JOB_OFFERSPROJECT_IDA',
+    'width' => '10%',
+    'default' => false,
+  ),  
+  'EXPECTED_DURATION' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_EXPECTED_DURATION',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'TEMPORALITY' => array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_TEMPORALITY',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'GOALS' => array (
+    'type' => 'varchar',
+    'label' => 'LBL_GOALS',
     'width' => '10%',
     'default' => false,
   ),

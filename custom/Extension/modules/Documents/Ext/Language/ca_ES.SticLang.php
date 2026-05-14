@@ -35,6 +35,8 @@ $mod_strings['LBL_MODIFIED_ID'] = 'Modificat per (ID)';
 $mod_strings['LBL_LEADS_DOCUMENTS_1_FROM_LEADS_TITLE'] = 'Interessats';
 $mod_strings['LBL_OVERVIEW_PANEL'] = 'Dades generals';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalls del registre';
+$mod_strings['LBL_STIC_CATEGORY'] = 'Categoria';
+$mod_strings['LBL_STIC_SUBCATEGORY'] = 'Subcategoria';
 $mod_strings['LBL_STIC_SHARED_DOCUMENT_LINK'] = 'Enllaç extern';
 $mod_strings['LBL_STIC_SESSIONS_DOCUMENTS_FROM_STIC_SESSIONS_TITLE'] = 'Sessió';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organitzacions';
@@ -45,6 +47,7 @@ $mod_strings['LBL_STIC_JOB_OFFERS_DOCUMENTS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofer
 $mod_strings['LBL_PROSPECTS_DOCUMENTS_1_FROM_PROSPECTS_TITLE'] = 'Públic Objectiu';
 $mod_strings['LBL_STIC_FAMILIES_DOCUMENTS_FROM_STIC_FAMILIES_TITLE'] = 'Unitats familiars';
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organitzacions subvencionades';
+$mod_strings['LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE'] = 'Actius';
 
 // Camps de filtre en relacions molts a molts
 $mod_strings['LBL_STIC_DOCUMENTS_ACCOUNTS_NAME'] = 'Organització';

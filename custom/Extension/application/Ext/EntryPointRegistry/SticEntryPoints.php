@@ -45,3 +45,22 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
+
+// Render Email Template
+$entry_point_registry['renderEmailTemplate'] = array('file' => 'custom/modules/EmailTemplates/RenderEmailTemplate.php', 'auth' => false);
+// Signatures module
+$entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/stic_Signatures/SignatureSignersSelect.php', 'auth' => false);
+$entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
+$entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
+
+// Entry points used by Stic Advanced Web Forms
+$entry_point_registry['stic_AWF_checkStatus'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckStatus.php', 'auth' => false);
+$entry_point_registry['stic_AWF_renderForm'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/RenderForm.php', 'auth' => false);
+$entry_point_registry['stic_AWF_responseHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ResponseHandler.php', 'auth' => false);
+$entry_point_registry['stic_AWF_checkSession'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckSession.php', 'auth' => false);
+$entry_point_registry['stic_AWF_webhookHanlder'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/WebhookHandler.php', 'auth' => false);
+
+// Entry point for async ListView count
+$entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
+
+

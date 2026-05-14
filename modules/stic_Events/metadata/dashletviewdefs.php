@@ -247,6 +247,22 @@ $dashletData['stic_EventsDashlet']['columns'] = array(
         'default' => false,
         'name' => 'session_color',
     ),
+    'volunteer_mode' => 
+    array (
+        'type' => 'enum',
+        'label' => 'LBL_VOLUNTEER_MODE',
+        'width' => '10%',
+        'default' => false,
+        'name' => 'volunteer_mode',
+    ),
+    'target_audience' => 
+    array (
+        'type' => 'enum',
+        'label' => 'LBL_TARGET_AUDIENCE',
+        'width' => '10%',
+        'default' => false,
+        'name' => 'target_audience',
+    ),          
     'description' => array(
         'type' => 'text',
         'label' => 'LBL_DESCRIPTION',

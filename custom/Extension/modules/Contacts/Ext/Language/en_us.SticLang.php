@@ -85,6 +85,7 @@ $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Project templates resources'
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Generate Job Applications';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Select a job offer in the popup window';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Center';
+$mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Assets';
 
 // Labour Insertion Strings
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -148,6 +149,10 @@ $mod_strings['LBL_SEPE_DISABILITY'] = 'Disability indicator (SEPE)';
 $mod_strings['LBL_SEPE_EDUCATION_LEVEL'] = 'Education level (SEPE)';
 $mod_strings['LBL_SEPE_IMMIGRANT'] = 'Immigrant indicator (SEPE)';
 $mod_strings['LBL_SEPE_INSERTION_DIFFICULTIES'] = 'Group insertion difficulties indicator (SEPE)';
+$mod_strings['LBL_STIC_CONFIDENTIALITY_AGREEMENT'] = 'Confidentiality agreement';
+$mod_strings['LBL_STIC_CONDUCT_CODE'] = 'Code of conduct';
+$mod_strings['LBL_STIC_OCCUPATIONAL_SAFETY'] = 'Occupational safety';
+$mod_strings['LBL_STIC_TIME_AVAILABILITY'] = 'Time availability';
 $mod_strings['LBL_STIC_JOB_APPLICATIONS_CONTACTS_FROM_STIC_JOB_APPLICATIONS_TITLE'] = 'Job applications';
 $mod_strings['LBL_STIC_PROFESSIONAL_PROFILE'] = 'Employee profile';
 $mod_strings['LBL_STIC_SEPE_ACTIONS_CONTACTS_FROM_STIC_SEPE_ACTIONS_TITLE'] = 'SEPE Actions';

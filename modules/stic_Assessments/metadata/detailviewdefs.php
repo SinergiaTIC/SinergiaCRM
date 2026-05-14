@@ -21,8 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $module_name = 'stic_Assessments';
-$viewdefs[$module_name] =
-array(
+$viewdefs[$module_name] = array(
     'DetailView' => array(
         'templateMeta' => array(
             'form' => array(
@@ -50,6 +49,18 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_EDITVIEW_PANEL1' => array (
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
+                'LBL_EDITVIEW_PANEL2' => array (
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
+                'LBL_EDITVIEW_PANEL3' => array (
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),                  
                 'LBL_PANEL_RECORD_DETAILS' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
@@ -86,7 +97,17 @@ array(
                         'label' => 'LBL_DERIVATION',
                     ),
                 ),
-                3 => array(
+                3 => array (
+                    0 => array (
+                        'name' => 'type',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TYPE',
+                    ),
+                    1 => array (
+                        'name' => 'project_stic_assessments_name',
+                    ),
+                ),                      
+                4 => array(
                     0 => array(
                         'name' => 'assessment_date',
                         'label' => 'LBL_ASSESSMENT_DATE',
@@ -96,7 +117,7 @@ array(
                         'label' => 'LBL_NEXT_DATE',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'scope',
                         'studio' => 'visible',
@@ -108,7 +129,7 @@ array(
                         'label' => 'LBL_MOMENT',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'areas',
                         'studio' => 'visible',
@@ -120,13 +141,75 @@ array(
                         'label' => 'LBL_RECOMMENDATIONS',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
                         'name' => 'conclusions',
                         'studio' => 'visible',
                         'label' => 'LBL_CONCLUSIONS',
                     ),
                     1 => 'description',
+                ),
+            ),
+            'lbl_editview_panel1' => array (),      
+            'lbl_editview_panel2' => array (
+                0 => array (
+                    0 => array (
+                        'name' => 'training_completed',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TRAINING_COMPLETED',
+                    ),
+                    1 => array (
+                        'name' => 'has_criminal_certificate',
+                        'studio' => 'visible',
+                        'label' => 'LBL_HAS_CRIMINAL_CERTIFICATE',
+                    ),
+                ),
+                1 => array (
+                    0 => array (
+                        'name' => 'needs_financial_aid',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NEEDS_FINANCIAL_AID',
+                    ),
+                    1 => array (
+                        'name' => 'needs_parental_authorization',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NEEDS_PARENTAL_AUTHORIZATION',
+                    ),
+                ),
+                2 => array (
+                    0 => array (
+                        'name' => 'available_days',
+                        'studio' => 'visible',
+                        'label' => 'LBL_AVAILABLE_DAYS',
+                    ),
+                    1 => array (
+                        'name' => 'available_time',
+                        'label' => 'LBL_AVAILABLE_TIME',
+                    ),
+                ),
+            ),
+            'lbl_editview_panel3' => array (
+                0 => array (
+                    0 => array (
+                        'name' => 'resignation_signed',
+                        'label' => 'LBL_RESIGNATION_SIGNED',
+                    ),
+                    1 => array (
+                        'name' => 'resignation_date',
+                        'label' => 'LBL_RESIGNATION_DATE',
+                    ),
+                ),
+                1 => array (
+                    0 => array (
+                        'name' => 'material_returned',
+                        'studio' => 'visible',
+                        'label' => 'LBL_MATERIAL_RETURNED',
+                    ),
+                    1 => array (
+                        'name' => 'insurance_canceled',
+                        'studio' => 'visible',
+                        'label' => 'LBL_INSURANCE_CANCELED',
+                    ),
                 ),
             ),
             'lbl_panel_record_details' => array(

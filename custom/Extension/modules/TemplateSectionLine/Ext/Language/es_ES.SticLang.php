@@ -65,3 +65,5 @@ $mod_strings['LBL_THUMBNAIL_NAME_HELP'] = 'El texto de este campo, limitado a 40
 $mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_CREATE_IMAGE'] = 'Rellene el campo ';
 
 $mod_strings['LNK_CAMPAIGN_LIST'] = 'Campañas';
+$mod_strings['LNK_NEW_EMAIL_TEMPLATE'] = 'Nueva Plantilla de Email';
+$mod_strings['LNK_EMAIL_TEMPLATE_LIST'] = 'Ver Plantillas de Email';

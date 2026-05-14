@@ -803,4 +803,10 @@ if (isset($_SESSION['msg']) && $_SESSION['msg']) {
 if (!empty($_REQUEST['func'])) {
     echo '<input type="hidden" id="func" value="'.$_REQUEST['func'].'">';
 }
+
+// STIC-Custom 20251201 MHP - Add custom HTML display field to smarty template
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/770
+$ss->assign('displayHTML', $mrkt_focus->stic_display_html_c);
+// END STIC-Custom
+
       $ss->display('modules/Campaigns/WizardMarketing.html');

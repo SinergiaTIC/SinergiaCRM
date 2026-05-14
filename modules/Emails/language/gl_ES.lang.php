@@ -388,7 +388,7 @@ $mod_strings = array(
     'LBL_LIST_DATE_MODIFIED' => 'Última Modificación',
     'LNK_IMPORT_CAMPAIGNS' => 'Importar campaña',
     
-    // Email Validation Erro messages. Typicaly for Email Validation:
+    // Email Validation Error messages. Typicaly for Email Validation:
     'ERR_FIELD_FROM_IS_NOT_SET' => 'O campo Desde non está establecido.',
     'ERR_FIELD_FROM_IS_EMPTY' => 'O campo Desde está baleiro.',
     'ERR_FIELD_FROM_IS_INVALID' => 'O campo Desde é inválido.',

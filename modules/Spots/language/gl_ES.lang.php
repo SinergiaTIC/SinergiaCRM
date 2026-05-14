@@ -179,7 +179,7 @@ $mod_strings = array(
     'LBL_AN_QUOTES_QUARTER_CREATED' => 'Trimestre Creado',
     'LBL_AN_QUOTES_YEAR_CREATED' => 'Ano creada',
 
-    //Erro message when there are multiple values for the label
+    //Error message when there are multiple values for the label
     'LBL_AN_DUPLICATE_LABEL_FOR_SUBAREA' => 'Erro para determinar a etiqueta da zona pivote',
 
     //Added to allow for the UI of the pivot to be language agnostic - PR 5452

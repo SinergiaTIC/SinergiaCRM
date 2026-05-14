@@ -685,7 +685,6 @@ $mod_strings = array(
     'LNK_IMPORT_CAMPAIGNS' => 'Importar Campaña',
     'LBL_UNLOCK_USER' => 'Desbloquear usuario',  // PR 2897
     'LBL_USER_UNLOCKED_MSG' => 'Usuario desbloqueado',  // PR 2897
-    'LBL_LANGUAGE' => 'Idioma', // PR 5721
     // for Google Token/Synchronization settings
     'LBL_GOOGLE_API_SETTINGS' => 'Sincronización da conta de Google',
     'LBL_GOOGLE_API_TOKEN' => 'Token da API de Google',

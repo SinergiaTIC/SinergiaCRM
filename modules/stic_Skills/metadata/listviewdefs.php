@@ -104,6 +104,25 @@ array(
         'width' => '10%',
         'default' => false,
     ),
+    'CERTIFIED_SKILL' => array(
+        'type' => 'bool',
+        'label' => 'LBL_CERTIFIED_SKILL',
+        'width' => '10%',
+        'default' => false,
+    ),    
+    'EVALUATION_DATE' => array(
+        'type' => 'date',
+        'label' => 'LBL_EVALUATION_DATE',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'EVALUATION_STAGE' => array(
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_EVALUATION_STAGE',
+        'width' => '10%',
+        'default' => false,
+    ),    
     'DESCRIPTION' => array(
         'type' => 'text',
         'label' => 'LBL_DESCRIPTION',

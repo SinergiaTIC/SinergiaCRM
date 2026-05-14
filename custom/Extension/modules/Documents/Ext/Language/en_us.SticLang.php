@@ -35,6 +35,8 @@ $mod_strings['LBL_MODIFIED_ID'] = 'Modified By (ID)';
 $mod_strings['LBL_LEADS_DOCUMENTS_1_FROM_LEADS_TITLE'] = 'Leads';
 $mod_strings['LBL_OVERVIEW_PANEL'] = 'Overview';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
+$mod_strings['LBL_STIC_CATEGORY'] = 'Category';
+$mod_strings['LBL_STIC_SUBCATEGORY'] = 'Subcategory';
 $mod_strings['LBL_STIC_SHARED_DOCUMENT_LINK'] = 'External link';
 $mod_strings['LBL_STIC_SESSIONS_DOCUMENTS_FROM_STIC_SESSIONS_TITLE'] = 'Session';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Accounts';
@@ -45,6 +47,7 @@ $mod_strings['LBL_STIC_JOB_OFFERS_DOCUMENTS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Job 
 $mod_strings['LBL_PROSPECTS_DOCUMENTS_1_FROM_PROSPECTS_TITLE'] = 'Público Objetivo';
 $mod_strings['LBL_STIC_FAMILIES_DOCUMENTS_FROM_STIC_FAMILIES_TITLE'] = 'Families';
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Granted accounts';
+$mod_strings['LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE'] = 'Assets';
 
 // Many to Many filter fields
 $mod_strings['LBL_STIC_DOCUMENTS_ACCOUNTS_NAME'] = 'Account';

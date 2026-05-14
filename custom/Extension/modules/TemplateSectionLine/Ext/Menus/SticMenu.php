@@ -38,3 +38,11 @@ if (ACLController::checkAccess('Campaigns', 'list', true)) {
         $mod_strings['LNK_CAMPAIGN_LIST'],"List", 'Campaigns'
     );
 }
+
+if (ACLController::checkAccess('EmailTemplates', 'edit', true)) {
+    $module_menu[] = array("index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView",$mod_strings['LNK_NEW_EMAIL_TEMPLATE'],"View_Create_Email_Templates","Emails");
+}
+
+if (ACLController::checkAccess('EmailTemplates', 'list', true)) {
+    $module_menu[] = array("index.php?module=EmailTemplates&action=index",$mod_strings['LNK_EMAIL_TEMPLATE_LIST'],"View_Email_Templates", 'Emails');
+}

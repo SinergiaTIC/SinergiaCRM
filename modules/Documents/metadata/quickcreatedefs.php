@@ -174,9 +174,26 @@ $viewdefs['Documents']['QuickCreate'] = array (
           'name' => 'stic_shared_document_link_c',
           'label' => 'LBL_STIC_SHARED_DOCUMENT_LINK',
         ),
-        1 => '',
+        1 => 
+        array (
+          'name' => 'stic_assets_documents_name',
+          'label' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE',
+        ),
       ),
       3 => 
+      array (
+        0 => 
+        array (
+          'name' => 'stic_category_c',
+          'label' => 'LBL_STIC_CATEGORY',
+        ),
+        1 => 
+        array (
+          'name' => 'stic_subcategory_c',
+          'label' => 'LBL_STIC_SUBCATEGORY',
+        ),
+      ),      
+      4 => 
       array (
         0 => 
         array (
@@ -192,7 +209,7 @@ $viewdefs['Documents']['QuickCreate'] = array (
           'label' => 'LBL_DOC_EXP_DATE',
         ),
       ),
-      4 => 
+      5 => 
       array (
         0 => 
         array (

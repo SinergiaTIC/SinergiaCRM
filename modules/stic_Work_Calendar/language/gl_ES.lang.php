@@ -92,7 +92,7 @@ $mod_strings = array (
   'LBL_PERIODIC_WORK_CALENDAR_TITLE' => 'Xerar Calendario laboral',
   'LBL_WORK_CALENDAR_DURATION' => 'Duración do rexistro de Calendario laboral',
   'LBL_ERROR_IN_VALIDATION' => 'Hai un erro no valor indicado no campo Data e hora de finalización.',
-  'LBL_END_DATE_ERROR' => 'A Data e hora de finalización debe ser posterior á Data e hora de inicio.',
+  'LBL_END_DATE_ERROR' => 'A data e hora de finalización debe ser posterior á data e hora de inicio.',
   
   // Resumen del asistente de creación de registros de Calendario laboral
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'Resumo:',
@@ -115,13 +115,13 @@ $mod_strings = array (
   'LBL_MASS_UPDATE_VALIDATION_1' => 'Comprobar que a data e hora de inicio sexa anterior á data e hora de finalización.',
   'LBL_MASS_UPDATE_VALIDATION_2' => 'Comprobar que a duración non sexa superior a 24 horas.',
   'LBL_MASS_UPDATE_VALIDATION_3' => 'Comprobar que non existan outros rexistros creados previamente con tipos incompatibles e que se solapen cos de nova creación.',
-  'LBL_MASS_UPDATE_TEXT' => 'Indique primero el operador y después los valores a sumar, restar o asignar en un campo o en ambos: ',
+  'LBL_MASS_UPDATE_TEXT' => 'Indique primeiro o operador e despois os valores a sumar, restar ou asignar nun campo ou en ambos: ',
   'LBL_MASS_UPDATE_DATES_FIELD' => 'Campo',
   'LBL_MASS_UPDATE_DATES_OPERADOR' => 'Operador',
   'LBL_MASS_UPDATE_DATES_HORAS' => 'Horas',
   'LBL_MASS_UPDATE_DATES_MINUTES' => 'Minutos',
-  'LBL_OPERATOR_REQUIRED' => 'Debe indicar un operador en al menos uno de los campos.',
-  'LBL_HOUR_OR_MINUTES_REQUIRED' => 'Debe indicar los campos de hora y minutos.',
+  'LBL_OPERATOR_REQUIRED' => 'Debe indicar un operador en polo menos un dos campos.',
+  'LBL_HOUR_OR_MINUTES_REQUIRED' => 'Debe indicar os campos de hora e minutos.',
   'LBL_CANCEL_BUTTON' => 'Cancelar',
   'LBL_UPDATE_BUTTON' => 'Actualizar',
 );

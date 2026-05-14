@@ -105,6 +105,32 @@ $dictionary["Campaign"]["fields"]['notification_prospect_list_ids'] = array(
     'popupHelp' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP',
 );
 
+
+// The category of the Target List to be created automatically for the Notification
+$dictionary["Campaign"]["fields"]['notification_auto_prospect_list_name'] = array(
+    'name' => 'notification_auto_prospect_list_name',
+    'vname' => 'LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME',
+    'type' => 'enum',
+    'massupdate' => 0,
+    'no_default' => false,
+    'module' => 'ProspectLists',
+    'source' => 'non-db',
+    'comments' => '',
+    'help' => '',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'notification_auto_prospect_list_name_list',
+    'dependency' => false,
+    'popupHelp' => 'LBL_NOTIFICATION_AUTO_PROSPECT_LIST_NAME_HELP',
+);
+
 // These fields are from the EmailMarketing related to the Notification 
 // In edit: Filled by user, used to assign in the related EmailMarketing
 // In detail: Filled from the related EmailMarketing data

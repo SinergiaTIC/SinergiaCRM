@@ -21,6 +21,59 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+$dictionary['Document']['fields']['stic_category_c'] = array(
+    'required' => false,
+    'id' => 'Documentsstic_category_c',
+    'name' => 'stic_category_c',
+    'vname' => 'LBL_STIC_CATEGORY',
+    'custom_module' => 'Documents',
+    'source' => 'custom_fields',
+    'type' => 'enum',
+    'options' => 'stic_documents_categories_list',
+    'len' => 100,
+    'size' => '20',
+    'default' => false,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'audited' => false,
+    'massupdate' => true,
+    'importable' => true,
+    'inline_edit' => true,
+    'reportable' => true,
+    'unified_search' => true,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'enabled',
+);
+
+$dictionary['Document']['fields']['stic_subcategory_c'] = array(
+    'required' => 0,
+    'id' => 'Documentsstic_subcategory_c',
+    'name' => 'stic_subcategory_c',
+    'vname' => 'LBL_STIC_SUBCATEGORY',
+    'custom_module' => 'Documents',
+    'source' => 'custom_fields',
+    'type' => 'dynamicenum',
+    'options' => 'stic_documents_subcategories_list',
+    'parentenum' => 'stic_category_c',
+    'len' => 100,
+    'size' => '40',
+    'comments' => '',
+    'help' => '',
+    'default' => false,
+    'no_default' => false,
+    'audited' => false,
+    'massupdate' => true,
+    'importable' => true,
+    'inline_edit' => true,
+    'reportable' => true,
+    'unified_search' => false,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'enabled',
+);
+
 $dictionary['Document']['fields']['stic_shared_document_link_c'] = array(
     'inline_edit' => 1,
     'labelValue' => 'Shared document link',
@@ -148,7 +201,7 @@ $dictionary["Document"]["fields"]["stic_families_documentsstic_families_ida"] = 
     'side' => 'right',
     'vname' => 'LBL_STIC_FAMILIES_DOCUMENTS_FROM_DOCUMENTS_TITLE',
 );
-$dictionary["Document"]["fields"]["stic_group_opportunities_documents_1"] = array (
+$dictionary["Document"]["fields"]["stic_group_opportunities_documents_1"] = array(
     'name' => 'stic_group_opportunities_documents_1',
     'type' => 'link',
     'relationship' => 'stic_group_opportunities_documents_1',
@@ -156,7 +209,38 @@ $dictionary["Document"]["fields"]["stic_group_opportunities_documents_1"] = arra
     'module' => 'stic_Group_Opportunities',
     'bean_name' => 'stic_Group_Opportunities',
     'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNITIES_TITLE',
-  );
+);
+$dictionary["Document"]["fields"]["stic_assets_documents"] = array(
+    'name' => 'stic_assets_documents',
+    'type' => 'link',
+    'relationship' => 'stic_assets_documents',
+    'source' => 'non-db',
+    'module' => 'stic_Assets',
+    'bean_name' => 'stic_Assets',
+    'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE',
+    'id_name' => 'stic_assets_documentsstic_assets_ida',
+);
+$dictionary["Document"]["fields"]["stic_assets_documents_name"] = array(
+    'name' => 'stic_assets_documents_name',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE',
+    'save' => true,
+    'id_name' => 'stic_assets_documentsstic_assets_ida',
+    'link' => 'stic_assets_documents',
+    'table' => 'stic_assets',
+    'module' => 'stic_Assets',
+    'rname' => 'name',
+);
+$dictionary["Document"]["fields"]["stic_assets_documentsstic_assets_ida"] = array(
+    'name' => 'stic_assets_documentsstic_assets_ida',
+    'type' => 'link',
+    'relationship' => 'stic_assets_documents',
+    'source' => 'non-db',
+    'reportable' => false,
+    'side' => 'right',
+    'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+);
 
 // Modified properties in native fields
 $dictionary['Document']['fields']['filename']['required'] = 0;
@@ -209,4 +293,3 @@ $dictionary['Document']['fields']['selected_revision_filename']['massupdate'] = 
 $dictionary['Document']['fields']['aos_contracts']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_shared_document_link_c']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_sessions_documents_name']['massupdate'] = 0;
-

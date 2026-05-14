@@ -67,8 +67,12 @@ $mod_strings = array (
   'LBL_ORAL' => 'Nivell oral',
   'LBL_CERTIFICATE' => 'Certificat',
   'LBL_CERTIFICATE_DATE' => 'Data del certificat',
+  'LBL_CERTIFIED_SKILL' => 'Competència certificada',
+  'LBL_EVALUATION_DATE' => 'Data de la valoració',
+  'LBL_EVALUATION_STAGE' => 'Moment de la valoració',
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LBL_PANEL_LANGUAGE' => 'Idioma',
+  'LBL_PANEL_EVALUATION' => 'Avaluació',
   'LBL_STIC_SKILLS_CONTACTS_FROM_CONTACTS_TITLE'=> 'Persona',
 );

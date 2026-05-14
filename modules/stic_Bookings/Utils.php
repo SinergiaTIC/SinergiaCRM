@@ -86,7 +86,11 @@ class stic_BookingsUtils
         }
     
         if ($isAllDay) {
-            return date('Y-m-d ' . ($isStart ? '00:00:00' : '23:59:59'), $timestamp);
+            if($isStart) {
+                return date('Y-m-d 00:00:00', $timestamp);
+            } else {
+                return date('Y-m-d 00:00:00', strtotime('+1 day', $timestamp));
+            }
         } else {
             return date('Y-m-d H:i:s', $timestamp);
         }

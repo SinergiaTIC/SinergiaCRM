@@ -102,6 +102,7 @@ $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de plantillas de pr
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Generar Candidaturas';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione una oferta laboral en la ventana emergente';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
+$mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -165,6 +166,10 @@ $mod_strings['LBL_SEPE_DISABILITY'] = 'Indicador discapacidad (SEPE)';
 $mod_strings['LBL_SEPE_EDUCATION_LEVEL'] = 'Nivel formativo (SEPE)';
 $mod_strings['LBL_SEPE_IMMIGRANT'] = 'Indicador inmigrante (SEPE)';
 $mod_strings['LBL_SEPE_INSERTION_DIFFICULTIES'] = 'Indicador colectivo dificultades inserción (SEPE)';
+$mod_strings['LBL_STIC_CONFIDENTIALITY_AGREEMENT'] = 'Acuerdo de confidencialidad';
+$mod_strings['LBL_STIC_CONDUCT_CODE'] = 'Código de conducta';
+$mod_strings['LBL_STIC_OCCUPATIONAL_SAFETY'] = 'PRL';
+$mod_strings['LBL_STIC_TIME_AVAILABILITY'] = 'Disponibilidad horaria';
 $mod_strings['LBL_STIC_JOB_APPLICATIONS_CONTACTS_FROM_STIC_JOB_APPLICATIONS_TITLE'] = 'Candidaturas';
 $mod_strings['LBL_STIC_PROFESSIONAL_PROFILE'] = 'Perfil del trabajador';
 $mod_strings['LBL_STIC_SEPE_ACTIONS_CONTACTS_FROM_STIC_SEPE_ACTIONS_TITLE'] = 'Acciones SEPE';

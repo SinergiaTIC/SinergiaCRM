@@ -16,13 +16,13 @@ $subpanel_layout = array(
   'where' => '',
   'list_fields' =>
   array(
-    'grp' =>
-    array(
-      'type' => 'varchar',
-      'vname' => 'LBL_GRP',
-      'width' => '10%',
-      'default' => true,
-    ),
+    // 'grp' =>
+    // array(
+    //   'type' => 'varchar',
+    //   'vname' => 'LBL_GRP',
+    //   'width' => '10%',
+    //   'default' => true,
+    // ),
     'name' =>
     array(
       'vname' => 'LBL_NAME',

@@ -30,139 +30,230 @@
  *  - SticRunScripts.php?file=SticUpdates/Migrations/20200803_hotfix_34_RemovingMailMergeExampleTemplates.sql
  *
  * Only files under `SticUpdates/` or `SticInstall/scripts/` are permitted (see checks below).
+ *
+ * Can be called in two ways:
+ * 1. Via URL with 'file' parameter
+ * 2. Directly from other files using static methods: SticRunScripts::executeScript($file, $infos, $errors)
  */
 
+require_once 'SticInclude/Utils.php';
 /**
- * Create and return a PDO connection using database settings from $sugar_config.
- *
- * The connection is configured to throw exceptions on error and to use UTF-8.
- *
- * @return PDO PDO connection object on success.
- *                On failure the script sends an HTTP 500 and terminates.
+ * Class SticRunScripts
+ * Handles execution of SQL and PHP scripts with proper validation and error handling.
  */
-function connectToDBWithPDO()
-{
-    echo "Connecting to the database <br />";
-    global $sugar_config;
-    $mysqlHost = $sugar_config["dbconfig"]["db_host_name"];
-    $mysqlDatabase = $sugar_config["dbconfig"]["db_name"];
-    $mysqlUser = $sugar_config["dbconfig"]["db_user_name"];
-    $mysqlPassword = $sugar_config["dbconfig"]["db_password"];
-    try {
-        $connection = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDatabase", $mysqlUser, $mysqlPassword);
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $connection->exec("SET NAMES 'utf8'"); // Set connection charset to UTF-8
-        return $connection;
-    } catch (PDOException $e) {
-        http_response_code(500);
-        die("Connection Error: " . $e->getMessage());
-    }
-}
-
-/**
- * Execute the SQL statements contained in the given file using the provided PDO connection.
- *
- * The file should contain valid SQL; multiple statements are supported.
- *
- * @param PDO    $connection PDO connection object.
- * @param string $file       Path to the SQL file.
- * @return bool  True on success, false on failure. On failure an HTTP 500 status is sent.
- */
-function executeSQLFile($connection, $file)
-{
-    $sqlFileContent = file_get_contents($file);
-    echo "<br> -- $file <br>";
+class SticRunScripts {
     
-    // Execute SQL from file
-    try {
-        $connection->exec($sqlFileContent);
-        echo "SQL statements executed correctly. <br />";
-        return true;
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo "Error when executing SQL statements: " . $e->getMessage() . "<br />";
-        return false;
+    /**
+     * Create and return a PDO connection using database settings from $sugar_config.
+     *
+     * The connection is configured to throw exceptions on error and to use UTF-8.
+     *
+     * @param array $infos  Array to store info messages (passed by reference).
+     * @param array $errors Array to store error messages (passed by reference).
+     * @return PDO|bool     PDO connection object on success, false on failure.
+     */
+    public static function connectToDBWithPDO(&$infos, &$errors) {
+        global $sugar_config;
+        $mysqlHost = $sugar_config["dbconfig"]["db_host_name"];
+        $mysqlDatabase = $sugar_config["dbconfig"]["db_name"];
+        $mysqlUser = $sugar_config["dbconfig"]["db_user_name"];
+        $mysqlPassword = $sugar_config["dbconfig"]["db_password"];
+        try {
+            $connection = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDatabase", $mysqlUser, $mysqlPassword);
+            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $connection->exec("SET NAMES 'utf8'"); // Set connection charset to UTF-8
+            return $connection;
+        } catch (PDOException $e) {
+            $infos[] = "[ERROR] Errors database connection: " . $e->getMessage();
+            $errors[] = "Errors database connection: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * Execute the SQL statements contained in the given file using the provided PDO connection.
+     *
+     * The file should contain valid SQL; multiple statements are supported.
+     *
+     * @param PDO    $connection PDO connection object.
+     * @param string $file       Path to the SQL file.
+     * @param array  $infos      Array to store info messages (passed by reference).
+     * @param array  $errors     Array to store error messages (passed by reference).
+     * @return bool  True on success, false on failure.
+     */
+    public static function executeSQLFile($connection, $file, &$infos, &$errors) {
+        $sqlFileContent = file_get_contents($file);
+        
+        try {
+            $connection->exec($sqlFileContent);
+            return true;
+        } catch (PDOException $e) {
+            $infos[] = "[ERROR] Error when executing SQL statements: " . $e->getMessage();
+            $errors[] = "Error when executing SQL statements: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * Execute a PHP script file.
+     *
+     * @param string $file   Path to the PHP file.
+     * @param array  $infos  Array to store info messages (passed by reference).
+     * @param array  $errors Array to store error messages (passed by reference).
+     * @return bool  True on success, false on failure.
+     */
+    public static function executePHPFile($file, &$infos, &$errors) {
+        try {
+            require($file);
+            $infos[] = "Script executed correctly: $file";
+            return true;
+        } catch (Exception $e) {
+            $infos[] = "[ERROR] Error when executing PHP script: " . $e->getMessage();
+            $errors[] = "Error when executing PHP script: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * Validate and normalize the file path.
+     *
+     * Checks that:
+     * - File exists and is a regular file
+     * - File is under permitted directories (SticUpdates/ or SticInstall/scripts/)
+     * - For language files, language matches CRM default language
+     *
+     * @param string $file   The file path to validate.
+     * @param array  $infos  Array to store info messages (passed by reference).
+     * @param array  $errors Array to store error messages (passed by reference).
+     * @return string|false  Normalized file path on success, false on failure.
+     */
+    public static function validateAndNormalizePath($file, &$infos, &$errors) {
+        global $sugar_config;
+        
+        // Normalize path separators and strip any leading slash to avoid absolute path bypasses
+        $normalizedFile = str_replace('\\', '/', $file);
+        $normalizedNoLeading = ltrim($normalizedFile, '/');
+
+        // Check if file exists
+        if (!file_exists($normalizedNoLeading) || !is_file($normalizedNoLeading)) {
+            $infos[] = "[ERROR] File $normalizedNoLeading doesn't exist on server or is not a file";
+            $errors[] = "File $normalizedNoLeading doesn't exist on server or is not a file";
+            return false;
+        }
+
+        // Restrict allowed files to prevent arbitrary file execution
+        if (!preg_match('#^(?:SticUpdates/|SticInstall/scripts/)#i', $normalizedNoLeading)) {
+            $infos[] = "[ERROR] Execution is restricted to SticUpdates/ or SticInstall/scripts/";
+            $errors[] = "Execution is restricted to SticUpdates/ or SticInstall/scripts/";
+            return false;
+        }
+
+        // If this is a language package, ensure its language directory matches the CRM default language
+        if (stripos($normalizedNoLeading, 'SticUpdates/Languages/') === 0) {
+            $after = substr($normalizedNoLeading, strlen('SticUpdates/Languages/'));
+            $fileLang = strtolower(strtok(trim($after, '/'), '/')) ?: '';
+            $crmLang = strtolower(strtok(str_replace('-', '_', $sugar_config['default_language'] ?? ''), '_')) ?: '';
+
+            if ($fileLang !== $crmLang) {
+                $infos[] = "Requested language file ($fileLang) doesn't match CRM language ($crmLang). Skipping execution.";
+                return false;
+            }
+        }
+
+        return $normalizedNoLeading;
+    }
+
+    /**
+     * Execute a script file (SQL or PHP).
+     *
+     * Main method to execute a script with full validation and proper error handling.
+     * Checks maintenance mode is enabled before execution.
+     *
+     * @param string $file   Path to the script file (relative to CRM root).
+     * @param array  $infos  Array to store info messages (passed by reference).
+     * @param array  $errors Array to store error messages (passed by reference).
+     * @return bool  True on success, false on failure.
+     */
+    public static function executeScript($file, &$infos, &$errors) {
+        global $sugar_config;
+        $infos[] = "Executing file: $file";
+        // Initialize arrays if not provided
+        if (!is_array($infos)) {
+            $infos = array();
+        }
+        if (!is_array($errors)) {
+            $errors = array();
+        }
+
+        // Check if maintenance mode is enabled
+        if (!(isset($sugar_config['stic_maintenance_mode_enabled']) && filter_var($sugar_config['stic_maintenance_mode_enabled'], FILTER_VALIDATE_BOOLEAN))) {
+            $infos[] = "[ERROR] stic_maintenance_mode_enabled is not enabled in configuration. Exiting.";
+            $errors[] = "stic_maintenance_mode_enabled is not enabled in configuration. Exiting.";
+            return false;
+        }
+
+        // Validate and normalize the file path
+        $normalizedFile = self::validateAndNormalizePath($file, $infos, $errors);
+        if ($normalizedFile === false) {
+            return false;
+        }
+
+        // Determine file type and execute
+        $ext = strtolower(substr($normalizedFile, -3));
+        
+        if ($ext === "php") {
+            return self::executePHPFile($normalizedFile, $infos, $errors);
+        } else if ($ext === "sql") {
+            $connection = self::connectToDBWithPDO($infos, $errors);
+            if ($connection === false) {
+                return false;
+            }
+            $result = self::executeSQLFile($connection, $normalizedFile, $infos, $errors);
+            $connection = null; // Close the connection
+            return $result;
+        } else {
+            $infos[] = "[ERROR] File: $normalizedFile. The file extension must be php or sql";
+            $errors[] = "File: $normalizedFile. The file extension must be php or sql";
+            return false;
+        }
     }
 }
-
 // ******* MAIN SCRIPT *******
 // This script executes a single update script or SQL migration specified by the `file` request parameter.
 // It does not run multiple files automatically; the caller must indicate which file to execute.
+
+// Require the `file` parameter: nothing will be executed without it.
+// If the script is called by other source.
+if (basename($_SERVER['SCRIPT_FILENAME']) !== basename(__FILE__)) {  
+    return;  
+}  
+
+if (!isset($_REQUEST['file'])) {
+    return;
+}
 
 include ('include/MVC/preDispatch.php');
 $startTime = microtime(true);
 require_once('include/entryPoint.php');
 ob_start();
-// Only allow execution when maintenance mode is enabled in configuration
-global $sugar_config;
-// Require maintenance mode to be enabled in config (accepts boolean or string-ish values)
-if (!(isset($sugar_config['stic_maintenance_mode_enabled']) && filter_var($sugar_config['stic_maintenance_mode_enabled'], FILTER_VALIDATE_BOOLEAN))) {
-    http_response_code(503);
-    echo "stic_maintenance_mode_enabled is not enabled in configuration. Exiting.";
-    exit;
-}
 
-// Require the `file` parameter: nothing will be executed without it.
-if (!isset($_REQUEST['file'])) {
-    http_response_code(400);
-    echo "File isn't specified in URL. Exiting.";
-    exit;
-}
+// Initialize arrays for storing info and error messages
+$infos = array();
+$errors = array();
 
 $file = $_REQUEST['file'];
 
-// Normalize path separators and strip any leading slash to avoid absolute path bypasses
-$normalizedFile = str_replace('\\', '/', $file);
-$normalizedNoLeading = ltrim($normalizedFile, '/');
+// Execute the script using the static method
+$result = SticRunScripts::executeScript($file, $infos, $errors);
 
-if (!file_exists($normalizedNoLeading) || !is_file($normalizedNoLeading)) {
-    http_response_code(404);
-    echo "File $normalizedNoLeading doesn't exist on server or not it is a file";
-    exit;
+// Add success message if execution was successful
+if ($result === true) {
+    $infos[] = "Script executed successfully.";
 }
 
-// Restrict allowed files to prevent arbitrary file execution. Only files under `SticUpdates/` or `SticInstall/scripts/` are permitted.
-// Language packages under `SticUpdates/Languages/` must match the CRM default language (checked below).
-if (!preg_match('#^(?:SticUpdates/|SticInstall/scripts/)#i', $normalizedNoLeading)) {
-    http_response_code(403);
-    echo "Execution is restricted to SticUpdates/ or SticInstall/scripts/.";
-    exit;
-}
-
-// If this is a language package, ensure its language directory matches the CRM default language
-if (stripos($normalizedNoLeading, 'SticUpdates/Languages/') === 0) {
-    $after = substr($normalizedNoLeading, strlen('SticUpdates/Languages/'));
-    $fileLang = strtolower(strtok(trim($after, '/'), '/')) ?: '';
-    $crmLang = strtolower(strtok(str_replace('-', '_', $sugar_config['default_language'] ?? ''), '_')) ?: '';
-
-    if ($fileLang !== $crmLang) {
-        http_response_code(204);
-        echo "Requested language file ($fileLang) doesn't match CRM language ($crmLang). Skipping execution.";
-        exit;
-    }
-}
-
-$ext = substr($normalizedNoLeading, -3);
-if ($ext === "php") {
-    echo "$normalizedNoLeading <br>";
-    require($normalizedNoLeading);
-    // Indicate successful execution of the script
-    http_response_code(200);
-    echo "Script executed correctly.";
-} else if ($ext === "sql") {
-    $connection = connectToDBWithPDO();
-        $ok = executeSQLFile($connection,$normalizedNoLeading);
-        // Close the PDO connection by unsetting the reference so it can be freed
-        $connection = null;
-        if ($ok === false) {
-            // executeSQLFile already set a 500 status and printed the error
-            exit;
-        }
-        // SQL executed successfully
-        http_response_code(200);
-        echo "Script executed correctly.";
+// Output results using standardized JSON response function
+if (count($errors) > 0) {
+    SticUtils::outputJsonResponse('error', $errors, $infos);
 } else {
-    http_response_code(400);
-    echo "File: $normalizedNoLeading. The file extension must be php or sql";
-    exit;
+    SticUtils::outputJsonResponse('success', $errors, $infos);
 }

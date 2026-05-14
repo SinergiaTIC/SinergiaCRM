@@ -93,11 +93,27 @@ class stic_IncorporaController extends SugarController
             if (!empty($retArray['where'])) {
                 $where = " AND " . $retArray['where'];
             }
+
+            $focus = BeanFactory::getBean($this->returnModule);
+            if ($focus->bean_implements('ACL')) {
+                if (!ACLController::checkAccess($focus->module_dir, 'list', true)) {
+                    ACLController::displayNoAccess();
+                    sugar_die('');
+                }
+
+                $accessWhere = $focus->buildAccessWhere('list');
+                if (!empty($accessWhere)) {
+                    $where .= ' AND ' . $accessWhere;
+                }
+            }
         } else {
             $ids = explode(',', $_REQUEST['uid']);
             $idList = implode("','", $ids);
             $where = " AND id in ('{$idList}')";
         }
+
+
+
         $sql .= $where;
         $resultado = $db->query($sql);
         unset($ids);

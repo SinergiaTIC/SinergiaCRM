@@ -33,7 +33,7 @@ $moduleList[] = 'stic_Remittances';
 $moduleList[] = 'stic_Sessions';
 $moduleList[] = 'stic_Settings';
 $moduleList[] = 'stic_Validation_Actions';
-$moduleList[] = 'stic_Web_Forms';
+// $moduleList[] = 'stic_Web_Forms';
 $moduleList[] = 'stic_Assessments';
 $moduleList[] = 'stic_Goals';
 $moduleList[] = 'stic_Personal_Environment';
@@ -65,10 +65,15 @@ $moduleList[] = 'stic_Messages';
 $moduleList[] = 'stic_Bookings_Places_Calendar';
 $moduleList[] = 'stic_Places';
 $moduleList[] = 'stic_Group_Opportunities';
+$moduleList[] = 'stic_Signatures';
+$moduleList[] = 'stic_Signers';
+$moduleList[] = 'stic_Signature_Log';
 // $moduleList[] = 'stic_Message_Marketing'; -- Do not want to show them at module list
 // $moduleList[] = 'stic_MessagesMan';
 $moduleList[] = 'stic_Transactions';
 $moduleList[] = 'stic_Financial_Products';
+$moduleList[] = 'stic_Assets';
+$moduleList[] = 'stic_AWF_Forms';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -117,12 +122,23 @@ $beanList['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations'
 $beanList['stic_Custom_View_Conditions'] = 'stic_Custom_View_Conditions';
 $beanList['stic_Custom_View_Actions'] = 'stic_Custom_View_Actions';
 $beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
+$beanList['stic_Signatures'] = 'stic_Signatures';
+$beanList['stic_Signers'] = 'stic_Signers';
+$beanList['stic_Signature_Log'] = 'stic_Signature_Log';
 $beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
 $beanList['stic_MessagesMan'] = 'stic_MessagesMan';
 $beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
 $beanList['stic_Places'] = 'stic_Places';
 $beanList['stic_Transactions'] = 'stic_Transactions';
 $beanList['stic_Financial_Products'] = 'stic_Financial_Products';
+$beanList['stic_Assets'] = 'stic_Assets';
+$beanList['stic_AWF_Forms'] = 'stic_AWF_Forms';
+$beanList['stic_AWF_Responses'] = 'stic_AWF_Responses';
+$beanList['stic_AWF_Links'] = 'stic_AWF_Links';
+$beanList['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
+$beanList['stic_AWF_Deferred_Tickets'] = 'stic_AWF_Deferred_Tickets';
+$beanList['stic_AWF_Incoming_Events'] = 'stic_AWF_Incoming_Events';
+
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -170,12 +186,22 @@ $beanFiles['stic_Custom_View_Customizations'] = 'modules/stic_Custom_View_Custom
 $beanFiles['stic_Custom_View_Conditions'] = 'modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php';
 $beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
 $beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
+$beanFiles['stic_Signatures'] = 'modules/stic_Signatures/stic_Signatures.php';
+$beanFiles['stic_Signers'] = 'modules/stic_Signers/stic_Signers.php';
+$beanFiles['stic_Signature_Log'] = 'modules/stic_Signature_Log/stic_Signature_Log.php';  
 $beanFiles['stic_Message_Marketing'] = 'modules/stic_Message_Marketing/stic_Message_Marketing.php';
 $beanFiles['stic_MessagesMan'] = 'modules/stic_MessagesMan/stic_MessagesMan.php';
 $beanFiles['stic_Bookings_Places_Calendar'] = 'modules/stic_Bookings_Places_Calendar/stic_Bookings_Places_Calendar.php';
 $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
 $beanFiles['stic_Transactions'] = 'modules/stic_Transactions/stic_Transactions.php';
 $beanFiles['stic_Financial_Products'] = 'modules/stic_Financial_Products/stic_Financial_Products.php';
+$beanFiles['stic_Assets'] = 'modules/stic_Assets/stic_Assets.php';
+$beanFiles['stic_AWF_Forms'] = 'modules/stic_AWF_Forms/stic_AWF_Forms.php';
+$beanFiles['stic_AWF_Responses'] = 'modules/stic_AWF_Responses/stic_AWF_Responses.php';
+$beanFiles['stic_AWF_Links'] = 'modules/stic_AWF_Links/stic_AWF_Links.php';
+$beanFiles['stic_AWF_Response_Details'] = 'modules/stic_AWF_Response_Details/stic_AWF_Response_Details.php';
+$beanFiles['stic_AWF_Deferred_Tickets'] = 'modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php';
+$beanFiles['stic_AWF_Incoming_Events'] = 'modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -190,14 +216,23 @@ $modInvisList[] = 'stic_Custom_View_Customizations';
 $modInvisList[] = 'stic_Custom_View_Conditions';
 $modInvisList[] = 'stic_Custom_View_Actions';
 $modInvisList[] = 'stic_MessagesMan';
+$modInvisList[] = 'stic_AWF_Responses';
+$modInvisList[] = 'stic_AWF_Links';
+$modInvisList[] = 'stic_AWF_Response_Details';
+$modInvisList[] = 'stic_AWF_Deferred_Tickets';
+$modInvisList[] = 'stic_AWF_Incoming_Events';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
 $modules_exempt_from_availability_check['stic_Incorpora'] = 'stic_Incorpora';
 $modules_exempt_from_availability_check['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations';
+$modules_exempt_from_availability_check['stic_AWF_Responses'] = 'stic_AWF_Responses';
+$modules_exempt_from_availability_check['stic_AWF_Links'] = 'stic_AWF_Links';
+$modules_exempt_from_availability_check['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
 
 // Modules that have been hidden with $modInvisList, but must be available in reporting
 // $report_include_modules['stic_XXXXXXXXXX'] = 'stic_XXXXXXXXXX'; // sample value
+$report_include_modules['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
 
 // Modules that should be accessed only by administrators through the Admin page
 $adminOnlyList['stic_Settings'] = array('all' => 1);

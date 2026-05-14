@@ -63,6 +63,11 @@ class actionSendMessage extends actionBase
             unset($app_list_strings['aow_message_type_list']['Related Field']);
         }
 
+        // Ensure AOW action does not allow WhatsAppWeb selection: remove from stic_messages_type_list
+        if (isset($app_list_strings['stic_messages_type_list']['WhatsAppWeb'])) {
+            unset($app_list_strings['stic_messages_type_list']['WhatsAppWeb']);
+        }
+
         // Error status not allowed on message creation
         unset($app_list_strings['stic_messages_status_list']['error']);
 

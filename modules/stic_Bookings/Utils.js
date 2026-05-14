@@ -147,7 +147,7 @@ addToValidateCallback(
     var repeatBookingCheckbox = document.getElementById('periodic_booking');
     var repeatType = document.getElementById('repeat_type');
    
-    if (!repeatBookingCheckbox || !repeatBookingCheckbox.checked) {
+    if (!repeatBookingCheckbox || !repeatBookingCheckbox.checked || repeatBookingCheckbox.disabled) {
       return true;
     }
    
@@ -223,8 +223,9 @@ switch (viewType()) {
     manualPlannedEndHours = "10";
     manualPlannedEndMinutes = "30";
 
-    // With all_day loadCenterResourcesButtoned the DateTime fields shouldn't display the time section
-    // and the end_date should display one day less
+    // With all_day checked the DateTime fields shouldn't display the time section
+    // and the end_date should display one day less (except when reloading from session).
+    var isLoadFromSession = window.location.search.indexOf("loadFromSession=true") !== -1;
     if ($("#all_day", "form").is(":checked")) {
       $("#start_date_hours").val("00");
       $("#start_date_minutes").val("00");
@@ -254,7 +255,7 @@ switch (viewType()) {
       // Hide planned date time sections
       $("#planned_start_date_time_section").parent().hide();
       $("#planned_end_date_time_section").parent().hide();
-      if ($("#end_date_date").val()) {
+      if (!isLoadFromSession && $("#end_date_date").val()) {
         var formatString = cal_date_format
             .replace(/%/g, "")
             .toLowerCase()
@@ -466,13 +467,12 @@ switch (viewType()) {
     setAutofill(["name"]);
     setAutofill(["total_amount"]);
     setAutofill(["copayment_amount"]);
-    document
-      .getElementById("place_booking")
-      .addEventListener("change", function () {
+    var placeBookingCheckbox = document.getElementById("place_booking");
+    if (placeBookingCheckbox) 
+      placeBookingCheckbox.addEventListener("change", function () {
         var currentCheckbox = this;
         var isChecked = currentCheckbox.checked;
-        var hasResources = getTotalResourceCount() > 0;
-
+          var hasResources = getTotalResourceCount() > 0;
         if (isChecked && hasResources) {
           if (!confirm(SUGAR.language.get(module, "LBL_CONFIRM_CHANGE_BOOKING_TYPE"))) {
             currentCheckbox.checked = false; 
@@ -846,6 +846,11 @@ function isResourceAvailable(resourceElement = null) {
   bookingId = $('[name="record"]').val()
     ? $('[name="record"]').val()
     : $(".listview-checkbox", $(".inlineEditActive").closest("tr")).val();
+  var startDateValue = getFieldValue("start_date");
+  if ($("#all_day", "form").is(":checked") && startDateValue) {
+    // In all-day bookings, avoid carrying residual time (e.g. 11:00) to SQL checks
+    startDateValue = startDateValue.split(" ")[0];
+  }
   if (
     $("#all_day", "form").is(":checked") ||
     getFieldValue("end_date").indexOf(" ") == -1
@@ -875,7 +880,7 @@ function isResourceAvailable(resourceElement = null) {
       dataType: "json",
       async: false,
       data: {
-        startDate: dateToYMDHM(getDateObject(getFieldValue("start_date"))),
+        startDate: dateToYMDHM(getDateObject(startDateValue)),
         endDate: dateToYMDHM(getDateObject(endDateValue)),
         resourceId: resourceElement ? $("#" + resourceElement).val() : null,
         bookingId: bookingId,
@@ -922,29 +927,44 @@ function openCenterPopup() {
       name: "center_name",
     },
   };
-
-  open_popup("stic_Centers", 600, 400, "", true, false, popupRequestData);
+  open_popup("stic_Centers", 600, 400, "", true, false, popupRequestData, 'MultiSelect');
 }
 
 function callbackCenterSelectPopup(popupReplyData) {
-  var centerId = popupReplyData.name_to_value_array.center_id;
-  var centerName = popupReplyData.name_to_value_array.center_name;
-  
-  var centerAlreadySelected = selectedCenters.some(function(center) {
-    return center.centerId === centerId;
-  });
-  
-  if (centerAlreadySelected) {
-    alert(SUGAR.language.get(module, "LBL_CENTER_ALREADY_SELECTED")+ ": " + centerName);
-    return; 
+
+
+
+  // check if multiple centers are being returned
+  if(popupReplyData.selection_list) {
+    Object.values(popupReplyData.selection_list).forEach(function(centerId) {
+      // search centerId in STIC.centersArray to get the center name
+      var centerName = STIC.centersArray.find(item => item.id === centerId).name;
+      var centerAlreadySelected = selectedCenters.some(function(center) {
+        return center.centerId === centerId;
+      });     
+      if (!centerAlreadySelected) {
+        selectedCenters.push({ centerId: centerId, centerName: centerName });
+      } 
+    });
+  }
+  else {
+    var centerId = popupReplyData.name_to_value_array.center_id;
+    var centerName = popupReplyData.name_to_value_array.center_name;
+    var centerAlreadySelected = selectedCenters.some(function(center) {
+      return center.centerId === centerId;
+    });
+    if (centerAlreadySelected) {
+      alert(SUGAR.language.get(module, "LBL_CENTER_ALREADY_SELECTED")+ ": " + centerName);
+      return; 
+    }
+    selectedCenters.push({ centerId: centerId, centerName: centerName });
   }
   
-  selectedCenters.push({ centerId: centerId, centerName: centerName });
   updateSelectedCentersList();
   $("#selectedCenterName").text(centerName);
   $(".filter-box").show();
   $("#resourceSearchFields").show();
-  if (selectedCenters.length === 1) {
+  if (selectedCenters.length > 0) {
     loadResourceTypes(centerId);
   }
   $("#loadCenterResourcesButton").off("click").on("click", loadResources);
@@ -1094,8 +1114,16 @@ function loadCenterResources(
   numberOfPlaces = ""
 ) {
   var centerIds = selectedCenters.map((center) => center.centerId).join(",");
-  var startDate = getDateObject(getFieldValue("start_date"));
-  var endDate = getDateObject(getFieldValue("end_date"));
+  var startDateValue = getFieldValue("start_date");
+  var endDateValue = getFieldValue("end_date");
+
+  if ($("#all_day", "form").is(":checked")) {
+    startDateValue = startDateValue ? startDateValue.split(" ")[0] : startDateValue;
+    endDateValue = endDateValue ? endDateValue.split(" ")[0] : endDateValue;
+  }
+
+  var startDate = getDateObject(startDateValue);
+  var endDate = getDateObject(endDateValue);
   
   var existingResourceIds = getCurrentResourceIds();
 
