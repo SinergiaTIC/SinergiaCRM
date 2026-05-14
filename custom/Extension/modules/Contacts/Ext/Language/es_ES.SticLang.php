@@ -249,11 +249,11 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
 
 // Cadenas Área Privada
-$mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario Área Privada';
-$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña Área Privada';
-$mod_strings['LBL_STIC_PA_ENABLE'] = 'Activar Área Privada';
-$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'Al activar esta opción, se habilitará el acceso al Área Privada para esta persona. Si se desactiva esta opción, se revocará el acceso al Área Privada. Además, para poder proceder con el envío de las credenciales de acceso al Área Privada, es necesario que se active la configuración "PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE". En caso contrario, no se podrán enviar las credenciales de acceso al Área Privada.';
-$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'Se podrá introducir/cambiar la contraseña del Área Privada solo si la opción de "Activar Área Privada" está habilitada.';
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario área privada';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña área privada';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Activar área privada';
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'Para que la persona pueda acceder al área privada es necesario que este campo esté marcado. Si no lo está, no se podrá acceder a ella aunque se disponga de nombre de usuario y contraseña. Al marcar este campo, si el parámetro de configuración <a href="index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11" target="_blank">PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> está activado, se enviarán automáticamente a la persona las credenciales de acceso. En caso contrario, será necesario hacerlo de forma manual.';
+$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'Para editar la contraseña es necesario que el campo "Activar área privada" esté marcado.';
 
 // Conversaciones
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversaciones';
