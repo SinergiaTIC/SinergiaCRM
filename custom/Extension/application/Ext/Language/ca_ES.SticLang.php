@@ -4048,6 +4048,21 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorat';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tractat';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sense canvis';
 
+// Advanced Web Forms Deferred Tickets: status
+$app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendent';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Processant';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resolt';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Fallit';
+$app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancel·lat';
+
+// Advanced Web Forms Incoming Events: status
+$app_list_strings['stic_awf_incoming_events_status'][''] = '';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Nou';
+$app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processat';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Error de procés';
+$app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorat';
+
 // Modificacions del core de SuiteCRM
 
 // Cadenes generals (procedents d'include)

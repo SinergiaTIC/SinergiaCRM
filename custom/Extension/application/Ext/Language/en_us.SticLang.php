@@ -4047,6 +4047,21 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Skipped';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Processed';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Unchanged';
 
+// Advanced Web Forms Deferred Tickets: status
+$app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pending';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Processing';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resolved';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Failed';
+$app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancelled';
+
+// Advanced Web Forms Incoming Events: status
+$app_list_strings['stic_awf_incoming_events_status'][''] = '';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'New';
+$app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processed';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Error';
+$app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignored';
+
 // SuiteCRM Core modifications
 
 // Opportunities: Roles of the contacts in the opportunity context
