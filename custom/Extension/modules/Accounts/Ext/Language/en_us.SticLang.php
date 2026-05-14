@@ -158,8 +158,8 @@ $mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Training'
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Work experience';
 
 // Private Area strings
-$mod_strings['LBL_STIC_PA_USERNAME'] = 'Private Area user';
-$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private Area password';
-$mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable Private Area';
-$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'When this option is enabled, access to the Private Area will be granted for this organization. If this option is disabled, access to the Private Area will be revoked. Additionally, to proceed with sending the access credentials to the Private Area, the "PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE" configuration must be enabled. Otherwise, the access credentials cannot be sent.';
-$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'The Private Area password can only be entered/changed if the "Enable Private Area" option is enabled.';
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Private area user';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private area password';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable private area';
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'In order for the account to access the private area, this field must be checked. If not, it will not be possible to access it even if a username and password are available. When checking this field, if the setting <a href="index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11" target="_blank">PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> is enabled, the access credentials will be automatically sent to the account. Otherwise, it will have to be done manually.';
+$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'To edit the password, the "Enable private area" field must be checked.';
