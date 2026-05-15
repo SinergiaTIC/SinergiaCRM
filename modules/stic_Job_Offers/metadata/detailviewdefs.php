@@ -367,25 +367,22 @@ array(
                         'name' => 'job_applications_total',
                         'label' => 'LBL_JOB_APPLICATIONS_TOTAL',
                     ),
+                    1 => array (
+                        'name' => 'job_applications_expected_presentation',
+                        'label' => 'LBL_JOB_APPLICATIONS_EXPECTED_PRESENTATION',
+                    ),
                 ),
                 1 => array(
-                    0 => array(
-                        'name' => 'job_applications_accepted',
-                        'label' => 'LBL_JOB_APPLICATIONS_ACCEPTED',
-                    ),
-                    1 => array(
-                        'name' => 'job_applications_rejected_closed',
-                        'label' => 'LBL_JOB_APPLICATIONS_REJECTED_CLOSED',
-                    ),
-                ),
-                2 => array(
                     0 => array(
                         'name' => 'job_applications_review',
                         'label' => 'LBL_JOB_APPLICATIONS_REVIEW',
                     ),
-                    1 => '',
+                    1 => array(
+                        'name' => 'job_applications_presented',
+                        'label' => 'LBL_JOB_APPLICATIONS_PRESENTED',
+                    ),
                 ),
-                3 => array(
+                2 => array(
                     0 => array(
                         'name' => 'job_applications_pending_interview',
                         'label' => 'LBL_JOB_APPLICATIONS_PENDING_INTERVIEW',
@@ -397,12 +394,12 @@ array(
                 ),
                 4 => array(
                     0 => array(
-                        'name' => 'job_applications_expected_presentation',
-                        'label' => 'LBL_JOB_APPLICATIONS_EXPECTED_PRESENTATION',
+                        'name' => 'job_applications_accepted',
+                        'label' => 'LBL_JOB_APPLICATIONS_ACCEPTED',
                     ),
                     1 => array(
-                        'name' => 'job_applications_presented',
-                        'label' => 'LBL_JOB_APPLICATIONS_PRESENTED',
+                        'name' => 'job_applications_rejected_closed',
+                        'label' => 'LBL_JOB_APPLICATIONS_REJECTED_CLOSED',
                     ),
                 ),
             ),
