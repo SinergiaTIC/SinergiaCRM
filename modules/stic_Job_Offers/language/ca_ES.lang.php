@@ -193,7 +193,7 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_REJECTED' => "Candidatura tancada (interlocutor)",
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_REJECTED_INFO' => "Plantilla per notificar a l'interlocutor que una candidatura ha canviat a 'Rebutjada o tancada'. Si el camp es deixa buit s'utilitzarà la plantilla per defecte.",
     'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER' => "Candidatura cancel·lada (usuari assignat)",
-    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_INFO' => "Plantilla per notificar a l'usuari assignat que la persona candidata ha abandonat el procés. Si el camp es deixa buit s'utilitzarà la plantilla per defecte.",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_INFO' => "Plantilla per notificar a l'usuari assignat que el candidat ha abandonat el procés. Si el camp es deixa buit s'utilitzarà la plantilla per defecte.",
     'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR' => "Candidatura cancel·lada (interlocutor)",
-    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_INFO' => "Plantilla per notificar a l'interlocutor que la persona candidata ha abandonat el procés. Si el camp es deixa buit s'utilitzarà la plantilla per defecte.",
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_INFO' => "Plantilla per notificar a l'interlocutor que el candidat ha abandonat el procés. Si el camp es deixa buit s'utilitzarà la plantilla per defecte.",
 );
