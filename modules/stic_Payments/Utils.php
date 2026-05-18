@@ -53,7 +53,7 @@ class stic_PaymentsUtils
 
         // STIC NOTE - $_REQUEST variable is not the same when saving a record from EDIT_VIEW as from INLINE_EDIT.
         // In order to generate the relationship between the contact and the call, it is necessary to enter the following properties in $_REQUEST
-        if ($_REQUEST['action'] == 'saveHTMLField') {
+        if ($_REQUEST['action'] == 'saveHTMLField' || $_REQUEST['action'] == 'Save') {
             $_REQUEST['relate_to'] = 'Contacts';
             $_REQUEST['relate_id'] = $paymentBean->stic_payments_contactscontacts_ida;
         }
