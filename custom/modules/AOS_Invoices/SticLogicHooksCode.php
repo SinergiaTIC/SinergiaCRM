@@ -56,6 +56,39 @@ class AOS_InvoicesHook
         }
         // === End Legacy mode ===
 
+        // === Validate customer identification number (DNI/NIF/CIF) ===
+        if (!$isDuplicate && empty($bean->fetched_row['id'])) {
+            if (!empty($bean->billing_account_id)) {
+                $account = BeanFactory::getBean('Accounts', $bean->billing_account_id);
+                if (!empty($account->id) && empty($account->stic_identification_number_c)) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Account ' . $bean->billing_account_id . ' has no identification number.');
+                    SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING']));
+                    $bean->in_save = false;
+                }
+            } elseif (!empty($bean->billing_contact_id)) {
+                $contact = BeanFactory::getBean('Contacts', $bean->billing_contact_id);
+                if (!empty($contact->id) && empty($contact->stic_identification_number_c)) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Contact ' . $bean->billing_contact_id . ' has no identification number.');
+                    SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING']));
+                    $bean->in_save = false;
+                }
+            }
+        }
+        // Clear address fields if no customer is selected
+        if (empty($bean->billing_account_id) && empty($bean->billing_contact_id)) {
+            $bean->billing_address_street = '';
+            $bean->billing_address_city = '';
+            $bean->billing_address_state = '';
+            $bean->billing_address_postalcode = '';
+            $bean->billing_address_country = '';
+            $bean->shipping_address_street = '';
+            $bean->shipping_address_city = '';
+            $bean->shipping_address_state = '';
+            $bean->shipping_address_postalcode = '';
+            $bean->shipping_address_country = '';
+        }
+        // === End customer identification number validation ===
+
         // === Step 1.1: Block edition of invoices accepted by AEAT ===
         // If the invoice is already accepted by AEAT, only non-tax fields can be edited
         if (!empty($bean->fetched_row['verifactu_aeat_status_c']) && 

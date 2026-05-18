@@ -65,6 +65,72 @@ switch (viewType()) {
       setAutofill(["name"]);
 
       initSeriesFilter();
+
+      // Validation: Customer must have identification number (DNI/NIF/CIF)
+      addToValidateCallback(getFormName(), "customer_id_number", "text", false,
+          SUGAR.language.get(module, "LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING"),
+          function() {
+              var accountId = $("#billing_account_id").val();
+              var contactId = $("#billing_contact_id").val();
+              if (!accountId && !contactId) return true;
+              var idNum = $("#customer_id_number").val() || customerIdentificationNumber || '';
+              return idNum.trim() !== "";
+          }
+      );
+
+      // Override billing_contact popup button to also map Contact address fields.
+      // The popup's send_back() looks up each field_to_name_array key in
+      // associated_javascript_data[the_key.toUpperCase()], so we map the
+      // Contact field names (primary_address_*) to form field names (billing_address_*)
+      var contactBtn = document.getElementById('btn_billing_contact');
+      if (contactBtn) {
+          contactBtn.onclick = function() {
+              var initialFilter = "&account_name=";
+              if (document.EditView && document.EditView.billing_account) {
+                  initialFilter += encodeURIComponent(document.EditView.billing_account.value);
+              }
+              open_popup("Contacts", 600, 400, initialFilter, true, false, {
+                  "call_back_function": "set_return",
+                  "form_name": "EditView",
+                  "field_to_name_array": {
+                      "id": "billing_contact_id",
+                      "name": "billing_contact",
+                      "primary_address_street": "billing_address_street",
+                      "primary_address_city": "billing_address_city",
+                      "primary_address_state": "billing_address_state",
+                      "primary_address_postalcode": "billing_address_postalcode",
+                      "primary_address_country": "billing_address_country",
+                      "alt_address_street": "shipping_address_street",
+                      "alt_address_city": "shipping_address_city",
+                      "alt_address_state": "shipping_address_state",
+                      "alt_address_postalcode": "shipping_address_postalcode",
+                      "alt_address_country": "shipping_address_country",
+                      "stic_identification_number_c": "customer_id_number"
+                  }
+              }, "single", true);
+              return false;
+          };
+      }
+
+      // NOTE: Autocomplete address population is handled by extending
+      // sqs_objects['EditView_billing_contact'] in view.edit.php (inline script
+      // after parent::display()). The quicksearch's field_list/populate_list are
+      // extended to include address fields before enableQS creates the widget.
+
+      // Clear address fields when Account or Contact X button is clicked
+      $('#btn_clr_billing_account, #btn_clr_billing_contact').on('click', function() {
+          setTimeout(function() {
+              if (!$('#billing_account_id').val() && !$('#billing_contact_id').val()) {
+                  var addressFields = [
+                      'billing_address_street', 'billing_address_city', 'billing_address_state',
+                      'billing_address_postalcode', 'billing_address_country',
+                      'shipping_address_street', 'shipping_address_city', 'shipping_address_state',
+                      'shipping_address_postalcode', 'shipping_address_country'
+                  ];
+                  addressFields.forEach(function(f) { $('#' + f).val(''); });
+              }
+          }, 0);
+      });
     });
     break;
 

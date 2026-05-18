@@ -53,6 +53,9 @@ $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/s
 $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
 $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
 
+// Used by AOS_Invoices EditView to fetch Contact addresses for auto-population (billing_contact autocomplete)
+$entry_point_registry['sticGetContactAddresses'] = array('file' => 'custom/modules/AOS_Invoices/GetContactAddresses.php', 'auth' => true);
+
 // Entry points used by Stic Advanced Web Forms
 $entry_point_registry['stic_AWF_checkStatus'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckStatus.php', 'auth' => false);
 $entry_point_registry['stic_AWF_renderForm'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/RenderForm.php', 'auth' => false);

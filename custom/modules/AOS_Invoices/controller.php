@@ -25,6 +25,62 @@ require_once 'modules/AOS_Invoices/controller.php';
 class CustomAOS_InvoicesController extends AOS_InvoicesController
 {
     /**
+     * Override editview to populate Contact addresses when a Contact is selected.
+     */
+    public function action_editview()
+    {
+        parent::action_editview();
+
+        // Determine which customer ID was passed via popup selection.
+        // The popup sends billing_account_id/billing_contact_id (not account_id/contact_id).
+        // The core controller uses account_id/contact_id only for the Quote-to-Invoice flow.
+        $selectedContactId = $_REQUEST['billing_contact_id'] ?? $_REQUEST['contact_id'] ?? '';
+        $selectedAccountId = $_REQUEST['billing_account_id'] ?? $_REQUEST['account_id'] ?? '';
+
+        // If a Contact was selected but NO Account was selected, populate addresses from Contact
+        // (Account addresses take precedence when both are present)
+        if (!empty($selectedContactId) && empty($selectedAccountId)) {
+            $query = "SELECT * FROM contacts WHERE id = '?'";
+            $result = $this->bean->db->pquery($query, [$selectedContactId]);
+            $row = $this->bean->db->fetchByAssoc($result);
+            if ($row) {
+                // Primary address → billing address
+                $this->bean->billing_address_street = $row['primary_address_street'];
+                $this->bean->billing_address_city = $row['primary_address_city'];
+                $this->bean->billing_address_state = $row['primary_address_state'];
+                $this->bean->billing_address_postalcode = $row['primary_address_postalcode'];
+                $this->bean->billing_address_country = $row['primary_address_country'];
+
+                // Alternate address → shipping address (if exists, otherwise copy from primary)
+                if (!empty($row['alt_address_street'])) {
+                    $this->bean->shipping_address_street = $row['alt_address_street'];
+                    $this->bean->shipping_address_city = $row['alt_address_city'];
+                    $this->bean->shipping_address_state = $row['alt_address_state'];
+                    $this->bean->shipping_address_postalcode = $row['alt_address_postalcode'];
+                    $this->bean->shipping_address_country = $row['alt_address_country'];
+                } else {
+                    $this->bean->shipping_address_street = $row['primary_address_street'];
+                    $this->bean->shipping_address_city = $row['primary_address_city'];
+                    $this->bean->shipping_address_state = $row['primary_address_state'];
+                    $this->bean->shipping_address_postalcode = $row['primary_address_postalcode'];
+                    $this->bean->shipping_address_country = $row['primary_address_country'];
+                }
+
+                // Store identification number on bean for view/JS validation
+                $this->bean->customer_id_number = $row['stic_identification_number_c'] ?? '';
+            }
+        } elseif (!empty($selectedAccountId)) {
+            // When an Account is selected, also store its identification number
+            $query = "SELECT stic_identification_number_c FROM accounts WHERE id = '?'";
+            $result = $this->bean->db->pquery($query, [$selectedAccountId]);
+            $row = $this->bean->db->fetchByAssoc($result);
+            if ($row) {
+                $this->bean->customer_id_number = $row['stic_identification_number_c'] ?? '';
+            }
+        }
+    }
+
+    /**
      * Override delete action (uses before_delete hook for blocking logic).
      */
     public function action_delete()
