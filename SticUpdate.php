@@ -103,6 +103,7 @@ $rac->clearDashlets();
 $rac->clearVardefs();
 $rac->clearJsLangFiles();
 $rac->rebuildAuditTables();
+$rac->clearThemeCache();
 
 // Enable throwing exceptions for database errors.
 $db->setDieOnError(true);
@@ -130,14 +131,26 @@ $cache_key = 'app_list_strings.' . ($defaultLanguage ?? 'en_us');
 sugar_cache_clear($cache_key);
 sugar_cache_reset();
 
+// Rebuild JavaScript grouped files (sugar_grp1.js, etc.)
+$_REQUEST['js_rebuild_concat'] = 'rebuild';
+$_REQUEST['root_directory'] = dirname(__FILE__);
+require_once 'jssource/minify.php';
+
 // Execute post-installation scripts
 runScripts($scriptsVersion, 'post_install.txt', $errors, $infos);
 
 // Apply custom SCSS theme settings (configurable via skipCssRebuild parameter, defaults to false)
 if (!filter_var($_REQUEST['skipCssRebuild'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
     $_REQUEST['keepUserTheme'] = 1;
+    ob_start();
     include_once('SticInclude/SticCustomScss.php');
+    ob_clean();
 }
+
+// Restore Roles and ACLs to ensure non-admin users can access modules
+ob_start();
+require_once 'modules/ACL/install_actions.php';
+ob_clean();
 
 // Cleanup application resources
 sugar_cleanup(false);

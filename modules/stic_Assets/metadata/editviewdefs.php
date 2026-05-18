@@ -38,26 +38,26 @@ array(
                     'field' => '30',
                 ),
             ),
-            'useTabs' => false,
+            'useTabs' => true,
             'tabDefs' => array(
                 'LBL_DEFAULT_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_ADDRESS_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_OWNERSHIP_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_INSURANCES_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_UTILITIES_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
             ),
