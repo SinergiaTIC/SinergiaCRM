@@ -514,9 +514,3 @@ $dictionary['AOS_Invoices']['fields']['verifactu_previous_status_c'] = array(
     'popupHelp' => 'LBL_VERIFACTU_PREVIOUS_STATUS_HELP',
 );
 
-// Unique index on number to prevent duplicate invoice numbers
-$dictionary['AOS_Invoices']['indices'][] = array(
-    'name' => 'idx_invoice_number_unique',
-    'type' => 'unique',
-    'fields' => array('number'),
-);
