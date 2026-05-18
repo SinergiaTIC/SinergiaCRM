@@ -48,6 +48,46 @@ use josemmo\Verifactu\Services\QrGenerator;
 class AOS_InvoicesUtils
 {
     /**
+     * Check if Verifactu integration is activated
+     * @return bool
+     */
+    public static function isVerifactuActivated()
+    {
+        require_once 'modules/stic_Settings/Utils.php';
+        $setting = stic_SettingsUtils::getSetting('VERIFACTU_ACTIVATED');
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': VERIFACTU_ACTIVATED = ' . var_export($setting, true));
+        return ($setting == 1 || $setting === '1');
+    }
+
+    /**
+     * Check if Verifactu is activated and return status info for UI
+     * @return array
+     */
+    public static function getVerifactuStatus()
+    {
+        $activated = self::isVerifactuActivated();
+
+        require_once 'custom/include/SticCertificateUtils.php';
+        $hasCertificate = SticCertificateUtils::certificateExists();
+
+        $warning = '';
+        if (!$activated && $hasCertificate) {
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            $warning = $mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_WARNING'] ??
+                'Verifactu no está activado. El certificado digital está configurado pero el envío a AEAT está deshabilitado.';
+        }
+
+        return [
+            'activated' => $activated,
+            'hasCertificate' => $hasCertificate,
+            'warning' => $warning,
+        ];
+    }
+
+    /**
      * Create a registration record for an invoice
      *
      * @param string $issuerNif Company's NIF/CIF
@@ -334,6 +374,13 @@ class AOS_InvoicesUtils
     public static function sendToAeat($invoiceBean)
     {
         global $db, $mod_strings, $sugar_config;
+
+        // Check if Verifactu is activated - if not, skip (legacy mode)
+        if (!self::isVerifactuActivated()) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Verifactu not activated (legacy mode), skipping sendToAeat.');
+            return;
+        }
+
         // Allow sending if: status is 'emitted' AND (aeat_status is empty/pending/rejected, but NOT 'accepted')
         $aeatStatus = $invoiceBean->verifactu_aeat_status_c ?? '';
         if (
@@ -1755,6 +1802,12 @@ class AOS_InvoicesUtils
     public static function sendCancellationToAeat($invoiceBean)
     {
         global $sugar_config;
+
+        // Check if Verifactu is activated - if not, skip (legacy mode)
+        if (!self::isVerifactuActivated()) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Verifactu not activated (legacy mode), skipping sendCancellationToAeat.');
+            return ['success' => false, 'message' => 'Verifactu no está activado.'];
+        }
 
         try {
             // --- Validate invoice can be cancelled ---

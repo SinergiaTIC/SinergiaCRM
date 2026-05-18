@@ -44,30 +44,37 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
 
         SticViews::preDisplay($this);
 
-// If invoice is accepted/emitted, redirect to detail view (unless duplicating)
         $bean = $this->bean;
-        $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') 
+        $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1')
             || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true')
             || (!empty($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] === 'true');
-        
-        if (!$isDuplicate && !empty($bean->verifactu_aeat_status_c) && 
+
+        if (!$isDuplicate && !empty($bean->verifactu_aeat_status_c) &&
             in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
-            
+
             if (!empty($bean->id)) {
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
             }
         }
-        
-        // Write here you custom code
     }
 
     public function display()
     {
+        global $sugar_config;
+        $seriesConfig = $sugar_config['aos']['invoices']['series'] ?? [];
+        $seriesForJs = [];
+        foreach ($seriesConfig as $name => $config) {
+            $seriesForJs[] = [
+                'name' => $name,
+                'isRectified' => !empty($config['isRectified']),
+            ];
+        }
+        echo '<script>var sticSeriesConfig = ' . json_encode($seriesForJs) . ';</script>';
+
         parent::display();
 
         SticViews::display($this);
 
-        // Write here you custom code
         echo getVersionedScript("custom/modules/AOS_Invoices/SticUtils.js");
     }
 

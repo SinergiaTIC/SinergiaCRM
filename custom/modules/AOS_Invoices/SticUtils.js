@@ -62,16 +62,9 @@ switch (viewType()) {
         var contactId = $("#billing_contact_id").val();
         return (accountId || contactId) ? true : false;
       });
-      // Mark name as auto-generated field
       setAutofill(["name"]);
-      
-      // === Step 2.3: Filter series dropdown based on isRectified flag ===
-      filterSeriesDropdown();
-      
-      // Listen for changes in the isRectified checkbox
-      $("#verifactu_is_rectified_c").on("change", function() {
-        filterSeriesDropdown();
-      });
+
+      initSeriesFilter();
     });
     break;
 
@@ -187,18 +180,47 @@ function disableDeleteButton() {
 function filterSeriesDropdown() {
   var isRectified = $("#verifactu_is_rectified_c").is(":checked");
   var seriesSelect = $("#stic_invoice_type_c");
-  
-  if (!seriesSelect.length) {
+
+  if (!seriesSelect.length || typeof sticSeriesConfig === 'undefined') {
     return;
   }
-  
-  // Get all options
-  var allOptions = seriesSelect.find("option");
-  
-  // Note: The options are populated from config, so we need to know which series is rectified
-  // For now, we'll hide/show based on common naming patterns or let the server-side validation handle it
-  // This is a basic implementation - the server-side validation in before_save provides the actual blocking
-  
-  // If we had access to series config from JS, we would filter here
-  // For now, we rely on server-side validation to block mismatched combinations
+
+  var currentValue = seriesSelect.val();
+  var validOptions = [];
+  var firstValidValue = null;
+
+  seriesSelect.find("option").each(function() {
+    var option = $(this);
+    var optionValue = option.val();
+
+    if (!optionValue) {
+      return;
+    }
+
+    var seriesInfo = sticSeriesConfig.find(function(s) { return s.name === optionValue; });
+
+    if (seriesInfo) {
+      var isValid = seriesInfo.isRectified === isRectified;
+      option.css('display', isValid ? '' : 'none');
+
+      if (isValid) {
+        validOptions.push(optionValue);
+        if (firstValidValue === null) {
+          firstValidValue = optionValue;
+        }
+      }
+    }
+  });
+
+  if (validOptions.length > 0 && !validOptions.includes(currentValue)) {
+    seriesSelect.val(firstValidValue);
+  }
+}
+
+function initSeriesFilter() {
+  filterSeriesDropdown();
+
+  $("#verifactu_is_rectified_c").on("change", function() {
+    filterSeriesDropdown();
+  });
 }

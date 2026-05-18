@@ -34,10 +34,28 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
     public function preDisplay()
     {
         parent::preDisplay();
-        
+
         SticViews::preDisplay($this);
-        
+
         $this->bean->field_defs['name']['inline_edit'] = false;
+
+        // === Verifactu Activation Banner ===
+        // Show warning if Verifactu is not activated but certificate is configured
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
+
+        if (!empty($verifactuStatus['warning'])) {
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+
+            echo '<div class="alert alert-info" style="margin: 10px 0; padding: 12px; border-left: 4px solid #5bc0de; background-color: #d9edf7;">
+                <strong><span class="suitepicon suitepicon-action-info"></span> ' . $verifactuStatus['warning'] . '</strong>
+                <br><a href="index.php?module=stic_Settings&action=index">' . ($mod_strings['LBL_VERIFACTU_ACTIVATED_LINK'] ?? 'Configurar Verifactu') . '</a>
+            </div>';
+        }
+        // === End Verifactu Activation Banner ===
 
         // Add banner for accepted/emitted invoices
         $bean = $this->bean;

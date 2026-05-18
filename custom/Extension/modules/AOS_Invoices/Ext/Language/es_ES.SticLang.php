@@ -142,3 +142,8 @@ $mod_strings['LBL_FIELD_RECTIFIED_DATE'] = 'Fecha de la factura rectificada';
 $mod_strings['LBL_MISSING_FIELDS'] = 'Campos faltantes';
 $mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'] = 'No es posible enviar la factura a la AEAT: su fecha de expedición (%s) es anterior a la de la última factura ya registrada en la cadena Verifactu (nº %s, fecha %s).';
 
+// Verifactu Activation
+$mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_WARNING'] = 'Verifactu no está activado. El certificado digital está configurado pero el envío a AEAT está deshabilitado.';
+$mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_SEND_ERROR'] = 'Verifactu no está activado. Active la integración en stic_Settings para poder enviar facturas a la AEAT.';
+$mod_strings['LBL_VERIFACTU_ACTIVATED_LINK'] = 'Ir a configuración de Verifactu';
+

@@ -305,17 +305,28 @@ class AOS_InvoicesHook
             }
         }
 
-        // If the invoice type field is empty, set a default value (first series)
+        // If the invoice type field is empty, set a default value based on whether it's a rectified invoice
         if (empty($bean->stic_invoice_type_c)) {
-            // Get first series from config
             if (!empty($sugar_config['aos']['invoices']['series']) && is_array($sugar_config['aos']['invoices']['series'])) {
                 // === Step 2.6: Validate series uniqueness ===
                 require_once 'custom/modules/AOS_Invoices/SticUtils.php';
                 AOS_InvoicesUtils::validateSeriesUniqueness();
                 // === End Step 2.6 ===
-                
-                $seriesNames = array_keys($sugar_config['aos']['invoices']['series']);
-                $bean->stic_invoice_type_c = $seriesNames[0];
+
+                // Check if this is a rectified invoice
+                $isRectified = !empty($bean->verifactu_is_rectified_c);
+
+                // Find first series matching the invoice type
+                foreach ($sugar_config['aos']['invoices']['series'] as $seriesName => $seriesConfig) {
+                    $seriesIsRectified = !empty($seriesConfig['isRectified']);
+
+                    // If invoice is rectified, find first rectified series
+                    // If invoice is not rectified, find first non-rectified series
+                    if ($isRectified === $seriesIsRectified) {
+                        $bean->stic_invoice_type_c = $seriesName;
+                        break;
+                    }
+                }
             }
         }
 
@@ -349,7 +360,13 @@ class AOS_InvoicesHook
     
     public function after_save($bean, $event, $arguments)
     {
-        return;
+        // Check if Verifactu is activated - if not, skip all AEAT logic (legacy mode)
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Verifactu not activated (legacy mode), skipping AEAT send.');
+            return;
+        }
+
         // check if status is 'emitted'
         if ($bean->status !== 'emitted') {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} status is not 'emitted', skipping AEAT send.");
