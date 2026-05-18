@@ -41,11 +41,7 @@ $layout_defs[$module_name]['subpanel_setup']['notes'] = array(
     'sort_by'           => 'date_entered',
     'title_key'         => 'LBL_ATTACHMENTS_SUBPANEL_TITLE',
     'get_subpanel_data' => 'notes',
-    'top_buttons'       => array(
-        array(
-            'widget_class' => 'SubPanelTopCreateButton',
-        ),
-    ),
+    'top_buttons'       => array(),
     'list_fields' => array(
         'name' => array(
             'vname'        => 'LBL_NOTE_NAME',
