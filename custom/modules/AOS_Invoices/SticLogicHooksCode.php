@@ -39,6 +39,20 @@ class AOS_InvoicesHook
         }
         // === End Step 1.3 ===
 
+        // === Legacy mode: Generate invoice number on save if Verifactu is not activated ===
+        // When VERIFACTU_ACTIVATED = false, numbers are not assigned at AEAT send time
+        // So we need to generate them here on save to have a number visible in the list
+        // Only generate for new invoices (not edits)
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated() && empty($bean->number) && empty($bean->fetched_row['id'])) {
+            $generatedNumber = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_invoice_type_c, $bean);
+            if ($generatedNumber) {
+                $bean->number = $generatedNumber;
+                $GLOBALS['log']->debug(__METHOD__ . ': Generated invoice number in legacy mode: ' . $generatedNumber);
+            }
+        }
+        // === End Legacy mode ===
+
         // === Step 1.1: Block edition of invoices accepted by AEAT ===
         // If the invoice is already accepted by AEAT, only non-tax fields can be edited
         if (!empty($bean->fetched_row['verifactu_aeat_status_c']) && 
