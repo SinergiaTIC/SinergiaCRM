@@ -61,6 +61,24 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
     public function display()
     {
         global $sugar_config;
+
+        // === Verifactu Activation Banner ===
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
+
+        if (!empty($verifactuStatus['warning'])) {
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+
+            echo '<div class="alert alert-info" style="margin: 10px 0; padding: 12px; border-left: 4px solid #5bc0de; background-color: #d9edf7;">
+                <strong><span class="suitepicon suitepicon-action-info"></span> ' . $verifactuStatus['warning'] . '</strong>
+                <br><a href="index.php?module=stic_Settings&action=index">' . ($mod_strings['LBL_VERIFACTU_ACTIVATED_LINK'] ?? 'Configurar Verifactu') . '</a>
+            </div>';
+        }
+        // === End Verifactu Activation Banner ===
+
         $seriesConfig = $sugar_config['aos']['invoices']['series'] ?? [];
         $seriesForJs = [];
         foreach ($seriesConfig as $name => $config) {
