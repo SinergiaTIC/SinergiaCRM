@@ -195,7 +195,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $modifications = $this->populateBean($bean, $block);
             
             // Save without running logic hooks to avoid unwanted side effects in the creation of the record.
-            $bean->check_notify = false;
             $bean->save(false); 
             
             $modificationType = BeanModificationType::CREATED;
@@ -213,7 +212,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     $modificationType = BeanModificationType::UPDATED;
                     
                     // Save without running logic hooks to avoid unwanted side effects in the creation of the record.
-                    $bean->check_notify = false;
                     $bean->save(false); 
                     break;
 
@@ -223,7 +221,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     $modificationType = BeanModificationType::ENRICHED;
 
                     // Save without running logic hooks to avoid unwanted side effects in the creation of the record.
-                    $bean->check_notify = false;
                     $bean->save(false); 
                     break;
                 
