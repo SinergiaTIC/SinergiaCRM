@@ -1312,7 +1312,7 @@ class AOS_InvoicesUtils
      * @param string $seriesDbValue The database value for query (e.g., 'Factura normal')
      * @return string The generated invoice number
      */
-    public static function generateNextInvoiceNumber($seriesConfigKey, $bean, $seriesDbValue = null)
+    public static function generateNextInvoiceNumber($seriesConfigKey, $bean, $seriesDbValue = null, $filterByAeatStatus = true)
     {
         global $db, $sugar_config;
 
@@ -1334,7 +1334,7 @@ class AOS_InvoicesUtils
         $year = date('Y', strtotime($invoiceDate));
         $yearTwoDigits = substr($year, -2);
 
-        $GLOBALS['log']->debug("generateNextInvoiceNumber - ConfigKey: $seriesConfigKey, DBValue: $seriesForQuery, Format: $format, Initial: $initialNumber, Year: $year");
+        $GLOBALS['log']->debug("generateNextInvoiceNumber - ConfigKey: $seriesConfigKey, DBValue: $seriesForQuery, Format: $format, Initial: $initialNumber, Year: $year, FilterByStatus: " . ($filterByAeatStatus ? 'true' : 'false'));
 
         // === Step 2.2: Validate series format ===
         try {
@@ -1357,9 +1357,9 @@ class AOS_InvoicesUtils
         }
 
         // Find all invoice numbers with the same series (invoice type) and year
-        // Note: stic_invoice_type_c is in aos_invoices_cstm table
-        // Include all invoices that have been sent to AEAT (both accepted and rejected)
-        // This prevents generating the same number when re-sending failed invoices
+        // If filterByAeatStatus is true (Verifactu activated), only consider invoices
+        // that have been sent to AEAT (accepted/rejected).
+        // If false (legacy mode), consider all non-deleted invoices.
         $query = "SELECT aos_invoices.number
                   FROM aos_invoices
                   INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
@@ -1367,10 +1367,13 @@ class AOS_InvoicesUtils
                   AND aos_invoices.deleted = 0
                   AND aos_invoices.number IS NOT NULL
                   AND aos_invoices.number != ''
-                  AND aos_invoices.number LIKE " . $db->quoted($searchPattern) . "
-                  AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected')
-                  ORDER BY aos_invoices.number DESC
-                  LIMIT 1";
+                  AND aos_invoices.number LIKE " . $db->quoted($searchPattern);
+
+        if ($filterByAeatStatus) {
+            $query .= " AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected')";
+        }
+
+        $query .= " ORDER BY aos_invoices.number DESC LIMIT 1";
 
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Query: $query");
 
@@ -1402,14 +1405,17 @@ class AOS_InvoicesUtils
             $attempt = 0;
             
             while ($attempt < $maxAttempts) {
-                // Check if this number already exists for this series (excluding pending/cancelled)
+                // Check if this number already exists for this series
                 $checkQuery = "SELECT COUNT(*) as cnt
                               FROM aos_invoices
                               INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
                               WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesForQuery) . "
                               AND aos_invoices.number = " . $db->quoted($generatedNumber) . "
-                              AND aos_invoices.deleted = 0
-                              AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected', 'emitted')";
+                              AND aos_invoices.deleted = 0";
+
+                if ($filterByAeatStatus) {
+                    $checkQuery .= " AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected')";
+                }
                 
                 $exists = $db->getOne($checkQuery);
                 
