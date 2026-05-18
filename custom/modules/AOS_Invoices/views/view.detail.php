@@ -39,6 +39,10 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
 
         $this->bean->field_defs['name']['inline_edit'] = false;
 
+        // === Ensure default series exist ===
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        AOS_InvoicesUtils::checkAndDisplaySeriesBanner();
+
         // === Verifactu Activation Banner ===
         // Show warning if Verifactu is not activated but certificate is configured
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';

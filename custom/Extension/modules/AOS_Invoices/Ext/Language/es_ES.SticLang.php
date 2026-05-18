@@ -147,3 +147,10 @@ $mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_WARNING'] = 'Verifactu no está activa
 $mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_SEND_ERROR'] = 'Verifactu no está activado. Active la integración en stic_Settings para poder enviar facturas a la AEAT.';
 $mod_strings['LBL_VERIFACTU_ACTIVATED_LINK'] = 'Ir a configuración de Verifactu';
 
+$mod_strings['LBL_STIC_SERIES_NORMAL_NAME'] = 'Factura normal';
+$mod_strings['LBL_STIC_SERIES_RECTIFIED_NAME'] = 'Factura rectificativa';
+$mod_strings['LBL_STIC_SERIES_CREATED_TITLE'] = 'Nuevas series de facturas';
+$mod_strings['LBL_STIC_SERIES_AUTO_CREATED'] = 'Se han creado automáticamente las siguientes series de factura:';
+$mod_strings['LBL_STIC_SERIES_FORMAT_INFO'] = 'Las facturas de estas series seguirán el formato AÑO-NÚMERO secuencial (ejemplo: 2026-0001).';
+$mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] = 'Si se desea, un administrador puede modificar estas series desde Administración > Ajustes AOS. Al hacer clic en Aceptar se recargará la página.';
+

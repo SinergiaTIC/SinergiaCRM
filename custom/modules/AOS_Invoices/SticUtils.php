@@ -2040,6 +2040,130 @@ class AOS_InvoicesUtils
         return '<div class="alert alert-success" style="margin: 10px 0; padding: 12px; border-left: 4px solid #5cb85c; background-color: #dff0d8;">' . $message . '</div>';
     }
 
+    /**
+     * Check if invoice series exist and create default ones if missing.
+     * At least one normal series and one rectified series are required.
+     * Uses Configurator to save config_override.php.
+     *
+     * @return array Status with 'created' (bool) and 'message' (string)
+     */
+    public static function ensureDefaultSeries()
+    {
+        static $executed = false;
+        if ($executed) {
+            return ['created' => false, 'message' => ''];
+        }
+        $executed = true;
+
+        global $sugar_config;
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+
+        $series = $sugar_config['aos']['invoices']['series'] ?? [];
+        $hasNormal = false;
+        $hasRectified = false;
+
+        foreach ($series as $name => $config) {
+            if (!empty($config['isRectified'])) {
+                $hasRectified = true;
+            } else {
+                $hasNormal = true;
+            }
+        }
+
+        if ($hasNormal && $hasRectified) {
+            return ['created' => false, 'message' => ''];
+        }
+
+        $defaultSeries = [];
+        $created = [];
+
+        if (!$hasNormal) {
+            $defaultSeries['Factura normal'] = [
+                'format' => 'YYYY-0000',
+                'initialNumber' => 1,
+                'isRectified' => false,
+            ];
+            $created[] = $mod_strings['LBL_STIC_SERIES_NORMAL_NAME'] ?? 'Factura normal';
+        }
+
+        if (!$hasRectified) {
+            $defaultSeries['Factura rectificativa'] = [
+                'format' => 'YYYY-0000',
+                'initialNumber' => 1,
+                'isRectified' => true,
+            ];
+            $created[] = $mod_strings['LBL_STIC_SERIES_RECTIFIED_NAME'] ?? 'Factura rectificativa';
+        }
+
+        $newLines = '';
+        foreach ($defaultSeries as $seriesName => $seriesData) {
+            $safeName = addslashes($seriesName);
+            $safeFormat = addslashes($seriesData['format']);
+            $isRectified = $seriesData['isRectified'] ? 'true' : 'false';
+            $newLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['format'] = '{$safeFormat}';\n";
+            $newLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['initialNumber'] = {$seriesData['initialNumber']};\n";
+            $newLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['isRectified'] = {$isRectified};\n";
+        }
+
+        $configFile = 'config_override.php';
+        $configContent = file_get_contents($configFile);
+
+        $configContent = preg_replace(
+            "/\\\$sugar_config\\['aos'\\]\\['invoices'\\]\\['series'\\].*?;\n/s",
+            '',
+            $configContent
+        );
+
+        $configContent = preg_replace("/\n{3,}/", "\n\n", $configContent);
+
+        $marker = '/***CONFIGURATOR***/';
+        $firstPos = strpos($configContent, $marker);
+        $secondPos = ($firstPos !== false) ? strpos($configContent, $marker, $firstPos + strlen($marker)) : false;
+
+        if ($secondPos !== false) {
+            $configContent = substr_replace($configContent, $newLines, $secondPos, 0);
+        } elseif ($firstPos !== false) {
+            $configContent = substr_replace($configContent, $newLines, $firstPos, 0);
+        } else {
+            $configContent = rtrim($configContent) . "\n" . $newLines;
+        }
+
+        file_put_contents($configFile, $configContent);
+
+        if (file_exists('config_override.php')) {
+            include 'config_override.php';
+        }
+
+        $seriesItems = '';
+        foreach ($created as $name) {
+            $seriesItems .= '<div style="margin:0 0 8px 20px;font-size:14px;">• '
+                . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ' → <em>YYYY-0000</em></div>';
+        }
+        $message = '<div style="font-family:inherit;">'
+            . '<p style="margin:0 0 12px 0;font-size:14px;font-weight:bold;">'
+            . ($mod_strings['LBL_STIC_SERIES_AUTO_CREATED'] ?? '...') . '</p>'
+            . $seriesItems
+            . '<p style="margin:0 0 12px 0;font-size:13px;color:#555;">'
+            . ($mod_strings['LBL_STIC_SERIES_FORMAT_INFO'] ?? '...') . '</p>'
+            . '<p style="margin:0;font-size:12px;color:#999;">'
+            . ($mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] ?? '...') . '</p>'
+            . '</div>';
+
+        return ['created' => true, 'message' => $message];
+    }
+
+    /**
+     * Check and create default series if missing, show modal to reload if created.
+     * To be called from view preDisplay() methods.
+     */
+    public static function checkAndDisplaySeriesBanner()
+    {
+        $result = self::ensureDefaultSeries();
+        if ($result['created']) {
+            echo '<script>var sticSeriesReloadMessage = ' . json_encode($result['message'], JSON_UNESCAPED_UNICODE) . ';</script>';
+        }
+    }
+
 }
 
 /**

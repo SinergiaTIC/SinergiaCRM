@@ -36,13 +36,14 @@ class CustomAOS_InvoicesViewList extends ViewList
 
         SticViews::preDisplay($this);
 
-        // Write here you custom code
+        // === Ensure default series exist ===
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        AOS_InvoicesUtils::checkAndDisplaySeriesBanner();
     }
 
     public function display()
     {
         // === Verifactu Activation Banner ===
-        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
 
         if (!empty($verifactuStatus['warning'])) {

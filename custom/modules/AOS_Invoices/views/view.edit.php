@@ -56,14 +56,20 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
             }
         }
+
+        // === Ensure default series exist ===
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        AOS_InvoicesUtils::checkAndDisplaySeriesBanner();
     }
 
     public function display()
     {
+        // === Ensure default series exist ===
+        // (checked in preDisplay above)
+
         global $sugar_config;
 
         // === Verifactu Activation Banner ===
-        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
 
         if (!empty($verifactuStatus['warning'])) {
