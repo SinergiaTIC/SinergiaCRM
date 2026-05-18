@@ -2088,7 +2088,7 @@ class AOS_InvoicesUtils
 
         if (!$hasRectified) {
             $defaultSeries['Factura rectificativa'] = [
-                'format' => 'YYYY-0000',
+                'format' => 'RECT-YYYY-0000',
                 'initialNumber' => 1,
                 'isRectified' => true,
             ];
@@ -2136,11 +2136,12 @@ class AOS_InvoicesUtils
 
         $seriesItems = '';
         foreach ($created as $name) {
+            $format = $defaultSeries[$name]['format'] ?? 'YYYY-0000';
             $seriesItems .= '<div style="margin:0 0 8px 20px;font-size:14px;">• '
-                . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ' → <em>YYYY-0000</em></div>';
+                . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ' → <em>' . htmlspecialchars($format, ENT_QUOTES, 'UTF-8') . '</em></div>';
         }
         $message = '<div style="font-family:inherit;">'
-            . '<p style="margin:0 0 12px 0;font-size:14px;font-weight:bold;">'
+            . '<p style="margin:0 0 12px 0;font-size:14px;font-weight:bold;text-align:center;">'
             . ($mod_strings['LBL_STIC_SERIES_AUTO_CREATED'] ?? '...') . '</p>'
             . $seriesItems
             . '<p style="margin:0 0 12px 0;font-size:13px;color:#555;">'
@@ -2153,15 +2154,17 @@ class AOS_InvoicesUtils
     }
 
     /**
-     * Check and create default series if missing, show modal to reload if created.
+     * Check and create default series if missing.
+     * Returns the message HTML if series were created, null otherwise.
      * To be called from view preDisplay() methods.
      */
     public static function checkAndDisplaySeriesBanner()
     {
         $result = self::ensureDefaultSeries();
         if ($result['created']) {
-            echo '<script>var sticSeriesReloadMessage = ' . json_encode($result['message'], JSON_UNESCAPED_UNICODE) . ';</script>';
+            return $result['message'];
         }
+        return null;
     }
 
 }

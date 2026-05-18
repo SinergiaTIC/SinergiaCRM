@@ -135,17 +135,6 @@ if (STIC?.record?.verifactu_is_rectified_c == '0') {
 
 /* AUX FUNCTIONS */
 
-// === Auto-created series reload handler ===
-if (typeof sticSeriesReloadMessage !== 'undefined') {
-  YAHOO.SUGAR.MessageBox.show({
-    type: 'alert',
-    width: 520,
-    title: SUGAR.language.get(module, 'LBL_STIC_SERIES_CREATED_TITLE'),
-    msg: sticSeriesReloadMessage,
-    fn: function() { window.location.reload(); }
-  });
-}
-
 // Confirmation and redirection for sending invoice to AEAT. 
 // If invoice is in draft status, it will be marked as emitted before sending.
 function sendToAEAT() {

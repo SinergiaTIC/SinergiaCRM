@@ -41,7 +41,22 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
 
         // === Ensure default series exist ===
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
-        AOS_InvoicesUtils::checkAndDisplaySeriesBanner();
+        $this->sticSeriesMessage = AOS_InvoicesUtils::checkAndDisplaySeriesBanner();
+        if ($this->sticSeriesMessage) {
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            $title = $mod_strings['LBL_STIC_SERIES_CREATED_TITLE'] ?? 'Nuevas series de facturas';
+            echo '<div id="sticSeriesAlert" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:#fff;border:3px solid #5bc0de;border-radius:12px;padding:30px;max-width:520px;box-shadow:0 8px 40px rgba(0,0,0,0.25);font-family:Arial,sans-serif;">
+                <div style="font-size:48px;color:#5bc0de;text-align:center;margin-bottom:15px;">ⓘ</div>
+                <p style="margin:0 0 20px 0;font-size:18px;font-weight:bold;text-align:center;color:#333;">' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</p>
+                <div style="font-size:14px;line-height:1.7;color:#555;margin-bottom:20px;">' . $this->sticSeriesMessage . '</div>
+                <div style="text-align:center;">
+                    <button onclick="document.getElementById(\'sticSeriesAlert\').style.display=\'none\';window.location.reload();" style="background:#5bc0de;color:#fff;border:none;padding:12px 40px;font-size:16px;border-radius:6px;cursor:pointer;font-weight:bold;">Aceptar</button>
+                </div>
+            </div>';
+        }
 
         // === Verifactu Activation Banner ===
         // Show warning if Verifactu is not activated but certificate is configured
