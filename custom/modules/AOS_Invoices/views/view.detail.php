@@ -106,6 +106,7 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         SticViews::display($this);
 
         $bean = $this->bean;
+
         if (!empty($bean->verifactu_aeat_status_c) && 
             in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
             
@@ -117,6 +118,10 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
             });
             </script>';
         }
+
+        // Pass verifactu status to JS for hiding panels in legacy mode
+        $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
+        echo '<script>var verifactuActivated = ' . (!empty($verifactuStatus['activated']) ? 'true' : 'false') . ';</script>';
         
         // Write here the SinergiaCRM code that must be executed for this module and view
         echo getVersionedScript("custom/modules/AOS_Invoices/SticUtils.js");

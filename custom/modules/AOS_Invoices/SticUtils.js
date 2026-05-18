@@ -224,3 +224,11 @@ function initSeriesFilter() {
     filterSeriesDropdown();
   });
 }
+
+// Hide AEAT status panel in legacy mode (VERIFACTU_ACTIVATED = 0)
+$(document).ready(function() {
+  var isVerifactuActivated = typeof verifactuActivated !== 'undefined' ? verifactuActivated : null;
+  if (isVerifactuActivated === false) {
+    $('[data-id="LBL_AEAT_STATUS_PANEL"]').closest(".panel").hide();
+  }
+});
