@@ -135,6 +135,10 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
 
         // Pass customer identification number for JS validation
         $customerIdNumber = $this->bean->customer_id_number ?? '';
+        echo '<style>
+        .stic-disabled { opacity: 0.5; cursor: not-allowed !important; pointer-events: none; }
+        input.stic-disabled { background-color: #eee; }
+        </style>';
         echo '<script>var customerIdentificationNumber = ' . json_encode($customerIdNumber) . ';</script>';
         echo '<input type="hidden" name="customer_id_number" id="customer_id_number" value="' . htmlspecialchars($customerIdNumber, ENT_QUOTES, 'UTF-8') . '">';
 

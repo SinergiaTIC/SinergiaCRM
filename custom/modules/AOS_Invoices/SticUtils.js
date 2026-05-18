@@ -117,6 +117,28 @@ switch (viewType()) {
       // after parent::display()). The quicksearch's field_list/populate_list are
       // extended to include address fields before enableQS creates the widget.
 
+      // Mutual exclusion: when Account is selected, disable Contact (and vice versa).
+      // Polling detects changes from popup, autocomplete, or X button clearing.
+      (function() {
+          var lastAccountId, lastContactId;
+          function setDisabled(el, disabled) {
+              $(el).prop('disabled', disabled).toggleClass('stic-disabled', disabled);
+          }
+          function syncDisableState() {
+              var accountId = $('#billing_account_id').val();
+              var contactId = $('#billing_contact_id').val();
+              if (accountId === lastAccountId && contactId === lastContactId) return;
+              lastAccountId = accountId;
+              lastContactId = contactId;
+              setDisabled('#billing_contact', !!accountId);
+              setDisabled('#btn_billing_contact, #btn_clr_billing_contact', !!accountId);
+              setDisabled('#billing_account', !!contactId);
+              setDisabled('#btn_billing_account, #btn_clr_billing_account', !!contactId);
+          }
+          syncDisableState();
+          setInterval(syncDisableState, 300);
+      })();
+
       // Clear address fields when Account or Contact X button is clicked
       $('#btn_clr_billing_account, #btn_clr_billing_contact').on('click', function() {
           setTimeout(function() {
