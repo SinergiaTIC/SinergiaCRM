@@ -1,14 +1,12 @@
 -- =============================================================================
--- Verifactu (AEAT) Integration — Fields Migration
--- Date: 2025-11-17
--- Description: Register Verifactu custom fields in fields_meta_data.
---              Database columns are created automatically by SuiteCRM's
---              repair mechanism (repairDatabase) based on fields_meta_data entries.
+-- Verifactu (AEAT) Integration — Full Migration
+-- Date: 2026-05-18
+-- Description: All Verifactu SQL migrations unified into a single file.
+--              Includes fields_meta_data entries and stic_settings configuration.
 -- =============================================================================
 
 -- =============================================================================
--- AOS_Invoices — Fields added to fields_meta_data (17 custom + 1 relate = 18 entries)
--- =============================================================================
+-- AOS_Invoices — Fields added to fields_meta_data (18 entries)
 -- verifactu_hash_c                : Hash del registro de factura (huella AEAT, SHA-256)
 -- verifactu_previous_hash_c       : Hash de la factura anterior (encadenamiento de cadena)
 -- verifactu_check_url_c           : URL QR de verificación devuelta por AEAT
@@ -30,7 +28,6 @@
 
 -- =============================================================================
 -- AOS_Products_Quotes — Fields added to fields_meta_data (1 field)
--- =============================================================================
 -- verifactu_aeat_operation_type_c : Tipo de operación AEAT por línea: S (sujeto) / E (exento) / N (no sujeto) / NL (no sujeto por localizacion)
 -- =============================================================================
 
@@ -53,3 +50,16 @@ REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('AOS_Invoicesverifactu_previous_status_c', 'AOS_Invoices', 'verifactu_previous_status_c'),
 ('AOS_Invoicesverifactu_cancel_name_c', 'AOS_Invoices', 'verifactu_cancel_name_c'),
 ('AOS_Products_Quotesverifactu_aeat_operation_type_c', 'AOS_Products_Quotes', 'verifactu_aeat_operation_type_c');
+
+-- =============================================================================
+-- stic_settings — Verifactu configuration (3 entries)
+-- VERIFACTU_TEST       : Modo de trabajo (0 = Real, 1 = Test)
+-- VERIFACTU_TAX_TYPE   : Tipo de impuesto por defecto (01=IVA, 02=IPSI, 03=IGIC)
+-- VERIFACTU_ACTIVATED  : Activa o desactiva la integración (0 = modo legacy, 1 = Verifactu activo)
+-- =============================================================================
+
+REPLACE INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_user_id`, `created_by`, `deleted`, `assigned_user_id`, `type`, `name`, `value`, `description`)
+VALUES
+('f47ac10b-58cc-4372-a567-0e02b2c3d480', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'VERIFACTU_TEST', 1, 'Indica el modo de trabajo (0 = Real, 1 = Test).'),
+('f47ac10b-58cc-4372-a567-0e02b2c3d482', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'VERIFACTU_TAX_TYPE', '01', 'Tipo de impuesto por defecto (01=IVA, 02=IPSI, 03=IGIC).'),
+('f47ac10b-58cc-4372-a567-0e02b2c3d481', NOW(), NOW(), '1', '1', 0, '1', 'VERIFACTU', 'VERIFACTU_ACTIVATED', 0, 'Activa o desactiva la integración con Verifactu AEAT (0 = modo legacy sin envío, 1 = Verifactu activo con envío automático a AEAT).');
