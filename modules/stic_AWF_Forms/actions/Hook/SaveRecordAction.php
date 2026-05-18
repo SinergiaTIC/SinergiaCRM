@@ -193,6 +193,9 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             }
             // Fill all bean fields
             $modifications = $this->populateBean($bean, $block); 
+            if (property_exists($bean, 'fromAWF')) {
+                $bean->fromAWF = true;
+            }
             $bean->save();
             $modificationType = BeanModificationType::CREATED;
 
@@ -207,6 +210,9 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     // Overwrite all fields of the existing bean
                     $modifications = $this->populateBean($bean, $block);
                     $modificationType = BeanModificationType::UPDATED;
+                    if (property_exists($bean, 'fromAWF')) {
+                        $bean->fromAWF = true;
+                    }
                     $bean->save();
                     break;
 
@@ -214,6 +220,9 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     // Fill only empty fields of the existing bean
                     $modifications = $this->enrichBean($bean, $block); 
                     $modificationType = BeanModificationType::ENRICHED;
+                    if (property_exists($bean, 'fromAWF')) {
+                        $bean->fromAWF = true;
+                    }
                     $bean->save();
                     break;
                 

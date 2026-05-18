@@ -272,6 +272,11 @@ class stic_Payment_CommitmentsUtils
      */
     public static function updatePaymentsWithoutRelationships($PCBean)
     {
+        // Only execute when the bean has been explicitly marked as coming from AWF context
+        if ($PCBean->fromAWF !== true) {
+            return;
+        }
+
         // If there is no related Contact or Account in the Payment Commitment return directly
         if (empty($PCBean->stic_payment_commitments_contactscontacts_ida) && empty($PCBean->stic_payment_commitments_accountsaccounts_ida)) {
             return;
