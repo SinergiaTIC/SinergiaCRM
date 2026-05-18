@@ -22,5 +22,25 @@
  */
 
 interface stic_MessagesHelper {
+    /**
+     * Returns the helper type identifier (e.g., 'sms', 'whatsapp').
+     * Used to determine template type and message capabilities.
+     */
+    public function getHelperType(): string;
+
+    /**
+     * Returns the template type used by this helper (e.g., 'sms', 'whatsapp').
+     * Used to filter available templates in UI.
+     */
+    public function getTemplateType(): string;
+
+    /**
+     * Returns true if this helper passes template body to the external provider
+     * along with template SID and resolved variables. Used for providers like
+     * Twilio WhatsApp that handle template substitution server-side.
+     * Returns false for helpers that send pre-resolved text directly.
+     */
+    public function passesTemplateBodyToProvider(): bool;
+
     public function sendMessage(?string $from, string $text, string $to): array;
 }

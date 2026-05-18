@@ -312,7 +312,7 @@ class stic_Messages extends Basic
         }
 
         if ($messageHelper !== null) {
-            if ($file === 'WhatsAppHelper') {
+            if ($messageHelper->passesTemplateBodyToProvider()) {
                 // Build the beans array from the parent record so placeholders can be resolved
                 $beans = [];
                 if (!empty($this->parent_type) && !empty($this->parent_id)) {

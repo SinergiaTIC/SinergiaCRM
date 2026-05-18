@@ -95,6 +95,15 @@
         sticInitAttachmentFile();
     });
 
+    // Also initialize immediately in case the script is loaded after DOMContentLoaded
+    // (e.g., when the form is rendered directly, not via AJAX)
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(function() {
+            sticInitAttachmentToggle();
+            sticInitAttachmentFile();
+        }, 100);
+    }
+
     if (typeof jQuery !== 'undefined') {
         jQuery(document).ajaxComplete(function (event, xhr, settings) {
             if (settings && settings.url && settings.url.indexOf('ComposeView') !== -1) {

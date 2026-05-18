@@ -34,6 +34,18 @@ class SevenSMSHelper implements stic_MessagesHelper {
     protected ?string $apiKey = null;
     protected ?string $sender;
 
+    public function getHelperType(): string {
+        return 'sms';
+    }
+
+    public function getTemplateType(): string {
+        return 'sms';
+    }
+
+    public function passesTemplateBodyToProvider(): bool {
+        return false;
+    }
+
     public function __construct() {
         $active = stic_SettingsUtils::getSetting('seven_active');
         $this->setActive($active);

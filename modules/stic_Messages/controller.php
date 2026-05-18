@@ -375,14 +375,33 @@ class stic_MessagesController extends SugarController
     }
 
     public function action_FillDynamicListMessageTemplate() {
-        $typeParam = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : '';
+        $typeParam = $_REQUEST['type'] ?? '';
 
-        if (strpos($typeParam, 'whatsapp') !== false) {
-            $helperType = 'whatsapphelper';
-        } elseif (strpos($typeParam, 'sms') !== false) {
-            $helperType = 'smssevenhelper';
-        } else {
-            $helperType = 'smssevenhelper';
+        // Try to get template type from helper if type is a helper class name
+        $helperType = null;
+        if (!empty($typeParam)) {
+            $file = $typeParam;
+            if (file_exists('custom/modules/stic_Messages/Helpers/' . $file . '.php')) {
+                require_once('custom/modules/stic_Messages/Helpers/' . $file . '.php');
+                $helper = new $file;
+                $helperType = $helper->getTemplateType();
+            } elseif (file_exists('modules/stic_Messages/Helpers/' . $file . '.php')) {
+                require_once('modules/stic_Messages/Helpers/' . $file . '.php');
+                $helper = new $file;
+                $helperType = $helper->getTemplateType();
+            }
+        }
+
+        // Fallback: infer from type string if helper not found
+        if ($helperType === null) {
+            $typeLower = strtolower($typeParam);
+            if (strpos($typeLower, 'whatsapp') !== false) {
+                $helperType = 'whatsapp';
+            } elseif (strpos($typeLower, 'sms') !== false || strpos($typeLower, 'seven') !== false) {
+                $helperType = 'sms';
+            } else {
+                $helperType = 'sms';
+            }
         }
 
         require_once 'modules/stic_Messages/Utils.php';

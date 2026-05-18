@@ -49,29 +49,26 @@ function filterTemplatesByType(lineNum) {
     // Get template arrays from hidden fields
     var smsTemplates = {};
     var whatsappTemplates = {};
-    var sevenTemplates = {};
     
     try {
         var smsField = document.getElementById('aow_sms_templates');
         var waField = document.getElementById('aow_whatsapp_templates');
-        var sevenField = document.getElementById('aow_seven_templates');
         
         if (smsField && smsField.value) smsTemplates = JSON.parse(smsField.value);
         if (waField && waField.value) whatsappTemplates = JSON.parse(waField.value);
-        if (sevenField && sevenField.value) sevenTemplates = JSON.parse(sevenField.value);
     } catch(e) {
         return;
     }
     
-    // Determine which templates to show based on type
+    // Determine which templates to show based on type (only 2 generic types: SMS and WhatsApp)
     var templatesToShow = {};
+    var typeLower = selectedType.toLowerCase();
     
-    if (selectedType === 'SevenSmsHelper' || selectedType === 'SMS' || selectedType === 'sms' || selectedType === 'smssevenhelper') {
-        templatesToShow = { ...smsTemplates, ...sevenTemplates };
-    } else if (selectedType === 'WhatsAppHelper' || selectedType === 'WhatsApp' || selectedType === 'whatsapp' || selectedType === 'whatsapphelper') {
+    if (typeLower.indexOf('whatsapp') !== -1) {
         templatesToShow = whatsappTemplates;
     } else {
-        templatesToShow = { ...smsTemplates, ...whatsappTemplates, ...sevenTemplates };
+        // All other types (SMS, SevenSmsHelper, etc.) use SMS templates
+        templatesToShow = smsTemplates;
     }
     
     // Clear all options

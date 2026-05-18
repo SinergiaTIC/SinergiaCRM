@@ -55,21 +55,17 @@ class actionSendMessage extends actionBase
         // Get SMS templates - unique WHERE to avoid cache collision
         $smsTemplates = get_bean_select_array(true, 'EmailTemplate', 'name', "type = 'sms'", 'name') ?: array();
         
-        // Get WhatsApp templates (both 'whatsapp' and 'whatsapphelper' types) - add parentheses for proper SQL
-        $whatsappTemplates = get_bean_select_array(true, 'EmailTemplate', 'name', "(type = 'whatsapp' OR type = 'whatsapphelper')", 'name') ?: array();
-        
-        // Get SevenSmsHelper templates (also treated as SMS) - unique WHERE to avoid cache collision
-        $sevenSmsTemplates = get_bean_select_array(true, 'EmailTemplate', 'name', "type = 'smssevenhelper'", 'name') ?: array();
+        // Get WhatsApp templates - unique WHERE to avoid cache collision
+        $whatsappTemplates = get_bean_select_array(true, 'EmailTemplate', 'name', "type = 'whatsapp'", 'name') ?: array();
         
         // Merge all templates - remove empty key and use array_merge to include all
-        $email_templates_arr = array_merge($smsTemplates, $whatsappTemplates, $sevenSmsTemplates);
+        $email_templates_arr = array_merge($smsTemplates, $whatsappTemplates);
         unset($email_templates_arr['']); // Remove empty key
         asort($email_templates_arr);
         
         // Pass templates by type to JavaScript for dynamic filtering
         $smsTemplatesJson = json_encode($smsTemplates);
         $whatsappTemplatesJson = json_encode($whatsappTemplates);
-        $sevenSmsTemplatesJson = json_encode($sevenSmsTemplates);
 
         // If the bean has no phone record, the option is removed from list
         if (!in_array($bean->module_dir, stic_MessagesUtils::getMessageableModules())) {
@@ -94,7 +90,6 @@ class actionSendMessage extends actionBase
         // Hidden fields with templates by type for JavaScript filtering
         $html .= '<input type="hidden" id="aow_sms_templates" value="'.htmlspecialchars($smsTemplatesJson, ENT_QUOTES, 'UTF-8').'">';
         $html .= '<input type="hidden" id="aow_whatsapp_templates" value="'.htmlspecialchars($whatsappTemplatesJson, ENT_QUOTES, 'UTF-8').'">';
-        $html .= '<input type="hidden" id="aow_seven_templates" value="'.htmlspecialchars($sevenSmsTemplatesJson, ENT_QUOTES, 'UTF-8').'">';
 
         $html .= "<table border='0' cellpadding='0' cellspacing='0' width='100%' data-workflow-action='send-message'>";
         $html .= "<tr>";

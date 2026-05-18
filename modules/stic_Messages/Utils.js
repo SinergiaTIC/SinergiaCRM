@@ -509,12 +509,8 @@ function addEditCreateTemplateLinks() {
 }
 
 function open_email_template_form() {
-
-  if ($("#type").val()== 'WhatsAppHelper') {
-    templateType = 'whatsapp';
-  } else if ($("#type").val()== 'SevenSmsHelper') {
-    templateType = 'sms';
-  }
+  var typeVal = $("#type").val().toLowerCase();
+  var templateType = typeVal.indexOf('whatsapp') !== -1 ? 'whatsapp' : 'sms';
 
   URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
   URL += "&inboundEmail=false&show_js=1";
@@ -530,11 +526,8 @@ function open_email_template_form() {
 }
 
 function edit_email_template_form() {
-  if ($("#type").val()== 'WhatsAppHelper') {
-    templateType = 'whatsapp';
-  } else if ($("#type").val()== 'SevenSmsHelper') {
-    templateType = 'sms';
-  }
+  var typeVal = $("#type").val().toLowerCase();
+  var templateType = typeVal.indexOf('whatsapp') !== -1 ? 'whatsapp' : 'sms';
 
   URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
 

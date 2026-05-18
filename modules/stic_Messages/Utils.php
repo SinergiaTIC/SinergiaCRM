@@ -237,11 +237,7 @@ class stic_MessagesUtils {
         } else {
             $typeRequest = strtolower($type);
         }
-        $typeMap = [
-            'smssevenhelper' => 'sms',
-            'whatsapphelper' => 'whatsapp'
-        ];
-        $type = $typeMap[$typeRequest] ?? 'sms';
+        $type = $typeRequest;
         $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='$type'", 0, -99, -99);
 
         $dynamic_email_template_list = array("" => translate("LBL_NONE", "app_strings"));

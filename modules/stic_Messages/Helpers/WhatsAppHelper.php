@@ -37,6 +37,18 @@ class WhatsAppHelper implements stic_MessagesHelper {
     protected ?string $twilioNumber;
     private $apiUrl = 'https://api.twilio.com/2010-04-01';
 
+    public function getHelperType(): string {
+        return 'whatsapp';
+    }
+
+    public function getTemplateType(): string {
+        return 'whatsapp';
+    }
+
+    public function passesTemplateBodyToProvider(): bool {
+        return true;
+    }
+
     public function __construct()
     {
         $sid = stic_SettingsUtils::getSetting('twilio_sid');
