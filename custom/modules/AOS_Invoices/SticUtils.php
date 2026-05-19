@@ -48,6 +48,14 @@ use josemmo\Verifactu\Services\QrGenerator;
 class AOS_InvoicesUtils
 {
     /**
+     * Re-entry guard: tracks invoice IDs currently being sent to AEAT
+     * Prevents infinite recursion when internal save() triggers after_save hook
+     * (AOS_Invoices::save() does not forward $skip_hooks to SugarBean::save())
+     * @var array
+     */
+    private static array $processingInvoiceIds = [];
+
+    /**
      * Check if Verifactu integration is activated
      * @return bool
      */
@@ -381,6 +389,15 @@ class AOS_InvoicesUtils
             return;
         }
 
+        // Re-entry guard: prevent infinite recursion from internal save() → after_save → sendToAeat
+        // (AOS_Invoices::save() does not forward $skip_hooks to SugarBean::save())
+        $invoiceId = $invoiceBean->id;
+        if (isset(self::$processingInvoiceIds[$invoiceId])) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Re-entry detected for invoice ' . $invoiceId . ', skipping.');
+            return;
+        }
+        self::$processingInvoiceIds[$invoiceId] = true;
+
         // Allow sending if: status is 'emitted' AND (aeat_status is empty/pending/rejected, but NOT 'accepted')
         $aeatStatus = $invoiceBean->verifactu_aeat_status_c ?? '';
         if (
@@ -390,6 +407,7 @@ class AOS_InvoicesUtils
 
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($aeatStatus ?: 'N/A'));
             SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']));
+            unset(self::$processingInvoiceIds[$invoiceId]);
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             return;
         }
@@ -1061,7 +1079,7 @@ class AOS_InvoicesUtils
                     $invoiceBean->verifactu_submitted_at_c = $response->submittedAt->format('Y-m-d H:i:s');
                 }
 
-                // Save without triggering logic hooks
+                // Save - hooks fire but re-entry guard prevents recursion
                 $invoiceBean->save(false);
 
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice updated with AEAT response data');
@@ -1077,14 +1095,15 @@ class AOS_InvoicesUtils
                 $hashForLog = $invoiceBean->verifactu_hash_c ?? 'N/A';
                 $statusForLog = $invoiceBean->verifactu_aeat_status_c ?? 'unknown';
                 $responseForLog = $invoiceBean->verifactu_aeat_response_c ?? 'N/A';
+                $rectifiedFlag = !empty($invoiceBean->verifactu_is_rectified_c) ? ' [RECTIFIED]' : '';
 
                 if ($statusForLog === 'accepted') {
                     $qrForLog = $invoiceBean->verifactu_check_url_c ?? 'N/A';
-                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT. Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: ACCEPTED. QR: {$qrForLog}";
+                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT.{$rectifiedFlag} Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: ACCEPTED. QR: {$qrForLog}";
                 } elseif ($statusForLog === 'rejected') {
-                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT. Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: REJECTED. Response: {$responseForLog}";
+                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT.{$rectifiedFlag} Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: REJECTED. Response: {$responseForLog}";
                 } else {
-                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT. Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: {$statusForLog}";
+                    $auditLog .= "[{$auditTimestamp}] Invoice sent to AEAT.{$rectifiedFlag} Number: {$invoiceNumberForLog}, Hash: {$hashForLog}, Status: {$statusForLog}";
                 }
 
                 $invoiceBean->verifactu_audit_log_c = $auditLog;
@@ -1112,7 +1131,7 @@ class AOS_InvoicesUtils
                 $invoiceBean->number = $generatedInvoiceNumber;
                 // Save the exact config key (e.g., "Factura normal"), not the dropdown key (e.g., "factura_no")
                 $invoiceBean->stic_invoice_type_c = $seriesConfigKey;
-                $invoiceBean->save();
+                $invoiceBean->save(false);
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saved generated invoice number: ' . $generatedInvoiceNumber . ', Series: ' . $seriesConfigKey);
             }
             // === End Step 1.3 ===
@@ -1134,6 +1153,8 @@ class AOS_InvoicesUtils
             SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMessage));
 
             return false;
+        } finally {
+            unset(self::$processingInvoiceIds[$invoiceId]);
         }
     }
 
@@ -1336,6 +1357,10 @@ class AOS_InvoicesUtils
 
         $GLOBALS['log']->debug("generateNextInvoiceNumber - ConfigKey: $seriesConfigKey, DBValue: $seriesForQuery, Format: $format, Initial: $initialNumber, Year: $year, FilterByStatus: " . ($filterByAeatStatus ? 'true' : 'false'));
 
+        // === Step 2.4: Detect if format includes year placeholder ===
+        $hasYear = (strpos($format, 'YYYY') !== false || strpos($format, 'YY') !== false);
+        // === End Step 2.4 ===
+
         // === Step 2.2: Validate series format ===
         try {
             self::validateSeriesFormat($format);
@@ -1373,6 +1398,11 @@ class AOS_InvoicesUtils
             $query .= " AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected')";
         }
 
+        // For formats without YYYY/YY, filter by fiscal year to ensure per-year reset
+        if (!$hasYear) {
+            $query .= " AND YEAR(aos_invoices.invoice_date) = " . $db->quoted($year);
+        }
+
         $query .= " ORDER BY aos_invoices.number DESC LIMIT 1";
 
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Query: $query");
@@ -1394,9 +1424,6 @@ class AOS_InvoicesUtils
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Generated number: '$generatedNumber'");
 
         // === Step 2.4: Validate uniqueness for formats without year ===
-        // Check if format contains year (YYYY or YY)
-        $hasYear = (strpos($format, 'YYYY') !== false || strpos($format, 'YY') !== false);
-
         if (!$hasYear) {
             $GLOBALS['log']->debug("generateNextInvoiceNumber - Format without year detected, checking uniqueness");
             
@@ -1416,7 +1443,9 @@ class AOS_InvoicesUtils
                 if ($filterByAeatStatus) {
                     $checkQuery .= " AND aos_invoices_cstm.verifactu_aeat_status_c IN ('accepted', 'rejected')";
                 }
-                
+
+                $checkQuery .= " AND YEAR(aos_invoices.invoice_date) = " . $db->quoted($year);
+
                 $exists = $db->getOne($checkQuery);
                 
                 if (empty($exists)) {

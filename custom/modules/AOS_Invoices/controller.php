@@ -133,10 +133,11 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         if(!empty($_REQUEST['set']) && $_REQUEST['set'] === 'emitted') {
             $invoiceBean->status = 'emitted';
             $invoiceBean->save();
+            // after_save hook already called sendToAeat - skip direct call to avoid double-send
+        } else {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            AOS_InvoicesUtils::sendToAeat($invoiceBean);
         }
-
-        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
-        AOS_InvoicesUtils::sendToAeat($invoiceBean);
         
         // Redirect back to invoice
         SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
@@ -301,12 +302,37 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             $GLOBALS['log']->debug("Updated totals directly in database for invoice {$rectifiedInvoice->id}");
         }
 
+        // === Step 1.6: Add audit log entries for rectification ===
+        $auditTimestamp = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+        $rectifiedRef = !empty($rectifiedInvoice->number) ? $rectifiedInvoice->number : $rectifiedInvoice->id;
+
+        // Audit log for the rectified invoice
+        $rectifiedAuditLog = $rectifiedInvoice->verifactu_audit_log_c ?? '';
+        if (!empty($rectifiedAuditLog)) {
+            $rectifiedAuditLog .= "\n";
+        }
+        $rectifiedAuditLog .= "[{$auditTimestamp}] Rectified invoice created. Original invoice: {$originalInvoice->number} (ID: {$originalInvoice->id}).";
+        $rectifiedInvoice->verifactu_audit_log_c = $rectifiedAuditLog;
+        $rectifiedInvoice->save();
+
+        // Audit log for the original invoice (in addition to the description reference)
+        $originalAuditLog = $originalInvoice->verifactu_audit_log_c ?? '';
+        if (!empty($originalAuditLog)) {
+            $originalAuditLog .= "\n";
+        }
+        $originalAuditLog .= "[{$auditTimestamp}] Original invoice rectified by new invoice: {$rectifiedRef} (ID: {$rectifiedInvoice->id}).";
+        $originalInvoice->verifactu_audit_log_c = $originalAuditLog;
+
         // Add text to original invoice description to reference rectification
         // Skip if original is already accepted by AEAT (description update is not critical)
         if (empty($originalInvoice->verifactu_aeat_status_c) || $originalInvoice->verifactu_aeat_status_c !== 'accepted') {
-            $originalInvoice->description .= "\n {$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']} {$rectifiedInvoice->number}";
+            $originalInvoice->description .= "\n {$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']} {$rectifiedRef}";
+            $originalInvoice->save();
+        } else {
+            // Save audit log even if description is skipped
             $originalInvoice->save();
         }
+        // === End Step 1.6 ===
 
         // Copy line item groups from original invoice
         $originalToRectifiedGroupIds = [];

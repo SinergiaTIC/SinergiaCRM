@@ -440,8 +440,8 @@ class AOS_InvoicesHook
             return;
         }
 
-        // check if already sent
-        if (!empty($bean->verifactu_aeat_status_c) && $bean->verifactu_aeat_status_c === 'sent') {
+        // check if already sent and accepted (rejected invoices can be retried)
+        if (!empty($bean->verifactu_aeat_status_c) && $bean->verifactu_aeat_status_c === 'accepted') {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} has already been sent to AEAT, skipping resend.");
             return;
         }
