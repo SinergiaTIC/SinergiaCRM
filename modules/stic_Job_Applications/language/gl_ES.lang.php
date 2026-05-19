@@ -63,8 +63,8 @@ $mod_strings = array(
     'LBL_STATUS_DETAILS' => 'Detalles do estado',
     'LBL_MOTIVATIONS' => 'Motivación da candidatura',
     'LBL_PREVIOUS_EXPERIENCE' => 'Experiencia previa',
-    'LBL_AVAILABLE_DAYS' => 'Días disponibles',
-    'LBL_AVAILABLE_TIME' => 'Disponibilidad horaria',
+    'LBL_AVAILABLE_DAYS' => 'Días dispoñibles',
+    'LBL_AVAILABLE_TIME' => 'Dispoñibilidade horaria',
     'LBL_ACCOUNT' => 'Organización',
     'LBL_ATTENTION_DATE' => 'Data de atención',
     'LBL_CONTRACT_START_DATE' => 'Data inicio contrato ou colocación',
@@ -99,4 +99,6 @@ $mod_strings = array(
     'LBL_START_DATE_CONTRACT_START_DATE_ERROR' => 'A data de alta debe ser anterior á data de inicio de contrato',
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => 'A data de inicio de contrato debe ser posterior á data de alta',
     'LBL_WORK_EXPERIENCE_SUBJECT' => 'Candidatura aceptada',
+    'LBL_INTERLOCUTOR' => 'Interlocutor',
+    'LBL_INTERLOCUTOR_HELP' => 'Persona de contacto relacionada con la oferta laboral a la que se ha presentado la candidatura.',
 );
