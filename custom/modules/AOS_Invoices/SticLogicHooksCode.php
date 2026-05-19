@@ -89,6 +89,23 @@ class AOS_InvoicesHook
         }
         // === End customer identification number validation ===
 
+        // === Block status change from draft to non-emitted ===
+        $isNewRecord = empty($bean->fetched_row['id']);
+        $isCurrentlyDraft = !empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'draft';
+        if ($bean->status !== 'draft' && $bean->status !== 'emitted' && ($isNewRecord || $isCurrentlyDraft)) {
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR']));
+            $bean->status = 'draft';
+            $bean->in_save = false;
+            if (!$isNewRecord) {
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                die();
+            }
+        }
+        // === End block status change ===
+
         // === Step 1.1: Block edition of invoices accepted by AEAT ===
         // If the invoice is already accepted by AEAT, only non-tax fields can be edited
         if (!empty($bean->fetched_row['verifactu_aeat_status_c']) && 

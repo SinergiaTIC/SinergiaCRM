@@ -157,3 +157,6 @@ $mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] = 'Si se desea, un administra
 // Customer identification number validation
 $mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING'] = 'La Organización o Persona seleccionada no tiene informado el NIF/DNI/CIF. Por favor, edite el cliente y complete este campo antes de guardar la factura.';
 
+// Block draft to non-emitted status change
+$mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';
+

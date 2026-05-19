@@ -139,6 +139,16 @@ switch (viewType()) {
           setInterval(syncDisableState, 300);
       })();
 
+      // Disable non-emitted options in status dropdown when original status is draft
+      if ($('#status').val() === 'draft') {
+        $('#status option').each(function() {
+          var val = $(this).val();
+          if (val !== 'draft' && val !== 'emitted') {
+            $(this).prop('disabled', true);
+          }
+        });
+      }
+
       // Clear address fields when Account or Contact X button is clicked
       $('#btn_clr_billing_account, #btn_clr_billing_contact').on('click', function() {
           setTimeout(function() {
