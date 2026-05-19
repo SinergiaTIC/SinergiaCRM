@@ -204,10 +204,10 @@ $(function() {
     }
   }
 
-  // Force status to 'sent' when type is WhatsAppWeb
+  // Force status to 'redirected' when type is WhatsAppWeb
   $('select[name="type"]').on('change', function() {
     if ($(this).val() === 'WhatsAppWeb') {
-      $('select[name="status"]').val('sent').prop('disabled', true);
+      $('select[name="status"]').val('redirected').prop('disabled', true);
     } else {
       $('select[name="status"]').prop('disabled', false);
     }
@@ -215,7 +215,7 @@ $(function() {
 
   // On page load, check if type is WhatsAppWeb
   if ($('select[name="type"]').val() === 'WhatsAppWeb') {
-    $('select[name="status"]').val('sent').prop('disabled', true);
+    $('select[name="status"]').val('redirected').prop('disabled', true);
   }
 
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {

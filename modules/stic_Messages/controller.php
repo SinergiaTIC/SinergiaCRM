@@ -422,6 +422,22 @@ class stic_MessagesController extends SugarController
         exit;
     }
 
+    public function action_checkWhatsAppWindow() {
+        $parentId   = $_REQUEST['parent_id']   ?? '';
+        $parentType = $_REQUEST['parent_type'] ?? '';
+
+        require_once 'modules/stic_Messages/Utils.php';
+        $windowState = stic_MessagesUtils::getWhatsAppWindowState($parentId, $parentType);
+
+        echo json_encode(array(
+            'success' => true,
+            'windowOpen' => $windowState['windowOpen'],
+            'hoursLeft' => $windowState['hoursLeft'],
+            'minutesLeft' => $windowState['minutesLeft']
+        ));
+        exit;
+    }
+
     public function action_conversation() {
         global $current_language;
         $mod_strings = return_module_language($current_language, 'stic_Messages');
@@ -434,11 +450,11 @@ class stic_MessagesController extends SugarController
         $db = DBManagerFactory::getInstance();
         $parentIdSafe = $db->quote($parentId);
 
+        require_once('modules/stic_Messages/Utils.php');
         $contactPhone = '';
         $parentName = '';
         $contactBean = BeanFactory::getBean($parentType, $parentId);
         if ($contactBean) {
-            require_once('modules/stic_Messages/Utils.php');
             $contactPhone = stic_MessagesUtils::getPhoneForMessage($contactBean);
             $parentName = $contactBean->name ?? $contactBean->full_name ?? '';
         }
@@ -456,50 +472,40 @@ class stic_MessagesController extends SugarController
             $messages[] = $row;
         }
 
-        // Calculate 24h window:
-        // Buscar el mensaje más reciente que sea:
-        $lastWindowEvent = null;
+        // Calculate 24h window using shared utility function
+        $windowState = stic_MessagesUtils::getWhatsAppWindowState($parentId, $parentType);
+        $windowOpen = $windowState['windowOpen'];
 
-        foreach (array_reverse($messages) as $msg) {
-            if ($msg['type'] === 'received' || $msg['type'] === 'WhatsApp') {
-                $lastWindowEvent = $msg['date_entered'];
-                break;
-            }
-            if ($msg['type'] === 'WhatsAppHelper' && !empty($msg['template_id'])) {
-                $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
-                if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
-                    $lastWindowEvent = $msg['date_entered'];
+        if ($windowOpen) {
+            $windowMessage = sprintf(
+                $mod_strings['LBL_CONVERSATION_WINDOW_OPEN'],
+                $windowState['hoursLeft'],
+                $windowState['minutesLeft']
+            );
+        } elseif (!empty($messages)) {
+            // Find the last event date for closed message
+            $lastEvent = null;
+            foreach (array_reverse($messages) as $msg) {
+                if (in_array($msg['type'], ['received', 'WhatsApp'])) {
+                    $lastEvent = $msg['date_entered'];
                     break;
                 }
+                if ($msg['type'] === 'WhatsAppHelper' && !empty($msg['template_id'])) {
+                    $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
+                    if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
+                        $lastEvent = $msg['date_entered'];
+                        break;
+                    }
+                }
             }
-        }
-
-        // < 24h since $lastWindowEvent)
-        $windowOpen    = false;
-        $windowMessage = null;
-
-        if ($lastWindowEvent) {
-            $eventTs = (new DateTime($lastWindowEvent, new DateTimeZone('UTC')))->getTimestamp();
-            $nowTs   = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
-            $diffSeconds = $nowTs - $eventTs;
-            $diffH   = ($diffSeconds) / 3600;
-
-            if ($diffH < 24) {
-                $windowOpen    = true;
-                $secondsLeft = (24 * 3600) - $diffSeconds;
-                $hoursLeft   = floor($secondsLeft / 3600);
-                $minutesLeft = floor(($secondsLeft % 3600) / 60);
-                $windowMessage = sprintf(
-                    $mod_strings['LBL_CONVERSATION_WINDOW_OPEN'],
-                    $hoursLeft,
-                    $minutesLeft
-                );
-            } else {
-                $lastEventFormatted = $GLOBALS['timedate']->to_display_date_time($lastWindowEvent);
+            if ($lastEvent) {
+                $lastEventFormatted = $GLOBALS['timedate']->to_display_date_time($lastEvent);
                 $windowMessage = sprintf(
                     $mod_strings['LBL_CONVERSATION_WINDOW_CLOSED'],
                     $lastEventFormatted
                 );
+            } else {
+                $windowMessage = $mod_strings['LBL_CONVERSATION_NO_HISTORY'];
             }
         } else {
             $windowMessage = $mod_strings['LBL_CONVERSATION_NO_HISTORY'];

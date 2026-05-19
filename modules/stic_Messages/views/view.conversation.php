@@ -177,7 +177,8 @@ class stic_MessagesViewConversation extends SugarView {
                         <?= $lbl('LBL_CONVERSATION_WINDOW_CLOSED_HINT') ?>
                     </div>
                     <?php if (!empty($this->newMessageUrl)): ?>
-                    <a href="<?= htmlspecialchars($this->newMessageUrl) ?>" class="btn-new-message">
+                    <a href="<?= htmlspecialchars($this->newMessageUrl) ?>" class="btn-new-message"
+                       onclick="window.opener.location.href=this.href;window.close();return false;">
                         <span class="btn-icon">✉</span>
                         <?= $lbl('LBL_CONVERSATION_NEW_MESSAGE_BTN') ?>
                     </a>

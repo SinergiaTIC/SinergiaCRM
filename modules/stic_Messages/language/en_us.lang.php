@@ -106,6 +106,7 @@ $mod_strings = array (
 'LBL_ERROR_UNSUPPORTED_FILE_TYPE' => 'File type not supported by WhatsApp',
 'LBL_ERROR_FILE_SIZE_EXCEEDED' => 'File exceeds the limit of',
 'LBL_ERROR_CREATING_NOTE' => 'Error creating attachment record',
-'LBL_ERROR_SAVING_FILE' => 'Error saving file',
-'LBL_WHATSAPP_WEB_READONLY_NOTICE' => 'Warning: WhatsApp Web messages cannot be edited once sent.',
+  'LBL_ERROR_SAVING_FILE' => 'Error saving file',
+  'LBL_WHATSAPP_WEB_READONLY_NOTICE' => 'Warning: WhatsApp Web messages cannot be edited once sent.',
+  'LBL_WHATSAPP_TEMPLATE_REQUIRED' => 'For WhatsApp, you must select a template. Free text is only allowed within an open 24h conversation window.',
 );

@@ -57,8 +57,9 @@ class stic_MessagesViewEdit extends ViewEdit
 
         $this->ev->ss->assign('IS_MODAL', isset($_REQUEST['in_popup']) ? $_REQUEST['in_popup'] : false);
 
-        $this->bean->parent_type = !empty($this->bean->parent_type) ? $this->bean->parent_type : ($_REQUEST['relatedModule']??'');
-	    $this->bean->parent_id = !empty($this->bean->parent_id)? $this->bean->parent_id : ($_REQUEST['relatedId'] ?? null);
+        // Support both URL parameter names: relatedModule/relatedId (from subpanel) and parent_type/parent_id (from conversation view)
+        $this->bean->parent_type = !empty($this->bean->parent_type) ? $this->bean->parent_type : ($_REQUEST['parent_type'] ?? $_REQUEST['relatedModule'] ?? '');
+        $this->bean->parent_id = !empty($this->bean->parent_id) ? $this->bean->parent_id : ($_REQUEST['parent_id'] ?? $_REQUEST['relatedId'] ?? null);
         $this->bean->fill_in_additional_parent_fields();
 
         $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
@@ -88,6 +89,12 @@ class stic_MessagesViewEdit extends ViewEdit
 
         // Attachment widget JS
         echo $this->_buildAttachmentScript($mod_strings);
+
+        // WhatsApp window check JS
+        $parentId = $this->bean->parent_id ?? '';
+        $parentType = $this->bean->parent_type ?? '';
+        echo "<script>var sticMessagesParentId = '" . addslashes($parentId) . "'; var sticMessagesParentType = '" . addslashes($parentType) . "';</script>";
+        echo getVersionedScript("modules/stic_Messages/include/EditView/stic_MessagesEditView.js");
     }
 
     /**

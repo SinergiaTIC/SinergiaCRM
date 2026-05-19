@@ -109,4 +109,5 @@ $mod_strings = array (
   'LBL_ERROR_CREATING_NOTE' => 'Error al crear el registre de l\'adjunt',
   'LBL_ERROR_SAVING_FILE' => 'Error al desar el fitxer',
   'LBL_WHATSAPP_WEB_READONLY_NOTICE' => 'Avís: Els missatges de WhatsApp Web no poden ser editats un cop enviats.',
+  'LBL_WHATSAPP_TEMPLATE_REQUIRED' => 'Per a WhatsApp, has de seleccionar una plantilla. El text lliure només està permès dins d\'una finestra de conversa oberta de 24h.',
 );

@@ -3671,6 +3671,7 @@ $app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
 $app_list_strings['stic_messages_status_list']['received'] = 'Rebut';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['redirected'] = 'Redirigit';
 
 // Missatges: Tipus de registres pare
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organitzacions';

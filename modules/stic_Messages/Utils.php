@@ -228,6 +228,63 @@ class stic_MessagesUtils {
         echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
     }
 
+    public static function getWhatsAppWindowState(string $parentId, string $parentType): array
+    {
+        if (empty($parentId) || empty($parentType)) {
+            return array('windowOpen' => false, 'hoursLeft' => 0, 'minutesLeft' => 0);
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $parentIdSafe = $db->quote($parentId);
+
+        $sql = "SELECT id, message, type, status, date_entered, sender, phone, direction,
+                    template_id
+                FROM stic_messages
+                WHERE parent_id = '{$parentIdSafe}'
+                AND deleted = 0
+                AND type IN ('WhatsAppHelper', 'WhatsApp', 'received')
+                ORDER BY date_entered DESC
+                LIMIT 1";
+
+        $result = $db->query($sql);
+        $lastMessage = $db->fetchByAssoc($result);
+
+        $windowOpen = false;
+        $hoursLeft = 0;
+        $minutesLeft = 0;
+
+        if ($lastMessage) {
+            $type = $lastMessage['type'];
+            $isValidWindowEvent = false;
+
+            // Window is open if: received message OR sent template (WhatsAppHelper with template that has SID)
+            if ($type === 'received' || $type === 'WhatsApp') {
+                $isValidWindowEvent = true;
+            } elseif ($type === 'WhatsAppHelper' && !empty($lastMessage['template_id'])) {
+                $templateBean = BeanFactory::getBean('EmailTemplates', $lastMessage['template_id']);
+                if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
+                    $isValidWindowEvent = true;
+                }
+            }
+
+            if ($isValidWindowEvent) {
+                $eventTs = (new DateTime($lastMessage['date_entered'], new DateTimeZone('UTC')))->getTimestamp();
+                $nowTs   = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
+                $diffSeconds = $nowTs - $eventTs;
+                $diffH = $diffSeconds / 3600;
+
+                if ($diffH < 24) {
+                    $windowOpen = true;
+                    $secondsLeft = (24 * 3600) - $diffSeconds;
+                    $hoursLeft   = floor($secondsLeft / 3600);
+                    $minutesLeft = floor(($secondsLeft % 3600) / 60);
+                }
+            }
+        }
+
+        return array('windowOpen' => $windowOpen, 'hoursLeft' => $hoursLeft, 'minutesLeft' => $minutesLeft);
+    }
+
     public static function fillDynamicListMessageTemplate($type = null)
     {
         $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');

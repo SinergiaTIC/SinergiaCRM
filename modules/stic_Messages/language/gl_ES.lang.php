@@ -112,4 +112,5 @@ $mod_strings = array (
   'LBL_ERROR_CREATING_NOTE' => 'Error al crear el registro del adjunto',
   'LBL_ERROR_SAVING_FILE' => 'Error al guardar el archivo',
   'LBL_WHATSAPP_WEB_READONLY_NOTICE' => 'Aviso: Los mensajes de WhatsApp Web no pueden ser editados una vez enviados.',
+  'LBL_WHATSAPP_TEMPLATE_REQUIRED' => 'Para WhatsApp, debes seleccionar una plantilla. El texto libre solo está permitido dentro de una ventana de conversación abierta de 24h.',
 );

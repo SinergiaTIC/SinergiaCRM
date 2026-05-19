@@ -152,11 +152,11 @@ class stic_Messages extends Basic
 
         // If Message is being created or status changed to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
-            // If type is WhatsAppWeb we don't have a server-side sender: mark as sent and skip helper
+            // If type is WhatsAppWeb we don't have a server-side sender: mark as redirected and skip helper
             if ($this->type === 'WhatsAppWeb') {
-                // mark as sent because user/client will open WhatsApp Web
-                $response = array('code' => self::OK, 'message' => 'Sent via WhatsApp Web (client)');
-                $this->status = 'sent';
+                // mark as redirected because user is redirected to WhatsApp Web
+                $response = array('code' => self::OK, 'message' => 'Redirected to WhatsApp Web');
+                $this->status = 'redirected';
                 $this->response = $response['message'];
                 $this->sent_date = $GLOBALS['timedate']->nowDb();
             } else {

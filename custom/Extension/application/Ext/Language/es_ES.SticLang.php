@@ -3671,6 +3671,7 @@ $app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
 $app_list_strings['stic_messages_status_list']['received'] = 'Recibido';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['redirected'] = 'Redirigido';
 
 // Mensajes: Tipos de registros padre
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organizaciones';
