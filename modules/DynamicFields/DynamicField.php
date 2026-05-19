@@ -505,12 +505,15 @@ class DynamicField
                     $first = false;
                     $queryInsert .= " ,$name";
                     $values .= " ,$quote" . $this->db->quote($val) . $quote;
+                    // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Use INSERT ... ON DUPLICATE KEY UPDATE
+                    // PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
                     if ($firstDup) {
                         $onDuplicate .= "$name=VALUES($name)";
                     } else {
                         $onDuplicate .= ",$name=VALUES($name)";
                     }
                     $firstDup = false;
+                    // END STIC-CUSTOM
                 }
             }
             if ($isUpdate) {
