@@ -525,7 +525,7 @@ class stic_AWF_FormsUtils {
             $enabled[$key] = ["name" => $key, "text" => $text, "textSingular" => $textSingular, "inStudio" => false, "icon" => ""];
         }
 
-        // Fill inStudio information
+        // Complete information from Studio
         require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
         $sb = new StudioBrowser();
         $nodes = $sb->getNodes();
@@ -536,16 +536,12 @@ class stic_AWF_FormsUtils {
             }
         }
 
-        $result = array_filter($enabled, function($item) {
-            return isset($item['inStudio']) && $item['inStudio'] == true;
-        });
-
         // Sort modules by text
-        uasort($result, function($a, $b) {
+        uasort($enabled, function($a, $b) {
             return strcmp($a['text'], $b['text']);
         });
 
-        return $result;
+        return $enabled;
     }
 
     /**
