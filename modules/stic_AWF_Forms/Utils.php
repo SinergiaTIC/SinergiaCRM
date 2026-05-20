@@ -499,7 +499,7 @@ class stic_AWF_FormsUtils {
             'AOR_Reports', 'AOR_Scheduled_Reports',
             'AOS_PDF_Templates',
             'DHA_PlantillasDocumentos',
-            'Documents',
+            // 'Documents',
             'Emails', 'EmailTemplates',
             'jjwg_Address_Cache', 'jjwg_Areas', 'jjwg_Maps', 'jjwg_Markers',
             'ProspectLists',
