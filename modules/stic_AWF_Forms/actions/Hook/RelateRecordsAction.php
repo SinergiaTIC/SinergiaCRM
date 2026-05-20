@@ -89,6 +89,11 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
     public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
     {
+        // Mark the bean as being processed within AWF context to enable AWF-specific behavior
+        if (property_exists($bean, 'fromAWF')) {
+            $bean->fromAWF = true;
+        }
+
         // Get additional parameters (ParameterResolver ensures they are not null because they are required)
 
         /** @var OptionSelectorResolved $targetObjectSelector */
@@ -136,7 +141,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
         // Load the relationship in source Bean
         if (!$bean->load_relationship($linkName)) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Could not load relationship '{$linkName}' in module '{$bean->module_name}'. Check vardefs link name.");
+            return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Could not load relationship '{$linkName}' in module '{$bean->module_name}'. Check vardefs link name.");
         }
         // Verify that it is a Link2
         if (!($bean->$linkName instanceof Link2)) {
