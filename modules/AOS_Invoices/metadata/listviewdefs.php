@@ -226,15 +226,15 @@ global $sugar_config;
 
 $listViewDefs['AOS_Invoices'] =
 array(
-    'NUMBER' => array(
-        'width' => '5%',
-        'label' => 'LBL_LIST_NUM',
-        'default' => true,
-    ),
     'NAME' => array(
         'width' => '15%',
         'label' => 'LBL_ACCOUNT_NAME',
         'link' => true,
+        'default' => true,
+    ),
+    'NUMBER' => array(
+        'width' => '5%',
+        'label' => 'LBL_LIST_NUM',
         'default' => true,
     ),
     'QUOTE_NUMBER' => array(
