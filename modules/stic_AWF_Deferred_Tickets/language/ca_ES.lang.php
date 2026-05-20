@@ -67,4 +67,6 @@ $mod_strings = array (
   'LBL_HANDLER_ACTION_ID' => "Id de l'acció diferida",
   'LBL_CONTEXT_DATA' => 'Dades de context',
   'LBL_EXPIRATION_DATE' => "Data d'expiració",
+  'LBL_RETRY_COUNT' => 'Intents',
+  'LBL_LAST_ERROR_MESSAGE' => 'Últim error',
 );

@@ -67,4 +67,6 @@ $mod_strings = array (
   'LBL_HANDLER_ACTION_ID' => 'Id de la acción diferida',
   'LBL_CONTEXT_DATA' => 'Datos de contexto',
   'LBL_EXPIRATION_DATE' => 'Fecha de expiración',
+  'LBL_RETRY_COUNT' => 'Reintentos',
+  'LBL_LAST_ERROR_MESSAGE' => 'Último error',
 );
