@@ -103,70 +103,87 @@ class AOS_PDF_Templates extends AOS_PDF_Templates_sugar
         return $modules;
     }
     // END STIC-Custom    
-    
+
+    // STIC-Custom - AAM - 20260519 - Preserve subpanel comment tags (<!--$subpanel:...-->) during HTML purification
+    // These comments are used by templateParser for related record loops in PDF templates.
+    // HTMLPurifier strips invalid content between table rows, so we extract subpanel tags
+    // before purification and re-insert them after.
     public function cleanBean()
     {
-        // Run purification with comment preservation first
-        $this->description = $this->purifyWithSubpanelPreservation($this->description);
-        $this->pdfheader = $this->purifyWithSubpanelPreservation($this->pdfheader);
-        $this->pdffooter = $this->purifyWithSubpanelPreservation($this->pdffooter);
-        
-        // Save the purified content before parent runs
-        $savedDescription = $this->description;
-        $savedPdfheader = $this->pdfheader;
-        $savedPdffooter = $this->pdffooter;
+        // Store subpanel comments before any purification
+        $descSubpanels = self::extractSubpanelTags($this->description);
+        $headSubpanels = self::extractSubpanelTags($this->pdfheader);
+        $footSubpanels = self::extractSubpanelTags($this->pdffooter);
 
+        // Run parent clean (encodes HTML entities)
         parent::cleanBean();
-        
-        // Restore our content - parent may have purified again
-        $this->description = $savedDescription;
-        $this->pdfheader = $savedPdfheader;
-        $this->pdffooter = $savedPdffooter;
+
+        // Apply purify for security, but first protect subpanel placeholders
+        $this->description = self::safePurify($this->description, $descSubpanels);
+        $this->pdfheader = self::safePurify($this->pdfheader, $headSubpanels);
+        $this->pdffooter = self::safePurify($this->pdffooter, $footSubpanels);
     }
+    // END STIC-Custom
     
-    private function purifyWithSubpanelPreservation($html)
+    // STIC-Custom - AAM - 20260519 - Extract subpanel comments to protect them from HTMLPurifier
+    /**
+     * Extract subpanel comments and return them as [placeholder => comment_string]
+     * Replaces them with short placeholder tokens that survive HTMLPurifier.
+     */
+    private static function extractSubpanelTags(&$html)
     {
-        if (empty($html)) {
-            return $html;
-        }
-        
-        // Decode first
-        $html = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        
-        $GLOBALS['log']->fatal('PURIFY_DECODED: ' . $html);
-        
-        // Extract subpanel comments - BOTH start and end tags
-        // Start: <!--$subpanel:xxx-->
-        // End: <!--/$subpanel:xxx-->
-        $subpanelComments = array();
+        $tags = array();
+        if (empty($html)) return $tags;
         $counter = 0;
-        
-        // Match both patterns: <!--$subpanel:...--> AND <!--/$subpanel:...-->
         $html = preg_replace_callback(
             '/<!--(?:\/?\$)[a-z_]+:[a-z0-9_]+-->/i',
-            function($match) use (&$subpanelComments, &$counter) {
-                $key = '###SUBPANEL_' . $counter . '###';
-                $subpanelComments[$key] = $match[0];
+            function ($match) use (&$tags, &$counter) {
+                $key = "\x01SP" . $counter . "\x01";
+                $tags[$key] = $match[0];
                 $counter++;
                 return $key;
             },
             $html
         );
-        
-        $GLOBALS['log']->fatal('PURIFY_PLACEHOLDERS: ' . $html . ' | COMMENTS: ' . json_encode($subpanelComments));
-        
-        // Purify
+        return $tags;
+    }
+
+    // STIC-Custom - AAM - 20260519 - Apply purify_html after protecting subpanel placeholders
+    // Wraps placeholder tokens in valid <tr> elements to survive table purification,
+    // then unwraps them back after purify.
+    /**
+     * Apply purify_html after securing subpanel placeholders via tr-wrapping technique.
+     */
+    private static function safePurify($html, $subpanelTags)
+    {
+        if (empty($html)) return $html;
+
+        // Wrap subpanel placeholders in <tr> elements so they survive table purification
+        $html = preg_replace(
+            '/\x01SP(\d+)\x01/',
+            '<tr class="spph" data-sp="$1"><td></td></tr>',
+            $html
+        );
+
+        // Standard purification
         $html = purify_html($html, ['HTML.ForbiddenElements' => ['iframe' => true]]);
-        
-        $GLOBALS['log']->fatal('PURIFY_AFTER: ' . $html);
-        
-        // Restore comments
-        foreach ($subpanelComments as $key => $comment) {
+
+        // Unwrap: restore placeholders from <tr> wrappers
+        $html = preg_replace_callback(
+            '/<tr class="spph" data-sp="(\d+)"><td><\/td><\/tr>/i',
+            function ($match) {
+                $key = "\x01SP" . $match[1] . "\x01";
+                return $key;
+            },
+            $html
+        );
+
+        // Restore original subpanel comments
+        foreach ($subpanelTags as $key => $comment) {
             $html = str_replace($key, $comment, $html);
         }
-        
-        $GLOBALS['log']->fatal('PURIFY_RESTORED: ' . $html);
-        
+
         return $html;
     }
+    // END STIC-Custom
 }

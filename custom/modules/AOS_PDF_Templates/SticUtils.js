@@ -20,6 +20,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+var activeFilters = [];
+
 function populateSubpanelsFromType() {
     var moduleSelect = document.getElementById('type') || document.getElementById('module_name');
     var moduleName = moduleSelect ? moduleSelect.value : '';
@@ -49,13 +51,16 @@ function populateSubpanelFields() {
     var moduleName = moduleSelect ? moduleSelect.value : '';
     var subpanelSelect = document.getElementById('subpanel_name');
     var fieldSelect = document.getElementById('subpanel_field_name');
+    var orderSelect = document.getElementById('subpanel_order_field');
+    var filterField = document.getElementById('subpanel_filter_field');
     
-    if (!fieldSelect) {
-        return;
-    }
+    if (!fieldSelect) return;
     
     var subpanelKey = subpanelSelect ? subpanelSelect.value : '';
-    fieldSelect.innerHTML = '<option value="">-- ' + SUGAR.language.get('AOS_PDF_Templates', 'LBL_SELECT') + ' --</option>';
+    var emptyOption = '<option value="">-- ' + SUGAR.language.get('AOS_PDF_Templates', 'LBL_SELECT') + ' --</option>';
+    fieldSelect.innerHTML = emptyOption;
+    if (orderSelect) orderSelect.innerHTML = emptyOption;
+    if (filterField) filterField.innerHTML = emptyOption;
     
     if (moduleName && subpanelKey && typeof subpanelModuleOptions !== 'undefined' && subpanelModuleOptions[moduleName]) {
         var subpanels = subpanelModuleOptions[moduleName].subpanels;
@@ -63,10 +68,13 @@ function populateSubpanelFields() {
             var fields = subpanels[subpanelKey].fields;
             var tableName = subpanels[subpanelKey].table_name || subpanelKey;
             for (var key in fields) {
-                var option = document.createElement('option');
-                option.value = '$' + tableName + '_' + key;
-                option.text = fields[key];
-                fieldSelect.appendChild(option);
+                var val = '$' + tableName + '_' + key;
+                var opt = document.createElement('option');
+                opt.value = val;
+                opt.text = fields[key];
+                fieldSelect.appendChild(opt);
+                if (orderSelect) orderSelect.appendChild(opt.cloneNode(true));
+                if (filterField) filterField.appendChild(opt.cloneNode(true));
             }
         }
     }
@@ -82,45 +90,139 @@ function insertSubpanelLoop() {
     var fieldValue = fieldSelect ? fieldSelect.value : '';
     
     if (!moduleName || !subpanelKey) {
-        alert('Please select a module and subpanel first.');
+        alert(SUGAR.language.get('AOS_PDF_Templates', 'LBL_SUBPANEL_SELECT_MODULE_WARN'));
         return;
     }
     
+    // Build options string
+    var options = buildOptionsString();
+    
+    var startTag = '<!--$subpanel:' + subpanelKey;
+    if (options) {
+        startTag += ':' + options;
+    }
+    startTag += '-->';
+    var endTag = '<!--/$subpanel:' + subpanelKey + '-->';
+    
     var templateContent = '';
     if (fieldValue) {
-        templateContent = '<!--$subpanel:' + subpanelKey + '--><tr><td>' + fieldValue + '</td></tr><!--/$subpanel:' + subpanelKey + '-->';
+        templateContent = startTag + '<tr><td>' + fieldValue + '</td></tr>' + endTag;
     } else {
-        templateContent = '<!--$subpanel:' + subpanelKey + '--><!--/$subpanel:' + subpanelKey + '-->';
+        templateContent = startTag + endTag;
     }
     
-    var inst = tinyMCE.getInstanceById("description");
-    if (inst) {
-        inst.getWin().focus();
-        inst.execCommand('mceInsertContent', false, templateContent);
-    } else {
-        var textarea = document.getElementById('description');
-        if (textarea) {
-            textarea.value += templateContent;
+    insertAtCursor(templateContent);
+}
+
+function buildOptionsString() {
+    var parts = [];
+    
+    // Order
+    var orderField = document.getElementById('subpanel_order_field');
+    var orderDir = document.getElementById('subpanel_order_dir');
+    if (orderField && orderField.value) {
+        parts.push('order=' + orderField.value.replace(/^\$/, '').replace(/^[a-z0-9_]+_/, ''));
+        if (orderDir && orderDir.value) {
+            parts.push('dir=' + orderDir.value);
         }
     }
+    
+    // Limit
+    var limitInput = document.getElementById('subpanel_limit');
+    if (limitInput && limitInput.value && parseInt(limitInput.value) > 0) {
+        parts.push('limit=' + parseInt(limitInput.value));
+    }
+    
+    // Filters
+    for (var i = 0; i < activeFilters.length; i++) {
+        var f = activeFilters[i];
+        parts.push('filter=' + f.field + ':' + f.op + ':' + f.value);
+    }
+    
+    return parts.join(';');
+}
+
+function addSubpanelFilter() {
+    var filterField = document.getElementById('subpanel_filter_field');
+    var filterOp = document.getElementById('subpanel_filter_op');
+    var filterValue = document.getElementById('subpanel_filter_value');
+    
+    if (!filterField || !filterField.value) {
+        alert(SUGAR.language.get('AOS_PDF_Templates', 'LBL_SUBPANEL_SELECT_FIELD_WARN'));
+        return;
+    }
+    if (!filterValue || !filterValue.value) {
+        alert(SUGAR.language.get('AOS_PDF_Templates', 'LBL_SUBPANEL_ENTER_VALUE_WARN'));
+        return;
+    }
+    
+    var fieldName = filterField.value.replace(/^\$/, '').replace(/^[a-z0-9_]+_/, '');
+    var op = filterOp ? filterOp.value : 'eq';
+    var value = filterValue.value;
+    
+    activeFilters.push({ field: fieldName, op: op, value: value });
+    renderActiveFilters();
+    filterValue.value = '';
+}
+
+function removeSubpanelFilter(index) {
+    activeFilters.splice(index, 1);
+    renderActiveFilters();
+}
+
+function renderActiveFilters() {
+    var container = document.getElementById('subpanel_active_filters');
+    if (!container) return;
+    
+    var opLabels = { eq: '=', neq: '!=', gt: '>', gte: '>=', lt: '<', lte: '<=', like: '~', in: 'IN' };
+    var html = '';
+    for (var i = 0; i < activeFilters.length; i++) {
+        var f = activeFilters[i];
+        html += '<span class="filter-tag" style="display:inline-block;background:#e8f0fe;border:1px solid #aecbfa;border-radius:4px;padding:2px 6px;margin:2px;font-size:12px;">';
+        html += f.field + ' ' + (opLabels[f.op] || f.op) + ' ' + f.value;
+        html += ' <a href="javascript:void(0)" onclick="removeSubpanelFilter(' + i + ')" style="color:#c00;text-decoration:none;font-weight:bold;">x</a>';
+        html += '</span>';
+    }
+    container.innerHTML = html;
 }
 
 function insertSubpanelField() {
     var fieldSelect = document.getElementById('subpanel_field_name');
     var fieldValue = fieldSelect ? fieldSelect.value : '';
+    if (!fieldValue) return;
+    insertAtCursor(fieldValue);
+}
+
+function insertAggregateField() {
+    var aggFunc = document.getElementById('subpanel_agg_func');
+    var fieldSelect = document.getElementById('subpanel_field_name');
     
-    if (!fieldValue) {
-        return;
-    }
+    if (!aggFunc || !aggFunc.value) return;
+    if (!fieldSelect || !fieldSelect.value) return;
     
+    var func = aggFunc.value;
+    var fieldVal = fieldSelect.value;
+    // Parse $tablename_fieldname into table and field
+    var match = fieldVal.match(/^\$([a-z0-9_]+)_(.+)$/i);
+    if (!match) return;
+    
+    var table = match[1];
+    var field = match[2];
+    var placeholder = '$' + func + ':' + table + ':' + field;
+    insertAtCursor(placeholder);
+}
+
+function insertAtCursor(content) {
     var inst = tinyMCE.getInstanceById("description");
     if (inst) {
         inst.getWin().focus();
-        inst.execCommand('mceInsertContent', false, fieldValue);
+        inst.execCommand('mceInsertContent', false, content);
     } else {
         var textarea = document.getElementById('description');
         if (textarea) {
-            textarea.value += fieldValue;
+            var start = textarea.selectionStart || 0;
+            var end = textarea.selectionEnd || 0;
+            textarea.value = textarea.value.substring(0, start) + content + textarea.value.substring(end);
         }
     }
 }
