@@ -52,8 +52,13 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
      */
     public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
     {
-        global $db;
+        global $db, $beanList;
+
         $module = $block->dataBlock->module;
+        if (!isset($beanList[$module])) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "The configured module '{$module}' is not available on the system.");
+        }
+
         $bean = null;
         $onDuplicateAction = null;
         $modifications = [];
@@ -68,6 +73,9 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
             $foundBean = null;
             $tempBean = BeanFactory::newBean($module);
+            if (!$tempBean) {
+                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Failed to create a new instance of the module '{$module}'.");
+            }
 
             // Build the search fields for this rule
             foreach ($rule->fields as $fieldName) {
@@ -79,7 +87,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     $skipRule = false;
                     break; // Move to the next rule
                 }
-                if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName], $fieldName)) {
+                if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName] ?? null, $fieldName)) {
                     $emailValues[] = $fieldValue;
                 } else {
                     $scalarFields[$fieldName] = $fieldValue;
@@ -137,7 +145,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     if ($beanToCheck) {
                         $match = true;
                         foreach ($scalarFields as $sField => $sValue) {
-                            if ($beanToCheck->$sField != $sValue) {
+                            if (($beanToCheck->$sField ?? null) != $sValue) {
                                 $match = false;
                                 break;
                             }
@@ -187,13 +195,22 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         if ($bean === null) {
             // No duplicate, create a new one
             $bean = BeanFactory::newBean($module);
+            if (!$bean) {
+                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Failed to create a new instance of the module '{$module}'.");
+            }
+            
             // Assign user if a default one is set
             if (!empty($context->defaultAssignedUserId)) {
                 $bean->assigned_user_id = $context->defaultAssignedUserId;
             }
             // Fill all bean fields
-            $modifications = $this->populateBean($bean, $block); 
-            $bean->save();
+            $modifications = $this->populateBean($bean, $block);
+            if (property_exists($bean, 'fromAWF')) {
+                $bean->fromAWF = true;
+            }
+            // Save without running logic hooks to avoid unwanted side effects in the creation of the record.
+            $bean->save(false); 
+            
             $modificationType = BeanModificationType::CREATED;
 
         } else {
@@ -207,14 +224,24 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     // Overwrite all fields of the existing bean
                     $modifications = $this->populateBean($bean, $block);
                     $modificationType = BeanModificationType::UPDATED;
-                    $bean->save();
+                    
+                    if (property_exists($bean, 'fromAWF')) {
+                        $bean->fromAWF = true;
+                    }
+                    // Save without running logic hooks to avoid unwanted side effects in the creation of the record.
+                    $bean->save(false); 
                     break;
 
                 case OnDuplicateAction::ENRICH:
                     // Fill only empty fields of the existing bean
                     $modifications = $this->enrichBean($bean, $block); 
                     $modificationType = BeanModificationType::ENRICHED;
-                    $bean->save();
+
+                    if (property_exists($bean, 'fromAWF')) {
+                        $bean->fromAWF = true;
+                    }
+                    // Save without running logic hooks to avoid unwanted side effects in the creation of the record.
+                    $bean->save(false); 
                     break;
                 
                 case OnDuplicateAction::SKIP:
@@ -276,7 +303,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
             $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
 
-            if (stic_AWF_FormsUtils::isEmailField($bean->field_defs[$targetField], $targetField)) {
+            if (isset($bean->field_defs[$targetField]) && stic_AWF_FormsUtils::isEmailField($bean->field_defs[$targetField], $targetField)) {
                 if ($targetField === 'email') {
                     $targetField = 'email1';
                 }
@@ -318,6 +345,18 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
             // Check if the field in the bean is empty or null
             $isEmpty = ($oldValue === null || $oldValue === '');
+
+            // Check if the field is boolean (in that case, consider false as empty)
+            $isBoolean = ($fieldDef && isset($fieldDef['type']) && ($fieldDef['type'] === 'bool' || $fieldDef['type'] === 'boolean'));
+            if ($isBoolean) {
+                // Normalize new value to boolean true if it is sent as checked (otherside, consider it false)
+                $newValue = ($newValue === true || $newValue === 1 || $newValue === '1');
+
+                // If the field has value, consider empty old value false or null
+                if ($newValue) {
+                    $isEmpty = ($isEmpty || $oldValue === false || $oldValue === 0 || $oldValue === '0');
+                }
+            }
 
             if ($isEmpty && $newValue !== null && $newValue !== '') {
                 // The current field is empty.
