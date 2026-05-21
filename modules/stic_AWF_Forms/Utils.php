@@ -496,18 +496,26 @@ class stic_AWF_FormsUtils {
         global $app_list_strings;
 
         $blackList = [
+            'Home',
+            'AOW_WorkFlow',
             'AOR_Reports', 'AOR_Scheduled_Reports',
+            'KReports',
             'AOS_PDF_Templates',
             'DHA_PlantillasDocumentos',
+            'AM_ProjectTemplates',
             // 'Documents',
             'Emails', 'EmailTemplates',
-            'jjwg_Address_Cache', 'jjwg_Areas', 'jjwg_Maps', 'jjwg_Markers',
+            'jjwg_Maps', 'jjwg_Markers', 'jjwg_Areas', 'jjwg_Address_Cache',
             'ProspectLists',
-            'SecurityGroups',
+            'SecurityGroups', 'stic_Security_Groups_Rules',
             'Spots',
             'Surveys',
             'stic_Sepe_Actions', 'stic_Sepe_Files', 'stic_Sepe_Incidents',
-            'stic_Validation_Results',
+            'stic_Signatures', 'stic_Signature_Log', 'stic_Signers',
+            'stic_Messages',
+            'stic_Validation_Actions', 'stic_Validation_Results',
+            'stic_AWF_Forms',
+            'stic_Settings',
         ];
 
         // Get Enabled Modules
