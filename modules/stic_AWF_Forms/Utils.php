@@ -493,30 +493,7 @@ class stic_AWF_FormsUtils {
      * }
      */
     public static function getEnabledModules() {
-        global $app_list_strings;
-
-        $blackList = [
-            'Home',
-            'AOW_WorkFlow',
-            'AOR_Reports', 'AOR_Scheduled_Reports',
-            'KReports',
-            'AOS_PDF_Templates',
-            'DHA_PlantillasDocumentos',
-            'AM_ProjectTemplates',
-            // 'Documents',
-            'Emails', 'EmailTemplates',
-            'jjwg_Maps', 'jjwg_Markers', 'jjwg_Areas', 'jjwg_Address_Cache',
-            'ProspectLists',
-            'SecurityGroups', 'stic_Security_Groups_Rules',
-            'Spots',
-            'Surveys',
-            'stic_Sepe_Actions', 'stic_Sepe_Files', 'stic_Sepe_Incidents',
-            'stic_Signatures', 'stic_Signature_Log', 'stic_Signers',
-            'stic_Messages',
-            'stic_Validation_Actions', 'stic_Validation_Results',
-            'stic_AWF_Forms',
-            'stic_Settings',
-        ];
+        global $app_list_strings, $beanList;
 
         // Get Enabled Modules
         require_once("modules/MySettings/TabController.php");
@@ -525,7 +502,7 @@ class stic_AWF_FormsUtils {
         
         $enabled = [];
         foreach ($tabs[0] as $key=>$value) {
-            if (in_array($key, $blackList)) {
+            if (!isset($beanList[$key])) {
                 continue;
             }
             $text = translate($key);
