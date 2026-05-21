@@ -318,6 +318,7 @@ $dictionary['stic_Messages'] = array(
             'reportable'  => 0,
             'unified_search' => 0,
             'source'      => 'non-db',
+        ),
         'new_conversation' => array (
             'required' => false,
             'name' => 'new_conversation',
@@ -418,7 +419,8 @@ $dictionary['stic_Messages'] = array(
         array(
             'name' => 'idx_messages_phone',
             'type' => 'index',
-            'fields' => array('phone')),
+            'fields' => array('phone'),
+        ),
     ),
     'relationships' => array(
     ),
