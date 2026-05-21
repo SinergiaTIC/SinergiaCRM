@@ -445,7 +445,8 @@ class AOS_InvoicesHook
         }
 
         // check if status changed to 'emitted' (only send on status change)
-        if (!empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'emitted') {
+        // Allow resend if previous AEAT status was 'rejected'
+        if (!empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'emitted' && $bean->verifactu_aeat_status_c !== 'rejected') {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} was already in 'emitted' status, skipping send.");
             return;
         }
