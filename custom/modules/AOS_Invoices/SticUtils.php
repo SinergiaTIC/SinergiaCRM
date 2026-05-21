@@ -33,6 +33,8 @@ use josemmo\Verifactu\Models\ComputerSystem;
 use josemmo\Verifactu\Models\Records\BreakdownDetails;
 use josemmo\Verifactu\Models\Records\CancellationRecord;
 use josemmo\Verifactu\Models\Records\FiscalIdentifier;
+use josemmo\Verifactu\Models\Records\ForeignFiscalIdentifier;
+use josemmo\Verifactu\Models\Records\ForeignIdType;
 use josemmo\Verifactu\Models\Records\InvoiceIdentifier;
 use josemmo\Verifactu\Models\Records\InvoiceType;
 use josemmo\Verifactu\Models\Records\OperationType;
@@ -177,12 +179,12 @@ class AOS_InvoicesUtils
             }
             // For rectified invoices with customer info, still set recipients
             if (!empty($customerNif) && !empty($customerName)) {
-                $recipient = new FiscalIdentifier($customerName, $customerNif);
+                $recipient = self::createRecipientIdentifier($customerName, $customerNif);
                 $record->recipients = [$recipient];
             }
         } elseif (!empty($customerNif) && !empty($customerName)) {
             $record->invoiceType = InvoiceType::Factura; // F1 - Completa
-            $recipient = new FiscalIdentifier($customerName, $customerNif);
+            $recipient = self::createRecipientIdentifier($customerName, $customerNif);
             $record->recipients = [$recipient];
         } else {
             $record->invoiceType = InvoiceType::Simplificada; // F2 - Simplificada
@@ -235,6 +237,20 @@ class AOS_InvoicesUtils
         // $record->validate();
 
         return $record;
+    }
+
+    /**
+     * Create a recipient identifier, using "No censado" (07) in test mode for personal NIFs only.
+     * AEAT only accepts IDType=07 for individuals (personas físicas), not for companies (CIF).
+     */
+    private static function createRecipientIdentifier($name, $nif)
+    {
+        $isTestMode = stic_SettingsUtils::getSetting('VERIFACTU_TEST') == '1';
+        $isPersonalNif = preg_match('/^[0-9]/', $nif);
+        if ($isTestMode && $isPersonalNif) {
+            return new ForeignFiscalIdentifier($name, 'ES', ForeignIdType::Unregistered, $nif);
+        }
+        return new FiscalIdentifier($name, $nif);
     }
 
     /**
