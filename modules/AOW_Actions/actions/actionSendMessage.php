@@ -53,8 +53,22 @@ class actionSendMessage extends actionBase
         global $app_list_strings;
         
         // Query templates directly to get type info (avoiding cache issues)
+        require_once 'modules/EmailTemplates/EmailTemplate.php';
+        $emailTemplateBean = new EmailTemplate();
+        
         $db = DBManagerFactory::getInstance();
-        $sql = "SELECT id, name, type FROM email_templates WHERE deleted = 0 AND (type = 'sms' OR type = 'whatsapp') ORDER BY name";
+        $sql = "SELECT {$emailTemplateBean->table_name}.id, {$emailTemplateBean->table_name}.name, {$emailTemplateBean->table_name}.type ";
+        $sql .= "FROM {$emailTemplateBean->table_name} ";
+        $sql .= "WHERE deleted = 0 AND (type = 'sms' OR type = 'whatsapp') ";
+        
+        $accessWhere = $emailTemplateBean->buildAccessWhere('list');
+        if (!empty($accessWhere)) {
+            $sql .= ' AND ' . $accessWhere;
+        }
+        
+        $sql .= " ORDER BY name";
+        
+        $GLOBALS['log']->debug('actionSendMessage: email templates query: ' . $sql);
         $result = $db->query($sql, true);
         
         $smsTemplates = array();
