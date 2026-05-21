@@ -35,6 +35,7 @@ class SticPrivateAreaUtils
      */
     public static function processBeforeSave($bean)
     {
+        return;
         // When Portal is being disabled, keep credentials intact
         if (!self::isPortalEnabledNow($bean) && self::wasPortalEnabled($bean)) {
             $storedPassword = self::getStoredPortalPassword($bean);
@@ -121,6 +122,7 @@ class SticPrivateAreaUtils
      */
     public static function processAfterSave($bean)
     {
+        return;
         // Send only when Portal has just been enabled (0 -> 1)
         if (!self::isPortalBeingEnabled($bean)) {
             return;
