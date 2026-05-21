@@ -293,7 +293,7 @@ class AOS_InvoicesHook
                 } else {
                     // Invoice not yet sent - allow series change and reset number
                     // The number will be regenerated at send time (Step 1.3)
-                    if (!empty($bean->number) && strpos($bean->number, 'BORRADOR-') !== 0) {
+                    if (!empty($bean->number) && strpos($bean->number, $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX']) !== 0) {
                         $GLOBALS['log']->info(__METHOD__ . ': Step 2.8 - Series changed from "' . $originalSeries . '" to "' . $currentSeries . '". Resetting number for regeneration at send time.');
                         $bean->number = '';
                     }

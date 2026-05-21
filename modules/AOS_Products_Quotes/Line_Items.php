@@ -115,7 +115,7 @@ function display_lines($focus, $field, $value, $view)
             if ($enable_groups && ($group_id != $row['group_id'] || $i == 0)) {
                 $html .= $groupStart.$product.$service.$groupEnd;
                 if ($i != 0) {
-                    $html .= "<tr><td colspan='9' nowrap='nowrap'><br></td></tr>";
+                    $html .= "<tr><td colspan='10' nowrap='nowrap'><br></td></tr>";
                 }
                 $groupStart = '';
                 $groupEnd = '';

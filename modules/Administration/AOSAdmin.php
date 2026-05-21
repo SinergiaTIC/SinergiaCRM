@@ -97,6 +97,11 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         $rectifiedSeriesIndex = isset($_POST['invoice_series_rectified']) ? $_POST['invoice_series_rectified'] : null;
         
         foreach ($_POST['invoice_series_format'] as $index => $format) {
+            // Validate: format cannot start with a space
+            if (strlen($format) > 0 && $format[0] === ' ') {
+                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_SPACE_START'];
+                continue;
+            }
             $format = trim($format);
             $initialNumber = isset($_POST['invoice_series_initial'][$index]) 
                            ? (int)$_POST['invoice_series_initial'][$index] 
@@ -108,7 +113,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             
             // Validate format: only letters, 0, and symbols (no digits 1-9)
             if (!empty($format) && preg_match('/[1-9]/', $format)) {
-                $validationErrors[] = "El formato '{$format}' contiene números del 1-9. Solo se permite usar el número 0.";
+                $validationErrors[] = string_format($mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT_ERROR'], array($format));
                 continue; // Skip this series
             }
             
@@ -129,7 +134,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             
             // Validate initial number: must be 1 or greater
             if ($initialNumber < 1) {
-                $validationErrors[] = "El número inicial de la serie '{$name}' debe ser 1 o superior.";
+                $validationErrors[] = string_format($mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL_ERROR'], array($name));
                 continue; // Skip this series
             }
             
@@ -205,6 +210,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         
         // If there are validation errors, show them and don't save
         if (!empty($validationErrors)) {
+            SugarApplication::appendErrorMessage($mod_strings['LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS']);
             foreach ($validationErrors as $error) {
                 SugarApplication::appendErrorMessage($error);
             }
