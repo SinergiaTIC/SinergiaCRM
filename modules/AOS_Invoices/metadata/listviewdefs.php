@@ -232,6 +232,11 @@ array(
         'link' => true,
         'default' => true,
     ),
+    'STIC_INVOICE_TYPE_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_STIC_INVOICE_TYPE',
+        'default' => true,
+    ),
     'NUMBER' => array(
         'width' => '5%',
         'label' => 'LBL_LIST_NUM',
@@ -287,11 +292,6 @@ array(
     'VERIFACTU_RECTIFIED_BASE_C' => array(
         'width' => '10%',
         'label' => 'LBL_VERIFACTU_RECTIFIED_BASE',
-        'default' => false,
-    ),
-    'STIC_INVOICE_TYPE' => array( 
-        'width' => '15%',
-        'label' => 'LBL_STIC_INVOICE_TYPE',
         'default' => false,
     ),
     'TOTAL_AMOUNT' => array(
