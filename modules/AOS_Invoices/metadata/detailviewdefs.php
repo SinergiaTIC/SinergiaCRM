@@ -410,10 +410,11 @@ array(
                     ),
                 ),
                 2 => array(
-                    1 => array(
+                    0 => array(
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
                     ),
+                    1 => array(),
                 ),
                 3 => array(
                     0 => array(

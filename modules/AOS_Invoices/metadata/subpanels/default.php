@@ -49,12 +49,15 @@ $subpanel_layout = array(
       'vname' => 'LBL_STATUS',
       'default' => true,
     ),
+    // STIC-Custom - JCH - 20260521 - Show Verifactu AEAT status in invoice subpanel 
+    // PR https://github.com/SinergiaTIC/SinergiaCRM/pull/870
     'verifactu_aeat_status_c' =>
     array(
       'width' => '15%',
       'vname' => 'LBL_VERIFACTU_AEAT_STATUS',
       'default' => true,
     ),
+    // END STIC-Custom
     'assigned_user_name' =>
     array(
       'name' => 'assigned_user_name',
