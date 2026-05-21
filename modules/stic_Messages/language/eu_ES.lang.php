@@ -110,4 +110,7 @@ $mod_strings = array (
   'LBL_ERROR_SAVING_FILE' => 'Error al guardar el archivo',
   'LBL_WHATSAPP_WEB_READONLY_NOTICE' => 'Aviso: Los mensajes de WhatsApp Web no pueden ser editados una vez enviados.',
   'LBL_WHATSAPP_TEMPLATE_REQUIRED' => 'Para WhatsApp, debes seleccionar una plantilla. El texto libre solo está permitido dentro de una ventana de conversación abierta de 24h.',
+  'LBL_STIC_CONVERSATIONS_STIC_MESSAGES' => 'Conversación',
+  'LBL_NEW_CONVERSATION' => 'Nueva conversación',
+  'LBL_NEW_CONVERSATION_HELP' => 'Si marca la casilla se creará una nueva conversación. En caso contrario, será necesario seleccionar una conversación existente.',
 );

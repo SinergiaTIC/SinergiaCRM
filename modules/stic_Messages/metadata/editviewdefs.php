@@ -106,9 +106,17 @@ array(
                 ),
                 7 => array(
                     0 => array(
-
+                        'name' => 'new_conversation',
+                        'label' => 'LBL_NEW_CONVERSATION',
                     ),
-                    1 => array(),
+                    1 => array(
+                        'name' => 'stic_conversations_stic_messages_name',
+                    ),
+                ),
+                7 => array(
+                    0 => array(
+                        'name' => 'stic_conversation_subject',
+                    ),
                 ),
             ),
         ),
