@@ -52,15 +52,25 @@ class actionSendMessage extends actionBase
         // Get all email templates for SMS and WhatsApp types
         global $app_list_strings;
         
-        // Get SMS templates - unique WHERE to avoid cache collision
-        $smsTemplates = get_bean_select_array(true, 'EmailTemplate', 'name', "type = 'sms'", 'name') ?: array();
+        // Query templates directly to get type info (avoiding cache issues)
+        $db = DBManagerFactory::getInstance();
+        $sql = "SELECT id, name, type FROM email_templates WHERE deleted = 0 AND (type = 'sms' OR type = 'whatsapp') ORDER BY name";
+        $result = $db->query($sql, true);
         
-        // Get WhatsApp templates - unique WHERE to avoid cache collision
-        $whatsappTemplates = get_bean_select_array(true, 'EmailTemplate', 'name', "type = 'whatsapp'", 'name') ?: array();
+        $smsTemplates = array();
+        $whatsappTemplates = array();
         
-        // Merge all templates - remove empty key and use array_merge to include all
+        while ($row = $db->fetchByAssoc($result)) {
+            if ($row['type'] === 'sms') {
+                $smsTemplates[$row['id']] = $row['name'];
+            } elseif ($row['type'] === 'whatsapp') {
+                $whatsappTemplates[$row['id']] = $row['name'];
+            }
+        }
+        
+        // Merge all templates for the select dropdown
         $email_templates_arr = array_merge($smsTemplates, $whatsappTemplates);
-        unset($email_templates_arr['']); // Remove empty key
+        unset($email_templates_arr['']);
         asort($email_templates_arr);
         
         // Pass templates by type to JavaScript for dynamic filtering
@@ -141,7 +151,8 @@ class actionSendMessage extends actionBase
         $html .= '</td>';
 
         $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
-        $html .= "<select name='aow_actions_param[".$line."][type]' id='aow_actions_param[".$line."][type]' >" . get_select_options_with_id($app_list_strings['stic_messages_type_list'], $defaultType) . "</select>";
+        $selectedType = $params['type'] ?? $defaultType;
+        $html .= "<select name='aow_actions_param[".$line."][type]' id='aow_actions_param_type_".$line."' >" . get_select_options_with_id($app_list_strings['stic_messages_type_list'], $selectedType) . "</select>";
         $html .= '</td>';
 
         // Direction field hidden until other type of messages included

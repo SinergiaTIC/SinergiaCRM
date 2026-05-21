@@ -35,9 +35,7 @@ function show_edit_template_link(field, ln) {
 }
 
 function filterTemplatesByType(lineNum) {
-    // Try to find the type select - SuiteCRM may escape brackets
-    var typeSelect = document.getElementById('aow_actions_param[' + lineNum + '][type]') 
-                  || document.getElementById('aow_actions_param\\[' + lineNum + '\\]\\[type\\]');
+    var typeSelect = document.getElementById('aow_actions_param_type_' + lineNum);
     var templateSelect = document.getElementById('aow_actions_param_email_template' + lineNum);
     
     if (!typeSelect || !templateSelect) {
@@ -67,7 +65,6 @@ function filterTemplatesByType(lineNum) {
     if (typeLower.indexOf('whatsapp') !== -1) {
         templatesToShow = whatsappTemplates;
     } else {
-        // All other types (SMS, SevenSmsHelper, etc.) use SMS templates
         templatesToShow = smsTemplates;
     }
     
@@ -103,9 +100,7 @@ function filterTemplatesByType(lineNum) {
 }
 
 function initTemplateFilter(lineNum) {
-    // Try to find the type select - SuiteCRM may escape brackets
-    var typeSelect = document.getElementById('aow_actions_param[' + lineNum + '][type]') 
-                  || document.getElementById('aow_actions_param\\[' + lineNum + '\\]\\[type\\]');
+    var typeSelect = document.getElementById('aow_actions_param_type_' + lineNum);
     
     if (typeSelect) {
         typeSelect.addEventListener('change', function() {
