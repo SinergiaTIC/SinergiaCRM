@@ -4188,9 +4188,8 @@ $app_list_strings['stic_products_quotes_operation_type_list']['E'] = 'Exenta de 
 $app_list_strings['stic_products_quotes_operation_type_list']['NL'] = 'No sujeta por localización';
 
 // Tipos de facturas rectificativas
-$app_list_strings['verifactu_rectified_type_list'][''] = '';
 $app_list_strings['verifactu_rectified_type_list']['S'] = 'Por sustitución (anula y reemplaza)';
-$app_list_strings['verifactu_rectified_type_list']['I'] = 'Por diferencias (solo ajustes)';
+// $app_list_strings['verifactu_rectified_type_list']['I'] = 'Por diferencias (solo ajustes)'; // Keep it for reference, but it is not currently possible in SinergiaCRM
 
 // Bases de rectificación según LIVA
 $app_list_strings['verifactu_rectified_base_list'][''] = '';
