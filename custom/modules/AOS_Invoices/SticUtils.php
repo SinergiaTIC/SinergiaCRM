@@ -84,8 +84,7 @@ class AOS_InvoicesUtils
             if (empty($mod_strings)) {
                 $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
             }
-            $warning = $mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_WARNING'] ??
-                'Verifactu no está activado. El certificado digital está configurado pero el envío a AEAT está deshabilitado.';
+            $warning = $mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_WARNING'];
         }
 
         return [
@@ -2128,7 +2127,7 @@ class AOS_InvoicesUtils
                 'initialNumber' => 1,
                 'isRectified' => false,
             ];
-            $created[] = $mod_strings['LBL_STIC_SERIES_NORMAL_NAME'] ?? 'Factura normal';
+            $created[] = $mod_strings['LBL_STIC_SERIES_NORMAL_NAME'];
         }
 
         if (!$hasRectified) {
@@ -2137,7 +2136,7 @@ class AOS_InvoicesUtils
                 'initialNumber' => 1,
                 'isRectified' => true,
             ];
-            $created[] = $mod_strings['LBL_STIC_SERIES_RECTIFIED_NAME'] ?? 'Factura rectificativa';
+            $created[] = $mod_strings['LBL_STIC_SERIES_RECTIFIED_NAME'];
         }
 
         $newLines = '';
@@ -2187,12 +2186,12 @@ class AOS_InvoicesUtils
         }
         $message = '<div style="font-family:inherit;">'
             . '<p style="margin:0 0 12px 0;font-size:14px;font-weight:bold;text-align:center;">'
-            . ($mod_strings['LBL_STIC_SERIES_AUTO_CREATED'] ?? '...') . '</p>'
+            . $mod_strings['LBL_STIC_SERIES_AUTO_CREATED'] . '</p>'
             . $seriesItems
             . '<p style="margin:0 0 12px 0;font-size:13px;color:#555;">'
-            . ($mod_strings['LBL_STIC_SERIES_FORMAT_INFO'] ?? '...') . '</p>'
+            . $mod_strings['LBL_STIC_SERIES_FORMAT_INFO'] . '</p>'
             . '<p style="margin:0;font-size:12px;color:#999;">'
-            . ($mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] ?? '...') . '</p>'
+            . $mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] . '</p>'
             . '</div>';
 
         return ['created' => true, 'message' => $message];

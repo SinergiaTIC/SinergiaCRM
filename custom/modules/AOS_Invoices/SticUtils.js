@@ -253,7 +253,7 @@ function disableDeleteButton() {
     deleteButton.style.cursor = 'not-allowed';
     deleteButton.style.opacity = '0.5';
     deleteButton.onclick = function() {
-      alert(SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_BLOCK_DELETE_MESSAGE") || 'No se puede eliminar una factura que ha sido enviada a la AEAT.');
+      alert(SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_BLOCK_DELETE_MESSAGE"));
       return false;
     };
   }
@@ -267,7 +267,7 @@ function disableDeleteButton() {
       item.style.opacity = '0.5';
       item.onclick = function(e) {
         e.preventDefault();
-        alert(SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_BLOCK_DELETE_MESSAGE") || 'No se puede eliminar una factura que ha sido enviada a la AEAT.');
+        alert(SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_BLOCK_DELETE_MESSAGE"));
         return false;
       };
     }

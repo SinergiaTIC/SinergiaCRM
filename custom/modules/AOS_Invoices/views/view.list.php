@@ -44,7 +44,7 @@ class CustomAOS_InvoicesViewList extends ViewList
             if (empty($mod_strings)) {
                 $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
             }
-            $title = $mod_strings['LBL_STIC_SERIES_CREATED_TITLE'] ?? 'Nuevas series de facturas';
+            $title = $mod_strings['LBL_STIC_SERIES_CREATED_TITLE'];
             echo '<div id="sticSeriesAlert" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:#fff;border:3px solid #5bc0de;border-radius:12px;padding:30px;max-width:520px;box-shadow:0 8px 40px rgba(0,0,0,0.25);font-family:Arial,sans-serif;">
                 <div style="font-size:48px;color:#5bc0de;text-align:center;margin-bottom:15px;">ⓘ</div>
                 <p style="margin:0 0 20px 0;font-size:18px;font-weight:bold;text-align:center;color:#333;">' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</p>
@@ -69,7 +69,7 @@ class CustomAOS_InvoicesViewList extends ViewList
 
             echo '<div class="alert alert-info" style="margin: 10px 0; padding: 12px; border-left: 4px solid #5bc0de; background-color: #d9edf7;">
                 <strong><span class="suitepicon suitepicon-action-info"></span> ' . $verifactuStatus['warning'] . '</strong>
-                <br><a href="index.php?module=stic_Settings&action=index">' . ($mod_strings['LBL_VERIFACTU_ACTIVATED_LINK'] ?? 'Configurar Verifactu') . '</a>
+                <br><a href="index.php?module=stic_Settings&action=index">' . $mod_strings['LBL_VERIFACTU_ACTIVATED_LINK'] . '</a>
             </div>';
         }
         // === End Verifactu Activation Banner ===

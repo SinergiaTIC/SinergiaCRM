@@ -171,8 +171,7 @@ class AOS_InvoicesHook
                         $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
                     }
                     
-                    $errorMsg = $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'] ??
-                        'No se puede modificar una factura ya aceptada por AEAT. Debe crear una factura rectificativa.';
+                    $errorMsg = $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'];
 
                     SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
                     
@@ -284,8 +283,7 @@ class AOS_InvoicesHook
                         $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
                     }
 
-                    $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'] ??
-                        'No se puede cambiar la serie de una factura que ya ha sido enviada a AEAT.';
+                    $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'];
 
                     SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
                     SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
@@ -472,8 +470,7 @@ class AOS_InvoicesHook
 
             $invoiceInfo = !empty($bean->number) ? $bean->number : $bean->id;
             $errorMsg = sprintf(
-                $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'] ??
-                'No se puede continuar porque la selección incluye facturas que ya han sido enviadas a la AEAT: %s.',
+                $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'],
                 $invoiceInfo
             );
 

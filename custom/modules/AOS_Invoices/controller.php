@@ -117,7 +117,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         if (!AOS_InvoicesUtils::isVerifactuActivated()) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Attempt to send invoice to AEAT but Verifactu is not activated.');
-            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_SEND_ERROR'] ?? 'Verifactu no está activado. Active la integración en stic_Settings para poder enviar facturas a la AEAT.'));
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_SEND_ERROR']));
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
             return;
         }
