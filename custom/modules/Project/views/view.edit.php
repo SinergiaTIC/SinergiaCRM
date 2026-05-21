@@ -40,6 +40,34 @@ class CustomProjectViewEdit extends ProjectViewEdit {
         SticViews::preDisplay($this);
 
         // Write here you custom code
+
+        $cancelCustomCode = '{if !empty($smarty.request.return_action) && $smarty.request.return_action == "ProjectTemplatesDetailView" && (!empty($fields.id.value) || !empty($smarty.request.return_id)) }<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="SUGAR.ajaxUI.loadContent(\'index.php?action=ProjectTemplatesDetailView&module={$smarty.request.return_module|escape:\'url\'}&record={$fields.id.value|escape:\'url\'}\'); return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" id="CANCEL{$place}"> {elseif !empty($smarty.request.return_action) && $smarty.request.return_action == "DetailView" && (!empty($fields.id.value) || !empty($smarty.request.return_id)) }<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="SUGAR.ajaxUI.loadContent(\'index.php?action=DetailView&module={$smarty.request.return_module|escape:\'url\'}&record={$fields.id.value|escape:\'url\'}\'); return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" id="CANCEL{$place}"> {elseif $is_template}<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="SUGAR.ajaxUI.loadContent(\'index.php?action=ProjectTemplatesListView&module={$smarty.request.return_module|escape:\'url\'}\'); return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" id="CANCEL{$place}"> {else}<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="SUGAR.ajaxUI.loadContent(\'index.php?action=index&module={$smarty.request.return_module|escape:\'url\'}\'); return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" id="CANCEL{$place}"> {/if}';
+
+        // Replace the Cancel button definition in the form buttons array
+        $buttons = $this->ev->defs['templateMeta']['form']['buttons'] ?? null;
+        if (is_array($buttons)) {
+            foreach ($buttons as $index => $button) {
+                // Detect Cancel button by id or label
+                $isCancelButton = false;
+                if ($button === 'CANCEL') {
+                    $isCancelButton = true;
+                } elseif (is_array($button)) {
+                    if (!empty($button['customCode']) && strpos($button['customCode'], 'LBL_CANCEL_BUTTON_LABEL') !== false) {
+                        $isCancelButton = true;
+                    } elseif (!empty($button['value']) && $button['value'] === 'Cancel') {
+                        $isCancelButton = true;
+                    }
+                }
+
+                if ($isCancelButton) {
+                    // Override Cancel rendering with custom ajaxUI navigation
+                    $this->ev->defs['templateMeta']['form']['buttons'][$index] = array(
+                        'customCode' => $cancelCustomCode,
+                    );
+                    break;
+                }
+            }
+        }
     }
 
     public function display() {
