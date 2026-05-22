@@ -220,7 +220,7 @@ class stic_PaymentsController extends SugarController
      *
      * @return void
      */
-    public function action_notifyUser()
+public function action_notifyUser()
     {
         global $current_user, $mod_strings;
 
@@ -281,6 +281,60 @@ class stic_PaymentsController extends SugarController
         die();
     }
 
+    /**
+     * Create an Invoice from selected Payments
+     *
+     * @return void
+     */
+    public function action_createInvoiceFromPayments()
+    {
+        global $mod_strings;
+
+        $paymentIds = $_REQUEST['payment_ids'] ?? array();
+        if (empty($paymentIds)) {
+            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_NO_PAYMENTS_SELECTED'] . '", "error");</script>');
+            SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
+            return;
+        }
+
+        if (!is_array($paymentIds)) {
+            $paymentIds = array($paymentIds);
+        }
+
+        require_once 'modules/stic_Payments/CreateInvoiceFromPayments.php';
+
+        $payments = CreateInvoiceFromPayments::getPaymentsByIds($paymentIds);
+        if (empty($payments)) {
+            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_NO_PAYMENTS_FOUND'] . '", "error");</script>');
+            SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
+            return;
+        }
+
+        if (!CreateInvoiceFromPayments::validateSamePayer($payments)) {
+            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_PAYER_MISMATCH_ERROR'] . '", "error");</script>');
+            SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
+            return;
+        }
+
+        $alreadyInvoiced = CreateInvoiceFromPayments::validatePaymentsNotInvoiced($payments);
+        if (!empty($alreadyInvoiced)) {
+            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_PAYMENT_ALREADY_INVOICED'] . ': ' . implode(', ', $alreadyInvoiced) . '", "error");</script>');
+            SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
+            return;
+        }
+
+        $payer = CreateInvoiceFromPayments::getPayerInfo($payments);
+        $totalAmount = 0;
+        foreach ($payments as $payment) {
+            $totalAmount += floatval($payment->amount);
+        }
+
+        $this->view = 'createinvoicefrompayments';
+        $this->view_object_map['PAYMENT_IDS'] = $paymentIds;
+        $this->view_object_map['PAYMENTS'] = $payments;
+        $this->view_object_map['PAYER'] = $payer;
+        $this->view_object_map['TOTAL_AMOUNT'] = $totalAmount;
+    }
 
     /**
      * Apply selected organization filters and checks.
