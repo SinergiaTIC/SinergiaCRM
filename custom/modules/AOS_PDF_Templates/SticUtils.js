@@ -22,6 +22,9 @@
 
 var activeFilters = [];
 
+/**
+ * Populates subpanels based on the selected module type
+ */
 function populateSubpanelsFromType() {
     var moduleSelect = document.getElementById('type') || document.getElementById('module_name');
     var moduleName = moduleSelect ? moduleSelect.value : '';
@@ -46,6 +49,9 @@ function populateSubpanelsFromType() {
     populateSubpanelFields();
 }
 
+/**
+ * Populates the field selectors based on the selected subpanel
+ */
 function populateSubpanelFields() {
     var moduleSelect = document.getElementById('type') || document.getElementById('module_name');
     var moduleName = moduleSelect ? moduleSelect.value : '';
@@ -80,6 +86,9 @@ function populateSubpanelFields() {
     }
 }
 
+/**
+ * Inserts a subpanel loop into the template
+ */
 function insertSubpanelLoop() {
     var moduleSelect = document.getElementById('type') || document.getElementById('module_name');
     var moduleName = moduleSelect ? moduleSelect.value : '';
@@ -114,6 +123,10 @@ function insertSubpanelLoop() {
     insertAtCursor(templateContent);
 }
 
+/**
+ * Builds the options string for the subpanel loop
+ * @returns {string}
+ */
 function buildOptionsString() {
     var parts = [];
     
@@ -142,6 +155,9 @@ function buildOptionsString() {
     return parts.join(';');
 }
 
+/**
+ * Adds a filter to the subpanel loop
+ */
 function addSubpanelFilter() {
     var filterField = document.getElementById('subpanel_filter_field');
     var filterOp = document.getElementById('subpanel_filter_op');
@@ -165,11 +181,18 @@ function addSubpanelFilter() {
     filterValue.value = '';
 }
 
+/**
+ * Removes a filter from the subpanel loop
+ * @param {number} index - The index of the filter to remove
+ */
 function removeSubpanelFilter(index) {
     activeFilters.splice(index, 1);
     renderActiveFilters();
 }
 
+/**
+ * Renders the active filters for the subpanel loop
+ */
 function renderActiveFilters() {
     var container = document.getElementById('subpanel_active_filters');
     if (!container) return;
@@ -186,6 +209,9 @@ function renderActiveFilters() {
     container.innerHTML = html;
 }
 
+/**
+ * Inserts a subpanel field into the template
+ */
 function insertSubpanelField() {
     var fieldSelect = document.getElementById('subpanel_field_name');
     var fieldValue = fieldSelect ? fieldSelect.value : '';
@@ -193,6 +219,9 @@ function insertSubpanelField() {
     insertAtCursor(fieldValue);
 }
 
+/**
+ * Inserts an aggregate field into the template
+ */
 function insertAggregateField() {
     var aggFunc = document.getElementById('subpanel_agg_func');
     var fieldSelect = document.getElementById('subpanel_field_name');
@@ -212,6 +241,10 @@ function insertAggregateField() {
     insertAtCursor(placeholder);
 }
 
+/**
+ * Inserts content at the current cursor position
+ * @param {string} content - The content to insert
+ */
 function insertAtCursor(content) {
     var inst = tinyMCE.getInstanceById("description");
     if (inst) {

@@ -104,12 +104,18 @@ class AOS_PDF_Templates extends AOS_PDF_Templates_sugar
     }
     // END STIC-Custom    
 
-    // STIC-Custom - AAM - 20260519 - Preserve subpanel comment tags (<!--$subpanel:...-->) during HTML purification
-    // These comments are used by templateParser for related record loops in PDF templates.
-    // HTMLPurifier strips invalid content between table rows, so we extract subpanel tags
-    // before purification and re-insert them after.
+
     public function cleanBean()
     {
+        // STIC-Custom - AAM - 20260519 - Preserve subpanel comment tags (<!--$subpanel:...-->) during HTML purification
+        // These comments are used by templateParser for related record loops in PDF templates.
+        // HTMLPurifier strips invalid content between table rows, so we extract subpanel tags
+        // before purification and re-insert them after.
+        // parent::cleanBean();
+        // $this->pdfheader = purify_html($this->pdfheader, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+        // $this->description = purify_html($this->description, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+        // $this->pdffooter = purify_html($this->pdffooter, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+        
         // Store subpanel comments before any purification
         $descSubpanels = self::extractSubpanelTags($this->description);
         $headSubpanels = self::extractSubpanelTags($this->pdfheader);

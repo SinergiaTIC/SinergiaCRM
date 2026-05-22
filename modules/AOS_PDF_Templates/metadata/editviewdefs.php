@@ -352,7 +352,7 @@ array (
             'label' => 'LBL_DESCRIPTION',
           ),
         ),
-        7 => 
+        6 => 
         array (
           0 => 
           array (

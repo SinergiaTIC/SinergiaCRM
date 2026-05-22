@@ -33,13 +33,17 @@ class CustomAOS_PDF_TemplatesViewEdit extends AOS_PDF_TemplatesViewEdit
         parent::__construct();
         $this->useForSubpanel = true;
         $this->useModuleQuickCreateTemplate = true;
+        // SuiteCRM modules use singular form for bean names. Plural form is set in SticViews class in order to load the language files
         $this->moduleName = 'AOS_PDF_Templates';
     }
 
     public function preDisplay()
     {
         parent::preDisplay();
+
         SticViews::preDisplay($this);
+
+        // Write here you custom code
     }
 
     public function display()
