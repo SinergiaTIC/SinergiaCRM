@@ -21,6 +21,16 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+$dictionary["AOS_Invoices"]["relationships"]["aos_invoices_stic_payments"] = array(
+    'lhs_module' => 'AOS_Invoices',
+    'lhs_table' => 'aos_invoices',
+    'lhs_key' => 'id',
+    'rhs_module' => 'stic_Payments',
+    'rhs_table' => 'stic_payments',
+    'rhs_key' => 'aos_invoices_id_c',
+    'relationship_type' => 'one-to-many',
+);
+
 $dictionary['AOS_Invoices']['fields']['stic_payments'] = array(
     'name' => 'stic_payments',
     'type' => 'link',
@@ -30,3 +40,6 @@ $dictionary['AOS_Invoices']['fields']['stic_payments'] = array(
     'source' => 'non-db',
     'vname' => 'LBL_STIC_PAYMENTS',
 );
+
+$dictionary['AOS_Invoices']['fields']['line_items']['function']['include'] = 'custom/modules/AOS_Products_Quotes/Line_Items.php';
+$dictionary['AOS_Invoices']['fields']['product_quotes']['function']['include'] = 'custom/modules/AOS_Products_Quotes/Line_Items.php';

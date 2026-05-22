@@ -21,6 +21,17 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+$dictionary['stic_Payments']['fields']['aos_invoices_id_c'] = array(
+    'name' => 'aos_invoices_id_c',
+    'vname' => 'LBL_AOS_INVOICES_ID',
+    'type' => 'id',
+    'required' => false,
+    'reportable' => false,
+    'audited' => false,
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+);
+
 $dictionary['stic_Payments']['fields']['aos_invoices'] = array(
     'name' => 'aos_invoices',
     'type' => 'link',

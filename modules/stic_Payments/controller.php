@@ -292,7 +292,13 @@ public function action_notifyUser()
 
         $paymentIds = $_REQUEST['payment_ids'] ?? array();
         if (empty($paymentIds)) {
-            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_NO_PAYMENTS_SELECTED'] . '", "error");</script>');
+            $uid = $_REQUEST['uid'] ?? '';
+            if (!empty($uid)) {
+                $paymentIds = explode(',', $uid);
+            }
+        }
+        if (empty($paymentIds)) {
+            SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_NO_PAYMENTS_SELECTED']));
             SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
             return;
         }
@@ -305,35 +311,43 @@ public function action_notifyUser()
 
         $payments = CreateInvoiceFromPayments::getPaymentsByIds($paymentIds);
         if (empty($payments)) {
-            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_NO_PAYMENTS_FOUND'] . '", "error");</script>');
+            SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_NO_PAYMENTS_FOUND']));
             SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
             return;
         }
 
         if (!CreateInvoiceFromPayments::validateSamePayer($payments)) {
-            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_PAYER_MISMATCH_ERROR'] . '", "error");</script>');
+            SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_PAYER_MISMATCH_ERROR']));
             SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
             return;
         }
 
         $alreadyInvoiced = CreateInvoiceFromPayments::validatePaymentsNotInvoiced($payments);
         if (!empty($alreadyInvoiced)) {
-            SugarApplication::appendErrorMessage('<script>SUGAR.util.flashMessage("' . $mod_strings['LBL_PAYMENT_ALREADY_INVOICED'] . ': ' . implode(', ', $alreadyInvoiced) . '", "error");</script>');
+            SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_PAYMENT_ALREADY_INVOICED'] . ': ' . implode(', ', $alreadyInvoiced)));
             SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
             return;
         }
 
-        $payer = CreateInvoiceFromPayments::getPayerInfo($payments);
-        $totalAmount = 0;
-        foreach ($payments as $payment) {
-            $totalAmount += floatval($payment->amount);
+        $result = CreateInvoiceFromPayments::createInvoiceFromPayments($paymentIds);
+        if (!$result['success']) {
+            SugarApplication::appendErrorMessage(self::getStyledErrorAlert($result['message']));
+            SugarApplication::redirect('index.php?module=stic_Payments&action=ListView');
+            return;
         }
 
-        $this->view = 'createinvoicefrompayments';
-        $this->view_object_map['PAYMENT_IDS'] = $paymentIds;
-        $this->view_object_map['PAYMENTS'] = $payments;
-        $this->view_object_map['PAYER'] = $payer;
-        $this->view_object_map['TOTAL_AMOUNT'] = $totalAmount;
+        SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($mod_strings['LBL_INVOICE_CREATED_SUCCESS'] . ' ' . $result['invoice_number']));
+        SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $result['invoice_id']);
+    }
+
+    private static function getStyledErrorAlert($message)
+    {
+        return '<div class="alert alert-danger" style="margin: 10px 0; padding: 12px; border-left: 4px solid #d9534f; background-color: #f2dede;">' . $message . '</div>';
+    }
+
+    private static function getStyledSuccessAlert($message)
+    {
+        return '<div class="alert alert-success" style="margin: 10px 0; padding: 12px; border-left: 4px solid #5cb85c; background-color: #dff0d8;">' . $message . '</div>';
     }
 
     /**

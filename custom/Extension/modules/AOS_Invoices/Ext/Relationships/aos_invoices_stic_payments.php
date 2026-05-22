@@ -22,7 +22,11 @@
  */
 
 $relationships[] = array(
-    'rhs_module' => 'AOS_Invoices',
-    'lhs_module' => 'stic_Payments',
+    'lhs_module' => 'AOS_Invoices',
+    'lhs_table' => 'aos_invoices',
+    'lhs_key' => 'id',
+    'rhs_module' => 'stic_Payments',
+    'rhs_table' => 'stic_payments',
+    'rhs_key' => 'aos_invoices_id_c',
     'relationship_type' => 'one-to-many',
 );

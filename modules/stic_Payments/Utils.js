@@ -109,6 +109,12 @@ switch (viewType()) {
 
     createListViewButton(button);
 
+    createListViewButton({
+      id: "createInvoiceFromPayments",
+      text: SUGAR.language.get("stic_Payments", "LBL_CREATE_INVOICE_FROM_PAYMENTS"),
+      onclick: "onClickCreateInvoiceButton()",
+    });
+
     break;
 
   default:
@@ -157,6 +163,17 @@ function onClickAddPaymentsToRemittanceButton() {
   SUGAR.ajaxUI.loadingPanel.show();
   ajaxStatus.showStatus(selectRemittanceAlert);
   document.getElementById("ajaxStatusDiv").style.zIndex = 1040; // No need this line when this PR is merged: https://github.com/salesagility/SuiteCRM/issues/8266
+}
+
+function onClickCreateInvoiceButton() {
+  sugarListView.get_checks();
+  if (sugarListView.get_checks_count() < 1) {
+    alert(alertListView);
+    return false;
+  }
+  document.MassUpdate.action.value = "createInvoiceFromPayments";
+  document.MassUpdate.module.value = "stic_Payments";
+  document.MassUpdate.submit();
 }
 
 /* AUX FUNCTIONS */
