@@ -39,8 +39,6 @@ class CustomAccountsViewDetail extends AccountsViewDetail
         SticViews::preDisplay($this);
 
         // Write here the SinergiaCRM code that must be executed for this module and view
-
-        AccountsUtils::removePrivateAreaPasswordFromDetailDefs($this->dv->defs);
     }
 
     public function display()
