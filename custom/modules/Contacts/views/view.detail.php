@@ -42,6 +42,8 @@ class CustomContactsViewDetail extends ContactsViewDetail
         SticViews::preDisplay($this);
 
         // Write here you custom code
+        // TODO: Encrypt password functionality
+        // ContactsUtils::removePrivateAreaPasswordFromDetailDefs($this->dv->defs);
     }
 
     public function display()
