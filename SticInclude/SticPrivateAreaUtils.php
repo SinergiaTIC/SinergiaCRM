@@ -35,30 +35,11 @@ class SticPrivateAreaUtils
      */
     public static function processBeforeSave($bean)
     {
-        return;
-        // When Portal is being disabled, keep credentials intact
-        if (!self::isPortalEnabledNow($bean) && self::wasPortalEnabled($bean)) {
-            $storedPassword = self::getStoredPortalPassword($bean);
-            $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
-            $bean->_stic_plain_pa_password = '';
-            if ($fetchedPassword !== '') {
-                $bean->stic_pa_password_c = $fetchedPassword;
-            } elseif ($storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
-            }
-            return;
-        }
+        require_once 'SticInclude/SticPasswordManager.php';
 
-        // Skip credential logic when Portal is disabled
+        // When Portal is being disabled or is disabled, delegate password handling to SticPasswordManager
         if (!self::isPortalEnabledNow($bean)) {
-            $storedPassword = self::getStoredPortalPassword($bean);
-            $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
-            $bean->_stic_plain_pa_password = '';
-            if ($fetchedPassword !== '') {
-                $bean->stic_pa_password_c = $fetchedPassword;
-            } elseif ($storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
-            }
+            SticPasswordManager::handlePasswordBeforeSave($bean);
             return;
         }
 
@@ -71,9 +52,8 @@ class SticPrivateAreaUtils
         }
 
         $isBeingEnabled = self::isPortalBeingEnabled($bean);
-        $submittedPassword = (string)($_REQUEST['stic_pa_password_c'] ?? '');
-        $hasSubmittedPassword = (array_key_exists('stic_pa_password_c', $_REQUEST) && $submittedPassword !== '');
-        $storedPassword = self::getStoredPortalPassword($bean);
+        $hasSubmittedPassword = (array_key_exists('stic_pa_password_c', $_REQUEST) && (string)($_REQUEST['stic_pa_password_c'] ?? '') !== '');
+        $storedPassword = SticPasswordManager::getStoredPassword($bean);
         $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
 
         if ($isBeingEnabled && !$hasSubmittedPassword) {
@@ -85,28 +65,13 @@ class SticPrivateAreaUtils
                 $bean->stic_pa_password_c = $storedPassword;
                 $bean->_stic_plain_pa_password = '';
             } else {
-                $generatedPassword = self::generateRandomPassword();
+                $generatedPassword = SticPasswordManager::generateRandomPassword();
                 $bean->_stic_plain_pa_password = $generatedPassword;
                 $bean->stic_pa_password_c = $generatedPassword;
             }
-        } elseif (!$hasSubmittedPassword) {
-            // Keep existing password when it was not changed in the form
-            $bean->_stic_plain_pa_password = '';
-            if ($fetchedPassword !== '') {
-                $bean->stic_pa_password_c = $fetchedPassword;
-            } elseif ($storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
-            }
         } else {
-            // If submitted value is the hidden UI mask/fetched value, keep stored value
-            if ($fetchedPassword !== '' && $submittedPassword === $fetchedPassword && $storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
-                $bean->_stic_plain_pa_password = '';
-            } else {
-                // Admin manually entered a new password in plain text
-                $bean->_stic_plain_pa_password = $submittedPassword;
-                $bean->stic_pa_password_c = $submittedPassword;
-            }
+            // Delegate to SticPasswordManager for normal password handling
+            SticPasswordManager::handlePasswordBeforeSave($bean);
         }
 
         // Prevent duplicate Portal usernames across Accounts and Contacts
@@ -122,7 +87,6 @@ class SticPrivateAreaUtils
      */
     public static function processAfterSave($bean)
     {
-        return;
         // Send only when Portal has just been enabled (0 -> 1)
         if (!self::isPortalBeingEnabled($bean)) {
             return;
@@ -453,27 +417,15 @@ class SticPrivateAreaUtils
     }
 
     /**
-    * Get currently stored Portal password (plain text)
+     * Get currently stored Portal password (plain text)
      *
      * @param SugarBean $bean
      * @return string
      */
     protected static function getStoredPortalPassword($bean)
     {
-        $module = $bean->module_dir ?? '';
-        $id = $bean->id ?? '';
-
-        if (empty($module) || empty($id)) {
-            return '';
-        }
-
-        $storedBean = BeanFactory::getBean($module, $id, ['disable_row_level_security' => true]);
-        if (empty($storedBean) || empty($storedBean->id)) {
-            return '';
-        }
-
-        $password = $storedBean->stic_pa_password_c ?? '';
-        return is_scalar($password) ? (string)$password : '';
+        require_once 'SticInclude/SticPasswordManager.php';
+        return SticPasswordManager::getStoredPassword($bean);
     }
 
     /**
@@ -499,10 +451,7 @@ class SticPrivateAreaUtils
      */
     protected static function generateRandomPassword()
     {
-        try {
-            return bin2hex(random_bytes(6));
-        } catch (\Exception $e) {
-            return substr(md5(uniqid((string)mt_rand(), true)), 0, 12);
-        }
+        require_once 'SticInclude/SticPasswordManager.php';
+        return SticPasswordManager::generateRandomPassword();
     }
 }

@@ -311,12 +311,17 @@ function setupPrivateAreaPasswordField() {
 
 /**
  * Function to enable or disable private area password field based on stic_pa_enable_c
+ * If stic_pa_enable_c is not present in the view, the password field remains editable
  */
 function setupPrivateAreaFields() {
   var checkbox = document.getElementById('stic_pa_enable_c');
   var password = document.getElementById('stic_pa_password_c');
 
-  if (!checkbox || !password) {
+  if (!password) {
+    return;
+  }
+
+  if (!checkbox) {
     return;
   }
 
