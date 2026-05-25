@@ -48,6 +48,7 @@ $mod_strings['LBL_PROSPECTS_DOCUMENTS_1_FROM_PROSPECTS_TITLE'] = 'Público Obxec
 $mod_strings['LBL_STIC_FAMILIES_DOCUMENTS_FROM_STIC_FAMILIES_TITLE'] = 'Unidades familiares';
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organizacións subvencionadas';
 $mod_strings['LBL_STIC_ASSETS_DOCUMENTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
+$mod_strings['LBL_STIC_WHISTLEBLOWING_DOCUMENTS_FROM_STIC_WHISTLEBLOWING_TITLE'] = 'Canal de denúncies';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_DOCUMENTS_ACCOUNTS_NAME'] = 'Organización';

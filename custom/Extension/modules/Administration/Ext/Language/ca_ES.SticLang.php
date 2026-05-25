@@ -105,3 +105,16 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = "Indiqueu la plantilla de cor
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticació OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = "Activa l'autenticació OAuth";
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activeu aquesta opció, els usuaris podran autenticar-se mitjançant OAuth 2.0, a més de poder fer-ho amb usuari i contrasenya. Després d'activar aquesta opció s'haurà de configurar, com a mínim, un dels proveïdors externs. Per a més informació, consulteu la <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentació</a>.";
+
+// Canal de denúncies
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Canal de Denúncies';
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Configuració del Canal de Denúncies (Whistleblowing)';
+$mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'Configuració Canal de Denúncies';
+$mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Gestió de textos de seguretat, confidencialitat i informació general del canal.';
+$mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Administració del Canal de Denúncies';
+$mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Estat de la Integració';
+$mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Activar Canal de Denúncies:';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Sobre el Canal';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Confidencialitat';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Seguretat';
+$mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Gestió de textos i activació del canal.';

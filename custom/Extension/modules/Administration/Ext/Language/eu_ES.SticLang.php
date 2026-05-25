@@ -105,3 +105,16 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de 
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Erabiltzailearekin eta pasahitzarekin batera, aukera hori aktibatzean, erabiltzaileak OAuth 2.0 bidez ere autentifikatu ahal izango dira. Aktibatu ondoren, gutxienez kanpoko hornitzaileetako bat konfiguratu beharko da. Informazio gehiago nahi izanez gero, kontsultatu.';
+
+// Canal de denuncias
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Salaketa Kanala';
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Salaketa Kanalaren konfigurazioa (Whistleblowing)';
+$mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'Salaketa Kanalaren konfigurazioa';
+$mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Segurtasun-testuen, konfidentzialtasunaren eta kanalaren informazio orokorraren kudeaketa.';
+$mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Salaketa Kanalaren administrazioa';
+$mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Integrazioaren egoera';
+$mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Salaketa Kanala aktibatu:';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Kanalari buruz';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Konfidentzialtasuna';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Segurtasuna';
+$mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Testuen kudeaketa eta kanalaren aktibazioa.';

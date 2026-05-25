@@ -54,4 +54,5 @@ $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/Sig
 $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
 
 
-
+// Entry point for whistleblowing
+$entry_point_registry['sticWhistleblowing'] = array('file' => 'custom/include/STIC/EntryPoints/sticWhistleblowing.php','auth' => false);
