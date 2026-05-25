@@ -184,8 +184,8 @@ $mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Formació
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiència laboral';
 
 // Cadenes Àrea Privada
-$mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'àrea privada";
-$mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'àrea privada";
-$mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'àrea privada";
-$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = "Per tal que l'organització pugui accedir a l'àrea privada cal que aquest camp estigui marcat. Si no ho està, no s'hi podrà accedir encara que es disposi de nom d'usuari i contrasenya. En marcar aquest camp, si el paràmetre de configuració <a href='index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11' target='_blank'>PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> està activat, s'enviaran automàticament a l'organització les credencials d'accés. En cas contrari, caldrà fer-ho de forma manual.";
-$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = "Per tal de poder editar la contrasenya cal que el camp 'Activa l'àrea privada' estigui marcat.";
+$mod_strings['LBL_STIC_PORTAL_USERNAME'] = "Usuari de l'àrea privada";
+$mod_strings['LBL_STIC_PORTAL_PASSWORD'] = "Contrasenya de l'àrea privada";
+$mod_strings['LBL_STIC_PORTAL_ENABLE'] = "Activa l'àrea privada";
+$mod_strings['LBL_STIC_PORTAL_ENABLE_HELP'] = "Per tal que l'organització pugui accedir a l'àrea privada cal que aquest camp estigui marcat. Si no ho està, no s'hi podrà accedir encara que es disposi de nom d'usuari i contrasenya. En marcar aquest camp, si el paràmetre de configuració <a href='index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11' target='_blank'>PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> està activat, s'enviaran automàticament a l'organització les credencials d'accés. En cas contrari, caldrà fer-ho de forma manual.";
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_HELP'] = "Per tal de poder editar la contrasenya cal que el camp 'Activa l'àrea privada' estigui marcat.";

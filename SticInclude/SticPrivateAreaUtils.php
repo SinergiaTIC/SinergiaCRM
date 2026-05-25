@@ -38,12 +38,12 @@ class SticPrivateAreaUtils
         // When Portal is being disabled, keep credentials intact
         if (!self::isPortalEnabledNow($bean) && self::wasPortalEnabled($bean)) {
             $storedPassword = self::getStoredPortalPassword($bean);
-            $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
+            $fetchedPassword = (string)($bean->fetched_row['stic_portal_password_c'] ?? '');
             $bean->_stic_plain_pa_password = '';
             if ($fetchedPassword !== '') {
-                $bean->stic_pa_password_c = $fetchedPassword;
+                $bean->stic_portal_password_c = $fetchedPassword;
             } elseif ($storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
+                $bean->stic_portal_password_c = $storedPassword;
             }
             return;
         }
@@ -51,60 +51,60 @@ class SticPrivateAreaUtils
         // Skip credential logic when Portal is disabled
         if (!self::isPortalEnabledNow($bean)) {
             $storedPassword = self::getStoredPortalPassword($bean);
-            $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
+            $fetchedPassword = (string)($bean->fetched_row['stic_portal_password_c'] ?? '');
             $bean->_stic_plain_pa_password = '';
             if ($fetchedPassword !== '') {
-                $bean->stic_pa_password_c = $fetchedPassword;
+                $bean->stic_portal_password_c = $fetchedPassword;
             } elseif ($storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
+                $bean->stic_portal_password_c = $storedPassword;
             }
             return;
         }
 
         // Default username to primary email when empty
-        if (empty($bean->stic_pa_username_c)) {
+        if (empty($bean->stic_portal_username_c)) {
             $primaryEmail = self::getPrimaryEmail($bean);
             if (!empty($primaryEmail)) {
-                $bean->stic_pa_username_c = $primaryEmail;
+                $bean->stic_portal_username_c = $primaryEmail;
             }
         }
 
         $isBeingEnabled = self::isPortalBeingEnabled($bean);
-        $submittedPassword = (string)($_REQUEST['stic_pa_password_c'] ?? '');
-        $hasSubmittedPassword = (array_key_exists('stic_pa_password_c', $_REQUEST) && $submittedPassword !== '');
+        $submittedPassword = (string)($_REQUEST['stic_portal_password_c'] ?? '');
+        $hasSubmittedPassword = (array_key_exists('stic_portal_password_c', $_REQUEST) && $submittedPassword !== '');
         $storedPassword = self::getStoredPortalPassword($bean);
-        $fetchedPassword = (string)($bean->fetched_row['stic_pa_password_c'] ?? '');
+        $fetchedPassword = (string)($bean->fetched_row['stic_portal_password_c'] ?? '');
 
         if ($isBeingEnabled && !$hasSubmittedPassword) {
             // On enable, generate only when no existing password is stored
             if ($fetchedPassword !== '') {
-                $bean->stic_pa_password_c = $fetchedPassword;
+                $bean->stic_portal_password_c = $fetchedPassword;
                 $bean->_stic_plain_pa_password = '';
             } elseif ($storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
+                $bean->stic_portal_password_c = $storedPassword;
                 $bean->_stic_plain_pa_password = '';
             } else {
                 $generatedPassword = self::generateRandomPassword();
                 $bean->_stic_plain_pa_password = $generatedPassword;
-                $bean->stic_pa_password_c = $generatedPassword;
+                $bean->stic_portal_password_c = $generatedPassword;
             }
         } elseif (!$hasSubmittedPassword) {
             // Keep existing password when it was not changed in the form
             $bean->_stic_plain_pa_password = '';
             if ($fetchedPassword !== '') {
-                $bean->stic_pa_password_c = $fetchedPassword;
+                $bean->stic_portal_password_c = $fetchedPassword;
             } elseif ($storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
+                $bean->stic_portal_password_c = $storedPassword;
             }
         } else {
             // If submitted value is the hidden UI mask/fetched value, keep stored value
             if ($fetchedPassword !== '' && $submittedPassword === $fetchedPassword && $storedPassword !== '') {
-                $bean->stic_pa_password_c = $storedPassword;
+                $bean->stic_portal_password_c = $storedPassword;
                 $bean->_stic_plain_pa_password = '';
             } else {
                 // Admin manually entered a new password in plain text
                 $bean->_stic_plain_pa_password = $submittedPassword;
-                $bean->stic_pa_password_c = $submittedPassword;
+                $bean->stic_portal_password_c = $submittedPassword;
             }
         }
 
@@ -307,15 +307,15 @@ class SticPrivateAreaUtils
     }
 
     /**
-     * Detect transition stic_pa_enable_c from false to true
+     * Detect transition stic_portal_enable_c from false to true
      *
      * @param SugarBean $bean
      * @return bool
      */
     protected static function isPortalBeingEnabled($bean)
     {
-        $current = (bool)($bean->stic_pa_enable_c ?? false);
-        $previous = (bool)($bean->fetched_row['stic_pa_enable_c'] ?? false);
+        $current = (bool)($bean->stic_portal_enable_c ?? false);
+        $previous = (bool)($bean->fetched_row['stic_portal_enable_c'] ?? false);
 
         return $current && !$previous;
     }
@@ -328,7 +328,7 @@ class SticPrivateAreaUtils
      */
     protected static function wasPortalEnabled($bean)
     {
-        return (bool)($bean->fetched_row['stic_pa_enable_c'] ?? false);
+        return (bool)($bean->fetched_row['stic_portal_enable_c'] ?? false);
     }
 
     /**
@@ -339,7 +339,7 @@ class SticPrivateAreaUtils
      */
     protected static function isPortalEnabledNow($bean)
     {
-        return (bool)($bean->stic_pa_enable_c ?? false);
+        return (bool)($bean->stic_portal_enable_c ?? false);
     }
 
     /**
@@ -352,7 +352,7 @@ class SticPrivateAreaUtils
      */
     protected static function assertUniquePortalUsername($bean)
     {
-        $username = trim((string)($bean->stic_pa_username_c ?? ''));
+        $username = trim((string)($bean->stic_portal_username_c ?? ''));
         if (empty($username)) {
             return;
         }
@@ -388,8 +388,8 @@ class SticPrivateAreaUtils
                 FROM contacts c
                 INNER JOIN contacts_cstm cc ON cc.id_c = c.id
                 WHERE c.deleted = 0
-                  AND cc.stic_pa_enable_c = 1
-                  AND cc.stic_pa_username_c = '{$usernameQuoted}'
+                  AND cc.stic_portal_enable_c = 1
+                  AND cc.stic_portal_username_c = '{$usernameQuoted}'
 
                 UNION ALL
 
@@ -397,8 +397,8 @@ class SticPrivateAreaUtils
                 FROM accounts a
                 INNER JOIN accounts_cstm ac ON ac.id_c = a.id
                 WHERE a.deleted = 0
-                  AND ac.stic_pa_enable_c = 1
-                  AND ac.stic_pa_username_c = '{$usernameQuoted}'
+                  AND ac.stic_portal_enable_c = 1
+                  AND ac.stic_portal_username_c = '{$usernameQuoted}'
             ) x
             WHERE x.id <> '{$currentIdQuoted}'
             LIMIT 1
@@ -470,7 +470,7 @@ class SticPrivateAreaUtils
             return '';
         }
 
-        $password = $storedBean->stic_pa_password_c ?? '';
+        $password = $storedBean->stic_portal_password_c ?? '';
         return is_scalar($password) ? (string)$password : '';
     }
 

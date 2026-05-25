@@ -164,7 +164,7 @@ function onClickIncorporaSyncButton() {
  * Function to hide or show the placeholders and the value of the private area password field
  */
 function privateAreaPasswordField() {
-  var field = document.getElementById("stic_pa_password_c");
+  var field = document.getElementById("stic_portal_password_c");
   if (!field) {
     return;
   }
@@ -206,7 +206,7 @@ function privateAreaPasswordField() {
     field.removeAttribute("placeholder");
   }
 
-  var checkbox = document.getElementById('stic_pa_enable_c');
+  var checkbox = document.getElementById('stic_portal_enable_c');
   if (checkbox) {
     field.disabled = !checkbox.checked;
     if (!checkbox.checked) {
@@ -228,7 +228,7 @@ function setupPrivateAreaPasswordField() {
   }
 
   var observer = new MutationObserver(function(mutations, obs) {
-    var field = document.getElementById("stic_pa_password_c");
+    var field = document.getElementById("stic_portal_password_c");
     if (field) {
       privateAreaPasswordField();
     }
@@ -238,11 +238,11 @@ function setupPrivateAreaPasswordField() {
 }
 
 /**
- * Function to enable or disable private area password field based on stic_pa_enable_c
+ * Function to enable or disable private area password field based on stic_portal_enable_c
  */
 function setupPrivateAreaFields() {
-  var checkbox = document.getElementById('stic_pa_enable_c');
-  var password = document.getElementById('stic_pa_password_c');
+  var checkbox = document.getElementById('stic_portal_enable_c');
+  var password = document.getElementById('stic_portal_password_c');
 
   if (!checkbox || !password) {
     return;
