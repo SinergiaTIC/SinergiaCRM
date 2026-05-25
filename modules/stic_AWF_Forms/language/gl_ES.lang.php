@@ -22,11 +22,11 @@
  */
 $mod_strings = array (
   'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
-  'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
+  'LBL_ASSIGNED_TO_NAME' => 'Asignado a:',
   'LBL_ASSIGNED_TO' => 'Asignado a',
   'LBL_LIST_ASSIGNED_TO_NAME' => 'Asignado a',
   'LBL_LIST_ASSIGNED_USER' => 'Asignado a',
-  'LBL_CREATED' => 'Creado por',
+  'LBL_CREATED' => 'Creado Por',
   'LBL_CREATED_USER' => 'Creado por',
   'LBL_CREATED_ID' => 'Creado por (ID)',
   'LBL_MODIFIED' => 'Modificado por',
@@ -51,22 +51,22 @@ $mod_strings = array (
   'LBL_LIST_FORM_TITLE' => 'Lista de Formularios Web Avanzados',
   'LBL_MODULE_NAME' => 'Formularios Web Avanzados',
   'LBL_MODULE_TITLE' => 'Formularios Web Avanzados',
-  'LBL_HOMEPAGE_TITLE' => 'Mis Formularios Web Avanzados',
+  'LBL_HOMEPAGE_TITLE' => 'Os Meus Formularios Web Avanzados',
   'LNK_NEW_RECORD' => 'Crear un Formulario Web Avanzado',
   'LNK_LIST' => 'Ver Formularios Web Avanzados',
   'LNK_IMPORT_stic_AWF_Forms' => 'Importar Formularios Web Avanzados',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Formularios Web Avanzados',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_NEW_FORM_TITLE' => 'Nuevo Formulario Web Avanzado',
+  'LBL_NEW_FORM_TITLE' => 'Novo Formulario Web Avanzado',
 
-  'LBL_DEFAULT_PANEL' => 'Datos generales',
-  'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
+  'LBL_DEFAULT_PANEL' => 'Datos xerais',
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
 
   // -- MODULE FIELDS --
   'LBL_STATUS' => 'Estado',
-  'LBL_START_DATE' => 'Fecha de inicio',
-  'LBL_END_DATE' => 'Fecha de fin',
+  'LBL_START_DATE' => 'Data de inicio',
+  'LBL_END_DATE' => 'Data de fin',
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Modo de procesamiento',
   'LBL_PROCESSING_MODE_DESC' => 'Define cómo se gestionan las respuestas recibidas. En modo síncrono las respuestas se almacenan y se procesan al recibirse. En modo asíncrono las respuestas se almacenan al recibirse y se procesan posteriormente mediante un proceso en segundo plano, lo que puede ser de interés para optimizar el rendimiento del sistema en casos de gran afluencia.',
@@ -109,7 +109,7 @@ $mod_strings = array (
   'LBL_WIZARD_DESC_STEP5' => 'Revisión y activación del formulario. Permite activar la recepción de respuestas, obtener el enlace de acceso público o descargar el código HTML para integrarlo en una página web externa.',
 
   // General buttons
-  'LBL_BUTTON_ADD' => 'Añadir',
+  'LBL_BUTTON_ADD' => 'Engadir',
   'LBL_BUTTON_EDIT' => 'Editar',
   'LBL_BUTTON_DELETE' => 'Eliminar',
   'LBL_BUTTON_MOVE_UP' => 'Mover arriba',
