@@ -27,6 +27,8 @@ class AOS_InvoicesHook
     {
         global $sugar_config, $mod_strings;
 
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+
         // === Step 1.3: Clear number on duplicate to avoid AEAT duplicate error ===
         // When duplicating, SuiteCRM copies all fields including number
         // We must reset it so a new number is generated at send time

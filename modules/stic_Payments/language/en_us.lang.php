@@ -166,5 +166,6 @@ $mod_strings = array(
     'LBL_SELECTED_PAYMENTS' => 'Selected payments',
     'LBL_PAYER' => 'Payer',
     'LBL_AOS_INVOICES' => 'Invoices',
+    'LBL_AOS_INVOICES_NAME' => 'Invoice',
     'LBL_INVOICE_CREATED_SUCCESS' => 'Invoice successfully created.',
 );

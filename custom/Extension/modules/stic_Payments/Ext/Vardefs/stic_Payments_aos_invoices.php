@@ -30,6 +30,24 @@ $dictionary['stic_Payments']['fields']['aos_invoices_id_c'] = array(
     'audited' => false,
     'importable' => 'true',
     'duplicate_merge' => 'disabled',
+    'studio' => 'visible',
+);
+
+$dictionary['stic_Payments']['fields']['aos_invoices_name_c'] = array(
+    'name' => 'aos_invoices_name_c',
+    'vname' => 'LBL_AOS_INVOICES_NAME',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'id_name' => 'aos_invoices_id_c',
+    'link' => 'aos_invoices',
+    'module' => 'AOS_Invoices',
+    'rname' => 'name',
+    'quicksearch' => 'enabled',
+    'studio' => 'visible',
+    'required' => false,
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'len' => 255,
 );
 
 $dictionary['stic_Payments']['fields']['aos_invoices'] = array(

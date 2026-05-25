@@ -41,5 +41,4 @@ $dictionary['AOS_Invoices']['fields']['stic_payments'] = array(
     'vname' => 'LBL_STIC_PAYMENTS',
 );
 
-$dictionary['AOS_Invoices']['fields']['line_items']['function']['include'] = 'custom/modules/AOS_Products_Quotes/Line_Items.php';
-$dictionary['AOS_Invoices']['fields']['product_quotes']['function']['include'] = 'custom/modules/AOS_Products_Quotes/Line_Items.php';
+

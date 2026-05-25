@@ -155,7 +155,7 @@ class CreateInvoiceFromPayments
         $invoice->name = $invoiceData['name'] ?? ($payerName ? $payerName . $payerType . ' ' . $invoiceDate : $invoiceDate);
         $invoice->invoice_date = $invoiceDate;
         $invoice->due_date = $invoiceData['due_date'] ?? null;
-        $invoice->status = 'Draft';
+        $invoice->status = 'draft';
         $invoice->assigned_user_id = $current_user->id;
 
         if (!empty($payer['account_id'])) {
