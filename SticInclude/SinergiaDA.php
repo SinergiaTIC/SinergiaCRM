@@ -591,8 +591,8 @@ class ExternalReporting
                                         'column' => $fieldV['name'],
                                         'type' => 'text',
                                         'aggregations' => 'count,count_distinct,none',
-                                        'label' => $fieldV['label'],
-                                        'description' => addslashes($fieldV['label']),
+                                        'label' => "{$fieldV['label']} ({$relatedModuleName})",
+                                        'description' => addslashes("{$fieldV['label']} ({$relatedModuleName})"),
                                         'sda_hidden' => 0,
                                         'stic_type' => $fieldV['type'] . '-name',
                                     ]
@@ -608,7 +608,7 @@ class ExternalReporting
                                         'target_table' => "{$this->viewPrefix}_{$fieldV['targetModule']}",
                                         'target_column' => 'id',
                                         'info' => 'relate',
-                                        'label' => "{$fieldV['label']}|{$txModuleName}",
+                                        'label' => "{$fieldV['label']} ({$relatedModuleName})|{$relatedModuleName}",
                                     ]
                                 );
                             }
