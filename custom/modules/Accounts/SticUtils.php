@@ -83,7 +83,7 @@ class AccountsUtils
 
                 foreach ($row as $index => $cell) {
                     $fieldName = is_array($cell) ? ($cell['name'] ?? '') : $cell;
-                    if ($fieldName === 'stic_portal_password_c') {
+                    if ($fieldName === 'stic_pa_password_c') {
                         $row[$index] = array(); // Set to empty string instead of unsetting to avoid issues with array keys in the layout definitions
                     }
                 }

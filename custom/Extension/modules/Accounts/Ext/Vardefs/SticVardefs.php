@@ -2081,10 +2081,10 @@ $dictionary['Account']['fields']['emails_list'] = array(
 );
 
 // Private Area fields
-$dictionary['Account']['fields']['stic_portal_username_c'] = array(
-    'name' => 'stic_portal_username_c',
-    'id' => 'Accountsstic_portal_username_c',
-    'vname' => 'LBL_STIC_PORTAL_USERNAME',
+$dictionary['Account']['fields']['stic_pa_username_c'] = array(
+    'name' => 'stic_pa_username_c',
+    'id' => 'Accountsstic_pa_username_c',
+    'vname' => 'LBL_STIC_PA_USERNAME',
     'type' => 'varchar',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2101,10 +2101,10 @@ $dictionary['Account']['fields']['stic_portal_username_c'] = array(
     'merge_filter' => 'disabled',
 );
 
-$dictionary['Account']['fields']['stic_portal_password_c'] = array(
-    'name' => 'stic_portal_password_c',
-    'id' => 'Accountsstic_portal_password_c',
-    'vname' => 'LBL_STIC_PORTAL_PASSWORD',
+$dictionary['Account']['fields']['stic_pa_password_c'] = array(
+    'name' => 'stic_pa_password_c',
+    'id' => 'Accountsstic_pa_password_c',
+    'vname' => 'LBL_STIC_PA_PASSWORD',
     'type' => 'encrypt',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2127,13 +2127,13 @@ $dictionary['Account']['fields']['stic_portal_password_c'] = array(
         'popupsearch' => false,
         'quickcreate' => false,
     ),
-    'popupHelp' => 'LBL_STIC_PORTAL_PASSWORD_HELP',
+    'popupHelp' => 'LBL_STIC_PA_PASSWORD_HELP',
 );
 
-$dictionary['Account']['fields']['stic_portal_enable_c'] = array(
-    'name' => 'stic_portal_enable_c',
-    'id' => 'Accountsstic_portal_enable_c',
-    'vname' => 'LBL_STIC_PORTAL_ENABLE',
+$dictionary['Account']['fields']['stic_pa_enable_c'] = array(
+    'name' => 'stic_pa_enable_c',
+    'id' => 'Accountsstic_pa_enable_c',
+    'vname' => 'LBL_STIC_PA_ENABLE',
     'type' => 'bool',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2147,5 +2147,5 @@ $dictionary['Account']['fields']['stic_portal_enable_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'popupHelp' => 'LBL_STIC_PORTAL_ENABLE_HELP',
+    'popupHelp' => 'LBL_STIC_PA_ENABLE_HELP',
 );
