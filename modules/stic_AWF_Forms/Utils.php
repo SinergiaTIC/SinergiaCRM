@@ -89,7 +89,8 @@ class stic_AWF_FormsUtils {
                         // If it's the reverse part of a bidirectional relationship already seen, skip it
                         if (!empty($relName) && isset($seen_relationships[$relName])) continue;
 
-                        $link_defs[$fieldName] = $arr;
+                        $compoundKey = "{$moduleOrigName}__{$fieldName}";
+                        $link_defs[$compoundKey] = $arr;
                         
                         $destModule = $arr['module'] ?? '';
                         if (empty($destModule) && $beanOrig->load_relationship($fieldName)) {
@@ -97,11 +98,11 @@ class stic_AWF_FormsUtils {
                         }
 
                         if (!empty($destModule) && isset($moduleScan['availableDest'][$destModule]) && $destModule !== 'EmailAddress') {
-                            if (!isset($result['relationships'][$fieldName])) {
-                                if (!empty($relName)) $seen_relationships[$relName] = true; // Mark as seen
+                            if (!isset($result['relationships'][$compoundKey])) {
+                                if (!empty($relName)) $seen_relationships[$relName] = true;
                                 
-                                $result['relationships'][$fieldName] = [
-                                    'name' => $fieldName,
+                                $result['relationships'][$compoundKey] = [
+                                    'name' => $compoundKey,
                                     'text' => '',
                                     'module_orig' => $moduleOrigName,
                                     'field_orig' => $fieldName,
@@ -123,6 +124,7 @@ class stic_AWF_FormsUtils {
                     if (in_array($arr['type'], $excludedTypes)) continue;
 
                     if ($moduleOrigName == $moduleName) {
+                        $isEmail = self::isEmailField($arr, $fieldName);
                         // Add field information
                         // name, text, type, required, default, options, inViews
                         $result['fields'][$fieldName] = [
@@ -142,11 +144,12 @@ class stic_AWF_FormsUtils {
                     // Process relate fields pointing to links as relationships, but only if they point to available modules (and are not EmailAddress, which is a special module not usable in AWF)
                     if ($arr['type'] == 'relate' && isset($arr['link'])) {
                         $linkName = $arr['link'];
+                        $compoundKey = "{$moduleOrigName}__{$linkName}";
                         $relName = $beanOrig->field_defs[$linkName]['relationship'] ?? '';
 
                         // If we have already added the link to the results list, update the source field (UI)
-                        if (isset($result['relationships'][$linkName])) {
-                            $result['relationships'][$linkName]['field_orig'] = $fieldName;
+                        if (isset($result['relationships'][$compoundKey])) {
+                            $result['relationships'][$compoundKey]['field_orig'] = $fieldName;
                             continue;
                         }
 
@@ -162,11 +165,11 @@ class stic_AWF_FormsUtils {
 
                         if (empty($destModule) || $destModule == 'EmailAddress' || !isset($moduleScan['availableDest'][$destModule])) continue;
 
-                        if (!isset($result['relationships'][$linkName])) {
+                        if (!isset($result['relationships'][$compoundKey])) {
                             if (!empty($relName)) $seen_relationships[$relName] = true;
                             
-                            $result['relationships'][$linkName] = [
-                                'name' => $linkName,
+                            $result['relationships'][$compoundKey] = [
+                                'name' => $compoundKey,
                                 'text' => '',
                                 'module_orig' => $moduleOrigName,
                                 'field_orig' => $fieldName,
@@ -309,7 +312,8 @@ class stic_AWF_FormsUtils {
                         $relName = $arr['relationship'] ?? '';
                         if (!empty($relName) && isset($seen_relationships[$relName])) continue;
 
-                        $link_defs[$fieldName] = $arr;
+                        $compoundKey = "{$moduleOrigName}__{$fieldName}";
+                        $link_defs[$compoundKey] = $arr;
                         $destModule = $arr['module'] ?? '';
                         
                         if (empty($destModule) && $moduleOrig->load_relationship($fieldName)) {
@@ -317,10 +321,10 @@ class stic_AWF_FormsUtils {
                         }
 
                         if (!empty($destModule) && isset($moduleScan['availableDest'][$destModule]) && $destModule !== 'EmailAddress') {
-                            if (!isset($result[$fieldName])) {
+                            if (!isset($result[$compoundKey])) {
                                 if (!empty($relName)) $seen_relationships[$relName] = true;
-                                $result[$fieldName] = [
-                                    'name' => $fieldName,
+                                $result[$compoundKey] = [
+                                    'name' => $compoundKey,
                                     'text' => '',
                                     'module_orig' => $moduleOrigName,
                                     'field_orig' => $fieldName,
@@ -334,10 +338,11 @@ class stic_AWF_FormsUtils {
 
                     if ($arr['type'] == 'relate' && isset($arr['link'])) {
                         $linkName = $arr['link'];
+                        $compoundKey = "{$moduleOrigName}__{$linkName}";
                         $relName = $moduleOrig->field_defs[$linkName]['relationship'] ?? '';
 
-                        if (isset($result[$linkName])) {
-                            $result[$linkName]['field_orig'] = $fieldName;
+                        if (isset($result[$compoundKey])) {
+                            $result[$compoundKey]['field_orig'] = $fieldName;
                             continue;
                         }
 
@@ -352,10 +357,10 @@ class stic_AWF_FormsUtils {
 
                         if (empty($destModule) || $destModule == 'EmailAddress' || !isset($moduleScan['availableDest'][$destModule])) continue;
                         
-                        if (!isset($result[$linkName])) {
+                        if (!isset($result[$compoundKey])) {
                             if (!empty($relName)) $seen_relationships[$relName] = true;
-                            $result[$linkName] = [
-                                'name' => $linkName,
+                            $result[$compoundKey] = [
+                                'name' => $compoundKey,
                                 'text' => '',
                                 'module_orig' => $moduleOrigName,
                                 'field_orig' => $fieldName,
@@ -413,7 +418,8 @@ class stic_AWF_FormsUtils {
                     $relName = $arr['relationship'] ?? '';
                     if (!empty($relName) && isset($seen_relationships[$relName])) continue;
 
-                    $link_defs[$fieldName] = $arr;
+                    $compoundKey = "{$moduleName}__{$fieldName}";
+                    $link_defs[$compoundKey] = $arr;
                     $destModule = $arr['module'] ?? '';
                     
                     if (empty($destModule) && $module->load_relationship($fieldName)) {
@@ -421,10 +427,10 @@ class stic_AWF_FormsUtils {
                     }
 
                     if (!empty($destModule) && isset($availableModules[$destModule]) && $destModule !== 'EmailAddress') {
-                        if (!isset($result[$fieldName])) {
+                        if (!isset($result[$compoundKey])) {
                             if (!empty($relName)) $seen_relationships[$relName] = true;
-                            $result[$fieldName] = [
-                                'name' => $fieldName,
+                            $result[$compoundKey] = [
+                                'name' => $compoundKey,
                                 'text' => '',
                                 'module_orig' => $moduleName,
                                 'field_orig' => $fieldName,
@@ -438,10 +444,11 @@ class stic_AWF_FormsUtils {
             
                 if ($arr['type'] == 'relate' && isset($arr['link'])) {
                     $linkName = $arr['link'];
+                    $compoundKey = "{$moduleName}__{$linkName}";
                     $relName = $module->field_defs[$linkName]['relationship'] ?? '';
 
-                    if (isset($result[$linkName])) {
-                        $result[$linkName]['field_orig'] = $fieldName;
+                    if (isset($result[$compoundKey])) {
+                        $result[$compoundKey]['field_orig'] = $fieldName;
                         continue;
                     }
 
@@ -456,10 +463,10 @@ class stic_AWF_FormsUtils {
 
                     if (empty($destModule) || $destModule == 'EmailAddress' || !isset($availableModules[$destModule])) continue;
             
-                    if (!isset($result[$linkName])) {
+                    if (!isset($result[$compoundKey])) {
                         if (!empty($relName)) $seen_relationships[$relName] = true;
-                        $result[$linkName] = [
-                            'name' => $linkName,
+                        $result[$compoundKey] = [
+                            'name' => $compoundKey,
                             'text' => '',
                             'module_orig' => $moduleName,
                             'field_orig' => $fieldName,
