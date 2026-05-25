@@ -352,9 +352,11 @@ class ExternalReporting
 
                 $fieldPrefix = ($fieldV['source'] ?? null) == 'custom_fields' ? 'c' : 'm';
 
-                // If the field is excluded, skip it
+                // If the field is excluded, skip it unless it belongs to a self-referencing relationship (auto-relationship)
                 if (in_array($fieldV['name'], $this->evenExcludedFields)) {
-                    continue;
+                    if (($fieldV['module'] ?? null) != $moduleName) {
+                        continue;
+                    }
                 }
 
                 // Conditionally controls the visibility of fields in the detail view:
@@ -468,6 +470,12 @@ class ExternalReporting
                                     $fieldV['rLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE', $fieldV['module']);
                                     $fieldV['lLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_L_TITLE', $fieldV['module']);
                                     $fieldV['autoRelJoinModuleRelLabel'] = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE';
+                                    // Resolve the actual relationship name from the link field definition
+                                    // (needed when the link field name differs from the relationship name, e.g. member_of vs member_accounts)
+                                    $linkFieldDef = $moduleBean->getFieldDefinitions()[$fieldV['link']] ?? null;
+                                    if ($linkFieldDef && !empty($linkFieldDef['relationship'])) {
+                                        $fieldV['rel_name'] = $linkFieldDef['relationship'];
+                                    }
                                     $autoRelationships[$fieldV['link']] = $fieldV;
                                     $this->autoRelationshipsRegistered[$fieldV['link']] = $fieldV['table'];
                                 }
@@ -508,7 +516,11 @@ class ExternalReporting
                                 $indexesToCreate[] = $fieldV['alias'];
 
                                 if (!empty($fieldSrc)) {
-                                    $fieldList['related'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
+                                    // Skip adding to related field list for auto-relationships,
+                                    // the auto-relationship view already adds the column via parentIdfieldSrc
+                                    if (empty($fieldV['isAutoRelationship'])) {
+                                        $fieldList['related'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
+                                    }
                                 } else {
                                     $fieldList['failedRelations'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
                                 }
@@ -1275,7 +1287,9 @@ class ExternalReporting
 
         $tableLabel = empty($tableLabel) ? '-' : $tableLabel;
         // **Retrieve relationship information:**
-        $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
+        // Use the resolved relationship name if available (for cases where link field name differs from relationship name)
+        $relName = $field['rel_name'] ?? $field['link'];
+        $rel = $db->fetchOne("select * from relationships where relationship_name='{$relName}'");
 
         // **Check if necessary information is present for standard join:**
         if (!empty($rel['join_table']) && !empty($rel['join_key_lhs']) && !empty($rel['join_key_rhs'])) {
@@ -1362,21 +1376,26 @@ class ExternalReporting
         } else {
             // **Handle cases where no join table is used:**
 
-            // Check for one-to-many relationship with the current table
-            $sql = "SELECT * FROM relationships WHERE (lhs_table='{$tableName}' OR rhs_table='{$tableName}') AND (lhs_table='{$field['table']}' OR rhs_table='{$field['table']}') AND relationship_type='one-to-many'";
-            $rel = $db->fetchOne($sql);
-
-            if ($rel) {
+            // Use the relationship data already retrieved from the first query (by relationship_name).
+            // The first query already found the correct relationship; we just need to verify
+            // it is one-to-many. Avoid re-querying by table names, which is ambiguous for
+            // self-referencing relationships where both sides use the same table.
+            if ($rel && !empty($rel['relationship_type']) && $rel['relationship_type'] == 'one-to-many') {
                 // One-to-many relationship - use direct join
                 $res['field'] = "m.{$field['id_name']}";
                 $res['leftJoin'] = " LEFT JOIN {$field['table']} ON {$field['table']}.id=m.{$field['id_name']} AND {$field['table']}.deleted=0 ";
 
                 // Add metadata record
+                // For auto-relationships, source_table points to the N-side view (e.g. sda_accounts_member_of)
+                // since the parent_id column resides there, not in the main view.
+                $relSourceTable = $isAutoRelationship
+                    ? $this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$field['link']}", 64)
+                    : "{$this->viewPrefix}_{$tableName}";
                 $this->addMetadataRecord(
                     'sda_def_relationships',
                     [
                         'id' => $field['link'],
-                        'source_table' => "{$this->viewPrefix}_{$tableName}",
+                        'source_table' => $relSourceTable,
                         'source_column' => $field['id_name'],
                         'target_table' => "{$this->viewPrefix}_{$field['table']}",
                         'target_column' => 'id',
@@ -1384,6 +1403,11 @@ class ExternalReporting
                         'label' => "{$field['label']}|{$tableLabel}",
                     ]
                 );
+
+                // For one-to-many auto-relationships without join table, set the N-side view data
+                if ($isAutoRelationship) {
+                    $res['fieldForAutoRelationshipsNSide'] = "m.{$rel['rhs_key']}";
+                }
 
                 return $res;
 
