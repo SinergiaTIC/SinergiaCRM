@@ -25,11 +25,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 $hook_array['before_save'][] = Array(
-    99, 
+    1, 
     'Num_secuencial', 
-    'custom/Extension/modules/stic_FollowUps/Ext/LogicHooksCode/FollowUps_Incremental.php', 
-    'FollowUps_Incremental', 
+    'custom/Extension/modules/stic_Whistleblowing/Ext/LogicHooksCode/whistleblowingIncremental.php', 
+    'Whistleblowing_Incremental', 
     'incremental'
 );
-$hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_FollowUps/LogicHooksCode.php', 'stic_FollowUpsLogicHooks', 'before_save');
 

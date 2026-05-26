@@ -63,4 +63,5 @@ $entry_point_registry['stic_AWF_webhookHanlder'] = array('file' => 'modules/stic
 // Entry point for async ListView count
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
 
-
+// Entry point for whistleblowing
+$entry_point_registry['sticWhistleblowing'] = array('file' => 'custom/include/STIC/EntryPoints/sticWhistleblowing.php','auth' => false);

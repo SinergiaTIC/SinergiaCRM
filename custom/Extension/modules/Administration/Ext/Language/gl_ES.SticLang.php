@@ -105,3 +105,16 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de corr
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Aa activar esta opción os usuarios poderán autenticarse mediante OAuth 2.0, ademais de facelo con usuario e contraseña. Despois de activala deberase configurar polo menos un dos proveedores externos. Para máis información, consulte a <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
+
+// Canle de Denuncias
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Canle de Denuncias';
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Configuración da Canle de Denuncias (Whistleblowing)';
+$mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'Configuración Canle de Denuncias';
+$mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Xestión de textos de seguridade, confidencialidade e información xeral da canle.';
+$mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Administración da Canle de Denuncias';
+$mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Estado da Integración';
+$mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Activar Canle de Denuncias:';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Sobre a Canle';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Confidencialidade';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Seguridade';
+$mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Xestión de textos e activación da canle.';
