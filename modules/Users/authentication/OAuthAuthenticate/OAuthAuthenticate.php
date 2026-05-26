@@ -212,6 +212,10 @@ class OAuthAuthenticate extends SugarAuthenticate
                     $_SESSION['login_error'] = $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] . $email . $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'];
                     return false;
                 }
+                if($userBean->status == 'Inactive') {
+                    $_SESSION['login_error'] = $mod_strings['LBL_OAUTH_AUTH_ERR_INACTIVE_USER'];
+                    return false;
+                }
                 $this->userAuthenticate->loadUserOnSession($userBean->id);
 
 	            return $this->postLoginAuthenticate();
