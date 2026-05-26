@@ -44,7 +44,7 @@ class stic_AWF_Response_Details extends Basic
     public $new_schema = true;
     public $module_dir = 'stic_AWF_Response_Details';
     public $object_name = 'stic_AWF_Response_Details';
-    public $table_name = 'stic_AWF_Response_Details';
+    public $table_name = 'stic_awf_response_details';
     public $importable = false;
 
     public $id;

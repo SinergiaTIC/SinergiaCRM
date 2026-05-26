@@ -39,7 +39,7 @@
  */
 
 $dictionary['stic_AWF_Responses'] = array(
-    'table' => 'stic_AWF_Responses',
+    'table' => 'stic_awf_responses',
     'audited' => false,
     'inline_edit' => false,
     'duplicate_merge' => false,
@@ -259,7 +259,7 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_1bb8ponses_name"] = array (
   'save' => true,
   'id_name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
   'link' => 'stic_69c1s_responses',
-  'table' => 'stic_AWF_Forms',
+  'table' => 'stic_awf_forms',
   'module' => 'stic_AWF_Forms',
   'rname' => 'name',
 );
