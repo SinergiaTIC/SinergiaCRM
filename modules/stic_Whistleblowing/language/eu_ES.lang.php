@@ -114,4 +114,5 @@ $mod_strings = array (
   'LBL_HARASSMENT' => 'Jazarpena',
   'LBL_DATA_PRIVACY' => 'Datuen pribatutasuna',
   'LBL_OTHERS' => 'Besterik',
+  'LBL_START_DATE' => 'Gertaeren data',
 );

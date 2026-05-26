@@ -29,13 +29,18 @@ $db = DBManagerFactory::getInstance();
 
 // 1. Processament de CREACIÓ
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accepta_condicions_c'])) {
-    // ... (Mantinc tot el teu codi de creació intacte) ...
+
+    require_once 'modules/stic_Settings/Utils.php';
+    $allowed_users_str = stic_SettingsUtils::getSetting('WHISTLEBLOWING_ALLOWED_USERS');
+    $allowed_users = array_map('trim', explode(',', $allowed_users_str));
+    
     $bean = BeanFactory::newBean('stic_Whistleblowing');
     $bean->name = t('LBL_CANAL_TITOL') . ": " . $_POST['type'];
     $bean->description = $_POST['description'];
-    $bean->stic_status = 'pending';
-    $bean->assigned_user_id = '000001ce-cfd0-62ad-8705-6a034c4ec656';
+    $bean->stic_status = 'new';
+    $bean->assigned_user_id = !empty($allowed_users[0]) ? $allowed_users[0] : '';
     $bean->stic_category = $_POST['category'];
+    $bean->stic_start_date = $_POST['stic_start_date'];
     $bean->type = $_POST['type'];
     $bean->accepta_condicions_c = 1;
 
@@ -196,6 +201,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action_type']) && $_P
             <div class="form-group">
                 <label><?php echo t('LBL_MOTIU'); ?></label>
                 <input type="text" name="type" required>
+            </div>
+            <div class="form-group">
+                <label><?php echo t('LBL_START_DATE'); ?></label>
+                <input type="date" id="stic_start_date" name="stic_start_date" class="form-control" required>
             </div>
             <div class="form-group">
                 <label><?php echo t('LBL_DESCRIPCIO'); ?></label>

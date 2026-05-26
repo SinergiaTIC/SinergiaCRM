@@ -131,6 +131,7 @@ $beanList['stic_Places'] = 'stic_Places';
 $beanList['stic_Transactions'] = 'stic_Transactions';
 $beanList['stic_Financial_Products'] = 'stic_Financial_Products';
 $beanList['stic_Assets'] = 'stic_Assets';
+$beanList['stic_Whistleblowing'] = 'stic_Whistleblowing';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -188,6 +189,7 @@ $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
 $beanFiles['stic_Transactions'] = 'modules/stic_Transactions/stic_Transactions.php';
 $beanFiles['stic_Financial_Products'] = 'modules/stic_Financial_Products/stic_Financial_Products.php';
 $beanFiles['stic_Assets'] = 'modules/stic_Assets/stic_Assets.php';
+$beanFiles['stic_Whistleblowing'] = 'modules/stic_Whistleblowing/stic_Whistleblowing.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -202,6 +204,7 @@ $modInvisList[] = 'stic_Custom_View_Customizations';
 $modInvisList[] = 'stic_Custom_View_Conditions';
 $modInvisList[] = 'stic_Custom_View_Actions';
 $modInvisList[] = 'stic_MessagesMan';
+$modInvisList[] = 'stic_Whistleblowing';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';

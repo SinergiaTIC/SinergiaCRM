@@ -67,6 +67,7 @@ $whistleblowingConfig = [
     'whistleblowing_text_about'           => $sugar_config['whistleblowing_text_about'] ?? '',
     'whistleblowing_text_confidentiality' => $sugar_config['whistleblowing_text_confidentiality'] ?? '',
     'whistleblowing_text_security'        => $sugar_config['whistleblowing_text_security'] ?? '',
+    'whistleblowing_url'                => $sugar_config['site_url'] . '/index.php?module=stic_Whistleblowing',
 ];
 $sugar_smarty->assign('config', $whistleblowingConfig);
 

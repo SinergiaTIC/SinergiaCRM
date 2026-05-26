@@ -4035,5 +4035,11 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensaxes';
 
+// Estados del canal de denuncias
+$app_list_strings['stic_whistleblowing_status_list']['new'] = 'Novo';
+$app_list_strings['stic_whistleblowing_status_list']['working'] = 'En proceso de revisión';
+$app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Resolto';
+$app_list_strings['stic_whistleblowing_status_list']['arxivat'] = 'Arquivado';
+
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

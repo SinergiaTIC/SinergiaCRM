@@ -109,8 +109,8 @@ $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Erabiltzailearekin eta pasahitzare
 // Canal de denuncias
 $mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Salaketa Kanala';
 $mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Salaketa Kanalaren konfigurazioa (Whistleblowing)';
-$mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'Salaketa Kanalaren konfigurazioa';
-$mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Segurtasun-testuen, konfidentzialtasunaren eta kanalaren informazio orokorraren kudeaketa.';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_TITLE'] = 'Salaketa-kanalera sartu';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_HELP'] = 'Gaitutako erabiltzaileek soilik izango dute sarbidea.';
 $mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Salaketa Kanalaren administrazioa';
 $mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Integrazioaren egoera';
 $mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Salaketa Kanala aktibatu:';

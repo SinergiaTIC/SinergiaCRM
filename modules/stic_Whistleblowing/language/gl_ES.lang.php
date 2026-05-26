@@ -114,4 +114,5 @@ $mod_strings = array (
   'LBL_HARASSMENT' => 'Acoso',
   'LBL_DATA_PRIVACY' => 'Privacidade de datos',
   'LBL_OTHERS' => 'Outros',
+  'LBL_START_DATE' => 'Data dos feitos',
 );

@@ -109,9 +109,8 @@ $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Al activar esta opción los usuari
 // Canal de denúncies
 $mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Canal de Denuncias';
 $mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Configuración del Canal de Denuncias (Whistleblowing)';
-$mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'Configuración Canal de Denuncias';
-$mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Gestión de textos de seguridad, confidencialidad e información general del canal.';
-$mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Administración del Canal de Denuncias';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_TITLE'] = 'Acceder al canal de denuncias';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_HELP'] = 'Sólo los usuarios habilitados podrán tener acceso.';$mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Administración del Canal de Denuncias';
 $mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Estado de la Integración';
 $mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Activar Canal de Denuncias:';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Sobre el Canal';

@@ -109,8 +109,8 @@ $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'When enabling this option users wi
 // Whistleblowing configuration
 $mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Whistleblowing Channel';
 $mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Whistleblowing Channel Configuration';
-$mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'Whistleblowing Configuration';
-$mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Management of security, confidentiality, and general channel information texts.';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_TITLE'] = 'Access the whistleblowing channel';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_HELP'] = 'Only authorized users will be able to access.';
 $mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Whistleblowing Channel Administration';
 $mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Integration Status';
 $mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Enable Whistleblowing Channel:';

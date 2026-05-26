@@ -96,6 +96,16 @@
 
         <div id="whistleblowing_config_body" {if $config.whistleblowing_enabled != '1'}style="display:none;"{/if}>
             
+            <div class="whistleblowing-row" style="background-color: #eef2e1; border: 1px solid #8ca33e;">
+                <label class="whistleblowing-label-header" style="color: #5d6d29;">{$MOD.LBL_WHISTLEBLOWING_LINK_TITLE}</label>
+                <p style="margin: 5px 0;">
+                    <a href="{$config.whistleblowing_url}" target="_blank" style="font-weight: bold; color: #2196F3; text-decoration: underline;">
+                        {$config.whistleblowing_url}
+                    </a>
+                </p>
+                <div class="whistle-help-text">{$MOD.LBL_WHISTLEBLOWING_LINK_HELP}</div>
+            </div>
+            
             <div class="whistleblowing-row">
                 <label class="whistleblowing-label-header">{$MOD.LBL_WHISTLEBLOWING_SECTION_ABOUT}</label>
                 <textarea name="whistleblowing_text_about" class="whistle-textarea">{$config.whistleblowing_text_about}</textarea>

@@ -4035,5 +4035,11 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 
+// Estados del canal de denuncias
+$app_list_strings['stic_whistleblowing_status_list']['new'] = 'Berria';
+$app_list_strings['stic_whistleblowing_status_list']['working'] = 'Berrikuspen prozesuan';
+$app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Ebaztuta';
+$app_list_strings['stic_whistleblowing_status_list']['arxivat'] = 'Artxibatuta';
+
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

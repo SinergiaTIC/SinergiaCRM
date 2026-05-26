@@ -38,47 +38,64 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
+ class stic_Whistleblowing extends Basic
+ {
+     public $new_schema = true;
+     public $module_dir = 'stic_Whistleblowing';
+     public $object_name = 'stic_Whistleblowing';
+     public $table_name = 'stic_whistleblowing';
+     public $importable = false;
+ 
+     public $id;
+     public $name;
+     public $date_entered;
+     public $date_modified;
+     public $modified_user_id;
+     public $modified_by_name;
+     public $created_by;
+     public $created_by_name;
+     public $description;
+     public $deleted;
+     public $created_by_link;
+     public $modified_user_link;
+     public $assigned_user_id;
+     public $assigned_user_name;
+     public $assigned_user_link;
+     public $SecurityGroups;
+     public $securitygroups_name;
+     public $stic_category;
+     public $stic_start_date;
+     public $stic_code;
+     public $stic_status;
+     public $stic_status_detail;
+     
+     public function bean_implements($interface)
+     {
+         switch($interface)
+         {
+             case 'ACL':
+                 return true;
+         }
+ 
+         return false;
+     }
+ 
 
-class stic_Whistleblowing extends Basic
-{
-    public $new_schema = true;
-    public $module_dir = 'stic_Whistleblowing';
-    public $object_name = 'stic_Whistleblowing';
-    public $table_name = 'stic_whistleblowing';
-    public $importable = true;
-
-    public $id;
-    public $name;
-    public $date_entered;
-    public $date_modified;
-    public $modified_user_id;
-    public $modified_by_name;
-    public $created_by;
-    public $created_by_name;
-    public $description;
-    public $deleted;
-    public $created_by_link;
-    public $modified_user_link;
-    public $assigned_user_id;
-    public $assigned_user_name;
-    public $assigned_user_link;
-    public $SecurityGroups;
-    public $securitygroups_name;
-    public $stic_category;
-    public $stic_start_date;
-    public $stic_code;
-    public $stic_status;
-    public $stic_status_detail;
-	
-    public function bean_implements($interface)
-    {
-        switch($interface)
-        {
-            case 'ACL':
-                return true;
-        }
-
-        return false;
-    }
-	
-}
+     public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set') 
+     {
+         $view = strtolower($view);
+ 
+         // Bloquegem l'edició i la importació si el registre ja té ID (ja existeix)
+         if ($view == 'edit' || $view == 'import') {
+             if (!empty($this->id)) {
+                //  global $current_user;
+                //  if ($current_user->is_admin) {
+                //      return true;
+                //  }
+                 return false;
+             }
+         }
+ 
+         return parent::ACLAccess($view, $is_owner, $in_group);
+     }
+ }

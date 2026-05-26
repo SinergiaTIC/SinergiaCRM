@@ -112,4 +112,5 @@ $mod_strings = array (
   'LBL_HARASSMENT' => 'Assetjament',
   'LBL_DATA_PRIVACY' => 'Privacitat de dades',
   'LBL_OTHERS' => 'Altres',
+  'LBL_START_DATE' => 'Data dels fets',
 );
