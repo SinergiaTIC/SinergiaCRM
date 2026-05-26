@@ -75,27 +75,11 @@ class stic_Job_Applications extends Basic
 
             $this->name = $contact_name .' - '.$offer_name;
         }
-
-        // Safely retrieve the offer ID
-        $jobOfferId = $this->stic_job_applications_stic_job_offersstic_job_offers_ida ?? '';
-        $offerBean = null;
-        if (!empty($jobOfferId)) {
-            $offerBean = BeanFactory::getBean('stic_Job_Offers', $jobOfferId);
-        }
-
-        // If it is a new record and it relates to a volunteering offer, the assigned user of the offer is indicated in the job application.
-        // Also verify that $offerBean is a valid object with an ID
-        if (!empty($offerBean) && !empty($offerBean->id) && ($offerBean->offer_type == 'volunteering') && isset($this->assigned_user_id) && $this->assigned_user_id != $offerBean->assigned_user_id
-        ) {
         
-        $offerBean = BeanFactory::getBean('stic_Job_Offers', $this->stic_job_applications_stic_job_offersstic_job_offers_ida);
-
-        if (empty($offerBean) || empty($offerBean->id)) {
-            $offerId = $this->getRelatedOfferId();
-            if (!empty($offerId)) {
-                $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
-            }
-        }
+        $offerId = $this->getRelatedOfferId();
+        $offerBean = !empty($offerId)
+            ? BeanFactory::getBean('stic_Job_Offers', $offerId)
+            : null;
         // If it is a new record, the assigned user of the offer is indicated in the job application
         if (!empty($offerBean) &&
             $this->assigned_user_id != $offerBean->assigned_user_id) {
