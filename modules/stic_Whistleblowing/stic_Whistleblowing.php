@@ -69,6 +69,15 @@
      public $stic_status;
      public $stic_status_detail;
      
+
+     public function __construct() 
+     {
+         parent::__construct();
+         if (class_exists('TrackerManager')) {
+             TrackerManager::getInstance()->pause();
+         }
+     }
+
      public function bean_implements($interface)
      {
          switch($interface)
