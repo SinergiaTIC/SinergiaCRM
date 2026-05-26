@@ -611,9 +611,9 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '2.8.2', 
-    'js_custom_version' => 35,
-    'stic_show_update_alert' => 1,
+    'sinergiacrm_version' => '2.10.1', 
+    'js_custom_version' => 38,
+    'stic_show_update_alert' => 0,
     // END STIC
 
     // STIC-Custom 20240117 JCH - Security Groups Module Rules activation config
@@ -677,6 +677,9 @@ $sugar_config = array(
     ),
     // END STIC-Custom
 
+    // STIC-Custom 20260427 JBL - Config for redirection method in web forms (Lead or Person capture) (POST or GET)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1079
+    'stic_webFormsRedirectMethod' => 'POST', // Possible values: 'POST' or 'GET'
     // STIC-Custom 20260424 AAM - Async ListView count
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
     'stic_async_list_count' => false, 
