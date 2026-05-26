@@ -56,6 +56,7 @@ $mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Inici de sessió alternati
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = "L'adreça de correu electrònic ";
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = " no pertany a cap usuari de SinergiaCRM. Si creieu que és un error, contacteu amb un administrador.";
 $mod_strings['LBL_OAUTH_AUTH_ERR_INACTIVE_USER'] = "L'usuari associat a aquesta adreça de correu electrònic està inactiu. Si creieu que és un error, contacteu amb un administrador.";
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_USER_TYPE'] = "L'usuari associat a aquesta adreça de correu electrònic no pot iniciar sessió mitjançant autenticació externa. Si creieu que és un error, contacteu amb un administrador.";
 
 // Autenticació OAuth - Google
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Inicia la sessió amb Google';
