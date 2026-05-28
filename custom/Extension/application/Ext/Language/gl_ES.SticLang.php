@@ -402,7 +402,6 @@ $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Sin
 $app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidaturas';
 $app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborais';
 $app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversacións';
-$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Mensajes';
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -4041,19 +4040,19 @@ $app_list_strings['stic_awf_forms_date_relative_list']['today'] = 'Hoxe (data ac
 $app_list_strings['stic_awf_forms_date_relative_list']['now'] = 'Agora (data e hora actuais)';
 $app_list_strings['stic_awf_forms_date_relative_list']['+1_day'] = 'Dentro dun día';
 $app_list_strings['stic_awf_forms_date_relative_list']['+1_week'] = 'Dentro dunha semana';
-$app_list_strings['stic_awf_forms_date_relative_list']['+1_month'] = 'Dentro de un mes';
-$app_list_strings['stic_awf_forms_date_relative_list']['last_day_of_this_month'] = 'Último día de este mes';
-$app_list_strings['stic_awf_forms_date_relative_list']['first_day_of_next_month'] = 'Primer día del próximo mes';
+$app_list_strings['stic_awf_forms_date_relative_list']['+1_month'] = 'Dentro dun mes';
+$app_list_strings['stic_awf_forms_date_relative_list']['last_day_of_this_month'] = 'Último día deste mes';
+$app_list_strings['stic_awf_forms_date_relative_list']['first_day_of_next_month'] = 'Primeiro día do próximo mes';
 $app_list_strings['stic_awf_forms_date_relative_list']['custom'] = 'Personalizada...';
 
 // Advanced Web Forms Responses: status
-$app_list_strings['stic_awf_responses_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_awf_responses_status_list']['pending'] = 'Pendente';
 $app_list_strings['stic_awf_responses_status_list']['processing'] = 'Procesando';
-$app_list_strings['stic_awf_responses_status_list']['awaiting_action'] = 'En espera';
+$app_list_strings['stic_awf_responses_status_list']['awaiting_action'] = 'En Espera';
 $app_list_strings['stic_awf_responses_status_list']['processed'] = 'Procesada';
-$app_list_strings['stic_awf_responses_status_list']['rejected'] = 'Rechazada';
+$app_list_strings['stic_awf_responses_status_list']['rejected'] = 'Rexeitada';
 $app_list_strings['stic_awf_responses_status_list']['spam'] = 'No deseada';
-$app_list_strings['stic_awf_responses_status_list']['error'] = 'Error';
+$app_list_strings['stic_awf_responses_status_list']['error'] = 'Erro';
 
 // Advanced Web Forms Links: record_action
 $app_list_strings['stic_awf_links_record_action_list']['created'] = 'Creado';
@@ -4062,11 +4061,6 @@ $app_list_strings['stic_awf_links_record_action_list']['enriched'] = 'Ampliado';
 $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorado';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tratado';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sin cambios';
-
-// Conversaciones: Tipos
-$app_list_strings['stic_conversations_types_list'][''] = '';
-$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipo 1';
-$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipo 2';
 
 // TODO:
 // Define: stic_awf_deferred_tickets_status
