@@ -446,15 +446,22 @@ class stic_AWF_FormsUtils {
             'Emails', 'EmailTemplates',
             'jjwg_Maps', 'jjwg_Markers', 'jjwg_Areas', 'jjwg_Address_Cache',
             'ProspectLists',
-            'SecurityGroups', 'stic_Security_Groups_Rules',
+            'SecurityGroups', 'Roles', 'stic_Security_Groups_Rules',
+            'SavedSearch', 
             'Spots',
-            'Surveys',
+            'Schedulers', 'SchedulersJobs',
+            'Surveys', 'SurveyQuestions', 'SurveyResponses', 'SurveyQuestionOptions', 'SurveyQuestionResponses',
             'stic_Sepe_Actions', 'stic_Sepe_Files', 'stic_Sepe_Incidents',
             'stic_Signatures', 'stic_Signature_Log', 'stic_Signers',
-            'stic_Messages',
+            'stic_Messages', 'stic_Message_Marketing', 'stic_MessagesMan', 
             'stic_Validation_Actions', 'stic_Validation_Results',
-            'stic_AWF_Forms',
+            'stic_AWF_Forms', 'stic_AWF_Responses', 'stic_AWF_Response_Details', 'stic_AWF_Links', 'stic_AWF_Deferred_Tickets', 'stic_AWF_Incoming_Events',
+            'stic_Web_Forms',
             'stic_Settings',
+            'Calendar', 'ResourceCalendar', 'stic_Bookings_Calendar', 'stic_Bookings_Places_Calendar', 'Reminders', 'Reminders_Invitees',
+            'AOK_KnowledgeBase', 
+            'stic_Incorpora', 'stic_Incorpora_Locations',
+            'FP_events'
         ];
 
         // Get Enabled Modules
