@@ -74,6 +74,7 @@ class stic_AWF_FormsUtils {
 
         $link_defs = [];
         $seen_relationships = [];
+        $relNameToKey = [];
 
         foreach($moduleScanList as $moduleScan) {
             foreach($moduleScan['availableOrig'] as $moduleOrigName => $moduleOrigInfo) {
@@ -99,7 +100,10 @@ class stic_AWF_FormsUtils {
 
                         if (!empty($destModule) && isset($moduleScan['availableDest'][$destModule]) && $destModule !== 'EmailAddress') {
                             if (!isset($result['relationships'][$compoundKey])) {
-                                if (!empty($relName)) $seen_relationships[$relName] = true;
+                                if (!empty($relName)) {
+                                    $seen_relationships[$relName] = true;
+                                    $relNameToKey[$relName] = $compoundKey;
+                                }
                                 
                                 $result['relationships'][$compoundKey] = [
                                     'name' => $compoundKey,
@@ -151,6 +155,12 @@ class stic_AWF_FormsUtils {
                         // If we have already added the link to the results list, update the source field (UI)
                         if (isset($result['relationships'][$compoundKey])) {
                             $result['relationships'][$compoundKey]['field_orig'] = $fieldName;
+                            continue;
+                        }
+
+                        // If the relationship was added from another module (different compound key), update its field_orig
+                        if (!empty($relName) && isset($relNameToKey[$relName]) && isset($result['relationships'][$relNameToKey[$relName]])) {
+                            $result['relationships'][$relNameToKey[$relName]]['field_orig'] = $fieldName;
                             continue;
                         }
 
@@ -303,6 +313,7 @@ class stic_AWF_FormsUtils {
 
         $link_defs = [];
         $seen_relationships = [];
+        $relNameToKey = [];
 
         foreach($moduleScanList as $moduleScan) {
             foreach($moduleScan['availableOrig'] as $moduleOrigName => $moduleOrigInfo) {
@@ -326,7 +337,10 @@ class stic_AWF_FormsUtils {
 
                         if (!empty($destModule) && isset($moduleScan['availableDest'][$destModule]) && $destModule !== 'EmailAddress') {
                             if (!isset($result[$compoundKey])) {
-                                if (!empty($relName)) $seen_relationships[$relName] = true;
+                                if (!empty($relName)) {
+                                    $seen_relationships[$relName] = true;
+                                    $relNameToKey[$relName] = $compoundKey;
+                                }
                                 $result[$compoundKey] = [
                                     'name' => $compoundKey,
                                     'text' => '',
@@ -348,6 +362,11 @@ class stic_AWF_FormsUtils {
 
                         if (isset($result[$compoundKey])) {
                             $result[$compoundKey]['field_orig'] = $fieldName;
+                            continue;
+                        }
+
+                        if (!empty($relName) && isset($relNameToKey[$relName]) && isset($result[$relNameToKey[$relName]])) {
+                            $result[$relNameToKey[$relName]]['field_orig'] = $fieldName;
                             continue;
                         }
 
@@ -410,6 +429,7 @@ class stic_AWF_FormsUtils {
     public static function getRelationshipsBetween($availableModules) {
         $result = [];
         $seen_relationships = [];
+        $relNameToKey = [];
         
         foreach($availableModules as $moduleName => $moduleInfo) {
             $module = BeanFactory::newBean($moduleName);
@@ -434,7 +454,10 @@ class stic_AWF_FormsUtils {
 
                     if (!empty($destModule) && isset($availableModules[$destModule]) && $destModule !== 'EmailAddress') {
                         if (!isset($result[$compoundKey])) {
-                            if (!empty($relName)) $seen_relationships[$relName] = true;
+                            if (!empty($relName)) {
+                                $seen_relationships[$relName] = true;
+                                $relNameToKey[$relName] = $compoundKey;
+                            }
                             $result[$compoundKey] = [
                                 'name' => $compoundKey,
                                 'text' => '',
@@ -456,6 +479,11 @@ class stic_AWF_FormsUtils {
 
                     if (isset($result[$compoundKey])) {
                         $result[$compoundKey]['field_orig'] = $fieldName;
+                        continue;
+                    }
+
+                    if (!empty($relName) && isset($relNameToKey[$relName]) && isset($result[$relNameToKey[$relName]])) {
+                        $result[$relNameToKey[$relName]]['field_orig'] = $fieldName;
                         continue;
                     }
 

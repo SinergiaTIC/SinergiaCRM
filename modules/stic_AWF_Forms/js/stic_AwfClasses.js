@@ -1824,8 +1824,10 @@ class stic_AwfConfiguration {
     });
 
     // Review and fill Dest <- Orig info
+    // Use 'relationship' (SuiteCRM relationship name) instead of 'name' (compound key)
+    // because the compound key differs between modules (e.g. Contacts__link vs stic_Registrations__link)
     relsToReview.forEach(r => {
-      let rel = allRelationships[r.datablock_dest].find(v => v.name == r.name);
+      let rel = allRelationships[r.datablock_dest].find(v => v.relationship && v.relationship === r.relationship);
       if (rel) {
         // Fill Dest <- Orig info
         rel.datablock_orig = r.datablock_orig;
