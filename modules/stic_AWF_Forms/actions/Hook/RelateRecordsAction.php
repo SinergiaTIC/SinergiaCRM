@@ -100,6 +100,12 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $targetObjectSelector = $actionConfig->getResolvedParameter('target_object');
         $linkName = $actionConfig->getResolvedParameter('relationship_name');
 
+        // Support compound key format (Module__linkName): extract the link name portion
+        if (strpos($linkName, '__') !== false) {
+            $parts = explode('__', $linkName, 2);
+            $linkName = $parts[1];
+        }
+
         // Validation of selector parameter
         if (!$targetObjectSelector || !($targetObjectSelector instanceof OptionSelectorResolved)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid target_object parameter type.");

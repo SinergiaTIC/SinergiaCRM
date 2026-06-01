@@ -107,7 +107,8 @@ class stic_AWF_FormsUtils {
                                     'module_orig' => $moduleOrigName,
                                     'field_orig' => $fieldName,
                                     'relationship' => $relName,
-                                    'module_dest' => $destModule
+                                    'module_dest' => $destModule,
+                                    'link_name' => $fieldName
                                 ];
                             }
                         }
@@ -174,7 +175,8 @@ class stic_AWF_FormsUtils {
                                 'module_orig' => $moduleOrigName,
                                 'field_orig' => $fieldName,
                                 'relationship' => $relName, 
-                                'module_dest' => $destModule
+                                'module_dest' => $destModule,
+                                'link_name' => $linkName
                             ];
                         }
                     }
@@ -220,10 +222,12 @@ class stic_AWF_FormsUtils {
                         'options' => $linkName,
                         'module' => $module_dest,
                         'merge_filter' => '',
-                        'inViews' => false
+                        'inViews' => false,
+                        'link_name' => $arr['link_name']
                     ];
                 } else {
                     $result['fields'][$field_name]['options'] = $linkName;
+                    $result['fields'][$field_name]['link_name'] = $arr['link_name'];
                 }
             }
         }
@@ -329,7 +333,8 @@ class stic_AWF_FormsUtils {
                                     'module_orig' => $moduleOrigName,
                                     'field_orig' => $fieldName,
                                     'relationship' => $relName,
-                                    'module_dest' => $destModule
+                                    'module_dest' => $destModule,
+                                    'link_name' => $fieldName
                                 ];
                             }
                         }
@@ -365,7 +370,8 @@ class stic_AWF_FormsUtils {
                                 'module_orig' => $moduleOrigName,
                                 'field_orig' => $fieldName,
                                 'relationship' => $relName,
-                                'module_dest' => $destModule
+                                'module_dest' => $destModule,
+                                'link_name' => $linkName
                             ];
                         }
                     }
@@ -435,7 +441,8 @@ class stic_AWF_FormsUtils {
                                 'module_orig' => $moduleName,
                                 'field_orig' => $fieldName,
                                 'relationship' => $relName,
-                                'module_dest' => $destModule
+                                'module_dest' => $destModule,
+                                'link_name' => $fieldName
                             ];
                         }
                     }
@@ -471,7 +478,8 @@ class stic_AWF_FormsUtils {
                             'module_orig' => $moduleName,
                             'field_orig' => $fieldName,
                             'relationship' => $relName,
-                            'module_dest' => $destModule
+                            'module_dest' => $destModule,
+                            'link_name' => $linkName
                         ];
                     }
                 }

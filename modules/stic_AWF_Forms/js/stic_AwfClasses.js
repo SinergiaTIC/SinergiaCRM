@@ -1925,7 +1925,7 @@ class stic_AwfConfiguration {
           
           // Use 'options' property which contains the link name
           if (moduleFieldInfo && moduleFieldInfo.type === 'relate' && moduleFieldInfo.options) {
-            relationshipName = moduleFieldInfo.options;
+            relationshipName = moduleFieldInfo.link_name || moduleFieldInfo.options;
           }
           
           if (relationshipName) {
@@ -1976,7 +1976,7 @@ class stic_AwfConfiguration {
               const params = {
                 'data_block_id': { value: blockOrig.id, valueText: blockOrig.text, selectedOption: '' },
                 'target_object': { value: blockDest.id, valueText: blockDest.text, selectedOption: 'datablock' },
-                'relationship_name': { value: rel.name, valueText: rel.text, selectedOption: '' }
+                'relationship_name': { value: rel.link_name || rel.name, valueText: rel.text, selectedOption: '' }
               };
               
               const newAction = this.addAction(actionDef, params, '0');
