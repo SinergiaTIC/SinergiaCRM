@@ -608,7 +608,7 @@ class ExternalReporting
                                         'target_table' => "{$this->viewPrefix}_{$fieldV['targetModule']}",
                                         'target_column' => 'id',
                                         'info' => 'relate',
-                                        'label' => "{$fieldV['label']} ({$relatedModuleName})|{$relatedModuleName}",
+                                        'label' => "{$fieldV['label']} ({$relatedModuleName})|{$txModuleName} ({$fieldV['label']})",
                                     ]
                                 );
                             }
