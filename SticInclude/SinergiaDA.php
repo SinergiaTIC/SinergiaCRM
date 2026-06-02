@@ -913,7 +913,7 @@ class ExternalReporting
             unset($qualifiedLabel);
             if (!empty($autoRelationships)) {
                 foreach ($autoRelationships as $key => $value) {
-                    if ($txModuleName != $value['rLabel']) {
+                    if ($txModuleName != $value['rLabel'] && strpos($value['rLabel'], 'LBL_') !== 0) {
                         $qualifiedLabel = "{$txModuleName} ({$value['rLabel']})";
                     } else {
                         $qualifiedLabel = "{$txModuleName} ({$value['label']})";
