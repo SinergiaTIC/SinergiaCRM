@@ -4051,7 +4051,7 @@ $app_list_strings['stic_awf_responses_status_list']['processing'] = 'Procesando'
 $app_list_strings['stic_awf_responses_status_list']['awaiting_action'] = 'En Espera';
 $app_list_strings['stic_awf_responses_status_list']['processed'] = 'Procesada';
 $app_list_strings['stic_awf_responses_status_list']['rejected'] = 'Rexeitada';
-$app_list_strings['stic_awf_responses_status_list']['spam'] = 'No deseada';
+$app_list_strings['stic_awf_responses_status_list']['spam'] = 'Non desexada';
 $app_list_strings['stic_awf_responses_status_list']['error'] = 'Erro';
 
 // Advanced Web Forms Links: record_action
@@ -4060,7 +4060,7 @@ $app_list_strings['stic_awf_links_record_action_list']['updated'] = 'Actualizado
 $app_list_strings['stic_awf_links_record_action_list']['enriched'] = 'Ampliado';
 $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorado';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tratado';
-$app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sin cambios';
+$app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sen cambios';
 
 // TODO:
 // Define: stic_awf_deferred_tickets_status
