@@ -248,16 +248,28 @@ class stic_RegistrationsUtils {
         $endDay = date('Y-m-d');
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $startDay . '|' . $endDay);
-        $start = new DateTime($startDay);
-        $end = new DateTime($endDay);
 
-        $numDays = $start->diff($end)->days;
-        $dayToCreate = $start->format('Y-m-d');
-        $a = 0;
-        while ($a <= $numDays) {
-            stic_AttendancesUtils::createAttendances($dayToCreate, $registrationBean->id, null);
-            $dayToCreate = $start->add(new DateInterval('P1D'))->format('Y-m-d');
-            $a++;
+        // STIC-Custom - JCH - 20260602 - Optimized: query only session dates instead of iterating day by day
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/923
+        $querySessionDates =
+            "SELECT DISTINCT DATE(s.start_date) as session_date
+            FROM stic_registrations_stic_events_c re
+            JOIN stic_sessions_stic_events_c se ON
+                re.stic_registrations_stic_eventsstic_events_ida = se.stic_sessions_stic_eventsstic_events_ida
+            JOIN stic_sessions s ON
+                se.stic_sessions_stic_eventsstic_sessions_idb = s.id
+            WHERE
+                re.stic_registrations_stic_eventsstic_registrations_idb = '{$registrationBean->id}'
+                AND re.deleted = 0
+                AND se.deleted = 0
+                AND s.deleted = 0
+                AND DATE(s.start_date) >= '$startDay'
+                AND DATE(s.start_date) <= '$endDay'";
+        // END STIC-Custom OC
+
+        $result = $registrationBean->db->query($querySessionDates);
+        while ($row = $registrationBean->db->fetchByAssoc($result)) {
+            stic_AttendancesUtils::createAttendances($row['session_date'], $registrationBean->id, null);
         }
 
     }
