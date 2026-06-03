@@ -51,5 +51,9 @@ class AccountsLogicHooks
             include_once 'modules/stic_Incorpora_Locations/Utils.php';
             stic_Incorpora_LocationsUtils::transferLocationData($bean);
         }
+
+        // Portal authentication: hash password and enforce policies
+        include_once 'SticInclude/SticPortalAuthUtils.php';
+        SticPortalAuthUtils::processBeforeSave($bean);
     }
 }

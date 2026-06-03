@@ -2830,3 +2830,248 @@ $dictionary['Contact']['fields']['am_projecttemplates_resources']['vname'] = 'LB
 // STIC#981
 $dictionary['Contact']['fields']['primary_address_postalcode']['inline_edit'] = true;
 $dictionary['Contact']['fields']['do_not_call']['massupdate'] = '1';
+<?php
+/**
+ * SticPortalVardefs.php
+ * Vardef definitions for the Portal Authentication custom fields
+ * on the Contacts module.
+ *
+ * NOTE: the matching SQL migration is in
+ * SticUpdates/Migrations/20260602_feature_portalAuthentication.sql
+ */
+
+$dictionary['Contact']['fields']['stic_portal_username_c'] = array(
+    'name' => 'stic_portal_username_c',
+    'vname' => 'LBL_STIC_PORTAL_USERNAME',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_hashed_c'] = array(
+    'name' => 'stic_portal_hashed_c',
+    'vname' => 'LBL_STIC_PORTAL_HASHED',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'visible',
+    'inline_edit' => false,
+    'write_only' => true,
+);
+
+$dictionary['Contact']['fields']['stic_portal_remember_token_c'] = array(
+    'name' => 'stic_portal_remember_token_c',
+    'vname' => 'LBL_STIC_PORTAL_REMEMBER_TOKEN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'hidden',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_locked_until_c'] = array(
+    'name' => 'stic_portal_locked_until_c',
+    'vname' => 'LBL_STIC_PORTAL_LOCKED_UNTIL',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => true,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_failed_attempts_c'] = array(
+    'name' => 'stic_portal_failed_attempts_c',
+    'vname' => 'LBL_STIC_PORTAL_FAILED_ATTEMPTS',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'int',
+    'len' => 11,
+    'default' => 0,
+    'required' => false,
+    'audited' => true,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_last_login_c'] = array(
+    'name' => 'stic_portal_last_login_c',
+    'vname' => 'LBL_STIC_PORTAL_LAST_LOGIN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => true,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_password_changed_c'] = array(
+    'name' => 'stic_portal_password_changed_c',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD_CHANGED',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_password_expires_c'] = array(
+    'name' => 'stic_portal_password_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD_EXPIRES',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_reset_token_c'] = array(
+    'name' => 'stic_portal_reset_token_c',
+    'vname' => 'LBL_STIC_PORTAL_RESET_TOKEN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'hidden',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_reset_expires_c'] = array(
+    'name' => 'stic_portal_reset_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_RESET_EXPIRES',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'hidden',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_session_id_c'] = array(
+    'name' => 'stic_portal_session_id_c',
+    'vname' => 'LBL_STIC_PORTAL_SESSION_ID',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'hidden',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_magic_token_c'] = array(
+    'name' => 'stic_portal_magic_token_c',
+    'vname' => 'LBL_STIC_PORTAL_MAGIC_TOKEN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'hidden',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_magic_expires_c'] = array(
+    'name' => 'stic_portal_magic_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_MAGIC_EXPIRES',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'hidden',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_enabled_c'] = array(
+    'name' => 'stic_portal_enabled_c',
+    'vname' => 'LBL_STIC_PORTAL_ENABLED',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'bool',
+    'default' => 0,
+    'required' => false,
+    'audited' => true,
+    'importable' => true,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => true,
+);
+
+$dictionary['Contact']['fields']['stic_portal_force_pw_change_c'] = array(
+    'name' => 'stic_portal_force_pw_change_c',
+    'vname' => 'LBL_STIC_PORTAL_FORCE_PW_CHANGE',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'bool',
+    'default' => 0,
+    'required' => false,
+    'audited' => true,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
