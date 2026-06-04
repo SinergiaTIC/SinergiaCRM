@@ -80,7 +80,7 @@ function wizardForm() {
               config.addAction(actionDef, {}, '0');
             }
           }
-        } else if (newType === 'web') {
+        } else {
           config.flows.forEach(flow => {
             flow.actions = flow.actions.filter(a => a.name !== 'CheckSessionAction');
           });
