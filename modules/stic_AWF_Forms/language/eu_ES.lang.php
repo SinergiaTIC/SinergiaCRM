@@ -91,6 +91,9 @@ $mod_strings = array (
   'LBL_WIZARD_FORM_EDIT_WARNING_PUBLIC' => 'Este formulario es público: alguien podría estar rellenándolo en este mismo momento.',
   'LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES' => 'Hay %s respuestas registradas: cambiar la estructura del formulario podría causar inconsistencias.',
   'LBL_WIZARD_FORM_EDIT_WARNING_PROCEED' => 'En caso de querer realizar cambios significativos se recomienda valorar la posibilidad de duplicar el formulario.',
+
+  // Corrupted form warning
+  'LBL_WIZARD_FORM_CORRUPTED_WARNING_MESSAGE' => '⚠️ Error crítico: No se ha podido cargar la configuración correctamente. El formulario se mostrará vacío y el guardado automático se ha desactivado para evitar la pérdida de datos.',
   
   // Steps
   'LBL_WIZARD_TITLE_STEP1' => 'Información general',
@@ -566,4 +569,4 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga una URL válida',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no es válida',
- );
+);
