@@ -11,16 +11,13 @@ global $db;
 // GET: validate access token and return portal identity
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $token = $_GET['access_token'] ?? '';
-    $result = $db->limitQuery("SELECT portal_type, assigned_user_id FROM oauth2tokens WHERE access_token=" . $db->quoted($token) . " AND deleted=0 AND token_is_revoked=0", 0, 1);
-    $row = $db->fetchByAssoc($result);
-    if (!$row || empty($row['portal_type'])) {
+    $result = $db->limitQuery("SELECT id FROM oauth2tokens WHERE access_token=" . $db->quoted($token) . " AND deleted=0 AND token_is_revoked=0", 0, 1);
+    if (!$db->fetchByAssoc($result)) {
         http_response_code(401);
         echo json_encode(['error' => 'invalid_token']);
         exit;
     }
-    // Parse portal:Contact:uuid or portal:Account:uuid from assigned_user_id
-    // Actually, portal_type is stored separately in the column we added
-    echo json_encode(['portal_type' => $row['portal_type'], 'portal_id' => $row['assigned_user_id']]);
+    echo json_encode(['valid' => true]);
     exit;
 }
 
@@ -49,10 +46,9 @@ if ($grantType === 'authorization_code') {
     $at = bin2hex(random_bytes(32));
     $rt = bin2hex(random_bytes(32));
 
-    $type = $row['portal_type'];
     $portalId = $row['portal_id'];
 
-    $db->query("INSERT INTO oauth2tokens (id, access_token, refresh_token, access_token_expires, refresh_token_expires, client, assigned_user_id, portal_type, token_is_revoked, token_type, grant_type, date_entered, date_modified, deleted) VALUES ("
+    $db->query("INSERT INTO oauth2tokens (id, access_token, refresh_token, access_token_expires, refresh_token_expires, client, assigned_user_id, token_is_revoked, token_type, grant_type, date_entered, date_modified, deleted) VALUES ("
         . $db->quoted(create_guid()) . ", "
         . $db->quoted($at) . ", "
         . $db->quoted($rt) . ", "
@@ -86,7 +82,7 @@ if ($grantType === 'refresh_token') {
     $at = bin2hex(random_bytes(32));
     $rt = bin2hex(random_bytes(32));
 
-    $db->query("INSERT INTO oauth2tokens (id, access_token, refresh_token, access_token_expires, refresh_token_expires, client, assigned_user_id, portal_type, token_is_revoked, token_type, grant_type, date_entered, date_modified, deleted) VALUES ("
+    $db->query("INSERT INTO oauth2tokens (id, access_token, refresh_token, access_token_expires, refresh_token_expires, client, assigned_user_id, token_is_revoked, token_type, grant_type, date_entered, date_modified, deleted) VALUES ("
         . $db->quoted(create_guid()) . ", "
         . $db->quoted($at) . ", "
         . $db->quoted($rt) . ", "
@@ -94,7 +90,6 @@ if ($grantType === 'refresh_token') {
         . $db->quoted($rtExp) . ", "
         . $db->quoted($clientId) . ", "
         . $db->quoted($row['assigned_user_id']) . ", "
-        . $db->quoted($row['portal_type']) . ", "
         . "0, 'Bearer', 'portal_password', "
         . $db->quoted($now) . ", "
         . $db->quoted($now) . ", 0)");

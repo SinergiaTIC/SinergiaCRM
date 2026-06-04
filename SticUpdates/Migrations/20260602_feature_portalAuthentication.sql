@@ -153,7 +153,6 @@ CREATE TABLE IF NOT EXISTS `stic_portal_magic_rate_limit` (
 -- 7. Extend oauth2tokens to track portal tokens
 -- ---------------------------------------------------------------------
 ALTER TABLE `oauth2tokens`
-    ADD COLUMN IF NOT EXISTS `portal_type` VARCHAR(20) NULL;
 
 -- ---------------------------------------------------------------------
 -- 8. Default settings in config table (only if not already set)
