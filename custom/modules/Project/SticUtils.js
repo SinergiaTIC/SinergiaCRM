@@ -62,33 +62,40 @@ switch (viewType()) {
 
 /* FIX MODULE AND RECORD - Handle duplicate and edit scenarios */
 (function() {
-  var hasClickedCancel = false;
-  var duplicateFlags = ['isDuplicate', 'duplicateId', 'duplicateSave'];
-
   function isDuplicateMode() {
     if (!document.EditView) { return false; }
-    // Check form flags first
-    if (document.EditView.duplicateSave) { return true; }
-    if (document.EditView.isDuplicate && document.EditView.isDuplicate.value) {
-      return document.EditView.isDuplicate.value === 'true' || document.EditView.isDuplicate.value === '1';
+
+    function isTruthyDuplicateValue(field) {
+      if (!field || typeof field.value === 'undefined' || field.value === null) { return false; }
+      var value = String(field.value).trim().toLowerCase();
+      return value === 'true' || value === '1' || value === 'yes';
     }
-    if (document.EditView.duplicateId && document.EditView.duplicateId.value !== '') { return true; }
+
+    // Check form flags first
+    if (isTruthyDuplicateValue(document.EditView.duplicateSave)) { return true; }
+    if (isTruthyDuplicateValue(document.EditView.isDuplicate)) { return true; }
+    if (document.EditView.duplicateId && document.EditView.duplicateId.value) { return true; }
 
     // Fallback to URL params
     var urlParams = new URLSearchParams(window.location.search);
-    var urlIsDuplicate = urlParams.get('isDuplicate');
+    var urlIsDuplicate = (urlParams.get('isDuplicate') || '').toLowerCase();
+    var urlDuplicateSave = (urlParams.get('duplicateSave') || '').toLowerCase();
     var urlDuplicateId = urlParams.get('duplicateId');
-    return urlIsDuplicate === 'true' || urlIsDuplicate === '1' || !!urlDuplicateId;
+    return urlIsDuplicate === 'true' || urlIsDuplicate === '1' || urlDuplicateSave === 'true' || urlDuplicateSave === '1' || !!urlDuplicateId;
   }
 
   function getRecordIdFromContext() {
+    if (document.EditView && document.EditView.record && document.EditView.record.value) {
+      return document.EditView.record.value;
+    }
+
     // Prefer return_id; fallback to URL record
     if (document.EditView && document.EditView.return_id && document.EditView.return_id.value) {
       return document.EditView.return_id.value;
     }
 
     var urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('record');
+    return urlParams.get('record') || urlParams.get('return_id') || urlParams.get('duplicateId');
   }
 
   function fixModule() {
@@ -102,13 +109,13 @@ switch (viewType()) {
     // Check if we are in duplicate mode
     var isDuplicate = isDuplicateMode();
     
-    // Keep record empty when duplicating; restore it for edits or after cancel
+    // Keep record empty when duplicating; restore it for edits
     if (document.EditView.record) {
-      if (isDuplicate && !hasClickedCancel) {
-        // In duplicate mode and not cancelled, clear record to create new
+      if (isDuplicate) {
+        // In duplicate mode, clear record to create a new one
         document.EditView.record.value = '';
       } else {
-        // Edit mode or Cancel was clicked, use return_id or URL to get record ID
+        // Edit mode: use return_id or URL to get record ID
         if (!document.EditView.record.value) {
           var recordFromContext = getRecordIdFromContext();
           if (recordFromContext) {
@@ -135,33 +142,6 @@ switch (viewType()) {
 
     // Also run on page show
     window.addEventListener("pageshow", fixModule);
-
-    // Track Cancel button click to prevent duplicate creation
-    // Only target Cancel buttons in the main form, not in popup dialogs
-    var cancelButtons = document.querySelectorAll('#EditView input[value*="Cancel"], #EditView button[id*="CANCEL"], form[name="EditView"] input[value*="Cancel"], form[name="EditView"] button[id*="CANCEL"]');
-    cancelButtons.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        // Check if button is inside a popup/dialog
-        var parentDialog = btn.closest('.modal, .yui-dialog, .dialog');
-        if (!parentDialog) {
-          hasClickedCancel = true;
-          // Disable duplicate flags on cancel so Save doesn't duplicate
-          if (document.EditView) {
-            duplicateFlags.forEach(function(flag) {
-              if (document.EditView[flag]) {
-                document.EditView[flag].value = '';
-              }
-            });
-          }
-          if (document.EditView && document.EditView.record) {
-            var recordFromContext = getRecordIdFromContext();
-            if (recordFromContext) {
-              document.EditView.record.value = recordFromContext;
-            }
-          }
-        }
-      });
-    });
 
     // Handle form submit
     document.EditView.addEventListener('submit', function(e) {
