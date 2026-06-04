@@ -68,6 +68,25 @@ function wizardForm() {
         this.formConfig.prepareProcessingMode(newMode);
       });
 
+      // Auto-manage CheckSessionAction based on form_type
+      this.$watch('bean.form_type', (newType, oldType) => {
+        if (newType === oldType) return;
+        const config = this.formConfig;
+        if (newType === 'crm') {
+          const mainFlow = config.flows.find(f => f.id == '0');
+          if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
+            const actionDef = utils.getDefinedActions().find(a => a.name === 'CheckSessionAction');
+            if (actionDef) {
+              config.addAction(actionDef, {}, '0');
+            }
+          }
+        } else if (newType === 'web') {
+          config.flows.forEach(flow => {
+            flow.actions = flow.actions.filter(a => a.name !== 'CheckSessionAction');
+          });
+        }
+      });
+
       // Quill Editor Modal Component
       Alpine.data('quillEditorModal', () => ({
         editor: null,
@@ -205,6 +224,18 @@ function wizardForm() {
         this.formConfig = new stic_AwfConfiguration();
         this.isReadOnly = true;
       }
+
+      // STIC-Custom 20260603 - Ensure CheckSessionAction exists if form_type is 'crm'
+      if (this.bean?.form_type === 'crm') {
+        const mainFlow = this.formConfig.flows.find(f => f.id == '0');
+        if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
+          const actionDef = utils.getDefinedActions().find(a => a.name === 'CheckSessionAction');
+          if (actionDef) {
+            this.formConfig.addAction(actionDef, {}, '0');
+          }
+        }
+      }
+      // END STIC-Custom
 
       // Load current Step
       WizardNavigation.loadStep();
