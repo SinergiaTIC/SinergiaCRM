@@ -528,7 +528,10 @@ class SticPortalAuthUtils
             $addr = $bean->emailAddress->getPrimaryAddress($bean);
             if ($addr) return $addr;
         }
-        return '';
+        global $db;
+        $r = $db->limitQuery("SELECT ea.email_address FROM email_addr_bean_rel eabr JOIN email_addresses ea ON ea.id=eabr.email_address_id WHERE eabr.bean_id=" . $db->quoted($bean->id) . " AND eabr.primary_address=1 AND eabr.deleted=0 AND ea.deleted=0", 0, 1);
+        $row = $db->fetchByAssoc($r);
+        return $row ? $row['email_address'] : '';
     }
 
     public static function getRecipientName($bean)

@@ -3,26 +3,23 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'SticInclude/SticPortalAuthUtils.php';
 require_once 'SticInclude/SticPortalConfigUtils.php';
-require_once 'SticInclude/SticPortalOAuthUtils.php';
+require_once 'SticInclude/SticPortalOAuthRepository.php';
 
 session_start();
 $message = '';
 $error   = '';
 $mode    = 'password';
-// Detect OAuth flow from URL params
 $oauthClientId    = $_GET['client_id'] ?? $_POST['client_id'] ?? '';
 $oauthRedirectUri = $_GET['redirect_uri'] ?? $_POST['redirect_uri'] ?? '';
 $oauthState       = $_GET['state'] ?? $_POST['state'] ?? '';
 $isOAuth = !empty($oauthClientId) && !empty($oauthRedirectUri);
 
-// Validate OAuth client if present
-$oauthClient = null;
 if ($isOAuth) {
-    $oauthClient = SticPortalOAuthUtils::validateClient($oauthClientId, $oauthRedirectUri);
-    if (!$oauthClient) {
+    $oauthClient = \BeanFactory::getBean('OAuth2Clients', $oauthClientId);
+    if (!$oauthClient || !$oauthClient->id || $oauthClient->deleted == 1
+        || (strpos($oauthRedirectUri, $oauthClient->redirect_url ?? '') !== 0)) {
         $error = 'Invalid OAuth client or redirect URI.';
         $isOAuth = false;
-        $GLOBALS['log']->info("Portal OAuth - Invalid client_id=$oauthClientId or redirect_uri");
     }
 }
 
@@ -50,10 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($auth['success']) {
                 // OAuth flow: generate auth code and redirect
                 if ($isOAuth) {
-                    $code = SticPortalOAuthUtils::createAuthCode($auth['bean']->id, $auth['type'], $oauthClientId, $oauthRedirectUri);
-                    $sep = (strpos($oauthRedirectUri, '?') === false) ? '?' : '&';
-                    $redirect = $oauthRedirectUri . $sep . 'code=' . urlencode($code) . (!empty($oauthState) ? '&state=' . urlencode($oauthState) : '');
-                    header('Location: ' . $redirect); exit;
+                    SticPortalAuthCodeGenerator::generateAndRedirect($auth['bean']->id, $auth['type'], $oauthClientId, $oauthRedirectUri, $oauthState);
                 }
                 $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', 'index.php?entryPoint=sticPortalLogin');
                 if ($auth['must_change_password']) $redirect = 'index.php?entryPoint=sticPortalChangePassword';

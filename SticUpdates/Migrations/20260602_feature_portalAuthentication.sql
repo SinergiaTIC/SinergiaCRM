@@ -159,7 +159,6 @@ ALTER TABLE `oauth2tokens`
 -- 8. Default settings in config table (only if not already set)
 -- ---------------------------------------------------------------------
 INSERT IGNORE INTO `config` (`category`, `name`, `value`) VALUES
-('portal', 'PORTAL_TITLE',                          'SinergiaCRM Portal'),
 ('portal', 'PORTAL_HOME_URL',                        ''),
 ('portal', 'PORTAL_LOGO',                            ''),
 ('portal', 'PORTAL_LOGO_WIDTH',                      '212'),

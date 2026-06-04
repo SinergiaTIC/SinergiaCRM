@@ -37,11 +37,11 @@ if ($grantType === 'authorization_code') {
     $client = SticPortalOAuthUtils::validateClient($clientId, $redirectUri);
     if (!$client) { http_response_code(400); echo json_encode(['error' => 'invalid_client']); exit; }
 
-    $result = $db->limitQuery("SELECT * FROM stic_portal_oauth_codes WHERE authorization_code=" . $db->quoted($code) . " AND deleted=0 AND is_revoked=0", 0, 1);
+    $result = $db->limitQuery("SELECT * FROM stic_portal_auth_codes WHERE auth_code=" . $db->quoted($code) . " AND deleted=0 AND is_revoked=0", 0, 1);
     $row = $db->fetchByAssoc($result);
     if (!$row || $row['client_id'] !== $clientId) { http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit; }
 
-    $db->query("UPDATE stic_portal_oauth_codes SET is_revoked=1 WHERE id=" . $db->quoted($row['id']));
+    $db->query("UPDATE stic_portal_auth_codes SET is_revoked=1 WHERE id=" . $db->quoted($row['id']));
 
     $now = date('Y-m-d H:i:s');
     $atExp = date('Y-m-d H:i:s', time() + 3600);

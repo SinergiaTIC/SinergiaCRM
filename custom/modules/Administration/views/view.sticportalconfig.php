@@ -11,28 +11,35 @@ class AdministrationViewSticportalconfig extends SugarView
         if (!is_admin($current_user)) {
             sugar_die("Unauthorized access to administration.");
         }
+        $this->ss->assign('RETURN_MODULE', 'Administration');
+        $this->ss->assign('RETURN_ACTION', 'index');
     }
 
     public function display()
     {
         global $mod_strings, $app_strings;
+
         $settings = SticPortalConfigUtils::getAll();
         $logoUrl  = SticPortalConfigUtils::getLogoUrl();
+        $emailTemplates = $this->getEmailTemplates();
 
         $this->ss->assign('MOD', $mod_strings);
+        $this->ss->assign('APP', $app_strings);
         $this->ss->assign('SETTINGS', $settings);
         $this->ss->assign('LOGO_URL', $logoUrl);
-        $this->ss->assign('title', $this->getModuleTitle(false));
-
-        // Fetch audit log (last 20 entries)
-        global $db;
-        $audit = array();
-        $r = $db->query("SELECT * FROM stic_portal_login_audit WHERE deleted=0 ORDER BY date_entered DESC LIMIT 20");
-        while ($row = $db->fetchByAssoc($r)) {
-            $audit[] = $row;
-        }
-        $this->ss->assign('AUDIT', $audit);
+        $this->ss->assign('EMAIL_TEMPLATES', $emailTemplates);
 
         echo $this->ss->fetch('custom/modules/Administration/templates/SticPortalConfig.tpl');
+    }
+
+    protected function getEmailTemplates()
+    {
+        global $db;
+        $templates = ['' => '--None--'];
+        $r = $db->query("SELECT id, name FROM email_templates WHERE type='email' AND email_templates.deleted=0 ORDER BY name");
+        while ($row = $db->fetchByAssoc($r)) {
+            $templates[$row['id']] = $row['name'];
+        }
+        return $templates;
     }
 }
