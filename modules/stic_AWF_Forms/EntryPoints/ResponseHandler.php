@@ -184,6 +184,25 @@ class ResponseHandler
         }
         $formConfig = FormConfig::fromJsonArray($configData);
 
+        // CRM form type: detect form_type for legacy forms
+        if (empty($formBean->form_type)) {
+            $hasCheckSession = false;
+            $mainFlowActions = $configData['flows']['0']['actions'] ?? [];
+            if (!empty($mainFlowActions)) {
+                // Gets the first element and evaluates if its name matches CheckSessionAction to determine if it's a CRM form
+                $firstAction = reset($mainFlowActions);
+                $hasCheckSession = ($firstAction['name'] ?? '') === 'CheckSessionAction';
+            }
+            $formBean->form_type = $hasCheckSession ? 'crm' : 'web';
+            $formBean->save();
+        }
+
+        // If CRM form type and there is a real session user, use that user instead of admin
+        if ($formBean->form_type === 'crm' && $realUserId) {
+            $current_user = BeanFactory::getBean('Users', $realUserId);
+        }
+        
+
         // AJAX: Remote validation for js
         if (isset($_REQUEST['ajax_validation_only']) && $_REQUEST['ajax_validation_only'] == '1') {
             if (ob_get_length()) ob_clean();
