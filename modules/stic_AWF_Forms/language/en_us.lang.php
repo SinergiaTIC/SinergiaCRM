@@ -92,6 +92,9 @@ $mod_strings = array (
   'LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES' => 'There are %s recorded responses: changing the form structure could cause inconsistencies.',
   'LBL_WIZARD_FORM_EDIT_WARNING_PROCEED' => 'If you want to make significant changes, it is recommended to consider duplicating the form.',
   
+  // Corrupted form warning
+  'LBL_WIZARD_FORM_CORRUPTED_WARNING_MESSAGE' => '⚠️ Critical error: Configuration failed to load properly. The form will appear empty and auto-save has been disabled to prevent data loss.',
+
   // Steps
   'LBL_WIZARD_TITLE_STEP1' => 'General information',
   'LBL_WIZARD_DESC_STEP1' => 'Definition of the form general properties.',

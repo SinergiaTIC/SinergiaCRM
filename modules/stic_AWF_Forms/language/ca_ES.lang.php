@@ -92,6 +92,9 @@ $mod_strings = array (
   'LBL_WIZARD_FORM_EDIT_WARNING_RESPONSES' => "Hi ha %s respostes enregistrades: canviar l'estructura del formulari podria causar inconsistències.",
   'LBL_WIZARD_FORM_EDIT_WARNING_PROCEED' => 'En cas de voler realitzar canvis significatius es recomana valorar la possibilitat de duplicar el formulari.',
   
+  // Corrupted form warning
+  'LBL_WIZARD_FORM_CORRUPTED_WARNING_MESSAGE' => "⚠️ Error crític: No s'ha pogut carregar la configuració correctament. El formulari es mostrarà buit i s'ha bloquejat el desat automàtic per evitar pèrdues de dades.",
+
   // Steps
   'LBL_WIZARD_TITLE_STEP1' => 'Informació general',
   'LBL_WIZARD_DESC_STEP1' => 'Definició de les propietats generals del formulari.',

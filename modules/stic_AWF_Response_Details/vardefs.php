@@ -39,7 +39,7 @@
  */
 
 $dictionary['stic_AWF_Response_Details'] = array(
-    'table' => 'stic_AWF_Response_Details',
+    'table' => 'stic_awf_response_details',
     'audited' => false,
     'inline_edit' => false,
     'duplicate_merge' => false,
@@ -368,10 +368,10 @@ $dictionary['stic_AWF_Response_Details'] = array(
       'stic_awf_responses_details' => 
       array (
         'lhs_module' => 'stic_AWF_Responses',
-        'lhs_table' => 'stic_AWF_Responses',
+        'lhs_table' => 'stic_awf_responses',
         'lhs_key' => 'id',
         'rhs_module' => 'stic_AWF_Response_Details',
-        'rhs_table' => 'stic_AWF_Response_Details',
+        'rhs_table' => 'stic_awf_response_details',
         'rhs_key' => 'stic_awf_responses_id_c', 
         'relationship_type' => 'one-to-many',
       ),

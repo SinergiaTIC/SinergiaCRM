@@ -141,7 +141,7 @@ class FormHtmlGeneratorService {
         // Grid i Variables Base
         $secCols   = intval($theme->sections_per_row ?? 1);
         $fieldCols = intval($theme->fields_per_row ?? 1);
-        $secMinPx   = '350px'; 
+        $secMinPx   = '200px'; 
         $fieldMinPx = '200px';
 
         $shadows = ['none' => 'none', 'sm' => '0 .125rem .25rem rgba(0,0,0,.075)', 'normal' => '0 .5rem 1rem rgba(0,0,0,.15)', 'lg' => '0 1rem 3rem rgba(0,0,0,.175)'];
@@ -194,13 +194,13 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .btn-primary:active, #{$wrapperId} .btn-primary.active { filter: brightness(0.85); background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; }
 #{$wrapperId} h1, #{$wrapperId} .h1 { font-size: 2.5em; } #{$wrapperId} h2, #{$wrapperId} .h2 { font-size: 2em; } #{$wrapperId} h3, #{$wrapperId} .h3 { font-size: 1.75em; } #{$wrapperId} h4, #{$wrapperId} .h4 { font-size: 1.5em; } #{$wrapperId} h5, #{$wrapperId} .h5 { font-size: 1.25em; } #{$wrapperId} h6, #{$wrapperId} .h6 { font-size: 1em; }
 #{$wrapperId} .form-label { margin-bottom: 0; } #{$wrapperId} .btn { border-radius: var(--bs-border-radius); } #{$wrapperId} .card-header { font-size: 1em; } #{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; } #{$wrapperId} .extra-small { font-size: 0.75em; }
-#{$wrapperId} .awf-main-card { width: 100%; max-width: var(--awf-max-width); min-width: 350px; margin: 0 auto; background-color: var(--bs-body-bg); border: var(--awf-border-width) solid var(--bs-border-color); border-radius: var(--awf-card-radius); box-shadow: var(--awf-box-shadow); position: relative; overflow: hidden; }
+#{$wrapperId} .awf-main-card { width: 100%; max-width: var(--awf-max-width); min-width: 200px; margin: 0 auto; background-color: var(--bs-body-bg); border: var(--awf-border-width) solid var(--bs-border-color); border-radius: var(--awf-card-radius); box-shadow: var(--awf-box-shadow); position: relative; overflow: hidden; }
 #{$wrapperId} .awf-preview-ribbon { position: absolute; top: 5px; right: -95px; transform: rotate(45deg); background-color: #dc3545; color: #ffffff; padding: 5px 40px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 5px rgba(0,0,0,0.3); z-index: 1050; pointer-events: none; user-select: none; }
 #{$wrapperId} .awf-grid-sections { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(max(var(--awf-sec-min-px), calc((100% - (1.5rem * (var(--awf-sec-cols) - 1))) / var(--awf-sec-cols))), 1fr)); }
 #{$wrapperId} .awf-grid-fields { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(max(var(--awf-field-min-px), calc((100% - (1rem * (var(--awf-field-cols) - 1))) / var(--awf-field-cols))), 1fr)); }
 #{$wrapperId} .awf-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: var(--bs-border-radius); }
 #{$wrapperId} .awf-overlay-content { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--bs-border-color); max-width: 80%; }
-#{$wrapperId} .awf-relative-wrapper { position: relative; min-height: 300px;}
+#{$wrapperId} .awf-relative-wrapper { min-height: 300px;}
 #{$wrapperId} .awf-field { margin-bottom: var(--awf-field-spacing); }
 #{$wrapperId} .awf-help-text { font-size: 0.85em; color: #6c757d; font-style: italic; margin-top: 0.25rem; }
 #{$wrapperId} .awf-section-card { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: calc(var(--awf-card-radius) - 2px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); height: var(--awf-section-height); }
