@@ -77,7 +77,8 @@ function filterTemplatesByType(lineNum) {
     // Add "None" option first
     var noneOpt = document.createElement('option');
     noneOpt.value = 'None';
-    noneOpt.text = '--None--';
+    var noneLabelField = document.getElementById('aow_none_label');
+    noneOpt.text = noneLabelField ? noneLabelField.value : '--None--';
     templateSelect.add(noneOpt);
     
     // Add filtered options (skip empty keys from PHP templates)

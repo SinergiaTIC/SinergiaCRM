@@ -403,7 +403,6 @@ $dictionary['stic_Messages'] = array(
         //     'unified_search' => 0,
         //     'source' => 'non-db',
         // ),
-
     ),
     'indices' => array(
         array(

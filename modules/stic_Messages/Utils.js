@@ -275,7 +275,7 @@ switch (sticViewType) {
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
     var messageType = $("#type").val();
 
-// If message is not of type conversation, hide conversation field and new conversation checkbox
+    // If message is not of type conversation, hide conversation field and new conversation checkbox
     if (messageType !== 'private_area') {
       $('div[data-field="new_conversation"]').hide();
       $('div[data-field="stic_conversations_stic_messages_name"]').hide();

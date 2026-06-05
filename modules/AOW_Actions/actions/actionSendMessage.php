@@ -114,6 +114,7 @@ class actionSendMessage extends actionBase
         // Hidden fields with templates by type for JavaScript filtering
         $html .= '<input type="hidden" id="aow_sms_templates" value="'.htmlspecialchars($smsTemplatesJson, ENT_QUOTES, 'UTF-8').'">';
         $html .= '<input type="hidden" id="aow_whatsapp_templates" value="'.htmlspecialchars($whatsappTemplatesJson, ENT_QUOTES, 'UTF-8').'">';
+        $html .= '<input type="hidden" id="aow_none_label" value="'.htmlspecialchars(translate('LBL_NONE', 'app_strings'), ENT_QUOTES, 'UTF-8').'">';
 
         $html .= "<table border='0' cellpadding='0' cellspacing='0' width='100%' data-workflow-action='send-message'>";
         $html .= "<tr>";

@@ -25,7 +25,11 @@ var sticMessagesWindowChecked = false;
 var sticMessagesWindowOpen = false;
 
 function sticMessagesGetTemplateRequiredMsg() {
-    return SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_TEMPLATE_REQUIRED') || 'For WhatsApp, you must select a template. Free text is only allowed within an open 24h conversation window.';
+    return SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_TEMPLATE_REQUIRED') || SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_TEMPLATE_REQUIRED');
+}
+
+function sticMessagesGetWindowClosedAlertMsg() {
+    return SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WINDOW_CLOSED_ALERT') || SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WINDOW_CLOSED_ALERT');
 }
 
 function sticMessagesCheckWhatsAppWindow(parentId, parentType) {
@@ -196,7 +200,7 @@ function sticMessagesValidateWhatsApp() {
 
     if (!sticMessagesWindowOpen) {
         if (!templateEl || !templateEl.value || templateEl.value === '') {
-            alert('When the conversation window is closed, you must select a WhatsApp template to send a message.');
+            alert(sticMessagesGetWindowClosedAlertMsg());
             return false;
         }
     }

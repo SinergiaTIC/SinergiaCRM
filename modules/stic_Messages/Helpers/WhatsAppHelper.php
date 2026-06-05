@@ -104,10 +104,10 @@ class WhatsAppHelper implements stic_MessagesHelper {
         }
         
         if (isset($resultArray['data']['sid'])) {
-            $GLOBALS['log']->info('WhatsApp enviado. SID: ' . $resultArray['data']['sid']);
+            $GLOBALS['log']->info('WhatsApp message sent. SID: ' . $resultArray['data']['sid']);
             return [
                 'code' => stic_Messages::OK,
-                'message' => 'Message sent',
+                'message' => translate('LBL_MESSAGE_SENT', 'stic_Messages'),
                 'twilio_sid' => $resultArray['data']['sid'],
                 'status' => $resultArray['data']['status'] ?? 'sent'
             ];
@@ -123,14 +123,14 @@ class WhatsAppHelper implements stic_MessagesHelper {
     {
         if (!$this->isConfigured()) {
             return json_encode([
-                'success' => false, 
-                'message' => 'Configuración de Twilio incompleta'
+                'success' => false,
+                'message' => translate('LBL_TWILIO_CONFIG_INCOMPLETE', 'stic_Messages')
             ]);
         }
         if (empty($phone) || (empty($message) && empty($templateSid) && empty($mediaUrl))) {
             return json_encode([
-                'success' => false, 
-                'message' => 'Teléfono o mensaje vacíos'
+                'success' => false,
+                'message' => translate('LBL_TWILIO_EMPTY_PHONE_OR_MESSAGE', 'stic_Messages')
             ]);
         }
 
@@ -198,9 +198,9 @@ class WhatsAppHelper implements stic_MessagesHelper {
             ]);
         }
 
-        $errorMessage = $responseData['message'] ?? 'Error desconocido';
+        $errorMessage = $responseData['message'] ?? translate('LBL_TWILIO_UNKNOWN_ERROR', 'stic_Messages');
         return json_encode([
-            'success' => false, 
+            'success' => false,
             'message' => $errorMessage
         ]);
     }
@@ -222,9 +222,9 @@ class WhatsAppHelper implements stic_MessagesHelper {
     public function validateConfig()
     {
         $errors = [];
-        if (empty($this->sid)) $errors[] = 'Account SID ausente';
-        if (empty($this->token)) $errors[] = 'Auth Token ausente';
-        if (empty($this->twilioNumber)) $errors[] = 'Número Twilio ausente';
+        if (empty($this->sid)) $errors[] = translate('LBL_TWILIO_SID_MISSING', 'stic_Messages');
+        if (empty($this->token)) $errors[] = translate('LBL_TWILIO_TOKEN_MISSING', 'stic_Messages');
+        if (empty($this->twilioNumber)) $errors[] = translate('LBL_TWILIO_NUMBER_MISSING', 'stic_Messages');
         return $errors;
     }
 

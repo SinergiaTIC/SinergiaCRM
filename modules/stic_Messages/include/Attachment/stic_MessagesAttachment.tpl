@@ -21,9 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$lblAttach = htmlspecialchars($mod_strings['LBL_ATTACHMENT'] ?? 'Attachment');
-$lblRemove = htmlspecialchars($mod_strings['LBL_ATTACHMENT_REMOVE'] ?? 'Remove');
-$lblUploading = htmlspecialchars($mod_strings['LBL_CONVERSATION_UPLOADING'] ?? 'Uploading…');
+$lblAttach = htmlspecialchars($mod_strings['LBL_ATTACHMENT'] ?? 'LBL_ATTACHMENT');
+$lblRemove = htmlspecialchars($mod_strings['LBL_ATTACHMENT_REMOVE'] ?? 'LBL_ATTACHMENT_REMOVE');
+$lblUploading = htmlspecialchars($mod_strings['LBL_CONVERSATION_UPLOADING'] ?? 'LBL_CONVERSATION_UPLOADING');
 ?>
 <div id="stic_attachment_widget" style="display:none;">
     <input type="hidden" id="media_note_id" name="media_note_id" value="">

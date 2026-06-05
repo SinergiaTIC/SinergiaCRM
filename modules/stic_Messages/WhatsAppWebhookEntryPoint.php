@@ -150,8 +150,8 @@ class WhatsAppWebhookEntryPoint
             }
         }
 
-        $label = $app_strings['LBL_WHATSAPP_INCOMING_MESSAGE'] ?? 'Incoming WhatsApp message';
-        $from_label = $app_strings['LBL_FROM'] ?? 'from';
+        $label = $app_strings['LBL_WHATSAPP_INCOMING_MESSAGE'] ?? 'LBL_WHATSAPP_INCOMING_MESSAGE';
+        $from_label = $app_strings['LBL_FROM'] ?? 'LBL_FROM';
         return $label . ' ' . $from_label . ' ' . $from . ' - ' . $GLOBALS['timedate']->nowDb();
     }
 

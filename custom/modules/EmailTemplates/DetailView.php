@@ -174,7 +174,6 @@ if (is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty(
 
 $xtpl->assign("DESCRIPTION", $focus->description);
 
-// STIC-Custom AAM - Asignaciones campos WhatsApp
 $stic_type_val     = isset($focus->type)                             ? $focus->type                             : '';
 $stic_status_val   = isset($focus->stic_whatsapp_status_c)           ? $focus->stic_whatsapp_status_c           : '';
 $stic_category_val = isset($focus->stic_whatsapp_category_c)         ? $focus->stic_whatsapp_category_c         : '';
@@ -189,7 +188,6 @@ $xtpl->assign('STIC_WHATSAPP_STATUS_LABEL',      htmlspecialchars($stic_status_l
 $xtpl->assign('STIC_WHATSAPP_CATEGORY_LABEL',    htmlspecialchars($stic_category_label, ENT_QUOTES));
 $xtpl->assign('STIC_WHATSAPP_TWILIO_ID',         htmlspecialchars($stic_twilio_id,      ENT_QUOTES));
 $xtpl->assign('TYPE_RAW',                        htmlspecialchars($stic_type_val,        ENT_QUOTES));
-// END STIC-Custom
 
 $detailView->processListNavigation($xtpl, "EMAIL_TEMPLATE", $offset);
 
@@ -199,7 +197,5 @@ require_once('modules/DynamicFields/templates/Files/DetailView.php');
 $xtpl->parse("main");
 $xtpl->out("main");
 
-// STIC Custom 20240909 EPS - SMS messages
 echo getVersionedScript("SticInclude/js/Utils.js");
 echo getVersionedScript("custom/modules/EmailTemplates/SticUtils.js");
-// END STIC Custom
