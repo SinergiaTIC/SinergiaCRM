@@ -782,11 +782,6 @@ class AOW_WorkFlow extends Basic
                 // END STIC Custom
 
                 // STIC-Custom 20260604 PCS - Load relationship if relate field ID is empty
-                // Issue #1222: Workflow conditions on custom related fields fail because
-                // the relationship is not loaded before evaluating the condition.
-                // When a bean is loaded programmatically (callbacks, hooks, CLI, imports),
-                // relate fields with source => non-db have null ID. This fallback loads
-                // the relationship to get the correct ID for condition evaluation.
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/1223
                 if ($field === null && $data['type'] === 'relate' && isset($data['link'])) {
                     $condition_bean->load_relationship($data['link']);
