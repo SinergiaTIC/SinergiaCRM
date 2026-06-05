@@ -35,7 +35,3 @@ $mod_strings['LBL_STIC_WHATSAPP_TWILIO_ID'] = 'ID de Twilio';
 
 
 
-
-
-
-

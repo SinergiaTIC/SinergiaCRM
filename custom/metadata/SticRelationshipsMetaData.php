@@ -8180,7 +8180,7 @@ $dictionary["stic_assets_stic_followups"] = array(
     ),
 );
 
-$dictionary["stic_messages_notes"] = array(
+$dictionary["stic_messages_notes"] = array (
     'relationships' => array(
         'stic_messages_notes' => array(
             'lhs_module' => 'stic_Messages',
@@ -8198,7 +8198,7 @@ $dictionary["stic_messages_notes"] = array(
     'indices' => '',
     'table' => '',
 );
-  $dictionary["stic_awf_forms_stic_awf_responses"] = array (
+$dictionary["stic_awf_forms_stic_awf_responses"] = array (
     'true_relationship_type' => 'one-to-many',
     'relationships' => 
     array (
