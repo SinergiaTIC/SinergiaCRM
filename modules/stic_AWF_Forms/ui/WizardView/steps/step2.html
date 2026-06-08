@@ -568,7 +568,6 @@
                                     </template>
                                     <!-- Text -->
                                     <td>
-                                      <!-- <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"/> -->
                                       <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"
                                              @change="if (field.isSelectCustomOptions() && (!element.value || element.value.trim() === '')) { element.value = element.text; }" />
                                     </td>
