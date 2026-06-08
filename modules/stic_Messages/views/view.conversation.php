@@ -132,7 +132,7 @@ class stic_MessagesViewConversation extends SugarView {
                 $status = strtolower($msg['status'] ?? 'sent');
 
                 if (empty($direction)) {
-                    $direction = ($type === 'whatsapp' || $type === 'received') ? 'inbound' : 'outbound';
+                    $direction = 'outbound';
                 }
 
                 $isOut = ($direction === 'outbound' || $direction === 'out');

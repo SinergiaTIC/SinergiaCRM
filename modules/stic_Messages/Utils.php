@@ -242,7 +242,7 @@ class stic_MessagesUtils {
                 FROM stic_messages
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
-                AND type IN ('WhatsAppHelper', 'WhatsApp', 'received')
+                AND type = 'WhatsAppHelper'
                 ORDER BY date_entered DESC
                 LIMIT 1";
 
@@ -254,18 +254,7 @@ class stic_MessagesUtils {
         $minutesLeft = 0;
 
         if ($lastMessage) {
-            $type = $lastMessage['type'];
-            $isValidWindowEvent = false;
-
-            // Window is open if: received message OR sent template (WhatsAppHelper with template that has SID)
-            if ($type === 'received' || $type === 'WhatsApp') {
-                $isValidWindowEvent = true;
-            } elseif ($type === 'WhatsAppHelper' && !empty($lastMessage['template_id'])) {
-                $templateBean = BeanFactory::getBean('EmailTemplates', $lastMessage['template_id']);
-                if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
-                    $isValidWindowEvent = true;
-                }
-            }
+            $isValidWindowEvent = true;
 
             if ($isValidWindowEvent) {
                 $eventTs = (new DateTime($lastMessage['date_entered'], new DateTimeZone('UTC')))->getTimestamp();

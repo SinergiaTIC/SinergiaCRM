@@ -646,7 +646,7 @@ class stic_MessagesController extends SugarController
                 FROM stic_messages
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
-                AND type IN ('WhatsAppHelper', 'WhatsApp', 'received')
+                AND type = 'WhatsAppHelper'
                 ORDER BY date_entered ASC";
 
         $result = $db->query($sql);
@@ -669,13 +669,15 @@ class stic_MessagesController extends SugarController
             // Find the last event date for closed message
             $lastEvent = null;
             foreach (array_reverse($messages) as $msg) {
-                if (in_array($msg['type'], ['received', 'WhatsApp'])) {
-                    $lastEvent = $msg['date_entered'];
-                    break;
-                }
-                if ($msg['type'] === 'WhatsAppHelper' && !empty($msg['template_id'])) {
-                    $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
-                    if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
+                if ($msg['type'] === 'WhatsAppHelper') {
+                    if (!empty($msg['template_id'])) {
+                        $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
+                        if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
+                            $lastEvent = $msg['date_entered'];
+                            break;
+                        }
+                    } else {
+                        // Free-text message sent within the 24h window also counts as event
                         $lastEvent = $msg['date_entered'];
                         break;
                     }
