@@ -551,8 +551,7 @@
                                     </template>
                                     <template x-if="field.isSelectCustomOptions()">
                                       <td x-show="showInternalValues">
-                                        <input class="form-control" type="text" x-model="element.value" :id="`modalField_ValueOptionsValue${index}`"
-                                               :placeholder="stic_AwfConfiguration.cleanName(element.text)"/>
+                                        <input class="form-control" type="text" x-model="element.value" :id="`modalField_ValueOptionsValue${index}`" :placeholder="element.text"/>
                                       </td>
                                     </template>
                                     <!-- Text original -->
@@ -571,7 +570,7 @@
                                     <td>
                                       <!-- <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"/> -->
                                       <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"
-                                             @change="if (field.isSelectCustomOptions() && (!element.value || element.value.trim() === '')) { element.value = stic_AwfConfiguration.cleanName(element.text); }" />
+                                             @change="if (field.isSelectCustomOptions() && (!element.value || element.value.trim() === '')) { element.value = element.text; }" />
                                     </td>
                                     <!-- Buttons -->
                                     <td class="d-flex">
