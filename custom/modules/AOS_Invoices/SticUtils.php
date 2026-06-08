@@ -333,8 +333,11 @@ class AOS_InvoicesUtils
      * All Verifactu operations must use this method to guarantee that the
      * same system identification data is sent to AEAT on every request.
      *
-     * @param string $issuerNif  NIF of the certificate holder / issuer
-     * @param string $issuerName Name of the certificate holder / issuer
+     * The vendorNif/vendorName identify the software producer (SinergiaTIC),
+     * separate from the taxpayer (certificate holder) which is set via FiscalIdentifier.
+     *
+     * @param string $issuerNif  NIF of the certificate holder / issuer (for FiscalIdentifier)
+     * @param string $issuerName Name of the certificate holder / issuer (for FiscalIdentifier)
      *
      * @return ComputerSystem
      */
@@ -342,16 +345,19 @@ class AOS_InvoicesUtils
     {
         global $sugar_config;
 
-        require_once 'modules/stic_Settings/Utils.php';
+        $systemName    = 'SinergiaCRM';
+        $systemId      = 'SC';
+        $systemVersion = $sugar_config['sinergiacrm_version'] ?? '1.0';
 
-        $systemName         = 'SinergiaCRM';
-        $systemId           = 'SC';
-        $systemVersion      = $sugar_config['sinergiacrm_version'] ?? '1.0';
-        $installationNumber = '001';
+        $vendorNif   = $sugar_config['verifactu_vendor_nif'] ?? '';
+        $vendorName  = $sugar_config['verifactu_vendor_name'] ?? '';
+
+        // Auto-generate installation number from unique_key
+        $installationNumber = 'SC-' . substr(md5($sugar_config['unique_key']), 0, 8);
 
         return self::configureComputerSystem(
-            $issuerNif,
-            $issuerName,
+            $vendorNif,
+            $vendorName,
             $systemName,
             $systemId,
             $systemVersion,

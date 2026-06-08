@@ -55,6 +55,7 @@
                 </button>
                 
                 <input type="hidden" id="invoice_series_count" value="0">
+                <input type="hidden" name="invoice_series_rectified" id="invoice_series_rectified_hidden" value="">
                 <!-- END STIC CUSTOM -->
             </td>
         </tr>
@@ -138,19 +139,25 @@
                          '<input type="hidden" name="invoice_series_original_name[' + lineNum + ']" ' +
                          'value="' + name + '">';
         
-        // Rectified series radio button cell - hide if series is blocked
+        // Rectified series cell
         var cell2 = row.insertCell(1);
         cell2.style.textAlign = 'center';
         cell2.style.padding = '2px';
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = !!isRectified;
         if (hasInvoices) {
-            cell2.innerHTML = '<span style="color:#888;font-size:12px;">-</span>';
+            cb.disabled = true;
+            cb.title = MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP;
         } else {
-            var checkedAttr = isRectified ? 'checked' : '';
-            cell2.innerHTML = '<input type="radio" name="invoice_series_rectified" ' +
-                             'id="invoice_series_rectified_' + lineNum + '" ' +
-                             'value="' + lineNum + '" ' +
-                             checkedAttr + ' ' +
-                             'title="{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_HELP}{literal}">';
+            cb.className = 'rectified_checkbox';
+            cb.dataset.line = lineNum;
+            cb.title = '{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_HELP}{literal}';
+        }
+        cell2.appendChild(cb);
+        // Update hidden field on page load if this is the rectified series
+        if (isRectified) {
+            document.getElementById('invoice_series_rectified_hidden').value = lineNum;
         }
         
         // Format cell
@@ -279,6 +286,42 @@
         }
     }
     
+    // Handle checkbox change for rectified series
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('rectified_checkbox')) {
+            var lineNum = e.target.dataset.line;
+            var hidden = document.getElementById('invoice_series_rectified_hidden');
+            
+            if (e.target.checked) {
+                // Check this one -> uncheck all other non-blocked checkboxes
+                document.querySelectorAll('.rectified_checkbox').forEach(function(cb) {
+                    if (cb !== e.target) {
+                        cb.checked = false;
+                    }
+                });
+                hidden.value = lineNum;
+            } else {
+                // Unchecked -> check if there's a disabled rectified checkbox to fall back to
+                var hasBlockedRectified = false;
+                document.querySelectorAll('#invoice_series_lines input[type="checkbox"][disabled]').forEach(function(cb) {
+                    if (cb.checked) {
+                        hasBlockedRectified = true;
+                        // Find the line number from the row
+                        var row = cb.closest('tr');
+                        var lineMatch = row.id.match(/invoice_series_line_(\d+)/);
+                        if (lineMatch) {
+                            hidden.value = lineMatch[1];
+                        }
+                    }
+                });
+                if (!hasBlockedRectified) {
+                    // No fallback -> re-check (must have exactly one rectified)
+                    e.target.checked = true;
+                }
+            }
+        }
+    });
+    
     // Validate that exactly one series is marked as rectified
     function validateRectifiedSeries() {
         var tbody = document.getElementById('invoice_series_lines');
@@ -289,12 +332,12 @@
             return true;
         }
         
-        // Check if at least one radio button is selected
-        var radios = document.getElementsByName('invoice_series_rectified');
+        // Check if at least one checkbox is selected (disabled or enabled)
+        var checkboxes = document.querySelectorAll('#invoice_series_lines input[type="checkbox"]');
         var isOneSelected = false;
         
-        for (var i = 0; i < radios.length; i++) {
-            if (radios[i].checked) {
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
                 isOneSelected = true;
                 break;
             }
@@ -370,6 +413,76 @@
                 <input type='hidden' name='aos.lineItems.totalTax' value='false'>
                 <input name='aos.lineItems.totalTax'  type="checkbox" value="true" {$lineItems_totalTax}>
             </td>
+        </tr>
+    </table>
+
+    <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+        <tr>
+            <th align="left" scope="row" colspan="4">
+                <h4>{$MOD.LBL_AOS_ADMIN_VERIFACTU_SETTINGS}</h4>
+            </th>
+        </tr>
+        <tr>
+            <td colspan="4" style="padding: 4px 8px 8px 8px; font-size:12px; color:#666;">
+                {$MOD.LBL_AOS_ADMIN_VERIFACTU_HELP}
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_VENDOR_NIF}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_VENDOR_NIF}' size='15' maxlength='9' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_VENDOR_NIF_HELP}</em>
+            </td>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_VENDOR_NAME}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_VENDOR_NAME}' size='40' maxlength='120' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_VENDOR_NAME_HELP}</em>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_SYSTEM_NAME}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_SYSTEM_NAME}' size='30' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_SYSTEM_NAME_HELP}</em>
+            </td>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_SYSTEM_ID}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_SYSTEM_ID}' size='10' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_SYSTEM_ID_HELP}</em>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_SYSTEM_VERSION}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_SYSTEM_VERSION}' size='15' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_SYSTEM_VERSION_HELP}</em>
+            </td>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_INSTALLATION_NUMBER}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_INSTALLATION_NUMBER}' size='25' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_INSTALLATION_NUMBER_HELP}</em>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_ACTIVATED}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_ACTIVATED}' size='10' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_ACTIVATED_HELP}</em>
+            </td>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TEST_MODE}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_TEST_MODE}' size='10' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TEST_MODE_HELP}</em>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TAX_TYPE}: </td>
+            <td>
+                <input type='text' value='{$VERIFACTU_TAX_TYPE}' size='10' readonly style="background:#f5f5f5;border:1px solid #ddd;">
+                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TAX_TYPE_HELP}</em>
+            </td>
+            <td scope="row" width="200"></td>
+            <td></td>
         </tr>
     </table>
 

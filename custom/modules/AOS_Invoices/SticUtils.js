@@ -276,14 +276,20 @@ function disableDeleteButton() {
 
 // === Step 2.3: Filter series dropdown based on isRectified flag ===
 function filterSeriesDropdown() {
-  var isRectified = $("#verifactu_is_rectified_c").is(":checked");
   var seriesSelect = $("#stic_invoice_type_c");
 
   if (!seriesSelect.length || typeof sticSeriesConfig === 'undefined') {
     return;
   }
 
+  // Sync checkbox with currently selected series
   var currentValue = seriesSelect.val();
+  var currentSeriesInfo = sticSeriesConfig.find(function(s) { return s.name === currentValue; });
+  if (currentSeriesInfo) {
+    $("#verifactu_is_rectified_c").prop("checked", currentSeriesInfo.isRectified);
+  }
+
+  var isRectified = $("#verifactu_is_rectified_c").is(":checked");
   var validOptions = [];
   var firstValidValue = null;
 
@@ -319,6 +325,10 @@ function initSeriesFilter() {
   filterSeriesDropdown();
 
   $("#verifactu_is_rectified_c").on("change", function() {
+    filterSeriesDropdown();
+  });
+
+  $("#stic_invoice_type_c").on("change", function() {
     filterSeriesDropdown();
   });
 }

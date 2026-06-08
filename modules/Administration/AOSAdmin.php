@@ -109,7 +109,13 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             $name = isset($_POST['invoice_series_name'][$index])
                   ? trim(substr($_POST['invoice_series_name'][$index], 0, 50))
                   : '';
-            $isRectified = ($rectifiedSeriesIndex !== null && $rectifiedSeriesIndex == $index);
+            if ($rectifiedSeriesIndex !== null && $rectifiedSeriesIndex !== '') {
+                $isRectified = ($rectifiedSeriesIndex == $index);
+            } elseif (!empty($name)) {
+                $isRectified = !empty($sugar_config['aos']['invoices']['series'][$name]['isRectified']);
+            } else {
+                $isRectified = false;
+            }
             
             // Validate format: only letters, 0, and symbols (no digits 1-9)
             if (!empty($format) && preg_match('/[1-9]/', $format)) {
@@ -229,17 +235,21 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['isRectified'] = {$isRectified};\n";
         }
         
-        // Insert new lines before the closing /***CONFIGURATOR***/
-        $configContent = str_replace(
-            '/***CONFIGURATOR***/',
-            $newSeriesLines . '/***CONFIGURATOR***/',
-            $configContent
-        );
+        // Insert new lines before the LAST /***CONFIGURATOR***/
+        $lastPos = strrpos($configContent, '/***CONFIGURATOR***/');
+        if ($lastPos !== false) {
+            $configContent = substr_replace(
+                $configContent,
+                $newSeriesLines . '/***CONFIGURATOR***/',
+                $lastPos,
+                strlen('/***CONFIGURATOR***/')
+            );
+        }
         
         // Write back to file
         file_put_contents($configFile, $configContent);
     }
-    // END STIC CUSTOM 
+    // END STIC CUSTOM
 
     // Stay on AOSAdmin page after save
     SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin&saved=1');
@@ -253,6 +263,35 @@ $sugar_smarty->assign('LANGUAGES', get_languages());
 $sugar_smarty->assign("JAVASCRIPT", get_set_focus_js());
 $sugar_smarty->assign('config', $sugar_config);
 $sugar_smarty->assign('error', $errors);
+
+// STIC CUSTOM - Set Verifactu values for Smarty display
+require_once 'modules/stic_Settings/Utils.php';
+
+$verifactuVendorNif = $sugar_config['verifactu_vendor_nif'] ?? '';
+$verifactuVendorName = $sugar_config['verifactu_vendor_name'] ?? '';
+$verifactuSystemName = 'SinergiaCRM';
+$verifactuSystemId = 'SC';
+$verifactuSystemVersion = $sugar_config['sinergiacrm_version'] ?? '1.0';
+$verifactuInstallationNumber = 'SC-' . substr(md5($sugar_config['unique_key']), 0, 8);
+
+$tmp = stic_SettingsUtils::getSetting('VERIFACTU_ACTIVATED');
+$verifactuActivated = $tmp === false ? '' : ($tmp == '1' ? 'Sí' : 'No');
+$tmp = stic_SettingsUtils::getSetting('VERIFACTU_TEST');
+$verifactuTestMode = $tmp === false ? '' : ($tmp == '1' ? 'Test' : 'Real');
+$tmp = stic_SettingsUtils::getSetting('VERIFACTU_TAX_TYPE');
+$taxTypes = array('01' => 'IVA', '02' => 'IPSI', '03' => 'IGIC');
+$verifactuTaxType = ($tmp !== false && isset($taxTypes[$tmp])) ? $taxTypes[$tmp] . " ({$tmp})" : ($tmp !== false ? $tmp : '');
+
+$sugar_smarty->assign('VERIFACTU_VENDOR_NIF', $verifactuVendorNif);
+$sugar_smarty->assign('VERIFACTU_VENDOR_NAME', $verifactuVendorName);
+$sugar_smarty->assign('VERIFACTU_SYSTEM_NAME', $verifactuSystemName);
+$sugar_smarty->assign('VERIFACTU_SYSTEM_ID', $verifactuSystemId);
+$sugar_smarty->assign('VERIFACTU_SYSTEM_VERSION', $verifactuSystemVersion);
+$sugar_smarty->assign('VERIFACTU_INSTALLATION_NUMBER', $verifactuInstallationNumber);
+$sugar_smarty->assign('VERIFACTU_ACTIVATED', $verifactuActivated);
+$sugar_smarty->assign('VERIFACTU_TEST_MODE', $verifactuTestMode);
+$sugar_smarty->assign('VERIFACTU_TAX_TYPE', $verifactuTaxType);
+// END STIC CUSTOM
 
 // Get series that have accepted invoices in current year (to block edition/removal in UI)
 $db = DBManagerFactory::getInstance();
