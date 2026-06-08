@@ -207,9 +207,11 @@ class WhatsAppHelper implements stic_MessagesHelper {
 
     private function formatPhoneNumber($phone)
     {
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        if (substr($phone, 0, 1) !== '+') {
-            $phone = '+' . $phone;
+        $phone = trim($phone);
+        if (strpos($phone, '+') === 0) {
+            $phone = '+' . preg_replace('/[^0-9]/', '', substr($phone, 1));
+        } else {
+            $phone = '+34' . preg_replace('/[^0-9]/', '', $phone);
         }
         return $phone;
     }
