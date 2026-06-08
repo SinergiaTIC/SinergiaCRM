@@ -85,6 +85,15 @@ class stic_AttendancesUtils
      */
     public static function createAttendances($date = null, $registrationId = null, $sessionId = null)
     {
+        // DEBUG: Track call sequence
+        static $callCount = 0;
+        $callCount++;
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
+        $trace = [];
+        foreach ($bt as $i => $f) {
+            $trace[] = ($f['class']??'') . ($f['type']??'') . ($f['function']??'') . ':' . ($f['line']??'?');
+        }
+        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": CALL#$callCount stack=" . implode(' <- ', $trace));
 
         if ($date > date('Y-m-d')) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  $date is future... no attendances will be created.');
@@ -92,6 +101,7 @@ class stic_AttendancesUtils
         }
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Creating attendances with these params: date:' . $date . '| registration_id:' . $registrationId . '| session_id:' . $sessionId);
+
         // STIC TIP: run task in navigator with:
         // window.location.href="/index.php?module=stic_Attendances&action=createAttendances&return_module=stic_Attendances&return_action=index"
         // window.location.href="/index.php?module=stic_Attendances&action=createAttendancesRange&return_module=stic_Attendances&return_action=index&start=2019-01-15&end=2019-01-15&session_id=b10a46ce-9dbc-fa97-2355-5ca399094453"
@@ -190,6 +200,9 @@ class stic_AttendancesUtils
             self::setBatchMode(true);
         }
 
+        $createdCount = 0;
+        $startTime = microtime(true);
+
         while ($row = $db->fetchByAssoc($result)) {
 
             // Avoid attendance creation if $date weekday appears in registration disabled_weekdays string
@@ -234,10 +247,17 @@ class stic_AttendancesUtils
 
             $attendance->save();
 
+            $createdCount++;
         }
 
         if ($enableBatch) {
             self::setBatchMode(false);
+        }
+
+        if ($createdCount > 0) {
+            $elapsed = microtime(true) - $startTime;
+            $avg = ($elapsed / $createdCount) * 1000;
+            $GLOBALS['log']->debug(__METHOD__ . ": Created $createdCount attendances in " . round($elapsed, 4) . " seconds (avg " . round($avg, 2) . " ms per attendance)");
         }
         return true;
     }

@@ -143,10 +143,13 @@ class stic_SessionsLogicHooks
                 case 'after_relationship_add':
                     // Recalculate event total hours
                     stic_EventsUtils::setEventTotalHours($event_id);
-                    // Create attendances if neccesary
-                    require_once 'modules/stic_Attendances/Utils.php';
-                    $startDateString = substr($bean->start_date, 0, 10);
-                    stic_AttendancesUtils::createAttendances($startDateString, null, $bean->id);
+                    // For existing sessions (not new), create attendances if needed.
+                    // For new sessions, after_save handles attendance creation.
+                    if (!empty($bean->fetched_row['id'])) {
+                        require_once 'modules/stic_Attendances/Utils.php';
+                        $startDateString = substr($bean->start_date, 0, 10);
+                        stic_AttendancesUtils::createAttendances($startDateString, null, $bean->id);
+                    }
                     break;
                 default:
                     break;
