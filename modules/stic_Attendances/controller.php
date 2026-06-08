@@ -80,6 +80,10 @@ class stic_AttendancesController extends SugarController
 
         $numDays = $start->diff($end)->days;
         $dayToCreate = $start->format('Y-m-d');
+
+        // Enable batch mode to defer recalculations until all days are processed
+        stic_AttendancesUtils::setBatchMode(true);
+        $a = 0;
         while ($a <= $numDays) {
             $GLOBALS['log']->debug(__METHOD__ . '. line ' . __LINE__ . ' Creando asistencias para el día ' . $dayToCreate);
             stic_AttendancesUtils::createAttendances($dayToCreate, $registration_id, $session_id);
@@ -87,6 +91,7 @@ class stic_AttendancesController extends SugarController
             $a++;
 
         }
+        stic_AttendancesUtils::setBatchMode(false);
         SugarApplication::redirect('index.php?module=stic_Attendances&action=index');
 
     }

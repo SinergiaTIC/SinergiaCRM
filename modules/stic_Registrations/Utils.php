@@ -267,10 +267,13 @@ class stic_RegistrationsUtils {
                 AND DATE(s.start_date) <= '$endDay'";
         // END STIC-Custom OC
 
+        // Enable batch mode so that all attendances are created before flushing recalculations
+        stic_AttendancesUtils::setBatchMode(true);
         $result = $registrationBean->db->query($querySessionDates);
         while ($row = $registrationBean->db->fetchByAssoc($result)) {
             stic_AttendancesUtils::createAttendances($row['session_date'], $registrationBean->id, null);
         }
+        stic_AttendancesUtils::setBatchMode(false);
 
     }
 }
