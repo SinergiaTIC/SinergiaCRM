@@ -68,6 +68,18 @@
     // Series with accepted invoices (populated from PHP to block removal)
     var seriesWithInvoices = {if isset($series_with_invoices)}{$series_with_invoices|json_encode}{else}[]{/if};
     
+    // Localized strings (must be before the success message block that uses them)
+    var MOD_LBL_AOS_INVOICE_SERIES_NAME_PLACEHOLDER = "{$MOD.LBL_AOS_INVOICE_SERIES_NAME_PLACEHOLDER}";
+    var MOD_LBL_AOS_INVOICE_SERIES_NAME_REQUIRED = "{$MOD.LBL_AOS_INVOICE_SERIES_NAME_REQUIRED}";
+    var MOD_LBL_AOS_INVOICE_SERIES_FORMAT_PLACEHOLDER = "{$MOD.LBL_AOS_INVOICE_SERIES_FORMAT_PLACEHOLDER}";
+    var MOD_LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION = "{$MOD.LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION}";
+    var MOD_LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION = "{$MOD.LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION}";
+    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE}";
+    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE_CONFIRM = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE_CONFIRM}";
+    var MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP = "{$MOD.LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP}";
+    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED}";
+    var MOD_LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS = "{$MOD.LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS}";
+    
     // Check for success message from save - passed as PHP variable
     var saveSuccess = {if isset($smarty.get.saved) && $smarty.get.saved == 1}true{else}false{/if};
     {literal}
@@ -90,18 +102,6 @@
     existingSeries.push({ldelim} format: "{$seriesData.format}", initialNumber: "{$seriesData.initialNumber}", name: "{$name|escape:'javascript'}", isRectified: {if isset($seriesData.isRectified) && $seriesData.isRectified}true{else}false{/if} {rdelim});
         {/foreach}
     {/if}
-    
-    // Localized strings
-    var MOD_LBL_AOS_INVOICE_SERIES_NAME_PLACEHOLDER = "{$MOD.LBL_AOS_INVOICE_SERIES_NAME_PLACEHOLDER}";
-    var MOD_LBL_AOS_INVOICE_SERIES_NAME_REQUIRED = "{$MOD.LBL_AOS_INVOICE_SERIES_NAME_REQUIRED}";
-    var MOD_LBL_AOS_INVOICE_SERIES_FORMAT_PLACEHOLDER = "{$MOD.LBL_AOS_INVOICE_SERIES_FORMAT_PLACEHOLDER}";
-    var MOD_LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION = "{$MOD.LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION}";
-    var MOD_LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION = "{$MOD.LBL_AOS_INVOICE_SERIES_INITIAL_VALIDATION}";
-    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE}";
-    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE_CONFIRM = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE_CONFIRM}";
-    var MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP = "{$MOD.LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP}";
-    var MOD_LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED}";
-    var MOD_LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS = "{$MOD.LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS}";
     
     {literal}
     function addInvoiceSeriesLine(format, initialNumber, name, isRectified) {
