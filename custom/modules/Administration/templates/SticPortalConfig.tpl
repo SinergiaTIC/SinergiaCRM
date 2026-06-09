@@ -52,7 +52,7 @@
 <script>setInlineHelpQtip();</script>
         <div class="inline-help-content" style="display:none;">{$MOD.LBL_STIC_PORTAL_PASSWORD_MIN_LENGTH_HELP}</div>
     </td>
-    <td width="25%" valign="middle"><input type="number" name="PORTAL_PASSWORD_MIN_LENGTH" value="{$SETTINGS.PORTAL_PASSWORD_MIN_LENGTH|default:'8'}" min="1" max="64" style="width:80px"> {$MOD.LBL_STIC_PORTAL_CHARACTERS}</td>
+    <td width="25%" valign="middle"><input type="number" name="PORTAL_PASSWORD_MIN_LENGTH" value="{$SETTINGS.PORTAL_PASSWORD_MIN_LENGTH|default:'8'}" min="4" max="64" style="width:80px"> {$MOD.LBL_STIC_PORTAL_CHARACTERS}</td>
     <td width="25%" scope="row" valign="middle">
         {$MOD.LBL_STIC_PORTAL_PASSWORD_HISTORY}
         <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="5" aria-describedby="qtip-5"></i>

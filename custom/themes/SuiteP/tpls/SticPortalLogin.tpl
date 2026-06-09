@@ -45,6 +45,7 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
   </div>
   {/if}
   <form method="post">
+    <div style="position:absolute;left:-9999px" aria-hidden="true"><input type="text" name="portal_hp" tabindex="-1" autocomplete="off"></div>
     <input type="hidden" name="csrf_token" value="{$CSRF_TOKEN|escape}">
     <input type="hidden" name="portal_mode" id="portal_mode" value="{$MODE|default:'password'}">
     {if $IS_OAUTH}
