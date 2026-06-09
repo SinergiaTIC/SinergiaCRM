@@ -319,11 +319,11 @@ $mod_strings = array (
   'LBL_THEME_PROCESSED_FORM_DESC' => 'Mensaxe que se mostrará por defecto ao procesar correctamente unha resposta ao formulario. Non se mostrará se se define unha acción final.',
   'LBL_THEME_PROCESSED_FORM_TITLE' => 'Título da mensaxe',
   'LBL_THEME_PROCESSED_FORM_TITLE_VALUE' => 'Procesado',
-  'LBL_THEME_PROCESSED_FORM_TEXT' => 'Texto del mensaje',
-  'LBL_THEME_PROCESSED_FORM_TEXT_VALUE' => 'Sus datos han sido procesados correctamente.',
+  'LBL_THEME_PROCESSED_FORM_TEXT' => 'Texto da mensaxe',
+  'LBL_THEME_PROCESSED_FORM_TEXT_VALUE' => 'Os seus datos foron procesados correctamente.',
   
   'LBL_THEME_RECEIPT_FORM' => 'Mensaxe: Datos recibidos',
-  'LBL_THEME_RECEIPT_FORM_DESC' => 'Mensaje que se mostrará por defecto al recibir una respuesta y guardarla para procesarla más tarde. Este mensaje no se mostrará si se define una acción final.',
+  'LBL_THEME_RECEIPT_FORM_DESC' => 'Mensaxe que se mostrará por defecto ao recibir unha resposta e gardala para procesala máis tarde. Esta mensaxe non se mostrará se se define unha acción final.',
   'LBL_THEME_RECEIPT_FORM_TITLE' => 'Título da mensaxe',
   'LBL_THEME_RECEIPT_FORM_TITLE_VALUE' => 'Recibido',
   'LBL_THEME_RECEIPT_FORM_TEXT' => 'Título da mensaxe',
@@ -343,7 +343,7 @@ $mod_strings = array (
   'LBL_SECTION_CONTAINER' => 'Contenedor visual',
   'LBL_SECTION_IS_COLLAPSIBLE' => 'Colapsable',
   'LBL_SECTION_ISCOLLAPSED' => 'Colapsado inicialmente',
-  'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mover a...',
+  'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Volver a...',
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está vacía. Mueva bloques aquí desde otras secciones.',
 
   // Form generation
