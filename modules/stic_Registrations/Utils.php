@@ -271,9 +271,10 @@ class stic_RegistrationsUtils {
         stic_AttendancesUtils::setBatchMode(true);
         $result = $registrationBean->db->query($querySessionDates);
         while ($row = $registrationBean->db->fetchByAssoc($result)) {
-            stic_AttendancesUtils::createAttendances($row['session_date'], $registrationBean->id, null);
+            stic_AttendancesUtils::createAttendances($row['session_date'], $registrationBean->id, null, true);
         }
         stic_AttendancesUtils::setBatchMode(false);
+        stic_AttendancesUtils::sendUISummary();
 
     }
 }

@@ -26,6 +26,8 @@ class stic_AttendancesUtils
     private static $batchMode = false;
     private static $pendingRegistrationUpdates = [];
     private static $pendingSessionUpdates = [];
+    private static $uiCreatedDates = [];
+    private static $uiNoopDates = [];
 
     /**
      * Enable or disable batch mode for deferred recalculations.
@@ -83,17 +85,8 @@ class stic_AttendancesUtils
      * @param String $sessionId Optional, default null
      * @return void
      */
-    public static function createAttendances($date = null, $registrationId = null, $sessionId = null)
+    public static function createAttendances($date = null, $registrationId = null, $sessionId = null, $fromUI = false)
     {
-        // DEBUG: Track call sequence
-        static $callCount = 0;
-        $callCount++;
-        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
-        $trace = [];
-        foreach ($bt as $i => $f) {
-            $trace[] = ($f['class']??'') . ($f['type']??'') . ($f['function']??'') . ':' . ($f['line']??'?');
-        }
-        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": CALL#$callCount stack=" . implode(' <- ', $trace));
 
         if ($date > date('Y-m-d')) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  $date is future... no attendances will be created.');
@@ -259,7 +252,61 @@ class stic_AttendancesUtils
             $avg = ($elapsed / $createdCount) * 1000;
             $GLOBALS['log']->debug(__METHOD__ . ": Created $createdCount attendances in " . round($elapsed, 4) . " seconds (avg " . round($avg, 2) . " ms per attendance)");
         }
+
+        if ($fromUI) {
+            if ($createdCount > 0) {
+                self::$uiCreatedDates[] = $date;
+            } else {
+                self::$uiNoopDates[] = $date;
+            }
+        }
+
         return true;
+    }
+
+    /**
+     * Send a summary of UI-created attendances as a success message.
+     * If total days <= 10, lists individual dates; otherwise shows aggregated counts.
+     *
+     * @return void
+     */
+    public static function sendUISummary()
+    {
+        if (empty(self::$uiCreatedDates) && empty(self::$uiNoopDates)) {
+            return;
+        }
+        require_once 'include/MVC/SugarApplication.php';
+        global $timedate, $current_language;
+
+        $formatDate = function ($date) use ($timedate) {
+            $dateObj = $timedate->fromDbDate($date);
+            return $dateObj ? $timedate->asUserDate($dateObj, false) : $date;
+        };
+
+        $created = array_map($formatDate, self::$uiCreatedDates);
+        $noop = array_map($formatDate, self::$uiNoopDates);
+        $total = count($created) + count($noop);
+
+        $parts = [];
+        if (!empty($created)) {
+            if ($total <= 10) {
+                $parts[] = sprintf(translate('LBL_UI_CREATED_LIST', 'stic_Attendances'), implode(', ', $created));
+            } else {
+                $parts[] = sprintf(translate('LBL_UI_CREATED_COUNT', 'stic_Attendances'), count($created));
+            }
+        }
+        if (!empty($noop)) {
+            if ($total <= 10) {
+                $parts[] = sprintf(translate('LBL_UI_NOOP_LIST', 'stic_Attendances'), implode(', ', $noop));
+            } else {
+                $parts[] = sprintf(translate('LBL_UI_NOOP_COUNT', 'stic_Attendances'), count($noop));
+            }
+        }
+
+        SugarApplication::appendSuccessMessage(implode('<br>', $parts));
+
+        self::$uiCreatedDates = [];
+        self::$uiNoopDates = [];
     }
 
     /**
