@@ -95,6 +95,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         $invoiceSeries = array();
         $validationErrors = array();
         $rectifiedSeriesIndex = isset($_POST['invoice_series_rectified']) ? $_POST['invoice_series_rectified'] : null;
+        $usedFormats = array();
         
         foreach ($_POST['invoice_series_format'] as $index => $format) {
             // Validate: format cannot start with a space
@@ -150,6 +151,14 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 continue; // Skip this duplicate
             }
             // === End Step 2.6 ===
+
+            // === Step 2.6b: Validate format uniqueness ===
+            $trimmedFormat = trim($format);
+            if (!empty($trimmedFormat) && isset($usedFormats[$trimmedFormat])) {
+                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_DUPLICATE_FORMAT'];
+                continue; // Skip this duplicate format
+            }
+            // === End Step 2.6b ===
             
             // === Step 2.7: Check if format can be modified (block if accepted invoices exist) ===
             // Only validate if: name is not empty AND format changed AND series exists in config
@@ -169,6 +178,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             
             // Only save non-empty formats and names that passed validation
             if (!empty($format) && !empty($name)) {
+                $usedFormats[$trimmedFormat] = true;
                 $invoiceSeries[$name] = array(
                     'format' => $format,
                     'initialNumber' => $initialNumber,

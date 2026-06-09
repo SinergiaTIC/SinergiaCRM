@@ -890,6 +890,8 @@ $mod_strings = array(
     'LBL_AOS_SERIES_FORMAT_SPACE_START' => 'El formato de serie no puede empezar con un espacio.',
     'LBL_AOS_SERIES_DUPLICATE_NAME' => 'El nombre de serie ya existe. Los nombres deben ser únicos.',
     'LBL_AOS_SERIES_FORMAT_LOCKED' => 'No se puede modificar el formato de la serie porque ya existen facturas aceptadas por la AEAT.',
+
+    'LBL_AOS_SERIES_DUPLICATE_FORMAT' => 'El formato de serie ya está en uso por otra serie. Los formatos deben ser únicos.',
     'LBL_AOS_ADMIN_VERIFACTU_SETTINGS' => 'Configuración de Verifactu (AEAT)',
     'LBL_AOS_ADMIN_VERIFACTU_HELP' => 'Esta sección muestra información de configuración utilizada en las comunicaciones con la AEAT a través de Verifactu. Todos los campos son de solo lectura.',
     'LBL_AOS_ADMIN_VERIFACTU_VENDOR_NIF' => 'NIF del productor del software',
