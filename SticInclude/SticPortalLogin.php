@@ -73,4 +73,4 @@ $ss->assign('ERROR', $error); $ss->assign('MESSAGE', $message);
 $ss->assign('MODE', $mode); $ss->assign('CSRF_TOKEN', $csrfToken);
 $ss->assign('OAUTH_CLIENT_ID', $oauthClientId); $ss->assign('OAUTH_REDIRECT_URI', $oauthRedirectUri);
 $ss->assign('OAUTH_STATE', $oauthState); $ss->assign('IS_OAUTH', $isOAuth);
-$ss->display('custom/themes/SuiteP/tpls/SticPortallogin.tpl');
+$ss->display('custom/themes/SuiteP/tpls/SticPortalLogin.tpl');

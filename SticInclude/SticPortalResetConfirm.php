@@ -44,4 +44,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $ss = new Sugar_Smarty();
 $ss->assign('ERROR', $error);
 $ss->assign('SUCCESS', $success);
-$ss->display('custom/themes/SuiteP/tpls/SticPortalreset_confirm.tpl');
+$ss->display('custom/themes/SuiteP/tpls/SticPortalResetConfirm.tpl');

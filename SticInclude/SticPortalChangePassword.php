@@ -31,4 +31,4 @@ $ss = new Sugar_Smarty();
 $ss->assign('ERROR', $error);
 $ss->assign('SUCCESS', $success);
 $ss->assign('HOME_URL', SticPortalConfigUtils::get('PORTAL_HOME_URL', ''));
-$ss->display('custom/themes/SuiteP/tpls/SticPortalchange_password.tpl');
+$ss->display('custom/themes/SuiteP/tpls/SticPortalChangePassword.tpl');

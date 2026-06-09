@@ -20,4 +20,4 @@ $ss = new Sugar_Smarty();
 $ss->assign('TITLE', 'Reset Password');
 $ss->assign('ERROR', $error);
 $ss->assign('MESSAGE', $message);
-$ss->display('custom/themes/SuiteP/tpls/SticPortalreset.tpl');
+$ss->display('custom/themes/SuiteP/tpls/SticPortalReset.tpl');
