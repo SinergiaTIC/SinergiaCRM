@@ -1915,7 +1915,6 @@ class stic_AwfConfiguration {
    * @returns {stic_AwfAction} The new action
    */
   addAction(actionDef, params = {}, flowId = '0') {
-    debugger;
     const flow = this.flows.find(f => f.id == flowId);
     if (!flow) {
       console.error(`Flow with ID ${flowId} not found.`);
