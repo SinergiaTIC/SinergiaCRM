@@ -532,6 +532,28 @@ class stic_AWFUtils {
     }
 
     /**
+     * Render a generic error page with a standard title and message, using form styles if available
+     * @param ?FormConfig $config The form configuration to extract styles from (can be null for defaults)
+     */
+    public static function renderGenericResponseError(?FormConfig $config): void
+    {
+        $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
+        $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
+        self::renderGenericResponse($config, $title, $msg);
+    }
+
+    /**
+     * Render a generic success page with a standard title and message, using form styles if available
+     * @param ?FormConfig $config The form configuration to extract styles from (can be null for defaults)
+     */
+    public static function renderGenericResponseSuccess(?FormConfig $config): void
+    {
+        $title = $config?->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+        $msg = $config?->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+        self::renderGenericResponse($config, $title, $msg);
+    }
+
+    /**
      * Render a basic HTML page using the form styles
      * @param ?FormConfig $config The form configuration to extract styles from (can be null for defaults)
      * @param string $title The title of the page (also used in the <title> tag and as a heading)
@@ -889,4 +911,154 @@ class stic_AWFUtils {
 
         return true; // All conditions passed
     }
+
+    /**
+     * Rebuilds the ExecutionContext from a Deferred Ticket.
+     * Shared between ReturnHandler and WebhookHandler to avoid code duplication.
+     *
+     * @param stic_AWF_Deferred_Tickets $ticket The deferred ticket with context_data
+     * @return ExecutionContext The reconstructed execution context
+     * @throws Exception If the response, form or configuration cannot be found
+     */
+    public static function rebuildContextFromTicket(stic_AWF_Deferred_Tickets $ticket): ExecutionContext
+    {
+        $responseBean = BeanFactory::getBean('stic_AWF_Responses', $ticket->stic_awf_responses_id_c);
+        if (empty($responseBean) || empty($responseBean->id)) {
+            throw new Exception("Response not found for ticket ID={$ticket->id}");
+        }
+
+        $responseBean->load_relationship('stic_69c1s_responses');
+        $formId = null;
+        if (!empty($responseBean->stic_69c1s_responses)) {
+            $relatedForms = $responseBean->stic_69c1s_responses->getBeans();
+            if (!empty($relatedForms)) {
+                $formBeanRel = reset($relatedForms);
+                $formId = $formBeanRel->id;
+            }
+        }
+
+        if (empty($formId)) {
+            global $db;
+            $safeResponseId = $db->quote($responseBean->id);
+            $result = $db->query("SELECT stic_awf_forms_stic_awf_responsesforms_ida AS form_id
+                                  FROM stic_awf_forms_stic_awf_responses_c
+                                  WHERE stic_awf_forms_stic_awf_responsesresponses_idb = '{$safeResponseId}'
+                                  AND deleted = 0 LIMIT 1");
+            $row = $db->fetchByAssoc($result);
+            $formId = $row['form_id'] ?? null;
+        }
+
+        if (empty($formId)) {
+            throw new Exception("Cannot determine form ID for response={$responseBean->id}");
+        }
+
+        $formBean = BeanFactory::getBean('stic_AWF_Forms', $formId);
+        if (empty($formBean) || empty($formBean->id)) {
+            throw new Exception("Form not found. ID={$formId}");
+        }
+
+        $jsonConfig = html_entity_decode($formBean->configuration ?? '', ENT_QUOTES, 'UTF-8');
+        $configData = json_decode($jsonConfig, true);
+        if (!$configData) {
+            throw new Exception("Invalid form configuration for form ID={$formId}");
+        }
+        $formConfig = FormConfig::fromJsonArray($configData);
+
+        $formData = json_decode($responseBean->raw_payload, true) ?: [];
+
+        $context = new ExecutionContext(
+            $formBean->id,
+            $responseBean->id,
+            $formData,
+            $formConfig,
+            null,
+            $responseBean->assigned_user_id,
+            $responseBean
+        );
+
+        $contextData = json_decode($ticket->context_data, true) ?: [];
+        $context->setCustomData($contextData);
+
+        return $context;
+    }
+
+    /**
+     * Resumes a deferred flow (success or error) from the context_data stored in the ticket.
+     * Looks up the flow by flow_success_id / flow_error_id, executes it via
+     * ServerActionFlowExecutor, and calls performTerminal() if the last action is ITerminalAction.
+     *
+     * @param ExecutionContext $context The execution context
+     * @param array $contextData The context_data from the ticket (must contain flow_success_id / flow_error_id)
+     * @param bool $isSuccess Whether to execute the success or error flow
+     * @return ?ActionResult Null if no flow was configured, otherwise the last ActionResult from the flow
+     */
+    public static function resumeDeferredFlow(ExecutionContext $context, array $contextData, bool $isSuccess): ?ActionResult
+    {
+        $successFlowId = $contextData['flow_success_id'] ?? null;
+        $errorFlowId   = $contextData['flow_error_id']   ?? null;
+
+        if ($isSuccess) {
+            $flowId = $successFlowId;
+            $flow = ($flowId !== null && $flowId !== '')
+                ? ($context->formConfig->flows[$flowId] ?? null)
+                : null;
+
+            if ($flow === null) {
+                return null;
+            }
+
+            $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
+                ? ($context->formConfig->flows[$errorFlowId] ?? null)
+                : null;
+
+            $executor = new ServerActionFlowExecutor($context);
+            $lastResult = $executor->executeFlow($flow, $errorFlow);
+
+            if ($context->responseBean) {
+                $context->responseBean->status = 'processed';
+                $context->responseBean->save();
+            }
+
+            $lastAction = $lastResult->getAction();
+            if ($lastAction instanceof ITerminalAction) {
+                try {
+                    $lastAction->performTerminal($context, $lastResult);
+                } catch (\Throwable $t) {
+                    $GLOBALS['log']->error('resumeDeferredFlow (success): ' . $t->getMessage());
+                }
+            }
+
+            return $lastResult;
+        }
+
+        // Error / cancelled case
+        $flowId = $errorFlowId;
+        $flow = ($flowId !== null && $flowId !== '')
+            ? ($context->formConfig->flows[$flowId] ?? null)
+            : null;
+
+        if ($flow === null) {
+            return null;
+        }
+
+        $executor = new ServerActionFlowExecutor($context);
+        $lastResult = $executor->executeFlow($flow);
+
+        if ($context->responseBean) {
+            $context->responseBean->status = 'error';
+            $context->responseBean->save();
+        }
+
+        $lastAction = $lastResult->getAction();
+        if ($lastAction instanceof ITerminalAction) {
+            try {
+                $lastAction->performTerminal($context, $lastResult);
+            } catch (\Throwable $t) {
+                $GLOBALS['log']->error('resumeDeferredFlow (error): ' . $t->getMessage());
+            }
+        }
+
+        return $lastResult;
+    }
+
 }
