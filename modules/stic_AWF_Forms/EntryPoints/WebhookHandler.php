@@ -110,7 +110,7 @@ class WebhookHandler
     private function processWithTicket(stic_AWF_Deferred_Tickets $ticket, array $rawData, string $rawBody, $incomingEvent, ?ExecutionContext &$outContext): ActionResult
     {
         try {
-            $context = $this->rebuildContext($ticket);
+            $context = stic_AWFUtils::rebuildContextFromTicket($ticket);
         } catch (Exception $e) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Failed to rebuild context for Ticket ID={$ticket->id}: " . $e->getMessage());
             $ticket->status = 'failed';
@@ -324,116 +324,6 @@ class WebhookHandler
         return (!empty($ticket->id)) ? $ticket : null;
     }
 
-    /**
-     * Rebuilds the ExecutionContext from data stored in the Deferred Ticket.
-     */
-    private function rebuildContext(stic_AWF_Deferred_Tickets $ticket): ExecutionContext
-    {
-        $responseBean = BeanFactory::getBean('stic_AWF_Responses', $ticket->stic_awf_responses_id_c);
-        if (empty($responseBean) || empty($responseBean->id)) {
-            throw new Exception("Response not found for ticket ID={$ticket->id}, response_id={$ticket->stic_awf_responses_id_c}");
-        }
-
-        $responseBean->load_relationship('stic_69c1s_responses');
-        $formId = null;
-        if (!empty($responseBean->stic_69c1s_responses)) {
-            $relatedForms = $responseBean->stic_69c1s_responses->getBeans();
-            if (!empty($relatedForms)) {
-                $formBeanRel = reset($relatedForms);
-                $formId = $formBeanRel->id;
-            }
-        }
-
-        if (empty($formId)) {
-            global $db;
-            $safeResponseId = $db->quote($responseBean->id);
-            $result = $db->query("SELECT stic_awf_forms_stic_awf_responsesforms_ida AS form_id
-                                  FROM stic_awf_forms_stic_awf_responses_c
-                                  WHERE stic_awf_forms_stic_awf_responsesresponses_idb = '{$safeResponseId}'
-                                  AND deleted = 0 LIMIT 1");
-            $row = $db->fetchByAssoc($result);
-            $formId = $row['form_id'] ?? null;
-        }
-
-        if (empty($formId)) {
-            throw new Exception("Cannot determine form ID for response={$responseBean->id}");
-        }
-
-        $formBean = BeanFactory::getBean('stic_AWF_Forms', $formId);
-        if (empty($formBean) || empty($formBean->id)) {
-            throw new Exception("Form not found. ID={$formId}");
-        }
-
-        $jsonConfig = html_entity_decode($formBean->configuration ?? '', ENT_QUOTES, 'UTF-8');
-        $configData = json_decode($jsonConfig, true);
-        if (!$configData) {
-            throw new Exception("Invalid form configuration for form ID={$formId}");
-        }
-        $formConfig = FormConfig::fromJsonArray($configData);
-
-        $formData = json_decode($responseBean->raw_payload, true) ?: [];
-
-        $context = new ExecutionContext(
-            $formBean->id,
-            $responseBean->id,
-            $formData,
-            $formConfig,
-            null,
-            $responseBean->assigned_user_id,
-            $responseBean
-        );
-
-        $contextData = json_decode($ticket->context_data, true) ?: [];
-        $context->setCustomData($contextData);
-
-        return $context;
-    }
-
-    /**
-     * Executes the success or error deferred flow using the flow IDs stored in the ticket's context_data.
-     */
-    private function resumeFlow(stic_AWF_Deferred_Tickets $ticket, ExecutionContext $context, bool $isSuccess): void
-    {
-        $contextData = json_decode($ticket->context_data, true) ?: [];
-
-        $successFlowId = $contextData['flow_success_id'] ?? null;
-        $errorFlowId   = $contextData['flow_error_id']   ?? null;
-
-        $successFlow = ($successFlowId !== null && $successFlowId !== '')
-            ? ($context->formConfig->flows[$successFlowId] ?? null)
-            : null;
-        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
-            ? ($context->formConfig->flows[$errorFlowId] ?? null)
-            : null;
-
-        if ($isSuccess) {
-            if ($successFlow === null) {
-                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: No success flow (flow_success_id={$successFlowId}) for ticket {$ticket->id}");
-                return;
-            }
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Executing success flow ID={$successFlowId} for ticket {$ticket->id}");
-            $executor = new ServerActionFlowExecutor($context);
-            $executor->executeFlow($successFlow, $errorFlow);
-
-            if ($context->responseBean) {
-                $context->responseBean->status = 'processed';
-                $context->responseBean->save();
-            }
-        } else {
-            if ($errorFlow === null) {
-                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: No error flow (flow_error_id={$errorFlowId}) for ticket {$ticket->id}");
-                return;
-            }
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Executing error flow ID={$errorFlowId} for ticket {$ticket->id}");
-            $executor = new ServerActionFlowExecutor($context);
-            $executor->executeFlow($errorFlow);
-
-            if ($context->responseBean) {
-                $context->responseBean->status = 'error';
-                $context->responseBean->save();
-            }
-        }
-    }
 }
 
 $handler = new WebhookHandler();
