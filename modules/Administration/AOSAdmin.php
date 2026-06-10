@@ -138,6 +138,13 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 }
             }
             // === End Step 2.2 ===
+
+            // === Step 2.2b: Validate format includes YYYY/YY and at least 2 zeros ===
+            if (!empty($format) && (strpos($format, 'YYYY') === false && strpos($format, 'YY') === false || !preg_match('/0{2,}/', $format))) {
+                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_REQUIRES_VARIABLE'];
+                continue;
+            }
+            // === End Step 2.2b ===
             
             // Validate initial number: must be 1 or greater
             if ($initialNumber < 1) {

@@ -894,6 +894,8 @@ $mod_strings = array(
     'LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS' => 'Configuración de series guardada correctamente.',
 
     'LBL_AOS_SERIES_DUPLICATE_FORMAT' => 'El formato de serie ya está en uso por otra serie. Los formatos deben ser únicos.',
+
+    'LBL_AOS_SERIES_FORMAT_REQUIRES_VARIABLE' => 'El formato de serie debe incluir un año (YYYY o YY) y al menos 2 ceros consecutivos para la numeración secuencial. Por ejemplo: YYYY-0000 o YY-00.',
     'LBL_AOS_ADMIN_VERIFACTU_SETTINGS' => 'Configuración de Verifactu (AEAT)',
     'LBL_AOS_ADMIN_VERIFACTU_HELP' => 'Esta sección muestra información de configuración utilizada en las comunicaciones con la AEAT a través de Verifactu. Todos los campos son de solo lectura.',
     'LBL_AOS_ADMIN_VERIFACTU_VENDOR_NIF' => 'NIF del productor del software',

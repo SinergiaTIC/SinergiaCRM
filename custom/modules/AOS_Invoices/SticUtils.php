@@ -1550,6 +1550,11 @@ class AOS_InvoicesUtils
                 throw new Exception("El formato de serie no puede tener más de 20 dígitos en la secuencia numérica. Formato: $format");
             }
         }
+
+        // Must include YYYY or YY, and at least 2 consecutive zeros
+        if ((strpos($format, 'YYYY') === false && strpos($format, 'YY') === false) || !preg_match('/0{2,}/', $format)) {
+            throw new Exception("El formato de serie debe incluir un año (YYYY o YY) y al menos 2 ceros consecutivos para la numeración secuencial. Ejemplo: YYYY-0000 o YY-000. Formato: $format");
+        }
         
         $GLOBALS['log']->debug("validateSeriesFormat - Format '$format' is valid");
         return true;
