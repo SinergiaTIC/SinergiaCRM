@@ -69,4 +69,9 @@ $mod_strings = array (
   'LBL_EXPIRATION_DATE' => "Data d'expiració",
   'LBL_RETRY_COUNT' => 'Intents',
   'LBL_LAST_ERROR_MESSAGE' => 'Últim error',
-);
+
+  'LBL_ERROR_TOKEN_MSG' => "No s'ha proporcionat un token vàlid a la URL.",
+
+  'LBL_PROCESSING_TITLE' => 'Processant',
+  'LBL_PROCESSING_MSG' => "La sol·licitud està sent processada. Això pot trigar uns instants.",
+  );

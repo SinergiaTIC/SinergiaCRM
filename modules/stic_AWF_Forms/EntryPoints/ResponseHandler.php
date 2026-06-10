@@ -408,19 +408,15 @@ class ResponseHandler
                 // No terminal (or error runing terminal): Show generic message
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found or failed in Main flow in form. ID: $formId");
                 if ($hasErrors) {
-                    $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
-                    $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
-                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
+                    stic_AWFUtils::renderGenericResponseError($formConfig);
                 } else {
-                    $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-                    $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
-                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg); 
+                    stic_AWFUtils::renderGenericResponseSuccess($formConfig); 
                 }
                 
             } else {
                 // If there is no main flow, we show generic message
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
-                stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
+                stic_AWFUtils::renderGenericResponseError($formConfig);
             }
         }
     }
@@ -507,9 +503,9 @@ class ResponseHandler
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
-            stic_AWFUtils::renderGenericResponse($formConfig, 
-                                             translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_AWF_Responses'),
-                                             translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_AWF_Responses'));
+            $title = translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_AWF_Responses');
+            $msg = translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_AWF_Responses');
+            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
         } else {
             $this->terminateRawError("This response has already been submitted.");
         }
