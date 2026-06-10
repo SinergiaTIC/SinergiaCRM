@@ -4201,11 +4201,12 @@ $app_list_strings['stic_invoices_verifactu_aeat_status_list']['accepted'] = 'Env
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['rejected'] = 'Rechazado';
 $app_list_strings['stic_invoices_verifactu_aeat_status_list']['cancelled'] = 'Anulada';
 
-// Tipos de operacion admitidas por AEAT para facturas
-$app_list_strings['stic_products_quotes_operation_type_list']['S'] = 'Sujeta a impuestos';
-$app_list_strings['stic_products_quotes_operation_type_list']['N'] = 'No sujeta a impuestos';
-$app_list_strings['stic_products_quotes_operation_type_list']['E'] = 'Exenta de impuestos';
-$app_list_strings['stic_products_quotes_operation_type_list']['NL'] = 'No sujeta por localización';
+// Tipos de operacion admitidas por AEAT para lineas de factura
+$app_list_strings['stic_products_quotes_operation_type_list'][''] = '';
+$app_list_strings['stic_products_quotes_operation_type_list']['S1'] = 'S1 - Sujeta';
+$app_list_strings['stic_products_quotes_operation_type_list']['S2'] = 'S2 - Sujeta (ISP)';
+$app_list_strings['stic_products_quotes_operation_type_list']['N1'] = 'N1 - No sujeta';
+$app_list_strings['stic_products_quotes_operation_type_list']['N2'] = 'N2 - No sujeta (localización)';
 
 // Tipos de facturas rectificativas
 $app_list_strings['verifactu_rectified_type_list']['S'] = 'Por sustitución (anula y reemplaza)';
