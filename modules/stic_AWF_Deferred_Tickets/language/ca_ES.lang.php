@@ -73,5 +73,5 @@ $mod_strings = array (
   'LBL_ERROR_TOKEN_MSG' => "No s'ha proporcionat un token vàlid a la URL.",
 
   'LBL_PROCESSING_TITLE' => 'Processant',
-  'LBL_PROCESSING_MSG' => "La sol·licitud està sent processada. Això pot trigar uns instants.",
+  'LBL_PROCESSING_MSG' => 'La sol·licitud està sent processada. Això pot trigar uns instants.',
   );
