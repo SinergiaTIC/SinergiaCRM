@@ -216,17 +216,18 @@ abstract class stic_AWF_PaymentStrategy
 
     /**
      * Returns the URL to redirect the user after the gateway processes the payment.
+     * The ReturnHandler uses the token to look up the ticket and relies on the
+     * database status (updated via webhook), not on URL parameters.
      * Requires $this->ticket to be set (call createTicket first).
      *
-     * @param string $status The status to append ('success', 'error', 'pending')
      * @return string The full return URL
      */
-    protected function getReturnUrl(string $status): string
+    protected function getReturnUrl(): string
     {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         $token = $this->ticket ? $this->ticket->token_hash : '';
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_ReturnHandler&token=' . urlencode($token) . '&status=' . urlencode($status);
+        return $siteUrl . '/index.php?entryPoint=stic_AWF_ReturnHandler&token=' . urlencode($token);
     }
 
     /**
