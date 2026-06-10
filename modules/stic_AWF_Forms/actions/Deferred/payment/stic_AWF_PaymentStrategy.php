@@ -227,7 +227,7 @@ abstract class stic_AWF_PaymentStrategy
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         $token = $this->ticket ? $this->ticket->token_hash : '';
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_ReturnHandler&token=' . urlencode($token);
+        return $siteUrl . '/index.php?entryPoint=stic_AWF_returnHandler&token=' . urlencode($token);
     }
 
     /**
