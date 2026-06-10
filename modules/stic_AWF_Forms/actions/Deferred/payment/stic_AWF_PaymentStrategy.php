@@ -143,42 +143,32 @@ abstract class stic_AWF_PaymentStrategy
      */
     protected function updatePayment(stic_Payments $beanPayment, string $status, array $options = []): void
     {
-        global $db;
-        $safeId = $db->quote($beanPayment->id);
-        $safeStatus = $db->quote($status);
+        // Ensure we have the latest data to prevent overwriting concurrent updates (e.g. from another webhook)
+        $beanPayment->retrieve($beanPayment->id);
 
-        $sql = "UPDATE stic_payments SET status = '{$safeStatus}'";
-        if (isset($options['authCode'])) {
-            $sql .= ", banking_concept = '" . $db->quote((string)$options['authCode']) . "'";
-        }
-        if (isset($options['gatewayLog'])) {
-            $log = $db->quote(($beanPayment->gateway_log ?? '') . '##### ' . $options['gatewayLog']);
-            $sql .= ", gateway_log = '" . $log . "'";
-        }
-        if (isset($options['gatewayRejectionReason'])) {
-            $sql .= ", gateway_rejection_reason = '" . $db->quote($options['gatewayRejectionReason']) . "'";
-        }
-        if (isset($options['amount'])) {
-            $sql .= ", amount = " . floatval($options['amount']);
-        }
-        $sql .= " WHERE id = '{$safeId}' AND status = 'pending' AND deleted = 0";
-        $result = $db->query($sql);
-
-        if ($db->getAffectedRowCount($result) === 0) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Atomic update skipped for payment [{$beanPayment->id}]. Status is no longer 'pending' (concurrent webhook detected).");
+        // Check if the payment is still pending and not deleted
+        if ($beanPayment->status !== 'pending' || !empty($beanPayment->deleted)) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Update skipped for payment [{$beanPayment->id}]. Status is no longer 'pending' (concurrent webhook detected).");
             return;
         }
 
+        // Assign new values
         $beanPayment->status = $status;
         if (isset($options['authCode'])) {
             $beanPayment->banking_concept = (string)$options['authCode'];
+        }
+        if (isset($options['gatewayLog'])) {
+            $beanPayment->gateway_log = ($beanPayment->gateway_log ?? '') . '##### ' . $options['gatewayLog'];
         }
         if (isset($options['gatewayRejectionReason'])) {
             $beanPayment->gateway_rejection_reason = $options['gatewayRejectionReason'];
         }
         if (isset($options['amount'])) {
-            $beanPayment->amount = $options['amount'];
+            $beanPayment->amount = floatval($options['amount']);
         }
+
+        // Save the updated payment bean
+        $beanPayment->save();
     }
 
     /**
