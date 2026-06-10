@@ -1546,8 +1546,8 @@ class AOS_InvoicesUtils
         // Validate numeric placeholders (0 sequence)
         preg_match_all('/0+/', $format, $matches);
         foreach ($matches[0] as $numericPlaceholder) {
-            if (strlen($numericPlaceholder) > 4) {
-                throw new Exception("El formato de serie no puede tener más de 4 dígitos en la secuencia numérica. Formato: $format");
+            if (strlen($numericPlaceholder) > 20) {
+                throw new Exception("El formato de serie no puede tener más de 20 dígitos en la secuencia numérica. Formato: $format");
             }
         }
         
