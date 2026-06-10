@@ -269,11 +269,6 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         if (!empty($originalInvoice->shipping_contact_id)) {
             $rectifiedInvoice->shipping_contact_id = $originalInvoice->shipping_contact_id;
         }
-        // Save again to persist relationship IDs
-        if (!empty($originalInvoice->billing_account_id) || !empty($originalInvoice->billing_contact_id)) {
-            $rectifiedInvoice->save();
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saved invoice again to persist customer relationship');
-        }
         
         // Copy totals directly in database to avoid formatting issues
         $totalFields = [
