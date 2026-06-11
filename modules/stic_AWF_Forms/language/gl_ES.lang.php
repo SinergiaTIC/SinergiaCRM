@@ -371,21 +371,21 @@ $mod_strings = array (
   'LBL_FORM_PUBLISH_IFRAME' => 'Incrustar (iframe)',
   'LBL_FORM_PUBLISH_IFRAME_DESC' => 'Copie este código para incrustar o formulario nun sitio web externo manténdoo aloxado en SinergiaCRM.',
   'LBL_FORM_PUBLISH_HTML' => 'Código HTML',
-  'LBL_FORM_PUBLISH_HTML_DESC' => 'Utilice este código para alojar el formulario en un sitio web externo.',
+  'LBL_FORM_PUBLISH_HTML_DESC' => 'Utilice este código para aloxar o formulario nun sitio web externo.',
 
-  'LBL_COPY_TO_CLIPBOARD_DONE' => 'Copiado al portapapeles',
+  'LBL_COPY_TO_CLIPBOARD_DONE' => 'Copiado ao portapapeis',
 
   'LBL_RATE_ARIA' => 'Valore con un %s',
 
   // Errors
-  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'El bloque de datos tiene errores',
-  'LBL_ERROR_DATABLOCK_NAME' => 'El nombre interno del bloque de datos está vacío',
-  'LBL_ERROR_DATABLOCK_TITLE' => 'El bloque de datos debe tener un nombre público',
-  'LBL_ERROR_NO_DATABLOCKS' => 'Debe definirse al menos un bloque de datos para continuar',
-  'LBL_ERROR_FIELD_IS_INVALID' => 'El campo tiene errores',
-  'LBL_ERROR_FIELD_NAME' => 'El nombre interno del campo está vacío',
-  'LBL_ERROR_FIELD_LABEL' => 'No existe etiqueta para el campo',
-  'LBL_ERROR_FIELD_TYPE' => 'No se ha definido el tipo de campo o de editor en el formulario',
+  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'O bloque de datos ten erros',
+  'LBL_ERROR_DATABLOCK_NAME' => 'O nome interno do bloque de datos está baleiro',
+  'LBL_ERROR_DATABLOCK_TITLE' => 'O bloque de datos debe ter un nome público',
+  'LBL_ERROR_NO_DATABLOCKS' => 'Debe definirse polo menos un bloque de datos para continuar',
+  'LBL_ERROR_FIELD_IS_INVALID' => 'O campo ten erros',
+  'LBL_ERROR_FIELD_NAME' => 'O nome interno do campo está baleiro',
+  'LBL_ERROR_FIELD_LABEL' => 'O campo ten erros',
+  'LBL_ERROR_FIELD_TYPE' => 'Non se definiu o tipo de campo ou de editor no formulario',
   'LBL_ERROR_FIELD_OPTIONS' => 'Desplegable sin opciones definidas',
   'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fijo sin valor asignado',
   'LBL_OK_FIELD_IS_VALID' => 'El campo es correcto',
@@ -409,7 +409,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Bloque de datos destino',
-  'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registro destino',
+  'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID do rexistro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino',
 
@@ -437,7 +437,7 @@ $mod_strings = array (
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Origen del usuario asignado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Orixe do usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indica el registro del cual se obtendrá el usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Formulario ',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RESPONSE_TEXT' => 'Resposta do formulario',
@@ -484,29 +484,29 @@ $mod_strings = array (
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un bloque de datos en una plataforma externa.',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de Pago',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos con el Compromiso de Pago para realizar su pago en la plataforma externa.',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona o bloque de datos co Compromiso de Pago para realizar o seu pago na plataforma externa.',
 
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
-  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo según una expresión regular',
+  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo segundo unha expresión regular',
   'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Expresión regular',
-  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El formato del campo no es válido',
+  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O formato do campo non é válido',
 
   // EmailValidatorAction
   'LBL_EMAIL_VALIDATOR_ACTION_TITLE' => 'Validador de correo electrónico',
-  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un correo electrónico válido',
-  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La dirección de correo electrónico no es válida',
+  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un correo electrónico válido',
+  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O enderezo de correo electrónico non é válido',
 
   // DniValidatorAction
   'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI/NIF',
-  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI/NIF español válido',
-  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI/NIF no es válido',
+  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un DNI/NIF español válido',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O DNI/NIF non é válido',
 
   // CifValidatorAction
-  'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de NIF de persona jurídica',
-  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIF español de persona jurídica válido',
+  'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de NIF de persoa xurídica',
+  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un NIF español de persoa xurídica válido',
   'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIF no es válido',
 
   // NieValidatorAction
@@ -567,6 +567,6 @@ $mod_strings = array (
 
   // UrlValidatorAction
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
-  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga una URL válida',
-  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no es válida',
+  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña unha URL válida',
+  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A URL non é válida',
 );
