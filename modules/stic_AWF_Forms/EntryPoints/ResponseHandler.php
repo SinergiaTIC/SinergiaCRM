@@ -653,9 +653,8 @@ class ResponseHandler
             if (empty($realVardefs)) continue;
 
             foreach ($block->fields as $formField) {
-                $prefix = ($formField->type_field === DataBlockFieldType::UNLINKED) ? '_detached.' : '';
-                $inputKeyInForm = $prefix . $block->name . '.' . $formField->name;
-                $inputKey = str_replace(".", "_", $inputKeyInForm);
+                $inputKeyInForm = $formField->getKey();
+                $inputKey = $formField->getPhpKey();
                 $value = $data[$inputKey] ?? null;
                 $label = rtrim($formField->label, ":");
                 
@@ -824,8 +823,7 @@ class ResponseHandler
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
 
                 // Input key
-                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached_' : '';
-                $inputKey = $prefix . $block->name . '_' . $field->name;
+                $inputKey = $field->getPhpKey();
                 
                 $rawValue = $submittedData[$inputKey] ?? null;
                 
