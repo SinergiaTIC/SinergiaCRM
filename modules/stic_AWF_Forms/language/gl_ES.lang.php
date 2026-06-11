@@ -507,40 +507,40 @@ $mod_strings = array (
   // CifValidatorAction
   'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de NIF de persoa xurídica',
   'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un NIF español de persoa xurídica válido',
-  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIF no es válido',
+  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O NIF non é válido',
 
   // NieValidatorAction
   'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'Validador de NIE',
-  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIE español válido',
-  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no es válido',
+  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un NIE español válido',
+  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O NIE non é válido',
 
   // CatSalutCipValidatorAction
   'LBL_CATSALUT_CIP_VALIDATOR_ACTION_TITLE' => 'Validador de CIP (CatSalut)',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un Código de Identificación Personal (CIP) de CatSalut válido',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIP no es válido',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un Código de Identificación Persoal (CIP) de CatSalut válido',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O CIP non é válido',
 
   // NafValidatorAction
   'LBL_NAF_VALIDATOR_ACTION_TITLE' => 'Validador de NUSS',
-  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un número de afiliación a la Seguridad Social (NUSS) válido',
-  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El número de afiliación a la Seguridad Social no es válido',
+  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un número de afiliación á Seguridade Social (NUSS) válido',
+  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O número de afiliación á Seguridade Social non é válido',
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador numérico',
-  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un valor numérico y que, opcionalmente, se encuentre dentro de un rango',
+  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un valor numérico e que, opcionalmente, se atope dentro dun rango',
   'LBL_NUMERIC_VALIDATOR_ACTION_MIN_TEXT' => 'Valor mínimo (opcional)',
   'LBL_NUMERIC_VALIDATOR_ACTION_MAX_TEXT' => 'Valor máximo (opcional)',
-  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El valor debe ser numérico y estar entre los valores permitidos',
+  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O valor debe ser numérico e estar entre os valores permitidos',
 
   // TextLengthValidatorAction
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_TITLE' => 'Validador de longitud de texto',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un texto con una longitud dentro de un rango',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MIN_LENGTH_TEXT' => 'Longitud mínima (opcional)',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MAX_LENGTH_TEXT' => 'Longitud máxima (opcional)',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El texto debe tener una longitud entre los valores permitidos',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_TITLE' => 'Validador de lonxitude de texto',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un texto cunha lonxitude dentro dun rango',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MIN_LENGTH_TEXT' => 'Lonxitude mínima (opcional)',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MAX_LENGTH_TEXT' => 'Lonxitude máxima (opcional)',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O texto debe ter unha lonxitude entre os valores permitidos',
 
   // IbanValidatorAction
   'LBL_IBAN_VALIDATOR_ACTION_TITLE' => 'Validador de IBAN',
-  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un IBAN válido',
+  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un IBAN válido',
   'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El IBAN no es válido',
 
   // PhoneValidatorAction
