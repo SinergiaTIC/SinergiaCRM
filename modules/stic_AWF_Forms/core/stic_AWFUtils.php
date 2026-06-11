@@ -171,11 +171,7 @@ class stic_AWFUtils {
                         continue;
                     }
 
-                    $formKey = "{$block->name}.{$fieldDef->name}";
-                    if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                        $formKey = "_detached.{$formKey}";
-                    }
-                    $formKey = str_replace('.', '_', $formKey);
+                    $formKey = $fieldDef->getPhpKey();
                     
                     // Value to display
                     $value = $formData[$formKey] ?? '';
@@ -403,11 +399,7 @@ class stic_AWFUtils {
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                     if (empty($fieldDef->label)) continue;
 
-                    $formKey = "{$block->name}.{$fieldDef->name}";
-                    if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                        $formKey = "_detached.{$formKey}";
-                    }
-                    $formKey = str_replace('.', '_', $formKey);
+                    $formKey = $fieldDef->getPhpKey();
 
                     // Value to display
                     $value = $formData[$formKey] ?? '';
