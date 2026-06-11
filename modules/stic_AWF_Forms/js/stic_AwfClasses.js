@@ -1151,6 +1151,7 @@ class stic_AwfLayoutSection {
     Object.assign(this, {
       id: utils.newId('sect'), // ID of the section
       title: "",               // Title to display
+      subtitle: "",            // Subtitle to display
       showTitle: true,         // Indicates if the title will be shown
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
