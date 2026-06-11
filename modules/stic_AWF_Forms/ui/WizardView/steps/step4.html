@@ -29,6 +29,12 @@
          <div class="col-md-3 border-end bg-light overflow-auto p-3" style="max-height: calc(100vh - 200px);">
             <h3 class="mb-3" x-text="utils.translate('LBL_LAYOUT_SETTINGS')"></h3>
 
+            <!-- web_title -->
+            <div class="mb-3 row">
+                <label for="theme-web_title" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_WEB_TITLE_TEXT')"></label>
+                <input id="theme-web_title" type="text" x-model="formConfig.layout.web_title">
+            </div>
+
             <!-- submit_button_text -->
             <div class="mb-3 row">
                 <label for="theme-submit_button_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_SUBMIT_BUTTON_TEXT')"></label>

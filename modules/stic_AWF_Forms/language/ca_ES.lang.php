@@ -272,6 +272,8 @@ $mod_strings = array (
   'LBL_LAYOUT_FOOTER' => 'Peu',
 
   // Layout -> Theme
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Títol de la pàgina',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Formulari Web Avançat',
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => "Text del botó d'enviament",
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Envia',
   'LBL_THEME_MAIN_COLORS' => 'Colors',
