@@ -640,6 +640,10 @@ class ResponseHandler
             'errorDescriptions' => [],
         ];
 
+        // Preprocess data to fill in missing boolean/checkbox fields
+        // (browsers don't send unchecked checkboxes)
+        stic_AWFUtils::fillMissingBooleanFields($config, $data);
+
         foreach ($config->data_blocks as $block) {
             // Datablock is detached
             if (empty($block->module)) continue; 
