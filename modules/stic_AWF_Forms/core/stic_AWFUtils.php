@@ -851,9 +851,7 @@ class stic_AWFUtils {
         foreach ($formConfig->data_blocks as $dataBlock) {
             foreach ($dataBlock->fields as $field) {
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
-                    $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached.' : '';
-                    $fieldKey = $prefix . $dataBlock->name . '.' . $field->name;
-                    $phpKey = str_replace('.', '_', $fieldKey);
+                    $phpKey = $field->getPhpKey();
                     if (!isset($formData[$phpKey])) {
                         $formData[$phpKey] = '0';
                     }
