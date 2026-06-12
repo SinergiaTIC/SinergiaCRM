@@ -81,6 +81,13 @@ class MassGenerateDocument {
     function current_user_has_access_to_template($template_id, $roles_with_access){
        global $current_user, $db;
 
+      // STIC-Custom 20220516 AAM - This code needs to be run after the Security Suite check
+      // STIC#734
+      // // No tener ningún rol asignado equivale a tener acceso a todos los roles
+      // if ((count($roles_with_access) == 0) || (count($roles_with_access) == 1 && empty($roles_with_access[0])))
+      // return true;
+      // END STIC
+
        if ($current_user->isAdmin()){
           return true;
        }
@@ -93,19 +100,19 @@ class MassGenerateDocument {
           return true;
        }
 
-       // STIC-Custom OC 20260610 - Batch SecurityGroups + cached roles + inline ownership
-       // Replaces per-template BeanFactory::getBean + ACLAccess + groupHasAccess (~1300 queries)
+       // STIC-Custom EPS 20260610 - Batch SecurityGroups + cached roles + inline ownership
+       // Replaces per-template BeanFactory::getBean + ACLAccess + groupHasAccess (too many queries if there are too many templates)
        // with 3 batch queries per request
        // https://github.com/SinergiaTIC/SinergiaCRM/pull/XXX
 
-       // Plan A: Batch SecurityGroups - one query per request
+       // Batch SecurityGroups - one query per request
        static $accessibleRecordIds = null;
        if ($accessibleRecordIds === null) {
           require_once('custom/include/SticSecurityGroupsListViewOptimization.php');
           $accessibleRecordIds = Stic_SecurityGroupsListViewOptimization::getUserAccessibleRecordIds('DHA_PlantillasDocumentos', 'list');
        }
 
-       // Plan C: Batch ownership - one query per request
+       // Batch ownership - one query per request
        static $ownedRecordIds = null;
        if ($ownedRecordIds === null) {
           $ownedRecordIds = array();
@@ -127,7 +134,7 @@ class MassGenerateDocument {
        if ((count($roles_with_access) == 0) || (count($roles_with_access) == 1 && empty($roles_with_access[0])))
            return true;
 
-       // Plan B: Cached user roles - one query per request
+       // Cached user roles - one query per request
        static $userRoles = null;
        if ($userRoles === null) {
           $userRoles = array();
@@ -148,7 +155,7 @@ class MassGenerateDocument {
        }
      
        return false;
-       // END STIC-Custom OC
+       // END STIC-Custom EPS 20260610
     }
    
    ///////////////////////////////////////////////////////////////////////////////////////////////////         
