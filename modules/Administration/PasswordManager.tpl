@@ -260,8 +260,8 @@
 									{/if}
 									</table>
 
-									{* STIC-Custom ART 20260612 - User Lockout Settings *}
-									{* https://github.com/SinergiaTIC/SinergiaCRM/pull/ *}
+									{* STIC-Custom 20260612 ART - User Lockout Settings *}
+									{* https://github.com/SinergiaTIC/SinergiaCRM/pull/1242 *}
 									<table id="userLockId" name="userLockName" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 										<tr>
 											<th align="left" scope="row" colspan="2"><h4>{$MOD.LBL_USER_LOCKOUT}</h4></th>
@@ -662,8 +662,8 @@ document.getElementById('forgotpassword_checkbox').checked=true;
 
 {literal}
 <script>
-// STIC-Custom ART 20260612 - User Lockout Settings
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+// STIC-Custom 20260612 ART - User Lockout Settings
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
 // Function to toggle display of lockout settings rows based on checkbox state
 function toggleLockoutRow(checkboxSelector, rowSelector, inputSelector) {
 	if($(checkboxSelector).is(':checked')){
@@ -723,8 +723,8 @@ function addcheck(form){{/literal}
 	// STIC#737
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_generatepasswordtmpl', 'string', form.generatepasswordtmpl.value == '',"{$MOD.ERR_SYS_GEN_PWD_TPL_NOT_SELECTED}" );
 	// END STIC-Custom
-	// STIC-Custom ART 20260612 - User Lockout Settings
-	// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+	// STIC-Custom 20260612 ART - User Lockout Settings
+	// https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
 	addToValidate('ConfigurePasswordSettings', 'userlockout_maxfailedlogins', 'int', false,"{$MOD.ERR_MAX_FAILED_LOGINS} ");
   	addToValidate('ConfigurePasswordSettings', 'userlockout_automaticunlocktime', 'int', false,"{$MOD.ERR_AUTOMATIC_UNLOCK_TIME} ");
 	// END STIC-Custom

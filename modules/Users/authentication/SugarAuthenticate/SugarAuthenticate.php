@@ -80,7 +80,7 @@ class SugarAuthenticate
     }
 
     // STIC-Custom 20260612 ART - User Lockout Settings 
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
     /**
      * Given a user returns true if this user is currently locked out based on the user_locked_out and
      * on whether the unlock time has passed, if set.
@@ -119,7 +119,7 @@ class SugarAuthenticate
     public function loginAuthenticate($username, $password, $fallback=false, $PARAMS = array())
     {
         // STIC-Custom 20260612 ART - User Lockout Settings 
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
         // global $mod_strings;
         global $mod_strings, $sugar_config;
         // END STIC-Custom
@@ -132,7 +132,7 @@ class SugarAuthenticate
         $_SESSION['hasExpiredPassword']='0';
 
         // STIC-Custom 20260612 ART - User Lockout Settings 
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
         // Check if user lockout feature is enabled
         if (!empty($sugar_config['userlockout']['enabled'])) {
             if ($this->isUserLockedOut($usr)) {
@@ -150,7 +150,7 @@ class SugarAuthenticate
             if ($usr->getPreference('loginfailed') != '' && $usr->getPreference('loginfailed') != 0) {
                 $usr->setPreference('loginfailed', '0');
                 // STIC-Custom 20260612 ART - User Lockout Settings 
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
                 $usr->setPreference('user_locked_out', false);
                 $usr->setPreference('user_locked_out_time', '');
                 // END STIC-Custom
@@ -161,7 +161,7 @@ class SugarAuthenticate
             //if(!empty($usr_id) && $res['lockoutexpiration'] > 0){
             if (!empty($usr_id)) {
                 // STIC-Custom 20260612 ART - User Lockout Settings 
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
                 // if (($logout=$usr->getPreference('loginfailed'))=='') {
                 //     $usr->setPreference('loginfailed', '1');
                 // } else {
