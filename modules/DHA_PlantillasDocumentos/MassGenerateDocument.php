@@ -77,10 +77,10 @@ class MassGenerateDocument {
       return $html;
    }
    
-///////////////////////////////////////////////////////////////////////////////////////////////////         
-    function current_user_has_access_to_template($template_id, $roles_with_access){
-       global $current_user, $db;
-
+   ///////////////////////////////////////////////////////////////////////////////////////////////////         
+   function current_user_has_access_to_template($template_id, $roles_with_access){
+      global $current_user, $db;
+      
       // STIC-Custom 20220516 AAM - This code needs to be run after the Security Suite check
       // STIC#734
       // // No tener ningún rol asignado equivale a tener acceso a todos los roles
@@ -88,75 +88,45 @@ class MassGenerateDocument {
       // return true;
       // END STIC
 
-       if ($current_user->isAdmin()){
+      if ($current_user->isAdmin()){
+         return true;
+      }
+      
+      if ($current_user->isAdminForModule('DHA_PlantillasDocumentos')){
+         return true;
+      }
+      
+      if ($current_user->isDeveloperForModule('DHA_PlantillasDocumentos')){
+         return true;
+      }
+
+      // STIC-Custom 20220516 AAM - Adding Security Suite access check and the non-role access check
+      // STIC#734
+      $mmrBean = BeanFactory::getBean('DHA_PlantillasDocumentos', $template_id);
+      if (!$mmrBean->ACLAccess('ListView', $mmrBean->isOwner($current_user->id))) {
+         return false;
+      }
+
+      // Following lines have been moved here from above
+      // No tener ningún rol asignado equivale a tener acceso a todos los roles
+      if ((count($roles_with_access) == 0) || (count($roles_with_access) == 1 && empty($roles_with_access[0])))
           return true;
-       }
-       
-       if ($current_user->isAdminForModule('DHA_PlantillasDocumentos')){
-          return true;
-       }
-       
-       if ($current_user->isDeveloperForModule('DHA_PlantillasDocumentos')){
-          return true;
-       }
-
-       // STIC-Custom EPS 20260610 - Batch SecurityGroups + cached roles + inline ownership
-       // Replaces per-template BeanFactory::getBean + ACLAccess + groupHasAccess (too many queries if there are too many templates)
-       // with 3 batch queries per request
-       // https://github.com/SinergiaTIC/SinergiaCRM/pull/1249
-
-       // Batch SecurityGroups - one query per request
-       static $accessibleRecordIds = null;
-       if ($accessibleRecordIds === null) {
-          require_once('custom/include/SticSecurityGroupsListViewOptimization.php');
-          $accessibleRecordIds = Stic_SecurityGroupsListViewOptimization::getUserAccessibleRecordIds('DHA_PlantillasDocumentos', 'list');
-       }
-
-       // Batch ownership - one query per request
-       static $ownedRecordIds = null;
-       if ($ownedRecordIds === null) {
-          $ownedRecordIds = array();
-          $ownerSql = "SELECT id FROM dha_plantillasdocumentos "
-                    . "WHERE assigned_user_id = '{$db->quote($current_user->id)}' AND deleted = 0";
-          $ownerResult = $db->query($ownerSql);
-          while ($ownerRow = $db->fetchByAssoc($ownerResult)) {
-             $ownedRecordIds[$ownerRow['id']] = true;
-          }
-       }
-
-       $isOwner = isset($ownedRecordIds[$template_id]);
-       $inGroup = isset($accessibleRecordIds[$template_id]);
-       if (!$isOwner && !$inGroup) {
-          return false;
-       }
-
-       // No tener ningún rol asignado equivale a tener acceso a todos los roles
-       if ((count($roles_with_access) == 0) || (count($roles_with_access) == 1 && empty($roles_with_access[0])))
-           return true;
-
-       // Cached user roles - one query per request
-       static $userRoles = null;
-       if ($userRoles === null) {
-          $userRoles = array();
-          $roleSql = "SELECT t1.id FROM acl_roles t1 "
-                   . "INNER JOIN acl_roles_users t2 ON "
-                   . "t2.user_id = '{$db->quote($current_user->id)}' AND t2.role_id = t1.id AND t2.deleted = 0 "
-                   . "WHERE t1.deleted = 0";
-          $roleResult = $db->query($roleSql);
-          while ($roleRow = $db->fetchByAssoc($roleResult)) {
-             $userRoles[] = $roleRow['id'];
-          }
-       }
-
-       foreach ($userRoles as $roleId) {
-          if (in_array($roleId, $roles_with_access)) {
-             return true;
-          }
-       }
-     
-       return false;
-       // END STIC-Custom EPS 20260610
-    }
+      // END STIC
+      
+      $sql = "SELECT t1.id 
+              FROM acl_roles t1 
+              INNER JOIN acl_roles_users t2 ON 
+                t2.user_id = '{$current_user->id}' AND t2.role_id = t1.id AND t2.deleted = 0 
+              WHERE t1.deleted = 0 ";
+      $dataset = $db->query($sql);
+      while ($row = $db->fetchByAssoc($dataset)) {
+         if (in_array($row['id'], $roles_with_access)) { 
+            return true;
+         }
+      }
+    
+      return false;
+   }   
    
    ///////////////////////////////////////////////////////////////////////////////////////////////////         
    function role_enabled_level($role_id){
