@@ -79,6 +79,32 @@ class SugarAuthenticate
         $this->userAuthenticate = new $this->userAuthenticateClass();
     }
 
+    // STIC-Custom 20260612 ART - User Lockout Settings 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    /**
+     * Given a user returns true if this user is currently locked out based on the user_locked_out and
+     * on whether the unlock time has passed, if set.
+     *
+     * @see SugarAuthenticate::loginAuthenticate()
+     * @param User $user
+     *
+     * @return bool
+     */
+	public function isUserLockedOut(User $user){
+        global $sugar_config;
+	    if(!$user->getPreference('user_locked_out')){
+	        return false;
+        }
+        if(empty($sugar_config['userlockout']['automaticunlocktime'])){
+	       return true;
+        }
+        $unlockCutoff = time() - ($sugar_config['userlockout']['automaticunlocktime'] * 60);
+        if($user->getPreference('user_locked_out_time') < $unlockCutoff){
+            return false;
+        }
+        return true;
+    }
+    // END STIC-Custom
 
 
     /**
@@ -92,7 +118,11 @@ class SugarAuthenticate
      */
     public function loginAuthenticate($username, $password, $fallback=false, $PARAMS = array())
     {
-        global $mod_strings;
+        // STIC-Custom 20260612 ART - User Lockout Settings 
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // global $mod_strings;
+        global $mod_strings, $sugar_config;
+        // END STIC-Custom
         unset($_SESSION['login_error']);
         $usr= new user();
         $usr_id=$usr->retrieve_user_id($username);
@@ -100,6 +130,17 @@ class SugarAuthenticate
         $_SESSION['login_error']='';
         $_SESSION['waiting_error']='';
         $_SESSION['hasExpiredPassword']='0';
+
+        // STIC-Custom 20260612 ART - User Lockout Settings 
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // Check if user lockout feature is enabled
+        if (!empty($sugar_config['userlockout']['enabled'])) {
+            if ($this->isUserLockedOut($usr)) {
+                $_SESSION['login_error'] = translate('ERR_USER_IS_LOCKED_OUT', 'Users');
+                return false;
+            }
+        }
+        // END STIC-Custom
         if ($this->userAuthenticate->loadUserOnLogin($username, $password, $fallback, $PARAMS)) {
             require_once('modules/Users/password_utils.php');
             if (hasPasswordExpired($username)) {
@@ -108,16 +149,41 @@ class SugarAuthenticate
             // now that user is authenticated, reset loginfailed
             if ($usr->getPreference('loginfailed') != '' && $usr->getPreference('loginfailed') != 0) {
                 $usr->setPreference('loginfailed', '0');
+                // STIC-Custom 20260612 ART - User Lockout Settings 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                $usr->setPreference('user_locked_out', false);
+                $usr->setPreference('user_locked_out_time', '');
+                // END STIC-Custom
                 $usr->savePreferencesToDB();
             }
             return $this->postLoginAuthenticate();
         } else {
             //if(!empty($usr_id) && $res['lockoutexpiration'] > 0){
             if (!empty($usr_id)) {
-                if (($logout=$usr->getPreference('loginfailed'))=='') {
+                // STIC-Custom 20260612 ART - User Lockout Settings 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // if (($logout=$usr->getPreference('loginfailed'))=='') {
+                //     $usr->setPreference('loginfailed', '1');
+                // } else {
+                //     $usr->setPreference('loginfailed', $logout+1);
+				if (($logout=$usr->getPreference('loginfailed'))=='') {
                     $usr->setPreference('loginfailed', '1');
-                } else {
-                    $usr->setPreference('loginfailed', $logout+1);
+                }else{
+	        		$usr->setPreference('loginfailed',$logout+1);
+				}
+                
+                // Only apply lockout logic if feature is enabled
+                if (!empty($sugar_config['userlockout']['enabled']) && 
+                    !empty($sugar_config['userlockout']['maxfailedlogins']) &&
+                    ($logout + 1) >= $sugar_config['userlockout']['maxfailedlogins']
+                ) {
+                    $usr->setPreference('user_locked_out', true);
+                    $usr->setPreference('user_locked_out_time', time());
+
+                    $_SESSION['login_error'] = translate('ERR_USER_IS_LOCKED_OUT', 'Users');
+                } elseif (empty($_SESSION['login_error'])) {
+                    $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
+                // END STIC-Custom
                 }
                 $usr->savePreferencesToDB();
             }
