@@ -103,7 +103,7 @@ class MassGenerateDocument {
        // STIC-Custom EPS 20260610 - Batch SecurityGroups + cached roles + inline ownership
        // Replaces per-template BeanFactory::getBean + ACLAccess + groupHasAccess (too many queries if there are too many templates)
        // with 3 batch queries per request
-       // https://github.com/SinergiaTIC/SinergiaCRM/pull/XXX
+       // https://github.com/SinergiaTIC/SinergiaCRM/pull/1249
 
        // Batch SecurityGroups - one query per request
        static $accessibleRecordIds = null;
