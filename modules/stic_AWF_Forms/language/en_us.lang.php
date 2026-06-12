@@ -404,7 +404,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Field matching',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Save relationship',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Create relationship',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Creates a relationship between two records',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Relationship destination',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'The destination data block or record for the relationship to save',

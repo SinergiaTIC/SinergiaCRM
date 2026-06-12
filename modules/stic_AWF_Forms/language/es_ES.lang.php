@@ -404,7 +404,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crear relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar',
