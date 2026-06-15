@@ -65,6 +65,18 @@ if (isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 
+// STIC Custom EPS 20260615 - Fix: Check ACL before clearing ID for duplication
+// When duplicating, the ID was cleared before the ACL check, causing permission errors
+// for users with Security Group-restricted access (group-based ACL). The empty ID
+// made both isOwner() and groupHasAccess() fail, denying access even though the user
+// legitimately had access to the original record.
+// https://github.com/SinergiaTIC/SinergiaCRM/issues/XXX
+if (!$focus->ACLAccess('EditView') || (!is_admin($current_user) && isset($focus->type) && $focus->type === 'system')) {
+    ACLController::displayNoAccess(true);
+    sugar_cleanup(true);
+}
+// END STIC Custom
+
 $old_id = '';
 if (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
     $old_id = $focus->id; // for attachments down below
@@ -115,10 +127,12 @@ if (empty($focus->id)) {
 
 echo getClassicModuleTitle($focus->module_dir, $params, true);
 
-if (!$focus->ACLAccess('EditView') || (!is_admin($current_user) && isset($focus->type) && $focus->type === 'system')) {
-    ACLController::displayNoAccess(true);
-    sugar_cleanup(true);
-}
+// STIC Custom EPS 20260615 - Fix: Check ACL before clearing ID for duplication
+// if (!$focus->ACLAccess('EditView') || (!is_admin($current_user) && isset($focus->type) && $focus->type === 'system')) {
+//     ACLController::displayNoAccess(true);
+//     sugar_cleanup(true);
+// }
+// END STIC Custom
 
 $GLOBALS['log']->info("EmailTemplate detail view");
 
