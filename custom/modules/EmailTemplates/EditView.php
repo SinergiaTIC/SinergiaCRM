@@ -70,7 +70,7 @@ if (isset($_REQUEST['record'])) {
 // for users with Security Group-restricted access (group-based ACL). The empty ID
 // made both isOwner() and groupHasAccess() fail, denying access even though the user
 // legitimately had access to the original record.
-// https://github.com/SinergiaTIC/SinergiaCRM/issues/XXX
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1259
 if (!$focus->ACLAccess('EditView') || (!is_admin($current_user) && isset($focus->type) && $focus->type === 'system')) {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
@@ -128,6 +128,7 @@ if (empty($focus->id)) {
 echo getClassicModuleTitle($focus->module_dir, $params, true);
 
 // STIC Custom EPS 20260615 - Fix: Check ACL before clearing ID for duplication
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1259
 // if (!$focus->ACLAccess('EditView') || (!is_admin($current_user) && isset($focus->type) && $focus->type === 'system')) {
 //     ACLController::displayNoAccess(true);
 //     sugar_cleanup(true);
