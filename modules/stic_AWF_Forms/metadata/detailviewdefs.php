@@ -45,6 +45,10 @@ $viewdefs [$module_name] = array (
             'name' => 'form_type',
             'label' => 'LBL_FORM_TYPE',
           ),
+          1 => array (
+            'name' => 'processing_mode',
+            'label' => 'LBL_PROCESSING_MODE',
+          ),
         ),
         2 => array (
           0 => array (
@@ -52,8 +56,6 @@ $viewdefs [$module_name] = array (
             'label' => 'LBL_STATUS',
           ),
           1 => array (
-            'name' => 'processing_mode',
-            'label' => 'LBL_PROCESSING_MODE',
           ),
         ),
         3 => array (

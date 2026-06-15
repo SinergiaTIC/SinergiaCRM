@@ -75,7 +75,7 @@ function wizardForm() {
         if (newType === 'crm') {
           const mainFlow = config.flows.find(f => f.id == '0');
           if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
-            const actionDef = utils.getDefinedActions().find(a => a.name === 'CheckSessionAction');
+            const actionDef = utils.getDefinedAction('CheckSessionAction');
             if (actionDef) {
               config.addAction(actionDef, {}, '0');
             }
@@ -225,17 +225,16 @@ function wizardForm() {
         this.isReadOnly = true;
       }
 
-      // STIC-Custom 20260603 - Ensure CheckSessionAction exists if form_type is 'crm'
       if (this.bean?.form_type === 'crm') {
         const mainFlow = this.formConfig.flows.find(f => f.id == '0');
         if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
-          const actionDef = utils.getDefinedActions().find(a => a.name === 'CheckSessionAction');
+          const actionDef = utils.getDefinedAction('CheckSessionAction');
           if (actionDef) {
             this.formConfig.addAction(actionDef, {}, '0');
           }
         }
       }
-      // END STIC-Custom
+     
 
       // Load current Step
       WizardNavigation.loadStep();
@@ -557,7 +556,7 @@ class WizardStep2 {
 
             /** Get the translated title of a validator */
             getValidatorTitle(validatorName) {
-                const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                const def = utils.getDefinedAction(validatorName);
                 return def ? def.title : validatorName;
             },
 
@@ -594,7 +593,7 @@ class WizardStep2 {
             getValidationParamsForTable(validation) {
               if (!validation || !validation.validator || !validation.params) return [];
               
-              const def = utils.getDefinedActions().find(a => a.name === validation.validator);
+              const def = utils.getDefinedAction(validation.validator);
               if (!def) return [];
               
               return Object.entries(validation.params).map(([key, value]) => {
@@ -746,7 +745,7 @@ class WizardStep2 {
               Alpine.effect(() => {
                 const validatorName = this.validation?.validator;
                 if (validatorName && (!this.validation.message || this.validation.message === '')) {
-                  const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                  const def = utils.getDefinedAction(validatorName);
                   if (def) {
                     this.validation.message = def.defaultErrorMessage ?? '';
                   }
@@ -1424,7 +1423,7 @@ class WizardStep2 {
 
       get selectedValidatorDefinition() {
         if (!this.validation || !this.validation.validator) return null;
-        return utils.getDefinedActions().find(a => a.name === this.validation.validator);
+        return utils.getDefinedAction(this.validation.validator);
       },
     };
   }
@@ -1513,7 +1512,7 @@ class WizardStep2 {
 
         let tooltip = utils.translateForFieldLabel('LBL_FIELD_ACTIVE_VALIDATIONS') + "\n";
         const lines = field.validations.map(val => {
-            const def = utils.getDefinedActions().find(a => a.name === val.validator);
+            const def = utils.getDefinedAction(val.validator);
             const name = def ? def.title : val.validator;
             return `- ${name}`;
         });

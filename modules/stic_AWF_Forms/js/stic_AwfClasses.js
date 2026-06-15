@@ -1890,7 +1890,7 @@ class stic_AwfConfiguration {
     this.data_blocks.forEach(block => {
       if (!block.module) return;
       
-      const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
+      const originalDef = utils.getDefinedAction('SaveRecordAction');
       if (originalDef) {
         // Prepare definition override
         const actionDef = { 
@@ -1929,7 +1929,7 @@ class stic_AwfConfiguration {
           }
           
           if (relationshipName) {
-            const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
+            const originalDef = utils.getDefinedAction('RelateRecordsAction');
             if (originalDef) {
               const actionDef = { 
                 ...originalDef, 
