@@ -461,19 +461,19 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Pulse aquí para continuar',
 
   // RedirectSummaryPageAction
-  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de datos',
-  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página en la que se muestran los datos facilitados',
-  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_TEXT' => 'Título de la página',
-  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_DEFAULT' => 'Resumen de los datos facilitados',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumo de datos',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona o navegador do usuario final a unha páxina na que se mostran os datos facilitados',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_TEXT' => 'Título da páxina',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_DEFAULT' => 'Resumo dos datos facilitados',
 
   // CheckSessionAction
-  'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa y permisos',
-  'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea el procesamiento del formulario si no hay una sesión de usuario activa o si el usuario no tiene los permisos para crear los registros asociados al formulario',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Mensaje por sesión no activa',
+  'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa e permisos',
+  'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea o procesamento do formulario se non hai unha sesión de usuario activa ou se o usuario non ten os permisos para crear os rexistros asociados ao formulario',
+  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Mensaxe por sesión non activa',
   'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. Por favor, inicie sesión para continuar.',
-  'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Mensaje por falta de permisos',
-  'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. No posee los permisos necesarios para continuar.',
-  'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso y permisos...',
+  'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Mensaxe por falta de permisos',
+  'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Acceso non autorizado. Non posúe os permisos necesarios para continuar.',
+  'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso e permisos...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Acceso denegado',
   'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Iniciar sesión',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sesión activa',
@@ -481,8 +481,8 @@ $mod_strings = array (
 
   // -- DEFERRED ACTIONS --
   // PaymentRouterAction
-  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
-  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un bloque de datos en una plataforma externa.',
+  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago na plataforma externa',
+  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa o pago correspondente a un bloque de datos nunha plataforma externa.',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de Pago',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona o bloque de datos co Compromiso de Pago para realizar o seu pago na plataforma externa.',
 
@@ -541,29 +541,29 @@ $mod_strings = array (
   // IbanValidatorAction
   'LBL_IBAN_VALIDATOR_ACTION_TITLE' => 'Validador de IBAN',
   'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un IBAN válido',
-  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El IBAN no es válido',
+  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O IBAN non é válido',
 
   // PhoneValidatorAction
   'LBL_PHONE_VALIDATOR_ACTION_TITLE' => 'Validador de teléfono',
-  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un número de teléfono español válido (al menos 9 dígitos numéricos)',
-  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El teléfono no es válido',
+  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un número de teléfono español válido (polo menos 9 díxitos numéricos)',
+  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O teléfono non é válido',
 
   // SpanishZipValidatorAction
   'LBL_SPANISH_ZIP_VALIDATOR_ACTION_TITLE' => 'Validador de código postal',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un código postal español válido (5 dígitos numéricos)',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El código postal no es válido',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un código postal español válido (5 díxitos numéricos)',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O código postal non é válido',
 
   // TrueValidatorAction
-  'LBL_TRUE_VALIDATOR_ACTION_TITLE' => 'Selección obligada',
-  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Asegura que una casilla esté marcada (por ejemplo, la aceptación de condiciones)',
-  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Es necesario aceptar este campo para continuar',
+  'LBL_TRUE_VALIDATOR_ACTION_TITLE' => 'Selección obrigada',
+  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Asegura que unha casilla estea marcada (por exemplo, a aceptación de condicións)',
+  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'É necesario aceptar este campo para continuar',
 
   // AgeValidatorAction
-  'LBL_AGE_VALIDATOR_ACTION_TITLE' => 'Validador de edad',
-  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calcula la edad a partir de la fecha de nacimiento y verifica que esté entre la mínima y la máxima permitidas',
-  'LBL_AGE_VALIDATOR_ACTION_MIN_YEARS_TEXT' => 'Edad mínima (opcional)',
-  'LBL_AGE_VALIDATOR_ACTION_MAX_YEARS_TEXT' => 'Edad máxima (opcional)',
-  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La edad no está en el rango permitido',
+  'LBL_AGE_VALIDATOR_ACTION_TITLE' => 'Validador de idade',
+  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calcula a idade a partir da data de nacemento e verifica que estea entre a mínima e a máxima permitidas',
+  'LBL_AGE_VALIDATOR_ACTION_MIN_YEARS_TEXT' => 'Idade mínima (opcional)',
+  'LBL_AGE_VALIDATOR_ACTION_MAX_YEARS_TEXT' => 'Idade máxima (opcional)',
+  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A idade non está no rango permitido',
 
   // UrlValidatorAction
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
