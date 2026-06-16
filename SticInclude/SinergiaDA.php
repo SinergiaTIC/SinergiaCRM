@@ -2237,7 +2237,7 @@ class ExternalReporting
         if ($result !== false) {
             if ($result->num_rows > 0) {
                 while ($row = $db->fetchByassoc($result)) {
-                    $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE `{$columnName}` = '{$row['table']}';";
+                    $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE `{$row['column_name']}` = '{$row['table']}';";
 
                     $deleteResult = $db->query($queryDelete);
 
