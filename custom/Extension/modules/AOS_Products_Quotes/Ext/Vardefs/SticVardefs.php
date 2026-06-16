@@ -50,7 +50,7 @@ $dictionary["AOS_Products_Quotes"]["fields"]["verifactu_aeat_operation_type_c"] 
     'massupdate' => '0',
     'default' => NULL,
     'no_default' => false,
-    'default' => 'S',
+    'default' => 'S1',
     'comments' => '',
     'help' => '',
     'importable' => 'true',

@@ -1027,10 +1027,10 @@ function handleOperationTypeChange(ln, type) {
   
   var operationType = operationTypeSelect.value;
   
-  // If operation type is NOT 'S' (Subject to tax), disable VAT and set to 0
-  if (operationType !== 'S') {
+  // If operation type starts with 'N' (Not subject to tax), disable VAT and set to 0
+  if (operationType && operationType.charAt(0) === 'N') {
     // Set VAT rate to 0
-    vatSelect.value = '0.00';
+    vatSelect.value = '0';
     vatSelect.disabled = true;
     
     // Set VAT amount to 0

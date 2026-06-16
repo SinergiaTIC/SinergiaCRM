@@ -55,7 +55,7 @@ function display_lines($focus, $field, $value, $view)
 		// 		  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">';
         $html .= '<input type="hidden" name="vathidden" id="vathidden" value="'.get_select_options_with_id($app_list_strings['vat_list'], '').'">
 				  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">
-                  <input type="hidden" name="operation_type_hidden" id="operation_type_hidden" value="'.get_select_options_with_id($app_list_strings['stic_products_quotes_operation_type_list'], '').'">';
+                  <input type="hidden" name="operation_type_hidden" id="operation_type_hidden" value="'.get_select_options_with_id($app_list_strings['stic_products_quotes_operation_type_list'], 'S1').'">';
         // END STIC CUSTOM                  
         
         if ($focus->id != '') {

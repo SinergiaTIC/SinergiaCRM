@@ -1200,7 +1200,8 @@ class AOS_InvoicesUtils
         } finally {
             if (!$sendSuccess && !empty($invoiceBean->id)) {
                 $invoiceBean->status = 'draft';
-                $invoiceBean->saveFields(['status']);
+                $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Reverted invoice ' . $invoiceId . ' status to draft due to send failure.');
             }
             unset(self::$processingInvoiceIds[$invoiceId]);
