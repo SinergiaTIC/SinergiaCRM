@@ -37,7 +37,7 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
         return 'stripe';
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody): ?string
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
     {
         $payload = json_decode($rawBody, true);
         return $payload['data']['object']['id'] ?? null;
