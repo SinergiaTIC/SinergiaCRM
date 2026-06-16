@@ -156,6 +156,18 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 continue;
             }
             // === End Step 2.2b ===
+
+            // === Step 2.2c: Validate zero sequence length (max 20) ===
+            if (!empty($format)) {
+                preg_match_all('/0+/', $format, $zeroMatches);
+                foreach ($zeroMatches[0] as $zeroSeq) {
+                    if (strlen($zeroSeq) > 20) {
+                        $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_ZERO_LIMIT'];
+                        continue 2;
+                    }
+                }
+            }
+            // === End Step 2.2c ===
             
             // Validate initial number: must be 1 or greater
             if ($initialNumber < 1) {
