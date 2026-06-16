@@ -433,6 +433,8 @@ class AOS_InvoicesUtils
             return;
         }
 
+        $sendSuccess = false;
+
         try {
             // Load certificate utilities
             require_once 'custom/include/SticCertificateUtils.php';
@@ -1173,7 +1175,12 @@ class AOS_InvoicesUtils
             }
             // === End Step 1.3 ===
 
-            SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($successMessage));
+            if ($invoiceBean->verifactu_aeat_status_c === 'accepted') {
+                SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($successMessage));
+                $sendSuccess = true;
+            } else {
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_AEAT_SEND_ERROR']));
+            }
 
             return true;
 
@@ -1191,6 +1198,11 @@ class AOS_InvoicesUtils
 
             return false;
         } finally {
+            if (!$sendSuccess && !empty($invoiceBean->id)) {
+                $invoiceBean->status = 'draft';
+                $invoiceBean->saveFields(['status']);
+                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Reverted invoice ' . $invoiceId . ' status to draft due to send failure.');
+            }
             unset(self::$processingInvoiceIds[$invoiceId]);
         }
     }
