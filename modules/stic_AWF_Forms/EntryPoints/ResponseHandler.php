@@ -250,7 +250,10 @@ class ResponseHandler
         }
 
         // Execution context
-        $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
+        $defaultAssignedUserId = '';
+        if ($formBean->form_type !== 'crm') {
+            $defaultAssignedUserId = $formBean->assigned_user_id;
+        }
         if (empty($defaultAssignedUserId)) {
             $defaultAssignedUserId = $current_user->id;
         }
