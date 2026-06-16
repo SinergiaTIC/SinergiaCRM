@@ -386,77 +386,77 @@ $mod_strings = array (
   'LBL_ERROR_FIELD_NAME' => 'O nome interno do campo está baleiro',
   'LBL_ERROR_FIELD_LABEL' => 'O campo ten erros',
   'LBL_ERROR_FIELD_TYPE' => 'Non se definiu o tipo de campo ou de editor no formulario',
-  'LBL_ERROR_FIELD_OPTIONS' => 'Desplegable sin opciones definidas',
-  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fijo sin valor asignado',
-  'LBL_OK_FIELD_IS_VALID' => 'El campo es correcto',
+  'LBL_ERROR_FIELD_OPTIONS' => 'Despregable sen opcións definidas',
+  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fixo sen valor asignado',
+  'LBL_OK_FIELD_IS_VALID' => 'O campo é correcto',
 
   // -- SUBPANELS --
-  'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE' => 'Respuestas a formularios',
+  'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE' => 'Respostas a formularios',
 
   // -- HOOK ACTIONS --
   // Generic 
   'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
-  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione el bloque de datos que será utilizado como parámetro en la acción',
+  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione o bloque de datos que será utilizado como parámetro na acción',
 
   // SaveRecordAction
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Gardar rexistro',
-  'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro a partir de los datos del formulario',
+  'LBL_SAVE_RECORD_ACTION_DESC' => 'Garda ou actualiza un rexistro a partir dos datos do formulario',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
-  'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros',
-  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
-  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Gardar relación',
+  'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea unha relación entre dous rexistros',
+  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino da relación',
+  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'O bloque de datos ou rexistro destino da relación a gardar',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID do rexistro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
-  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino',
+  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'O nome interno da relación que enlaza co bloque de datos destino',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Agregar a Lista de Público Obxectivo',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Añade el registro procesado (persona, interesado, usuario u organización) a una Lista de Público Objetivo existente',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Engade o rexistro procesado (persoa, interesado, usuario ou organización) a unha Lista de Público Obxectivo existente',
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_TEXT' => 'Destinatario',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indica el bloque de datos que contiene el destinatario que se va a añadir a la Lista de Público Objetivo',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indica o bloque de datos que contén o destinatario que se vai a engadir á Lista de Público Obxectivo',
   'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Lista de Público Obxectivo (LPO)',
   
   // SendEmailToDataBlockAction
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar correo al remitente del formulario',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico al registro procesado (persona, interesado, usuario u organización) contenido en un bloque de datos',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar correo ao remitente do formulario',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico ao rexistro procesado (persoa, interesado, usuario ou organización) contido nun bloque de datos',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el destinatario del correo electrónico',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica o bloque de datos que contén o destinatario do correo electrónico',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
 
   // SendEmailToAddressAction
-  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TITLE' => 'Enviar correo a una dirección',
-  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a una dirección de correo electrónico concreta',
+  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TITLE' => 'Enviar correo a un enderezo',
+  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a un enderezo de correo electrónico concreto',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   
   
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envía un correo electrónico ao usuario asignado do formulario ou dun rexistro',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Orixe do usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indica el registro del cual se obtendrá el usuario asignado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indica o rexistro do cal se obterá o usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Formulario ',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RESPONSE_TEXT' => 'Resposta do formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RECORD_TEXT' => 'Registro fijo',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RECORD_TEXT' => 'Rexistro fixo',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RELATE_TEXT' => 'Campo Relacionado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   
   // RedirectAction
-  'LBL_REDIRECT_ACTION_TITLE' => 'Ir a una página web',
-  'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página web concreta',
+  'LBL_REDIRECT_ACTION_TITLE' => 'Ir a unha páxina web',
+  'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona o navegador do usuario final a unha páxina web concreta',
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de redirección',
-  'LBL_REDIRECT_ACTION_URL_DESC' => 'Indica la dirección de la página web a la que redirigir al usuario final. Debe incluir el protocolo (http:// o https://).',
+  'LBL_REDIRECT_ACTION_URL_DESC' => 'Indica o enderezo da páxina web á que redirixir ao usuario final. Debe incluír o protocolo (http:// o https://).',
   'LBL_REDIRECT_ACTION_METHOD_TEXT' => 'Método de envío',
-  'LBL_REDIRECT_ACTION_METHOD_DESC' => 'Indica, en caso de que sea necesario, cómo se deben enviar los datos a la página de redirección.',
-  'LBL_REDIRECT_ACTION_METHOD_GET_TEXT' => 'GET (los datos se añaden a la URL de redirección)',
-  'LBL_REDIRECT_ACTION_METHOD_POST_TEXT' => 'POST (los datos se envían mediante un formulario oculto)',
+  'LBL_REDIRECT_ACTION_METHOD_DESC' => 'Indica, en caso de que sexa necesario, como se deben enviar os datos á páxina de redirección.',
+  'LBL_REDIRECT_ACTION_METHOD_GET_TEXT' => 'GET (os datos engádense á URL de redirección)',
+  'LBL_REDIRECT_ACTION_METHOD_POST_TEXT' => 'POST (os datos envíanse mediante un formulario oculto)',
   'LBL_REDIRECT_ACTION_FIELDS_TEXT' => 'Campos a enviar',
-  'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Indica los campos a enviar a la URL de redirección. En caso de no necesitar enviar datos debe dejarse en blanco.',
+  'LBL_REDIRECT_ACTION_FIELDS_DESC' => 'Indica os campos a enviar á URL de redirección. No caso de non necesitar enviar datos debe deixarse en branco.',
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionando...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Pulse aquí para continuar',
 
