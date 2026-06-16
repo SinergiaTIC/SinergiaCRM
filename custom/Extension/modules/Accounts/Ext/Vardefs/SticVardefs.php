@@ -2158,3 +2158,283 @@ $dictionary['Account']['fields']['stic_portal_password_c'] = array(
     'studio' => 'visible',
     'popupHelp' => 'Set or reset the portal password. The value is hashed and never stored in plain text.',
 );
+
+$dictionary['Account']['fields']['stic_portal_username_c'] = array(
+    'name' => 'stic_portal_username_c',
+    'vname' => 'LBL_STIC_PORTAL_USERNAME',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => true,
+    'importable' => true,
+    'massupdate' => true,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_hashed_c'] = array(
+    'name' => 'stic_portal_hashed_c',
+    'vname' => 'LBL_STIC_PORTAL_HASHED',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_enabled_c'] = array(
+    'name' => 'stic_portal_enabled_c',
+    'vname' => 'LBL_STIC_PORTAL_ENABLED',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'bool',
+    'default' => 0,
+    'required' => false,
+    'audited' => true,
+    'importable' => true,
+    'massupdate' => true,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_force_pw_change_c'] = array(
+    'name' => 'stic_portal_force_pw_change_c',
+    'vname' => 'LBL_STIC_PORTAL_FORCE_PW_CHANGE',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'bool',
+    'default' => 0,
+    'required' => false,
+    'audited' => true,
+    'importable' => true,
+    'massupdate' => true,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_last_login_c'] = array(
+    'name' => 'stic_portal_last_login_c',
+    'vname' => 'LBL_STIC_PORTAL_LAST_LOGIN',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => true,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_failed_attempts_c'] = array(
+    'name' => 'stic_portal_failed_attempts_c',
+    'vname' => 'LBL_STIC_PORTAL_FAILED_ATTEMPTS',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'int',
+    'len' => 11,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_locked_until_c'] = array(
+    'name' => 'stic_portal_locked_until_c',
+    'vname' => 'LBL_STIC_PORTAL_LOCKED_UNTIL',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_password_changed_c'] = array(
+    'name' => 'stic_portal_password_changed_c',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD_CHANGED',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_password_expires_c'] = array(
+    'name' => 'stic_portal_password_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD_EXPIRES',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_reset_token_c'] = array(
+    'name' => 'stic_portal_reset_token_c',
+    'vname' => 'LBL_STIC_PORTAL_RESET_TOKEN',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_reset_expires_c'] = array(
+    'name' => 'stic_portal_reset_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_RESET_EXPIRES',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_magic_token_c'] = array(
+    'name' => 'stic_portal_magic_token_c',
+    'vname' => 'LBL_STIC_PORTAL_MAGIC_TOKEN',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_magic_expires_c'] = array(
+    'name' => 'stic_portal_magic_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_MAGIC_EXPIRES',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_remember_token_c'] = array(
+    'name' => 'stic_portal_remember_token_c',
+    'vname' => 'LBL_STIC_PORTAL_REMEMBER_TOKEN',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_session_id_c'] = array(
+    'name' => 'stic_portal_session_id_c',
+    'vname' => 'LBL_STIC_PORTAL_SESSION_ID',
+    'custom_module' => 'Accounts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Account']['fields']['stic_portal_password_c'] = array(
+    'name' => 'stic_portal_password_c',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD',
+    'custom_module' => 'Accounts',
+    'source' => 'non-db',
+    'type' => 'encrypt',
+    'dbType' => 'varchar',
+    'len' => 255,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'listview' => false,
+        'detailview' => false,
+        'editview' => true,
+        'searchview' => false,
+    ),
+);
