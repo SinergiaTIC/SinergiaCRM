@@ -38,7 +38,7 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
         return 'redsys';
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody): ?string
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
     {
         $params = $rawData['Ds_MerchantParameters'] ?? '';
         if (empty($params)) return null;
