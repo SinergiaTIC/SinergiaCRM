@@ -290,7 +290,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param string $rawBody Raw request body (for JSON-based gateways)
      * @return string|null The external transaction ID or null if not found
      */
-    abstract public static function extractExternalId(array $rawData, string $rawBody): ?string;
+    abstract public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
 
     /**
     * Prepare payment.
