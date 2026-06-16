@@ -41,9 +41,11 @@ interface IWebhookDecodable {
     /**
      * Asks the action to extract the Token from the raw payload.
      * Returns the hash of the Deferred_Ticket.
+     * @param string $source The source url parameter
+     * @param array $requestData the request data received (POST or GET)
      * @param string $rawPayload the body raw payload received
      * @param array $headers the headers received
      * @return string|null the hash of the Deferred_Ticket
      */
-    public function extractTokenFromEvent(string $rawPayload, array $headers): ?string;
+    public function extractTokenFromEvent(string $source, array $requestData, string $rawPayload, array $headers): ?string;
 }
