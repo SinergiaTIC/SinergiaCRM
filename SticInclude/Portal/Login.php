@@ -1,9 +1,9 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'SticInclude/SticPortalAuthUtils.php';
-require_once 'SticInclude/SticPortalConfigUtils.php';
-require_once 'SticInclude/SticPortalOAuthRepository.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
+require_once 'SticInclude/Portal/ConfigUtils.php';
+require_once 'SticInclude/Portal/OAuthRepository.php';
 
 session_start();
 $message = ''; $error = ''; $mode = 'password';
@@ -73,4 +73,7 @@ $ss->assign('ERROR', $error); $ss->assign('MESSAGE', $message);
 $ss->assign('MODE', $mode); $ss->assign('CSRF_TOKEN', $csrfToken);
 $ss->assign('OAUTH_CLIENT_ID', $oauthClientId); $ss->assign('OAUTH_REDIRECT_URI', $oauthRedirectUri);
 $ss->assign('OAUTH_STATE', $oauthState); $ss->assign('IS_OAUTH', $isOAuth);
+// Portal apps for display on login page
+$portalApps = json_decode(SticPortalConfigUtils::get('PORTAL_APPS', '[]'), true) ?: [];
+$ss->assign('PORTAL_APPS', $portalApps);
 $ss->display('custom/themes/SuiteP/tpls/SticPortalLogin.tpl');

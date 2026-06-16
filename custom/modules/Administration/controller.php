@@ -159,8 +159,9 @@ class CustomAdministrationController extends AdministrationController
     }
 
     public function action_sticportalconfig_save() {
-        require_once 'SticInclude/SticPortalConfigUtils.php';
+        require_once 'SticInclude/Portal/ConfigUtils.php';
         SticPortalConfigUtils::saveFromPost($_POST);
+        SticPortalConfigUtils::saveFromPostApps($_POST);
         if (!empty($_FILES['portal_logo_file']['tmp_name'])) {
             $file = $_FILES['portal_logo_file'];
             $tmp = $file['tmp_name'];
@@ -170,21 +171,21 @@ class CustomAdministrationController extends AdministrationController
             @chmod($dest, 0644);
             SticPortalConfigUtils::set('PORTAL_LOGO', 'portal_logo.png');
         }
-        header('Location: index.php?module=Administration&action=sticportalconfig');
+        header('Location: index.php?module=Administration&action=index');
         exit;
     }
 
     public function action_sticportalconfig_clearlockouts() {
-        require_once 'SticInclude/SticPortalConfigUtils.php';
+        require_once 'SticInclude/Portal/ConfigUtils.php';
         SticPortalConfigUtils::clearAllLockouts();
-        header('Location: index.php?module=Administration&action=sticportalconfig');
+        header('Location: index.php?module=Administration&action=index');
         exit;
     }
 
     public function action_sticportalconfig_clearsessions() {
-        require_once 'SticInclude/SticPortalConfigUtils.php';
+        require_once 'SticInclude/Portal/ConfigUtils.php';
         SticPortalConfigUtils::clearAllSessions();
-        header('Location: index.php?module=Administration&action=sticportalconfig');
+        header('Location: index.php?module=Administration&action=index');
         exit;
     }
 

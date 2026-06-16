@@ -3,7 +3,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once 'SticInclude/SticPortalAuthUtils.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
 
 session_start();
 if (!empty($_SESSION['portal_user_id'])) {

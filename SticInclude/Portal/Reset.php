@@ -1,7 +1,7 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'SticInclude/SticPortalAuthUtils.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
 
 $message = '';
 $error   = '';

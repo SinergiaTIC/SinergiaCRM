@@ -36,7 +36,7 @@ class ContactsLogicHooks {
         }
 
         // Portal authentication: hash password and enforce policies
-        include_once 'SticInclude/SticPortalAuthUtils.php';
+        include_once 'SticInclude/Portal/AuthUtils.php';
         SticPortalAuthUtils::processBeforeSave($bean);
     }
 

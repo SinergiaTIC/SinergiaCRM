@@ -198,3 +198,27 @@ $mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'To edit the password, the "Enable p
 
 // Conversations
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversations';
+
+$mod_strings['LBL_STIC_PANEL_PORTAL_AUTHENTICATION'] = 'Portal Authentication';
+
+$mod_strings['LBL_STIC_PORTAL_ENABLED'] = 'Portal Enabled';
+
+$mod_strings['LBL_STIC_PORTAL_USERNAME'] = 'Portal Username';
+
+$mod_strings['LBL_STIC_PORTAL_LAST_LOGIN'] = 'Last Login';
+
+$mod_strings['LBL_STIC_PORTAL_FAILED_ATTEMPTS'] = 'Failed Attempts';
+
+$mod_strings['LBL_STIC_PORTAL_LOCKED_UNTIL'] = 'Locked Until';
+
+$mod_strings['LBL_STIC_PORTAL_FORCE_PW_CHANGE'] = 'Force Password Change';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED'] = 'Password Changed';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES'] = 'Password Expires';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD'] = 'Portal Password';
+
+$mod_strings['LBL_STIC_SEND_PORTAL_INVITATION'] = 'Send Portal Invitation';
+
+$mod_strings["LBL_STIC_PORTAL_ACTIONS"] = "Portal Actions";

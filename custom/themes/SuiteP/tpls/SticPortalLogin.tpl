@@ -68,7 +68,16 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
     </div>
     {/if}
   </form>
-  <div class="links"><a href="index.php?entryPoint=sticPortalReset">Forgot password?</a></div>
+  
+  {if $PORTAL_APPS}
+  <div style="margin-top:20px;padding:12px;background:#f5f5f5;border-radius:4px;font-size:12px;color:#666;text-align:center">
+    <strong>Available apps:</strong><br>
+    {foreach from=$PORTAL_APPS item=app}
+    <span style="display:inline-block;margin:4px 8px;padding:2px 10px;background:#e8e8e8;border-radius:10px;font-size:11px">{$app.name|escape}</span>
+    {/foreach}
+  </div>
+  {/if}
+<div class="links"><a href="index.php?entryPoint=sticPortalReset">Forgot password?</a></div>
 </div>
 {literal}
 <script>

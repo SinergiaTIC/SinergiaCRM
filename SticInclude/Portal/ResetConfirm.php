@@ -1,14 +1,17 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'SticInclude/SticPortalAuthUtils.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
 
-$token  = $_GET['token'] ?? '';
-$id     = $_GET['id'] ?? '';
-$result = SticPortalAuthUtils::validateResetToken($token, $id);
+$token       = $_GET['token'] ?? '';
+$id          = $_GET['id'] ?? '';
+$redirectUri = $_REQUEST['redirect_uri'] ?? '';
+$result      = SticPortalAuthUtils::validateResetToken($token, $id);
 
 if (!$result) {
-    header('Location: index.php?entryPoint=sticPortalReset&error=invalid');
+    $loc = 'index.php?entryPoint=sticPortalReset&error=invalid';
+    if ($redirectUri) $loc .= '&redirect_uri=' . urlencode($redirectUri);
+    header('Location: ' . $loc);
     exit;
 }
 
@@ -17,6 +20,7 @@ $error   = '';
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $redirectUri = $_POST['redirect_uri'] ?? $redirectUri;
     $newPassword = $_POST['new_password'] ?? '';
     $confirm     = $_POST['confirm_password'] ?? '';
     if ($newPassword !== $confirm) {
@@ -44,4 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $ss = new Sugar_Smarty();
 $ss->assign('ERROR', $error);
 $ss->assign('SUCCESS', $success);
+$ss->assign('REDIRECT_URI', $redirectUri);
+$ss->assign('PW_MIN_LENGTH', SticPortalConfigUtils::get('PORTAL_PASSWORD_MIN_LENGTH', '8'));
+$ss->assign('PW_REQUIRE_UPPER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_UPPER', '0'));
+$ss->assign('PW_REQUIRE_LOWER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_LOWER', '0'));
+$ss->assign('PW_REQUIRE_NUMBER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_NUMBER', '0'));
+$ss->assign('PW_REQUIRE_SPECIAL', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_SPECIAL', '0'));
 $ss->display('custom/themes/SuiteP/tpls/SticPortalResetConfirm.tpl');

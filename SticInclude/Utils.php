@@ -917,4 +917,80 @@ EOQ;
         ob_flush();
     }
 
+
+
+    /**
+     * Add a panel with fields to a view using SuiteCRM ParserFactory.
+     * Connectors controller pattern — adds panel + tab definition.
+     */
+    public static function addPanelToView($view, $module, $panelLabel, $fields) {
+        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+        $parser = ParserFactory::getParser($view, $module);
+        if (!$parser) return 0;
+        if (isset($parser->_viewdefs["panels"][$panelLabel])) return 0;
+
+        // Register field defs (Connectors pattern — required for handleSave)
+        foreach ($fields as $f) {
+            if (is_array($f)) {
+                $fname = $f["name"];
+                if (!isset($parser->_fielddefs[$fname])) {
+                    $parser->_fielddefs[$fname] = $f;
+                }
+            }
+        }
+
+        $rows = array();
+        for ($i = 0; $i < count($fields); $i += 2) {
+            $c0 = is_array($fields[$i]) ? $fields[$i]["name"] : $fields[$i];
+            $c1 = ($i + 1 < count($fields))
+                ? (is_array($fields[$i + 1]) ? $fields[$i + 1]["name"] : $fields[$i + 1])
+                : "(empty)";
+            $rows[] = array(0 => $c0, 1 => $c1);
+        }
+        $parser->_viewdefs["panels"][$panelLabel] = $rows;
+        if (!isset($parser->_viewdefs["templateMeta"]["tabDefs"])) {
+            $parser->_viewdefs["templateMeta"]["tabDefs"] = array();
+        }
+        $parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel] = array(
+            "newTab" => true, "panelDefault" => "expanded",
+        );
+        $parser->handleSave(false);
+        return 1;
+    }
+
+    public static function removeFieldsFromView($view, $module, $fieldNames, $panelLabel) {
+        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+        $parser = ParserFactory::getParser($view, $module);
+        if (!$parser) return 0;
+        if (isset($parser->_viewdefs["panels"][$panelLabel])) {
+            unset($parser->_viewdefs["panels"][$panelLabel]);
+        }
+        if (isset($parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel])) {
+            unset($parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel]);
+        }
+        $parser->handleSave(false);
+        return 1;
+    }
+
+    public static function addListColumns($module, $columns) {
+        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+        $parser = ParserFactory::getParser(MB_LISTVIEW, $module);
+        if (!$parser) return 0;
+        foreach ($columns as $col) {
+            $parser->addField(array("name" => $col));
+        }
+        $parser->handleSave(false);
+        return 1;
+    }
+
+    public static function removeListColumns($module, $columns) {
+        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+        $parser = ParserFactory::getParser(MB_LISTVIEW, $module);
+        if (!$parser) return 0;
+        foreach ($columns as $col) {
+            $parser->removeField($col);
+        }
+        $parser->handleSave(false);
+        return 1;
+    }
 }

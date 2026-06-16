@@ -3,7 +3,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once 'SticInclude/SticPortalConfigUtils.php';
+require_once 'SticInclude/Portal/ConfigUtils.php';
 
 class SticPortalAuthUtils
 {
@@ -277,9 +277,9 @@ class SticPortalAuthUtils
             $GLOBALS['log']->debug(__METHOD__ . " - Empty token or recordId");
             return null;
         }
+        global $db;
         $hashed = $db->quoted(hash('sha256', $token));
         $id = $db->quoted($recordId);
-        global $db;
         $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=$id AND c.deleted=0 AND cc.stic_portal_reset_token_c=$hashed AND cc.stic_portal_reset_expires_c > NOW()", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) { $GLOBALS['log']->debug(__METHOD__ . " - Valid reset token for Contact: {$row['id']}"); return array('bean' => BeanFactory::getBean('Contacts', $row['id']), 'type' => 'Contact'); }
@@ -312,9 +312,9 @@ class SticPortalAuthUtils
     public static function validateMagicLinkToken($token, $recordId)
     {
         if (empty($token) || empty($recordId)) return null;
+        global $db;
         $hashed = $db->quoted(hash('sha256', $token));
         $id = $db->quoted($recordId);
-        global $db;
         $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=$id AND c.deleted=0 AND cc.stic_portal_magic_token_c=$hashed AND cc.stic_portal_magic_expires_c > NOW()", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
@@ -452,6 +452,12 @@ class SticPortalAuthUtils
     // ── Before-save logic hook ────────────────────────
     public static function processBeforeSave($bean)
     {
+        // Portal password: copy plaintext from virtual field to hashed_c for processing
+        if (!empty($bean->stic_portal_password_c)) {
+            $bean->stic_portal_hashed_c = $bean->stic_portal_password_c;
+            $bean->stic_portal_password_c = '';
+            $bean->stic_portal_force_pw_change_c = 1;
+        }
         if (empty($bean->stic_portal_hashed_c)) return;
         $submitted = $bean->stic_portal_hashed_c;
         $fetched   = $bean->fetched_row['stic_portal_hashed_c'] ?? null;
@@ -481,6 +487,7 @@ class SticPortalAuthUtils
     public static function sendSecurityNotification($bean, $eventType)
     {
         $settingMap = array('password_changed' => 'PORTAL_NOTIFY_PASSWORD_CHANGED', 'new_login' => 'PORTAL_NOTIFY_NEW_LOGIN', 'account_locked' => 'PORTAL_NOTIFY_ACCOUNT_LOCKED', 'reset_requested' => 'PORTAL_NOTIFY_RESET_REQUESTED');
+        $templateMap = array('password_changed' => 'PORTAL_TMPL_NOTIFY_PWCHG', 'new_login' => 'PORTAL_TMPL_NOTIFY_LOGIN', 'account_locked' => 'PORTAL_TMPL_NOTIFY_LOCK', 'reset_requested' => 'PORTAL_TMPL_NOTIFY_RESET');
         if (!isset($settingMap[$eventType]) || SticPortalConfigUtils::get($settingMap[$eventType], '0') !== '1') return false;
         require_once 'include/SugarPHPMailer.php';
         $to = self::getPrimaryEmail($bean);
@@ -489,14 +496,40 @@ class SticPortalAuthUtils
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
         $now = date('Y-m-d H:i:s');
-        $subjects = array('password_changed' => "{$title} - Your password was changed", 'new_login' => "{$title} - New login detected", 'account_locked' => "{$title} - Your account has been locked", 'reset_requested' => "{$title} - Password reset requested");
-        $body = "A security event occurred on your {$title} account.\n\nEvent: {$eventType}\nTime: {$now}\nIP: {$ip}\nBrowser: {$ua}\n\nIf this was not you, please contact support immediately.";
+
+        $templateId = SticPortalConfigUtils::get($templateMap[$eventType], '');
+        $subject = "{$title} - Security notification";
+        $bodyHtml = "<p>A security event occurred on your {$title} account.</p><p>Event: {$eventType}<br>Time: {$now}<br>IP: {$ip}<br>Browser: {$ua}</p><p>If this was not you, please contact support immediately.</p>";
+
+        if (!empty($templateId)) {
+            $tmpl = BeanFactory::getBean('EmailTemplates', $templateId);
+            if ($tmpl && $tmpl->id) {
+                if (!empty($tmpl->subject)) $subject = html_entity_decode($tmpl->subject, ENT_QUOTES);
+                if (!empty($tmpl->body_html)) $bodyHtml = html_entity_decode($tmpl->body_html, ENT_QUOTES);
+            }
+        }
+
+        $replace = array(
+            '{$notification_time}'   => $now,
+            '{$notification_ip}'     => $ip,
+            '{$notification_ua}'     => $ua,
+            '{$notification_event}'  => $eventType,
+            '{$portal_title}'        => $title,
+            '{$contact_name}'        => self::getRecipientName($bean),
+        );
+        $subject  = str_replace(array_keys($replace), array_values($replace), $subject);
+        $bodyHtml = str_replace(array_keys($replace), array_values($replace), $bodyHtml);
+        $bodyText = strip_tags(str_replace(array('<br>', '</p>'), array("\n", "\n\n"), $bodyHtml));
+
         $mail = new SugarPHPMailer();
+        $mail->setMailerForSystem();
         $mail->From = 'noreply@sinergiacrm.org';
         $mail->FromName = $title;
         $mail->addAddress($to, self::getRecipientName($bean));
-        $mail->Subject = $subjects[$eventType] ?? "{$title} - Security notification";
-        $mail->Body = $body;
+        $mail->Subject  = $subject;
+        $mail->Body     = $bodyHtml;
+        $mail->AltBody  = $bodyText;
+        $mail->isHTML(true);
         return $mail->Send();
     }
 

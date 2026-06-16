@@ -710,6 +710,9 @@ $listViewDefs['Contacts'] = array (
       'label' => 'LBL_MODIFIED',
       'default' => false,
     ),
+        'STIC_PORTAL_ENABLED_C' => array ('label' => 'LBL_STIC_PORTAL_ENABLED', 'type' => 'bool', 'default' => false, 'width' => '8%'),
+        'STIC_PORTAL_USERNAME_C' => array ('label' => 'LBL_STIC_PORTAL_USERNAME', 'type' => 'varchar', 'default' => false, 'width' => '14%'),
+        'STIC_PORTAL_LAST_LOGIN_C' => array ('label' => 'LBL_STIC_PORTAL_LAST_LOGIN', 'type' => 'datetimecombo', 'default' => false, 'width' => '12%'),
     'DATE_MODIFIED' => 
     array (
       'type' => 'datetime',

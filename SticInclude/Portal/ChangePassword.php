@@ -1,8 +1,8 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'SticInclude/SticPortalAuthUtils.php';
-require_once 'SticInclude/SticPortalConfigUtils.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
+require_once 'SticInclude/Portal/ConfigUtils.php';
 
 session_start();
 $bean = SticPortalAuthUtils::validatePortalSession();
@@ -30,5 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $ss = new Sugar_Smarty();
 $ss->assign('ERROR', $error);
 $ss->assign('SUCCESS', $success);
+$ss->assign('PW_MIN_LENGTH', SticPortalConfigUtils::get('PORTAL_PASSWORD_MIN_LENGTH', '8'));
+$ss->assign('PW_REQUIRE_UPPER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_UPPER', '0'));
+$ss->assign('PW_REQUIRE_LOWER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_LOWER', '0'));
+$ss->assign('PW_REQUIRE_NUMBER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_NUMBER', '0'));
+$ss->assign('PW_REQUIRE_SPECIAL', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_SPECIAL', '0'));
 $ss->assign('HOME_URL', SticPortalConfigUtils::get('PORTAL_HOME_URL', ''));
 $ss->display('custom/themes/SuiteP/tpls/SticPortalChangePassword.tpl');

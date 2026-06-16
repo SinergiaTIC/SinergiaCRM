@@ -15,12 +15,19 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
 {/literal}
 {if $ERROR}<div class="msg msg-error">{$ERROR|escape}</div>{/if}
 {if $SUCCESS}
-  <div class="msg msg-success">Password changed successfully. <a href="index.php?entryPoint=sticPortalLogin">Log in</a>.</div>
+  <div class="msg msg-success">Password changed successfully.</div>
+  {if $REDIRECT_URI}
+    <p style="text-align:center;margin-top:15px;font-size:13px;color:#888">Redirecting back to your application...</p>
+    <meta http-equiv="refresh" content="2;url={$REDIRECT_URI|escape}?reset=ok">
+  {else}
+    <div class="links"><a href="index.php?entryPoint=sticPortalLogin">Log in</a></div>
+  {/if}
 {else}
-  <div class="help">Minimum 8 characters. Additional requirements may apply based on security policy.</div>
+  <div class="help">Minimum {$PW_MIN_LENGTH} characters.{$PW_REQUIRE_UPPER eq "1" ? " Must contain an uppercase letter." : ""}{$PW_REQUIRE_LOWER eq "1" ? " Must contain a lowercase letter." : ""}{$PW_REQUIRE_NUMBER eq "1" ? " Must contain a number." : ""}{$PW_REQUIRE_SPECIAL eq "1" ? " Must contain a special character." : ""}</div>
   <form method="post">
     <label>New Password</label><input type="password" name="new_password" required autocomplete="new-password">
     <label>Confirm Password</label><input type="password" name="confirm_password" required autocomplete="new-password">
+    {if $REDIRECT_URI}<input type="hidden" name="redirect_uri" value="{$REDIRECT_URI|escape}">{/if}
     <button type="submit" class="btn">Change Password</button>
   </form>
 {/if}

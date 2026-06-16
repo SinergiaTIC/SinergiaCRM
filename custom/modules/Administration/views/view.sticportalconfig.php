@@ -1,7 +1,7 @@
 <?php
 require_once 'include/MVC/View/SugarView.php';
-require_once 'SticInclude/SticPortalConfigUtils.php';
-require_once 'SticInclude/SticPortalAuthUtils.php';
+require_once 'SticInclude/Portal/ConfigUtils.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
 
 class AdministrationViewSticportalconfig extends SugarView
 {
@@ -22,12 +22,16 @@ class AdministrationViewSticportalconfig extends SugarView
         $settings = SticPortalConfigUtils::getAll();
         $logoUrl  = SticPortalConfigUtils::getLogoUrl();
         $emailTemplates = $this->getEmailTemplates();
+        
+        $portalApps = @unserialize(htmlspecialchars_decode($settings["PORTAL_APPS"] ?? ""), ["allowed_classes" => false]) ?: [];
 
+        
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('SETTINGS', $settings);
         $this->ss->assign('LOGO_URL', $logoUrl);
         $this->ss->assign('EMAIL_TEMPLATES', $emailTemplates);
+        $this->ss->assign('PORTAL_APPS', $portalApps);
 
         echo $this->ss->fetch('custom/modules/Administration/templates/SticPortalConfig.tpl');
     }

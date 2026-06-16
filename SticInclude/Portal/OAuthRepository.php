@@ -1,7 +1,7 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'SticInclude/SticPortalAuthUtils.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
 
 use Api\V8\BeanDecorator\BeanManager;
 use Api\V8\OAuth2\Entity\UserEntity;

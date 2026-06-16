@@ -3,8 +3,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once 'SticInclude/SticPortalAuthUtils.php';
-require_once 'SticInclude/SticPortalConfigUtils.php';
+require_once 'SticInclude/Portal/AuthUtils.php';
+require_once 'SticInclude/Portal/ConfigUtils.php';
 
 $token = $_GET['token'] ?? '';
 $id    = $_GET['id'] ?? '';

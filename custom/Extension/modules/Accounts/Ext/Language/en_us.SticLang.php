@@ -163,3 +163,27 @@ $mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private area password';
 $mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable private area';
 $mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'In order for the account to access the private area, this field must be checked. If not, it will not be possible to access it even if a username and password are available. When checking this field, if the setting <a href="index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11" target="_blank">PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> is enabled, the access credentials will be automatically sent to the account. Otherwise, it will have to be done manually.';
 $mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'To edit the password, the "Enable private area" field must be checked.';
+
+$mod_strings['LBL_STIC_PANEL_PORTAL_AUTHENTICATION'] = 'Portal Authentication';
+
+$mod_strings['LBL_STIC_PORTAL_ENABLED'] = 'Portal Enabled';
+
+$mod_strings['LBL_STIC_PORTAL_USERNAME'] = 'Portal Username';
+
+$mod_strings['LBL_STIC_PORTAL_LAST_LOGIN'] = 'Last Login';
+
+$mod_strings['LBL_STIC_PORTAL_FAILED_ATTEMPTS'] = 'Failed Attempts';
+
+$mod_strings['LBL_STIC_PORTAL_LOCKED_UNTIL'] = 'Locked Until';
+
+$mod_strings['LBL_STIC_PORTAL_FORCE_PW_CHANGE'] = 'Force Password Change';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED'] = 'Password Changed';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES'] = 'Password Expires';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD'] = 'Portal Password';
+
+$mod_strings['LBL_STIC_SEND_PORTAL_INVITATION'] = 'Send Portal Invitation';
+
+$mod_strings["LBL_STIC_PORTAL_ACTIONS"] = "Portal Actions";

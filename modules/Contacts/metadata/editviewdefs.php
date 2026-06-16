@@ -306,6 +306,7 @@ array (
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
+        'LBL_STIC_PANEL_PORTAL_AUTHENTICATION' => array ('newTab' => true, 'panelDefault' => 'expanded'),
         'LBL_STIC_PANEL_INCORPORA_ADDRESS' => 
         array (
           'newTab' => false,
@@ -373,8 +374,8 @@ array (
             'name' => 'birthdate',
             'label' => 'LBL_BIRTHDATE',
           ),
-          1 => '',
-        ),
+          1 => array('name'=>'stic_portal_force_pw_change_c','label'=>'LBL_STIC_PORTAL_FORCE_PW_CHANGE'),
+       ),
         5 => 
         array (
           0 => 
@@ -961,6 +962,19 @@ array (
             'studio' => 'visible',
             'label' => 'LBL_INC_OBSERVATIONS',
           ),
+        ),
+      ),
+      'LBL_STIC_PANEL_PORTAL_AUTHENTICATION' => 
+      array (
+        0 => 
+        array (
+          0 => array('name'=>'stic_portal_username_c','label'=>'LBL_STIC_PORTAL_USERNAME'),
+          1 => array('name'=>'stic_portal_enabled_c','label'=>'LBL_STIC_PORTAL_ENABLED'),
+        ),
+        1 => 
+        array (
+          0 => array('name'=>'stic_portal_password_c','label'=>'LBL_STIC_PORTAL_PASSWORD'),
+          1 => '',
         ),
       ),
       'LBL_STIC_PANEL_INCORPORA_ADDRESS' => 

@@ -101,6 +101,15 @@ switch (viewType()) {
     createDetailViewButton(buttons.syncIncorpora);
     createDetailViewButton(buttons.pdfEmail);
 
+
+        // Portal Actions button
+        if (STIC.portalClients && typeof createDetailViewButton === 'function') {
+            createDetailViewButton({
+                id: 'bt_portal_actions',
+                title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
+                onclick: 'openPortalActionsPopup()',
+            });
+        }
     break;
 
     case "list":
@@ -123,6 +132,15 @@ switch (viewType()) {
     
         createListViewButton(buttons.syncIncorpora);
         createListViewButton(buttons.massJobApplications);
+
+        // Portal Invitation bulk action
+        var portalInvitationListBtn = {
+            id: "bt_portal_invitation_listview",
+            title: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
+            text: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
+            onclick: "onClickPortalInvitationButton()",
+        };
+        createListViewButton(portalInvitationListBtn);
         break;
   default:
     break;
@@ -334,4 +352,50 @@ function setupPrivateAreaFields() {
 
   togglePassword();
   checkbox.addEventListener('change', togglePassword);
+}
+
+/**
+ * Portal Actions popup
+ */
+function openPortalActionsPopup() {
+    var sel = document.getElementById("portalAppSelect");
+    sel.innerHTML = "";
+    var genOpt = document.createElement("option");
+    genOpt.value = "";
+    genOpt.textContent = "Generic (no specific app)";
+    sel.appendChild(genOpt);
+    if (STIC.portalClients) {
+        STIC.portalClients.forEach(function(c) {
+            var opt = document.createElement("option");
+            opt.value = c.url;
+            opt.textContent = c.name;
+            sel.appendChild(opt);
+        });
+    }
+    document.getElementById("portalActionsPopup").style.display = "flex";
+}
+function closePortalActionsPopup() {
+    document.getElementById("portalActionsPopup").style.display = "none";
+}
+function executePortalAction() {
+    var action = document.getElementById("portalActionType").value;
+    var redirectUri = document.getElementById("portalAppSelect").value;
+    var params = "id=" + STIC.record.id + "&return_module=" + module + "&redirect_uri=" + encodeURIComponent(redirectUri);
+    closePortalActionsPopup();
+    if (action === "invitation") {
+        location.href = "index.php?entryPoint=sticPortalInvitation&" + params;
+    } else if (action === "pwreset") {
+        location.href = "index.php?entryPoint=sticPortalResetRequest&" + params;
+    }
+}
+
+function onClickPortalInvitationButton() {
+    sugarListView.get_checks();
+    if (sugarListView.get_checks_count() < 1) {
+        alert(SUGAR.language.get("app_strings", "LBL_LISTVIEW_NO_SELECTED"));
+        return false;
+    }
+    var ids = [];
+    document.querySelectorAll("input[name=mass\\[]]:checked").forEach(function(cb) { ids.push(cb.value); });
+    location.href = "index.php?entryPoint=sticPortalInvitation&id=" + ids.join(",") + "&return_module=" + module + "&return_action=index";
 }
