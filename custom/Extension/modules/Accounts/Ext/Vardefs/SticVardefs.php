@@ -2161,6 +2161,7 @@ $dictionary['Account']['fields']['stic_portal_password_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_username_c'] = array(
     'name' => 'stic_portal_username_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_USERNAME_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_USERNAME',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2198,6 +2199,7 @@ $dictionary['Account']['fields']['stic_portal_hashed_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_enabled_c'] = array(
     'name' => 'stic_portal_enabled_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_ENABLED_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_ENABLED',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2214,6 +2216,7 @@ $dictionary['Account']['fields']['stic_portal_enabled_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_force_pw_change_c'] = array(
     'name' => 'stic_portal_force_pw_change_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_FORCE_PW_CHANGE_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_FORCE_PW_CHANGE',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2230,6 +2233,7 @@ $dictionary['Account']['fields']['stic_portal_force_pw_change_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_last_login_c'] = array(
     'name' => 'stic_portal_last_login_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_LAST_LOGIN_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_LAST_LOGIN',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2245,6 +2249,7 @@ $dictionary['Account']['fields']['stic_portal_last_login_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_failed_attempts_c'] = array(
     'name' => 'stic_portal_failed_attempts_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_FAILED_ATTEMPTS_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_FAILED_ATTEMPTS',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2261,6 +2266,7 @@ $dictionary['Account']['fields']['stic_portal_failed_attempts_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_locked_until_c'] = array(
     'name' => 'stic_portal_locked_until_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_LOCKED_UNTIL_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_LOCKED_UNTIL',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2276,6 +2282,7 @@ $dictionary['Account']['fields']['stic_portal_locked_until_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_password_changed_c'] = array(
     'name' => 'stic_portal_password_changed_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_PASSWORD_CHANGED_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_PASSWORD_CHANGED',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
@@ -2291,6 +2298,7 @@ $dictionary['Account']['fields']['stic_portal_password_changed_c'] = array(
 
 $dictionary['Account']['fields']['stic_portal_password_expires_c'] = array(
     'name' => 'stic_portal_password_expires_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_PASSWORD_EXPIRES_C_HELP',
     'vname' => 'LBL_STIC_PORTAL_PASSWORD_EXPIRES',
     'custom_module' => 'Accounts',
     'source' => 'custom_fields',
