@@ -143,42 +143,32 @@ abstract class stic_AWF_PaymentStrategy
      */
     protected function updatePayment(stic_Payments $beanPayment, string $status, array $options = []): void
     {
-        global $db;
-        $safeId = $db->quote($beanPayment->id);
-        $safeStatus = $db->quote($status);
+        // Ensure we have the latest data to prevent overwriting concurrent updates (e.g. from another webhook)
+        $beanPayment->retrieve($beanPayment->id);
 
-        $sql = "UPDATE stic_payments SET status = '{$safeStatus}'";
-        if (isset($options['authCode'])) {
-            $sql .= ", banking_concept = '" . $db->quote((string)$options['authCode']) . "'";
-        }
-        if (isset($options['gatewayLog'])) {
-            $log = $db->quote(($beanPayment->gateway_log ?? '') . '##### ' . $options['gatewayLog']);
-            $sql .= ", gateway_log = '" . $log . "'";
-        }
-        if (isset($options['gatewayRejectionReason'])) {
-            $sql .= ", gateway_rejection_reason = '" . $db->quote($options['gatewayRejectionReason']) . "'";
-        }
-        if (isset($options['amount'])) {
-            $sql .= ", amount = " . floatval($options['amount']);
-        }
-        $sql .= " WHERE id = '{$safeId}' AND status = 'pending' AND deleted = 0";
-        $result = $db->query($sql);
-
-        if ($db->getAffectedRowCount($result) === 0) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Atomic update skipped for payment [{$beanPayment->id}]. Status is no longer 'pending' (concurrent webhook detected).");
+        // Check if the payment is still pending and not deleted
+        if ($beanPayment->status !== 'pending' || !empty($beanPayment->deleted)) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Update skipped for payment [{$beanPayment->id}]. Status is no longer 'pending' (concurrent webhook detected).");
             return;
         }
 
+        // Assign new values
         $beanPayment->status = $status;
         if (isset($options['authCode'])) {
             $beanPayment->banking_concept = (string)$options['authCode'];
+        }
+        if (isset($options['gatewayLog'])) {
+            $beanPayment->gateway_log = ($beanPayment->gateway_log ?? '') . '##### ' . $options['gatewayLog'];
         }
         if (isset($options['gatewayRejectionReason'])) {
             $beanPayment->gateway_rejection_reason = $options['gatewayRejectionReason'];
         }
         if (isset($options['amount'])) {
-            $beanPayment->amount = $options['amount'];
+            $beanPayment->amount = floatval($options['amount']);
         }
+
+        // Save the updated payment bean
+        $beanPayment->save();
     }
 
     /**
@@ -226,17 +216,18 @@ abstract class stic_AWF_PaymentStrategy
 
     /**
      * Returns the URL to redirect the user after the gateway processes the payment.
+     * The ReturnHandler uses the token to look up the ticket and relies on the
+     * database status (updated via webhook), not on URL parameters.
      * Requires $this->ticket to be set (call createTicket first).
      *
-     * @param string $status The status to append ('success', 'error', 'pending')
      * @return string The full return URL
      */
-    protected function getReturnUrl(string $status): string
+    protected function getReturnUrl(): string
     {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         $token = $this->ticket ? $this->ticket->token_hash : '';
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_ReturnHandler&token=' . urlencode($token) . '&status=' . urlencode($status);
+        return $siteUrl . '/index.php?entryPoint=stic_AWF_returnHandler&token=' . urlencode($token);
     }
 
     /**
@@ -299,7 +290,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param string $rawBody Raw request body (for JSON-based gateways)
      * @return string|null The external transaction ID or null if not found
      */
-    abstract public static function extractExternalId(array $rawData, string $rawBody): ?string;
+    abstract public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
 
     /**
     * Prepare payment.

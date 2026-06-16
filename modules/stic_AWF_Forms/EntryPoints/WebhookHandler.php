@@ -27,7 +27,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once "modules/stic_AWF_Forms/core/includes.php";
 require_once "modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php";
 require_once "modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php";
-require_once "modules/stic_AWF_Forms/actions/Deferred/PaymentRouterAction.php";
 require_once "include/SugarQueue/SugarJobQueue.php";
 
 /**
@@ -56,49 +55,67 @@ class WebhookHandler
         $current_user->getSystemUser();
 
         $source  = $_REQUEST['source'] ?? '';
-        $rawData = $_POST;
-        $rawBody = file_get_contents('php://input');
+        $requestData = $_POST;
+        $rawPayload = file_get_contents('php://input');
+        $headers = function_exists('getallheaders') ? getallheaders() : [];
 
-        // --- 1. Create IncomingEvent log record ---
+        // Create IncomingEvent log record
         $incomingEvent = BeanFactory::newBean('stic_AWF_Incoming_Events');
         $incomingEvent->name = 'AWF Webhook: ' . $source . ' - ' . date('Y-m-d H:i:s');
         $incomingEvent->token = $_REQUEST['token'] ?? null;
         $incomingEvent->source = $source;
-        $incomingEvent->raw_payload = $rawBody ?: json_encode($rawData);
+        $incomingEvent->raw_payload = $rawPayload ?: json_encode($requestData);
         $incomingEvent->status = 'new';
         $incomingEvent->date_received = date('Y-m-d H:i:s');
         $incomingEvent->save();
 
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Received webhook from source='{$source}'. IncomingEvent ID={$incomingEvent->id}");
 
-        // --- 2. Extract external transaction ID (delegated to strategy) ---
-        $externalId = stic_AWF_PaymentStrategyFactory::extractExternalIdBySource($source, $rawData, $rawBody);
+        // Extract Identifier
+        $searchField = 'token_hash';
+        $identifier = $_REQUEST['token'] ?? null;
 
-        if (empty($externalId)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Could not extract external transaction ID for source='{$source}'");
+        if (empty($identifier) && !empty($source)) {
+            // No token in URL, but we have a source. Let's ask the actions.
+            $searchField = 'external_transaction_id';
+            
+            $deferredActions = ActionDiscoveryService::discoverActions([ActionType::DEFERRED]);
+            foreach ($deferredActions as $action) {
+                if ($action instanceof IWebhookDecodable && $action->handlesSource($source)) {
+                    $identifier = $action->extractTokenFromEvent($source, $requestData, $rawPayload, $headers);
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Action '{$action->getName()}' handled source '{$source}' and extracted identifier.");
+                    break;
+                }
+            }
+        }
+
+        if (empty($identifier)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Could not extract identifier for source='{$source}'. No matching Decodable action found or extraction failed.");
             $incomingEvent->status = 'ignored';
-            $incomingEvent->last_error_message = "Could not extract external transaction ID";
+            $incomingEvent->last_error_message = "Could not extract identifier";
             $incomingEvent->date_processed = date('Y-m-d H:i:s');
             $incomingEvent->save();
             http_response_code(400);
             die("Cannot determine transaction ID");
         }
 
-        $incomingEvent->external_transaction_id = $externalId;
+        if ($searchField === 'external_transaction_id') {
+            $incomingEvent->external_transaction_id = $identifier;
+        }
         $incomingEvent->save();
 
-        // --- 3. Atomically find and lock the Deferred Ticket ---
-        $ticket = $this->findTicket($externalId);
+        // Atomically find and lock the Deferred Ticket
+        $ticket = $this->findTicket($identifier, $searchField);
 
-        // --- 4. Build context and resolve ---
+        // Build context and resolve
         $context = null;
         if ($ticket) {
-            $result = $this->processWithTicket($ticket, $rawData, $rawBody, $incomingEvent, $context);
+            $result = $this->processWithTicket($ticket, $requestData, $rawPayload, $incomingEvent, $context);
         } else {
-            $result = $this->processWithoutTicket($source, $rawData, $rawBody, $incomingEvent);
+            $result = $this->processWithoutTicket($source, $requestData, $rawPayload, $incomingEvent);
         }
 
-        // --- 5. Handle result ---
+        // Handle result
         $this->handleResult($result, $ticket, $incomingEvent, $context);
     }
 
@@ -110,7 +127,7 @@ class WebhookHandler
     private function processWithTicket(stic_AWF_Deferred_Tickets $ticket, array $rawData, string $rawBody, $incomingEvent, ?ExecutionContext &$outContext): ActionResult
     {
         try {
-            $context = $this->rebuildContext($ticket);
+            $context = stic_AWFUtils::rebuildContextFromTicket($ticket);
         } catch (Exception $e) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Failed to rebuild context for Ticket ID={$ticket->id}: " . $e->getMessage());
             $ticket->status = 'failed';
@@ -302,14 +319,18 @@ class WebhookHandler
      * Atomically finds and locks the Deferred Ticket using an UPDATE...WHERE status='pending'.
      * This prevents race conditions when the same webhook arrives multiple times.
      */
-    private function findTicket(string $externalId): ?stic_AWF_Deferred_Tickets
+    private function findTicket(string $identifier, string $searchField): ?stic_AWF_Deferred_Tickets
     {
         global $db;
-        $safeId = $db->quote($externalId);
+        $safeId = $db->quote($identifier);
+        // Note: The searchField is validated to be either 'token_hash' or 'external_transaction_id'.
+        if (!in_array($searchField, ['token_hash', 'external_transaction_id'])) {
+            return null;
+        }
 
         $sql = "UPDATE stic_AWF_Deferred_Tickets 
                 SET status = 'processing' 
-                WHERE external_transaction_id = '{$safeId}' 
+                WHERE {$searchField} = '{$safeId}' 
                 AND status = 'pending' 
                 AND deleted = 0";
         $result = $db->query($sql);
@@ -319,121 +340,11 @@ class WebhookHandler
         }
 
         $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
-        $ticket->retrieve_by_string_fields(['external_transaction_id' => $externalId, 'deleted' => '0']);
+        $ticket->retrieve_by_string_fields([$searchField => $identifier, 'deleted' => '0']);
 
         return (!empty($ticket->id)) ? $ticket : null;
     }
 
-    /**
-     * Rebuilds the ExecutionContext from data stored in the Deferred Ticket.
-     */
-    private function rebuildContext(stic_AWF_Deferred_Tickets $ticket): ExecutionContext
-    {
-        $responseBean = BeanFactory::getBean('stic_AWF_Responses', $ticket->stic_awf_responses_id_c);
-        if (empty($responseBean) || empty($responseBean->id)) {
-            throw new Exception("Response not found for ticket ID={$ticket->id}, response_id={$ticket->stic_awf_responses_id_c}");
-        }
-
-        $responseBean->load_relationship('stic_69c1s_responses');
-        $formId = null;
-        if (!empty($responseBean->stic_69c1s_responses)) {
-            $relatedForms = $responseBean->stic_69c1s_responses->getBeans();
-            if (!empty($relatedForms)) {
-                $formBeanRel = reset($relatedForms);
-                $formId = $formBeanRel->id;
-            }
-        }
-
-        if (empty($formId)) {
-            global $db;
-            $safeResponseId = $db->quote($responseBean->id);
-            $result = $db->query("SELECT stic_awf_forms_stic_awf_responsesforms_ida AS form_id
-                                  FROM stic_awf_forms_stic_awf_responses_c
-                                  WHERE stic_awf_forms_stic_awf_responsesresponses_idb = '{$safeResponseId}'
-                                  AND deleted = 0 LIMIT 1");
-            $row = $db->fetchByAssoc($result);
-            $formId = $row['form_id'] ?? null;
-        }
-
-        if (empty($formId)) {
-            throw new Exception("Cannot determine form ID for response={$responseBean->id}");
-        }
-
-        $formBean = BeanFactory::getBean('stic_AWF_Forms', $formId);
-        if (empty($formBean) || empty($formBean->id)) {
-            throw new Exception("Form not found. ID={$formId}");
-        }
-
-        $jsonConfig = html_entity_decode($formBean->configuration ?? '', ENT_QUOTES, 'UTF-8');
-        $configData = json_decode($jsonConfig, true);
-        if (!$configData) {
-            throw new Exception("Invalid form configuration for form ID={$formId}");
-        }
-        $formConfig = FormConfig::fromJsonArray($configData);
-
-        $formData = json_decode($responseBean->raw_payload, true) ?: [];
-
-        $context = new ExecutionContext(
-            $formBean->id,
-            $responseBean->id,
-            $formData,
-            $formConfig,
-            null,
-            $responseBean->assigned_user_id,
-            $responseBean
-        );
-
-        $contextData = json_decode($ticket->context_data, true) ?: [];
-        $context->setCustomData($contextData);
-
-        return $context;
-    }
-
-    /**
-     * Executes the success or error deferred flow using the flow IDs stored in the ticket's context_data.
-     */
-    private function resumeFlow(stic_AWF_Deferred_Tickets $ticket, ExecutionContext $context, bool $isSuccess): void
-    {
-        $contextData = json_decode($ticket->context_data, true) ?: [];
-
-        $successFlowId = $contextData['flow_success_id'] ?? null;
-        $errorFlowId   = $contextData['flow_error_id']   ?? null;
-
-        $successFlow = ($successFlowId !== null && $successFlowId !== '')
-            ? ($context->formConfig->flows[$successFlowId] ?? null)
-            : null;
-        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
-            ? ($context->formConfig->flows[$errorFlowId] ?? null)
-            : null;
-
-        if ($isSuccess) {
-            if ($successFlow === null) {
-                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: No success flow (flow_success_id={$successFlowId}) for ticket {$ticket->id}");
-                return;
-            }
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Executing success flow ID={$successFlowId} for ticket {$ticket->id}");
-            $executor = new ServerActionFlowExecutor($context);
-            $executor->executeFlow($successFlow, $errorFlow);
-
-            if ($context->responseBean) {
-                $context->responseBean->status = 'processed';
-                $context->responseBean->save();
-            }
-        } else {
-            if ($errorFlow === null) {
-                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: No error flow (flow_error_id={$errorFlowId}) for ticket {$ticket->id}");
-                return;
-            }
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Executing error flow ID={$errorFlowId} for ticket {$ticket->id}");
-            $executor = new ServerActionFlowExecutor($context);
-            $executor->executeFlow($errorFlow);
-
-            if ($context->responseBean) {
-                $context->responseBean->status = 'error';
-                $context->responseBean->save();
-            }
-        }
-    }
 }
 
 $handler = new WebhookHandler();
