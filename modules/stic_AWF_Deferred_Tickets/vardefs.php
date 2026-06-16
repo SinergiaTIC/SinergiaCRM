@@ -271,22 +271,14 @@ $dictionary['stic_AWF_Deferred_Tickets'] = array(
     'size' => '40',
   ),
 ),
-    'relationships' => array (
+'relationships' => array (),
+'indices' => array (
+  array ('name' => 'idx_token_hash', 'type' => 'index', 'fields' => array ('token_hash')),
+  array ('name' => 'idx_status', 'type' => 'index', 'fields' => array ('status')),
+  array('name' => 'idx_ext_txn_id', 'type' => 'index', 'fields' => array('external_transaction_id')),
 ),
-    'indices' => array (
-        array (
-            'name' => 'idx_token_hash',
-            'type' => 'index',
-            'fields' => array ('token_hash'),
-        ),
-        array (
-            'name' => 'idx_status',
-            'type' => 'index',
-            'fields' => array ('status'),
-        ),
-    ),
-    'optimistic_locking' => true,
-    'unified_search' => true,
+'optimistic_locking' => true,
+'unified_search' => true,
 );
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');

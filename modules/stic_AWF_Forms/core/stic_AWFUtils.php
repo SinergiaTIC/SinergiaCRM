@@ -532,6 +532,28 @@ class stic_AWFUtils {
     }
 
     /**
+     * Render a generic error page with a standard title and message, using form styles if available
+     * @param ?FormConfig $config The form configuration to extract styles from (can be null for defaults)
+     */
+    public static function renderGenericResponseError(?FormConfig $config): void
+    {
+        $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
+        $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
+        self::renderGenericResponse($config, $title, $msg);
+    }
+
+    /**
+     * Render a generic success page with a standard title and message, using form styles if available
+     * @param ?FormConfig $config The form configuration to extract styles from (can be null for defaults)
+     */
+    public static function renderGenericResponseSuccess(?FormConfig $config): void
+    {
+        $title = $config?->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+        $msg = $config?->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+        self::renderGenericResponse($config, $title, $msg);
+    }
+
+    /**
      * Render a basic HTML page using the form styles
      * @param ?FormConfig $config The form configuration to extract styles from (can be null for defaults)
      * @param string $title The title of the page (also used in the <title> tag and as a heading)
@@ -656,8 +678,8 @@ class stic_AWFUtils {
         $loadedModules = array_map(function($b) { return $b->module_dir; }, $beansForTemplate);
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modBean) {
-                // Ignore skipped beans to avoid send data that is not in the CRM
-                if ($modBean->modificationType === BeanModificationType::SKIPPED) continue;
+                // Ignore Metadata entries wich represent action logs not CRM records
+                if ($modBean->modificationType === BeanModificationType::METADATA) continue;
 
                 // Ignore beans from modules that are already loaded to avoid unpredictable overwrites in the template parser
                 if (in_array($modBean->moduleName, $loadedModules)) continue;
@@ -889,4 +911,148 @@ class stic_AWFUtils {
 
         return true; // All conditions passed
     }
+
+    /**
+     * Rebuilds the ExecutionContext from a Deferred Ticket.
+     * Shared between ReturnHandler and WebhookHandler to avoid code duplication.
+     *
+     * @param stic_AWF_Deferred_Tickets $ticket The deferred ticket with context_data
+     * @return ExecutionContext The reconstructed execution context
+     * @throws Exception If the response, form or configuration cannot be found
+     */
+    public static function rebuildContextFromTicket(stic_AWF_Deferred_Tickets $ticket): ExecutionContext
+    {
+        $responseBean = BeanFactory::getBean('stic_AWF_Responses', $ticket->stic_awf_responses_id_c);
+        if (empty($responseBean) || empty($responseBean->id)) {
+            throw new Exception("Response not found for ticket ID={$ticket->id}");
+        }
+
+        $responseBean->load_relationship('stic_69c1s_responses');
+        $formId = null;
+        if (!empty($responseBean->stic_69c1s_responses)) {
+            $relatedForms = $responseBean->stic_69c1s_responses->getBeans();
+            if (!empty($relatedForms)) {
+                $formBeanRel = reset($relatedForms);
+                $formId = $formBeanRel->id;
+            }
+        }
+
+        if (empty($formId)) {
+            global $db;
+            $safeResponseId = $db->quote($responseBean->id);
+            $result = $db->query("SELECT stic_awf_forms_stic_awf_responsesforms_ida AS form_id
+                                  FROM stic_awf_forms_stic_awf_responses_c
+                                  WHERE stic_awf_forms_stic_awf_responsesresponses_idb = '{$safeResponseId}'
+                                  AND deleted = 0 LIMIT 1");
+            $row = $db->fetchByAssoc($result);
+            $formId = $row['form_id'] ?? null;
+        }
+
+        if (empty($formId)) {
+            throw new Exception("Cannot determine form ID for response={$responseBean->id}");
+        }
+
+        $formBean = BeanFactory::getBean('stic_AWF_Forms', $formId);
+        if (empty($formBean) || empty($formBean->id)) {
+            throw new Exception("Form not found. ID={$formId}");
+        }
+
+        $jsonConfig = html_entity_decode($formBean->configuration ?? '', ENT_QUOTES, 'UTF-8');
+        $configData = json_decode($jsonConfig, true);
+        if (!$configData) {
+            throw new Exception("Invalid form configuration for form ID={$formId}");
+        }
+        $formConfig = FormConfig::fromJsonArray($configData);
+
+        $formData = json_decode($responseBean->raw_payload, true) ?: [];
+
+        $context = new ExecutionContext(
+            $formBean->id,
+            $responseBean->id,
+            $formData,
+            $formConfig,
+            null,
+            $responseBean->assigned_user_id,
+            $responseBean
+        );
+
+        $contextData = json_decode($ticket->context_data, true) ?: [];
+        $context->setCustomData($contextData);
+
+        return $context;
+    }
+
+    /**
+     * Resumes a deferred flow (success or error) from the context_data stored in the ticket.
+     * Implements strict idempotency checks and safety guards for CLI (Cron) environments.
+     * Looks up the flow by flow_success_id / flow_error_id, executes it via
+     * ServerActionFlowExecutor, and calls performTerminal() if the last action is ITerminalAction.
+     *
+     * @param ExecutionContext $context The execution context
+     * @param array $contextData The context_data from the ticket (must contain flow_success_id / flow_error_id)
+     * @param bool $isSuccess Whether to execute the success or error flow
+     * @return ?ActionResult Null if no flow was configured, otherwise the last ActionResult from the flow
+     */
+    public static function resumeDeferredFlow(ExecutionContext $context, array $contextData, bool $isSuccess): ?ActionResult
+    {
+        $successFlowId = $contextData['flow_success_id'] ?? null;
+        $errorFlowId   = $contextData['flow_error_id']   ?? null;
+        $flowId        = $isSuccess ? $successFlowId : $errorFlowId;
+
+        $flow = ($flowId !== null && $flowId !== '') ? ($context->formConfig->flows[$flowId] ?? null) : null;
+        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '') ? ($context->formConfig->flows[$errorFlowId] ?? null) : null;
+
+        if ($flow === null) {
+            return null;
+        }
+
+        $isCli = (php_sapi_name() === 'cli');
+        $executor = new ServerActionFlowExecutor($context);
+
+        // Check if the response has already been processed by a concurrent thread (e.g. Webhook)
+        if ($context->responseBean && in_array($context->responseBean->status, ['processed', 'error'])) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": resumeDeferredFlow: Deferred flow already processed (Status: {$context->responseBean->status}). Skipping database flow.");
+
+            // Delegate UI rendering directly to the flow executor safely
+            if (!$isCli) {
+                $executor->executeTerminalActionOnly($flow);
+            }
+
+            return new ActionResult(ResultStatus::OK, null, "Already processed");
+        }
+
+        // REGULAR EXECUTION: First time processing the data flow
+        if ($isSuccess) {
+            // Success flow execution
+            $lastResult = $executor->executeFlow($flow, $errorFlow);
+            if ($context->responseBean && !$lastResult->isError()) {
+                $context->responseBean->status = 'processed';
+                $context->responseBean->save();
+            }
+        } else {
+            // Error flow execution
+            $lastResult = $executor->executeFlow($flow);
+            if ($context->responseBean) {
+                $context->responseBean->status = 'error';
+                $context->responseBean->save();
+            }
+        }
+
+        // CLI ENVIRONMENT PROTECTION FOR STANDARD FLOWS
+        $lastAction = $lastResult->getAction();
+        if ($lastAction instanceof ITerminalAction) {
+            if (!$isCli) {
+                try {
+                    $lastAction->performTerminal($context, $lastResult);
+                } catch (\Throwable $t) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": resumeDeferredFlow: execution terminal crash: " . $t->getMessage());
+                }
+            } else {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": resumeDeferredFlow: Skipping Terminal action '{$lastAction->getName()}' execution on CLI environment to prevent Cron hijacking.");
+            }
+        }
+
+        return $lastResult;
+    }
+
 }
