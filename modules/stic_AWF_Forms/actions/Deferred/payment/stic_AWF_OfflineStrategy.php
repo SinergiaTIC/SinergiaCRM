@@ -41,7 +41,7 @@ class stic_AWF_OfflineStrategy extends stic_AWF_PaymentStrategy
         return 'offline';
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody): ?string
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
     {
         return null;
     }
