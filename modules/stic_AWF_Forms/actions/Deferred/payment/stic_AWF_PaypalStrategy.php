@@ -39,7 +39,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
         return 'paypal';
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody): ?string
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
     {
         return $rawData['custom'] ?? null;
     }
