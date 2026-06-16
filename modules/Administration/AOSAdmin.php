@@ -67,6 +67,7 @@ echo getClassicModuleTitle(
 $cfg = new Configurator();
 $sugar_smarty = new Sugar_Smarty();
 $errors = array();
+$hasValidationErrors = false;
 
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
     foreach ($_POST as $key => $value) {
@@ -96,6 +97,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         $validationErrors = array();
         $rectifiedSeriesIndex = isset($_POST['invoice_series_rectified']) ? $_POST['invoice_series_rectified'] : null;
         $usedFormats = array();
+        $submittedSeries = array();
+        $existingSeriesCount = !empty($sugar_config['aos']['invoices']['series']) ? count($sugar_config['aos']['invoices']['series']) : 0;
         
         foreach ($_POST['invoice_series_format'] as $index => $format) {
             // Validate: format cannot start with a space
@@ -117,6 +120,14 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             } else {
                 $isRectified = false;
             }
+
+            $submittedSeries[] = array(
+                'name' => $name,
+                'format' => $format,
+                'initialNumber' => $initialNumber,
+                'isRectified' => $isRectified,
+                'isNew' => $index >= $existingSeriesCount,
+            );
             
             // Validate format: only letters, 0, and symbols (no digits 1-9)
             if (!empty($format) && preg_match('/[1-9]/', $format)) {
@@ -231,46 +242,42 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         }
         // === End Step 2.7 ===
         
-        // If there are validation errors, show them and don't save
-        if (!empty($validationErrors)) {
-            SugarApplication::appendErrorMessage($mod_strings['LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS']);
-            foreach ($validationErrors as $error) {
-                SugarApplication::appendErrorMessage($error);
+        // If there are validation errors, fall through to render with errors
+        $hasValidationErrors = !empty($validationErrors);
+        if (!$hasValidationErrors) {
+            // Build new series configuration lines
+            $newSeriesLines = '';
+            foreach ($invoiceSeries as $seriesName => $seriesData) {
+                $safeName = addslashes($seriesName);
+                $safeFormat = addslashes($seriesData['format']);
+                $isRectified = $seriesData['isRectified'] ? 'true' : 'false';
+                $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['format'] = '{$safeFormat}';\n";
+                $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['initialNumber'] = {$seriesData['initialNumber']};\n";
+                $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['isRectified'] = {$isRectified};\n";
             }
-            SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin');
-            exit();
+            
+            // Insert new lines before the LAST /***CONFIGURATOR***/
+            $lastPos = strrpos($configContent, '/***CONFIGURATOR***/');
+            if ($lastPos !== false) {
+                $configContent = substr_replace(
+                    $configContent,
+                    $newSeriesLines . '/***CONFIGURATOR***/',
+                    $lastPos,
+                    strlen('/***CONFIGURATOR***/')
+                );
+            }
+            
+            // Write back to file
+            file_put_contents($configFile, $configContent);
         }
-        
-        // Build new series configuration lines
-        $newSeriesLines = '';
-        foreach ($invoiceSeries as $seriesName => $seriesData) {
-            $safeName = addslashes($seriesName);
-            $safeFormat = addslashes($seriesData['format']);
-            $isRectified = $seriesData['isRectified'] ? 'true' : 'false';
-            $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['format'] = '{$safeFormat}';\n";
-            $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['initialNumber'] = {$seriesData['initialNumber']};\n";
-            $newSeriesLines .= "\$sugar_config['aos']['invoices']['series']['{$safeName}']['isRectified'] = {$isRectified};\n";
-        }
-        
-        // Insert new lines before the LAST /***CONFIGURATOR***/
-        $lastPos = strrpos($configContent, '/***CONFIGURATOR***/');
-        if ($lastPos !== false) {
-            $configContent = substr_replace(
-                $configContent,
-                $newSeriesLines . '/***CONFIGURATOR***/',
-                $lastPos,
-                strlen('/***CONFIGURATOR***/')
-            );
-        }
-        
-        // Write back to file
-        file_put_contents($configFile, $configContent);
     }
     // END STIC CUSTOM
 
-    // Stay on AOSAdmin page after save
-    SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin&saved=1');
-    exit();
+    if (!$hasValidationErrors) {
+        // Stay on AOSAdmin page after save
+        SugarApplication::redirect('index.php?module=Administration&action=AOSAdmin&saved=1');
+        exit();
+    }
 }
 
 $sugar_smarty->assign('MOD', $mod_strings);
@@ -279,6 +286,14 @@ $sugar_smarty->assign('APP_LIST', $app_list_strings);
 $sugar_smarty->assign('LANGUAGES', get_languages());
 $sugar_smarty->assign("JAVASCRIPT", get_set_focus_js());
 $sugar_smarty->assign('config', $sugar_config);
+
+if (!empty($hasValidationErrors)) {
+    require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+    $errorMessage = '<strong>' . $mod_strings['LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS'] . '</strong><br>' . implode('<br>', $validationErrors);
+    $sugar_smarty->assign('validation_errors', AOS_InvoicesUtils::getStyledErrorAlert($errorMessage));
+    $sugar_smarty->assign('submitted_series', $submittedSeries);
+}
+
 $sugar_smarty->assign('error', $errors);
 
 // STIC CUSTOM - Set Verifactu values for Smarty display

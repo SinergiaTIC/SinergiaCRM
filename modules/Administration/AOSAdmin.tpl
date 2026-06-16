@@ -4,6 +4,9 @@
       action="index.php?module=Administration&action=AOSAdmin&do=save">
 
     <span class='error'>{$error.main}</span>
+    {if isset($validation_errors)}
+    {$validation_errors}
+    {/if}
 
     <table width="100%" cellpadding="0" cellspacing="1" border="0" class="actionsContainer">
         <tr>
@@ -99,24 +102,33 @@
     
     {if isset($config.aos.invoices.series) && is_array($config.aos.invoices.series)}
         {foreach from=$config.aos.invoices.series key=name item=seriesData}
-    existingSeries.push({ldelim} format: "{$seriesData.format}", initialNumber: "{$seriesData.initialNumber}", name: "{$name|escape:'javascript'}", isRectified: {if isset($seriesData.isRectified) && $seriesData.isRectified}true{else}false{/if} {rdelim});
+    existingSeries.push({ldelim} format: "{$seriesData.format}", initialNumber: "{$seriesData.initialNumber}", name: "{$name|escape:'javascript'}", isRectified: {if isset($seriesData.isRectified) && $seriesData.isRectified}true{else}false{/if}, isNew: false {rdelim});
+        {/foreach}
+    {/if}
+    
+    {if isset($submitted_series) && is_array($submitted_series)}
+    // On validation errors, restore ALL submitted data (existing + new rows)
+    existingSeries = [];
+        {foreach from=$submitted_series item=series}
+    existingSeries.push({ldelim} format: "{$series.format}", initialNumber: "{$series.initialNumber}", name: "{$series.name|escape:'javascript'}", isRectified: {if $series.isRectified}true{else}false{/if}, isNew: {if $series.isNew}true{else}false{/if} {rdelim});
         {/foreach}
     {/if}
     
     {literal}
-    function addInvoiceSeriesLine(format, initialNumber, name, isRectified) {
+    function addInvoiceSeriesLine(format, initialNumber, name, isRectified, isNew) {
         format = format || '';
         initialNumber = initialNumber || '1';
         name = name || '';
         isRectified = isRectified || false;
+        isNew = isNew || false;
         
         var lineNum = invoiceSeriesLineNumber++;
         var tbody = document.getElementById('invoice_series_lines');
         var row = tbody.insertRow(-1);
         row.id = 'invoice_series_line_' + lineNum;
         
-        // Check if this series has invoices in current year - if so, disable it
-        var hasInvoices = name && seriesWithInvoices.indexOf(name) !== -1;
+        // Check if this series has invoices in current year - if so, disable it (skip for new series)
+        var hasInvoices = !isNew && name && seriesWithInvoices.indexOf(name) !== -1;
         // Attenuated styles for blocked series (0.6 opacity, not-allowed cursor)
         var blockedStyle = hasInvoices ? 'background:#f5f5f5;color:#666;opacity:0.6;cursor:not-allowed;' : '';
         var disabledAttr = hasInvoices ? 'readonly="readonly"' : '';
@@ -362,7 +374,7 @@
     // Load existing series on page load
     if (existingSeries.length > 0) {
         existingSeries.forEach(function(series) {
-            addInvoiceSeriesLine(series.format, series.initialNumber, series.name, series.isRectified);
+            addInvoiceSeriesLine(series.format, series.initialNumber, series.name, series.isRectified, series.isNew);
         });
     } else {
         // Add one empty line by default
