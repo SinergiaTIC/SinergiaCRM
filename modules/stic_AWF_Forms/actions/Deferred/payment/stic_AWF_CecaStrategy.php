@@ -37,7 +37,7 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
         return 'ceca';
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody): ?string
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
     {
         return $rawData['Num_operacion'] ?? null;
     }
