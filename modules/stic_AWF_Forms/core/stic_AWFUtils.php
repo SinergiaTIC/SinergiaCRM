@@ -642,13 +642,15 @@ class stic_AWFUtils {
      * @param string $templateId ID of the mail template to use. 
      * @param ExecutionContext $context The execution context of the form. 
      * @param ?SugarBean $parentBeanForArchive (Optional) Parent bean to archive mail. 
+     * @param array $customVars (Optional) Key-Value array to replace custom macros in subject and body.
      * @throws \Exception If there are errors in the submission or in the template. 
      */
     public static function sendTemplateEmail(
         string $toAddress, 
         string $templateId, 
         ExecutionContext $context, 
-        ?SugarBean $parentBeanForArchive = null
+        ?SugarBean $parentBeanForArchive = null,
+        array $customVars = []
     ): void 
     {
         // Load the email template
@@ -708,6 +710,12 @@ class stic_AWFUtils {
             $body = html_entity_decode($bodyHtml, ENT_QUOTES, 'UTF-8');
         } else {
             $body = nl2br(html_entity_decode($bodyText, ENT_QUOTES, 'UTF-8'));
+        }
+
+        // Replace custom macros in subject and body
+        foreach ($customVars as $macro => $replacement) {
+            $subject = str_replace($macro, $replacement, $subject);
+            $body = str_replace($macro, $replacement, $body);
         }
 
         // Initialize the mailer
