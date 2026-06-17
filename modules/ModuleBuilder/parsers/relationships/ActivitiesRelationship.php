@@ -250,16 +250,6 @@ class ActivitiesRelationship extends OneToManyRelationship
                         'module' => 'Calls' ,
                         'subpanel_name' => 'ForActivities' ,
                         'get_subpanel_data' => $relationshipName. '_calls' ),
-                    // STIC Custom 20240909 EPS - SMS Messages
-                    'messages' => array(
-                        'module' => 'stic_Messages',
-                        'subpanel_name' => 'ForActivities',
-                        'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
-                        'generate_select' => true,
-                        'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'draft'"),
-                    )
-                    // END STIC Custom
-
                  ) ) ;
     }
 
