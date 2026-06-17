@@ -58,7 +58,6 @@
                 </button>
                 
                 <input type="hidden" id="invoice_series_count" value="0">
-                <input type="hidden" name="invoice_series_rectified" id="invoice_series_rectified_hidden" value="">
                 <!-- END STIC CUSTOM -->
             </td>
         </tr>
@@ -162,15 +161,21 @@
             cb.disabled = true;
             cb.title = MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP;
         } else {
-            cb.className = 'rectified_checkbox';
-            cb.dataset.line = lineNum;
             cb.title = '{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_HELP}{literal}';
         }
         cell2.appendChild(cb);
-        // Update hidden field on page load if this is the rectified series
-        if (isRectified) {
-            document.getElementById('invoice_series_rectified_hidden').value = lineNum;
-        }
+
+        // Hidden input per row to submit rectified state independently
+        var rectifiedHidden = document.createElement('input');
+        rectifiedHidden.type = 'hidden';
+        rectifiedHidden.name = 'invoice_series_rectified[' + lineNum + ']';
+        rectifiedHidden.id = 'invoice_series_rectified_hidden_' + lineNum;
+        rectifiedHidden.value = isRectified ? '1' : '0';
+        cell2.appendChild(rectifiedHidden);
+
+        cb.addEventListener('change', function() {
+            document.getElementById('invoice_series_rectified_hidden_' + lineNum).value = this.checked ? '1' : '0';
+        });
         
         // Format cell
         var cell3 = row.insertCell(2);
@@ -298,78 +303,8 @@
         }
     }
     
-    // Handle checkbox change for rectified series
-    document.addEventListener('change', function(e) {
-        if (e.target.classList.contains('rectified_checkbox')) {
-            var lineNum = e.target.dataset.line;
-            var hidden = document.getElementById('invoice_series_rectified_hidden');
-            
-            if (e.target.checked) {
-                // Check this one -> uncheck all other non-blocked checkboxes
-                document.querySelectorAll('.rectified_checkbox').forEach(function(cb) {
-                    if (cb !== e.target) {
-                        cb.checked = false;
-                    }
-                });
-                hidden.value = lineNum;
-            } else {
-                // Unchecked -> check if there's a disabled rectified checkbox to fall back to
-                var hasBlockedRectified = false;
-                document.querySelectorAll('#invoice_series_lines input[type="checkbox"][disabled]').forEach(function(cb) {
-                    if (cb.checked) {
-                        hasBlockedRectified = true;
-                        // Find the line number from the row
-                        var row = cb.closest('tr');
-                        var lineMatch = row.id.match(/invoice_series_line_(\d+)/);
-                        if (lineMatch) {
-                            hidden.value = lineMatch[1];
-                        }
-                    }
-                });
-                if (!hasBlockedRectified) {
-                    // No fallback -> re-check (must have exactly one rectified)
-                    e.target.checked = true;
-                }
-            }
-        }
-    });
-    
-    // Validate that exactly one series is marked as rectified
-    function validateRectifiedSeries() {
-        var tbody = document.getElementById('invoice_series_lines');
-        var rowCount = tbody.rows.length;
-        
-        // If there are no series, don't validate
-        if (rowCount === 0) {
-            return true;
-        }
-        
-        // Check if at least one checkbox is selected (disabled or enabled)
-        var checkboxes = document.querySelectorAll('#invoice_series_lines input[type="checkbox"]');
-        var isOneSelected = false;
-        
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                isOneSelected = true;
-                break;
-            }
-        }
-        
-        if (!isOneSelected) {
-            alert('{/literal}{$MOD.LBL_AOS_INVOICE_SERIES_RECTIFIED_REQUIRED}{literal}');
-            return false;
-        }
-        
-        return true;
-    }
-    
-    // Attach validation to form submit
-    document.getElementById('ConfigureSettings').addEventListener('submit', function(e) {
-        if (!validateRectifiedSeries()) {
-            e.preventDefault();
-            return false;
-        }
-    });
+    // Each rectified checkbox now toggles independently (multiple allowed).
+    // The per-row hidden input handles the actual form submission.
     
     // Load existing series on page load
     if (existingSeries.length > 0) {

@@ -95,7 +95,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         // Build new series array from scratch
         $invoiceSeries = array();
         $validationErrors = array();
-        $rectifiedSeriesIndex = isset($_POST['invoice_series_rectified']) ? $_POST['invoice_series_rectified'] : null;
+        $rectifiedSeriesData = isset($_POST['invoice_series_rectified']) && is_array($_POST['invoice_series_rectified']) ? $_POST['invoice_series_rectified'] : [];
         $usedFormats = array();
         $submittedSeries = array();
         $existingSeriesCount = !empty($sugar_config['aos']['invoices']['series']) ? count($sugar_config['aos']['invoices']['series']) : 0;
@@ -114,8 +114,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             $name = isset($_POST['invoice_series_name'][$index])
                   ? trim(substr($_POST['invoice_series_name'][$index], 0, 50))
                   : '';
-            if ($rectifiedSeriesIndex !== null && $rectifiedSeriesIndex !== '') {
-                $isRectified = ($rectifiedSeriesIndex == $index);
+            if (isset($rectifiedSeriesData[$index])) {
+                $isRectified = ($rectifiedSeriesData[$index] === '1');
             } elseif (!empty($name)) {
                 $isRectified = !empty($sugar_config['aos']['invoices']['series'][$name]['isRectified']);
             } else {

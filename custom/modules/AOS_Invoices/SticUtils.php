@@ -202,20 +202,21 @@ class AOS_InvoicesUtils
         $record->previousHash = $previousHash;
 
         // Rectified invoice data (if applicable)
-        if ($isRectified && $rectifiedType && $rectifiedBase && $rectifiedNumber && $rectifiedDate) {
-            // Create identifier for the rectified invoice
-            $rectifiedInvoiceId = new InvoiceIdentifier();
-            $rectifiedInvoiceId->issuerId = $issuerNif;
-            $rectifiedInvoiceId->invoiceNumber = $rectifiedNumber;
-            $rectifiedInvoiceId->issueDate = $rectifiedDate;
-
+        if ($isRectified && $rectifiedType) {
             // Set corrective type ('S' = Substitution, 'I' = Differences)
+            // Required by AEAT for all rectified invoices (TipoRectificativa)
             $record->correctiveType = ($rectifiedType === 'S')
             ? \josemmo\Verifactu\Models\Records\CorrectiveType::Substitution
             : \josemmo\Verifactu\Models\Records\CorrectiveType::Differences;
 
-            // Add the rectified invoice to the list
-            $record->correctedInvoices = [$rectifiedInvoiceId];
+            // Set corrected invoice reference only if we have the original invoice data
+            if ($rectifiedNumber && $rectifiedDate) {
+                $rectifiedInvoiceId = new InvoiceIdentifier();
+                $rectifiedInvoiceId->issuerId = $issuerNif;
+                $rectifiedInvoiceId->invoiceNumber = $rectifiedNumber;
+                $rectifiedInvoiceId->issueDate = $rectifiedDate;
+                $record->correctedInvoices = [$rectifiedInvoiceId];
+            }
 
             // For substitution type ('S'), set corrected amounts
             if ($rectifiedType === 'S' && $correctedBaseAmount !== null && $correctedTaxAmount !== null) {
@@ -224,7 +225,7 @@ class AOS_InvoicesUtils
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Setting corrected amounts - Base: ' . $correctedBaseAmount . ', Tax: ' . $correctedTaxAmount);
             }
 
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Setting rectified invoice data - Type: ' . $rectifiedType . ', Base: ' . $rectifiedBase . ', Original: ' . $rectifiedNumber);
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Setting rectified invoice data - Type: ' . $rectifiedType . ', Base: ' . $rectifiedBase . ', Original: ' . ($rectifiedNumber ?? 'N/A'));
         }
 
         // Generate hash
