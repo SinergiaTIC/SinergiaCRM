@@ -482,6 +482,20 @@ $mod_strings = array (
 
 
   // -- DEFERRED ACTIONS --
+  // EmailConfirmationAction
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Send confirmation email',
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Generates a unique link and sends it via email so the user can confirm their action.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Recipient',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Specifies the data block containing the email to be verified and to which the confirmation link will be sent',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Email template',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'The email template must contain the variable {::confirmation_url::} in the message body to generate the confirmation link.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_TEXT' => 'Title of the waiting screen',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DESC' => 'Title to be displayed on the email confirmation waiting screen.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DEFAULT' => 'Check your email',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_TEXT' => 'Text of the waiting screen',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_DESC' => 'Explanatory text to instruct you to check your inbox and click the confirmation link.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_DEFAULT' => 'An email has been sent to the address provided.\nPlease check your inbox and click the confirmation link',
+
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Make payment on external platform',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processes the payment corresponding to a data block on an external platform.',
