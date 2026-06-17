@@ -40,19 +40,15 @@ class AOS_InvoicesHook
         // === End Step 1.3 ===
 
         // === Legacy mode: Generate invoice number on save if Verifactu is not activated ===
-        // When VERIFACTU_ACTIVATED = false, numbers are not assigned at AEAT send time
-        // So we need to generate them here on save to have a number visible in the list
-        // Generate for new invoices AND for duplicates (number was cleared above)
+        // Simple sequential numbering: MAX(number) + 1, without series format
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         $isVerifactuActivated = AOS_InvoicesUtils::isVerifactuActivated();
         $isNew = empty($bean->fetched_row['id']);
         
         if (!$isVerifactuActivated && empty($bean->number) && ($isNew || $isDuplicate)) {
-            $generatedNumber = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_invoice_type_c, $bean, null, false);
-            if ($generatedNumber) {
-                $bean->number = $generatedNumber;
-                $GLOBALS['log']->debug(__METHOD__ . ': Generated invoice number in legacy mode: ' . $generatedNumber);
-            }
+            $lastNumber = $GLOBALS['db']->getOne("SELECT MAX(CAST(number AS UNSIGNED)) FROM aos_invoices WHERE deleted = 0 AND number IS NOT NULL AND number != ''");
+            $bean->number = ($lastNumber !== null) ? (string) ((int) $lastNumber + 1) : '1';
+            $GLOBALS['log']->debug(__METHOD__ . ': Generated invoice number in legacy mode: ' . $bean->number);
         }
         // === End Legacy mode ===
 
@@ -89,19 +85,22 @@ class AOS_InvoicesHook
         }
         // === End customer identification number validation ===
 
-        // === Block status change from draft to non-emitted ===
-        $isNewRecord = empty($bean->fetched_row['id']);
-        $isCurrentlyDraft = !empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'draft';
-        if ($bean->status !== 'draft' && $bean->status !== 'emitted' && ($isNewRecord || $isCurrentlyDraft)) {
-            if (empty($mod_strings)) {
-                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
-            }
-            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR']));
-            $bean->status = 'draft';
-            $bean->in_save = false;
-            if (!$isNewRecord) {
-                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
-                die();
+        // === Block status change from draft to non-emitted (Verifactu mode only) ===
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (AOS_InvoicesUtils::isVerifactuActivated()) {
+            $isNewRecord = empty($bean->fetched_row['id']);
+            $isCurrentlyDraft = !empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'draft';
+            if ($bean->status !== 'draft' && $bean->status !== 'emitted' && ($isNewRecord || $isCurrentlyDraft)) {
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR']));
+                $bean->status = 'draft';
+                $bean->in_save = false;
+                if (!$isNewRecord) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                    die();
+                }
             }
         }
         // === End block status change ===

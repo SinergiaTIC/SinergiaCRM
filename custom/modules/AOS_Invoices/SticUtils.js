@@ -149,6 +149,11 @@ switch (viewType()) {
         });
       }
 
+      // Hide stic_invoice_type_c (Tipo de factura) in EditView when Verifactu is NOT activated (legacy mode)
+      if (typeof verifactuActivated !== 'undefined' && verifactuActivated === false) {
+        $("#stic_invoice_type_c").closest(".edit-view-row-item").hide();
+      }
+
       // Clear address fields when Account or Contact X button is clicked
       $('#btn_clr_billing_account, #btn_clr_billing_contact').on('click', function() {
           setTimeout(function() {

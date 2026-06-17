@@ -79,7 +79,19 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
 
     public function display()
     {
-        global $sugar_config;
+        global $sugar_config, $app_list_strings;
+
+        // === Legacy mode: restore original status list (remove draft, emitted) ===
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            unset($app_list_strings['invoice_status_dom']['draft']);
+            unset($app_list_strings['invoice_status_dom']['emitted']);
+            $this->bean->field_defs['status']['default'] = '';
+            if (empty($this->bean->id) && $this->bean->status === 'draft') {
+                $this->bean->status = '';
+            }
+        }
+        // === End Legacy mode ===
 
         // === Verifactu Activation Banner ===
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
@@ -141,6 +153,10 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         </style>';
         echo '<script>var customerIdentificationNumber = ' . json_encode($customerIdNumber) . ';</script>';
         echo '<input type="hidden" name="customer_id_number" id="customer_id_number" value="' . htmlspecialchars($customerIdNumber, ENT_QUOTES, 'UTF-8') . '">';
+
+        // Pass verifactu status to JS for SticUtils.js
+        $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
+        echo '<script>var verifactuActivated = ' . (!empty($verifactuStatus['activated']) ? 'true' : 'false') . ';</script>';
 
         SticViews::display($this);
 
