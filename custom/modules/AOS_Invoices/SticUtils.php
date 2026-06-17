@@ -696,6 +696,8 @@ class AOS_InvoicesUtils
                             $seriesLastInvoiceDate->format('d/m/Y')
                         )
                     ));
+                    $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                    $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
                     SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
                     return;
                 }
@@ -872,7 +874,9 @@ class AOS_InvoicesUtils
                 }
 
                 SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMsg));
-                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $invoiceBean->id);
+                $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
                 return;
             }
             // === End customer NIF validation ===
@@ -882,7 +886,9 @@ class AOS_InvoicesUtils
             if ($invoiceTypeValidation !== true) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice type validation failed: ' . $invoiceTypeValidation);
                 SugarApplication::appendErrorMessage(self::getStyledErrorAlert($invoiceTypeValidation));
-                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $invoiceBean->id);
+                $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
                 return;
             }
             // === End Step 2.10 ===
