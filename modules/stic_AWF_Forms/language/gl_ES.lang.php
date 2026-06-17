@@ -492,9 +492,9 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_TEXT' => 'Título de la pantalla de espera',
   'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DESC' => 'Título que se mostrará en la pantalla de espera de la confirmación de correo electrónico.',
   'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DEFAULT' => 'Verifica tu correo electrónico',
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_TEXT' => 'Texto de la pantalla de espera',
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_DESC' => 'Texto explicativo  para indicar que revise su bandeja de entrada y haga clic en el enlace de confirmación.',
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_DEFAULT' => 'Se ha enviado un correo electrónico a la dirección indicada.\nPor favor, revise su bandeja de entrada y haga clic en el enlace de confirmación',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_MSG_TEXT' => 'Texto de la pantalla de espera',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_MSG_DESC' => 'Texto explicativo  para indicar que revise su bandeja de entrada y haga clic en el enlace de confirmación.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_MSG_DEFAULT' => 'Se ha enviado un correo electrónico a la dirección indicada.\nPor favor, revise su bandeja de entrada y haga clic en el enlace de confirmación',
 
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
