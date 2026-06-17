@@ -72,7 +72,7 @@
 				if ($("#debug-check").is(':checked')) {
 					e.preventDefault();
 					var href = $(this).attr('href');
-					var box = '<div id="debug-output" style="border:2px solid #ffc107;border-radius:4px;margin-top:15px;background:#fff;">'
+					var box = '<div id="debug-output" style="border:2px solid #ffc107;border-radius:4px;margin-top:15px;margin-bottom:15px;background:#fff;">'
 						+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fff8e1;border-bottom:1px solid #ffc107;">'
 						+ '<strong style="font-size:14px;">Resultado de depuraci&oacute;n</strong>'
 						+ '<button type="button" class="button" id="debug-toggle">Ocultar</button>'
