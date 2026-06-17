@@ -179,7 +179,7 @@
                          'id="invoice_series_format_' + lineNum + '" ' +
                          'value="' + format + '" ' +
                          'style="width: 95%;' + blockedStyle + '" ' +
-                         'placeholder="' + MOD_LBL_AOS_INVOICE_SERIES_FORMAT_PLACEHOLDER + '" ' +
+                         'required ' +
                          'pattern="[A-Za-z0\\-/_ ]+" ' +
                          'title="' + MOD_LBL_AOS_INVOICE_SERIES_FORMAT_VALIDATION + '" ' +
                          disabledAttr + ' ' +

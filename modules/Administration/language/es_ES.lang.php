@@ -895,6 +895,7 @@ $mod_strings = array(
 
     'LBL_AOS_SERIES_DUPLICATE_FORMAT' => 'El formato de serie ya está en uso por otra serie. Los formatos deben ser únicos.',
 
+    'LBL_AOS_SERIES_FORMAT_REQUIRED' => 'El formato de serie es obligatorio.',
     'LBL_AOS_SERIES_FORMAT_REQUIRES_VARIABLE' => 'El formato de serie debe incluir un año (YYYY o YY) y al menos 2 ceros consecutivos para la numeración secuencial. Por ejemplo: YYYY-0000 o YY-00.',
     'LBL_AOS_SERIES_FORMAT_ZERO_LIMIT' => 'El formato de serie supera el número máximo de 20 dígitos consecutivos permitidos en la secuencia numérica.',
     'LBL_AOS_ADMIN_VERIFACTU_SETTINGS' => 'Configuración de Verifactu (AEAT)',

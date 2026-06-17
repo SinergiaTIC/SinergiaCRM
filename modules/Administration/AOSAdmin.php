@@ -101,12 +101,13 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         $existingSeriesCount = !empty($sugar_config['aos']['invoices']['series']) ? count($sugar_config['aos']['invoices']['series']) : 0;
         
         foreach ($_POST['invoice_series_format'] as $index => $format) {
-            // Validate: format cannot start with a space
-            if (strlen($format) > 0 && $format[0] === ' ') {
-                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_SPACE_START'];
+            $format = trim($format);
+            
+            // Validate: format is required
+            if (empty($format)) {
+                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_REQUIRED'];
                 continue;
             }
-            $format = trim($format);
             $initialNumber = isset($_POST['invoice_series_initial'][$index]) 
                            ? (int)$_POST['invoice_series_initial'][$index] 
                            : 1;
