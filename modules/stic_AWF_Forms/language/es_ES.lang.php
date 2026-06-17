@@ -482,6 +482,20 @@ $mod_strings = array (
 
 
   // -- DEFERRED ACTIONS --
+  // EmailConfirmationAction
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Enviar correo de confirmación',
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su acción.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'La plantilla de correo electrónico deberá tener la variable {::confirmation_url::} en el cuerpo del mensaje para que se genere el enlace de confirmación.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_TEXT' => 'Título de la pantalla de espera',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DESC' => 'Título que se mostrará en la pantalla de espera de la confirmación de correo electrónico.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DEFAULT' => 'Verifica tu correo electrónico',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_TEXT' => 'Texto de la pantalla de espera',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_DESC' => 'Texto explicativo  para indicar que revise su bandeja de entrada y haga clic en el enlace de confirmación.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TEXT_DEFAULT' => 'Se ha enviado un correo electrónico a la dirección indicada.\nPor favor, revise su bandeja de entrada y haga clic en el enlace de confirmación',
+
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un bloque de datos en una plataforma externa.',

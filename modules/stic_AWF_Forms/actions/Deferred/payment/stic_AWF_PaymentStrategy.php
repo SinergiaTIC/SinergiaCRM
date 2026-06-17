@@ -290,7 +290,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param string $rawBody Raw request body (for JSON-based gateways)
      * @return string|null The external transaction ID or null if not found
      */
-    abstract public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
+    abstract public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string;
 
     /**
     * Prepare payment.
@@ -308,7 +308,7 @@ abstract class stic_AWF_PaymentStrategy
     /**
     * WEBHOOK: Resolves action when notification arrives from external event.
     * Can be called with or without a Deferred Ticket:
-    * - With ticket: context->getCustomData() contains strategy_class, payment_id, etc.
+    * - With ticket: $context->deferredContext contains strategy_class, payment_id, etc.
     * - Without ticket: context is minimal; strategy handles recurring events directly.
     */ 
     abstract public function resolve(ExecutionContext $context, ActionResult $result): ActionResult;

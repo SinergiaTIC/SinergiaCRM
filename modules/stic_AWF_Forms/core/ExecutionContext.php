@@ -42,7 +42,10 @@ class ExecutionContext {
     public string $defaultAssignedUserId;
     public ?string $visitorUserId = null;
 
-    /** @var array Custom data payload used by deferred actions (e.g. webhook context reconstruction) */
+    /** @var ?DeferredContextData Objecte de context per a processos diferits */
+    public ?DeferredContextData $deferredContext = null;
+    
+    /** @var array Custom data payload */
     protected array $customData = [];
 
     /**
