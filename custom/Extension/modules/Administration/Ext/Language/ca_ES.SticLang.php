@@ -65,6 +65,7 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = "Hi ha hagut errors a l'elimin
 // SinergiaDA
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Reconstrueix ara';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = "Reconstrueix i repara les vistes i els elements necessaris per a la integració amb Sinergia Data Analytics. Si n'hi ha, afegeix els nous camps.";
+$mod_strings['LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL'] = 'Activar mode de depuració';
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ves a Sinergia Data Analytics';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'La reconstrucció de Sinergia Data Analytics ha acabat correctament.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = "Durant la reconstrucció de Sinergia Data Analytics s'han trobat els següents errors. Contacteu amb el suport tècnic de SinergiaTIC si ho considereu necessari.";

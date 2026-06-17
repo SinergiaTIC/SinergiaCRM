@@ -57,10 +57,11 @@ class ViewSticManageSdaIntegration extends SugarView
     public function display()
     {
         
-        global $mod_strings;
+        global $mod_strings, $current_user;
         
         $this->ss->assign('MOD', $GLOBALS['mod_strings']);
         $this->ss->assign('title', $this->getModuleTitle(false));
+        $this->ss->assign('CURRENT_USER_ID', $current_user->id);
 
         echo $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
     }

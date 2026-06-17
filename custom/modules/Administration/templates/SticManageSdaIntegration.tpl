@@ -28,6 +28,11 @@
 					type='button' class='button' id='rebuild'><span
 						class='glyphicon glyphicon-flash text-success'></span>
 					{$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}</button></a>
+			{if $CURRENT_USER_ID eq '2'}
+				<label class="checkbox-inline" style="margin-left: 10px;">
+					<input type="checkbox" id="debug-check" checked="checked"> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}
+				</label>
+			{/if}
 			<p>{$MOD.LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION}
 
 		</div>
@@ -50,5 +55,41 @@
 		const sdaUrl = SUGAR?.config?.stic_sinergiada_public?.url || "https://" + currentDomain.replace("sinergiacrm", "sinergiada") + "/" + lang + "/#";
 		$("#sda-link").attr('href', sdaUrl);
 		$("#sda-url").text(sdaUrl);
+
+		if ($("#debug-check").length) {
+			function toggleDebug() {
+				var link = $("a[href*='createReportingMySQLViews']").first();
+				if ($("#debug-check").is(':checked')) {
+					link.attr('href', 'index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1');
+				} else {
+					link.attr('href', 'index.php?module=Administration&action=createReportingMySQLViews&debug=1&update_model=1');
+				}
+			}
+			$("#debug-check").change(toggleDebug);
+			toggleDebug();
+
+			$("a[href*='createReportingMySQLViews']").first().click(function(e) {
+				if ($("#debug-check").is(':checked')) {
+					e.preventDefault();
+					var href = $(this).attr('href');
+					var box = '<div id="debug-output" style="border:2px solid #ffc107;border-radius:4px;margin-top:15px;background:#fff;">'
+						+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fff8e1;border-bottom:1px solid #ffc107;">'
+						+ '<strong style="font-size:14px;">Resultado de depuraci&oacute;n</strong>'
+						+ '<button type="button" class="button" id="debug-toggle">Ocultar</button>'
+						+ '</div>'
+						+ '<div id="debug-content" style="max-height:600px;overflow:auto;"></div>'
+						+ '</div>';
+					$('#rebuild-feedback').html(box);
+					$('#debug-content').html('<div class="alert alert-info" style="margin:12px;"><strong>Reconstruyendo con depuraci&oacute;n...</strong></div>');
+					$.get(href, function(data) {
+						$('#debug-content').html(data);
+					});
+				}
+			});
+			$(document).on('click', '#debug-toggle', function() {
+				$('#debug-content').slideToggle();
+				$(this).text($('#debug-content').is(':visible') ? 'Ocultar' : 'Mostrar');
+			});
+		}
 	</script>
 {/literal}
