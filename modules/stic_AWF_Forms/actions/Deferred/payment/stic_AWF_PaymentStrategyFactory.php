@@ -157,13 +157,15 @@ class stic_AWF_PaymentStrategyFactory
      * @param string $source The source identifier from the webhook URL
      * @param array $rawData POST data array
      * @param string $rawBody Raw request body
+     * @param array $headers the headers received
+     * 
      * @return string|null The external transaction ID or null
      */
-    public static function extractExternalIdBySource(string $source, array $rawData, string $rawBody): ?string
+    public static function extractExternalIdBySource(string $source, array $rawData, string $rawBody, array $headers): ?string
     {
         $strategy = self::createFromSource($source);
         if ($strategy !== null) {
-            return $strategy::extractExternalId($rawData, $rawBody);
+            return $strategy::extractExternalId($rawData, $rawBody, $headers);
         }
         return null;
     }

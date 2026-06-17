@@ -29,11 +29,11 @@ require_once __DIR__.'/payment/stic_AWF_PaymentStrategyFactory.php';
 require_once __DIR__.'/payment/stic_AWF_PaymentStrategy.php';
 require_once 'modules/stic_Payment_Commitments/stic_Payment_Commitments.php';
 
-class PaymentRouterAction extends DeferredBeanActionDefinition 
+class PaymentRouterAction extends DeferredBeanActionDefinition implements IWebhookDecodable
 {
     public function __construct() {
-        $this->isActive = true;
-        $this->isUserSelectable = true;
+        $this->isActive = false;
+        $this->isUserSelectable = false;
         $this->category = 'integration';
         $this->baseLabel = 'LBL_PAYMENT_ROUTER_ACTION';
     }
@@ -152,6 +152,33 @@ class PaymentRouterAction extends DeferredBeanActionDefinition
         }
 
         return $strategyResult;
+    }
+
+    /**
+     * Indicates whether the action knows how to handle the specified Source.
+     * @param string $source The source url parameter
+     * @return bool indicating if the action can handle the specified source
+     */
+    public function handlesSource(string $source): bool 
+    {
+        // Check if some payment strategy can handle the source (delegated to the factory)
+        $strategy = stic_AWF_PaymentStrategyFactory::createFromSource($source);
+        return $strategy !== null;
+    }
+
+    /**
+     * Asks the action to extract the Token from the raw payload.
+     * Returns the hash of the Deferred_Ticket.
+     * @param string $source The source url parameter
+     * @param array $requestData the request data received (POST or GET)
+     * @param string $rawPayload the body raw payload received
+     * @param array $headers the headers received
+     * @return string|null the hash of the Deferred_Ticket
+     */
+    public function extractTokenFromEvent(string $source, array $requestData, string $rawPayload, array $headers): ?string 
+    {
+        // Delegated to the factory, which will call the extractExternalId method of the appropriate strategy
+        return stic_AWF_PaymentStrategyFactory::extractExternalIdBySource($source, $requestData, $rawPayload, $headers);
     }
 
     /**

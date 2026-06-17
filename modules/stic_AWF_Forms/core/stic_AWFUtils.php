@@ -642,13 +642,15 @@ class stic_AWFUtils {
      * @param string $templateId ID of the mail template to use. 
      * @param ExecutionContext $context The execution context of the form. 
      * @param ?SugarBean $parentBeanForArchive (Optional) Parent bean to archive mail. 
+     * @param array $customVars (Optional) Key-Value array to replace custom macros in subject and body.
      * @throws \Exception If there are errors in the submission or in the template. 
      */
     public static function sendTemplateEmail(
         string $toAddress, 
         string $templateId, 
         ExecutionContext $context, 
-        ?SugarBean $parentBeanForArchive = null
+        ?SugarBean $parentBeanForArchive = null,
+        array $customVars = []
     ): void 
     {
         // Load the email template
@@ -708,6 +710,12 @@ class stic_AWFUtils {
             $body = html_entity_decode($bodyHtml, ENT_QUOTES, 'UTF-8');
         } else {
             $body = nl2br(html_entity_decode($bodyText, ENT_QUOTES, 'UTF-8'));
+        }
+
+        // Replace custom macros in subject and body
+        foreach ($customVars as $macro => $replacement) {
+            $subject = str_replace($macro, $replacement, $subject);
+            $body = str_replace($macro, $replacement, $body);
         }
 
         // Initialize the mailer
@@ -984,6 +992,7 @@ class stic_AWFUtils {
 
     /**
      * Resumes a deferred flow (success or error) from the context_data stored in the ticket.
+     * Implements strict idempotency checks and safety guards for CLI (Cron) environments.
      * Looks up the flow by flow_success_id / flow_error_id, executes it via
      * ServerActionFlowExecutor, and calls performTerminal() if the last action is ITerminalAction.
      *
@@ -996,65 +1005,58 @@ class stic_AWFUtils {
     {
         $successFlowId = $contextData['flow_success_id'] ?? null;
         $errorFlowId   = $contextData['flow_error_id']   ?? null;
+        $flowId        = $isSuccess ? $successFlowId : $errorFlowId;
 
-        if ($isSuccess) {
-            $flowId = $successFlowId;
-            $flow = ($flowId !== null && $flowId !== '')
-                ? ($context->formConfig->flows[$flowId] ?? null)
-                : null;
-
-            if ($flow === null) {
-                return null;
-            }
-
-            $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
-                ? ($context->formConfig->flows[$errorFlowId] ?? null)
-                : null;
-
-            $executor = new ServerActionFlowExecutor($context);
-            $lastResult = $executor->executeFlow($flow, $errorFlow);
-
-            if ($context->responseBean) {
-                $context->responseBean->status = 'processed';
-                $context->responseBean->save();
-            }
-
-            $lastAction = $lastResult->getAction();
-            if ($lastAction instanceof ITerminalAction) {
-                try {
-                    $lastAction->performTerminal($context, $lastResult);
-                } catch (\Throwable $t) {
-                    $GLOBALS['log']->error('resumeDeferredFlow (success): ' . $t->getMessage());
-                }
-            }
-
-            return $lastResult;
-        }
-
-        // Error / cancelled case
-        $flowId = $errorFlowId;
-        $flow = ($flowId !== null && $flowId !== '')
-            ? ($context->formConfig->flows[$flowId] ?? null)
-            : null;
+        $flow = ($flowId !== null && $flowId !== '') ? ($context->formConfig->flows[$flowId] ?? null) : null;
+        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '') ? ($context->formConfig->flows[$errorFlowId] ?? null) : null;
 
         if ($flow === null) {
             return null;
         }
 
+        $isCli = (php_sapi_name() === 'cli');
         $executor = new ServerActionFlowExecutor($context);
-        $lastResult = $executor->executeFlow($flow);
 
-        if ($context->responseBean) {
-            $context->responseBean->status = 'error';
-            $context->responseBean->save();
+        // Check if the response has already been processed by a concurrent thread (e.g. Webhook)
+        if ($context->responseBean && in_array($context->responseBean->status, ['processed', 'error'])) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": resumeDeferredFlow: Deferred flow already processed (Status: {$context->responseBean->status}). Skipping database flow.");
+
+            // Delegate UI rendering directly to the flow executor safely
+            if (!$isCli) {
+                $executor->executeTerminalActionOnly($flow);
+            }
+
+            return new ActionResult(ResultStatus::OK, null, "Already processed");
         }
 
+        // REGULAR EXECUTION: First time processing the data flow
+        if ($isSuccess) {
+            // Success flow execution
+            $lastResult = $executor->executeFlow($flow, $errorFlow);
+            if ($context->responseBean && !$lastResult->isError()) {
+                $context->responseBean->status = 'processed';
+                $context->responseBean->save();
+            }
+        } else {
+            // Error flow execution
+            $lastResult = $executor->executeFlow($flow);
+            if ($context->responseBean) {
+                $context->responseBean->status = 'error';
+                $context->responseBean->save();
+            }
+        }
+
+        // CLI ENVIRONMENT PROTECTION FOR STANDARD FLOWS
         $lastAction = $lastResult->getAction();
         if ($lastAction instanceof ITerminalAction) {
-            try {
-                $lastAction->performTerminal($context, $lastResult);
-            } catch (\Throwable $t) {
-                $GLOBALS['log']->error('resumeDeferredFlow (error): ' . $t->getMessage());
+            if (!$isCli) {
+                try {
+                    $lastAction->performTerminal($context, $lastResult);
+                } catch (\Throwable $t) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": resumeDeferredFlow: execution terminal crash: " . $t->getMessage());
+                }
+            } else {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": resumeDeferredFlow: Skipping Terminal action '{$lastAction->getName()}' execution on CLI environment to prevent Cron hijacking.");
             }
         }
 
