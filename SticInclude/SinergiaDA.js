@@ -19,6 +19,14 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+/**
+ * Module Toggle and Sorting
+ *
+ * Binds click events to module list items to toggle their corresponding debug
+ * section visibility. Also highlights modules that contain errors or fatal
+ * messages with a red background badge. Finally, sorts the module list
+ * alphabetically by their label text.
+ */
 (function() {
   var items = document.querySelectorAll(".sda-module");
   for (var i = 0; i < items.length; i++) {
@@ -49,6 +57,14 @@
   }
 })();
 
+/**
+ * Summary Header Builder
+ *
+ * Inspects the debug output for module, error, warning, and time elements
+ * and builds a summary bar (module count, error/warning counts, status,
+ * execution time, and detailed error list) that is prepended to the debug
+ * output container.
+ */
 (function() {
   var modules = document.querySelectorAll(".sda-module");
   var totalModules = modules.length;
@@ -93,6 +109,14 @@
   }
 })();
 
+/**
+ * Collapsible Section Headers
+ *
+ * Finds all h2 elements inside the debug wrapper and makes them clickable.
+ * Clicking an h2 toggles visibility of all sibling elements between this h2
+ * and the next one. The first section starts expanded; all others start
+ * collapsed. A small arrow indicator (▼/▶) is appended inside each h2.
+ */
 (function() {
   var wrapper = document.querySelector(".sda-debug-wrapper");
   if (!wrapper) return;
