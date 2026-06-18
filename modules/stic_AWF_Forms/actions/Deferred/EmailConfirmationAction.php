@@ -162,7 +162,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
 
         // Send the email and update Email Opt-in status
         try {
-            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $context, $context->responseBean, $customVars);
+            stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $context, $bean, $customVars);
             $this->updateEmailOptInStatus($emailAddress, 'sent', $ticket->token_hash);
         } catch (\Exception $e) {
             $this->updateEmailOptInStatus($emailAddress, 'failed');

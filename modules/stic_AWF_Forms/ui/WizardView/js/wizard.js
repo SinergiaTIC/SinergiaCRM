@@ -1634,7 +1634,7 @@ class WizardStep3 {
              * @returns {Array} List of available categories 
              */
             get availableCategories() {
-              const validActions = this.allDefinitions.filter(d => (d.type == 'Deferred' && !this.isTerminalFilter) || d.isTerminal == this.isTerminalFilter);
+              const validActions = this.allDefinitions.filter(d => (d.type == 'Deferred' && !this.isTerminalFilter) || d.isTerminal == this.isTerminalFilter && d.type != 'Deferred');
               const uniqueCatIds = [...new Set(validActions.map(a => a.category))];
               return stic_AwfAction.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
             },
