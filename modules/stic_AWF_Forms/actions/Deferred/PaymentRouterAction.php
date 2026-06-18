@@ -29,13 +29,21 @@ require_once __DIR__.'/payment/stic_AWF_PaymentStrategyFactory.php';
 require_once __DIR__.'/payment/stic_AWF_PaymentStrategy.php';
 require_once 'modules/stic_Payment_Commitments/stic_Payment_Commitments.php';
 
-class PaymentRouterAction extends DeferredBeanActionDefinition implements IWebhookDecodable
+class PaymentRouterAction extends DeferredBeanActionDefinition implements ITerminalAction, IWebhookDecodable
 {
     public function __construct() {
-        $this->isActive = false;
-        $this->isUserSelectable = false;
+        $this->isActive = true;
+        $this->isUserSelectable = true;
         $this->category = 'integration';
         $this->baseLabel = 'LBL_PAYMENT_ROUTER_ACTION';
+    }
+
+    /**
+     * Declares who will resume this deferred process and how.
+     */
+    public function getResumptionContext(): DeferredResumptionContext
+    {
+        return DeferredResumptionContext::SERVER_WEBHOOK;
     }
 
     /**

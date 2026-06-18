@@ -41,6 +41,14 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
     }
 
     /**
+     * Declares who will resume this deferred process and how.
+     */
+    public function getResumptionContext(): DeferredResumptionContext
+    {
+        return DeferredResumptionContext::ORIGINAL_USER;
+    }
+
+    /**
      * Modules supported by the action
      */
     protected function getSupportedModules(): array {

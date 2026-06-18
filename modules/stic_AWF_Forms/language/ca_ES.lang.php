@@ -483,8 +483,8 @@ $mod_strings = array (
 
   // -- DEFERRED ACTIONS --
   // EmailConfirmationAction 
-  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Enviar correu de confirmació', 
-  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => "Genera un enllaç únic i l'envia per correu electrònic perquè l'usuari pugui confirmar la seva acció.", 
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirma correu electrònic', 
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => "Genera un enllaç únic i l'envia per correu electrònic perquè l'usuari pugui confirmar la seva adreça de correu electrònic.", 
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatari', 
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => "Indica el bloc de dades que conté el correu electrònic a verificar i al que s'enviarà l'enllaç de confirmació", 
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correu electrònic', 
@@ -497,7 +497,7 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_MSG_DEFAULT' => "S'ha enviat un correu electrònic a l'adreça indicada.\nSi us plau, reviseu la safata d'entrada i feu clic a l'enllaç de confirmació",
 
   // PaymentRouterAction
-  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realitza un pagament en una plataforma externa',
+  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realitza pagament',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processa el pagament corresponent a un bloc de dades en una plataforma externa.',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromís de Pagament',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloc de dades amb el Compromís de Pagament per realitzar el seu pagament a la plataforma externa.',
