@@ -103,16 +103,6 @@ class ViewSticManageSdaIntegration extends SugarView
         $g = hexdec(substr($primaryHex, 2, 2));
         $b = hexdec(substr($primaryHex, 4, 2));
 
-        $this->ss->assign('SDA_THEME_COLORS', [
-            'primary' => $primaryColor,
-            'dark' => $darkColor,
-            'darker' => $darkerColor,
-            'light' => $lightColor,
-            'r' => $r,
-            'g' => $g,
-            'b' => $b,
-        ]);
-
         $styleBlock = "<style>\n.sda-page-wrapper {\n";
         $styleBlock .= "\t--sda-primary: {$primaryColor};\n";
         $styleBlock .= "\t--sda-primary-dark: {$darkColor};\n";
