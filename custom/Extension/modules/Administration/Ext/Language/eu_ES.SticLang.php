@@ -102,6 +102,39 @@ $mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Registro de las sesiones de usuario 
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Acciones de Administración';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de correo que se usará cuando el sistema genere la contraseña de un nuevo usuario.';
 
+// SinergiaDAren konfigurazioa
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SECTION'] = 'SinergiaDAren konfigurazioa';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_GENERAL'] = 'Konfigurazio orokorra';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_CACHE'] = 'SinergiaDA cachea';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE'] = 'Konfigurazioa gorde';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_HELP'] = 'SinergiaDAren konfigurazio orokorra eta cachea aplikatu';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_SUCCESS'] = 'Konfigurazioa ondo gorde da.';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_ERROR'] = 'Errorea konfigurazioa gordetzean. Begiratu log-a xehetasun gehiagorako.';
+$mod_strings['LBL_STIC_SINERGIADA_ENABLED_LABEL'] = 'SinergiaDA gaitu';
+$mod_strings['LBL_STIC_SINERGIADA_ENABLED_HELP'] = 'SinergiaDAren funtzionalitatea gaitu edo desgaitu. Desgaituta badago, ez dira menuak erakusten eta sinkronizazioa ez da posible.';
+$mod_strings['LBL_STIC_SINERGIADA_URL_LABEL'] = 'Instantziaren URLa';
+$mod_strings['LBL_STIC_SINERGIADA_URL_HELP'] = 'SinergiaDA instantzia dagoen URLa. Loturak eta updateModel deia eraikitzeko erabiltzen da. Adierazten ez bada, SinergiaTIC zerbitzarietan instalazio estandarra suposatzen da.';
+$mod_strings['LBL_STIC_SINERGIADA_SEED_STRING_LABEL'] = 'Enkriptatze katea';
+$mod_strings['LBL_STIC_SINERGIADA_SEED_STRING_HELP'] = 'SinergiaDAk datu-basean balioak enkriptatzeko eta updateModel deia segurtatzeko erabiltzen duen ausazko katea.';
+$mod_strings['LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_LABEL'] = 'Datuak taula gisa argitaratu';
+$mod_strings['LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP'] = 'Hautatu SinergiaDA-n taula gisa argitaratuko diren moduluak. Hautatu EZ diren moduluak MySQL bista gisa argitaratuko dira.';
+$mod_strings['LBL_STIC_SINERGIADA_MAX_USERS_LABEL'] = 'Administratzaileak ez diren erabiltzaileen muga';
+$mod_strings['LBL_STIC_SINERGIADA_MAX_USERS_HELP'] = 'Prozesatu beharreko administratzaileak ez diren erabiltzaileen gehieneko kopurua. Hutsik edo 0 = mugarik gabe.';
+$mod_strings['LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_LABEL'] = 'Talde baimenak';
+$mod_strings['LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP'] = 'SinergiaDAk SinergiaCRMeko segurtasun taldeen erregistroetarako sarbide baimenak erabiliko dituen zehazten du.';
+$mod_strings['LBL_STIC_SINERGIADA_AUTO_REBUILD_LABEL'] = 'Birkonstrukzio automatikoa';
+$mod_strings['LBL_STIC_SINERGIADA_AUTO_REBUILD_HELP'] = 'Studio-n eremu bat ezabatu edo modulu bat desinstalatu ostean birkonstrukzioa automatikoki exekutatzen du.';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_ENABLED_LABEL'] = 'Cachea gaitu';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_ENABLED_HELP'] = 'SinergiaDAren cachea gaitu edo desgaitu.';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_UNITS_LABEL'] = 'Denbora unitatea';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_UNITS_HELP'] = 'Cachea birsortzeko denbora unitatea (days edo hours).';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_QUANTITY_LABEL'] = 'Kopurua';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_QUANTITY_HELP'] = 'Cachea birsortzeen arteko egun edo ordu kopurua.';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_LABEL'] = 'Birsortze ordua';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_HELP'] = 'Cachea birsortzeko ordua (HH formatua, adb. 04).';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_LABEL'] = 'Birsortze minutua';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_HELP'] = 'Cachea birsortzeko minutua (MM formatua, adb. 30).';
+
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';

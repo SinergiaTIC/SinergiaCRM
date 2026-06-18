@@ -57,12 +57,152 @@ class ViewSticManageSdaIntegration extends SugarView
     public function display()
     {
         
-        global $mod_strings, $current_user;
+        global $mod_strings, $current_user, $sugar_config, $app_list_strings;
         
         $this->ss->assign('MOD', $GLOBALS['mod_strings']);
         $this->ss->assign('title', $this->getModuleTitle(false));
         $this->ss->assign('CURRENT_USER_ID', $current_user->id);
+        $this->ss->assign('SDA_CONFIG', $sugar_config['stic_sinergiada'] ?? []);
+        $this->ss->assign('SDA_PUBLIC_URL', $sugar_config['stic_sinergiada_public']['url'] ?? '');
 
-        echo $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
+        // Load active theme color from stic_settings
+        require_once 'modules/stic_Settings/Utils.php';
+        $primaryColor = stic_SettingsUtils::getSetting('GENERAL_CUSTOM_THEME_COLOR');
+        if (empty($primaryColor)) {
+            $primaryColor = '#b5bc31';
+        }
+
+        list($h, $s, $l) = $this->sda_hexToHsl($primaryColor);
+        $darkColor = $this->sda_hslToHex($h, $s, max(0, $l - 7));
+        $darkerColor = $this->sda_hslToHex($h, $s, max(0, $l - 14));
+        $lightColor = $this->sda_hslToHex($h, $s, min(100, $l + 35));
+
+        $primaryHex = ltrim($primaryColor, '#');
+        $r = hexdec(substr($primaryHex, 0, 2));
+        $g = hexdec(substr($primaryHex, 2, 2));
+        $b = hexdec(substr($primaryHex, 4, 2));
+
+        $this->ss->assign('SDA_THEME_COLORS', [
+            'primary' => $primaryColor,
+            'dark' => $darkColor,
+            'darker' => $darkerColor,
+            'light' => $lightColor,
+            'r' => $r,
+            'g' => $g,
+            'b' => $b,
+        ]);
+
+        $styleBlock = "<style>\n.sda-page-wrapper {\n";
+        $styleBlock .= "\t--sda-primary: {$primaryColor};\n";
+        $styleBlock .= "\t--sda-primary-dark: {$darkColor};\n";
+        $styleBlock .= "\t--sda-primary-darker: {$darkerColor};\n";
+        $styleBlock .= "\t--sda-primary-light: {$lightColor};\n";
+        $styleBlock .= "\t--sda-primary-r: {$r};\n";
+        $styleBlock .= "\t--sda-primary-g: {$g};\n";
+        $styleBlock .= "\t--sda-primary-b: {$b};\n";
+        $styleBlock .= "}\n</style>";
+        $this->ss->assign('SDA_THEME_STYLE', $styleBlock);
+
+        // Build module list for publish_as_table selector, replicating SinergiaDA module filtering
+        include_once 'modules/MySettings/TabController.php';
+        $controller = new TabController();
+        $visibleModules = $controller->get_system_tabs();
+        $evenExcludedModules = [
+            'Administration', 'AM_ProjectTemplates', 'AOBH_BusinessHours', 'AOK_Knowledge_Base_Categories',
+            'AOK_KnowledgeBase', 'AOR_Reports', 'AOR_Scheduled_Reports', 'AOS_PDF_Templates', 'AOW_WorkFlow',
+            'Bugs', 'Calendar', 'DHA_PlantillasDocumentos', 'Documents', 'EmailTemplates', 'FP_events',
+            'Home', 'jjwg_Address_Cache', 'jjwg_Areas', 'jjwg_Maps', 'jjwg_Markers', 'KReports',
+            'ProspectLists', 'Prospects', 'ResourceCalendar', 'SecurityGroups', 'Spots',
+            'stic_Bookings_Calendar', 'stic_Sepe_Files', 'stic_Settings', 'stic_Validation_Actions',
+            'stic_Web_Forms', 'stic_Incorpora_Locations', 'stic_Validation_Results', 'stic_Custom_Views',
+        ];
+        $modulesList = array_diff($visibleModules, $evenExcludedModules);
+        $modulesList['Users'] = 'Users';
+        natsort($modulesList);
+        $moduleOptions = [];
+        foreach ($modulesList as $moduleName) {
+            $txModuleName = $app_list_strings['moduleList'][$moduleName] ?? $moduleName;
+            $moduleOptions[] = ['name' => $moduleName, 'label' => $txModuleName];
+        }
+        usort($moduleOptions, function ($a, $b) {
+            return strcmp($a['label'], $b['label']);
+        });
+        $this->ss->assign('SDA_MODULES', $moduleOptions);
+
+        try {
+            $output = $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
+            if (!empty($output)) {
+                echo $output;
+            }
+        } catch (Exception $e) {
+            echo '<p style="color:red;padding:20px;">Exception: ' . $e->getMessage() . '</p>';
+        }
+    }
+
+    /**
+     * Helper: convert hex color to HSL array.
+     */
+    private function sda_hexToHsl($hex)
+    {
+        $hex = ltrim($hex, '#');
+        $r = hexdec(substr($hex, 0, 2)) / 255;
+        $g = hexdec(substr($hex, 2, 2)) / 255;
+        $b = hexdec(substr($hex, 4, 2)) / 255;
+
+        $max = max($r, $g, $b);
+        $min = min($r, $g, $b);
+        $l = ($max + $min) / 2;
+
+        if ($max == $min) {
+            return [0, 0, round($l * 100)];
+        }
+
+        $d = $max - $min;
+        $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+
+        switch ($max) {
+            case $r:
+                $h = ($g - $b) / $d + ($g < $b ? 6 : 0);
+                break;
+            case $g:
+                $h = ($b - $r) / $d + 2;
+                break;
+            case $b:
+                $h = ($r - $g) / $d + 4;
+                break;
+        }
+        $h /= 6;
+
+        return [round($h * 360), round($s * 100), round($l * 100)];
+    }
+
+    /**
+     * Helper: convert HSL to hex color.
+     */
+    private function sda_hslToHex($h, $s, $l)
+    {
+        $h /= 360;
+        $s /= 100;
+        $l /= 100;
+
+        if ($s == 0) {
+            $r = $g = $b = $l;
+        } else {
+            $huetoRgb = function ($p, $q, $t) {
+                if ($t < 0) {$t += 1;}
+                if ($t > 1) {$t -= 1;}
+                if ($t < 1 / 6) {return $p + ($q - $p) * 6 * $t;}
+                if ($t < 1 / 2) {return $q;}
+                if ($t < 2 / 3) {return $p + ($q - $p) * (2 / 3 - $t) * 6;}
+                return $p;
+            };
+            $q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
+            $p = 2 * $l - $q;
+            $r = $huetoRgb($p, $q, $h + 1 / 3);
+            $g = $huetoRgb($p, $q, $h);
+            $b = $huetoRgb($p, $q, $h - 1 / 3);
+        }
+
+        return sprintf('#%02x%02x%02x', round($r * 255), round($g * 255), round($b * 255));
     }
 }
