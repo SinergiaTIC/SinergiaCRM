@@ -187,12 +187,23 @@ class CustomAdministrationController extends AdministrationController
             $configurator->config['stic_sinergiada']['publish_as_table'] = array_values($publish);
         }
 
-        // Cache settings
+        // Cache settings (known fields)
+        $knownCacheKeys = ['cache_enabled', 'cache_units', 'cache_quantity', 'cache_hours', 'cache_minutes'];
         $configurator->config['stic_sinergiada']['config']['cache_enabled'] = !empty($_POST['cache_enabled']);
         $configurator->config['stic_sinergiada']['config']['cache_units'] = $_POST['cache_units'] ?? 'days';
         $configurator->config['stic_sinergiada']['config']['cache_quantity'] = $_POST['cache_quantity'] !== '' ? (int) $_POST['cache_quantity'] : '';
         $configurator->config['stic_sinergiada']['config']['cache_hours'] = $_POST['cache_hours'] ?? '';
         $configurator->config['stic_sinergiada']['config']['cache_minutes'] = $_POST['cache_minutes'] ?? '';
+
+        // Extra / unknown config keys (from "Otras configuraciones" section)
+        $extraConfig = $_POST['extra_config'] ?? [];
+        if (is_array($extraConfig)) {
+            foreach ($extraConfig as $ekey => $evalue) {
+                if (!in_array($ekey, $knownCacheKeys)) {
+                    $configurator->config['stic_sinergiada']['config'][$ekey] = $evalue;
+                }
+            }
+        }
 
         // Public URL
         $configurator->config['stic_sinergiada_public']['url'] = $_POST['public_url'] ?? '';

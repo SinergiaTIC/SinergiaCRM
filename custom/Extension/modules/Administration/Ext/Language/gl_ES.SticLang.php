@@ -134,6 +134,10 @@ $mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_LABEL'] = 'Hora de rexeneración';
 $mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_HELP'] = 'Hora de rexeneración da caché (formato HH, ex. 04).';
 $mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_LABEL'] = 'Minuto de rexeneración';
 $mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_HELP'] = 'Minuto de rexeneración da caché (formato MM, ex. 30).';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA'] = 'Outras configuracións';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY'] = 'Nova clave';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE'] = 'Valor';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD'] = 'Engadir configuración';
 
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';

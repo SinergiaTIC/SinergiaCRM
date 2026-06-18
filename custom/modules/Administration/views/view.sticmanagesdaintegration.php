@@ -62,7 +62,28 @@ class ViewSticManageSdaIntegration extends SugarView
         $this->ss->assign('MOD', $GLOBALS['mod_strings']);
         $this->ss->assign('title', $this->getModuleTitle(false));
         $this->ss->assign('CURRENT_USER_ID', $current_user->id);
-        $this->ss->assign('SDA_CONFIG', $sugar_config['stic_sinergiada'] ?? []);
+        $sdaConfig = $sugar_config['stic_sinergiada'] ?? [];
+        $knownCacheKeys = ['cache_enabled', 'cache_units', 'cache_quantity', 'cache_hours', 'cache_minutes'];
+        $defaultCache = [
+            'cache_enabled' => false,
+            'cache_units' => 'days',
+            'cache_quantity' => 2,
+            'cache_hours' => '04',
+            'cache_minutes' => '30',
+        ];
+        if (!isset($sdaConfig['config']) || !is_array($sdaConfig['config'])) {
+            $sdaConfig['config'] = $defaultCache;
+        } else {
+            $sdaConfig['config'] = array_merge($defaultCache, $sdaConfig['config']);
+        }
+        $extraConfig = [];
+        foreach ($sdaConfig['config'] as $key => $value) {
+            if (!in_array($key, $knownCacheKeys)) {
+                $extraConfig[$key] = $value;
+            }
+        }
+        $this->ss->assign('SDA_EXTRA_CONFIG', $extraConfig);
+        $this->ss->assign('SDA_CONFIG', $sdaConfig);
         $this->ss->assign('SDA_PUBLIC_URL', $sugar_config['stic_sinergiada_public']['url'] ?? '');
 
         // Load active theme color from stic_settings
@@ -129,13 +150,9 @@ class ViewSticManageSdaIntegration extends SugarView
         });
         $this->ss->assign('SDA_MODULES', $moduleOptions);
 
-        try {
-            $output = $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
-            if (!empty($output)) {
-                echo $output;
-            }
-        } catch (Exception $e) {
-            echo '<p style="color:red;padding:20px;">Exception: ' . $e->getMessage() . '</p>';
+        $output = $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
+        if (!empty($output)) {
+            echo $output;
         }
     }
 

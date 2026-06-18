@@ -218,6 +218,35 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="sda-sub-card">
+							<div class="sda-sub-card-header">
+								<span class="glyphicon glyphicon-wrench"></span>
+								<h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA}</h4>
+							</div>
+							<div class="sda-sub-card-body" id="sda-extra-body">
+								{foreach from=$SDA_EXTRA_CONFIG key=ekey item=eval}
+								<div class="sda-config-row">
+									<div class="sda-row-label">
+										<span>{$ekey}</span>
+									</div>
+									<div class="sda-row-value">
+										<input type="text" name="extra_config[{$ekey}]" value="{$eval}" class="form-control">
+									</div>
+								</div>
+								{/foreach}
+									<div class="sda-config-row" id="sda-add-extra-row">
+									<div class="sda-row-label" style="display:flex;align-items:center;gap:8px;">
+										<span id="sda-add-extra-text">{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD}</span>
+										<input type="text" id="sda-new-extra-key" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY}" class="form-control" style="width:100%;display:none;">
+									</div>
+									<div class="sda-row-value" style="display:flex;gap:6px;align-items:center;">
+										<input type="text" id="sda-new-extra-value" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE}" class="form-control" style="flex:1;display:none;">
+										<button type="button" id="sda-add-extra-btn" class="sda-btn-add">+</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="sda-config-footer">
 						<button type="submit" class="sda-btn-save">
@@ -296,6 +325,36 @@
 		jQuery('input[type="checkbox"][name="enabled"], input[type="checkbox"][name="cache_enabled"]').each(function() {
 			jQuery(this).on('change', function() { toggleDependents(this); });
 			toggleDependents(this);
+		});
+
+		var $addBtn = jQuery("#sda-add-extra-btn");
+		var $addText = jQuery("#sda-add-extra-text");
+		var $extraKey = jQuery("#sda-new-extra-key");
+		var $extraVal = jQuery("#sda-new-extra-value");
+
+		$addBtn.on("click", function() {
+			if ($addBtn.text() === "+") {
+				$addText.hide();
+				$extraKey.show().focus();
+				$extraVal.show();
+				$addBtn.text("\u2713");
+			} else {
+				var key = $extraKey.val().trim();
+				var val = $extraVal.val().trim();
+				if (!key) return;
+				var safeKey = key.replace(/[^a-zA-Z0-9_]/g, "_");
+				var row = '<div class="sda-config-row">'
+					+ '<div class="sda-row-label"><span>' + safeKey + '</span></div>'
+					+ '<div class="sda-row-value"><input type="text" name="extra_config[' + safeKey + ']" value="' + jQuery('<div>').text(val).html() + '" class="form-control"></div>'
+					+ '</div>';
+				jQuery(row).insertBefore("#sda-add-extra-row");
+				$extraKey.val("");
+				$extraVal.val("");
+				$extraKey.hide();
+				$extraVal.hide();
+				$addText.show();
+				$addBtn.text("+");
+			}
 		});
 	});
 })();

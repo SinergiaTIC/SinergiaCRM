@@ -134,6 +134,10 @@ $mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_LABEL'] = 'Birsortze ordua';
 $mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_HELP'] = 'Cachea birsortzeko ordua (HH formatua, adb. 04).';
 $mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_LABEL'] = 'Birsortze minutua';
 $mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_HELP'] = 'Cachea birsortzeko minutua (MM formatua, adb. 30).';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA'] = 'Beste ezarpen batzuk';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY'] = 'Gako berria';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE'] = 'Balioa';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD'] = 'Gehitu konfigurazioa';
 
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';

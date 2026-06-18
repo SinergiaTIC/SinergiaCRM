@@ -84,3 +84,9 @@
 .sda-debug-wrapper .sda-subsection { font-size: 12px; font-weight: 600; color: #37474f; padding: 6px 12px; background: #eceff1; border-left: 3px solid #78909c; margin: 12px 0 6px; }
 .sda-debug-wrapper .sda-subsection .count { background: #78909c; color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 8px; }
 .sda-debug-wrapper .sda-detail { font-size: 11px; color: #757575; padding: 4px 10px; background: #fafafa; border-radius: 3px; margin: 3px 0; }
+.sda-page-wrapper .sda-btn-add { background: var(--sda-primary, #b5bc31); color: #fff; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.sda-page-wrapper .sda-btn-add:hover { background: var(--sda-primary-dark, #9da31f); transform: scale(1.1); }
+.sda-page-wrapper #sda-add-extra-row { border-top: 1px dashed #ddd; padding-top: 12px; margin-top: 8px; }
+.sda-page-wrapper #sda-add-extra-row .sda-row-value { align-self: center; }
+.sda-page-wrapper #sda-add-extra-text { color: #999; font-style: italic; font-size: 13px; cursor: default; }
+.sda-page-wrapper #sda-new-extra-key, .sda-page-wrapper #sda-new-extra-value { font-size: 13px; color: #666; }
