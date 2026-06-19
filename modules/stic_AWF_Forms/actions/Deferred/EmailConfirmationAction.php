@@ -87,27 +87,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         $paramTemplate->supportedModules = ['EmailTemplates'];
         $paramTemplate->required = true;
 
-        // The final response title parameter (optional)
-        $paramTitle = new ActionParameterDefinition();
-        $paramTitle->name = 'terminal_title';
-        $paramTitle->text = $this->translate('TERMINAL_TITLE_TEXT'); 
-        $paramTitle->description = $this->translate('TERMINAL_TITLE_DESC');
-        $paramTitle->type = ActionParameterType::VALUE;
-        $paramTitle->dataType = ActionDataType::TEXT;
-        $paramTitle->defaultValue = $this->translate('TERMINAL_TITLE_DEFAULT');
-        $paramTitle->required = false;
-
-        // The final response message parameter (optional)
-        $paramMsg = new ActionParameterDefinition();
-        $paramMsg->name = 'terminal_msg';
-        $paramMsg->text = $this->translate('TERMINAL_MSG_TEXT');
-        $paramMsg->description = $this->translate('TERMINAL_MSG_DESC');
-        $paramMsg->type = ActionParameterType::VALUE;
-        $paramMsg->dataType = ActionDataType::TEXTAREA;
-        $paramMsg->defaultValue = $this->translate('TERMINAL_MSG_DEFAULT');
-        $paramMsg->required = false;
-
-        return [$paramTemplate, $paramTitle, $paramMsg];
+        return [$paramTemplate];
     }
 
 
@@ -179,28 +159,6 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
 
         // Return a WAIT result to halt the flow until the user confirms via email
         return new ActionResult(ResultStatus::WAIT, $actionConfig, "Waiting for confirmation at {$emailAddress}");
-    }
-
-    /**
-     * Called only if execute() was successful.
-     * This is where the 'exit', 'header' or HTML is rendered, losing control of execution.
-     * 
-     * @param ExecutionContext $context Execution context of the action
-     * @param ActionResult Result of the execution of the action (last ActionResult)
-     */
-    public function performTerminal(ExecutionContext $context, ActionResult $executionResult): void
-    {
-        $title = $executionResult->actionConfig->getResolvedParameter('terminal_title');
-        if (empty($title)) {
-            $title = $this->translate('TERMINAL_TITLE_DEFAULT');
-        }
-
-        $msg = $executionResult->actionConfig->getResolvedParameter('terminal_msg');
-        if (empty($msg)) {
-            $msg = $this->translate('TERMINAL_MSG_DEFAULT');
-        }
-
-        stic_AWFUtils::renderGenericResponse($context->formConfig, $title, $msg);
     }
 
     /**

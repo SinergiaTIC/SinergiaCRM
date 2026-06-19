@@ -489,12 +489,6 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => "Indica el bloc de dades que conté el correu electrònic a verificar i al que s'enviarà l'enllaç de confirmació", 
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correu electrònic', 
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => "La plantilla de correu electrònic ha de tenir la variable {::confirmation_url::} al cos del missatge perquè es generi l'enllaç de confirmació.", 
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_TEXT' => "Títol de la pantalla d'espera", 
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DESC' => "Títol que es mostrarà a la pantalla d'espera de la confirmació de correu electrònic.", 
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_TITLE_DEFAULT' => 'Verifica el teu correu electrònic', 
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_MSG_TEXT' => "Text de la pantalla d'espera", 
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_MSG_DESC' => "Text explicatiu per indicar que es revisi la safata d'entrada i faci clic a l'enllaç de confirmació.", 
-  'LBL_EMAIL_CONFIRMATION_ACTION_TERMINAL_MSG_DEFAULT' => "S'ha enviat un correu electrònic a l'adreça indicada.\nSi us plau, reviseu la safata d'entrada i feu clic a l'enllaç de confirmació",
 
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realitza pagament',
