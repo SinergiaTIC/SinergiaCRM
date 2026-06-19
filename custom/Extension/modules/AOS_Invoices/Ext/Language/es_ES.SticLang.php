@@ -109,7 +109,8 @@ $mod_strings['LBL_VERIFACTU_RECTIFIED_PANEL'] = 'Datos de factura rectificativa'
 $mod_strings['LBL_CREATE_RECTIFIED_INVOICE'] = 'Crear factura rectificativa';
 $mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'] = 'Para facturas rectificativas son obligatorios: tipo de rectificación, base de rectificación, factura rectificada y fecha de la factura rectificada.';
 $mod_strings['LBL_RECTIFIED'] = 'Rectificativa';
-$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY'] = 'Esta factura ha sido rectificada por la factura ';
+$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY'] = 'Se ha creado la factura rectificativa: ';
+$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFICATIVA_SENT'] = 'Se ha enviado la factura rectificativa a AEAT: ';
 
 // Cancellation labels
 $mod_strings['LBL_CANCEL_INVOICE'] = 'Anular factura';

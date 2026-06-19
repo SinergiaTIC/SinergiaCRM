@@ -1185,6 +1185,17 @@ class AOS_InvoicesUtils
             if ($invoiceBean->verifactu_aeat_status_c === 'accepted') {
                 SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($successMessage));
                 $sendSuccess = true;
+
+                // If this is a rectified invoice sent successfully, notify on the original invoice's description
+                if (!empty($invoiceBean->verifactu_is_rectified_c) && !empty($invoiceBean->verifactu_cancel_id_c)) {
+                    $originalInvoice = BeanFactory::getBean('AOS_Invoices', $invoiceBean->verifactu_cancel_id_c);
+                    if (!empty($originalInvoice->id)) {
+                        $rectifiedRef = !empty($generatedInvoiceNumber) ? $generatedInvoiceNumber : $invoiceBean->name;
+                        $newDesc = $originalInvoice->db->quote($originalInvoice->description
+                            . "\n{$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFICATIVA_SENT']}{$rectifiedRef}");
+                        $originalInvoice->db->query("UPDATE aos_invoices SET description = '{$newDesc}' WHERE id = '{$originalInvoice->id}'");
+                    }
+                }
             } else {
                 SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_AEAT_SEND_ERROR']));
             }

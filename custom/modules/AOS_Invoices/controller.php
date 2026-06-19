@@ -322,7 +322,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         // Use direct DB UPDATE to bypass before_save protection on accepted invoices
         // (both description and verifactu_audit_log_c are protected for accepted invoices)
         $newDesc = $originalInvoice->db->quote($originalInvoice->description
-            . "\n {$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']} {$rectifiedRef}");
+            . "\n{$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']}{$rectifiedRef}");
         $originalInvoice->db->query("UPDATE aos_invoices SET description = '{$newDesc}' WHERE id = '{$originalInvoice->id}'");
         $auditLogQuoted = $originalInvoice->db->quote($originalInvoice->verifactu_audit_log_c);
         $originalInvoice->db->query("UPDATE aos_invoices_cstm SET verifactu_audit_log_c = '{$auditLogQuoted}' WHERE id_c = '{$originalInvoice->id}'");

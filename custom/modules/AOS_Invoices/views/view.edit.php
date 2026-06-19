@@ -93,6 +93,23 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         }
         // === End Legacy mode ===
 
+        // === Sort series dropdown by usage count (desc), then alphabetically ===
+        $usageQuery = "SELECT c.stic_invoice_type_c, COUNT(*) AS cnt FROM aos_invoices_cstm c INNER JOIN aos_invoices i ON c.id_c = i.id WHERE i.deleted = 0 AND c.stic_invoice_type_c IS NOT NULL AND c.stic_invoice_type_c != '' GROUP BY c.stic_invoice_type_c";
+        $usageResult = $GLOBALS['db']->query($usageQuery);
+        $usageCounts = [];
+        while ($row = $GLOBALS['db']->fetchByAssoc($usageResult)) {
+            $usageCounts[$row['stic_invoice_type_c']] = (int)$row['cnt'];
+        }
+        uksort($app_list_strings['stic_invoices_types_list'], function($a, $b) use ($usageCounts) {
+            $countA = $usageCounts[$a] ?? 0;
+            $countB = $usageCounts[$b] ?? 0;
+            if ($countA !== $countB) {
+                return $countB - $countA;
+            }
+            return strcasecmp($a, $b);
+        });
+        // === End Sort ===
+
         // === Verifactu Activation Banner ===
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
 
