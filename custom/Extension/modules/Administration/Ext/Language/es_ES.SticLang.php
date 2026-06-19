@@ -168,3 +168,4 @@ $mod_strings['LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP'] = 'Esta serie no puede mo
 $mod_strings['LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS'] = '✓ Configuración guardada correctamente';
 $mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL_ERROR'] = 'El número inicial de la serie \'{0}\' debe ser 1 o superior.';
 $mod_strings['LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS'] = 'Se encontraron errores de validación en la configuración de series de facturación.';
+$mod_strings['LBL_AOS_SERIES_FORMAT_TOO_LONG'] = 'La combinación del nombre de la serie y su formato supera el límite de 60 caracteres. Reduzca la longitud del nombre o del formato.';

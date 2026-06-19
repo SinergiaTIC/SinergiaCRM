@@ -52,8 +52,8 @@ $dictionary['AOS_Invoices']['fields']['status']['popupHelp'] = 'LBL_STATUS_HELP'
 // Inline edition definition:
 $dictionary['AOS_Invoices']['fields']['number']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['number']['type'] = 'varchar';
-$dictionary['AOS_Invoices']['fields']['number']['len'] = 50;
-$dictionary['AOS_Invoices']['fields']['number']['size'] = 50;
+$dictionary['AOS_Invoices']['fields']['number']['len'] = 60;
+$dictionary['AOS_Invoices']['fields']['number']['size'] = 60;
 
 $dictionary['AOS_Invoices']['fields']['billing_address_street']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['shipping_address_street']['inline_edit'] = 0;

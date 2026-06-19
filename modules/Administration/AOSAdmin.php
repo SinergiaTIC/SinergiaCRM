@@ -169,6 +169,19 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 }
             }
             // === End Step 2.2c ===
+
+            // === Validate expanded format length does not exceed 60 ===
+            if (!empty($format)) {
+                $expandedFormat = str_replace(['YYYY', 'YY'], ['9999', '99'], $format);
+                $expandedFormat = preg_replace_callback('/0+/', function($m) {
+                    return str_repeat('9', strlen($m[0]));
+                }, $expandedFormat);
+                if (strlen($expandedFormat) > 60) {
+                    $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_TOO_LONG'];
+                    continue;
+                }
+            }
+            // === End expanded format length validation ===
             
             // Validate initial number: must be 1 or greater
             if ($initialNumber < 1) {

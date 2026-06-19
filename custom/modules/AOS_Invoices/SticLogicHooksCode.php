@@ -241,14 +241,12 @@ class AOS_InvoicesHook
         }
         // === End Step 2.3 ===
 
-        // === Step 2.5: Validate max length (60 chars) for series + number ===
-        if (!empty($bean->stic_invoice_type_c) && !empty($bean->number)) {
-            $series = $bean->stic_invoice_type_c;
-            $number = $bean->number;
-            $combinedLength = strlen($series) + strlen($number);
+        // === Step 2.5: Validate max length (60 chars) for invoice number ===
+        if (!empty($bean->number)) {
+            $numberLength = strlen($bean->number);
             
-            if ($combinedLength > 60) {
-                $GLOBALS['log']->error(__METHOD__ . ': Step 2.5 - Combined length exceeds 60 characters: ' . $combinedLength);
+            if ($numberLength > 60) {
+                $GLOBALS['log']->error(__METHOD__ . ': Step 2.5 - Number length exceeds 60 characters: ' . $numberLength);
 
                 if (empty($mod_strings)) {
                     $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
