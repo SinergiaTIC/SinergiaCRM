@@ -509,4 +509,4 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
     }
 
-    }
+}

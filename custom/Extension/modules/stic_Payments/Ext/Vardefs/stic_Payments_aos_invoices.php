@@ -1,0 +1,61 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+$dictionary['stic_Payments']['fields']['aos_invoices_id_c'] = array(
+    'name' => 'aos_invoices_id_c',
+    'vname' => 'LBL_AOS_INVOICES_ID',
+    'type' => 'id',
+    'required' => false,
+    'reportable' => false,
+    'audited' => false,
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'studio' => 'visible',
+);
+
+$dictionary['stic_Payments']['fields']['aos_invoices_name_c'] = array(
+    'name' => 'aos_invoices_name_c',
+    'vname' => 'LBL_AOS_INVOICES_NAME',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'id_name' => 'aos_invoices_id_c',
+    'link' => 'aos_invoices',
+    'module' => 'AOS_Invoices',
+    'rname' => 'name',
+    'quicksearch' => 'enabled',
+    'studio' => 'visible',
+    'required' => false,
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'len' => 255,
+);
+
+$dictionary['stic_Payments']['fields']['aos_invoices'] = array(
+    'name' => 'aos_invoices',
+    'type' => 'link',
+    'relationship' => 'aos_invoices_stic_payments',
+    'module' => 'AOS_Invoices',
+    'bean_name' => 'AOS_Invoices',
+    'source' => 'non-db',
+    'vname' => 'LBL_AOS_INVOICES',
+);

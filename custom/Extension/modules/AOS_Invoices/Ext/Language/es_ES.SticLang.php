@@ -160,3 +160,22 @@ $mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING'] = 'La Organización o
 // Block draft to non-emitted status change
 $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';
 
+// Create Invoice from Payments
+$mod_strings['LBL_SELECT_PAYMENTS_TO_INVOICE'] = 'Crear Factura desde Pagos';
+$mod_strings['LBL_CREATE_INVOICE'] = 'Crear Factura';
+$mod_strings['LBL_NO_PAYMENTS_SELECTED'] = 'No se han seleccionado pagos';
+$mod_strings['LBL_NO_PAYMENTS_FOUND'] = 'No se encontraron pagos';
+$mod_strings['LBL_PAYER_MISMATCH_ERROR'] = 'Todos los pagos deben ser del mismo pagador';
+$mod_strings['LBL_PAYMENT_ALREADY_INVOICED'] = 'El pago ya está Facturado';
+$mod_strings['LBL_INVOICE_CREATED_SUCCESS'] = 'Factura creada correctamente';
+$mod_strings['LBL_INVOICE_NAME'] = 'Nombre de factura';
+$mod_strings['LBL_INVOICE_DATE'] = 'Fecha de factura';
+$mod_strings['LBL_DUE_DATE'] = 'Fecha de vencimiento';
+$mod_strings['LBL_CANCEL'] = 'Cancelar';
+$mod_strings['LBL_INVOICE_DEFAULT_NAME'] = 'Factura desde Pagos';
+$mod_strings['LBL_AVAILABLE_PAYMENTS'] = 'Pagos disponibles';
+$mod_strings['LBL_SELECT'] = 'Seleccionar';
+$mod_strings['LBL_SELECT_PAYMENTS_INFO'] = 'Seleccione los pagos que desea incluir en la factura. Todos los pagos seleccionados deben ser del mismo pagador (Persona u Organización).';
+$mod_strings['LBL_NO_PAYMENTS_AVAILABLE'] = 'No hay pagos disponibles para crear factura';
+$mod_strings['LBL_STIC_PAYMENTS'] = 'Pagos';
+
