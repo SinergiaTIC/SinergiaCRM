@@ -44,9 +44,9 @@ class WhatsAppMediaEntryPoint
     public function run()
     {
         try {
-            $noteId  = $_GET['note_id']  ?? '';
+            $noteId = $_GET['note_id']  ?? '';
             $expires = (int)($_GET['expires'] ?? 0);
-            $token   = $_GET['token']    ?? '';
+            $token = $_GET['token']    ?? '';
 
             if (!$this->validateToken($noteId, $expires, $token)) {
                 $this->sendError(403, 'Forbidden');
@@ -80,7 +80,7 @@ class WhatsAppMediaEntryPoint
             return false;
         }
 
-        $secret   = $GLOBALS['sugar_config']['unique_key'] ?? '';
+        $secret = $GLOBALS['sugar_config']['unique_key'] ?? '';
         $expected = hash_hmac('sha256', $noteId . $expires, $secret);
 
         return hash_equals($expected, $token);

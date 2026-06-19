@@ -34,17 +34,17 @@ $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'title_key' => 'LBL_SECURITYGROUPS_SUBPANEL_TITLE',
 );
 $layout_defs[$module_name]['subpanel_setup']['notes'] = array(
-    'order'             => 10,
-    'module'            => 'Notes',
-    'subpanel_name'     => 'default',
-    'sort_order'        => 'desc',
-    'sort_by'           => 'date_entered',
-    'title_key'         => 'LBL_ATTACHMENTS_SUBPANEL_TITLE',
+    'order' => 10,
+    'module' => 'Notes',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_entered',
+    'title_key' => 'LBL_ATTACHMENTS_SUBPANEL_TITLE',
     'get_subpanel_data' => 'notes',
-    'top_buttons'       => array(),
+    'top_buttons' => array(),
     'list_fields' => array(
         'name' => array(
-            'vname'        => 'LBL_NOTE_NAME',
+            'vname' => 'LBL_NOTE_NAME',
             'widget_class' => 'SubpanelDetailViewLink',
         ),
         'date_entered' => array(
@@ -56,25 +56,25 @@ $layout_defs[$module_name]['subpanel_setup']['notes'] = array(
             'width' => '15%',
         ),
         'filename' => array(
-            'vname'        => 'LBL_FILENAME',
+            'vname' => 'LBL_FILENAME',
             'widget_class' => 'SubpanelDetailViewLink',
-            'width'        => '20%',
+            'width' => '20%',
         ),
         'created_by_name' => array(
             'vname' => 'LBL_CREATED',
             'width' => '15%',
         ),
         'edit_button' => array(
-            'vname'        => 'LBL_EDIT_BUTTON',
+            'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubpanelEditButton',
-            'module'       => 'Notes',
-            'width'        => '5%',
+            'module' => 'Notes',
+            'width' => '5%',
         ),
         'remove_button' => array(
-            'vname'        => 'LBL_REMOVE',
+            'vname' => 'LBL_REMOVE',
             'widget_class' => 'SubpanelRemoveButtonNotes',
-            'module'       => 'Notes',
-            'width'        => '5%',
+            'module' => 'Notes',
+            'width' => '5%',
         ),
     ),
 );

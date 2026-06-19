@@ -42,7 +42,7 @@ class WhatsAppWebhookEntryPoint
             $messageSid = $_POST['MessageSid'] ?? '';
             $from = $this->cleanPhoneNumber($_POST['From'] ?? '');
             $body = $_POST['Body'] ?? '';
-            $numMedia   = (int)($_POST['NumMedia'] ?? 0);
+            $numMedia = (int)($_POST['NumMedia'] ?? 0);
 
             $parentInfo = $this->findContactByPhone($from);
 
@@ -129,7 +129,7 @@ class WhatsAppWebhookEntryPoint
             return null;
         }
 
-        $sql    = "SELECT id FROM {$bean->table_name} WHERE deleted = 0 AND (" . implode(' OR ', $conditions) . ") LIMIT 1";
+        $sql = "SELECT id FROM {$bean->table_name} WHERE deleted = 0 AND (" . implode(' OR ', $conditions) . ") LIMIT 1";
         $result = $db->query($sql);
 
         if ($row = $db->fetchByAssoc($result)) {

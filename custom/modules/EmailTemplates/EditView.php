@@ -279,9 +279,9 @@ $xtpl->assign("TYPE_OPTIONS", get_select_options_with_id($app_list_strings['reco
 //$xtpl->assign("DEFAULT_MODULE","Accounts");
 
 // Prepare WhatsApp select options and current values
-$approval_selected  = isset($focus->stic_whatsapp_status_c)   ? $focus->stic_whatsapp_status_c   : '';
-$category_selected  = isset($focus->stic_whatsapp_category_c)  ? $focus->stic_whatsapp_category_c  : '';
-$twilio_id          = isset($focus->stic_whatsapp_twilio_id_c) ? $focus->stic_whatsapp_twilio_id_c : '';
+$approval_selected = isset($focus->stic_whatsapp_status_c)   ? $focus->stic_whatsapp_status_c   : '';
+$category_selected = isset($focus->stic_whatsapp_category_c)  ? $focus->stic_whatsapp_category_c  : '';
+$twilio_id = isset($focus->stic_whatsapp_twilio_id_c) ? $focus->stic_whatsapp_twilio_id_c : '';
 
 // Status
 if (!empty($app_list_strings['stic_whatsapp_status_list'])) {

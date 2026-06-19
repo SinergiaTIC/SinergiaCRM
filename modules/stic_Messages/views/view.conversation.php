@@ -25,15 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class stic_MessagesViewConversation extends SugarView {
 
-    public $messages      = [];
-    public $parentName    = '';
-    public $parentId      = '';
-    public $parentType    = '';
-    public $contactPhone  = '';
-    public $windowOpen    = false;
+    public $messages = [];
+    public $parentName = '';
+    public $parentId = '';
+    public $parentType = '';
+    public $contactPhone = '';
+    public $windowOpen = false;
     public $windowMessage = '';
     public $newMessageUrl = '';
-    public $modStrings    = [];
+    public $modStrings = [];
 
     public function display() {
         $timedate = $GLOBALS['timedate'];

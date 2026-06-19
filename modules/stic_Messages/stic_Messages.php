@@ -294,7 +294,7 @@ class stic_Messages extends Basic
                 $GLOBALS['log']->info('stic_Messages: Note ' . $this->media_note_id . ' linked to message ' . $this->id);
             }
             $this->media_note_id = null;
-            $this->media_url     = null;
+            $this->media_url = null;
         }
         // For conversation messages, ensure the M:M relationship is created in the join table
         if ($this->type === 'private_area' && !empty($this->stic_conversations_ida)) {
@@ -364,7 +364,7 @@ class stic_Messages extends Basic
         $timezone = $userPreferences->getPreference('timezone');
         if ($timezone === null) {
             require_once('include/TimeDate.php');
-            $timezone =  TimeDate::guessTimezone();;
+            $timezone = TimeDate::guessTimezone();
         }
 
         $date = $date->setTimezone(new DateTimeZone($timezone));
@@ -388,8 +388,8 @@ class stic_Messages extends Basic
     public function buildSignedMediaUrl(string $noteId): string
     {
         $expires = time() + 300; // 5 minutes — matches WhatsAppMediaEntryPoint::TOKEN_TTL
-        $secret  = $GLOBALS['sugar_config']['unique_key'] ?? '';
-        $token   = hash_hmac('sha256', $noteId . $expires, $secret);
+        $secret = $GLOBALS['sugar_config']['unique_key'] ?? '';
+        $token = hash_hmac('sha256', $noteId . $expires, $secret);
         $siteUrl = rtrim($GLOBALS['sugar_config']['site_url'], '/');
 
         return $siteUrl . '/index.php?entryPoint=sticWhatsappMedia'

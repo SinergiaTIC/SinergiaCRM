@@ -88,7 +88,7 @@ array(
                 ),
                 5 => array(
                     0 => array(
-                        'name'  => 'attachment_widget',
+                        'name' => 'attachment_widget',
                         'label' => 'LBL_ATTACHMENT',
                     ),
                 ),

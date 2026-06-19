@@ -258,14 +258,14 @@ class stic_MessagesUtils {
 
             if ($isValidWindowEvent) {
                 $eventTs = (new DateTime($lastMessage['date_entered'], new DateTimeZone('UTC')))->getTimestamp();
-                $nowTs   = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
+                $nowTs = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
                 $diffSeconds = $nowTs - $eventTs;
                 $diffH = $diffSeconds / 3600;
 
                 if ($diffH < 24) {
                     $windowOpen = true;
                     $secondsLeft = (24 * 3600) - $diffSeconds;
-                    $hoursLeft   = floor($secondsLeft / 3600);
+                    $hoursLeft = floor($secondsLeft / 3600);
                     $minutesLeft = floor(($secondsLeft % 3600) / 60);
                 }
             }

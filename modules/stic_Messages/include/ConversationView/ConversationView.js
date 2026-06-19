@@ -60,7 +60,7 @@ function handleFileSelected(input) {
     var file = input.files[0];
 
     document.getElementById('uploadingIndicator').style.display = 'block';
-    document.getElementById('attachmentPreview').style.display  = 'none';
+    document.getElementById('attachmentPreview').style.display = 'none';
 
     var formData = new FormData();
     formData.append('module', 'stic_Messages');
@@ -94,8 +94,8 @@ function handleFileSelected(input) {
 
 function showAttachmentPreview(file, name) {
     var preview = document.getElementById('attachmentPreview');
-    var img     = document.getElementById('previewImg');
-    var icon    = document.getElementById('previewIcon');
+    var img = document.getElementById('previewImg');
+    var icon = document.getElementById('previewIcon');
 
     document.getElementById('previewName').textContent = name;
 
@@ -103,12 +103,12 @@ function showAttachmentPreview(file, name) {
         var reader = new FileReader();
         reader.onload = function(e) {
             img.src = e.target.result;
-            img.style.display  = 'block';
+            img.style.display = 'block';
             icon.style.display = 'none';
         };
         reader.readAsDataURL(file);
     } else {
-        img.style.display  = 'none';
+        img.style.display = 'none';
         icon.style.display = 'block';
     }
 
@@ -119,13 +119,13 @@ function removeAttachment() {
     _pendingMediaNoteId = null;
     _pendingMediaName = null;
     _pendingMediaMime = null;
-    document.getElementById('mediaFile').value           = '';
+    document.getElementById('mediaFile').value = '';
     document.getElementById('attachmentPreview').style.display = 'none';
-    document.getElementById('previewImg').src            = '';
+    document.getElementById('previewImg').src = '';
 }
 
 function sendMessage() {
-    var text    = document.getElementById('msgText').value.trim();
+    var text = document.getElementById('msgText').value.trim();
     var sendBtn = document.getElementById('sendBtn');
 
     if (!text && !_pendingMediaNoteId) {

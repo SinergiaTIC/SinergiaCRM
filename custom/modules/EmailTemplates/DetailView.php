@@ -100,9 +100,9 @@ EOD
 );
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
-    'id'      => 'detail_header_action_menu',
+    'id' => 'detail_header_action_menu',
     'buttons' => $buttons,
-    'class'   => 'clickMenu fancymenu',
+    'class' => 'clickMenu fancymenu',
 ), $xtpl);
 
 $xtpl->assign("ACTION_BUTTON", $action_button);
@@ -174,12 +174,12 @@ if (is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty(
 
 $xtpl->assign("DESCRIPTION", $focus->description);
 
-$stic_type_val     = isset($focus->type)                             ? $focus->type                             : '';
-$stic_status_val   = isset($focus->stic_whatsapp_status_c)           ? $focus->stic_whatsapp_status_c           : '';
+$stic_type_val = isset($focus->type)                             ? $focus->type                             : '';
+$stic_status_val = isset($focus->stic_whatsapp_status_c)           ? $focus->stic_whatsapp_status_c           : '';
 $stic_category_val = isset($focus->stic_whatsapp_category_c)         ? $focus->stic_whatsapp_category_c         : '';
-$stic_twilio_id    = isset($focus->stic_whatsapp_twilio_id_c)        ? $focus->stic_whatsapp_twilio_id_c        : '';
+$stic_twilio_id = isset($focus->stic_whatsapp_twilio_id_c)        ? $focus->stic_whatsapp_twilio_id_c        : '';
 
-$stic_status_label   = !empty($app_list_strings['stic_whatsapp_status_list'][$stic_status_val])
+$stic_status_label = !empty($app_list_strings['stic_whatsapp_status_list'][$stic_status_val])
                             ? $app_list_strings['stic_whatsapp_status_list'][$stic_status_val]    : $stic_status_val;
 $stic_category_label = !empty($app_list_strings['stic_whatsapp_category_list'][$stic_category_val])
                             ? $app_list_strings['stic_whatsapp_category_list'][$stic_category_val] : $stic_category_val;

@@ -28,12 +28,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 use SuiteCRM\Utility\SuiteValidator;
 
 include_once 'include/Exceptions/SugarControllerException.php';
-global $mod_strings;
-
-function sticMessagesGetString($key, $module = 'stic_Messages') {
-    global $mod_strings;
-    return isset($mod_strings[$key]) ? $mod_strings[$key] : $key;
-}
 require_once 'modules/stic_Messages/Utils.php';
 require_once("modules/AOW_WorkFlow/aow_utils.php");
 
@@ -141,7 +135,7 @@ class stic_MessagesController extends SugarController
             // Clear any accidental output (warnings, HTML, etc.) so the response is pure JSON
             while (ob_get_level()) { ob_end_clean(); }
             header('Content-Type: application/json');
-            echo json_encode(array('success' =>  true, 'type' => 'sms', 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
+            echo json_encode(array('success' => true, 'type' => 'sms', 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
             exit;
         }
         else {
@@ -453,7 +447,7 @@ class stic_MessagesController extends SugarController
     }
 
     public function action_checkWhatsAppWindow() {
-        $parentId   = $_REQUEST['parent_id']   ?? '';
+        $parentId = $_REQUEST['parent_id']   ?? '';
         $parentType = $_REQUEST['parent_type'] ?? '';
 
         require_once 'modules/stic_Messages/Utils.php';
@@ -625,7 +619,7 @@ class stic_MessagesController extends SugarController
         global $current_language;
         $mod_strings = return_module_language($current_language, 'stic_Messages');
 
-        $parentId   = $_REQUEST['parent_id']   ?? '';
+        $parentId = $_REQUEST['parent_id']   ?? '';
         $parentType = $_REQUEST['parent_type'] ?? 'Contacts';
 
         if (empty($parentId)) die('Missing parent_id');
@@ -706,15 +700,15 @@ class stic_MessagesController extends SugarController
 
         require_once('modules/stic_Messages/views/view.conversation.php');
         $view = new stic_MessagesViewConversation();
-        $view->messages       = $messages;
-        $view->parentName     = $parentName;
-        $view->parentId       = $parentId;
-        $view->parentType     = $parentType;
-        $view->contactPhone   = $contactPhone;
-        $view->windowOpen     = $windowOpen;
-        $view->windowMessage  = $windowMessage;
-        $view->newMessageUrl  = $newMessageUrl;
-        $view->modStrings     = $mod_strings;
+        $view->messages = $messages;
+        $view->parentName = $parentName;
+        $view->parentId = $parentId;
+        $view->parentType = $parentType;
+        $view->contactPhone = $contactPhone;
+        $view->windowOpen = $windowOpen;
+        $view->windowMessage = $windowMessage;
+        $view->newMessageUrl = $newMessageUrl;
+        $view->modStrings = $mod_strings;
         $view->display();
         sugar_cleanup();
         exit();
@@ -737,36 +731,36 @@ class stic_MessagesController extends SugarController
         ];
 
         if (empty($_FILES['media']) || $_FILES['media']['error'] !== UPLOAD_ERR_OK) {
-            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_NO_FILE_RECEIVED')]);
+            echo json_encode(['success' => false, 'error' => $this->sticMessagesGetString('LBL_ERROR_NO_FILE_RECEIVED')]);
             exit();
         }
 
-        $file     = $_FILES['media'];
+        $file = $_FILES['media'];
         $mimeType = mime_content_type($file['tmp_name']);
 
         if (!in_array($mimeType, $allowedMimes)) {
-            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_UNSUPPORTED_FILE_TYPE') . ': ' . $mimeType]);
+            echo json_encode(['success' => false, 'error' => $this->sticMessagesGetString('LBL_ERROR_UNSUPPORTED_FILE_TYPE') . ': ' . $mimeType]);
             exit();
         }
 
         $sizeLimit = (strpos($mimeType, 'image/') === 0) ? 5 * 1024 * 1024 : 16 * 1024 * 1024;
         if ($file['size'] > $sizeLimit) {
             $limitMb = $sizeLimit / 1024 / 1024;
-            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_FILE_SIZE_EXCEEDED') . " {$limitMb}MB"]);
+            echo json_encode(['success' => false, 'error' => $this->sticMessagesGetString('LBL_ERROR_FILE_SIZE_EXCEEDED') . " {$limitMb}MB"]);
             exit();
         }
 
-        $note                 = BeanFactory::newBean('Notes');
-        $note->parent_type    = 'stic_Messages';
-        $note->parent_id      = '';
-        $note->name           = $file['name'];
-        $note->filename       = $file['name'];
+        $note = BeanFactory::newBean('Notes');
+        $note->parent_type = 'stic_Messages';
+        $note->parent_id = '';
+        $note->name = $file['name'];
+        $note->filename = $file['name'];
         $note->file_mime_type = $mimeType;
-        $note->deleted        = 0;
-        $noteId               = $note->save();
+        $note->deleted = 0;
+        $noteId = $note->save();
 
         if (empty($noteId)) {
-            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_CREATING_NOTE')]);
+            echo json_encode(['success' => false, 'error' => $this->sticMessagesGetString('LBL_ERROR_CREATING_NOTE')]);
             exit();
         }
 
@@ -774,7 +768,7 @@ class stic_MessagesController extends SugarController
         if (!move_uploaded_file($file['tmp_name'], $destPath)) {
             $note->deleted = 1;
             $note->save();
-            echo json_encode(['success' => false, 'error' => sticMessagesGetString('LBL_ERROR_SAVING_FILE')]);
+            echo json_encode(['success' => false, 'error' => $this->sticMessagesGetString('LBL_ERROR_SAVING_FILE')]);
             exit();
         }
 
@@ -783,8 +777,8 @@ class stic_MessagesController extends SugarController
         echo json_encode([
             'success' => true,
             'media_note_id' => $noteId,
-            'name'    => $file['name'],
-            'mime'    => $mimeType,
+            'name' => $file['name'],
+            'mime' => $mimeType,
         ]);
         exit();
     }
@@ -938,4 +932,9 @@ class stic_MessagesController extends SugarController
         exit;
     }
 
+    private function sticMessagesGetString($key)
+    {
+        global $mod_strings;
+        return $mod_strings[$key] ?? $key;
+    }
 }
