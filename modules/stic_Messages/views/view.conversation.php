@@ -210,8 +210,7 @@ class stic_MessagesViewConversation extends SugarView {
                             placeholder="<?= $lbl('LBL_CONVERSATION_PLACEHOLDER') ?>"
                             rows="1"
                             onInput="this.style.height='auto';this.style.height=this.scrollHeight+'px';"
-                            onKeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}">
-                        </textarea>
+                            onKeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
                         <button id="sendBtn" onclick="sendMessage()" title="<?= $lbl('LBL_CONVERSATION_SEND') ?>">➤</button>
                     </div>
                 </div>

@@ -40,26 +40,26 @@ class WhatsAppWebhookEntryPoint
             }
 
             $messageSid = $_POST['MessageSid'] ?? '';
-            $from       = $this->cleanPhoneNumber($_POST['From'] ?? '');
-            $body       = $_POST['Body'] ?? '';
+            $from = $this->cleanPhoneNumber($_POST['From'] ?? '');
+            $body = $_POST['Body'] ?? '';
             $numMedia   = (int)($_POST['NumMedia'] ?? 0);
 
             $parentInfo = $this->findContactByPhone($from);
 
-            $message              = BeanFactory::newBean('stic_Messages');
-            $message->name        = $this->generateMessageName($parentInfo, $from);
-            $message->type        = 'WhatsAppHelper';
-            $message->direction   = 'inbound';
-            $message->phone       = $from;
-            $message->sender      = $from;
-            $message->message     = $body;
-            $message->status      = 'received';
-            $message->response    = "MessageSid: $messageSid";
-            $message->sent_date   = $GLOBALS['timedate']->nowDb();
+            $message = BeanFactory::newBean('stic_Messages');
+            $message->name = $this->generateMessageName($parentInfo, $from);
+            $message->type = 'WhatsAppHelper';
+            $message->direction = 'inbound';
+            $message->phone = $from;
+            $message->sender = $from;
+            $message->message = $body;
+            $message->status = 'received';
+            $message->response = "MessageSid: $messageSid";
+            $message->sent_date = $GLOBALS['timedate']->nowDb();
 
             if ($parentInfo) {
                 $message->parent_type = $parentInfo['module'];
-                $message->parent_id   = $parentInfo['id'];
+                $message->parent_id = $parentInfo['id'];
             }
 
             $message->save();
@@ -115,9 +115,9 @@ class WhatsAppWebhookEntryPoint
             return null;
         }
 
-        $cleanPhone  = preg_replace('/[^0-9]/', '', $phone);
+        $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
         $phoneFields = ['phone_mobile', 'phone_work', 'phone_home', 'phone_other', 'phone_fax'];
-        $conditions  = [];
+        $conditions = [];
 
         foreach ($phoneFields as $field) {
             if (isset($bean->field_defs[$field])) {
@@ -146,13 +146,13 @@ class WhatsAppWebhookEntryPoint
         if ($parentInfo) {
             $bean = BeanFactory::getBean($parentInfo['module'], $parentInfo['id']);
             if ($bean) {
-                return $bean->name . ' - ' . $GLOBALS['timedate']->nowDb();
+                return $bean->name . ' - ' . date('Y-m-d H:i:s');
             }
         }
 
         $label = $app_strings['LBL_WHATSAPP_INCOMING_MESSAGE'] ?? 'LBL_WHATSAPP_INCOMING_MESSAGE';
         $from_label = $app_strings['LBL_FROM'] ?? 'LBL_FROM';
-        return $label . ' ' . $from_label . ' ' . $from . ' - ' . $GLOBALS['timedate']->nowDb();
+        return $label . ' ' . $from_label . ' ' . $from . ' - ' . date('Y-m-d H:i:s');
     }
 
     private function sendTwiMLResponse()
