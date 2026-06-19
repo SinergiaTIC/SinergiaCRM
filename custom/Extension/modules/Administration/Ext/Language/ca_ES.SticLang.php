@@ -138,6 +138,10 @@ $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA'] = 'Altres configuracions';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY'] = 'Nova clau';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE'] = 'Valor';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD'] = 'Afegir configuració';
+$mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Resultat de depuració';
+$mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Amagar';
+$mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Mostrar';
+$mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Reconstruint amb depuració...';
 
 // Autenticació OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticació OAuth';

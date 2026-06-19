@@ -1,6 +1,7 @@
 //Login Logo
 div.p_login .p_login_top a {
-  background-image: none, url("../../../../../custom/themes/SuiteP/images/p_login_logo.svg"),
+  background-image:
+    none, url("../../../../../custom/themes/SuiteP/images/p_login_logo.svg"),
     url("../../../../../custom/themes/SuiteP/images/p_login_logo.png") !important;
 }
 
@@ -1193,7 +1194,8 @@ table.view th.depend-not-exist div:before {
   p {
     margin: 0 0 10px 0;
   }
-  ul, ol {
+  ul,
+  ol {
     margin-bottom: 10px;
     padding-left: 30px;
     list-style-position: outside;
@@ -1413,18 +1415,18 @@ a#nonprofitized_by {
 }
 // fix for recovery password button https://github.com/SinergiaTIC/SinergiaCRM/issues/409
 #forgot_password_dialog input#generate_pwd_button {
-  position: relative ;
+  position: relative;
   z-index: 99;
 }
 
 // Font por advanced Menu
-#stic-menu li a{
+#stic-menu li a {
   font-family: Lato, Arial, sans-serif;
 }
 
 // Prevents the overlap of the general search box
-.desktop-toolbar{
-  z-index: 0; 
+.desktop-toolbar {
+  z-index: 0;
 }
 
 // Currency type values must be aligned to the right
@@ -1432,13 +1434,13 @@ a#nonprofitized_by {
   text-align: right !important;
 }
 
-.edit-view-field[type="currency"]{
+.edit-view-field[type="currency"] {
   input {
     text-align: right !important;
   }
 }
 
-span.totals{
+span.totals {
   input[type="text"] {
     text-align: right !important;
   }
@@ -1454,11 +1456,11 @@ span.totals{
 
 // Change position of alerts dropdown to open leftward and adjust size
 #alerts.dropdown-menu {
-  right: 0 !important;   // keep it aligned to the right edge of the button
+  right: 0 !important; // keep it aligned to the right edge of the button
   left: auto !important; // override Bootstrap’s default left positioning
-  min-width: 280px;    
-  max-height: 400px;   
-  overflow-y: auto;    // Not growing beyond max-height
+  min-width: 280px;
+  max-height: 400px;
+  overflow-y: auto; // Not growing beyond max-height
 }
 
 // Fix for ACL Edit View header sticky
@@ -1467,14 +1469,14 @@ span.totals{
   top: 0;
   background: #f8f8f8;
   z-index: 20;
-  
+
   // First column in header - 20% width
   #ACLEditView_Access_Header_category {
     width: 20% !important;
     min-width: 20% !important;
     max-width: 20% !important;
   }
-  
+
   // All other columns in header should have equal width
   td:not(#ACLEditView_Access_Header_category) {
     width: auto !important;
@@ -1484,19 +1486,19 @@ span.totals{
 #acl-scroll-wrapper {
   max-height: 400px;
   overflow-y: auto;
-  
+
   table {
     table-layout: fixed;
     width: 100%;
   }
-  
+
   // First column (category names) - 20% width
   td[id$="_category"] {
     width: 20% !important;
     min-width: 20% !important;
     max-width: 20% !important;
   }
-  
+
   // All other columns should have equal width
   td:not([id$="_category"]) {
     width: auto !important;
@@ -1520,4 +1522,28 @@ span.totals{
   padding: 10px;
   text-align: center;
   font-size: 16px;
+}
+
+// SinergiaDA config page colors for SticCustom subtheme.
+// The html prefix ensures higher specificity than SinergiaDA.css.
+// Standard Stic users get button colors from SinergiaCRM's compiled .button class.
+html .sda-page-wrapper {
+
+  .sda-page-wrapper .sda-action-card h3 {
+    color: $stic-text !important;
+  }
+  .sda-action-card,
+  .sda-config-card,
+  .sda-sub-card {
+    border: 2px solid $stic-base;
+    .sda-sub-card {
+      border-color: $stic-darken !important;
+    }
+  }
+
+  select.selectized:focus,
+  .selectize-control.single .selectize-input.focus {
+    border-color: $stic-base;
+    box-shadow: 0 0 0 2px rgba(red($stic-base), green($stic-base), blue($stic-base), 0.15);
+  }
 }

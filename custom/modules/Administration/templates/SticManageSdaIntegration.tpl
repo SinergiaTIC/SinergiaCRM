@@ -28,14 +28,12 @@
 <link rel="stylesheet" type="text/css" href="SticInclude/SinergiaDA.css" />
 <script src="SticInclude/vendor/selectize/js/selectize.min.js"></script>
 
-{$SDA_THEME_STYLE}
-
-<div class="sda-page-wrapper"><div class="row sda-actions-row">
+ <div class="sda-page-wrapper"><div class="row sda-actions-row">
 		<div class="col-md-6">
 			<div class="sda-action-card sda-action-card-left">
-				<h3><span class="glyphicon glyphicon-flash"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}</h3>
+				<!-- <h3><span class="glyphicon glyphicon-flash"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}</h3> -->
 				<div style="margin-bottom: 12px;">
-					<a id="rebuild-link" href="index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1" class="sda-rebuild-link">
+					<a id="rebuild-link" href="index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1" class="button sda-rebuild-link">
 						<span class="glyphicon glyphicon-flash"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}
 					</a>
 					{if $CURRENT_USER_ID eq '2'}
@@ -48,9 +46,9 @@
 		</div>
 		<div class="col-md-6">
 			<div class="sda-action-card sda-action-card-right">
-				<h3><span class="glyphicon glyphicon-link"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}</h3>
+				<!-- <h3><span class="glyphicon glyphicon-link"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}</h3> -->
 				<div style="margin-bottom: 8px;">
-					<a id="sda-link" target="_blank" class="sda-external-link">
+					<a id="sda-link" target="_blank" class="button sda-external-link">
 						<span class="glyphicon glyphicon-link"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
 					</a>
 				</div>
@@ -242,14 +240,14 @@
 									</div>
 									<div class="sda-row-value" style="display:flex;gap:6px;align-items:center;">
 										<input type="text" id="sda-new-extra-value" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE}" class="form-control" style="flex:1;display:none;">
-										<button type="button" id="sda-add-extra-btn" class="sda-btn-add">+</button>
+										<button type="button" id="sda-add-extra-btn" class="button sda-btn-add">+</button>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="sda-config-footer">
-						<button type="submit" class="sda-btn-save">
+						<button type="submit" class="button sda-btn-save">
 							<span class="glyphicon glyphicon-floppy-disk"></span> {$MOD.LBL_STIC_SINERGIADA_CONFIG_SAVE}
 						</button>
 					</div>
@@ -259,8 +257,12 @@
 	</div>
 </div>
 
-{literal}
 <script type="text/javascript">
+var SDA_DEBUG_TITLE = '{$MOD.LBL_STIC_DA_DEBUG_TITLE|escape:'javascript'}';
+var SDA_DEBUG_HIDE = '{$MOD.LBL_STIC_DA_DEBUG_HIDE|escape:'javascript'}';
+var SDA_DEBUG_SHOW = '{$MOD.LBL_STIC_DA_DEBUG_SHOW|escape:'javascript'}';
+var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
+{literal}
 (function() {
 	var currentDomain = window.location.hostname;
 	var lang = (SUGAR.language.languages && SUGAR.language.languages.app_list_strings && SUGAR.language.languages.app_list_strings.language_pack_name) ? SUGAR.language.languages.app_list_strings.language_pack_name.split(" ").pop().split("_")[0] : "es";
@@ -287,13 +289,13 @@
 				var href = this.href;
 				var box = '<div id="debug-output" style="margin-top:16px;border:2px solid var(--sda-primary,#b5bc31);border-radius:8px;overflow:hidden;background:#fff;">'
 					+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--sda-primary-light,#f6f7d9);border-bottom:1px solid var(--sda-primary,#b5bc31);">'
-					+ '<strong style="font-size:14px;color:#333;"><span class="glyphicon glyphicon-console" style="margin-right:6px;"></span>Resultado de depuraci&oacute;n</strong>'
-					+ '<button type="button" class="btn btn-default btn-xs" id="debug-toggle">Ocultar</button>'
+					+ '<strong style="font-size:14px;color:#333;"><span class="glyphicon glyphicon-console" style="margin-right:6px;"></span>' + SDA_DEBUG_TITLE + '</strong>'
+					+ '<button type="button" class="btn btn-default btn-xs" id="debug-toggle">' + SDA_DEBUG_HIDE + '</button>'
 					+ '</div>'
 					+ '<div id="debug-content" style="max-height:500px;overflow:auto;"></div>'
 					+ '</div>';
 				document.getElementById("rebuild-feedback").innerHTML = box;
-				document.getElementById("debug-content").innerHTML = '<div class="alert alert-info" style="margin:16px;"><span class="glyphicon glyphicon-hourglass" style="margin-right:8px;"></span>Reconstruyendo con depuraci&oacute;n...</div>';
+				document.getElementById("debug-content").innerHTML = '<div class="alert alert-info" style="margin:16px;"><span class="glyphicon glyphicon-hourglass" style="margin-right:8px;"></span>' + SDA_DEBUG_LOADING + '</div>';
 				jQuery.get(href, function(data) {
 					jQuery("#debug-content").html(data);
 				});
@@ -303,7 +305,7 @@
 		document.addEventListener("click", function(e) {
 			if (e.target.id === "debug-toggle") {
 				jQuery("#debug-content").slideToggle();
-				e.target.textContent = jQuery("#debug-content").is(":visible") ? "Ocultar" : "Mostrar";
+				e.target.textContent = jQuery("#debug-content").is(":visible") ? SDA_DEBUG_HIDE : SDA_DEBUG_SHOW;
 			}
 		});
 	}

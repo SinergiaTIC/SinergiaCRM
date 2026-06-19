@@ -138,6 +138,10 @@ $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA'] = 'Other settings';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY'] = 'New key';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE'] = 'Value';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD'] = 'Add setting';
+$mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Debug result';
+$mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Hide';
+$mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Show';
+$mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Rebuilding with debug...';
 
 // OAuth authentication
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth authentication';

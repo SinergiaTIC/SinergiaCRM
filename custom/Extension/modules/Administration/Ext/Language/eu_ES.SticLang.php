@@ -138,6 +138,10 @@ $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA'] = 'Beste ezarpen batzuk';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY'] = 'Gako berria';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE'] = 'Balioa';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD'] = 'Gehitu konfigurazioa';
+$mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Arazketa-emaitza';
+$mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Ezkutatu';
+$mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Erakutsi';
+$mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Berreraikitzen arazketarekin...';
 
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
