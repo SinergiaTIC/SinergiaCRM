@@ -1985,9 +1985,6 @@ class stic_AwfConfiguration {
   upsertAction(action, actionType, flow, originalId = null) {
     // Deferred Actions management
     if (actionType === 'Deferred') {
-      action.is_terminal = true;
-      action.order = 999;
-
       const okFlowId = `${action.id}_ok`;
       const errorFlowId = `${action.id}_err`;
       action.success_flow_id = okFlowId;
@@ -1999,11 +1996,15 @@ class stic_AwfConfiguration {
         okFlow = new stic_AwfFlow({ id: okFlowId, name: `${action.name}_Ok` });
         this.flows.push(okFlow);
 
-        // Look for any action that is terminal and NOT the one we are editing to move it to the new flow
-        const terminalIndex = flow.actions.findIndex(a => a.order === 999 && a.id !== (originalId || action.id));
-        if (terminalIndex !== -1) {
-          const terminalAction = flow.actions.splice(terminalIndex, 1)[0];
-          okFlow.actions.push(terminalAction);
+        // Look for action definition and move terminal actions if new aresumptionContext is original user browser
+        const def = utils.getDefinedActions().find(d => d.name === action.name);
+        if (action.is_terminal && def && def.resumptionContext === 'original_user') {
+          // Look for any action that is terminal and NOT the one we are editing to move it to the new flow
+          const terminalIndex = flow.actions.findIndex(a => a.order === 999 && a.id !== (originalId || action.id));
+          if (terminalIndex !== -1) {
+            const terminalAction = flow.actions.splice(terminalIndex, 1)[0];
+            okFlow.actions.push(terminalAction);
+          }
         }
       }
 

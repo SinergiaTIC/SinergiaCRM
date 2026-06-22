@@ -39,6 +39,7 @@ class ActionDefinitionDTO {
     public bool $isAutomatic;
     public bool $isTerminal;
     public bool $defaultContinueOnError;
+    public ?string $resumptionContext = null;
 
     public string $category;
     public string $type;
@@ -79,6 +80,12 @@ class ActionDefinitionDTO {
         $this->isUserSelectable = $def->isUserSelectable;
         $this->isAutomatic = $def->isAutomatic;
         $this->isTerminal = $def instanceof ITerminalAction;
+
+        if ($def instanceof IDeferredAction) {
+            $this->resumptionContext = $def->getResumptionContext()->value;
+        } else {
+            $this->resumptionContext = null;
+        }
 
         $this->category = $def->category;
         $this->scope = $def->scope->value; // Convert enum to string
