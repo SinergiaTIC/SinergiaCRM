@@ -30,7 +30,7 @@ require_once "modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php";
 require_once "include/SugarQueue/SugarJobQueue.php";
 
 /**
- * EntryPoint: WebhookHandler
+ * EntryPoint: stic_AWF_webhookHandler
  * Receives and processes webhook responses from payment gateways.
  *
  * This entry point is fully gateway-agnostic. All gateway-specific logic
@@ -59,10 +59,13 @@ class WebhookHandler
         $rawPayload = file_get_contents('php://input');
         $headers = function_exists('getallheaders') ? getallheaders() : [];
 
+        // Get Token
+        $token = $_REQUEST['token'] ?? '';
+
         // Create IncomingEvent log record
         $incomingEvent = BeanFactory::newBean('stic_AWF_Incoming_Events');
         $incomingEvent->name = 'AWF Webhook: ' . $source . ' - ' . date('Y-m-d H:i:s');
-        $incomingEvent->token = $_REQUEST['token'] ?? null;
+        $incomingEvent->token = $token;
         $incomingEvent->source = $source;
         $incomingEvent->raw_payload = $rawPayload ?: json_encode($requestData);
         $incomingEvent->status = 'new';
@@ -73,7 +76,7 @@ class WebhookHandler
 
         // Extract Identifier
         $searchField = 'token_hash';
-        $identifier = $_REQUEST['token'] ?? null;
+        $identifier = $token;
 
         if (empty($identifier) && !empty($source)) {
             // No token in URL, but we have a source. Let's ask the actions.

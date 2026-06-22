@@ -220,14 +220,15 @@ abstract class stic_AWF_PaymentStrategy
      * database status (updated via webhook), not on URL parameters.
      * Requires $this->ticket to be set (call createTicket first).
      *
+     * @param string $status The return context status ('ok' or 'error')
      * @return string The full return URL
      */
-    protected function getReturnUrl(): string
+    protected function getReturnUrl(string $status = 'ok'): string
     {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         $token = $this->ticket ? $this->ticket->token_hash : '';
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_returnHandler&token=' . urlencode($token);
+        return $siteUrl . '/index.php?entryPoint=stic_AWF_resumeHandler&token=' . urlencode($token) . '&status=' . $status;
     }
 
     /**
