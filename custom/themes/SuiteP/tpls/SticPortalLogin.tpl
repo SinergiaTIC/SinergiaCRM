@@ -29,6 +29,9 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
 .tabs button.active{color:#1976d2;border-bottom-color:#1976d2;font-weight:600}
 .tab-content{display:none}.tab-content.active{display:block}
 .help{font-size:12px;color:#888;margin-bottom:15px;padding:8px;background:#f5f5f5;border-radius:4px}
+.app-list{margin-top:20px;padding:12px;background:#f5f5f5;border-radius:4px;font-size:12px;color:#666;text-align:center}
+.app-badge{display:inline-block;margin:4px 8px;padding:2px 10px;background:#e8e8e8;border-radius:10px;font-size:11px}
+.honeypot{position:absolute;left:-9999px}
 </style>
 </head>
 <body>
@@ -45,7 +48,7 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
   </div>
   {/if}
   <form method="post">
-    <div style="position:absolute;left:-9999px" aria-hidden="true"><input type="text" name="portal_hp" tabindex="-1" autocomplete="off"></div>
+    <div class="honeypot" aria-hidden="true"><input type="text" name="portal_hp" tabindex="-1" autocomplete="off"></div>
     <input type="hidden" name="csrf_token" value="{$CSRF_TOKEN|escape}">
     <input type="hidden" name="portal_mode" id="portal_mode" value="{$MODE|default:'password'}">
     {if $IS_OAUTH}
@@ -70,10 +73,10 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
   </form>
   
   {if $PORTAL_APPS}
-  <div style="margin-top:20px;padding:12px;background:#f5f5f5;border-radius:4px;font-size:12px;color:#666;text-align:center">
+  <div class="app-list">
     <strong>Available apps:</strong><br>
     {foreach from=$PORTAL_APPS item=app}
-    <span style="display:inline-block;margin:4px 8px;padding:2px 10px;background:#e8e8e8;border-radius:10px;font-size:11px">{$app.name|escape}</span>
+    <span class="app-badge">{$app.name|escape}</span>
     {/foreach}
   </div>
   {/if}

@@ -16,8 +16,9 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
 {if $ERROR}<div class="msg msg-error">{$ERROR|escape}</div>{/if}
 {if $SUCCESS}
   <div class="msg msg-success">Password changed successfully.</div>
+  <div class="links"><a href="index.php?entryPoint=sticPortalLogin">Back to portal</a></div>
 {else}
-  <div class="help">Your new password must meet current security requirements.</div>
+  <div class="help">Minimum {$PW_MIN_LENGTH} characters.{if $PW_REQUIRE_UPPER eq "1"} Must contain an uppercase letter.{/if}{if $PW_REQUIRE_LOWER eq "1"} Must contain a lowercase letter.{/if}{if $PW_REQUIRE_NUMBER eq "1"} Must contain a number.{/if}{if $PW_REQUIRE_SPECIAL eq "1"} Must contain a special character.{/if}</div>
   <form method="post">
     <label>Current Password</label><input type="password" name="current_password" required autocomplete="current-password">
     <label>New Password</label><input type="password" name="new_password" required autocomplete="new-password">
@@ -25,6 +26,4 @@ input:focus{outline:none;border-color:#1976d2;box-shadow:0 0 0 2px rgba(25,118,2
     <button type="submit" class="btn">Change Password</button>
   </form>
 {/if}
-<div class="links">
-  <a href="index.php?entryPoint=sticPortalLogout">Logout</a>{if $HOME_URL} | <a href="{$HOME_URL|escape}">Home</a>{/if}
-</div></div></body></html>
+<div class="links"><a href="index.php?entryPoint=sticPortalLogout">Logout</a></div></div></body></html>

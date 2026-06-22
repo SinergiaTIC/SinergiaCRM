@@ -217,8 +217,6 @@ $mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED'] = 'Password Changed';
 
 $mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES'] = 'Password Expires';
 
-$mod_strings['LBL_STIC_PORTAL_PASSWORD'] = 'Portal Password';
-
 $mod_strings['LBL_STIC_SEND_PORTAL_INVITATION'] = 'Send Portal Invitation';
 
 $mod_strings["LBL_STIC_PORTAL_ACTIONS"] = "Portal Actions";
@@ -230,4 +228,3 @@ $mod_strings['LBL_STIC_PORTAL_FAILED_ATTEMPTS_C_HELP'] = 'Number of consecutive 
 $mod_strings['LBL_STIC_PORTAL_LOCKED_UNTIL_C_HELP'] = 'If the account is locked due to failed attempts, the date and time when it will be automatically unlocked. Read-only.';
 $mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED_C_HELP'] = 'Date when the portal password was last changed. Read-only, updated automatically.';
 $mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES_C_HELP'] = 'Date when the portal password expires. After this date, the user will be forced to change it on login. Read-only.';
-$mod_strings['LBL_STIC_PORTAL_PASSWORD_C_HELP'] = 'Set or reset the portal password. Enter a new value to change the existing password. The password is never stored in plain text.';

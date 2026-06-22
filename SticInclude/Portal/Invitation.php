@@ -31,7 +31,12 @@ foreach ($idList as $id) {
     if (!$bean || !$bean->id) { $errors[] = "$id: not found"; continue; }
 
     $usernameField = 'stic_portal_username_c';
-    if (empty($bean->$usernameField)) { $errors[] = "$id: no username"; continue; }
+    $emailAddr = SticPortalAuthUtils::getPrimaryEmail($bean);
+    if (empty($emailAddr)) { $errors[] = "$id: no email address"; continue; }
+    if (empty($bean->$usernameField)) {
+        $bean->$usernameField = $emailAddr;
+        $bean->save();
+    }
 
     $token   = bin2hex(random_bytes(32));
     $expires = date('Y-m-d H:i:s', time() + 86400);
@@ -43,8 +48,7 @@ foreach ($idList as $id) {
         $redirectUri = $_REQUEST['redirect_uri'] ?? '';
         if (!empty($redirectUri)) $resetLink .= '&redirect_uri=' . urlencode($redirectUri);
 
-    $emailAddr = SticPortalAuthUtils::getPrimaryEmail($bean);
-    if (empty($emailAddr)) { $errors[] = "$id: no email"; continue; }
+    
 
     if ($module === 'Contacts') {
         $firstName = $bean->first_name ?? '';

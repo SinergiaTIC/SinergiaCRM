@@ -429,11 +429,13 @@ class SticPortalAuthUtils
             return array('success' => false, 'error_code' => 'ip_locked', 'error' => 'Too many attempts. Try again later');
         }
         if (!self::verifyPassword($password, $bean->stic_portal_hashed_c)) {
+            $GLOBALS['log']->fatal(__METHOD__ . " - Password verification FAILED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
             self::recordFailedAttempt($bean, $ipAddress);
             self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'invalid_credentials', 'password');
             $GLOBALS['log']->info(__METHOD__ . " - Invalid password for: $username");
             return array('success' => false, 'error_code' => 'invalid_credentials', 'error' => 'Invalid credentials');
         }
+        $GLOBALS['log']->fatal(__METHOD__ . " - Password verification PASSED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
         if (self::needsRehash($bean->stic_portal_hashed_c)) {
             $bean->stic_portal_hashed_c = self::hashPassword($password);
             $bean->save();
@@ -452,17 +454,25 @@ class SticPortalAuthUtils
     // ── Before-save logic hook ────────────────────────
     public static function processBeforeSave($bean)
     {
-        // Portal password: copy plaintext from virtual field to hashed_c for processing
-        if (!empty($bean->stic_portal_password_c)) {
-            $bean->stic_portal_hashed_c = $bean->stic_portal_password_c;
-            $bean->stic_portal_password_c = '';
-            $bean->stic_portal_force_pw_change_c = 1;
-        }
+        $logPrefix = __METHOD__ . "({$bean->module_dir}:{$bean->id}): ";
+        $GLOBALS['log']->fatal($logPrefix . "entered, hashed_c=" . (empty($bean->stic_portal_hashed_c) ? 'empty' : substr($bean->stic_portal_hashed_c, 0, 30) . '...') . ", fetched_hashed=" . ($bean->fetched_row['stic_portal_hashed_c'] ?? 'null'));
+
         if (empty($bean->stic_portal_hashed_c)) return;
         $submitted = $bean->stic_portal_hashed_c;
         $fetched   = $bean->fetched_row['stic_portal_hashed_c'] ?? null;
         if ($submitted !== $fetched) {
             $plain = $submitted;
+            $alreadyHashed = (strlen($plain) >= 60 && preg_match('/^\$2[ayb]\$\d{2}\$/', $plain));
+            if ($alreadyHashed) {
+                $GLOBALS['log']->fatal($logPrefix . "SKIP — already a bcrypt hash (len=" . strlen($plain) . "), not re-hashing");
+                $bean->stic_portal_password_changed_c = self::nowDb();
+                $bean->stic_portal_force_pw_change_c = 0;
+                self::setPasswordExpiration($bean);
+                $bean->stic_portal_reset_token_c = null;
+                $bean->stic_portal_reset_expires_c = null;
+                return;
+            }
+            $GLOBALS['log']->fatal($logPrefix . "plaintext (len=" . strlen($plain) . ") — validating and hashing");
             $violations = self::validatePasswordPolicy($plain);
             if (!empty($violations)) throw new RuntimeException('Password policy violations: ' . implode('; ', $violations));
             $oldHash = $fetched;
@@ -472,14 +482,8 @@ class SticPortalAuthUtils
             $bean->stic_portal_password_changed_c = self::nowDb();
             $bean->stic_portal_force_pw_change_c = 0;
             self::setPasswordExpiration($bean);
-            self::clearResetToken($bean);
-        } elseif (empty($fetched)) {
-            $violations = self::validatePasswordPolicy($submitted);
-            if (!empty($violations)) throw new RuntimeException('Password policy violations: ' . implode('; ', $violations));
-            $bean->stic_portal_hashed_c = self::hashPassword($submitted);
-            $bean->stic_portal_password_changed_c = self::nowDb();
-            $bean->stic_portal_force_pw_change_c = 0;
-            self::setPasswordExpiration($bean);
+            $bean->stic_portal_reset_token_c = null;
+            $bean->stic_portal_reset_expires_c = null;
         }
     }
 
@@ -550,7 +554,8 @@ class SticPortalAuthUtils
         $result = $db->limitQuery("SELECT * FROM $cstmTable WHERE id_c=" . $db->quoted($bean->id), 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
-            foreach ($row as $k => $v) { if ($k !== 'id_c') $bean->$k = $v; }
+            foreach ($row as $k => $v) { if ($k !== 'id_c') $bean->$k = $v;
+                    $bean->fetched_row[$k] = $v; }
         }
     }
 
@@ -599,15 +604,13 @@ class SticPortalAuthUtils
     {
         if ($newPassword !== $confirmPassword) return array('success' => false, 'error' => 'Passwords do not match');
         if (!self::verifyPassword($currentPassword, $bean->stic_portal_hashed_c)) return array('success' => false, 'error' => 'Current password is incorrect');
-        $violations = self::validatePasswordPolicy($newPassword);
-        if (!empty($violations)) return array('success' => false, 'error' => 'Password policy: ' . implode('; ', $violations));
-        if (self::isPasswordInHistory($bean, $newPassword)) return array('success' => false, 'error' => 'Password was used recently');
-        self::archivePasswordHistory($bean, $bean->stic_portal_hashed_c);
-        $bean->stic_portal_hashed_c = self::hashPassword($newPassword);
-        $bean->stic_portal_password_changed_c = self::nowDb();
+        $GLOBALS['log']->fatal(__METHOD__ . " - current password verified for {$bean->id}, setting hashed_c with plaintext");
+        // Set hashed_c directly with plaintext — processBeforeSave validates policy, checks history, and hashes
+        $bean->stic_portal_hashed_c = $newPassword;
         $bean->stic_portal_force_pw_change_c = 0;
-        self::setPasswordExpiration($bean);
+        self::archivePasswordHistory($bean, $bean->fetched_row['stic_portal_hashed_c'] ?? null);
         $bean->save();
+        $GLOBALS['log']->fatal(__METHOD__ . " - save done for {$bean->id}, hashed=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40));
         self::sendSecurityNotification($bean, 'password_changed');
         return array('success' => true);
     }

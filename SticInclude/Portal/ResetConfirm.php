@@ -30,15 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($violations)) {
             $error = 'Password policy: ' . implode('; ', $violations);
         } else {
-            $newHash = SticPortalAuthUtils::hashPassword($newPassword);
-            SticPortalAuthUtils::archivePasswordHistory($bean, $bean->stic_portal_hashed_c);
-            $bean->stic_portal_hashed_c = $newHash;
-            $bean->stic_portal_password_changed_c = gmdate('Y-m-d H:i:s');
+            // Set hashed_c directly with plaintext — processBeforeSave validates policy, checks history, and hashes
+            $bean->stic_portal_hashed_c = $newPassword;
             $bean->stic_portal_force_pw_change_c = 0;
-            SticPortalAuthUtils::setPasswordExpiration($bean);
-            SticPortalAuthUtils::clearResetToken($bean);
-            SticPortalAuthUtils::resetFailedAttempts($bean);
+            $bean->stic_portal_reset_token_c = null;
+            $bean->stic_portal_reset_expires_c = null;
+            $bean->stic_portal_failed_attempts_c = 0;
+            $bean->stic_portal_locked_until_c = null;
+            $GLOBALS['log']->fatal("ResetConfirm: about to save (single) with hashed_c=" . substr($newPassword, 0, 20) . "...");
             $bean->save();
+            $GLOBALS['log']->fatal("ResetConfirm: save done, hashed=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40));
             SticPortalAuthUtils::sendSecurityNotification($bean, 'password_changed');
             $success = true;
         }

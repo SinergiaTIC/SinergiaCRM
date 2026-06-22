@@ -2142,22 +2142,6 @@ $dictionary['Account']['fields']['stic_pa_enable_c'] = array(
     'popupHelp' => 'LBL_STIC_PA_ENABLE_HELP',
 );
 
-$dictionary['Account']['fields']['stic_portal_password_c'] = array(
-    'name' => 'stic_portal_password_c',
-    'vname' => 'LBL_STIC_PORTAL_PASSWORD',
-    'custom_module' => 'Accounts',
-    'type' => 'varchar',
-    'source' => 'non-db',
-    'len' => 255,
-    'required' => false,
-    'default' => '',
-    'audited' => false,
-    'importable' => false,
-    'massupdate' => false,
-    'reportable' => false,
-    'studio' => 'visible',
-    'popupHelp' => 'Set or reset the portal password. The value is hashed and never stored in plain text.',
-);
 
 $dictionary['Account']['fields']['stic_portal_username_c'] = array(
     'name' => 'stic_portal_username_c',
@@ -2426,23 +2410,3 @@ $dictionary['Account']['fields']['stic_portal_session_id_c'] = array(
     'inline_edit' => false,
 );
 
-$dictionary['Account']['fields']['stic_portal_password_c'] = array(
-    'name' => 'stic_portal_password_c',
-    'vname' => 'LBL_STIC_PORTAL_PASSWORD',
-    'custom_module' => 'Accounts',
-    'source' => 'non-db',
-    'type' => 'encrypt',
-    'dbType' => 'varchar',
-    'len' => 255,
-    'required' => false,
-    'audited' => false,
-    'importable' => false,
-    'massupdate' => false,
-    'reportable' => false,
-    'studio' => array(
-        'listview' => false,
-        'detailview' => false,
-        'editview' => true,
-        'searchview' => false,
-    ),
-);
