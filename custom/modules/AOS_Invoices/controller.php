@@ -510,6 +510,57 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
     }
 
     /**
+     * Action to query AEAT Verifactu for registered invoices.
+     */
+    public function action_QueryAeatInvoices()
+    {
+        global $mod_strings;
+
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert(
+                $mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_SEND_ERROR']
+            ));
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+            return;
+        }
+
+        if (!empty($_POST['query'])) {
+            $year = $_POST['year'] ?? date('Y');
+            $period = $_POST['period'] ?? date('m');
+            $serieNumber = $_POST['serie_number'] ?? '';
+            $dateFrom = $_POST['date_from'] ?? '';
+            $dateTo = $_POST['date_to'] ?? '';
+            $counterpartyNif = $_POST['counterparty_nif'] ?? '';
+            $counterpartyName = $_POST['counterparty_name'] ?? '';
+            $filterBySif = !empty($_POST['filter_by_sif']);
+
+            if (!empty($dateFrom)) {
+                $dateFrom = date('d-m-Y', strtotime($dateFrom));
+            }
+            if (!empty($dateTo)) {
+                $dateTo = date('d-m-Y', strtotime($dateTo));
+            }
+
+            $result = AOS_InvoicesUtils::queryAeatInvoices(
+                $year,
+                $period,
+                !empty($serieNumber) ? $serieNumber : null,
+                !empty($dateFrom) ? $dateFrom : null,
+                !empty($dateTo) ? $dateTo : null,
+                !empty($counterpartyNif) ? $counterpartyNif : null,
+                !empty($counterpartyName) ? $counterpartyName : null,
+                $filterBySif,
+            );
+
+            $_SESSION['VERIFACTU_QUERY_RESULT'] = $result;
+        }
+
+        $this->view = 'queryaeatinvoices';
+    }
+
+    /**
      * Override massupdate to pre-check invoices before mass delete.
      * Invoices already sent to AEAT are skipped, and a summary warning is shown.
      * Only applies to explicit UID selection (not "entire" mode).

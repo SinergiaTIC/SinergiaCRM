@@ -159,6 +159,44 @@ $mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] = 'Si se desea, un administra
 // Customer identification number validation
 $mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING'] = 'La Organización o Persona seleccionada no tiene informado el NIF/DNI/CIF. Por favor, edite el cliente y complete este campo antes de guardar la factura.';
 
+// Verifactu consultation with AEAT
+$mod_strings['LBL_VERIFACTU_QUERY_AEAT'] = 'Consultar facturas en AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_MENU'] = 'Facturas registradas en AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_TITLE'] = 'Consulta de facturas en AEAT (Verifactu)';
+$mod_strings['LBL_VERIFACTU_QUERY_YEAR'] = 'Ejercicio:';
+$mod_strings['LBL_VERIFACTU_QUERY_PERIOD'] = 'Periodo:';
+$mod_strings['LBL_VERIFACTU_QUERY_SERIE_NUMBER'] = 'Serie+Nº:';
+$mod_strings['LBL_VERIFACTU_QUERY_DATE_FROM'] = 'Fecha desde:';
+$mod_strings['LBL_VERIFACTU_QUERY_DATE_TO'] = 'Fecha hasta:';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF'] = 'NIF contraparte:';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NAME'] = 'Nombre contraparte:';
+$mod_strings['LBL_VERIFACTU_QUERY_BUTTON'] = 'Consultar AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_CANCEL'] = 'Cancelar';
+$mod_strings['LBL_VERIFACTU_QUERY_SERIE_NUMBER_PLACEHOLDER'] = 'Ej: STD/2026-00001';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF_PLACEHOLDER'] = '12345678Z';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NAME_PLACEHOLDER'] = 'Nombre del cliente';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_SERIE'] = 'Serie+Número';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_DATE'] = 'Fecha emisión';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_TYPE'] = 'Tipo';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_AMOUNT'] = 'Importe total';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_CLIENT'] = 'Cliente';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_CLIENT_NIF'] = 'NIF Cliente';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_STATUS'] = 'Estado AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_PRESENTATION'] = 'Presentación';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_ERROR'] = 'Error';
+$mod_strings['LBL_VERIFACTU_QUERY_RESULT'] = 'Resultado:';
+$mod_strings['LBL_VERIFACTU_QUERY_REGISTROS'] = 'registros';
+$mod_strings['LBL_VERIFACTU_QUERY_PAGINATION'] = 'Hay más resultados disponibles (paginación activa)';
+$mod_strings['LBL_VERIFACTU_QUERY_LAST_KEY'] = 'Última clave de paginación:';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_PREFIX'] = 'Error:';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_F1'] = 'Factura';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_F2'] = 'Simplificada';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_F3'] = 'Sustitución';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_RECTIFYING'] = 'Rectificativa';
+$mod_strings['LBL_VERIFACTU_QUERY_STATUS_CORRECT'] = 'Correcto';
+$mod_strings['LBL_VERIFACTU_QUERY_STATUS_ACCEPTED_WITH_ERRORS'] = 'Aceptado con errores';
+$mod_strings['LBL_VERIFACTU_QUERY_STATUS_CANCELLED'] = 'Anulado';
+
 // Block draft to non-emitted status change
 $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';
 

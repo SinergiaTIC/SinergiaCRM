@@ -2250,6 +2250,113 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Query AEAT Verifactu for registered invoices.
+     */
+    public static function queryAeatInvoices(
+        string $year,
+        string $period,
+        ?string $serieNumber = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+        ?string $counterpartyNif = null,
+        ?string $counterpartyName = null,
+        bool $filterBySif = true,
+    ): array {
+        global $sugar_config;
+
+        if (!self::isVerifactuActivated()) {
+            return [
+                'success' => false,
+                'message' => 'Verifactu no está activado.',
+            ];
+        }
+
+        try {
+            require_once 'custom/include/SticCertificateUtils.php';
+
+            $certComponents = SticCertificateUtils::getCertificateComponents();
+            if (!$certComponents) {
+                return [
+                    'success' => false,
+                    'message' => 'Certificado no encontrado. Por favor, cargue un certificado en Administración > Certificado Digital.',
+                ];
+            }
+
+            $issuerNif = SticCertificateUtils::getCertificateNif();
+            $issuerName = SticCertificateUtils::getCertificateHolderName();
+
+            if (empty($issuerNif) || empty($issuerName)) {
+                return [
+                    'success' => false,
+                    'message' => 'No se pudo extraer el NIF o nombre del certificado.',
+                ];
+            }
+
+            $certificateType = SticCertificateUtils::isEntitySeal();
+
+            require_once 'modules/stic_Settings/Utils.php';
+            $useProduction = (stic_SettingsUtils::getSetting('VERIFACTU_TEST') == '1' ? false : true);
+
+            require_once 'custom/include/SticAeatQueryClient.php';
+            $system = self::buildComputerSystem($issuerNif, $issuerName);
+            $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
+
+            $consultaClient = new SticAeatQueryClient($system, $taxpayer);
+
+            $consultaClient->setEntitySeal((bool) $certificateType);
+
+            $certificate = $certComponents['certificate'];
+            $privateKey = $certComponents['private_key'];
+            $caChain = $certComponents['ca_chain'];
+
+            $cleanPemBlock = function ($str) {
+                if (preg_match('/(-----BEGIN (?:CERTIFICATE|.*?PRIVATE KEY.*?)-----.*?-----END (?:CERTIFICATE|.*?PRIVATE KEY.*?)-----)/s', $str, $matches)) {
+                    return trim($matches[1]);
+                }
+                return trim($str);
+            };
+
+            $pemContent = $cleanPemBlock($certificate) . "\n" . $cleanPemBlock($privateKey);
+            if (!empty($caChain)) {
+                $pemContent .= "\n" . $cleanPemBlock($caChain);
+            }
+
+            $tempPemFile = tempnam(sys_get_temp_dir(), 'stic_verifactu_cons_');
+            file_put_contents($tempPemFile, $pemContent);
+
+            $consultaClient->setCertificate($tempPemFile, null);
+            $consultaClient->setProduction($useProduction);
+
+            $result = $consultaClient->query(
+                $year,
+                $period,
+                $serieNumber,
+                $dateFrom,
+                $dateTo,
+                $counterpartyName,
+                $counterpartyNif,
+                $filterBySif ? $system : null,
+            );
+
+            unlink($tempPemFile);
+
+            return [
+                'success' => true,
+                'data' => $result,
+            ];
+        } catch (\Throwable $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error querying AEAT: ' . $e->getMessage());
+            if (isset($tempPemFile) && file_exists($tempPemFile)) {
+                unlink($tempPemFile);
+            }
+            return [
+                'success' => false,
+                'message' => 'Error al consultar AEAT: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Check and create default series if missing.
      * Returns the message HTML if series were created, null otherwise.
      * To be called from view preDisplay() methods.
