@@ -64,7 +64,7 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
         $acquirerBin = str_pad($config['ACQUIRER_BIN'] ?? '', 10, '0', STR_PAD_LEFT);
         $terminal = str_pad($config['TERMINAL'] ?? '001', 8, '0', STR_PAD_LEFT);
         
-        $okURL = $this->getReturnUrl('success');
+        $okURL = $this->getReturnUrl('ok');
         $koURL = $this->getReturnUrl('error');
 
         $formHtml = $this->renderTemplate('CecaFirstStep', [
