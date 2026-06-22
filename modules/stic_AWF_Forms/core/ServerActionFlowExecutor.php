@@ -167,10 +167,8 @@ class ServerActionFlowExecutor {
                 // Execute the action
                 $executionResult = $actionExecutor->execute($this->context, $actionConfig);
                 $actionExecutor->performTerminal($this->context, $executionResult);
-                
-                // Terminate the web thread cleanly after the first matching terminal action is executed
-                exit; 
-                
+                break;
+
             } catch (\Throwable $t) {
                 $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Failed to evaluate or execute terminal action '{$actionConfig->name}': " . $t->getMessage());
             }

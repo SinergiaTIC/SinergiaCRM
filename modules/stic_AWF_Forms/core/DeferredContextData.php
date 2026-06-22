@@ -26,6 +26,30 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
+ * Defines the context from which a Deferred Action will resume.
+ * This determines what type of child actions (sub-flows) will be allowed to be nested.
+ */
+enum DeferredResumptionContext: string {
+    /**
+     * The flow resumes in the background via an S2S (Webhook) call. No human user is present. 
+     * It does NOT support child terminal actions.
+     */
+    case SERVER_WEBHOOK = 'server_webhook'; 
+
+    /**
+     * The workflow is restarted by a different person than the one who filled out the form (e.g., CRM Administrator). 
+     * It does NOT support endpoint actions intended for the original user.
+     */
+    case THIRD_PARTY_HUMAN = 'third_party_human';
+
+    /**
+     * The workflow resumes synchronously with the user who filled out the form.
+     * It supports all types of actions (Terminal and other Deferred).
+     */
+    case ORIGINAL_USER = 'original_user';
+}
+
+/**
 * Data Transfer Object to manage the execution context of a Deferred Ticket.
 * Centralizes serialization/deserialization avoiding arrays with hardcoded keys.
 */

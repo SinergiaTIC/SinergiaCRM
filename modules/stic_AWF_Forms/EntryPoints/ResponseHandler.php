@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once "modules/stic_AWF_Forms/core/includes.php";
 
 /**
- * EntryPoint: ResponseHandler
+ * EntryPoint: stic_AWF_responseHandler
  * Entry point class responsible for handling form responses submitted by users. 
  * It processes the incoming data, performs validations, detects spam, saves the response, and executes the defined action flows based on the form configuration.
  */
