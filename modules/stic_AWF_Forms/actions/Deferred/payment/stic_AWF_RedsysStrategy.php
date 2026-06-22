@@ -97,7 +97,7 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
         $redsys->setParameter("DS_MERCHANT_MERCHANTNAME", $config['MERCHANT_NAME'] ?? '');
         $redsys->setParameter("DS_MERCHANT_URL", $this->getCallbackUrl('redsys'));
         $redsys->setParameter("DS_MERCHANT_URLKO", $this->getReturnUrl('error'));
-        $redsys->setParameter("DS_MERCHANT_URLOK", $this->getReturnUrl('success'));
+        $redsys->setParameter("DS_MERCHANT_URLOK", $this->getReturnUrl('ok'));
 
         if (strpos($paymentMethod, 'bizum') === 0) {
             $redsys->setParameter('DS_MERCHANT_PAYMETHODS', 'z');
