@@ -73,6 +73,8 @@ $mod_strings['LBL_NUMBER_HELP'] = 'El número de factura se asigna automáticame
 $mod_strings['LBL_VERIFACTU_SERIES_NUMBER_TOO_LONG'] = 'El número de factura generado excede los 60 caracteres permitidos por Verifactu.';
 $mod_strings['LBL_VERIFACTU_SUBMITTED_AT'] = 'Fecha de envío a Verifactu';
 $mod_strings['LBL_VERIFACTU_SUBMITTED_AT_HELP'] = 'Fecha y hora en que esta factura fue enviada al sistema Verifactu para su validación y registro ante la AEAT.';
+$mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_WARNING'] = 'Se han eliminado %d facturas. Las siguientes facturas no se han podido eliminar porque ya habían sido enviadas a la AEAT: %s.';
+$mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_BLOCKED'] = 'No se ha eliminado ninguna factura porque todas las seleccionadas ya habían sido enviadas a la AEAT: %s.';
 
 
 $mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE'] = 'Tipo de operación';

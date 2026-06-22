@@ -459,6 +459,12 @@ class AOS_InvoicesHook
     {
         global $mod_strings;
 
+        // Only block deletion when Verifactu is activated
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            return;
+        }
+
         if (!empty($bean->verifactu_aeat_status_c) &&
             in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
 

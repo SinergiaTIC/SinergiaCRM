@@ -509,4 +509,87 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
     }
 
+    /**
+     * Override massupdate to pre-check invoices before mass delete.
+     * Invoices already sent to AEAT are skipped, and a summary warning is shown.
+     * Only applies to explicit UID selection (not "entire" mode).
+     */
+    public function action_massupdate()
+    {
+        global $mod_strings;
+
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            parent::action_massupdate();
+            return;
+        }
+
+        if (!empty($_REQUEST['Delete']) && !empty($_REQUEST['uid'])) {
+            $ids = explode(',', $_REQUEST['uid']);
+            $allowedIds = [];
+            $blockedInvoices = [];
+
+            foreach ($ids as $id) {
+                $id = trim($id);
+                if (empty($id)) {
+                    continue;
+                }
+                $invoice = BeanFactory::getBean('AOS_Invoices', $id);
+                if (!empty($invoice->verifactu_aeat_status_c)
+                    && in_array($invoice->verifactu_aeat_status_c, ['accepted', 'emitted'])) {
+                    $invoiceLabel = !empty($invoice->number) ? $invoice->number : $id;
+                    $blockedInvoices[] = '<a href="index.php?module=AOS_Invoices&action=DetailView&record=' . $id . '">' . $invoiceLabel . '</a>';
+                } else {
+                    $allowedIds[] = $id;
+                }
+            }
+
+            if (!empty($blockedInvoices)) {
+                $_SESSION['VERIFACTU_BLOCKED_DELETES'] = [
+                    'deletedCount' => count($allowedIds),
+                    'invoices' => $blockedInvoices,
+                ];
+
+                if (empty($allowedIds)) {
+                    // All blocked - skip mass update and show warning
+                    if (empty($mod_strings)) {
+                        $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                    }
+                    $errorMsg = sprintf(
+                        $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_BLOCKED'],
+                        implode(', ', $blockedInvoices)
+                    );
+                    $styledMsg = '<div class="alert alert-warning" style="margin: 10px 0; padding: 12px; border-left: 4px solid #f0ad4e; background-color: #fcf8e3;">' . $errorMsg . '</div>';
+                    SugarApplication::appendErrorMessage($styledMsg);
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+                    return;
+                }
+
+                // Some blocked - update request to only process allowed invoices
+                $_REQUEST['uid'] = implode(',', $allowedIds);
+                $_POST['mass'] = $allowedIds;
+            }
+        }
+
+        // Process mass update with filtered list
+        parent::action_massupdate();
+
+        // After mass update, show warning for blocked invoices
+        if (!empty($_SESSION['VERIFACTU_BLOCKED_DELETES'])) {
+            $blockedData = $_SESSION['VERIFACTU_BLOCKED_DELETES'];
+            unset($_SESSION['VERIFACTU_BLOCKED_DELETES']);
+
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            $errorMsg = sprintf(
+                $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_WARNING'],
+                $blockedData['deletedCount'],
+                implode(', ', $blockedData['invoices'])
+            );
+            $styledMsg = '<div class="alert alert-warning" style="margin: 10px 0; padding: 12px; border-left: 4px solid #f0ad4e; background-color: #fcf8e3;">' . $errorMsg . '</div>';
+            SugarApplication::appendErrorMessage($styledMsg);
+        }
     }
+
+}
