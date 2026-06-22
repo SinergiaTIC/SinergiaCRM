@@ -482,8 +482,16 @@ $mod_strings = array (
 
 
   // -- DEFERRED ACTIONS --
+  // EmailConfirmationAction
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su dirección de correo electrónico.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'La plantilla de correo electrónico deberá tener la variable {::confirmation_url::} en el cuerpo del mensaje para que se genere el enlace de confirmación.',
+
   // PaymentRouterAction
-  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
+  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un bloque de datos en una plataforma externa.',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de Pago',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos con el Compromiso de Pago para realizar su pago en la plataforma externa.',

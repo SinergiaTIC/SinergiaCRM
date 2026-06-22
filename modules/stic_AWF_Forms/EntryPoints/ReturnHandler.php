@@ -29,7 +29,7 @@ require_once "modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php";
 require_once "modules/stic_Web_Forms/Catcher/FormConfig.php";
 
 /**
- * EntryPoint: ReturnHandler
+ * EntryPoint: stic_AWF_returnHandler
  * Handles the user return from an external platform (e.g. a payment gateway).
  *
  * When a deferred action (like PaymentRouterAction) redirects the user to an
@@ -49,23 +49,23 @@ class ReturnHandler
 {
     public function run(): void
     {
+        // Get Token
         $token = $_REQUEST['token'] ?? '';
-
         if (empty($token)) {
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Invalid request: missing token");
             stic_AWFUtils::renderGenericResponseError(null);
             return;
         }
 
+        // Get Ticket from token
+        /** @var stic_AWF_Deferred_Tickets $ticket */
         $ticket = BeanFactory::getBean('stic_AWF_Deferred_Tickets');
-        $ticket->retrieve_by_string_fields(['token_hash' => $token]);
-
+        $ticket->retrieve_by_string_fields(['token_hash' => $token, 'deleted' => 0]);
         if (empty($ticket->id)) {
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Invalid request: no ticket found for token");
             stic_AWFUtils::renderGenericResponseError(null);
             return;
         }
-
         $ticketStatus = $ticket->status ?? 'pending';
 
         // For pending/processing, show a waiting page (no flow to execute yet)
@@ -98,7 +98,7 @@ class ReturnHandler
                 stic_AWFUtils::renderGenericResponseError($context->formConfig);
             }
         } catch (Exception $e) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ReturnHandler: " . $e->getMessage());
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ReturnHandler exception: " . $e->getMessage());
             stic_AWFUtils::renderGenericResponseError(null);
         }
     }
