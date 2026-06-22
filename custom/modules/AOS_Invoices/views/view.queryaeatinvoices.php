@@ -131,19 +131,6 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                         }
                     }
 
-                    $renderRegs = [];
-                    foreach ($registros as $i => $r) {
-                        if (isset($childOfParentInSet[$i])) {
-                            continue;
-                        }
-                        $renderRegs[] = ['reg' => $r, 'depth' => 0, 'idx' => $i];
-                        if (isset($children[$i])) {
-                            foreach ($children[$i] as $cIdx) {
-                                $renderRegs[] = ['reg' => $registros[$cIdx], 'depth' => 1, 'idx' => $cIdx];
-                            }
-                        }
-                    }
-
                     $parentsWithChildren = [];
                     foreach ($registros as $i => $r) {
                         if (isset($children[$i])) {
@@ -151,20 +138,32 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                         }
                     }
 
+                    $renderRegs = [];
+                    foreach ($registros as $i => $r) {
+                        if (isset($childOfParentInSet[$i])) {
+                            continue;
+                        }
+                        $stack = [[$i, 0]];
+                        while (!empty($stack)) {
+                            [$currIdx, $currDepth] = array_pop($stack);
+                            $renderRegs[] = ['reg' => $registros[$currIdx], 'depth' => $currDepth, 'idx' => $currIdx];
+                            if ($nestRectified && isset($children[$currIdx])) {
+                                $childList = $children[$currIdx];
+                                for ($c = count($childList) - 1; $c >= 0; $c--) {
+                                    $stack[] = [$childList[$c], $currDepth + 1];
+                                }
+                            }
+                        }
+                    }
+
                     $tableRows = [];
                     $rowClass = 'oddListRowS1';
 
                     foreach ($renderRegs as $item) {
-                        if ($nestRectified) {
-                            $reg = $item['reg'];
-                            $depth = $item['depth'];
-                            $idx = $item['idx'];
-                            $isParentRectified = $depth === 0 && isset($parentsWithChildren[$idx]);
-                        } else {
-                            $reg = $item;
-                            $depth = 0;
-                            $isParentRectified = false;
-                        }
+                        $reg = $item['reg'];
+                        $depth = $item['depth'];
+                        $idx = $item['idx'];
+                        $isParentRectified = $nestRectified && isset($parentsWithChildren[$idx]);
 
                         $idFactura = $reg['idFactura'] ?? [];
                         $datos = $reg['datos'] ?? [];
@@ -186,7 +185,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
 
                         $isChild = $depth > 0;
                         $isCancelled = $statusReg === 'Anulado';
-                        $isDimmed = !$isChild && $isParentRectified;
+                        $isDimmed = $isParentRectified;
 
                         $typeLabel = match ($invoiceTypeRaw) {
                             'F1' => $mod_strings['LBL_VERIFACTU_QUERY_TYPE_F1'],
@@ -229,15 +228,17 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                             $rowClass = ($rowClass === 'oddListRowS1') ? 'evenListRowS1' : 'oddListRowS1';
                         }
 
-                        $seriePrefix = $isChild ? '<span style="margin-left: 20px;">↳ </span>' : '';
+                        $seriePrefix = $isChild ? '<span style="margin-left: ' . ($depth * 20) . 'px;">↳ </span>' : '';
                         $tdPad = $isChild ? 'padding: 4px 8px;' : 'padding: 6px 8px;';
                         $rowStyle = '';
                         if ($isCancelled) {
                             $rowStyle = 'background-color: #f2dede;';
-                        } elseif ($isChild) {
-                            $rowStyle = 'font-size: 11px; background-color: #fafafa;';
-                        } elseif ($isDimmed) {
-                            $rowStyle = 'opacity: 0.55;';
+                        }
+                        if ($isChild) {
+                            $rowStyle .= 'font-size: 11px; background-color: #fafafa;';
+                        }
+                        if ($isDimmed && !$isCancelled) {
+                            $rowStyle .= ' opacity: 0.55;';
                         }
 
                         $tableRows[] = [
