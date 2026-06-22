@@ -197,6 +197,8 @@ $mod_strings['LBL_VERIFACTU_QUERY_STATUS_CORRECT'] = 'Correcto';
 $mod_strings['LBL_VERIFACTU_QUERY_STATUS_ACCEPTED_WITH_ERRORS'] = 'Aceptado con errores';
 $mod_strings['LBL_VERIFACTU_QUERY_STATUS_CANCELLED'] = 'Anulado';
 $mod_strings['LBL_VERIFACTU_QUERY_NEST_RECTIFIED'] = 'Anidar facturas rectificativas';
+$mod_strings['LBL_VERIFACTU_QUERY_LINK_TOOLTIP'] = 'Abrir factura en SinergiaCRM';
+$mod_strings['LBL_VERIFACTU_QUERY_NO_LINK_TOOLTIP'] = 'Factura no registrada en SinergiaCRM';
 
 // Block draft to non-emitted status change
 $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';
