@@ -25,45 +25,20 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-#[\AllowDynamicProperties]
-class OAuth2ClientsViewDetail extends ViewDetail
-{
-    /** @var string */
-    public $formName;
+require_once 'modules/OAuth2Clients/views/view.detail.php';
 
-    /** @see SugarView::preDisplay() */
+/**
+ * Adds SinergiaCRM portal (portal_authorization_code) support
+ * by setting the detailportal type before delegating to parent.
+ */
+class CustomOAuth2ClientsViewDetail extends OAuth2ClientsViewDetail
+{
     public function getMetaDataFile()
     {
-        $this->setViewType();
-        return parent::getMetaDataFile();
-    }
-
-    /**
-     * Determine which detail view definition to use based on grant type.
-     * Adds SinergiaCRM portal (portal_authorization_code) support.
-     */
-    private function setViewType()
-    {
-        switch ($this->bean->allowed_grant_type) {
-            case 'password':
-                $this->type = 'detailpassword';
-                $this->formName = 'DetailPassword';
-                break;
-            case 'client_credentials':
-                $this->type = 'detailcredentials';
-                $this->formName = 'DetailCredentials';
-                break;
-            case 'portal_authorization_code':
-                $this->type = 'detailportal';
-                $this->formName = 'DetailPortal';
-                break;
+        if ($this->bean && $this->bean->allowed_grant_type === 'portal_authorization_code') {
+            $this->type = 'detailportal';
+            $this->formName = 'DetailPortal';
         }
-    }
-
-    /** @inheritdoc */
-    public function display()
-    {
-        $this->dv->formName = $this->formName;
-        parent::display();
+        return parent::getMetaDataFile();
     }
 }

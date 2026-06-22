@@ -118,7 +118,7 @@ switch (viewType()) {
     createDetailViewButton(buttons.pdfEmail);
 
     // Portal Actions button
-    if (STIC.portalClients && typeof createDetailViewButton === 'function') {
+    if (STIC.portalClients && STIC.portalClients.length > 0) {
         createDetailViewButton({
             id: 'bt_portal_actions',
             title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',

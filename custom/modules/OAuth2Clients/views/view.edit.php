@@ -25,61 +25,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-#[\AllowDynamicProperties]
-class OAuth2ClientsViewEdit extends ViewEdit
-{
-    /** @var string */
-    public $formName;
+require_once 'modules/OAuth2Clients/views/view.edit.php';
 
-    /** @see SugarView::preDisplay() */
+/**
+ * Adds SinergiaCRM portal (portal_authorization_code) support
+ * by setting the editportal type before delegating to parent.
+ */
+class CustomOAuth2ClientsViewEdit extends OAuth2ClientsViewEdit
+{
     public function getMetaDataFile()
     {
-        $this->setViewType();
+        if ($this->bean && $this->bean->allowed_grant_type === 'portal_authorization_code') {
+            $this->type = 'editportal';
+            $this->formName = 'EditPortal';
+        } elseif (!empty($_REQUEST['action']) && $_REQUEST['action'] === 'EditViewPortal') {
+            $this->type = 'editportal';
+            $this->formName = 'EditPortal';
+        }
         return parent::getMetaDataFile();
-    }
-
-    /**
-     * Determine which edit view definition to use based on grant type.
-     * Adds SinergiaCRM portal (portal_authorization_code) support.
-     */
-    private function setViewType()
-    {
-        switch ($this->bean->allowed_grant_type) {
-            case 'password':
-                $this->type = 'editpassword';
-                $this->formName = 'EditPassword';
-                break;
-            case 'client_credentials':
-                $this->type = 'editcredentials';
-                $this->formName = 'EditCredentials';
-                break;
-            case 'portal_authorization_code':
-                $this->type = 'editportal';
-                $this->formName = 'EditPortal';
-                break;
-        }
-        if (!empty($_REQUEST['action'])) {
-            switch ($_REQUEST['action']) {
-                case 'EditViewPassword':
-                    $this->type = 'editpassword';
-                    $this->formName = 'EditPassword';
-                    break;
-                case 'EditViewCredentials':
-                    $this->type = 'editcredentials';
-                    $this->formName = 'EditCredentials';
-                    break;
-                case 'EditViewPortal':
-                    $this->type = 'editportal';
-                    $this->formName = 'EditPortal';
-                    break;
-            }
-        }
-    }
-
-    /** @inheritdoc */
-    public function display()
-    {
-        $this->ev->formName = $this->formName;
-        parent::display();
     }
 }
