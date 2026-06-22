@@ -240,6 +240,15 @@ class SticAeatQueryClient
                     }
                 }
 
+                $facturaRectificadaEl = $datosEl->get("{{$nsRes}}FacturaRectificada");
+                if ($facturaRectificadaEl) {
+                    $registro['datos']['facturaRectificada'] = [
+                        'idEmisor' => $this->getChildText($facturaRectificadaEl, $nsInfo, 'IDEmisorFactura'),
+                        'numSerie' => $this->getChildText($facturaRectificadaEl, $nsInfo, 'NumSerieFactura'),
+                        'fechaExpedicion' => $this->getChildText($facturaRectificadaEl, $nsInfo, 'FechaExpedicionFactura'),
+                    ];
+                }
+
                 $destinatariosEl = $datosEl->get("{{$nsRes}}Destinatarios");
                 if ($destinatariosEl) {
                     $clientes = [];

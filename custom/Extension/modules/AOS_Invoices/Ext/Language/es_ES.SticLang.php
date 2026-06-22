@@ -196,6 +196,7 @@ $mod_strings['LBL_VERIFACTU_QUERY_TYPE_RECTIFYING'] = 'Rectificativa';
 $mod_strings['LBL_VERIFACTU_QUERY_STATUS_CORRECT'] = 'Correcto';
 $mod_strings['LBL_VERIFACTU_QUERY_STATUS_ACCEPTED_WITH_ERRORS'] = 'Aceptado con errores';
 $mod_strings['LBL_VERIFACTU_QUERY_STATUS_CANCELLED'] = 'Anulado';
+$mod_strings['LBL_VERIFACTU_QUERY_NEST_RECTIFIED'] = 'Anidar facturas rectificativas';
 
 // Block draft to non-emitted status change
 $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';

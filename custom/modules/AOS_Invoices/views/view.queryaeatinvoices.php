@@ -85,6 +85,15 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         echo '<input type="hidden" name="filter_by_sif" value="1">';
 
         echo '<tr>';
+        echo '<td colspan="6" style="padding-top: 10px;">';
+        $nestChecked = !empty($_POST['nest_rectified']) ? ' checked' : '';
+        echo '<label style="font-weight: normal; cursor: pointer;">';
+        echo '<input type="checkbox" name="nest_rectified" value="1"' . $nestChecked . ' style="margin-right: 6px;"> ' . $mod_strings['LBL_VERIFACTU_QUERY_NEST_RECTIFIED'];
+        echo '</label>';
+        echo '</td>';
+        echo '</tr>';
+
+        echo '<tr>';
         echo '<td colspan="6" style="padding-top: 15px; text-align: center;">';
                         echo '<button type="submit" class="button primary" style="padding: 8px 30px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
                             <span class="suitepicon suitepicon-action-search"></span> ' . $mod_strings['LBL_VERIFACTU_QUERY_BUTTON'] . '
@@ -136,8 +145,60 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                     echo '</thead>';
                     echo '<tbody>';
 
+                    $nestRectified = !empty($_POST['nest_rectified']);
+                    $renderRegs = $registros;
+
+                    if ($nestRectified) {
+                        $byNumSerie = [];
+                        foreach ($registros as $i => $r) {
+                            $ns = $r['idFactura']['numSerie'] ?? '';
+                            if ($ns !== '') {
+                                $byNumSerie[$ns] = $i;
+                            }
+                        }
+
+                        $children = [];
+                        $childOfParentInSet = [];
+                        foreach ($registros as $i => $r) {
+                            $tipo = $r['datos']['tipoFactura'] ?? '';
+                            $isRectificativa = in_array($tipo, ['R1', 'R2', 'R3', 'R4', 'R5'], true);
+                            if (!$isRectificativa) {
+                                continue;
+                            }
+                            $parentNs = $r['datos']['facturaRectificada']['numSerie']
+                                ?? $r['datos']['encadenamiento']['numSerie']
+                                ?? null;
+                            if ($parentNs !== null && isset($byNumSerie[$parentNs])) {
+                                $pIdx = $byNumSerie[$parentNs];
+                                $children[$pIdx][] = $i;
+                                $childOfParentInSet[$i] = true;
+                            }
+                        }
+
+                        $renderRegs = [];
+                        foreach ($registros as $i => $r) {
+                            if (isset($childOfParentInSet[$i])) {
+                                continue;
+                            }
+                            $renderRegs[] = ['reg' => $r, 'depth' => 0, 'idx' => $i];
+                            if (isset($children[$i])) {
+                                foreach ($children[$i] as $cIdx) {
+                                    $renderRegs[] = ['reg' => $registros[$cIdx], 'depth' => 1, 'idx' => $cIdx];
+                                }
+                            }
+                        }
+                    }
+
+                    $parentsWithChildren = [];
+                    foreach ($registros as $i => $r) {
+                        if (isset($children[$i])) {
+                            $parentsWithChildren[$i] = true;
+                        }
+                    }
+
                     $rowClass = 'oddListRowS1';
-                    foreach ($registros as $reg) {
+
+                    $renderRow = function (array $reg, int $depth, bool $isParentRectified = false) use ($mod_strings, &$rowClass) {
                         $idFactura = $reg['idFactura'] ?? [];
                         $datos = $reg['datos'] ?? [];
                         $estado = $reg['estado'] ?? [];
@@ -151,11 +212,11 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                         $clientes = $datos['clientes'] ?? [];
                         $nombreCliente = htmlspecialchars($clientes[0]['nombre'] ?? '');
                         $nifCliente = htmlspecialchars($clientes[0]['nif'] ?? '');
-                        $nifPresentador = htmlspecialchars($presentacion['nifPresentador'] ?? '');
                         $timestamp = htmlspecialchars($presentacion['timestamp'] ?? '');
                         $codigoError = htmlspecialchars($estado['codigoError'] ?? '');
                         $descError = htmlspecialchars($estado['descripcionError'] ?? '');
 
+                        $isChild = $depth > 0;
                         $tipoLabel = match ($tipoFactura) {
                             'F1' => $mod_strings['LBL_VERIFACTU_QUERY_TYPE_F1'],
                             'F2' => $mod_strings['LBL_VERIFACTU_QUERY_TYPE_F2'],
@@ -181,23 +242,44 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                             }
                         }
 
-                        $rowClass = ($rowClass === 'oddListRowS1') ? 'evenListRowS1' : 'oddListRowS1';
+                        if (!$isChild && !$isDimmed) {
+                            $rowClass = ($rowClass === 'oddListRowS1') ? 'evenListRowS1' : 'oddListRowS1';
+                        }
 
-                        echo '<tr class="' . $rowClass . '">';
-                        echo '<td style="padding: 6px 8px;">' . $serieNum . '</td>';
-                        echo '<td style="padding: 6px 8px; white-space: nowrap;">' . $fechaExp . '</td>';
-                        echo '<td style="padding: 6px 8px;">' . $tipoLabel . '</td>';
-                        echo '<td style="padding: 6px 8px; text-align: right;">' . $importeTotal . '</td>';
-                        echo '<td style="padding: 6px 8px; max-width: 180px; overflow: hidden; text-overflow: ellipsis;">' . $nombreCliente . '</td>';
-                        echo '<td style="padding: 6px 8px; white-space: nowrap;">' . $nifCliente . '</td>';
-                        echo '<td style="padding: 6px 8px;">' . $estadoBadge . '</td>';
-                        echo '<td style="padding: 6px 8px; white-space: nowrap; font-size: 11px;">' . $fechaCorta . '</td>';
+                        $isDimmed = !$isChild && $isParentRectified;
+                        $seriePrefix = $isChild ? '<span style="margin-left: 20px;">↳ </span>' : '';
+                        $tdPad = $isChild ? 'padding: 4px 8px;' : 'padding: 6px 8px;';
+                        $rowStyle = '';
+                        if ($isChild) {
+                            $rowStyle = 'font-size: 11px; background-color: #fafafa;';
+                        } elseif ($isDimmed) {
+                            $rowStyle = 'opacity: 0.55;';
+                        }
+
+                        echo '<tr class="' . $rowClass . '" style="' . $rowStyle . '">';
+                        echo '<td style="' . $tdPad . '">' . $seriePrefix . $serieNum . '</td>';
+                        echo '<td style="' . $tdPad . 'white-space: nowrap;">' . $fechaExp . '</td>';
+                        echo '<td style="' . $tdPad . '">' . $tipoLabel . '</td>';
+                        echo '<td style="' . $tdPad . 'text-align: right;">' . $importeTotal . '</td>';
+                        echo '<td style="' . $tdPad . 'max-width: 180px; overflow: hidden; text-overflow: ellipsis;">' . $nombreCliente . '</td>';
+                        echo '<td style="' . $tdPad . 'white-space: nowrap;">' . $nifCliente . '</td>';
+                        echo '<td style="' . $tdPad . '">' . $estadoBadge . '</td>';
+                        echo '<td style="' . $tdPad . 'white-space: nowrap; font-size: 11px;">' . $fechaCorta . '</td>';
                         $errorDisplay = '';
                         if (!empty($codigoError)) {
                             $errorDisplay = '[' . $codigoError . '] ' . $descError;
                         }
-                        echo '<td style="padding: 6px 8px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; font-size: 11px;">' . htmlspecialchars($errorDisplay) . '</td>';
+                        echo '<td style="' . $tdPad . 'max-width: 200px; overflow: hidden; text-overflow: ellipsis; font-size: 11px;">' . htmlspecialchars($errorDisplay) . '</td>';
                         echo '</tr>';
+                    };
+
+                    foreach ($renderRegs as $item) {
+                        if ($nestRectified) {
+                            $pRectified = $item['depth'] === 0 && isset($parentsWithChildren[$item['idx']]);
+                            $renderRow($item['reg'], $item['depth'], $pRectified);
+                        } else {
+                            $renderRow($item, 0);
+                        }
                     }
 
                     echo '</tbody>';
