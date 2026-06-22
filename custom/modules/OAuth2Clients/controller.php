@@ -25,41 +25,19 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class OAuth2ClientsController extends SugarController
+require_once 'modules/OAuth2Clients/controller.php';
+
+class CustomOAuth2ClientsController extends OAuth2ClientsController
 {
     /**
-     * @inheritdoc
+     * Redirect existing portal clients to the portal edit view.
      */
     public function action_EditView()
     {
-        if (empty($_REQUEST['record']) || !$this->bean->fetched_row) {
-            parent::action_EditView();
-            return;
+        if (!empty($this->bean->fetched_row) && $this->bean->allowed_grant_type === 'portal_authorization_code') {
+            SugarApplication::redirect('index.php?module=OAuth2Clients&action=EditViewPortal&record=' . $this->bean->id);
         }
-        switch ($this->bean->allowed_grant_type) {
-            case 'password':
-                SugarApplication::redirect('index.php?module=OAuth2Clients&action=EditViewPassword&record=' . $this->bean->id);
-                break;
-            case 'client_credentials':
-                SugarApplication::redirect('index.php?module=OAuth2Clients&action=EditViewCredentials&record=' . $this->bean->id);
-                break;
-            case 'portal_authorization_code':
-                SugarApplication::redirect('index.php?module=OAuth2Clients&action=EditViewPortal&record=' . $this->bean->id);
-                break;
-            default:
-                parent::action_EditView();
-                break;
-        }
-    }
-
-    public function action_EditViewPassword()
-    {
-        $this->view = 'edit';
-    }
-
-    public function action_EditViewCredentials()
-    {
-        $this->view = 'edit';
+        parent::action_EditView();
     }
 
     /** SinergiaCRM — Portal authentication (portal_authorization_code) OAuth2 clients. */

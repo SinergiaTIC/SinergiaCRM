@@ -27,20 +27,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once 'modules/OAuth2Clients/views/view.edit.php';
 
-/**
- * Adds SinergiaCRM portal (portal_authorization_code) support
- * by setting the editportal type before delegating to parent.
- */
 class CustomOAuth2ClientsViewEdit extends OAuth2ClientsViewEdit
 {
     public function getMetaDataFile()
     {
         if ($this->bean && $this->bean->allowed_grant_type === 'portal_authorization_code') {
             $this->type = 'editportal';
-            $this->formName = 'EditPortal';
         } elseif (!empty($_REQUEST['action']) && $_REQUEST['action'] === 'EditViewPortal') {
+            $this->bean->allowed_grant_type = 'portal_authorization_code';
             $this->type = 'editportal';
-            $this->formName = 'EditPortal';
         }
         return parent::getMetaDataFile();
     }
