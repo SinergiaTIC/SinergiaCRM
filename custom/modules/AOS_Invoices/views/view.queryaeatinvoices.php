@@ -86,7 +86,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
 
         echo '<tr>';
         echo '<td colspan="6" style="padding-top: 10px;">';
-        $nestChecked = !empty($_POST['nest_rectified']) ? ' checked' : '';
+        $nestChecked = (!empty($_POST['query']) && !empty($_POST['nest_rectified'])) || empty($_POST['query']) ? ' checked' : '';
         echo '<label style="font-weight: normal; cursor: pointer;">';
         echo '<input type="checkbox" name="nest_rectified" value="1"' . $nestChecked . ' style="margin-right: 6px;"> ' . $mod_strings['LBL_VERIFACTU_QUERY_NEST_RECTIFIED'];
         echo '</label>';
@@ -129,6 +129,20 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                 echo '</div>';
 
                 if (!empty($registros)) {
+                    $db = DBManagerFactory::getInstance();
+                    $numSeries = array_map(function ($r) use ($db) {
+                        return $db->quoted($r['idFactura']['numSerie'] ?? '');
+                    }, $registros);
+                    $numSeries = array_filter($numSeries, function ($v) { return $v !== "''"; });
+                    $invoiceMap = [];
+                    if (!empty($numSeries)) {
+                        $query = "SELECT id, number FROM aos_invoices WHERE number IN (" . implode(',', $numSeries) . ") AND deleted = 0";
+                        $res = $db->query($query);
+                        while ($row = $db->fetchByAssoc($res)) {
+                            $invoiceMap[$row['number']] = $row['id'];
+                        }
+                    }
+
                     echo '<table class="list view table table-bordered" style="width: 100%;">';
                     echo '<thead>';
                     echo '<tr>';
@@ -198,7 +212,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
 
                     $rowClass = 'oddListRowS1';
 
-                    $renderRow = function (array $reg, int $depth, bool $isParentRectified = false) use ($mod_strings, &$rowClass) {
+                    $renderRow = function (array $reg, int $depth, bool $isParentRectified = false) use ($mod_strings, &$rowClass, $invoiceMap) {
                         $idFactura = $reg['idFactura'] ?? [];
                         $datos = $reg['datos'] ?? [];
                         $estado = $reg['estado'] ?? [];
@@ -257,7 +271,11 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                         }
 
                         echo '<tr class="' . $rowClass . '" style="' . $rowStyle . '">';
-                        echo '<td style="' . $tdPad . '">' . $seriePrefix . $serieNum . '</td>';
+                        $serieLink = $serieNum;
+                        if (isset($invoiceMap[$serieNum])) {
+                            $serieLink = '<a href="index.php?module=AOS_Invoices&action=DetailView&record=' . htmlspecialchars($invoiceMap[$serieNum]) . '">' . $serieNum . '</a>';
+                        }
+                        echo '<td style="' . $tdPad . '">' . $seriePrefix . $serieLink . '</td>';
                         echo '<td style="' . $tdPad . 'white-space: nowrap;">' . $fechaExp . '</td>';
                         echo '<td style="' . $tdPad . '">' . $tipoLabel . '</td>';
                         echo '<td style="' . $tdPad . 'text-align: right;">' . $importeTotal . '</td>';
