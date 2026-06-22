@@ -21,7 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings['LBL_STIC_PAYMENTS_ACTIVITIES_EMAILS_FROM_STIC_PAYMENTS_TITLE'] = 'Activitats:Pagaments';
-$mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interessats';
 $mod_strings['LBL_EMAIL_INFORMATION'] = 'Dades generals';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalls del registre';
 $mod_strings['LBL_TEST_EMAIL_BODY'] = "Aquest correu electrònic s'ha enviat per provar la configuració del servidor de correu sortint de SinergiaCRM. La seva recepció indica que la configuració és correcta.";
