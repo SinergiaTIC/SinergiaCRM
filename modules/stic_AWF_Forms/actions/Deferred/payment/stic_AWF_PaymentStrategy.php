@@ -220,14 +220,15 @@ abstract class stic_AWF_PaymentStrategy
      * database status (updated via webhook), not on URL parameters.
      * Requires $this->ticket to be set (call createTicket first).
      *
+     * @param string $status The return context status ('ok' or 'error')
      * @return string The full return URL
      */
-    protected function getReturnUrl(): string
+    protected function getReturnUrl(string $status = 'ok'): string
     {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         $token = $this->ticket ? $this->ticket->token_hash : '';
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_returnHandler&token=' . urlencode($token);
+        return $siteUrl . '/index.php?entryPoint=stic_AWF_resumeHandler&token=' . urlencode($token) . '&status=' . $status;
     }
 
     /**
@@ -290,7 +291,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param string $rawBody Raw request body (for JSON-based gateways)
      * @return string|null The external transaction ID or null if not found
      */
-    abstract public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
+    abstract public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string;
 
     /**
     * Prepare payment.
@@ -308,7 +309,7 @@ abstract class stic_AWF_PaymentStrategy
     /**
     * WEBHOOK: Resolves action when notification arrives from external event.
     * Can be called with or without a Deferred Ticket:
-    * - With ticket: context->getCustomData() contains strategy_class, payment_id, etc.
+    * - With ticket: $context->deferredContext contains strategy_class, payment_id, etc.
     * - Without ticket: context is minimal; strategy handles recurring events directly.
     */ 
     abstract public function resolve(ExecutionContext $context, ActionResult $result): ActionResult;

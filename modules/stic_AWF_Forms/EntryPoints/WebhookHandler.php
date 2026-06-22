@@ -30,7 +30,7 @@ require_once "modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php";
 require_once "include/SugarQueue/SugarJobQueue.php";
 
 /**
- * EntryPoint: WebhookHandler
+ * EntryPoint: stic_AWF_webhookHandler
  * Receives and processes webhook responses from payment gateways.
  *
  * This entry point is fully gateway-agnostic. All gateway-specific logic
@@ -59,10 +59,13 @@ class WebhookHandler
         $rawPayload = file_get_contents('php://input');
         $headers = function_exists('getallheaders') ? getallheaders() : [];
 
+        // Get Token
+        $token = $_REQUEST['token'] ?? '';
+
         // Create IncomingEvent log record
         $incomingEvent = BeanFactory::newBean('stic_AWF_Incoming_Events');
         $incomingEvent->name = 'AWF Webhook: ' . $source . ' - ' . date('Y-m-d H:i:s');
-        $incomingEvent->token = $_REQUEST['token'] ?? null;
+        $incomingEvent->token = $token;
         $incomingEvent->source = $source;
         $incomingEvent->raw_payload = $rawPayload ?: json_encode($requestData);
         $incomingEvent->status = 'new';
@@ -73,7 +76,7 @@ class WebhookHandler
 
         // Extract Identifier
         $searchField = 'token_hash';
-        $identifier = $_REQUEST['token'] ?? null;
+        $identifier = $token;
 
         if (empty($identifier) && !empty($source)) {
             // No token in URL, but we have a source. Let's ask the actions.
@@ -141,13 +144,18 @@ class WebhookHandler
         }
 
         // Inject rawBody into context for strategies that need it
-        $customData = $context->getCustomData();
-        $customData['_rawBody'] = $rawBody;
-        $context->setCustomData($customData);
+        $contextObj = DeferredContextData::fromJson($ticket->context_data);
+        $contextObj->setCustom('_rawBody', $rawBody);
+        $context->deferredContext = $contextObj;
 
         $outContext = $context;
 
-        $actionDefinition = new PaymentRouterAction();
+        $actionClass = $context->deferredContext->actionClass;
+        if (empty($actionClass) || !class_exists($actionClass)) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Handler class {$actionClass} not found for webhook processing.");
+            return new ActionResult(ResultStatus::ERROR, null, "Handler class '{$actionClass}' not found for webhook processing.");
+        }
+        $actionDefinition = new $actionClass();
         return $actionDefinition->processWebhook($context, $rawData);
     }
 
@@ -191,71 +199,60 @@ class WebhookHandler
      */
     private function handleResult(ActionResult $result, ?stic_AWF_Deferred_Tickets $ticket, $incomingEvent, ?ExecutionContext $context): void
     {
-        if ($result->isOk()) {
-            if ($ticket) {
+        // Update status depending on result
+        if ($ticket) {
+            if ($result->isOk()) {
                 $ticket->status = 'resolved';
                 $ticket->save();
-            }
-
-            if ($incomingEvent->status !== 'processed') {
-                $incomingEvent->status = 'processed';
-                $incomingEvent->date_processed = date('Y-m-d H:i:s');
-                $incomingEvent->save();
-            }
-
-            http_response_code(200);
-            echo "OK";
-
-        } elseif ($result->isWait()) {
-            if ($ticket) {
-                $ticket->status = 'pending';
-                if (!empty($result->getData())) {
-                    $ticket->context_data = json_encode($result->getData());
-                }
-                $ticket->save();
-            }
-
-            if ($incomingEvent->status !== 'processed') {
-                $incomingEvent->status = 'processed';
-                $incomingEvent->date_processed = date('Y-m-d H:i:s');
-                $incomingEvent->save();
-            }
-
-            http_response_code(200);
-            echo "OK, Updated";
-
-        } else {
-            if ($ticket) {
+            } elseif ($result->isError()) {
                 $maxRetries = 3;
                 $retryCount = intval($ticket->retry_count ?? 0) + 1;
                 $ticket->retry_count = $retryCount;
-                $ticket->last_error_message = $result->message ?? 'Unknown error';
+                $ticket->last_error_message = $result->getMessage() ?? 'Unknown error';
 
                 if ($retryCount < $maxRetries) {
                     $ticket->status = 'pending';
                     $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket [{$ticket->id}] failed (attempt {$retryCount}/{$maxRetries}). Reset to pending for retry.");
                 } else {
                     $ticket->status = 'failed';
-                    $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket [{$ticket->id}] permanently failed after {$maxRetries} attempts. Error: " . ($result->message ?? 'Unknown'));
-                    $this->createAdminAlert($ticket, $result->message ?? 'Unknown error');
+                    $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket [{$ticket->id}] permanently failed after {$maxRetries} attempts. Error: " . $ticket->last_error_message);
+                    $this->createAdminAlert($ticket, $ticket->last_error_message);
                 }
                 $ticket->save();
 
+                // If final status is failed: Change to error flow
                 if ($ticket->status === 'failed') {
                     $this->enqueueDeferredFlow($ticket->id, false);
                 }
             }
+            // If is WAIT, do not change status
+        }
 
-            if ($incomingEvent->status !== 'error') {
-                $incomingEvent->status = 'processed';
-                $incomingEvent->last_error_message = $result->message ?? 'Payment rejected';
-                $incomingEvent->date_processed = date('Y-m-d H:i:s');
-                $incomingEvent->save();
-            }
+        // Register incoming event
+        if ($incomingEvent->status !== 'processed') {
+            // Set event as processed but save error if any
+            $incomingEvent->status = 'processed';
+            $incomingEvent->last_error_message = $result->isError() ? ($result->getMessage() ?? 'Unknown error') : '';
+            $incomingEvent->date_processed = date('Y-m-d H:i:s');
+            $incomingEvent->save();
+        }
 
-            // Return 200 even for rejected payments — the webhook itself was processed correctly.
-            http_response_code(200);
-            echo "Processed with error: " . ($result->message ?? 'Unknown error');
+        // Redirect UI if url has param 'redirect'
+        if (!empty($_REQUEST['redirect']) && $ticket) {
+            $token = $ticket->token_hash;
+            // ReturnHandler will check ticket status to show correct message
+            header("Location: index.php?entryPoint=stic_AWF_returnHandler&token=" . urlencode($token));
+            exit;
+        }
+
+        // Return 200 even for rejected responses: the webhook itself was processed correctly.
+        http_response_code(200);
+        if ($result->isOk()) {
+            echo "OK";
+        } elseif ($result->isError()) {
+            echo "Error: " . ($result->getMessage() ?? 'Unknown error');
+        } else {
+            echo "Pending / Waiting";
         }
     }
 

@@ -1,0 +1,150 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+// Prevents directly accessing this file from a web browser
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+/**
+ * Defines the context from which a Deferred Action will resume.
+ * This determines what type of child actions (sub-flows) will be allowed to be nested.
+ */
+enum DeferredResumptionContext: string {
+    /**
+     * The flow resumes in the background via an S2S (Webhook) call. No human user is present. 
+     * It does NOT support child terminal actions.
+     */
+    case SERVER_WEBHOOK = 'server_webhook'; 
+
+    /**
+     * The workflow is restarted by a different person than the one who filled out the form (e.g., CRM Administrator). 
+     * It does NOT support endpoint actions intended for the original user.
+     */
+    case THIRD_PARTY_HUMAN = 'third_party_human';
+
+    /**
+     * The workflow resumes synchronously with the user who filled out the form.
+     * It supports all types of actions (Terminal and other Deferred).
+     */
+    case ORIGINAL_USER = 'original_user';
+}
+
+/**
+* Data Transfer Object to manage the execution context of a Deferred Ticket.
+* Centralizes serialization/deserialization avoiding arrays with hardcoded keys.
+*/
+class DeferredContextData 
+{
+    public string $actionClass;
+    public string $ticketId;
+    public ?string $flowSuccessId;
+    public ?string $flowErrorId;
+    public ?string $beanId;
+    public ?string $module;
+    
+    /** @var array Additional data specific to the action (ex: email, stripe_session...) */
+    public array $customData = [];
+
+    public function __construct(
+        string $actionClass, 
+        string $ticketId, 
+        ?string $flowSuccessId = null, 
+        ?string $flowErrorId = null, 
+        ?string $beanId = null, 
+        ?string $module = null
+    ) {
+        $this->actionClass = $actionClass;
+        $this->ticketId = $ticketId;
+        $this->flowSuccessId = $flowSuccessId;
+        $this->flowErrorId = $flowErrorId;
+        $this->beanId = $beanId;
+        $this->module = $module;
+    }
+
+    /**
+    * Adds custom data to the context.
+    */
+    public function setCustom(string $key, mixed $value): void {
+        $this->customData[$key] = $value;
+    }
+
+    /**
+     * Retrieve a custom data.
+     */
+    public function getCustom(string $key, mixed $default = null): mixed {
+        return $this->customData[$key] ?? $default;
+    }
+
+    /**
+     * Serialize the object to save it to the database (JSON).
+     */
+    public function toJson(): string {
+        $data = [
+            'action_class' => $this->actionClass,
+            'ticket_id' => $this->ticketId,
+            'flow_success_id' => $this->flowSuccessId,
+            'flow_error_id' => $this->flowErrorId,
+            'bean_id' => $this->beanId,
+            'module' => $this->module,
+        ];
+        // Merge the fixed data with the custom data (the fixed data takes precedence in case of collision)
+        return json_encode(array_merge($this->customData, $data), JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Constructs the object from the JSON stored in the database.
+     */
+    public static function fromJson(string $json): self {
+        $data = json_decode($json, true) ?: [];
+        
+        $instance = new self(
+            $data['action_class'] ?? '',
+            $data['ticket_id'] ?? '',
+            $data['flow_success_id'] ?? null,
+            $data['flow_error_id'] ?? null,
+            $data['bean_id'] ?? null,
+            $data['module'] ?? null
+        );
+
+        // Remove the fixed keys to save only the custom ones
+        unset($data['action_class'], $data['ticket_id'], $data['flow_success_id'], $data['flow_error_id'], $data['bean_id'], $data['module']);
+        $instance->customData = $data;
+
+        return $instance;
+    }
+
+    /**
+     * Export to array for compatibility with ExecutionContext.
+     */
+    public function toArray(): array {
+        $data = [
+            'action_class' => $this->actionClass,
+            'ticket_id' => $this->ticketId,
+            'flow_success_id' => $this->flowSuccessId,
+            'flow_error_id' => $this->flowErrorId,
+            'bean_id' => $this->beanId,
+            'module' => $this->module,
+        ];
+        return array_merge($this->customData, $data);
+    }
+}

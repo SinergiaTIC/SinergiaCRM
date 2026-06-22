@@ -29,7 +29,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Interface for all actions that can wait for an external event.
  * Examples: Payments, SMS Validation, Digital Signature, Manual Approval...
  */
-interface IDeferredAction extends ITerminalAction {
+interface IDeferredAction extends IServerAction {
+
+    /**
+     * Declares who will resume this deferred process and how.
+     */
+    public function getResumptionContext(): DeferredResumptionContext;
 
     /**
      * Processes an incoming request (webhook) from an external service.

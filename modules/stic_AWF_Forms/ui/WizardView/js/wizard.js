@@ -1530,6 +1530,32 @@ class WizardStep3 {
       selectedCategory: '', 
       selectedActionDefName: '', 
 
+      /**
+       * Indicates whether a terminal action can be added to the flow
+       * @param {stic_AwfFlow} flow 
+       * @returns 
+       */
+      canAddTerminalAction(flow) {
+        if (!flow) return false;
+        if (flow.hasTerminalAction()) return false; // Only one Terminal action per flow
+
+        // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
+        if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
+          for (const f of this.formConfig.flows) {
+            const parentAction = f.actions.find(a => a.success_flow_id == flow.id || a.failure_flow_id == flow.id);
+            if (parentAction) {
+              // Check reumptionContext from the deferred action
+              const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
+              if (parentDef && parentDef.resumptionContext !== 'original_user') {
+                return false;
+              }
+              break;
+            }
+          }
+        }
+        return true;
+      },
+
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
         this.$watch('formConfig.flows', (flows) => {
@@ -1629,12 +1655,57 @@ class WizardStep3 {
               }
             },
 
+            get parentResumptionContext() {
+              if (!this.flow) return 'original_user';
+              if (this.flow.id === '0' || this.flow.id === '-1' || this.flow.id === '1') return 'original_user';
+              
+              for (const f of this.formConfig.flows) {
+                const parentAction = f.actions.find(a => a.success_flow_id == this.flow.id || a.failure_flow_id == this.flow.id);
+                if (parentAction) {
+                  const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
+                  return parentDef ? parentDef.resumptionContext : 'original_user';
+                }
+              }
+              return 'original_user';
+            },
+
+            get validDefinitionsForCurrentFlow() {
+              const parentCtx = this.parentResumptionContext;
+              const hasTerminal = this.flow?.hasTerminalAction();
+              
+              return this.allDefinitions.filter(d => {
+                // For UX, every deferred action is considered non Terminal
+                const isTerminalForUser = d.isTerminal && d.type !== 'Deferred';
+
+                // Add Terminal button
+                if (isTerminalForUser !== this.isTerminalFilter) {
+                  return false;
+                }
+
+                // If flow has any real terminal action
+                if (isTerminalForUser && hasTerminal) {
+                  if (!this.isEdit || this.action?.name !== d.name) return false;
+                }
+
+                // Parent context restrictions
+                if (parentCtx === 'server_webhook' || parentCtx === 'third_party_human') {
+                  if (d.isTerminal) return false;
+                  // Do not allow deferred actions that need the original user's browser 
+                  if (d.type === 'Deferred' && d.resumptionContext === 'original_user') {
+                    return false;
+                  }
+                }
+                
+                return true;
+              });
+            },
+
             /** 
              * Returns the categories available according to the valid actions 
              * @returns {Array} List of available categories 
              */
             get availableCategories() {
-              const validActions = this.allDefinitions.filter(d => (d.type == 'Deferred' && !this.isTerminalFilter) || d.isTerminal == this.isTerminalFilter);
+              const validActions = this.validDefinitionsForCurrentFlow;
               const uniqueCatIds = [...new Set(validActions.map(a => a.category))];
               return stic_AwfAction.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
             },
@@ -1645,7 +1716,7 @@ class WizardStep3 {
              */
             get filteredActions() {
                 if (!this.selectedCategory) return [];
-                return this.allDefinitions.filter(d => ((d.type == 'Deferred' && !this.isTerminalFilter) || d.isTerminal == this.isTerminalFilter) && d.category == this.selectedCategory);
+                return this.validDefinitionsForCurrentFlow.filter(d => d.category == this.selectedCategory);
             },
 
             get isValid() {
