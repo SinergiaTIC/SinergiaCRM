@@ -64,8 +64,8 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
         
         $transactionCode = $this->generateTransactionCode($beanPayment);
         
-        $successUrl = $this->getReturnUrl('success') . '&session_id={CHECKOUT_SESSION_ID}';
-        $cancelUrl = $this->getReturnUrl('cancel');
+        $successUrl = $this->getReturnUrl('ok') . '&session_id={CHECKOUT_SESSION_ID}';
+        $cancelUrl = $this->getReturnUrl('error');
 
         $isRecurring = !empty($actionConfig->data['recurring']) && $actionConfig->data['recurring'] != 'punctual';
         $sessionParams = [
