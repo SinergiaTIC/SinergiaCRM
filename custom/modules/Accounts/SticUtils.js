@@ -117,15 +117,14 @@ switch (viewType()) {
     createDetailViewButton(buttons.syncIncorpora);
     createDetailViewButton(buttons.pdfEmail);
 
-
-        // Portal Actions button
-        if (STIC.portalClients && typeof createDetailViewButton === 'function') {
-            createDetailViewButton({
-                id: 'bt_portal_actions',
-                title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
-                onclick: 'openPortalActionsPopup()',
-            });
-        }
+    // Portal Actions button
+    if (STIC.portalClients && typeof createDetailViewButton === 'function') {
+        createDetailViewButton({
+            id: 'bt_portal_actions',
+            title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
+            onclick: 'openPortalActionsPopup()',
+        });
+    }
     break;
 
   case "list":
@@ -138,14 +137,14 @@ switch (viewType()) {
 
     createListViewButton(button);
 
-        // Portal Invitation bulk action
-        var portalInvitationListBtn = {
-            id: "bt_portal_invitation_listview",
-            title: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
-            text: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
-            onclick: "onClickPortalInvitationButton()",
-        };
-        createListViewButton(portalInvitationListBtn);
+    // Portal Invitation bulk action
+    var portalInvitationListBtn = {
+        id: "bt_portal_invitation_listview",
+        title: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
+        text: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
+        onclick: "onClickPortalInvitationButton()",
+    };
+    createListViewButton(portalInvitationListBtn);
     break;
 
   default:
@@ -282,9 +281,7 @@ function setupPrivateAreaFields() {
   checkbox.addEventListener('change', togglePassword);
 }
 
-/**
- * Portal Actions popup
- */
+// Portal Actions popup
 function openPortalActionsPopup() {
     var sel = document.getElementById("portalAppSelect");
     sel.innerHTML = "";

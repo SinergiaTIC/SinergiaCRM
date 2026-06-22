@@ -46,10 +46,14 @@ class CustomAccountsViewDetail extends AccountsViewDetail
 
         SticViews::display($this);
 
-        // Portal: inject configured apps for invitation buttons
+        // Portal: inject configured OAuth2 clients for invitation buttons
         require_once 'SticInclude/Portal/ConfigUtils.php';
-        $allCfg = SticPortalConfigUtils::getAll();
-        $clients = ($allCfg['PORTAL_APPS'] ? @unserialize(htmlspecialchars_decode($allCfg['PORTAL_APPS']), ["allowed_classes" => false]) : []) ?: [];
+        global $db;
+        $clients = array();
+        $r = $db->query("SELECT id, name, redirect_url FROM oauth2clients WHERE allowed_grant_type='portal_authorization_code' AND deleted=0 ORDER BY name");
+        while ($row = $db->fetchByAssoc($r)) {
+            $clients[] = array('name' => $row['name'], 'url' => $row['redirect_url']);
+        }
         echo "<script>STIC.portalClients = " . json_encode($clients) . ";</script>\n";
         
         // Portal Actions popup (raw HTML, no Smarty to avoid corrupting $this->ss after display)

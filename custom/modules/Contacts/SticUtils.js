@@ -1,4 +1,24 @@
-/* HEADER */
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 // Set module name
 var module = "Contacts";
 
@@ -101,15 +121,14 @@ switch (viewType()) {
     createDetailViewButton(buttons.syncIncorpora);
     createDetailViewButton(buttons.pdfEmail);
 
-
-        // Portal Actions button
-        if (STIC.portalClients && typeof createDetailViewButton === 'function') {
-            createDetailViewButton({
-                id: 'bt_portal_actions',
-                title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
-                onclick: 'openPortalActionsPopup()',
-            });
-        }
+    // Portal Actions button
+    if (STIC.portalClients && typeof createDetailViewButton === 'function') {
+        createDetailViewButton({
+            id: 'bt_portal_actions',
+            title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
+            onclick: 'openPortalActionsPopup()',
+        });
+    }
     break;
 
     case "list":
@@ -354,9 +373,7 @@ function setupPrivateAreaFields() {
   checkbox.addEventListener('change', togglePassword);
 }
 
-/**
- * Portal Actions popup
- */
+// Portal Actions popup
 function openPortalActionsPopup() {
     var sel = document.getElementById("portalAppSelect");
     sel.innerHTML = "";

@@ -299,7 +299,7 @@ EOQ;
     /**
      * Clean a string of characters that are not valid for NIF or CIF
      * This function is less accurate than cleanNIF since there are characters that are valid for CIF, but not for NIF, such as the letter U
-     * This function should only be used when it is not possible to determine if a CIF or NIF type identifier is being processed
+     * This function should only be used when it is not possible to determine if a CIF or NIF type identifier is being processed
      *
      * @param String NIF o CIF
      * @return String
@@ -920,77 +920,174 @@ EOQ;
 
 
     /**
-     * Add a panel with fields to a view using SuiteCRM ParserFactory.
-     * Connectors controller pattern — adds panel + tab definition.
+     * Adds a panel (tab) with fields to a given view using SuiteCRM's ModuleBuilder ParserFactory.
+     *
+     * If the panel already exists in the view, no changes are made. Fields are arranged
+     * in pairs (two per row) following SuiteCRM's standard layout pattern.
+     * Required field definitions are registered in the parser before saving.
+     *
+     * @param string $view       The view type (e.g. MB_EDITVIEW, MB_DETAILVIEW)
+     * @param string $module     The module name (e.g. 'Accounts', 'Contacts')
+     * @param string $panelLabel The unique label/identifier for the panel
+     * @param array  $fields     Array of field definitions (strings or arrays with 'name' key)
+     *
+     * @return int 1 on success, 0 on failure
      */
     public static function addPanelToView($view, $module, $panelLabel, $fields) {
-        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
-        $parser = ParserFactory::getParser($view, $module);
-        if (!$parser) return 0;
-        if (isset($parser->_viewdefs["panels"][$panelLabel])) return 0;
+        if (empty($view) || empty($module) || empty($panelLabel) || empty($fields)) {
+            $GLOBALS['log']->error(__METHOD__ . ': Missing required parameters.');
+            return 0;
+        }
+        try {
+            require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+            $parser = ParserFactory::getParser($view, $module);
+            if (!$parser) {
+                $GLOBALS['log']->error(__METHOD__ . ": Failed to get parser for view '{$view}', module '{$module}'.");
+                return 0;
+            }
+            if (isset($parser->_viewdefs["panels"][$panelLabel])) {
+                $GLOBALS['log']->debug(__METHOD__ . ": Panel '{$panelLabel}' already exists in view '{$view}' for module '{$module}'.");
+                return 0;
+            }
 
-        // Register field defs (Connectors pattern — required for handleSave)
-        foreach ($fields as $f) {
-            if (is_array($f)) {
-                $fname = $f["name"];
-                if (!isset($parser->_fielddefs[$fname])) {
-                    $parser->_fielddefs[$fname] = $f;
+            // Register field defs (Connectors pattern — required for handleSave)
+            foreach ($fields as $f) {
+                if (is_array($f)) {
+                    $fname = $f["name"];
+                    if (!isset($parser->_fielddefs[$fname])) {
+                        $parser->_fielddefs[$fname] = $f;
+                    }
                 }
             }
-        }
 
-        $rows = array();
-        for ($i = 0; $i < count($fields); $i += 2) {
-            $c0 = is_array($fields[$i]) ? $fields[$i]["name"] : $fields[$i];
-            $c1 = ($i + 1 < count($fields))
-                ? (is_array($fields[$i + 1]) ? $fields[$i + 1]["name"] : $fields[$i + 1])
-                : "(empty)";
-            $rows[] = array(0 => $c0, 1 => $c1);
+            $rows = array();
+            for ($i = 0; $i < count($fields); $i += 2) {
+                $c0 = is_array($fields[$i]) ? $fields[$i]["name"] : $fields[$i];
+                $c1 = ($i + 1 < count($fields))
+                    ? (is_array($fields[$i + 1]) ? $fields[$i + 1]["name"] : $fields[$i + 1])
+                    : "(empty)";
+                $rows[] = array(0 => $c0, 1 => $c1);
+            }
+            $parser->_viewdefs["panels"][$panelLabel] = $rows;
+            if (!isset($parser->_viewdefs["templateMeta"]["tabDefs"])) {
+                $parser->_viewdefs["templateMeta"]["tabDefs"] = array();
+            }
+            $parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel] = array(
+                "newTab" => true, "panelDefault" => "expanded",
+            );
+            $parser->handleSave(false);
+            return 1;
+        } catch (Exception $e) {
+            $GLOBALS['log']->error(__METHOD__ . ': ' . $e->getMessage());
+            return 0;
         }
-        $parser->_viewdefs["panels"][$panelLabel] = $rows;
-        if (!isset($parser->_viewdefs["templateMeta"]["tabDefs"])) {
-            $parser->_viewdefs["templateMeta"]["tabDefs"] = array();
-        }
-        $parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel] = array(
-            "newTab" => true, "panelDefault" => "expanded",
-        );
-        $parser->handleSave(false);
-        return 1;
     }
 
+    /**
+     * Removes a panel and its associated tab definition from a given view.
+     *
+     * Safely unsets both the panel fields and the tab metadata from the view definition.
+     * Note: The $fieldNames parameter is not currently used by this implementation;
+     * the entire panel identified by $panelLabel is removed.
+     *
+     * @param string $view       The view type (e.g. MB_EDITVIEW, MB_DETAILVIEW)
+     * @param string $module     The module name
+     * @param array  $fieldNames Kept for API compatibility (not used in this implementation)
+     * @param string $panelLabel The panel label/identifier to remove
+     *
+     * @return int 1 on success, 0 on failure
+     */
     public static function removeFieldsFromView($view, $module, $fieldNames, $panelLabel) {
-        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
-        $parser = ParserFactory::getParser($view, $module);
-        if (!$parser) return 0;
-        if (isset($parser->_viewdefs["panels"][$panelLabel])) {
-            unset($parser->_viewdefs["panels"][$panelLabel]);
+        if (empty($view) || empty($module) || empty($panelLabel)) {
+            $GLOBALS['log']->error(__METHOD__ . ': Missing required parameters.');
+            return 0;
         }
-        if (isset($parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel])) {
-            unset($parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel]);
+        try {
+            require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+            $parser = ParserFactory::getParser($view, $module);
+            if (!$parser) {
+                $GLOBALS['log']->error(__METHOD__ . ": Failed to get parser for view '{$view}', module '{$module}'.");
+                return 0;
+            }
+            if (isset($parser->_viewdefs["panels"][$panelLabel])) {
+                unset($parser->_viewdefs["panels"][$panelLabel]);
+            }
+            if (isset($parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel])) {
+                unset($parser->_viewdefs["templateMeta"]["tabDefs"][$panelLabel]);
+            }
+            $parser->handleSave(false);
+            return 1;
+        } catch (Exception $e) {
+            $GLOBALS['log']->error(__METHOD__ . ': ' . $e->getMessage());
+            return 0;
         }
-        $parser->handleSave(false);
-        return 1;
     }
 
+    /**
+     * Adds columns to the list view of a module using the ModuleBuilder parser.
+     *
+     * Each column name in the $columns array is added to the list view definition
+     * for the specified module.
+     *
+     * @param string $module  The module name
+     * @param array  $columns Array of column names (strings) to add to the list view
+     *
+     * @return int 1 on success, 0 on failure
+     */
     public static function addListColumns($module, $columns) {
-        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
-        $parser = ParserFactory::getParser(MB_LISTVIEW, $module);
-        if (!$parser) return 0;
-        foreach ($columns as $col) {
-            $parser->addField(array("name" => $col));
+        if (empty($module) || empty($columns)) {
+            $GLOBALS['log']->error(__METHOD__ . ': Missing required parameters.');
+            return 0;
         }
-        $parser->handleSave(false);
-        return 1;
+        try {
+            require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+            $parser = ParserFactory::getParser(MB_LISTVIEW, $module);
+            if (!$parser) {
+                $GLOBALS['log']->error(__METHOD__ . ": Failed to get list view parser for module '{$module}'.");
+                return 0;
+            }
+            foreach ($columns as $col) {
+                $parser->addField(array("name" => $col));
+            }
+            $parser->handleSave(false);
+            return 1;
+        } catch (Exception $e) {
+            $GLOBALS['log']->error(__METHOD__ . ': ' . $e->getMessage());
+            return 0;
+        }
     }
 
+    /**
+     * Removes columns from the list view of a module using the ModuleBuilder parser.
+     *
+     * Each column name in the $columns array is removed from the list view definition
+     * for the specified module.
+     *
+     * @param string $module  The module name
+     * @param array  $columns Array of column names (strings) to remove from the list view
+     *
+     * @return int 1 on success, 0 on failure
+     */
     public static function removeListColumns($module, $columns) {
-        require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
-        $parser = ParserFactory::getParser(MB_LISTVIEW, $module);
-        if (!$parser) return 0;
-        foreach ($columns as $col) {
-            $parser->removeField($col);
+        if (empty($module) || empty($columns)) {
+            $GLOBALS['log']->error(__METHOD__ . ': Missing required parameters.');
+            return 0;
         }
-        $parser->handleSave(false);
-        return 1;
+        try {
+            require_once "modules/ModuleBuilder/parsers/ParserFactory.php";
+            $parser = ParserFactory::getParser(MB_LISTVIEW, $module);
+            if (!$parser) {
+                $GLOBALS['log']->error(__METHOD__ . ": Failed to get list view parser for module '{$module}'.");
+                return 0;
+            }
+            foreach ($columns as $col) {
+                $parser->removeField($col);
+            }
+            $parser->handleSave(false);
+            return 1;
+        } catch (Exception $e) {
+            $GLOBALS['log']->error(__METHOD__ . ': ' . $e->getMessage());
+            return 0;
+        }
     }
 }

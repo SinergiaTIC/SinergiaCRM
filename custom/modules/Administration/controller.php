@@ -161,7 +161,6 @@ class CustomAdministrationController extends AdministrationController
     public function action_sticportalconfig_save() {
         require_once 'SticInclude/Portal/ConfigUtils.php';
         SticPortalConfigUtils::saveFromPost($_POST);
-        SticPortalConfigUtils::saveFromPostApps($_POST);
         if (!empty($_FILES['portal_logo_file']['tmp_name'])) {
             $file = $_FILES['portal_logo_file'];
             $tmp = $file['tmp_name'];

@@ -1,4 +1,25 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -77,13 +98,13 @@ class SticPortalConfigUtils
     public static function handleLogoUpload($fileField)
     {
         if (empty($fileField) || empty($fileField['tmp_name']) || $fileField['error'] !== UPLOAD_ERR_OK) {
-            $GLOBALS['log']->fatal(__METHOD__ . " - Invalid file upload");
+            $GLOBALS['log']->error(__METHOD__ . " - Invalid file upload");
             return false;
         }
         $allowed = array('image/png' => 'png', 'image/jpeg' => 'jpg', 'image/svg+xml' => 'svg');
         $finfo   = function_exists('mime_content_type') ? mime_content_type($fileField['tmp_name']) : $fileField['type'];
         if (!isset($allowed[$finfo])) {
-            $GLOBALS['log']->fatal(__METHOD__ . " - Unsupported file type: $finfo");
+            $GLOBALS['log']->error(__METHOD__ . " - Unsupported file type: $finfo");
             return false;
         }
         $ext        = $allowed[$finfo];
@@ -92,7 +113,7 @@ class SticPortalConfigUtils
         if (!is_dir($targetDir)) @mkdir($targetDir, 0777, true);
         $targetPath = $targetDir . '/' . $targetName;
         if (!move_uploaded_file($fileField['tmp_name'], $targetPath)) {
-            $GLOBALS['log']->fatal(__METHOD__ . " - Failed to move uploaded file to $targetPath");
+            $GLOBALS['log']->error(__METHOD__ . " - Failed to move uploaded file to $targetPath");
             return false;
         }
         @chmod($targetPath, 0644);

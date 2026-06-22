@@ -1,47 +1,93 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
 require_once 'SticInclude/Portal/ConfigUtils.php';
 
+/**
+ * Portal authentication utilities.
+ *
+ * Handles password hashing, login, lockout, sessions,
+ * password reset/magic link tokens, security notifications,
+ * login audit, and the before_save logic hook.
+ *
+ * All methods are static — no instantiation needed.
+ */
 class SticPortalAuthUtils
 {
+    /** @var TimeDate|null Cached TimeDate instance. */
     private static $timeDate;
 
+    /** @return TimeDate */
     private static function td()
     {
         if (!self::$timeDate) self::$timeDate = TimeDate::getInstance();
         return self::$timeDate;
     }
 
+    /** @return string Current datetime in DB format. */
     private static function nowDb()
     {
         return self::td()->nowDb();
     }
 
+    /** @return string Future datetime in DB format, $seconds from now. */
     private static function futureDb($seconds)
     {
         return self::td()->getNow()->modify("+{$seconds} seconds")->asDb();
     }
 
     // ── Password hashing ──────────────────────────────────────────
+
+    /** Hash a plaintext password with bcrypt. */
     public static function hashPassword($plainPassword)
     {
         return password_hash($plainPassword, PASSWORD_DEFAULT);
     }
 
+    /** Verify a plaintext password against a stored bcrypt hash. */
     public static function verifyPassword($plainPassword, $hash)
     {
         return password_verify($plainPassword, $hash);
     }
 
+    /** Check if a stored hash needs rehashing (algorithm/cost changed). */
     public static function needsRehash($hash)
     {
         return password_needs_rehash($hash, PASSWORD_DEFAULT);
     }
 
     // ── User lookup ──────────────────────────────────────────────
+
+    /**
+     * Look up a portal-enabled user by username.
+     * Searches Contacts first, then Accounts.
+     *
+     * @param string $username Portal username (usually the email).
+     * @return array|null ['bean' => SugarBean, 'type' => 'Contact'|'Account'] or null if not found.
+     */
     public static function getPortalUserByUsername($username)
     {
         global $db;
@@ -72,6 +118,13 @@ class SticPortalAuthUtils
     }
 
     // ── Lockout ──────────────────────────────────────────────────
+
+    /**
+     * Check if the user's account is locked due to too many failed attempts.
+     *
+     * @param SugarBean $bean
+     * @return array ['locked' => bool, 'remaining_seconds' => int]
+     */
     public static function checkLockout($bean)
     {
         $locked = $bean->stic_portal_locked_until_c;
@@ -84,6 +137,12 @@ class SticPortalAuthUtils
         return array('locked' => false, 'remaining_seconds' => 0);
     }
 
+    /**
+     * Record a failed login attempt. Locks the account if the threshold is reached.
+     *
+     * @param SugarBean $bean
+     * @param string $ipAddress
+     */
     public static function recordFailedAttempt($bean, $ipAddress = '')
     {
         $GLOBALS['log']->debug(__METHOD__ . " - Recording failed attempt for {$bean->stic_portal_username_c} ({$bean->id}), IP: $ipAddress");
@@ -191,6 +250,13 @@ class SticPortalAuthUtils
     }
 
     // ── Password policies ──────────────────────────────
+
+    /**
+     * Validate a plaintext password against configured policies.
+     *
+     * @param string $password Plaintext password to check.
+     * @return string[] List of violation messages (empty if valid).
+     */
     public static function validatePasswordPolicy($password)
     {
         $violations = array();
@@ -405,6 +471,17 @@ class SticPortalAuthUtils
     }
 
     // ── Full authentication ───────────────────────────
+
+    /**
+     * Full authentication flow: user lookup → lockout check → password verify →
+     * session creation. Returns a result array with success/error info.
+     *
+     * @param string $username Portal username.
+     * @param string $password Plaintext password.
+     * @param bool $remember Whether to generate a remember-me token.
+     * @param string $ipAddress Client IP for lockout tracking.
+     * @return array See method body for structure.
+     */
     public static function authenticate($username, $password, $remember = false, $ipAddress = '')
     {
         $GLOBALS['log']->debug(__METHOD__ . " - Authenticating user: $username from IP: $ipAddress");
@@ -429,13 +506,13 @@ class SticPortalAuthUtils
             return array('success' => false, 'error_code' => 'ip_locked', 'error' => 'Too many attempts. Try again later');
         }
         if (!self::verifyPassword($password, $bean->stic_portal_hashed_c)) {
-            $GLOBALS['log']->fatal(__METHOD__ . " - Password verification FAILED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
+            $GLOBALS['log']->error(__METHOD__ . " - Password verification FAILED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
             self::recordFailedAttempt($bean, $ipAddress);
             self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'invalid_credentials', 'password');
             $GLOBALS['log']->info(__METHOD__ . " - Invalid password for: $username");
             return array('success' => false, 'error_code' => 'invalid_credentials', 'error' => 'Invalid credentials');
         }
-        $GLOBALS['log']->fatal(__METHOD__ . " - Password verification PASSED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
+        $GLOBALS['log']->info(__METHOD__ . " - Password verification PASSED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
         if (self::needsRehash($bean->stic_portal_hashed_c)) {
             $bean->stic_portal_hashed_c = self::hashPassword($password);
             $bean->save();
@@ -452,10 +529,22 @@ class SticPortalAuthUtils
     }
 
     // ── Before-save logic hook ────────────────────────
+
+    /**
+     * Called by the before_save logic hook. If stic_portal_hashed_c contains
+     * a plaintext password (len &lt; 60, not bcrypt format), validates policy,
+     * checks history, hashes it, and clears any active reset token.
+     *
+     * If the value is already a bcrypt hash, skips re-hashing (guards against
+     * double-hash when processBeforeSave fires multiple times).
+     *
+     * @param SugarBean $bean
+     * @throws RuntimeException If policy or history validation fails.
+     */
     public static function processBeforeSave($bean)
     {
         $logPrefix = __METHOD__ . "({$bean->module_dir}:{$bean->id}): ";
-        $GLOBALS['log']->fatal($logPrefix . "entered, hashed_c=" . (empty($bean->stic_portal_hashed_c) ? 'empty' : substr($bean->stic_portal_hashed_c, 0, 30) . '...') . ", fetched_hashed=" . ($bean->fetched_row['stic_portal_hashed_c'] ?? 'null'));
+        $GLOBALS['log']->debug($logPrefix . "entered, hashed_c=" . (empty($bean->stic_portal_hashed_c) ? 'empty' : substr($bean->stic_portal_hashed_c, 0, 30) . '...') . ", fetched_hashed=" . ($bean->fetched_row['stic_portal_hashed_c'] ?? 'null'));
 
         if (empty($bean->stic_portal_hashed_c)) return;
         $submitted = $bean->stic_portal_hashed_c;
@@ -464,7 +553,7 @@ class SticPortalAuthUtils
             $plain = $submitted;
             $alreadyHashed = (strlen($plain) >= 60 && preg_match('/^\$2[ayb]\$\d{2}\$/', $plain));
             if ($alreadyHashed) {
-                $GLOBALS['log']->fatal($logPrefix . "SKIP — already a bcrypt hash (len=" . strlen($plain) . "), not re-hashing");
+                $GLOBALS['log']->debug($logPrefix . "SKIP — already a bcrypt hash (len=" . strlen($plain) . "), not re-hashing");
                 $bean->stic_portal_password_changed_c = self::nowDb();
                 $bean->stic_portal_force_pw_change_c = 0;
                 self::setPasswordExpiration($bean);
@@ -472,7 +561,7 @@ class SticPortalAuthUtils
                 $bean->stic_portal_reset_expires_c = null;
                 return;
             }
-            $GLOBALS['log']->fatal($logPrefix . "plaintext (len=" . strlen($plain) . ") — validating and hashing");
+            $GLOBALS['log']->debug($logPrefix . "plaintext (len=" . strlen($plain) . ") — validating and hashing");
             $violations = self::validatePasswordPolicy($plain);
             if (!empty($violations)) throw new RuntimeException('Password policy violations: ' . implode('; ', $violations));
             $oldHash = $fetched;
@@ -548,14 +637,27 @@ class SticPortalAuthUtils
     }
 
     // ── Helpers ─────────────────────────────────────
+
+    /**
+     * Load all fields from the given _cstm table onto the bean.
+     * Also syncs them into $bean->fetched_row so processBeforeSave
+     * sees consistent values (avoids false "password changed" detection).
+     *
+     * @param SugarBean $bean
+     * @param string $cstmTable e.g. 'contacts_cstm'
+     */
     public static function loadCustomFields($bean, $cstmTable)
     {
         global $db;
         $result = $db->limitQuery("SELECT * FROM $cstmTable WHERE id_c=" . $db->quoted($bean->id), 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
-            foreach ($row as $k => $v) { if ($k !== 'id_c') $bean->$k = $v;
-                    $bean->fetched_row[$k] = $v; }
+            foreach ($row as $k => $v) {
+                if ($k !== 'id_c') {
+                    $bean->$k = $v;
+                    $bean->fetched_row[$k] = $v;
+                }
+            }
         }
     }
 
@@ -604,13 +706,13 @@ class SticPortalAuthUtils
     {
         if ($newPassword !== $confirmPassword) return array('success' => false, 'error' => 'Passwords do not match');
         if (!self::verifyPassword($currentPassword, $bean->stic_portal_hashed_c)) return array('success' => false, 'error' => 'Current password is incorrect');
-        $GLOBALS['log']->fatal(__METHOD__ . " - current password verified for {$bean->id}, setting hashed_c with plaintext");
+        $GLOBALS['log']->debug(__METHOD__ . " - current password verified for {$bean->id}, setting hashed_c with plaintext");
         // Set hashed_c directly with plaintext — processBeforeSave validates policy, checks history, and hashes
         $bean->stic_portal_hashed_c = $newPassword;
         $bean->stic_portal_force_pw_change_c = 0;
         self::archivePasswordHistory($bean, $bean->fetched_row['stic_portal_hashed_c'] ?? null);
         $bean->save();
-        $GLOBALS['log']->fatal(__METHOD__ . " - save done for {$bean->id}, hashed=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40));
+        $GLOBALS['log']->debug(__METHOD__ . " - save done for {$bean->id}, hashed=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40));
         self::sendSecurityNotification($bean, 'password_changed');
         return array('success' => true);
     }

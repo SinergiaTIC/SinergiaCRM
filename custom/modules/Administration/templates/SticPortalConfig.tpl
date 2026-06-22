@@ -1,4 +1,24 @@
-
+{*
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ *}
 {if isset($smarty.get.portal_msg)}
 <div style="margin:10px 0;padding:10px;border-radius:4px;font-size:13px;{if $smarty.get.portal_msg|strpos:"ok" !== false}background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9{else}background:#fff3e0;color:#e65100;border:1px solid #ffe0b2{/if}">
     {if $smarty.get.portal_msg|strpos:"apply" !== false}Portal tab: {if $smarty.get.portal_msg|strpos:"ok" !== false}Added successfully. Check a Contact detail view.{else}Already exists (no changes needed).{/if}
@@ -50,58 +70,6 @@
     <td width="25%" valign="middle"><input type="number" name="PORTAL_LOGO_WIDTH" value="{$SETTINGS.PORTAL_LOGO_WIDTH|default:'212'}" min="0" style="width:80px"></td>
 </tr>
 </table>
-
-<!-- PORTAL APPS -->
-<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
-<tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_STIC_PORTAL_APPS} 
-    <i class="inline-help glyphicon glyphicon-info-sign" aria-describedby="qtip-apps"></i>
-    <div class="inline-help-content" style="display:none;">{$MOD.LBL_STIC_PORTAL_APPS_HELP}</div>
-</h4></th></tr>
-<tr>
-    <td colspan="4">
-        <table id="portalAppsTable" width="100%" border="0" cellspacing="1" cellpadding="3">
-        <thead><tr>
-            <th width="40%">{$MOD.LBL_STIC_PORTAL_APP_NAME}</th>
-            <th width="50%">{$MOD.LBL_STIC_PORTAL_APP_URL}</th>
-            <th width="10%"></th>
-        </tr></thead>
-        <tbody>
-        {foreach from=$PORTAL_APPS item=app name=apps}
-        <tr>
-            <td><input type="text" name="app_name[]" value="{$app.name|escape}" style="width:95%"></td>
-            <td><input type="text" name="app_url[]" value="{$app.url|escape}" style="width:95%"></td>
-            <td><input type="button" class="button" value="X" onclick="this.closest('tr').remove()"></td>
-        </tr>
-        {/foreach}
-        {if $PORTAL_APPS|@count eq 0}
-        <tr><td colspan="3" style="text-align:center;color:#888">{$MOD.LBL_STIC_PORTAL_NO_APPS|default:'No apps configured. Click Add below.'}</td></tr>
-        {/if}
-        </tbody>
-        </table>
-        <div style="padding:8px"><input type="button" class="button" value="+ {$MOD.LBL_STIC_PORTAL_ADD_APP|default:'Add App'}" onclick="addAppRow()"></div>
-    </td>
-</tr>
-</table>
-<script>
-function trimEmptyApps() {ldelim}
-    var rows = document.querySelectorAll('#portalAppsTable tbody tr');
-    rows.forEach(function(r) {ldelim}
-        var inputs = r.querySelectorAll('input[type=text]');
-        var empty = true;
-        inputs.forEach(function(inp) {ldelim} if (inp.value.trim() !== '') empty = false; {rdelim});
-        if (empty && rows.length > 1) r.remove();
-    {rdelim});
-{rdelim}
-function addAppRow() {ldelim}
-    var tbody = document.querySelector('#portalAppsTable tbody');
-    var emptyRow = tbody.querySelector('tr td[colspan]');
-    if (emptyRow) emptyRow.parentElement.remove();
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td><input type="text" name="app_name[]" value="" style="width:95%"></td><td><input type="text" name="app_url[]" value="" style="width:95%"></td><td><input type="button" class="button" value="X" onclick="this.closest(\'tr\').remove()"></td>';
-    tbody.appendChild(tr);
-{rdelim}
-</script>
-
 
 <!-- PASSWORD POLICIES -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
@@ -278,8 +246,6 @@ function addAppRow() {ldelim}
 </tr>
 </table>
 
-
-
 <!-- BULK ACTIONS -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_STIC_PORTAL_BULK_ACTIONS}</h4></th></tr>
@@ -327,4 +293,3 @@ $(function() {
 });
 </script>
 {/literal}
-
