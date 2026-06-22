@@ -79,6 +79,7 @@ $mod_strings['LBL_STIC_INVALID_IDENTIFICATION_NUMBER_OR_TYPE'] = "Si indiqueu un
 $mod_strings['LBL_ATTACHMENT_DESCRIPTION'] = 'Fitxer rebut des d\'un formulari web relacionat amb la campanya: ';
 
 // Cadenes adaptades de Clients Potencials a Interessats
+$mod_strings['ERR_DELETE_RECORD'] = "Per eliminar l'interessat cal especificar un número de registre.";
 $mod_strings['LBL_ACCOUNT_DESCRIPTION'] = "Descripció de l'Organització";
 $mod_strings['LBL_ACCOUNT_ID'] = "ID de l'Organització";
 $mod_strings['LBL_ACCOUNT_NAME'] = "Nom de l'Organització:";
@@ -117,6 +118,7 @@ $mod_strings['LBL_OPPORTUNITY_NAME'] = 'Nom de la Subvenció:';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Cerca Interessats';
 $mod_strings['LBL_SELECT_CHECKED_BUTTON_LABEL'] = 'Seleccioneu els interessats marcats';
 $mod_strings['LBL_SELECT_CHECKED_BUTTON_TITLE'] = 'Seleccioneu els interessats marcats';
+$mod_strings['LNK_IMPORT_VCARD'] = 'Nou Interessat des de vCard';
 $mod_strings['LNK_LEAD_LIST'] = 'Mostra els Interessats';
 $mod_strings['LNK_NEW_ACCOUNT'] = 'Nova Organització';
 $mod_strings['LNK_NEW_CONTACT'] = 'Nova Persona';
