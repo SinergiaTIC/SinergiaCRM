@@ -291,7 +291,7 @@
     
     function validateSeriesFormat(input) {
         var value = input.value;
-        // Remove any digits 1-9 (keep only letters, 0, and symbols)
+        // Remove any digits 1-9 (only 0 allowed for numeric placeholder)
         var cleaned = value.replace(/[1-9]/g, '');
         
         if (cleaned !== value) {

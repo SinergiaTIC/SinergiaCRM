@@ -136,8 +136,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 continue; // Skip this series
             }
             
-            // === Step 2.2: Validate series format characters ===
-            // Allowed: A-Z, 0-9, hyphen (-), underscore (_), slash (/), dot (.), space, Y, 0
+            // === Step 2.2: Validate series format characters (AEAT requirements) ===
+            // Allowed: A-Z, 0-9, hyphen (-), underscore (_), slash (/), dot (.), space
             // Valid placeholders: YYYY, YY, and sequences of 0s (0000, 000, 00)
             if (!empty($format)) {
                 if (preg_match('/[a-z]/', $format)) {

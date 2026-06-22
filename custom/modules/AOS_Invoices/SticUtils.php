@@ -502,9 +502,7 @@ class AOS_InvoicesUtils
                     self::validateSeriesFormat($seriesFormat);
                 } catch (Exception $e) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid series format: ' . $e->getMessage());
-                    $errorMsg = ($mod_strings['LBL_AOS_SERIES_FORMAT_INVALID']) .
-                                ' "' . $seriesFormat . '" ' .
-                                ($mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS']);
+                    $errorMsg = $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'] . ' (' . $seriesFormat . ') ' . $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS'];
                     SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMsg));
                     return;
                 }
@@ -1546,7 +1544,7 @@ class AOS_InvoicesUtils
      * 
      * Problem: Normative non-compliance 4.23 - format characters not validated
      * 
-     * Allowed characters: A-Z, 0-9, hyphen (-), underscore (_), slash (/), dot (.)
+     * Allowed characters: A-Z, 0-9, hyphen (-), underscore (_), slash (/), dot (.), space
      * Allowed placeholders: YYYY, YY, 000+ (numeric sequence)
      * 
      * @param string $format The format pattern to validate
@@ -1555,24 +1553,20 @@ class AOS_InvoicesUtils
      */
     public static function validateSeriesFormat($format)
     {
-        // Check for invalid characters: allow only A-Z, 0-9, hyphen, underscore, slash, dot, Y, 0
-        // Also check for lowercase letters
+        // Check for lowercase letters (not allowed by AEAT)
         if (preg_match('/[a-z]/', $format)) {
             throw new Exception("El formato de serie no puede contener letras minúsculas. Formato: $format");
         }
         
-        // Check for invalid special characters (anything except Y, 0-9, hyphen, underscore, slash, dot, space)
+        // Check for invalid characters (AEAT only allows A-Z, 0-9, hyphen, underscore, slash, dot, space)
         if (preg_match('/[^A-Z0-9\-_\/. ]/', $format)) {
-            throw new Exception("El formato de serie contiene caracteres inválidos. Solo se permiten: A-Z, 0-9, guión (-), guión bajo (_), barra (/), punto (.) y espacio. Formato: $format");
+            throw new Exception("El formato de serie contiene caracteres no permitidos. Solo se permiten: mayúsculas (A-Z), números (0-9), guión (-), guión bajo (_), barra (/), punto (.) y espacio. Formato: $format");
         }
         
         // Check for spaces at the beginning
         if (preg_match('/^ /', $format)) {
             throw new Exception("El formato de serie no puede empezar con un espacio. Formato: $format");
         }
-        
-        // Note: YYYY and YY are valid placeholders for 4-digit and 2-digit year
-        // The general character validation above handles invalid characters
         
         // Validate numeric placeholders (0 sequence)
         preg_match_all('/0+/', $format, $matches);
