@@ -972,8 +972,11 @@ class stic_AWFUtils {
         }
         $formConfig = FormConfig::fromJsonArray($configData);
 
-        $cleanPayload = html_entity_decode($responseBean->raw_payload ?? '', ENT_QUOTES, 'UTF-8');
-        $formData = json_decode($cleanPayload, true) ?: [];
+        $payload = $responseBean->raw_payload ?? '';
+        while (strpos($payload, '&quot;') !== false || strpos($payload, '&amp;') !== false) {
+            $payload = html_entity_decode($payload, ENT_QUOTES, 'UTF-8');
+        }
+        $formData = json_decode($payload, true) ?: [];
 
         $context = new ExecutionContext(
             $formBean->id,
