@@ -103,7 +103,7 @@ class WhatsAppHelper implements stic_MessagesHelper {
             ];
         }
         
-        if (isset($resultArray['data']['sid'])) {
+        if (isset($resultArray['data']['sid']) && empty($resultArray['data']['error_code'])) {
             $GLOBALS['log']->info('WhatsApp message sent. SID: ' . $resultArray['data']['sid']);
             return [
                 'code' => stic_Messages::OK,
@@ -112,9 +112,13 @@ class WhatsAppHelper implements stic_MessagesHelper {
                 'status' => $resultArray['data']['status'] ?? 'sent'
             ];
         } else {
+            $errorMessage = $resultArray['data']['error_message']
+                ?? $resultArray['data']['message']
+                ?? translate('LBL_TWILIO_UNKNOWN_ERROR', 'stic_Messages');
+            $GLOBALS['log']->error('WhatsApp send failed. SID: ' . ($resultArray['data']['sid'] ?? 'none') . ' - ' . $errorMessage);
             return [
                 'code' => stic_Messages::ERROR_NOT_SENT, 
-                'message' => $result
+                'message' => $errorMessage
             ];
         }
     }

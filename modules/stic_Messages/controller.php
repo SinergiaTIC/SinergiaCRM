@@ -187,6 +187,14 @@ class stic_MessagesController extends SugarController
                 case 'error':
                     $title = $mod_strings['LBL_ERROR'];
                     $detail = $mod_strings['LBL_MESSAGE_NOT_SENT'];
+                    if (!empty($this->bean->response)) {
+                        $responseData = json_decode($this->bean->response, true);
+                        if ($responseData && !empty($responseData['message'])) {
+                            $detail .= ': ' . $responseData['message'];
+                        } else {
+                            $detail .= ': ' . $this->bean->response;
+                        }
+                    }
                     break;
                 case 'draft':
                     $title = $app_strings['LBL_EMAIL_SUCCESS'];
