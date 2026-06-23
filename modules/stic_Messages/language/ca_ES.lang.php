@@ -120,6 +120,7 @@ $mod_strings = array (
   'LBL_TWILIO_SID_MISSING' => 'Falta l\'Account SID de Twilio',
   'LBL_TWILIO_TOKEN_MISSING' => 'Falta l\'Auth Token de Twilio',
   'LBL_TWILIO_NUMBER_MISSING' => 'Falta el número de Twilio',
+  'LBL_TWILIO_INVALID_PHONE' => 'El número de telèfon ha d\'incloure el prefix internacional (+)',
   'LBL_ATTACHMENT_REMOVE' => 'Elimina',
   'LBL_WHATSAPP_INCOMING_MESSAGE' => 'Missatge entrant de WhatsApp',
 );

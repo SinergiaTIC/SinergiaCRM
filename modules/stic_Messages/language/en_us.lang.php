@@ -119,6 +119,7 @@ $mod_strings = array (
   'LBL_TWILIO_SID_MISSING' => 'Missing Twilio Account SID',
   'LBL_TWILIO_TOKEN_MISSING' => 'Missing Twilio Auth Token',
   'LBL_TWILIO_NUMBER_MISSING' => 'Missing Twilio number',
+  'LBL_TWILIO_INVALID_PHONE' => 'Phone number must include the international prefix (+)',
   'LBL_ATTACHMENT_REMOVE' => 'Remove',
   'LBL_WHATSAPP_INCOMING_MESSAGE' => 'Incoming WhatsApp message',
 );

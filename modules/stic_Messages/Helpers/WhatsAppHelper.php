@@ -91,7 +91,14 @@ class WhatsAppHelper implements stic_MessagesHelper {
     public function sendMessage(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = [], ?string $mediaUrl = null): array
     {
         $phone = $this->formatPhoneNumber($phone);
-        
+
+        if (empty($phone)) {
+            return [
+                'code' => stic_Messages::ERROR_NOT_SENT,
+                'message' => translate('LBL_TWILIO_INVALID_PHONE', 'stic_Messages')
+            ];
+        }
+
         $result = $this->apiCall($sender, $message, $phone, $templateSid, $beans, $mediaUrl);
         
         $resultArray = json_decode($result, true);
@@ -213,11 +220,9 @@ class WhatsAppHelper implements stic_MessagesHelper {
     {
         $phone = trim($phone);
         if (strpos($phone, '+') === 0) {
-            $phone = '+' . preg_replace('/[^0-9]/', '', substr($phone, 1));
-        } else {
-            $phone = '+34' . preg_replace('/[^0-9]/', '', $phone);
+            return '+' . preg_replace('/[^0-9]/', '', substr($phone, 1));
         }
-        return $phone;
+        return '';
     }
 
     private function isConfigured()
