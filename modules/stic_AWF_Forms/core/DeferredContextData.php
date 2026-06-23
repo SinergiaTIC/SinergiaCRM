@@ -55,30 +55,46 @@ enum DeferredResumptionContext: string {
 */
 class DeferredContextData 
 {
+    public string $formId;
     public string $actionClass;
+    public string $actionText;
     public string $ticketId;
     public ?string $flowSuccessId;
     public ?string $flowErrorId;
     public ?string $beanId;
     public ?string $module;
+    public array $blockReferences = [];
     
     /** @var array Additional data specific to the action (ex: email, stripe_session...) */
     public array $customData = [];
 
     public function __construct(
+        string $formId, 
         string $actionClass, 
+        string $actionText, 
         string $ticketId, 
         ?string $flowSuccessId = null, 
         ?string $flowErrorId = null, 
         ?string $beanId = null, 
         ?string $module = null
     ) {
+        $this->formId = $formId;
         $this->actionClass = $actionClass;
+        $this->actionText = $actionText;
         $this->ticketId = $ticketId;
         $this->flowSuccessId = $flowSuccessId;
         $this->flowErrorId = $flowErrorId;
         $this->beanId = $beanId;
         $this->module = $module;
+    }
+
+    public function captureBlockReferences(ExecutionContext $context): void {
+        $this->blockReferences = [];
+        foreach ($context->formConfig->data_blocks as $bId => $b) {
+            if ($b->getBeanReference() !== null) {
+                $this->blockReferences[$bId] = $b->getBeanReference()->beanId;
+            }
+        }
     }
 
     /**
@@ -100,12 +116,15 @@ class DeferredContextData
      */
     public function toJson(): string {
         $data = [
+            'form_id' => $this->formId,
             'action_class' => $this->actionClass,
+            'action_text' => $this->actionText,
             'ticket_id' => $this->ticketId,
             'flow_success_id' => $this->flowSuccessId,
             'flow_error_id' => $this->flowErrorId,
             'bean_id' => $this->beanId,
             'module' => $this->module,
+            'block_references' => $this->blockReferences,
         ];
         // Merge the fixed data with the custom data (the fixed data takes precedence in case of collision)
         return json_encode(array_merge($this->customData, $data), JSON_UNESCAPED_UNICODE);
@@ -119,16 +138,27 @@ class DeferredContextData
         $data = json_decode($cleanJson, true) ?: [];
         
         $instance = new self(
+            $data['form_id'] ?? '',
             $data['action_class'] ?? '',
+            $data['action_text'] ?? '',
             $data['ticket_id'] ?? '',
             $data['flow_success_id'] ?? null,
             $data['flow_error_id'] ?? null,
             $data['bean_id'] ?? null,
             $data['module'] ?? null
         );
+        $instance->blockReferences = $data['block_references'] ?? [];
 
         // Remove the fixed keys to save only the custom ones
-        unset($data['action_class'], $data['ticket_id'], $data['flow_success_id'], $data['flow_error_id'], $data['bean_id'], $data['module']);
+        unset($data['form_id'], 
+              $data['action_class'], 
+              $data['action_text'], 
+              $data['ticket_id'], 
+              $data['flow_success_id'], 
+              $data['flow_error_id'], 
+              $data['bean_id'], 
+              $data['module'], 
+              $data['block_references']);
         $instance->customData = $data;
 
         return $instance;
@@ -139,13 +169,33 @@ class DeferredContextData
      */
     public function toArray(): array {
         $data = [
+            'form_id' => $this->formId,
             'action_class' => $this->actionClass,
+            'action_text' => $this->actionText,
             'ticket_id' => $this->ticketId,
             'flow_success_id' => $this->flowSuccessId,
             'flow_error_id' => $this->flowErrorId,
             'bean_id' => $this->beanId,
             'module' => $this->module,
+            'block_references' => $this->blockReferences,
         ];
         return array_merge($this->customData, $data);
+    }
+
+    public static function createSnapshot(string $actionClass, stic_AWF_Deferred_Tickets $ticket, FormAction $actionConfig, SugarBean $bean, ExecutionContext $context, array $customData): self {
+        $instance = new self(
+            $context->formId,
+            $actionClass,
+            $actionConfig->text ?? $actionConfig->name,
+            $ticket->id,
+            $actionConfig->flow_success_id ?: null,
+            $actionConfig->flow_error_id ?: null,
+            $bean->id,
+            $bean->module_dir ?? null
+        );
+        $instance->customData = $customData;
+        $instance->captureBlockReferences($context);
+
+        return $instance;
     }
 }

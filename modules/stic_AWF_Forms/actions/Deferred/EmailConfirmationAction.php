@@ -128,15 +128,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         $ticket->save();
 
         // Save the context data for the deferred flow
-        $contextData = new DeferredContextData(
-            self::class,
-            $ticket->id,
-            $actionConfig->flow_success_id,
-            $actionConfig->flow_error_id,
-            $bean->id,
-            $bean->module_dir
-        );
-        $contextData->setCustom('email', $emailAddress);
+        $contextData = DeferredContextData::createSnapshot(self::class, $ticket, $actionConfig, $bean, $context, ['email' => $emailAddress]);
         $ticket->context_data = $contextData->toJson();;
         $ticket->save();
 

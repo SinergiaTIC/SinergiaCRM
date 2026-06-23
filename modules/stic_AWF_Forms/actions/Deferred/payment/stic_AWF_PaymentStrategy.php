@@ -115,16 +115,14 @@ abstract class stic_AWF_PaymentStrategy
 
         $ticket->save();
 
-        $contextData = [
-            'strategy_class'   => static::class,
-            'strategy_suffix'  => $this->suffix,
-            'payment_id'       => $beanPayment->id,
-            'ticket_id'        => $ticket->id,
-            'form_id'          => $context->formId,
-            'flow_success_id'  => $actionConfig->flow_success_id,
-            'flow_error_id'    => $actionConfig->flow_error_id,
-        ];
-        $ticket->context_data = json_encode($contextData);
+        // Save the context data for the deferred flow
+        $contextData = DeferredContextData::createSnapshot('PaymentRouterAction', $ticket, $actionConfig, $beanPayment, $context, 
+            [ 
+                'strategy_class' => static::class,
+                'strategy_suffix' => $this->suffix,
+                'payment_id' => $beanPayment->id,
+            ]);
+        $ticket->context_data = $contextData->toJson();;
         $ticket->save();
 
         $this->ticket = $ticket;

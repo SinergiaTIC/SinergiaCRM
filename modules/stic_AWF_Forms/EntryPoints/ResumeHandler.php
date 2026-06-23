@@ -118,6 +118,8 @@ class ResumeHandler
 
             if (!empty($remainingActions)) {
                 $lastResult = $executor->executeFlow($virtualFlow, $errorFlow);
+                stic_AWFUtils::updateResponseExecutionLog($context);
+                
                 if ($lastResult->isError()) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Virtual flow collapsed into unrecovered error. Rendering fallback.");
                     stic_AWFUtils::renderGenericResponseError($context->formConfig);

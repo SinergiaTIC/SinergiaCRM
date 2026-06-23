@@ -139,7 +139,7 @@ class WebhookHandler
                         if (in_array($ticketStatus, ['resolved', 'processed', 'failed'])) { 
                             // The user re-clicks an email link that was already processed in the past. 
                             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Browser re-clicked a completed link. Rendering final UI inline without redirect.");
-                            stic_AWFUtils::rebuildContextAndResumeDeferredFlow($ticket);
+                            stic_AWFUtils::rebuildContextAndResumeDeferredFlow($existingTicket);
                         } else {
                             // Ticket is running right now
                             $GLOBALS['log']->info("AWF WebhookHandler: Browser hit an actively processing lock. Rendering unified waiting screen.");
@@ -214,10 +214,15 @@ class WebhookHandler
         $actionClass = $context->deferredContext->actionClass;
         if (empty($actionClass) || !class_exists($actionClass)) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Handler class {$actionClass} not found for webhook processing.");
-            return new ActionResult(ResultStatus::ERROR, null, "Handler class '{$actionClass}' not found for webhook processing.");
+            $res = new ActionResult(ResultStatus::ERROR, null, "Handler class '{$actionClass}' not found for webhook processing.");
+            $context->addActionResult($res);
+        } else {
+            $actionDefinition = new $actionClass();
+            $res = $actionDefinition->processWebhook($context, $rawData);
         }
-        $actionDefinition = new $actionClass();
-        return $actionDefinition->processWebhook($context, $rawData);
+
+        stic_AWFUtils::updateResponseExecutionLog($context);
+        return $res;
     }
 
     /**

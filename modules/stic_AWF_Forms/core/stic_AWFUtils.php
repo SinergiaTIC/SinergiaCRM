@@ -988,7 +988,29 @@ class stic_AWFUtils {
         $deferredContext = DeferredContextData::fromJson($ticket->context_data);
         $context->deferredContext = $deferredContext;
 
+        // Datablock references to beans
+        foreach ($deferredContext->blockReferences as $blockId => $beanId) {
+            if (isset($formConfig->data_blocks[$blockId])) {
+                $formConfig->data_blocks[$blockId]->setBeanReference($beanId);
+            }
+        }
+
         return $context;
+    }
+
+    /**
+     * Extract an indexed map [block_id => bean_id] of all data blocks
+     * that have already been successfully saved in the current thread.
+     */
+    public static function extractBlockReferences(ExecutionContext $context): array
+    {
+        $blockReferences = [];
+        foreach ($context->formConfig->data_blocks as $bId => $b) {
+            if ($b->getBeanReference() !== null) {
+                $blockReferences[$bId] = $b->getBeanReference()->beanId;
+            }
+        }
+        return $blockReferences;
     }
 
     /**
@@ -1052,6 +1074,7 @@ class stic_AWFUtils {
                 $context->responseBean->save();
             }
         }
+        self::updateResponseExecutionLog($context);
 
         // CLI ENVIRONMENT PROTECTION FOR STANDARD FLOWS
         $lastAction = $lastResult->getAction();
@@ -1100,6 +1123,54 @@ class stic_AWFUtils {
             if (!$isCli) {
                 self::renderGenericResponseError(null);
             }
+        }
+    }
+
+    /**
+    * Safely increments the form response execution log
+    * with the results obtained in the execution context.
+    */
+    public static function updateResponseExecutionLog(ExecutionContext $context): void
+    {
+        if (empty($context->responseBean) || empty($context->actionResults)) {
+            return;
+        }
+
+        // Retrieve the current state of the database
+        $context->responseBean->retrieve($context->responseBean->id);
+        $currentLog = $context->responseBean->execution_log ?? '';
+
+        if ($context->deferredContext !== null) {
+            $labelTitle = translate('LBL_EXECUTION_DEFERRED', 'stic_AWF_Responses');
+            $parentActionText = $context->deferredContext->actionText ?? '';
+            $header = "[" . date('Y-m-d H:i:s') . " - {$labelTitle}: {$parentActionText}]\n";
+        } else {
+            $header = "[" . date('Y-m-d H:i:s') . "]\n";
+        }
+        $newLogSegment = $header;
+        $hasNewEntries = false;
+
+        foreach ($context->actionResults as $result) {
+            if ($result->isError()) {
+                $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
+            } elseif ($result->isSkipped()) {
+                $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_AWF_Responses');
+            } else {
+                $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
+            }
+
+            $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
+            $newLogSegment .= "{$icon} {$actionName}";
+            if (!empty($result->message)) {
+                $newLogSegment .= ": " . $result->message;
+            }
+            $newLogSegment .= "\n";
+            $hasNewEntries = true;
+        }
+
+        if ($hasNewEntries) {
+            $context->responseBean->execution_log = $currentLog . (empty($currentLog) ? "" : "\n") . $newLogSegment;
+            $context->responseBean->save();
         }
     }
         
