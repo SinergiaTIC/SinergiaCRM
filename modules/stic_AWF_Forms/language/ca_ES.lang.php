@@ -493,8 +493,8 @@ $mod_strings = array (
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Fes un pagament',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processa en una plataforma externa el pagament corresponent a un bloc de dades.',
-  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => "Pagament confirmat",
-  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => "Error",
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => 'Pagament confirmat',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Error',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromís de pagament',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => "Selecciona el bloc de dades que conté el compromís de pagament del qual s'haurà de fer el pagament en una plataforma externa.",
 
