@@ -483,8 +483,8 @@ $mod_strings = array (
   // EmailConfirmationAction 
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirma el correu electrònic', 
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => "Genera un enllaç únic i l'envia per correu electrònic perquè l'usuari pugui confirmar la seva adreça de correu electrònic.", 
-  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => "Correu confirmat",
-  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => "Error",
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correu confirmat',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatari', 
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => "Indica el bloc de dades que conté el correu electrònic a verificar i al qual s'enviarà l'enllaç de confirmació.", 
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correu electrònic', 
