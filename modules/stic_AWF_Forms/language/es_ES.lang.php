@@ -434,8 +434,7 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a una dirección de correo electrónico concreta',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  
-  
+    
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
@@ -480,13 +479,12 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Iniciar sesión',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sesión activa',
 
-
   // -- DEFERRED ACTIONS --
   // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su dirección de correo electrónico.',
-  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => "Correo Confirmado",
-  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => "Error",
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
@@ -495,11 +493,10 @@ $mod_strings = array (
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un bloque de datos en una plataforma externa.',
-  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => "Pago confirmado",
-  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => "Error",
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de Pago',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos con el Compromiso de Pago para realizar su pago en la plataforma externa.',
-
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => 'Pago confirmado',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de pago',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos que contiene el compromiso de pago del que debe realizarse el pago en una plataforma externa.',
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
