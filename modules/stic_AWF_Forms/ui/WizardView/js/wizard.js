@@ -1542,7 +1542,7 @@ class WizardStep3 {
         // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
         if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
           for (const f of this.formConfig.flows) {
-            const parentAction = f.actions.find(a => a.success_flow_id == flow.id || a.failure_flow_id == flow.id);
+            const parentAction = f.actions.find(a => a.flow_success_id == flow.id || a.flow_error_id == flow.id);
             if (parentAction) {
               // Check reumptionContext from the deferred action
               const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
@@ -1558,15 +1558,6 @@ class WizardStep3 {
 
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
-        this.$watch('formConfig.flows', (flows) => {
-            flows.forEach(flow => {
-                flow.actions.forEach(action => {
-                    if (action.success_flow_id || action.failure_flow_id) {
-                      this.formConfig.upsertAction(action, "Deferred", flow, action.id);
-                    }
-                });
-            });
-        }, { deep: true });
 
         // Store for the Action Editor management
         if (!Alpine.store('actionEditor')) {
@@ -1660,7 +1651,7 @@ class WizardStep3 {
               if (this.flow.id === '0' || this.flow.id === '-1' || this.flow.id === '1') return 'original_user';
               
               for (const f of this.formConfig.flows) {
-                const parentAction = f.actions.find(a => a.success_flow_id == this.flow.id || a.failure_flow_id == this.flow.id);
+                const parentAction = f.actions.find(a => a.flow_success_id == this.flow.id || a.flow_error_id == this.flow.id);
                 if (parentAction) {
                   const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
                   return parentDef ? parentDef.resumptionContext : 'original_user';
@@ -1858,8 +1849,8 @@ class WizardStep3 {
                   continue_on_error: def.defaultContinueOnError || false,
                   order: defaultOrder,
                   is_user_selectable: true,
-                  success_flow_text: def.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
-                  failure_flow_text: def.flowErrorLabel || utils.translate("LBL_FLOW_DEFERRED_ONERROR"),
+                  flow_success_text: def.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
+                  flow_error_text: def.flowErrorLabel || utils.translate("LBL_FLOW_DEFERRED_ONERROR"),
                 });
 
                 // Initialize empty parameters according to the definition

@@ -115,7 +115,8 @@ class DeferredContextData
      * Constructs the object from the JSON stored in the database.
      */
     public static function fromJson(string $json): self {
-        $data = json_decode($json, true) ?: [];
+        $cleanJson = html_entity_decode($json, ENT_QUOTES, 'UTF-8');
+        $data = json_decode($cleanJson, true) ?: [];
         
         $instance = new self(
             $data['action_class'] ?? '',

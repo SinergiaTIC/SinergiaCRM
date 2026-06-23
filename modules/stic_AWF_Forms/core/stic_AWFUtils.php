@@ -972,7 +972,8 @@ class stic_AWFUtils {
         }
         $formConfig = FormConfig::fromJsonArray($configData);
 
-        $formData = json_decode($responseBean->raw_payload, true) ?: [];
+        $cleanPayload = html_entity_decode($responseBean->raw_payload ?? '', ENT_QUOTES, 'UTF-8');
+        $formData = json_decode($cleanPayload, true) ?: [];
 
         $context = new ExecutionContext(
             $formBean->id,
@@ -1004,11 +1005,17 @@ class stic_AWFUtils {
     public static function resumeDeferredFlow(ExecutionContext $context, array $contextData, bool $isSuccess): ?ActionResult
     {
         $successFlowId = $contextData['flow_success_id'] ?? null;
-        $errorFlowId   = $contextData['flow_error_id']   ?? null;
-        $flowId        = $isSuccess ? $successFlowId : $errorFlowId;
+        $errorFlowId = $contextData['flow_error_id']   ?? null;
+        $flowId = $isSuccess ? $successFlowId : $errorFlowId;
+        $flow = null;
+        $errorFlow = null;
 
-        $flow = ($flowId !== null && $flowId !== '') ? ($context->formConfig->flows[$flowId] ?? null) : null;
-        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '') ? ($context->formConfig->flows[$errorFlowId] ?? null) : null;
+        if ($flowId !== null && $flowId !== '') {
+            $flow = $context->formConfig->flows[$flowId] ?? null;
+        }
+        if ($errorFlowId !== null && $errorFlowId !== '') {
+            $errorFlow =  $context->formConfig->flows[$errorFlowId] ?? null;
+        }
 
         if ($flow === null) {
             return null;
@@ -1063,4 +1070,37 @@ class stic_AWFUtils {
         return $lastResult;
     }
 
+    public static function rebuildContextAndResumeDeferredFlow(stic_AWF_Deferred_Tickets $ticket)
+    {
+        $isCli = (php_sapi_name() === 'cli');
+        try {
+            $ticketStatus = $ticket->status ?? 'pending';
+            $context = self::rebuildContextFromTicket($ticket);
+            $deferredData = DeferredContextData::fromJson($ticket->context_data);
+            $contextData = $deferredData->toArray();
+            $isSuccess = $ticketStatus === 'resolved';
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred flow for ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
+
+            $lastResult = self::resumeDeferredFlow($context, $contextData, $isSuccess);
+            if ($lastResult === null) {
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": No flow configured for this ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
+            }
+
+            if (!$isCli) {
+                // If no flow was configured, or the last action is not terminal (or terminal didn't exit), show a generic fallback page.
+                if ($isSuccess) {
+                    self::renderGenericResponseSuccess($context->formConfig); 
+                } else {
+                    self::renderGenericResponseError($context->formConfig);
+                }
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": exception: " . $e->getMessage());
+            if (!$isCli) {
+                self::renderGenericResponseError(null);
+            }
+        }
+    }
+        
 }
