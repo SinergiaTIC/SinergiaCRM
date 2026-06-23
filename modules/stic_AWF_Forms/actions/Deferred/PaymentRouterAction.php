@@ -194,19 +194,29 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * Falls back to the error flow if the success flow fails.
      *
      * @param ExecutionContext $context Execution context
-     * @param FormAction $actionConfig Action configuration containing flow_success_id / flow_error_id
+     * @param ?FormAction $actionConfig Action configuration containing flow_success_id / flow_error_id
      */
-    private function executeDeferredOkFlow(ExecutionContext $context, FormAction $actionConfig): void
+    private function executeDeferredOkFlow(ExecutionContext $context, ?FormAction $actionConfig = null): void
     {
-        $successFlowId = $actionConfig->flow_success_id ?? null;
-        $errorFlowId   = $actionConfig->flow_error_id   ?? null;
+        $successFlowId = null;
+        $successFlow = null;
+        $errorFlowId = null;
+        $errorFlow = null;
 
-        $successFlow = ($successFlowId !== null && $successFlowId !== '')
-            ? ($context->formConfig->flows[$successFlowId] ?? null)
-            : null;
-        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '')
-            ? ($context->formConfig->flows[$errorFlowId] ?? null)
-            : null;
+        if ($actionConfig !== null) {
+            $successFlowId = $actionConfig->flow_success_id ?? null;
+            $errorFlowId = $actionConfig->flow_error_id ?? null;
+        } elseif ($context->deferredContext !== null) {
+            $successFlowId = $context->deferredContext->flowSuccessId ?? null;
+            $errorFlowId = $context->deferredContext->flowErrorId ?? null;
+        }
+
+        if ($successFlowId !== null && $successFlowId !== '') {
+            $successFlow = $context->formConfig->flows[$successFlowId] ?? null;
+        }
+        if ($errorFlowId !== null && $errorFlowId !== '') {
+            $errorFlow = $context->formConfig->flows[$errorFlowId] ?? null;
+        }
 
         if ($successFlow === null) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouterAction: No success flow configured (flow_success_id={$successFlowId}). Skipping deferred OK flow.");
@@ -250,11 +260,12 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult
     {
-        $savedData = $context->getCustomData() ?? []; 
+        $savedData = $context->deferredContext ? $context->deferredContext->toArray() : [];
         
         try {
             $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
-            $result = new ActionResult(ResultStatus::WAIT, null, '', $savedData);
+            $result = new ActionResult(ResultStatus::WAIT, null, '');
+            $result->setData($savedData);
             $resolveResult = $strategy->resolve($context, $result);
 
             if ($resolveResult->isOk()) {
@@ -270,6 +281,26 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
     }
 
     /**
+    * Receives the call for orphan events (without a transactional ticket in the CRM, such as recurrences).
+    * Dynamically routes the thread to the appropriate factory and financial strategy.
+    */
+    public function processOrphanWebhook(ExecutionContext $context, string $source, array $rawData): ActionResult 
+    {
+        try {
+            // Retrieve the corresponding payment strategy from the webhook source
+            $strategy = stic_AWF_PaymentStrategyFactory::createFromSource($source);
+            if ($strategy === null) {
+                return new ActionResult(ResultStatus::ERROR, null, "Unknown strategy source identifier '{$source}'");
+            }
+            
+            // Launch the polymorphic emergency resolution of the financial strategy
+            return $strategy->resolve($context, new ActionResult(ResultStatus::WAIT, null, ''));
+        } catch (\Exception $e) {
+            return new ActionResult(ResultStatus::ERROR, null, "PaymentRouter orfan execution failed: " . $e->getMessage());
+        }
+    }
+
+    /**
      * Enqueues the deferred flow for async execution via SuiteCRM job queue.
      * This ensures the webhook returns HTTP 200 immediately without waiting
      * for the flow (emails, PDFs, etc.) to complete, preventing gateway timeouts.
@@ -279,8 +310,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      */
     private function enqueueDeferredFlow(ExecutionContext $context, bool $isSuccess): void
     {
-        $customData = $context->getCustomData() ?? [];
-        $ticketId = $customData['ticket_id'] ?? null;
+        $ticketId = $context->deferredContext ? $context->deferredContext->ticketId : null;
 
         if (empty($ticketId)) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": No ticket_id in context data. Falling back to synchronous flow execution.");

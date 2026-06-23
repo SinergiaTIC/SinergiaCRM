@@ -32,9 +32,12 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     protected string $configType = 'PAYPAL';
     protected string $configKeyPrefix = 'PAYPAL';
 
-    protected array $contextCustomData = [];
-
-    public static function getSourceName(): string
+    /**
+    * Prepare payment.
+    * If Offline -> Returns OK.
+    * If External platform -> Returns WAIT with data to redirection.
+    */
+    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
         return 'paypal';
     }

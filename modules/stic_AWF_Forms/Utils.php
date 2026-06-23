@@ -520,7 +520,7 @@ class stic_AWF_FormsUtils {
         $dateNow = $db->convert($db->quoted(date('Y-m-d H:i:s')), 'datetime');
 
         // Release zombie tickets: reset 'processing' tickets stuck for >30 minutes back to 'pending'
-        $sqlReleaseZombies = "UPDATE stic_AWF_Deferred_Tickets
+        $sqlReleaseZombies = "UPDATE stic_awf_deferred_tickets
                 SET status = 'pending', date_modified = {$dateNow}
                 WHERE status = 'processing' AND date_modified < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND deleted = 0";
         $resultZombies = $db->query($sqlReleaseZombies);
@@ -530,7 +530,7 @@ class stic_AWF_FormsUtils {
         }
 
         // Cancel expired pending tickets
-        $sql = "UPDATE stic_AWF_Deferred_Tickets
+        $sql = "UPDATE stic_awf_deferred_tickets
                 SET status = 'cancelled', date_modified = {$dateNow}
                 WHERE status = 'pending' AND expiration_date < {$dateNow} AND deleted = 0";
         $result = $db->query($sql);

@@ -185,7 +185,7 @@ $dictionary['stic_AWF_Deferred_Tickets'] = array(
   'context_data' => 
   array (
     'required' => false,
-    'name' => 'context',
+    'name' => 'context_data',
     'vname' => 'LBL_CONTEXT_DATA',
     'type' => 'text',
     'massupdate' => 0,
