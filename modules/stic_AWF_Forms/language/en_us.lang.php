@@ -435,7 +435,6 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Email',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Email template',
   
-  
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Send email to assigned user',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Sends an email to the assigned user of the form or a record',
@@ -480,13 +479,12 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Log in',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Active session',
 
-
   // -- DEFERRED ACTIONS --
   // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirm email',
-  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Generates a unique link and sends it via email so the user can confirm its email address.',
-  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => "Confirmed email",
-  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => "Error",
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Generates a unique link and sends it via email so the user can confirm the email address.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Email confirmed',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Recipient',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Specifies the data block containing the email to be verified and to which the confirmation link will be sent',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Email template',
@@ -495,11 +493,10 @@ $mod_strings = array (
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Make payment',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processes the payment corresponding to a data block on an external platform.',
-  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => "Confirmed payment",
-  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => "Error",
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => 'Confirmed payment',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Error',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Payment Commitment',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selects the data block with the Payment Commitment to make its payment on the external platform.',
-
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selects the data block that contains the payment commitment for which payment must be made on an external platform.',
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
