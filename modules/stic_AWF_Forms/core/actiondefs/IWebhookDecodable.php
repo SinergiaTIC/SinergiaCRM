@@ -48,4 +48,13 @@ interface IWebhookDecodable {
      * @return string|null the hash of the Deferred_Ticket
      */
     public function extractTokenFromEvent(string $source, array $requestData, string $rawPayload, array $headers): ?string;
+
+    /**
+     * Processes an asynchronous incoming event that does not have an active session ticket (Orphan).
+     * @param ExecutionContext $context Emergency context isolated
+     * @param string $source The source identifier
+     * @param array $rawData The request payload
+     * @return ActionResult
+     */
+    public function processOrphanWebhook(ExecutionContext $context, string $source, array $rawData): ActionResult;
 }

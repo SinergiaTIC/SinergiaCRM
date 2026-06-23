@@ -911,7 +911,12 @@ class stic_AwfAction {
       continue_on_error: false, // Indicates if the flow should continue if this action fails
       success_flow_id: null,    // ID of the success flow
       failure_flow_id: null,    // ID of the failure flow
+      success_flow_text: null,    // Final text for the success flow
+      failure_flow_text: null,    // Final text for the failure flow
     });
+
+    this.success_flow_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
+    this.failure_flow_text = utils.translate("LBL_FLOW_DEFERRED_ONERROR");
 
     // 2. Overwrite with provided data
     Object.assign(this, data);
@@ -1935,6 +1940,8 @@ class stic_AwfConfiguration {
       is_terminal: actionDef.isTerminal,
       continue_on_error: actionDef.defaultContinueOnError || false,
       order: defaultOrder,
+      success_flow_text: actionDef.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
+      failure_flow_text: actionDef.flowErrorLabel || utils.translate("LBL_FLOW_DEFERRED_ONERROR"),
     });
 
     const requisiteActions = new Set(); 
@@ -2014,8 +2021,8 @@ class stic_AwfConfiguration {
         this.flows.push(errFlow);
       }
 
-      okFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_MAIN');
-      errFlow.label = action.text + ": " + utils.translate('LBL_FLOW_DEFERRED_ONERROR');
+      okFlow.label = action.text + ": " + action.success_flow_text;
+      errFlow.label = action.text + ": " + action.failure_flow_text;
     }
 
     // Insert or update to the flow
