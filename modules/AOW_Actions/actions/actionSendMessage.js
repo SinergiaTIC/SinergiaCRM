@@ -68,11 +68,11 @@ function filterTemplatesByType(lineNum) {
         templatesToShow = smsTemplates;
     }
     
+    // Store current selection before clearing
+    var currentValue = templateSelect.value;
+    
     // Clear all options
     templateSelect.innerHTML = '';
-    
-    // Store current selection
-    var currentValue = templateSelect.value;
     
     // Add "None" option first
     var noneOpt = document.createElement('option');
@@ -197,7 +197,7 @@ function show_PhoneField(ln, cln, value){
 
         var aow_field_name = "aow_actions_param["+ln+"][phone]["+cln+"]";
 
-        YAHOO.util.Connect.asyncRequest ("GET", "index.php?module=stic_Messages&action=getPhoneField&aow_module="+flow_module+"&aow_newfieldname="+aow_field_name+"&aow_type="+aow_phonetype+"&aow_value="+value,callback);
+        YAHOO.util.Connect.asyncRequest ("GET", "index.php?module=stic_Messages&action=getPhoneField&aow_module="+flow_module+"&aow_newfieldname="+aow_field_name+"&aow_type="+aow_phonetype+"&aow_value="+encodeURIComponent(value),callback);
     }
     else {
         document.getElementById('phoneLine'+ln+'_field'+cln).innerHTML = '';
