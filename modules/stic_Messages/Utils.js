@@ -379,6 +379,12 @@ function onTemplateSelect(args) {
       }, function (jsonResponse) {
         var response = JSON.parse(jsonResponse);
         $("#message").val(response.data.body);
+        if ($('#type').val() === 'WhatsAppHelper') {
+          $('#message').prop('disabled', true);
+          $('#message').attr('readonly', true);
+          $('#message').css('background', '#F8F8F8');
+          $('#message').css('border-color', '#E2E7EB');
+        }
       });
       set_return(args);
     };
@@ -578,6 +584,12 @@ function template_change() {
   console.log('template_chage #' + $("#template_id").val() +'#');
   if ($("#template_id").val() == "") {
     $("#template_id_edit_link").hide();
+    if ($('#type').val() === 'WhatsAppHelper') {
+      $('#message').prop('disabled', false);
+      $('#message').attr('readonly', false);
+      $('#message').css('background', '');
+      $('#message').css('border-color', '');
+    }
   } else {
     $("#template_id_edit_link").show();
   }
@@ -595,6 +607,12 @@ function updateMessageBox (args) {
       }, function (jsonResponse) {
         var response = JSON.parse(jsonResponse);
         $("#message").val(response.data.body);
+        if ($('#type').val() === 'WhatsAppHelper') {
+          $('#message').prop('disabled', true);
+          $('#message').attr('readonly', true);
+          $('#message').css('background', '#F8F8F8');
+          $('#message').css('border-color', '#E2E7EB');
+        }
       });
       set_return(args);
     };
