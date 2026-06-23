@@ -32,7 +32,12 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
     protected string $configType = 'STRIPE';
     protected string $configKeyPrefix = 'STRIPE';
 
-    public static function getSourceName(): string
+    /**
+    * Prepare payment.
+    * If Offline -> Returns OK.
+    * If External platform -> Returns WAIT with data to redirection.
+    */
+    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
         return 'stripe';
     }

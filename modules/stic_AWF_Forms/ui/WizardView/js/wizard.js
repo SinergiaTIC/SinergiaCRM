@@ -1849,15 +1849,17 @@ class WizardStep3 {
 
                 // Create an empty instance based on the definition
                 let tempAction = new stic_AwfAction({
-                    name: def.name,
-                    title: def.title,
-                    text: def.title, // By default the title
-                    description: def.description,
-                    category: def.category,
-                    is_terminal: def.isTerminal,
-                    continue_on_error: def.defaultContinueOnError || false,
-                    order: defaultOrder,
-                    is_user_selectable: true
+                  name: def.name,
+                  title: def.title,
+                  text: def.title, // By default the title
+                  description: def.description,
+                  category: def.category,
+                  is_terminal: def.isTerminal,
+                  continue_on_error: def.defaultContinueOnError || false,
+                  order: defaultOrder,
+                  is_user_selectable: true,
+                  success_flow_text: def.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
+                  failure_flow_text: def.flowErrorLabel || utils.translate("LBL_FLOW_DEFERRED_ONERROR"),
                 });
 
                 // Initialize empty parameters according to the definition

@@ -77,7 +77,6 @@ class WebhookHandler
         // Extract Identifier
         $searchField = 'token_hash';
         $identifier = $token;
-
         if (empty($identifier) && !empty($source)) {
             // No token in URL, but we have a source. Let's ask the actions.
             $searchField = 'external_transaction_id';
@@ -114,12 +113,25 @@ class WebhookHandler
         $context = null;
         if ($ticket) {
             $result = $this->processWithTicket($ticket, $requestData, $rawPayload, $incomingEvent, $context);
-        } else {
+            $this->handleResult($result, $ticket, $incomingEvent, $context);
+         } else {
+            // Check if ticket exists and is processing
+            if ($this->isTicketDuplicateOrLocked($identifier, $searchField)) {
+                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Concurrency lock or duplicate event detected for identifier '{$identifier}'.");
+                $incomingEvent->status = 'ignored';
+                $incomingEvent->last_error_message = "Ticket is already processing or resolved (Concurrency lock)";
+                $incomingEvent->date_processed = date('Y-m-d H:i:s');
+                $incomingEvent->save();
+                
+                http_response_code(200);
+                echo "Already processed or processing (Concurrency lock)";
+                return;
+            }
+            // Event without direct ticket: process it
             $result = $this->processWithoutTicket($source, $requestData, $rawPayload, $incomingEvent);
+            $this->handleResult($result, null, $incomingEvent, null);
         }
 
-        // Handle result
-        $this->handleResult($result, $ticket, $incomingEvent, $context);
     }
 
     /**
@@ -143,10 +155,8 @@ class WebhookHandler
             die("Internal error");
         }
 
-        // Inject rawBody into context for strategies that need it
-        $contextObj = DeferredContextData::fromJson($ticket->context_data);
-        $contextObj->setCustom('_rawBody', $rawBody);
-        $context->deferredContext = $contextObj;
+        // Inject rawBody into deferred context for strategies that need it
+        $context->deferredContext->setCustom('_rawBody', $rawBody);
 
         $outContext = $context;
 
@@ -169,28 +179,54 @@ class WebhookHandler
     {
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: No ticket found for source='{$source}'. Delegating to strategy directly.");
 
-        $strategy = stic_AWF_PaymentStrategyFactory::createFromSource($source);
-        if ($strategy === null) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Unknown source '{$source}' and no ticket found.");
-            $incomingEvent->status = 'ignored';
-            $incomingEvent->last_error_message = "Ticket not found or already processed";
-            $incomingEvent->date_processed = date('Y-m-d H:i:s');
-            $incomingEvent->save();
-            http_response_code(200);
-            die("Already processed");
+        $deferredActions = ActionDiscoveryService::discoverActions([ActionType::DEFERRED]);
+        foreach ($deferredActions as $action) {
+            if ($action instanceof IWebhookDecodable && $action->handlesSource($source)) {
+                // Initialize the isolated emergency typed context
+                $context = new ExecutionContext('', '', [], new FormConfig(), null, '');
+                $context->deferredContext = new DeferredContextData('', '');
+                $context->deferredContext->setCustom('_rawBody', $rawBody);
+
+                // Give up control of the resolution to the deferred action itself
+                $result = $action->processOrphanWebhook($context, $source, $rawData);
+                
+                $incomingEvent->status = $result->isOk() ? 'processed' : 'error';
+                $incomingEvent->last_error_message = $result->message ?? '';
+                $incomingEvent->date_processed = date('Y-m-d H:i:s');
+                $incomingEvent->save();
+
+                return $result;
+            }
         }
 
-        $context = new ExecutionContext('', '', [], new FormConfig(), null, '');
-        $context->setCustomData(['_rawBody' => $rawBody]);
-
-        $result = $strategy->resolve($context, new ActionResult(ResultStatus::WAIT, null, '', []));
-
-        $incomingEvent->status = $result->isOk() ? 'processed' : 'error';
-        $incomingEvent->last_error_message = $result->message ?? '';
+        // Fallback if no deferred action can attend the source
+        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Unknown source '{$source}' and no matching deferred action handles it.");
+        $incomingEvent->status = 'ignored';
+        $incomingEvent->last_error_message = "No matching deferred action found for orphan webhook source";
         $incomingEvent->date_processed = date('Y-m-d H:i:s');
         $incomingEvent->save();
 
-        return $result;
+        http_response_code(200);
+        die("Ignored: Source not handled");
+    }
+
+    /**
+     * Atomically validates whether a ticket exists in the database under any state.
+     * Used as a concurrency trap if findTicket() returned empty.
+     */
+    private function isTicketDuplicateOrLocked(string $identifier, string $searchField): bool
+    {
+        global $db;
+        $safeId = $db->quote($identifier);
+        if (!in_array($searchField, ['token_hash', 'external_transaction_id'])) {
+            return false;
+        }
+        
+        $sql = "SELECT id FROM stic_awf_deferred_tickets WHERE {$searchField} = '{$safeId}' AND deleted = 0";
+        $result = $db->query($sql);
+        $row = $db->fetchByAssoc($result);
+        
+        return !empty($row['id']);
     }
 
     /**
@@ -325,7 +361,7 @@ class WebhookHandler
             return null;
         }
 
-        $sql = "UPDATE stic_AWF_Deferred_Tickets 
+        $sql = "UPDATE stic_awf_deferred_tickets 
                 SET status = 'processing' 
                 WHERE {$searchField} = '{$safeId}' 
                 AND status = 'pending' 
