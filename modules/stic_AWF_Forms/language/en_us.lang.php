@@ -485,6 +485,8 @@ $mod_strings = array (
   // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirm email',
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Generates a unique link and sends it via email so the user can confirm its email address.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => "Confirmed email",
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => "Error",
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Recipient',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Specifies the data block containing the email to be verified and to which the confirmation link will be sent',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Email template',
@@ -493,6 +495,8 @@ $mod_strings = array (
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Make payment',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processes the payment corresponding to a data block on an external platform.',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => "Confirmed payment",
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => "Error",
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Payment Commitment',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selects the data block with the Payment Commitment to make its payment on the external platform.',
 

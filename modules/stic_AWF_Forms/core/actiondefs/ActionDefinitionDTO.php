@@ -61,7 +61,10 @@ class ActionDefinitionDTO {
     public array $autoApplyRules = [];
 
     public int $order;
-    
+
+    public string $flowSuccessLabel;
+    public string $flowErrorLabel;
+
     /** @var ActionParameterDefinitionDTO[] */
     public array $parameters;
 
@@ -101,6 +104,13 @@ class ActionDefinitionDTO {
         }
         
         $this->order = $def->order;
+
+        if (method_exists($def, 'getFlowSuccessLabel')) {
+            $this->flowSuccessLabel = $def->getFlowSuccessLabel();
+        }
+        if (method_exists($def, 'getFlowErrorLabel')) {
+            $this->flowErrorLabel = $def->getFlowErrorLabel();
+        }
         
         $this->parameters = array_map(
             fn($paramDef) => new ActionParameterDefinitionDTO($paramDef), 

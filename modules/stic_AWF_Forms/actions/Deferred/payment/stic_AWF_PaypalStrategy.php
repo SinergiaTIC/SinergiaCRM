@@ -37,7 +37,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     * If Offline -> Returns OK.
     * If External platform -> Returns WAIT with data to redirection.
     */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payment $beanPayment): ActionResult
+    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
         $config = $this->getConfigValues(array('ID', 'ID_TEST', 'TEST'));
         $config['URL'] = 'https://www.paypal.com/cgi-bin/webscr';

@@ -33,23 +33,11 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
     protected string $configType = 'TPV';
     protected string $configKeyPrefix = 'TPV';
 
-    public static function getSourceName(): string
-    {
-        return 'redsys';
-    }
-
-    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
-    {
-        $params = $rawData['Ds_MerchantParameters'] ?? '';
-        if (empty($params)) return null;
-        $decoded = json_decode(base64_decode(strtr($params, '-_', '+/')), true);
-        return $decoded['Ds_Order'] ?? null;
-    }
-
-    /**
-     * Prepare payment.
-     * If External platform (Redsys) -> Returns WAIT with data to redirection.
-     */
+        /**
+    * Prepare payment.
+    * If Offline -> Returns OK.
+    * If External platform -> Returns WAIT with data to redirection.
+    */
     public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
         $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'TERMINAL', 'MERCHANT_NAME', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));

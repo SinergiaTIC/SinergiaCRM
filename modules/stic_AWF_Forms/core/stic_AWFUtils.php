@@ -984,8 +984,8 @@ class stic_AWFUtils {
             $responseBean
         );
 
-        $contextData = json_decode($ticket->context_data, true) ?: [];
-        $context->setCustomData($contextData);
+        $deferredContext = DeferredContextData::fromJson($ticket->context_data);
+        $context->deferredContext = $deferredContext;
 
         return $context;
     }
