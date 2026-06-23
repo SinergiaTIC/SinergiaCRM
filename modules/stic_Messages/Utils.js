@@ -40,6 +40,16 @@ switch (sticViewType) {
       
       addEditCreateTemplateLinks();
 
+      // Function to lock sender field and sync with assigned user
+      function lockSenderField() {
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+
+        syncSenderWithAssignedUserIfWhatsApp();
+      }
+
       // Function to lock sender and status fields to 'sent' when type is WhatsAppWeb or conversation
       function lockSenderAndStatusToSent() {
         $('#status').val('sent');
@@ -48,17 +58,13 @@ switch (sticViewType) {
         $('#status').css('background', '#F8F8F8');
         $('#status').css('border-color', '#E2E7EB');
 
-        $('#sender').prop('disabled', true);
-        $('#sender').attr('readonly', true);
-        $('#sender').css('background', '#F8F8F8');
-        $('#sender').css('border-color', '#E2E7EB');
-
-        syncSenderWithAssignedUserIfConversation();
+        lockSenderField();
       }
 
-      // Keep sender synchronized with assigned user when type is conversation
-      function syncSenderWithAssignedUserIfConversation() {
-        if ($('#type').val() !== 'private_area') {
+      // Keep sender synchronized with assigned user when type is conversation or WhatsApp
+      function syncSenderWithAssignedUserIfWhatsApp() {
+        var type = $('#type').val();
+        if (type !== 'private_area' && type !== 'WhatsAppHelper') {
           return;
         }
 
@@ -160,10 +166,12 @@ switch (sticViewType) {
         $("#template_id_create_link").addClass("ui-state-disabled");
       }
 
-      // When type changes to WhatsAppWeb or conversation, force status to 'sent' and lock sender
+      // When type changes, lock/unlock sender and status accordingly
       $('#type').on('change', function() {
         if ($(this).val() === 'WhatsAppWeb' || $(this).val() === 'private_area') {
           lockSenderAndStatusToSent();
+        } else if ($(this).val() === 'WhatsAppHelper') {
+          lockSenderField();
         } else if (!$('#EditView input[name="record"]').val()) {
           unlockSenderAndStatusForNewMessage();
         }
@@ -175,6 +183,8 @@ switch (sticViewType) {
       // On page load, WhatsAppWeb and conversation are always sent and sender is fixed to CRM user
       if ($('#type').val() === 'WhatsAppWeb' || $('#type').val() === 'private_area') {
         lockSenderAndStatusToSent();
+      } else if ($('#type').val() === 'WhatsAppHelper') {
+        lockSenderField();
       }
 
   // On load, refresh templates select according to current type
@@ -185,17 +195,17 @@ switch (sticViewType) {
         var $assignedUserId = $('#assigned_user_id');
         var lastAssignedUserName = $assignedUserName.val() || '';
 
-        $assignedUserName.add($assignedUserId).on('change keyup blur', syncSenderWithAssignedUserIfConversation);
+        $assignedUserName.add($assignedUserId).on('change keyup blur', syncSenderWithAssignedUserIfWhatsApp);
 
         $('#btn_assigned_user_name, #btn_clr_assigned_user_name').on('click', function() {
-          setTimeout(syncSenderWithAssignedUserIfConversation, 300);
+          setTimeout(syncSenderWithAssignedUserIfWhatsApp, 300);
         });
 
         setInterval(function() {
           var currentName = $assignedUserName.val() || '';
           if (currentName !== lastAssignedUserName) {
             lastAssignedUserName = currentName;
-            syncSenderWithAssignedUserIfConversation();
+            syncSenderWithAssignedUserIfWhatsApp();
           }
         }, 500);
       }

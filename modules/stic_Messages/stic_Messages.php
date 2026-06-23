@@ -204,8 +204,8 @@ class stic_Messages extends Basic
             $this->status = 'sent';
         }
 
-        // For WhatsAppWeb messages, set sender to assigned user name
-        if ($this->type === 'WhatsAppWeb') {
+        // For WhatsAppWeb and WhatsAppHelper messages, set sender to assigned user name
+        if ($this->type === 'WhatsAppWeb' || ($this->type === 'WhatsAppHelper' && empty($this->sender))) {
             $this->sender = $current_user->name;
         }
 

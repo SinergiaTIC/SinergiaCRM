@@ -42,7 +42,6 @@ class WhatsAppWebhookEntryPoint
             $messageSid = $_POST['MessageSid'] ?? '';
             $from = $this->cleanPhoneNumber($_POST['From'] ?? '');
             $body = $_POST['Body'] ?? '';
-            $numMedia = (int)($_POST['NumMedia'] ?? 0);
 
             $parentInfo = $this->findContactByPhone($from);
 
