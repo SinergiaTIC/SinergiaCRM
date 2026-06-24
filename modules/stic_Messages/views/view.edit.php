@@ -62,6 +62,14 @@ class stic_MessagesViewEdit extends ViewEdit
         $this->bean->parent_id = !empty($this->bean->parent_id) ? $this->bean->parent_id : ($_REQUEST['parent_id'] ?? $_REQUEST['relatedId'] ?? null);
         $this->bean->fill_in_additional_parent_fields();
 
+        // Pre-fill phone and type from URL parameters (e.g. from conversation view)
+        if (empty($this->bean->phone) && !empty($_REQUEST['phone'])) {
+            $this->bean->phone = $_REQUEST['phone'];
+        }
+        if (empty($this->bean->type) && !empty($_REQUEST['type'])) {
+            $this->bean->type = $_REQUEST['type'];
+        }
+
         $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
 
         if (!$this->bean->fetched_row) {

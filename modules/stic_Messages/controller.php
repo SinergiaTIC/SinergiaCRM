@@ -704,7 +704,9 @@ class stic_MessagesController extends SugarController
             . '&return_id='     . urlencode($parentId)
             . '&parent_type='   . urlencode($parentType)
             . '&parent_id='     . urlencode($parentId)
-            . '&parent_name='   . urlencode($parentName);
+            . '&parent_name='   . urlencode($parentName)
+            . '&phone='         . urlencode($contactPhone)
+            . '&type='          . urlencode('WhatsAppHelper');
 
         require_once('modules/stic_Messages/views/view.conversation.php');
         $view = new stic_MessagesViewConversation();
