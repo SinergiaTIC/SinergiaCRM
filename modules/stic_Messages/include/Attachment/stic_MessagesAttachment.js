@@ -78,7 +78,7 @@
                     return;
                 }
 
-                document.getElementById('media_note_id').value = data.note_id;
+                document.getElementById('media_note_id').value = data.media_note_id;
                 sticShowAttachPreview(file, data.name);
             })
             .catch(function (err) {
