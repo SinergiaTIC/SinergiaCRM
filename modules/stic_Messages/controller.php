@@ -66,16 +66,20 @@ class stic_MessagesController extends SugarController
         else {
             $this->applyConversationSubpanelDefaults();
             $this->prepareConversationDataForMessage();
-            // Subpanel conversations to validate
             if (!$this->validateConversationRequiredFields($this->bean)) {
                 echo json_encode(array('success' => false, 'number_found' => false));
                 exit;
             }
             $this->bean->save(!empty($this->bean->notify_on_save));
-            // header('Content-Type: application/json');
-            // $this->bean->response
-            // echo "{'status': 200, 'message': 'ok'}";
-            echo json_encode(array('success' => true, 'number_found' => true));
+
+            $saveSuccess = ($this->bean->status === 'sent' || $this->bean->status === 'redirected');
+            echo json_encode(array(
+                'success' => $saveSuccess,
+                'number_found' => true,
+                'message_status' => $this->bean->status ?? '',
+                'response' => $this->bean->response ?? '',
+            ));
+            exit;
         }
     }
 

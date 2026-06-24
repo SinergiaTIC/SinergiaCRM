@@ -530,11 +530,7 @@ if (!$inboundEmail) {
 $xtpl->parse("main.NoInbound4");
 $xtpl->parse("main.NoInbound5");
 
-// Parse stic_whatsapp_fields only when editing a whatsapp template
-if ((isset($_REQUEST['type']) && ($_REQUEST['type'] === 'whatsapp' || $_REQUEST['type'] === 'whatsappweb'))
-    || (isset($focus->type) && ($focus->type === 'whatsapp' || $focus->type === 'whatsappweb')) ) {
-    $xtpl->parse("main.stic_whatsapp_fields");
-}
+$xtpl->parse("main.stic_whatsapp_fields");
 
 $xtpl->parse("main");
 $xtpl->out("main");
