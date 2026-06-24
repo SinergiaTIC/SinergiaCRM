@@ -161,10 +161,3 @@ function sendMessage() {
         sendBtn.disabled = false;
     });
 }
-
-/* ── Auto-refresh to show new messages ── */
-setInterval(function() {
-    if (!document.hidden) {
-        location.reload();
-    }
-}, 3000);

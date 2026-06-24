@@ -276,6 +276,10 @@ class stic_Messages extends Basic
                 }
             }
         }
+        // Clean up curly braces left by EmailTemplate variable resolution (e.g. {{Paula}} → Paula)
+        // Twilio's template engine uses {{N}} syntax and these braces would otherwise persist in the stored message.
+        $this->message = preg_replace('/\{\{([^}]+)\}\}/', '$1', $this->message);
+
         // Save the bean
         $GLOBALS['log']->info('stic_Messages::save() — saving bean id=' . ($this->id ?? 'NEW'));
         parent::save($check_notify);
