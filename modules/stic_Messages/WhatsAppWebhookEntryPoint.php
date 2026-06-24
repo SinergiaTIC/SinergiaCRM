@@ -278,6 +278,8 @@ class WhatsAppWebhookEntryPoint
             'video/mp4' => '.mp4',
             'video/3gpp' => '.3gp',
             'application/pdf' => '.pdf',
+            'text/csv' => '.csv',
+            'application/csv' => '.csv',
         ];
 
         return $mimeToExtension[$mimeType] ?? '.bin';

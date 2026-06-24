@@ -36,7 +36,8 @@ $lblUploading = htmlspecialchars($mod_strings['LBL_CONVERSATION_UPLOADING'] ?? '
                 application/msword,
                 application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                 application/vnd.ms-excel,
-                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                text/csv,.csv">
 
     <div id="stic_attach_btn_row" style="display:flex;align-items:center;gap:10px;">
         <button type="button" class="button" id="stic_attach_btn"

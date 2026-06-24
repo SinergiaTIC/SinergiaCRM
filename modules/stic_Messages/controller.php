@@ -738,6 +738,8 @@ class stic_MessagesController extends SugarController
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'application/vnd.ms-powerpoint',
             'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'text/csv',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         ];
 
         if (empty($_FILES['media']) || $_FILES['media']['error'] !== UPLOAD_ERR_OK) {
