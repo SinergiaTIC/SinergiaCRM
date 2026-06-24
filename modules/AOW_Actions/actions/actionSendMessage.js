@@ -98,6 +98,15 @@ function filterTemplatesByType(lineNum) {
     
     // Update edit link visibility
     show_edit_template_link(templateSelect, lineNum);
+
+    // STIC-Custom 20250624 - Auto-populate sender with workflow assigned user when type is WhatsApp
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/995
+    var senderField = document.getElementById('aow_actions_param[' + lineNum + '][sender_name]');
+    var assignedUser = document.getElementById('assigned_user_name');
+    if (senderField && assignedUser && typeLower.indexOf('whatsapp') !== -1) {
+        senderField.value = assignedUser.value;
+    }
+    // END STIC-Custom
 }
 
 function initTemplateFilter(lineNum) {
