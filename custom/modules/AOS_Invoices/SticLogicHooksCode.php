@@ -150,7 +150,8 @@ class AOS_InvoicesHook
 
         // === Step 1.1: Block edition of invoices accepted by AEAT ===
         // If the invoice is already accepted by AEAT, only non-tax fields can be edited
-        if (!empty($bean->fetched_row['verifactu_aeat_status_c']) && 
+        if (AOS_InvoicesUtils::isVerifactuActivated() &&
+            !empty($bean->fetched_row['verifactu_aeat_status_c']) && 
             $bean->fetched_row['verifactu_aeat_status_c'] === 'accepted') {
             
             // Check if it's a duplicate or creating a rectified invoice (both are allowed)
@@ -174,7 +175,7 @@ class AOS_InvoicesHook
                 // List of tax fields that CANNOT be edited
                 $protectedFields = array(
                     'number', 'stic_invoice_type_c', 'invoice_date', 'due_date',
-                    'billing_account_id', 'billing_account', 'billing_contact_id', 'billing_contact',
+                    'billing_account_id', 'billing_contact_id',
                     'billing_address_street', 'billing_address_city', 'billing_address_state', 
                     'billing_address_postalcode', 'billing_address_country',
                     'shipping_address_street', 'shipping_address_city', 'shipping_address_state',
@@ -185,13 +186,14 @@ class AOS_InvoicesHook
                     // Campos Verifactu
                     'verifactu_hash_c', 'verifactu_previous_hash_c', 'verifactu_check_url_c',
                     'verifactu_aeat_status_c', 'verifactu_aeat_response_c', 'verifactu_cancel_id_c',
-                    'verifactu_csv_c', 'verifactu_submitted_at_c', 'verifactu_cancel_hash_c',
+                    'verifactu_csv_c', 'verifactu_cancel_hash_c',
                     'verifactu_audit_log_c', 'verifactu_is_rectified_c', 'verifactu_rectified_type_c',
                     'verifactu_rectified_base_c', 'verifactu_rectified_date_c'
                 );
                 
                 // Detect which fields have been modified
                 $modifiedFields = array();
+                require_once 'include/clean.php';
                 foreach ($protectedFields as $field) {
                     // Compare current value with original value
                     $currentValue = isset($bean->$field) ? $bean->$field : null;
@@ -202,6 +204,18 @@ class AOS_InvoicesHook
                     $originalNormalized = ($originalValue === null || $originalValue === '') ? null : $originalValue;
                     
                     if ($currentNormalized !== $originalNormalized) {
+                        // Check if this is a phantom change from cleanBean()->purify_html()
+                        // cleanBean() applies purify_html() to char/text/enum fields before before_save,
+                        // which creates artificial differences vs fetched_row
+                        if (!empty($currentNormalized) && !empty($originalNormalized)) {
+                            $fieldType = $bean->field_defs[$field]['type'] ?? '';
+                            if (strpos((string)$fieldType, 'char') !== false || strpos((string)$fieldType, 'text') !== false || $fieldType === 'enum') {
+                                $purifiedOriginal = purify_html($originalNormalized, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+                                if ($purifiedOriginal === $currentNormalized) {
+                                    continue;
+                                }
+                            }
+                        }
                         $modifiedFields[] = $field;
                     }
                 }
