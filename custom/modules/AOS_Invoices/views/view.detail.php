@@ -58,9 +58,19 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
             </div>';
         }
 
+        // === Restrict inline edit for non-draft invoices with Verifactu ===
+        // Only status and description can be inline-edited when invoice is non-draft
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !empty($this->bean->id) && $this->bean->status !== 'draft') {
+            foreach ($this->bean->field_defs as $field => &$def) {
+                if ($field !== 'status' && $field !== 'description') {
+                    $def['inline_edit'] = false;
+                }
+            }
+        }
+
         // === Verifactu Activation Banner ===
         // Show warning if Verifactu is not activated but certificate is configured
-        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
 
         if (!empty($verifactuStatus['warning'])) {
@@ -103,20 +113,6 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         parent::display();
 
         SticViews::display($this);
-
-        $bean = $this->bean;
-
-        if (!empty($bean->verifactu_aeat_status_c) && 
-            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
-            
-            // Disable inline editing
-            echo '<script>
-            $(document).ready(function() {
-                $(".inlineEditIcon").hide();
-                $(".inlineEdit").unbind("dblclick");
-            });
-            </script>';
-        }
 
         // Pass verifactu status to JS for hiding panels in legacy mode
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();

@@ -136,6 +136,12 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         }
         echo '<script>var sticSeriesConfig = ' . json_encode($seriesForJs) . ';</script>';
 
+        // === Filter status dropdown based on current invoice status ===
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !empty($this->bean->id)) {
+            AOS_InvoicesUtils::filterStatusDropdown($app_list_strings, $this->bean->status);
+        }
+        // === End Filter ===
+
         parent::display();
 
         // Extend sqs_objects for billing_contact to include address and identification number fields.

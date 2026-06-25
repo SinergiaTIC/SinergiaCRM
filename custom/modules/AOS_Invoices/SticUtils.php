@@ -97,6 +97,45 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Filter the invoice_status_dom dropdown based on the invoice's current status.
+     * Modifies $app_list_strings in place to only keep allowed options.
+     * 
+     * @param array $app_list_strings Reference to the global app_list_strings
+     * @param string $currentStatus The current status value of the invoice
+     * @return void
+     */
+    public static function filterStatusDropdown(&$app_list_strings, $currentStatus)
+    {
+        if (!self::isVerifactuActivated()) {
+            return;
+        }
+
+        $allowedTransitions = array(
+            'draft' => array('draft'),
+            'emitted' => array('emitted', 'Paid', 'Unpaid', 'Cancelled'),
+            'Paid' => array('Paid', 'Unpaid', 'Cancelled'),
+            'Unpaid' => array('Unpaid', 'Paid', 'Cancelled'),
+            'Cancelled' => array('Cancelled'),
+        );
+
+        if (!isset($app_list_strings['invoice_status_dom'])) {
+            return;
+        }
+
+        $allowed = $allowedTransitions[$currentStatus] ?? null;
+
+        if ($allowed === null) {
+            return;
+        }
+
+        foreach ($app_list_strings['invoice_status_dom'] as $key => $label) {
+            if (!in_array($key, $allowed)) {
+                unset($app_list_strings['invoice_status_dom'][$key]);
+            }
+        }
+    }
+
+    /**
      * Create a registration record for an invoice
      *
      * @param string $issuerNif Company's NIF/CIF

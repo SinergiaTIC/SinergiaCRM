@@ -105,6 +105,49 @@ class AOS_InvoicesHook
         }
         // === End block status change ===
 
+        // === Step 1.1a: Block non-draft → draft status change ===
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
+            && $bean->status === 'draft' && !empty($bean->fetched_row['status'])
+            && $bean->fetched_row['status'] !== 'draft') {
+            $GLOBALS['log']->warn(__METHOD__ . ': Step 1.1a - Blocked non-draft→draft status change for invoice ' . $bean->id);
+            $bean->status = $bean->fetched_row['status'];
+        }
+        // === End Step 1.1a ===
+
+        // === Step 1.1c: Field protection for non-draft invoices (inline edit only) ===
+        // Verifactu activated and invoice already has a non-draft status.
+        // Inline edit modifies exactly 1 field at a time (via saveField). If only 1 field changed
+        // besides system fields, it's an inline edit. System saves (sendToAeat, etc.) change
+        // multiple fields and are allowed to proceed unrestricted.
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
+            && !empty($bean->fetched_row['status']) && $bean->fetched_row['status'] !== 'draft') {
+
+            $allowedFields = array('status', 'description');
+            $modifiedFields = array();
+
+            foreach ($bean->fetched_row as $field => $originalValue) {
+                if (in_array($field, $allowedFields)) {
+                    continue;
+                }
+                // Compare current bean value with original fetched value
+                $currentValue = isset($bean->$field) ? $bean->$field : null;
+                $originalNormalized = ($originalValue === null || $originalValue === '') ? null : $originalValue;
+                $currentNormalized = ($currentValue === null || $currentValue === '') ? null : $currentValue;
+
+                if ($currentNormalized !== $originalNormalized) {
+                    $modifiedFields[] = $field;
+                }
+            }
+
+            // If exactly 1 field changed (inline edit) and it's not allowed, revert it
+            if (count($modifiedFields) === 1) {
+                $field = $modifiedFields[0];
+                $GLOBALS['log']->warn(__METHOD__ . ': Step 1.1c - Blocked inline edit of field "' . $field . '" for non-draft invoice ' . $bean->id);
+                $bean->$field = $bean->fetched_row[$field];
+            }
+        }
+        // === End Step 1.1c ===
+
         // === Step 1.1: Block edition of invoices accepted by AEAT ===
         // If the invoice is already accepted by AEAT, only non-tax fields can be edited
         if (!empty($bean->fetched_row['verifactu_aeat_status_c']) && 
