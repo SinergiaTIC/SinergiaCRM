@@ -51,6 +51,7 @@ class CustomHomeController extends HomeController
     /**
      * Override action_getEditFieldHTML to filter the invoice_status_dom dropdown
      * based on the invoice's current status when Verifactu is activated.
+     * In legacy mode, draft and emitted statuses are removed from the dropdown.
      */
     public function action_getEditFieldHTML()
     {
@@ -62,7 +63,12 @@ class CustomHomeController extends HomeController
             $bean = BeanFactory::getBean('AOS_Invoices', $_REQUEST['id']);
             if ($bean && $bean->id) {
                 global $app_list_strings;
-                AOS_InvoicesUtils::filterStatusDropdown($app_list_strings, $bean->status);
+                if (AOS_InvoicesUtils::isVerifactuActivated()) {
+                    AOS_InvoicesUtils::filterStatusDropdown($app_list_strings, $bean->status);
+                } else {
+                    unset($app_list_strings['invoice_status_dom']['draft']);
+                    unset($app_list_strings['invoice_status_dom']['emitted']);
+                }
             }
         }
         parent::action_getEditFieldHTML();
