@@ -4063,11 +4063,6 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorado';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tratado';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sin cambios';
 
-// Conversaciones: Tipos
-$app_list_strings['stic_conversations_types_list'][''] = '';
-$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipo 1';
-$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipo 2';
-
 // Advanced Web Forms Deferred Tickets: status
 $app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
 $app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendiente';
@@ -4082,6 +4077,11 @@ $app_list_strings['stic_awf_incoming_events_status']['new'] = 'Nuevo';
 $app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Procesado';
 $app_list_strings['stic_awf_incoming_events_status']['error'] = 'Error de proceso';
 $app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorado';
+
+// Conversaciones: Tipos
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipo 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipo 2';
 
 // Modificaciones del core de SuiteCRM
 

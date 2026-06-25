@@ -931,7 +931,7 @@ class stic_AwfAction {
     });
 
     this.flow_success_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
-    this.flow_error_text = utils.translate("LBL_FLOW_DEFERRED_ONERROR");
+    this.flow_error_text = utils.translate("LBL_FLOW_ONERROR");
 
     // 2. Overwrite with provided data
     Object.assign(this, data);
@@ -1956,7 +1956,7 @@ class stic_AwfConfiguration {
       continue_on_error: actionDef.defaultContinueOnError || false,
       order: defaultOrder,
       flow_success_text: actionDef.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
-      flow_error_text: actionDef.flowErrorLabel || utils.translate("LBL_FLOW_DEFERRED_ONERROR"),
+      flow_error_text: actionDef.flowErrorLabel || utils.translate("LBL_FLOW_ONERROR"),
     });
 
     const requisiteActions = new Set(); 

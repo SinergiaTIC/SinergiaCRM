@@ -111,11 +111,12 @@ abstract class stic_AWF_PaymentStrategy
         $ticket->external_transaction_id = $externalTransactionId;
         $ticket->status = 'pending';
         $ticket->handler_action_id = $actionConfig->id;
-        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime('+30 days'));
 
-        $ticket->save();
+        // Set the expiration date
+        $days = (int)$actionConfig->getResolvedParameter('expiration_days', 30);
+        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
 
-        // Save the context data for the deferred flow
+        // Set the context data for the deferred flow
         $contextData = DeferredContextData::createSnapshot('PaymentRouterAction', $ticket, $actionConfig, $beanPayment, $context, 
             [ 
                 'strategy_class' => static::class,
@@ -123,6 +124,8 @@ abstract class stic_AWF_PaymentStrategy
                 'payment_id' => $beanPayment->id,
             ]);
         $ticket->context_data = $contextData->toJson();;
+
+        // Save the ticket
         $ticket->save();
 
         $this->ticket = $ticket;

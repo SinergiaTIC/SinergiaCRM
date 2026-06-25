@@ -64,6 +64,8 @@ class DeferredContextData
     public ?string $beanId;
     public ?string $module;
     public array $blockReferences = [];
+    public ?string $expiredTitle = null;
+    public ?string $expiredMessage = null;
     
     /** @var array Additional data specific to the action (ex: email, stripe_session...) */
     public array $customData = [];
@@ -125,6 +127,8 @@ class DeferredContextData
             'bean_id' => $this->beanId,
             'module' => $this->module,
             'block_references' => $this->blockReferences,
+            'expired_title' => $this->expiredTitle,
+            'expired_message' => $this->expiredMessage,
         ];
         // Merge the fixed data with the custom data (the fixed data takes precedence in case of collision)
         return json_encode(array_merge($this->customData, $data), JSON_UNESCAPED_UNICODE);
@@ -145,9 +149,12 @@ class DeferredContextData
             $data['flow_success_id'] ?? null,
             $data['flow_error_id'] ?? null,
             $data['bean_id'] ?? null,
-            $data['module'] ?? null
+            $data['module'] ?? null,
         );
         $instance->blockReferences = $data['block_references'] ?? [];
+
+        $instance->expiredTitle = $data['expired_title'] ?? null;
+        $instance->expiredMessage = $data['expired_message'] ?? null;
 
         // Remove the fixed keys to save only the custom ones
         unset($data['form_id'], 
@@ -158,7 +165,9 @@ class DeferredContextData
               $data['flow_error_id'], 
               $data['bean_id'], 
               $data['module'], 
-              $data['block_references']);
+              $data['block_references'],
+              $data['expired_title'],
+              $data['expired_message']);
         $instance->customData = $data;
 
         return $instance;
@@ -178,6 +187,8 @@ class DeferredContextData
             'bean_id' => $this->beanId,
             'module' => $this->module,
             'block_references' => $this->blockReferences,
+            'expired_title' => $this->expiredTitle,
+            'expired_message' => $this->expiredMessage,
         ];
         return array_merge($this->customData, $data);
     }
@@ -195,6 +206,9 @@ class DeferredContextData
         );
         $instance->customData = $customData;
         $instance->captureBlockReferences($context);
+        
+        $instance->expiredTitle = $actionConfig->getResolvedParameter('expired_title');
+        $instance->expiredMessage = $actionConfig->getResolvedParameter('expired_message');
 
         return $instance;
     }

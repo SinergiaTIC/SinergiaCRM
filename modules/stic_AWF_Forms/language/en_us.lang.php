@@ -229,7 +229,6 @@ $mod_strings = array (
   'LBL_FLOW_MAIN' => 'Main',
   'LBL_FLOW_ONERROR' => 'Error',
   'LBL_FLOW_DEFERRED_MAIN' => 'Finished',
-  'LBL_FLOW_DEFERRED_ONERROR' => 'Error',
 
   // Flow -> Action
   'LBL_ACTION' => 'Action',
@@ -480,6 +479,15 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Active session',
 
   // -- DEFERRED ACTIONS --
+  'LBL_PARAM_EXPIRATION_DAYS' => 'Expiration days',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Number of days before the deferred action expires',
+  'LBL_PARAM_EXPIRED_TITLE' => 'Title for expired link',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Title of the warning that will be displayed when accessing the expired link',
+  'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Expired link',
+  'LBL_PARAM_EXPIRED_TEXT' => 'Expired link warning text',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Text to display when accessing the expired link',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'This link has expired for security reasons',
+
   // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirm email',
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Generates a unique link and sends it via email so the user can confirm the email address.',

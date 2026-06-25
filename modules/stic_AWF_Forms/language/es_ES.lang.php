@@ -229,7 +229,6 @@ $mod_strings = array (
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
   'LBL_FLOW_DEFERRED_MAIN' => 'Finalizada',
-  'LBL_FLOW_DEFERRED_ONERROR' => 'Error',
 
   // Flow -> Action
   'LBL_ACTION' => 'Acción',
@@ -480,6 +479,15 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sesión activa',
 
   // -- DEFERRED ACTIONS --
+  'LBL_PARAM_EXPIRATION_DAYS' => 'Días para caducidad',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días antes de que caduque la acción diferida',
+  'LBL_PARAM_EXPIRED_TITLE' => 'Título para enlace caducado',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título de la advertencia que se mostrará al acceder al enlace caducado',
+  'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enlace caducado',
+  'LBL_PARAM_EXPIRED_TEXT' => 'Texto de advertencia del enlace caducado',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto que se mostrará al acceder al enlace caducado',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad',
+  
   // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su dirección de correo electrónico.',

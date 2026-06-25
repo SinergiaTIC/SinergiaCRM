@@ -1118,7 +1118,16 @@ class stic_AWFUtils {
                 if ($isSuccess) {
                     self::renderGenericResponseSuccess($context->formConfig); 
                 } else {
-                    self::renderGenericResponseError($context->formConfig);
+                    $customTitle = $context->deferredContext?->expiredTitle;
+                    $customMsg = $context->deferredContext?->expiredMessage;
+
+                    if (!empty($customTitle) || !empty($customMsg)) {
+                        $title = $customTitle ?: translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
+                        $msg = $customMsg ?: translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
+                        self::renderGenericResponse($context->formConfig, $title, $msg);
+                    } else {
+                        self::renderGenericResponseError($context->formConfig);
+                    }
                 }
             }
         } catch (Exception $e) {

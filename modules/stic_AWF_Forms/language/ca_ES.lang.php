@@ -229,7 +229,6 @@ $mod_strings = array (
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
   'LBL_FLOW_DEFERRED_MAIN' => 'Finalitzada',
-  'LBL_FLOW_DEFERRED_ONERROR' => 'Error',
 
   // Flow -> Action
   'LBL_ACTION' => 'Acció',
@@ -480,6 +479,15 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sessió activa',
 
   // -- DEFERRED ACTIONS --
+  'LBL_PARAM_EXPIRATION_DAYS' => "Dies d'expiració",
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => "Nombre de dies abans que el l'acció diferida caduqui",
+  'LBL_PARAM_EXPIRED_TITLE' => 'Títol per enllaç caducat',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => "Títol de l'avís que es mostrarà quan s'accedeixi a l'enllaç caducat",
+  'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enllaç caducat',
+  'LBL_PARAM_EXPIRED_TEXT' => "Text de l'avís per enllaç caducat",
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => "Text que es mostrarà quan s'accedeixi a l'enllaç caducat",
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Aquest enllaç ha caducat per motius de seguretat',
+
   // EmailConfirmationAction 
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirma el correu electrònic', 
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => "Genera un enllaç únic i l'envia per correu electrònic perquè l'usuari pugui confirmar la seva adreça de correu electrònic.", 

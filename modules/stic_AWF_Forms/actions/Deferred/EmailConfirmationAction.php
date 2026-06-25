@@ -38,6 +38,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         $this->isUserSelectable = true;
         $this->category = 'security';
         $this->baseLabel = 'LBL_EMAIL_CONFIRMATION_ACTION';
+        $this->defaultExpirationDays = '7';
     }
 
     /**
@@ -72,11 +73,9 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
     }
 
     /**
-     * getCustomParameters()
-     * Definition of the ADDITIONAL parameters needed for the action
-     * The parameter of the main Data Block is requested by the parent class.
+     * Definition of the ADDITIONAL parameters needed for the deferred action
      */
-    protected function getCustomParameters(): array
+    protected function getDeferredCustomParameters(): array
     {
         // The email template to use (required)
         $paramTemplate = new ActionParameterDefinition();
@@ -124,12 +123,16 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         $ticket->token_hash = bin2hex(random_bytes(32)); 
         $ticket->status = 'pending';
         $ticket->handler_action_id = $actionConfig->id;
-        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime('+7 days'));
-        $ticket->save();
 
-        // Save the context data for the deferred flow
+        // Set the expiration date
+        $days = (int)$actionConfig->getResolvedParameter('expiration_days', 7);
+        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
+
+        // Set the context data for the deferred flow
         $contextData = DeferredContextData::createSnapshot(self::class, $ticket, $actionConfig, $bean, $context, ['email' => $emailAddress]);
         $ticket->context_data = $contextData->toJson();;
+
+        // Save the ticket
         $ticket->save();
 
         // Generate the confirmation URL
@@ -145,7 +148,12 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
             stic_AWFUtils::sendTemplateEmail($emailAddress, $templateRef->beanId, $context, $bean, $customVars);
             $this->updateEmailOptInStatus($emailAddress, 'sent', $ticket->token_hash);
         } catch (\Exception $e) {
-            $this->updateEmailOptInStatus($emailAddress, 'failed');
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error trying to send Email to '{$emailAddress}': " . $e->getMessage());
+            try {
+                $this->updateEmailOptInStatus($emailAddress, 'failed');
+            } catch (\Exception $e2) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error trying to set Opt-in as failed: " . $e2->getMessage());
+            }
             return new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         }
 
@@ -165,14 +173,22 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
     {
         // Email confirmation received: extract the email address from the context data and update the opt-in status
         $emailAddress = $context->deferredContext?->getCustom('email');
-        if ($emailAddress) {
-            $this->updateEmailOptInStatus($emailAddress, 'confirmed');
+        if (empty($emailAddress)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF EmailConfirmationAction: Email address missing in Webhook request");
+            return new ActionResult(ResultStatus::ERROR, null, "No valid email address found in the context data.");
         }
 
-        return new ActionResult(ResultStatus::OK, null, "Correu confirmat correctament.");
+        try {
+            $this->updateEmailOptInStatus($emailAddress, 'confirmed');
+        } catch (\Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error trying to set Opt-in as confirmed: " . $e->getMessage());
+            return new ActionResult(ResultStatus::ERROR, null, "Error confirming email: " . $e->getMessage());
+        }
+    
+        return new ActionResult(ResultStatus::OK, null, "Email confirmed.");
     }
 
-/**
+    /**
      * Updates the opt-in status of the email address in the email_addresses table.
      * @param string $email The email address to update.
      * @param string $action The action performed ('sent', 'confirmed', 'failed').
@@ -180,32 +196,31 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
      */
     private function updateEmailOptInStatus(string $email, string $action, ?string $token = null)
     {
-        global $db;
-        $safeEmail = $db->quote($email);
         $now = TimeDate::getInstance()->nowDb();
 
-        if ($action === 'sent') {
-            $safeToken = $db->quote($token ?? '');
-            $sql = "UPDATE email_addresses 
-                    SET confirm_opt_in = 'not-opt-in',
-                        confirm_opt_in_sent_date = '{$now}',
-                        confirm_opt_in_token = '{$safeToken}'
-                    WHERE email_address = '{$safeEmail}' AND deleted = 0";
-                    
-        } elseif ($action === 'confirmed') {
-            $sql = "UPDATE email_addresses 
-                    SET confirm_opt_in = 'confirmed-opt-in', 
-                        opt_out = 0,
-                        confirm_opt_in_date = '{$now}'
-                    WHERE email_address = '{$safeEmail}' AND deleted = 0";
-                    
-        } elseif ($action === 'failed') {
-            $sql = "UPDATE email_addresses 
-                    SET confirm_opt_in_fail_date = '{$now}'
-                    WHERE email_address = '{$safeEmail}' AND deleted = 0";
+        /** @var EmailAddress $emailBean */
+        $emailBean = BeanFactory::newBean('EmailAddresses');
+        $emailBean->retrieve_by_string_fields([ 'email_address' => $email, 'deleted' => 0 ]);
+
+        if (empty($emailBean->id)) {
+            throw new \Exception("Email record not found for '{$email}' to update opt-in status.");
         }
-        
-        $db->query($sql);
+
+        if ($action === 'sent') {
+            $emailBean->confirm_opt_in = 'not-opt-in';
+            $emailBean->confirm_opt_in_sent_date = $now;
+            $emailBean->confirm_opt_in_token = $token ?? '';
+            
+        } elseif ($action === 'confirmed') {
+            $emailBean->confirm_opt_in = 'confirmed-opt-in';
+            $emailBean->opt_out = 0;
+            $emailBean->confirm_opt_in_date = $now;
+            
+        } elseif ($action === 'failed') {
+            $emailBean->confirm_opt_in_fail_date = $now;
+        }
+
+        $emailBean->save();
     }
 
     /**

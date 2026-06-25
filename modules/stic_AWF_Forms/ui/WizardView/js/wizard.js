@@ -1850,7 +1850,7 @@ class WizardStep3 {
                   order: defaultOrder,
                   is_user_selectable: true,
                   flow_success_text: def.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
-                  flow_error_text: def.flowErrorLabel || utils.translate("LBL_FLOW_DEFERRED_ONERROR"),
+                  flow_error_text: def.flowErrorLabel || utils.translate("LBL_FLOW_ONERROR"),
                 });
 
                 // Initialize empty parameters according to the definition

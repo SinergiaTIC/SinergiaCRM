@@ -289,7 +289,6 @@ class WebhookHandler
                 } else {
                     $ticket->status = 'failed';
                     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket [{$ticket->id}] permanently failed after {$maxRetries} attempts. Error: " . $ticket->last_error_message);
-                    $this->createAdminAlert($ticket, $ticket->last_error_message);
                 }
                 $ticket->save();
 
@@ -355,32 +354,6 @@ class WebhookHandler
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Enqueued deferred flow Job ID={$jobId} for ticket {$ticketId} (success=" . ($isSuccess ? 'true' : 'false') . ")");
         } catch (Exception $e) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to enqueue deferred flow for ticket {$ticketId}: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Creates an alert Task in the CRM when a deferred ticket permanently fails,
-     * so an administrator can perform manual reconciliation.
-     */
-    private function createAdminAlert(stic_AWF_Deferred_Tickets $ticket, string $errorMessage): void
-    {
-        try {
-            $task = BeanFactory::newBean('Tasks');
-            $task->name = '[AWF] Deferred action failed - Ticket ' . $ticket->id;
-            $task->status = 'Not Started';
-            $task->priority = 'High';
-            $task->description = "A deferred ticket has permanently failed after maximum retries.\n\n"
-                . "Ticket ID: {$ticket->id}\n"
-                . "External Transaction ID: " . ($ticket->external_transaction_id ?? 'N/A') . "\n"
-                . "Error: {$errorMessage}\n"
-                . "Retry count: " . ($ticket->retry_count ?? 0);
-            $task->parent_type = 'stic_AWF_Deferred_Tickets';
-            $task->parent_id = $ticket->id;
-            $task->assigned_user_id = '1';
-            $task->save();
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Created admin alert Task ID={$task->id} for failed ticket {$ticket->id}");
-        } catch (Exception $e) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to create admin alert task: " . $e->getMessage());
         }
     }
 
