@@ -439,17 +439,11 @@ array(
                         'label' => 'LBL_VERIFACTU_RECTIFIED_BASE',
                     ),
                     1 => array(
-                        'name' => 'verifactu_rectified_date_c',
-                        'label' => 'LBL_VERIFACTU_RECTIFIED_DATE',
-                    ),
-                ),
-                2 => array(
-                    0 => array(
                         'name' => 'verifactu_cancel_name_c',
                         'studio' => 'visible',
                         'label' => 'LBL_VERIFACTU_CANCEL_NAME',
                     ),
-                    1 => '',
+                    
                 ),
             ),
             'LBL_INVOICE_TO' => array(

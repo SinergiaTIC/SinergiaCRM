@@ -403,7 +403,7 @@ array(
                         'name' => 'stic_invoice_type_c',
                         'label' => 'LBL_STIC_INVOICE_TYPE',
                     ),
-                    
+
                     1 => array(
                         'name' => 'number',
                         'label' => 'LBL_INVOICE_NUMBER',
@@ -499,15 +499,15 @@ array(
                         'label' => 'LBL_VERIFACTU_RECTIFIED_BASE',
                     ),
                     1 => array(
-                        'name' => 'verifactu_rectified_date_c',
-                        'label' => 'LBL_VERIFACTU_RECTIFIED_DATE',
+                        'name' => 'verifactu_cancel_name_c',
+                        'studio' => 'visible',
+                        'label' => 'LBL_VERIFACTU_CANCEL_NAME',
                     ),
                 ),
                 2 => array(
                     0 => array(
-                        'name' => 'verifactu_cancel_name_c',
-                        'studio' => 'visible',
-                        'label' => 'LBL_VERIFACTU_CANCEL_NAME',
+                        'name' => 'verifactu_rectified_date_c',
+                        'label' => 'LBL_VERIFACTU_RECTIFIED_DATE',
                     ),
                     1 => '',
                 ),
