@@ -59,11 +59,12 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         }
 
         // === Restrict inline edit for non-draft invoices with Verifactu ===
-        // Only status and description can be inline-edited when invoice is non-draft
+        // Only status, assigned_user_id and description can be inline-edited when invoice is non-draft
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         if (AOS_InvoicesUtils::isVerifactuActivated() && !empty($this->bean->id) && $this->bean->status !== 'draft') {
+            $allowedInlineFields = array('status', 'assigned_user_id', 'description');
             foreach ($this->bean->field_defs as $field => &$def) {
-                if ($field !== 'status' && $field !== 'description') {
+                if (!in_array($field, $allowedInlineFields)) {
                     $def['inline_edit'] = false;
                 }
             }

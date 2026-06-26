@@ -122,7 +122,7 @@ class AOS_InvoicesHook
         if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
             && !empty($bean->fetched_row['status']) && $bean->fetched_row['status'] !== 'draft') {
 
-            $allowedFields = array('status', 'description');
+            $allowedFields = array('status', 'description', 'assigned_user_id');
             $modifiedFields = array();
 
             foreach ($bean->fetched_row as $field => $originalValue) {

@@ -224,6 +224,39 @@ switch (viewType()) {
     break;
 
   case "list":
+    // Restrict inline edit for non-draft invoices in list view
+    // Only status, assigned_user_name and description can be inline-edited
+    // Detection: if verifactu_aeat_status_c cell has a value, it's non-draft (draft=empty)
+    // In legacy mode, verifactu_aeat_status_c is always empty, so no restriction applies
+    (function() {
+      var allowedFields = ["status", "assigned_user_name", "description"];
+
+      function restrictInlineEdit() {
+        var rows = document.querySelectorAll(".listViewBody tr.oddListRowS1, .listViewBody tr.evenListRowS1");
+
+        rows.forEach(function(row) {
+          var statusCell = row.querySelector('td[field="status"]');
+          if (!statusCell) return;
+          var statusText = statusCell.textContent.trim();
+          if (statusText === "Borrador" || statusText === "Draft") return;
+
+          row.querySelectorAll("td[field]").forEach(function(cell) {
+            var fieldName = cell.getAttribute("field");
+            if (allowedFields.indexOf(fieldName) === -1) {
+              cell.classList.remove("inlineEdit");
+              $(cell).off("dblclick");
+              var icon = cell.querySelector(".inlineEditIcon");
+              if (icon) icon.style.display = "none";
+            }
+          });
+        });
+      }
+
+      $(document).ready(function() {
+        restrictInlineEdit();
+        setInterval(restrictInlineEdit, 3000);
+      });
+    })();
     break;
 
   default:
