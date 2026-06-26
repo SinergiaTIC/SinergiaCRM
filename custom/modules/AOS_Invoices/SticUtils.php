@@ -2336,7 +2336,7 @@ class AOS_InvoicesUtils
             require_once 'modules/stic_Settings/Utils.php';
             $useProduction = (stic_SettingsUtils::getSetting('VERIFACTU_TEST') == '1' ? false : true);
 
-            require_once 'custom/include/SticAeatQueryClient.php';
+            require_once 'custom/modules/AOS_Invoices/SticAeatQueryClient.php';
             $system = self::buildComputerSystem($issuerNif, $issuerName);
             $taxpayer = new FiscalIdentifier($issuerName, $issuerNif);
 
