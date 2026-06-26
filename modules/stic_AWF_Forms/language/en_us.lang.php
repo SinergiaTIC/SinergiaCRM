@@ -480,13 +480,13 @@ $mod_strings = array (
 
   // -- DEFERRED ACTIONS --
   'LBL_PARAM_EXPIRATION_DAYS' => 'Expiration days',
-  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Number of days before the deferred action expires',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Number of days before the deferred action expires.',
   'LBL_PARAM_EXPIRED_TITLE' => 'Title for expired link',
-  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Title of the warning that will be displayed when accessing the expired link',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Title of the warning that will be displayed when accessing the expired link.',
   'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Expired link',
   'LBL_PARAM_EXPIRED_TEXT' => 'Expired link warning text',
-  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Text to display when accessing the expired link',
-  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'This link has expired for security reasons',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Text to display when accessing the expired link.',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'This link has expired for security reasons.',
 
   // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirm email',
@@ -494,7 +494,7 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Email confirmed',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Recipient',
-  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Specifies the data block containing the email to be verified and to which the confirmation link will be sent',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Specifies the data block containing the email to be verified and to which the confirmation link will be sent.',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Email template',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'The email template must contain the variable {::confirmation_url::} in the message body to generate the confirmation link.',
 
