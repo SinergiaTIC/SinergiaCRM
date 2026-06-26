@@ -205,3 +205,14 @@ $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar
 
 $mod_strings['LBL_VERIFACTU_INLINE_EDIT_RESTRICTED'] = 'Esta factura ya ha sido enviada a AEAT. Solo se permite modificar los campos: Estado, Usuario asignado y Descripción.';
 
+// Verifactu AEAT query error messages
+$mod_strings['LBL_VERIFACTU_MODE_PRODUCTION'] = 'producción';
+$mod_strings['LBL_VERIFACTU_MODE_TEST'] = 'pruebas';
+$mod_strings['LBL_VERIFACTU_ENDPOINT_PRODUCTION'] = 'www1.agenciatributaria.gob.es / www10.agenciatributaria.gob.es';
+$mod_strings['LBL_VERIFACTU_ENDPOINT_TEST'] = 'prewww1.aeat.es / prewww10.aeat.es';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_CONNECT'] = 'No se pudo conectar con AEAT (%s). Verifique: (a) conexión a Internet, (b) que los endpoints %s sean accesibles desde su red, (c) cortafuegos o proxies que puedan bloquear la conexión. Detalle técnico: %s';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_HTTP'] = 'AEAT respondió con error HTTP %s. Detalle: %s';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_AEAT'] = 'AEAT rechazó la consulta: %s. Verifique que el certificado es válido y está reconocido por la AEAT.';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_CERTIFICATE'] = 'Error de certificado al conectar con AEAT: %s. Verifique que el certificado es válido, no ha caducado y está correctamente cargado en Administración > Certificado Digital.';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_GENERIC'] = 'Error al consultar AEAT (%s): %s';
+

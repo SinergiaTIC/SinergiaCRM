@@ -2388,9 +2388,32 @@ class AOS_InvoicesUtils
             if (isset($tempPemFile) && file_exists($tempPemFile)) {
                 unlink($tempPemFile);
             }
+
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+
+            $msg = $e->getMessage();
+            $isProduction = isset($useProduction) ? $useProduction : true;
+            $mode = $mod_strings[$isProduction ? 'LBL_VERIFACTU_MODE_PRODUCTION' : 'LBL_VERIFACTU_MODE_TEST'];
+            $endpoint = $mod_strings[$isProduction ? 'LBL_VERIFACTU_ENDPOINT_PRODUCTION' : 'LBL_VERIFACTU_ENDPOINT_TEST'];
+
+            if ($e instanceof \GuzzleHttp\Exception\ConnectException) {
+                $userMsg = sprintf($mod_strings['LBL_VERIFACTU_QUERY_ERROR_CONNECT'], $mode, $endpoint, $msg);
+            } elseif ($e instanceof \GuzzleHttp\Exception\ClientException || $e instanceof \GuzzleHttp\Exception\ServerException) {
+                $code = $e->getResponse() ? $e->getResponse()->getStatusCode() : '?';
+                $userMsg = sprintf($mod_strings['LBL_VERIFACTU_QUERY_ERROR_HTTP'], $code, $msg);
+            } elseif ($e instanceof \josemmo\Verifactu\Exceptions\AeatException) {
+                $userMsg = sprintf($mod_strings['LBL_VERIFACTU_QUERY_ERROR_AEAT'], $msg);
+            } elseif (stripos($msg, 'certificate') !== false || stripos($msg, 'SSL') !== false || stripos($msg, 'certificad') !== false) {
+                $userMsg = sprintf($mod_strings['LBL_VERIFACTU_QUERY_ERROR_CERTIFICATE'], $msg);
+            } else {
+                $userMsg = sprintf($mod_strings['LBL_VERIFACTU_QUERY_ERROR_GENERIC'], $mode, $msg);
+            }
+
             return [
                 'success' => false,
-                'message' => 'Error al consultar AEAT: ' . $e->getMessage(),
+                'message' => $userMsg,
             ];
         }
     }
