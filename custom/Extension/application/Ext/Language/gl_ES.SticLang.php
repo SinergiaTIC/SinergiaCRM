@@ -4072,9 +4072,9 @@ $app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancelado'
 
 // Advanced Web Forms Incoming Events: status
 $app_list_strings['stic_awf_incoming_events_status'][''] = '';
-$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Nuevo';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendiente';
 $app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Procesado';
-$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Error de proceso';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallido';
 $app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorado';
 
 // Conversaciones: Tipos
