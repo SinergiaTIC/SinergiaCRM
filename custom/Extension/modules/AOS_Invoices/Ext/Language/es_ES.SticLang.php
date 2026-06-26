@@ -203,3 +203,5 @@ $mod_strings['LBL_VERIFACTU_QUERY_NO_LINK_TOOLTIP'] = 'Factura no registrada en 
 // Block draft to non-emitted status change
 $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';
 
+$mod_strings['LBL_VERIFACTU_INLINE_EDIT_RESTRICTED'] = 'Esta factura ya ha sido enviada a AEAT. Solo se permite modificar los campos: Estado, Usuario asignado y Descripción.';
+

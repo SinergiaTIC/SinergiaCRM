@@ -229,6 +229,10 @@ switch (viewType()) {
     // Detection: if verifactu_aeat_status_c cell has a value, it's non-draft (draft=empty)
     // In legacy mode, verifactu_aeat_status_c is always empty, so no restriction applies
     (function() {
+      if (typeof verifactuActivated === "undefined" || verifactuActivated !== true) {
+        return;
+      }
+
       var allowedFields = ["status", "assigned_user_name", "description"];
 
       function restrictInlineEdit() {
@@ -245,6 +249,7 @@ switch (viewType()) {
             if (allowedFields.indexOf(fieldName) === -1) {
               cell.classList.remove("inlineEdit");
               $(cell).off("dblclick");
+              cell.setAttribute("title", typeof verifactuInlineEditRestricted !== "undefined" ? verifactuInlineEditRestricted : "");
               var icon = cell.querySelector(".inlineEditIcon");
               if (icon) icon.style.display = "none";
             }

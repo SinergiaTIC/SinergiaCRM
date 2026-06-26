@@ -78,6 +78,8 @@ class CustomAOS_InvoicesViewList extends ViewList
 
         SticViews::display($this);
 
+        echo '<script>var verifactuActivated = ' . (!empty($verifactuStatus['activated']) ? 'true' : 'false') . ';
+var verifactuInlineEditRestricted = "' . addslashes(translate('LBL_VERIFACTU_INLINE_EDIT_RESTRICTED', 'AOS_Invoices')) . '";</script>';
         echo getVersionedScript("custom/modules/AOS_Invoices/SticUtils.js");
     }
 }
