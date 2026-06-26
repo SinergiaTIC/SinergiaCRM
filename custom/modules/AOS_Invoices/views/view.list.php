@@ -30,6 +30,15 @@ class CustomAOS_InvoicesViewList extends ViewList
         parent::__construct();
     }
 
+    public function listViewPrepare()
+    {
+        parent::listViewPrepare();
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            unset($this->lv->displayColumns['STIC_INVOICE_TYPE_C']);
+        }
+    }
+
     public function preDisplay()
     {
         parent::preDisplay();

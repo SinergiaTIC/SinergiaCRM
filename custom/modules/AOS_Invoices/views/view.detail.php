@@ -58,6 +58,18 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
             </div>';
         }
 
+        // === Legacy mode: hide invoice type field ===
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            foreach ($this->dv->defs['panels'] as $panelName => &$panel) {
+                foreach ($panel as $rowNum => &$row) {
+                    $row = array_values(array_filter($row, function($field) {
+                        return !(is_array($field) && isset($field['name']) && $field['name'] === 'stic_invoice_type_c');
+                    }));
+                }
+            }
+        }
+        // === End Legacy mode ===
+
         // === Restrict inline edit for non-draft invoices with Verifactu ===
         // Only status, assigned_user_id and description can be inline-edited when invoice is non-draft
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
