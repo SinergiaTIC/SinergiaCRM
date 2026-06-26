@@ -57,12 +57,11 @@ abstract class DeferredBeanActionDefinition extends ServerBeanActionDefinition i
     public function getFlowErrorLabel(): string { return $this->translate('FLOW_ERROR'); }
 
     /**
-     * getCustomParameters()
-     * Definition of the ADDITIONAL parameters needed for the action
-     * The parameter of the main Data Block is requested by the parent class.
+     * (Optional) Override to add ADDITIONAL parameters before the data block parameter.
+     * @return ActionParameterDefinition[]
      */
-    final protected function getCustomParameters(): array
-    {
+    final protected function getInitialCustomParameters(): array {
+        /** @var ActionParameterDefinition[] $parameters */
         $parameters = [];
 
         $paramDays = new ActionParameterDefinition();
@@ -98,11 +97,23 @@ abstract class DeferredBeanActionDefinition extends ServerBeanActionDefinition i
             $parameters[] = $paramMsg;
         }
 
-        return array_merge($parameters, $this->getDeferredCustomParameters());
+        return $parameters;
+    }
+
+    /**
+     * getCustomParameters()
+     * Definition of the ADDITIONAL parameters needed for the action
+     * The parameter of the main Data Block is requested by the parent class.
+     * @return ActionParameterDefinition[] The custom parameters of the deferred action
+     */
+    final protected function getCustomParameters(): array
+    {
+        return $this->getDeferredCustomParameters();
     }
 
     /**
      * Definition of the ADDITIONAL parameters needed for the deferred action
+     * @return ActionParameterDefinition[] The custom parameters of the deferred action
      */
     protected function getDeferredCustomParameters(): array {
         return [];

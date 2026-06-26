@@ -59,6 +59,7 @@ abstract class DeferredActionDefinition extends ServerActionDefinition implement
      */
     final public function getParameters(): array
     {
+        /** @var ActionParameterDefinition[] $parameters */
         $parameters = [];
 
         $paramDays = new ActionParameterDefinition();
@@ -101,5 +102,8 @@ abstract class DeferredActionDefinition extends ServerActionDefinition implement
      * Returns the parameters defined for the deferred action
      * @return ActionParameterDefinition[] The parameters of the deferred action
      */
-    abstract protected function getDeferredParameters(): array;
+    protected function getDeferredParameters(): array {
+        return [];
+    }
+
 }
