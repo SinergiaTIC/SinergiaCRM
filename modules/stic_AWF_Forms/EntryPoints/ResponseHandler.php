@@ -360,30 +360,20 @@ class ResponseHandler
                 // Generate analytical response details
                 $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
 
-                // Update status and generate execution log
+                // Generate execution log
+                stic_AWFUtils::updateResponseExecutionLog($context);
+
+                // Update status
                 $hasErrors = false;
-                $logSummary = "[" . date('Y-m-d H:i:s') . "]\n";
                 foreach ($context->actionResults as $result) {
                     if ($result->isError()) {
                         $hasErrors = true;
-                        $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
-                    } elseif ($result->isSkipped()) {
-                        $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_AWF_Responses');
-                    } else {
-                        $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
+                        break;
                     }
-                    $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
-                    $logSummary .= "{$icon} {$actionName}";
-                    if (!empty($result->message)) {
-                        $logSummary .= ": " . $result->message;
-                    }
-                    $logSummary .= "\n";
                 }
-                $responseBean->execution_log = $logSummary;
-
-                // Update status
                 if ($lastResult->isError()) {
                     $responseBean->status = 'error';
+                    $hasErrors = true;
                 } elseif ($lastResult->isWait()) {
                     $responseBean->status = 'awaiting_action'; 
                 } else {

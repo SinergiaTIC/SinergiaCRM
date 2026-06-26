@@ -861,6 +861,21 @@ class stic_AwfFlow {
   }
 
   getText() {
+    if (this.id && (String(this.id).endsWith('_ok') || String(this.id).endsWith('_err'))) {
+      const isOk = String(this.id).endsWith('_ok');
+      const parentActionId = isOk ? this.id.slice(0, -3) : this.id.slice(0, -4);
+
+      if (window.alpineComponent && window.alpineComponent.formConfig) {
+        for (const f of window.alpineComponent.formConfig.flows) {
+          const parentAction = f.actions.find(a => a.id === parentActionId);
+          if (parentAction) {
+            const suffixText = isOk ? parentAction.flow_success_text : parentAction.flow_error_text;
+            return (parentAction.text || parentAction.title) + ": " + (suffixText || "");
+          }
+        }
+      }
+    }
+    
     return this.label != "" ? utils.translate(this.label) : this.text;
   }
 
@@ -909,14 +924,14 @@ class stic_AwfAction {
       order: 0,                 // Execution order of the action
       conditions: [],           // Conditions to execute the action (all must be accomplished)
       continue_on_error: false, // Indicates if the flow should continue if this action fails
-      success_flow_id: null,    // ID of the success flow
-      failure_flow_id: null,    // ID of the failure flow
-      success_flow_text: null,    // Final text for the success flow
-      failure_flow_text: null,    // Final text for the failure flow
+      flow_success_id: null,    // ID of the success flow
+      flow_error_id: null,      // ID of the failure flow
+      flow_success_text: null,  // Final text for the success flow
+      flow_error_text: null,    // Final text for the failure flow
     });
 
-    this.success_flow_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
-    this.failure_flow_text = utils.translate("LBL_FLOW_DEFERRED_ONERROR");
+    this.flow_success_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
+    this.flow_error_text = utils.translate("LBL_FLOW_ONERROR");
 
     // 2. Overwrite with provided data
     Object.assign(this, data);
@@ -1940,8 +1955,8 @@ class stic_AwfConfiguration {
       is_terminal: actionDef.isTerminal,
       continue_on_error: actionDef.defaultContinueOnError || false,
       order: defaultOrder,
-      success_flow_text: actionDef.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
-      failure_flow_text: actionDef.flowErrorLabel || utils.translate("LBL_FLOW_DEFERRED_ONERROR"),
+      flow_success_text: actionDef.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
+      flow_error_text: actionDef.flowErrorLabel || utils.translate("LBL_FLOW_ONERROR"),
     });
 
     const requisiteActions = new Set(); 
@@ -1994,8 +2009,8 @@ class stic_AwfConfiguration {
     if (actionType === 'Deferred') {
       const okFlowId = `${action.id}_ok`;
       const errorFlowId = `${action.id}_err`;
-      action.success_flow_id = okFlowId;
-      action.failure_flow_id = errorFlowId;
+      action.flow_success_id = okFlowId;
+      action.flow_error_id = errorFlowId;
 
       // We create sub-flows if they don't exist
       let okFlow = this.flows.find(f => f.id === okFlowId);
@@ -2021,8 +2036,8 @@ class stic_AwfConfiguration {
         this.flows.push(errFlow);
       }
 
-      okFlow.label = action.text + ": " + action.success_flow_text;
-      errFlow.label = action.text + ": " + action.failure_flow_text;
+      okFlow.label = action.text + ": " + action.flow_success_text;
+      errFlow.label = action.text + ": " + action.flow_error_text;
     }
 
     // Insert or update to the flow
@@ -2056,14 +2071,21 @@ class stic_AwfConfiguration {
       console.error(`Action with ID ${actionId} not found.`);
       return false;
     }
-    if (action.success_flow_id) {
-      const okFlow = this.flows.find(f => f.id === action.success_flow_id);
+    if (action.flow_success_id) {
+      const okFlow = this.flows.find(f => f.id === action.flow_success_id);
       if (okFlow) {
         // Move the actions to parent flow
         okFlow.actions.forEach(a => flow.actions.push(a));
       }
       // Remove success and error flows
-      this.flows = this.flows.filter(f => f.id !== action.success_flow_id && f.id !== action.failure_flow_id);
+      const okFlowIndex = this.flows.findIndex(f => f.id === action.flow_success_id);
+      if (okFlowIndex !== -1) {
+        this.flows.splice(okFlowIndex, 1);
+      }
+      const errFlowIndex = this.flows.findIndex(f => f.id === action.flow_error_id);
+      if (errFlowIndex !== -1) {
+        this.flows.splice(errFlowIndex, 1);
+      }
     }
 
     flow.actions = flow.actions.filter(a => a.id != actionId);

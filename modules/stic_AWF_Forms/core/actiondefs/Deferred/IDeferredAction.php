@@ -45,4 +45,14 @@ interface IDeferredAction extends IServerAction {
      * @return ActionResult Result of the execution of the action.
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult;
+
+    /**
+     * Returns the Subflow success label
+     */
+    public function getFlowSuccessLabel(): string;
+
+    /**
+     * Returns the Subflow error label
+     */
+    public function getFlowErrorLabel(): string;
 }

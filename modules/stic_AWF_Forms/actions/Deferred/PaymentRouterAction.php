@@ -70,11 +70,9 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
     }
 
     /**
-     * getCustomParameters()
-     * Definition of the ADDITIONAL parameters required for the action
-     * The main Data Block parameters are requested by the parent class.
+     * Definition of the ADDITIONAL parameters needed for the deferred action
      */
-    protected function getCustomParameters(): array
+    protected function getDeferredCustomParameters(): array
     {
         return [];
     }
