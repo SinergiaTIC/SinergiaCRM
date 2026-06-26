@@ -84,7 +84,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 // If a field in the duplicate rule is empty, do not apply the rule
                 // (Two persons cannot be the same if both have an empty email field)
                 if ($fieldValue === null || $fieldValue === '') {
-                    $skipRule = false;
+                    $skipRule = true;
                     break; // Move to the next rule
                 }
                 if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName] ?? null, $fieldName)) {

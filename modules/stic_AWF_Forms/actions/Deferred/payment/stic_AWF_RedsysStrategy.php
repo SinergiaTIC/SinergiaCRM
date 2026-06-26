@@ -26,7 +26,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 include_once __DIR__."/stic_AWF_PaymentStrategy.php";
-require_once 'modules/stic_Web_Forms/Catcher/Include/Payment/lib/ApiRedsys.php';
 
 class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
 {

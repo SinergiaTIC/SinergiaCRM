@@ -42,7 +42,7 @@ require_once "modules/stic_Web_Forms/Catcher/FormConfig.php";
  *   3. If pending/processing: shows a waiting page
  *   4. If resolved/failed/cancelled: rebuilds the ExecutionContext
  *      from the ticket and executes the corresponding deferred flow
- *      (flow_success_id or flow_error_id) via stic_AWFUtils::resumeDeferredFlow(),
+ *      (flow_success_id or flow_error_id) via stic_AWFUtils::rebuildContextAndResumeDeferredFlow(),
  *      letting the flow's actions decide what to render or where to redirect.
  */
 class ReturnHandler
@@ -80,27 +80,7 @@ class ReturnHandler
         // For resolved states, rebuild context and execute the deferred flow.
         // The flow (configured by the form designer via flow_success_id / flow_error_id)
         // decides what to do: redirect to a thank-you page, show a summary, send emails, etc.
-        try {
-            $context = stic_AWFUtils::rebuildContextFromTicket($ticket);
-            $contextData = json_decode($ticket->context_data, true) ?: [];
-            $isSuccess = $ticketStatus === 'resolved';
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred flow for ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
-
-            $lastResult = stic_AWFUtils::resumeDeferredFlow($context, $contextData, $isSuccess);
-            if ($lastResult === null) {
-                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ReturnHandler: No flow configured for this ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
-            }
-
-            // If no flow was configured, or the last action is not terminal (or terminal didn't exit), show a generic fallback page.
-            if ($isSuccess) {
-                stic_AWFUtils::renderGenericResponseSuccess($context->formConfig); 
-            } else {
-                stic_AWFUtils::renderGenericResponseError($context->formConfig);
-            }
-        } catch (Exception $e) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ReturnHandler exception: " . $e->getMessage());
-            stic_AWFUtils::renderGenericResponseError(null);
-        }
+        stic_AWFUtils::rebuildContextAndResumeDeferredFlow($ticket);
     }
 }
 
