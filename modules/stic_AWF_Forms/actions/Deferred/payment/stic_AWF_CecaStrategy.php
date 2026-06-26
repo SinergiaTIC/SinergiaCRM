@@ -43,9 +43,10 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
     }
 
     /**
-     * Prepare payment via CECA TPV.
-     * Returns WAIT with form HTML.
-     */
+    * Prepare payment.
+    * If Offline -> Returns OK.
+    * If External platform -> Returns WAIT with data to redirection.
+    */
     public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
     {
         $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));

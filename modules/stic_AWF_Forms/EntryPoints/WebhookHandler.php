@@ -30,7 +30,7 @@ require_once "modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php";
 require_once "include/SugarQueue/SugarJobQueue.php";
 
 /**
- * EntryPoint: WebhookHandler
+ * EntryPoint: stic_AWF_webhookHandler
  * Receives and processes webhook responses from payment gateways.
  *
  * This entry point is fully gateway-agnostic. All gateway-specific logic
@@ -59,10 +59,13 @@ class WebhookHandler
         $rawPayload = file_get_contents('php://input');
         $headers = function_exists('getallheaders') ? getallheaders() : [];
 
+        // Get Token
+        $token = $_REQUEST['token'] ?? '';
+
         // Create IncomingEvent log record
         $incomingEvent = BeanFactory::newBean('stic_AWF_Incoming_Events');
         $incomingEvent->name = 'AWF Webhook: ' . $source . ' - ' . date('Y-m-d H:i:s');
-        $incomingEvent->token = $_REQUEST['token'] ?? null;
+        $incomingEvent->token = $token;
         $incomingEvent->source = $source;
         $incomingEvent->raw_payload = $rawPayload ?: json_encode($requestData);
         $incomingEvent->status = 'new';
@@ -73,8 +76,7 @@ class WebhookHandler
 
         // Extract Identifier
         $searchField = 'token_hash';
-        $identifier = $_REQUEST['token'] ?? null;
-
+        $identifier = $token;
         if (empty($identifier) && !empty($source)) {
             // No token in URL, but we have a source. Let's ask the actions.
             $searchField = 'external_transaction_id';
@@ -104,19 +106,80 @@ class WebhookHandler
         }
         $incomingEvent->save();
 
-        // Atomically find and lock the Deferred Ticket
+        // Atomically find and lock the Deferred Ticket (for tickets in 'pending' state)
         $ticket = $this->findTicket($identifier, $searchField);
-
-        // Build context and resolve
         $context = null;
-        if ($ticket) {
-            $result = $this->processWithTicket($ticket, $requestData, $rawPayload, $incomingEvent, $context);
-        } else {
-            $result = $this->processWithoutTicket($source, $requestData, $rawPayload, $incomingEvent);
+
+        if (!$ticket) {
+            // If ticket is not in pending state, analyze the cause
+            /** @var stic_AWF_Deferred_Tickets $existingTicket */
+            $existingTicket = BeanFactory::getBean('stic_AWF_Deferred_Tickets');
+            $existingTicket->retrieve_by_string_fields([$searchField => $identifier, 'deleted' => 0]);
+
+            if (!empty($existingTicket->id)) {
+                $ticketStatus = $existingTicket->status ?? 'pending';
+
+                // If the ticket has been 'processing' for more than 2 minutes: unlock it.
+                if ($ticketStatus === 'processing') {
+                    $modifiedTime = strtotime($existingTicket->date_modified);
+                    if ($modifiedTime < (time() - 120)) { 
+                        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Interactive unstick triggered for ticket {$existingTicket->id} stuck in 'processing' since " . $existingTicket->date_modified);
+                        $existingTicket->status = 'pending';
+                        $existingTicket->save();
+                        
+                        // Find and lock the Deferred Ticket again
+                        $ticket = $this->findTicket($identifier, $searchField); 
+                    }
+                }
+                
+                if (!$ticket) {
+                    // Ticket is already resolved or is running right now
+                    if (!empty($_REQUEST['redirect'])) {
+                        // Comes from an human browser (UI)
+                        if (in_array($ticketStatus, ['resolved', 'processed', 'failed'])) { 
+                            // The user re-clicks an email link that was already processed in the past. 
+                            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Browser re-clicked a completed link. Rendering final UI inline without redirect.");
+                            stic_AWFUtils::rebuildContextAndResumeDeferredFlow($existingTicket);
+                        } else {
+                            // Ticket is running right now
+                            $GLOBALS['log']->info("AWF WebhookHandler: Browser hit an actively processing lock. Rendering unified waiting screen.");
+                            
+                            $formConfig = null;
+                            try {
+                                $context = stic_AWFUtils::rebuildContextFromTicket($existingTicket);
+                                $formConfig = $context->formConfig;
+                            } catch (Exception $e) {}
+
+                            $title = translate('LBL_PROCESSING_TITLE', 'stic_AWF_Deferred_Tickets');
+                            $msg = translate('LBL_PROCESSING_MSG', 'stic_AWF_Deferred_Tickets');
+                            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
+                            return;
+                        }
+                    } else {
+                        // Is a S2S webhook call. Respond with 200
+                        $incomingEvent->status = 'ignored'; 
+                        $incomingEvent->last_error_message = "Ticket is already processing or completed (Status: {$ticketStatus})";
+                        $incomingEvent->date_processed = date('Y-m-d H:i:s');
+                        $incomingEvent->save();
+                        
+                        http_response_code(200);
+                        echo "Acknowledged: Ticket current status is {$ticketStatus}";
+                        return;
+                    }
+                }
+            }
         }
 
-        // Handle result
-        $this->handleResult($result, $ticket, $incomingEvent, $context);
+        // Build context and resolve
+        if ($ticket) {
+            $result = $this->processWithTicket($ticket, $requestData, $rawPayload, $incomingEvent, $context);
+            $this->handleResult($result, $ticket, $incomingEvent, $context);
+         } else {
+            // Event without direct ticket: process it
+            $result = $this->processWithoutTicket($source, $requestData, $rawPayload, $incomingEvent);
+            $this->handleResult($result, null, $incomingEvent, null);
+        }
+
     }
 
     /**
@@ -140,20 +203,26 @@ class WebhookHandler
             die("Internal error");
         }
 
-        // Inject rawBody into context for strategies that need it
-        $contextObj = DeferredContextData::fromJson($ticket->context_data);
-        $contextObj->setCustom('_rawBody', $rawBody);
-        $context->deferredContext = $contextObj;
+        // Inject rawBody into deferred context for strategies that need it
+        $context->deferredContext->setCustom('_rawBody', $rawBody);
 
         $outContext = $context;
+
+        // Discover actions to require class files
+        ActionDiscoveryService::discoverActions([ActionType::DEFERRED]);
 
         $actionClass = $context->deferredContext->actionClass;
         if (empty($actionClass) || !class_exists($actionClass)) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Handler class {$actionClass} not found for webhook processing.");
-            return new ActionResult(ResultStatus::ERROR, null, "Handler class '{$actionClass}' not found for webhook processing.");
+            $res = new ActionResult(ResultStatus::ERROR, null, "Handler class '{$actionClass}' not found for webhook processing.");
+            $context->addActionResult($res);
+        } else {
+            $actionDefinition = new $actionClass();
+            $res = $actionDefinition->processWebhook($context, $rawData);
         }
-        $actionDefinition = new $actionClass();
-        return $actionDefinition->processWebhook($context, $rawData);
+
+        stic_AWFUtils::updateResponseExecutionLog($context);
+        return $res;
     }
 
     /**
@@ -166,35 +235,42 @@ class WebhookHandler
     {
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: No ticket found for source='{$source}'. Delegating to strategy directly.");
 
-        $strategy = stic_AWF_PaymentStrategyFactory::createFromSource($source);
-        if ($strategy === null) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Unknown source '{$source}' and no ticket found.");
-            $incomingEvent->status = 'ignored';
-            $incomingEvent->last_error_message = "Ticket not found or already processed";
-            $incomingEvent->date_processed = date('Y-m-d H:i:s');
-            $incomingEvent->save();
-            http_response_code(200);
-            die("Already processed");
+        $deferredActions = ActionDiscoveryService::discoverActions([ActionType::DEFERRED]);
+        foreach ($deferredActions as $action) {
+            if ($action instanceof IWebhookDecodable && $action->handlesSource($source)) {
+                // Initialize the isolated emergency typed context
+                $context = new ExecutionContext('', '', [], new FormConfig(), null, '');
+                $context->deferredContext = new DeferredContextData('', '');
+                $context->deferredContext->setCustom('_rawBody', $rawBody);
+
+                // Give up control of the resolution to the deferred action itself
+                $result = $action->processOrphanWebhook($context, $source, $rawData);
+                
+                $incomingEvent->status = $result->isOk() ? 'processed' : 'error';
+                $incomingEvent->last_error_message = $result->message ?? '';
+                $incomingEvent->date_processed = date('Y-m-d H:i:s');
+                $incomingEvent->save();
+
+                return $result;
+            }
         }
 
-        $context = new ExecutionContext('', '', [], new FormConfig(), null, '');
-        $context->setCustomData(['_rawBody' => $rawBody]);
-
-        $result = $strategy->resolve($context, new ActionResult(ResultStatus::WAIT, null, '', []));
-
-        $incomingEvent->status = $result->isOk() ? 'processed' : 'error';
-        $incomingEvent->last_error_message = $result->message ?? '';
+        // Fallback if no deferred action can attend the source
+        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Unknown source '{$source}' and no matching deferred action handles it.");
+        $incomingEvent->status = 'ignored';
+        $incomingEvent->last_error_message = "No matching deferred action found for orphan webhook source";
         $incomingEvent->date_processed = date('Y-m-d H:i:s');
         $incomingEvent->save();
 
-        return $result;
+        http_response_code(200);
+        die("Ignored: Source not handled");
     }
 
     /**
      * Handles the ActionResult from strategy->resolve(), updating ticket,
      * resuming flows, and sending the HTTP response.
      */
-    private function handleResult(ActionResult $result, ?stic_AWF_Deferred_Tickets $ticket, $incomingEvent, ?ExecutionContext $context): void
+    private function handleResult(ActionResult $result, ?stic_AWF_Deferred_Tickets $ticket, stic_AWF_Incoming_Events $incomingEvent, ?ExecutionContext $context): void
     {
         // Update status depending on result
         if ($ticket) {
@@ -205,7 +281,7 @@ class WebhookHandler
                 $maxRetries = 3;
                 $retryCount = intval($ticket->retry_count ?? 0) + 1;
                 $ticket->retry_count = $retryCount;
-                $ticket->last_error_message = $result->getMessage() ?? 'Unknown error';
+                $ticket->last_error_message = $result->message ?? 'Unknown error';
 
                 if ($retryCount < $maxRetries) {
                     $ticket->status = 'pending';
@@ -213,7 +289,6 @@ class WebhookHandler
                 } else {
                     $ticket->status = 'failed';
                     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Ticket [{$ticket->id}] permanently failed after {$maxRetries} attempts. Error: " . $ticket->last_error_message);
-                    $this->createAdminAlert($ticket, $ticket->last_error_message);
                 }
                 $ticket->save();
 
@@ -229,17 +304,17 @@ class WebhookHandler
         if ($incomingEvent->status !== 'processed') {
             // Set event as processed but save error if any
             $incomingEvent->status = 'processed';
-            $incomingEvent->last_error_message = $result->isError() ? ($result->getMessage() ?? 'Unknown error') : '';
+            $incomingEvent->last_error_message = $result->isError() ? ($result->message ?? 'Unknown error') : '';
             $incomingEvent->date_processed = date('Y-m-d H:i:s');
             $incomingEvent->save();
         }
 
         // Redirect UI if url has param 'redirect'
         if (!empty($_REQUEST['redirect']) && $ticket) {
-            $token = $ticket->token_hash;
-            // ReturnHandler will check ticket status to show correct message
-            header("Location: index.php?entryPoint=stic_AWF_returnHandler&token=" . urlencode($token));
-            exit;
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Browser redirection flag detected. Resuming final UI inline.");
+            
+            stic_AWFUtils::rebuildContextAndResumeDeferredFlow($ticket);
+            return;
         }
 
         // Return 200 even for rejected responses: the webhook itself was processed correctly.
@@ -247,7 +322,7 @@ class WebhookHandler
         if ($result->isOk()) {
             echo "OK";
         } elseif ($result->isError()) {
-            echo "Error: " . ($result->getMessage() ?? 'Unknown error');
+            echo "Error: " . ($result->message ?? 'Unknown error');
         } else {
             echo "Pending / Waiting";
         }
@@ -283,33 +358,6 @@ class WebhookHandler
     }
 
     /**
-     * Creates an alert Task in the CRM when a deferred payment ticket permanently fails,
-     * so an administrator can perform manual reconciliation.
-     */
-    private function createAdminAlert(stic_AWF_Deferred_Tickets $ticket, string $errorMessage): void
-    {
-        try {
-            $task = BeanFactory::newBean('Tasks');
-            $task->name = '[AWF] Deferred payment failed - Ticket ' . $ticket->id;
-            $task->status = 'Not Started';
-            $task->priority = 'High';
-            $task->description = "A deferred payment ticket has permanently failed after maximum retries.\n\n"
-                . "Ticket ID: {$ticket->id}\n"
-                . "External Transaction ID: " . ($ticket->external_transaction_id ?? 'N/A') . "\n"
-                . "Error: {$errorMessage}\n"
-                . "Retry count: " . ($ticket->retry_count ?? 0) . "\n\n"
-                . "The donor may have already paid at the gateway. Manual reconciliation is required.";
-            $task->parent_type = 'stic_AWF_Deferred_Tickets';
-            $task->parent_id = $ticket->id;
-            $task->assigned_user_id = '1';
-            $task->save();
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Created admin alert Task ID={$task->id} for failed ticket {$ticket->id}");
-        } catch (Exception $e) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Failed to create admin alert task: " . $e->getMessage());
-        }
-    }
-
-    /**
      * Atomically finds and locks the Deferred Ticket using an UPDATE...WHERE status='pending'.
      * This prevents race conditions when the same webhook arrives multiple times.
      */
@@ -322,8 +370,8 @@ class WebhookHandler
             return null;
         }
 
-        $sql = "UPDATE stic_AWF_Deferred_Tickets 
-                SET status = 'processing' 
+        $sql = "UPDATE stic_awf_deferred_tickets 
+                SET status = 'processing', date_modified = '" . date('Y-m-d H:i:s') . "' 
                 WHERE {$searchField} = '{$safeId}' 
                 AND status = 'pending' 
                 AND deleted = 0";

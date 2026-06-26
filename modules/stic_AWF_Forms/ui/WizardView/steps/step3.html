@@ -38,7 +38,7 @@
         <div class="stic-tabs">
             <template x-for="flow in formConfig.flows" :key="flow.id">
                 <template x-if="flow.id != 1 || bean.processing_mode == 'async'">
-                    <div class="stic-tab">
+                    <div class="stic-tab" :class="{ 'tab-error': flow.id == '-1' || String(flow.id).endsWith('_err') }">
                         <input class="form-check-input" type="radio" :id="`flowTab${flow.id}`" x-model="flowTabSelected" :value="`${flow.id}`"/>
                         <label class="form-label" :for="`flowTab${flow.id}`" x-text="flow.getText()"></label>
                     </div>
@@ -171,7 +171,7 @@
                             @click="$store.actionEditor.openCreate(flow, false)"></button>
                     <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_TERMINAL_ADD')" 
                             @click="$store.actionEditor.openCreate(flow, true)"
-                            x-bind:disabled="flow.hasTerminalAction();"></button>
+                            x-bind:disabled="!canAddTerminalAction(flow)"></button>
                 </div>
             </template>
             <template x-if="bean.processing_mode == 'async'">
@@ -179,7 +179,7 @@
                     <template x-if="flow.id == 1">
                         <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_TERMINAL_ADD')" 
                                 @click="$store.actionEditor.openCreate(flow, true)"
-                                x-bind:disabled="flow.hasTerminalAction();"></button>
+                                x-bind:disabled="!canAddTerminalAction(flow)"></button>
                     </template>
                     <template x-if="flow.id != 1">
                         <button type="button" class="btn w-auto" x-text="utils.translate('LBL_ACTION_ADD')" 
