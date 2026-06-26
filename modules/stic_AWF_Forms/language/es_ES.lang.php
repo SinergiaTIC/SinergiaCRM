@@ -480,13 +480,13 @@ $mod_strings = array (
 
   // -- DEFERRED ACTIONS --
   'LBL_PARAM_EXPIRATION_DAYS' => 'Días para caducidad',
-  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días antes de que caduque la acción diferida',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días antes de que caduque la acción diferida.',
   'LBL_PARAM_EXPIRED_TITLE' => 'Título para enlace caducado',
-  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título de la advertencia que se mostrará al acceder al enlace caducado',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título de la advertencia que se mostrará al acceder al enlace caducado.',
   'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enlace caducado',
   'LBL_PARAM_EXPIRED_TEXT' => 'Texto de advertencia del enlace caducado',
-  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto que se mostrará al acceder al enlace caducado',
-  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto que se mostrará al acceder al enlace caducado.',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad.',
   
   // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
@@ -494,7 +494,7 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
-  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación.',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'La plantilla de correo electrónico deberá tener la variable {::confirmation_url::} en el cuerpo del mensaje para que se genere el enlace de confirmación.',
 
