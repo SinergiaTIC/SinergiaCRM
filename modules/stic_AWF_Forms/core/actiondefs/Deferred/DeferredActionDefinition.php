@@ -31,6 +31,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * providing a common structure for all deferred actions while enforcing the implementation of the getType method to return ActionType::
  */
 abstract class DeferredActionDefinition extends ServerActionDefinition implements IDeferredAction {
+
+    protected string $defaultExpirationDays = '30';
+
     /**
      * Returns the type of the action, which is ActionType::DEFERRED for all classes extending DeferredActionDefinition.
      * This method is final to ensure that all deferred actions consistently return the correct type which is ActionType::DEFERRED.
@@ -49,5 +52,58 @@ abstract class DeferredActionDefinition extends ServerActionDefinition implement
      * Returns the Subflow error label
      */
     public function getFlowErrorLabel(): string { return $this->translate('FLOW_ERROR'); }
+
+    /**
+     * Returns the parameters defined for the action
+     * @return ActionParameterDefinition[] The parameters of the action
+     */
+    final public function getParameters(): array
+    {
+        /** @var ActionParameterDefinition[] $parameters */
+        $parameters = [];
+
+        $paramDays = new ActionParameterDefinition();
+        $paramDays->name = 'expiration_days';
+        $paramDays->text = translate('LBL_PARAM_EXPIRATION_DAYS', 'stic_AWF_Forms');
+        $paramDays->description = translate('LBL_PARAM_EXPIRATION_DAYS_DESC', 'stic_AWF_Forms');
+        $paramDays->type = ActionParameterType::VALUE;
+        $paramDays->dataType = ActionDataType::INTEGER;
+        $paramDays->defaultValue = $this->defaultExpirationDays;
+        $paramDays->required = true;
+
+        $parameters[] = $paramDays;
+
+        if ($this->getResumptionContext() !== DeferredResumptionContext::SERVER_WEBHOOK) {
+            $paramTitle = new ActionParameterDefinition();
+            $paramTitle->name = 'expired_title';
+            $paramTitle->text = translate('LBL_PARAM_EXPIRED_TITLE', 'stic_AWF_Forms');
+            $paramTitle->description = translate('LBL_PARAM_EXPIRED_TITLE_DESC', 'stic_AWF_Forms');
+            $paramTitle->type = ActionParameterType::VALUE;
+            $paramTitle->dataType = ActionDataType::TEXT;
+            $paramTitle->defaultValue = translate('LBL_PARAM_EXPIRED_TITLE_DEFAULT', 'stic_AWF_Forms');
+            $paramTitle->required = false;
+            $parameters[] = $paramTitle;
+
+            $paramMsg = new ActionParameterDefinition();
+            $paramMsg->name = 'expired_message';
+            $paramMsg->text = translate('LBL_PARAM_EXPIRED_TEXT', 'stic_AWF_Forms');
+            $paramMsg->description = translate('LBL_PARAM_EXPIRED_TEXT_DESC', 'stic_AWF_Forms');
+            $paramMsg->type = ActionParameterType::VALUE;
+            $paramMsg->dataType = ActionDataType::TEXTAREA;
+            $paramMsg->defaultValue = translate('LBL_PARAM_EXPIRED_TEXT_DEFAULT', 'stic_AWF_Forms');
+            $paramMsg->required = false;
+            $parameters[] = $paramMsg;
+        }
+
+        return array_merge($parameters, $this->getDeferredParameters());
+    }
+    
+    /**
+     * Returns the parameters defined for the deferred action
+     * @return ActionParameterDefinition[] The parameters of the deferred action
+     */
+    protected function getDeferredParameters(): array {
+        return [];
+    }
 
 }

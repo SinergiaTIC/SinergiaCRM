@@ -64,7 +64,8 @@ class ResumeHandler
         try {
             // Rebuild context from ticket
             $context = stic_AWFUtils::rebuildContextFromTicket($ticket);
-            $contextData = json_decode($ticket->context_data, true) ?: [];
+            $deferredData = DeferredContextData::fromJson($ticket->context_data);
+            $contextData = $deferredData->toArray();
             $specificErrorFlowId = $contextData['flow_error_id'] ?? '-1';
             $errorFlow = $context->formConfig->flows[$specificErrorFlowId] ?? $context->formConfig->flows['-1'] ?? null;
 
@@ -117,6 +118,8 @@ class ResumeHandler
 
             if (!empty($remainingActions)) {
                 $lastResult = $executor->executeFlow($virtualFlow, $errorFlow);
+                stic_AWFUtils::updateResponseExecutionLog($context);
+                
                 if ($lastResult->isError()) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Virtual flow collapsed into unrecovered error. Rendering fallback.");
                     stic_AWFUtils::renderGenericResponseError($context->formConfig);

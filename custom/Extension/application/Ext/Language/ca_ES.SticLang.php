@@ -4078,9 +4078,9 @@ $app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancel·la
 
 // Advanced Web Forms Incoming Events: status
 $app_list_strings['stic_awf_incoming_events_status'][''] = '';
-$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Nou';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendent';
 $app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processat';
-$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Error de procés';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallit';
 $app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorat';
 
 // Modificacions del core de SuiteCRM

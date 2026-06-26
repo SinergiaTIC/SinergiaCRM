@@ -105,10 +105,8 @@ class ActionDefinitionDTO {
         
         $this->order = $def->order;
 
-        if (method_exists($def, 'getFlowSuccessLabel')) {
+        if ($def instanceof IDeferredAction) {
             $this->flowSuccessLabel = $def->getFlowSuccessLabel();
-        }
-        if (method_exists($def, 'getFlowErrorLabel')) {
             $this->flowErrorLabel = $def->getFlowErrorLabel();
         }
         

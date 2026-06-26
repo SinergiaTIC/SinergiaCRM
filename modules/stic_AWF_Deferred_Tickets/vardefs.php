@@ -275,6 +275,7 @@ $dictionary['stic_AWF_Deferred_Tickets'] = array(
 'indices' => array (
   array ('name' => 'idx_token_hash', 'type' => 'index', 'fields' => array ('token_hash')),
   array ('name' => 'idx_status', 'type' => 'index', 'fields' => array ('status')),
+  array ('name' => 'idx_status_expiration_date', 'type' => 'index', 'fields' => array ('status', 'expiration_date')),
   array('name' => 'idx_ext_txn_id', 'type' => 'index', 'fields' => array('external_transaction_id')),
 ),
 'optimistic_locking' => true,

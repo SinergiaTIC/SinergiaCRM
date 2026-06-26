@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/PaymentStrategy.php";
+include_once __DIR__."/stic_AWF_PaymentStrategy.php";
 
 class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
 {

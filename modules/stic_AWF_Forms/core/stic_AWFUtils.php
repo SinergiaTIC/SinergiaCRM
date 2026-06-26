@@ -972,7 +972,11 @@ class stic_AWFUtils {
         }
         $formConfig = FormConfig::fromJsonArray($configData);
 
-        $formData = json_decode($responseBean->raw_payload, true) ?: [];
+        $payload = $responseBean->raw_payload ?? '';
+        while (strpos($payload, '&quot;') !== false || strpos($payload, '&amp;') !== false) {
+            $payload = html_entity_decode($payload, ENT_QUOTES, 'UTF-8');
+        }
+        $formData = json_decode($payload, true) ?: [];
 
         $context = new ExecutionContext(
             $formBean->id,
@@ -987,7 +991,29 @@ class stic_AWFUtils {
         $deferredContext = DeferredContextData::fromJson($ticket->context_data);
         $context->deferredContext = $deferredContext;
 
+        // Datablock references to beans
+        foreach ($deferredContext->blockReferences as $blockId => $beanId) {
+            if (isset($formConfig->data_blocks[$blockId])) {
+                $formConfig->data_blocks[$blockId]->setBeanReference($beanId);
+            }
+        }
+
         return $context;
+    }
+
+    /**
+     * Extract an indexed map [block_id => bean_id] of all data blocks
+     * that have already been successfully saved in the current thread.
+     */
+    public static function extractBlockReferences(ExecutionContext $context): array
+    {
+        $blockReferences = [];
+        foreach ($context->formConfig->data_blocks as $bId => $b) {
+            if ($b->getBeanReference() !== null) {
+                $blockReferences[$bId] = $b->getBeanReference()->beanId;
+            }
+        }
+        return $blockReferences;
     }
 
     /**
@@ -1004,11 +1030,17 @@ class stic_AWFUtils {
     public static function resumeDeferredFlow(ExecutionContext $context, array $contextData, bool $isSuccess): ?ActionResult
     {
         $successFlowId = $contextData['flow_success_id'] ?? null;
-        $errorFlowId   = $contextData['flow_error_id']   ?? null;
-        $flowId        = $isSuccess ? $successFlowId : $errorFlowId;
+        $errorFlowId = $contextData['flow_error_id']   ?? null;
+        $flowId = $isSuccess ? $successFlowId : $errorFlowId;
+        $flow = null;
+        $errorFlow = null;
 
-        $flow = ($flowId !== null && $flowId !== '') ? ($context->formConfig->flows[$flowId] ?? null) : null;
-        $errorFlow = ($errorFlowId !== null && $errorFlowId !== '') ? ($context->formConfig->flows[$errorFlowId] ?? null) : null;
+        if ($flowId !== null && $flowId !== '') {
+            $flow = $context->formConfig->flows[$flowId] ?? null;
+        }
+        if ($errorFlowId !== null && $errorFlowId !== '') {
+            $errorFlow =  $context->formConfig->flows[$errorFlowId] ?? null;
+        }
 
         if ($flow === null) {
             return null;
@@ -1045,6 +1077,7 @@ class stic_AWFUtils {
                 $context->responseBean->save();
             }
         }
+        self::updateResponseExecutionLog($context);
 
         // CLI ENVIRONMENT PROTECTION FOR STANDARD FLOWS
         $lastAction = $lastResult->getAction();
@@ -1063,4 +1096,94 @@ class stic_AWFUtils {
         return $lastResult;
     }
 
+    public static function rebuildContextAndResumeDeferredFlow(stic_AWF_Deferred_Tickets $ticket)
+    {
+        $isCli = (php_sapi_name() === 'cli');
+        try {
+            $ticketStatus = $ticket->status ?? 'pending';
+            $context = self::rebuildContextFromTicket($ticket);
+            $deferredData = DeferredContextData::fromJson($ticket->context_data);
+            $contextData = $deferredData->toArray();
+            $isSuccess = $ticketStatus === 'resolved';
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred flow for ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
+
+            $lastResult = self::resumeDeferredFlow($context, $contextData, $isSuccess);
+            if ($lastResult === null) {
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": No flow configured for this ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
+            }
+
+            if (!$isCli) {
+                // If no flow was configured, or the last action is not terminal (or terminal didn't exit), show a generic fallback page.
+                if ($isSuccess) {
+                    self::renderGenericResponseSuccess($context->formConfig); 
+                } else {
+                    $customTitle = $context->deferredContext?->expiredTitle;
+                    $customMsg = $context->deferredContext?->expiredMessage;
+
+                    if (!empty($customTitle) || !empty($customMsg)) {
+                        $title = $customTitle ?: translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
+                        $msg = $customMsg ?: translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
+                        self::renderGenericResponse($context->formConfig, $title, $msg);
+                    } else {
+                        self::renderGenericResponseError($context->formConfig);
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": exception: " . $e->getMessage());
+            if (!$isCli) {
+                self::renderGenericResponseError(null);
+            }
+        }
+    }
+
+    /**
+    * Safely increments the form response execution log
+    * with the results obtained in the execution context.
+    */
+    public static function updateResponseExecutionLog(ExecutionContext $context): void
+    {
+        if (empty($context->responseBean) || empty($context->actionResults)) {
+            return;
+        }
+
+        // Retrieve the current state of the database
+        $context->responseBean->retrieve($context->responseBean->id);
+        $currentLog = $context->responseBean->execution_log ?? '';
+
+        if ($context->deferredContext !== null) {
+            $labelTitle = translate('LBL_EXECUTION_DEFERRED', 'stic_AWF_Responses');
+            $parentActionText = $context->deferredContext->actionText ?? '';
+            $header = "[" . date('Y-m-d H:i:s') . " - {$labelTitle}: {$parentActionText}]\n";
+        } else {
+            $header = "[" . date('Y-m-d H:i:s') . "]\n";
+        }
+        $newLogSegment = $header;
+        $hasNewEntries = false;
+
+        foreach ($context->actionResults as $result) {
+            if ($result->isError()) {
+                $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
+            } elseif ($result->isSkipped()) {
+                $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_AWF_Responses');
+            } else {
+                $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
+            }
+
+            $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
+            $newLogSegment .= "{$icon} {$actionName}";
+            if (!empty($result->message)) {
+                $newLogSegment .= ": " . $result->message;
+            }
+            $newLogSegment .= "\n";
+            $hasNewEntries = true;
+        }
+
+        if ($hasNewEntries) {
+            $context->responseBean->execution_log = $currentLog . (empty($currentLog) ? "" : "\n") . $newLogSegment;
+            $context->responseBean->save();
+        }
+    }
+        
 }
