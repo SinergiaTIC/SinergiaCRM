@@ -111,20 +111,21 @@ abstract class stic_AWF_PaymentStrategy
         $ticket->external_transaction_id = $externalTransactionId;
         $ticket->status = 'pending';
         $ticket->handler_action_id = $actionConfig->id;
-        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime('+30 days'));
 
-        $ticket->save();
+        // Set the expiration date
+        $days = (int)$actionConfig->getResolvedParameter('expiration_days', 30);
+        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
 
-        $contextData = [
-            'strategy_class'   => static::class,
-            'strategy_suffix'  => $this->suffix,
-            'payment_id'       => $beanPayment->id,
-            'ticket_id'        => $ticket->id,
-            'form_id'          => $context->formId,
-            'flow_success_id'  => $actionConfig->flow_success_id,
-            'flow_error_id'    => $actionConfig->flow_error_id,
-        ];
-        $ticket->context_data = json_encode($contextData);
+        // Set the context data for the deferred flow
+        $contextData = DeferredContextData::createSnapshot('PaymentRouterAction', $ticket, $actionConfig, $beanPayment, $context, 
+            [ 
+                'strategy_class' => static::class,
+                'strategy_suffix' => $this->suffix,
+                'payment_id' => $beanPayment->id,
+            ]);
+        $ticket->context_data = $contextData->toJson();;
+
+        // Save the ticket
         $ticket->save();
 
         $this->ticket = $ticket;
@@ -220,14 +221,15 @@ abstract class stic_AWF_PaymentStrategy
      * database status (updated via webhook), not on URL parameters.
      * Requires $this->ticket to be set (call createTicket first).
      *
+     * @param string $status The return context status ('ok' or 'error')
      * @return string The full return URL
      */
-    protected function getReturnUrl(): string
+    protected function getReturnUrl(string $status = 'ok'): string
     {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         $token = $this->ticket ? $this->ticket->token_hash : '';
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_returnHandler&token=' . urlencode($token);
+        return $siteUrl . '/index.php?entryPoint=stic_AWF_resumeHandler&token=' . urlencode($token) . '&status=' . $status;
     }
 
     /**
