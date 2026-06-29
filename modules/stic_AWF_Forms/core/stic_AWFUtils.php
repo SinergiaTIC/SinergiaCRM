@@ -1119,7 +1119,7 @@ class stic_AWFUtils {
             $context = self::rebuildContextFromTicket($ticket);
             $deferredData = DeferredContextData::fromJson($ticket->context_data);
             $contextData = $deferredData->toArray();
-            $isSuccess = $ticketStatus === 'resolved';
+            $isSuccess = ($ticketStatus === 'resolved' || $ticketStatus === 'processed');
 
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred flow for ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
 
