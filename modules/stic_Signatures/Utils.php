@@ -441,11 +441,10 @@ class stic_SignaturesUtils
         // The parse_template function requires an array of beans
         $beanArray = [$bean->module_dir => $bean->id];
 
-        // AAES - BFD - Custom Edit
+        // Enable custom parsing in templates
         if (file_exists('custom/modules/stic_Signatures/customParseTemplate.php')){
             require_once 'custom/modules/stic_Signatures/customParseTemplate.php';
         }
-        //END AAES - BFD - Custom Edit
 
         // First parse: Parse the template using the record's data
         $converted = templateParser::parse_template($text, $beanArray);
