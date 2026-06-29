@@ -115,6 +115,8 @@ class SignatureAction extends DeferredBeanActionDefinition implements ITerminalA
 
         // Create a deferred ticket
         $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
+        $ticket->id = create_guid(); // Set Id for the ContextData
+        $ticket->new_with_id = true;
         $ticket->name = 'Signature: ' . $bean->name . ' - ' . date('Y-m-d H:i:s');
         $ticket->stic_awf_responses_id_c = $context->responseId;
         $ticket->token_hash = bin2hex(random_bytes(32));
@@ -137,7 +139,7 @@ class SignatureAction extends DeferredBeanActionDefinition implements ITerminalA
         );
         $ticket->context_data = $contextData->toJson();
 
-        // Save the ticket to get an ID
+        // Save the ticket
         $ticket->save();
 
         // Add the user as a signer to the signature process
