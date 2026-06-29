@@ -33,6 +33,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 global $mod_strings, $current_user;
 
+if (empty($current_user->id) && !empty($_SESSION['authenticated_user_id'])) {
+    $current_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
+}
+
 $bean = BeanFactory::getBean($_REQUEST['module']);
 
 if (!$bean) {
