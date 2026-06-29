@@ -393,7 +393,7 @@ class actionSendMessage extends actionBase
         $recipients = $this->getPhonesFromParams($bean, $params);
 
         $messageBean->sender = $params['sender_name'];
-            $messageBean->template_id = $params['email_template'];
+        $messageBean->template_id = $params['email_template'];
             $messageBean->status = $params['status'];
             $messageBean->type = $params['type'];
 

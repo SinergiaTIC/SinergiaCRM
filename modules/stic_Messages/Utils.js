@@ -50,9 +50,9 @@ switch (sticViewType) {
         syncSenderWithAssignedUser();
       }
 
-      // Function to lock sender and status fields to 'sent' when type is WhatsAppWeb or conversation
-      function lockSenderAndStatusToSent() {
-        $('#status').val('sent');
+      // Function to lock sender and status fields when type is WhatsAppWeb or private_area
+      function lockSenderAndStatus(statusValue) {
+        $('#status').val(statusValue);
         $('#status').prop('disabled', true);
         $('#status').attr('readonly', true);
         $('#status').css('background', '#F8F8F8');
@@ -168,8 +168,10 @@ switch (sticViewType) {
 
       // When type changes, lock/unlock sender and status accordingly
       $('#type').on('change', function() {
-        if ($(this).val() === 'WhatsAppWeb' || $(this).val() === 'private_area') {
-          lockSenderAndStatusToSent();
+        if ($(this).val() === 'WhatsAppWeb') {
+          lockSenderAndStatus('redirected');
+        } else if ($(this).val() === 'private_area') {
+          lockSenderAndStatus('sent');
         } else if ($(this).val() === 'WhatsAppHelper') {
           lockSenderField();
         } else if (!$('#EditView input[name="record"]').val()) {
@@ -181,8 +183,10 @@ switch (sticViewType) {
       });
 
       // On page load, WhatsAppWeb and conversation are always sent and sender is fixed to CRM user
-      if ($('#type').val() === 'WhatsAppWeb' || $('#type').val() === 'private_area') {
-        lockSenderAndStatusToSent();
+      if ($('#type').val() === 'WhatsAppWeb') {
+        lockSenderAndStatus('redirected');
+      } else if ($('#type').val() === 'private_area') {
+        lockSenderAndStatus('sent');
       } else if ($('#type').val() === 'WhatsAppHelper') {
         lockSenderField();
       }
