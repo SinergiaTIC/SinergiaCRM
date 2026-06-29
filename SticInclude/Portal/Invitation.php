@@ -63,6 +63,7 @@ foreach ($idList as $id) {
     $expires = date('Y-m-d H:i:s', time() + 86400);
     $bean->stic_portal_reset_token_c   = hash('sha256', $token);
     $bean->stic_portal_reset_expires_c = $expires;
+    $bean->stic_portal_enabled_c = 1; // Auto-enable portal when invitation is sent
     $bean->save();
 
     $resetLink = $portalUrl . '/index.php?entryPoint=sticPortalResetConfirm&token=' . urlencode($token) . '&id=' . urlencode($bean->id);

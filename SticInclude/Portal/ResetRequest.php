@@ -39,6 +39,7 @@ if (empty($bean->$usernameField)) { die('Portal username not set.'); }
 $token = bin2hex(random_bytes(32));
 $bean->stic_portal_reset_token_c   = hash('sha256', $token);
 $bean->stic_portal_reset_expires_c = date('Y-m-d H:i:s', time() + 86400);
+$bean->stic_portal_enabled_c = 1; // Auto-enable portal when reset request is sent
 $bean->save();
 
 $portalUrl = SticPortalConfigUtils::get('PORTAL_HOME_URL', $GLOBALS['sugar_config']['site_url']);
