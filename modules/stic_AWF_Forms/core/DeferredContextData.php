@@ -194,6 +194,7 @@ class DeferredContextData
     }
 
     public static function createSnapshot(string $actionClass, stic_AWF_Deferred_Tickets $ticket, FormAction $actionConfig, ?SugarBean $bean, ExecutionContext $context, array $customData): self {
+        $bean = $bean ?? $context->responseBean;
         $instance = new self(
             $context->formId,
             $actionClass,
