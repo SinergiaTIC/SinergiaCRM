@@ -21,16 +21,20 @@
  */
 
 (function () {
-    var WHATSAPP_TYPES = ['WhatsAppHelper', 'WhatsAppWeb'];
+    var WHATSAPP_TYPES = ['WhatsAppHelper'];
 
     function sticToggleAttachment() {
         var typeEl = document.getElementById('type');
-        var widget = document.getElementById('stic_attachment_widget');
-        if (!typeEl || !widget) return;
+        if (!typeEl) return;
         var val = typeEl.value || '';
+        var row = document.querySelector('div[data-field="attachment_widget"]');
+        var widget = document.getElementById('stic_attachment_widget');
+        if (!row || !widget) return;
         if (WHATSAPP_TYPES.indexOf(val) !== -1) {
+            row.style.display = '';
             widget.style.display = 'block';
         } else {
+            row.style.display = 'none';
             widget.style.display = 'none';
             sticRemoveAttachment();
         }

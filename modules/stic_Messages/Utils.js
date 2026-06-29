@@ -47,7 +47,7 @@ switch (sticViewType) {
         $('#sender').css('background', '#F8F8F8');
         $('#sender').css('border-color', '#E2E7EB');
 
-        syncSenderWithAssignedUserIfWhatsApp();
+        syncSenderWithAssignedUser();
       }
 
       // Function to lock sender and status fields to 'sent' when type is WhatsAppWeb or conversation
@@ -62,7 +62,7 @@ switch (sticViewType) {
       }
 
       // Keep sender synchronized with assigned user when type is conversation or WhatsApp
-      function syncSenderWithAssignedUserIfWhatsApp() {
+      function syncSenderWithAssignedUser() {
         var type = $('#type').val();
         if (type !== 'private_area' && type !== 'WhatsAppHelper') {
           return;
@@ -195,17 +195,17 @@ switch (sticViewType) {
         var $assignedUserId = $('#assigned_user_id');
         var lastAssignedUserName = $assignedUserName.val() || '';
 
-        $assignedUserName.add($assignedUserId).on('change keyup blur', syncSenderWithAssignedUserIfWhatsApp);
+        $assignedUserName.add($assignedUserId).on('change keyup blur', syncSenderWithAssignedUser);
 
         $('#btn_assigned_user_name, #btn_clr_assigned_user_name').on('click', function() {
-          setTimeout(syncSenderWithAssignedUserIfWhatsApp, 300);
+          setTimeout(syncSenderWithAssignedUser, 300);
         });
 
         setInterval(function() {
           var currentName = $assignedUserName.val() || '';
           if (currentName !== lastAssignedUserName) {
             lastAssignedUserName = currentName;
-            syncSenderWithAssignedUserIfWhatsApp();
+            syncSenderWithAssignedUser();
           }
         }, 500);
       }
