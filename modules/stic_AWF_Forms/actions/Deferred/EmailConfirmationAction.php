@@ -118,6 +118,9 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
 
         // Create a deferred ticket
         $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
+        $ticket->id = create_guid(); // Set Id for the ContextData
+        $ticket->new_with_id = true;
+
         $ticket->name = 'Email Confirmation: ' . $emailAddress . ' - ' . date('Y-m-d H:i:s');
         $ticket->stic_awf_responses_id_c = $context->responseId;
         $ticket->token_hash = bin2hex(random_bytes(32)); 
