@@ -94,10 +94,20 @@ class WhatsAppWebhookEntryPoint
     {
         $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
 
+        $variants = [$cleanPhone];
+        $digits = preg_replace('/[^0-9]/', '', $cleanPhone);
+        if (strlen($digits) === 10 && substr($digits, 0, 2) === '34') {
+            $variants[] = substr($digits, 2);
+        } elseif (strlen($digits) === 9) {
+            $variants[] = '34' . $digits;
+        }
+
         foreach (['Contacts', 'Users', 'Accounts', 'Employees', 'Leads'] as $module) {
-            $result = $this->searchPhoneInModule($module, $cleanPhone);
-            if ($result) {
-                return $result;
+            foreach ($variants as $variant) {
+                $result = $this->searchPhoneInModule($module, $variant);
+                if ($result) {
+                    return $result;
+                }
             }
         }
 

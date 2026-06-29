@@ -222,6 +222,13 @@ class WhatsAppHelper implements stic_MessagesHelper {
         if (strpos($phone, '+') === 0) {
             return '+' . preg_replace('/[^0-9]/', '', substr($phone, 1));
         }
+        $digits = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($digits) === 9) {
+            return '+34' . $digits;
+        }
+        if (strlen($digits) === 10 && substr($digits, 0, 2) === '34') {
+            return '+' . $digits;
+        }
         return '';
     }
 
