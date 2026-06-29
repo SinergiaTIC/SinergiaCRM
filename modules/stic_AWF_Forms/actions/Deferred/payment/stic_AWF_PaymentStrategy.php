@@ -104,29 +104,18 @@ abstract class stic_AWF_PaymentStrategy
     protected function createTicket(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment, string $externalTransactionId): stic_AWF_Deferred_Tickets
     {
         /** @var stic_AWF_Deferred_Tickets $ticket */
-        $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
-        $ticket->id = create_guid(); // Set Id for the ContextData
-        $ticket->new_with_id = true;
+        // Create a deferred ticket
+        $ticket = $this->createDeferredTicket(
+            $context,
+            $actionConfig,
+            $beanPayment,
+            ['strategy_class' => static::class,
+             'strategy_suffix' => $this->suffix,
+             'payment_id' => $beanPayment->id], // Custom data
+            'AWF Payment: ' . $beanPayment->id
+        );
 
-        $ticket->name = 'AWF Payment: ' . $beanPayment->id . ' - ' . date('Y-m-d H:i:s');
-        $ticket->stic_awf_responses_id_c = $context->responseId;
-        $ticket->token_hash = bin2hex(random_bytes(32));
         $ticket->external_transaction_id = $externalTransactionId;
-        $ticket->status = 'pending';
-        $ticket->handler_action_id = $actionConfig->id;
-
-        // Set the expiration date
-        $days = (int)$actionConfig->getResolvedParameter('expiration_days', 30);
-        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
-
-        // Set the context data for the deferred flow
-        $contextData = DeferredContextData::createSnapshot('PaymentRouterAction', $ticket, $actionConfig, $beanPayment, $context, 
-            [ 
-                'strategy_class' => static::class,
-                'strategy_suffix' => $this->suffix,
-                'payment_id' => $beanPayment->id,
-            ]);
-        $ticket->context_data = $contextData->toJson();;
 
         // Save the ticket
         $ticket->save();
@@ -229,10 +218,7 @@ abstract class stic_AWF_PaymentStrategy
      */
     protected function getReturnUrl(string $status = 'ok'): string
     {
-        global $sugar_config;
-        $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
-        $token = $this->ticket ? $this->ticket->token_hash : '';
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_resumeHandler&token=' . urlencode($token) . '&status=' . $status;
+        $this->getSequentialReturnUrl($this->ticket, $status)
     }
 
     /**
