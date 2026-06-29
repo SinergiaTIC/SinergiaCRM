@@ -61,6 +61,8 @@ class WhatsAppWebhookEntryPoint
                 $message->parent_id = $parentInfo['id'];
             }
 
+            $message->assigned_user_id = $this->resolveAssignedUser($from, $parentInfo);
+
             $message->save();
 
             $this->processMedia($message);
@@ -146,6 +148,34 @@ class WhatsAppWebhookEntryPoint
         }
 
         return null;
+    }
+
+    private function resolveAssignedUser($phone, $parentInfo)
+    {
+        $digits = preg_replace('/[^0-9]/', '', $phone);
+
+        $db = DBManagerFactory::getInstance();
+        $phoneQuoted = $db->quote($digits);
+        $sql = "SELECT assigned_user_id FROM stic_messages
+                WHERE direction = 'outbound'
+                AND phone LIKE '%{$phoneQuoted}%'
+                AND assigned_user_id IS NOT NULL
+                AND assigned_user_id != ''
+                ORDER BY date_entered DESC
+                LIMIT 1";
+        $result = $db->query($sql);
+        if ($row = $db->fetchByAssoc($result)) {
+            return $row['assigned_user_id'];
+        }
+
+        if ($parentInfo) {
+            $bean = BeanFactory::getBean($parentInfo['module'], $parentInfo['id']);
+            if ($bean && !empty($bean->assigned_user_id)) {
+                return $bean->assigned_user_id;
+            }
+        }
+
+        return '';
     }
 
     private function generateMessageName($parentInfo, $from)
