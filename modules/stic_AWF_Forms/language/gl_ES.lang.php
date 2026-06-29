@@ -588,4 +588,14 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga una URL válida',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no es válida',
-);
+
+  // SignatureAction
+  'LBL_SIGNATURE_ACTION_TITLE' => 'Firmar documento',
+  'LBL_SIGNATURE_ACTION_DESC' => 'Engade o usuario como firmante a un proceso de firma e redirixe ao portal de firma.',
+  'LBL_SIGNATURE_ACTION_FLOW_SUCCESS' => 'Documento firmado',
+  'LBL_SIGNATURE_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_TEXT' => 'Firmante',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica o bloque de datos que contén o usuario que se engadirá como firmante.',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_TEXT' => 'Proceso de firma',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_DESC' => 'Selecciona o proceso de firma ao que se engadirá o usuario como firmante.',
+ );

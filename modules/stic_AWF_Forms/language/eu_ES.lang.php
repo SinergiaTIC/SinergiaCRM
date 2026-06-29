@@ -588,4 +588,14 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga una URL válida',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no es válida',
-);
+
+  // SignatureAction
+  'LBL_SIGNATURE_ACTION_TITLE' => 'Sinatu dokumentua',
+  'LBL_SIGNATURE_ACTION_DESC' => 'Erabiltzailea sinatzaile gisa gehitzen du sinadura-prozesu batean eta sinadura-portalera birbideratzen du.',
+  'LBL_SIGNATURE_ACTION_FLOW_SUCCESS' => 'Dokumentua sinatuta',
+  'LBL_SIGNATURE_ACTION_FLOW_ERROR' => 'Errorea',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_TEXT' => 'Sinatzailea',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_DESC' => 'Sinatzaile gisa gehituko den erabiltzailea duen datu-blokea adierazten du.',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_TEXT' => 'Sinadura-prozesua',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_DESC' => 'Erabiltzailea sinatzaile gisa gehituko den sinadura-prozesua hautatzen du.',
+ );

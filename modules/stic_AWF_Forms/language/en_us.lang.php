@@ -588,4 +588,14 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'URL validator',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid URL',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The URL is invalid',
+
+  // SignatureAction
+  'LBL_SIGNATURE_ACTION_TITLE' => 'Sign document',
+  'LBL_SIGNATURE_ACTION_DESC' => 'Adds the user as a signer to a signature process and redirects to the signature portal.',
+  'LBL_SIGNATURE_ACTION_FLOW_SUCCESS' => 'Document signed',
+  'LBL_SIGNATURE_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_TEXT' => 'Signer',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_DESC' => 'Specifies the data block containing the user to be added as a signer.',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_TEXT' => 'Signature process',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_DESC' => 'Selects the signature process to which the user will be added as a signer.',
  );

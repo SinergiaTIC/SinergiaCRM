@@ -392,11 +392,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const url = 'index.php';
         const signerId = urlParams.get('signerId');
+        const returnToken = urlParams.get('returnToken');
         const data = {
             entryPoint: "sticSign",
             signatureAction: "acceptDocument",
             signerId: signerId,
         };
+        if (returnToken) {
+            data.returnToken = returnToken;
+        }
         fetch(url, {
             method: 'POST',
             headers: {
@@ -408,6 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         }).then(data => {
             if (data.success === true) {
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                    return;
+                }
                 console.log('Signature data sent successfully:', data);
                 showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_ACCEPTANCE_REGISTERED_SUCCESSFULLY, null, true);
             } else {

@@ -588,4 +588,14 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => "Validador d'URL",
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui una URL vàlida',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'URL no és vàlida",
-);
+
+  // SignatureAction
+  'LBL_SIGNATURE_ACTION_TITLE' => 'Signar document',
+  'LBL_SIGNATURE_ACTION_DESC' => "Afegeix l'usuari com a signant a un procés de signatura i redirigeix al portal de signatura.",
+  'LBL_SIGNATURE_ACTION_FLOW_SUCCESS' => 'Document signat',
+  'LBL_SIGNATURE_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_TEXT' => 'Signant',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_DESC' => "Indica el bloc de dades que conté l'usuari que s'afegirà com a signant.",
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_TEXT' => 'Procés de signatura',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_DESC' => "Selecciona el procés de signatura al qual s'afegirà l'usuari com a signant.",
+ );
