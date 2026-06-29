@@ -118,6 +118,9 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
 
         // Create a deferred ticket
         $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
+        $ticket->id = create_guid(); // Set Id for the ContextData
+        $ticket->new_with_id = true;
+
         $ticket->name = 'Email Confirmation: ' . $emailAddress . ' - ' . date('Y-m-d H:i:s');
         $ticket->stic_awf_responses_id_c = $context->responseId;
         $ticket->token_hash = bin2hex(random_bytes(32)); 
@@ -158,7 +161,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         }
 
         // Return a WAIT result to halt the flow until the user confirms via email
-        return new ActionResult(ResultStatus::WAIT, $actionConfig, "Waiting for confirmation at {$emailAddress}");
+        return new ActionResult(ResultStatus::OK, $actionConfig, "Confirmation email sent to {$emailAddress}. Continuing the flow execution");
     }
 
     /**

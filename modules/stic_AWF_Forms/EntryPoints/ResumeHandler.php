@@ -60,12 +60,14 @@ class ResumeHandler
 
         // Get request status
         $status = $_REQUEST['status'] ?? 'ok';
+        $isCli = (php_sapi_name() === 'cli');
 
         try {
             // Rebuild context from ticket
             $context = stic_AWFUtils::rebuildContextFromTicket($ticket);
             $deferredData = DeferredContextData::fromJson($ticket->context_data);
             $contextData = $deferredData->toArray();
+
             $specificErrorFlowId = $contextData['flow_error_id'] ?? '-1';
             $errorFlow = $context->formConfig->flows[$specificErrorFlowId] ?? $context->formConfig->flows['-1'] ?? null;
 
@@ -74,10 +76,21 @@ class ResumeHandler
             // Error case: Execute error flow
             if ($status === 'error' || $ticket->status === 'failed') {
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Gateway returned error status 'error' for ticket ID {$ticket->id}. Executing contextual error flow.");
+
+                if ($ticket->status !== 'failed') {
+                    $ticket->status = 'failed';
+                    $ticket->save();
+                }
+
+                if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
+                    $context->responseBean->status = 'error';
+                    $context->responseBean->save();
+                }
+
                 if ($errorFlow) {
                     $lastResult = $executor->executeFlow($errorFlow);
                     $lastAction = $lastResult->getAction();
-                    if ($lastAction instanceof ITerminalAction) {
+                    if ($lastAction instanceof ITerminalAction && !$isCli) {
                         $lastAction->performTerminal($context, $lastResult);
                     }
                 }
@@ -116,20 +129,52 @@ class ResumeHandler
             $virtualFlow->id = 'virtual_resume_flow';
             $virtualFlow->actions = $remainingActions;
 
+            if ($ticket->status === 'processed') {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed previously. Delegating the terminal action exclusively.");
+                if (!$isCli) {
+                    $executor->executeTerminalActionOnly($virtualFlow);
+                }
+                stic_AWFUtils::renderGenericResponseSuccess($context->formConfig);
+                return;
+            }
+            
+            $lastResult = new ActionResult(ResultStatus::OK, null);
             if (!empty($remainingActions)) {
                 $lastResult = $executor->executeFlow($virtualFlow, $errorFlow);
                 stic_AWFUtils::updateResponseExecutionLog($context);
                 
                 if ($lastResult->isError()) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Virtual flow collapsed into unrecovered error. Rendering fallback.");
+                    $ticket->status = 'failed';
+                    $ticket->save();
+
+                    if ($context->responseBean) {
+                        $context->responseBean->status = 'error';
+                        $context->responseBean->save();
+                    }
                     stic_AWFUtils::renderGenericResponseError($context->formConfig);
                     return;
                 }
-                $lastAction = $lastResult->getAction();
-                if ($lastAction instanceof ITerminalAction) {
+            }
+
+            $ticket->status = 'processed';
+            $ticket->save();
+
+            if ($context->responseBean && !$lastResult->isError()) {
+                $context->responseBean->status = 'processed';
+                $context->responseBean->save();
+            }
+
+            $lastAction = $lastResult->getAction();
+            if ($lastAction instanceof ITerminalAction && !$isCli) {
+                try {
                     $lastAction->performTerminal($context, $lastResult);
+                } catch (\Throwable $t) {
+                    $context->addError($t, $lastResult->actionConfig);
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error executing sequential terminal action: " . $t->getMessage());
                 }
             }
+
             // Visual Fallback
             stic_AWFUtils::renderGenericResponseSuccess($context->formConfig);
         } catch (Exception $e) {
