@@ -28,6 +28,10 @@
  * SignatureSignersManager, and handles UI messages and redirect.
  * The business logic is also available from non-HTTP contexts via
  * SignatureSignersManager::addSignersToSignature().
+ *
+ * Incorporates the fix from PR #1279: manual authentication of $current_user
+ * from the session when the entrypoint is called with 'auth' => false,
+ * ensuring created_by and assigned_user_id are correctly populated.
  */
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
