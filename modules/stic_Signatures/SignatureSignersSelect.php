@@ -28,12 +28,23 @@
  * SignatureSignersManager, and handles UI messages and redirect.
  * The business logic is also available from non-HTTP contexts via
  * SignatureSignersManager::addSignersToSignature().
+<<<<<<< HEAD
+=======
+ *
+ * Incorporates the fix from PR #1279: manual authentication of $current_user
+ * from the session when the entrypoint is called with 'auth' => false,
+ * ensuring created_by and assigned_user_id are correctly populated.
+>>>>>>> improvement/useSignerClasses
  */
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
 global $mod_strings, $current_user;
+
+if (empty($current_user->id) && !empty($_SESSION['authenticated_user_id'])) {
+    $current_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
+}
 
 require_once 'custom/modules/stic_Signatures/SignatureSignersManager.php';
 
