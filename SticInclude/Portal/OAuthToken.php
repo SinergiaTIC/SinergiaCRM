@@ -60,21 +60,81 @@ if ($grantType === 'authorization_code') {
     $now = date('Y-m-d H:i:s');
     $atExp = date('Y-m-d H:i:s', time() + 3600); $rtExp = date('Y-m-d H:i:s', time() + 2592000);
     $at = bin2hex(random_bytes(32)); $rt = bin2hex(random_bytes(32));
-    $portalId = $row['portal_id'];
+    $portalType = $row['portal_type'];
+    $portalId   = $row['portal_id'];
 
     $db->query("INSERT INTO oauth2tokens (id, access_token, access_token_expires, refresh_token, refresh_token_expires, token_type, token_is_revoked, date_entered, date_modified, deleted) VALUES ("
         . $db->quoted(create_guid()) . ", " . $db->quoted($at) . ", " . $db->quoted($atExp) . ", " . $db->quoted($rt) . ", "
         . $db->quoted($rtExp) . ", " . $db->quoted("Bearer") . ", 0, " . $db->quoted($now) . ", " . $db->quoted($now) . ", 0)");
 
-    // Include relationships directly in the response
-    // Include full Contact info
-    $contact = $db->fetchByAssoc($db->limitQuery("SELECT c.id, c.first_name, c.last_name, c.title, c.department, c.phone_mobile, c.phone_work, c.phone_home, c.description, cc.stic_portal_username_c, cc.stic_portal_enabled_c, cc.stic_portal_last_login_c, cc.stic_portal_failed_attempts_c, cc.stic_portal_locked_until_c FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=" . $db->quoted($portalId), 0, 1));
-    // All relationships (active + ended)
+    $user = null;
     $rels = [];
-    $rr = $db->query("SELECT sr.id, sr.name, sr.relationship_type, sr.start_date, sr.end_date, sr.role, p.name AS project_name FROM stic_contacts_relationships sr JOIN stic_contacts_relationships_contacts_c lnk ON lnk.stic_contacts_relationships_contactscontacts_ida = sr.id LEFT JOIN stic_contacts_relationships_project_c prj ON prj.stic_conta0d5aonships_idb = sr.id AND prj.deleted = 0 LEFT JOIN project p ON p.id = prj.stic_contacts_relationships_projectproject_ida AND p.deleted = 0 WHERE lnk.stic_contae394onships_idb = " . $db->quoted($portalId) . " AND sr.deleted = 0 AND lnk.deleted = 0 ORDER BY sr.start_date DESC");
-    while ($rrow = $db->fetchByAssoc($rr)) { $rels[] = $rrow; }
 
-    echo json_encode(['access_token' => $at, 'token_type' => 'Bearer', 'expires_in' => 3600, 'refresh_token' => $rt, 'portal_id' => $portalId, 'contact' => $contact, 'relationships' => $rels, 'relationship_count' => count($rels)]);
+    if ($portalType === 'Contact') {
+        $user = $db->fetchByAssoc($db->limitQuery(
+            "SELECT c.id, c.first_name, c.last_name, c.phone_mobile, c.birthdate,"
+            . " c.primary_address_postalcode, c.primary_address_country, c.primary_address_state, c.primary_address_city,"
+            . " cc.stic_identification_number_c, cc.stic_identification_type_c,"
+            . " cc.stic_language_c, cc.stic_gender_c, cc.stic_age_c"
+            . " FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id"
+            . " WHERE c.id=" . $db->quoted($portalId), 0, 1));
+
+        if ($user) {
+            // Fetch primary email
+            $er = $db->limitQuery(
+                "SELECT ea.email_address FROM email_addr_bean_rel eabr"
+                . " JOIN email_addresses ea ON ea.id = eabr.email_address_id"
+                . " WHERE eabr.bean_id=" . $db->quoted($portalId)
+                . " AND eabr.bean_module='Contacts' AND eabr.primary_address=1"
+                . " AND eabr.deleted=0 AND ea.deleted=0", 0, 1);
+            $emailRow = $db->fetchByAssoc($er);
+            $user['email'] = $emailRow['email_address'] ?? '';
+
+            // All relationships (active + ended)
+            $rr = $db->query(
+                "SELECT sr.id, sr.name, sr.relationship_type, sr.start_date, sr.end_date, sr.role,"
+                . " p.name AS project_name, p.estimated_start_date, p.estimated_end_date,"
+                . " sr.stic_portal_decidim_excluded_c"
+                . " FROM stic_contacts_relationships sr"
+                . " JOIN stic_contacts_relationships_contacts_c lnk ON lnk.stic_contacts_relationships_contactscontacts_ida = sr.id"
+                . " LEFT JOIN stic_contacts_relationships_project_c prj ON prj.stic_conta0d5aonships_idb = sr.id AND prj.deleted = 0"
+                . " LEFT JOIN project p ON p.id = prj.stic_contacts_relationships_projectproject_ida AND p.deleted = 0"
+                . " WHERE lnk.stic_contae394onships_idb = " . $db->quoted($portalId)
+                . " AND sr.deleted = 0 AND lnk.deleted = 0 ORDER BY sr.start_date DESC");
+            while ($rrow = $db->fetchByAssoc($rr)) { $rels[] = $rrow; }
+        }
+    } elseif ($portalType === 'Account') {
+        $user = $db->fetchByAssoc($db->limitQuery(
+            "SELECT a.id, a.name, a.phone_office, a.phone_alternate, a.website,"
+            . " a.billing_address_postalcode, a.billing_address_country, a.billing_address_state, a.billing_address_city,"
+            . " a.description, a.account_type, a.industry,"
+            . " ac.stic_identification_number_c, ac.stic_identification_type_c, ac.stic_language_c"
+            . " FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id"
+            . " WHERE a.id=" . $db->quoted($portalId), 0, 1));
+
+        if ($user) {
+            $er = $db->limitQuery(
+                "SELECT ea.email_address FROM email_addr_bean_rel eabr"
+                . " JOIN email_addresses ea ON ea.id = eabr.email_address_id"
+                . " WHERE eabr.bean_id=" . $db->quoted($portalId)
+                . " AND eabr.bean_module='Accounts' AND eabr.primary_address=1"
+                . " AND eabr.deleted=0 AND ea.deleted=0", 0, 1);
+            $emailRow = $db->fetchByAssoc($er);
+            $user['email'] = $emailRow['email_address'] ?? '';
+        }
+    }
+
+    echo json_encode([
+        'access_token' => $at,
+        'token_type' => 'Bearer',
+        'expires_in' => 3600,
+        'refresh_token' => $rt,
+        'portal_id' => $portalId,
+        'portal_type' => $portalType,
+        'user' => $user,
+        'relationships' => $rels,
+        'relationship_count' => count($rels),
+    ]);
     exit;
 }
 

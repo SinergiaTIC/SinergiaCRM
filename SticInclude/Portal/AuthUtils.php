@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -348,10 +349,16 @@ class SticPortalAuthUtils
         $id = $db->quoted($recordId);
         $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=$id AND c.deleted=0 AND cc.stic_portal_reset_token_c=$hashed AND cc.stic_portal_reset_expires_c > NOW()", 0, 1);
         $row = $db->fetchByAssoc($result);
-        if ($row) { $GLOBALS['log']->debug(__METHOD__ . " - Valid reset token for Contact: {$row['id']}"); return array('bean' => BeanFactory::getBean('Contacts', $row['id']), 'type' => 'Contact'); }
+        if ($row) {
+            $GLOBALS['log']->debug(__METHOD__ . " - Valid reset token for Contact: {$row['id']}");
+            return array('bean' => BeanFactory::getBean('Contacts', $row['id']), 'type' => 'Contact');
+        }
         $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.id=$id AND a.deleted=0 AND ac.stic_portal_reset_token_c=$hashed AND ac.stic_portal_reset_expires_c > NOW()", 0, 1);
         $row = $db->fetchByAssoc($result);
-        if ($row) { $GLOBALS['log']->debug(__METHOD__ . " - Valid reset token for Account: {$row['id']}"); return array('bean' => BeanFactory::getBean('Accounts', $row['id']), 'type' => 'Account'); }
+        if ($row) {
+            $GLOBALS['log']->debug(__METHOD__ . " - Valid reset token for Account: {$row['id']}");
+            return array('bean' => BeanFactory::getBean('Accounts', $row['id']), 'type' => 'Account');
+        }
         $GLOBALS['log']->debug(__METHOD__ . " - Invalid or expired reset token");
         return null;
     }
@@ -423,7 +430,10 @@ class SticPortalAuthUtils
         $mail->addAddress($to, self::getRecipientName($bean));
         $mail->Subject = $tpl->subject;
         $mail->Body = !empty($tpl->body_html) ? $tpl->body_html : $tpl->body;
-        if (!empty($tpl->body_html)) { $mail->AltBody = $tpl->body; $mail->isHTML(true); }
+        if (!empty($tpl->body_html)) {
+            $mail->AltBody = $tpl->body;
+            $mail->isHTML(true);
+        }
         return $mail->Send();
     }
 
@@ -684,7 +694,8 @@ class SticPortalAuthUtils
     public static function isMagicLinkRateLimited($identifier, $identifierType = 'username')
     {
         global $db;
-        $maxPerMin = 1; $maxPerHr = 5;
+        $maxPerMin = 1;
+        $maxPerHr = 5;
         $ident = $db->quoted($identifier);
         $idType = $db->quoted($identifierType);
         $result = $db->query("SELECT COUNT(*) c FROM stic_portal_magic_rate_limit WHERE identifier=$ident AND identifier_type=$idType AND window_start > DATE_SUB(NOW(), INTERVAL 60 SECOND) AND deleted=0");

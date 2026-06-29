@@ -19,6 +19,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  *}
+{literal}
 <style>
 .portal-msg{margin:10px 0;padding:10px;border-radius:4px;font-size:13px}
 .portal-msg-success{background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
@@ -27,6 +28,7 @@
 .portal-input-narrow{width:80px}
 .inline-help-content{display:none}
 </style>
+{/literal}
 
 {if isset($smarty.get.portal_msg)}
 <div class="portal-msg {if $smarty.get.portal_msg|strpos:"ok" !== false}portal-msg-success{else}portal-msg-warning{/if}">
