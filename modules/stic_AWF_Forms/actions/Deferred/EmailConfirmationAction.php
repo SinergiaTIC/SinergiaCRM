@@ -161,7 +161,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         }
 
         // Return a WAIT result to halt the flow until the user confirms via email
-        return new ActionResult(ResultStatus::WAIT, $actionConfig, "Waiting for confirmation at {$emailAddress}");
+        return new ActionResult(ResultStatus::OK, $actionConfig, "Confirmation email sent to {$emailAddress}. Continuing the flow execution");
     }
 
     /**

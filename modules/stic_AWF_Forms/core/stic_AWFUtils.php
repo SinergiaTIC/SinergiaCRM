@@ -1049,9 +1049,14 @@ class stic_AWFUtils {
         $isCli = (php_sapi_name() === 'cli');
         $executor = new ServerActionFlowExecutor($context);
 
-        // Check if the response has already been processed by a concurrent thread (e.g. Webhook)
-        if ($context->responseBean && in_array($context->responseBean->status, ['processed', 'error'])) {
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": resumeDeferredFlow: Deferred flow already processed (Status: {$context->responseBean->status}). Skipping database flow.");
+
+        $ticketId = $contextData['ticket_id'] ?? null;
+        /** @var stic_AWF_Deferred_Tickets $ticketBean */
+        $ticketBean = !empty($ticketId) ? BeanFactory::getBean('stic_AWF_Deferred_Tickets', $ticketId) : null;
+
+        // Check if the ticket has already been processed by a concurrent thread (e.g. Webhook)
+        if ($ticketBean && $ticketBean->status === 'processed') {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The sub-flow for this ticket has already been executed in the past. Delegating only the UI.");
 
             // Delegate UI rendering directly to the flow executor safely
             if (!$isCli) {
@@ -1065,16 +1070,26 @@ class stic_AWFUtils {
         if ($isSuccess) {
             // Success flow execution
             $lastResult = $executor->executeFlow($flow, $errorFlow);
-            if ($context->responseBean && !$lastResult->isError()) {
-                $context->responseBean->status = 'processed';
-                $context->responseBean->save();
+            if (!$lastResult->isError()) {
+                if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
+                    $context->responseBean->status = 'processed';
+                    $context->responseBean->save();
+                }
+                if ($ticketBean && $ticketBean->status === 'resolved') {
+                    $ticketBean->status = 'processed';
+                    $ticketBean->save();
+                }
             }
         } else {
             // Error flow execution
             $lastResult = $executor->executeFlow($flow);
-            if ($context->responseBean) {
+            if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
                 $context->responseBean->status = 'error';
                 $context->responseBean->save();
+            }
+            if ($ticketBean) {
+                $ticketBean->status = 'failed';
+                $ticketBean->save();
             }
         }
         self::updateResponseExecutionLog($context);
