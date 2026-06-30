@@ -193,7 +193,8 @@ class DeferredContextData
         return array_merge($this->customData, $data);
     }
 
-    public static function createSnapshot(string $actionClass, stic_AWF_Deferred_Tickets $ticket, FormAction $actionConfig, SugarBean $bean, ExecutionContext $context, array $customData): self {
+    public static function createSnapshot(string $actionClass, stic_AWF_Deferred_Tickets $ticket, FormAction $actionConfig, ?SugarBean $bean, ExecutionContext $context, array $customData): self {
+        $bean = $bean ?? $context->responseBean;
         $instance = new self(
             $context->formId,
             $actionClass,
@@ -201,8 +202,8 @@ class DeferredContextData
             $ticket->id,
             $actionConfig->flow_success_id ?: null,
             $actionConfig->flow_error_id ?: null,
-            $bean->id,
-            $bean->module_dir ?? null
+            $bean?->id,
+            $bean?->module_dir ?? null
         );
         $instance->customData = $customData;
         $instance->captureBlockReferences($context);
