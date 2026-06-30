@@ -33,17 +33,22 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
     protected string $configKeyPrefix = 'STRIPE';
 
     /**
-    * Prepare payment.
-    * If Offline -> Returns OK.
-    * If External platform -> Returns WAIT with data to redirection.
-    */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
-    {
-        return 'stripe';
+     * Returns the webhook source identifier for this strategy.
+     * Used by WebhookHandler to route incoming webhooks to the correct strategy.
+     */
+    public static function getSourceName(): string {
+        return "Stripe";
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
-    {
+    /**
+     * Extracts the external transaction ID from the raw webhook request data.
+     * Each gateway sends the ID in a different location/format.
+     *
+     * @param array $rawData POST data array
+     * @param string $rawBody Raw request body (for JSON-based gateways)
+     * @return string|null The external transaction ID or null if not found
+     */
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string {
         $payload = json_decode($rawBody, true);
         return $payload['data']['object']['id'] ?? null;
     }
@@ -52,8 +57,7 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
      * Prepare payment via Stripe Checkout.
      * Returns WAIT with redirect URL to Stripe.
      */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
-    {
+    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         $config = $this->getConfigValues(array('SECRET_KEY', 'SECRET_KEY_TEST', 'WEBHOOK_SECRET', 'WEBHOOK_SECRET_TEST', 'TEST'));
         
         $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
@@ -120,8 +124,7 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
      * Terminal: Redirect to Stripe Checkout.
      * Only called if initiate() has returned WAIT.
      */
-    public function performTerminal(ExecutionContext $context, ActionResult $result): void
-    {
+    public function performTerminal(ExecutionContext $context, ActionResult $result): void {
         $data = $result->getData();
         if (!empty($data['redirect_url'])) {
             header('Location: ' . $data['redirect_url']);
@@ -130,12 +133,14 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
     }
 
     /**
-     * WEBHOOK: Resolves action when notification arrives from Stripe.
-     * Matches stic_Web_Forms PaymentController::actionStripeResponse() behavior:
-     * iterates all Stripe key pairs to find matching webhook signature.
-     */
-    public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
-    {
+    * WEBHOOK: Process action when notification arrives from Stripe.
+    * Matches stic_Web_Forms PaymentController::actionStripeResponse() behavior:
+    * iterates all Stripe key pairs to find matching webhook signature.
+    * Can be called with or without a Deferred Ticket:
+    * - With ticket: $context->deferredContext contains strategy_class, payment_id, etc.
+    * - Without ticket: context is minimal; strategy handles recurring events directly.
+    */ 
+    public function processNotification(ExecutionContext $context, ActionResult $result): ActionResult {
         require_once 'SticInclude/vendor/stripe/stripe-php/init.php';
 
         $stripeSettings = $this->getStripeSettings();
