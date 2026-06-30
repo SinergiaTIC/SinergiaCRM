@@ -57,7 +57,7 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
     /**
      * Prepare payment for the current Strategy (Offline, RedSys, CECA...)
      */
-    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         // TODO
 
         $config = $this->getConfigValues(array('SECRET_KEY', 'WEBHOOK_SECRET', 'SECRET_KEY_TEST', 'WEBHOOK_SECRET_TEST', 'TEST'));
