@@ -11,7 +11,11 @@ test.describe("Desktop navigation", () => {
     await expect(page.getByRole("navigation")).toBeVisible();
   });
 
-  test("all module group links are visible in sidebar", async ({ page }: { page: Page }) => {
+  test("all module group links are visible in sidebar", async ({
+    page,
+  }: {
+    page: Page;
+  }) => {
     const groups: string[] = [
       "LBL_GROUPTAB_MAIN",
       "LBL_GROUPTAB_ACTIVITIES",
@@ -26,7 +30,11 @@ test.describe("Desktop navigation", () => {
     }
   });
 
-  test("shows admin action link in sidebar", async ({ page }: { page: Page }) => {
+  test("shows admin action link in sidebar", async ({
+    page,
+  }: {
+    page: Page;
+  }) => {
     await expect(
       page.getByRole("link", { name: t("Administration") }),
     ).toBeVisible();

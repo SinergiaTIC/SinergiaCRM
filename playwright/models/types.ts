@@ -25,12 +25,6 @@ export interface ModuleEntry {
   type: ModuleType;
 }
 
-export interface DeviceConfig {
-  name: string;
-  width: number;
-  height: number;
-}
-
 export interface LabelSource {
   file: string;
 }

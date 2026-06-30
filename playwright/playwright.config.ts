@@ -1,40 +1,26 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 import { BASE_URL, TEST_LANG } from "./settings.js";
-import type { DeviceConfig } from "./models/types.js";
 
-const deviceConfigs: DeviceConfig[] = [
-  { name: "desktop", width: 1920, height: 1080 },
-  { name: "tablet", width: 768, height: 1024 },
-  { name: "mobile", width: 375, height: 812 },
-];
+type ProjectType = "functional" | "visual";
 
-const functionalProjects = deviceConfigs.map((device) => ({
-  name: `functional-${TEST_LANG}-${device.name}`,
-  testMatch: [
-    `specs/common/**/*.spec.ts`,
-    `specs/${device.name}/**/*.spec.ts`,
-    `specs/modules/*/common/**/*.spec.ts`,
-    `specs/modules/*/${device.name}/**/*.spec.ts`,
-  ],
-  use: {
-    channel: "chrome",
-    viewport: { width: device.width, height: device.height },
-  },
-}));
-
-const visualProjects = deviceConfigs.map((device) => ({
-  name: `visual-${TEST_LANG}-${device.name}`,
-  testMatch: [
-    `specs/visual/common/**/*.spec.ts`,
-    `specs/visual/${device.name}/**/*.spec.ts`,
-    `specs/modules/*/visual/common/**/*.spec.ts`,
-    `specs/modules/*/visual/${device.name}/**/*.spec.ts`,
-  ],
-  use: {
-    channel: "chrome",
-    viewport: { width: device.width, height: device.height },
-  },
-}));
+function makeProjects(type: ProjectType) {
+  const isVisual = type === "visual" ? "visual/" : "";
+  const deviceEntries = [
+    { name: "desktop", device: devices["Desktop Chrome"] },
+    { name: "tablet", device: devices["Galaxy Tab S4"] },
+    { name: "mobile", device: devices["Pixel 5"] },
+  ] as const;
+  return deviceEntries.map(({ name, device }) => ({
+    name: `${type}-${TEST_LANG}-${name}`,
+    testMatch: [
+      `specs/${isVisual}common/**/*.spec.ts`,
+      `specs/${isVisual}${name}/**/*.spec.ts`,
+      `specs/modules/*/${isVisual}common/**/*.spec.ts`,
+      `specs/modules/*/${isVisual}${name}/**/*.spec.ts`,
+    ],
+    use: { ...device },
+  }));
+}
 
 export default defineConfig({
   globalSetup: "./global-setup.ts",
@@ -50,9 +36,10 @@ export default defineConfig({
   use: {
     baseURL: BASE_URL,
     storageState: ".auth/user.json",
+    channel: "chrome",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "on-first-retry",
   },
-  projects: [...functionalProjects, ...visualProjects],
+  projects: [...makeProjects("functional"), ...makeProjects("visual")],
 });

@@ -1,3 +1,6 @@
+import { config } from "dotenv";
+config();
+
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 
