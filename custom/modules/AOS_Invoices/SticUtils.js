@@ -193,14 +193,14 @@ switch (viewType()) {
         },
       };
 
-      // Rectified invoice button: enabled if invoice is emitted, Paid, or Unpaid
-      if (STIC.record.status != 'emitted' && STIC.record.status != 'Paid' && STIC.record.status != 'Unpaid') {
+      // Rectified invoice button: enabled only if accepted by AEAT
+      if (STIC.record.verifactu_aeat_status_c !== 'accepted') {
         buttons.createRectifiedInvoice.disabled = 'disabled';
         buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";
       }
 
-      // Send to AEAT button: disabled if already accepted
-      if (STIC.record.status === 'emitted' && STIC.record.verifactu_aeat_status_c === 'accepted') {
+      // Send to AEAT button: disabled if already accepted or cancelled in AEAT
+      if (STIC.record.verifactu_aeat_status_c === 'accepted' || STIC.record.verifactu_aeat_status_c === 'cancelled') {
         buttons.sendToAEAT.disabled = 'disabled';
         buttons.sendToAEAT.style = "cursor: not-allowed; opacity: .5;";
       }

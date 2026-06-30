@@ -575,8 +575,40 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             return;
         }
 
-        if (!empty($_REQUEST['Delete']) && !empty($_REQUEST['uid'])) {
-            $ids = explode(',', $_REQUEST['uid']);
+        $ids = [];
+
+        if (!empty($_REQUEST['Delete'])) {
+            if (!empty($_REQUEST['uid'])) {
+                $ids = explode(',', $_REQUEST['uid']);
+            } elseif (!empty($_REQUEST['entire'])) {
+                $seed = BeanFactory::getBean('AOS_Invoices');
+                require_once 'include/MassUpdate.php';
+                $mass = new MassUpdate();
+                $mass->setSugarBean($seed);
+                if (!empty($_REQUEST['current_query_by_page'])) {
+                    $mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_query_by_page']);
+                }
+                $query = $seed->create_new_list_query(
+                    '',
+                    $mass->where_clauses,
+                    array(),
+                    array(),
+                    0,
+                    '',
+                    false,
+                    $seed,
+                    true,
+                    true
+                );
+                $db = DBManagerFactory::getInstance();
+                $result = $db->query($query, true);
+                while ($row = $db->fetchByAssoc($result, false)) {
+                    $ids[] = $row['id'];
+                }
+            }
+        }
+
+        if (!empty($ids)) {
             $allowedIds = [];
             $blockedInvoices = [];
 
@@ -602,7 +634,6 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                 ];
 
                 if (empty($allowedIds)) {
-                    // All blocked - skip mass update and show warning
                     if (empty($mod_strings)) {
                         $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
                     }
@@ -616,16 +647,16 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                     return;
                 }
 
-                // Some blocked - update request to only process allowed invoices
                 $_REQUEST['uid'] = implode(',', $allowedIds);
                 $_POST['mass'] = $allowedIds;
+                if (!empty($_REQUEST['entire'])) {
+                    unset($_REQUEST['entire']);
+                }
             }
         }
 
-        // Process mass update with filtered list
         parent::action_massupdate();
 
-        // After mass update, show warning for blocked invoices
         if (!empty($_SESSION['VERIFACTU_BLOCKED_DELETES'])) {
             $blockedData = $_SESSION['VERIFACTU_BLOCKED_DELETES'];
             unset($_SESSION['VERIFACTU_BLOCKED_DELETES']);
