@@ -136,23 +136,28 @@ class ExampleDeferredAction extends DeferredActionDefinition implements IWebhook
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        // 1. Retrieve visual configuration parameters resolved by the framework
+        // Retrieve visual configuration parameters resolved by the framework
         $endpoint = $actionConfig->getResolvedParameter('external_endpoint');
         /** @var ?BeanReference $campaignRef */
         $campaignRef = $actionConfig->getResolvedParameter('target_campaign');
 
-        // 2. Create the Deferred Ticket to track the transaction
+        // Generate an external transactional ID to mimic gateway tracking (Stripe/Redsys/CECA style)
+        $externalTxId = 'TX_EXT_' . bin2hex(random_bytes(8));
+
+        // Create the Deferred Ticket to track the transaction
         /** @var stic_AWF_Deferred_Tickets $ticket */
         $ticket = $this->createDeferredTicket(
             $context,
             $actionConfig,
             null,
-            [], // Custom data
+            [   // Custom data
+                'external_tx_id' => $externalTxId,
+                'campaign_id' => $campaignRef?->beanId ?? ''
+            ], 
             'External API Validation'
         );
 
-        // Generate an external transactional ID to mimic gateway tracking (Stripe/Redsys/CECA style)
-        $externalTxId = 'TX_EXT_' . bin2hex(random_bytes(8));
+        // Map physical relational columns required by WebhookHandler query lookups
         $ticket->external_transaction_id = $externalTxId;
 
         // Save the Ticket to DB
@@ -160,14 +165,12 @@ class ExampleDeferredAction extends DeferredActionDefinition implements IWebhook
 
         $GLOBALS['log']->info("Line " . __LINE__ . " - " . __METHOD__ . ": Created AWF Deferred Ticket ID={$ticket->id} for external transaction {$externalTxId}");
 
-        // 4. Dispatch payload to External API (Simulated)
+        // Dispatch payload to External API (Simulated)
         // In a real-world integration, you would trigger a cURL/Guzzle call to $endpoint here, 
         // passing the $ticket->token_hash (for redirects) or the $externalTxId (for webhooks).
         
-        // 5. Return WAIT to pause the flow and wait for the callback (Front-Channel or Back-Channel Webhook)
+        // Return WAIT to pause the flow and wait for the callback (Front-Channel or Back-Channel Webhook)
         $result = new ActionResult(ResultStatus::WAIT, $actionConfig, "Dispatched validation task. Awaiting external callback.");
-        $result->registerBeanModification($ticket, BeanModificationType::CREATED);
-
         return $result;
     }
 

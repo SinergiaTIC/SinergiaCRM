@@ -38,8 +38,7 @@ trait DeferredActionHelperTrait {
      * @param string $status optional status
      * @return string The url for sequential return
      */
-    public function getSequentialReturnUrl(stic_AWF_Deferred_Tickets $ticket, string $status = 'ok'): string
-    {
+    public function getSequentialReturnUrl(stic_AWF_Deferred_Tickets $ticket, string $status = 'ok'): string {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         
@@ -56,8 +55,7 @@ trait DeferredActionHelperTrait {
      * @param array $extraParams
      * @return string The url for asynchronous notifications
      */
-    public function getAsyncCallbackUrl(string $source, ?stic_AWF_Deferred_Tickets $ticket = null, array $extraParams = []): string
-    {
+    public function getAsyncCallbackUrl(string $source, ?stic_AWF_Deferred_Tickets $ticket = null, array $extraParams = []): string {
         global $sugar_config;
         $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
         
