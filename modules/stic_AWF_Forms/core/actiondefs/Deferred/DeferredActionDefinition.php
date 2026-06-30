@@ -31,6 +31,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * providing a common structure for all deferred actions while enforcing the implementation of the getType method to return ActionType::
  */
 abstract class DeferredActionDefinition extends ServerActionDefinition implements IDeferredAction {
+    use DeferredActionHelperTrait;
 
     protected string $defaultExpirationDays = '30';
 
