@@ -57,7 +57,7 @@ class stic_AWF_StripeStrategy extends stic_AWF_PaymentStrategy
      * Prepare payment via Stripe Checkout.
      * Returns WAIT with redirect URL to Stripe.
      */
-    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         $config = $this->getConfigValues(array('SECRET_KEY', 'SECRET_KEY_TEST', 'WEBHOOK_SECRET', 'WEBHOOK_SECRET_TEST', 'TEST'));
         
         $isTest = !empty($config['TEST']) && $config['TEST'] == '1';

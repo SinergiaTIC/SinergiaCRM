@@ -60,7 +60,7 @@ class stic_AWF_OfflineStrategy extends stic_AWF_PaymentStrategy
      * Initiates an offline payment: sets the payment status to 'pending' and
      * returns OK so PaymentRouterAction triggers the Deferred OK flow immediately.
      */
-    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         // Offline payments (bank transfer, cash, direct debit) keep their default status
         // (not_remitted as set by the Payment Commitment hook on creation).
         // No gateway interaction needed; return OK immediately so the flow continues.
