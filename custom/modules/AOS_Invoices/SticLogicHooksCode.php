@@ -114,6 +114,13 @@ class AOS_InvoicesHook
         }
         // === End Step 1.1a ===
 
+        // === Block Cancelled status in Verifactu mode ===
+        if (AOS_InvoicesUtils::isVerifactuActivated() && $bean->status === 'Cancelled') {
+            $GLOBALS['log']->warn(__METHOD__ . ': Blocked Cancelled status in Verifactu mode for invoice ' . $bean->id);
+            $bean->status = !empty($bean->fetched_row['status']) ? $bean->fetched_row['status'] : 'emitted';
+        }
+        // === End Block Cancelled ===
+
         // === Step 1.1c: Field protection for non-draft invoices (inline edit only) ===
         // Verifactu activated and invoice already has a non-draft status.
         // Inline edit modifies exactly 1 field at a time (via saveField). If only 1 field changed
@@ -135,6 +142,21 @@ class AOS_InvoicesHook
                 $currentNormalized = ($currentValue === null || $currentValue === '') ? null : $currentValue;
 
                 if ($currentNormalized !== $originalNormalized) {
+                    // Check if this is a phantom change from cleanBean()->purify_html()
+                    // cleanBean() applies purify_html() to char/text/enum fields before before_save,
+                    // which creates artificial differences vs fetched_row (e.g. accented chars → HTML entities)
+                    if (!empty($currentNormalized) && !empty($originalNormalized)) {
+                        $fieldType = $bean->field_defs[$field]['type'] ?? '';
+                        $fieldDbType = $bean->field_defs[$field]['dbType'] ?? '';
+                        $combinedType = $fieldType . $fieldDbType;
+                        if (strpos($combinedType, 'char') !== false || strpos($combinedType, 'text') !== false || $fieldType === 'enum') {
+                            $purifiedOriginal = purify_html($originalNormalized, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+                            if ($purifiedOriginal === $currentNormalized) {
+                                $bean->$field = $bean->fetched_row[$field];
+                                continue;
+                            }
+                        }
+                    }
                     $modifiedFields[] = $field;
                 }
             }

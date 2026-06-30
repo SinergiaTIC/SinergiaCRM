@@ -110,22 +110,18 @@ class AOS_InvoicesUtils
             return;
         }
 
-        $allowedTransitions = array(
-            'draft' => array('draft'),
-            'emitted' => array('emitted', 'Paid', 'Unpaid', 'Cancelled'),
-            'Paid' => array('Paid', 'Unpaid', 'Cancelled'),
-            'Unpaid' => array('Unpaid', 'Paid', 'Cancelled'),
-            'Cancelled' => array('Cancelled'),
-        );
-
         if (!isset($app_list_strings['invoice_status_dom'])) {
             return;
         }
 
-        $allowed = $allowedTransitions[$currentStatus] ?? null;
-
-        if ($allowed === null) {
-            return;
+        if ($currentStatus === 'draft') {
+            // Draft can only stay as draft
+            $allowed = array('draft');
+        } else {
+            // For all other statuses, remove 'draft' and 'Cancelled'.
+            // All other statuses (Paid, Unpaid, and any future ones) remain available.
+            $allowed = array_keys($app_list_strings['invoice_status_dom']);
+            $allowed = array_diff($allowed, array('draft', 'Cancelled', ''));
         }
 
         foreach ($app_list_strings['invoice_status_dom'] as $key => $label) {
