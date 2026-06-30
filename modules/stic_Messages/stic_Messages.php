@@ -403,53 +403,107 @@ class stic_Messages extends Basic
     }
 
     public function sendMessage() {
+        // Load the helper class based on message type
+        $messageHelper = $this->loadHelper();
+        
+        if ($messageHelper === null) {
+            return self::ERROR_NO_HELPER_CLASS;
+        }
 
-        // In the list stic_messages_type_list, the keypart is the name of the file containing the helper class.
-        $messageHelper = null;
+        // Build base parameters
+        $from = $this->sender;
+        $text = $this->message;
+        $to = $this->phone;
+        $extraArgs = [];
+
+        // If helper needs template body, prepare additional parameters
+        if ($messageHelper->passesTemplateBodyToProvider()) {
+            $templateSid = $this->getTemplateSid();
+            $beans = $this->getTemplateBeans();
+            $messageForHelper = $this->getMessageForTemplate();
+            $mediaUrl = $this->media_url ?? null;
+            
+            $extraArgs = [$templateSid, $beans, $mediaUrl];
+            $text = $messageForHelper;
+        }
+
+        return $messageHelper->sendMessage($from, $text, $to, ...$extraArgs);
+    }
+
+    /**
+     * Loads the message helper class based on message type.
+     * 
+     * @return stic_MessagesHelper|null The helper instance or null if not found
+     */
+    private function loadHelper(): ?stic_MessagesHelper {
         $file = $this->type;
-        if (file_exists('custom/modules/stic_Messages/Helpers/' . $file . '.php')) {
-            require_once('custom/modules/stic_Messages/Helpers/' . $file . '.php');
-            $messageHelper = new $file; 
+        
+        // Check custom directory first, then default modules directory
+        $paths = [
+            'custom/modules/stic_Messages/Helpers/',
+            'modules/stic_Messages/Helpers/',
+        ];
+        
+        foreach ($paths as $path) {
+            if (file_exists($path . $file . '.php')) {
+                require_once($path . $file . '.php');
+                if (class_exists($file)) {
+                    return new $file();
+                }
+            }
         }
-        else if (file_exists('modules/stic_Messages/Helpers/' . $file . '.php')) {
-            require_once('modules/stic_Messages/Helpers/' . $file . '.php');
-            $messageHelper = new $file; 
-        }
+        
+        return null;
+    }
 
-        $templateSid = null;
+    /**
+     * Gets the template SID from the email template.
+     * 
+     * @return string|null Template SID or null if not available
+     */
+    private function getTemplateSid(): ?string {
+        if (empty($this->template_id)) {
+            return null;
+        }
+        
+        $templateBean = BeanFactory::getBean('EmailTemplates', $this->template_id);
+        return $templateBean->stic_whatsapp_twilio_id_c ?? null;
+    }
+
+    /**
+     * Gets the beans array for template variable resolution.
+     * 
+     * @return array Array of SugarBean objects
+     */
+    private function getTemplateBeans(): array {
+        $beans = [];
+        
+        if (!empty($this->parent_type) && !empty($this->parent_id)) {
+            $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+            if ($parentBean) {
+                $beans[] = $parentBean;
+            }
+        }
+        
+        return $beans;
+    }
+
+    /**
+     * Gets the message text to send, using template body if available.
+     * 
+     * @return string Message text
+     */
+    private function getMessageForTemplate(): string {
+        $message = $this->message;
+        
         if (!empty($this->template_id)) {
             $templateBean = BeanFactory::getBean('EmailTemplates', $this->template_id);
-            if ($templateBean) {
-                $templateSid = $templateBean->stic_whatsapp_twilio_id_c ?? null;
+            if (!empty($templateBean) && !empty($templateBean->body)) {
+                $message = $templateBean->body;
             }
         }
-
-        if ($messageHelper !== null) {
-            if ($messageHelper->passesTemplateBodyToProvider()) {
-                // Build the beans array from the parent record so placeholders can be resolved
-                $beans = [];
-                if (!empty($this->parent_type) && !empty($this->parent_id)) {
-                    $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
-                    if ($parentBean) {
-                        $beans[] = $parentBean;
-                    }
-                }
-
-                $messageForHelper = $this->message;
-                if (!empty($templateBean) && !empty($templateBean->body)) {
-                    $messageForHelper = $templateBean->body;
-                }
-
-                $returnCode = $messageHelper->sendMessage($this->sender, $messageForHelper, $this->phone, $templateSid, $beans, $this->media_url ?? null);
-            } else {
-                $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
-            }
-        }
-        else {
-            $returnCode = self::ERROR_NO_HELPER_CLASS;
-        }
-        return $returnCode;
-
+        
+        return $message;
     }
 
     public static function replaceTemplateVariables($screenText, $bean)

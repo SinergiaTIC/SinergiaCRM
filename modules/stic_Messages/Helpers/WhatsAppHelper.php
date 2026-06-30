@@ -27,117 +27,140 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('modules/stic_Settings/Utils.php');
 require_once('modules/stic_Messages/Helpers/stic_MessagesHelper.php');
 
-class WhatsAppHelper implements stic_MessagesHelper {
+class WhatsAppHelper extends stic_MessagesHelper {
     
-    protected ?string $sid;
-    protected ?string $token;
-    protected ?string $twilioNumber;
-    private $apiUrl = 'https://api.twilio.com/2010-04-01';
+    protected ?string $sid = null;
+    protected ?string $token = null;
+    protected ?string $twilioNumber = null;
+    private string $apiUrl = 'https://api.twilio.com/2010-04-01';
 
-    public function getHelperType(): string {
+    /**
+     * Returns the provider name identifier.
+     */
+    protected function getProviderName(): string {
         return 'whatsapp';
     }
 
-    public function getTemplateType(): string {
-        return 'whatsapp';
+    /**
+     * Returns the list of required setting keys.
+     */
+    protected function getRequiredSettings(): array {
+        return ['twilio_sid', 'twilio_token', 'twilio_number'];
     }
 
+    /**
+     * WhatsApp passes template body to provider for server-side substitution.
+     */
     public function passesTemplateBodyToProvider(): bool {
         return true;
     }
 
-    public function __construct()
-    {
-        $sid = stic_SettingsUtils::getSetting('twilio_sid');
-        $this->setSid($sid ?? '');
-
-        $token = stic_SettingsUtils::getSetting('twilio_token');
-        $this->setToken($token ?? '');
-
-        $twilioNumber = stic_SettingsUtils::getSetting('twilio_number');
-        $this->setTwilioNumber($twilioNumber ?? '');
+    /**
+     * Constructor - loads configuration and initializes provider.
+     */
+    public function __construct() {
+        $this->loadConfig();
+        
+        $this->sid = $this->config['twilio_sid'] ?? '';
+        $this->token = $this->config['twilio_token'] ?? '';
+        $this->twilioNumber = $this->config['twilio_number'] ?? '';
+        $this->active = $this->isConfigured();
     }
 
-    protected function getSid(): ?string {
-        return $this->sid;
+    /**
+     * Builds send parameters with WhatsApp-specific data.
+     * 
+     * @param string|null $from
+     * @param string $text Message body or template SID
+     * @param string $to Phone number
+     * @param mixed ...$args Additional: templateSid, beans, mediaUrl
+     * @return array
+     */
+    protected function buildSendParams(?string $from, string $text, string $to, ...$args): array {
+        $templateSid = $args[0] ?? null;
+        $beans = $args[1] ?? [];
+        $mediaUrl = $args[2] ?? null;
+
+        return [
+            'from' => $from,
+            'text' => $text,
+            'to' => $to,
+            'templateSid' => $templateSid,
+            'beans' => $beans,
+            'mediaUrl' => $mediaUrl,
+        ];
     }
 
-    protected function setSid(string $sid): self {
-        $this->sid = $sid;
-        return $this;
-    }
+    /**
+     * Performs the API call to Twilio to send WhatsApp message.
+     * 
+     * @param array $params Must contain 'from', 'text', 'to', plus optional WhatsApp params
+     * @return array Result with 'code', 'message', and optional 'twilio_sid', 'status'
+     */
+    protected function performApiCall(array $params): array {
+        $from = $params['from'] ?? null;
+        $message = $params['text'] ?? '';
+        $phone = $params['to'] ?? '';
+        $templateSid = $params['templateSid'] ?? null;
+        $beans = $params['beans'] ?? [];
+        $mediaUrl = $params['mediaUrl'] ?? null;
 
-    protected function getToken(): ?string {
-        return $this->token;
-    }
-
-    protected function setToken(string $token): self {
-        $this->token = $token;
-        return $this;
-    }
-
-    protected function getTwilioNumber(): ?string {
-        return $this->twilioNumber;
-    }
-
-    protected function setTwilioNumber($twilioNumber): self {
-        $this->twilioNumber = $twilioNumber;
-        return $this;
-    }
-
-    public function sendMessage(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = [], ?string $mediaUrl = null): array
-    {
         $phone = $this->formatPhoneNumber($phone);
 
         if (empty($phone)) {
-            return [
-                'code' => stic_Messages::ERROR_NOT_SENT,
-                'message' => translate('LBL_TWILIO_INVALID_PHONE', 'stic_Messages')
-            ];
+            return $this->buildError(translate('LBL_TWILIO_INVALID_PHONE', 'stic_Messages'));
         }
 
-        $result = $this->apiCall($sender, $message, $phone, $templateSid, $beans, $mediaUrl);
+        $result = $this->callTwilioApi($from, $message, $phone, $templateSid, $beans, $mediaUrl);
         
         $resultArray = json_decode($result, true);
         
         if (!isset($resultArray['success']) || !$resultArray['success']) {
-            return [
-                'code' => stic_Messages::ERROR_NOT_SENT, 
-                'message' => $result
-            ];
+            return $this->buildError($result);
         }
         
         if (isset($resultArray['data']['sid']) && empty($resultArray['data']['error_code'])) {
-            $GLOBALS['log']->info('WhatsApp message sent. SID: ' . $resultArray['data']['sid']);
-            return [
-                'code' => stic_Messages::OK,
-                'message' => translate('LBL_MESSAGE_SENT', 'stic_Messages'),
-                'twilio_sid' => $resultArray['data']['sid'],
-                'status' => $resultArray['data']['status'] ?? 'sent'
-            ];
-        } else {
-            $errorMessage = $resultArray['data']['error_message']
-                ?? $resultArray['data']['message']
-                ?? translate('LBL_TWILIO_UNKNOWN_ERROR', 'stic_Messages');
-            $GLOBALS['log']->error('WhatsApp send failed. SID: ' . ($resultArray['data']['sid'] ?? 'none') . ' - ' . $errorMessage);
-            return [
-                'code' => stic_Messages::ERROR_NOT_SENT, 
-                'message' => $errorMessage
-            ];
+            $this->logInfo('WhatsApp message sent. SID: ' . $resultArray['data']['sid']);
+            return $this->buildSuccess(
+                translate('LBL_MESSAGE_SENT', 'stic_Messages'),
+                [
+                    'twilio_sid' => $resultArray['data']['sid'],
+                    'status' => $resultArray['data']['status'] ?? 'sent',
+                ]
+            );
         }
+
+        $errorMessage = $resultArray['data']['error_message']
+            ?? $resultArray['data']['message']
+            ?? translate('LBL_TWILIO_UNKNOWN_ERROR', 'stic_Messages');
+        $this->logError('WhatsApp send failed. SID: ' . ($resultArray['data']['sid'] ?? 'none') . ' - ' . $errorMessage);
+        return $this->buildError($errorMessage);
     }
 
-    protected function apiCall(?string $sender, string $message, string $phone, ?string $templateSid = null, array $beans = [], ?string $mediaUrl = null): string
-    {
+    // -------------------------------------------------------------------------
+    // Private/Protected methods specific to WhatsApp/Twilio
+    // -------------------------------------------------------------------------
+
+    /**
+     * Calls the Twilio API to send the WhatsApp message.
+     */
+    private function callTwilioApi(
+        ?string $sender, 
+        string $message, 
+        string $phone, 
+        ?string $templateSid = null, 
+        array $beans = [], 
+        ?string $mediaUrl = null
+    ): string {
         if (!$this->isConfigured()) {
             return json_encode([
                 'success' => false,
                 'message' => translate('LBL_TWILIO_CONFIG_INCOMPLETE', 'stic_Messages')
             ]);
         }
+
         if (empty($phone) || (empty($message) && empty($templateSid) && empty($mediaUrl))) {
             return json_encode([
                 'success' => false,
@@ -152,14 +175,13 @@ class WhatsAppHelper implements stic_MessagesHelper {
             'From' => $from,
             'To' => $to
         ];
+
         if (!empty($mediaUrl)) {
             $postData['MediaUrl'] = $mediaUrl;
         }
 
         if (!empty($templateSid)) {
             $postData['ContentSid'] = $templateSid;
-
-            // Build ContentVariables and force JSON object even if empty to satisfy Twilio's expected format.
             $vars = $this->buildTwilioContentVariables($message, $beans);
             $postData['ContentVariables'] = json_encode((object) $vars);
         } else {
@@ -189,8 +211,7 @@ class WhatsAppHelper implements stic_MessagesHelper {
             $errorMessage = curl_error($ch);
             curl_close($ch);
             
-            // fatal accepts a single message argument in this codebase
-            $GLOBALS['log']->fatal('Error sending WhatsApp ' . __METHOD__ . __LINE__ . ' - ' . $errorNumber . ' - ' . $errorMessage);
+            $this->logFatal('Error sending WhatsApp ' . __METHOD__ . ' ' . __LINE__ . ' - ' . $errorNumber . ' - ' . $errorMessage);
             $errorMsg = $errorNumber . '-' . $errorMessage;
             return json_encode([
                 'success' => false, 
@@ -216,8 +237,10 @@ class WhatsAppHelper implements stic_MessagesHelper {
         ]);
     }
 
-    private function formatPhoneNumber($phone)
-    {
+    /**
+     * Formats phone number to international format (+34XXXXXXXXX).
+     */
+    private function formatPhoneNumber($phone): string {
         $phone = trim($phone);
         if (strpos($phone, '+') === 0) {
             return '+' . preg_replace('/[^0-9]/', '', substr($phone, 1));
@@ -232,13 +255,17 @@ class WhatsAppHelper implements stic_MessagesHelper {
         return '';
     }
 
-    private function isConfigured()
-    {
+    /**
+     * Checks if all required configuration is present.
+     */
+    public function isConfigured(): bool {
         return !empty($this->sid) && !empty($this->token) && !empty($this->twilioNumber);
     }
 
-    public function validateConfig()
-    {
+    /**
+     * Validates configuration and returns list of errors.
+     */
+    public function validateConfig(): array {
         $errors = [];
         if (empty($this->sid)) $errors[] = translate('LBL_TWILIO_SID_MISSING', 'stic_Messages');
         if (empty($this->token)) $errors[] = translate('LBL_TWILIO_TOKEN_MISSING', 'stic_Messages');
@@ -248,15 +275,13 @@ class WhatsAppHelper implements stic_MessagesHelper {
 
     /**
      * Extracts $variable placeholders from the template body, resolves them
-     * against the provided beans, and returns a Twilio contentVariables array:
-     * ["1" => "value1", "2" => "value2", ...]
-     *
+     * against the provided beans, and returns a Twilio contentVariables array.
+     * 
      * @param string $templateBody Raw template body with $variable placeholders
-     * @param array  $beans        Ordered list of SugarBean objects to resolve against
-     * @return array
+     * @param array $beans Ordered list of SugarBean objects to resolve against
+     * @return array ["1" => "value1", "2" => "value2", ...]
      */
-    protected function buildTwilioContentVariables(string $templateBody, array $beans): array
-    {
+    protected function buildTwilioContentVariables(string $templateBody, array $beans): array {
         preg_match_all('/\$([a-zA-Z_][a-zA-Z0-9_]*)/', $templateBody, $matches);
         $placeholders = array_unique($matches[1] ?? []);
 

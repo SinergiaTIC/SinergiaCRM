@@ -123,4 +123,5 @@ $mod_strings = array (
   'LBL_TWILIO_INVALID_PHONE' => 'El número de teléfono debe incluir el prefijo internacional (+)',
   'LBL_ATTACHMENT_REMOVE' => 'Eliminar',
   'LBL_WHATSAPP_INCOMING_MESSAGE' => 'Mensaje entrante de WhatsApp',
+  'LBL_HELPER_MODULE_NOT_ACTIVE' => 'Módulo no activo',
 );
