@@ -51,17 +51,19 @@ if ($grantType === 'authorization_code') {
     $client = SticPortalOAuthUtils::validateClient($clientId, $redirectUri);
     if (!$client) { http_response_code(400); echo json_encode(['error' => 'invalid_client']); exit; }
 
-    $result = $db->limitQuery("SELECT * FROM stic_portal_auth_codes WHERE auth_code=" . $db->quoted($code) . " AND deleted=0 AND is_revoked=0", 0, 1);
+    $result = $db->limitQuery("SELECT * FROM oauth2tokens WHERE access_token=" . $db->quoted($code) . " AND token_type='auth_code' AND deleted=0 AND token_is_revoked=0", 0, 1);
     $row = $db->fetchByAssoc($result);
-    if (!$row || $row['client_id'] !== $clientId) { http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit; }
+    if (!$row || strtotime($row['access_token_expires']) < time() || $row['client'] !== $clientId) {
+        http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit;
+    }
 
-    $db->query("UPDATE stic_portal_auth_codes SET is_revoked=1 WHERE id=" . $db->quoted($row['id']));
+    $db->query("UPDATE oauth2tokens SET token_is_revoked=1 WHERE id=" . $db->quoted($row['id']));
 
     $now = date('Y-m-d H:i:s');
     $atExp = date('Y-m-d H:i:s', time() + 3600); $rtExp = date('Y-m-d H:i:s', time() + 2592000);
     $at = bin2hex(random_bytes(32)); $rt = bin2hex(random_bytes(32));
-    $portalType = $row['portal_type'];
-    $portalId   = $row['portal_id'];
+    $portalType = $row['platform'];
+    $portalId   = $row['assigned_user_id'];
 
     $db->query("INSERT INTO oauth2tokens (id, access_token, access_token_expires, refresh_token, refresh_token_expires, token_type, token_is_revoked, date_entered, date_modified, deleted) VALUES ("
         . $db->quoted(create_guid()) . ", " . $db->quoted($at) . ", " . $db->quoted($atExp) . ", " . $db->quoted($rt) . ", "
