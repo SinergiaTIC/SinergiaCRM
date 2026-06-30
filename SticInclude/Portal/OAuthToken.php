@@ -30,11 +30,11 @@ $GLOBALS['log']->debug("PortalOAuthToken - " . $_SERVER['REQUEST_METHOD']);
 global $db;
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $token = $_GET['access_token'] ?? '';
-    $result = $db->limitQuery("SELECT id, assigned_user_id FROM oauth2tokens WHERE access_token=" . $db->quoted($token) . " AND deleted=0 AND token_is_revoked=0", 0, 1);
-    $row = $db->fetchByAssoc($result);
-    if (!$row) { http_response_code(401); echo json_encode(['error' => 'invalid_token']); exit; }
-    echo json_encode(['valid' => true, 'portal_id' => $row['assigned_user_id']]);
+    $tokenVal = $_GET['access_token'] ?? '';
+    $t = BeanFactory::newBean('OAuth2Tokens');
+    $t->retrieve_by_string_fields(['access_token' => $tokenVal]);
+    if (!$t->id || $t->token_is_revoked == '1') { http_response_code(401); echo json_encode(['error' => 'invalid_token']); exit; }
+    echo json_encode(['valid' => true, 'portal_id' => $t->assigned_user_id]);
     exit;
 }
 
@@ -51,23 +51,41 @@ if ($grantType === 'authorization_code') {
     $client = SticPortalOAuthUtils::validateClient($clientId, $redirectUri);
     if (!$client) { http_response_code(400); echo json_encode(['error' => 'invalid_client']); exit; }
 
-    $result = $db->limitQuery("SELECT * FROM oauth2tokens WHERE access_token=" . $db->quoted($code) . " AND token_type='auth_code' AND deleted=0 AND token_is_revoked=0", 0, 1);
-    $row = $db->fetchByAssoc($result);
-    if (!$row || strtotime($row['access_token_expires']) < time() || $row['client'] !== $clientId) {
+    // Retrieve auth code via Bean
+    $authCode = BeanFactory::newBean('OAuth2Tokens');
+    $authCode->retrieve_by_string_fields(['access_token' => $code]);
+    if (!$authCode->id || $authCode->token_type !== 'auth_code' || $authCode->token_is_revoked == '1'
+        || strtotime($authCode->access_token_expires) < time() || $authCode->client !== $clientId) {
         http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit;
     }
 
-    $db->query("UPDATE oauth2tokens SET token_is_revoked=1 WHERE id=" . $db->quoted($row['id']));
+    // Revoke the auth code
+    $authCode->token_is_revoked = 1;
+    $authCode->save();
 
-    $now = date('Y-m-d H:i:s');
-    $atExp = date('Y-m-d H:i:s', time() + 3600); $rtExp = date('Y-m-d H:i:s', time() + 2592000);
-    $at = bin2hex(random_bytes(32)); $rt = bin2hex(random_bytes(32));
-    $portalType = $row['platform'];
-    $portalId   = $row['assigned_user_id'];
+    // Parse portal info from description: "Contact|00000a55..." or "Account|00000b66..."
+    $descParts = explode('|', $authCode->description ?? '');
+    $portalType = $descParts[0] ?? '';
+    $portalId   = $descParts[1] ?? '';
 
-    $db->query("INSERT INTO oauth2tokens (id, access_token, access_token_expires, refresh_token, refresh_token_expires, token_type, token_is_revoked, date_entered, date_modified, deleted) VALUES ("
-        . $db->quoted(create_guid()) . ", " . $db->quoted($at) . ", " . $db->quoted($atExp) . ", " . $db->quoted($rt) . ", "
-        . $db->quoted($rtExp) . ", " . $db->quoted("Bearer") . ", 0, " . $db->quoted($now) . ", " . $db->quoted($now) . ", 0)");
+    // Issue new tokens via Bean
+    $at = bin2hex(random_bytes(32));
+    $rt = bin2hex(random_bytes(32));
+    $atExp = date('Y-m-d H:i:s', time() + 3600);
+    $rtExp = date('Y-m-d H:i:s', time() + 2592000);
+
+    $token = BeanFactory::newBean('OAuth2Tokens');
+    $token->id = create_guid();
+    $token->new_with_id = true;
+    $token->access_token = $at;
+    $token->access_token_expires = $atExp;
+    $token->refresh_token = $rt;
+    $token->refresh_token_expires = $rtExp;
+    $token->token_type = 'Bearer';
+    $token->token_is_revoked = 0;
+    $token->description = $authCode->description;
+    $token->client = $clientId;
+    $token->save();
 
     $user = null;
     $rels = [];
@@ -145,19 +163,30 @@ if ($grantType === 'refresh_token') {
     $client = SticPortalOAuthUtils::validateClient($clientId, '');
     if (!$client) { http_response_code(400); echo json_encode(['error' => 'invalid_client']); exit; }
 
-    $result = $db->limitQuery("SELECT * FROM oauth2tokens WHERE refresh_token=" . $db->quoted($refreshToken) . " AND deleted=0 AND token_is_revoked=0", 0, 1);
-    $row = $db->fetchByAssoc($result);
-    if (!$row) { http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit; }
+    // Retrieve and revoke old token via Bean
+    $old = BeanFactory::newBean('OAuth2Tokens');
+    $old->retrieve_by_string_fields(['refresh_token' => $refreshToken]);
+    if (!$old->id || $old->token_is_revoked == '1') { http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit; }
+    $old->token_is_revoked = 1;
+    $old->save();
 
-    $db->query("UPDATE oauth2tokens SET token_is_revoked=1 WHERE id=" . $db->quoted($row['id']));
+    $at = bin2hex(random_bytes(32));
+    $rt = bin2hex(random_bytes(32));
+    $atExp = date('Y-m-d H:i:s', time() + 3600);
+    $rtExp = date('Y-m-d H:i:s', time() + 2592000);
 
-    $now = date('Y-m-d H:i:s');
-    $atExp = date('Y-m-d H:i:s', time() + 3600); $rtExp = date('Y-m-d H:i:s', time() + 2592000);
-    $at = bin2hex(random_bytes(32)); $rt = bin2hex(random_bytes(32));
-
-    $db->query("INSERT INTO oauth2tokens (id, access_token, access_token_expires, refresh_token, refresh_token_expires, token_type, token_is_revoked, date_entered, date_modified, deleted) VALUES ("
-        . $db->quoted(create_guid()) . ", " . $db->quoted($at) . ", " . $db->quoted($atExp) . ", " . $db->quoted($rt) . ", "
-        . $db->quoted($rtExp) . ", " . $db->quoted("Bearer") . ", 0, " . $db->quoted($now) . ", " . $db->quoted($now) . ", 0)");
+    $token = BeanFactory::newBean('OAuth2Tokens');
+    $token->id = create_guid();
+    $token->new_with_id = true;
+    $token->access_token = $at;
+    $token->access_token_expires = $atExp;
+    $token->refresh_token = $rt;
+    $token->refresh_token_expires = $rtExp;
+    $token->token_type = 'Bearer';
+    $token->token_is_revoked = 0;
+    $token->description = $old->description;
+    $token->client = $old->client;
+    $token->save();
 
     echo json_encode(["access_token" => $at, "token_type" => "Bearer", "expires_in" => 3600, "refresh_token" => $rt]);
     exit;
