@@ -55,7 +55,9 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
     /**
      * Prepare payment for the current Strategy (Offline, RedSys, CECA...)
      */
-    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+        // TODO
+
         $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
         $config['SERVER_URL'] = 'https://pgw.ceca.es/tpvweb/tpv/compra.action';
         $config['SERVER_URL_TEST'] = 'https://tpv.ceca.es/tpvweb/tpv/compra.action';
