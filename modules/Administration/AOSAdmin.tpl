@@ -4,9 +4,11 @@
       action="index.php?module=Administration&action=AOSAdmin&do=save">
 
     <span class='error'>{$error.main}</span>
+    <div id="validationErrorsBlock" {if !isset($validation_errors)}style="display:none"{/if}>
     {if isset($validation_errors)}
     {$validation_errors}
     {/if}
+    </div>
 
     <table width="100%" cellpadding="0" cellspacing="1" border="0" class="actionsContainer">
         <tr>
@@ -81,6 +83,13 @@
     var MOD_LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP = "{$MOD.LBL_AOS_INVOICE_SERIES_BLOCKED_TOOLTIP}";
     var MOD_LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED = "{$MOD.LBL_AOS_INVOICE_SERIES_REMOVE_BLOCKED}";
     var MOD_LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS = "{$MOD.LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS}";
+    var MOD_LBL_AOS_INVOICE_SERIES_UNSAVED_CONFIRM = "{$MOD.LBL_AOS_INVOICE_SERIES_UNSAVED_CONFIRM}";
+    var MOD_LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS = "{$MOD.LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS}";
+    
+    // Dirty tracking for series form
+    var seriesFormDirty = false;
+    var errorMessagesByLine = {};
+    var isInitialSeriesLoad = true;
     
     // Check for success message from save - passed as PHP variable
     var saveSuccess = {if isset($smarty.get.saved) && $smarty.get.saved == 1}true{else}false{/if};
@@ -109,17 +118,19 @@
     // On validation errors, restore ALL submitted data (existing + new rows)
     existingSeries = [];
         {foreach from=$submitted_series item=series}
-    existingSeries.push({ldelim} format: "{$series.format}", initialNumber: "{$series.initialNumber}", name: "{$series.name|escape:'javascript'}", isRectified: {if $series.isRectified}true{else}false{/if}, isNew: {if $series.isNew}true{else}false{/if} {rdelim});
+    existingSeries.push({ldelim} format: "{$series.format}", initialNumber: "{$series.initialNumber}", name: "{$series.name|escape:'javascript'}", isRectified: {if $series.isRectified}true{else}false{/if}, isNew: {if $series.isNew}true{else}false{/if}, hasError: {if isset($series.hasError) && $series.hasError}true{else}false{/if}, errorMessage: "{if isset($series.errorMessage)}{$series.errorMessage|escape:'javascript'}{/if}" {rdelim});
         {/foreach}
     {/if}
     
     {literal}
-    function addInvoiceSeriesLine(format, initialNumber, name, isRectified, isNew) {
+    function addInvoiceSeriesLine(format, initialNumber, name, isRectified, isNew, hasError, errorMessage) {
         format = format || '';
         initialNumber = initialNumber || '1';
         name = name || '';
         isRectified = isRectified || false;
         isNew = isNew || false;
+        hasError = hasError || false;
+        errorMessage = errorMessage || '';
         
         var lineNum = invoiceSeriesLineNumber++;
         var tbody = document.getElementById('invoice_series_lines');
@@ -219,6 +230,27 @@
                          '</button>';
         cell6.innerHTML = blockedIcon;
         
+        // Highlight row if this series has a validation error
+        if (hasError) {
+            row.style.backgroundColor = '#fff0f0';
+            row.style.outline = '2px solid #c00';
+            row.style.outlineOffset = '-2px';
+            if (errorMessage) {
+                row.title = errorMessage;
+            }
+            // Add inline error message below the series name
+            var errorSpan = document.createElement('div');
+            errorSpan.style.cssText = 'color: #c00; font-size: 11px; margin-top: 2px; font-weight: bold;';
+            errorSpan.textContent = errorMessage;
+            cell1.appendChild(errorSpan);
+            // Track error for dynamic cleanup
+            errorMessagesByLine[lineNum] = errorMessage;
+            row.setAttribute('data-has-error', 'true');
+        }
+        if (!isInitialSeriesLoad) {
+            seriesFormDirty = true;
+        }
+        
         updateInvoiceSeriesExample(lineNum);
         updateInvoiceSeriesCount();
     }
@@ -242,7 +274,28 @@
             }
             
             row.parentNode.removeChild(row);
+            seriesFormDirty = true;
+            // Remove associated error message if this row had an error
+            if (row.getAttribute('data-has-error') === 'true') {
+                delete errorMessagesByLine[lineNum];
+                updateValidationErrorsDisplay();
+            }
             updateInvoiceSeriesCount();
+        }
+    }
+    
+    function updateValidationErrorsDisplay() {
+        var errorBlock = document.getElementById('validationErrorsBlock');
+        if (!errorBlock) return;
+        var messages = Object.values(errorMessagesByLine);
+        if (messages.length === 0) {
+            errorBlock.style.display = 'none';
+        } else {
+            errorBlock.style.display = '';
+            var alertDiv = errorBlock.querySelector('.alert');
+            if (alertDiv) {
+                alertDiv.innerHTML = '<strong>' + MOD_LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS + '</strong><br>' + messages.join('<br>');
+            }
         }
     }
     
@@ -309,11 +362,38 @@
     // Load existing series on page load
     if (existingSeries.length > 0) {
         existingSeries.forEach(function(series) {
-            addInvoiceSeriesLine(series.format, series.initialNumber, series.name, series.isRectified, series.isNew);
+            addInvoiceSeriesLine(series.format, series.initialNumber, series.name, series.isRectified, series.isNew, series.hasError, series.errorMessage);
         });
     } else {
         // Add one empty line by default
         addInvoiceSeriesLine();
+    }
+    
+    // Series initial load complete - enable dirty tracking for user actions
+    isInitialSeriesLoad = false;
+    
+    // If validation errors are present, mark as dirty (user's changes would be lost on cancel)
+    var veBlock = document.getElementById('validationErrorsBlock');
+    if (veBlock && veBlock.style.display !== 'none' && veBlock.querySelector('.alert')) {
+        seriesFormDirty = true;
+    }
+    
+    // Listen for changes on series inputs to mark form as dirty
+    function markSeriesDirty() { seriesFormDirty = true; }
+    var seriesTbody = document.getElementById('invoice_series_lines');
+    seriesTbody.addEventListener('change', markSeriesDirty);
+    seriesTbody.addEventListener('input', markSeriesDirty);
+    
+    // Cancel button: warn about unsaved changes
+    var cancelBtn = document.querySelector('input[name="cancel"]');
+    if (cancelBtn) {
+        cancelBtn.onclick = function() {
+            if (seriesFormDirty && !confirm(MOD_LBL_AOS_INVOICE_SERIES_UNSAVED_CONFIRM)) {
+                return false;
+            }
+            document.location.href = 'index.php?module=Administration&action=index';
+            return false;
+        };
     }
     
     // Initialize qtip for inline-help elements after loading series

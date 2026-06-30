@@ -169,3 +169,5 @@ $mod_strings['LBL_AOS_INVOICE_SERIES_SAVED_SUCCESS'] = '✓ Configuración guard
 $mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL_ERROR'] = 'El número inicial de la serie \'{0}\' debe ser 1 o superior.';
 $mod_strings['LBL_AOS_INVOICE_SERIES_VALIDATION_ERRORS'] = 'Se encontraron errores de validación en la configuración de series de facturación.';
 $mod_strings['LBL_AOS_SERIES_FORMAT_TOO_LONG'] = 'La combinación del nombre de la serie y su formato supera el límite de 60 caracteres. Reduzca la longitud del nombre o del formato.';
+$mod_strings['LBL_AOS_INVOICE_SERIES_UNSAVED_CONFIRM'] = 'Tiene cambios sin guardar en la configuración de series. Si cancela, se perderán los cambios. ¿Desea continuar?';
+$mod_strings['LBL_AOS_SERIES_FORMAT_Y_INVALID'] = 'El formato contiene una secuencia de Y no válida. Solo se permite un bloque de YY (2 años) o YYYY (4 años).';

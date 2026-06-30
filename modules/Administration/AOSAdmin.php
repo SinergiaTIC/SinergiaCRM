@@ -102,14 +102,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
         
         foreach ($_POST['invoice_series_format'] as $index => $format) {
             $format = trim($format);
-            
-            // Validate: format is required
-            if (empty($format)) {
-                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_REQUIRED'];
-                continue;
-            }
-            $initialNumber = isset($_POST['invoice_series_initial'][$index]) 
-                           ? (int)$_POST['invoice_series_initial'][$index] 
+            $initialNumber = isset($_POST['invoice_series_initial'][$index])
+                           ? (int)$_POST['invoice_series_initial'][$index]
                            : 1;
             $name = isset($_POST['invoice_series_name'][$index])
                   ? trim(substr($_POST['invoice_series_name'][$index], 0, 50))
@@ -128,24 +122,41 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 'initialNumber' => $initialNumber,
                 'isRectified' => $isRectified,
                 'isNew' => $index >= $existingSeriesCount,
+                'hasError' => false,
+                'errorMessage' => '',
             );
-            
+            $currentSubmittedIdx = count($submittedSeries) - 1;
+
+            // Validate: format is required
+            if (empty($format)) {
+                $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_REQUIRED'];
+                $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_REQUIRED'];
+                continue;
+            }
+
             // Validate format: only letters, 0, and symbols (no digits 1-9)
             if (!empty($format) && preg_match('/[1-9]/', $format)) {
                 $validationErrors[] = string_format($mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT_ERROR'], array($format));
-                continue; // Skip this series
+                $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                $submittedSeries[$currentSubmittedIdx]['errorMessage'] = string_format($mod_strings['LBL_AOS_INVOICE_SERIES_FORMAT_ERROR'], array($format));
+                continue;
             }
-            
+
             // === Step 2.2: Validate series format characters (AEAT requirements) ===
             // Allowed: A-Z, 0-9, hyphen (-), underscore (_), slash (/), dot (.), space
             // Valid placeholders: YYYY, YY, and sequences of 0s (0000, 000, 00)
             if (!empty($format)) {
                 if (preg_match('/[a-z]/', $format)) {
                     $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_LOWERCASE'];
+                    $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                    $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_LOWERCASE'];
                     continue;
                 }
                 if (preg_match('/[^A-Z0-9\-_\/. ]/', $format)) {
                     $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'];
+                    $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                    $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'];
                     continue;
                 }
             }
@@ -154,9 +165,30 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             // === Step 2.2b: Validate format includes YYYY/YY and at least 2 zeros ===
             if (!empty($format) && (strpos($format, 'YYYY') === false && strpos($format, 'YY') === false || !preg_match('/0{2,}/', $format))) {
                 $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_REQUIRES_VARIABLE'];
+                $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_REQUIRES_VARIABLE'];
                 continue;
             }
             // === End Step 2.2b ===
+
+            // === Step 2.2d: Validate Y sequences (only one YY or YYYY block, max 4) ===
+            if (!empty($format)) {
+                preg_match_all('/Y+/', $format, $yMatches);
+                if (count($yMatches[0]) !== 1) {
+                    $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_Y_INVALID'];
+                    $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                    $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_Y_INVALID'];
+                    continue;
+                }
+                $yLen = strlen($yMatches[0][0]);
+                if ($yLen !== 2 && $yLen !== 4) {
+                    $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_Y_INVALID'];
+                    $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                    $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_Y_INVALID'];
+                    continue;
+                }
+            }
+            // === End Step 2.2d ===
 
             // === Step 2.2c: Validate zero sequence length (max 20) ===
             if (!empty($format)) {
@@ -164,6 +196,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 foreach ($zeroMatches[0] as $zeroSeq) {
                     if (strlen($zeroSeq) > 20) {
                         $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_ZERO_LIMIT'];
+                        $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                        $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_ZERO_LIMIT'];
                         continue 2;
                     }
                 }
@@ -178,21 +212,27 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                 }, $expandedFormat);
                 if (strlen($expandedFormat) > 60) {
                     $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_TOO_LONG'];
+                    $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                    $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_TOO_LONG'];
                     continue;
                 }
             }
             // === End expanded format length validation ===
-            
+
             // Validate initial number: must be 1 or greater
             if ($initialNumber < 1) {
                 $validationErrors[] = string_format($mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL_ERROR'], array($name));
-                continue; // Skip this series
+                $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                $submittedSeries[$currentSubmittedIdx]['errorMessage'] = string_format($mod_strings['LBL_AOS_INVOICE_SERIES_INITIAL_ERROR'], array($name));
+                continue;
             }
-            
+
             // === Step 2.6: Validate series name uniqueness (check before adding to array) ===
             if (!empty($name) && isset($invoiceSeries[$name])) {
                 $validationErrors[] = $mod_strings['LBL_AOS_SERIES_DUPLICATE_NAME'];
-                continue; // Skip this duplicate
+                $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_DUPLICATE_NAME'];
+                continue;
             }
             // === End Step 2.6 ===
 
@@ -200,10 +240,12 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
             $trimmedFormat = trim($format);
             if (!empty($trimmedFormat) && isset($usedFormats[$trimmedFormat])) {
                 $validationErrors[] = $mod_strings['LBL_AOS_SERIES_DUPLICATE_FORMAT'];
-                continue; // Skip this duplicate format
+                $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_DUPLICATE_FORMAT'];
+                continue;
             }
             // === End Step 2.6b ===
-            
+
             // === Step 2.7: Check if format can be modified (block if accepted invoices exist) ===
             // Only validate if: name is not empty AND format changed AND series exists in config
             if (!empty($name) && !empty(trim($format)) && isset($sugar_config['aos']['invoices']['series'][$name])) {
@@ -214,12 +256,14 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'save') {
                     require_once 'custom/modules/AOS_Invoices/SticUtils.php';
                     if (!AOS_InvoicesUtils::canModifySeriesFormat($name)) {
                         $validationErrors[] = $mod_strings['LBL_AOS_SERIES_FORMAT_LOCKED'];
+                        $submittedSeries[$currentSubmittedIdx]['hasError'] = true;
+                        $submittedSeries[$currentSubmittedIdx]['errorMessage'] = $mod_strings['LBL_AOS_SERIES_FORMAT_LOCKED'];
                         continue;
                     }
                 }
             }
             // === End Step 2.7 ===
-            
+
             // Only save non-empty formats and names that passed validation
             if (!empty($format) && !empty($name)) {
                 $usedFormats[$trimmedFormat] = true;
