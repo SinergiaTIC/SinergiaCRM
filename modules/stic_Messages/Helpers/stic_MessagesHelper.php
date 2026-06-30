@@ -26,70 +26,32 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Abstract base class for message helpers (SMS, WhatsApp, etc.)
- * 
- * Provides common functionality for all message providers.
+ * Abstract base class for message helpers.
  * New providers must extend this class and implement the abstract methods.
  */
 abstract class stic_MessagesHelper {
 
-    /**
-     * Whether this helper is active and configured
-     */
     protected bool $active = false;
-
-    /**
-     * Provider configuration loaded from settings
-     */
     protected array $config = [];
 
     // -------------------------------------------------------------------------
-    // Abstract methods - each provider MUST implement these
+    // Abstract methods
     // -------------------------------------------------------------------------
 
-    /**
-     * Returns the provider name identifier (e.g., 'sms', 'whatsapp').
-     * Used as default for getHelperType() and getTemplateType().
-     */
+    /** Provider name identifier (e.g., 'sms', 'whatsapp') */
     abstract protected function getProviderName(): string;
 
-    /**
-     * Returns the list of required setting keys for this provider.
-     * Used by loadConfig() to fetch settings from stic_Settings.
-     */
+    /** Required setting keys for loadConfig() */
     abstract protected function getRequiredSettings(): array;
 
-    /**
-     * Performs the actual API call to send the message.
-     * 
-     * @param array $params Associative array with:
-     *   - 'from': Sender identifier
-     *   - 'text': Message body
-     *   - 'to': Recipient phone number
-     *   - Plus any provider-specific params
-     * 
-     * @return array Result with 'code' and 'message' keys
-     */
+    /** Performs the API call to send the message */
     abstract protected function performApiCall(array $params): array;
 
-    /**
-     * Returns UI behavior configuration for JavaScript.
-     * 
-     * Used by Utils.js to determine field locking, status handling,
-     * and other UI behaviors without hardcoding provider names.
-     * 
-     * @return array Associative array with:
-     *   - 'lockSender': bool - Lock sender field on edit
-     *   - 'lockMessageOnTemplate': bool - Lock message field when template selected
-     *   - 'fixedStatus': string|null - Fixed status value (e.g., 'sent', 'redirected')
-     *   - 'canRetry': bool - Allow retry on error
-     *   - 'hideAttachment': bool - Hide attachment field
-     *   - 'allowedStatus': array - List of allowed status values
-     */
+    /** UI behavior configuration for JavaScript */
     abstract public function getUIConfig(): array;
 
     // -------------------------------------------------------------------------
-    // Concrete methods - common implementation for all providers
+    // Concrete methods
     // -------------------------------------------------------------------------
 
     /**
@@ -130,13 +92,61 @@ abstract class stic_MessagesHelper {
         if (!$this->isActive()) {
             return $this->buildError(translate('LBL_HELPER_MODULE_NOT_ACTIVE', 'stic_Messages'));
         }
-
         $params = $this->buildSendParams($from, $text, $to, ...$args);
         return $this->performApiCall($params);
     }
 
     // -------------------------------------------------------------------------
-    // Protected utility methods
+    // Lifecycle hooks - override in subclasses as needed
+    // -------------------------------------------------------------------------
+
+    /** Prepare the bean before saving (sender, status, etc.) */
+    public function prepareBeanBeforeSave(stic_Messages $bean): void {}
+
+    /** Return true to skip external API call (e.g., redirect, internal message) */
+    public function shouldSkipApiCall(): bool {
+        return false;
+    }
+
+    /** Process bean after successful send or skip */
+    public function processSuccessfulSend(stic_Messages $bean): void {
+        global $timedate;
+        $bean->status = 'sent';
+        $bean->response = 'Message sent';
+        $bean->sent_date = $timedate->nowDb();
+    }
+
+    /** Process bean after failed send */
+    public function processFailedSend(stic_Messages $bean, string $errorMessage): void {
+        $bean->status = 'error';
+        $bean->response = $errorMessage;
+    }
+
+    /** Whether this message type can be edited after creation */
+    public function isEditableAfterCreate(): bool {
+        return true;
+    }
+
+    /** Whether failed messages can be retried */
+    public function isRetryable(): bool {
+        return true;
+    }
+
+    /** Custom response data for single-save controller action */
+    public function getSaveResponseData(stic_Messages $bean): array {
+        return [];
+    }
+
+    /** Custom response data for mass-save controller action */
+    public function getMassSaveResponseData(array $phones, string $message, array $idsArray = []): array {
+        return [];
+    }
+
+    /** Post-save processing (e.g., M:M relationships) */
+    public function processAfterSave(stic_Messages $bean): void {}
+
+    // -------------------------------------------------------------------------
+    // Protected utilities
     // -------------------------------------------------------------------------
 
     /**
@@ -144,7 +154,6 @@ abstract class stic_MessagesHelper {
      */
     protected function loadConfig(): void {
         require_once('modules/stic_Settings/Utils.php');
-        
         $this->config = [];
         foreach ($this->getRequiredSettings() as $settingKey) {
             $this->config[$settingKey] = stic_SettingsUtils::getSetting($settingKey);
@@ -153,7 +162,6 @@ abstract class stic_MessagesHelper {
 
     /**
      * Checks if this helper is active and properly configured.
-     * Override in subclasses for custom active checks.
      */
     protected function isActive(): bool {
         return $this->active;
@@ -170,57 +178,25 @@ abstract class stic_MessagesHelper {
      * @return array
      */
     protected function buildSendParams(?string $from, string $text, string $to, ...$args): array {
-        return [
-            'from' => $from,
-            'text' => $text,
-            'to' => $to,
-        ];
+        return ['from' => $from, 'text' => $text, 'to' => $to];
     }
 
-    /**
-     * Builds a standardized error result array.
-     * 
-     * @param string $message Error message
-     * @return array ['code' => ERROR_NOT_SENT, 'message' => $message]
-     */
     protected function buildError(string $message): array {
-        return [
-            'code' => stic_Messages::ERROR_NOT_SENT,
-            'message' => $message,
-        ];
+        return ['code' => stic_Messages::ERROR_NOT_SENT, 'message' => $message];
     }
 
-    /**
-     * Builds a standardized success result array.
-     * 
-     * @param string $message Success message
-     * @param array $extra Additional data to include
-     * @return array ['code' => OK, 'message' => $message, ...$extra]
-     */
     protected function buildSuccess(string $message, array $extra = []): array {
-        return array_merge([
-            'code' => stic_Messages::OK,
-            'message' => $message,
-        ], $extra);
+        return array_merge(['code' => stic_Messages::OK, 'message' => $message], $extra);
     }
 
-    /**
-     * Logs an info message.
-     */
     protected function logInfo(string $message): void {
         $GLOBALS['log']->info($message);
     }
 
-    /**
-     * Logs an error message.
-     */
     protected function logError(string $message): void {
         $GLOBALS['log']->error($message);
     }
 
-    /**
-     * Logs a fatal error message.
-     */
     protected function logFatal(string $message): void {
         $GLOBALS['log']->fatal($message);
     }

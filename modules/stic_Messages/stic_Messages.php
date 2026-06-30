@@ -87,8 +87,11 @@ class stic_Messages extends Basic
             $this->fillName();
         }
 
-        // WhatsAppWeb messages cannot be edited once created (they are always sent immediately)
-        if ($this->fetched_row && $this->fetched_row['type'] === 'WhatsAppWeb' && !empty($this->id)) {
+        // Load helper early for edit lock check
+        $messageHelper = $this->loadHelper();
+
+        // If message type doesn't allow editing after creation, restore original values
+        if ($this->fetched_row && !empty($this->id) && $messageHelper !== null && !$messageHelper->isEditableAfterCreate()) {
             // Restore all original values to prevent any modification
             $this->template_id = $this->fetched_row['template_id'];
             $this->message = $this->fetched_row['message'];
@@ -128,91 +131,12 @@ class stic_Messages extends Basic
             $this->message = $processedText;
         }
 
-        $assignedUserId = $current_user->id ?? '';
-
-        // For conversation messages, resolve the assignee from related records
-        if ($this->type === 'private_area') {
-            $contactId = '';
-            $conversationBean = null;
-
-            // If the message already points to a Contact, use it first
-            if ($this->parent_type === 'Contacts' && !empty($this->parent_id)) {
-                $contactId = $this->parent_id;
-            }
-
-            // Otherwise, try to get the Contact from the related conversation
-            if (empty($contactId) && !empty($this->stic_conversations_ida)) {
-                $conversationBean = BeanFactory::getBean('stic_Conversations', $this->stic_conversations_ida);
-                if (!empty($conversationBean) && !empty($conversationBean->id) && $conversationBean->load_relationship('contacts_stic_conversations')) {
-                    $contactIds = $conversationBean->contacts_stic_conversations->get();
-                    if (!empty($contactIds) && !empty($contactIds[0])) {
-                        $contactId = $contactIds[0];
-                    }
-                }
-            }
-
-            // If we have a Contact, assign the message to that Contact's assigned user
-            if (!empty($contactId)) {
-                $contactBean = BeanFactory::getBean('Contacts', $contactId);
-                if (!empty($contactBean) && !empty($contactBean->id) && !empty($contactBean->assigned_user_id)) {
-                    $assignedUserId = $contactBean->assigned_user_id;
-                }
-            }
-
-            // Ensure parent points to the resolved Contact for notifications
-            if (empty($this->parent_id) && !empty($contactId)) {
-                $this->parent_id = $contactId;
-            }
-
-            // Use the conversation assigned user
-            if (empty($assignedUserId) && !empty($this->stic_conversations_ida)) {
-                if (empty($conversationBean) || empty($conversationBean->id)) {
-                    $conversationBean = BeanFactory::getBean('stic_Conversations', $this->stic_conversations_ida);
-                }
-
-                if (!empty($conversationBean) && !empty($conversationBean->id) && !empty($conversationBean->assigned_user_id)) {
-                    $assignedUserId = $conversationBean->assigned_user_id;
-                }
-            }
-
+        // Note: $messageHelper was already loaded above for edit lock check
+        // Let the helper prepare the bean before saving (includes assignee resolution, direction/sender, etc.)
+        if ($messageHelper !== null) {
+            $messageHelper->prepareBeanBeforeSave($this);
         }
 
-        // Apply the final assigned user to the message
-        if (!empty($assignedUserId)) {
-            $this->assigned_user_id = $assignedUserId;
-            // Ensure assigned_user_name is populated for notifications
-            if (empty($this->assigned_user_name)) {
-                $userBean = BeanFactory::getBean('Users', $assignedUserId);
-                if (!empty($userBean) && !empty($userBean->name)) {
-                    $this->assigned_user_name = $userBean->name;
-                }
-            }
-        }
-
-        // Conversation messages: set direction and sender
-        if ($this->type === 'private_area') {
-            if (empty($this->id) && empty($this->fetched_row['id'])) {
-                if ($this->direction === 'inbound') {
-                    $this->sender = 'sticpa';
-                } else {
-                    if (!empty($current_user->id)) {
-                        $this->sender = $current_user->name;
-                    }
-                    $this->direction = 'outbound';
-                }
-            }
-            $this->status = 'sent';
-        }
-
-        // For WhatsAppWeb and WhatsAppHelper messages, set sender to assigned user name
-        if ($this->type === 'WhatsAppWeb' || ($this->type === 'WhatsAppHelper' && empty($this->sender))) {
-            $this->sender = $current_user->name;
-        }
-
-        // WhatsAppWeb messages are always sent immediately, never saved as draft
-        if ($this->type === 'WhatsAppWeb' && $this->status === 'draft') {
-            $this->status = 'sent';
-        }
         // Resolve media_note_id from $_REQUEST if not already set
         if (empty($this->media_note_id)) {
             $this->media_note_id = $_REQUEST['media_note_id'] ?? '';
@@ -225,20 +149,12 @@ class stic_Messages extends Basic
         }
 
         // If Message is being created or status changed to "sent"
-        if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
-            // If type is WhatsAppWeb we don't have a server-side sender: mark as redirected and skip helper
-            if ($this->type === 'WhatsAppWeb') {
-                // mark as redirected because user is redirected to WhatsApp Web
-                $response = array('code' => self::OK, 'message' => 'Redirected to WhatsApp Web');
-                $this->status = 'redirected';
-                $this->response = $response['message'];
-                $this->sent_date = $GLOBALS['timedate']->nowDb();
-            } elseif ($this->type === 'private_area') {
-                // Conversation type is handled internally, without external provider
-                $this->status = 'sent';
-                $this->response = 'Conversation message saved';
-                $this->sent_date = $GLOBALS['timedate']->nowDb();
+        if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && ($this->fetched_row['status'] ?? '') !== 'sent')) {
+            if ($messageHelper !== null && $messageHelper->shouldSkipApiCall()) {
+                // Helper handles the send internally (e.g., WhatsAppWeb redirect, conversation save)
+                $messageHelper->processSuccessfulSend($this);
             } else {
+                // External provider: resolve phone and call API
                 if (empty($this->phone) && !empty($this->parent_type) && !empty($this->parent_id)) {
                     require_once('modules/stic_Messages/Utils.php');
                     $parentBean = BeanFactory::getBean($this->parent_type, $this->parent_id);
@@ -246,36 +162,19 @@ class stic_Messages extends Basic
                         $this->phone = stic_MessagesUtils::getPhoneForMessage($parentBean);
                     }
                 }
-                if (!empty($this->phone)){
+                if (!empty($this->phone)) {
                     $response = $this->sendMessage();
                     if ($response['code'] === self::OK) {
-                        $this->status = 'sent';
-                        $this->response = $response['message'] ?? '';
-                        $this->sent_date = $GLOBALS['timedate']->nowDb();
+                        $messageHelper->processSuccessfulSend($this);
+                    } else {
+                        $messageHelper->processFailedSend($this, $response['message'] ?? '');
                     }
-                    else {
-                        $this->status = 'error';
-                        $this->response = $response['message'] ?? '';
-                    }
-                }
-                else {
-                    $this->status = 'error';
-                    $this->response = 'No phone number';
+                } else {
+                    $messageHelper->processFailedSend($this, 'No phone number');
                 }
             }
         }
 
-        if ($this->type === 'private_area') {
-            $this->parent_type = 'Contacts';
-
-            // Store conversation subject on the bean for workflow notifications before save
-            if (empty($this->stic_conversations_subject) && !empty($this->stic_conversations_ida)) {
-                $convBean = BeanFactory::getBean('stic_Conversations', $this->stic_conversations_ida);
-                if (!empty($convBean) && !empty($convBean->id) && !empty($convBean->subject)) {
-                    $this->stic_conversations_subject = $convBean->subject;
-                }
-            }
-        }
         // Clean up curly braces left by EmailTemplate variable resolution (e.g. {{Paula}} → Paula)
         // Twilio's template engine uses {{N}} syntax and these braces would otherwise persist in the stored message.
         $this->message = preg_replace('/\{\{([^}]+)\}\}/', '$1', $this->message);
@@ -300,26 +199,12 @@ class stic_Messages extends Basic
             $this->media_note_id = null;
             $this->media_url = null;
         }
-        // For conversation messages, ensure the M:M relationship is created in the join table
-        if ($this->type === 'private_area' && !empty($this->stic_conversations_ida)) {
-            $this->load_relationship('stic_conversations_stic_messages');
-            if (!empty($this->stic_conversations_stic_messages)) {
-                $this->stic_conversations_stic_messages->add($this->stic_conversations_ida);
-            }
 
-            // If conversation has no subject, use the message text as subject
-            $conversationId = is_array($this->stic_conversations_ida) ? reset($this->stic_conversations_ida) : $this->stic_conversations_ida;
-            if (!empty($conversationId)) {
-                $convBean = BeanFactory::getBean('stic_Conversations', $conversationId);
-                if (!empty($convBean) && !empty($convBean->id) && empty($convBean->subject)) {
-                    $cleanSubject = trim(strip_tags((string)$this->message));
-                    if ($cleanSubject !== '') {
-                        $convBean->subject = mb_substr($cleanSubject, 0, 60);
-                        $convBean->save();
-                    }
-                }
-            }
+        // Let the helper perform post-save processing (e.g., M:M relationships for conversations)
+        if ($messageHelper !== null) {
+            $messageHelper->processAfterSave($this);
         }
+
         return $this->id;
     }
 
@@ -436,24 +321,14 @@ class stic_Messages extends Basic
      * @return stic_MessagesHelper|null The helper instance or null if not found
      */
     private function loadHelper(): ?stic_MessagesHelper {
-        $file = $this->type;
-        
-        // Check custom directory first, then default modules directory
-        $paths = [
-            'custom/modules/stic_Messages/Helpers/',
-            'modules/stic_Messages/Helpers/',
-        ];
-        
-        foreach ($paths as $path) {
-            if (file_exists($path . $file . '.php')) {
-                require_once($path . $file . '.php');
-                if (class_exists($file)) {
-                    return new $file();
-                }
-            }
+        require_once('modules/stic_Messages/Utils.php');
+
+        $className = stic_MessagesUtils::getHelperClassForType($this->type);
+        if ($className === null) {
+            return null;
         }
-        
-        return null;
+
+        return stic_MessagesUtils::instantiateHelper($className);
     }
 
     /**

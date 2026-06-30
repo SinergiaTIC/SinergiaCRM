@@ -95,6 +95,10 @@ class stic_MessagesController extends SugarController
             $idsArray = explode(';', $_REQUEST['mass_ids']);
             $phonesArray = explode(',', $_REQUEST['phone']);
 
+            // Load helper once for mass save response
+            $type = $_REQUEST['type'] ?? '';
+            $messageHelper = stic_MessagesUtils::instantiateHelperByType($type);
+
             array_map(function($id, $phone) use ($mod_strings) {
                 $newBean = BeanFactory::newBean('stic_Messages');
                 $this->bean = $newBean;
@@ -108,32 +112,23 @@ class stic_MessagesController extends SugarController
                 }
                 $this->bean->save(!empty($this->bean->notify_on_save));
             }, $idsArray, $phonesArray);
-            // If mass send and type is WhatsAppWeb, return an open_url built from the phones/message
-            if (isset($_REQUEST['type']) && $_REQUEST['type'] === 'WhatsAppWeb') {
+
+            // Check if helper has custom mass save response (e.g., WhatsAppWeb redirect)
+            if ($messageHelper !== null) {
                 $phonesRaw = isset($_REQUEST['phone']) ? $_REQUEST['phone'] : '';
                 $phonesList = $phonesRaw !== '' ? explode(',', $phonesRaw) : array();
                 $text = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
-                $openData = array();
-                foreach ($phonesList as $index => $p) {
-                    $p = trim($p);
-                    if ($p === '') continue;
-                    $phoneClean = preg_replace('/\D+/', '', $p);
-                    if ($phoneClean === '') continue;
-                    
-                    $processedText = $text;
-                    if (isset($idsArray[$index]) && !empty($idsArray[$index])) {
-                        $parentBean = BeanFactory::getBean($_REQUEST['return_module'], $idsArray[$index]);
-                        $processedText = stic_Messages::replaceTemplateVariables($text, $parentBean);
-                    }
-                    
-                    $openData[] = array('phone' => $phoneClean, 'text' => $processedText);
-                }
+                $customResponse = $messageHelper->getMassSaveResponseData($phonesList, $text, $idsArray);
 
-                // Clear accidental output and return JSON
-                while (ob_get_level()) { ob_end_clean(); }
-                header('Content-Type: application/json');
-                echo json_encode(array('success' => true, 'type' => 'WhatsAppWeb', 'open_data' => $openData, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_WHATSAPP_WEB_SENT']));
-                exit;                
+                if (!empty($customResponse)) {
+                    while (ob_get_level()) { ob_end_clean(); }
+                    header('Content-Type: application/json');
+                    echo json_encode(array_merge(
+                        ['success' => true, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_WHATSAPP_WEB_SENT']],
+                        $customResponse
+                    ));
+                    exit;
+                }
             }
 
             // Clear any accidental output (warnings, HTML, etc.) so the response is pure JSON
@@ -158,20 +153,16 @@ class stic_MessagesController extends SugarController
 
             $id = $this->bean->save(!empty($this->bean->notify_on_save));
 
-            if (isset($this->bean->type) && $this->bean->type === 'WhatsAppWeb') {
-                $phone = isset($this->bean->phone) ? preg_replace('/\D+/', '', $this->bean->phone) : '';
-                $text = isset($this->bean->message) ? $this->bean->message : '';
-                
-                if (!empty($this->bean->parent_type) && !empty($this->bean->parent_id)) {
-                    $parentBean = BeanFactory::getBean($this->bean->parent_type, $this->bean->parent_id);
-                    $text = stic_Messages::replaceTemplateVariables($text, $parentBean);
+            // Check if helper has custom save response (e.g., WhatsAppWeb redirect)
+            $messageHelper = stic_MessagesUtils::instantiateHelperByType($this->bean->type ?? '');
+            if ($messageHelper !== null) {
+                $customResponse = $messageHelper->getSaveResponseData($this->bean);
+                if (!empty($customResponse)) {
+                    while (ob_get_level()) { ob_end_clean(); }
+                    header('Content-Type: application/json');
+                    echo json_encode(array_merge(['success' => true], $customResponse));
+                    exit;
                 }
-                
-                // Clear output buffer before returning JSON to avoid malformed responses
-                while (ob_get_level()) { ob_end_clean(); }
-                header('Content-Type: application/json');
-                echo json_encode(array('success' => true, 'type' => 'WhatsAppWeb', 'phone' => $phone, 'text' => $text, 'id' => $id));
-                exit;
             }
 
             // Ensure response is clean JSON
@@ -220,8 +211,9 @@ class stic_MessagesController extends SugarController
         $id = $_REQUEST['recordId'];
         $bean = BeanFactory::getBean('stic_Messages', $id);
         
-        // WhatsAppWeb messages cannot be retried
-        if ($bean->type === 'WhatsAppWeb') {
+        // Check if this message type can be retried
+        $messageHelper = stic_MessagesUtils::instantiateHelperByType($bean->type ?? '');
+        if ($messageHelper !== null && !$messageHelper->isRetryable()) {
             echo json_encode(array(
                 'success' => false, 
                 'title' => $mod_strings['LBL_ERROR'], 
@@ -252,8 +244,16 @@ class stic_MessagesController extends SugarController
         }
 
         // only messages not sent and with direction outbound can be retried
-        // WhatsAppWeb messages are excluded from retry
-        $baseWhere = "stic_messages.deleted = 0 AND stic_messages.status <> 'sent' AND stic_messages.direction = 'outbound' AND stic_messages.type <> 'WhatsAppWeb'";
+        // Non-retryable types are excluded dynamically
+        $nonRetryableTypes = stic_MessagesUtils::getNonRetryableTypes();
+        $typeExclusion = '';
+        if (!empty($nonRetryableTypes)) {
+            $escapedTypes = array_map(function($t) use ($db) {
+                return "'" . $db->quote($t) . "'";
+            }, $nonRetryableTypes);
+            $typeExclusion = " AND stic_messages.type NOT IN (" . implode(',', $escapedTypes) . ")";
+        }
+        $baseWhere = "stic_messages.deleted = 0 AND stic_messages.status <> 'sent' AND stic_messages.direction = 'outbound'" . $typeExclusion;
 
         if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
             require_once 'include/export_utils.php';

@@ -312,25 +312,6 @@ class stic_MessagesUtils {
             }
         }
 
-        // Add special types that are not helpers but need UI config
-        $config['WhatsAppWeb'] = [
-            'lockSender' => true,
-            'lockMessageOnTemplate' => false,
-            'fixedStatus' => 'redirected',
-            'canRetry' => false,
-            'hideAttachment' => true,
-            'allowedStatus' => ['redirected'],
-        ];
-
-        $config['private_area'] = [
-            'lockSender' => true,
-            'lockMessageOnTemplate' => false,
-            'fixedStatus' => 'sent',
-            'canRetry' => false,
-            'hideAttachment' => true,
-            'allowedStatus' => ['sent'],
-        ];
-
         return $config;
     }
 
@@ -353,6 +334,10 @@ class stic_MessagesUtils {
             $files = glob($path . '*Helper.php');
             foreach ($files as $file) {
                 $className = basename($file, '.php');
+                // Skip the abstract base class
+                if ($className === 'stic_MessagesHelper') {
+                    continue;
+                }
                 if (!in_array($className, $helpers)) {
                     $helpers[] = $className;
                 }
@@ -368,7 +353,7 @@ class stic_MessagesUtils {
      * @param string $className
      * @return stic_MessagesHelper|null
      */
-    private static function instantiateHelper(string $className): ?stic_MessagesHelper {
+    public static function instantiateHelper(string $className): ?stic_MessagesHelper {
         $paths = [
             'custom/modules/stic_Messages/Helpers/',
             'modules/stic_Messages/Helpers/',
@@ -388,5 +373,59 @@ class stic_MessagesUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Returns list of message types that cannot be retried.
+     * Used by controller to build SQL WHERE clause.
+     * 
+     * @return array List of type names that are not retryable
+     */
+    public static function getNonRetryableTypes(): array {
+        $helpers = self::getAvailableHelpers();
+        $nonRetryable = [];
+
+        foreach ($helpers as $className) {
+            $helper = self::instantiateHelper($className);
+            if ($helper !== null && !$helper->isRetryable()) {
+                $nonRetryable[] = $className;
+            }
+        }
+
+        return $nonRetryable;
+    }
+
+    /**
+     * Finds the helper class name for a given message type.
+     * 
+     * @param string $type The message type (e.g., 'WhatsAppWeb', 'private_area', 'sms')
+     * @return string|null The helper class name or null if not found
+     */
+    public static function getHelperClassForType(string $type): ?string {
+        $helpers = self::getAvailableHelpers();
+
+        foreach ($helpers as $className) {
+            $helper = self::instantiateHelper($className);
+            if ($helper !== null && $helper->getHelperType() === $type) {
+                return $className;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Instantiates a helper by its message type.
+     * Convenience method that combines getHelperClassForType() + instantiateHelper().
+     * 
+     * @param string $type The message type (e.g., 'WhatsAppWeb', 'private_area', 'sms')
+     * @return stic_MessagesHelper|null
+     */
+    public static function instantiateHelperByType(string $type): ?stic_MessagesHelper {
+        $className = self::getHelperClassForType($type);
+        if ($className === null) {
+            return null;
+        }
+        return self::instantiateHelper($className);
     }
 }
