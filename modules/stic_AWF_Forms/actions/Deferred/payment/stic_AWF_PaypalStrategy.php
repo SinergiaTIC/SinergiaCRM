@@ -57,7 +57,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     /**
      * Prepare payment for the current Strategy (Offline, RedSys, CECA...)
      */
-    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         // TODO
 
         $config = $this->getConfigValues(array('ID', 'ID_TEST', 'TEST'));
