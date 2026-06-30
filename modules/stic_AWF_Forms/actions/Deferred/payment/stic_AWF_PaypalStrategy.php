@@ -54,9 +54,6 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
 
 
     /**
-     * Prepare payment for the current Strategy: PayPal
-     */
-    /**
     * Terminal: Execute the output (HTML form, Redirect header...).
     * Only called if initiate() has returned WAIT.
     */
