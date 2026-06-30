@@ -32,24 +32,35 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
     protected string $configType = 'TPVCECA';
     protected string $configKeyPrefix = 'TPVCECA';
 
-    public static function getSourceName(): string
-    {
-        return 'ceca';
+    /**
+     * Returns the webhook source identifier for this strategy.
+     * Used by WebhookHandler to route incoming webhooks to the correct strategy.
+     */
+    public static function getSourceName(): string {
+        return "ceca";
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody): ?string
-    {
+    /**
+     * Extracts the external transaction ID from the raw webhook request data.
+     * Each gateway sends the ID in a different location/format.
+     *
+     * @param array $rawData POST data array
+     * @param string $rawBody Raw request body (for JSON-based gateways)
+     * @return string|null The external transaction ID or null if not found
+     */
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string {
         return $rawData['Num_operacion'] ?? null;
     }
 
     /**
-    * Prepare payment.
-    * If Offline -> Returns OK.
-    * If External platform -> Returns WAIT with data to redirection.
-    */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
-    {
+     * Prepare payment for the current Strategy (Offline, RedSys, CECA...)
+     */
+    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'ACQUIRER_BIN', 'TERMINAL', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
+        $config['SERVER_URL'] = 'https://pgw.ceca.es/tpvweb/tpv/compra.action';
+        $config['SERVER_URL_TEST'] = 'https://tpv.ceca.es/tpvweb/tpv/compra.action';
+        $config['VERSION'] = 'HMAC_SHA256_V1';
+        $config['VERSION_TEST'] = 'HMAC_SHA256_V1';
         
         $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
         $serverUrl = $isTest 
@@ -101,8 +112,7 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
      * Terminal: Output CECA form HTML.
      * Only called if initiate() has returned WAIT.
      */
-    public function performTerminal(ExecutionContext $context, ActionResult $result): void
-    {
+    public function performTerminal(ExecutionContext $context, ActionResult $result): void {
         $data = $result->getData();
         if (!empty($data['form_html'])) {
             echo $data['form_html'];
@@ -110,13 +120,15 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
             echo '<p>Error: No payment form available</p>';
         }
     }
-
+    
     /**
-     * WEBHOOK: Resolves action when notification arrives from CECA.
+     * WEBHOOK: Process action when notification arrives from CECA.
      * Matches stic_Web_Forms PaymentController::actionCECAResponse() + PaymentBO::proccessTPVCECAResponse() behavior.
-     */
-    public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
-    {
+     * Can be called with or without a Deferred Ticket:
+     * - With ticket: $context->deferredContext contains strategy_class, payment_id, etc.
+     * - Without ticket: context is minimal; strategy handles recurring events directly.
+     */ 
+    public function processNotification(ExecutionContext $context, ActionResult $result): ActionResult {
         $requestData = $_REQUEST;
 
         if (!isset($requestData['Num_operacion'])) {

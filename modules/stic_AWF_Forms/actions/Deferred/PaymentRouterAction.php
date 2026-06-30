@@ -41,8 +41,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
     /**
      * Declares who will resume this deferred process and how.
      */
-    public function getResumptionContext(): DeferredResumptionContext
-    {
+    public function getResumptionContext(): DeferredResumptionContext {
         return DeferredResumptionContext::SERVER_WEBHOOK;
     }
 
@@ -72,8 +71,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
     /**
      * Definition of the ADDITIONAL parameters needed for the deferred action
      */
-    protected function getDeferredCustomParameters(): array
-    {
+    protected function getDeferredCustomParameters(): array {
         return [];
     }
 
@@ -86,8 +84,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param DataBlockResolved $block The data block (form data).
      * @return ActionResult
      */
-    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
-    {
+    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult {
         // $bean is a stic_Payment_Commitments registry
         /** @var stic_Payment_Commitments $paymentCommitmentBean */
         $paymentCommitmentBean = $bean;
@@ -140,7 +137,11 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
         }
 
         $paymentMethod = $paymentCommitmentBean->payment_method;
-        if ($paymentMethod == 'card' || substr($paymentMethod, 0, 5) == 'card_' || $paymentMethod == 'paypal' || $paymentMethod == 'bizum' || substr($paymentMethod, 0, 5) == 'bizum' || $paymentMethod == 'stripe' || substr($paymentMethod, 0, 7) == 'stripe_') {
+        if ($paymentMethod == 'card' || substr($paymentMethod, 0, 5) == 'card_' || 
+            $paymentMethod == 'paypal' || 
+            $paymentMethod == 'bizum' || substr($paymentMethod, 0, 5) == 'bizum' || 
+            $paymentMethod == 'stripe' || substr($paymentMethod, 0, 7) == 'stripe_') {
+
             $paymentBean->status = 'pending';
             $paymentBean->save();
         }
@@ -165,8 +166,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param string $source The source url parameter
      * @return bool indicating if the action can handle the specified source
      */
-    public function handlesSource(string $source): bool 
-    {
+    public function handlesSource(string $source): bool  {
         // Check if some payment strategy can handle the source (delegated to the factory)
         $strategy = stic_AWF_PaymentStrategyFactory::createFromSource($source);
         return $strategy !== null;
@@ -181,8 +181,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param array $headers the headers received
      * @return string|null the hash of the Deferred_Ticket
      */
-    public function extractTokenFromEvent(string $source, array $requestData, string $rawPayload, array $headers): ?string 
-    {
+    public function extractTokenFromEvent(string $source, array $requestData, string $rawPayload, array $headers): ?string  {
         // Delegated to the factory, which will call the extractExternalId method of the appropriate strategy
         return stic_AWF_PaymentStrategyFactory::extractExternalIdBySource($source, $requestData, $rawPayload, $headers);
     }
@@ -194,8 +193,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param ExecutionContext $context Execution context
      * @param ?FormAction $actionConfig Action configuration containing flow_success_id / flow_error_id
      */
-    private function executeDeferredOkFlow(ExecutionContext $context, ?FormAction $actionConfig = null): void
-    {
+    private function executeDeferredOkFlow(ExecutionContext $context, ?FormAction $actionConfig = null): void {
         $successFlowId = null;
         $successFlow = null;
         $errorFlowId = null;
@@ -234,8 +232,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param ExecutionContext $context Execution context of the action
      * @param ActionResult Result of the execution of the action (last ActionResult)
      */
-    public function performTerminal(ExecutionContext $context, ActionResult $executionResult): void
-    {
+    public function performTerminal(ExecutionContext $context, ActionResult $executionResult): void {
         // If the action is not in Wait state: do not redirect
         if (!$executionResult->isWait()) return;
 
@@ -256,15 +253,14 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param array $requestData The data of the incoming request.
      * @return ActionResult Result of the execution of the action.
      */
-    public function processWebhook(ExecutionContext $context, array $requestData): ActionResult
-    {
+    public function processWebhook(ExecutionContext $context, array $requestData): ActionResult {
         $savedData = $context->deferredContext ? $context->deferredContext->toArray() : [];
         
         try {
             $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
             $result = new ActionResult(ResultStatus::WAIT, null, '');
             $result->setData($savedData);
-            $resolveResult = $strategy->resolve($context, $result);
+            $resolveResult = $strategy->processNotification($context, $result);
 
             if ($resolveResult->isOk()) {
                 $this->enqueueDeferredFlow($context, true);
@@ -282,8 +278,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
     * Receives the call for orphan events (without a transactional ticket in the CRM, such as recurrences).
     * Dynamically routes the thread to the appropriate factory and financial strategy.
     */
-    public function processOrphanWebhook(ExecutionContext $context, string $source, array $rawData): ActionResult 
-    {
+    public function processOrphanWebhook(ExecutionContext $context, string $source, array $rawData): ActionResult  {
         try {
             // Retrieve the corresponding payment strategy from the webhook source
             $strategy = stic_AWF_PaymentStrategyFactory::createFromSource($source);
@@ -292,7 +287,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
             }
             
             // Launch the polymorphic emergency resolution of the financial strategy
-            return $strategy->resolve($context, new ActionResult(ResultStatus::WAIT, null, ''));
+            return $strategy->processNotification($context, new ActionResult(ResultStatus::WAIT, null, ''));
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, null, "PaymentRouter orfan execution failed: " . $e->getMessage());
         }
@@ -306,8 +301,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param ExecutionContext $context The execution context
      * @param bool $isSuccess Whether to run the success or error flow
      */
-    private function enqueueDeferredFlow(ExecutionContext $context, bool $isSuccess): void
-    {
+    private function enqueueDeferredFlow(ExecutionContext $context, bool $isSuccess): void {
         $ticketId = $context->deferredContext ? $context->deferredContext->ticketId : null;
 
         if (empty($ticketId)) {
