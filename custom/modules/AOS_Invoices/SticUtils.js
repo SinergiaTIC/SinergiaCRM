@@ -139,14 +139,17 @@ switch (viewType()) {
           setInterval(syncDisableState, 300);
       })();
 
-      // Disable non-draft options in status dropdown when original status is draft
-      // During creation, also disable 'emitted' (use "Enviar a AEAT" button instead)
+      // Limit status dropdown for draft invoices
       if ($('#status').val() === 'draft') {
         var isNewRecord = !$('[name="record"]').val();
         $('#status option').each(function() {
           var val = $(this).val();
-          if (val !== 'draft' && (val !== 'emitted' || isNewRecord)) {
-            $(this).prop('disabled', true);
+          if (val !== 'draft') {
+            if (isNewRecord) {
+              $(this).hide();
+            } else if (val !== 'emitted') {
+              $(this).prop('disabled', true);
+            }
           }
         });
       }
