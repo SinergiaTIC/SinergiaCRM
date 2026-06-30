@@ -30,8 +30,9 @@ require_once "modules/stic_Payment_Commitments/stic_Payment_Commitments.php";
 require_once "modules/stic_Payments/stic_Payments.php";
 require_once "modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php";
 
-abstract class stic_AWF_PaymentStrategy
-{
+abstract class stic_AWF_PaymentStrategy {
+    use DeferredActionHelperTrait;
+    
     protected ?string $suffix = null;
 
     protected string $configType = ''; // 'TPV', 'STRIPE'...
@@ -101,17 +102,18 @@ abstract class stic_AWF_PaymentStrategy
      * @param string $externalTransactionId The external transaction ID from the gateway
      * @return stic_AWF_Deferred_Tickets The created ticket
      */
-    protected function createTicket(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment, string $externalTransactionId): stic_AWF_Deferred_Tickets
-    {
+    protected function createTicket(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment, string $externalTransactionId): stic_AWF_Deferred_Tickets {
         /** @var stic_AWF_Deferred_Tickets $ticket */
         // Create a deferred ticket
         $ticket = $this->createDeferredTicket(
             $context,
             $actionConfig,
             $beanPayment,
-            ['strategy_class' => static::class,
-             'strategy_suffix' => $this->suffix,
-             'payment_id' => $beanPayment->id], // Custom data
+            [   // Custom data
+                'strategy_class' => static::class,
+                'strategy_suffix' => $this->suffix,
+                'payment_id' => $beanPayment->id
+            ], 
             'AWF Payment: ' . $beanPayment->id
         );
 
@@ -134,8 +136,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param string $status The new status value (paid, not_remitted, rejected_gateway, pending, etc.)
      * @param array $options Optional fields: authCode, gatewayLog, gatewayRejectionReason, amount
      */
-    protected function updatePayment(stic_Payments $beanPayment, string $status, array $options = []): void
-    {
+    protected function updatePayment(stic_Payments $beanPayment, string $status, array $options = []): void {
         // Ensure we have the latest data to prevent overwriting concurrent updates (e.g. from another webhook)
         $beanPayment->retrieve($beanPayment->id);
 
@@ -170,8 +171,7 @@ abstract class stic_AWF_PaymentStrategy
      *
      * @param stic_Payments $paymentBean The rejected payment bean
      */
-    protected static function disablePaymentCommitment(stic_Payments $paymentBean): void
-    {
+    protected static function disablePaymentCommitment(stic_Payments $paymentBean): void {
         require_once 'SticInclude/Utils.php';
         $PCBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
         if ($PCBean && $PCBean->periodicity != 'punctual') {
@@ -189,8 +189,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param stic_Payments $paymentBean The payment bean to check
      * @return bool True if the payment is already in a terminal state
      */
-    protected static function isAlreadyProcessed(stic_Payments $paymentBean): bool
-    {
+    protected static function isAlreadyProcessed(stic_Payments $paymentBean): bool {
         $terminalStatuses = ['paid', 'not_remitted', 'rejected_gateway', 'rejected_manual', 'cancelled'];
         return in_array($paymentBean->status ?? '', $terminalStatuses, true);
     }
@@ -201,8 +200,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param stic_Payments $paymentBean The payment bean
      * @return stic_Payment_Commitments|false The related PC bean or false
      */
-    protected static function getPaymentCommitment(stic_Payments $paymentBean)
-    {
+    protected static function getPaymentCommitment(stic_Payments $paymentBean) {
         require_once 'SticInclude/Utils.php';
         return SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
     }
@@ -216,22 +214,19 @@ abstract class stic_AWF_PaymentStrategy
      * @param string $status The return context status ('ok' or 'error')
      * @return string The full return URL
      */
-    protected function getReturnUrl(string $status = 'ok'): string
-    {
-        $this->getSequentialReturnUrl($this->ticket, $status)
+    protected function getReturnUrl(string $status = 'ok'): string {
+        return $this->getSequentialReturnUrl($this->ticket, $status);
     }
 
     /**
      * Returns the webhook callback URL for a given payment source.
      *
      * @param string $source The payment source identifier (e.g. 'redsys', 'stripe')
+     * @param array $extraParams
      * @return string The full callback URL
      */
-    protected function getCallbackUrl(string $source): string
-    {
-        global $sugar_config;
-        $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
-        return $siteUrl . '/index.php?entryPoint=stic_AWF_webhookHandler&source=' . urlencode($source);
+    protected function getCallbackUrl(string $source, array $extraParams = []): string {
+        return $this->getAsyncCallbackUrl($source, $this->ticket, $extraParams);
     }
 
     /**
@@ -243,8 +238,7 @@ abstract class stic_AWF_PaymentStrategy
      * @param array $vars Associative array of placeholder => value substitutions
      * @return string The rendered HTML string
      */
-    protected function renderTemplate(string $templateName, array $vars): string
-    {
+    protected function renderTemplate(string $templateName, array $vars): string {
         $awfPath = "modules/stic_AWF_Forms/tpls/{$templateName}.html";
         $wfPath  = "modules/stic_Web_Forms/Catcher/Include/Payment/tpls/{$templateName}.html";
 
@@ -268,6 +262,39 @@ abstract class stic_AWF_PaymentStrategy
     }
 
     /**
+     * Prepare payment.
+     * If Offline -> Returns OK.
+     * If External platform -> Returns WAIT with data to redirection.
+     */
+    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+        $strategyClass = static::class;
+        $strategySuffix = $this->suffix ?? '';
+        $paymentId = $beanPayment->id;
+        $paymentAmount = $beanPayment->amount;
+
+        $GLOBALS['log']->info("Line " . __LINE__ . " - " . __METHOD__ . ": AWF Payment initiation started for Strategy '" . $strategyClass . "' (Suffix: '{$strategySuffix}'). Payment ID: {$paymentId}, Amount: {$paymentAmount}");
+
+        try {
+            $result = $this->initiateStrategy($context, $actionConfig, $beanPayment);
+            $GLOBALS['log']->info("Line " . __LINE__ . " - " . __METHOD__ . ": AWF PaymentStrategy unrolled successfully with status '" . $result->status->value . "' for Payment ID: {$paymentId}");
+        } catch (\Throwable $t) {
+            $GLOBALS['log']->fatal("Line " . __LINE__ . " - " . __METHOD__ . ": AWF Payment infrastructure collapsed during strategy execution. Error: " . $t->getMessage());
+            $result = new ActionResult(ResultStatus::ERROR, $actionConfig, $t->getMessage());
+        }
+     
+        if ($result->isWait() || $result->isOk()) {
+            $result->setData(array_merge($result->getData(), [
+                'strategy_class' => $strategyClass,
+                'strategy_suffix' => $strategySuffix,
+                'payment_id' => $paymentId,
+                'payment_amount' => $paymentAmount
+            ]));
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns the webhook source identifier for this strategy.
      * Used by WebhookHandler to route incoming webhooks to the correct strategy.
      */
@@ -284,11 +311,10 @@ abstract class stic_AWF_PaymentStrategy
     abstract public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string;
 
     /**
-    * Prepare payment.
-    * If Offline -> Returns OK.
-    * If External platform -> Returns WAIT with data to redirection.
-    */
-    abstract public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult;
+     * Prepare payment for the current Strategy (Offline, RedSys, CECA...)
+     */
+    abstract protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult;
+
 
     /**
     * Terminal: Execute the output (HTML form, Redirect header...).
@@ -297,10 +323,10 @@ abstract class stic_AWF_PaymentStrategy
     abstract public function performTerminal(ExecutionContext $context, ActionResult $result): void;
 
     /**
-    * WEBHOOK: Resolves action when notification arrives from external event.
+    * WEBHOOK: Process action when notification arrives from external event.
     * Can be called with or without a Deferred Ticket:
     * - With ticket: $context->deferredContext contains strategy_class, payment_id, etc.
     * - Without ticket: context is minimal; strategy handles recurring events directly.
     */ 
-    abstract public function resolve(ExecutionContext $context, ActionResult $result): ActionResult;
+    abstract public function processNotification(ExecutionContext $context, ActionResult $result): ActionResult;
 }

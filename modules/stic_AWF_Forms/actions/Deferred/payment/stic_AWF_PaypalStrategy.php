@@ -33,26 +33,30 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     protected string $configKeyPrefix = 'PAYPAL';
 
     /**
-    * Prepare payment.
-    * If Offline -> Returns OK.
-    * If External platform -> Returns WAIT with data to redirection.
-    */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
-    {
-        return 'paypal';
-    }
-
-    public static function extractExternalId(array $rawData, string $rawBody): ?string
-    {
-        return $rawData['custom'] ?? null;
+     * Returns the webhook source identifier for this strategy.
+     * Used by WebhookHandler to route incoming webhooks to the correct strategy.
+     */
+    public static function getSourceName(): string {
+        return "Paypal";
     }
 
     /**
-     * Prepare payment via PayPal.
-     * Returns WAIT with PayPal form HTML.
+     * Extracts the external transaction ID from the raw webhook request data.
+     * Each gateway sends the ID in a different location/format.
+     *
+     * @param array $rawData POST data array
+     * @param string $rawBody Raw request body (for JSON-based gateways)
+     * @return string|null The external transaction ID or null if not found
      */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
-    {
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string {
+        return $rawData['custom'] ?? null;
+    }
+
+
+    /**
+     * Prepare payment for the current Strategy: PayPal
+     */
+    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         $config = $this->getConfigValues(array('ID', 'ID_TEST', 'URL', 'URL_TEST', 'TEST'));
         
         $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
@@ -142,8 +146,7 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
      * Terminal: Output PayPal form HTML.
      * Only called if initiate() has returned WAIT.
      */
-    public function performTerminal(ExecutionContext $context, ActionResult $result): void
-    {
+    public function performTerminal(ExecutionContext $context, ActionResult $result): void {
         $data = $result->getData();
         if (!empty($data['form_html'])) {
             echo $data['form_html'];
@@ -153,11 +156,13 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     }
 
     /**
-     * WEBHOOK: Resolves action when IPN notification arrives from PayPal.
-     * Matches stic_Web_Forms PaymentController::actionPaypalResponse() + PaymentBO::proccessPaypalResponse() behavior.
-     */
-    public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
-    {
+    * WEBHOOK: Process action when IPN notification arrives from PayPal.
+    * Matches stic_Web_Forms PaymentController::actionPaypalResponse() + PaymentBO::proccessPaypalResponse() behavior.
+    * Can be called with or without a Deferred Ticket:
+    * - With ticket: $context->deferredContext contains strategy_class, payment_id, etc.
+    * - Without ticket: context is minimal; strategy handles recurring events directly.
+    */ 
+    public function processNotification(ExecutionContext $context, ActionResult $result): ActionResult {
         $rawData = $_POST;
         
         if (empty($rawData)) {

@@ -99,8 +99,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
      * @param DataBlockResolved $block The data block (form data).
      * @return ActionResult
      */
-    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
-    {
+    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult {
         // Get additional parameters (ParameterResolver ensures they are not null because they are required)
 
         /** @var BeanReference $templateRef */
@@ -121,7 +120,10 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
             $context,
             $actionConfig,
             $bean,
-            ['email' => $emailAddress], // Custom data
+            [
+                // Custom data
+                'email' => $emailAddress
+            ], 
             'Email Confirmation: ' . $emailAddress, 
             $this->defaultExpirationDays
         );
@@ -161,8 +163,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
      * @param array $requestData The data of the incoming request.
      * @return ActionResult Result of the execution of the action.
      */
-    public function processWebhook(ExecutionContext $context, array $requestData): ActionResult
-    {
+    public function processWebhook(ExecutionContext $context, array $requestData): ActionResult {
         // Email confirmation received: extract the email address from the context data and update the opt-in status
         $emailAddress = $context->deferredContext?->getCustom('email');
         if (empty($emailAddress)) {
