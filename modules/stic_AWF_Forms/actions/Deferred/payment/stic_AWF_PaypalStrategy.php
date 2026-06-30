@@ -56,7 +56,11 @@ class stic_AWF_PaypalStrategy extends stic_AWF_PaymentStrategy
     /**
      * Prepare payment for the current Strategy: PayPal
      */
-    public function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+    /**
+    * Terminal: Execute the output (HTML form, Redirect header...).
+    * Only called if initiate() has returned WAIT.
+    */
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         $config = $this->getConfigValues(array('ID', 'ID_TEST', 'URL', 'URL_TEST', 'TEST'));
         
         $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
