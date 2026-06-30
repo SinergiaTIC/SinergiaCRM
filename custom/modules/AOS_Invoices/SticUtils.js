@@ -139,11 +139,13 @@ switch (viewType()) {
           setInterval(syncDisableState, 300);
       })();
 
-      // Disable non-emitted options in status dropdown when original status is draft
+      // Disable non-draft options in status dropdown when original status is draft
+      // During creation, also disable 'emitted' (use "Enviar a AEAT" button instead)
       if ($('#status').val() === 'draft') {
+        var isNewRecord = !$('[name="record"]').val();
         $('#status option').each(function() {
           var val = $(this).val();
-          if (val !== 'draft' && val !== 'emitted') {
+          if (val !== 'draft' && (val !== 'emitted' || isNewRecord)) {
             $(this).prop('disabled', true);
           }
         });
