@@ -72,6 +72,22 @@ abstract class stic_MessagesHelper {
      */
     abstract protected function performApiCall(array $params): array;
 
+    /**
+     * Returns UI behavior configuration for JavaScript.
+     * 
+     * Used by Utils.js to determine field locking, status handling,
+     * and other UI behaviors without hardcoding provider names.
+     * 
+     * @return array Associative array with:
+     *   - 'lockSender': bool - Lock sender field on edit
+     *   - 'lockMessageOnTemplate': bool - Lock message field when template selected
+     *   - 'fixedStatus': string|null - Fixed status value (e.g., 'sent', 'redirected')
+     *   - 'canRetry': bool - Allow retry on error
+     *   - 'hideAttachment': bool - Hide attachment field
+     *   - 'allowedStatus': array - List of allowed status values
+     */
+    abstract public function getUIConfig(): array;
+
     // -------------------------------------------------------------------------
     // Concrete methods - common implementation for all providers
     // -------------------------------------------------------------------------

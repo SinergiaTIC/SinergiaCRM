@@ -92,6 +92,10 @@ class stic_MessagesViewEdit extends ViewEdit
 
         SticViews::display($this);
 
+        // Inject helpers UI configuration for JavaScript
+        $helpersConfig = stic_MessagesUtils::getHelpersUIConfig();
+        echo "<script>var STIC_HELPERS_CONFIG = " . json_encode($helpersConfig) . ";</script>";
+
         echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
         echo getVersionedScript("modules/stic_Messages/Utils.js");
 

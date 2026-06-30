@@ -294,4 +294,99 @@ class stic_MessagesUtils {
 
         $GLOBALS['app_list_strings']['dynamic_message_template_list'] = $dynamic_email_template_list;
     }
+
+    /**
+     * Returns UI configuration for all registered message helpers.
+     * Used by JavaScript to determine field locking and behavior.
+     * 
+     * @return array Associative array keyed by helper class name
+     */
+    public static function getHelpersUIConfig(): array {
+        $helpers = self::getAvailableHelpers();
+        $config = [];
+
+        foreach ($helpers as $className) {
+            $helper = self::instantiateHelper($className);
+            if ($helper !== null) {
+                $config[$className] = $helper->getUIConfig();
+            }
+        }
+
+        // Add special types that are not helpers but need UI config
+        $config['WhatsAppWeb'] = [
+            'lockSender' => true,
+            'lockMessageOnTemplate' => false,
+            'fixedStatus' => 'redirected',
+            'canRetry' => false,
+            'hideAttachment' => true,
+            'allowedStatus' => ['redirected'],
+        ];
+
+        $config['private_area'] = [
+            'lockSender' => true,
+            'lockMessageOnTemplate' => false,
+            'fixedStatus' => 'sent',
+            'canRetry' => false,
+            'hideAttachment' => true,
+            'allowedStatus' => ['sent'],
+        ];
+
+        return $config;
+    }
+
+    /**
+     * Returns list of available helper class names.
+     * 
+     * @return array
+     */
+    public static function getAvailableHelpers(): array {
+        $helpers = [];
+        $paths = [
+            'custom/modules/stic_Messages/Helpers/',
+            'modules/stic_Messages/Helpers/',
+        ];
+
+        foreach ($paths as $path) {
+            if (!is_dir($path)) {
+                continue;
+            }
+            $files = glob($path . '*Helper.php');
+            foreach ($files as $file) {
+                $className = basename($file, '.php');
+                if (!in_array($className, $helpers)) {
+                    $helpers[] = $className;
+                }
+            }
+        }
+
+        return $helpers;
+    }
+
+    /**
+     * Instantiates a helper class by name.
+     * 
+     * @param string $className
+     * @return stic_MessagesHelper|null
+     */
+    private static function instantiateHelper(string $className): ?stic_MessagesHelper {
+        $paths = [
+            'custom/modules/stic_Messages/Helpers/',
+            'modules/stic_Messages/Helpers/',
+        ];
+
+        foreach ($paths as $path) {
+            $file = $path . $className . '.php';
+            if (file_exists($file)) {
+                require_once($file);
+                if (class_exists($className)) {
+                    $instance = new $className();
+                    if ($instance instanceof stic_MessagesHelper) {
+                        return $instance;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }
