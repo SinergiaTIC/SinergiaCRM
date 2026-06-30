@@ -34,6 +34,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *   - Error management 
  */
 abstract class DeferredBeanActionDefinition extends ServerBeanActionDefinition implements IDeferredAction {
+    use DeferredActionHelperTrait;
 
     protected string $defaultExpirationDays = '30';
 
