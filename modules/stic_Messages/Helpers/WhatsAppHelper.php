@@ -339,16 +339,12 @@ class WhatsAppHelper extends stic_MessagesHelper {
     }
 
     /**
-     * Returns UI behavior configuration for JavaScript.
+     * {@inheritdoc}
      */
-    public function getUIConfig(): array {
+    protected function getSpecificUIConfig(): array {
         return [
             'lockSender' => true,
             'lockMessageOnTemplate' => true,
-            'fixedStatus' => null,
-            'canRetry' => true,
-            'hideAttachment' => false,
-            'allowedStatus' => ['sent', 'error', 'draft'],
         ];
     }
 }

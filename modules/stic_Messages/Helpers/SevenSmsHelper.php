@@ -119,16 +119,9 @@ class SevenSMSHelper extends stic_MessagesHelper {
     }
 
     /**
-     * Returns UI behavior configuration for JavaScript.
+     * {@inheritdoc}
      */
-    public function getUIConfig(): array {
-        return [
-            'lockSender' => false,
-            'lockMessageOnTemplate' => false,
-            'fixedStatus' => null,
-            'canRetry' => true,
-            'hideAttachment' => false,
-            'allowedStatus' => ['sent', 'error', 'draft'],
-        ];
+    protected function getSpecificUIConfig(): array {
+        return [];
     }
 }

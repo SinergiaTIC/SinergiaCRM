@@ -59,13 +59,11 @@ class WhatsAppWebHelper extends stic_MessagesHelper {
     /**
      * {@inheritdoc}
      */
-    public function getUIConfig(): array {
+    protected function getSpecificUIConfig(): array {
         return [
             'lockSender' => true,
-            'lockMessageOnTemplate' => false,
             'fixedStatus' => 'sent',
             'canRetry' => false,
-            'hideAttachment' => false,
             'allowedStatus' => ['sent', 'redirected'],
         ];
     }

@@ -211,6 +211,14 @@ class stic_MessagesController extends SugarController
         $id = $_REQUEST['recordId'];
         $bean = BeanFactory::getBean('stic_Messages', $id);
         
+        // Check ACL edit permission
+        if ($bean->bean_implements('ACL')) {
+            if (!ACLController::checkAccess($bean->module_dir, 'edit', true)) {
+                ACLController::displayNoAccess();
+                sugar_die('');
+            }
+        }
+        
         // Check if this message type can be retried
         $messageHelper = stic_MessagesUtils::instantiateHelperByType($bean->type ?? '');
         if ($messageHelper !== null && !$messageHelper->isRetryable()) {

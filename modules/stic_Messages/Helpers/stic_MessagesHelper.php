@@ -47,8 +47,39 @@ abstract class stic_MessagesHelper {
     /** Performs the API call to send the message */
     abstract protected function performApiCall(array $params): array;
 
-    /** UI behavior configuration for JavaScript */
-    abstract public function getUIConfig(): array;
+    /** UI behavior configuration for JavaScript (final - do not override) */
+    abstract protected function getSpecificUIConfig(): array;
+
+    // -------------------------------------------------------------------------
+    // UI Config
+    // -------------------------------------------------------------------------
+
+    /**
+     * Default UI configuration values.
+     * If in the future you add a new parameter here, it will be automatically
+     * available to all child classes.
+     */
+    protected function getDefaultUIConfig(): array {
+        return [
+            'lockSender' => false,
+            'lockMessageOnTemplate' => false,
+            'fixedStatus' => null,
+            'canRetry' => true,
+            'hideAttachment' => false,
+            'allowedStatus' => ['sent', 'error', 'draft'],
+        ];
+    }
+
+    /**
+     * Public method called by the application.
+     * Final so no child class can break it.
+     */
+    final public function getUIConfig(): array {
+        return array_merge(
+            $this->getDefaultUIConfig(),
+            $this->getSpecificUIConfig()
+        );
+    }
 
     // -------------------------------------------------------------------------
     // Concrete methods
