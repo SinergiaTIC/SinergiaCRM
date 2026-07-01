@@ -94,6 +94,7 @@ if (!empty($messageIds)) {
         .attachment-bubble-img{max-width:220px;max-height:220px;border-radius:6px;display:block;object-fit:cover;cursor:pointer}
         .attachment-bubble-file{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(0,0,0,.06);border-radius:8px;font-size:12px;color:#333;text-decoration:none}
         .attachment-bubble-file:hover{background:rgba(0,0,0,.12)}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     </style>
 </head>
 <body>
@@ -224,7 +225,8 @@ if (!empty($messageIds)) {
 <script>
     var CONVERSATION = {
         parentType: '<?= addslashes($parentType) ?>',
-        parentId:   '<?= addslashes($parentId) ?>'
+        parentId:   '<?= addslashes($parentId) ?>',
+        lastDate:   '<?= addslashes(end($messages)['date_entered'] ?? '') ?>'
     };
 </script>
 <?= getVersionedScript('modules/stic_Messages/include/ConversationView/ConversationView.js') ?>

@@ -56,6 +56,7 @@ $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_S
 // These entry points are used by the Stic Messages module
 $entry_point_registry['sticMessagesTwilioResponse'] = array('file' => 'modules/stic_Messages/WhatsAppWebhookEntryPoint.php', 'auth' => false);
 $entry_point_registry['sticWhatsappMedia'] = array('file' => 'modules/stic_Messages/WhatsAppMediaEntryPoint.php', 'auth' => false);
+$entry_point_registry['sticConversationMessages'] = array('file' => 'modules/stic_Messages/ConversationMessagesEntryPoint.php', 'auth' => true);
 
 // Entry points used by Stic Advanced Web Forms
 $entry_point_registry['stic_AWF_checkStatus'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckStatus.php', 'auth' => false);

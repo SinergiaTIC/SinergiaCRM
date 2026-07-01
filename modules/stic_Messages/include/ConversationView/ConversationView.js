@@ -161,3 +161,132 @@ function sendMessage() {
         sendBtn.disabled = false;
     });
 }
+
+/* ── Live polling ── */
+
+var _pollLastDate = CONVERSATION.lastDate || '';
+var _pollInterval = null;
+var _pollDelay = 5000; // 5 seconds
+
+function pollNewMessages() {
+    if (document.hidden) return;
+
+    var url = 'index.php?entryPoint=sticConversationMessages'
+            + '&parent_id='   + encodeURIComponent(CONVERSATION.parentId)
+            + '&parent_type=' + encodeURIComponent(CONVERSATION.parentType)
+            + '&last_date='   + encodeURIComponent(_pollLastDate);
+
+    fetch(url, { credentials: 'same-origin' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (!data.success || !data.messages || data.messages.length === 0) return;
+
+        var waBody = document.getElementById('waBody');
+        var wasAtBottom = waBody.scrollTop + waBody.clientHeight >= waBody.scrollHeight - 50;
+
+        data.messages.forEach(function(msg) {
+            appendMessage(msg);
+            _pollLastDate = msg.date_entered;
+        });
+
+        if (wasAtBottom) {
+            waBody.scrollTop = waBody.scrollHeight;
+        }
+    })
+    .catch(function() {});
+}
+
+function appendMessage(msg) {
+    var waBody = document.getElementById('waBody');
+    var direction = (msg.direction || 'outbound').toLowerCase();
+    var status = (msg.status || 'sent').toLowerCase();
+    var isOut = direction === 'outbound' || direction === 'out';
+    var isError = status === 'error';
+
+    var bubble = document.createElement('div');
+    bubble.className = 'bubble ' + (isError ? 'error' : (isOut ? 'out' : 'in'));
+    bubble.style.animation = 'fadeIn 0.3s ease-in';
+
+    var textDiv = document.createElement('div');
+    textDiv.className = 'text';
+    textDiv.innerHTML = (msg.message || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+    bubble.appendChild(textDiv);
+
+    // Attachments
+    if (msg.notes && msg.notes.length > 0) {
+        msg.notes.forEach(function(note) {
+            var attachDiv = document.createElement('div');
+            attachDiv.className = 'bubble-attachment';
+
+            var isImage = note.file_mime_type && note.file_mime_type.indexOf('image/') === 0;
+            if (isImage) {
+                var img = document.createElement('img');
+                img.className = 'attachment-bubble-img';
+                img.src = 'upload/' + note.id;
+                img.onclick = function() { window.open('index.php?module=Notes&action=DetailView&record=' + note.id); };
+                attachDiv.appendChild(img);
+            } else {
+                var a = document.createElement('a');
+                a.className = 'attachment-bubble-file';
+                a.href = 'upload/' + note.id;
+                a.target = '_blank';
+                a.textContent = '\uD83D\uDCC4 ' + (note.filename || note.name);
+                attachDiv.appendChild(a);
+            }
+
+            bubble.appendChild(attachDiv);
+        });
+    }
+
+    // Meta (time + tick)
+    var meta = document.createElement('div');
+    meta.className = 'meta';
+
+    var timeSpan = document.createElement('span');
+    var msgDate = new Date(msg.date_entered.replace(' ', 'T') + 'Z');
+    var hours = msgDate.getHours().toString().padStart(2, '0');
+    var minutes = msgDate.getMinutes().toString().padStart(2, '0');
+    timeSpan.textContent = hours + ':' + minutes;
+    meta.appendChild(timeSpan);
+
+    if (isOut) {
+        var tick = document.createElement('span');
+        var tickClass = 'sent';
+        var tickSymbol = '\u2713';
+        if (status === 'delivered') { tickClass = 'delivered'; tickSymbol = '\u2713\u2713'; }
+        else if (status === 'read') { tickClass = 'read'; tickSymbol = '\u2713\u2713'; }
+        else if (status === 'error') { tickClass = 'error'; tickSymbol = '\u2717'; }
+        tick.className = 'tick ' + tickClass;
+        tick.textContent = tickSymbol;
+        meta.appendChild(tick);
+    }
+
+    bubble.appendChild(meta);
+    waBody.appendChild(bubble);
+}
+
+function startPolling() {
+    if (_pollInterval) return;
+    _pollInterval = setInterval(pollNewMessages, _pollDelay);
+}
+
+function stopPolling() {
+    if (_pollInterval) {
+        clearInterval(_pollInterval);
+        _pollInterval = null;
+    }
+}
+
+// Start/stop polling based on page visibility
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        stopPolling();
+    } else {
+        startPolling();
+    }
+});
+
+// Start polling on load
+if (!document.hidden) {
+    startPolling();
+}
