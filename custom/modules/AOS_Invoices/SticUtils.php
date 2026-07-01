@@ -950,6 +950,25 @@ class AOS_InvoicesUtils
                 }
             }
 
+            // === Step 2.7b: Validate rectificative date is not before original invoice date ===
+            if ($isRectified && !empty($invoiceBean->invoice_date) && !empty($rectifiedDate)) {
+                try {
+                    $rectificativeIssueDate = self::parseDateToImmutable($invoiceBean->invoice_date);
+                    if ($rectificativeIssueDate < $rectifiedDate) {
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Rectificative date ' . $invoiceBean->invoice_date . ' is before original date ' . $invoiceBean->verifactu_rectified_date_c);
+                        SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_RECTIFIED_DATE_BEFORE_ORIGINAL'] ?? 'La fecha de la factura rectificativa no puede ser anterior a la fecha de la factura original.'));
+                        $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                        $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                        unset(self::$processingInvoiceIds[$invoiceId]);
+                        SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+                        return;
+                    }
+                } catch (Exception $e) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Cannot parse rectificative invoice date: ' . $invoiceBean->invoice_date);
+                }
+            }
+            // === End Step 2.7b ===
+
             // For substitution rectified invoices, get the corrected amounts
             $correctedBaseAmount = null;
             $correctedTaxAmount = null;
