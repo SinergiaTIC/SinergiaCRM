@@ -246,6 +246,7 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('AOS_Invoicesverifactu_cancel_hash_c', 'AOS_Invoices', 'verifactu_cancel_hash_c'),
 ('AOS_Invoicesverifactu_audit_log_c', 'AOS_Invoices', 'verifactu_audit_log_c'),
 ('AOS_Invoicesverifactu_previous_status_c', 'AOS_Invoices', 'verifactu_previous_status_c'),
+('AOS_Invoicesverifactu_valid_invoice_c', 'AOS_Invoices', 'verifactu_valid_invoice_c'),
 -- AOS_Products_Quotes
 ('AOS_Products_Quotesverifactu_aeat_operation_type_c', 'AOS_Products_Quotes', 'verifactu_aeat_operation_type_c'),
 

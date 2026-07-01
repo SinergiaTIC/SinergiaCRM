@@ -517,3 +517,32 @@ $dictionary['AOS_Invoices']['fields']['verifactu_previous_status_c'] = array(
     'popupHelp' => 'LBL_VERIFACTU_PREVIOUS_STATUS_HELP',
 );
 
+// Indica si la factura está vigente en Verifactu (1) o ha sido anulada/rectificada (0)
+$dictionary['AOS_Invoices']['fields']['verifactu_valid_invoice_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_valid_invoice_c',
+    'name' => 'verifactu_valid_invoice_c',
+    'vname' => 'LBL_VERIFACTU_VALID_INVOICE',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'enum',
+    'len' => 100,
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => '',
+    'no_default' => 1,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'options' => 'stic_boolean_list',
+    'popupHelp' => 'LBL_VERIFACTU_VALID_INVOICE_HELP',
+);
+

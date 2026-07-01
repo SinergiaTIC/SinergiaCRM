@@ -1228,16 +1228,24 @@ class AOS_InvoicesUtils
                 SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($successMessage));
                 $sendSuccess = true;
 
-                // If this is a rectified invoice sent successfully, notify on the original invoice's description
+                // If this is a rectified invoice sent successfully, log on the original invoice's audit log
                 if (!empty($invoiceBean->verifactu_is_rectified_c) && !empty($invoiceBean->verifactu_cancel_id_c)) {
                     $originalInvoice = BeanFactory::getBean('AOS_Invoices', $invoiceBean->verifactu_cancel_id_c);
                     if (!empty($originalInvoice->id)) {
                         $rectifiedRef = !empty($generatedInvoiceNumber) ? $generatedInvoiceNumber : $invoiceBean->name;
-                        $newDesc = $originalInvoice->db->quote($originalInvoice->description
-                            . "\n{$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFICATIVA_SENT']}{$rectifiedRef}");
-                        $originalInvoice->db->query("UPDATE aos_invoices SET description = '{$newDesc}' WHERE id = '{$originalInvoice->id}'");
+                        $auditTimestamp = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+                        $originalAuditLog = $originalInvoice->verifactu_audit_log_c ?? '';
+                        if (!empty($originalAuditLog)) {
+                            $originalAuditLog .= "\n";
+                        }
+                        $originalAuditLog .= "[{$auditTimestamp}] " . str_replace(['{0}', '{1}'], [$rectifiedRef, $invoiceBean->id], $mod_strings['LBL_AUDIT_ORIGINAL_RECTIFIED_SENT']);
+                        $auditLogQuoted = $originalInvoice->db->quote($originalAuditLog);
+                        $originalInvoice->db->query("UPDATE aos_invoices_cstm SET verifactu_audit_log_c = '{$auditLogQuoted}', verifactu_valid_invoice_c = '0' WHERE id_c = '{$originalInvoice->id}'");
                     }
                 }
+
+                // Mark the invoice itself as vigente (1)
+                $invoiceBean->db->query("UPDATE aos_invoices_cstm SET verifactu_valid_invoice_c = '1' WHERE id_c = '{$invoiceBean->id}'");
             } else {
                 SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_AEAT_SEND_ERROR']));
             }
@@ -2126,6 +2134,7 @@ class AOS_InvoicesUtils
             // Preserve original hash and store cancellation hash in separate field
             $invoiceBean->verifactu_cancel_hash_c = $cancellationRecord->hash;
             $invoiceBean->verifactu_aeat_status_c = 'cancelled';
+            $invoiceBean->verifactu_valid_invoice_c = '0';
             $invoiceBean->verifactu_aeat_response_c = 'Factura anulada en AEAT. CSV: ' . $response->csv;
             $invoiceBean->verifactu_csv_c = $response->csv;
             if (isset($response->submittedAt)) {

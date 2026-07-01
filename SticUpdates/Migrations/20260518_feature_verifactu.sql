@@ -5,7 +5,7 @@
 -- =============================================================================
 
 -- =============================================================================
--- AOS_Invoices — Fields added to fields_meta_data (18 entries)
+-- AOS_Invoices — Fields added to fields_meta_data (18 entries, see also 20260701_feature_verifactu_valid_invoice.sql for verifactu_valid_invoice_c)
 -- =============================================================================
 
 REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES

@@ -268,6 +268,12 @@ array(
         'label' => 'LBL_VERIFACTU_AEAT_STATUS',
         'default' => true,
     ),
+    'VERIFACTU_VALID_INVOICE_C' => array(
+        'type' => 'enum',
+        'default' => true,
+        'label' => 'LBL_VERIFACTU_VALID_INVOICE',
+        'width' => '10%',
+    ),
     'VERIFACTU_AEAT_RESPONSE_C' => array(
         'width' => '20%',
         'label' => 'LBL_VERIFACTU_AEAT_RESPONSE',

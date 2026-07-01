@@ -170,6 +170,14 @@ class AOS_InvoicesHook
         }
         // === End Step 1.1c ===
 
+        // === Step 3b: Set default verifactu_valid_invoice_c ===
+        // New invoices default to null (not yet sent to AEAT).
+        // Only becomes 1 (vigente) when sent and accepted by AEAT.
+        if (AOS_InvoicesUtils::isVerifactuActivated() && $isNew) {
+            $bean->verifactu_valid_invoice_c = null;
+        }
+        // === End Step 3b ===
+
         // === Step 1.1: Block edition of invoices accepted by AEAT ===
         // If the invoice is already accepted by AEAT, only non-tax fields can be edited
         if (AOS_InvoicesUtils::isVerifactuActivated() &&
@@ -398,6 +406,7 @@ class AOS_InvoicesHook
             $bean->verifactu_cancel_id_c = null;
             $bean->verifactu_rectified_date_c = null;
             $bean->description = null;
+            $bean->verifactu_valid_invoice_c = null;
         }
 
         // Validate rectified invoice data

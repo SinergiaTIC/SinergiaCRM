@@ -456,10 +456,13 @@ array(
                 ),
                 1 => array(
                     0 => array(
+                        'name' => 'verifactu_valid_invoice_c',
+                        'label' => 'LBL_VERIFACTU_VALID_INVOICE',
+                    ),
+                    1 => array(
                         'name' => 'verifactu_aeat_response_c',
                         'label' => 'LBL_VERIFACTU_AEAT_RESPONSE',
                     ),
-                    1 => '',
                 ),
                 2 => array(
                     0 => array(

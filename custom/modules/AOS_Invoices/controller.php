@@ -186,6 +186,25 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             return;
         }
 
+        // === Task 2: Verify the original invoice hasn't been rectified already (accepted by AEAT) ===
+        $existingRectified = $originalInvoice->db->query(
+            "SELECT id, number FROM aos_invoices i "
+            . "INNER JOIN aos_invoices_cstm c ON i.id = c.id_c "
+            . "WHERE c.verifactu_cancel_id_c = '{$originalInvoice->db->quote($originalId)}' "
+            . "AND c.verifactu_aeat_status_c = 'accepted' "
+            . "AND i.deleted = 0"
+        );
+        $existing = $originalInvoice->db->fetchByAssoc($existingRectified);
+        if (!empty($existing)) {
+            $existingRef = $existing['number'] ?? $existing['id'];
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert(
+                str_replace('{0}', $existingRef, $mod_strings['LBL_ORIGINAL_ALREADY_RECTIFIED'])
+            ));
+            SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
+            return;
+        }
+        // === End Task 2 ===
+
         // Create a new invoice (rectified)
         $rectifiedInvoice = BeanFactory::newBean('AOS_Invoices');
 
@@ -306,25 +325,18 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         if (!empty($rectifiedAuditLog)) {
             $rectifiedAuditLog .= "\n";
         }
-        $rectifiedAuditLog .= "[{$auditTimestamp}] Rectified invoice created. Original invoice: {$originalInvoice->number} (ID: {$originalInvoice->id}).";
+        $rectifiedAuditLog .= "[{$auditTimestamp}] " . str_replace(['{0}', '{1}'], [$originalInvoice->number, $originalInvoice->id], $mod_strings['LBL_AUDIT_RECTIFIED_CREATED']);
         $rectifiedInvoice->verifactu_audit_log_c = $rectifiedAuditLog;
         $rectifiedInvoice->save();
 
-        // Audit log for the original invoice (in addition to the description reference)
+        // Audit log for the original invoice
+        // Use direct DB UPDATE to bypass before_save protection on accepted invoices
         $originalAuditLog = $originalInvoice->verifactu_audit_log_c ?? '';
         if (!empty($originalAuditLog)) {
             $originalAuditLog .= "\n";
         }
-        $originalAuditLog .= "[{$auditTimestamp}] Original invoice rectified by new invoice: {$rectifiedRef} (ID: {$rectifiedInvoice->id}).";
-        $originalInvoice->verifactu_audit_log_c = $originalAuditLog;
-
-        // Add text to original invoice description and update audit log
-        // Use direct DB UPDATE to bypass before_save protection on accepted invoices
-        // (both description and verifactu_audit_log_c are protected for accepted invoices)
-        $newDesc = $originalInvoice->db->quote($originalInvoice->description
-            . "\n{$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY']}{$rectifiedRef}");
-        $originalInvoice->db->query("UPDATE aos_invoices SET description = '{$newDesc}' WHERE id = '{$originalInvoice->id}'");
-        $auditLogQuoted = $originalInvoice->db->quote($originalInvoice->verifactu_audit_log_c);
+        $originalAuditLog .= "[{$auditTimestamp}] " . str_replace(['{0}', '{1}'], [$rectifiedRef, $rectifiedInvoice->id], $mod_strings['LBL_AUDIT_ORIGINAL_RECTIFIED']);
+        $auditLogQuoted = $originalInvoice->db->quote($originalAuditLog);
         $originalInvoice->db->query("UPDATE aos_invoices_cstm SET verifactu_audit_log_c = '{$auditLogQuoted}' WHERE id_c = '{$originalInvoice->id}'");
         // === End Step 1.6 ===
 
