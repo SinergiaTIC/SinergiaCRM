@@ -237,13 +237,14 @@ class stic_MessagesUtils {
         $db = DBManagerFactory::getInstance();
         $parentIdSafe = $db->quote($parentId);
 
-        $sql = "SELECT id, message, type, status, date_entered, sender, phone, direction,
+        $sql = "SELECT id, message, type, status, date_entered, sent_date, sender, phone, direction,
                     template_id
                 FROM stic_messages
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
                 AND type = 'WhatsAppHelper'
-                ORDER BY date_entered DESC
+                AND status = 'sent'
+                ORDER BY sent_date DESC
                 LIMIT 1";
 
         $result = $db->query($sql);
@@ -253,21 +254,17 @@ class stic_MessagesUtils {
         $hoursLeft = 0;
         $minutesLeft = 0;
 
-        if ($lastMessage) {
-            $isValidWindowEvent = true;
+        if ($lastMessage && !empty($lastMessage['sent_date'])) {
+            $eventTs = (new DateTime($lastMessage['sent_date'], new DateTimeZone('UTC')))->getTimestamp();
+            $nowTs = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
+            $diffSeconds = $nowTs - $eventTs;
+            $diffH = $diffSeconds / 3600;
 
-            if ($isValidWindowEvent) {
-                $eventTs = (new DateTime($lastMessage['date_entered'], new DateTimeZone('UTC')))->getTimestamp();
-                $nowTs = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
-                $diffSeconds = $nowTs - $eventTs;
-                $diffH = $diffSeconds / 3600;
-
-                if ($diffH < 24) {
-                    $windowOpen = true;
-                    $secondsLeft = (24 * 3600) - $diffSeconds;
-                    $hoursLeft = floor($secondsLeft / 3600);
-                    $minutesLeft = floor(($secondsLeft % 3600) / 60);
-                }
+            if ($diffH < 24) {
+                $windowOpen = true;
+                $secondsLeft = (24 * 3600) - $diffSeconds;
+                $hoursLeft = floor($secondsLeft / 3600);
+                $minutesLeft = floor(($secondsLeft % 3600) / 60);
             }
         }
 

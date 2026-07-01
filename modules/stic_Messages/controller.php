@@ -237,7 +237,7 @@ class stic_MessagesController extends SugarController
 
         $focus = BeanFactory::newBean('stic_Messages');
         if ($focus->bean_implements('ACL')) {
-            if (!ACLController::checkAccess($focus->module_dir, 'export', true)) {
+            if (!ACLController::checkAccess($focus->module_dir, 'edit', true)) {
                 ACLController::displayNoAccess();
                 sugar_die('');
             }
