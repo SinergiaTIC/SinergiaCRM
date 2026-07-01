@@ -434,7 +434,7 @@ class stic_AWF_FormsUtils {
     public static function getEnabledModules() {
         global $app_list_strings, $beanList;
 
-         $blackList = [
+        $blackList = [
             'Home',
             'AOW_WorkFlow',
             'AOR_Reports', 'AOR_Scheduled_Reports',
@@ -459,9 +459,10 @@ class stic_AWF_FormsUtils {
             'stic_Web_Forms',
             'stic_Settings',
             'Calendar', 'ResourceCalendar', 'stic_Bookings_Calendar', 'stic_Bookings_Places_Calendar', 'Reminders', 'Reminders_Invitees',
-            'AOK_KnowledgeBase', 
-            'stic_Incorpora', 'stic_Incorpora_Locations',
-            'FP_events'
+            'AOBH_BusinessHours',
+            'AOK_KnowledgeBase', 'AOK_Knowledge_Base_Categories',
+            'stic_Incorpora_Locations',
+            'FP_Event_Locations'
         ];
 
         // Get Enabled Modules
