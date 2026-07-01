@@ -405,7 +405,6 @@ class AOS_InvoicesHook
             $bean->verifactu_rectified_base_c = null;
             $bean->verifactu_cancel_id_c = null;
             $bean->verifactu_rectified_date_c = null;
-            $bean->description = null;
             $bean->verifactu_valid_invoice_c = null;
         }
 
