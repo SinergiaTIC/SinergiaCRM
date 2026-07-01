@@ -453,7 +453,7 @@ class stic_AWF_FormsUtils {
             'Surveys', 'SurveyQuestions', 'SurveyResponses', 'SurveyQuestionOptions', 'SurveyQuestionResponses',
             'stic_Sepe_Actions', 'stic_Sepe_Files', 'stic_Sepe_Incidents',
             'stic_Signatures', 'stic_Signature_Log', 'stic_Signers',
-            'stic_Messages', 'stic_Message_Marketing', 'stic_MessagesMan', 
+            'stic_Messages', 'stic_Message_Marketing', 'stic_MessagesMan', 'stic_Conversations',
             'stic_Validation_Actions', 'stic_Validation_Results',
             'stic_AWF_Forms', 'stic_AWF_Responses', 'stic_AWF_Response_Details', 'stic_AWF_Links', 'stic_AWF_Deferred_Tickets', 'stic_AWF_Incoming_Events',
             'stic_Web_Forms',
