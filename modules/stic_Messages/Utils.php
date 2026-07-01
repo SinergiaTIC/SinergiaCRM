@@ -242,8 +242,10 @@ class stic_MessagesUtils {
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
                 AND type = 'WhatsAppHelper'
-                AND status = 'sent'
-                AND (direction = 'inbound' OR (direction = 'outbound' AND template_id IS NOT NULL AND template_id != ''))
+                AND (
+                    (direction = 'inbound' AND status = 'received')
+                    OR (direction = 'outbound' AND template_id IS NOT NULL AND template_id != '' AND status = 'sent')
+                )
                 ORDER BY date_entered DESC
                 LIMIT 1";
 
