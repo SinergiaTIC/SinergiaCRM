@@ -237,14 +237,14 @@ class stic_MessagesUtils {
         $db = DBManagerFactory::getInstance();
         $parentIdSafe = $db->quote($parentId);
 
-        $sql = "SELECT id, message, type, status, date_entered, sent_date, sender, phone, direction,
-                    template_id
+        $sql = "SELECT date_entered
                 FROM stic_messages
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
                 AND type = 'WhatsAppHelper'
                 AND status = 'sent'
-                ORDER BY sent_date DESC
+                AND (direction = 'inbound' OR (direction = 'outbound' AND template_id IS NOT NULL AND template_id != ''))
+                ORDER BY date_entered DESC
                 LIMIT 1";
 
         $result = $db->query($sql);
@@ -254,8 +254,8 @@ class stic_MessagesUtils {
         $hoursLeft = 0;
         $minutesLeft = 0;
 
-        if ($lastMessage && !empty($lastMessage['sent_date'])) {
-            $eventTs = (new DateTime($lastMessage['sent_date'], new DateTimeZone('UTC')))->getTimestamp();
+        if ($lastMessage && !empty($lastMessage['date_entered'])) {
+            $eventTs = (new DateTime($lastMessage['date_entered'], new DateTimeZone('UTC')))->getTimestamp();
             $nowTs = (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
             $diffSeconds = $nowTs - $eventTs;
             $diffH = $diffSeconds / 3600;

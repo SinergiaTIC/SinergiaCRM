@@ -157,7 +157,8 @@ class WhatsAppWebhookEntryPoint
         $db = DBManagerFactory::getInstance();
         $phoneQuoted = $db->quote($digits);
         $sql = "SELECT assigned_user_id FROM stic_messages
-                WHERE direction = 'outbound'
+                WHERE deleted = 0
+                AND direction = 'outbound'
                 AND phone LIKE '%{$phoneQuoted}%'
                 AND assigned_user_id IS NOT NULL
                 AND assigned_user_id != ''
