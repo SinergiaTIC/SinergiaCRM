@@ -270,6 +270,7 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'shipping_tax_amt',
+                'function' => null,
             ),
             'shipping_amount' => array(
                 'type' => 'currency',
