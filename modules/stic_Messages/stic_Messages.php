@@ -137,15 +137,9 @@ class stic_Messages extends Basic
             $messageHelper->prepareBeanBeforeSave($this);
         }
 
-        // Resolve media_note_id from $_REQUEST if not already set
-        if (empty($this->media_note_id)) {
-            $this->media_note_id = $_REQUEST['media_note_id'] ?? '';
-        }
-
-        // If a Note was pre-created during upload and there is an attachment,
-        // build a signed public URL for Twilio before calling sendMessage()
-        if (!empty($this->media_note_id)) {
-            $this->media_url = $this->buildSignedMediaUrl($this->media_note_id);
+        // Let the helper resolve media attachments (e.g., build signed URL for Twilio)
+        if ($messageHelper !== null) {
+            $messageHelper->resolveMedia($this);
         }
 
         // If Message is being created or status changed to "sent"

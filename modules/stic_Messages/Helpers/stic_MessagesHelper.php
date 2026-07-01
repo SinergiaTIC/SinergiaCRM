@@ -103,6 +103,9 @@ abstract class stic_MessagesHelper {
     /** Prepare the bean before saving (sender, status, etc.) */
     public function prepareBeanBeforeSave(stic_Messages $bean): void {}
 
+    /** Resolve media attachment for the message (e.g., build signed URL for Twilio) */
+    public function resolveMedia(stic_Messages $bean): void {}
+
     /** Return true to skip external API call (e.g., redirect, internal message) */
     public function shouldSkipApiCall(): bool {
         return false;

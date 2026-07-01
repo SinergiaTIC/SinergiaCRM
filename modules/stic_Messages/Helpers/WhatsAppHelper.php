@@ -94,6 +94,38 @@ class WhatsAppHelper extends stic_MessagesHelper {
     }
 
     /**
+     * Resolve media attachment for WhatsApp messages.
+     * Builds signed URL for Twilio to fetch the file.
+     */
+    public function resolveMedia(stic_Messages $bean): void {
+        if (empty($bean->media_note_id)) {
+            $bean->media_note_id = $_REQUEST['media_note_id'] ?? '';
+        }
+
+        if (empty($bean->media_note_id) && !empty($bean->id)) {
+            $note = BeanFactory::getBean('Notes');
+            $notes = $note->get_full_list('date_entered', "parent_id = '{$bean->id}' AND parent_type = 'stic_Messages' AND deleted = 0", 0, 1);
+            if ($notes) {
+                $bean->media_note_id = $notes[0]->id;
+            }
+        }
+
+        if (empty($bean->media_note_id) && !empty($bean->template_id)) {
+            require_once('modules/EmailTemplates/EmailTemplate.php');
+            $template = BeanFactory::getBean('EmailTemplates', $bean->template_id);
+            $attachments = $template->getAttachments();
+            if ($attachments) {
+                $bean->media_note_id = $attachments[0]->id;
+            }
+        }
+
+        // Build signed URL for Twilio
+        if (!empty($bean->media_note_id)) {
+            $bean->media_url = $bean->buildSignedMediaUrl($bean->media_note_id);
+        }
+    }
+
+    /**
      * Performs the API call to Twilio to send WhatsApp message.
      * 
      * @param array $params Must contain 'from', 'text', 'to', plus optional WhatsApp params
