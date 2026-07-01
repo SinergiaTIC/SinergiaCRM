@@ -631,7 +631,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                 }
                 $invoice = BeanFactory::getBean('AOS_Invoices', $id);
                 if (!empty($invoice->verifactu_aeat_status_c)
-                    && in_array($invoice->verifactu_aeat_status_c, ['accepted', 'emitted'])) {
+                    && in_array($invoice->verifactu_aeat_status_c, ['accepted', 'emitted', 'cancelled'])) {
                     $invoiceLabel = !empty($invoice->number) ? $invoice->number : $id;
                     $blockedInvoices[] = '<a href="index.php?module=AOS_Invoices&action=DetailView&record=' . $id . '">' . $invoiceLabel . '</a>';
                 } else {

@@ -554,7 +554,7 @@ class AOS_InvoicesHook
         }
 
         if (!empty($bean->verifactu_aeat_status_c) &&
-            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
+            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted', 'cancelled'))) {
 
             if (empty($mod_strings)) {
                 $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
