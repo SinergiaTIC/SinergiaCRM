@@ -966,21 +966,30 @@ class AOS_InvoicesUtils
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Corrected amounts for substitution - Base: ' . $correctedBaseAmount . ', Tax: ' . $correctedTaxAmount);
             }
 
-            // === Step 2.9: Block empty rectified invoices ===
-            if ($isRectified) {
-                $hasLines = $invoiceBean->get_linked_beans('aos_products_quotes', 'AOS_Products_Quotes');
-                if (empty($hasLines)) {
-                    throw new Exception($mod_strings['LBL_RECTIFIED_INVOICE_EMPTY']
-                        ?? 'La factura rectificativa no tiene líneas de producto.');
-                }
-                $subtotal = floatval($invoiceBean->subtotal_amount ?? 0);
-                $tax = floatval($invoiceBean->tax_amount ?? 0);
-                if ($subtotal <= 0 && $tax <= 0) {
-                    throw new Exception($mod_strings['LBL_RECTIFIED_INVOICE_ZERO_AMOUNT']
-                        ?? 'La factura rectificativa tiene importe cero.');
-                }
+            // === Step 2.8: Block empty invoices ===
+            $hasLines = $invoiceBean->get_linked_beans('aos_products_quotes', 'AOS_Products_Quotes');
+            if (empty($hasLines)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . ($mod_strings['LBL_INVOICE_EMPTY'] ?? 'La factura no tiene líneas de producto.'));
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_INVOICE_EMPTY'] ?? 'La factura no tiene líneas de producto.'));
+                $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                unset(self::$processingInvoiceIds[$invoiceId]);
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+                return;
             }
-            // === End Step 2.9 ===
+            $subtotal = floatval($invoiceBean->subtotal_amount ?? 0);
+            $tax = floatval($invoiceBean->tax_amount ?? 0);
+            $isDifferencesRectified = ($isRectified && $rectifiedType === 'I');
+            if ($subtotal <= 0 && $tax <= 0 && !$isDifferencesRectified) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . ($mod_strings['LBL_INVOICE_ZERO_AMOUNT'] ?? 'La factura tiene importe cero.'));
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_INVOICE_ZERO_AMOUNT'] ?? 'La factura tiene importe cero.'));
+                $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                unset(self::$processingInvoiceIds[$invoiceId]);
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
+                return;
+            }
+            // === End Step 2.8 ===
 
             // Create registration record
             $record = self::createRegistrationRecord(

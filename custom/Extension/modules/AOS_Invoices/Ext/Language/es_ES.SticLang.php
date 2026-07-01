@@ -113,6 +113,8 @@ $mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'] = 'Para facturas rectific
 $mod_strings['LBL_RECTIFIED'] = 'Rectificativa';
 $mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY'] = 'Se ha creado la factura rectificativa: ';
 $mod_strings['LBL_ORIGINAL_INVOICE_RECTIFICATIVA_SENT'] = 'Se ha enviado la factura rectificativa a AEAT: ';
+$mod_strings['LBL_INVOICE_EMPTY'] = 'No es posible enviar la factura a la AEAT porque no tiene líneas de producto. Añada al menos una línea antes del envío.';
+$mod_strings['LBL_INVOICE_ZERO_AMOUNT'] = 'No es posible enviar la factura a la AEAT porque el importe total es cero. Verifique que los importes son correctos antes del envío.';
 
 // Cancellation labels
 $mod_strings['LBL_CANCEL_INVOICE'] = 'Anular factura';
