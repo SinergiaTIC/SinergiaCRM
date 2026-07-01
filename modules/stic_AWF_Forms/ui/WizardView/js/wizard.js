@@ -443,7 +443,11 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
-              return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
+              return this.dataBlockRelationships[datablockId].filter(r => {
+                if (r.datablock_orig == '' && r.relationship_type !== 'many-to-many') return true; // 1-N unused
+                if (r.relationship_type === 'many-to-many') return true; // N-M always available
+                return false;
+              });
             },
             addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText) {
               let dataBlock = this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
@@ -458,10 +462,12 @@ class WizardStep2 {
             suggestNewDestDataBlockText(origDatablockId, relName) {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
-            getRelText(datablockId, relName) {
-              let rel = this.dataBlockRelationships[datablockId].find(r => r.name == relName);
-              let dataBlock_orig = this.formConfig.data_blocks.find(d => d.id == rel.datablock_orig);
-              let dataBlock_dest = this.formConfig.data_blocks.find(d => d.id == rel.datablock_dest);
+            getRelText(datablockId, relName, datablockDestId = null) {
+              let dataBlock_orig = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let dataBlock_dest = datablockDestId
+                ? this.formConfig.data_blocks.find(d => d.id == datablockDestId)
+                : null;
+              let relText = this.dataBlockRelationships[datablockId]?.find(r => r.name === relName)?.text || relName;
               let str = "";
               if (dataBlock_orig && dataBlock_dest) {
                 if (dataBlock_orig.id == datablockId) {
@@ -469,7 +475,7 @@ class WizardStep2 {
                 } else {
                   str = `${dataBlock_dest.text} ⟵ ${dataBlock_orig.text}`;
                 }
-                str += ` (${rel.text})`;
+                str += ` (${relText})`;
               }
               return str;
             },

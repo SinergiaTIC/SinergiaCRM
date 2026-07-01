@@ -39,6 +39,7 @@ class stic_AwfDataBlock {
       module: "",               // Module name
       required: false,          // Indicates if it is required (internal, cannot be deleted)
       fields: [],               // Fields of the Data Block
+      relationships: [],        // Block-to-block relationships [{ name, related_datablock_id }]
       duplicate_detections: [], // Duplicate detection definition
       save_action_id: "",       // ID of the data block save action
     });
@@ -283,6 +284,28 @@ class stic_AwfDataBlock {
       text = `${module.textSingular} ${index}`;
     }
     return text;
+  }
+
+  addRelationship(relName, relatedBlockId, relationshipType = 'many-to-many') {
+    let isDuplicate;
+    if (relationshipType === 'one-to-many') {
+      // 1-N: only one usage allowed
+      isDuplicate = this.relationships.some(r => r.name === relName);
+    } else {
+      // N-M: multiple usages allowed, only block duplicates prevented
+      isDuplicate = this.relationships.some(r => r.name === relName && r.related_datablock_id === relatedBlockId);
+    }
+    if (!isDuplicate) {
+      this.relationships.push({ name: relName, related_datablock_id: relatedBlockId });
+    }
+  }
+
+  removeRelationship(relName, relatedBlockId = null) {
+    if (relatedBlockId) {
+      this.relationships = this.relationships.filter(r => !(r.name === relName && r.related_datablock_id === relatedBlockId));
+    } else {
+      this.relationships = this.relationships.filter(r => r.name !== relName);
+    }
   }
 }
 
@@ -1724,53 +1747,56 @@ class stic_AwfConfiguration {
    * @returns 
    */
   addDataBlockRelationship(datablockId, relationshipName, relatedDatablockId, newDataBlockText) {
-    // DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
 
     // Find Relationship
     let rel = this.getAllDataBlockRelationships()[datablockId].find(r => r.name == relationshipName);
-    if (!rel) {
-      return null;
-    }
+    if (!rel) return null;
 
     // Find Datablock
     let dataBlock = this.data_blocks.find(d => d.id == datablockId);
-    if (!dataBlock) {
-      return null;
-    }
+    if (!dataBlock) return null;
 
     // Find related Datablock
     let relDatablock = null;
     if (relatedDatablockId != -1) {
-      // Use existant related Datablock
       relDatablock = this.data_blocks.find(d => d.id == relatedDatablockId);
     } else {
-      // Create new related Datablock
       relDatablock = this.addDataBlockModule(rel.module, true, newDataBlockText);
     }
-    if (!relDatablock) {
-      return null;
-    }
+    if (!relDatablock) return null;
 
-    // Set field value in origin
-    let dataBlock_orig = dataBlock;
-    let dataBlock_dest = relDatablock;
-    if (dataBlock_orig.module != rel.module_orig) {
-      dataBlock_orig = relDatablock;
-      dataBlock_dest = dataBlock;
-    }
-    let module_orig = utils.getModuleInformation(rel.module_orig);
+    // Store relationship metadata on BOTH blocks so each side knows about the link
+    let relationshipType = utils.getModuleInformation(dataBlock.module).relationships[relationshipName]?.relationship_type || 'many-to-many';
+    dataBlock.addRelationship(relationshipName, relDatablock.id, relationshipType);
+    relDatablock.addRelationship(relationshipName, dataBlock.id, relationshipType);
 
-    /**
-     * Field: { 
-     *    name, label, required, required_in_form, type, in_form, 
-     *    type_in_form, value_type, value_options: [{value, text}], value, value_text 
-     *  }
-     */
-    let dataField_orig = dataBlock_orig.addFieldFromModuleField(module_orig.fields[rel.field_orig]);
-    dataField_orig.type_field = 'fixed';
-    dataField_orig.in_form = false;
-    dataField_orig.value_type = "dataBlock";
-    dataField_orig.value = dataBlock_dest.id;
+    // For 1-N relationships with relate fields: add server field on the block that owns
+    // the relate field (the "N" side), pointing to the other block (the "1" side).
+    [{block: dataBlock, target: relDatablock}, {block: relDatablock, target: dataBlock}].forEach(({block, target}) => {
+      let moduleInfo = utils.getModuleInformation(block.module);
+      if (!moduleInfo) return;
+      let relateFields = Object.values(moduleInfo.fields).filter(
+        f => f.type === 'relate' && f.options === relationshipName
+      );
+      relateFields.forEach(fieldInfo => {
+        let fieldIndex = block.fields.findIndex(f => f.name === fieldInfo.name);
+        let existingField;
+        if (fieldIndex >= 0) {
+          existingField = block.fields[fieldIndex];
+        } else {
+          existingField = block.addFieldFromModuleField(fieldInfo);
+          fieldIndex = block.fields.findIndex(f => f.name === fieldInfo.name);
+        }
+        existingField.type_field = 'fixed';
+        existingField.in_form = false;
+        existingField.value_type = 'dataBlock';
+        existingField.value = target.id;
+        existingField.value_text = target.text;
+        if (fieldIndex >= 0) {
+          block.fields.splice(fieldIndex, 1, existingField);
+        }
+      });
+    });
 
     return dataBlock;
   }
@@ -1782,55 +1808,42 @@ class stic_AwfConfiguration {
    * DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
    */
   getAllDataBlockRelationships() {
-    // Relationship: {name, text, module_orig, field_orig, relationship, module_dest}
-    // DataBlockRelationship: {name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest}
     let allRelationships = {};
-    let relsToReview = [];
 
     this.data_blocks.forEach(d => {
-      if (d.module) {
-        allRelationships[d.id] = [];
-        Object.values(utils.getModuleInformation(d.module).relationships).forEach(r => {
-          let rel = {...r}; // Copy relationship object
+      if (!d.module) return;
+      allRelationships[d.id] = [];
+      let moduleInfo = utils.getModuleInformation(d.module);
 
-          // Fill all available relationships for every DataBlock
-          rel.datablock = d.id;
-          rel.module = rel.module_orig == d.module ? rel.module_dest : rel.module_orig;
-          rel.textExtended = `${rel.text} (${STIC.enabledModules[rel.module].text})`;
-          rel.datablock_orig = "";
-          rel.datablock_dest = "";
+      // Base list: ALL module relationships (used + unused)
+      Object.values(moduleInfo.relationships).forEach(r => {
+        let rel = {...r};
+        rel.datablock = d.id;
+        rel.module = rel.module_orig == d.module ? rel.module_dest : rel.module_orig;
+        rel.textExtended = `${rel.text} (${STIC.enabledModules[rel.module]?.text || rel.module})`;
+        rel.datablock_orig = "";
+        rel.datablock_dest = "";
+        allRelationships[d.id].push(rel);
+      });
 
-          allRelationships[d.id].push(rel);
-        });
-
-        // Sort relationships
-        allRelationships[d.id].sort((a, b) => {
-          return a.textExtended.localeCompare(b.textExtended);
-        });
-
-        // Find and fill defined relationships in datablock fields
-        d.fields.filter(f => f.value_type == "dataBlock").forEach(f => {
-          let rel = allRelationships[d.id].find(r => r.module_orig == d.module && r.field_orig == f.name);
-          if (rel) {
-            // Fill Orig -> Dest info
-            rel.datablock_orig = d.id;
-            rel.datablock_dest = f.value;
-
-            // Mark to review to fill Dest <- Orig info
-            relsToReview.push(rel);
-          }
-        });
-      }
-    });
-
-    // Review and fill Dest <- Orig info
-    relsToReview.forEach(r => {
-      let rel = allRelationships[r.datablock_dest].find(v => v.name == r.name);
-      if (rel) {
-        // Fill Dest <- Orig info
-        rel.datablock_orig = r.datablock_orig;
-        rel.datablock_dest = r.datablock_dest;
-      }
+      // Mark used relationships from block.relationships[]
+      d.relationships.forEach(dbrel => {
+        let rel = allRelationships[d.id].find(r => r.name === dbrel.name && !r.datablock_orig);
+        if (rel) {
+          // First usage: mark the base entry
+          rel.datablock_orig = d.id;
+          rel.datablock_dest = dbrel.related_datablock_id;
+        } else {
+          // Subsequent usage (N-M reuse): clone a fresh entry
+          let baseRel = allRelationships[d.id].find(r => r.name === dbrel.name);
+          if (!baseRel) return;
+          allRelationships[d.id].push({
+            ...baseRel,
+            datablock_orig: d.id,
+            datablock_dest: dbrel.related_datablock_id,
+          });
+        }
+      });
     });
 
     return allRelationships;
