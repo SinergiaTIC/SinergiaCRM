@@ -6,9 +6,9 @@ import {
   INSTANCE_USER,
   INSTANCE_PASSWORD,
   CRM_ROOT,
-} from "./settings.js";
-import { ALL_MODULES } from "./helpers/generic/ModuleRegistry.js";
-import type { LabelSource } from "./models/types.js";
+} from "#settings";
+import { ALL_MODULES } from "#helpers/generic/ModuleRegistry";
+import type { LabelSource } from "#models/types";
 
 interface ApiResponse {
   id?: string;

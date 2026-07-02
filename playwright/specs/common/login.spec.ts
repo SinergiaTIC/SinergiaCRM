@@ -1,8 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
-import { LoginPage } from "../../pages/LoginPage.js";
-import { expectNoPhpErrors } from "../../helpers/errors.js";
-import { INSTANCE_USER, INSTANCE_PASSWORD } from "../../settings.js";
-import { t } from "../../helpers/i18n.js";
+import { LoginPage } from "#pages/LoginPage";
+import { expectNoPhpErrors } from "#helpers/errors";
+import { INSTANCE_USER, INSTANCE_PASSWORD } from "#settings";
+import { t } from "#helpers/i18n";
 
 test.describe("Login page", () => {
   test.use({ storageState: { cookies: [], origins: [] } as any });

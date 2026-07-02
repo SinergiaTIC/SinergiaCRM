@@ -1,4 +1,4 @@
-import type { ModuleKey, ModuleEntry } from "../../models/types.js";
+import type { ModuleKey, ModuleEntry } from "#models/types";
 
 export type { ModuleKey, ModuleEntry };
 

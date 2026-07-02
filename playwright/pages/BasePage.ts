@@ -1,7 +1,7 @@
 import { type Page } from "@playwright/test";
 import { expect } from "@playwright/test";
-import { t } from "../helpers/i18n.js";
-import { expectNoPhpErrors } from "../helpers/errors.js";
+import { t } from "#helpers/i18n";
+import { expectNoPhpErrors } from "#helpers/errors";
 
 export class BasePage {
   constructor(protected readonly page: Page) {}

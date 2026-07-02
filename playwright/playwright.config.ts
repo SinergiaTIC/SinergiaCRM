@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { BASE_URL, TEST_LANG } from "./settings.js";
+import { BASE_URL, TEST_LANG } from "#settings";
 
 type ProjectType = "functional" | "visual";
 

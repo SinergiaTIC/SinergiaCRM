@@ -1,7 +1,7 @@
 import { test, type Page } from "@playwright/test";
-import { ListViewPage } from "../../pages/ListViewPage.js";
-import { ALL_MODULES, type ModuleEntry } from "../../helpers/generic/ModuleRegistry.js";
-import { t } from "../../helpers/i18n.js";
+import { ListViewPage } from "#pages/ListViewPage";
+import { ALL_MODULES, type ModuleEntry } from "#helpers/generic/ModuleRegistry";
+import { t } from "#helpers/i18n";
 
 test.describe("Module list view smoke tests", () => {
   for (const mod of ALL_MODULES) {

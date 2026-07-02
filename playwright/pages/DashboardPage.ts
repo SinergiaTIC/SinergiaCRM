@@ -1,6 +1,6 @@
 import { type Locator, type Page } from "@playwright/test";
-import { BasePage } from "./BasePage.js";
-import { t } from "../helpers/i18n.js";
+import { BasePage } from "#pages/BasePage";
+import { t } from "#helpers/i18n";
 
 export class DashboardPage extends BasePage {
   readonly userMenuButton: Locator;

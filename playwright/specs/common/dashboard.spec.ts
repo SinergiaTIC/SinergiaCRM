@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { expectNoPhpErrors } from "../../helpers/errors.js";
+import { expectNoPhpErrors } from "#helpers/errors";
 
 test.describe("Dashboard", () => {
   test.beforeEach(async ({ page }: { page: Page }) => {

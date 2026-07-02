@@ -1,8 +1,8 @@
 import { type Page } from "@playwright/test";
-import { BasePage } from "./BasePage.js";
-import { expectNoPhpErrors } from "../helpers/errors.js";
+import { BasePage } from "#pages/BasePage";
+import { expectNoPhpErrors } from "#helpers/errors";
 import { expect } from "@playwright/test";
-import { t } from "../helpers/i18n.js";
+import { t } from "#helpers/i18n";
 
 export class DetailViewPage extends BasePage {
   readonly moduleName: string;

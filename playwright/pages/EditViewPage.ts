@@ -1,7 +1,7 @@
 import { type Page } from "@playwright/test";
-import { BasePage } from "./BasePage.js";
-import { expectNoPhpErrors } from "../helpers/errors.js";
-import { fillRelateField } from "../helpers/generic/FieldHelpers.js";
+import { BasePage } from "#pages/BasePage";
+import { expectNoPhpErrors } from "#helpers/errors";
+import { fillRelateField } from "#helpers/generic/FieldHelpers";
 import { expect } from "@playwright/test";
 
 export class EditViewPage extends BasePage {

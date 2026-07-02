@@ -1,5 +1,5 @@
 import { type Page } from "@playwright/test";
-import { t } from "../helpers/i18n.js";
+import { t } from "#helpers/i18n";
 
 export class FilterModalPage {
   constructor(private readonly page: Page) {}

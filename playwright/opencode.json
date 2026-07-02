@@ -94,6 +94,48 @@
         "playwright-test*planner_setup_page": true,
         "playwright-test*planner_save_plan": true
       }
+    },
+    "playwright-qa-orchestrator": {
+      "description": "Expert QA Playwright orchestrates complete end-to-end testing workflow — coordinates planning, generation, and healing to create maintainable, standards-compliant test suites",
+      "mode": "primary",
+      "prompt": "{file:.opencode/agents/playwright-qa-orchestrator.md}",
+      "tools": {
+        "ls": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "edit": true,
+        "write": true,
+        "task": true,
+        "webfetch": true,
+        "playwright-test*browser_click": true,
+        "playwright-test*browser_evaluate": true,
+        "playwright-test*browser_navigate": true,
+        "playwright-test*browser_snapshot": true,
+        "playwright-test*browser_type": true,
+        "playwright-test*browser_wait_for": true,
+        "playwright-test*generator_read_log": true,
+        "playwright-test*generator_setup_page": true,
+        "playwright-test*generator_write_test": true,
+        "playwright-test*planner_setup_page": true,
+        "playwright-test*planner_save_plan": true,
+        "playwright-test*test_debug": true,
+        "playwright-test*test_list": true,
+        "playwright-test*test_run": true,
+        "chrome-devtools_navigate_page": true,
+        "chrome-devtools_take_snapshot": true,
+        "chrome-devtools_take_screenshot": true,
+        "chrome-devtools_click": true,
+        "chrome-devtools_fill": true,
+        "chrome-devtools_fill_form": true,
+        "chrome-devtools_handle_dialog": true,
+        "chrome-devtools_press_key": true,
+        "chrome-devtools_wait_for": true,
+        "chrome-devtools_list_pages": true,
+        "chrome-devtools_select_page": true,
+        "chrome-devtools_list_console_messages": true,
+        "chrome-devtools_get_console_message": true
+      }
     }
   }
 }

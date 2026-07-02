@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
-import { ListViewPage } from "../../../pages/ListViewPage.js";
-import { ALL_MODULES } from "../../../helpers/generic/ModuleRegistry.js";
-import { t } from "../../../helpers/i18n.js";
+import { ListViewPage } from "#pages/ListViewPage";
+import { ALL_MODULES } from "#helpers/generic/ModuleRegistry";
+import { t } from "#helpers/i18n";
 
 test.describe("Module list view visual baselines", () => {
   for (const mod of ALL_MODULES) {

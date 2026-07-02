@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
-import { DashboardPage } from "../../pages/DashboardPage.js";
-import { t } from "../../helpers/i18n.js";
+import { DashboardPage } from "#pages/DashboardPage";
+import { t } from "#helpers/i18n";
 
 test.describe("Desktop navigation", () => {
   test.beforeEach(async ({ page }: { page: Page }) => {

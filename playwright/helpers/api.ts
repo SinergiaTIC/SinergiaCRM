@@ -1,4 +1,4 @@
-import { BASE_URL, INSTANCE_USER, INSTANCE_PASSWORD } from "../settings.js";
+import { BASE_URL, INSTANCE_USER, INSTANCE_PASSWORD } from "#settings";
 
 interface ApiConfig {
   endpoint?: string;
@@ -12,9 +12,16 @@ interface ApiError {
   description: string;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 interface ApiResponse {
   id?: string;
   error?: ApiError;
+  entry_list?: Array<{
+    id: string;
+    module_name: string;
+    name_value_list: Record<string, { name: string; value: string }>;
+  }>;
 }
 
 export class SuiteCRMApi {
@@ -27,6 +34,21 @@ export class SuiteCRMApi {
     this.endpoint = config.endpoint ?? `${BASE_URL}service/v4_1/rest.php`;
     this.username = config.username ?? INSTANCE_USER;
     this.password = config.password ?? INSTANCE_PASSWORD;
+  }
+
+  async getEntry(module: string, id: string): Promise<ApiResponse> {
+    this.#ensureSession();
+    const data = await this.#request("get_entry", {
+      session: this.session,
+      module_name: module,
+      id,
+      select_fields: [],
+      link_name_to_fields_array: [],
+    });
+    if (data.error) {
+      throw new Error(`API getEntry failed for ${module}#${id}: ${data.error.name} — ${data.error.description}`);
+    }
+    return data;
   }
 
   async login(): Promise<string> {

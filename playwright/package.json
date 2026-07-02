@@ -2,6 +2,14 @@
   "name": "sinergiacrm-playwright",
   "private": true,
   "type": "module",
+  "imports": {
+    "#pages/*":       "./pages/*.ts",
+    "#helpers/*":     "./helpers/*.ts",
+    "#specs/*":       "./specs/*.ts",
+    "#models/*":      "./models/*.ts",
+    "#settings":      "./settings.ts",
+    "#global-setup":  "./global-setup.ts"
+  },
   "scripts": {
     "test": "npx playwright test",
     "test:ui": "npx playwright test --ui",

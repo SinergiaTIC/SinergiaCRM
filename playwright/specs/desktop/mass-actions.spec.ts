@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
-import { BasePage } from "../../pages/BasePage.js";
-import { t } from "../../helpers/i18n.js";
+import { BasePage } from "#pages/BasePage";
+import { t } from "#helpers/i18n";
 
 test.describe("Mass actions", () => {
   test.beforeEach(async ({ page }: { page: Page }) => {

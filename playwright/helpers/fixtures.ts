@@ -1,4 +1,4 @@
-import { SuiteCRMApi } from "./api.js";
+import { SuiteCRMApi } from "#helpers/api";
 
 export interface FixtureRecord {
   module: string;
