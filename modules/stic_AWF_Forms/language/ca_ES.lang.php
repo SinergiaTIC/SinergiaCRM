@@ -219,8 +219,8 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW' => 'Nova relació entre blocs de dades',  
   'LBL_RELATIONSHIP_NO_MODULE_RELATED' => 'Sense mòdul relacionat',
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nou bloc de dades',
-  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloc de dades origen',
-  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloc de dades destí',
+  'LBL_RELATIONSHIP_TYPE' => 'Tipus',
+  'LBL_RELATIONSHIP_INVOLVED_BLOCKS' => 'Blocs de dades involucrats',
 
   // Flows
   'LBL_FLOWS' => "Fluxos d'accions",
@@ -244,6 +244,7 @@ $mod_strings = array (
   'LBL_ACTION_CATEGORY' => 'Categoria',
   'LBL_ACTION_PARAMETERS' => 'Paràmetres',
   'LBL_ACTION_ACTIONS' => 'Accions',
+  'LBL_ACTION_AUTOMATIC' => 'Automàtica',
   'LBL_ACTION_NO_PARAMS' => 'Sense paràmetres',
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Selecciona --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Mòdul',

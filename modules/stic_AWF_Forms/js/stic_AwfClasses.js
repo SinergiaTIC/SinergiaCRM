@@ -1649,7 +1649,14 @@ class stic_AwfConfiguration {
           let relEntry = d.relationships.find(r => r.related_datablock_id === f.value);
           relName = relEntry?.name || '';
         }
-        d.deleteField(f.name);
+        if (f.required) {
+          // Field is required: keep it but convert to fixed (block no longer exists)
+          f.value = '';
+          f.value_text = '';
+          f.value_type = 'fixed';
+        } else {
+          d.deleteField(f.name);
+        }
         if (relName) {
           let targetBlock = this.data_blocks.find(tb => tb.id === f.value);
           if (targetBlock) {
@@ -1841,26 +1848,32 @@ class stic_AwfConfiguration {
     if (!dataBlock) return;
     let relDatablock = this.data_blocks.find(d => d.id == relatedDatablockId);
 
-    // Find and delete the auto-created relate field (if any) on either block
-    let deletedViaField = false;
+    // Find the auto-created relate field (if any) on either block
+    let relateField = null;
+    let relateFieldBlock = null;
     [dataBlock, relDatablock].forEach(block => {
-      if (!block || deletedViaField) return;
+      if (!block || relateField) return;
       let moduleInfo = block.getModuleInformation();
       let relateFieldNames = Object.values(moduleInfo?.fields || {}).filter(
         f => f.type === 'relate' && f.options === relName
       ).map(f => f.name);
-      let field = block.fields.find(f =>
+      relateField = block.fields.find(f =>
         relateFieldNames.includes(f.name) && f.value_type == 'dataBlock' &&
         (f.value == datablockId || f.value == relatedDatablockId)
       );
-      if (field) {
-        this.deleteDataBlockField(block, field);
-        deletedViaField = true;
-      }
+      if (relateField) relateFieldBlock = block;
     });
 
-    // If no relate field was found (N-M or already removed), clean up manually
-    if (!deletedViaField) {
+    if (relateField && !relateField.required) {
+      // Field is not required: delete field + relationship + action
+      this.deleteDataBlockField(relateFieldBlock, relateField);
+    } else {
+      // No relate field (N-M), or field is required (keep field, convert to fixed, remove relationship + action)
+      if (relateField) {
+        relateField.value = '';
+        relateField.value_text = '';
+        relateField.value_type = 'fixed';
+      }
       dataBlock.removeRelationship(relName, relatedDatablockId);
       if (relDatablock) {
         relDatablock.removeRelationship(relName, datablockId);
@@ -2094,6 +2107,110 @@ class stic_AwfConfiguration {
         }
       });
     });
+
+    // Sort actions topologically based on requisite_actions dependencies
+    this.sortFlowTopologically(mainFlow);
+  }
+
+  /**
+   * Sorts the actions of a flow topologically using Kahn's algorithm based on requisite_actions.
+   * Detects cycles and marks the closing edge as deferred (removes it from requisites) so the
+   * topological sort can complete. Deferred edges are returned so the caller knows which
+   * RelateRecordsAction dependencies were broken.
+   * @param {stic_AwfFlow} flow The flow to sort
+   * @returns {Array} List of deferred edges: { from: actionId, to: actionId }
+   */
+  sortFlowTopologically(flow) {
+    if (!flow || !flow.actions || flow.actions.length === 0) return [];
+
+    // Build action map for name resolution
+    let actionMap = new Map();
+    flow.actions.forEach(a => actionMap.set(a.id, a));
+
+    // Build adjacency list and in-degree count from requisite_actions
+    // Edge: requisite -> action (action depends on requisite)
+    let inDegree = new Map();
+    let dependents = new Map(); // actionId -> [actionIds that depend on it]
+    flow.actions.forEach(a => {
+      inDegree.set(a.id, 0);
+      dependents.set(a.id, []);
+    });
+
+    flow.actions.forEach(a => {
+      (a.requisite_actions || []).forEach(reqId => {
+        if (actionMap.has(reqId)) {
+          dependents.get(reqId).push(a.id);
+          inDegree.set(a.id, inDegree.get(a.id) + 1);
+        }
+      });
+    });
+
+    // Kahn's algorithm (BFS)
+    let sorted = [];
+    let queue = [];
+    inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
+
+    while (queue.length > 0) {
+      let currentId = queue.shift();
+      sorted.push(currentId);
+      dependents.get(currentId).forEach(depId => {
+        inDegree.set(depId, inDegree.get(depId) - 1);
+        if (inDegree.get(depId) === 0) queue.push(depId);
+      });
+    }
+
+    // Cycle detection: if sorted < total, there is a cycle
+    let deferred = [];
+    if (sorted.length < flow.actions.length) {
+      // Find actions in the cycle (those not yet sorted)
+      let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
+
+      // For each remaining action, find a requisite that is also remaining (the cycle edge)
+      remaining.forEach(actionId => {
+        let action = actionMap.get(actionId);
+        let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
+        if (cycleReq) {
+          deferred.push({ from: cycleReq, to: actionId });
+          // Remove the deferred edge so the sort can proceed
+          action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
+          inDegree.set(actionId, inDegree.get(actionId) - 1);
+          if (inDegree.get(actionId) === 0) queue.push(actionId);
+        }
+      });
+
+      // Continue BFS after breaking cycles
+      while (queue.length > 0) {
+        let currentId = queue.shift();
+        sorted.push(currentId);
+        dependents.get(currentId).forEach(depId => {
+          inDegree.set(depId, inDegree.get(depId) - 1);
+          if (inDegree.get(depId) === 0) queue.push(depId);
+        });
+      }
+
+      // If there are still unsorted actions, force them at the end (resilience against multi-edge cycles)
+      let forced = [];
+      flow.actions.forEach(a => {
+        if (!sorted.includes(a.id)) {
+          sorted.push(a.id);
+          forced.push(a.id);
+        }
+      });
+    }
+
+    // Reorder flow.actions according to topological order
+    let sortedMap = new Map();
+    sorted.forEach((id, index) => sortedMap.set(id, index));
+    flow.actions.sort((a, b) => (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0));
+
+    // Reassign order property to match the new sequence
+    flow.actions.forEach((a, i) => {
+      if (a.is_automatic) a.order = -1;
+      else if (!a.is_terminal) a.order = i;
+      // Terminal actions keep their order (999)
+    });
+
+    return deferred;
   }
 
 }

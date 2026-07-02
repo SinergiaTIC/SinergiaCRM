@@ -322,8 +322,8 @@
                     <thead>
                       <tr>
                         <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
-                        <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_ORIG')"></th>
-                        <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_DEST')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_INVOLVED_BLOCKS')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_TYPE')"></th>
                         <th></th>
                       </tr>
                     </thead>
@@ -332,10 +332,12 @@
                         <tr>
                           <!-- Relationship -->
                           <td x-text="rel.text"></td>
-                          <!-- DataBlock Orig -->
-                          <td x-text="getDataBlockText(rel.datablock_orig)"></td>
-                          <!-- DataBlock Dest -->
-                          <td x-text="getDataBlockText(rel.datablock_dest)"></td>
+                          <!-- Involved DataBlocks -->
+                          <td x-text="$store.dataBlockRelationships.getInvolvedBlocksText(item.id, rel)"></td>
+                          <!-- Type -->
+                          <td>
+                            <span class="badge rounded-pill bg-secondary" x-text="$store.dataBlockRelationships.getRelationshipTypeLabel(item.id, rel.name, rel.datablock_dest)"></span>
+                          </td>
                           <!-- Delete button -->
                           <td>
                             <button type="button" class="btn"

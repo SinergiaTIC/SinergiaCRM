@@ -474,6 +474,19 @@ class WizardStep2 {
               this.formConfig.deleteRelationship(datablockId, relName, relatedDatablockId);
               this.resetDataBlockRelationships();
             },
+            getRelationshipTypeLabel(datablockId, relName, otherDatablockId) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return 'N-M';
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
+              let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              let otherHasRelateField = otherModuleInfo && Object.values(otherModuleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              if (hasRelateField && !otherHasRelateField) return 'N-1';
+              if (!hasRelateField && otherHasRelateField) return '1-N';
+              if (hasRelateField && otherHasRelateField) return '1-1';
+              return 'N-M';
+            },
             getAvailableDataBlocksForRelationship(datablockId, relName) { 
               return this.formConfig.getAvailableDataBlocksForRelationship(datablockId, relName);
             },
@@ -481,21 +494,32 @@ class WizardStep2 {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
             getRelText(datablockId, relName, datablockDestId = null) {
-              let dataBlock_orig = this.formConfig.data_blocks.find(d => d.id == datablockId);
-              let dataBlock_dest = datablockDestId
-                ? this.formConfig.data_blocks.find(d => d.id == datablockDestId)
-                : null;
-              let relText = this.dataBlockRelationships[datablockId]?.find(r => r.name === relName)?.text || relName;
-              let str = "";
-              if (dataBlock_orig && dataBlock_dest) {
-                if (dataBlock_orig.id == datablockId) {
-                  str = `${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
-                } else {
-                  str = `${dataBlock_dest.text} ⟵ ${dataBlock_orig.text}`;
-                }
-                str += ` (${relText})`;
-              }
-              return str;
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let rel = this.dataBlockRelationships[datablockId]?.find(r => r.name === relName && (datablockDestId == null || r.datablock_dest == datablockDestId));
+              if (!block || !rel) return relName;
+              let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              if (!otherBlock) return relName;
+
+              let typeLabel = this.getRelationshipTypeLabel(datablockId, relName, otherBlockId);
+              let arrow = '⟶';
+              if (typeLabel === 'N-M' || typeLabel === '1-1') arrow = '⟷';
+              else if (typeLabel === '1-N') arrow = '⟵';
+
+              return `${block.text} ${arrow} ${otherBlock.text}`;
+            },
+            getInvolvedBlocksText(datablockId, rel) {
+              let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
+              let typeLabel = this.getRelationshipTypeLabel(datablockId, rel.name, otherBlockId);
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              if (!block || !otherBlock) return rel.text;
+
+              let arrow = '⟶';
+              if (typeLabel === 'N-M' || typeLabel === '1-1') arrow = '⟷';
+              else if (typeLabel === '1-N') arrow = '⟵';
+
+              return `${block.text} (${block.getModuleText()}) ${arrow} ${otherBlock.text} (${otherBlock.getModuleText()})`;
             },
           });
         }

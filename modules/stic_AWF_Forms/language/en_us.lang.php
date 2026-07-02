@@ -219,8 +219,8 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW' => 'New data block relationship',  
   'LBL_RELATIONSHIP_NO_MODULE_RELATED' => 'No related module',
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'New data block',
-  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Origin data block',
-  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Destination data block',
+  'LBL_RELATIONSHIP_TYPE' => 'Type',
+  'LBL_RELATIONSHIP_INVOLVED_BLOCKS' => 'Involved data blocks',
 
   // Flows
   'LBL_FLOWS' => 'Action flows',
@@ -244,6 +244,7 @@ $mod_strings = array (
   'LBL_ACTION_CATEGORY' => 'Category',
   'LBL_ACTION_PARAMETERS' => 'Parameters',
   'LBL_ACTION_ACTIONS' => 'Actions',
+  'LBL_ACTION_AUTOMATIC' => 'Automatic',
   'LBL_ACTION_NO_PARAMS' => 'No parameters',
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Select --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Module',
