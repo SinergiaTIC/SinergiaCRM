@@ -1121,6 +1121,19 @@ class stic_AWFUtils {
             $contextData = $deferredData->toArray();
             $isSuccess = ($ticketStatus === 'resolved' || $ticketStatus === 'processed');
 
+            if ($isSuccess && $ticketStatus === 'processed' && !$isCli) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed. Ticket ID: {$ticket->id}");
+                
+                $customTitle = $context->deferredContext?->alreadyProcessedTitle;
+                $customMsg = $context->deferredContext?->alreadyProcessedMessage;
+                if (!empty($customTitle) || !empty($customMsg)) {
+                    $title = $customTitle ?: translate('LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT', 'stic_AWF_Forms');
+                    $msg = $customMsg ?: translate('LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT', 'stic_AWF_Forms');
+                    self::renderGenericResponse($context->formConfig, $title, $msg);
+                    return;
+                }
+            }
+
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred flow for ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
 
             $lastResult = self::resumeDeferredFlow($context, $contextData, $isSuccess);

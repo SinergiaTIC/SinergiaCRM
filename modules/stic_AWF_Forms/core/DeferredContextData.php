@@ -64,6 +64,8 @@ class DeferredContextData
     public ?string $beanId;
     public ?string $module;
     public array $blockReferences = [];
+    public ?string $alreadyProcessedTitle = null;
+    public ?string $alreadyProcessedMessage = null;
     public ?string $expiredTitle = null;
     public ?string $expiredMessage = null;
     
@@ -127,6 +129,8 @@ class DeferredContextData
             'bean_id' => $this->beanId,
             'module' => $this->module,
             'block_references' => $this->blockReferences,
+            'already_processed_title' => $this->alreadyProcessedTitle,
+            'already_processed_message' => $this->alreadyProcessedMessage,
             'expired_title' => $this->expiredTitle,
             'expired_message' => $this->expiredMessage,
         ];
@@ -153,6 +157,8 @@ class DeferredContextData
         );
         $instance->blockReferences = $data['block_references'] ?? [];
 
+        $instance->alreadyProcessedTitle = $data['already_processed_title'] ?? null;
+        $instance->alreadyProcessedMessage = $data['already_processed_message'] ?? null;
         $instance->expiredTitle = $data['expired_title'] ?? null;
         $instance->expiredMessage = $data['expired_message'] ?? null;
 
@@ -166,6 +172,8 @@ class DeferredContextData
               $data['bean_id'], 
               $data['module'], 
               $data['block_references'],
+              $data['already_processed_title'],
+              $data['already_processed_message'],
               $data['expired_title'],
               $data['expired_message']);
         $instance->customData = $data;
@@ -187,6 +195,8 @@ class DeferredContextData
             'bean_id' => $this->beanId,
             'module' => $this->module,
             'block_references' => $this->blockReferences,
+            'already_processed_title' => $this->alreadyProcessedTitle,
+            'already_processed_message' => $this->alreadyProcessedMessage,
             'expired_title' => $this->expiredTitle,
             'expired_message' => $this->expiredMessage,
         ];
@@ -208,6 +218,9 @@ class DeferredContextData
         $instance->customData = $customData;
         $instance->captureBlockReferences($context);
         
+        $instance->alreadyProcessedTitle = $actionConfig->getResolvedParameter('already_processed_title');
+        $instance->alreadyProcessedMessage = $actionConfig->getResolvedParameter('already_processed_message');
+
         $instance->expiredTitle = $actionConfig->getResolvedParameter('expired_title');
         $instance->expiredMessage = $actionConfig->getResolvedParameter('expired_message');
 

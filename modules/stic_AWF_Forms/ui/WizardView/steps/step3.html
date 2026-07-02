@@ -335,7 +335,8 @@
                                             </template>
 
                                             <template x-for="param in $store.actionEditor.action.parameters" :key="param.name">
-                                                <div class="mb-3 col-4" x-data="{ paramDef: $store.actionEditor.definition.parameters.find(p => p.name == param.name) }" x-show="paramDef">
+                                                <div class="mb-3" :class="paramDef ? (paramDef.colSize || 'col-4') : 'col-4'" 
+                                                     x-data="{ paramDef: $store.actionEditor.definition.parameters.find(p => p.name == param.name) }" x-show="paramDef">
                                                     <!-- Label, required, description -->
                                                     <label :for="'ModalAction-param-'+paramDef.name" class="form-label" x-init="utils.setInlineHelpQtip()">
                                                         <span x-text="utils.toFieldLabelText(paramDef.text)"></span>

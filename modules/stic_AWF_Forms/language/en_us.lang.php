@@ -481,6 +481,12 @@ $mod_strings = array (
   // -- DEFERRED ACTIONS --
   'LBL_PARAM_EXPIRATION_DAYS' => 'Expiration days',
   'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Number of days before the deferred action expires.',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Title for link already used',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => 'Title of the message that will be displayed when the link is accessed if it has already been used.',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Action already performed',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => 'Text of the message for link already used',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => 'Text that will be displayed when the link is accessed if it has already been used.',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => 'This action has already been completed successfully and does not need to be repeated.',
   'LBL_PARAM_EXPIRED_TITLE' => 'Title for expired link',
   'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Title of the warning that will be displayed when accessing the expired link.',
   'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Expired link',
