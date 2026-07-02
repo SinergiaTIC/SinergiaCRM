@@ -36,43 +36,48 @@ require_once "modules/stic_Payments/stic_Payments.php";
  */
 class stic_AWF_OfflineStrategy extends stic_AWF_PaymentStrategy
 {
-    public static function getSourceName(): string
-    {
+    /**
+     * Returns the webhook source identifier for this strategy.
+     * Used by WebhookHandler to route incoming webhooks to the correct strategy.
+     */
+    public static function getSourceName(): string { 
         return 'offline';
     }
 
-    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string
-    {
+    /**
+     * Extracts the external transaction ID from the raw webhook request data.
+     * Each gateway sends the ID in a different location/format.
+     *
+     * @param array $rawData POST data array
+     * @param string $rawBody Raw request body (for JSON-based gateways)
+     * @return string|null The external transaction ID or null if not found
+     */
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string {
         return null;
     }
+
     /**
      * Initiates an offline payment: sets the payment status to 'pending' and
      * returns OK so PaymentRouterAction triggers the Deferred OK flow immediately.
      */
-    public function initiate(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult
-    {
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         // Offline payments (bank transfer, cash, direct debit) keep their default status
         // (not_remitted as set by the Payment Commitment hook on creation).
         // No gateway interaction needed; return OK immediately so the flow continues.
-
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF OfflineStrategy: Payment {$beanPayment->id} processed as offline (status: {$beanPayment->status}).");
-
         return new ActionResult(ResultStatus::OK, $actionConfig, 'Offline payment registered');
     }
 
     /**
      * No-op: Offline payments never reach the terminal step.
      */
-    public function performTerminal(ExecutionContext $context, ActionResult $result): void
-    {
+    public function performTerminal(ExecutionContext $context, ActionResult $result): void {
         // Offline payments return OK immediately, so this is never called.
     }
 
     /**
      * No-op: Offline payments do not receive webhooks.
      */
-    public function resolve(ExecutionContext $context, ActionResult $result): ActionResult
-    {
+    public function processNotification(ExecutionContext $context, ActionResult $result): ActionResult {
         // Offline payments return OK immediately, so this is never called.
         return new ActionResult(ResultStatus::OK, null, 'Offline: no webhook expected');
     }

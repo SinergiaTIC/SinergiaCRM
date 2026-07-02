@@ -99,8 +99,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
      * @param DataBlockResolved $block The data block (form data).
      * @return ActionResult
      */
-    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult
-    {
+    public function executeWithBean(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block): ActionResult {
         // Get additional parameters (ParameterResolver ensures they are not null because they are required)
 
         /** @var BeanReference $templateRef */
@@ -117,31 +116,23 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         }
 
         // Create a deferred ticket
-        $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
-        $ticket->id = create_guid(); // Set Id for the ContextData
-        $ticket->new_with_id = true;
-
-        $ticket->name = 'Email Confirmation: ' . $emailAddress . ' - ' . date('Y-m-d H:i:s');
-        $ticket->stic_awf_responses_id_c = $context->responseId;
-        $ticket->token_hash = bin2hex(random_bytes(32)); 
-        $ticket->status = 'pending';
-        $ticket->handler_action_id = $actionConfig->id;
-
-        // Set the expiration date
-        $days = (int)$actionConfig->getResolvedParameter('expiration_days', 7);
-        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
-
-        // Set the context data for the deferred flow
-        $contextData = DeferredContextData::createSnapshot(self::class, $ticket, $actionConfig, $bean, $context, ['email' => $emailAddress]);
-        $ticket->context_data = $contextData->toJson();;
-
-        // Save the ticket
+        $ticket = $this->createDeferredTicket(
+            $context,
+            $actionConfig,
+            $bean,
+            [
+                // Custom data
+                'email' => $emailAddress
+            ], 
+            'Email Confirmation: ' . $emailAddress, 
+            $this->defaultExpirationDays
+        );
+        
+        // Save the Ticket to DB
         $ticket->save();
 
         // Generate the confirmation URL
-        global $sugar_config;
-        $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
-        $confirmationUrl = $siteUrl . '/index.php?entryPoint=stic_AWF_webhookHandler&source=email_confirmation_action&token=' . urlencode($ticket->token_hash) . '&redirect=1';
+        $confirmationUrl = $this->getAsyncCallbackUrl('email_confirmation_action', $ticket, ['redirect' => 1]);
 
         // Insert the confirmation URL into the email template using a custom macro
         $customVars = [ '{::confirmation_url::}' => $confirmationUrl ];
@@ -172,8 +163,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
      * @param array $requestData The data of the incoming request.
      * @return ActionResult Result of the execution of the action.
      */
-    public function processWebhook(ExecutionContext $context, array $requestData): ActionResult
-    {
+    public function processWebhook(ExecutionContext $context, array $requestData): ActionResult {
         // Email confirmation received: extract the email address from the context data and update the opt-in status
         $emailAddress = $context->deferredContext?->getCustom('email');
         if (empty($emailAddress)) {

@@ -136,61 +136,41 @@ class ExampleDeferredAction extends DeferredActionDefinition implements IWebhook
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        // 1. Retrieve visual configuration parameters resolved by the framework
+        // Retrieve visual configuration parameters resolved by the framework
         $endpoint = $actionConfig->getResolvedParameter('external_endpoint');
         /** @var ?BeanReference $campaignRef */
         $campaignRef = $actionConfig->getResolvedParameter('target_campaign');
 
-        // 2. Create the Deferred Ticket to track the transaction
-        /** @var stic_AWF_Deferred_Tickets $ticket */
-        $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
-        
-        // PERFORMANCE PATTERN: Allocate GUID in memory to include it in the snapshot safely before saving
-        $ticket->id = create_guid();
-        $ticket->new_with_id = true;
-
-        $ticket->name = 'External API Validation: ' . $ticket->id . ' - ' . date('Y-m-d H:i:s');
-        $ticket->stic_awf_responses_id_c = $context->responseId;
-        $ticket->token_hash = bin2hex(random_bytes(32)); // Internal secure token
-        $ticket->status = 'pending';
-        $ticket->handler_action_id = $actionConfig->id;
-
         // Generate an external transactional ID to mimic gateway tracking (Stripe/Redsys/CECA style)
         $externalTxId = 'TX_EXT_' . bin2hex(random_bytes(8));
-        $ticket->external_transaction_id = $externalTxId;
 
-        // Set the expiration date based on the visual parameter
-        $days = (int)$actionConfig->getResolvedParameter('expiration_days', 14);
-        $ticket->expiration_date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
-
-        // 3. Serialize Context Snapshot into Ticket
-        // This captures current modified beans, blocks, and custom payload data for restoration on Webhook resumption
-        $contextData = DeferredContextData::createSnapshot(
-            self::class,
-            $ticket,
+        // Create the Deferred Ticket to track the transaction
+        /** @var stic_AWF_Deferred_Tickets $ticket */
+        $ticket = $this->createDeferredTicket(
+            $context,
             $actionConfig,
             null,
-            $context,
-            [
+            [   // Custom data
                 'external_tx_id' => $externalTxId,
-                'campaign_id' => $campaignRef?->beanId ?? '',
-            ]
+                'campaign_id' => $campaignRef?->beanId ?? ''
+            ], 
+            'External API Validation'
         );
-        $ticket->context_data = $contextData->toJson();
+
+        // Map physical relational columns required by WebhookHandler query lookups
+        $ticket->external_transaction_id = $externalTxId;
 
         // Save the Ticket to DB
         $ticket->save();
 
         $GLOBALS['log']->info("Line " . __LINE__ . " - " . __METHOD__ . ": Created AWF Deferred Ticket ID={$ticket->id} for external transaction {$externalTxId}");
 
-        // 4. Dispatch payload to External API (Simulated)
+        // Dispatch payload to External API (Simulated)
         // In a real-world integration, you would trigger a cURL/Guzzle call to $endpoint here, 
         // passing the $ticket->token_hash (for redirects) or the $externalTxId (for webhooks).
         
-        // 5. Return WAIT to pause the flow and wait for the callback (Front-Channel or Back-Channel Webhook)
+        // Return WAIT to pause the flow and wait for the callback (Front-Channel or Back-Channel Webhook)
         $result = new ActionResult(ResultStatus::WAIT, $actionConfig, "Dispatched validation task. Awaiting external callback.");
-        $result->registerBeanModification($ticket, BeanModificationType::CREATED);
-
         return $result;
     }
 
