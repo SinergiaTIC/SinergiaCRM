@@ -1639,7 +1639,7 @@ class stic_AwfConfiguration {
    * @param {stic_AwfDataBlock} dataBlock 
    */
   deleteDataBlock(dataBlock) {
-    // Remove fields that reference this DataBlock (prevents "Camp fix sense valor assignat" errors)
+    // Remove fields that reference this DataBlock (prevents "Fixed field without assigned value" errors)
     this.data_blocks.forEach(d => {
       let fieldsToRemove = d.fields.filter(f => f.value_type == 'dataBlock' && f.value == dataBlock.id);
       fieldsToRemove.forEach(f => {
