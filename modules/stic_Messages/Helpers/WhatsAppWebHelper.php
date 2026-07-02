@@ -39,7 +39,11 @@ class WhatsAppWebHelper extends stic_MessagesHelper {
      * {@inheritdoc}
      */
     protected function getProviderName(): string {
-        return 'WhatsAppWeb';
+        return 'whatsapp_web';
+    }
+
+    public function getHelperType(): string {
+        return 'whatsapp_web';
     }
 
     /**
@@ -132,7 +136,7 @@ class WhatsAppWebHelper extends stic_MessagesHelper {
         }
 
         return [
-            'type' => 'WhatsAppWeb',
+            'type' => 'whatsapp_web',
             'phone' => $phone,
             'text' => $text,
             'id' => $bean->id,
@@ -162,7 +166,7 @@ class WhatsAppWebHelper extends stic_MessagesHelper {
         }
 
         return [
-            'type' => 'WhatsAppWeb',
+            'type' => 'whatsapp_web',
             'open_data' => $openData,
         ];
     }

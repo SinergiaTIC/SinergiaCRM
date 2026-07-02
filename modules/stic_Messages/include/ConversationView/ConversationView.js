@@ -244,7 +244,7 @@ function appendMessage(msg, isNew) {
             } else {
                 var a = document.createElement('a');
                 a.className = 'attachment-bubble-file';
-                a.href = 'upload/' + note.id;
+                a.href = 'index.php?module=Notes&action=DetailView&record=' + note.id;
                 a.target = '_blank';
                 a.textContent = '\uD83D\uDCC4 ' + (note.filename || note.name);
                 attachDiv.appendChild(a);
