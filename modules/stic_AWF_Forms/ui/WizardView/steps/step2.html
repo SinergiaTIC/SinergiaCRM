@@ -62,7 +62,7 @@
                 <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
                 <div>
                   <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
-                    <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel.name, rel.datablock_dest);"></div>
+                    <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel);"></div>
                   </template>
                 </div>
                 <!-- Buttons -->

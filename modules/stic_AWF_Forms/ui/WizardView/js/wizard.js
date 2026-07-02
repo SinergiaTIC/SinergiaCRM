@@ -493,15 +493,14 @@ class WizardStep2 {
             suggestNewDestDataBlockText(origDatablockId, relName) {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
-            getRelText(datablockId, relName, datablockDestId = null) {
+            getRelText(datablockId, rel) {
               let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
-              let rel = this.dataBlockRelationships[datablockId]?.find(r => r.name === relName && (datablockDestId == null || r.datablock_dest == datablockDestId));
-              if (!block || !rel) return relName;
+              if (!block || !rel) return rel?.text || '';
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
               let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
-              if (!otherBlock) return relName;
+              if (!otherBlock) return rel.text;
 
-              let typeLabel = this.getRelationshipTypeLabel(datablockId, relName, otherBlockId);
+              let typeLabel = this.getRelationshipTypeLabel(datablockId, rel.name, otherBlockId);
               let arrow = '⟶';
               if (typeLabel === 'N-M' || typeLabel === '1-1') arrow = '⟷';
               else if (typeLabel === '1-N') arrow = '⟵';
