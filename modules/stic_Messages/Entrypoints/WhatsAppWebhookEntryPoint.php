@@ -47,7 +47,7 @@ class WhatsAppWebhookEntryPoint
 
             $message = BeanFactory::newBean('stic_Messages');
             $message->name = $this->generateMessageName($parentInfo, $from);
-            $message->type = 'WhatsAppHelper';
+            $message->type = 'whatsapp';
             $message->direction = 'inbound';
             $message->phone = $from;
             $message->sender = $from;

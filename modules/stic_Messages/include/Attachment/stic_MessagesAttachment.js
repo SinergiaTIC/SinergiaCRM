@@ -21,7 +21,7 @@
  */
 
 (function () {
-    var WHATSAPP_TYPES = ['WhatsAppHelper'];
+    var WHATSAPP_TYPES = ['whatsapp'];
 
     function sticToggleAttachment() {
         var typeEl = document.getElementById('type');

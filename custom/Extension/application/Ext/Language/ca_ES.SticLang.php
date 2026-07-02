@@ -3672,9 +3672,9 @@ $app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Inter
 $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 
 // Missatges: Tipus
-$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
-$app_list_strings['stic_messages_type_list']['WhatsAppHelper'] = 'WhatsApp';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'WhatsApp';
 $app_list_strings['stic_messages_type_list']['private_area'] = 'Àrea privada';
 
 // Missatges: Direcció

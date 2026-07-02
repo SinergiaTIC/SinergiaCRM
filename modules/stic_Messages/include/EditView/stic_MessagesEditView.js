@@ -20,7 +20,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-var WHATSAPP_HELPER = 'WhatsAppHelper';
+var WHATSAPP_HELPER = 'whatsapp';
 var sticMessagesWindowChecked = false;
 var sticMessagesWindowOpen = false;
 

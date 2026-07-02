@@ -241,7 +241,7 @@ class stic_MessagesUtils {
                 FROM stic_messages
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
-                AND type = 'WhatsAppHelper'
+                AND type = 'whatsapp'
                 AND (
                     (direction = 'inbound' AND status = 'received')
                     OR (direction = 'outbound' AND template_id IS NOT NULL AND template_id != '' AND status = 'sent')
@@ -387,7 +387,7 @@ class stic_MessagesUtils {
         foreach ($helpers as $className) {
             $helper = self::instantiateHelper($className);
             if ($helper !== null && !$helper->isRetryable()) {
-                $nonRetryable[] = $className;
+                $nonRetryable[] = $helper->getHelperType();
             }
         }
 
@@ -395,29 +395,63 @@ class stic_MessagesUtils {
     }
 
     /**
-     * Finds the helper class name for a given message type.
+     * Converts a channel type identifier to a class name segment.
+     * e.g., 'whatsapp' → 'WhatsApp', 'private_area' → 'PrivateArea', 'sms' → 'Sms'
+     */
+    private static function channelToPascalCase(string $type): string {
+        $parts = explode('_', $type);
+        $result = '';
+        foreach ($parts as $part) {
+            $result .= ucfirst($part);
+        }
+        // Ensure "whatsapp" is properly cased as "WhatsApp"
+        $result = str_replace('Whatsapp', 'WhatsApp', $result);
+        return $result;
+    }
+
+    /**
+     * Finds the helper class name for a given channel type.
+     * Resolves provider from config_override when available.
      * 
-     * @param string $type The message type (e.g., 'WhatsAppWeb', 'private_area', 'sms')
+     * @param string $type The channel type (e.g., 'whatsapp', 'sms', 'WhatsAppWeb', 'private_area')
      * @return string|null The helper class name or null if not found
      */
     public static function getHelperClassForType(string $type): ?string {
-        $helpers = self::getAvailableHelpers();
+        global $sugar_config;
 
-        foreach ($helpers as $className) {
-            $helper = self::instantiateHelper($className);
-            if ($helper !== null && $helper->getHelperType() === $type) {
+        // Default providers: can be overridden in config_override.php
+        $defaultProviders = [
+            'whatsapp' => 'Twilio',
+            'sms' => 'Seven',
+        ];
+        $providers = array_merge(
+            $defaultProviders,
+            $sugar_config['stic_message_providers'] ?? []
+        );
+        $provider = $providers[$type] ?? null;
+        
+        if ($provider) {
+            $channelPart = self::channelToPascalCase($type);
+            $className = $provider . $channelPart . 'Helper';
+            if (self::instantiateHelper($className) !== null) {
                 return $className;
             }
         }
-
+        
+        // Fallback: try direct class name {Channel}Helper
+        $className = self::channelToPascalCase($type) . 'Helper';
+        if (self::instantiateHelper($className) !== null) {
+            return $className;
+        }
+        
         return null;
     }
 
     /**
-     * Instantiates a helper by its message type.
+     * Instantiates a helper by its channel type.
      * Convenience method that combines getHelperClassForType() + instantiateHelper().
      * 
-     * @param string $type The message type (e.g., 'WhatsAppWeb', 'private_area', 'sms')
+     * @param string $type The channel type (e.g., 'whatsapp', 'sms', 'WhatsAppWeb', 'private_area')
      * @return stic_MessagesHelper|null
      */
     public static function instantiateHelperByType(string $type): ?stic_MessagesHelper {

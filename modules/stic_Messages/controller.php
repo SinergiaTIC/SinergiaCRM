@@ -662,7 +662,7 @@ class stic_MessagesController extends SugarController
                 FROM stic_messages
                 WHERE parent_id = '{$parentIdSafe}'
                 AND deleted = 0
-                AND type = 'WhatsAppHelper'
+                AND type = 'whatsapp'
                 ORDER BY date_entered ASC";
 
         $result = $db->query($sql);
@@ -685,7 +685,7 @@ class stic_MessagesController extends SugarController
             // Find the last event date for closed message
             $lastEvent = null;
             foreach (array_reverse($messages) as $msg) {
-                if ($msg['type'] === 'WhatsAppHelper') {
+                if ($msg['type'] === 'whatsapp') {
                     if (!empty($msg['template_id'])) {
                         $templateBean = BeanFactory::getBean('EmailTemplates', $msg['template_id']);
                         if ($templateBean && !empty($templateBean->stic_whatsapp_twilio_id_c)) {
@@ -720,7 +720,7 @@ class stic_MessagesController extends SugarController
             . '&parent_id='     . urlencode($parentId)
             . '&parent_name='   . urlencode($parentName)
             . '&phone='         . urlencode($contactPhone)
-            . '&type='          . urlencode('WhatsAppHelper');
+            . '&type='          . urlencode('whatsapp');
 
         require_once('modules/stic_Messages/views/view.conversation.php');
         $view = new stic_MessagesViewConversation();

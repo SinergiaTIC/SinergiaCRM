@@ -43,10 +43,10 @@ class SevenSMSHelper extends stic_MessagesHelper {
     }
 
     /**
-     * Returns the helper type matching the DB stic_messages_type_list key.
+     * Returns the helper type matching the channel.
      */
     public function getHelperType(): string {
-        return 'SevenSmsHelper';
+        return 'sms';
     }
 
     /**

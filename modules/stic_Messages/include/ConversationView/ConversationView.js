@@ -148,7 +148,7 @@ function sendMessage() {
     var formData = new FormData();
     formData.append('module',      'stic_Messages');
     formData.append('action',      'Save');
-    formData.append('type',        'WhatsAppHelper');
+    formData.append('type',        'whatsapp');
     formData.append('status',      'sent');
     formData.append('message',     text);
     formData.append('parent_type', CONVERSATION.parentType);

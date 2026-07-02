@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-// WhatsApp Helper class to send WhatsApp messages through Twilio provider.
+// Twilio WhatsApp Helper class to send WhatsApp messages through Twilio provider.
 
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once('modules/stic_Messages/Helpers/stic_MessagesHelper.php');
 
-class WhatsAppHelper extends stic_MessagesHelper {
+class TwilioWhatsAppHelper extends stic_MessagesHelper {
     
     protected ?string $sid = null;
     protected ?string $token = null;
@@ -47,7 +47,7 @@ class WhatsAppHelper extends stic_MessagesHelper {
      * Returns the helper type matching the DB stic_messages_type_list key.
      */
     public function getHelperType(): string {
-        return 'WhatsAppHelper';
+        return 'whatsapp';
     }
 
     /**

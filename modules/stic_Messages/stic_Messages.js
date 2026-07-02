@@ -239,8 +239,8 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
                 // Disable WhatsApp option and change to SMS if WhatsAppWeb is selected
                 $typeSelect.find('option[value="WhatsAppWeb"]').prop('disabled', true);
                 if ($typeSelect.val() === 'WhatsAppWeb') {
-                  const smsOption = $typeSelect.find('option[value="SevenSmsHelper"]');
-                  $typeSelect.val(smsOption.length ? 'SevenSmsHelper' : $typeSelect.find('option:not(:disabled)').first().val());
+                  const smsOption = $typeSelect.find('option[value="sms"]');
+                  $typeSelect.val(smsOption.length ? 'sms' : $typeSelect.find('option:not(:disabled)').first().val());
                 }
               }
             }
