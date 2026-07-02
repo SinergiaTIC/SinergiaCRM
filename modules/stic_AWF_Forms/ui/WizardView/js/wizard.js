@@ -1545,7 +1545,6 @@ class WizardStep3 {
       flowTabSelected: 0,
       get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
-      showAllActions: false,
 
       selectedCategory: '', 
       selectedActionDefName: '', 

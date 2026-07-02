@@ -27,13 +27,6 @@
     <!-- Flows -->
     <div>
         <h2 class="mb-2" x-text="utils.translate('LBL_FLOWS')"></h2>
-        <!-- Show all Actions -->
-        <div class="text-muted form-check form-switch small p-3" x-init="utils.setInlineHelpQtip()">
-            <label for="actions_allcheck" class="form-label" x-text="utils.translate('LBL_ACTIONS_SHOW_ALL')"></label>
-            <i class="inline-help glyphicon glyphicon-info-sign"></i>
-            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_ACTIONS_SHOW_ALL_DESC')"></div>
-            <input class="form-check-input form-switch" type="checkbox" role="switch" id="actions_allcheck" x-model="showAllActions"/>
-        </div>
         <!-- Tab Headers: Flows -->
         <div class="stic-tabs">
             <template x-for="flow in formConfig.flows" :key="flow.id">
@@ -50,7 +43,7 @@
             <!-- Actions -->
             <div class="accordion">
                 <template x-for="action in actions" :key="action.id">
-                    <div class="accordion-item" x-data="{opened:false}" x-show="action.is_user_selectable || showAllActions">
+                    <div class="accordion-item" x-data="{opened:false}">
                         <div :id="action.id+'_Header'" class="mt-1 mb-1 pe-2 btn accordion-header accordion-button p-0 align-items-center" :class="{'collapsed': !opened}">
                             <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
                                  data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
@@ -77,20 +70,18 @@
                                 -->
                             </div>
                             <!-- Buttons -->
-                            <template x-if="showAllActions">
-                                <div class="d-flex align-items-center pe-3">
-                                    <div class="d-inline-flex input-group" role="group">
-                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                :disabled="!canMoveUpAction(action);" @click="moveUpAction(action);">
-                                            <span class="suitepicon suitepicon-action-move-up"></span>
-                                        </button>
-                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                :disabled="!canMoveDownAction(action);" @click="moveDownAction(action);">
-                                            <span class="suitepicon suitepicon-action-move-down"></span>
-                                        </button>
-                                    </div> 
-                                </div>
-                            </template>
+                            <div class="d-flex align-items-center pe-3">
+                                <div class="d-inline-flex input-group" role="group">
+                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                            :disabled="!canMoveUpAction(action);" @click="moveUpAction(action);">
+                                        <span class="suitepicon suitepicon-action-move-up"></span>
+                                    </button>
+                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                            :disabled="!canMoveDownAction(action);" @click="moveDownAction(action);">
+                                        <span class="suitepicon suitepicon-action-move-down"></span>
+                                    </button>
+                                </div> 
+                            </div>
                         </div>
                         <div :id="action.id+'_Content'" class="accordion-collapse collapse" :aria-labelledby="action.id+'_Header'">
                             <div :id="action.id+'_Body'" class="accordion-body"> 
