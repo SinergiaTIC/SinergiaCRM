@@ -443,9 +443,23 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return [];
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let seen = new Set();
               return this.dataBlockRelationships[datablockId].filter(r => {
-                if (r.datablock_orig == '' && r.relationship_type !== 'many-to-many') return true; // 1-N unused
-                if (r.relationship_type === 'many-to-many') return true; // N-M always available
+                if (seen.has(r.name)) return false;
+                // If this module has a relate field for this relationship, it's the N side: hide after use
+                let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === r.name);
+                if (!hasRelateField) {
+                  seen.add(r.name);
+                  return true;
+                }
+                let isUsed = block.relationships.some(br => br.name === r.name);
+                if (!isUsed) {
+                  seen.add(r.name);
+                  return true;
+                }
                 return false;
               });
             },

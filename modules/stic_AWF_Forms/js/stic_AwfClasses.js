@@ -287,17 +287,14 @@ class stic_AwfDataBlock {
   }
 
   addRelationship(relName, relatedBlockId, relationshipType = 'many-to-many') {
-    let isDuplicate;
-    if (relationshipType === 'one-to-many') {
-      // 1-N: only one usage allowed
-      isDuplicate = this.relationships.some(r => r.name === relName);
-    } else {
-      // N-M: multiple usages allowed, only block duplicates prevented
-      isDuplicate = this.relationships.some(r => r.name === relName && r.related_datablock_id === relatedBlockId);
-    }
-    if (!isDuplicate) {
-      this.relationships.push({ name: relName, related_datablock_id: relatedBlockId });
-    }
+    // Prevent exact duplicates (same name + same block)
+    if (this.relationships.some(r => r.name === relName && r.related_datablock_id === relatedBlockId)) return false;
+    // If this block's module has a relate field for this relationship, it's the N side: only one usage allowed
+    let moduleInfo = this.getModuleInformation();
+    let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+    if (hasRelateField && this.relationships.some(r => r.name === relName)) return false;
+    this.relationships.push({ name: relName, related_datablock_id: relatedBlockId });
+    return true;
   }
 
   removeRelationship(relName, relatedBlockId = null) {
@@ -1642,12 +1639,29 @@ class stic_AwfConfiguration {
    * @param {stic_AwfDataBlock} dataBlock 
    */
   deleteDataBlock(dataBlock) {
-    // Reset all fields pointing to this DataBlock
+    // Remove fields that reference this DataBlock (prevents "Camp fix sense valor assignat" errors)
     this.data_blocks.forEach(d => {
-      d.fields.filter(f => f.value_type == 'dataBlock' && f.value == dataBlock.id).forEach(f => {
-        f.value = '';
-        f.value_text = '';
+      let fieldsToRemove = d.fields.filter(f => f.value_type == 'dataBlock' && f.value == dataBlock.id);
+      fieldsToRemove.forEach(f => {
+        let moduleInfo = d.getModuleInformation();
+        let relName = moduleInfo?.fields[f.name]?.options || '';
+        if (!relName) {
+          let relEntry = d.relationships.find(r => r.related_datablock_id === f.value);
+          relName = relEntry?.name || '';
+        }
+        d.deleteField(f.name);
+        if (relName) {
+          let targetBlock = this.data_blocks.find(tb => tb.id === f.value);
+          if (targetBlock) {
+            targetBlock.removeRelationship(relName, d.id);
+          }
+        }
       });
+    });
+
+    // Remove relationships pointing to this DataBlock
+    this.data_blocks.forEach(d => {
+      d.relationships = d.relationships.filter(r => r.related_datablock_id !== dataBlock.id);
     });
 
     // Remove DataBlock
@@ -1659,7 +1673,6 @@ class stic_AwfConfiguration {
 
     if (field.type == 'relate' && field.value_type == 'dataBlock') {
       // Remove Relationship Action
-      // TODO: Review Remove Relationship Action: Parameters: data_block_id, target_object, relationship_name
       const relateAction = this.flows.flatMap(f => f.actions).find(a => {
         if (a.name == 'RelateRecordsAction') {
           return a.parameters.find(p => p.name == 'data_block_id' && p.value == dataBlock.id) &&
@@ -1672,6 +1685,21 @@ class stic_AwfConfiguration {
         this.flows.forEach(flow => {
           flow.actions = flow.actions.filter(a => a.id != relateAction.id);
         });
+      }
+
+      // Remove the relationship from this block (N side)
+      let moduleInfo = dataBlock.getModuleInformation();
+      let relName = moduleInfo?.fields[field.name]?.options || '';
+      if (!relName) {
+        let relEntry = dataBlock.relationships.find(r => r.related_datablock_id === field.value);
+        relName = relEntry?.name || '';
+      }
+      if (relName) {
+        dataBlock.removeRelationship(relName, field.value);
+        let targetBlock = this.data_blocks.find(d => d.id == field.value);
+        if (targetBlock) {
+          targetBlock.removeRelationship(relName, dataBlock.id);
+        }
       }
     }
 
@@ -1767,7 +1795,7 @@ class stic_AwfConfiguration {
 
     // Store relationship metadata on BOTH blocks so each side knows about the link
     let relationshipType = utils.getModuleInformation(dataBlock.module).relationships[relationshipName]?.relationship_type || 'many-to-many';
-    dataBlock.addRelationship(relationshipName, relDatablock.id, relationshipType);
+    if (!dataBlock.addRelationship(relationshipName, relDatablock.id, relationshipType)) return dataBlock;
     relDatablock.addRelationship(relationshipName, dataBlock.id, relationshipType);
 
     // For 1-N relationships with relate fields: add server field on the block that owns
@@ -1815,8 +1843,11 @@ class stic_AwfConfiguration {
       allRelationships[d.id] = [];
       let moduleInfo = utils.getModuleInformation(d.module);
 
-      // Base list: ALL module relationships (used + unused)
+      // Base list: ALL module relationships (used + unused), deduplicated by name
+      let seenNames = new Set();
       Object.values(moduleInfo.relationships).forEach(r => {
+        if (seenNames.has(r.name)) return;
+        seenNames.add(r.name);
         let rel = {...r};
         rel.datablock = d.id;
         rel.module = rel.module_orig == d.module ? rel.module_dest : rel.module_orig;
@@ -1825,6 +1856,9 @@ class stic_AwfConfiguration {
         rel.datablock_dest = "";
         allRelationships[d.id].push(rel);
       });
+
+      // Sort alphabetically
+      allRelationships[d.id].sort((a, b) => a.textExtended.localeCompare(b.textExtended));
 
       // Mark used relationships from block.relationships[]
       d.relationships.forEach(dbrel => {
@@ -1868,14 +1902,23 @@ class stic_AwfConfiguration {
    */
   getAvailableDataBlocksForRelationship(datablockId, relationshipName) {
     let module = this.getRelationshipModule(datablockId, relationshipName);
-    if (!module) {
-      return [];
+    if (!module) return [];
+
+    // Exclude blocks already related via this relationship
+    let block = this.data_blocks.find(d => d.id == datablockId);
+    let alreadyRelatedIds = new Set();
+    if (block) {
+      block.relationships
+        .filter(r => r.name === relationshipName)
+        .forEach(r => alreadyRelatedIds.add(r.related_datablock_id));
     }
 
     let dataBlocks = [];
-    this.data_blocks.filter(d => d.module == module).forEach(db => {
-      dataBlocks.push({id: db.id, text: db.text});
-    });
+    this.data_blocks
+      .filter(d => d.module == module && !alreadyRelatedIds.has(d.id))
+      .forEach(db => {
+        dataBlocks.push({id: db.id, text: db.text});
+      });
     dataBlocks.push({ id: -1, text: utils.translate('LBL_DATABLOCK_NEW') });
 
     return dataBlocks;

@@ -262,7 +262,25 @@ class stic_AWF_FormsUtils {
                     $text = rtrim(trim($text), ':');
                 }
                 if (empty($text) || $text === $vname) {
-                    $text = translate($otherModule) ?: $relName;
+                    // Fallback 1: try relate field's vname (more descriptive for 1-N)
+                    $fieldVname = '';
+                    foreach ($fields as $fName => $fDef) {
+                        if (($fDef['type'] ?? '') !== 'relate') continue;
+                        $match = (!empty($linkFieldName) && ($fDef['link'] ?? '') === $linkFieldName)
+                              || (($fDef['module'] ?? '') === $otherModule);
+                        if ($match) {
+                            $fieldVname = $fDef['vname'] ?? '';
+                            break;
+                        }
+                    }
+                    if (!empty($fieldVname)) {
+                        $text = translate($fieldVname, $moduleName);
+                        $text = rtrim(trim($text), ':');
+                    }
+                    // Fallback 2: destination module name
+                    if (empty($text) || $text === $fieldVname) {
+                        $text = translate($otherModule) ?: $relName;
+                    }
                 }
 
                 $result[$relName] = [
@@ -274,6 +292,18 @@ class stic_AWF_FormsUtils {
                     'link_name'         => $linkFieldName,
                     'relationship_type' => $relType,
                 ];
+            }
+        }
+
+        // Deduplicate by target module: if multiple relationships point to the same module_dest,
+        // keep only the first one (avoids duplicate Notes/Tasks entries in module selectors)
+        $seenDest = [];
+        foreach ($result as $relName => $relData) {
+            $dest = $relData['module_dest'];
+            if (isset($seenDest[$dest])) {
+                unset($result[$relName]);
+            } else {
+                $seenDest[$dest] = true;
             }
         }
 
