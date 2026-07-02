@@ -1829,6 +1829,56 @@ class stic_AwfConfiguration {
     return dataBlock;
   }
 
+  /**
+   * Deletes a relationship between two DataBlocks, removing any auto-created relate field
+   * and the associated RelateRecordsAction.
+   * @param {string} datablockId One of the DataBlock ids in the relationship
+   * @param {string} relName The relationship name
+   * @param {string} relatedDatablockId The other DataBlock id in the relationship
+   */
+  deleteRelationship(datablockId, relName, relatedDatablockId) {
+    let dataBlock = this.data_blocks.find(d => d.id == datablockId);
+    if (!dataBlock) return;
+    let relDatablock = this.data_blocks.find(d => d.id == relatedDatablockId);
+
+    // Find and delete the auto-created relate field (if any) on either block
+    let deletedViaField = false;
+    [dataBlock, relDatablock].forEach(block => {
+      if (!block || deletedViaField) return;
+      let moduleInfo = block.getModuleInformation();
+      let relateFieldNames = Object.values(moduleInfo?.fields || {}).filter(
+        f => f.type === 'relate' && f.options === relName
+      ).map(f => f.name);
+      let field = block.fields.find(f =>
+        relateFieldNames.includes(f.name) && f.value_type == 'dataBlock' &&
+        (f.value == datablockId || f.value == relatedDatablockId)
+      );
+      if (field) {
+        this.deleteDataBlockField(block, field);
+        deletedViaField = true;
+      }
+    });
+
+    // If no relate field was found (N-M or already removed), clean up manually
+    if (!deletedViaField) {
+      dataBlock.removeRelationship(relName, relatedDatablockId);
+      if (relDatablock) {
+        relDatablock.removeRelationship(relName, datablockId);
+      }
+      // Remove RelateRecordsAction for this relationship
+      this.flows.forEach(flow => {
+        flow.actions = flow.actions.filter(a => {
+          if (a.name == 'RelateRecordsAction') {
+            let p1 = a.parameters.find(p => p.name == 'data_block_id' && (p.value == datablockId || p.value == relatedDatablockId));
+            let p2 = a.parameters.find(p => p.name == 'relationship_name' && p.value == relName);
+            return !(p1 && p2);
+          }
+          return true;
+        });
+      });
+    }
+  }
+
 
   /**
    * Get all defined Relationships in all modules represented in data_blocks array

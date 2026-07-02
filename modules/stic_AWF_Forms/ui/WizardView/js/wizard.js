@@ -470,6 +470,10 @@ class WizardStep2 {
               }
               return dataBlock;
             },
+            deleteRelationship(datablockId, relName, relatedDatablockId) {
+              this.formConfig.deleteRelationship(datablockId, relName, relatedDatablockId);
+              this.resetDataBlockRelationships();
+            },
             getAvailableDataBlocksForRelationship(datablockId, relName) { 
               return this.formConfig.getAvailableDataBlocksForRelationship(datablockId, relName);
             },
