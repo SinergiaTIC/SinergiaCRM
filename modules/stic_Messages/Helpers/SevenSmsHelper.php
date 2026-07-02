@@ -43,6 +43,13 @@ class SevenSMSHelper extends stic_MessagesHelper {
     }
 
     /**
+     * Returns the helper type matching the DB stic_messages_type_list key.
+     */
+    public function getHelperType(): string {
+        return 'SevenSmsHelper';
+    }
+
+    /**
      * Returns the list of required setting keys.
      */
     protected function getRequiredSettings(): array {

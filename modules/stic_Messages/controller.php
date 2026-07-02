@@ -64,6 +64,7 @@ class stic_MessagesController extends SugarController
             }, $idsArray, $phonesArray);
         }
         else {
+            $this->pre_save();
             $this->applyConversationSubpanelDefaults();
             $this->prepareConversationDataForMessage();
             if (!$this->validateConversationRequiredFields($this->bean)) {
@@ -138,6 +139,7 @@ class stic_MessagesController extends SugarController
             exit;
         }
         else {
+            $this->pre_save();
             $oldStatus = $this->bean->fetched_row['status']??'';
 
             // Subpanel conversations to validate

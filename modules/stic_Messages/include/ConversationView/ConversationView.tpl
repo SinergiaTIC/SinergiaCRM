@@ -95,6 +95,10 @@ if (!empty($messageIds)) {
         .attachment-bubble-file{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(0,0,0,.06);border-radius:8px;font-size:12px;color:#333;text-decoration:none}
         .attachment-bubble-file:hover{background:rgba(0,0,0,.12)}
         @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes newMsgSlide{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+        .bubble-new.in{background:#a8e6a8;border-left:3px solid #25d366;animation:newMsgSlide 0.4s ease-out}
+        .bubble-new.out{background:#a8e6a8;border-right:3px solid #25d366;animation:newMsgSlide 0.4s ease-out}
+        .bubble-new.error{background:#a8e6a8;border-right:3px solid #25d366;animation:newMsgSlide 0.4s ease-out}
     </style>
 </head>
 <body>

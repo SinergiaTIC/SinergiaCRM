@@ -49,6 +49,17 @@ function openWhatsAppConversation(recordId, parentType) {
     if (waBody) {
         waBody.scrollTop = 9999999;
     }
+    var clearNew = function() {
+        var bubbles = document.querySelectorAll('.bubble-new');
+        for (var i = 0; i < bubbles.length; i++) {
+            bubbles[i].classList.remove('bubble-new');
+        }
+    };
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.wa-body') || e.target.closest('.wa-footer')) {
+            clearNew();
+        }
+    });
 })();
 
 var _pendingMediaNoteId = null;
@@ -169,8 +180,6 @@ var _pollInterval = null;
 var _pollDelay = 5000; // 5 seconds
 
 function pollNewMessages() {
-    if (document.hidden) return;
-
     var url = 'index.php?entryPoint=sticConversationMessages'
             + '&parent_id='   + encodeURIComponent(CONVERSATION.parentId)
             + '&parent_type=' + encodeURIComponent(CONVERSATION.parentType)
@@ -182,10 +191,11 @@ function pollNewMessages() {
         if (!data.success || !data.messages || data.messages.length === 0) return;
 
         var waBody = document.getElementById('waBody');
+        if (!waBody) return;
         var wasAtBottom = waBody.scrollTop + waBody.clientHeight >= waBody.scrollHeight - 50;
 
         data.messages.forEach(function(msg) {
-            appendMessage(msg);
+            appendMessage(msg, true);
             _pollLastDate = msg.date_entered;
         });
 
@@ -193,10 +203,12 @@ function pollNewMessages() {
             waBody.scrollTop = waBody.scrollHeight;
         }
     })
-    .catch(function() {});
+    .catch(function(err) {
+        console.error('[ConversationView] Poll error:', err);
+    });
 }
 
-function appendMessage(msg) {
+function appendMessage(msg, isNew) {
     var waBody = document.getElementById('waBody');
     var direction = (msg.direction || 'outbound').toLowerCase();
     var status = (msg.status || 'sent').toLowerCase();
@@ -205,7 +217,11 @@ function appendMessage(msg) {
 
     var bubble = document.createElement('div');
     bubble.className = 'bubble ' + (isError ? 'error' : (isOut ? 'out' : 'in'));
-    bubble.style.animation = 'fadeIn 0.3s ease-in';
+    if (isNew) {
+        bubble.className += ' bubble-new';
+    } else {
+        bubble.style.animation = 'fadeIn 0.3s ease-in';
+    }
 
     var textDiv = document.createElement('div');
     textDiv.className = 'text';
@@ -267,6 +283,7 @@ function appendMessage(msg) {
 
 function startPolling() {
     if (_pollInterval) return;
+    console.log('[ConversationView] Poll started');
     _pollInterval = setInterval(pollNewMessages, _pollDelay);
 }
 
@@ -277,16 +294,5 @@ function stopPolling() {
     }
 }
 
-// Start/stop polling based on page visibility
-document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-        stopPolling();
-    } else {
-        startPolling();
-    }
-});
-
-// Start polling on load
-if (!document.hidden) {
-    startPolling();
-}
+// Always start polling on load
+startPolling();

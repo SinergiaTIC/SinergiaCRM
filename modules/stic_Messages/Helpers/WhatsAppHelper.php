@@ -44,6 +44,13 @@ class WhatsAppHelper extends stic_MessagesHelper {
     }
 
     /**
+     * Returns the helper type matching the DB stic_messages_type_list key.
+     */
+    public function getHelperType(): string {
+        return 'WhatsAppHelper';
+    }
+
+    /**
      * Returns the list of required setting keys.
      */
     protected function getRequiredSettings(): array {

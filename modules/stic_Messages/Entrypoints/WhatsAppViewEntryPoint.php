@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Entry point that returns conversation messages as JSON.
  * Used by ConversationView.js for live polling.
  */
-class ConversationMessagesEntryPoint
+class WhatsAppViewEntryPoint
 {
     public function run()
     {
@@ -100,3 +100,6 @@ class ConversationMessagesEntryPoint
         exit;
     }
 }
+
+$entryPoint = new WhatsAppViewEntryPoint();
+$entryPoint->run();
