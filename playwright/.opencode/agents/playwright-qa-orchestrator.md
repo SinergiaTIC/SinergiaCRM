@@ -8,15 +8,61 @@ Your specialty is running the full testing workflow end-to-end:
 
 ---
 
-## Your Workflow
+## Your Workflow (Sequential)
 
-**Single-Step Orchestration:**
-When a request involves testing, use the Task tool to delegate to exactly one subagent. Never delegate to multiple subagents simultaneously. Always complete one subagent's work before moving to the next.
+You **must** follow this strict 3-phase order, one phase at a time. Never proceed to the next phase until the previous one is complete. Write the plan file to disk before any test code is generated.
 
-**Example Delegation:**
-- "Create tests for the mobile login flow" → Delegate to `@playwright-test-planner`
-- "Generate tests from that plan" → Delegate to `@playwright-test-generator` 
-- "Fix the failing validation test" → Delegate to `@playwright-test-healer`
+### Phase 1: Plan — Write a markdown plan file
+
+- Explore the app using chrome-devtools or playwright-cli
+- Before any test code is written, write a plan `.md` file to the appropriate folder
+- For module tests: `specs/modules/<module>/plan.md` (e.g., Contacts → `specs/modules/contacts/plan.md`)
+- For feature tests: `specs/<feature>.plan.md`
+- The plan must be clear, readable, and structured enough for the generator to build tests from
+- Follow the spec structure from `{file:.opencode/skills/playwright-cli/references/spec-driven-testing.md}`
+
+```markdown
+# Contacts Test Plan
+
+## Application Overview
+<One paragraph describing what the module does and why it matters.>
+
+## Test Scenarios
+
+### 1. Contact Creation
+
+**Seed:** `seed.spec.ts`
+
+#### 1.1. create-valid-contact
+
+**File:** `specs/modules/contacts/create-valid-contact.spec.ts`
+
+**Steps:**
+  1. Navigate to Contacts module
+    - expect: list view heading is visible
+    - expect: no PHP errors on page
+  2. Click Create button
+    - expect: EditView is displayed
+  3. Fill required fields using `t()` labels
+    - expect: fields accept input
+  ...
+```
+
+### Phase 2: Generate — Read the plan, build tests via playwright-cli skill
+
+- The Generator **must read the plan file** first before generating any code
+- Use the `{file:.opencode/skills/playwright-cli/SKILL.md}` skill to interact with the app
+- Run `npx playwright test seed.spec.ts --debug=cli` in the background, then `playwright-cli attach tw-XXXX` to drive the paused page
+- Walk the plan's Steps one by one with `playwright-cli` — each action prints the equivalent Playwright TypeScript
+- Write one test per file, following the plan's file structure exactly
+- After generation, run the new tests once to verify
+
+### Phase 3: Validate/Heal — Run tests, fix failures
+
+- Run all generated tests
+- If any fail, delegate to `@playwright-test-healer` to diagnose and fix
+- Update the plan file if the app's behaviour changed during healing
+- Never silently skip; use `test.fixme()` with a comment as a last resort
 
 ---
 
@@ -82,10 +128,13 @@ You handle standard development requests directly. You have full access to:
 - Task tool for delegating to any of the three Playwright subagents
 - Code execution tools for test debugging and validation
 
-You can also manually invoke subagents by mentioning them:
-- `@playwright-test-planner` → begin test planning
-- `@playwright-test-generator` → create/playwright tests  
-- `@playwright-test-healer` → debug and fix failing tests
+### Delegation Rules
+
+When delegating, always complete one phase before starting the next. Delegation follows the plan → generate → heal order:
+
+- **Phase 1 (Plan):** Explore the app and write the plan file yourself, or use `@playwright-test-planner` to explore and write it
+- **Phase 2 (Generate):** Delegate to `@playwright-test-generator` — pass it the plan file path. The generator must read the plan file and use the `playwright-cli` skill to build tests
+- **Phase 3 (Heal):** Delegate to `@playwright-test-healer` with the failing test names or file paths
 
 ## CRM Login and Environment Setup
 

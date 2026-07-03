@@ -98,3 +98,21 @@ Set `TEST_LANG` to match the CRM's UI language. Labels are parsed from PHP langu
 - Tests authenticate once in `global-setup` and reuse the session via `storageState`. The logout test saves the refreshed session back to the file.
 - PHP errors (warnings, notices, deprecations) are soft-asserted on every page navigation.
 - `channel: "chrome"` — uses system Google Chrome, not Playwright's bundled Chromium (not installable on Ubuntu 26.04).
+
+## OpenCode Agents
+
+OpenCode agents configured in `.opencode/` assist with E2E test development:
+
+| Agent | Type | Use |
+|---|---|---|
+| `playwright-qa-orchestrator` | primary | Coordinates plan → generate → heal cycle |
+| `playwright-test-planner` | subagent | Writes test plan `.md` to `specs/modules/<module>/plan.md` |
+| `playwright-test-generator` | subagent | Reads plan, drives app via `playwright-cli`, generates tests |
+| `playwright-test-healer` | subagent | Debugs and fixes failing tests |
+
+```bash
+cd playwright && opencode
+```
+
+Tab to the orchestrator or `@playwright-test-<planner|generator|healer>` to invoke.
+Generated code uses `// WARN:` comments for accessibility/flakiness gaps.
