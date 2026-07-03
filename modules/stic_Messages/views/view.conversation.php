@@ -34,8 +34,10 @@ class stic_MessagesViewConversation extends SugarView {
     public $windowMessage = '';
     public $newMessageUrl = '';
     public $modStrings = [];
+    public $pollDelay = 5000;
 
     public function display() {
+        global $sugar_config;
         $messages = $this->messages;
         $parentName = $this->parentName;
         $parentId = $this->parentId;
@@ -44,6 +46,7 @@ class stic_MessagesViewConversation extends SugarView {
         $windowMessage = $this->windowMessage;
         $newMessageUrl = $this->newMessageUrl;
         $mod_strings = $this->modStrings;
+        $pollDelay = $sugar_config['stic_conversation_poll_delay'] ?? 5000;
 
         include 'modules/stic_Messages/include/ConversationView/ConversationView.tpl';
     }

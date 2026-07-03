@@ -230,7 +230,8 @@ if (!empty($messageIds)) {
     var CONVERSATION = {
         parentType: '<?= addslashes($parentType) ?>',
         parentId:   '<?= addslashes($parentId) ?>',
-        lastDate:   '<?= addslashes(end($messages)['date_entered'] ?? '') ?>'
+        lastDate:   '<?= addslashes(end($messages)['date_entered'] ?? '') ?>',
+        pollDelay:  <?= (int)$pollDelay ?>
     };
 </script>
 <?= getVersionedScript('modules/stic_Messages/include/ConversationView/ConversationView.js') ?>

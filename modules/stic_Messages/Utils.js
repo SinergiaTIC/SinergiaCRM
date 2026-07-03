@@ -395,6 +395,12 @@ function refreshTemplateOptions() {
   });
 }
 
+function decodeHtmlEntities(text) {
+    var txt = document.createElement('textarea');
+    txt.innerHTML = text;
+    return txt.value;
+}
+
 function onTemplateSelect(args) {
     var confirmed = function (args) {
       var args = JSON.parse(args);
@@ -404,7 +410,7 @@ function onTemplateSelect(args) {
         emailTemplateId: $("#template_id").val()
       }, function (jsonResponse) {
         var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
+        $("#message").val(decodeHtmlEntities(response.data.body));
         var tplType = $('#type').val();
         var tplConfig = sticGetHelperConfig(tplType);
         if (tplConfig && tplConfig.lockMessageOnTemplate) {
@@ -637,7 +643,7 @@ function updateMessageBox (args) {
         emailTemplateId: $('#template_id').val()
       }, function (jsonResponse) {
         var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
+        $("#message").val(decodeHtmlEntities(response.data.body));
         var msgType = $('#type').val();
         var msgConfig = sticGetHelperConfig(msgType);
         if (msgConfig && msgConfig.lockMessageOnTemplate) {

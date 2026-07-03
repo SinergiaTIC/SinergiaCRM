@@ -177,9 +177,16 @@ function sendMessage() {
 
 var _pollLastDate = CONVERSATION.lastDate || '';
 var _pollInterval = null;
-var _pollDelay = 5000; // 5 seconds
+var _pollDelay = CONVERSATION.pollDelay || 5000; // 5 seconds default
+var _pollEmptyCount = 0;
+var _pollMaxDelay = 30000; // 30 seconds max with backoff
 
 function pollNewMessages() {
+    // Skip if tab is not visible (background tab or minimized)
+    if (document.hidden) return;
+    var waBody = document.getElementById('waBody');
+    if (!waBody || waBody.offsetParent === null || waBody.getBoundingClientRect().height === 0) return;
+
     var url = 'index.php?entryPoint=sticConversationMessages'
             + '&parent_id='   + encodeURIComponent(CONVERSATION.parentId)
             + '&parent_type=' + encodeURIComponent(CONVERSATION.parentType)
@@ -188,10 +195,15 @@ function pollNewMessages() {
     fetch(url, { credentials: 'same-origin' })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-        if (!data.success || !data.messages || data.messages.length === 0) return;
-
-        var waBody = document.getElementById('waBody');
+        if (!data.success || !data.messages || data.messages.length === 0) {
+            _pollEmptyCount++;
+            applyBackoff();
+            return;
+        }
         if (!waBody) return;
+        _pollEmptyCount = 0;
+        resetPollDelay();
+
         var wasAtBottom = waBody.scrollTop + waBody.clientHeight >= waBody.scrollHeight - 50;
 
         data.messages.forEach(function(msg) {
@@ -206,6 +218,29 @@ function pollNewMessages() {
     .catch(function(err) {
         console.error('[ConversationView] Poll error:', err);
     });
+}
+
+function applyBackoff() {
+    if (_pollEmptyCount > 3) {
+        stopPolling();
+        var backoffDelay = Math.min(_pollDelay * 2, _pollMaxDelay);
+        _pollInterval = setInterval(pollNewMessages, backoffDelay);
+    }
+}
+
+function resetPollDelay() {
+    stopPolling();
+    _pollInterval = setInterval(pollNewMessages, _pollDelay);
+}
+
+function startPolling() {
+    if (_pollInterval) return;
+    console.log('[ConversationView] Poll started');
+    // Stagger initial poll to avoid all conversations firing at once
+    var stagger = Math.random() * _pollDelay;
+    setTimeout(function() {
+        _pollInterval = setInterval(pollNewMessages, _pollDelay);
+    }, stagger);
 }
 
 function appendMessage(msg, isNew) {
@@ -281,12 +316,6 @@ function appendMessage(msg, isNew) {
     waBody.appendChild(bubble);
 }
 
-function startPolling() {
-    if (_pollInterval) return;
-    console.log('[ConversationView] Poll started');
-    _pollInterval = setInterval(pollNewMessages, _pollDelay);
-}
-
 function stopPolling() {
     if (_pollInterval) {
         clearInterval(_pollInterval);
@@ -296,3 +325,12 @@ function stopPolling() {
 
 // Always start polling on load
 startPolling();
+
+// Stop interval when tab is hidden, restart when visible
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+        stopPolling();
+    } else if (document.visibilityState === 'visible') {
+        startPolling();
+    }
+});
