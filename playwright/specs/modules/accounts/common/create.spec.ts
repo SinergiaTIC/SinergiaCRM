@@ -39,10 +39,7 @@ test.describe("Account creation", () => {
     await edit.fillField("name", name);
     await edit.fillField("phone_office", phone);
     await edit.fillField("website", website);
-    // WARN: attribute-based selector; prefer a label/role-based locator if description had one.
-    await page
-      .locator('textarea[name="description"]')
-      .fill("Test account created by e2e");
+    await edit.fillField("description", "Test account created by e2e");
     await edit.save();
 
     const detail = new DetailViewPage(page, MODULE);

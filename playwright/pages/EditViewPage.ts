@@ -23,7 +23,8 @@ export class EditViewPage extends BasePage {
   async fillField(label: string, value: string): Promise<void> {
     const field = this.page
       .getByLabel(label)
-      .or(this.page.locator(`input[name^="${label}"]`));
+      .or(this.page.locator(`input[name^="${label}"]`))
+      .or(this.page.locator(`textarea[name^="${label}"]`));
     await field.fill(value);
   }
 

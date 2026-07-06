@@ -4,12 +4,16 @@ import { SuiteCRMApi } from "#helpers/api";
 import { t } from "#helpers/i18n";
 
 test.describe("Accounts list view", () => {
-  test("List view displays heading and controls", async ({ page }) => {
+  test("List view displays heading, columns, and controls", async ({ page }) => {
     const list = new ListViewPage(page, "Accounts");
     await list.navigateTo();
     await list.waitForLoad();
 
-    await expect(page.locator("h2.module-title-text")).toBeVisible();
+    // WARN: heading text is uppercased via CSS text-transform; h2.module-title-text is fragile
+    // if the class changes. Prefer getByRole('heading') but the page has multiple <h2> elements.
+    await expect(page.locator("h2.module-title-text")).toContainText("Accounts");
+    // Assert the Name column header is present in the list table
+    await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible();
     // WARN: CSS class-based selector (glyphicon-filter) — fragile if icon class changes.
     await expect(page.locator(".glyphicon-filter").first()).toBeVisible();
     // WARN: columnsFilterLink only renders when records exist (it controls visible columns).
