@@ -71,6 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($isOAuth) SticPortalAuthCodeGenerator::generateAndRedirect($auth['bean']->id, $auth['type'], $oauthClientId, $oauthRedirectUri, $oauthState);
                 $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', 'index.php?entryPoint=sticPortalLogin');
                 if ($auth['must_change_password']) $redirect = 'index.php?entryPoint=sticPortalChangePassword';
+                // Avoid blank page after generic login — redirect back to login with success flag
+                if (!$isOAuth && $redirect === 'index.php?entryPoint=sticPortalLogin') $redirect .= '&logged_in=1';
                 header('Location: ' . $redirect); exit;
             }
             $error = ($auth['error_code'] === 'locked' || $auth['error_code'] === 'ip_locked')
@@ -84,6 +86,9 @@ if (empty($_SESSION['portal_csrf_token'])) $_SESSION['portal_csrf_token'] = bin2
 $csrfToken = $_SESSION['portal_csrf_token'];
 if (isset($_GET['error']) && $_GET['error'] === 'invalid_link') $error = 'Invalid or expired link. Please request a new one.';
 if (isset($_GET['error']) && $_GET['error'] === 'session_expired') $error = 'Session expired. Please log in again.';
+if (isset($_GET['logged_in'])) $message = 'You are now logged in.';
+
+$loggedIn = SticPortalAuthUtils::validatePortalSession() !== null;
 
 $ss = new Sugar_Smarty();
 $ss->assign('TITLE', SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal'));
@@ -94,4 +99,5 @@ $ss->assign('ERROR', $error); $ss->assign('MESSAGE', $message);
 $ss->assign('MODE', $mode); $ss->assign('CSRF_TOKEN', $csrfToken);
 $ss->assign('OAUTH_CLIENT_ID', $oauthClientId); $ss->assign('OAUTH_REDIRECT_URI', $oauthRedirectUri);
 $ss->assign('OAUTH_STATE', $oauthState); $ss->assign('IS_OAUTH', $isOAuth);
+$ss->assign('LOGGED_IN', $loggedIn);
 $ss->display('custom/themes/SuiteP/tpls/SticPortalLogin.tpl');

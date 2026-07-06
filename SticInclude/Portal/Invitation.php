@@ -84,7 +84,8 @@ foreach ($idList as $id) {
 
     // Get template content (or use defaults)
     $subject  = "$portalTitle - Access your portal";
-    $bodyHtml = "<p>Hello {$firstName},</p><p>Your portal account is ready.</p><p>Access: <a href=\"{$portalUrl}\">{$portalUrl}</a></p><p>Username: {$bean->$usernameField}</p><p>Click here to set your password: <a href=\"{$resetLink}\">Set Password</a></p><p>This link expires in 24 hours.</p>";
+    $loginUrl = $portalUrl . '/index.php?entryPoint=sticPortalLogin';
+    $bodyHtml = "<p>Hello {$firstName},</p><p>Your portal account is ready.</p><p>Access: <a href=\"{$loginUrl}\">{$loginUrl}</a></p><p>Username: {$bean->$usernameField}</p><p>Click here to set your password: <a href=\"{$resetLink}\">Set Password</a></p><p>This link expires in 24 hours.</p>";
 
     if (!empty($templateId)) {
         $tmpl = BeanFactory::getBean('EmailTemplates', $templateId);
@@ -102,6 +103,7 @@ foreach ($idList as $id) {
         '{$contact_description}'              => $bean->description ?? '',
         '{$contact_stic_portal_username_c}'   => $bean->$usernameField,
         '{$portal_address}'                   => $portalUrl,
+        '{$portal_login_url}'                 => $loginUrl,
         '{$portal_title}'                     => $portalTitle,
         '{$portal_reset_link}'                => $resetLink,
         // Also handle Account-prefixed variables
@@ -136,7 +138,9 @@ if (count($idList) === 1 && $returnAction === 'DetailView') {
     $redirectUrl .= '&record=' . urlencode($idList[0]);
 }
 $params = array();
-if ($sentCount > 0) $params[] = 'msg=' . urlencode("$sentCount invitation(s) sent");
-if (!empty($errors)) $params[] = 'error=' . urlencode(implode('; ', $errors));
+$msgParts = array();
+if ($sentCount > 0) $msgParts[] = "$sentCount invitation(s) sent";
+if (!empty($errors)) $msgParts[] = 'Errors: ' . implode('; ', $errors);
+if ($msgParts) $params[] = 'msg=' . urlencode(implode('. ', $msgParts));
 if ($params) $redirectUrl .= '&' . implode('&', $params);
 SugarApplication::redirect($redirectUrl);
