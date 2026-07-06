@@ -31,15 +31,14 @@ class CustomOAuth2ClientsController extends OAuth2ClientsController
 {
     /**
      * Redirect existing portal clients to the portal edit view.
-     * Falls back to SugarController for non-portal clients — some SuiteCRM versions
-     * lack action_EditView on OAuth2ClientsController.
+     * Non-portal clients fall through to default EditView behavior.
      */
     public function action_EditView()
     {
         if (!empty($this->bean->fetched_row) && $this->bean->allowed_grant_type === 'portal_authorization_code') {
             SugarApplication::redirect('index.php?module=OAuth2Clients&action=EditViewPortal&record=' . $this->bean->id);
         }
-        SugarController::action_EditView();
+        $this->view = 'edit';
     }
 
     /** SinergiaCRM — Portal authentication (portal_authorization_code) OAuth2 clients. */
