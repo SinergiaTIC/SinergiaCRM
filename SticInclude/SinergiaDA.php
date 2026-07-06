@@ -647,9 +647,33 @@ class ExternalReporting
                             ]
                         );
                         break;
+                    case 'bool':
+
+                        $fieldV['alias'] = $fieldV['name'];
+
+                        // Create listViewName for use in metadata & view creation
+                        $listViewName = substr(join('_', [$tableName, $fieldV['name'], 'stic_boolean_list']), 0, 58);
+
+                        $fieldSrc = " IFNULL({$fieldPrefix}.{$fieldV['name']} ,'') AS {$fieldName}";
+
+                        // For boolean fields, always create the enum view with fixed '1'/'0' codes
+                        // regardless of the actual keys in stic_boolean_list
+                        $this->createFixedBooleanEnumView($listViewName);
+
+                        $this->addMetadataRecord(
+                            'sda_def_enumerations',
+                            [
+                                'source_table' => "{$this->viewPrefix}_{$tableName}",
+                                'source_column' => $fieldV['name'],
+                                'master_table' => "{$this->listViewPrefix}_{$listViewName}",
+                                'info' => 'enum_list',
+                                'stic_type' => $fieldV['type'],
+                            ]
+                        );
+                        break;
+
                     case 'enum':
                     case 'dynamicenum':
-                    case 'bool':
                     case 'radioenum':
 
                         $fieldV['alias'] = $fieldV['name'];
@@ -663,9 +687,8 @@ class ExternalReporting
 
                         $createdListView = $this->createEnumView($listName, $listViewName);
 
-                        // If there is a valid drop-down list or if it corresponds to that of a boolean field
-                        // we continue, otherwise we move on to the next column
-                        if (!empty($createdListView) || $listName == 'stic_boolean_list') {
+                        // If there is a valid drop-down list we continue, otherwise we move on to the next column
+                        if (!empty($createdListView)) {
                             $listNames[] = $createdListView;
                         } else {
                             continue 2;
@@ -1802,6 +1825,30 @@ class ExternalReporting
         } else {
             return $listViewName;
         };
+    }
+
+    /**
+     * Creates a MariaDB view for boolean fields with fixed '1'/'0' codes,
+     * independent of the actual keys in stic_boolean_list.
+     * This ensures that the enum view always matches the raw DB values ('1'/'0')
+     * regardless of any modifications to the dropdown list.
+     */
+    private function createFixedBooleanEnumView($listViewName)
+    {
+        global $app_strings;
+
+        $db = DBManagerFactory::getInstance();
+        $yesLabel = $db->quote($app_strings['LBL_YES']);
+        $noLabel = $db->quote($app_strings['LBL_NO']);
+        $viewName = "{$this->listViewPrefix}_{$listViewName}";
+
+        $sqlCommand = "CREATE OR REPLACE VIEW {$viewName} AS
+            SELECT '1' as 'code', '{$yesLabel}' as 'value'
+            UNION SELECT '0', '{$noLabel}'";
+
+        if (!$db->query($sqlCommand)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] running Query: [{$sqlCommand}]");
+        }
     }
 
     /**
