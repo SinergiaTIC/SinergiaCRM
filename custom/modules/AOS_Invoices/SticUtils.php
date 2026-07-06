@@ -232,6 +232,15 @@ class AOS_InvoicesUtils
         $record->totalTaxAmount = $totalTaxAmount;
         $record->totalAmount = $totalAmount;
 
+        // Operation date (FechaOperacion)
+        // For rectificatives: use the original invoice date (per AEAT guidance)
+        // For regular invoices: use the invoice's own issuance date
+        if ($isRectified && $rectifiedDate !== null) {
+            $record->operationDate = $rectifiedDate;
+        } elseif (!$isRectified) {
+            $record->operationDate = $issueDate;
+        }
+
         // Chaining (previous invoice reference)
         $record->previousInvoiceId = $previousInvoiceId;
         $record->previousHash = $previousHash;
