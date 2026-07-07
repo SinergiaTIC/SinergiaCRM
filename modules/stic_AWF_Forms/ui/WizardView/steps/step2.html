@@ -336,7 +336,7 @@
                           <td x-text="$store.dataBlockRelationships.getInvolvedBlocksText(item.id, rel)"></td>
                           <!-- Type -->
                           <td>
-                            <span class="badge rounded-pill bg-secondary" x-text="$store.dataBlockRelationships.getRelationshipTypeLabel(item.id, rel.name, rel.datablock_dest)"></span>
+                            <span class="badge rounded-pill bg-secondary" x-text="$store.dataBlockRelationships.getRelationshipTypeLabel(item.id, rel.name, rel.datablock_dest, rel.initiator_id)"></span>
                           </td>
                           <!-- Delete button -->
                           <td>

@@ -118,6 +118,7 @@ class stic_AWF_FormsUtils {
                 'default' => $arr['default'] ?? null,
                 'options' => $arr['options'] ?? '',
                 'module' => $arr['module'] ?? '',
+                'id_name' => $arr['id_name'] ?? '',
                 'merge_filter' => $merge_filter,
                 'inViews' => false,
             ];
@@ -340,6 +341,8 @@ class stic_AWF_FormsUtils {
             if (empty($text)) {
                 $text = translate($f['module']) ?: $fieldName;
             }
+            $suffix = translate('LBL_AWF_FIELD_SUFFIX', 'stic_AWF_Forms');
+            $text .= ' (' . $suffix . ')';
 
             $result[$virtualName] = [
                 'name'              => $virtualName,
@@ -355,6 +358,86 @@ class stic_AWF_FormsUtils {
             ];
 
             $processed[$virtualName] = true;
+        }
+
+        // Build a map of canonical relationship text by module_dest to detect redundant inverse virtuals.
+        $canonicalTextByDest = [];
+        foreach ($result as $relName => $relData) {
+            if (empty($relData['is_virtual_relate'])) {
+                $dest = $relData['module_dest'];
+                if (!isset($canonicalTextByDest[$dest])) {
+                    $canonicalTextByDest[$dest] = $relData['text'];
+                }
+            }
+        }
+
+        // Fourth source: inverse virtual relationships — scan other modules for standalone
+        // relate fields pointing to the current module, so the relationship is visible from
+        // both the owning module (the N side with the FK) and the target module (the 1 side).
+        foreach ($availableModules as $otherModuleName => $otherModuleInfo) {
+            if ($otherModuleName === $moduleName) continue;
+
+            try {
+                $otherObjectName = BeanFactory::getObjectName($otherModuleName);
+                if (empty($otherObjectName)) {
+                    $GLOBALS['log']->debug(__METHOD__ . ": Fourth source — empty objectName for '{$otherModuleName}', skipping.");
+                    continue;
+                }
+                VardefManager::loadVardef($otherModuleName, $otherObjectName);
+            } catch (\Exception $e) {
+                $GLOBALS['log']->debug(__METHOD__ . ": Fourth source — Exception loading vardefs for '{$otherModuleName}': " . $e->getMessage());
+                continue;
+            }
+
+            $otherFields = $dictionary[$otherObjectName]['fields'] ?? [];
+
+            foreach ($otherFields as $fieldName => $f) {
+                if (($f['type'] ?? '') !== 'relate') continue;
+                if (empty($f['id_name'])) continue;
+                if (!empty($f['link'])) continue;
+                if (($f['module'] ?? '') !== $moduleName) continue;
+
+                $virtualName = 'virtual__' . $fieldName;
+                if (isset($processed[$virtualName])) continue;
+
+                $vname = $f['vname'] ?? '';
+                $baseText = '';
+                if (!empty($vname)) {
+                    $baseText = rtrim(trim(translate($vname, $otherModuleName)), ':');
+                }
+                if (empty($baseText)) {
+                    $baseText = translate($moduleName) ?: $fieldName;
+                }
+
+                // Skip if a canonical relationship already covers the same text to the same module_dest.
+                // This prevents redundant inverse virtuals (e.g. Leads' report_to_name → Contacts
+                // when contact_direct_reports already provides "Informa a" within Contacts).
+                if (isset($canonicalTextByDest[$moduleName]) && $canonicalTextByDest[$moduleName] === $baseText) {
+                    $GLOBALS['log']->debug(__METHOD__ . ": Fourth source — SKIPPING '{$virtualName}' (field '{$fieldName}' in '{$otherModuleName}'): text '{$baseText}' already covered by canonical to '{$moduleName}'.");
+                    continue;
+                }
+
+                $suffix = translate('LBL_AWF_FIELD_SUFFIX', 'stic_AWF_Forms');
+                $text = $baseText . ' (' . $suffix . ')';
+
+                $GLOBALS['log']->debug(__METHOD__ . ": Fourth source — FOUND relate field '{$fieldName}' in '{$otherModuleName}' pointing to '{$moduleName}', creating virtual '{$virtualName}' with text '{$text}'.");
+
+                $result[$virtualName] = [
+                    'name'               => $virtualName,
+                    'text'               => $text,
+                    'module_orig'        => $otherModuleName,
+                    'module_dest'        => $moduleName,
+                    'relationship'       => $virtualName,
+                    'link_name'          => $fieldName,
+                    'id_name'            => $f['id_name'],
+                    'is_virtual_relate'  => true,
+                    'is_inverse_virtual' => true,
+                    'type'               => '1-N',
+                    'relationship_type'  => 'one-to-many',
+                ];
+
+                $processed[$virtualName] = true;
+            }
         }
 
         // Deduplicate by target module: if multiple relationships point to the same module_dest,

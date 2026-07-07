@@ -221,6 +221,7 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nou bloc de dades',
   'LBL_RELATIONSHIP_TYPE' => 'Tipus',
   'LBL_RELATIONSHIP_INVOLVED_BLOCKS' => 'Blocs de dades involucrats',
+  'LBL_AWF_FIELD_SUFFIX' => 'camp',
 
   // Flows
   'LBL_FLOWS' => "Fluxos d'accions",
@@ -411,6 +412,8 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registre destí',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relació a actualitzar',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nom intern de la relació que enllaça amb el bloc de dades destí',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Nom del camp FK (id_name)',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_DESC' => 'Per a relacions 1-N basades en FK, el id_name a injectar al bean origen',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Afegeix a una Llista de Públic Objectiu',

@@ -83,7 +83,16 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $paramRelName->dataType = ActionDataType::TEXT; 
         $paramRelName->required = true;
 
-        return [$paramTarget, $paramRelName];
+        // The id_name of the FK field (for 1-N relationships: virtual or canonical)
+        $paramIdName = new ActionParameterDefinition();
+        $paramIdName->name = 'relation_id_name';
+        $paramIdName->text = $this->translate('RELATION_ID_NAME_TEXT');
+        $paramIdName->description = $this->translate('RELATION_ID_NAME_DESC');
+        $paramIdName->type = ActionParameterType::VALUE;
+        $paramIdName->dataType = ActionDataType::TEXT;
+        $paramIdName->required = false;
+
+        return [$paramTarget, $paramRelName, $paramIdName];
     }
 
 
@@ -146,18 +155,49 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Relationship '{$linkName}' failed: No target ID found.");
         }
 
-        // Load the relationship in source Bean
+        // Determine whether this is a FK-based (1-N) or link-based (N-M) relationship
+        $relationIdName = $actionConfig->getResolvedParameter('relation_id_name', '');
+
+        if (!empty($relationIdName)) {
+            // 1-N relationship: inject FK directly and re-save the bean
+            $GLOBALS['log']->debug("RelateRecordsAction: Using FK injection for '{$linkName}' — setting '{$relationIdName}' = '{$targetBeanId}' on bean '{$bean->id}'.");
+            $bean->{$relationIdName} = $targetBeanId;
+            if (property_exists($bean, 'fromAWF')) {
+                $bean->fromAWF = true;
+            }
+            $bean->save(false);
+
+            // Recalculate name (if necessary)
+            $nameFieldInBlock = $block->getFieldValue('name');
+            $nameIsUserDefined = $nameFieldInBlock && !empty($nameFieldInBlock->value);
+            $beanWasCreatedHere = $this->wasBeanCreatedInThisContext($bean->id, $context);
+
+            if (!$nameIsUserDefined && $beanWasCreatedHere) {
+                $bean->retrieve($bean->id);
+                $bean->name = '';
+                $bean->save();
+            }
+
+            $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via FK '{$relationIdName}' to ID {$targetBeanId}");
+            $dataToLog = [
+                ['key' => 'relationship_name', 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],
+                ['key' => 'target_object', 'label' => $this->translate('TARGET_OBJECT_TEXT'), 'value' => $targetBeanId],
+                ['key' => 'fk_field', 'label' => $this->translate('RELATION_ID_NAME_TEXT'), 'value' => $relationIdName],
+            ];
+            $actionResult->registerActionMetadata($bean, $dataToLog);
+
+            return $actionResult;
+        }
+
+        // N-M relationship (or canonical 1-N without explicit id_name): use link-based relationship
         if (!$bean->load_relationship($linkName)) {
             return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Could not load relationship '{$linkName}' in module '{$bean->module_name}'. Check vardefs link name.");
         }
-        // Verify that it is a Link2
         if (!($bean->$linkName instanceof Link2)) {
             $type = gettype($bean->$linkName);
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error: '{$linkName}' acts as a '{$type}', not a Relationship Link. Please check if you are using the Field Name instead of the Link Name in the configuration.");
         }
 
-        // Establish the relationship
-        // The add() method manages internally whether it is 1:M (foreign keys) or M:M (intermediate tables).
         try {
             $bean->$linkName->add($targetBeanId);
         } catch (\Exception $e) {
@@ -169,17 +209,12 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $nameIsUserDefined = $nameFieldInBlock && !empty($nameFieldInBlock->value);
         $beanWasCreatedHere = $this->wasBeanCreatedInThisContext($bean->id, $context);
 
-        // The name has not been explicitly indicated, the bean has been created and has a name (calculated)
         if (!$nameIsUserDefined && $beanWasCreatedHere) {
-            // Retrieve the bean to have updated data
             $bean->retrieve($bean->id);
-            // Reset the name
             $bean->name = '';
-            // Save again so that the name is recalculated
             $bean->save();
         }
 
-        // Result notification
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via '{$linkName}' to ID {$targetBeanId}");
         $dataToLog = [
             ['key' => 'relationship_name', 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],

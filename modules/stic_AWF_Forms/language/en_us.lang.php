@@ -221,6 +221,7 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'New data block',
   'LBL_RELATIONSHIP_TYPE' => 'Type',
   'LBL_RELATIONSHIP_INVOLVED_BLOCKS' => 'Involved data blocks',
+  'LBL_AWF_FIELD_SUFFIX' => 'field',
 
   // Flows
   'LBL_FLOWS' => 'Action flows',
@@ -411,6 +412,8 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'Destination record ID',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relationship to update',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'The internal name of the relationship linking to the destination data block',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'FK field name (id_name)',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_DESC' => 'For 1-N FK-based relationships, the id_name to inject on the source bean',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Add to Target List',

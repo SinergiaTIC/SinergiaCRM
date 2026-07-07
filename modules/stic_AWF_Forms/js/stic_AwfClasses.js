@@ -289,10 +289,6 @@ class stic_AwfDataBlock {
   addRelationship(relName, relatedBlockId, relationshipType = 'many-to-many') {
     // Prevent exact duplicates (same name + same block)
     if (this.relationships.some(r => r.name === relName && r.related_datablock_id === relatedBlockId)) return false;
-    // If this block's module has a relate field for this relationship, it's the N side: only one usage allowed
-    let moduleInfo = this.getModuleInformation();
-    let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
-    if (hasRelateField && this.relationships.some(r => r.name === relName)) return false;
     this.relationships.push({ name: relName, related_datablock_id: relatedBlockId });
     return true;
   }
@@ -1800,17 +1796,56 @@ class stic_AwfConfiguration {
     }
     if (!relDatablock) return null;
 
-    // Store relationship metadata on BOTH blocks so each side knows about the link
     let relationshipType = utils.getModuleInformation(dataBlock.module).relationships[relationshipName]?.relationship_type || 'many-to-many';
-    if (!dataBlock.addRelationship(relationshipName, relDatablock.id, relationshipType)) return dataBlock;
-    relDatablock.addRelationship(relationshipName, dataBlock.id, relationshipType);
+    let moduleInfo = utils.getModuleInformation(dataBlock.module);
+    let targetModuleInfo = utils.getModuleInformation(relDatablock.module);
+    let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relationshipName);
+    let targetHasRelateField = targetModuleInfo && Object.values(targetModuleInfo.fields).some(f => f.type === 'relate' && f.options === relationshipName);
+    // Fallback: check relationship metadata for virtual 1-N relationships
+    if (!hasRelateField && !targetHasRelateField) {
+      let relData = (moduleInfo?.relationships?.[relationshipName]) || (targetModuleInfo?.relationships?.[relationshipName]);
+      if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+        if (relData.module_orig === dataBlock.module) hasRelateField = true;
+        if (relData.module_orig === relDatablock.module) targetHasRelateField = true;
+      }
+    }
+    let bothHaveRelate = hasRelateField && targetHasRelateField;
+
+    // If the initiating block has the relate field and already has an initiator relationship
+    // with this name, block it (a block can only be the N side once per relationship).
+    // Entries with role 'target' are inverse (1 side) and don't block.
+    if (hasRelateField && dataBlock.relationships.some(r => r.name === relationshipName && r.role !== 'target')) return dataBlock;
+
+    // Store relationship on both blocks, tagging each with the initiator's id so downstream
+    // direction logic (arrows, labels) can tell N side from 1 side.
+    dataBlock.relationships.push({
+      name: relationshipName,
+      related_datablock_id: relDatablock.id,
+      initiator_id: dataBlock.id,
+    });
+    if (bothHaveRelate) {
+      relDatablock.relationships.push({
+        name: relationshipName,
+        related_datablock_id: dataBlock.id,
+        role: 'target',
+        initiator_id: dataBlock.id,
+      });
+    } else {
+      relDatablock.relationships.push({
+        name: relationshipName,
+        related_datablock_id: dataBlock.id,
+        initiator_id: dataBlock.id,
+      });
+    }
 
     // For 1-N relationships with relate fields: add server field on the block that owns
     // the relate field (the "N" side), pointing to the other block (the "1" side).
+    // For self-referencing (both have relate), only the initiating block gets the server field.
     [{block: dataBlock, target: relDatablock}, {block: relDatablock, target: dataBlock}].forEach(({block, target}) => {
-      let moduleInfo = utils.getModuleInformation(block.module);
-      if (!moduleInfo) return;
-      let relateFields = Object.values(moduleInfo.fields).filter(
+      if (bothHaveRelate && block.id !== datablockId) return;
+      let blockModuleInfo = utils.getModuleInformation(block.module);
+      if (!blockModuleInfo) return;
+      let relateFields = Object.values(blockModuleInfo.fields).filter(
         f => f.type === 'relate' && f.options === relationshipName
       );
       relateFields.forEach(fieldInfo => {
@@ -1930,15 +1965,18 @@ class stic_AwfConfiguration {
           // First usage: mark the base entry
           rel.datablock_orig = d.id;
           rel.datablock_dest = dbrel.related_datablock_id;
+          if (dbrel.initiator_id) rel.initiator_id = dbrel.initiator_id;
         } else {
           // Subsequent usage (N-M reuse): clone a fresh entry
           let baseRel = allRelationships[d.id].find(r => r.name === dbrel.name);
           if (!baseRel) return;
-          allRelationships[d.id].push({
+          let newRel = {
             ...baseRel,
             datablock_orig: d.id,
             datablock_dest: dbrel.related_datablock_id,
-          });
+          };
+          if (dbrel.initiator_id) newRel.initiator_id = dbrel.initiator_id;
+          allRelationships[d.id].push(newRel);
         }
       });
     });
@@ -2097,6 +2135,17 @@ class stic_AwfConfiguration {
                 'target_object': { value: blockDest.id, valueText: blockDest.text, selectedOption: 'datablock' },
                 'relationship_name': { value: rel.name, valueText: rel.text, selectedOption: '' }
               };
+              
+              // For 1-N relationships: determine the id_name for FK injection
+              const moduleOrigInfo = utils.getModuleInformation(blockOrig.module);
+              if (moduleOrigInfo) {
+                const relateField = Object.values(moduleOrigInfo.fields).find(
+                  f => f.type === 'relate' && f.options === rel.name
+                );
+                if (relateField && relateField.id_name) {
+                  params['relation_id_name'] = { value: relateField.id_name, valueText: relateField.id_name, selectedOption: '' };
+                }
+              }
               
               const newAction = this.addAction(actionDef, params, '0');
               if (newAction) {

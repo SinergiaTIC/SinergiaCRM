@@ -427,15 +427,10 @@ class WizardStep2 {
           Alpine.store('dataBlockRelationships', {
             get formConfig() { return window.alpineComponent.formConfig; },
 
-            _dataBlockRelationships: null,
             get dataBlockRelationships() { 
-              if (this._dataBlockRelationships == null) {
-                this._dataBlockRelationships = this.formConfig.getAllDataBlockRelationships(); 
-              }
-              return this._dataBlockRelationships;
+              return this.formConfig.getAllDataBlockRelationships(); 
             },
             resetDataBlockRelationships() {
-              this._dataBlockRelationships = null;
             },
             usedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
@@ -449,13 +444,23 @@ class WizardStep2 {
               let seen = new Set();
               return this.dataBlockRelationships[datablockId].filter(r => {
                 if (seen.has(r.name)) return false;
-                // If this module has a relate field for this relationship, it's the N side: hide after use
+                // Check if this block is the N side: it has a relate field, or relationship metadata marks it as 1-N
                 let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === r.name);
+                if (!hasRelateField) {
+                  // Fallback: check relationship metadata for virtual 1-N
+                  let relData = moduleInfo?.relationships?.[r.name];
+                  if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                    // Block is N side if its module matches module_orig
+                    if (relData.module_orig === block.module) hasRelateField = true;
+                  }
+                }
                 if (!hasRelateField) {
                   seen.add(r.name);
                   return true;
                 }
-                let isUsed = block.relationships.some(br => br.name === r.name);
+                // For self-referencing (hasRelateField on both sides), only hide if the block
+                // is the initiator (role !== 'target'), not when it's the target (1 side).
+                let isUsed = block.relationships.some(br => br.name === r.name && br.role !== 'target');
                 if (!isUsed) {
                   seen.add(r.name);
                   return true;
@@ -474,24 +479,55 @@ class WizardStep2 {
               this.formConfig.deleteRelationship(datablockId, relName, relatedDatablockId);
               this.resetDataBlockRelationships();
             },
-            getRelationshipTypeLabel(datablockId, relName, otherDatablockId) {
+            getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
               let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
-              if (!block) return 'N-M';
+              if (!block) return 'N\u2009\u27f7\u2009M';
               let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
               let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
               let otherHasRelateField = otherModuleInfo && Object.values(otherModuleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
-              if (hasRelateField && !otherHasRelateField) return 'N-1';
-              if (!hasRelateField && otherHasRelateField) return '1-N';
-              if (hasRelateField && otherHasRelateField) return '1-1';
-              return 'N-M';
+              if (hasRelateField && otherHasRelateField && block.module === otherBlock?.module) {
+                return datablockId === origDatablockId ? 'N\u2009\u27f6\u20091' : '1\u2009\u27f5\u2009N';
+              }
+              if (hasRelateField && !otherHasRelateField) return 'N\u2009\u27f6\u20091';
+              if (!hasRelateField && otherHasRelateField) return '1\u2009\u27f5\u2009N';
+              if (hasRelateField && otherHasRelateField) return '1\u2009\u27f7\u20091';
+              // Fallback: check relationship metadata for virtual/inverse virtual relationships
+              let relData = moduleInfo?.relationships?.[relName];
+              if (!relData && otherModuleInfo) relData = otherModuleInfo.relationships?.[relName];
+              if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                if (relData.module_orig === block.module) return 'N\u2009\u27f6\u20091';
+                if (relData.module_dest === block.module) return '1\u2009\u27f5\u2009N';
+              }
+              return 'N\u2009\u27f7\u2009M';
             },
             getAvailableDataBlocksForRelationship(datablockId, relName) { 
               return this.formConfig.getAvailableDataBlocksForRelationship(datablockId, relName);
             },
             suggestNewDestDataBlockText(origDatablockId, relName) {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
+            },
+            _relArrow(datablockId, relName, otherBlock, initiatorId) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return '⟷';
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
+              let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              let otherHasRelateField = otherModuleInfo && Object.values(otherModuleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              if (hasRelateField && otherHasRelateField && block.module === otherBlock?.module) {
+                return datablockId === initiatorId ? '⟶' : '⟵';
+              }
+              if (hasRelateField && !otherHasRelateField) return '⟶';
+              if (!hasRelateField && otherHasRelateField) return '⟵';
+              // Fallback: check relationship metadata for virtual relationships
+              let relData = moduleInfo?.relationships?.[relName];
+              if (!relData && otherModuleInfo) relData = otherModuleInfo.relationships?.[relName];
+              if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                if (relData.module_orig === block.module) return '⟶';
+                if (relData.module_dest === block.module) return '⟵';
+              }
+              return '⟷';
             },
             getRelText(datablockId, rel) {
               let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
@@ -500,24 +536,16 @@ class WizardStep2 {
               let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
               if (!otherBlock) return rel.text;
 
-              let typeLabel = this.getRelationshipTypeLabel(datablockId, rel.name, otherBlockId);
-              let arrow = '⟶';
-              if (typeLabel === 'N-M' || typeLabel === '1-1') arrow = '⟷';
-              else if (typeLabel === '1-N') arrow = '⟵';
-
+              let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
               return `${block.text} ${arrow} ${otherBlock.text}`;
             },
             getInvolvedBlocksText(datablockId, rel) {
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let typeLabel = this.getRelationshipTypeLabel(datablockId, rel.name, otherBlockId);
               let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
               let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
               if (!block || !otherBlock) return rel.text;
 
-              let arrow = '⟶';
-              if (typeLabel === 'N-M' || typeLabel === '1-1') arrow = '⟷';
-              else if (typeLabel === '1-N') arrow = '⟵';
-
+              let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
               return `${block.text} (${block.getModuleText()}) ${arrow} ${otherBlock.text} (${otherBlock.getModuleText()})`;
             },
           });
