@@ -122,13 +122,22 @@ class stic_AWF_FormsUtils {
                 'inViews' => false,
             ];
 
-            // For relate fields, link options to their relationship name if found
+            // For relate fields with 'link' property: link options to their relationship name
             if ($arr['type'] === 'relate' && isset($arr['link'])) {
                 $linkName = $arr['link'];
                 $linkRelName = $fieldDefs[$linkName]['relationship'] ?? '';
                 if (!empty($linkRelName) && isset($result['relationships'][$linkRelName])) {
                     $result['fields'][$fieldName]['options'] = $linkRelName;
                     $result['fields'][$fieldName]['link_name'] = $linkName;
+                }
+            }
+
+            // For standalone relate fields (no link, but has id_name): link to their virtual relationship
+            if ($arr['type'] === 'relate' && !isset($arr['link']) && !empty($arr['id_name'])) {
+                $virtualName = 'virtual__' . $fieldName;
+                if (isset($result['relationships'][$virtualName])) {
+                    $result['fields'][$fieldName]['options'] = $virtualName;
+                    $result['fields'][$fieldName]['link_name'] = $virtualName;
                 }
             }
         }
@@ -295,12 +304,68 @@ class stic_AWF_FormsUtils {
             }
         }
 
+        // Build set of id_name values already covered by existing relationships
+        $coveredIdNames = [];
+        foreach ($relDefs as $relName => $relDef) {
+            if (isset($processed[$relName])) {
+                if (isset($relDef['relationship_type']) && $relDef['relationship_type'] === 'one-to-many') {
+                    if (($relDef['rhs_module'] ?? '') === $moduleName && !empty($relDef['rhs_key'])) {
+                        $coveredIdNames[$relDef['rhs_key']] = true;
+                    }
+                }
+            }
+        }
+        // Also check result entries that may already have id_name set
+        foreach ($result as $relData) {
+            if (!empty($relData['id_name'])) {
+                $coveredIdNames[$relData['id_name']] = true;
+            }
+        }
+
+        // Third source: standalone relate fields with id_name but without link (virtual relationships)
+        foreach ($fields as $fieldName => $f) {
+            if (($f['type'] ?? '') !== 'relate') continue;
+            if (empty($f['id_name'])) continue;
+            if (!empty($f['link'])) continue;
+            if (empty($f['module']) || !isset($availableModules[$f['module']])) continue;
+            if (isset($coveredIdNames[$f['id_name']])) continue;
+
+            $virtualName = 'virtual__' . $fieldName;
+
+            $vname = $f['vname'] ?? '';
+            $text = '';
+            if (!empty($vname)) {
+                $text = rtrim(trim(translate($vname, $moduleName)), ':');
+            }
+            if (empty($text)) {
+                $text = translate($f['module']) ?: $fieldName;
+            }
+
+            $result[$virtualName] = [
+                'name'              => $virtualName,
+                'text'              => $text,
+                'module_orig'       => $moduleName,
+                'module_dest'       => $f['module'],
+                'relationship'      => $virtualName,
+                'link_name'         => $fieldName,
+                'id_name'           => $f['id_name'],
+                'is_virtual_relate' => true,
+                'type'              => '1-N',
+                'relationship_type' => 'one-to-many',
+            ];
+
+            $processed[$virtualName] = true;
+        }
+
         // Deduplicate by target module: if multiple relationships point to the same module_dest,
-        // keep only the first one (avoids duplicate Notes/Tasks entries in module selectors)
+        // keep only the first non-virtual one (avoids duplicate Notes/Tasks entries in module selectors).
+        // Virtual relationships (is_virtual_relate = true) are always kept, since they represent
+        // distinct standalone relate fields that coexist with canonical relationships to the same module.
         $seenDest = [];
         foreach ($result as $relName => $relData) {
             $dest = $relData['module_dest'];
-            if (isset($seenDest[$dest])) {
+            $isVirtual = $relData['is_virtual_relate'] ?? false;
+            if (isset($seenDest[$dest]) && !$isVirtual) {
                 unset($result[$relName]);
             } else {
                 $seenDest[$dest] = true;
