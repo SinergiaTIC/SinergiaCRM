@@ -1257,9 +1257,11 @@ class AOS_InvoicesUtils
                 $sendSuccess = true;
 
                 // If this is a rectified invoice sent successfully, log on the original invoice's audit log
+                // and mark all invoices referencing the same original as non-vigente (0)
                 if (!empty($invoiceBean->verifactu_is_rectified_c) && !empty($invoiceBean->verifactu_cancel_id_c)) {
                     $originalInvoice = BeanFactory::getBean('AOS_Invoices', $invoiceBean->verifactu_cancel_id_c);
                     if (!empty($originalInvoice->id)) {
+                        $originalId = $originalInvoice->id;
                         $rectifiedRef = !empty($generatedInvoiceNumber) ? $generatedInvoiceNumber : $invoiceBean->name;
                         $auditTimestamp = (new DateTimeImmutable())->format('Y-m-d H:i:s');
                         $originalAuditLog = $originalInvoice->verifactu_audit_log_c ?? '';
@@ -1268,7 +1270,16 @@ class AOS_InvoicesUtils
                         }
                         $originalAuditLog .= "[{$auditTimestamp}] " . str_replace(['{0}', '{1}'], [$rectifiedRef, $invoiceBean->id], $mod_strings['LBL_AUDIT_ORIGINAL_RECTIFIED_SENT']);
                         $auditLogQuoted = $originalInvoice->db->quote($originalAuditLog);
-                        $originalInvoice->db->query("UPDATE aos_invoices_cstm SET verifactu_audit_log_c = '{$auditLogQuoted}', verifactu_valid_invoice_c = '0' WHERE id_c = '{$originalInvoice->id}'");
+                        $originalInvoice->db->query("UPDATE aos_invoices_cstm SET verifactu_audit_log_c = '{$auditLogQuoted}', verifactu_valid_invoice_c = '0' WHERE id_c = '{$originalId}'");
+                        // Mark all other rectificatives of the same original as non-vigente (0)
+                        $originalInvoice->db->query(
+                            "UPDATE aos_invoices_cstm c "
+                            . "INNER JOIN aos_invoices i ON i.id = c.id_c "
+                            . "SET c.verifactu_valid_invoice_c = '0' "
+                            . "WHERE c.verifactu_cancel_id_c = '{$originalId}' "
+                            . "AND c.id_c != '{$invoiceBean->id}' "
+                            . "AND i.deleted = 0"
+                        );
                     }
                 }
 

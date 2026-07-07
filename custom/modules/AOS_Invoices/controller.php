@@ -186,24 +186,20 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             return;
         }
 
-        // === Task 2: Verify the original invoice hasn't been rectified already (accepted by AEAT) ===
-        $existingRectified = $originalInvoice->db->query(
-            "SELECT id, number FROM aos_invoices i "
-            . "INNER JOIN aos_invoices_cstm c ON i.id = c.id_c "
-            . "WHERE c.verifactu_cancel_id_c = '{$originalInvoice->db->quote($originalId)}' "
-            . "AND c.verifactu_aeat_status_c = 'accepted' "
-            . "AND i.deleted = 0"
-        );
-        $existing = $originalInvoice->db->fetchByAssoc($existingRectified);
-        if (!empty($existing)) {
-            $existingRef = $existing['number'] ?? $existing['id'];
-            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert(
-                str_replace('{0}', $existingRef, $mod_strings['LBL_ORIGINAL_ALREADY_RECTIFIED'])
-            ));
+        // === Task 1: Verify the invoice is not already a rectificative ===
+        // Rectificatives can only be created from original invoices, never from another rectificative
+        if (!empty($originalInvoice->verifactu_is_rectified_c)) {
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_CANNOT_RECTIFY_RECTIFIED_INVOICE']));
             SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
             return;
         }
-        // === End Task 2 ===
+
+        // === Task 1b: Verify the invoice is not cancelled ===
+        if ($originalInvoice->verifactu_aeat_status_c === 'cancelled') {
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_CANNOT_RECTIFY_CANCELLED_INVOICE']));
+            SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
+            return;
+        }
 
         // Create a new invoice (rectified)
         $rectifiedInvoice = BeanFactory::newBean('AOS_Invoices');

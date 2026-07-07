@@ -96,10 +96,16 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                     });
                     $invoiceMap = [];
                     if (!empty($numSerieValues)) {
-                        $query = "SELECT id, number FROM aos_invoices WHERE number IN (" . implode(',', $numSerieValues) . ") AND deleted = 0";
+                        $query = "SELECT i.id, i.number, c.verifactu_valid_invoice_c "
+                            . "FROM aos_invoices i "
+                            . "LEFT JOIN aos_invoices_cstm c ON c.id_c = i.id "
+                            . "WHERE i.number IN (" . implode(',', $numSerieValues) . ") AND i.deleted = 0";
                         $res = $db->query($query);
                         while ($row = $db->fetchByAssoc($res)) {
-                            $invoiceMap[$row['number']] = $row['id'];
+                            $invoiceMap[$row['number']] = [
+                                'id' => $row['id'],
+                                'valid_invoice' => $row['verifactu_valid_invoice_c'] ?? null,
+                            ];
                         }
                     }
 
@@ -150,7 +156,10 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                             if ($nestRectified && isset($children[$currIdx])) {
                                 $childList = $children[$currIdx];
                                 for ($c = count($childList) - 1; $c >= 0; $c--) {
-                                    $stack[] = [$childList[$c], $currDepth + 1];
+                                    // Only two levels: original (0) and rectificative (1).
+                                    // Deeper nesting is no longer possible since we prevent
+                                    // rectificatives of rectificatives.
+                                    $stack[] = [$childList[$c], 1];
                                 }
                             }
                         }
@@ -219,7 +228,11 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                         }
 
                         if (isset($invoiceMap[$serieNum])) {
-                            $serieLink = '<a href="index.php?module=AOS_Invoices&action=DetailView&record=' . htmlspecialchars($invoiceMap[$serieNum]) . '" title="' . htmlspecialchars($mod_strings['LBL_VERIFACTU_QUERY_LINK_TOOLTIP']) . '">' . $serieNum . '</a>';
+                            $invInfo = $invoiceMap[$serieNum];
+                            $vigenteIcon = $invInfo['valid_invoice'] === '1'
+                                ? '<span style="color: #3c763d; font-weight: bold; margin-right: 4px;">✓</span>'
+                                : '<span style="color: #d9534f; font-weight: bold; margin-right: 4px;">✗</span>';
+                            $serieLink = $vigenteIcon . ' <a href="index.php?module=AOS_Invoices&action=DetailView&record=' . htmlspecialchars($invInfo['id']) . '" title="' . htmlspecialchars($mod_strings['LBL_VERIFACTU_QUERY_LINK_TOOLTIP']) . '">' . $serieNum . '</a>';
                         } else {
                             $serieLink = '<span title="' . htmlspecialchars($mod_strings['LBL_VERIFACTU_QUERY_NO_LINK_TOOLTIP']) . '" style="cursor: help;">' . $serieNum . '</span>';
                         }
