@@ -127,13 +127,20 @@ array(
                 'default' => true,
                 'name' => 'verifactu_aeat_status_c',
             ),
-            'STIC_INVOICE_TYPE_C' => array( 
+             'STIC_INVOICE_TYPE_C' => array( 
                 'type' => 'enum',
                 'studio' => 'visible',
                 'label' => 'LBL_STIC_INVOICE_TYPE',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'stic_invoice_type_c',
+            ),
+            'VERIFACTU_VALID_INVOICE_C' => array(
+                'type' => 'enum',
+                'label' => 'LBL_VERIFACTU_VALID_INVOICE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'verifactu_valid_invoice_c',
             ),
             'total_amount' => array(
                 'type' => 'currency',
@@ -433,12 +440,19 @@ array(
                 'default' => true,
                 'name' => 'verifactu_aeat_response_c',
             ),
-            'VERIFACTU_CANCEL_ID_C' => array(
+             'VERIFACTU_CANCEL_ID_C' => array(
                 'type' => 'text',
                 'label' => 'LBL_VERIFACTU_CANCEL_ID',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'verifactu_cancel_id_c',
+            ),
+            'VERIFACTU_VALID_INVOICE_C' => array(
+                'type' => 'enum',
+                'label' => 'LBL_VERIFACTU_VALID_INVOICE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'verifactu_valid_invoice_c',
             ),
             'date_entered' => array(
                 'type' => 'datetime',
