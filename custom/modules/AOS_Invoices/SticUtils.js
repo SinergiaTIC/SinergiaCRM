@@ -199,8 +199,6 @@ switch (viewType()) {
       };
 
       // Rectified invoice button: only enabled for original (non-rectificative) accepted invoices
-      // Use explicit comparison (=== true or === '1') because SuiteCRM may return '0' for unchecked bool fields,
-      // and '0' is truthy in JavaScript, which would incorrectly disable the button for all invoices.
       if (STIC.record.verifactu_aeat_status_c !== 'accepted' || STIC.record.verifactu_is_rectified_c === true || STIC.record.verifactu_is_rectified_c === '1') {
         buttons.createRectifiedInvoice.disabled = 'disabled';
         buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";

@@ -167,8 +167,24 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
 
                     $tableRows = [];
                     $rowClass = 'oddListRowS1';
+                    $blockBorderColors = ['#5bc0de', '#f0ad4e', '#5cb85c'];
+                    $blockIdx = -1;
+                    $blockFirstRowRenderIdx = -1;
+                    $activeBlockColor = '';
 
                     foreach ($renderRegs as $item) {
+                        $isNewBlock = $item['depth'] === 0;
+
+                        if ($isNewBlock) {
+                            // Close previous block: add bottom border to its last rendered row
+                            if ($blockFirstRowRenderIdx >= 0 && count($tableRows) > 0) {
+                                $tableRows[count($tableRows) - 1]['ROW_STYLE'] .= 'border-bottom: 2px solid ' . $activeBlockColor . ';';
+                            }
+                            $blockIdx++;
+                            $blockFirstRowRenderIdx = count($tableRows);
+                        }
+
+                        $activeBlockColor = $blockBorderColors[$blockIdx % count($blockBorderColors)];
                         $reg = $item['reg'];
                         $depth = $item['depth'];
                         $idx = $item['idx'];
@@ -227,11 +243,13 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                             $errorDisplay = '[' . $errorCode . '] ' . $errorDesc;
                         }
 
+                        $isVigente = false;
                         if (isset($invoiceMap[$serieNum])) {
                             $invInfo = $invoiceMap[$serieNum];
-                            $vigenteIcon = $invInfo['valid_invoice'] === '1'
-                                ? '<span style="color: #3c763d; font-weight: bold; margin-right: 4px;">✓</span>'
-                                : '<span style="color: #d9534f; font-weight: bold; margin-right: 4px;">✗</span>';
+                            $isVigente = $invInfo['valid_invoice'] === '1';
+                            $vigenteIcon = $isVigente
+                                ? '<span style="color: #3c763d; font-weight: bold; font-size: 18px; margin-right: 6px;">✔</span>'
+                                : '<span style="color: #d9534f; font-weight: bold; font-size: 18px; margin-right: 6px;">✘</span>';
                             $serieLink = $vigenteIcon . ' <a href="index.php?module=AOS_Invoices&action=DetailView&record=' . htmlspecialchars($invInfo['id']) . '" title="' . htmlspecialchars($mod_strings['LBL_VERIFACTU_QUERY_LINK_TOOLTIP']) . '">' . $serieNum . '</a>';
                         } else {
                             $serieLink = '<span title="' . htmlspecialchars($mod_strings['LBL_VERIFACTU_QUERY_NO_LINK_TOOLTIP']) . '" style="cursor: help;">' . $serieNum . '</span>';
@@ -243,12 +261,18 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
 
                         $seriePrefix = $isChild ? '<span style="margin-left: ' . ($depth * 20) . 'px;">↳ </span>' : '';
                         $tdPad = $isChild ? 'padding: 4px 8px;' : 'padding: 6px 8px;';
-                        $rowStyle = '';
-                        if ($isCancelled) {
-                            $rowStyle = 'background-color: #f2dede;';
+                        $rowStyle = 'border-left: 2px solid ' . $activeBlockColor . ';border-right: 2px solid ' . $activeBlockColor . ';';
+                        if ($isNewBlock) {
+                            $rowStyle .= 'border-top: 2px solid ' . $activeBlockColor . ';';
                         }
                         if ($isChild) {
                             $rowStyle .= 'font-size: 11px; background-color: #fafafa;';
+                        }
+                        if (!$isDimmed) {
+                            $rowStyle .= 'font-size: 14px; font-weight: 500;';
+                        }
+                        if ($isCancelled) {
+                            $rowStyle .= 'background-color: #f2dede;';
                         }
                         if ($isDimmed && !$isCancelled) {
                             $rowStyle .= ' opacity: 0.55;';
@@ -271,6 +295,11 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                         ];
                     }
 
+                    // Close last block with bottom border
+                    if ($blockFirstRowRenderIdx >= 0 && count($tableRows) > 0) {
+                        $tableRows[count($tableRows) - 1]['ROW_STYLE'] .= 'border-bottom: 2px solid ' . $activeBlockColor . ';';
+                    }
+
                     $this->ss->assign('HAS_ROWS', true);
                     $this->ss->assign('TABLE_ROWS', $tableRows);
                 } else {
@@ -283,6 +312,12 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         }
 
         echo $this->ss->fetch('custom/modules/AOS_Invoices/tpls/QueryAeatInvoices.tpl');
+
+        // Auto-submit form on initial load to show results immediately
+        if (empty($_POST['query'])) {
+            echo '<script>document.forms["VerifactuQueryForm"].submit();</script>';
+        }
+
         SticViews::display($this);
     }
 }
