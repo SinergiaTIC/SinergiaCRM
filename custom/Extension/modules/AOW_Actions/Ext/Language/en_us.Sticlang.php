@@ -26,3 +26,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings ['LBL_SENDMESSAGE'] = 'Send message';
+$mod_strings ['LBL_SENDTOSIGN'] = 'Send to sign';
+$mod_strings ['LBL_SENDTOSIGN_SIGNATURE'] = 'Signature process';
+$mod_strings ['LBL_SENDTOSIGN_ACTION_TYPE'] = 'Action type';
+$mod_strings ['LBL_SENDTOSIGN_ADD_ONLY'] = 'Add to signature process';
+$mod_strings ['LBL_SENDTOSIGN_ADD_AND_EMAIL'] = 'Add to signature process and send email';

@@ -11,6 +11,7 @@ Actualizar con cada avance antes de crear el PR final.
 - [Commits y cambios acumulados](#commits-y-cambios-acumulados)
 - [Feature 1: Acción de firma en formularios web avanzados (AWF)](#feature-1-acción-de-firma-en-formularios-web-avanzados-awf)
 - [Feature 2: Mejoras en el proceso de firmantes (acción popup + email)](#feature-2-mejoras-en-el-proceso-de-firmantes-acción-popup--email)
+- [Feature 3: Acción "Enviar a firma" en WorkFlow](#feature-3-acción-enviar-a-firma-en-workflow)
 - [Archivos modificados](#archivos-modificados)
 - [Pruebas](#pruebas)
 - [Notas](#notas)
@@ -19,7 +20,7 @@ Actualizar con cada avance antes de crear el PR final.
 
 ## Resumen
 
-Esta rama implementa la capacidad de agregar un **proceso de firma** como **acción diferida** en los Formularios Web Avanzados (AWF), permitiendo que los formularios envíen documentos a firmar y redirijan al portal de firmas. Además, mejora la experiencia de usuario en el popup de selección de firmas (LV y DV) con checkboxes, mensajes por firmante con código de color, y un gestor de firmantes reutilizable.
+Esta rama implementa la capacidad de agregar un **proceso de firma** como **acción diferida** en los Formularios Web Avanzados (AWF) y como **acción en WorkFlow**, permitiendo automatizar el envío de registros a firmar. Además, mejora la experiencia de usuario en el popup de selección de firmas (LV y DV) con checkboxes, mensajes por firmante con código de color, y un gestor de firmantes reutilizable (`SignatureSignersManager`).
 
 ---
 
@@ -106,11 +107,48 @@ Mejora la interacción del usuario al añadir registros a un proceso de firma de
 
 ---
 
+## Feature 3: Acción "Enviar a firma" en WorkFlow
+
+### Descripción
+
+Nueva acción en WorkFlow (AOW_WorkFlow) que permite programar el envío de un registro a un proceso de firma.  
+Cuando se cumplan las condiciones del flujo, la acción:
+
+1. Añade el registro como firmante al proceso de firma seleccionado mediante `SignatureSignersManager::addSignersToSignature()`.
+2. Opcionalmente, envía el email de notificación al firmante usando la plantilla definida en el propio proceso de firma (campo `emailtemplate_id_c`), mediante `stic_SignersUtils::sendToSign()`.
+
+### Configuración en el WorkFlow
+
+| Campo | Descripción |
+|-------|-------------|
+| **Proceso de firma** | Desplegable con los procesos de firma disponibles para el módulo del flujo (`main_module`). |
+| **Tipo de acción** | Dos opciones: "Añadir al proceso de firma" (`add_only`) o "Añadir al proceso de firma y enviar email" (`add_and_email`). |
+
+La plantilla de email se toma directamente del proceso de firma seleccionado — no es necesario seleccionarla en el WorkFlow.
+
+### Archivos clave
+
+| Archivo | Descripción |
+|---------|-------------|
+| `custom/modules/AOW_Actions/Ext/Actions/actions.ext.php` | Registro de la acción `SendToSign` en `$aow_actions_list[]`. |
+| `custom/modules/AOW_Actions/actions/actionSendToSign.php` | Clase `actionSendToSign extends actionBase`. Implementa `edit_display()` (selector de firma + tipo de acción) y `run_action()` (add + opcional send email). |
+| `custom/modules/AOW_Actions/Ext/Language/{ca_ES,en_us,es_ES,eu_ES,gl_ES}.lang.ext.php` | Strings `LBL_SENDTOSIGN`, `LBL_SENDTOSIGN_SIGNATURE`, `LBL_SENDTOSIGN_ACTION_TYPE`, `LBL_SENDTOSIGN_ADD_ONLY`, `LBL_SENDTOSIGN_ADD_AND_EMAIL`. |
+
+### Notas
+
+- Reutiliza `SignatureSignersManager` (ya existente) para la lógica de negocio.
+- Reutiliza `stic_SignersUtils::sendToSign()` (ya existente) para el envío de email, que usa la plantilla de notificación del proceso de firma.
+- El `require_once` apunta a `custom/modules/stic_Signatures/SignatureSignersManager.php`.
+
+---
+
 ## Archivos modificados
 
 ### Nuevos
 - `custom/modules/stic_Signatures/SignatureSignersManager.php`
 - `modules/stic_AWF_Forms/actions/Deferred/SignatureAction.php`
+- `custom/modules/AOW_Actions/Ext/Actions/actions.ext.php`
+- `custom/modules/AOW_Actions/actions/actionSendToSign.php`
 
 ### Modificados
 - `custom/Extension/application/Ext/Language/{ca_ES,en_us,es_ES,eu_ES,gl_ES}.SticLang.php`
@@ -126,13 +164,14 @@ Mejora la interacción del usuario al añadir registros a un proceso de firma de
 - `modules/stic_Signatures/SignaturePortal/SignaturePortal.js`
 - `modules/stic_Signatures/language/{ca_ES,en_us,es_ES,eu_ES,gl_ES}.lang.php`
 - `modules/stic_Signers/Utils.php`
+- `custom/modules/AOW_Actions/Ext/Language/{ca_ES,en_us,es_ES,eu_ES,gl_ES}.lang.ext.php`
 
 ---
 
 ## Pruebas
 
 - [x] `php -l` sin errores de sintaxis en todos los archivos modificados.
-- [ ] Cache limpiada (`rm -rf cache/*`).
+- [x] Cache limpiada (`rm -rf cache/*`).
 
 ---
 
