@@ -445,13 +445,16 @@ class AOS_InvoicesUtils
      * @return object The AEAT response object
      * @throws Exception If certificate is not found or sending fails
      */
-    public static function sendToAeat($invoiceBean)
+    public static function sendToAeat($invoiceBean, $isMassAction = false)
     {
         global $db, $mod_strings, $sugar_config;
 
         // Check if Verifactu is activated - if not, skip (legacy mode)
         if (!self::isVerifactuActivated()) {
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Verifactu not activated (legacy mode), skipping sendToAeat.');
+            if ($isMassAction) {
+                return ['success' => false, 'status' => 'skipped', 'invoice_number' => $invoiceBean->number ?? '', 'message' => 'Verifactu not activated (legacy mode)'];
+            }
             return;
         }
 
@@ -460,6 +463,9 @@ class AOS_InvoicesUtils
         $invoiceId = $invoiceBean->id;
         if (isset(self::$processingInvoiceIds[$invoiceId])) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Re-entry detected for invoice ' . $invoiceId . ', skipping.');
+            if ($isMassAction) {
+                return ['success' => false, 'status' => 'skipped', 'invoice_number' => $invoiceBean->number ?? '', 'message' => 'Re-entry detected'];
+            }
             return;
         }
         self::$processingInvoiceIds[$invoiceId] = true;
@@ -472,6 +478,10 @@ class AOS_InvoicesUtils
             $aeatStatus === 'accepted') {
 
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice cannot be sent to AEAT. Status: ' . ($invoiceBean->status ?? 'N/A') . ', AEAT Status: ' . ($aeatStatus ?: 'N/A'));
+            if ($isMassAction) {
+                unset(self::$processingInvoiceIds[$invoiceId]);
+                return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']];
+            }
             SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT']));
             unset(self::$processingInvoiceIds[$invoiceId]);
             SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
@@ -547,6 +557,9 @@ class AOS_InvoicesUtils
                 } catch (Exception $e) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid series format: ' . $e->getMessage());
                     $errorMsg = $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'] . ' (' . $seriesFormat . ') ' . $mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS'];
+                    if ($isMassAction) {
+                        return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $errorMsg];
+                    }
                     SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMsg));
                     return;
                 }
@@ -595,6 +608,9 @@ class AOS_InvoicesUtils
 
             if ($certificateType === null) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Cannot determine certificate type (entity seal or representative).');
+                if ($isMassAction) {
+                    return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $mod_strings['LBL_MISSING_SETTINGS']];
+                }
                 SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_MISSING_SETTINGS']));
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             }
@@ -731,14 +747,18 @@ class AOS_InvoicesUtils
                 // Validate chronological order by series
                 if ($issueDate < $seriesLastInvoiceDate) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice date (' . $issueDate->format('Y-m-d') . ') is earlier than last registered invoice date for series ' . $seriesName . ' (' . $seriesLastInvoiceDate->format('Y-m-d') . ', #' . $seriesLastInvoice['number'] . '). Sending blocked.');
-                    SugarApplication::appendErrorMessage(self::getStyledErrorAlert(
-                        sprintf(
-                            $mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'],
-                            $issueDate->format('d/m/Y'),
-                            $seriesLastInvoice['number'],
-                            $seriesLastInvoiceDate->format('d/m/Y')
-                        )
-                    ));
+                    $dateErrorMsg = sprintf(
+                        $mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'],
+                        $issueDate->format('d/m/Y'),
+                        $seriesLastInvoice['number'],
+                        $seriesLastInvoiceDate->format('d/m/Y')
+                    );
+                    if ($isMassAction) {
+                        $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                        $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                        return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $dateErrorMsg];
+                    }
+                    SugarApplication::appendErrorMessage(self::getStyledErrorAlert($dateErrorMsg));
                     $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
                     $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
                     SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
@@ -916,6 +936,11 @@ class AOS_InvoicesUtils
                     $errorMsg .= 'Seleccione un cliente (Organización o Persona) con NIF informado.';
                 }
 
+                if ($isMassAction) {
+                    $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                    $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                    return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => strip_tags($errorMsg)];
+                }
                 SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMsg));
                 $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
                 $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
@@ -928,6 +953,11 @@ class AOS_InvoicesUtils
             $invoiceTypeValidation = self::validateInvoiceType($invoiceBean);
             if ($invoiceTypeValidation !== true) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice type validation failed: ' . $invoiceTypeValidation);
+                if ($isMassAction) {
+                    $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                    $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                    return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $invoiceTypeValidation];
+                }
                 SugarApplication::appendErrorMessage(self::getStyledErrorAlert($invoiceTypeValidation));
                 $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
                 $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
@@ -965,7 +995,14 @@ class AOS_InvoicesUtils
                     $rectificativeIssueDate = self::parseDateToImmutable($invoiceBean->invoice_date);
                     if ($rectificativeIssueDate < $rectifiedDate) {
                         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Rectificative date ' . $invoiceBean->invoice_date . ' is before original date ' . $invoiceBean->verifactu_rectified_date_c);
-                        SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_RECTIFIED_DATE_BEFORE_ORIGINAL'] ?? 'La fecha de la factura rectificativa no puede ser anterior a la fecha de la factura original.'));
+                        $rectDateMsg = $mod_strings['LBL_RECTIFIED_DATE_BEFORE_ORIGINAL'] ?? 'La fecha de la factura rectificativa no puede ser anterior a la fecha de la factura original.';
+                        if ($isMassAction) {
+                            $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                            $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                            unset(self::$processingInvoiceIds[$invoiceId]);
+                            return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $rectDateMsg];
+                        }
+                        SugarApplication::appendErrorMessage(self::getStyledErrorAlert($rectDateMsg));
                         $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
                         $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
                         unset(self::$processingInvoiceIds[$invoiceId]);
@@ -997,8 +1034,15 @@ class AOS_InvoicesUtils
             // === Step 2.8: Block empty invoices ===
             $hasLines = $invoiceBean->get_linked_beans('aos_products_quotes', 'AOS_Products_Quotes');
             if (empty($hasLines)) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . ($mod_strings['LBL_INVOICE_EMPTY'] ?? 'La factura no tiene líneas de producto.'));
-                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_INVOICE_EMPTY'] ?? 'La factura no tiene líneas de producto.'));
+                $emptyMsg = $mod_strings['LBL_INVOICE_EMPTY'] ?? 'La factura no tiene líneas de producto.';
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $emptyMsg);
+                if ($isMassAction) {
+                    $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                    $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                    unset(self::$processingInvoiceIds[$invoiceId]);
+                    return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $emptyMsg];
+                }
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($emptyMsg));
                 $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
                 $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
                 unset(self::$processingInvoiceIds[$invoiceId]);
@@ -1009,8 +1053,15 @@ class AOS_InvoicesUtils
             $tax = floatval($invoiceBean->tax_amount ?? 0);
             $isDifferencesRectified = ($isRectified && $rectifiedType === 'I');
             if ($subtotal <= 0 && $tax <= 0 && !$isDifferencesRectified) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . ($mod_strings['LBL_INVOICE_ZERO_AMOUNT'] ?? 'La factura tiene importe cero.'));
-                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_INVOICE_ZERO_AMOUNT'] ?? 'La factura tiene importe cero.'));
+                $zeroMsg = $mod_strings['LBL_INVOICE_ZERO_AMOUNT'] ?? 'La factura tiene importe cero.';
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $zeroMsg);
+                if ($isMassAction) {
+                    $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
+                    $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
+                    unset(self::$processingInvoiceIds[$invoiceId]);
+                    return ['success' => false, 'status' => 'validation_error', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $zeroMsg];
+                }
+                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($zeroMsg));
                 $db->query("UPDATE aos_invoices SET status='draft' WHERE id='" . $invoiceBean->id . "' AND deleted=0");
                 $db->query("UPDATE aos_invoices_cstm SET verifactu_hash_c=NULL, verifactu_previous_hash_c=NULL WHERE id_c='" . $invoiceBean->id . "'");
                 unset(self::$processingInvoiceIds[$invoiceId]);
@@ -1253,8 +1304,12 @@ class AOS_InvoicesUtils
             // === End Step 1.3 ===
 
             if ($invoiceBean->verifactu_aeat_status_c === 'accepted') {
-                SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($successMessage));
-                $sendSuccess = true;
+                if ($isMassAction) {
+                    $sendSuccess = true;
+                } else {
+                    SugarApplication::appendSuccessMessage(self::getStyledSuccessAlert($successMessage));
+                    $sendSuccess = true;
+                }
 
                 // If this is a rectified invoice sent successfully, log on the original invoice's audit log
                 // and mark all invoices referencing the same original as non-vigente (0)
@@ -1286,9 +1341,22 @@ class AOS_InvoicesUtils
                 // Mark the invoice itself as vigente (1)
                 $invoiceBean->db->query("UPDATE aos_invoices_cstm SET verifactu_valid_invoice_c = '1' WHERE id_c = '{$invoiceBean->id}'");
             } else {
-                SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_AEAT_SEND_ERROR']));
+                if ($isMassAction) {
+                    // In mass action mode, error is returned via result array
+                } else {
+                    SugarApplication::appendErrorMessage(self::getStyledErrorAlert($mod_strings['LBL_AEAT_SEND_ERROR']));
+                }
             }
 
+            if ($isMassAction) {
+                $aeatStatus = $invoiceBean->verifactu_aeat_status_c ?? '';
+                return [
+                    'success' => $aeatStatus === 'accepted',
+                    'status' => $aeatStatus,
+                    'invoice_number' => $invoiceBean->number ?? $generatedInvoiceNumber ?? '',
+                    'message' => $aeatStatus === 'accepted' ? 'Invoice sent successfully' : 'Invoice rejected by AEAT',
+                ];
+            }
             return true;
 
         } catch (Exception $e) {
@@ -1301,6 +1369,9 @@ class AOS_InvoicesUtils
             $errorMessage = $mod_strings['LBL_AEAT_SEND_ERROR'] . ' <a href="#" onclick="document.getElementById(\'aeat-error-details\').style.display=\'block\'; this.style.display=\'none\'; return false;">' . $mod_strings['LBL_AEAT_SHOW_DETAILS'] . '</a>';
             $errorMessage .= '<div id="aeat-error-details" style="display:none; margin-top:10px; padding:10px; background:#f5f5f5; border:1px solid #ddd;"><pre>' . htmlspecialchars($formattedError) . '</pre></div>';
 
+            if ($isMassAction) {
+                return ['success' => false, 'status' => 'exception', 'invoice_number' => $invoiceBean->number ?? '', 'message' => $e->getMessage()];
+            }
             SugarApplication::appendErrorMessage(self::getStyledErrorAlert($errorMessage));
 
             return false;
@@ -1313,6 +1384,39 @@ class AOS_InvoicesUtils
             }
             unset(self::$processingInvoiceIds[$invoiceId]);
         }
+    }
+
+    /**
+     * Send an invoice to AEAT in mass action mode.
+     * Sets status to 'emitted', saves, then delegates to sendToAeat() in mass mode.
+     *
+     * @param AOS_Invoices $invoiceBean Invoice bean object
+     * @return array Result with 'success', 'status', 'invoice_number', 'message' keys
+     */
+    public static function massSendToAeat($invoiceBean)
+    {
+        global $db, $mod_strings;
+
+        $invoiceId = $invoiceBean->id;
+        $invoiceNumber = $invoiceBean->number ?? $invoiceId;
+
+        // Pre-checks: must be draft
+        if ($invoiceBean->status !== 'draft') {
+            return ['success' => false, 'status' => 'skipped', 'invoice_number' => $invoiceNumber, 'message' => 'Not in draft status'];
+        }
+
+        // Check Verifactu is activated
+        if (!self::isVerifactuActivated()) {
+            return ['success' => false, 'status' => 'skipped', 'invoice_number' => $invoiceNumber, 'message' => 'Verifactu not activated'];
+        }
+
+        // Set status to emitted and save (skip hooks to prevent after_save from calling sendToAeat)
+        $invoiceBean->status = 'emitted';
+        $invoiceBean->save(false);
+
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Mass sending invoice ' . $invoiceId . ' to AEAT');
+
+        return self::sendToAeat($invoiceBean, true);
     }
 
     /**

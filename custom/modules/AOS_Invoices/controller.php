@@ -681,5 +681,152 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             SugarApplication::appendErrorMessage($styledMsg);
         }
     }
+    /**
+     * Mass send selected invoices to AEAT.
+     * Invoices must be in 'draft' status; non-draft invoices are silently skipped.
+     * Processing is ordered by invoice_date ASC and stops at the first AEAT rejection.
+     */
+    public function action_massSendToAeat()
+    {
+        global $mod_strings, $db;
+
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert(
+                $mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_SEND_ERROR']
+            ));
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+            return;
+        }
+
+        $uids = !empty($_REQUEST['uid']) ? explode(',', $_REQUEST['uid']) : [];
+
+        if (empty($uids)) {
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+            return;
+        }
+
+        // Fetch only draft invoices ordered by invoice_date ASC
+        $ids = [];
+        foreach ($uids as $id) {
+            $id = trim($id);
+            if (!empty($id)) {
+                $ids[] = $db->quoted($id);
+            }
+        }
+
+        if (empty($ids)) {
+            SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+            return;
+        }
+
+        $query = "SELECT id FROM aos_invoices WHERE id IN (" . implode(',', $ids) . ") AND status = 'draft' AND deleted = 0 ORDER BY invoice_date ASC";
+        $result = $db->query($query);
+
+        $processedIds = [];
+        $results = [
+            'success' => [],
+            'validation_errors' => [],
+            'aeat_rejected' => [],
+            'skipped_draft' => [],
+        ];
+
+        $aeatRejectedFound = false;
+
+        while ($row = $db->fetchByAssoc($result)) {
+            if ($aeatRejectedFound) {
+                // Add remaining drafts that will be processed next time
+                $results['skipped_draft'][] = $row['id'];
+                continue;
+            }
+
+            $invoiceBean = BeanFactory::getBean('AOS_Invoices', $row['id']);
+            if (empty($invoiceBean->id) || $invoiceBean->status !== 'draft') {
+                continue;
+            }
+
+            $sendResult = AOS_InvoicesUtils::massSendToAeat($invoiceBean);
+            $processedIds[] = $row['id'];
+
+            switch ($sendResult['status']) {
+                case 'accepted':
+                    $results['success'][] = $sendResult;
+                    break;
+                case 'rejected':
+                    $results['aeat_rejected'][] = $sendResult;
+                    $aeatRejectedFound = true;
+                    break;
+                case 'validation_error':
+                case 'exception':
+                    $results['validation_errors'][] = $sendResult;
+                    break;
+                default:
+                    $results['skipped_draft'][] = $row['id'];
+                    break;
+            }
+        }
+
+        // Determine which selected IDs were not in draft status
+        $allSelectedIds = [];
+        foreach ($uids as $id) {
+            $allSelectedIds[] = trim($id);
+        }
+        $nonDraftIds = array_diff($allSelectedIds, $processedIds);
+
+        // Build summary HTML
+        $summaryHtml = '';
+        $countSent = count($results['success']);
+        $countRejected = count($results['aeat_rejected']);
+        $countErrors = count($results['validation_errors']);
+        $countSkippedNonDraft = count($nonDraftIds);
+        $countSkippedPending = count($results['skipped_draft']);
+
+        if ($countSent > 0) {
+            $summaryHtml .= '<p><strong>Facturas enviadas correctamente (' . $countSent . '):</strong></p><ul>';
+            foreach ($results['success'] as $r) {
+                $summaryHtml .= '<li>' . htmlspecialchars($r['invoice_number']) . ' - ' . htmlspecialchars($r['status']) . '</li>';
+            }
+            $summaryHtml .= '</ul>';
+        }
+
+        if ($countErrors > 0) {
+            $summaryHtml .= '<p><strong>Errores de validación (' . $countErrors . '):</strong></p><ul>';
+            foreach ($results['validation_errors'] as $r) {
+                $summaryHtml .= '<li>' . htmlspecialchars($r['invoice_number']) . ' - ' . htmlspecialchars($r['message']) . '</li>';
+            }
+            $summaryHtml .= '</ul>';
+        }
+
+        if ($countRejected > 0) {
+            $r = $results['aeat_rejected'][0];
+            $summaryHtml .= '<p><strong>Rechazo de AEAT - Proceso interrumpido:</strong></p>';
+            $summaryHtml .= '<p>' . htmlspecialchars($r['invoice_number']) . ' - ' . htmlspecialchars($r['message']) . '</p>';
+            if ($countSkippedPending > 0) {
+                $summaryHtml .= '<p><em>Se han omitido ' . $countSkippedPending . ' facturas que no se procesaron debido a la interrupción.</em></p>';
+            }
+        }
+
+        if ($countSkippedNonDraft > 0) {
+            $summaryHtml .= '<p><em>Se han omitido ' . $countSkippedNonDraft . ' facturas que no estaban en estado Borrador.</em></p>';
+        }
+
+        if (empty($summaryHtml)) {
+            $summaryHtml = '<p>No se ha enviado ninguna factura. Verifique que las facturas seleccionadas estén en estado Borrador.</p>';
+        }
+
+        if (empty($mod_strings)) {
+            $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+        }
+
+        $styledSummary = '<div class="alert alert-info" style="margin: 10px 0; padding: 15px; border-left: 4px solid #5bc0de; background-color: #d9edf7;">'
+            . '<strong>' . $mod_strings['LBL_MASS_SEND_AEAT_SUMMARY_TITLE'] . '</strong>'
+            . $summaryHtml
+            . '</div>';
+
+        $_SESSION['MASS_AEAT_SEND_SUMMARY'] = $styledSummary;
+        SugarApplication::redirect('index.php?module=AOS_Invoices&action=index');
+    }
 
 }
+

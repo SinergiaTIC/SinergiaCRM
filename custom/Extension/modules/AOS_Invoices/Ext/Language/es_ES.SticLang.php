@@ -225,3 +225,10 @@ $mod_strings['LBL_VERIFACTU_QUERY_ERROR_AEAT'] = 'AEAT rechazó la consulta: %s.
 $mod_strings['LBL_VERIFACTU_QUERY_ERROR_CERTIFICATE'] = 'Error de certificado al conectar con AEAT: %s. Verifique que el certificado es válido, no ha caducado y está correctamente cargado en Administración > Certificado Digital.';
 $mod_strings['LBL_VERIFACTU_QUERY_ERROR_GENERIC'] = 'Error al consultar AEAT (%s): %s';
 
+// Mass send to AEAT
+$mod_strings['LBL_MASS_SEND_AEAT'] = 'Enviar facturas a AEAT';
+$mod_strings['LBL_MASS_SEND_AEAT_CONFIRM'] = 'Se van a enviar %d facturas a AEAT. ¿Desea continuar?';
+$mod_strings['LBL_MASS_SEND_AEAT_NO_SELECTION'] = 'No se ha seleccionado ninguna factura.';
+$mod_strings['LBL_MASS_SEND_AEAT_NO_DRAFTS'] = 'Ninguna de las facturas seleccionadas está en estado Borrador.';
+$mod_strings['LBL_MASS_SEND_AEAT_SUMMARY_TITLE'] = 'Resultado del envío masivo a AEAT:';
+

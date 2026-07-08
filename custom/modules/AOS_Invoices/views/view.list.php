@@ -45,8 +45,16 @@ class CustomAOS_InvoicesViewList extends ViewList
 
         SticViews::preDisplay($this);
 
-        // === Ensure default series exist ===
+        // === Add mass action button for AEAT send ===
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
+        if (!empty($verifactuStatus['activated'])) {
+            $massSendLabel = translate('LBL_MASS_SEND_AEAT', 'AOS_Invoices');
+            $this->lv->actionsMenuExtraItems[] = '<a href="javascript:void(0)" class="parent-dropdown-action-handler" onclick="return massSendToAeat();">' . $massSendLabel . '</a>';
+        }
+        // === End mass action button ===
+
+        // === Ensure default series exist ===
         $this->sticSeriesMessage = AOS_InvoicesUtils::checkAndDisplaySeriesBanner();
         if ($this->sticSeriesMessage) {
             global $mod_strings;
@@ -67,6 +75,13 @@ class CustomAOS_InvoicesViewList extends ViewList
 
     public function display()
     {
+        // === Mass AEAT Send Summary ===
+        if (!empty($_SESSION['MASS_AEAT_SEND_SUMMARY'])) {
+            echo $_SESSION['MASS_AEAT_SEND_SUMMARY'];
+            unset($_SESSION['MASS_AEAT_SEND_SUMMARY']);
+        }
+        // === End Mass AEAT Send Summary ===
+
         // === Verifactu Activation Banner ===
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
 

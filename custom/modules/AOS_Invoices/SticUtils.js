@@ -390,3 +390,31 @@ $(document).ready(function() {
     $('[data-id="LBL_AEAT_STATUS_PANEL"]').closest(".panel").hide();
   }
 });
+
+// Mass send selected invoices to AEAT
+function massSendToAeat() {
+  if (typeof verifactuActivated === 'undefined' || verifactuActivated !== true) {
+    return false;
+  }
+
+  var count = sugarListView.get_checks_count();
+  if (count < 1) {
+    alert(SUGAR.language.get('AOS_Invoices', 'LBL_MASS_SEND_AEAT_NO_SELECTION'));
+    return false;
+  }
+
+  sugarListView.get_checks();
+  var uids = document.MassUpdate.uid.value;
+  if (!uids) {
+    alert(SUGAR.language.get('AOS_Invoices', 'LBL_MASS_SEND_AEAT_NO_SELECTION'));
+    return false;
+  }
+
+  var confirmMsg = SUGAR.language.get('AOS_Invoices', 'LBL_MASS_SEND_AEAT_CONFIRM').replace('%d', count);
+  if (!confirm(confirmMsg)) {
+    return false;
+  }
+
+  window.location = 'index.php?module=AOS_Invoices&action=MassSendToAeat&uid=' + encodeURIComponent(uids);
+  return false;
+}
