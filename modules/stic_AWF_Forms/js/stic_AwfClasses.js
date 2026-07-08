@@ -2170,45 +2170,7 @@ class stic_AwfConfiguration {
         });
     });
 
-    // --- Phase 3: Generate RELATE actions for FiXED fields (unchanged) ---
-    this.data_blocks.forEach(block => {
-      const moduleInfo = block.getModuleInformation(); 
-        
-      block.fields.forEach(field => {
-        if (field.type === 'relate' && field.value_type === 'fixed' && field.value) {
-          let relationshipName = '';
-          const moduleFieldInfo = moduleInfo.fields[field.name];
-          
-          if (moduleFieldInfo && moduleFieldInfo.type === 'relate' && moduleFieldInfo.options) {
-            relationshipName = moduleFieldInfo.options;
-          }
-          
-          if (relationshipName) {
-            const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
-            if (originalDef) {
-              const actionDef = { 
-                ...originalDef, 
-                isAutomatic: true, 
-                order: AUTO_ACTION_ORDER 
-              };
-              
-              const params = {
-                'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' },
-                'target_object': { value: field.value, valueText: field.value_text || field.value, selectedOption: 'value' },
-                'relationship_name': { value: relationshipName, valueText: relationshipName, selectedOption: '' }
-              };
-              
-              const newAction = this.addAction(actionDef, params, '0');
-              if (newAction) {
-                newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${block.text}.${field.text_original || field.name} = ${field.value_text || field.value}`;
-              }
-            }
-          }
-        }
-      });
-    });
-
-    // --- Phase 4: Generate RELATE actions for Block-to-Block relationships ---
+    // --- Phase 3: Generate RELATE actions for Block-to-Block relationships ---
     // Skip 1-N relationships already handled by SaveRecordWithRelationsAction.
     const allRels = this.getAllDataBlockRelationships();
     Object.keys(allRels).forEach(blockId => {
