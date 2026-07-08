@@ -394,21 +394,21 @@ class actionSendMessage extends actionBase
 
         $messageBean->sender = $params['sender_name'];
         $messageBean->template_id = $params['email_template'];
-            $messageBean->status = $params['status'];
-            $messageBean->type = $params['type'];
+        $messageBean->status = $params['status'];
+        $messageBean->type = $params['type'];
 
-            // Direction field not used until new types added
-            // $messageBean->direction = $params['direction'];
+        // Direction field not used until new types added
+        // $messageBean->direction = $params['direction'];
 
-            $messageBean->message = $txt;
-            $name = $messageBean->fillName($bean->module_name, $bean->id);
+        $messageBean->message = $txt;
+        $name = $messageBean->fillName($bean->module_name, $bean->id);
 
-            foreach($recipients as $recipient) {
-                // Por cada destinatario se crea un mensaje
-                $messageBean = BeanFactory::newBean('stic_Messages');
+        foreach($recipients as $recipient) {
+            // Por cada destinatario se crea un mensaje
+            $messageBean = BeanFactory::newBean('stic_Messages');
 
-                $messageBean->sender = $params['sender_name'];
-                $messageBean->template_id = $params['email_template'];
+            $messageBean->sender = $params['sender_name'];
+            $messageBean->template_id = $params['email_template'];
             $messageBean->status = $params['status'];
             $messageBean->type = $params['type'];
             // Direction field not used until new types added
