@@ -417,8 +417,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'Destination record ID',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relationship to update',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'The internal name of the relationship linking to the destination data block',
-  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'FK field name (id_name)',
-  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_DESC' => 'For 1-N FK-based relationships, the id_name to inject on the source bean',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Related field',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Add to Target List',

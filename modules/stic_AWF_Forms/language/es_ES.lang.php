@@ -417,8 +417,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino',
-  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Nombre del campo FK (id_name)',
-  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_DESC' => 'Para relaciones 1-N basadas en FK, el id_name a inyectar en el bean origen',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Campo relacionado',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Añadir a Lista de Público Objetivo',

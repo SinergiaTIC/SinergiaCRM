@@ -287,10 +287,7 @@ class WizardNavigation {
     if (WizardNavigation.validateCurrentStep()) {
       window.alpineComponent.navigation.step = targetStep;
 
-      // Regenerate automatic actions before saving when entering Step 3 (action configuration).
-      // This ensures old actions (e.g. SaveRecordAction + RelateRecordsAction) are replaced
-      // with current ones (e.g. SaveRecordWithRelationsAction) regardless of data block hash,
-      // which is critical for existing form configs saved before the WithRelations action existed.
+      // Regenerate automatic actions when entering Step 3 to reflect current data block configuration
       if (targetStep === 3 && !window.alpineComponent.isReadOnly) {
         window.alpineComponent.formConfig.regenerateAutomaticActions();
       }
@@ -1616,10 +1613,7 @@ class WizardStep3 {
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
 
-        // Regenerate automatic actions when entering Step 3 to reflect current data block
-        // relationships. This ensures old automatic actions (e.g. SaveRecordAction +
-        // RelateRecordsAction) are replaced with current ones (e.g. SaveRecordWithRelationsAction)
-        // even when the data blocks hash hasn't changed since the last save.
+        // Regenerate automatic actions when entering Step 3 to reflect current data block relationships
         if (window.alpineComponent && !window.alpineComponent.isReadOnly) {
           window.alpineComponent.formConfig.regenerateAutomaticActions();
         }

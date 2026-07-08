@@ -1818,7 +1818,7 @@ class stic_AwfConfiguration {
 
     // Determine the actual N-side (the block that has the relate field with FK).
     // initiator_id must point to the N-side regardless of which block initiated the UI action,
-    // otherwise downstream logic (Phase 1 outgoing filter, Phase 2 requisites, UI arrows) fails.
+    // otherwise direction logic (requisites, arrows) fails.
     let nSideId;
     if (hasRelateField) {
       nSideId = dataBlock.id;
@@ -2058,12 +2058,12 @@ class stic_AwfConfiguration {
     // Using -1 ensures they will be inserted before default manual actions (0)
     const AUTO_ACTION_ORDER = -1;
 
-    // Global set of relationship names handled by SaveRecordWithRelationsAction.
-    // Used in Phase 4 to skip RelateRecordsAction for both directions.
+    // Relationships handled by SaveRecordWithRelationsAction (FK pre-injected before save).
+    // These are skipped when generating RelateRecordsAction later.
     const handledRelationshipNames = new Set();
 
-    // --- Phase 1: Generate SAVE actions for each DataBlock ---
-    // Use SaveRecordWithRelationsAction when the block has outgoing 1-N relationships,
+    // Generate SAVE actions for each DataBlock.
+    // Uses SaveRecordWithRelationsAction when the block has outgoing 1-N relationships,
     // so that FK values are injected before the first save.
     this.data_blocks.forEach(block => {
       if (!block.module) return;
@@ -2073,20 +2073,15 @@ class stic_AwfConfiguration {
       const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
       const moduleInfo = utils.getModuleInformation(block.module);
 
-      // Find outgoing 1-N relationships (N-side has the FK pointing to 1-side).
-      // We detect this by the presence of a relate field with id_name — the FK column.
-      // The relationship_type metadata is unreliable (many canonical 1-N relationships
-      // in CRM vardefs don't explicitly set relationship_type, defaulting to many-to-many),
-      // so we rely on the field structure instead.
-      // Note: getModuleInformation() in Utils.php populates the 'options' property of
-      // relate fields with the resolved relationship name (via the chain:
-      // relate.link → link field → link.relationship).
+      // Find outgoing 1-N relationships by the presence of a relate field with id_name,
+      // which represents the FK column. Relate fields carry the resolved relationship name
+      // in their 'options' property (populated by getModuleInformation() in Utils.php).
       const outgoing1n = activeRels.filter(r => {
         if (r.datablock_orig !== block.id) return false;
         if (!r.name) return false;
-        // For self-referencing 1-N, only the initiator (N-side) should inject FKs
+        // Only the initiator (N-side) should inject FKs
         if (r.initiator_id && r.initiator_id !== block.id) return false;
-        // Self-referencing: cannot inject FK before save (target not yet saved, no ID).
+        // Self-referencing: cannot inject FK before save (target not yet saved)
         if (r.datablock_orig === r.datablock_dest) return false;
         const relateField = moduleInfo && Object.values(moduleInfo.fields).find(
           f => f.type === 'relate' && f.options === r.name
@@ -2100,11 +2095,9 @@ class stic_AwfConfiguration {
       });
 
       if (outgoing1n.length > 0) {
-        // Use SaveRecordWithRelationsAction — saves the bean with FK pre-injected
         let originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordWithRelationsAction');
         let newActionName = utils.translate('LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_TITLE');
         if (!originalDef) {
-          // Fallback to regular SaveRecordAction if the WithRelations action is not available
           originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
           newActionName = utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')
         }
@@ -2150,10 +2143,8 @@ class stic_AwfConfiguration {
       }
     });
 
-    // --- Phase 2: Add requisites for block saves that inject FKs → target block saves ---
-    // This ensures the 1-side is saved before the N-side. Only the N-side (initiator)
-    // adds a requisite on the 1-side (target). The target does NOT add a reverse
-    // requisite, which would create a cycle and cause incorrect ordering.
+    // Add requisites ensuring the 1-side is saved before the N-side (FK injection target).
+    // Only the N-side (initiator) adds a requisite on the 1-side (target).
     this.data_blocks.forEach(block => {
       if (!block.save_action_id) return;
       const allRels = this.getAllDataBlockRelationships();
@@ -2170,21 +2161,20 @@ class stic_AwfConfiguration {
         });
     });
 
-    // --- Phase 3: Generate RELATE actions for Block-to-Block relationships ---
-    // Skip 1-N relationships already handled by SaveRecordWithRelationsAction.
+    // Generate RELATE actions for Block-to-Block relationships.
+    // Skip those already handled by SaveRecordWithRelationsAction.
     const allRels = this.getAllDataBlockRelationships();
     Object.keys(allRels).forEach(blockId => {
       const blockRels = allRels[blockId];
       const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
       
-      // Skip 1-N relationships already injected via SaveRecordWithRelationsAction.
-      // Uses the global handledRelationshipNames set built in Phase 1 so that
-      // BOTH directions are skipped (the initiator's FK injection is sufficient).
+      // Skip relationships already handled by SaveRecordWithRelationsAction.
+      // Both directions are skipped since the initiator's FK injection is sufficient.
       activeRels.forEach(rel => {
         if (rel.datablock_orig === blockId) {
           if (handledRelationshipNames.has(rel.name)) return;
-          // Skip non-initiator: for N-M only one direction is needed (bidirectional),
-          // for 1-N fallback the FK injection on the initiator side is sufficient.
+          // Skip non-initiator: N-M is bidirectional (one action suffices),
+          // 1-N fallback FK injection is done on the initiator side.
           if (rel.initiator_id && rel.initiator_id !== blockId) return;
           
           const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
@@ -2212,7 +2202,6 @@ class stic_AwfConfiguration {
                 const relateField = Object.values(moduleOrigInfo.fields).find(
                   f => f.type === 'relate' && f.options === rel.name
                 );
-                // For 1-N not handled by SaveRecordWithRelationsAction, pass FK field name
                 if (relateField && relateField.id_name) {
                   isOneToMany = true;
                   if (!rel.initiator_id || rel.initiator_id === blockOrig.id) {

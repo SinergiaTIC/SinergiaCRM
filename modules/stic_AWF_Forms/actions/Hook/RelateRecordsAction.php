@@ -87,7 +87,6 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         $paramIdName = new ActionParameterDefinition();
         $paramIdName->name = 'relation_id_name';
         $paramIdName->text = $this->translate('RELATION_ID_NAME_TEXT');
-        $paramIdName->description = $this->translate('RELATION_ID_NAME_DESC');
         $paramIdName->type = ActionParameterType::VALUE;
         $paramIdName->dataType = ActionDataType::TEXT;
         $paramIdName->required = false;
