@@ -186,10 +186,11 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             return;
         }
 
-        // === Task 1: Verify the invoice is not already a rectificative ===
-        // Rectificatives can only be created from original invoices, never from another rectificative
-        if (!empty($originalInvoice->verifactu_is_rectified_c)) {
-            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_CANNOT_RECTIFY_RECTIFIED_INVOICE']));
+        // === Task 1: Verify the invoice is vigente ===
+        // Only vigente invoices can be rectified (a substitution rectificative rectifies the
+        // current vigente invoice, which may itself be a rectificative in a chain).
+        if ($originalInvoice->verifactu_valid_invoice_c !== '1') {
+            SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_CANNOT_RECTIFY_NON_VIGENTE_INVOICE']));
             SugarApplication::redirect("index.php?module=AOS_Invoices&action=DetailView&record=$originalId");
             return;
         }

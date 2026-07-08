@@ -135,7 +135,7 @@ $mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED'] = 'No se especificó la factu
 $mod_strings['LBL_ORIGINAL_INVOICE_NOT_FOUND'] = 'No se encontró la factura original.';
 $mod_strings['LBL_ORIGINAL_INVOICE_MUST_BE_SENT_TO_AEAT'] = 'La factura original debe estar enviada a AEAT para poder rectificarla.';
 $mod_strings['LBL_ORIGINAL_INVOICE_NO_CUSTOMER_DATA'] = 'La factura original no tiene datos del destinatario (Organización o Persona). Las facturas rectificativas de sustitución requieren esta información. Por favor, edite la factura original para añadir los datos del cliente.';
-$mod_strings['LBL_CANNOT_RECTIFY_RECTIFIED_INVOICE'] = 'No se puede crear una factura rectificativa de otra factura rectificativa.';
+$mod_strings['LBL_CANNOT_RECTIFY_NON_VIGENTE_INVOICE'] = 'No se puede crear una factura rectificativa porque la factura original no es vigente. Solo se pueden rectificar facturas que estén vigentes.';
 $mod_strings['LBL_CANNOT_RECTIFY_CANCELLED_INVOICE'] = 'No se puede crear una factura rectificativa de una factura anulada.';
 $mod_strings['LBL_RECTIFIED_INVOICE_CREATED_SUCCESS'] = 'Factura rectificativa creada correctamente. Recuerde completar el tipo y base de rectificación antes de guardar.';
 

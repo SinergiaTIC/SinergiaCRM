@@ -156,10 +156,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                             if ($nestRectified && isset($children[$currIdx])) {
                                 $childList = $children[$currIdx];
                                 for ($c = count($childList) - 1; $c >= 0; $c--) {
-                                    // Only two levels: original (0) and rectificative (1).
-                                    // Deeper nesting is no longer possible since we prevent
-                                    // rectificatives of rectificatives.
-                                    $stack[] = [$childList[$c], 1];
+                                    $stack[] = [$childList[$c], $currDepth + 1];
                                 }
                             }
                         }

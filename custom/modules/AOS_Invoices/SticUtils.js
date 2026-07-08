@@ -198,8 +198,9 @@ switch (viewType()) {
         },
       };
 
-      // Rectified invoice button: only enabled for original (non-rectificative) accepted invoices
-      if (STIC.record.verifactu_aeat_status_c !== 'accepted' || STIC.record.verifactu_is_rectified_c === true || STIC.record.verifactu_is_rectified_c === '1') {
+      // Rectified invoice button: only enabled for vigente (valid) accepted invoices
+      // A vigente invoice can be an original or a rectificative that hasn't been replaced
+      if (STIC.record.verifactu_aeat_status_c !== 'accepted' || STIC.record.verifactu_valid_invoice_c !== '1') {
         buttons.createRectifiedInvoice.disabled = 'disabled';
         buttons.createRectifiedInvoice.style = "cursor: not-allowed; opacity: .5;";
       }
