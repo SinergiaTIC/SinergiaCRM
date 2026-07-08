@@ -2135,18 +2135,17 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveUpAction(action) {
-        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // We cannot move the first action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index <= 0) return false;
 
-        // We cannot skip a fixed order action
         const prevAction = this.actions[index - 1];
         if (prevAction.is_fixed_order) return false;
 
-        // We cannot move before a requisite action
+        // Manual actions cannot move past automatic actions
+        if (!action.is_automatic && prevAction.is_automatic) return false;
+
         if ((action.requisite_actions || []).includes(prevAction.id)) return false;
 
         return true;
@@ -2172,18 +2171,19 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveDownAction(action) {
-        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // We cannot move the last action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index >= this.actions.length - 1) return false;
 
-        // We cannot skip a fixed order action
         const nextAction = this.actions[index + 1];
         if (nextAction.is_fixed_order) return false;
 
-        // We cannot move if we are a requisite of the next action
+        // Manual actions cannot move past automatic actions
+        if (!action.is_automatic && nextAction.is_automatic) return false;
+        // Automatic actions cannot move past manual actions
+        if (action.is_automatic && !nextAction.is_automatic) return false;
+
         if ((nextAction.requisite_actions || []).includes(action.id)) return false;
 
         return true;  
