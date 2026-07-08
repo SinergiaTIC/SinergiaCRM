@@ -201,7 +201,7 @@ class SaveRecordWithRelationsAction extends HookDataBlockActionDefinition {
                 $bean->fromAWF = true;
             }
             // Inject FK values for outgoing 1-N relationships before save
-            $injectedFks = $this->injectRelationFks($context, $actionConfig, $bean);
+            $injectedFks = $this->injectRelationFks($context, $actionConfig, $bean, $block);
             $bean->save(false);
 
             $modificationType = BeanModificationType::CREATED;
@@ -219,7 +219,7 @@ class SaveRecordWithRelationsAction extends HookDataBlockActionDefinition {
                     if (property_exists($bean, 'fromAWF')) {
                         $bean->fromAWF = true;
                     }
-                    $injectedFks = $this->injectRelationFks($context, $actionConfig, $bean);
+                    $injectedFks = $this->injectRelationFks($context, $actionConfig, $bean, $block);
                     $bean->save(false);
                     break;
 
@@ -230,7 +230,7 @@ class SaveRecordWithRelationsAction extends HookDataBlockActionDefinition {
                     if (property_exists($bean, 'fromAWF')) {
                         $bean->fromAWF = true;
                     }
-                    $injectedFks = $this->injectRelationFks($context, $actionConfig, $bean);
+                    $injectedFks = $this->injectRelationFks($context, $actionConfig, $bean, $block, true);
                     $bean->save(false);
                     break;
 
@@ -302,7 +302,7 @@ class SaveRecordWithRelationsAction extends HookDataBlockActionDefinition {
      * Injects FK values for 1-N relationships before the first save.
      * @return bool True if any FK was injected.
      */
-    private function injectRelationFks(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean): bool
+    private function injectRelationFks(ExecutionContext $context, FormAction $actionConfig, SugarBean $bean, DataBlockResolved $block, bool $isEnrichMode = false): bool
     {
         $configsJson = $actionConfig->getResolvedParameter('relation_configs', '');
         if (empty($configsJson)) {
@@ -313,6 +313,8 @@ class SaveRecordWithRelationsAction extends HookDataBlockActionDefinition {
         if (!is_array($configs) || empty($configs)) {
             return false;
         }
+
+        $isExistingRecord = !empty($bean->id) && !$bean->new_with_id;
 
         $injectedAny = false;
         foreach ($configs as $config) {
@@ -336,8 +338,38 @@ class SaveRecordWithRelationsAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
+            // In enrich mode, protect existing FK values for existing records
+            if ($isEnrichMode && $isExistingRecord && !empty($bean->{$idName})) {
+                $GLOBALS['log']->debug("SaveRecordWithRelationsAction: Enrich mode — protected existing FK '{$idName}' = '{$bean->{$idName}}'.");
+                continue;
+            }
+
             $bean->{$idName} = $targetBeanRef->beanId;
             $GLOBALS['log']->debug("SaveRecordWithRelationsAction: Injected FK '{$idName}' = '{$targetBeanRef->beanId}' from relationship '{$relationName}'.");
+
+            // Populate the relate display field (e.g., account_name) so that
+            // LogicHooks/Workflows reading it right after save get the value.
+            // Uses reverse vardef lookup to handle both core fields (account_id→account_name)
+            // and Studio-created custom fields (projecte_id_c→projecte_c).
+            $nameField = null;
+            foreach ($bean->field_defs as $fieldName => $def) {
+                if (isset($def['type'], $def['id_name']) && $def['type'] === 'relate' && $def['id_name'] === $idName) {
+                    $nameField = $fieldName;
+                    break;
+                }
+            }
+            if ($nameField) {
+                $parentModule = $bean->field_defs[$nameField]['module'] ?? '';
+                $rname = $bean->field_defs[$nameField]['rname'] ?? 'name';
+                if ($parentModule) {
+                    $parentBean = BeanFactory::getBean($parentModule, $targetBeanRef->beanId);
+                    if ($parentBean && $parentBean->id === $targetBeanRef->beanId && isset($parentBean->$rname)) {
+                        $bean->$nameField = $parentBean->$rname;
+                        $GLOBALS['log']->debug("SaveRecordWithRelationsAction: Populated relate field '{$nameField}' = '{$parentBean->$rname}'.");
+                    }
+                }
+            }
+
             $injectedAny = true;
         }
 
