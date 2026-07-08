@@ -50,6 +50,7 @@ class SignatureSignersManager
             'ok' => 0,
             'ko' => 0,
             'errors' => [],
+            'created_signer_ids' => [],
         ];
 
         if (empty($signatureId)) {
@@ -125,6 +126,7 @@ class SignatureSignersManager
 
             $stic_SignatureBean->load_relationship('stic_signatures_stic_signers');
             $stic_SignatureBean->stic_signatures_stic_signers->add($stic_SignerBean->id);
+            $result['created_signer_ids'][] = $stic_SignerBean->id;
             $okCounter++;
         }
 

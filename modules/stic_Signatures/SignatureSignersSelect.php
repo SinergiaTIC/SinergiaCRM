@@ -72,6 +72,10 @@ if (empty($recordIds)) {
     sugar_die("No records selected");
 }
 
+$signatureAction = $_REQUEST['signature-action'] ?? 'default';
+$doRedirectPortal = !empty($_REQUEST['signature-action-portal']);
+$doSendEmail = !empty($_REQUEST['signature-action-email']) || $signatureAction === 'send_email';
+
 $result = SignatureSignersManager::addSignersToSignature(
     $signatureId,
     $module,
@@ -94,4 +98,46 @@ if ($result['ko'] !== 0) {
     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$result['ko']} signers could not be added because they already exist or an error occurred.");
 }
 
-SugarApplication::redirect('index.php?module=stic_Signatures&action=DetailView&record=' . $signatureId);
+$hasCreatedSigners = !empty($result['created_signer_ids']);
+
+if ($doSendEmail && $hasCreatedSigners) {
+    require_once 'modules/stic_Signers/Utils.php';
+
+    $mod_strings_sig = return_module_language($GLOBALS['current_language'], 'stic_Signatures');
+    foreach ($result['created_signer_ids'] as $signerId) {
+        $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+        $signerName = $signerBean ? $signerBean->name : $signerId;
+        $emailSent = stic_SignersUtils::sendToSign($signerId, false);
+        $emailLabel = $emailSent ? $mod_strings_sig['LBL_EMAIL_STATUS_SENT'] : $mod_strings_sig['LBL_EMAIL_STATUS_NOT_SENT'];
+        $cssClass = $emailSent ? 'label-success' : 'label-important';
+        $msg = "<p class='label {$cssClass}'>({$signerName}) - {$mod_strings_sig['LBL_ADDED_STATUS_OK']} - {$emailLabel}</p>";
+        if ($emailSent) {
+            SugarApplication::appendSuccessMessage($msg);
+        } else {
+            SugarApplication::appendErrorMessage($msg);
+        }
+    }
+}
+
+if ($doRedirectPortal && $hasCreatedSigners) {
+    require_once 'modules/stic_Signers/Utils.php';
+
+    $firstSignerId = $result['created_signer_ids'][0];
+    $signerBean = BeanFactory::getBean('stic_Signers', $firstSignerId);
+
+    if ($signerBean && !empty($signerBean->parent_id) && in_array($signerBean->parent_type, ['Contacts', 'Users'])) {
+        $redirectUrl = 'index.php?entryPoint=sticSign&signatureId=' . $signatureId . '&targetId=' . $signerBean->parent_id;
+        SugarApplication::redirect($redirectUrl);
+        return;
+    } else {
+        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Cannot redirect to portal - signer parent is not a Contact or User.");
+    }
+}
+
+if ($doRedirectPortal) {
+    SugarApplication::redirect('index.php?module=stic_Signatures&action=DetailView&record=' . $signatureId);
+} elseif ($doSendEmail) {
+    SugarApplication::redirect('index.php?module=stic_Signatures&action=DetailView&record=' . $signatureId);
+} else {
+    SugarApplication::redirect("index.php?module={$module}&action=index");
+}

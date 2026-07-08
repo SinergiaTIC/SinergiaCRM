@@ -110,14 +110,18 @@ class SelectSignatureTemplate
                     $iOddEvenCls = 'evenListRowS1';
                 }
                 echo '<tr height="20" class="' . $iOddEvenCls . '" >
-                                            <td width="17" valign="center"><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
-                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
-                                            <td scope="row" align="left"><b><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
-                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');">' . $signature['name'] . '</a></b></td>
+                                            <td width="17" valign="center"><a href="#" onclick="var cb=document.querySelector(\'#signature-actions-lv input[type=\\\'checkbox\\\']\');var sa=cb&&cb.checked?\'send_email\':\'default\';$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
+                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect&signature-action=\'+sa,\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
+                                            <td scope="row" align="left"><b><a href="#" onclick="var cb=document.querySelector(\'#signature-actions-lv input[type=\\\'checkbox\\\']\');var sa=cb&&cb.checked?\'send_email\':\'default\';$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
+                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect&signature-action=\'+sa,\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');">' . $signature['name'] . '</a></b></td>
                     <td>'.$app_list_strings['stic_signatures_status_list'][$signature['status']].'</td></tr>';
                 $iOddEven++;
             }
             echo '</tbody></table>
+                            <div id="signature-actions-lv" style="margin-top: 8px;">
+<label style="font-weight: normal; display: inline-block; margin-right: 8px;">' . $app_strings['LBL_SIGNATURE_ACTION'] . ':</label>
+                                <label style="font-weight: normal;"><input type="checkbox" name="signature-action-lv" value="send_email"> ' . $app_strings['LBL_SIGNATURE_ACTION_SEND_EMAIL'] . '</label>
+                            </div>
                         </div>
                      </div>
                      <div class="modal-footer">&nbsp;<button type="button" class="btn btn-primary" data-dismiss="modal">' . $app_strings['LBL_CANCEL_BUTTON_LABEL'] . '</button></div>
@@ -200,6 +204,11 @@ class SelectSignatureTemplate
                 $iOddEven++;
             }
             echo '</tbody></table>
+                              <div style="margin-top: 8px;">
+                                 <label style="font-weight: normal; display: inline-block; margin-right: 8px;">' . $app_strings['LBL_SIGNATURE_ACTION'] . ':</label>
+                                 <label style="font-weight: normal; margin-right: 12px;"><input type="checkbox" name="signature-action-portal" value="1"> ' . $app_strings['LBL_SIGNATURE_ACTION_REDIRECT_PORTAL'] . '</label>
+                                 <label style="font-weight: normal;"><input type="checkbox" name="signature-action-email" value="1"> ' . $app_strings['LBL_SIGNATURE_ACTION_SEND_EMAIL'] . '</label>
+                              </div>
                               <input type="hidden" name="signature-id" value="" />
                             <input type="hidden" name="module" value="' . $module . '" />
                             <input type="hidden" name="uid" value="' . clean_string($_REQUEST['record'],
