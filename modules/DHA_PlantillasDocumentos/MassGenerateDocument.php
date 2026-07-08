@@ -100,44 +100,76 @@ class MassGenerateDocument {
           return true;
        }
 
-       // STIC-Custom EPS 20260610 - Batch SecurityGroups + cached roles + inline ownership
-       // Replaces per-template BeanFactory::getBean + ACLAccess + groupHasAccess (too many queries if there are too many templates)
-       // with 3 batch queries per request
-       // https://github.com/SinergiaTIC/SinergiaCRM/pull/1249
+      // STIC-Custom EPS 20260610 - Batch SecurityGroups + cached roles + inline ownership
+      // Replaces per-template BeanFactory::getBean + ACLAccess + groupHasAccess (too many queries if there are too many templates)
+      // with batch queries per request, mirroring buildAccessWhere() ACL logic
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/1249
+      // // STIC-Custom 20220516 AAM - Adding Security Suite access check and the non-role access check
+      // // STIC#734
+      // $mmrBean = BeanFactory::getBean('DHA_PlantillasDocumentos', $template_id);
+      // if (!$mmrBean->ACLAccess('ListView', $mmrBean->isOwner($current_user->id))) {
+      //    return false;
+      // }       
 
-       // Batch SecurityGroups - one query per request
-       static $accessibleRecordIds = null;
-       if ($accessibleRecordIds === null) {
-          require_once('custom/include/SticSecurityGroupsListViewOptimization.php');
-          $accessibleRecordIds = Stic_SecurityGroupsListViewOptimization::getUserAccessibleRecordIds('DHA_PlantillasDocumentos', 'list');
-       }
+      require_once('modules/ACL/ACLController.php');
+      $requireOwner = ACLController::requireOwner('DHA_PlantillasDocumentos', 'list');
+      $requireGroup = ACLController::requireSecurityGroup('DHA_PlantillasDocumentos', 'list');
 
-       // Batch ownership - one query per request
-       static $ownedRecordIds = null;
-       if ($ownedRecordIds === null) {
-          $ownedRecordIds = array();
-          $ownerSql = "SELECT id FROM dha_plantillasdocumentos "
-                    . "WHERE assigned_user_id = '{$db->quote($current_user->id)}' AND deleted = 0";
-          $ownerResult = $db->query($ownerSql);
-          while ($ownerRow = $db->fetchByAssoc($ownerResult)) {
-             $ownedRecordIds[$ownerRow['id']] = true;
-          }
-       }
+      if ($requireOwner || $requireGroup) {
+         // Batch ownership - one query per request
+         static $ownedRecordIds = null;
+         if ($ownedRecordIds === null) {
+            $ownedRecordIds = array();
+            $ownerSql = "SELECT id FROM dha_plantillasdocumentos "
+                      . "WHERE assigned_user_id = '{$db->quote($current_user->id)}' AND deleted = 0";
+            $ownerResult = $db->query($ownerSql);
+            while ($ownerRow = $db->fetchByAssoc($ownerResult)) {
+               $ownedRecordIds[$ownerRow['id']] = true;
+            }
+         }
 
-       $isOwner = isset($ownedRecordIds[$template_id]);
-       $inGroup = isset($accessibleRecordIds[$template_id]);
-       if (!$isOwner && !$inGroup) {
-          return false;
-       }
+         $isOwner = isset($ownedRecordIds[$template_id]);
+
+         if ($requireGroup) {
+            // ACL "Group" (80): owner OR group member
+            static $accessibleRecordIds = null;
+            if ($accessibleRecordIds === null) {
+               $accessibleRecordIds = $this->getUserAccessibleRecordIds();
+            }
+            $inGroup = isset($accessibleRecordIds[$template_id]);
+            if (!$isOwner && !$inGroup) {
+               return false;
+            }
+         } else {
+            // ACL "Owner" (75): only owner
+            if (!$isOwner) {
+               return false;
+            }
+         }
+      }
+      // else: ACL "All" (90)+ - no ownership/group restriction, skip to role check
 
        // No tener ningún rol asignado equivale a tener acceso a todos los roles
        if ((count($roles_with_access) == 0) || (count($roles_with_access) == 1 && empty($roles_with_access[0])))
            return true;
 
-       // Cached user roles - one query per request
+       // STIC-Custom EPS 20260610
+       // Cached user roles - one query per request (roles are stored at an array)
+      // $sql = "SELECT t1.id 
+      //         FROM acl_roles t1 
+      //         INNER JOIN acl_roles_users t2 ON 
+      //           t2.user_id = '{$current_user->id}' AND t2.role_id = t1.id AND t2.deleted = 0 
+      //         WHERE t1.deleted = 0 ";
+      // $dataset = $db->query($sql);
+      // while ($row = $db->fetchByAssoc($dataset)) {
+      //    if (in_array($row['id'], $roles_with_access)) { 
+      //       return true;
+      //    }
+      // }
        static $userRoles = null;
        if ($userRoles === null) {
           $userRoles = array();
+       // END STIC-Custom EPS 20260610
           $roleSql = "SELECT t1.id FROM acl_roles t1 "
                    . "INNER JOIN acl_roles_users t2 ON "
                    . "t2.user_id = '{$db->quote($current_user->id)}' AND t2.role_id = t1.id AND t2.deleted = 0 "
@@ -153,11 +185,36 @@ class MassGenerateDocument {
              return true;
           }
        }
+       // END STIC-Custom EPS 20260610
      
        return false;
-       // END STIC-Custom EPS 20260610
     }
    
+   // STIC-Custom EPS 20260610
+   public function getUserAccessibleRecordIds()
+    {
+        global $current_user, $db;
+
+        $ids = array();
+
+        $query = "SELECT DISTINCT secr.record_id "
+            . "FROM securitygroups_records secr "
+            . "INNER JOIN securitygroups_users secu "
+            . "  ON secr.securitygroup_id = secu.securitygroup_id "
+            . "  AND secu.deleted = 0 "
+            . "  AND secu.user_id = '{$db->quote($current_user->id)}' "
+            . "WHERE secr.deleted = 0 AND secr.module = 'DHA_PlantillasDocumentos'";
+
+        $result = $db->query($query);
+        while ($row = $db->fetchByAssoc($result)) {
+            $ids[$row['record_id']] = true;
+        }
+
+        return $ids;
+    }
+   // END STIC-Custom EPS 20260610
+
+
    ///////////////////////////////////////////////////////////////////////////////////////////////////         
    function role_enabled_level($role_id){
       // Ver lista dha_plantillasdocumentos_enable_roles_dom
