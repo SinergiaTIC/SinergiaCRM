@@ -1816,26 +1816,41 @@ class stic_AwfConfiguration {
     // Entries with role 'target' are inverse (1 side) and don't block.
     if (hasRelateField && dataBlock.relationships.some(r => r.name === relationshipName && r.role !== 'target')) return dataBlock;
 
+    // Determine the actual N-side (the block that has the relate field with FK).
+    // initiator_id must point to the N-side regardless of which block initiated the UI action,
+    // otherwise downstream logic (Phase 1 outgoing filter, Phase 2 requisites, UI arrows) fails.
+    let nSideId;
+    if (hasRelateField) {
+      nSideId = dataBlock.id;
+    } else if (targetHasRelateField) {
+      nSideId = relDatablock.id;
+    } else {
+      nSideId = dataBlock.id;
+    }
+
     // Store relationship on both blocks, tagging each with the initiator's id so downstream
     // direction logic (arrows, labels) can tell N side from 1 side.
+    // When origin and destination are the same block, only store once to avoid duplicates.
     dataBlock.relationships.push({
       name: relationshipName,
       related_datablock_id: relDatablock.id,
-      initiator_id: dataBlock.id,
+      initiator_id: nSideId,
     });
-    if (bothHaveRelate) {
-      relDatablock.relationships.push({
-        name: relationshipName,
-        related_datablock_id: dataBlock.id,
-        role: 'target',
-        initiator_id: dataBlock.id,
-      });
-    } else {
-      relDatablock.relationships.push({
-        name: relationshipName,
-        related_datablock_id: dataBlock.id,
-        initiator_id: dataBlock.id,
-      });
+    if (dataBlock.id !== relDatablock.id) {
+      if (bothHaveRelate) {
+        relDatablock.relationships.push({
+          name: relationshipName,
+          related_datablock_id: dataBlock.id,
+          role: 'target',
+          initiator_id: nSideId,
+        });
+      } else {
+        relDatablock.relationships.push({
+          name: relationshipName,
+          related_datablock_id: dataBlock.id,
+          initiator_id: nSideId,
+        });
+      }
     }
 
     // For 1-N relationships with relate fields: add server field on the block that owns
@@ -2043,35 +2058,119 @@ class stic_AwfConfiguration {
     // Using -1 ensures they will be inserted before default manual actions (0)
     const AUTO_ACTION_ORDER = -1;
 
-    // Generate SAVE actions for each DataBlock
+    // Global set of relationship names handled by SaveRecordWithRelationsAction.
+    // Used in Phase 4 to skip RelateRecordsAction for both directions.
+    const handledRelationshipNames = new Set();
+
+    // --- Phase 1: Generate SAVE actions for each DataBlock ---
+    // Use SaveRecordWithRelationsAction when the block has outgoing 1-N relationships,
+    // so that FK values are injected before the first save.
     this.data_blocks.forEach(block => {
       if (!block.module) return;
-      
-      const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
-      if (originalDef) {
-        // Prepare definition override
-        const actionDef = { 
-          ...originalDef, 
-          isAutomatic: true, 
-          order: AUTO_ACTION_ORDER 
-        };
 
-        const params = {
-          'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' }
-        };
-        
-        const newAction = this.addAction(actionDef, params, '0');
-        if (newAction) {
-            // Store the ID so subsequent Relate actions can depend on it
+      const allRels = this.getAllDataBlockRelationships();
+      const blockRels = allRels[block.id] || [];
+      const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
+      const moduleInfo = utils.getModuleInformation(block.module);
+
+      // Find outgoing 1-N relationships (N-side has the FK pointing to 1-side).
+      // We detect this by the presence of a relate field with id_name — the FK column.
+      // The relationship_type metadata is unreliable (many canonical 1-N relationships
+      // in CRM vardefs don't explicitly set relationship_type, defaulting to many-to-many),
+      // so we rely on the field structure instead.
+      // Note: getModuleInformation() in Utils.php populates the 'options' property of
+      // relate fields with the resolved relationship name (via the chain:
+      // relate.link → link field → link.relationship).
+      const outgoing1n = activeRels.filter(r => {
+        if (r.datablock_orig !== block.id) return false;
+        if (!r.name) return false;
+        // For self-referencing 1-N, only the initiator (N-side) should inject FKs
+        if (r.initiator_id && r.initiator_id !== block.id) return false;
+        // Self-referencing: cannot inject FK before save (target not yet saved, no ID).
+        if (r.datablock_orig === r.datablock_dest) return false;
+        const relateField = moduleInfo && Object.values(moduleInfo.fields).find(
+          f => f.type === 'relate' && f.options === r.name
+        );
+        return relateField && relateField.id_name;
+      }).map(r => {
+        const relateField = Object.values(moduleInfo.fields).find(
+          f => f.type === 'relate' && f.options === r.name
+        );
+        return { ...r, id_name: relateField.id_name };
+      });
+
+      if (outgoing1n.length > 0) {
+        // Use SaveRecordWithRelationsAction — saves the bean with FK pre-injected
+        let originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordWithRelationsAction');
+        let newActionName = utils.translate('LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_TITLE');
+        if (!originalDef) {
+          // Fallback to regular SaveRecordAction if the WithRelations action is not available
+          originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
+          newActionName = utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')
+        }
+        if (originalDef) {
+          const actionDef = { ...originalDef, isAutomatic: true, order: AUTO_ACTION_ORDER };
+          const params = {
+            'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' },
+            'relation_configs': {
+              value: JSON.stringify(outgoing1n.map(r => ({
+                id_name: r.id_name,
+                target_block_id: r.datablock_dest,
+                relationship_name: r.name
+              }))),
+              valueText: outgoing1n.map(r => {
+                const targetBlock = this.data_blocks.find(b => b.id === r.datablock_dest);
+                const relText = r.text || r.name;
+                return `${relText} (${r.name}): ${targetBlock ? targetBlock.text : r.datablock_dest}`;
+              }).join('\n'),
+              selectedOption: ''
+            }
+          };
+          const newAction = this.addAction(actionDef, params, '0');
+          if (newAction) {
             block.save_action_id = newAction.id;
-            
-            // Override text for clarity
+            newAction.text = `${newActionName}: ${block.text}`;
+            outgoing1n.forEach(r => handledRelationshipNames.add(r.name));
+          }
+        }
+      } else {
+        // Regular SaveRecordAction
+        const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
+        if (originalDef) {
+          const actionDef = { ...originalDef, isAutomatic: true, order: AUTO_ACTION_ORDER };
+          const params = {
+            'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' }
+          };
+          const newAction = this.addAction(actionDef, params, '0');
+          if (newAction) {
+            block.save_action_id = newAction.id;
             newAction.text = `${utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')}: ${block.text}`;
+          }
         }
       }
     });
 
-    // Generate RELATE actions for FiXED fields
+    // --- Phase 2: Add requisites for block saves that inject FKs → target block saves ---
+    // This ensures the 1-side is saved before the N-side. Only the N-side (initiator)
+    // adds a requisite on the 1-side (target). The target does NOT add a reverse
+    // requisite, which would create a cycle and cause incorrect ordering.
+    this.data_blocks.forEach(block => {
+      if (!block.save_action_id) return;
+      const allRels = this.getAllDataBlockRelationships();
+      (allRels[block.id] || [])
+        .filter(r => r.datablock_orig && r.datablock_dest && handledRelationshipNames.has(r.name) && r.initiator_id === block.id)
+        .forEach(r => {
+          const targetBlock = this.data_blocks.find(b => b.id === r.datablock_dest);
+          if (targetBlock && targetBlock.save_action_id && targetBlock.save_action_id !== block.save_action_id) {
+            const saveAction = mainFlow.actions.find(a => a.id === block.save_action_id);
+            if (saveAction && !saveAction.requisite_actions.includes(targetBlock.save_action_id)) {
+              saveAction.requisite_actions.push(targetBlock.save_action_id);
+            }
+          }
+        });
+    });
+
+    // --- Phase 3: Generate RELATE actions for FiXED fields (unchanged) ---
     this.data_blocks.forEach(block => {
       const moduleInfo = block.getModuleInformation(); 
         
@@ -2080,7 +2179,6 @@ class stic_AwfConfiguration {
           let relationshipName = '';
           const moduleFieldInfo = moduleInfo.fields[field.name];
           
-          // Use 'options' property which contains the link name
           if (moduleFieldInfo && moduleFieldInfo.type === 'relate' && moduleFieldInfo.options) {
             relationshipName = moduleFieldInfo.options;
           }
@@ -2096,7 +2194,7 @@ class stic_AwfConfiguration {
               
               const params = {
                 'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' },
-                'target_object': { value: field.value, valueText: field.value_text || field.value, selectedOption: 'value' }, // target_object is a fixed ID value
+                'target_object': { value: field.value, valueText: field.value_text || field.value, selectedOption: 'value' },
                 'relationship_name': { value: relationshipName, valueText: relationshipName, selectedOption: '' }
               };
               
@@ -2110,14 +2208,23 @@ class stic_AwfConfiguration {
       });
     });
 
-    // Generate RELATE actions for Block-to-Block relationships
+    // --- Phase 4: Generate RELATE actions for Block-to-Block relationships ---
+    // Skip 1-N relationships already handled by SaveRecordWithRelationsAction.
     const allRels = this.getAllDataBlockRelationships();
     Object.keys(allRels).forEach(blockId => {
       const blockRels = allRels[blockId];
       const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
       
+      // Skip 1-N relationships already injected via SaveRecordWithRelationsAction.
+      // Uses the global handledRelationshipNames set built in Phase 1 so that
+      // BOTH directions are skipped (the initiator's FK injection is sufficient).
       activeRels.forEach(rel => {
         if (rel.datablock_orig === blockId) {
+          if (handledRelationshipNames.has(rel.name)) return;
+          // Skip non-initiator: for N-M only one direction is needed (bidirectional),
+          // for 1-N fallback the FK injection on the initiator side is sufficient.
+          if (rel.initiator_id && rel.initiator_id !== blockId) return;
+          
           const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
           if (originalDef) {
             const blockOrig = this.data_blocks.find(b => b.id == rel.datablock_orig);
@@ -2136,20 +2243,26 @@ class stic_AwfConfiguration {
                 'relationship_name': { value: rel.name, valueText: rel.text, selectedOption: '' }
               };
               
-              // For 1-N relationships: determine the id_name for FK injection
+              // Determine if this is 1-N (has a relate field) or N-M (no relate field)
               const moduleOrigInfo = utils.getModuleInformation(blockOrig.module);
+              let isOneToMany = false;
               if (moduleOrigInfo) {
                 const relateField = Object.values(moduleOrigInfo.fields).find(
                   f => f.type === 'relate' && f.options === rel.name
                 );
+                // For 1-N not handled by SaveRecordWithRelationsAction, pass FK field name
                 if (relateField && relateField.id_name) {
-                  params['relation_id_name'] = { value: relateField.id_name, valueText: relateField.id_name, selectedOption: '' };
+                  isOneToMany = true;
+                  if (!rel.initiator_id || rel.initiator_id === blockOrig.id) {
+                    params['relation_id_name'] = { value: relateField.id_name, valueText: relateField.id_name, selectedOption: '' };
+                  }
                 }
               }
               
+              const arrow = isOneToMany ? '\u27f6' : '\u27f7';
               const newAction = this.addAction(actionDef, params, '0');
               if (newAction) {
-                newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${blockOrig.text} ⟶ ${blockDest.text}`;
+                newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${blockOrig.text} ${arrow} ${blockDest.text}`;
               }
             }
           }

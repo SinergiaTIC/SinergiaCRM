@@ -126,7 +126,7 @@
                                                         <template x-for="param in action.parameters" :key="param.name">
                                                             <tr>
                                                                 <th class="w-25" x-text="param.text"></th>
-                                                                <td x-text="param.value_text!=''?param.value_text:param.value"></td>
+                                                                <td x-text="param.value_text!=''?param.value_text:param.value" style="white-space: pre-line;"></td>
                                                             </tr>
                                                         </template>
                                                     </tbody>

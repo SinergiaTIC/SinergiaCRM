@@ -403,6 +403,11 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Saves or updates a record from form data',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Field matching',
 
+  // SaveRecordWithRelationsAction
+  'LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_TITLE' => 'Save record with relationships',
+  'LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_DESC' => 'Saves a record and injects values for outgoing 1-N relationships in a single save',
+  'LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_RELATION_CONFIGS_TEXT' => 'Relationships',
+
   // RelateRecordsAction
   'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Save relationship',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Creates a relationship between two records',
