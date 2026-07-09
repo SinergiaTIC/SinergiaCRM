@@ -182,6 +182,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificat)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Selecciona els registres',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valors possibles',
+  'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostra els valors interns',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor intern',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Text original',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Text',
@@ -268,17 +269,19 @@ $mod_strings = array (
   'LBL_LAYOUT_FORM_DESIGN' => 'Disseny del formulari',
   'LBL_LAYOUT_PREVIEW' => 'Previsualització',
   'LBL_LAYOUT_HEADER' => 'Capçalera',
-  'LBL_LAYOUT_BODY' => 'Formulari',
   'LBL_LAYOUT_FOOTER' => 'Peu',
 
   // Layout -> Theme
+  'LBL_THEME_GENERAL' => 'General',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Títol de la pàgina',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Formulari Web Avançat',
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => "Text del botó d'enviament",
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Envia',
   'LBL_THEME_MAIN_COLORS' => 'Colors',
   'LBL_THEME_PRIMARY_COLOR' => 'Principal',
   'LBL_THEME_PAGE_BG_COLOR' => 'Fons de pàgina',
   'LBL_THEME_FORM_BG_COLOR' => 'Fons del formulari',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografia i text',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Format del text',
   'LBL_THEME_FONT_FAMILY' => 'Font',
   'LBL_THEME_FONT_SIZE' => 'Mida',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -404,7 +407,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidència per camps',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Desa la relació',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crea la relació',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relació entre dos registres',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destí de la relació',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloc de dades o registre destí de la relació a desar',

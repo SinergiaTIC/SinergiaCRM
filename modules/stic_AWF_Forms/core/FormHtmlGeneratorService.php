@@ -55,7 +55,7 @@ class FormHtmlGeneratorService {
             {
                 $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
-                $htmlRaw .= "<title>Advanced Web Form</title>" .$this->newLine();
+                $htmlRaw .= "<title>" . htmlspecialchars($config->layout->web_title) . "</title>" .$this->newLine();
         
                 // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
@@ -300,7 +300,7 @@ class FormHtmlGeneratorService {
                     $html .= "<div class='awf-overlay-content'>" .$this->newLine('+');
                     {
                         $html .= "<h3 class='h4 text-danger awf-field'>{$closedFormTitle}</h3>" .$this->newLine();
-                        $html .= "<p class='mb-0 lead' x-text='message'>{$closedFormText}</p>" .$this->newLine();
+                        $html .= "<p class='mb-0 lead'>{$closedFormText}</p>" .$this->newLine();
                     }
                     $html .= "</div>" .$this->newLine('-');
                 }
@@ -917,7 +917,6 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('awfForm', (config) => ({
     isActive: true,
     loadTime: 0,
-    message: config.closedFormText,
     submitting: false,
     serverErrors: {},
     
@@ -926,7 +925,6 @@ document.addEventListener('alpine:init', () => {
       if (!config.isPreview && config.checkUrl) {
         fetch(config.checkUrl).then(r => r.json()).then(d => {
           this.isActive = d.active;
-          this.message = this.message === config.closedFormText ? d.message : this.message;
         }).catch(e => console.error(e));
       }
       this.prefillFromUrl();
@@ -1093,9 +1091,7 @@ JS;
     },
     npsClass(i) { 
       if(this.val !== i) return 'btn-outline-secondary opacity-75';
-      if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
-      if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
-      return 'btn-success text-white border-success shadow-sm';
+      return 'btn-primary border-primary shadow-sm';
     },
     starContainerStyle(i) {
       const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';

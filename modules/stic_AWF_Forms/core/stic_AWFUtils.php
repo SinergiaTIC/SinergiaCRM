@@ -840,6 +840,27 @@ class stic_AWFUtils {
     }
 
     /**
+     * Preprocesses form data to fill in missing boolean/checkbox fields with '0'.
+     * Browsers do not send unchecked checkboxes in POST data, so they are absent from formData.
+     * Without this preprocessing, conditions on boolean fields with value 'No' ('0') would fail
+     * because the field would be null instead of '0'.
+     * @param FormConfig $formConfig The form configuration containing field definitions
+     * @param array $formData The submitted form data (passed by reference to be modified)
+     */
+    public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
+        foreach ($formConfig->data_blocks as $dataBlock) {
+            foreach ($dataBlock->fields as $field) {
+                if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
+                    $phpKey = $field->getPhpKey();
+                    if (!isset($formData[$phpKey])) {
+                        $formData[$phpKey] = '0';
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Evaluates an array of conditions against the provided form data.
      * Assumes an implicit AND between all conditions.
      * @param array|null $conditions Array of condition DTOs (field_name, operator, value)
