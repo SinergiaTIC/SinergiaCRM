@@ -2209,7 +2209,7 @@ class stic_AwfConfiguration {
               const params = {
                 'data_block_id': { value: blockOrig.id, valueText: blockOrig.text, selectedOption: '' },
                 'target_object': { value: blockDest.id, valueText: blockDest.text, selectedOption: 'datablock' },
-                'relationship_name': { value: rel.name, valueText: rel.text, selectedOption: '' }
+                'relationship_name': { value: rel.link_name || rel.name, valueText: rel.text, selectedOption: '' }
               };
               
               // Determine if this is 1-N (has a relate field) or N-M (no relate field)

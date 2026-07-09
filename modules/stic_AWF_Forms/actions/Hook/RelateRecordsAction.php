@@ -115,6 +115,21 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             $linkName = $parts[1];
         }
 
+        // If the value is a relationship name (not a link field name), resolve it
+        // to the actual link field by scanning vardefs. This covers cases where the
+        // relationship_name parameter was populated with the relationship name
+        // instead of the link name (e.g., cached module info without link_name).
+        if (!empty($linkName) && !isset($bean->field_defs[$linkName])) {
+            foreach ($bean->field_defs as $fieldName => $def) {
+                if (isset($def['type']) && $def['type'] === 'link'
+                    && isset($def['relationship']) && $def['relationship'] === $linkName) {
+                    $GLOBALS['log']->debug("RelateRecordsAction: Resolved relationship name '{$linkName}' to link field '{$fieldName}'.");
+                    $linkName = $fieldName;
+                    break;
+                }
+            }
+        }
+
         // Validation of selector parameter
         if (!$targetObjectSelector || !($targetObjectSelector instanceof OptionSelectorResolved)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid target_object parameter type.");

@@ -244,7 +244,14 @@ class stic_AWF_FormsUtils {
                     }
                 }
 
-                if (isset($processed[$relName])) continue;
+                if (isset($processed[$relName])) {
+                    // If the relationships source already created an entry but
+                    // without link_name (empty string), fill it from this link_field entry.
+                    if ($sourceType === 'link_fields' && isset($result[$relName]) && empty($result[$relName]['link_name'])) {
+                        $result[$relName]['link_name'] = $linkFieldName;
+                    }
+                    continue;
+                }
                 if (empty($rhs) || $rhs === 'EmailAddress') continue;
 
                 // Determine which side is the current module
