@@ -182,6 +182,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificado)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Seleccionar registros',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
+  'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor interno',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Texto original',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Texto',
@@ -268,17 +269,19 @@ $mod_strings = array (
   'LBL_LAYOUT_FORM_DESIGN' => 'Diseño del formulario',
   'LBL_LAYOUT_PREVIEW' => 'Previsualización',
   'LBL_LAYOUT_HEADER' => 'Cabecera',
-  'LBL_LAYOUT_BODY' => 'Formulario',
   'LBL_LAYOUT_FOOTER' => 'Pie',
 
   // Layout -> Theme
+  'LBL_THEME_GENERAL' => 'General',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Título de la página',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Formulario Web Avanzado',  
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => 'Texto del botón de envío',
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Enviar',
   'LBL_THEME_MAIN_COLORS' => 'Colores',
   'LBL_THEME_PRIMARY_COLOR' => 'Principal',
   'LBL_THEME_PAGE_BG_COLOR' => 'Fondo de página',
   'LBL_THEME_FORM_BG_COLOR' => 'Fondo del formulario',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografía y texto',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Formato del texto',
   'LBL_THEME_FONT_FAMILY' => 'Fuente',
   'LBL_THEME_FONT_SIZE' => 'Tamaño',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -338,6 +341,7 @@ $mod_strings = array (
   'LBL_SECTION_CONFIG' => 'Configuración',
   'LBL_SECTION_CONTENT' => 'Contenido',
   'LBL_SECTION_TITLE' => 'Título',
+  'LBL_SECTION_SUBTITLE' => 'Subtítulo',
   'LBL_SECTION_NO_TITLE' => '< Sin título >',
   'LBL_SECTION_SHOW_TITLE' => 'Mostrar título',
   'LBL_SECTION_CONTAINER' => 'Contenedor visual',
@@ -403,7 +407,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crear relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar',
@@ -468,13 +472,10 @@ $mod_strings = array (
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa y permisos',
   'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea el procesamiento del formulario si no hay una sesión de usuario activa o si el usuario no tiene los permisos para crear los registros asociados al formulario',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Mensaje por sesión no activa',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. Por favor, inicie sesión para continuar.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Mensaje por falta de permisos',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. No posee los permisos necesarios para continuar.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso y permisos...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Acceso denegado',
-  'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Iniciar sesión',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sesión activa',
 
 
