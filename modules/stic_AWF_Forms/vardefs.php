@@ -264,7 +264,6 @@ $dictionary['stic_AWF_Forms'] = array(
     'reportable' => true,
     'duplicate_merge' => 'disabled',
     'inline_edit' => false,
-    'reportable' => true,
     'massupdate' => false,
   ),
 ),

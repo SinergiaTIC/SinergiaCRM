@@ -274,7 +274,7 @@ class ResponseHandler
         $responseBean->save();
 
         // Execution Context
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean, $formBean->form_type);
         $context->visitorUserId = $realUserId;
 
         // Html Summary

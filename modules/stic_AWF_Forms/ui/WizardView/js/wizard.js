@@ -1617,10 +1617,16 @@ class WizardStep3 {
               return 'text';
             },
 
+            _reloadDefinitions() {
+              const formType = window.alpineComponent?.bean?.form_type || '';
+              this.allDefinitions = utils.getDefinedActions()
+                .filter(a => a.isUserSelectable && a.isActive && (a.type == 'Hook' || a.type == 'Deferred'))
+                .filter(a => !formType || !a.supportedFormTypes || a.supportedFormTypes.length === 0 ||
+                             a.supportedFormTypes.includes(formType));
+            },
+
             init() {
-              // Load all user selectable action definitions
-              this.allDefinitions = utils.getDefinedActions().filter(a => a.isUserSelectable && a.isActive && 
-                                                                     (a.type == 'Hook' || a.type == 'Deferred'));
+              this._reloadDefinitions();
             },
 
             updateApplyCondition(value) {
@@ -1681,6 +1687,7 @@ class WizardStep3 {
              * @returns {void} 
              */
             openCreate(flow, isTerminal) {
+              this._reloadDefinitions();
               this.isEdit = false;
               this.flow = flow;
               this.original_id = '';
@@ -1709,6 +1716,7 @@ class WizardStep3 {
              * @returns {void} 
              */
             openEdit(flow, action) {
+              this._reloadDefinitions();
               this.isEdit = true;
               this.flow = flow;
               this.original_id = action.id;
