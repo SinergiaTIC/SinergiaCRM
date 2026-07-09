@@ -98,7 +98,7 @@ class WhatsAppWebhookEntryPoint
 
         $variants = [$cleanPhone];
         $digits = preg_replace('/[^0-9]/', '', $cleanPhone);
-        if (strlen($digits) === 10 && substr($digits, 0, 2) === '34') {
+        if (strlen($digits) === 11 && substr($digits, 0, 2) === '34') {
             $variants[] = substr($digits, 2);
         } elseif (strlen($digits) === 9) {
             $variants[] = '34' . $digits;
