@@ -184,6 +184,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modified)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Select records',
   'LBL_FIELD_VALUE_OPTIONS' => 'Possible values',
+  'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Show internal values',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Internal value',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Original text',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Text',
@@ -270,17 +271,19 @@ $mod_strings = array (
   'LBL_LAYOUT_FORM_DESIGN' => 'Form design',
   'LBL_LAYOUT_PREVIEW' => 'Preview',
   'LBL_LAYOUT_HEADER' => 'Header',
-  'LBL_LAYOUT_BODY' => 'Form',
   'LBL_LAYOUT_FOOTER' => 'Footer',
 
   // Layout -> Theme
+  'LBL_THEME_GENERAL' => 'General',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Page title',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Advanced Web Form',
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => 'Submit button text',
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Submit',
   'LBL_THEME_MAIN_COLORS' => 'Colors',
   'LBL_THEME_PRIMARY_COLOR' => 'Main',
   'LBL_THEME_PAGE_BG_COLOR' => 'Page background',
   'LBL_THEME_FORM_BG_COLOR' => 'Form background',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Typography and text',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Text format',
   'LBL_THEME_FONT_FAMILY' => 'Font',
   'LBL_THEME_FONT_SIZE' => 'Size',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -340,6 +343,7 @@ $mod_strings = array (
   'LBL_SECTION_CONFIG' => 'Configuration',
   'LBL_SECTION_CONTENT' => 'Content',
   'LBL_SECTION_TITLE' => 'Title',
+  'LBL_SECTION_SUBTITLE' => 'Subtitle',
   'LBL_SECTION_NO_TITLE' => '< No title >',
   'LBL_SECTION_SHOW_TITLE' => 'Show title',
   'LBL_SECTION_CONTAINER' => 'Visual container',
@@ -354,7 +358,6 @@ $mod_strings = array (
   'LBL_CODE_LOADING' => 'Loading code...',
   'LBL_CODE_LOADING_ERROR' => 'Connection error',
 
-  'LBL_HONEYPOT_LABEL' => 'Keep this field empty',
   'LBL_REQUIRED_FIELD_MESSAGE' => 'This field must be informed',
   
   'LBL_PREVIEW_RIBBON' => 'Preview',
@@ -406,7 +409,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Field matching',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Save relationship',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Create relationship',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Creates a relationship between two records',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Relationship destination',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'The destination data block or record for the relationship to save',
@@ -471,13 +474,10 @@ $mod_strings = array (
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verify active session and permissions',
   'LBL_CHECK_SESSION_ACTION_DESC' => 'Blocks form processing if there is no active user session or if the user lacks permissions to create records associated with the form',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Message for inactive session',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT_DEFAULT' => 'Unauthorized access. Please log in to continue.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Message for lack of permissions',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Unauthorized access. You do not have the necessary permissions to continue.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verifying access and permissions...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Access denied',
-  'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Log in',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Active session',
 
 
