@@ -194,6 +194,6 @@ $mod_strings = array(
     'LBL_NOTIFICATION_TEMPLATE_INTERLOCUTOR_REJECTED_INFO' => 'Plantilla que se utilizará para notificar al interlocutor cuando la candidatura de un candidato relacionado con esta oferta cambie a "Rechazada o cerrada". Si el campo se deja vacío se utilizará la plantilla por defecto', 
     'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER' => 'Plantilla al usuario asignado por cancelación', 
     'LBL_NOTIFICATION_TEMPLATE_CANCELLED_ASSIGNED_USER_INFO' => 'Plantilla que se utilizará para notificar al usuario asignado cuando el candidato cancele una candidatura. Si el campo se deja vacío se utilizará la plantilla por defecto', 
-    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR' => 'Plantilla al interlocutor por cancelación',
+    'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR' => 'Plantilla al interlocutor por cancelación', 
     'LBL_NOTIFICATION_TEMPLATE_CANCELLED_INTERLOCUTOR_INFO' => 'Plantilla que se utilizará para notificar al interlocutor cuando el candidato cancele una candidatura. Si el campo se deja vacío se utilizará la plantilla por defecto',
 );
