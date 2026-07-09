@@ -243,6 +243,7 @@ class stic_MessagesController extends SugarController
     }
     public function action_Retry(){
 
+        $db = DBManagerFactory::getInstance();
         $where = '';
 
         $focus = BeanFactory::newBean('stic_Messages');
