@@ -55,7 +55,7 @@ class FormHtmlGeneratorService {
             {
                 $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
-                $htmlRaw .= "<title>Advanced Web Form</title>" .$this->newLine();
+                $htmlRaw .= "<title>" . htmlspecialchars($config->layout->web_title) . "</title>" .$this->newLine();
         
                 // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
@@ -301,7 +301,7 @@ class FormHtmlGeneratorService {
                     $html .= "<div class='awf-overlay-content'>" .$this->newLine('+');
                     {
                         $html .= "<h3 class='h4 text-danger awf-field'>{$closedFormTitle}</h3>" .$this->newLine();
-                        $html .= "<p class='mb-0 lead' x-text='message'>{$closedFormText}</p>" .$this->newLine();
+                        $html .= "<p class='mb-0 lead'>{$closedFormText}</p>" .$this->newLine();
                     }
                     $html .= "</div>" .$this->newLine('-');
                 }
@@ -361,7 +361,7 @@ class FormHtmlGeneratorService {
                                     if ($isCollapsible) {
                                         $cursorStyle = "cursor: pointer;"; 
                                         $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' " .
-                                                              "@click='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
+                                                              "@click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
                                         {
                                             $toggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" .$this->newLine();
                                         }
@@ -473,7 +473,7 @@ class FormHtmlGeneratorService {
         $html = "";
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
-            $html .= $this->renderField($block, $field, $theme);
+            $html .= $this->renderField($field, $theme);
         }
         return $html;
     }
@@ -483,13 +483,12 @@ class FormHtmlGeneratorService {
      * It handles special cases such as hidden fields, single checkboxes, switches, and rating fields, as well as common cases for text inputs, textareas, and selects. 
      * It also incorporates validation attributes and help text when provided.
      * 
-     * @param FormDataBlock $block The data block to which the field belongs, used for constructing the input name and ID
      * @param FormDataBlockField $field The field to be rendered, containing all necessary information about its type, label, validations, etc.
      * @param FormTheme $theme The form theme that may affect the rendering of the field (e.g., whether floating labels are used)
      * @return string The generated HTML for the field as a string
      */
-    private function renderField(FormDataBlock $block, FormDataBlockField $field, FormTheme $theme): string {
-        $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+    private function renderField(FormDataBlockField $field, FormTheme $theme): string {
+        $inputName = $field->getKey();
 
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
@@ -574,7 +573,7 @@ class FormHtmlGeneratorService {
         // --- SPECIAL CASES (ratings) ---
 
         if ($field->type_in_form === 'rating') {
-            return $this->generateRatingField($block, $field) .$this->newLine();
+            return $this->generateRatingField($field) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -714,12 +713,11 @@ class FormHtmlGeneratorService {
      * Supports different subtypes: stars, emojis, thumbs, and lights, each with its own visual representation and interaction logic.
      * The method uses AlpineJS for interactivity, allowing users to hover and select their rating, with visual feedback.
      * 
-     * @param FormDataBlock $block The data block to which the rating field belongs, used for constructing the input name and ID
      * @param FormDataBlockField $field The rating field to be rendered, containing all necessary information about its label, description, subtype, and validation requirements
      * @return string The generated HTML for the rating field as a string, including the interactive controls and any associated labels and descriptions
      */
-    private function generateRatingField(FormDataBlock $block, FormDataBlockField $field): string {
-        $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+    private function generateRatingField(FormDataBlockField $field): string {
+        $inputName = $field->getKey();
         $name = htmlspecialchars($inputName);
         $label = htmlspecialchars($field->label ?? '');
         $description = "";
@@ -942,7 +940,6 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('awfForm', (config) => ({
     isActive: true,
     loadTime: 0,
-    message: config.closedFormText,
     submitting: false,
     serverErrors: {},
     
@@ -951,7 +948,6 @@ document.addEventListener('alpine:init', () => {
       if (!config.isPreview && config.checkUrl) {
         fetch(config.checkUrl).then(r => r.json()).then(d => {
           this.isActive = d.active;
-          this.message = this.message === config.closedFormText ? d.message : this.message;
         }).catch(e => console.error(e));
       }
       this.prefillFromUrl();
@@ -1118,9 +1114,7 @@ JS;
     },
     npsClass(i) { 
       if(this.val !== i) return 'btn-outline-secondary opacity-75';
-      if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
-      if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
-      return 'btn-success text-white border-success shadow-sm';
+      return 'btn-primary border-primary shadow-sm';
     },
     starContainerStyle(i) {
       const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
