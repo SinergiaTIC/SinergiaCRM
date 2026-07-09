@@ -182,6 +182,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificado)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Seleccionar rexistros',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
+  'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor interno',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Texto orixinal',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Texto',
@@ -268,17 +269,19 @@ $mod_strings = array (
   'LBL_LAYOUT_FORM_DESIGN' => 'Deseño do formulario',
   'LBL_LAYOUT_PREVIEW' => 'Previsualización',
   'LBL_LAYOUT_HEADER' => 'Cabeceira',
-  'LBL_LAYOUT_BODY' => 'Formulario ',
   'LBL_LAYOUT_FOOTER' => 'Pé',
 
   // Layout -> Theme
+  'LBL_THEME_GENERAL' => 'General',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Título de la página',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Formulario Web Avanzado',
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => 'Texto do botón de envío',
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Enviar',
   'LBL_THEME_MAIN_COLORS' => 'Colores',
   'LBL_THEME_PRIMARY_COLOR' => 'Principal',
   'LBL_THEME_PAGE_BG_COLOR' => 'Fondo de páxina',
   'LBL_THEME_FORM_BG_COLOR' => 'Fondo do formulario',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografía e texto',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografía y texto',
   'LBL_THEME_FONT_FAMILY' => 'Fonte',
   'LBL_THEME_FONT_SIZE' => 'Tamaño',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -338,6 +341,7 @@ $mod_strings = array (
   'LBL_SECTION_CONFIG' => 'Configuración',
   'LBL_SECTION_CONTENT' => 'Contido',
   'LBL_SECTION_TITLE' => 'Titulo',
+  'LBL_SECTION_SUBTITLE' => 'Subtítulo',
   'LBL_SECTION_NO_TITLE' => '< Sen título >',
   'LBL_SECTION_SHOW_TITLE' => 'Mostrar título',
   'LBL_SECTION_CONTAINER' => 'Contedor visual',
@@ -352,7 +356,6 @@ $mod_strings = array (
   'LBL_CODE_LOADING' => 'Cargando o código...',
   'LBL_CODE_LOADING_ERROR' => 'Erro de conexión',
 
-  'LBL_HONEYPOT_LABEL' => 'Manteña este campo baleiro',
   'LBL_REQUIRED_FIELD_MESSAGE' => 'É necesario informar este campo',
   
   'LBL_PREVIEW_RIBBON' => 'Previsualización',
@@ -404,7 +407,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Gardar relación',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea unha relación entre dous rexistros',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino da relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'O bloque de datos ou rexistro destino da relación a gardar',
@@ -469,13 +472,10 @@ $mod_strings = array (
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa e permisos',
   'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea o procesamento do formulario se non hai unha sesión de usuario activa ou se o usuario non ten os permisos para crear os rexistros asociados ao formulario',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Mensaxe por sesión non activa',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. Por favor, inicie sesión para continuar.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Mensaxe por falta de permisos',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Acceso non autorizado. Non posúe os permisos necesarios para continuar.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso e permisos...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Acceso denegado',
-  'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Iniciar sesión',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sesión activa',
 
 
