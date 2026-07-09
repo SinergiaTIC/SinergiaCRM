@@ -2333,21 +2333,25 @@ class stic_AwfConfiguration {
     sorted.forEach((id, index) => sortedMap.set(id, index));
     flow.actions.sort((a, b) => (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0));
 
-    // Group actions so automatic come first, then manual, then terminal.
-    // Preserves topological order within each group but prevents manual
-    // actions from being interleaved with automatic ones.
+    // Group actions: pre-auto (order < -1) → auto (is_automatic) → manual → terminal.
+    // Preserves topological order within each group but prevents actions
+    // from being interleaved across groups.
+    const preAutoActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order < -1);
     const autoActions = flow.actions.filter(a => a.is_automatic);
-    const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal);
+    const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
     const terminalActions = flow.actions.filter(a => a.is_terminal);
-    flow.actions = [...autoActions, ...manualActions, ...terminalActions];
+    flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
 
     // Reassign order property.
-    // Automatic actions keep order -1 (place before default manual actions).
+    // Pre-auto actions keep their original negative order (fixed, before saves).
+    // Automatic actions keep order -1 (before default manual actions).
     // Manual actions stay at order 0 so is_fixed_order remains false (reorderable).
     // Terminal actions keep their order (999).
     flow.actions.forEach((a) => {
       if (a.is_automatic) a.order = -1;
-      else if (!a.is_terminal) a.order = 0;
+      else if (a.is_terminal) { /* keep 999 */ }
+      else if (a.order < -1) { /* keep pre-auto negative order */ }
+      else a.order = 0;
     });
 
     return deferred;
