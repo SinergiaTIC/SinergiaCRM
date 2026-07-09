@@ -462,6 +462,15 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionando...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Pulse aquí para continuar',
 
+  // RedirectToRecordAction
+  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => 'Ir a la página de un registro',
+  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => 'Redirecciona el navegador del usuario final a la página de un registro concreto',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Bloque de datos del registro',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => 'Indica el bloque de datos que contiene el registro al que redirigir al usuario final.',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista del CRM',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Vista de detalle',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => 'Vista de edición',
+  
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de datos',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página en la que se muestran los datos facilitados',

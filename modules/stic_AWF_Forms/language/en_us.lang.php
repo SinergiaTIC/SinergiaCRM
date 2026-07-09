@@ -462,6 +462,15 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redirecting...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Click here to continue',
 
+  // RedirectToRecordAction
+  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => "Go to a record's page",
+  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => "Redirects the end user's browser to a specific record's page",
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Record Data Block',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => 'Indicates the data block containing the record to which to redirect the end user.',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'CRM View',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Detail View',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => 'Edit View',
+
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Show data summary',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => "Redirects the end user's browser to a page where provided data is shown",
