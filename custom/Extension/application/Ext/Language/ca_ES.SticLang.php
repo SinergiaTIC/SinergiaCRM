@@ -44,6 +44,8 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativitzat per SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM ha estat desenvolupat per l\'Associació SinergiaTIC. El programari es proporciona TAL COM ÉS, sense cap garantia. Sota llicència AGPLv3. Per a més informació, visiteu el <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Aquest programa és programari lliure. Podeu redistribuir-lo i/o modificar-lo segons els termes de la Llicència Pública General Affero de GNU versió 3, publicada per la Free Software Foundation, incloent-hi qualsevol permís addicional indicat a la capçalera del codi font.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres empreses i productes esmentats poden ser marques registrades de les empreses amb les quals s'associen.";
+$app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Per autoritzar cal que el correu estigui relacionat amb una Organització/Persona/Interessat/Públic Objectiu';
+$app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = "Enviament de correu de confirmació d'autorització només per a Organitzacions/Persones/Interessats/Públic Objectiu";
 
 // Creació de registre horari via capçalera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crea un registre';

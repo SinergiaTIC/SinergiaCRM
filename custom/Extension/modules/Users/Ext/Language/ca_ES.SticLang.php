@@ -33,15 +33,42 @@ $mod_strings['LBL_MODIFIED_NAME'] = 'Modificat per';
 $mod_strings['LBL_MODIFIED_USER'] = 'Modificat per';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modificat per (ID)';
 $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Llistes de Públic Objectiu';
+
+// SinergiaCRM terminology
+$mod_strings['LBL_QUICK_ACCOUNT'] = 'Nova Organització';
+$mod_strings['LBL_QUICK_CONTACT'] = 'Nova Personas';
+$mod_strings['LBL_QUICK_LEAD'] = 'Nou Interessat';
+$mod_strings['LBL_QUICK_OPPORTUNITY'] = 'Nova Subvenció';
+$mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organitzacions';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Persones';
+$mod_strings['LBL_OPPORTUNITY_SUBPANEL_TITLE'] = 'Subvencions';
+$mod_strings['LBL_CONTACT_NAME'] = 'Persona:';
+$mod_strings['LBL_EMAILS_ACCOUNTS_REL'] = 'Correus:Organitzacions';
+$mod_strings['LBL_EMAILS_CONTACTS_REL'] = 'Correus:Persones';
+$mod_strings['LBL_EMAILS_LEADS_REL'] = 'Correus:Interessats';
+$mod_strings['LBL_EMAILS_OPPORTUNITIES_REL'] = 'Correus:Subvencions';
+$mod_strings['LBL_LIST_CONTACT'] = 'Persones';
+$mod_strings['LBL_LIST_LEAD'] = 'Interessats';
+$mod_strings['LBL_CREATE_CONTACT'] = 'Nova Persona';
+$mod_strings['LBL_CREATE_LEAD'] = 'Nou Interessat';
+$mod_strings['LBL_CREATE_CONTACTS'] = 'Crea una Persona' /* for 508 compliance fix */;
+$mod_strings['LBL_CREATE_LEADS'] = 'Crea un Interessat' /* for 508 compliance fix */;
+$mod_strings['LBL_CURRENCY_TEXT'] = 'Seleccioneu la moneda que es mostrarà per defecte quan creeu nous registres. Aquesta serà també la moneda mostrada a les columnes de quantitat a la vista de lista de Subvencions.';
+
+// Incorpora
 $mod_strings['LBL_INC_REFERENCE_GROUP'] = 'Grup de referència (Incorpora)';
 $mod_strings['LBL_INC_REFERENCE_ENTITY'] = 'Entitat de referència (Incorpora)';
 $mod_strings['LBL_INC_REFERENCE_OFFICER'] = 'Tècnic de referència (Incorpora)';
 $mod_strings['LBL_INC_INCORPORA_USER'] = 'Identificador (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Paràmetres de connexió amb Incorpora';
+
+// Work Calendar
 $mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Calendari laboral';
 $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = "Indica si la funcionalitat de Calendari laboral està activada per a l'usuari.";
 $mod_strings['LBL_STIC_CLOCK'] = 'Registre horari';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = "Indica si la funcionalitat de Registre horari està activada per a l'usuari.";
+
+// SinergiaDA
 $mod_strings['LBL_SDA_ALLOWED'] = 'Accés a SinergiaDA';
 $mod_strings['LBL_SDA_ALLOWED_INFO'] = "Indica el nivell d'accés de l'usuari a Sinergia Data Analytics.<ul><li><b>Sense accés:</b> l'usuari no podrà accedir-hi.</li><li><b>Accés complet:</b> l'usuari podrà crear, modificar i executar informes.</li><li><b>Accés de només lectura:</b> l'usuari podrà executar informes i veure'n els resultats però no podrà crear-ne de nous ni modificar els existents. Aquesta opció només és d'aplicació en usuaris normals, els administradors amb accés a SinergiaDA sempre hi tindran accés complet.</li></ul>";
 

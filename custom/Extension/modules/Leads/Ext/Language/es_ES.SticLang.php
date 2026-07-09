@@ -79,6 +79,7 @@ $mod_strings['LBL_STIC_INVALID_IDENTIFICATION_NUMBER_OR_TYPE'] = 'Si se indica u
 $mod_strings['LBL_ATTACHMENT_DESCRIPTION'] = 'Fichero recibido desde un formulario web relacionado con la campaña: ';
 
 // Cadenas adaptadas de Clientes Potenciales a Interesados
+$mod_strings['ERR_DELETE_RECORD'] = 'Debe especificar un número de registro para eliminar el Interesado.';
 $mod_strings['LBL_ACCOUNT_DESCRIPTION'] = 'Descripción de la Organización';
 $mod_strings['LBL_ACCOUNT_ID'] = 'ID de la Organización';
 $mod_strings['LBL_ACCOUNT_NAME'] = 'Nombre de la Organización:';
@@ -117,6 +118,7 @@ $mod_strings['LBL_OPPORTUNITY_NAME'] = 'Nombre de la Subvención:';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Buscar Interesados';
 $mod_strings['LBL_SELECT_CHECKED_BUTTON_LABEL'] = 'Seleccione los interesados ​​marcados';
 $mod_strings['LBL_SELECT_CHECKED_BUTTON_TITLE'] = 'Seleccione los interesados ​​marcados';
+$mod_strings['LNK_IMPORT_VCARD'] = 'Nuevo Interesado desde vCard';
 $mod_strings['LNK_LEAD_LIST'] = 'Ver Interesados';
 $mod_strings['LNK_NEW_ACCOUNT'] = 'Nueva Organización';
 $mod_strings['LNK_NEW_CONTACT'] = 'Nueva Persona';
