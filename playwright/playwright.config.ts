@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { BASE_URL, TEST_LANG } from "#settings";
+import { BASE_URL } from "#settings";
 
 type ProjectType = "functional" | "visual";
 
@@ -11,7 +11,7 @@ function makeProjects(type: ProjectType) {
     { name: "mobile", device: devices["Pixel 5"] },
   ] as const;
   return deviceEntries.map(({ name, device }) => ({
-    name: `${type}-${TEST_LANG}-${name}`,
+    name: `${type}-${name}`,
     testMatch: [
       `specs/${isVisual}common/**/*.spec.ts`,
       `specs/${isVisual}${name}/**/*.spec.ts`,

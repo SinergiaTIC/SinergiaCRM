@@ -25,6 +25,3 @@ export interface ModuleEntry {
   type: ModuleType;
 }
 
-export interface LabelSource {
-  file: string;
-}

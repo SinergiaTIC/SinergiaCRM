@@ -37,9 +37,8 @@ test.describe("Login page", () => {
   }) => {
     await test.step("protected page redirects to login", async () => {
       await page.goto("index.php?module=Accounts&action=index");
-      await expect(
-        page.getByRole("button", { name: t("LBL_LOGIN_BUTTON_LABEL") }),
-      ).toBeVisible();
+      // WARN: Since the user language is not set, language labels are not available and must be hard-coded.
+      await expect(page.getByRole("button", { name: "Log in" })).toBeVisible();
       await expectNoPhpErrors(page);
     });
   });

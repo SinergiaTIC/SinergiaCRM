@@ -21,7 +21,7 @@ npm install
 npm run test                              # all projects, 3 devices
 npx playwright test --project=functional-*  # functional only (skip screenshots)
 npx playwright test --project=visual-*      # visual only (screenshot regression)
-npx playwright test --project=functional-ca_ES-desktop  # single project
+npx playwright test --project=functional-desktop  # single project
 npx playwright test --grep="login"          # filter tests by name
 npm run test:ui                             # Playwright UI mode
 npm run test:debug                          # PWDEBUG=1
@@ -49,15 +49,12 @@ Tests in `specs/common/` run on all devices. Tests in `specs/{device}/` run only
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `BASE_URL` | `http://localhost:8000/sinergiacrm/` | CRM URL |
-| `TEST_LANG` | `ca_ES` | Locale (`en_us`, `ca_ES`, `es_ES`, `gl_ES`, `eu_ES`) |
 | `INSTANCE_USER` | `sinergiacrm` | Login username |
 | `INSTANCE_PASSWORD` | `sinergiacrm` | Login password |
 
-Override via `.env` file (copy from `.env.example`) or environment variables:
+Override via `.env` file (copy from `.env.example`) or environment variables.
 
-```bash
-TEST_LANG=en_us npx playwright test --project=functional-*
-```
+Language is auto-detected from the CRM's HTML `lang` attribute after login.
 
 ## Test structure
 
@@ -70,12 +67,6 @@ specs/
   visual/               screenshot tests by device
   modules/{module}/     per-module CRUD tests
 ```
-
-## Supported locales
-
-`en_us`, `ca_ES`, `es_ES`, `gl_ES`, `eu_ES`
-
-Set `TEST_LANG` to match the CRM's UI language. Labels are parsed from PHP language files on disk before the suite starts.
 
 ## Visual tests
 
