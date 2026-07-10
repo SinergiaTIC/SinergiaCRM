@@ -2065,11 +2065,12 @@ class stic_AwfConfiguration {
     const mainFlow = this.flows.find(f => f.id == '0');
     if (!mainFlow) return;
 
-    // Clean: Remove only SaveRecord and RelateRecords automatic actions (managed by this method).
-    // Other automatic actions (e.g., CheckSessionAction) are managed separately and must be preserved.
+    // Clean: Remove automatic SaveRecord, SaveRecordWithRelations, and RelateRecords actions
+    // (they will be regenerated below). Other automatic actions (e.g., CheckSessionAction)
+    // are managed separately and must be preserved.
+    const regeneratedActionNames = ['SaveRecordAction', 'SaveRecordWithRelationsAction', 'RelateRecordsAction'];
     mainFlow.actions = mainFlow.actions.filter(a => 
-      !a.is_automatic || 
-      (a.name !== 'SaveRecordAction' && a.name !== 'RelateRecordsAction')
+      !a.is_automatic || !regeneratedActionNames.includes(a.name)
     );
     
     // Reset saved action IDs on blocks before regenerating
