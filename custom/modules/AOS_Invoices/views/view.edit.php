@@ -94,7 +94,7 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
             foreach ($this->ev->defs['panels'] as $panelName => &$panel) {
                 foreach ($panel as $rowNum => &$row) {
                     $row = array_values(array_filter($row, function($field) {
-                        return !(is_array($field) && isset($field['name']) && $field['name'] === 'stic_invoice_type_c');
+                        return !(is_array($field) && isset($field['name']) && $field['name'] === 'verifactu_invoice_type_c');
                     }));
                 }
             }
@@ -103,11 +103,11 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
 
         // === Sort series dropdown by usage count (desc), then alphabetically ===
         if (AOS_InvoicesUtils::isVerifactuActivated()) {
-            $usageQuery = "SELECT c.stic_invoice_type_c, COUNT(*) AS cnt FROM aos_invoices_cstm c INNER JOIN aos_invoices i ON c.id_c = i.id WHERE i.deleted = 0 AND c.stic_invoice_type_c IS NOT NULL AND c.stic_invoice_type_c != '' GROUP BY c.stic_invoice_type_c";
+            $usageQuery = "SELECT c.verifactu_invoice_type_c, COUNT(*) AS cnt FROM aos_invoices_cstm c INNER JOIN aos_invoices i ON c.id_c = i.id WHERE i.deleted = 0 AND c.verifactu_invoice_type_c IS NOT NULL AND c.verifactu_invoice_type_c != '' GROUP BY c.verifactu_invoice_type_c";
             $usageResult = $GLOBALS['db']->query($usageQuery);
             $usageCounts = [];
             while ($row = $GLOBALS['db']->fetchByAssoc($usageResult)) {
-                $usageCounts[$row['stic_invoice_type_c']] = (int)$row['cnt'];
+                $usageCounts[$row['verifactu_invoice_type_c']] = (int)$row['cnt'];
             }
             uksort($app_list_strings['stic_invoices_types_list'], function($a, $b) use ($usageCounts) {
                 $countA = $usageCounts[$a] ?? 0;

@@ -184,11 +184,11 @@ $dashletData['AOS_InvoicesDashlet']['columns'] = array(
         'default' => true,
         'name' => 'verifactu_aeat_status_c',
     ),
-    'stic_invoice_type_c' => array( 
+    'verifactu_invoice_type_c' => array( 
         'width' => '15%',
-        'label' => 'LBL_STIC_INVOICE_TYPE',
+        'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
         'default' => false,
-        'name' => 'stic_invoice_type_c',
+        'name' => 'verifactu_invoice_type_c',
     ),
     'total_amount' => array(
         'width' => '15%',

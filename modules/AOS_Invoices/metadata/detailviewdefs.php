@@ -400,8 +400,8 @@ array(
                 ),
                 1 => array(
                     0 => array(
-                        'name' => 'stic_invoice_type_c',
-                        'label' => 'LBL_STIC_INVOICE_TYPE',
+                        'name' => 'verifactu_invoice_type_c',
+                        'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
                     ),
 
                     1 => array(

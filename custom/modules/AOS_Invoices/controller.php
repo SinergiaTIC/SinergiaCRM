@@ -260,7 +260,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         if (!empty($sugar_config['aos']['invoices']['series'])) {
             foreach ($sugar_config['aos']['invoices']['series'] as $seriesName => $seriesConfig) {
                 if (!empty($seriesConfig['isRectified'])) {
-                    $rectifiedInvoice->stic_invoice_type_c = $seriesName;
+                    $rectifiedInvoice->verifactu_invoice_type_c = $seriesName;
                     break;
                 }
             }

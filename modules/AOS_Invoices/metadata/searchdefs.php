@@ -130,10 +130,10 @@ array(
              'STIC_INVOICE_TYPE_C' => array( 
                 'type' => 'enum',
                 'studio' => 'visible',
-                'label' => 'LBL_STIC_INVOICE_TYPE',
+                'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'stic_invoice_type_c',
+                'name' => 'verifactu_invoice_type_c',
             ),
             'VERIFACTU_VALID_INVOICE_C' => array(
                 'type' => 'enum',

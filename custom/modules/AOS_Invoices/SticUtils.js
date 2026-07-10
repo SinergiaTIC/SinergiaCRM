@@ -154,9 +154,9 @@ switch (viewType()) {
         });
       }
 
-      // Hide stic_invoice_type_c (Tipo de factura) in EditView when Verifactu is NOT activated (legacy mode)
+      // Hide verifactu_invoice_type_c (Tipo de factura) in EditView when Verifactu is NOT activated (legacy mode)
       if (typeof verifactuActivated !== 'undefined' && verifactuActivated === false) {
-        $("#stic_invoice_type_c").closest(".edit-view-row-item").hide();
+        $("#verifactu_invoice_type_c").closest(".edit-view-row-item").hide();
       }
 
       // Clear address fields when Account or Contact X button is clicked
@@ -327,7 +327,7 @@ function disableDeleteButton() {
 
 // === Step 2.3: Filter series dropdown based on isRectified flag ===
 function filterSeriesDropdown() {
-  var seriesSelect = $("#stic_invoice_type_c");
+  var seriesSelect = $("#verifactu_invoice_type_c");
 
   if (!seriesSelect.length || typeof sticSeriesConfig === 'undefined') {
     return;
@@ -379,7 +379,7 @@ function initSeriesFilter() {
     filterSeriesDropdown();
   });
 
-  $("#stic_invoice_type_c").on("change", function() {
+  $("#verifactu_invoice_type_c").on("change", function() {
     filterSeriesDropdown();
   });
 }

@@ -63,7 +63,7 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
             foreach ($this->dv->defs['panels'] as $panelName => &$panel) {
                 foreach ($panel as $rowNum => &$row) {
                     $row = array_values(array_filter($row, function($field) {
-                        return !(is_array($field) && isset($field['name']) && $field['name'] === 'stic_invoice_type_c');
+                        return !(is_array($field) && isset($field['name']) && $field['name'] === 'verifactu_invoice_type_c');
                     }));
                 }
             }

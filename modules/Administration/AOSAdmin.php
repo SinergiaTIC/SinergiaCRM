@@ -398,19 +398,19 @@ $sugar_smarty->assign('VERIFACTU_TAX_TYPE', $verifactuTaxType);
 // Get series that have accepted invoices in current year (to block edition/removal in UI)
 $db = DBManagerFactory::getInstance();
 $currentYear = date('Y');
-$seriesWithInvoicesQuery = "SELECT DISTINCT cstm.stic_invoice_type_c 
+$seriesWithInvoicesQuery = "SELECT DISTINCT cstm.verifactu_invoice_type_c 
                             FROM aos_invoices_cstm cstm
                             INNER JOIN aos_invoices inv ON inv.id = cstm.id_c
                             WHERE cstm.verifactu_aeat_status_c = 'accepted' 
-                            AND cstm.stic_invoice_type_c IS NOT NULL 
-                            AND cstm.stic_invoice_type_c != '' 
+                            AND cstm.verifactu_invoice_type_c IS NOT NULL 
+                            AND cstm.verifactu_invoice_type_c != '' 
                             AND inv.deleted = 0
                             AND YEAR(inv.invoice_date) = " . (int)$currentYear;
 $seriesWithInvoicesResult = $db->query($seriesWithInvoicesQuery);
 $seriesWithInvoices = array();
 while ($row = $db->fetchByAssoc($seriesWithInvoicesResult)) {
-    if (!empty($row['stic_invoice_type_c'])) {
-        $seriesWithInvoices[] = $row['stic_invoice_type_c'];
+    if (!empty($row['verifactu_invoice_type_c'])) {
+        $seriesWithInvoices[] = $row['verifactu_invoice_type_c'];
     }
 }
 $sugar_smarty->assign('series_with_invoices', $seriesWithInvoices);

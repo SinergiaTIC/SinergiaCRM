@@ -204,7 +204,7 @@ class AOS_InvoicesHook
                 
                 // List of tax fields that CANNOT be edited
                 $protectedFields = array(
-                    'number', 'stic_invoice_type_c', 'invoice_date', 'due_date',
+                    'number', 'verifactu_invoice_type_c', 'invoice_date', 'due_date',
                     'billing_account_id', 'billing_contact_id',
                     'billing_address_street', 'billing_address_city', 'billing_address_state', 
                     'billing_address_postalcode', 'billing_address_country',
@@ -285,7 +285,7 @@ class AOS_InvoicesHook
                 
                 // Format the error message with actual values
                 $currentDateFormatted = date('d/m/Y', strtotime($bean->invoice_date));
-                $seriesName = $bean->stic_invoice_type_c;
+                $seriesName = $bean->verifactu_invoice_type_c;
                 $lastDateFormatted = ''; // Extract from the result if available
                 
                 // For now, use a simpler message
@@ -305,7 +305,7 @@ class AOS_InvoicesHook
 
         // === Step 2.3: Validate series type consistency ===
         // Only validate if not a duplicate
-        $GLOBALS['log']->debug(__METHOD__ . ': Step 2.3 - isDuplicate=' . ($isDuplicate ? 'true' : 'false') . ', isRectified=' . ($bean->verifactu_is_rectified_c ?? 'null') . ', series=' . ($bean->stic_invoice_type_c ?? 'null'));
+        $GLOBALS['log']->debug(__METHOD__ . ': Step 2.3 - isDuplicate=' . ($isDuplicate ? 'true' : 'false') . ', isRectified=' . ($bean->verifactu_is_rectified_c ?? 'null') . ', series=' . ($bean->verifactu_invoice_type_c ?? 'null'));
         
         if (!$isDuplicate) {
             require_once 'custom/modules/AOS_Invoices/SticUtils.php';
@@ -352,8 +352,8 @@ class AOS_InvoicesHook
         // If the invoice has NOT been sent to AEAT (pending), allow series change and reset number
         // If the invoice HAS been sent to AEAT (not pending), block series change
         if (!$isDuplicate && !empty($bean->fetched_row['id'])) {
-            $currentSeries = $bean->stic_invoice_type_c;
-            $originalSeries = $bean->fetched_row['stic_invoice_type_c'] ?? null;
+            $currentSeries = $bean->verifactu_invoice_type_c;
+            $originalSeries = $bean->fetched_row['verifactu_invoice_type_c'] ?? null;
             
             $aeatStatus = $bean->verifactu_aeat_status_c ?? 'pending';
             $hasBeenSent = !empty($bean->verifactu_submitted_at_c);
@@ -455,7 +455,7 @@ class AOS_InvoicesHook
         }
 
         // If the invoice type field is empty, set a default value based on whether it's a rectified invoice
-        if (empty($bean->stic_invoice_type_c)) {
+        if (empty($bean->verifactu_invoice_type_c)) {
             if (!empty($sugar_config['aos']['invoices']['series']) && is_array($sugar_config['aos']['invoices']['series'])) {
                 // === Step 2.6: Validate series uniqueness ===
                 require_once 'custom/modules/AOS_Invoices/SticUtils.php';
@@ -472,7 +472,7 @@ class AOS_InvoicesHook
                     // If invoice is rectified, find first rectified series
                     // If invoice is not rectified, find first non-rectified series
                     if ($isRectified === $seriesIsRectified) {
-                        $bean->stic_invoice_type_c = $seriesName;
+                        $bean->verifactu_invoice_type_c = $seriesName;
                         break;
                     }
                 }
@@ -500,9 +500,9 @@ class AOS_InvoicesHook
 
         // Generate the next invoice number based on the invoice type (series) - DEPRECATED by Step 1.3
         // Now numbers are assigned at AEAT send time, not at creation
-        // if (empty($bean->number) && !empty($bean->stic_invoice_type_c)) {
+        // if (empty($bean->number) && !empty($bean->verifactu_invoice_type_c)) {
         //     require_once 'custom/modules/AOS_Invoices/SticUtils.php';
-        //     $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->stic_invoice_type_c, $bean);
+        //     $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->verifactu_invoice_type_c, $bean);
         // }
     }
 

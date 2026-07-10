@@ -513,7 +513,7 @@ class AOS_InvoicesUtils
             $generatedInvoiceNumber = null;
             
             // Get the key value from bean
-            $seriesKey = $invoiceBean->stic_invoice_type_c;
+            $seriesKey = $invoiceBean->verifactu_invoice_type_c;
             
             // Get available series from config dynamically
             $availableSeries = array_keys($sugar_config['aos']['invoices']['series'] ?? []);
@@ -728,11 +728,11 @@ class AOS_InvoicesUtils
 
             // === Step 2.1: Validate chronological order by SERIES ===
             // Get last invoice from the SAME series for date validation
-            $seriesName = $invoiceBean->stic_invoice_type_c;
+            $seriesName = $invoiceBean->verifactu_invoice_type_c;
             $seriesLastInvoiceQuery = "SELECT id, number, invoice_date 
                 FROM aos_invoices 
                 INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c 
-                WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
+                WHERE aos_invoices_cstm.verifactu_invoice_type_c = " . $db->quoted($seriesName) . "
                 AND aos_invoices.deleted = 0 
                 AND aos_invoices.id != " . $db->quoted($invoiceBean->id) . "
                 AND aos_invoices_cstm.verifactu_aeat_status_c = 'accepted'
@@ -1297,7 +1297,7 @@ class AOS_InvoicesUtils
             if (!empty($generatedInvoiceNumber) && $invoiceBean->verifactu_aeat_status_c === 'accepted') {
                 $invoiceBean->number = $generatedInvoiceNumber;
                 // Save the exact config key (e.g., "Factura normal"), not the dropdown key (e.g., "factura_no")
-                $invoiceBean->stic_invoice_type_c = $seriesConfigKey;
+                $invoiceBean->verifactu_invoice_type_c = $seriesConfigKey;
                 $invoiceBean->save(false);
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Saved generated invoice number: ' . $generatedInvoiceNumber . ', Series: ' . $seriesConfigKey);
             }
@@ -1649,7 +1649,7 @@ class AOS_InvoicesUtils
         $query = "SELECT aos_invoices.number
                   FROM aos_invoices
                   INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
-                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesForQuery) . "
+                  WHERE aos_invoices_cstm.verifactu_invoice_type_c = " . $db->quoted($seriesForQuery) . "
                   AND aos_invoices.deleted = 0
                   AND aos_invoices.number IS NOT NULL
                   AND aos_invoices.number != ''
@@ -1697,7 +1697,7 @@ class AOS_InvoicesUtils
                 $checkQuery = "SELECT COUNT(*) as cnt
                               FROM aos_invoices
                               INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
-                              WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesForQuery) . "
+                              WHERE aos_invoices_cstm.verifactu_invoice_type_c = " . $db->quoted($seriesForQuery) . "
                               AND aos_invoices.number = " . $db->quoted($generatedNumber) . "
                               AND aos_invoices.deleted = 0";
 
@@ -1793,11 +1793,11 @@ class AOS_InvoicesUtils
         global $sugar_config, $mod_strings;
 
         // Only validate if invoice has series and isRectified flag
-        if (empty($bean->stic_invoice_type_c)) {
+        if (empty($bean->verifactu_invoice_type_c)) {
             return true;
         }
 
-        $seriesKey = $bean->stic_invoice_type_c;
+        $seriesKey = $bean->verifactu_invoice_type_c;
         $isRectified = !empty($bean->verifactu_is_rectified_c);
 
         // Map dropdown key to config key
@@ -1893,7 +1893,7 @@ class AOS_InvoicesUtils
         $query = "SELECT COUNT(*) as cnt
                   FROM aos_invoices
                   INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
-                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
+                  WHERE aos_invoices_cstm.verifactu_invoice_type_c = " . $db->quoted($seriesName) . "
                   AND aos_invoices.deleted = 0
                   AND aos_invoices_cstm.verifactu_aeat_status_c = 'accepted'";
         
@@ -1965,12 +1965,12 @@ class AOS_InvoicesUtils
         global $db, $sugar_config, $mod_strings;
 
         // Only validate if invoice has a date and series
-        if (empty($bean->invoice_date) || empty($bean->stic_invoice_type_c)) {
+        if (empty($bean->invoice_date) || empty($bean->verifactu_invoice_type_c)) {
             return true;
         }
 
         // Get the series from the bean
-        $seriesName = $bean->stic_invoice_type_c;
+        $seriesName = $bean->verifactu_invoice_type_c;
         
         // Get the current invoice date
         $currentDate = strtotime($bean->invoice_date);
@@ -1979,7 +1979,7 @@ class AOS_InvoicesUtils
         $query = "SELECT aos_invoices.id, aos_invoices.invoice_date
                   FROM aos_invoices
                   INNER JOIN aos_invoices_cstm ON aos_invoices.id = aos_invoices_cstm.id_c
-                  WHERE aos_invoices_cstm.stic_invoice_type_c = " . $db->quoted($seriesName) . "
+                  WHERE aos_invoices_cstm.verifactu_invoice_type_c = " . $db->quoted($seriesName) . "
                   AND aos_invoices.deleted = 0
                   AND aos_invoices.id != " . $db->quoted($bean->id) . "
                   AND aos_invoices_cstm.verifactu_aeat_status_c = 'accepted'
@@ -2028,7 +2028,7 @@ class AOS_InvoicesUtils
         global $mod_strings, $sugar_config;
 
         $isRectified = !empty($bean->verifactu_is_rectified_c);
-        $seriesName = $bean->stic_invoice_type_c ?? '';
+        $seriesName = $bean->verifactu_invoice_type_c ?? '';
 
         // Get the series configuration
         $seriesConfig = $sugar_config['aos']['invoices']['series'][$seriesName] ?? null;

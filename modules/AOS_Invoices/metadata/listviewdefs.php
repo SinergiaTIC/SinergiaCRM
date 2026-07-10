@@ -234,7 +234,7 @@ array(
     ),
     'STIC_INVOICE_TYPE_C' => array(
         'width' => '15%',
-        'label' => 'LBL_STIC_INVOICE_TYPE',
+        'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
         'default' => true,
     ),
     'NUMBER' => array(

@@ -299,10 +299,10 @@ $dictionary['AOS_Invoices']['fields']['verifactu_submitted_at_c'] = array(
     'popupHelp' => 'LBL_VERIFACTU_SUBMITTED_AT_HELP',
 );
 
-$dictionary["AOS_Invoices"]["fields"]["stic_invoice_type_c"] = array(
-    'id' => 'AOS_Invoicesstic_invoice_type_c',
-    'name' => 'stic_invoice_type_c',
-    'vname' => 'LBL_STIC_INVOICE_TYPE',
+$dictionary["AOS_Invoices"]["fields"]["verifactu_invoice_type_c"] = array(
+    'id' => 'AOS_Invoicesverifactu_invoice_type_c',
+    'name' => 'verifactu_invoice_type_c',
+    'vname' => 'LBL_VERIFACTU_INVOICE_TYPE',
     'custom_module' => 'AOS_Invoices',
     'required' => false,
     'source' => 'custom_fields',
@@ -324,7 +324,7 @@ $dictionary["AOS_Invoices"]["fields"]["stic_invoice_type_c"] = array(
     'options' => 'stic_invoices_types_list',
     'studio' => 'visible',
     'dependency' => NULL,
-    'popupHelp' => 'LBL_STIC_INVOICE_TYPE_HELP',
+    'popupHelp' => 'LBL_VERIFACTU_INVOICE_TYPE_HELP',
 );
 
 // Rectified invoice fields (Factura Rectificativa)
