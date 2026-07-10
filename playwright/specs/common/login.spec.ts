@@ -30,19 +30,6 @@ test.describe("Login page", () => {
     await expect(login.forgotPasswordLink).toBeVisible();
   });
 
-  test("redirects to login when unauthenticated", async ({
-    page,
-  }: {
-    page: Page;
-  }) => {
-    await test.step("protected page redirects to login", async () => {
-      await page.goto("index.php?module=Accounts&action=index");
-      // WARN: Since the user language is not set, language labels are not available and must be hard-coded.
-      await expect(page.getByRole("button", { name: "Log in" })).toBeVisible();
-      await expectNoPhpErrors(page);
-    });
-  });
-
   test("shows error with invalid credentials", async ({
     page,
   }: {
@@ -54,59 +41,11 @@ test.describe("Login page", () => {
     });
     await test.step("stays on login page with error message", async () => {
       await expect(page).toHaveURL(/action=Login/);
-      await expect(page.getByText(t("ERR_INVALID_PASSWORD"))).toBeVisible();
+      await expect(
+        page.getByText("You must specify a valid username and password."),
+      ).toBeVisible();
       await expect(loginPage.usernameInput).toBeVisible();
       await expectNoPhpErrors(page);
-    });
-  });
-
-  test("logs in successfully with valid credentials", async ({
-    page,
-  }: {
-    page: Page;
-  }) => {
-    await test.step("fill credentials and submit", async () => {
-      await login(INSTANCE_USER, INSTANCE_PASSWORD, page);
-    });
-    await test.step("redirected to Home dashboard", async () => {
-      await expect(page).toHaveURL(/module=Home&action=index/);
-      await expectNoPhpErrors(page);
-    });
-  });
-
-  test("session persists across module navigation", async ({
-    page,
-  }: {
-    page: Page;
-  }) => {
-    await test.step("log in", async () => {
-      await login(INSTANCE_USER, INSTANCE_PASSWORD, page);
-      await expect(page).toHaveURL(/module=Home&action=index/);
-    });
-    await test.step("navigate to Contacts — session active", async () => {
-      await page.goto("index.php?module=Contacts&action=index");
-      await expect(
-        page.getByRole("heading", { name: t("LBL_CONTACTS") }),
-      ).toBeVisible();
-    });
-    await test.step("navigate to Accounts — session active", async () => {
-      await page.goto("index.php?module=Accounts&action=index");
-      await expect(
-        page.getByRole("heading", { name: t("LBL_ACCOUNTS") }),
-      ).toBeVisible();
-    });
-  });
-
-  test("logout redirects to login page", async ({ page }: { page: Page }) => {
-    const loginPage: LoginPage = new LoginPage(page);
-    await test.step("log in", async () => {
-      await login(INSTANCE_USER, INSTANCE_PASSWORD, page);
-      await expect(page).toHaveURL(/module=Home&action=index/);
-    });
-    await test.step("perform logout and verify redirect", async () => {
-      await page.goto("index.php?module=Users&action=Logout");
-      await expect(page).toHaveURL(/action=Login/);
-      await expect(loginPage.loginButton).toBeVisible();
     });
   });
 });

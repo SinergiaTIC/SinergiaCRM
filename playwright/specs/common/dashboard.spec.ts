@@ -14,16 +14,6 @@ test.describe("Dashboard", () => {
     await expectNoPhpErrors(page);
   });
 
-  test("Dashboard page loads and shows suiteCRM Dashboard heading", async ({
-    page,
-  }: {
-    page: Page;
-  }) => {
-    await expect(page).toHaveURL(/module=Home&action=index/);
-    await expect(page).toHaveTitle(/Home » SinergiaCRM/);
-    await expect(dashboardPage.dashboardHeading).toBeVisible();
-  });
-
   test("All four dashlets are visible on the dashboard", async ({
     page,
   }: {

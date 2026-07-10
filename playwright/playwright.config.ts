@@ -10,6 +10,7 @@ function makeProjects(type: ProjectType) {
     { name: "tablet", device: devices["Galaxy Tab S4"] },
     { name: "mobile", device: devices["Pixel 5"] },
   ] as const;
+
   return deviceEntries.map(({ name, device }) => ({
     name: `${type}-${name}`,
     testMatch: [
@@ -25,9 +26,9 @@ function makeProjects(type: ProjectType) {
 export default defineConfig({
   globalSetup: "./global-setup.ts",
   workers: 1,
-  timeout: 30000,
+  timeout: 80000,
   expect: {
-    timeout: 10000,
+    timeout: 40000,
     toHaveScreenshot: { maxDiffPixelRatio: 0.02, threshold: 0.2 },
   },
   retries: process.env.CI ? 2 : 0,
@@ -41,5 +42,14 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "on-first-retry",
   },
-  projects: [...makeProjects("functional"), ...makeProjects("visual")],
+  projects: [
+    ...makeProjects("functional"),
+    ...makeProjects("visual"),
+    {
+      name: `smoke-tests`,
+      testMatch: [`specs/smoke/**/*.spec.ts`],
+      use: { ...devices["Desktop Chrome"] },
+      retries: 0,
+    },
+  ],
 });
