@@ -2065,8 +2065,12 @@ class stic_AwfConfiguration {
     const mainFlow = this.flows.find(f => f.id == '0');
     if (!mainFlow) return;
 
-    // Clean: Remove existing automatic actions from the main flow
-    mainFlow.actions = mainFlow.actions.filter(a => !a.is_automatic);
+    // Clean: Remove only SaveRecord and RelateRecords automatic actions (managed by this method).
+    // Other automatic actions (e.g., CheckSessionAction) are managed separately and must be preserved.
+    mainFlow.actions = mainFlow.actions.filter(a => 
+      !a.is_automatic || 
+      (a.name !== 'SaveRecordAction' && a.name !== 'RelateRecordsAction')
+    );
     
     // Reset saved action IDs on blocks before regenerating
     this.data_blocks.forEach(b => b.save_action_id = "");
@@ -2163,19 +2167,55 @@ class stic_AwfConfiguration {
     // Add requisites ensuring the 1-side is saved before the N-side (FK injection target).
     // Only the N-side (initiator) adds a requisite on the 1-side (target).
     this.data_blocks.forEach(block => {
-      if (!block.save_action_id) return;
-      const allRels = this.getAllDataBlockRelationships();
-      (allRels[block.id] || [])
-        .filter(r => r.datablock_orig && r.datablock_dest && handledRelationshipNames.has(r.name) && r.initiator_id === block.id)
-        .forEach(r => {
-          const targetBlock = this.data_blocks.find(b => b.id === r.datablock_dest);
-          if (targetBlock && targetBlock.save_action_id && targetBlock.save_action_id !== block.save_action_id) {
-            const saveAction = mainFlow.actions.find(a => a.id === block.save_action_id);
-            if (saveAction && !saveAction.requisite_actions.includes(targetBlock.save_action_id)) {
-              saveAction.requisite_actions.push(targetBlock.save_action_id);
+      // Add requisites for FK-injected relationships (1-N): the N-side (initiator)
+      // must execute after the 1-side (target) save.
+      if (block.save_action_id) {
+        const allRels = this.getAllDataBlockRelationships();
+        (allRels[block.id] || [])
+          .filter(r => r.datablock_orig && r.datablock_dest && handledRelationshipNames.has(r.name) && r.initiator_id === block.id)
+          .forEach(r => {
+            const targetBlock = this.data_blocks.find(b => b.id === r.datablock_dest);
+            if (targetBlock && targetBlock.save_action_id && targetBlock.save_action_id !== block.save_action_id) {
+              const saveAction = mainFlow.actions.find(a => a.id === block.save_action_id);
+              if (saveAction && !saveAction.requisite_actions.includes(targetBlock.save_action_id)) {
+                saveAction.requisite_actions.push(targetBlock.save_action_id);
+              }
+            }
+          });
+      }
+
+      // Generate RelateRecordsActions for relate fields with fixed values.
+      const moduleInfo = block.getModuleInformation();
+      if (moduleInfo) {
+        block.fields.forEach(field => {
+          if (field.type === 'relate' && field.value_type === 'fixed' && field.value) {
+            let relationshipName = '';
+            const moduleFieldInfo = moduleInfo.fields[field.name];
+            if (moduleFieldInfo && moduleFieldInfo.type === 'relate' && moduleFieldInfo.options) {
+              relationshipName = moduleFieldInfo.options;
+            }
+            if (relationshipName) {
+              const originalDef = utils.getDefinedAction('RelateRecordsAction');
+              if (originalDef) {
+                const actionDef = {
+                  ...originalDef,
+                  isAutomatic: true,
+                  order: AUTO_ACTION_ORDER
+                };
+                const params = {
+                  'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' },
+                  'target_object': { value: field.value, valueText: field.value_text || field.value, selectedOption: 'value' },
+                  'relationship_name': { value: relationshipName, valueText: relationshipName, selectedOption: '' }
+                };
+                const newAction = this.addAction(actionDef, params, '0');
+                if (newAction) {
+                  newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${block.text}.${field.text_original || field.name} = ${field.value_text || field.value}`;
+                }
+              }
             }
           }
         });
+      }
     });
 
     // Generate RELATE actions for Block-to-Block relationships.

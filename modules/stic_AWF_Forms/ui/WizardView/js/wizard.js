@@ -68,6 +68,25 @@ function wizardForm() {
         this.formConfig.prepareProcessingMode(newMode);
       });
 
+      // Auto-manage CheckSessionAction based on form_type
+      this.$watch('bean.form_type', (newType, oldType) => {
+        if (newType === oldType) return;
+        const config = this.formConfig;
+        if (newType === 'crm') {
+          const mainFlow = config.flows.find(f => f.id == '0');
+          if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
+            const actionDef = utils.getDefinedAction('CheckSessionAction');
+            if (actionDef) {
+              config.addAction(actionDef, {}, '0');
+            }
+          }
+        } else {
+          config.flows.forEach(flow => {
+            flow.actions = flow.actions.filter(a => a.name !== 'CheckSessionAction');
+          });
+        }
+      });
+
       // Quill Editor Modal Component
       Alpine.data('quillEditorModal', () => ({
         editor: null,
@@ -205,6 +224,17 @@ function wizardForm() {
         this.formConfig = new stic_AwfConfiguration();
         this.isReadOnly = true;
       }
+
+      if (this.bean?.form_type === 'crm') {
+        const mainFlow = this.formConfig.flows.find(f => f.id == '0');
+        if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
+          const actionDef = utils.getDefinedAction('CheckSessionAction');
+          if (actionDef) {
+            this.formConfig.addAction(actionDef, {}, '0');
+          }
+        }
+      }
+     
 
       // Load current Step
       WizardNavigation.loadStep();
@@ -630,7 +660,7 @@ class WizardStep2 {
 
             /** Get the translated title of a validator */
             getValidatorTitle(validatorName) {
-                const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                const def = utils.getDefinedAction(validatorName);
                 return def ? def.title : validatorName;
             },
 
@@ -667,7 +697,7 @@ class WizardStep2 {
             getValidationParamsForTable(validation) {
               if (!validation || !validation.validator || !validation.params) return [];
               
-              const def = utils.getDefinedActions().find(a => a.name === validation.validator);
+              const def = utils.getDefinedAction(validation.validator);
               if (!def) return [];
               
               return Object.entries(validation.params).map(([key, value]) => {
@@ -819,7 +849,7 @@ class WizardStep2 {
               Alpine.effect(() => {
                 const validatorName = this.validation?.validator;
                 if (validatorName && (!this.validation.message || this.validation.message === '')) {
-                  const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                  const def = utils.getDefinedAction(validatorName);
                   if (def) {
                     this.validation.message = def.defaultErrorMessage ?? '';
                   }
@@ -1497,7 +1527,7 @@ class WizardStep2 {
 
       get selectedValidatorDefinition() {
         if (!this.validation || !this.validation.validator) return null;
-        return utils.getDefinedActions().find(a => a.name === this.validation.validator);
+        return utils.getDefinedAction(this.validation.validator);
       },
     };
   }
@@ -1586,7 +1616,7 @@ class WizardStep2 {
 
         let tooltip = utils.translateForFieldLabel('LBL_FIELD_ACTIVE_VALIDATIONS') + "\n";
         const lines = field.validations.map(val => {
-            const def = utils.getDefinedActions().find(a => a.name === val.validator);
+            const def = utils.getDefinedAction(val.validator);
             const name = def ? def.title : val.validator;
             return `- ${name}`;
         });
@@ -1695,10 +1725,16 @@ class WizardStep3 {
               return 'text';
             },
 
+            _reloadDefinitions() {
+              const formType = window.alpineComponent?.bean?.form_type || '';
+              this.allDefinitions = utils.getDefinedActions()
+                .filter(a => a.isUserSelectable && a.isActive && (a.type == 'Hook' || a.type == 'Deferred'))
+                .filter(a => !formType || !a.supportedFormTypes || a.supportedFormTypes.length === 0 ||
+                             a.supportedFormTypes.includes(formType));
+            },
+
             init() {
-              // Load all user selectable action definitions
-              this.allDefinitions = utils.getDefinedActions().filter(a => a.isUserSelectable && a.isActive && 
-                                                                     (a.type == 'Hook' || a.type == 'Deferred'));
+              this._reloadDefinitions();
             },
 
             updateApplyCondition(value) {
@@ -1759,6 +1795,7 @@ class WizardStep3 {
              * @returns {void} 
              */
             openCreate(flow, isTerminal) {
+              this._reloadDefinitions();
               this.isEdit = false;
               this.flow = flow;
               this.original_id = '';
@@ -1787,6 +1824,7 @@ class WizardStep3 {
              * @returns {void} 
              */
             openEdit(flow, action) {
+              this._reloadDefinitions();
               this.isEdit = true;
               this.flow = flow;
               this.original_id = action.id;
