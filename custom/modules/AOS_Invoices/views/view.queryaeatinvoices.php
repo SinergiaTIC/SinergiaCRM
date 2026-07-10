@@ -110,37 +110,70 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                     }
 
                     $byNumSerie = [];
+                    $bySerieAndDate = [];
                     foreach ($registros as $i => $r) {
                         $ns = $r['idFactura']['numSerie'] ?? '';
+                        $fe = $r['idFactura']['fechaExpedicion'] ?? '';
                         if ($ns !== '') {
                             $byNumSerie[$ns] = $i;
+                            if ($fe !== '') {
+                                $bySerieAndDate[$ns . '|' . $fe] = $i;
+                            }
                         }
                     }
 
                     $children = [];
                     $childOfParentInSet = [];
+                    $isRectifier = [];
                     if ($nestRectified) {
+                        // For each rectifying invoice, find its IMMEDIATE predecessor
+                        // using the encadenamiento (hash chain), not facturaRectificada.
+                        // AEAT always returns facturaRectificada pointing to the ORIGINAL
+                        // invoice, but encadenamiento gives the actual chain:
+                        //   original → rectifier1 → rectifier2 → rectifier3
+                        // Use a composite key (numSerie|fechaExpedicion) because
+                        // rectifier numSeries like RECT-2026-0001 can appear multiple
+                        // times for different original invoices on different dates.
                         foreach ($registros as $i => $r) {
                             $tipo = $r['datos']['tipoFactura'] ?? '';
-                            $isRectificativa = in_array($tipo, ['R1', 'R2', 'R3', 'R4', 'R5'], true);
-                            if (!$isRectificativa) {
+                            $isRectifier[$i] = in_array($tipo, ['R1', 'R2', 'R3', 'R4', 'R5'], true);
+                            if (!$isRectifier[$i]) {
                                 continue;
                             }
-                            $parentNs = $r['datos']['facturaRectificada']['numSerie']
-                                ?? $r['datos']['encadenamiento']['numSerie']
-                                ?? null;
+                            // Try encadenamiento first (hash chain predecessor)
+                            $enc = $r['datos']['encadenamiento'] ?? [];
+                            $parentNs = $enc['numSerie'] ?? null;
+                            $parentFe = $enc['fechaExpedicion'] ?? null;
+                            if ($parentNs !== null && $parentFe !== null) {
+                                $compositeKey = $parentNs . '|' . $parentFe;
+                                if (isset($bySerieAndDate[$compositeKey])) {
+                                    $pIdx = $bySerieAndDate[$compositeKey];
+                                    $children[$pIdx][] = $i;
+                                    $childOfParentInSet[$i] = true;
+                                    continue;
+                                }
+                            }
+                            // Fallback: use facturaRectificada by numSerie only
+                            $parentNs = $r['datos']['facturaRectificada']['numSerie'] ?? null;
                             if ($parentNs !== null && isset($byNumSerie[$parentNs])) {
                                 $pIdx = $byNumSerie[$parentNs];
                                 $children[$pIdx][] = $i;
                                 $childOfParentInSet[$i] = true;
                             }
                         }
+                    } else {
+                        foreach ($registros as $i => $r) {
+                            $tipo = $r['datos']['tipoFactura'] ?? '';
+                            $isRectifier[$i] = in_array($tipo, ['R1', 'R2', 'R3', 'R4', 'R5'], true);
+                        }
                     }
 
                     $parentsWithChildren = [];
                     foreach ($registros as $i => $r) {
                         if (isset($children[$i])) {
-                            $parentsWithChildren[$i] = true;
+                            // Only mark as "parent with children" if it's a rectifying invoice;
+                            // originals (F1/F2/F3) should remain at full opacity
+                            $parentsWithChildren[$i] = $nestRectified && ($isRectifier[$i] ?? false);
                         }
                     }
 
@@ -185,7 +218,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                         $reg = $item['reg'];
                         $depth = $item['depth'];
                         $idx = $item['idx'];
-                        $isParentRectified = $nestRectified && isset($parentsWithChildren[$idx]);
+                        $isParentRectified = $nestRectified && ($parentsWithChildren[$idx] ?? false);
 
                         $idFactura = $reg['idFactura'] ?? [];
                         $datos = $reg['datos'] ?? [];
