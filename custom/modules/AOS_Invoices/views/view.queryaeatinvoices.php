@@ -126,37 +126,29 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                     $childOfParentInSet = [];
                     $isRectifier = [];
                     if ($nestRectified) {
-                        // For each rectifying invoice, find its IMMEDIATE predecessor
-                        // using the encadenamiento (hash chain), not facturaRectificada.
-                        // AEAT always returns facturaRectificada pointing to the ORIGINAL
-                        // invoice, but encadenamiento gives the actual chain:
-                        //   original → rectifier1 → rectifier2 → rectifier3
+                        // Nest each rectifier under its hash chain predecessor
+                        // (encadenamiento), which reflects the actual submission
+                        // order: original → rectifier1 → rectifier2 → rectifier3.
+                        // AEAT's facturaRectificada (the rectified invoice) is
+                        // optional and often absent from query responses, so we
+                        // rely on encadenamiento for the nesting hierarchy.
                         // Use a composite key (numSerie|fechaExpedicion) because
-                        // rectifier numSeries like RECT-2026-0001 can appear multiple
-                        // times for different original invoices on different dates.
+                        // rectifier numSeries can appear for different dates.
                         foreach ($registros as $i => $r) {
                             $tipo = $r['datos']['tipoFactura'] ?? '';
                             $isRectifier[$i] = in_array($tipo, ['R1', 'R2', 'R3', 'R4', 'R5'], true);
                             if (!$isRectifier[$i]) {
                                 continue;
                             }
-                            // Try encadenamiento first (hash chain predecessor)
                             $enc = $r['datos']['encadenamiento'] ?? [];
                             $parentNs = $enc['numSerie'] ?? null;
                             $parentFe = $enc['fechaExpedicion'] ?? null;
-                            if ($parentNs !== null && $parentFe !== null) {
-                                $compositeKey = $parentNs . '|' . $parentFe;
-                                if (isset($bySerieAndDate[$compositeKey])) {
-                                    $pIdx = $bySerieAndDate[$compositeKey];
-                                    $children[$pIdx][] = $i;
-                                    $childOfParentInSet[$i] = true;
-                                    continue;
-                                }
+                            if ($parentNs === null || $parentFe === null) {
+                                continue;
                             }
-                            // Fallback: use facturaRectificada by numSerie only
-                            $parentNs = $r['datos']['facturaRectificada']['numSerie'] ?? null;
-                            if ($parentNs !== null && isset($byNumSerie[$parentNs])) {
-                                $pIdx = $byNumSerie[$parentNs];
+                            $compositeKey = $parentNs . '|' . $parentFe;
+                            if (isset($bySerieAndDate[$compositeKey])) {
+                                $pIdx = $bySerieAndDate[$compositeKey];
                                 $children[$pIdx][] = $i;
                                 $childOfParentInSet[$i] = true;
                             }
