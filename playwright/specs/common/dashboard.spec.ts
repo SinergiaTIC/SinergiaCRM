@@ -19,6 +19,8 @@ test.describe("Dashboard", () => {
   }: {
     page: Page;
   }) => {
+    // WARN: FLAKY — Dashlet dashlet IDs are dynamic UUIDs so we must locate the title instead.
+    // Suggestion: Use a stable attribute like data-module or data-dashlet-type if available.
     await expect(page).toHaveURL(/module=Home&action=index/);
     await expect(dashboardPage.myCallsHeading).toBeVisible();
     await expect(dashboardPage.myMeetingsHeading).toBeVisible();
@@ -28,9 +30,10 @@ test.describe("Dashboard", () => {
 
   test("Each dashlet has action buttons", async ({ page }: { page: Page }) => {
     await expect(page).toHaveURL(/module=Home&action=index/);
-    // WARN: FLAKY — All dashlet action buttons share identical aria-labels, so these counts
+    // WARN: FLAKY — Dashlet dashlet IDs are dynamic UUIDs
+    // All dashlet action buttons share identical aria-labels, so these counts
     // match every dashlet's buttons globally. If dashlets are added or removed, the expected
-    // count changes. Cannot scope to a single dashlet because dashlet IDs are UUIDs (dynamic).
+    // count changes.
     await expect(dashboardPage.dashletEditButtons).toHaveCount(4);
     await expect(dashboardPage.dashletRefreshButtons).toHaveCount(4);
     await expect(dashboardPage.dashletDeleteButtons).toHaveCount(4);
@@ -42,12 +45,13 @@ test.describe("Dashboard", () => {
     page: Page;
   }) => {
     await expect(page).toHaveURL(/module=Home&action=index/);
-    // WARN: FLAKY — Uses .first() which assumes dashlets are in default order.
+    // WARN: FLAKY — Dashlet dashlet IDs are dynamic UUIDs
+    // Uses .first() which assumes dashlets are in default order.
     // If dashlets are reordered, this may select the wrong table.
     const myCallsTable = page
       .locator("table.list.view.default.dashletPanel")
       .first();
-    // Verify column headers
+    // WARN: Labels are hardcoded since dashlet table strings are not available in SUGAR.language.
     await expect(
       myCallsTable.getByRole("columnheader", { name: "Subject" }),
     ).toBeVisible();
@@ -71,7 +75,8 @@ test.describe("Dashboard", () => {
     page: Page;
   }) => {
     await expect(page).toHaveURL(/module=Home&action=index/);
-    // WARN: FLAKY — Uses .nth(1) which assumes dashlets are in default order.
+    // WARN: FLAKY — Dashlet dashlet IDs are dynamic UUIDs
+    // Uses .nth(1) which assumes dashlets are in default order.
     // If dashlets are reordered, this may select the wrong table.
     const myMeetingsTable = page
       .locator("table.list.view.default.dashletPanel")
@@ -94,7 +99,8 @@ test.describe("Dashboard", () => {
     page: Page;
   }) => {
     await expect(page).toHaveURL(/module=Home&action=index/);
-    // WARN: FLAKY — Uses .nth(2) which assumes dashlets are in default order.
+    // WARN: FLAKY — Dashlet dashlet IDs are dynamic UUIDs
+    // Uses .nth(2) which assumes dashlets are in default order.
     // If dashlets are reordered, this may select the wrong table.
     const myTasksTable = page
       .locator("table.list.view.default.dashletPanel")

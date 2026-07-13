@@ -23,6 +23,9 @@ export class DashboardPage extends BasePage {
   readonly dashletRefreshButtons: Locator;
   readonly dashletDeleteButtons: Locator;
 
+  // Desktop logout (scoped to avoid duplicate IDs in mobile/tablet bars)
+  readonly desktopLogoutLink: Locator;
+
   // Sidebar
   readonly sidebar: Locator;
   readonly recentlyViewedHeading: Locator;
@@ -35,6 +38,9 @@ export class DashboardPage extends BasePage {
     this.logoutItem = this.page.getByRole("menuitem", {
       name: t("LBL_LOGOUT"),
     });
+    // WARN: SuiteP renders 3 duplicate #logout_link elements (one per device bar).
+    // Scope to .desktop-bar to avoid strict-mode collisions.
+    this.desktopLogoutLink = this.page.locator(".desktop-bar #logout_link");
     // WARN: search button matched by regex /^[^a-zA-Z]+$/ on aria-label (Unicode icon).
     // If the icon character changes or another button gets such a label, the match breaks.
     // ACCESSIBILITY: screen readers cannot pronounce a Unicode icon aria-label.
@@ -51,7 +57,11 @@ export class DashboardPage extends BasePage {
       .filter({ hasText: t("LBL_LAST_VIEWED") });
     this.adminActionsHeading = this.page
       .locator("h2")
-      .filter({ hasText: "Admin actions" });
+      // WARN: no exact i18n key exists for "Admin actions" — SuiteP constructs it
+      // from concatenation. Using t("LBL_ADMIN") partial match ("Admin" is a
+      // substring of "Admin actions"). If a new <h2> with "Admin" is added, this
+      // silently matches it.
+      .filter({ hasText: t("LBL_ADMIN") });
     // WARN: #admin_link is NOT in the sidebar — it's in the top navigation bar.
     // Use .first() to handle duplicate IDs (same id used in nav + user menu).
     this.adminActions = this.page.locator("#admin_link").first();

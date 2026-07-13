@@ -67,17 +67,4 @@ test.describe("Login page", () => {
       ).toBeVisible();
     });
   });
-
-  test("logout redirects to login page", async ({ page }: { page: Page }) => {
-    const loginPage: LoginPage = new LoginPage(page);
-    await test.step("log in", async () => {
-      await login(INSTANCE_USER, INSTANCE_PASSWORD, page);
-      await expect(page).toHaveURL(/module=Home&action=index/);
-    });
-    await test.step("perform logout and verify redirect", async () => {
-      await page.goto("index.php?module=Users&action=Logout");
-      await expect(page).toHaveURL(/action=Login/);
-      await expect(loginPage.loginButton).toBeVisible();
-    });
-  });
 });

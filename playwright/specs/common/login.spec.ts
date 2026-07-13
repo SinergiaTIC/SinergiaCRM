@@ -1,8 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
+import { BasePage } from "#pages/BasePage";
 import { LoginPage } from "#pages/LoginPage";
 import { expectNoPhpErrors } from "#helpers/errors";
 import { INSTANCE_USER, INSTANCE_PASSWORD } from "#settings";
-import { t } from "#helpers/i18n";
 
 const login = async (user: string, password: string, page: Page) => {
   const login: LoginPage = new LoginPage(page);
@@ -46,6 +46,23 @@ test.describe("Login page", () => {
       ).toBeVisible();
       await expect(loginPage.usernameInput).toBeVisible();
       await expectNoPhpErrors(page);
+    });
+  });
+
+  test("logout redirects to login page", async ({ page }: { page: Page }) => {
+    const loginPage: LoginPage = new LoginPage(page);
+    await test.step("log in with valid credentials", async () => {
+      await login(INSTANCE_USER, INSTANCE_PASSWORD, page);
+      await expect(page).toHaveURL(/module=Home&action=index/);
+    });
+    await test.step("perform logout via UI and verify redirect", async () => {
+      // WARN: logout uses BasePage.logout() which is device-aware —
+      // it selects the correct responsive bar class based on viewport
+      // width (desktop / tablet / mobile).  The detailed breakpoint
+      // logic is documented in BasePage.ts.
+      const basePage = new BasePage(page);
+      await basePage.logout();
+      await expect(loginPage.loginButton).toBeVisible();
     });
   });
 });

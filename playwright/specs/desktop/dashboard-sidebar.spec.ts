@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { DashboardPage } from "#pages/DashboardPage";
 import { expectNoPhpErrors } from "#helpers/errors";
+import { t } from "#helpers/i18n";
 
 test.describe("Dashboard sidebar", () => {
   let dashboard: DashboardPage;
@@ -40,18 +41,16 @@ test.describe("Dashboard sidebar", () => {
   }: {
     page: Page;
   }) => {
-    // WARN: heading is matched by h2 text content "Admin actions" — this is hardcoded
-    // text and may change if the CRM is translated or the sidebar is restructured
+    // WARN: sidebar uses .sidebar CSS class — fragile if the layout changes.
     await expect(dashboard.adminActionsHeading).toBeVisible();
 
-    // WARN: relies on sidebar being a .sidebar CSS class; Administration link text
-    // may vary by language (i18n). #admin_link is NOT in the sidebar (it's in top nav),
-    // so we check the actual sidebar links directly.
+    // WARN: relies on sidebar being a .sidebar CSS class. #admin_link is NOT
+    // in the sidebar (it's in top nav), so we check the actual sidebar links.
     await expect(
-      dashboard.sidebar.getByRole("link", { name: "Administration" }),
+      dashboard.sidebar.getByRole("link", { name: t("Administration") }),
     ).toBeVisible();
     await expect(
-      dashboard.sidebar.getByRole("link", { name: "Studio" }),
+      dashboard.sidebar.getByRole("link", { name: t("Studio") }),
     ).toBeVisible();
   });
 });

@@ -25,7 +25,7 @@ function makeProjects(type: ProjectType) {
 
 export default defineConfig({
   globalSetup: "./global-setup.ts",
-  workers: 1,
+  workers: 4,
   timeout: 80000,
   expect: {
     timeout: 40000,
@@ -42,6 +42,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "on-first-retry",
   },
+  fullyParallel: true,
   projects: [
     ...makeProjects("functional"),
     ...makeProjects("visual"),

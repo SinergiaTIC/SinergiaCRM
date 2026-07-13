@@ -44,7 +44,7 @@ export type ModuleKey =
   | "Tasks"
   | "AOW_WorkFlow";
 
-export type ModuleType = "crm" | "activity" | "readonly";
+export type ModuleType = "listView" | "calendar" | "empty";
 
 export interface ModuleEntry {
   key: ModuleKey;

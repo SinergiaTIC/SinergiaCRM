@@ -14,11 +14,14 @@ export class ListViewPage extends BasePage {
     this.pageContent = page.locator(`#pagecontent[data-module="${moduleKey}"]`);
   }
 
-  async navigateTo(action = "index", recordId: string | null = null): Promise<void> {
+  async navigateTo(
+    action = "index",
+    recordId: string | null = null,
+  ): Promise<void> {
     await super.navigateTo(this.moduleKey, action, recordId);
   }
 
-  async waitForLoad(): Promise<void> {
+  async waitForContentLoad(): Promise<void> {
     await expect(this.pageContent).toBeVisible({ timeout: 10000 });
 
     // Check for visible content in priority order: data table, empty-state text, calendar grid.
@@ -28,13 +31,16 @@ export class ListViewPage extends BasePage {
     // First try: standard SuiteP data table wrapped in .list-view-rounded-corners.
     // WARN: scoped because multiple hidden `list view table-responsive` tables exist
     // at the root of #pagecontent for empty modules.
-    const dataTable = this.pageContent.locator('.list-view-rounded-corners table[class*="list"]').first();
+    const dataTable = this.pageContent
+      .locator('.list-view-rounded-corners table[class*="list"]')
+      .first();
     // Second try: any list table (some modules like Releases use `list view` without wrapper).
     const anyTable = this.pageContent.locator('table[class*="list"]').first();
     // Fallback: empty-state text or Calendar container.
     // WARN: empty-state text is hardcoded in English. Tests run with TEST_LANG=en_us.
-    const emptyMsg = this.page.getByText('You currently have no records saved.').first();
-    const calendar = this.pageContent.locator('#calendarContainer');
+    const emptyMsg = this.page
+      .getByText("You currently have no records saved.")
+      .first();
 
     try {
       // Fast path: modules with data use the standard .list-view-rounded-corners layout
@@ -45,7 +51,7 @@ export class ListViewPage extends BasePage {
         await expect(anyTable).toBeVisible({ timeout: 5000 });
       } catch {
         // Last resort: empty-state text or calendar for truly empty modules
-        await expect(emptyMsg.or(calendar)).toBeVisible({ timeout: 5000 });
+        await expect(emptyMsg).toBeVisible({ timeout: 5000 });
       }
     }
 
@@ -79,17 +85,23 @@ export class ListViewPage extends BasePage {
     //    with display:none because they have no bounding box
     // If CSS class names or inline styles change, this silently breaks.
     await this.page.evaluate((actionName) => {
-      document.querySelectorAll<HTMLElement>("#actionLinkTop, #actionLinkBottom").forEach((el) => {
-        el.classList.remove("hide");
-        el.querySelectorAll<HTMLElement>(".subnav").forEach((subnav) => {
-          subnav.style.display = "block";
+      document
+        .querySelectorAll<HTMLElement>("#actionLinkTop, #actionLinkBottom")
+        .forEach((el) => {
+          el.classList.remove("hide");
+          el.querySelectorAll<HTMLElement>(".subnav").forEach((subnav) => {
+            subnav.style.display = "block";
+          });
         });
-      });
-      document.querySelectorAll<HTMLElement>(".selectActionsDisabled").forEach((el) => {
-        el.style.display = "none";
-      });
+      document
+        .querySelectorAll<HTMLElement>(".selectActionsDisabled")
+        .forEach((el) => {
+          el.style.display = "none";
+        });
       // Find the action link by normalized text content and click it directly
-      const links = document.querySelectorAll<HTMLAnchorElement>("#actionLinkTop a, #actionLinkBottom a");
+      const links = document.querySelectorAll<HTMLAnchorElement>(
+        "#actionLinkTop a, #actionLinkBottom a",
+      );
       for (const link of links) {
         if (link.textContent?.trim().replace(/\s+/g, " ") === actionName) {
           link.click();
