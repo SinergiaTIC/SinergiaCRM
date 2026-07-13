@@ -479,19 +479,19 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sessió activa',
 
   // -- DEFERRED ACTIONS --
-  'LBL_PARAM_EXPIRATION_DAYS' => "Dies d'expiració",
-  'LBL_PARAM_EXPIRATION_DAYS_DESC' => "Nombre de dies abans que l'acció diferida caduqui.",
-  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Títol per enllaç ja utilitzat',
+  'LBL_PARAM_EXPIRATION_DAYS' => 'Dies per a la caducitat',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => "Nombre de dies després del qual caducarà l'acció diferida.",
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Títol per a enllaç ja utilitzat',
   'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => "Títol de l'avís que es mostrarà quan s'accedeixi a l'enllaç si ja s'ha utilitzat.",
   'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Acció ja realitzada',
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => "Text de l'avís per enllaç ja utilitzat",
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => "Text que es mostrarà quan s'accedeixi a l'enllaç si ja s'ha utilitzat.",
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => "Aquesta gestió ja s'ha completat anteriorment de manera correcta i no és necessari repetir-la.",
-  'LBL_PARAM_EXPIRED_TITLE' => 'Títol per enllaç caducat',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => "Text de l'avís per a enllaç ja utilitzat",
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => "Text de l'avís que es mostrarà quan s'accedeixi a l'enllaç si ja s'ha utilitzat.",
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => "Aquesta acció ja s'ha completat anteriorment de manera correcta i no és necessari repetir-la.",
+  'LBL_PARAM_EXPIRED_TITLE' => 'Títol per a enllaç caducat',
   'LBL_PARAM_EXPIRED_TITLE_DESC' => "Títol de l'avís que es mostrarà quan s'accedeixi a l'enllaç caducat.",
   'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enllaç caducat',
-  'LBL_PARAM_EXPIRED_TEXT' => "Text de l'avís per enllaç caducat",
-  'LBL_PARAM_EXPIRED_TEXT_DESC' => "Text que es mostrarà quan s'accedeixi a l'enllaç caducat.",
+  'LBL_PARAM_EXPIRED_TEXT' => "Text de l'avís per a enllaç caducat",
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => "Text de l'avís que es mostrarà quan s'accedeixi a l'enllaç caducat.",
   'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Aquest enllaç ha caducat per motius de seguretat.',
 
   // EmailConfirmationAction 
