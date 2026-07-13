@@ -480,21 +480,19 @@ $mod_strings = array (
 
   // -- DEFERRED ACTIONS --
   'LBL_PARAM_EXPIRATION_DAYS' => 'Días para caducidad',
-  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días antes de que caduque la acción diferida',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días después del cual caducará la acción diferida.',
   'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Título para enlace ya utilizado', 
   'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => 'Título del aviso que se mostrará cuando se acceda al enlace si ya se ha utilizado.', 
   'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Acción ya realizada', 
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => 'Texto del aviso para enlace ya utilizado', 
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => 'Texto que se mostrará cuando se acceda al enlace si ya se ha utilizado.', 
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => 'Esta gestión ya se ha completado anteriormente de forma correcta y no es necesario repetirla.',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => 'Texto para enlace ya utilizado', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => 'Texto del aviso que se mostrará cuando se acceda al enlace si ya se ha utilizado.', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => 'Esta acción ya se ha completado anteriormente de forma correcta y no es necesario repetirla.',  
   'LBL_PARAM_EXPIRED_TITLE' => 'Título para enlace caducado',
-  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título de la advertencia que se mostrará al acceder al enlace caducado',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título del aviso que se mostrará al acceder al enlace caducado.',
   'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enlace caducado',
-  'LBL_PARAM_EXPIRED_TEXT' => 'Texto de advertencia del enlace caducado',
-  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto que se mostrará al acceder al enlace caducado',
-  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad',
-  
-  // EmailConfirmationAction
+  'LBL_PARAM_EXPIRED_TEXT' => 'Texto del enlace caducado',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto del aviso que se mostrará al acceder al enlace caducado.',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad.',  // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su dirección de correo electrónico.',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
