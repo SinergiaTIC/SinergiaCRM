@@ -465,7 +465,7 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Premeu aquí per continuar',
 
   // RedirectToRecordAction
-  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => "Ves a la pàgina d'un registre",
+  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => "Ves a un registre",
   'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => "Redirecciona el navegador de l'usuari final a la pàgina d'un registre concret del CRM",
   'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Bloc de dades del registre',
   'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => "Indica el bloc de dades que conté el registre al qual es redirigirà l'usuari final.",
