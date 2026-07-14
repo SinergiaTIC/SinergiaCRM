@@ -135,6 +135,8 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TITLE' => 'Configurar un bloque de datos relacionado con un módulo del sistema',
   'LBL_DATABLOCK_ADD_UNLINKED' => 'Añadir un bloque de datos no enlazado',
   'LBL_DATABLOCK_ADD_UNLINKED_TITLE' => 'Configurar un bloque de datos sin relacionarlo con ningún módulo del sistema',
+  'LBL_DATABLOCK_ADD_DOCUMENTS' => 'Añadir un bloque de datos de documentos',
+  'LBL_DATABLOCK_ADD_DOCUMENTS_TITLE' => 'Añadir un bloque de datos de documentos para subir archivos',
   'LBL_DATABLOCK_NEW' => 'Nuevo bloque de datos',
   'LBL_DATABLOCK_NEW_UNLINKED' => 'Nuevo bloque de datos no enlazado',
   'LBL_DATABLOCK_MODULE' => 'Módulo',
@@ -424,6 +426,11 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Campo relacionado',
 
+  // SaveDocumentBlockAction
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Guardar documento',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Crear un registro de documento a partir de un bloque de documento y vincularlo a la respuesta',
+  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DOCUMENT_TEXT' => 'Bloque de datos del documento',
+
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Añadir a Lista de Público Objetivo',
   'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Añade el registro procesado (persona, interesado, usuario u organización) a una Lista de Público Objetivo existente',
@@ -577,4 +584,16 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga una URL válida',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no es válida',
+
+  // MaxDocumentSizeValidatorAction
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Tamaño máximo de archivo',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que el archivo subido no supere el tamaño máximo permitido',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_MAX_SIZE_MB_TEXT' => 'Tamaño máximo (MB)',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El archivo supera el tamaño máximo permitido',
+
+  // AllowedExtensionsValidatorAction
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_TITLE' => 'Extensiones permitidas',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Valida que el archivo subido tenga una extensión permitida',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Extensiones permitidas (separadas por comas)',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La extensión del archivo no está permitida',
 );

@@ -135,6 +135,8 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TITLE' => 'Configureu un bloc de dades relacionat amb un mòdul del sistema',
   'LBL_DATABLOCK_ADD_UNLINKED' => 'Afegeix un bloc de dades no enllaçat',
   'LBL_DATABLOCK_ADD_UNLINKED_TITLE' => 'Configureu un bloc de dades sense relacionar-lo amb cap mòdul del sistema',
+  'LBL_DATABLOCK_ADD_DOCUMENTS' => 'Afegeix un bloc de dades de documents',
+  'LBL_DATABLOCK_ADD_DOCUMENTS_TITLE' => 'Afegeix un bloc de dades de documents per pujar fitxers',
   'LBL_DATABLOCK_NEW' => 'Nou bloc de dades',
   'LBL_DATABLOCK_NEW_UNLINKED' => 'Nou bloc de dades no enllaçat',
   'LBL_DATABLOCK_MODULE' => 'Mòdul',
@@ -424,6 +426,11 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nom intern de la relació que enllaça amb el bloc de dades destí',
   'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Camp relacionat',
 
+  // SaveDocumentBlockAction
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Desa el document',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => "Crea un registre de document a partir d'un bloc de dades de document i el vincula a la resposta",
+  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DOCUMENT_TEXT' => 'Bloc de dades del document',
+
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Afegeix a una Llista de Públic Objectiu',
   'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Afegeix el registre processat (persona, interessat, usuari o organització) a una Llista de Públic Objectiu existent',
@@ -577,4 +584,16 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => "Validador d'URL",
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui una URL vàlida',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'URL no és vàlida",
+
+  // MaxDocumentSizeValidatorAction
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Mida màxima de fitxer',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que el fitxer pujat no superi la mida màxima permesa',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_MAX_SIZE_MB_TEXT' => 'Mida màxima (MB)',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El fitxer supera la mida màxima permesa',
+
+  // AllowedExtensionsValidatorAction
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_TITLE' => 'Extensions permeses',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Valida que el fitxer pujat tingui una extensió permesa',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Extensions permeses (separades per comes)',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'extensió del fitxer no està permesa",
 );

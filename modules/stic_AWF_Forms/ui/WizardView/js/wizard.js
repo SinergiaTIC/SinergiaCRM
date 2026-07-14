@@ -1191,6 +1191,17 @@ class WizardStep2 {
           }
         });
       },
+      handleAddDocumentDatablock() {
+        const text = this.formConfig.suggestDataBlockText('Documents');
+        const dataBlock = this.formConfig.addDataBlockModule('Documents', true, text);
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + dataBlock.id); 
+          if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      },
     };
   }
  

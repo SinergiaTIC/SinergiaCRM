@@ -135,6 +135,8 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TITLE' => 'Configure a data block related to a system module',
   'LBL_DATABLOCK_ADD_UNLINKED' => 'Add an unlinked data block',
   'LBL_DATABLOCK_ADD_UNLINKED_TITLE' => 'Configure a data block without relating it to any system module',
+  'LBL_DATABLOCK_ADD_DOCUMENTS' => 'Add document data block',
+  'LBL_DATABLOCK_ADD_DOCUMENTS_TITLE' => 'Add a document data block to upload files',
   'LBL_DATABLOCK_NEW' => 'New data block',
   'LBL_DATABLOCK_NEW_UNLINKED' => 'New unlinked data block',
   'LBL_DATABLOCK_MODULE' => 'Module',
@@ -397,7 +399,7 @@ $mod_strings = array (
 
   // -- SUBPANELS --
   'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE' => 'Form responses',
-
+  
   // -- HOOK ACTIONS --
   // Generic 
   'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_TEXT' => 'Data block',
@@ -423,6 +425,11 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relationship to update',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'The internal name of the relationship linking to the destination data block',
   'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Related field',
+
+  // SaveDocumentBlockAction
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Save document',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Create a document record from a document block and link it to the response',
+  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DOCUMENT_TEXT' => 'Document data block',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Add to Target List',
@@ -577,4 +584,16 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'URL validator',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid URL',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The URL is invalid',
- );
+
+  // MaxDocumentSizeValidatorAction
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Max file size',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Validates that the uploaded file does not exceed the maximum allowed size',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_MAX_SIZE_MB_TEXT' => 'Maximum size (MB)',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The file exceeds the maximum allowed size',
+
+  // AllowedExtensionsValidatorAction
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_TITLE' => 'Allowed extensions',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Validates that the uploaded file has an allowed extension',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Allowed extensions (comma-separated)',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'File extension is not allowed',
+);

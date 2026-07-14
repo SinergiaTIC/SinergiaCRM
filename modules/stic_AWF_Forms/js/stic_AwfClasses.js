@@ -41,6 +41,7 @@ class stic_AwfDataBlock {
       fields: [],               // Fields of the Data Block
       relationships: [],        // Block-to-block relationships [{ name, related_datablock_id }]
       duplicate_detections: [], // Duplicate detection definition
+      is_document_block: false, // Indicates if it is a Document block (auto-configured)
       save_action_id: "",       // ID of the data block save action
     });
 
@@ -1487,7 +1488,68 @@ class stic_AwfConfiguration {
       module: moduleName,
     });
 
-    // Set initial fields 
+    // Document blocks: auto-configure with specific fields instead of the normal loop
+    if (moduleName === 'Documents') {
+      dataBlock.is_document_block = true;
+
+      // Clear duplicate detections (not applicable for documents)
+      dataBlock.duplicate_detections = [];
+
+      // Add document_name field (required, form)
+      const docNameFieldDef = module.fields['document_name'];
+      if (docNameFieldDef) {
+        let newField = new stic_AwfField();
+        newField.updateWithFieldInformation(docNameFieldDef, 'form');
+        newField.required = true;
+        this.addDataBlockField(dataBlock, newField);
+      }
+
+      // Add status_id field (fixed, default "Active")
+      const statusFieldDef = module.fields['status_id'];
+      if (statusFieldDef) {
+        let newField = new stic_AwfField();
+        newField.updateWithFieldInformation(statusFieldDef, 'fixed');
+        newField.setValueOptions(utils.getFieldOptions(statusFieldDef));
+        newField.value = 'Active';
+        newField.value_text = 'Active';
+        this.addDataBlockField(dataBlock, newField);
+      }
+
+      // Add file field (unlinked, type_in_form: 'file', non-removable)
+      let fileField = new stic_AwfField({
+        name: 'file',
+        text_original: 'Upload file',
+        label: 'Upload file',
+        type_field: 'unlinked',
+        type_in_form: 'file',
+        subtype_in_form: 'file_upload',
+        required: true,
+        required_in_form: true,
+      });
+
+      // Attach validators by default
+      fileField.validations.push(new stic_AwfFieldValidation({
+        name: utils.newId('val_'),
+        validator: 'MaxDocumentSizeValidatorAction',
+        message: utils.translate('LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT'),
+        params: { max_size_mb: '10' },
+        is_automatic: true,
+      }));
+      fileField.validations.push(new stic_AwfFieldValidation({
+        name: utils.newId('val_'),
+        validator: 'AllowedExtensionsValidatorAction',
+        message: utils.translate('LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT'),
+        params: { extensions: 'pdf,doc,docx,jpg,png' },
+        is_automatic: true,
+      }));
+
+      this.addDataBlockField(dataBlock, fileField);
+
+      this.data_blocks.push(dataBlock);
+      return dataBlock;
+    }
+
+    // Set initial fields
     let hasRequiredRelate = false;
     for (const fieldDef of Object.values(module.fields)) {
       if (fieldDef.required && fieldDef.type === 'relate') {
@@ -2065,10 +2127,10 @@ class stic_AwfConfiguration {
     const mainFlow = this.flows.find(f => f.id == '0');
     if (!mainFlow) return;
 
-    // Clean: Remove automatic SaveRecord, SaveRecordWithRelations, and RelateRecords actions
+    // Clean: Remove automatic SaveRecord, SaveRecordWithRelations, RelateRecords, and SaveDocumentBlock actions
     // (they will be regenerated below). Other automatic actions (e.g., CheckSessionAction)
     // are managed separately and must be preserved.
-    const regeneratedActionNames = ['SaveRecordAction', 'SaveRecordWithRelationsAction', 'RelateRecordsAction'];
+    const regeneratedActionNames = ['SaveRecordAction', 'SaveRecordWithRelationsAction', 'RelateRecordsAction', 'SaveDocumentBlockAction'];
     mainFlow.actions = mainFlow.actions.filter(a => 
       !a.is_automatic || !regeneratedActionNames.includes(a.name)
     );
@@ -2087,8 +2149,26 @@ class stic_AwfConfiguration {
     // Generate SAVE actions for each DataBlock.
     // Uses SaveRecordWithRelationsAction when the block has outgoing 1-N relationships,
     // so that FK values are injected before the first save.
+    // Document blocks use SaveDocumentBlockAction instead.
     this.data_blocks.forEach(block => {
       if (!block.module) return;
+
+      // Document blocks: generate SaveDocumentBlockAction
+      if (block.is_document_block) {
+        const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveDocumentBlockAction');
+        if (originalDef) {
+          const actionDef = { ...originalDef, isAutomatic: true, order: AUTO_ACTION_ORDER };
+          const params = {
+            'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' }
+          };
+          const newAction = this.addAction(actionDef, params, '0');
+          if (newAction) {
+            block.save_action_id = newAction.id;
+            newAction.text = `${utils.translate('LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE')}: ${block.text}`;
+          }
+        }
+        return; // Skip the rest of the save action generation
+      }
 
       const allRels = this.getAllDataBlockRelationships();
       const blockRels = allRels[block.id] || [];

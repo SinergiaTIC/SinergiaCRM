@@ -39,6 +39,11 @@
           <i class="suitepicon suitepicon-module-surveys me-2"></i>
           <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
         </button>
+        <!-- Button: Add Document Datablock -->
+        <button type="button" class="btn w-auto" @click="handleAddDocumentDatablock();" :title="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS_TITLE')">
+          <i class="suitepicon suitepicon-module-documents me-2"></i>
+          <span x-text="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS')"></span>
+        </button>
       </div>
     </div>
 
@@ -254,7 +259,7 @@
               </div>
               </div>
               <!-- Duplicate Definition -->
-              <template x-if="item && item.module">
+              <template x-if="item && item.module && !item.is_document_block">
                 <div :id="`dataBlockDuplicates${item.id}`">
                   <table class="table table-bordered table-striped w-auto">
                     <thead>
@@ -360,7 +365,10 @@
                       ]);" x-init="sticControls.accordion($el)"></div>
               </template>
               <template x-if="item.module">
-                <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
+                <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify(item.is_document_block ? [
+                        {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                        {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
+                      ] : [
                         {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
                         {headerText:`utils.translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.id},
                         {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
@@ -384,6 +392,11 @@
           <button type="button" class="btn w-auto" @click="creatingUnlinkedDataBlock=true;" :title="utils.translate('LBL_DATABLOCK_ADD_UNLINKED_TITLE')">
             <i class="suitepicon suitepicon-module-surveys me-2"></i>
             <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
+          </button>
+          <!-- Button: Add Document Datablock -->
+          <button type="button" class="btn w-auto" @click="handleAddDocumentDatablock();" :title="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS_TITLE')">
+            <i class="suitepicon suitepicon-module-documents me-2"></i>
+            <span x-text="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS')"></span>
           </button>
         </div>
       </div>

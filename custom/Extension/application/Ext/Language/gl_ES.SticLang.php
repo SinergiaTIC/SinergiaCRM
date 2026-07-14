@@ -3971,6 +3971,7 @@ $app_list_strings['stic_awf_forms_field_type_in_form_list']['date'] = '🗓️ T
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['select'] = '▼ Opciones predeterminadas';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['rating'] = '🏅 Valoración';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['hidden'] = '🕵️ Oculta';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['file'] = '📄 Fichero';
 
 // Advanced Web Forms: configuration->data_block->field->subtype_in_form
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text'] = '🔤 Texto simple';
@@ -3994,6 +3995,7 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] =
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semáforo';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Pulgares';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10 (NPS)';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Adjuntar fichero';
 
 // Advanced Web Forms: configuration->data_block->field->value_type
 $app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
