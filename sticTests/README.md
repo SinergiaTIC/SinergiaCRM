@@ -18,39 +18,44 @@ npm install
 ## Running tests
 
 ```bash
-npm run test                              # all projects, 3 devices
-npx playwright test --project=functional-*  # functional only (skip screenshots)
-npx playwright test --project=visual-*      # visual only (screenshot regression)
+npm run test                                # all projects, 3 devices
+npm run test:smoke                          # smoke-tests only
+npm run test:functional                     # functional only
+npm run test:visual                         # visual only
 npx playwright test --project=functional-desktop  # single project
 npx playwright test --grep="login"          # filter tests by name
 npm run test:ui                             # Playwright UI mode
+npm run test:ui:functional                  # Playwright UI mode, functional tests only
+npm run test:ui:visual                      # Playwright UI mode, visual tests only
+npm run test:ui:smoke                       # UI mode, smoke-tests only
 npm run test:debug                          # PWDEBUG=1
 ```
 
 ## Projects
 
-6 projects — 3 devices × 2 types:
+7 projects — 3 devices × 2 types + smoke-tests:
 
-| Type | Purpose |
-|------|---------|
+| Project        | Purpose                                                      |
+| -------------- | ------------------------------------------------------------ |
 | `functional-*` | Behaviour validation (login, navigation, CRUD, module smoke) |
-| `visual-*` | Screenshot regression (baselines compared per run) |
+| `visual-*`     | Screenshot regression (baselines compared per run)           |
+| `smoke-tests`  | Quick health checks — login and basic page load              |
 
-| Device | Viewport |
-|--------|----------|
+| Device  | Viewport    |
+| ------- | ----------- |
 | desktop | 1920 × 1080 |
-| tablet | 768 × 1024 |
-| mobile | 375 × 812 |
+| tablet  | 768 × 1024  |
+| mobile  | 375 × 812   |
 
-Tests in `specs/common/` run on all devices. Tests in `specs/{device}/` run only on that device.
+Tests in `specs/common/` run on all devices. Tests in `specs/{device}/` run only on that device. Tests in `specs/smoke/` run in the `smoke-tests` project (desktop only, no retries).
 
 ## Environments
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `BASE_URL` | `http://localhost:8000/sinergiacrm/` | CRM URL |
-| `INSTANCE_USER` | `sinergiacrm` | Login username |
-| `INSTANCE_PASSWORD` | `sinergiacrm` | Login password |
+| Variable            | Default                              | Description    |
+| ------------------- | ------------------------------------ | -------------- |
+| `BASE_URL`          | `http://localhost:8000/sinergiacrm/` | CRM URL        |
+| `INSTANCE_USER`     | `sinergiacrm`                        | Login username |
+| `INSTANCE_PASSWORD` | `sinergiacrm`                        | Login password |
 
 Override via `.env` file (copy from `.env.example`) or environment variables.
 
@@ -64,6 +69,7 @@ specs/
   desktop/              desktop-only (navigation)
   mobile/               mobile-only (hamburger menu)
   tablet/               (not yet used)
+  smoke/                quick health checks (login, basic page load)
   visual/               screenshot tests by device
   modules/{module}/     per-module CRUD tests
 ```
@@ -76,16 +82,22 @@ specs/
 
 ## Scripts
 
-| Command | Action |
-|---------|--------|
-| `npm run test` | Full suite |
-| `npm run test:ui` | Playwright UI mode |
-| `npm run test:debug` | Debug with PWDEBUG |
-| `npm run typecheck` | TypeScript check (`tsc --noEmit`) |
+| Command                      | Action                                             |
+| ---------------------------- | -------------------------------------------------- |
+| `npm run test`               | Full suite (all projects)                          |
+| `npm run test:smoke`         | Smoke tests only                                   |
+| `npm run test:functional`    | Functional only (desktop + tablet + mobile)        |
+| `npm run test:visual`        | Visual regression only (desktop + tablet + mobile) |
+| `npm run test:ui`            | Playwright UI mode                                 |
+| `npm run test:ui:smoke`      | UI mode, smoke-tests only                          |
+| `npm run test:ui:functional` | UI mode, functional only                           |
+| `npm run test:ui:visual`     | UI mode, visual only                               |
+| `npm run test:debug`         | Debug with PWDEBUG                                 |
+| `npm run typecheck`          | TypeScript check (`tsc --noEmit`)                  |
 
 ## Notes
 
-- **1 worker** (`workers: 1`). Parallelism is not supported — workers would share the same PHP session cookie and conflict on server-side state.
+- **4 workers** (`workers: 4`) with `fullyParallel: true`. Tests are fully parallelised within a project. Smoke tests run sequentially (retries: 0).
 - Tests authenticate once in `global-setup` and reuse the session via `storageState`. The logout test saves the refreshed session back to the file.
 - PHP errors (warnings, notices, deprecations) are soft-asserted on every page navigation.
 - `channel: "chrome"` — uses system Google Chrome, not Playwright's bundled Chromium (not installable on Ubuntu 26.04).
@@ -94,15 +106,15 @@ specs/
 
 OpenCode agents configured in `.opencode/` assist with E2E test development:
 
-| Agent | Type | Use |
-|---|---|---|
-| `playwright-qa-orchestrator` | primary | Coordinates plan → generate → heal cycle |
-| `playwright-test-planner` | subagent | Writes test plan `.md` to `specs/modules/<module>/plan.md` |
-| `playwright-test-generator` | subagent | Reads plan, drives app via `playwright-cli`, generates tests |
-| `playwright-test-healer` | subagent | Debugs and fixes failing tests |
+| Agent                        | Type     | Use                                                          |
+| ---------------------------- | -------- | ------------------------------------------------------------ |
+| `playwright-qa-orchestrator` | primary  | Coordinates plan → generate → heal cycle                     |
+| `playwright-test-planner`    | subagent | Writes test plan `.md` to `specs/modules/<module>/plan.md`   |
+| `playwright-test-generator`  | subagent | Reads plan, drives app via `playwright-cli`, generates tests |
+| `playwright-test-healer`     | subagent | Debugs and fixes failing tests                               |
 
 ```bash
-cd playwright && opencode
+cd sticTests && opencode
 ```
 
 Tab to the orchestrator or `@playwright-test-<planner|generator|healer>` to invoke.
