@@ -121,6 +121,7 @@ $mod_strings = array (
   'LBL_TWILIO_TOKEN_MISSING' => 'Falta el Auth Token de Twilio',
   'LBL_TWILIO_NUMBER_MISSING' => 'Falta el número de Twilio',
   'LBL_TWILIO_INVALID_PHONE' => 'El número de teléfono debe incluir el prefijo internacional (+)',
+  'LBL_TWILIO_STATUS_FAILED' => 'Twilio informó de un estado de fallo',
   'LBL_ATTACHMENT_REMOVE' => 'Eliminar',
   'LBL_WHATSAPP_INCOMING_MESSAGE' => 'Mensaje entrante de WhatsApp',
   'LBL_HELPER_MODULE_NOT_ACTIVE' => 'Módulo no activo',

@@ -145,7 +145,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             return;
           }
 
-          var $conversationOption = $typeSelect.find('option[value="conversation"]');
+          var $conversationOption = $typeSelect.find('option[value="private_area"]');
           if (!$conversationOption.length) {
             return;
           }
@@ -268,6 +268,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
               },
               close: function() {
                 $(window).off('focus.sticMessagesModal');
+                $(this).dialog('destroy').remove();
               }
           });
           // If the modal is opened from the Conversations subpanel, we need to apply some defaults and hide some fields
@@ -313,20 +314,6 @@ $(function() {
         $('#EditView').prepend('<div class="whatsapp-readonly-notice" style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px;">' + SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_READONLY_NOTICE') + '</div>');
       }
     }
-  }
-
-  // Force status to 'redirected' when type is whatsapp_web
-  $('select[name="type"]').on('change', function() {
-    if ($(this).val() === 'whatsapp_web') {
-      $('select[name="status"]').val('redirected').prop('disabled', true);
-    } else {
-      $('select[name="status"]').prop('disabled', false);
-    }
-  });
-
-  // On page load, check if type is whatsapp_web
-  if ($('select[name="type"]').val() === 'whatsapp_web') {
-    $('select[name="status"]').val('redirected').prop('disabled', true);
   }
 
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {

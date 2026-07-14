@@ -101,6 +101,14 @@ switch (sticViewType) {
         $('#sender').css('background', '');
         $('#sender').css('border-color', '');
       }
+
+      // Function to unlock status field only (for types with lockSender but no fixedStatus)
+      function unlockStatusField() {
+        $('#status').prop('disabled', false);
+        $('#status').attr('readonly', false);
+        $('#status').css('background', '');
+        $('#status').css('border-color', '');
+      }
       
       // Messages with fixedStatus are always sent and cannot be edited
       var currentConfig = sticGetHelperConfig(messageType);
@@ -183,6 +191,38 @@ switch (sticViewType) {
         $("#template_id_create_link").addClass("ui-state-disabled");
       }
 
+      var originalStatusOptions = [];
+
+      function filterStatusOptionsByType() {
+        var type = $('#type').val();
+        var config = sticGetHelperConfig(type);
+        var $statusSelect = $('#status');
+        if (!$statusSelect.length) {
+          return;
+        }
+
+        if (originalStatusOptions.length === 0) {
+          $statusSelect.find('option').each(function () {
+            originalStatusOptions.push({ value: $(this).val(), text: $(this).text() });
+          });
+        }
+
+        var currentValue = $statusSelect.val();
+        var allowedStatuses = config && config.allowedStatus;
+
+        $statusSelect.empty();
+
+        originalStatusOptions.forEach(function (opt) {
+          if (!allowedStatuses || allowedStatuses.indexOf(opt.value) !== -1) {
+            $statusSelect.append($('<option>').val(opt.value).text(opt.text));
+          }
+        });
+
+        if ($statusSelect.find('option[value="' + currentValue + '"]').length) {
+          $statusSelect.val(currentValue);
+        }
+      }
+
       // When type changes, lock/unlock sender and status according to config
       $('#type').on('change', function() {
         var type = $(this).val();
@@ -191,6 +231,7 @@ switch (sticViewType) {
           if (config.fixedStatus) {
             lockSenderAndStatus(config.fixedStatus);
           } else if (config.lockSender) {
+            unlockStatusField();
             lockSenderField();
           } else if (!$('#EditView input[name="record"]').val()) {
             unlockSenderAndStatusForNewMessage();
@@ -201,6 +242,7 @@ switch (sticViewType) {
         // Refresh templates list when type changes
         try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }
         toggleParentTypeForConversation();
+        filterStatusOptionsByType();
       });
 
       // On page load, apply config-based behavior
@@ -210,6 +252,7 @@ switch (sticViewType) {
       } else if (loadConfig && loadConfig.lockSender) {
         lockSenderField();
       }
+      filterStatusOptionsByType();
 
   // On load, refresh templates select according to current type
   try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }

@@ -307,7 +307,7 @@ class stic_MessagesUtils {
         foreach ($helpers as $className) {
             $helper = self::instantiateHelper($className);
             if ($helper !== null) {
-                $config[$className] = $helper->getUIConfig();
+                $config[$helper->getHelperType()] = $helper->getUIConfig();
             }
         }
 

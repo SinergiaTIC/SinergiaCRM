@@ -158,8 +158,15 @@ class stic_Messages extends Basic
                 }
                 if (!empty($this->phone)) {
                     $response = $this->sendMessage();
+                    $GLOBALS['log']->info('stic_Messages::save() — sendMessage response: ' . json_encode($response));
                     if ($response['code'] === self::OK) {
+                        $twilioSid = $response['twilio_sid'] ?? '';
+                        $twilioStatus = $response['status'] ?? 'sent';
                         $messageHelper->processSuccessfulSend($this);
+                        // Overwrite response with Twilio details so the DB stores the actual provider status
+                        if (!empty($twilioSid)) {
+                            $this->response = json_encode(['twilio_sid' => $twilioSid, 'twilio_status' => $twilioStatus]);
+                        }
                     } else {
                         $messageHelper->processFailedSend($this, $response['message'] ?? '');
                     }

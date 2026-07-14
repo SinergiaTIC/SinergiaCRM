@@ -160,20 +160,29 @@ class TwilioWhatsAppHelper extends stic_MessagesHelper {
             return $this->buildError($result);
         }
         
-        if (isset($resultArray['data']['sid']) && empty($resultArray['data']['error_code'])) {
-            $this->logInfo('WhatsApp message sent. SID: ' . $resultArray['data']['sid']);
+        $twilioStatus = $resultArray['data']['status'] ?? '';
+        $isFailedStatus = in_array($twilioStatus, ['failed', 'undelivered']);
+        $hasErrorCode = !empty($resultArray['data']['error_code']);
+
+        if (isset($resultArray['data']['sid']) && !$hasErrorCode && !$isFailedStatus) {
+            $this->logInfo('WhatsApp message accepted. SID: ' . $resultArray['data']['sid'] . ' Twilio status: ' . $twilioStatus);
             return $this->buildSuccess(
                 translate('LBL_MESSAGE_SENT', 'stic_Messages'),
                 [
                     'twilio_sid' => $resultArray['data']['sid'],
-                    'status' => $resultArray['data']['status'] ?? 'sent',
+                    'status' => $twilioStatus,
                 ]
             );
         }
 
         $errorMessage = $resultArray['data']['error_message']
             ?? $resultArray['data']['message']
-            ?? translate('LBL_TWILIO_UNKNOWN_ERROR', 'stic_Messages');
+            ?? '';
+        if (empty($errorMessage)) {
+            $errorMessage = $isFailedStatus
+                ? translate('LBL_TWILIO_STATUS_FAILED', 'stic_Messages')
+                : translate('LBL_TWILIO_UNKNOWN_ERROR', 'stic_Messages');
+        }
         $this->logError('WhatsApp send failed. SID: ' . ($resultArray['data']['sid'] ?? 'none') . ' - ' . $errorMessage);
         return $this->buildError($errorMessage);
     }

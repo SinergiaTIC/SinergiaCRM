@@ -66,7 +66,7 @@ class WhatsAppWebHelper extends stic_MessagesHelper {
     protected function getSpecificUIConfig(): array {
         return [
             'lockSender' => true,
-            'fixedStatus' => 'sent',
+            'fixedStatus' => 'redirected',
             'canRetry' => false,
             'allowedStatus' => ['sent', 'redirected'],
         ];
