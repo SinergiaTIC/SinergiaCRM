@@ -18,7 +18,25 @@ $current_user->getSystemUser();
 // Include the GoogleMaps installer
 require_once 'install/suite_install/GoogleMaps.php';
 
-// Execute the installation function
-install_gmaps();
+$allFields = getCustomFields();
 
-echo "JJWG Maps fields repair completed.\n";
+// Filter out fields that already exist in fields_meta_data
+$missingFields = array();
+foreach ($allFields as $id => $field) {
+    $result = $db->query("SELECT id FROM fields_meta_data WHERE custom_module = '{$field['module']}' AND name = '{$field['name']}' AND deleted = 0");
+    if (!$db->fetchByAssoc($result)) {
+        $missingFields[$id] = $field;
+    }
+}
+
+if (!empty($missingFields)) {
+    require_once('ModuleInstall/ModuleInstaller.php');
+    $ModuleInstaller = new ModuleInstaller();
+    $ModuleInstaller->install_custom_fields($missingFields);
+    echo "Installed " . count($missingFields) . " missing JJWG Maps fields.\n";
+} else {
+    echo "All JJWG Maps fields already exist.\n";
+}
+
+installJJWHooks();
+echo "JJWG Maps logic hooks ensured.\n";
