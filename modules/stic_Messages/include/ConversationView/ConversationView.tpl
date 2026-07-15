@@ -154,7 +154,7 @@ if (!empty($messageIds)) {
                     </div>
                 <?php else: ?>
                     <div class="bubble-attachment">
-                        <a class="attachment-bubble-file" href="upload/<?= $note['id'] ?>" target="_blank">
+                        <a class="attachment-bubble-file" href="<?= $noteUrl ?>" target="_blank">
                             📄 <?= htmlspecialchars($note['filename'] ?? $note['name']) ?>
                         </a>
                     </div>
