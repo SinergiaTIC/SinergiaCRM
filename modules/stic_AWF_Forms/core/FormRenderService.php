@@ -65,17 +65,7 @@ class FormRenderService {
             }
 
             // CRM form type: detect form_type for legacy forms
-            if (empty($bean->form_type)) {
-                $hasCheckSession = false;
-                $mainFlowActions = $configData['flows']['0']['actions'] ?? [];
-                if (!empty($mainFlowActions)) {
-                    // Gets the first element and evaluates if its name matches CheckSessionAction to determine if it's a CRM form
-                    $firstAction = reset($mainFlowActions);
-                    $hasCheckSession = ($firstAction['name'] ?? '') === 'CheckSessionAction';
-                }
-                $bean->form_type = $hasCheckSession ? 'crm' : 'web';
-                $bean->save();
-            }
+            stic_AWF_FormsUtils::detectAndSaveFormType($bean, $configData);
         }
 
         // Process ConfigData

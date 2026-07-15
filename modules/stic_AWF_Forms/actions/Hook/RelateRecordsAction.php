@@ -175,22 +175,17 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         if (!empty($relationIdName)) {
             // 1-N relationship: inject FK directly and re-save the bean
             $GLOBALS['log']->debug("RelateRecordsAction: Using FK injection for '{$linkName}' — setting '{$relationIdName}' = '{$targetBeanId}' on bean '{$bean->id}'.");
+
             $bean->{$relationIdName} = $targetBeanId;
+            stic_AWF_FormsUtils::populateRelateDisplayField($bean, $relationIdName, $targetBeanId);
+
             if (property_exists($bean, 'fromAWF')) {
                 $bean->fromAWF = true;
             }
             $bean->save(false);
 
             // Recalculate name (if necessary)
-            $nameFieldInBlock = $block->getFieldValue('name');
-            $nameIsUserDefined = $nameFieldInBlock && !empty($nameFieldInBlock->value);
-            $beanWasCreatedHere = $this->wasBeanCreatedInThisContext($bean->id, $context);
-
-            if (!$nameIsUserDefined && $beanWasCreatedHere) {
-                $bean->retrieve($bean->id);
-                $bean->name = '';
-                $bean->save();
-            }
+            stic_AWF_FormsUtils::recalculateNameIfNeeded($bean, $block, $context);
 
             $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via FK '{$relationIdName}' to ID {$targetBeanId}");
             $dataToLog = [
@@ -219,15 +214,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         }
 
         // Recalculate name (if necessary)
-        $nameFieldInBlock = $block->getFieldValue('name');
-        $nameIsUserDefined = $nameFieldInBlock && !empty($nameFieldInBlock->value);
-        $beanWasCreatedHere = $this->wasBeanCreatedInThisContext($bean->id, $context);
-
-        if (!$nameIsUserDefined && $beanWasCreatedHere) {
-            $bean->retrieve($bean->id);
-            $bean->name = '';
-            $bean->save();
-        }
+        stic_AWF_FormsUtils::recalculateNameIfNeeded($bean, $block, $context);
 
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via '{$linkName}' to ID {$targetBeanId}");
         $dataToLog = [
@@ -239,15 +226,4 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         return $actionResult;
     }
 
-    private function wasBeanCreatedInThisContext(string $beanId, ExecutionContext $context): bool 
-    {
-        foreach ($context->actionResults as $result) {
-            foreach ($result->modifiedBeans as $modBean) {
-                if ($modBean->beanId === $beanId && $modBean->modificationType === BeanModificationType::CREATED) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

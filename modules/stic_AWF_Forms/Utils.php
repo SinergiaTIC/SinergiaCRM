@@ -658,4 +658,81 @@ class stic_AWF_FormsUtils {
             return '#b5bc31';
         }
     }
+
+    /**
+     * Checks if a bean was newly created during the current execution flow.
+     */
+    public static function wasBeanCreatedInThisContext(string $beanId, ExecutionContext $context): bool 
+    {
+        foreach ($context->actionResults as $result) {
+            foreach ($result->modifiedBeans as $modBean) {
+                if ($modBean->beanId === $beanId && $modBean->modificationType === BeanModificationType::CREATED) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recalculates auto-generated names for newly created beans.
+     */
+    public static function recalculateNameIfNeeded(SugarBean $bean, DataBlockResolved $block, ExecutionContext $context): void
+    {
+        $nameFieldInBlock = $block->getFieldValue('name');
+        $nameIsUserDefined = $nameFieldInBlock && !empty($nameFieldInBlock->value);
+
+        if (!$nameIsUserDefined && self::wasBeanCreatedInThisContext($bean->id, $context)) {
+            $bean->retrieve($bean->id);
+            $bean->name = '';
+            $bean->save();
+        }
+    }
+
+    /**
+     * Finds and populates the display relate field (e.g. account_name) associated with a physical FK field (e.g. account_id)
+     */
+    public static function populateRelateDisplayField(SugarBean $bean, string $idName, string $targetBeanId): void
+    {
+        $nameField = null;
+        foreach ($bean->field_defs as $fieldName => $def) {
+            if (isset($def['type'], $def['id_name']) && $def['type'] === 'relate' && $def['id_name'] === $idName) {
+                $nameField = $fieldName;
+                break;
+            }
+        }
+        if ($nameField) {
+            $parentModule = $bean->field_defs[$nameField]['module'] ?? '';
+            $rname = $bean->field_defs[$nameField]['rname'] ?? 'name';
+            if ($parentModule) {
+                $parentBean = BeanFactory::getBean($parentModule, $targetBeanId);
+                if ($parentBean && $parentBean->id === $targetBeanId && isset($parentBean->$rname)) {
+                    $bean->$nameField = $parentBean->$rname;
+                    $GLOBALS['log']->debug(__METHOD__ . ": Populated relate field '{$nameField}' = '{$parentBean->$rname}'.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Detects and saves the form type ('crm' or 'web') for legacy forms if not set.
+     *
+     * @param SugarBean $formBean
+     * @param array $configData
+     * @return void
+     */
+    public static function detectAndSaveFormType(SugarBean $formBean, array $configData): void
+    {
+        if (empty($formBean->form_type)) {
+            $hasCheckSession = false;
+            $mainFlowActions = $configData['flows']['0']['actions'] ?? [];
+            if (!empty($mainFlowActions)) {
+                // Gets the first element and evaluates if its name matches CheckSessionAction
+                $firstAction = reset($mainFlowActions);
+                $hasCheckSession = ($firstAction['name'] ?? '') === 'CheckSessionAction';
+            }
+            $formBean->form_type = $hasCheckSession ? 'crm' : 'web';
+            $formBean->save();
+        }
+    }
 }
