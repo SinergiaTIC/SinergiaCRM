@@ -480,7 +480,8 @@ class stic_AwfField {
       return [];
     }
     if (this.type_field == 'unlinked') {
-      return stic_AwfField.type_in_formList();
+      // Exclude 'file' type — only available for auto-configured Document blocks
+      return stic_AwfField.type_in_formList().filter(t => t.id !== 'file');
     }
 
     let availableTypes = [];
@@ -1504,22 +1505,35 @@ class stic_AwfConfiguration {
         this.addDataBlockField(dataBlock, newField);
       }
 
+      debugger;
       // Add status_id field (fixed, default "Active")
       const statusFieldDef = module.fields['status_id'];
       if (statusFieldDef) {
         let newField = new stic_AwfField();
         newField.updateWithFieldInformation(statusFieldDef, 'fixed');
         newField.setValueOptions(utils.getFieldOptions(statusFieldDef));
-        newField.value = 'Active';
-        newField.value_text = 'Active';
+        let newFieldValueOption = newField.value_options.find(v => v.value == "Active");
+        newField.value = newFieldValueOption.value;
+        newField.value_text = newFieldValueOption.text;
+        this.addDataBlockField(dataBlock, newField);
+      }
+
+      // Add active_date field (fixed, default "today")
+      const activeDateFieldDef = module.fields['active_date'];
+      if (activeDateFieldDef) {
+        let newField = new stic_AwfField();
+        newField.updateWithFieldInformation(activeDateFieldDef, 'fixed');
+        let newFieldValue = utils.getList("stic_awf_forms_date_relative_list").find(i => i.id=="today");
+        newField.value = newFieldValue.id;
+        newField.value_text = newFieldValue.text;
         this.addDataBlockField(dataBlock, newField);
       }
 
       // Add file field (unlinked, type_in_form: 'file', non-removable)
       let fileField = new stic_AwfField({
         name: 'file',
-        text_original: 'Upload file',
-        label: 'Upload file',
+        text_original: 'Pujar Fitxer',
+        label: 'Pujar Fitxer:',
         type_field: 'unlinked',
         type_in_form: 'file',
         subtype_in_form: 'file_upload',
@@ -1527,21 +1541,21 @@ class stic_AwfConfiguration {
         required_in_form: true,
       });
 
-      // Attach validators by default
-      fileField.validations.push(new stic_AwfFieldValidation({
-        name: utils.newId('val_'),
-        validator: 'MaxDocumentSizeValidatorAction',
-        message: utils.translate('LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT'),
-        params: { max_size_mb: '10' },
-        is_automatic: true,
-      }));
-      fileField.validations.push(new stic_AwfFieldValidation({
-        name: utils.newId('val_'),
-        validator: 'AllowedExtensionsValidatorAction',
-        message: utils.translate('LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT'),
-        params: { extensions: 'pdf,doc,docx,jpg,png' },
-        is_automatic: true,
-      }));
+      // // Attach validators by default
+      // fileField.validations.push(new stic_AwfFieldValidation({
+      //   name: utils.newId('val_'),
+      //   validator: 'MaxDocumentSizeValidatorAction',
+      //   message: utils.translate('LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT'),
+      //   params: { max_size_mb: '10' },
+      //   is_automatic: true,
+      // }));
+      // fileField.validations.push(new stic_AwfFieldValidation({
+      //   name: utils.newId('val_'),
+      //   validator: 'AllowedExtensionsValidatorAction',
+      //   message: utils.translate('LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT'),
+      //   params: { extensions: 'pdf,doc,docx,jpg,png' },
+      //   is_automatic: true,
+      // }));
 
       this.addDataBlockField(dataBlock, fileField);
 
