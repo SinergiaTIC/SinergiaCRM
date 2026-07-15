@@ -99,13 +99,13 @@ class SticAeatQueryClient
 
         if (!empty($counterpartyNif)) {
             $contraElement = $filtroElement->add('sum:Contraparte');
-            $contraElement->add('sum1:NombreRazon', $counterpartyName ?? '');
+            $contraElement->add('sum1:NombreRazon', !empty($counterpartyName) ? $counterpartyName : $counterpartyNif);
             $contraElement->add('sum1:NIF', $counterpartyNif);
         }
 
         if (!empty($dateFrom) || !empty($dateTo)) {
             $fechaElement = $filtroElement->add('sum:FechaExpedicionFactura');
-            $rangoElement = $fechaElement->add('sum:RangoFechaExpedicion');
+            $rangoElement = $fechaElement->add('sum1:RangoFechaExpedicion');
             if (!empty($dateFrom)) {
                 $rangoElement->add('sum1:Desde', $dateFrom);
             }

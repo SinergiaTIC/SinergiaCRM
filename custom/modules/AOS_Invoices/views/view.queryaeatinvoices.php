@@ -163,9 +163,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                     $parentsWithChildren = [];
                     foreach ($registros as $i => $r) {
                         if (isset($children[$i])) {
-                            // Only mark as "parent with children" if it's a rectifying invoice;
-                            // originals (F1/F2/F3) should remain at full opacity
-                            $parentsWithChildren[$i] = $nestRectified && ($isRectifier[$i] ?? false);
+                            $parentsWithChildren[$i] = $nestRectified;
                         }
                     }
 
@@ -185,6 +183,16 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                                 }
                             }
                         }
+                    }
+
+                    // Client-side substring filtering on client name
+                    $nameFilter = $_POST['counterparty_name'] ?? '';
+                    if ($nameFilter !== '') {
+                        $renderRegs = array_filter($renderRegs, function ($item) use ($nameFilter) {
+                            $clientName = $item['reg']['datos']['clientes'][0]['nombre'] ?? '';
+                            return mb_stripos($clientName, $nameFilter) !== false;
+                        });
+                        $renderRegs = array_values($renderRegs);
                     }
 
                     $tableRows = [];
@@ -232,7 +240,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
 
                         $isChild = $depth > 0;
                         $isCancelled = $statusReg === 'Anulado';
-                        $isDimmed = $isParentRectified;
+                        $isDimmed = $isCancelled || $isParentRectified;
 
                         $typeLabel = match ($invoiceTypeRaw) {
                             'F1' => $mod_strings['LBL_VERIFACTU_QUERY_TYPE_F1'],
@@ -283,20 +291,20 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
 
                         $seriePrefix = $isChild ? '<span style="margin-left: ' . ($depth * 20) . 'px;">↳ </span>' : '';
                         $tdPad = $isChild ? 'padding: 4px 8px;' : 'padding: 6px 8px;';
-                        $rowStyle = 'border-left: 2px solid ' . $activeBlockColor . ';border-right: 2px solid ' . $activeBlockColor . ';';
+                        $rowStyle = 'font-size: 13px;border-left: 2px solid ' . $activeBlockColor . ';border-right: 2px solid ' . $activeBlockColor . ';';
                         if ($isNewBlock) {
                             $rowStyle .= 'border-top: 2px solid ' . $activeBlockColor . ';';
                         }
                         if ($isChild) {
-                            $rowStyle .= 'font-size: 11px; background-color: #fafafa;';
+                            $rowStyle .= 'background-color: #fafafa;';
                         }
                         if (!$isDimmed) {
-                            $rowStyle .= 'font-size: 14px; font-weight: 500;';
+                            $rowStyle .= 'font-weight: 500;';
                         }
                         if ($isCancelled) {
                             $rowStyle .= 'background-color: #f2dede;';
                         }
-                        if ($isDimmed && !$isCancelled) {
+                        if ($isDimmed) {
                             $rowStyle .= ' opacity: 0.55;';
                         }
 
