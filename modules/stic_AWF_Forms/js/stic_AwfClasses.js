@@ -2065,10 +2065,10 @@ class stic_AwfConfiguration {
     const mainFlow = this.flows.find(f => f.id == '0');
     if (!mainFlow) return;
 
-    // Clean: Remove automatic SaveRecord, SaveRecordWithRelations, and RelateRecords actions
+    // Clean: Remove automatic SaveRecord and RelateRecords actions
     // (they will be regenerated below). Other automatic actions (e.g., CheckSessionAction)
     // are managed separately and must be preserved.
-    const regeneratedActionNames = ['SaveRecordAction', 'SaveRecordWithRelationsAction', 'RelateRecordsAction'];
+    const regeneratedActionNames = ['SaveRecordAction', 'RelateRecordsAction'];
     mainFlow.actions = mainFlow.actions.filter(a => 
       !a.is_automatic || !regeneratedActionNames.includes(a.name)
     );
@@ -2080,12 +2080,12 @@ class stic_AwfConfiguration {
     // Using -1 ensures they will be inserted before default manual actions (0)
     const AUTO_ACTION_ORDER = -1;
 
-    // Relationships handled by SaveRecordWithRelationsAction (FK pre-injected before save).
+    // Relationships handled by SaveRecordAction (FK pre-injected before save).
     // These are skipped when generating RelateRecordsAction later.
     const handledRelationshipNames = new Set();
 
     // Generate SAVE actions for each DataBlock.
-    // Uses SaveRecordWithRelationsAction when the block has outgoing 1-N relationships,
+    // Uses SaveRecordAction when the block has outgoing 1-N relationships,
     // so that FK values are injected before the first save.
     this.data_blocks.forEach(block => {
       if (!block.module) return;
@@ -2116,51 +2116,35 @@ class stic_AwfConfiguration {
         return { ...r, id_name: relateField.id_name };
       });
 
-      if (outgoing1n.length > 0) {
-        let originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordWithRelationsAction');
-        let newActionName = utils.translate('LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_TITLE');
-        if (!originalDef) {
-          originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
-          newActionName = utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')
-        }
-        if (originalDef) {
-          const actionDef = { ...originalDef, isAutomatic: true, order: AUTO_ACTION_ORDER };
-          const params = {
-            'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' },
-            'relation_configs': {
-              value: JSON.stringify(outgoing1n.map(r => ({
-                id_name: r.id_name,
-                target_block_id: r.datablock_dest,
-                relationship_name: r.name
-              }))),
-              valueText: outgoing1n.map(r => {
-                const targetBlock = this.data_blocks.find(b => b.id === r.datablock_dest);
-                const relText = r.text || r.name;
-                return `${relText} (${r.name}): ${targetBlock ? targetBlock.text : r.datablock_dest}`;
-              }).join('\n'),
-              selectedOption: ''
-            }
+      const originalDef = utils.getDefinedAction('SaveRecordAction');
+      if (originalDef) {
+        const actionDef = { ...originalDef, isAutomatic: true, order: AUTO_ACTION_ORDER };
+
+        // Base parameters
+        const params = {
+          'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' }
+        };
+        // Inject relationship configurations ONLY if they exist
+        if (outgoing1n.length > 0) {
+          params['relation_configs'] = {
+            value: JSON.stringify(outgoing1n.map(r => ({
+              id_name: r.id_name,
+              target_block_id: r.datablock_dest,
+              relationship_name: r.name
+            }))),
+            valueText: outgoing1n.map(r => {
+              const targetBlock = this.data_blocks.find(b => b.id === r.datablock_dest);
+              const relText = r.text || r.name;
+              return `${relText} (${r.name}): ${targetBlock ? targetBlock.text : r.datablock_dest}`;
+            }).join('\n'),
+            selectedOption: ''
           };
-          const newAction = this.addAction(actionDef, params, '0');
-          if (newAction) {
-            block.save_action_id = newAction.id;
-            newAction.text = `${newActionName}: ${block.text}`;
-            outgoing1n.forEach(r => handledRelationshipNames.add(r.name));
-          }
         }
-      } else {
-        // Regular SaveRecordAction
-        const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
-        if (originalDef) {
-          const actionDef = { ...originalDef, isAutomatic: true, order: AUTO_ACTION_ORDER };
-          const params = {
-            'data_block_id': { value: block.id, valueText: block.text, selectedOption: '' }
-          };
-          const newAction = this.addAction(actionDef, params, '0');
-          if (newAction) {
-            block.save_action_id = newAction.id;
-            newAction.text = `${utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')}: ${block.text}`;
-          }
+        const newAction = this.addAction(actionDef, params, '0');
+        if (newAction) {
+          block.save_action_id = newAction.id;
+          newAction.text = `${utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')}: ${block.text}`;
+          outgoing1n.forEach(r => handledRelationshipNames.add(r.name));
         }
       }
     });
@@ -2220,13 +2204,13 @@ class stic_AwfConfiguration {
     });
 
     // Generate RELATE actions for Block-to-Block relationships.
-    // Skip those already handled by SaveRecordWithRelationsAction.
+    // Skip those already handled by SaveRecordAction.
     const allRels = this.getAllDataBlockRelationships();
     Object.keys(allRels).forEach(blockId => {
       const blockRels = allRels[blockId];
       const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
       
-      // Skip relationships already handled by SaveRecordWithRelationsAction.
+      // Skip relationships already handled by SaveRecordAction.
       // Both directions are skipped since the initiator's FK injection is sufficient.
       activeRels.forEach(rel => {
         if (rel.datablock_orig === blockId) {
@@ -2235,7 +2219,7 @@ class stic_AwfConfiguration {
           // 1-N fallback FK injection is done on the initiator side.
           if (rel.initiator_id && rel.initiator_id !== blockId) return;
           
-          const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
+          const originalDef = utils.getDefinedAction('RelateRecordsAction');
           if (originalDef) {
             const blockOrig = this.data_blocks.find(b => b.id == rel.datablock_orig);
             const blockDest = this.data_blocks.find(b => b.id == rel.datablock_dest);

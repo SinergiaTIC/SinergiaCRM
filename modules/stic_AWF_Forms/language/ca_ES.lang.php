@@ -407,11 +407,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Desa el registre',
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Desa o actualitza un registre a partir de les dades del formulari',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidència per camps',
-
-  // SaveRecordWithRelationsAction
-  'LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_TITLE' => 'Desa el registre',
-  'LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_DESC' => 'Desa un registre i injecta valors per a relacions 1-N sortints en un sol desat',
-  'LBL_SAVE_RECORD_WITH_RELATIONS_ACTION_RELATION_CONFIGS_TEXT' => 'Camps de relació',
+  'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Camps de relació',
 
   // RelateRecordsAction
   'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crea la relació',
