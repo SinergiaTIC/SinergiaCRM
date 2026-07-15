@@ -55,13 +55,31 @@ global $sugar_config, $mod_strings;
     href="<?php echo $sugar_config['site_url'] . '/custom/modules/Home/css/style.css'; ?>">
 
 <main id="stic-about-main" class="stic-about-main">
-    <h1 class="stic-page-title"><?php echo $mod_strings['LBL_ABOUT_PAGE_TITLE']; ?></h1>
-    <p class="stic-page-subtitle"><?php echo $mod_strings['LBL_ABOUT_SINERGIACRM_1']; ?></p>
+    <header class="stic-header">
+        <div class="stic-title-wrapper">
+            <h1 class="stic-page-title"><?php echo $mod_strings['LBL_ABOUT_PAGE_TITLE']; ?></h1>
+            <p class="stic-page-subtitle"><?php echo $mod_strings['LBL_ABOUT_SINERGIACRM_1']; ?></p>
+        </div>
+        <div class="stic-software-version-card">
+            <div class="stic-software-version">SinergiaCRM:
+                <?php echo $mod_strings['LBL_VERSION'] . ' ' . $sugar_config['sinergiacrm_version']; ?>
+            </div>
+            <div class="stic-software-version">SuiteCRM:
+                <?php echo $mod_strings['LBL_VERSION'] . ' ' . $suitecrm_version;
+                    if (is_file('custom_version.php')) {
+                        include 'custom_version.php';
+                        echo '&nbsp;&nbsp;&nbsp;' . $custom_version;
+                    } ?>
+
+            </div>
+            <div class="stic-software-version">SugarCRM:
+                <?php echo $mod_strings['LBL_VERSION'] . ' ' . $sugar_version . ' (' . $mod_strings['LBL_BUILD'] . ' ' . $sugar_build . ')'; ?>
+
+            </div>
+        </div>
+    </header>
     <section class="stic-sinergiacrm-section">
         <img src="SticInclude/images/SinergiaCRMLogo.png" alt="SinergiaCRM" alt="">
-        <div class="stic-software-version"><strong>SinergiaCRM:
-                <?php echo $mod_strings['LBL_VERSION'] . ' ' . $sugar_config['sinergiacrm_version']; ?></strong>
-        </div>
         <h2><?php echo $mod_strings['LBL_ABOUT_SINERGIACRM_TITLE']; ?></h2>
         <div class="stic-about-inner">
             <div class="stic-about-content">
@@ -86,6 +104,7 @@ global $sugar_config, $mod_strings;
             </div>
             <div class="stic-about-content stic-about-financial">
                 <h3 class="stic-about-title"><?php echo $mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL']; ?></h3>
+                <p><?php echo $mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_SUPPORT']; ?></p>
                 <img class="stic-about-financial-image" src="SticInclude/images/about-financial-support.png"
                     alt="<?php echo $mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_ALT']; ?>" />
             </div>
@@ -96,17 +115,6 @@ global $sugar_config, $mod_strings;
 
     <section>
         <img src="include/images/suite_logo.png" alt="">
-        <div class="stic-software-version">
-            <p>SuiteCRM: <?php echo $mod_strings['LBL_VERSION'] . ' ' . $suitecrm_version;
-                if (is_file('custom_version.php')) {
-                    include 'custom_version.php';
-                    echo '&nbsp;&nbsp;&nbsp;' . $custom_version;
-                } ?>
-            </p>
-            <p>SugarCRM:
-                <?php echo $mod_strings['LBL_VERSION'] . ' ' . $sugar_version . ' (' . $mod_strings['LBL_BUILD'] . ' ' . $sugar_build . ')'; ?>
-            </p>
-        </div>
         <h2><?php echo $mod_strings['LBL_CONTRIBUTOR_SUITECRM']; ?></h2>
         <div class="stic-about-inner">
             <div class="stic-about-content">

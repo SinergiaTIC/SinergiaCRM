@@ -29,10 +29,35 @@
   box-sizing: border-box;
 }
 
+.stic-header {
+  display: flex;
+  margin-block-end: 2rem;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.stic-title-wrapper {
+  flex: 1;
+}
+
+.stic-software-version-card {
+  flex: 0 0 auto;
+  border: 1px solid var(--lt-color-gray-300);
+  padding: 2rem 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--lt-color-gray-600);
+
+  & .stic-software-version:first-child {
+    font-weight: 600;
+    color: var(--lt-color-gray-600);
+  }
+}
+
 .stic-page-subtitle {
   font-size: 1.6rem;
   font-weight: 400;
-  margin-block-end: 2rem;
   color: var(--lt-color-gray-600);
 }
 
@@ -52,8 +77,8 @@
 }
 
 .stic-about-content {
-  flex: 1 0 500px;
-  min-width: 500px;
+  flex: 1 0 600px;
+  min-width: 600px;
 }
 
 .stic-about-financial {

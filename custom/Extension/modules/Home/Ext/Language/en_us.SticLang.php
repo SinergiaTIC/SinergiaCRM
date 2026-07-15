@@ -37,7 +37,8 @@ $mod_strings['LBL_ABOUT_SINERGIACRM_KREPORTER'] = 'Kreporter by Christian Knoll'
 $mod_strings['LBL_ABOUT_SINERGIACRM_MAIL_MERGE'] = 'Mail Merge Reports by Izertis';
 $mod_strings['LBL_ABOUT_SINERGIACRM_OTHER'] = 'Other open source libraries may be found in <i>/vendor</i> and <i>/SticInclude/vendor</i> folders. License information for these libraries can be found in their own files.';
 
-$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL'] = 'Parte de la funcionalidad de SinergiaCRM ha sido desarrollada con el apoyo financiero de';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL'] = 'Con el apoyo de';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_SUPPORT'] = 'Parte de la funcionalidad de SinergiaCRM ha sido desarrollada con el apoyo financiero de';
 $mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_ALT'] = 'Unión Europea - NextGenerationEU - Gobierno de España - Plan de Recuperación, Transformación y Resiliencia - Next Generation Catalunya - Generalitat de Catalunya';
 
 // SinergiaDA
