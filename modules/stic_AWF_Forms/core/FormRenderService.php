@@ -65,6 +65,7 @@ class FormRenderService {
             }
 
             // CRM form type: detect form_type for legacy forms
+            require_once "modules/stic_AWF_Forms/Utils.php";
             stic_AWF_FormsUtils::detectAndSaveFormType($bean, $configData);
         }
 
