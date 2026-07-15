@@ -33,9 +33,9 @@
 			<div class="sda-action-card sda-action-card-left">
 				<!-- <h3><span class="glyphicon glyphicon-flash"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}</h3> -->
 				<div style="margin-bottom: 12px;">
-					<a id="rebuild-link" href="index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1" class="button sda-rebuild-link">
-						<span class="glyphicon glyphicon-flash"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}
-					</a>
+					<button id="rebuild-link" type="button" class="button">
+						<span class="glyphicon glyphicon-flash text-success"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}
+					</button>
 					{if $CURRENT_USER_ID eq '2'}
 						<label class="sda-debug-toggle">
 							<input type="checkbox" id="debug-check" checked="checked"> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}
@@ -48,9 +48,9 @@
 			<div class="sda-action-card sda-action-card-right">
 				<!-- <h3><span class="glyphicon glyphicon-link"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}</h3> -->
 				<div style="margin-bottom: 8px;">
-					<a id="sda-link" target="_blank" class="button sda-external-link">
-						<span class="glyphicon glyphicon-link"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
-					</a>
+					<button id="sda-link" type="button" class="button">
+						<span class="glyphicon glyphicon-link text-success"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
+					</button>
 				</div>
 				<div id="sda-url" class="sda-url-display"></div>
 			</div>
@@ -237,9 +237,9 @@
 						</div>
 					</div>
 					<div class="sda-config-footer">
-						<button type="submit" class="button sda-btn-save">
-							<span class="glyphicon glyphicon-floppy-disk"></span> {$MOD.LBL_STIC_SINERGIADA_CONFIG_SAVE}
-						</button>
+					<button type="button" class="button" onclick="this.form.submit()">
+						<span class="glyphicon glyphicon-floppy-disk text-success"></span> {$MOD.LBL_STIC_SINERGIADA_CONFIG_SAVE}
+					</button>
 					</div>
 				</form>
 			</div>
@@ -257,17 +257,19 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 	var currentDomain = window.location.hostname;
 	var lang = (SUGAR.language.languages && SUGAR.language.languages.app_list_strings && SUGAR.language.languages.app_list_strings.language_pack_name) ? SUGAR.language.languages.app_list_strings.language_pack_name.split(" ").pop().split("_")[0] : "es";
 	var sdaUrl = (SUGAR && SUGAR.config && SUGAR.config.stic_sinergiada_public && SUGAR.config.stic_sinergiada_public.url) ? SUGAR.config.stic_sinergiada_public.url : ("https://" + currentDomain.replace("sinergiacrm", "sinergiada") + "/" + lang + "/#");
-	document.getElementById("sda-link").href = sdaUrl;
+	document.getElementById("sda-link").addEventListener("click", function() {
+		window.open(sdaUrl, '_blank');
+	});
 	document.getElementById("sda-url").textContent = sdaUrl;
 
 	var debugCheck = document.getElementById("debug-check");
 	if (debugCheck) {
+		var rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
 		function toggleDebug() {
-			var link = document.getElementById("rebuild-link");
 			if (debugCheck.checked) {
-				link.href = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
+				rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
 			} else {
-				link.href = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&update_model=1";
+				rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&update_model=1";
 			}
 		}
 		debugCheck.addEventListener("change", toggleDebug);
@@ -275,8 +277,6 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 
 		document.getElementById("rebuild-link").addEventListener("click", function(e) {
 			if (debugCheck.checked) {
-				e.preventDefault();
-				var href = this.href;
 				var box = '<div id="debug-output" style="margin-top:16px;border:2px solid var(--sda-primary,#b5bc31);border-radius:8px;overflow:hidden;background:#fff;">'
 					+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--sda-primary-light,#f6f7d9);border-bottom:1px solid var(--sda-primary,#b5bc31);">'
 					+ '<strong style="font-size:14px;color:#333;"><span class="glyphicon glyphicon-console" style="margin-right:6px;"></span>' + SDA_DEBUG_TITLE + '</strong>'
@@ -286,9 +286,11 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 					+ '</div>';
 				document.getElementById("rebuild-feedback").innerHTML = box;
 				document.getElementById("debug-content").innerHTML = '<div class="alert alert-info" style="margin:16px;"><span class="glyphicon glyphicon-hourglass" style="margin-right:8px;"></span>' + SDA_DEBUG_LOADING + '</div>';
-				jQuery.get(href, function(data) {
+				jQuery.get(rebuildUrl, function(data) {
 					jQuery("#debug-content").html(data);
 				});
+			} else {
+				window.location.href = rebuildUrl;
 			}
 		});
 

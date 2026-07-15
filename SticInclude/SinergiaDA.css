@@ -67,20 +67,11 @@
 .sda-page-wrapper .sda-sub-card-header .glyphicon { font-size: 14px; }
 .sda-page-wrapper .sda-sub-card-body { padding: 12px 16px; }
 .sda-page-wrapper .sda-sub-card-body .sda-config-row:first-child { padding-top: 4px; }
-.sda-page-wrapper .sda-btn-save { border: none; padding: 12px 32px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-.sda-page-wrapper .sda-btn-save:hover { transform: translateY(-1px); }
-.sda-page-wrapper .sda-btn-save .glyphicon { margin-right: 0; }
 .sda-page-wrapper .sda-config-footer { padding: 20px; display: flex; align-items: center; justify-content: center; gap: 20px; }
 .sda-page-wrapper .sda-checkbox-label { font-weight: normal; cursor: pointer; }
-.sda-page-wrapper .sda-rebuild-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.2s; }
-.sda-page-wrapper .sda-rebuild-link:hover { transform: translateY(-1px); }
-.sda-page-wrapper .sda-rebuild-link .glyphicon { font-size: 16px; }
 .sda-page-wrapper .sda-feedback-row { margin-bottom: 16px; }
 .sda-page-wrapper .sda-debug-toggle { display: inline-flex; align-items: center; gap: 6px; margin-left: 16px; font-size: 13px; cursor: pointer; }
 .sda-page-wrapper .sda-debug-toggle input { margin: 0; }
-.sda-page-wrapper .sda-external-link { display: inline-flex; align-items: center; gap: 6px; background: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; border: 2px solid; transition: all 0.2s; }
-.sda-page-wrapper .sda-external-link:hover { background: #f5f5f5; }
-.sda-page-wrapper .sda-external-link .glyphicon { font-size: 14px; }
 .sda-page-wrapper .sda-url-display { font-family: monospace; font-size: 12px; color: #888; margin-top: 8px; word-break: break-all; }
 .sda-page-wrapper select.selectized, .sda-page-wrapper .selectize-control.single .selectize-input { border-radius: 6px; border-color: #d0d0d0; }
 .sda-page-wrapper select.selectized:focus, .sda-page-wrapper .selectize-control.single .selectize-input.focus { outline: none; }
