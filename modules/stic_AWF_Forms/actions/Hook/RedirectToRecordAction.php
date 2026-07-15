@@ -99,7 +99,7 @@ class RedirectToRecordAction extends HookDataBlockActionDefinition implements IT
                       "&action=" . urlencode($view) . 
                       "&record=" . urlencode($beanRef->beanId);
 
-        $result = new ActionResult(ResultStatus::OK, $actionConfig, "Redirecting to CRM record: {$redirectTo}.");
+        $result = new ActionResult(ResultStatus::OK, $actionConfig, "Redirecting to CRM record: {$redirectTo}");
         $result->setData(['redirect_url' => $redirectTo]);
 
         return $result;
