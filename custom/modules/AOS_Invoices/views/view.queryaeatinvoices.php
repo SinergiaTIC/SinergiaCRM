@@ -61,6 +61,25 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         $nestChecked = (!$hasPostback) || (!empty($_POST['nest_rectified']));
         $this->ss->assign('FORM_NEST_CHECKED', $nestChecked);
 
+        $activeFilters = [];
+        if (!empty($serieNumber)) {
+            $activeFilters[] = 'Serie: ' . $serieNumber;
+        }
+        if (!empty($dateFrom)) {
+            $activeFilters[] = 'Desde: ' . $dateFrom;
+        }
+        if (!empty($dateTo)) {
+            $activeFilters[] = 'Hasta: ' . $dateTo;
+        }
+        if (!empty($counterpartyNif)) {
+            $activeFilters[] = 'NIF: ' . $counterpartyNif;
+        }
+        if (!empty($counterpartyName)) {
+            $activeFilters[] = 'Cli: ' . $counterpartyName;
+        }
+        $this->ss->assign('FORM_ACTIVE_FILTERS', $activeFilters);
+        $this->ss->assign('FORM_ACTIVE_COUNT', count($activeFilters));
+
         $result = $_SESSION['VERIFACTU_QUERY_RESULT'] ?? null;
         $this->ss->assign('HAS_RESULT', $result !== null);
 
