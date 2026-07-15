@@ -308,7 +308,7 @@ $dictionary['stic_Prescription'] = array(
     'link' => true,
     'dbType' => 'varchar',
     'len' => '255',
-    'unified_search' => false,
+    'unified_search' => true,
     'full_text_search' => 
     array (
       'boost' => 3,
@@ -442,7 +442,7 @@ $dictionary['stic_Prescription'] = array(
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
-    'full_text_search' => false,    
+    // 'full_text_search' => false,    
     'unified_search_default_enabled' => false,    
 );
 if (!class_exists('VardefManager')) {
