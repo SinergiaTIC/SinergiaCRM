@@ -123,6 +123,7 @@ class FormHtmlGeneratorService {
         // Pre-càlcul: Quines icones i funcionalitats s'estan fent servir realment?
         $usedSubtypes = [];
         $hasCollapsible = false;
+        $hasFileField = false; // Flag to detect file fields in layout
 
         foreach ($layout->structure as $section) {
             if (!empty($section->isCollapsible)) {
@@ -133,6 +134,9 @@ class FormHtmlGeneratorService {
                     $block = $config->data_blocks[$element->ref_id];
                     foreach ($block->fields as $field) {
                         $usedSubtypes[$field->subtype_in_form ?? 'text'] = true;
+                        if ($field->type_in_form === 'file') { // Detect files
+                            $hasFileField = true;
+                        }
                     }
                 }
             }
@@ -179,6 +183,35 @@ class FormHtmlGeneratorService {
         $iconCss = str_replace('%WRAPPER_ID%', $wrapperId, implode("\n", $iconRules));
         $chevronCss = $hasCollapsible ? $this->getChevronCss($wrapperId) : "";
 
+        // Custom Dropzone styling injected only if files are used
+        $fileDropzoneCss = "";
+        if ($hasFileField) {
+            $fileDropzoneCss = "
+/* Drag and Drop Dropzone Styles */
+#{$wrapperId} .awf-file-dropzone {
+  border: 2px dashed var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  background-color: rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+#{$wrapperId} .awf-file-dropzone:hover {
+  border-color: var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), 0.02);
+}
+#{$wrapperId} .awf-file-dropzone.drag-over {
+  border-color: var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), 0.08);
+  transform: scale(1.01);
+}
+#{$wrapperId} .awf-file-dropzone:has(~ input.is-invalid),
+#{$wrapperId} .was-validated .awf-file-dropzone:has(~ input:invalid) {
+  border-color: #dc3545 !important;
+  background-color: rgba(220, 53, 69, 0.04);
+}
+";
+        }
+
         $browserIconFix = "";
         if (isset($usedSubtypes['date']) || isset($usedSubtypes['date_time']) || isset($usedSubtypes['date_datetime'])) {
             $browserIconFix = "\n/* Hide native Webkit icons */\n#{$wrapperId} .awf-icon-date::-webkit-calendar-picker-indicator, #{$wrapperId} .awf-icon-date-time::-webkit-calendar-picker-indicator, #{$wrapperId} .awf-icon-date-datetime::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 75%; position: absolute; right: 0; top: 0; width: auto; z-index: 10; }\n#{$wrapperId} .awf-icon-date, #{$wrapperId} .awf-icon-date-time, #{$wrapperId} .awf-icon-date-datetime { position: relative; }\n";
@@ -224,6 +257,7 @@ class FormHtmlGeneratorService {
         if ($customCss !== "")  $html .= "\n".$customCss;
         if ($iconCss !== "")  $html .= "\n".$iconCss;
         if ($chevronCss !== "")  $html .= "\n".$chevronCss;
+        if ($fileDropzoneCss !== "")  $html .= "\n".$fileDropzoneCss; // Inject drag-drop styles
         if ($browserIconFix !== "")  $html .= "\n".$browserIconFix;
         $html .= $this->newLine()."</style>".$this->newLine();
     
@@ -584,6 +618,12 @@ class FormHtmlGeneratorService {
             return $this->generateRatingField($field) .$this->newLine();
         }
 
+        // --- SPECIAL CASES (File Upload - Drag & Drop Dropzone) ---
+
+        if ($field->type_in_form === 'file') {
+            return $this->generateFileField($field, $theme) .$this->newLine();
+        }
+
         // --- COMMON CASES ---
 
         $userPlaceholder = htmlspecialchars($field->placeholder ?? '');
@@ -710,6 +750,113 @@ class FormHtmlGeneratorService {
             if ($description !== '') {
                 $html .= $description .$this->newLine();
             }
+        }
+        $html .= "</div>" .$this->newLine('-');
+
+        return $html;
+    }
+
+    /**
+     * Renders a custom Drag & Drop dropzone file field.
+     * Sibling architecture ensures error messages and validity states match the core engine natively.
+     */
+    private function generateFileField(FormDataBlockField $field, FormTheme $theme): string {
+        $inputName = $field->getKey();
+        $label = htmlspecialchars($field->label);
+        $requiredAttr = $field->required_in_form ? 'required' : '';
+        $asterisk = $field->required_in_form ? "<span class='awf-required' aria-hidden='true'>*</span>" : '';
+
+        // Alpine validations hook on @change instead of @blur for synchronous feedback
+        $validationsAttr = " @change='validateInput(\$el)' @input='resetError(\$el)'";
+        if (!empty($field->validations)) {
+            $rules = [];
+            foreach ($field->validations as $val) {
+                $rules[] = [
+                    'name' => $val->name,
+                    'validator' => $val->validator,
+                    'message' => $val->message,
+                    'params' => $val->params,
+                    'conditions' => $val->conditions ?? [],
+                ];
+            }
+            if (!empty($rules)) {
+                $jsonRules = htmlspecialchars(json_encode($rules), ENT_QUOTES, 'UTF-8');
+                $validationsAttr .= " data-awf-validations='{$jsonRules}'";
+            }
+        }
+
+        $description = "";
+        $ariaDescribedBy = "";
+        if ($field->description != '') {
+            $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
+            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+            $ariaDescribedBy = "aria-describedby='{$helpId}'";
+        }
+
+        $html = "<div class='awf-field' x-data='awfFileField()'>" .$this->newLine('+');
+        {
+            $html .= "<label for='f_{$inputName}' class='form-label'>" . $this->newLine('+');
+            {
+                $html .= $label . $this->newLine();
+                if ($asterisk !== '') {
+                    $html .= $asterisk . $this->newLine();
+                }
+            }
+            $html .= "</label>" . $this->newLine('-');
+
+            // Dropzone layout (clicks real input programmatically)
+            $html .= "<div class='awf-file-dropzone p-4 text-center d-flex flex-column align-items-center justify-content-center' " .
+                     ":class=\"isDragOver ? 'drag-over' : ''\" " .
+                     "@dragover.prevent='isDragOver = true' " .
+                     "@dragleave.prevent='isDragOver = false' " .
+                     "@drop.prevent='handleDrop(\$event)' " .
+                     "@click='\$refs.fileInput.click()'>" .$this->newLine('+');
+            {
+                // Visual helper representation when empty
+                $html .= "<div x-show='!fileName' class='py-2'>" .$this->newLine('+');
+                {
+                    $uploadIcon = stic_AWFUtils::getRawSvgIcon('upload') ?? '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-cloud-arrow-up text-muted mb-2" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z"/><path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/></svg>';
+                    $html .= $uploadIcon . $this->newLine();
+                    $dragText = translate('LBL_FILE_DRAG_DROP_PROMPT', 'stic_AWF_Forms');
+                    if ($dragText === 'LBL_FILE_DRAG_DROP_PROMPT') {
+                        $dragText = 'Arrastra tu archivo aquí o haz clic para buscar';
+                    }
+                    $html .= "<p class='mb-1 fw-bold text-muted'>{$dragText}</p>" .$this->newLine();
+                }
+                $html .= "</div>" .$this->newLine('-');
+
+                // Selected File State
+                $html .= "<div x-show='fileName' class='py-1 d-flex align-items-center justify-content-center gap-3 w-100' x-cloak @click.stop>" .$this->newLine('+');
+                {
+                    $fileIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-check text-success" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/><path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/></svg>';
+                    $html .= $fileIcon . $this->newLine();
+                    $html .= "<div class='text-start overflow-hidden' style='max-width: 70%;'>" .$this->newLine('+');
+                    {
+                        $html .= "<span class='fw-bold text-truncate d-block' x-text='fileName'></span>" .$this->newLine();
+                        $html .= "<span class='text-muted small d-block' x-text='fileSize'></span>" .$this->newLine();
+                    }
+                    $html .= "</div>" .$this->newLine('-');
+                    $deleteText = translate('LBL_DELETE', 'stic_AWF_Forms');
+                    if ($deleteText === 'LBL_DELETE') {
+                        $deleteText = 'Eliminar';
+                    }
+                    $html .= "<button type='button' class='btn btn-sm btn-outline-danger shadow-sm' @click='clear()'>{$deleteText}</button>" .$this->newLine();
+                }
+                $html .= "</div>" .$this->newLine('-');
+            }
+            $html .= "</div>" .$this->newLine('-');
+
+            // Hidden input kept directly inside the block to allow perfect Bootstrap validation feedback alignment
+            $html .= "<input type='file' name='{$inputName}' x-ref='fileInput' id='f_{$inputName}' " .
+                     "class='form-control' style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
+
+            if ($description !== '') {
+                $html .= $description .$this->newLine();
+            }
+
+            // Sibling validation message placeholder
+            $html .= "<div class='invalid-feedback' style='display: none;'></div>" .$this->newLine();
         }
         $html .= "</div>" .$this->newLine('-');
 
@@ -869,10 +1016,15 @@ class FormHtmlGeneratorService {
         // Get used validators
         $usedValidators = [];
         $hasRating = false;
+        $hasFile = false; // Flag to trace active file uploads globally
+
         foreach ($config->data_blocks as $block) {
             foreach ($block->fields as $field) {
                 if ($field->type_in_form === 'rating') {
                     $hasRating = true;
+                }
+                if ($field->type_in_form === 'file') { // Detect active file upload
+                    $hasFile = true;
                 }
                 if (!empty($field->validations)) {
                     foreach ($field->validations as $val) {
@@ -925,7 +1077,7 @@ class FormHtmlGeneratorService {
         }
 
         // == ALPINE CORE COMPONENTS ==
-        $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating).$this->newLine()."</script>" . $this->newLine();
+        $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating, $hasFile).$this->newLine()."</script>" . $this->newLine();
 
         // == CUSTOM JS ==
         // Add custom JS from layout
@@ -939,7 +1091,7 @@ class FormHtmlGeneratorService {
     /**
      * Declares the reusable Alpine.js global components
      */
-    private function getAlpineComponentsJs(bool $hasRating): string {
+    private function getAlpineComponentsJs(bool $hasRating, bool $hasFile): string {
         $js = <<<'JS'
 // --- Alpine.js COMPONENTS ---
 document.addEventListener('alpine:init', () => {
@@ -1212,6 +1364,60 @@ JS;
   }));
 JS;
         }
+
+        if ($hasFile) { // Inject global Drag & Drop handler for File input
+            $js .= "\n\n" . <<<'JS'
+  // Component for File Upload Fields (Drag & Drop)
+  Alpine.data('awfFileField', () => ({
+    fileName: '',
+    fileSize: '',
+    isDragOver: false,
+    
+    handleDrop(e) {
+      this.isDragOver = false;
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        this.$refs.fileInput.files = files;
+        this.updateFileInfo();
+      }
+    },
+    
+    updateFileInfo() {
+      const file = this.$refs.fileInput.files[0];
+      if (file) {
+        this.fileName = file.name;
+        this.fileSize = this.formatBytes(file.size);
+        this.$nextTick(() => {
+          // Trigger change and input events to force validations instantly
+          this.$refs.fileInput.dispatchEvent(new Event('input', { bubbles: true }));
+          this.$refs.fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+      } else {
+        this.clear();
+      }
+    },
+    
+    formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    },
+    
+    clear() {
+      this.fileName = '';
+      this.fileSize = '';
+      this.$refs.fileInput.value = '';
+      this.$nextTick(() => {
+        this.$refs.fileInput.dispatchEvent(new Event('input', { bubbles: true }));
+        this.$refs.fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+  }));
+JS;
+        }
+
         $js .= "\n});";
         return $js;
     }    
