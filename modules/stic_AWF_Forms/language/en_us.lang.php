@@ -163,6 +163,7 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION' => 'Definition',
   'LBL_FIELD_DEFINITION_FORM' => 'Representation in the form',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Data validation',
+  'LBL_FIELD_UPLOAD' => 'Upload file',
 
   'LBL_FIELD' => 'Field',
   'LBL_FIELD_NAME' => 'Name',

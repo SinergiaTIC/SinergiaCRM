@@ -1505,7 +1505,6 @@ class stic_AwfConfiguration {
         this.addDataBlockField(dataBlock, newField);
       }
 
-      debugger;
       // Add status_id field (fixed, default "Active")
       const statusFieldDef = module.fields['status_id'];
       if (statusFieldDef) {
@@ -1532,8 +1531,8 @@ class stic_AwfConfiguration {
       // Add file field (unlinked, type_in_form: 'file', non-removable)
       let fileField = new stic_AwfField({
         name: 'file',
-        text_original: 'Pujar Fitxer',
-        label: 'Pujar Fitxer:',
+        text_original: utils.translate('LBL_FIELD_UPLOAD'),
+        label: utils.translateForFieldLabel('LBL_FIELD_UPLOAD'),
         type_field: 'unlinked',
         type_in_form: 'file',
         subtype_in_form: 'file_upload',

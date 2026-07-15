@@ -163,6 +163,7 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION' => 'Definició',
   'LBL_FIELD_DEFINITION_FORM' => 'Representació al formulari',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Validació de dades',
+  'LBL_FIELD_UPLOAD' => 'Pujar fitxer',
 
   'LBL_FIELD' => 'Camp',
   'LBL_FIELD_NAME' => 'Nom',
