@@ -142,6 +142,7 @@ $mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Debug result';
 $mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Hide';
 $mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Show';
 $mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Rebuilding with debug...';
+$mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Actions';
 
 // OAuth authentication
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth authentication';

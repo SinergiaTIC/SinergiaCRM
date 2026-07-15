@@ -158,8 +158,6 @@ class ExternalReporting
 
         $this->info = '<span id="sda-run-date" style="display:none;">' . $fechaFormateada . '</span>';
 
-        $this->info .= '<link rel="stylesheet" type="text/css" href="SticInclude/SinergiaDA.css" />';
-
         $this->info .= '<div class="sda-debug-wrapper">';
 
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Running Createviews() function');

@@ -142,6 +142,7 @@ $mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Arazketa-emaitza';
 $mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Ezkutatu';
 $mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Erakutsi';
 $mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Berreraikitzen arazketarekin...';
+$mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Ekintzak';
 
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';

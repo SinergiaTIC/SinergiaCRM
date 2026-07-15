@@ -142,6 +142,7 @@ $mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Resultado de depuración';
 $mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Ocultar';
 $mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Mostrar';
 $mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Reconstruyendo con depuración...';
+$mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Acciones';
 
 // Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';

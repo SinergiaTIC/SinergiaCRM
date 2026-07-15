@@ -25,227 +25,172 @@
 </div>
 
 <link rel="stylesheet" type="text/css" href="SticInclude/vendor/selectize/css/selectize.bootstrap3.css" />
-<link rel="stylesheet" type="text/css" href="SticInclude/SinergiaDA.css" />
 <script src="SticInclude/vendor/selectize/js/selectize.min.js"></script>
 
- <div class="sda-page-wrapper"><div class="row sda-actions-row">
-		<div class="col-md-6">
-			<div class="sda-action-card sda-action-card-left">
-				<!-- <h3><span class="glyphicon glyphicon-flash"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}</h3> -->
-				<div style="margin-bottom: 12px;">
-					<button id="rebuild-link" type="button" class="button">
-						<span class="glyphicon glyphicon-flash text-success"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}
-					</button>
-					{if $CURRENT_USER_ID eq '2'}
-						<label class="sda-debug-toggle">
-							<input type="checkbox" id="debug-check" checked="checked"> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}
-						</label>
-					{/if}
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="sda-action-card sda-action-card-right">
-				<!-- <h3><span class="glyphicon glyphicon-link"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}</h3> -->
-				<div style="margin-bottom: 8px;">
-					<button id="sda-link" type="button" class="button">
-						<span class="glyphicon glyphicon-link text-success"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
-					</button>
-				</div>
-				<div id="sda-url" class="sda-url-display"></div>
-			</div>
-		</div>
-	</div>
+<form name="SdaConfigForm" method="POST" action="index.php?module=Administration&action=sticSaveSdaConfig">
+<input type="hidden" name="doaction" value="save">
 
-	<div class="row sda-feedback-row">
-		<div class="col-md-12">
-			<div id="rebuild-feedback"></div>
-		</div>
-	</div>
+<table class="edit view" style="margin-top:10px;">
+	<tr>
+		<td width="30%" scope="row">{$MOD.LBL_STIC_SINERGIADA_ENABLED_LABEL}</td>
+		<td width="70%" colspan="3" >
+			<input type="hidden" name="enabled" value="0"><input type="checkbox" name="enabled" value="1" {if $SDA_CONFIG.enabled}checked{/if}>
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_ENABLED_HELP}</em>
+		</td>
+	</tr>
+</table>
 
-	<div class="row">
-		<div class="col-md-12">
-			<div class="sda-config-card">
-				<div class="sda-config-header">
-					<h3>{$MOD.LBL_STIC_SINERGIADA_CONFIG_SECTION}</h3>
-				</div>
-				<form name="SdaConfigForm" method="POST" action="index.php?module=Administration&action=sticSaveSdaConfig">
-					<input type="hidden" name="doaction" value="save">
+<div id="sda-ui-fields">
 
-					<div class="sda-config-body">
+<table class="edit view" id="sda-actions-table">
+	<tr>
+		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_ACTIONS_SECTION}</h4></th>
+	</tr>
+	<tr>
+		<td width="50%" scope="row">
+			<button id="rebuild-link" type="button" class="button">
+				<span class="glyphicon glyphicon-flash text-success"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}
+			</button>
+			{if $CURRENT_USER_ID eq '2'}
+				<br><label><input type="checkbox" id="debug-check" checked=""> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}</label>
+			{/if}
+		</td>
+		<td width="50%" align="right">
+			<button id="sda-link" type="button" class="button">
+				<span class="glyphicon glyphicon-link text-success"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
+			</button>
+			<span id="sda-url" class="sda-url-display"></span>
+		</td>
+	</tr>
+</table>
 
-						<div class="sda-sub-card">
-							<div class="sda-sub-card-header">
-								<span class="glyphicon glyphicon-cog"></span>
-								<h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_GENERAL}</h4>
-							</div>
-							<div class="sda-sub-card-body">
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_ENABLED_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="hidden" name="enabled" value="0"><input type="checkbox" name="enabled" value="1" {if $SDA_CONFIG.enabled}checked{/if}>
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_ENABLED_HELP}</div>
-								</div>
+<div id="rebuild-feedback"></div>
 
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_AUTO_REBUILD_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="hidden" name="auto_rebuild_on_studio_events" value="0"><input type="checkbox" name="auto_rebuild_on_studio_events" value="1" {if $SDA_CONFIG.auto_rebuild_on_studio_events|default:true}checked{/if}>
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_AUTO_REBUILD_HELP}</div>
-								</div>
+<table class="edit view" id="sda-general-table">
+	<tr>
+		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_GENERAL}</h4></th>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_AUTO_REBUILD_LABEL}</td>
+		<td colspan="3" >
+			<input type="hidden" name="auto_rebuild_on_studio_events" value="0"><input type="checkbox" name="auto_rebuild_on_studio_events" value="1" {if $SDA_CONFIG.auto_rebuild_on_studio_events|default:true}checked{/if}>
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_AUTO_REBUILD_HELP}</em>
+		</td>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_URL_LABEL}</td>
+		<td colspan="3" >
+			<input type="text" name="public_url" value="{$SDA_PUBLIC_URL}" size="50">
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_URL_HELP}</em>
+		</td>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_LABEL}</td>
+		<td colspan="3" >
+			<input type="number" name="max_users_processed" value="{$SDA_CONFIG.max_users_processed}" min="0">
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_HELP}</em>
+		</td>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_LABEL}</td>
+		<td colspan="3" >
+			<select id="publish_as_table" name="publish_as_table[]" multiple placeholder="..." class="form-control">
+				{foreach from=$SDA_MODULES item=mod}
+					<option value="{$mod.name}" {if is_array($SDA_CONFIG.publish_as_table) && in_array($mod.name, $SDA_CONFIG.publish_as_table)}selected{/if}>{$mod.label}</option>
+				{/foreach}
+			</select>
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP}</em>
+		</td>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_LABEL}</td>
+		<td colspan="3" >
+			<input type="hidden" name="group_permissions_enabled" value="0"><input type="checkbox" name="group_permissions_enabled" value="1" {if $SDA_CONFIG.group_permissions_enabled}checked{/if}>
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP}</em>
+		</td>
+	</tr>
+</table>
 
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_URL_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="text" name="public_url" value="{$SDA_PUBLIC_URL}" class="form-control">
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_URL_HELP}</div>
-								</div>
+<table class="edit view" id="sda-cache-table">
+	<tr>
+		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_CACHE}</h4></th>
+	</tr>
+	<tbody class="sda-toggleable">
+	<tr>
+		<td width="30%" scope="row">{$MOD.LBL_STIC_SINERGIADA_CACHE_ENABLED_LABEL}</td>
+		<td width="70%" colspan="3" >
+			<input type="hidden" name="cache_enabled" value="0"><input type="checkbox" name="cache_enabled" value="1" {if $SDA_CONFIG.config.cache_enabled}checked{/if}>
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_CACHE_ENABLED_HELP}</em>
+		</td>
+	</tr>
+	</tbody>
+	<tbody class="sda-toggleable" id="sda-cache-fields">
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_CACHE_UNITS_LABEL}</td>
+		<td colspan="3" >
+			<select name="cache_units">
+				<option value="days" {if $SDA_CONFIG.config.cache_units eq 'days'}selected{/if}>{'days'|capitalize}</option>
+				<option value="hours" {if $SDA_CONFIG.config.cache_units eq 'hours'}selected{/if}>{'hours'|capitalize}</option>
+			</select>
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_CACHE_UNITS_HELP}</em>
+		</td>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_CACHE_QUANTITY_LABEL}</td>
+		<td colspan="3" >
+			<input type="number" name="cache_quantity" value="{$SDA_CONFIG.config.cache_quantity}" min="0">
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_CACHE_QUANTITY_HELP}</em>
+		</td>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_CACHE_HOURS_LABEL}</td>
+		<td colspan="3" >
+			<input type="text" name="cache_hours" value="{$SDA_CONFIG.config.cache_hours}" maxlength="2" size="2">
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_CACHE_HOURS_HELP}</em>
+		</td>
+	</tr>
+	<tr>
+		<td scope="row">{$MOD.LBL_STIC_SINERGIADA_CACHE_MINUTES_LABEL}</td>
+		<td colspan="3" >
+			<input type="text" name="cache_minutes" value="{$SDA_CONFIG.config.cache_minutes}" maxlength="2" size="2">
+			<br><em>{$MOD.LBL_STIC_SINERGIADA_CACHE_MINUTES_HELP}</em>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="number" name="max_users_processed" value="{$SDA_CONFIG.max_users_processed}" class="form-control" min="0">
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_HELP}</div>
-								</div>
+<table class="edit view" id="sda-extra-table">
+	<tr>
+		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA}</h4></th>
+	</tr>
+	{foreach from=$SDA_EXTRA_CONFIG key=ekey item=eval}
+	<tr>
+		<td width="30%" scope="row">{$ekey}</td>
+		<td width="70%" colspan="3" >
+			<input type="text" name="extra_config[{$ekey}]" value="{$eval}">
+		</td>
+	</tr>
+	{/foreach}
+	<tr id="sda-add-extra-row">
+		<td scope="row">
+			<span id="sda-add-extra-text">{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD}</span>
+			<input type="text" id="sda-new-extra-key" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY}" style="display:none;">
+		</td>
+		<td colspan="3" >
+			<input type="text" id="sda-new-extra-value" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE}" style="display:none;">
+			<button type="button" id="sda-add-extra-btn" class="button sda-btn-add">+</button>
+		</td>
+	</tr>
+</table>
 
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<select id="publish_as_table" name="publish_as_table[]" multiple placeholder="..." class="form-control">
-											{foreach from=$SDA_MODULES item=mod}
-												<option value="{$mod.name}" {if is_array($SDA_CONFIG.publish_as_table) && in_array($mod.name, $SDA_CONFIG.publish_as_table)}selected{/if}>{$mod.label}</option>
-											{/foreach}
-										</select>
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP}</div>
-								</div>
+<br>
+<button type="button" class="button primary" onclick="this.form.submit()">
+	<span class="glyphicon glyphicon-floppy-disk text-success"></span> {$MOD.LBL_STIC_SINERGIADA_CONFIG_SAVE}
+</button>
 
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="hidden" name="group_permissions_enabled" value="0"><input type="checkbox" name="group_permissions_enabled" value="1" {if $SDA_CONFIG.group_permissions_enabled}checked{/if}>
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP}</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="sda-sub-card">
-							<div class="sda-sub-card-header">
-								<span class="glyphicon glyphicon-floppy-disk"></span>
-								<h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_CACHE}</h4>
-							</div>
-							<div class="sda-sub-card-body">
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_CACHE_ENABLED_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="hidden" name="cache_enabled" value="0"><input type="checkbox" name="cache_enabled" value="1" {if $SDA_CONFIG.config.cache_enabled}checked{/if}>
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_CACHE_ENABLED_HELP}</div>
-								</div>
-
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_CACHE_UNITS_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<select name="cache_units" class="form-control">
-											<option value="days" {if $SDA_CONFIG.config.cache_units eq 'days'}selected{/if}>{'days'|capitalize}</option>
-											<option value="hours" {if $SDA_CONFIG.config.cache_units eq 'hours'}selected{/if}>{'hours'|capitalize}</option>
-										</select>
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_CACHE_UNITS_HELP}</div>
-								</div>
-
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_CACHE_QUANTITY_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="number" name="cache_quantity" value="{$SDA_CONFIG.config.cache_quantity}" class="form-control" min="0">
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_CACHE_QUANTITY_HELP}</div>
-								</div>
-
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_CACHE_HOURS_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="text" name="cache_hours" value="{$SDA_CONFIG.config.cache_hours}" class="form-control" maxlength="2">
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_CACHE_HOURS_HELP}</div>
-								</div>
-
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_CACHE_MINUTES_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="text" name="cache_minutes" value="{$SDA_CONFIG.config.cache_minutes}" class="form-control" maxlength="2">
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_CACHE_MINUTES_HELP}</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="sda-sub-card">
-							<div class="sda-sub-card-header">
-								<span class="glyphicon glyphicon-wrench"></span>
-								<h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA}</h4>
-							</div>
-							<div class="sda-sub-card-body" id="sda-extra-body">
-								{foreach from=$SDA_EXTRA_CONFIG key=ekey item=eval}
-								<div class="sda-config-row">
-									<div class="sda-row-label">
-										<span>{$ekey}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="text" name="extra_config[{$ekey}]" value="{$eval}" class="form-control">
-									</div>
-								</div>
-								{/foreach}
-									<div class="sda-config-row" id="sda-add-extra-row">
-									<div class="sda-row-label" style="display:flex;align-items:center;gap:8px;">
-										<span id="sda-add-extra-text">{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD}</span>
-										<input type="text" id="sda-new-extra-key" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY}" class="form-control" style="width:100%;display:none;">
-									</div>
-									<div class="sda-row-value" style="display:flex;gap:6px;align-items:center;">
-										<input type="text" id="sda-new-extra-value" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE}" class="form-control" style="flex:1;display:none;">
-										<button type="button" id="sda-add-extra-btn" class="button sda-btn-add">+</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="sda-config-footer">
-					<button type="button" class="button" onclick="this.form.submit()">
-						<span class="glyphicon glyphicon-floppy-disk text-success"></span> {$MOD.LBL_STIC_SINERGIADA_CONFIG_SAVE}
-					</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
 </div>
+
+</form>
 
 <script type="text/javascript">
 var SDA_DEBUG_TITLE = '{$MOD.LBL_STIC_DA_DEBUG_TITLE|escape:'javascript'}';
@@ -277,8 +222,8 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 
 		document.getElementById("rebuild-link").addEventListener("click", function(e) {
 			if (debugCheck.checked) {
-				var box = '<div id="debug-output" style="margin-top:16px;border:2px solid var(--sda-primary,#b5bc31);border-radius:8px;overflow:hidden;background:#fff;">'
-					+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--sda-primary-light,#f6f7d9);border-bottom:1px solid var(--sda-primary,#b5bc31);">'
+				var box = '<div id="debug-output" style="margin-top:16px;border:2px solid #b5bc31;border-radius:8px;overflow:hidden;background:#fff;">'
+					+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f6f7d9;border-bottom:1px solid #b5bc31;">'
 					+ '<strong style="font-size:14px;color:#333;"><span class="glyphicon glyphicon-console" style="margin-right:6px;"></span>' + SDA_DEBUG_TITLE + '</strong>'
 					+ '<button type="button" class="btn btn-default btn-xs" id="debug-toggle">' + SDA_DEBUG_HIDE + '</button>'
 					+ '</div>'
@@ -303,16 +248,14 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 	}
 
 	function toggleDependents(checkbox) {
-		var body = jQuery(checkbox).closest('.sda-sub-card-body');
-		body.find('.sda-config-row').each(function() {
-			if (this.querySelector('input[name="' + checkbox.name + '"]')) return;
-			jQuery(this).toggle(checkbox.checked);
-		});
+		if (checkbox.name === 'cache_enabled') {
+			jQuery('#sda-cache-fields').toggle(checkbox.checked);
+		}
 		if (checkbox.name === 'enabled') {
-			var $siblingCards = jQuery(checkbox).closest('.sda-sub-card').nextAll('.sda-sub-card');
-			$siblingCards.toggle(checkbox.checked);
+			jQuery('#sda-ui-fields').toggle(checkbox.checked);
 			if (checkbox.checked) {
-				$siblingCards.find('input[type="checkbox"][name="cache_enabled"]').trigger('change');
+				var $ce = jQuery('#sda-cache-table').find('input[type="checkbox"][name="cache_enabled"]');
+				if ($ce.length) toggleDependents($ce[0]);
 			}
 		}
 	}
@@ -344,10 +287,11 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 				var val = $extraVal.val().trim();
 				if (!key) return;
 				var safeKey = key.replace(/[^a-zA-Z0-9_]/g, "_");
-				var row = '<div class="sda-config-row">'
-					+ '<div class="sda-row-label"><span>' + safeKey + '</span></div>'
-					+ '<div class="sda-row-value"><input type="text" name="extra_config[' + safeKey + ']" value="' + jQuery('<div>').text(val).html() + '" class="form-control"></div>'
-					+ '</div>';
+				var row = '<tr>'
+					+ '<td width="30%" scope="row">' + $('<div>').text(safeKey).html() + '</td>'
+					+ '<td width="70%" colspan="3" >'
+					+ '<input type="text" name="extra_config[' + safeKey + ']" value="' + $('<div>').text(val).html() + '">'
+					+ '</td></tr>';
 				jQuery(row).insertBefore("#sda-add-extra-row");
 				$extraKey.val("");
 				$extraVal.val("");
