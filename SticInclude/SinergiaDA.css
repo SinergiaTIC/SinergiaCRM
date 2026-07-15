@@ -27,20 +27,20 @@
    ============================================================ */
 
 .sda-page-wrapper { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; }
-.sda-page-wrapper .sda-action-card { border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid; }
+.sda-page-wrapper .sda-action-card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid #e8e8e8; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 .sda-page-wrapper .sda-actions-row { display: flex; }
 .sda-page-wrapper .sda-actions-row > [class*="col-"] { display: flex; }
 .sda-page-wrapper .sda-actions-row .sda-action-card { width: 100%; height: 100%; margin-bottom: 0; }
-.sda-page-wrapper .sda-action-card h3 { font-size: 14px; font-weight: 700; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid; display: flex; align-items: center; gap: 8px; }
+.sda-page-wrapper .sda-action-card h3 { font-size: 14px; font-weight: 700; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid #e8e8e8; display: flex; align-items: center; gap: 8px; }
 .sda-page-wrapper .sda-action-card h3 .glyphicon { font-size: 16px; }
-.sda-page-wrapper .sda-config-card { border-radius: 10px; overflow: hidden; margin-bottom: 20px; border: 1px solid; }
-.sda-page-wrapper .sda-config-header { padding: 16px 20px; border-bottom: 1px solid; display: flex; align-items: center; gap: 10px; }
-.sda-page-wrapper .sda-config-header h3 { font-size: 15px; font-weight: 700; margin: 0; float: none; border: none; padding: 0; background: none; cursor: default; }
+.sda-page-wrapper .sda-config-card { background: #fff; border-radius: 10px; overflow: hidden; margin-bottom: 20px; border: 1px solid #e8e8e8; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.sda-page-wrapper .sda-config-header { background: #f8f9fa; padding: 16px 20px; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; gap: 10px; }
+.sda-page-wrapper .sda-config-header h3 { font-size: 15px; font-weight: 700; color: #333; margin: 0; float: none; border: none; padding: 0; background: none; cursor: default; }
 .sda-page-wrapper .sda-config-body { padding: 20px; }
 .sda-page-wrapper .sda-form-group { margin-bottom: 16px; }
 .sda-page-wrapper .sda-form-group label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; }
 .sda-page-wrapper .sda-form-group .help-icon { margin-left: 4px; cursor: help; vertical-align: middle; }
-.sda-page-wrapper .sda-config-row { display: flex; flex-wrap: wrap; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid; }
+.sda-page-wrapper .sda-config-row { display: flex; flex-wrap: wrap; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
 .sda-page-wrapper .sda-config-row:last-child { border-bottom: none; }
 .sda-page-wrapper .sda-config-row .sda-row-label { width: 50%; padding-right: 16px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .sda-page-wrapper .sda-config-row .sda-row-label span { font-weight: 600; font-size: 13px; }
@@ -57,12 +57,12 @@
 .sda-page-wrapper .sda-config-row .sda-row-value input[type="number"][min="0"] { width: 120px; min-width: 120px; max-width: 150px; }
 .sda-page-wrapper .sda-config-row .sda-row-value select#publish_as_table + .selectize-control { width: 100%; max-width: 500px; }
 .sda-page-wrapper .sda-config-row .sda-row-value #publish_as_table { width: 100%; max-width: 500px; }
-.sda-page-wrapper .sda-config-row .sda-help-text { width: 100%; font-size: 12px; margin-top: 4px; line-height: 1.4; }
-.sda-page-wrapper .sda-config-section-title { font-size: 13px; font-weight: 700; margin: 20px 0 10px; padding-bottom: 8px; border-bottom: 1px solid; display: flex; align-items: center; gap: 8px; }
+.sda-page-wrapper .sda-config-row .sda-help-text { width: 100%; font-size: 12px; color: #9e9e9e; margin-top: 4px; line-height: 1.4; }
+.sda-page-wrapper .sda-config-section-title { font-size: 13px; font-weight: 700; margin: 20px 0 10px; padding-bottom: 8px; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; gap: 8px; }
 .sda-page-wrapper .sda-config-section-title .glyphicon { font-size: 15px; }
 .sda-page-wrapper .sda-config-section-title:first-child { margin-top: 0; }
-.sda-page-wrapper .sda-sub-card { border: 1px solid; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
-.sda-page-wrapper .sda-sub-card-header { padding: 12px 16px; border-bottom: 1px solid; display: flex; align-items: center; gap: 8px; }
+.sda-page-wrapper .sda-sub-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+.sda-page-wrapper .sda-sub-card-header { background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%); padding: 12px 16px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 8px; }
 .sda-page-wrapper .sda-sub-card-header h4 { margin: 0; font-size: 13px; font-weight: 700; float: none; border: none; padding: 0; background: none; }
 .sda-page-wrapper .sda-sub-card-header .glyphicon { font-size: 14px; }
 .sda-page-wrapper .sda-sub-card-body { padding: 12px 16px; }
@@ -78,43 +78,47 @@
 .sda-page-wrapper .sda-feedback-row { margin-bottom: 16px; }
 .sda-page-wrapper .sda-debug-toggle { display: inline-flex; align-items: center; gap: 6px; margin-left: 16px; font-size: 13px; cursor: pointer; }
 .sda-page-wrapper .sda-debug-toggle input { margin: 0; }
-.sda-page-wrapper .sda-external-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; border: 2px solid; transition: all 0.2s; }
+.sda-page-wrapper .sda-external-link { display: inline-flex; align-items: center; gap: 6px; background: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; border: 2px solid; transition: all 0.2s; }
+.sda-page-wrapper .sda-external-link:hover { background: #f5f5f5; }
 .sda-page-wrapper .sda-external-link .glyphicon { font-size: 14px; }
-.sda-page-wrapper .sda-url-display { font-family: monospace; font-size: 12px; margin-top: 8px; word-break: break-all; }
-.sda-page-wrapper select.selectized, .sda-page-wrapper .selectize-control.single .selectize-input { border-radius: 6px; }
+.sda-page-wrapper .sda-url-display { font-family: monospace; font-size: 12px; color: #888; margin-top: 8px; word-break: break-all; }
+.sda-page-wrapper select.selectized, .sda-page-wrapper .selectize-control.single .selectize-input { border-radius: 6px; border-color: #d0d0d0; }
 .sda-page-wrapper select.selectized:focus, .sda-page-wrapper .selectize-control.single .selectize-input.focus { outline: none; }
 
 /* Debug wrapper - purely structural */
-.sda-debug-wrapper { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; padding: 12px; }
-.sda-debug-wrapper h2 { font-size: 13px; font-weight: 600; margin: 0 -12px 10px; padding: 10px 12px; border-bottom: 2px solid; cursor: pointer; user-select: none; float: none; }
-.sda-debug-wrapper .sda-time { font-size: 16px; font-weight: 700; text-align: center; padding: 14px; border-radius: 8px; margin: 16px 0; }
-.sda-debug-wrapper .sda-deleted { padding: 8px 14px; border-left: 4px solid; border-radius: 4px; margin: 10px 0; font-weight: 600; font-size: 13px; }
-.sda-debug-wrapper .sda-card { border: 1px solid; border-radius: 8px; padding: 14px 16px; margin: 14px 0; }
-.sda-debug-wrapper .sda-card h3 { margin: 0 0 10px; font-size: 13px; font-weight: 700; }
+.sda-debug-wrapper { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #1a1a2e; background: #f0f2f5; line-height: 1.6; padding: 12px; }
+.sda-debug-wrapper h2 { font-size: 13px; font-weight: 600; margin: 0 -12px 10px; padding: 10px 12px; background: #e8eaf6; color: #283593; border-bottom: 2px solid #283593; cursor: pointer; user-select: none; float: none; }
+.sda-debug-wrapper .sda-time { font-size: 16px; font-weight: 700; color: #1a237e; text-align: center; padding: 14px; background: #e8eaf6; border-radius: 8px; margin: 16px 0; }
+.sda-debug-wrapper .sda-deleted { padding: 8px 14px; background: #fff8e1; border-left: 4px solid #ff8f00; border-radius: 4px; margin: 10px 0; font-weight: 600; font-size: 13px; color: #e65100; }
+.sda-debug-wrapper .sda-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 16px; margin: 14px 0; }
+.sda-debug-wrapper .sda-card h3 { margin: 0 0 10px; font-size: 13px; font-weight: 700; color: #283593; }
 .sda-debug-wrapper .sda-card ul { list-style: none; padding: 0; margin: 6px 0; }
 .sda-debug-wrapper .sda-card ul li { padding: 3px 0; font-size: 13px; }
 .sda-debug-wrapper .sda-modules { list-style: none; padding: 0; margin: 6px 0; }
-.sda-debug-wrapper .sda-module { margin-bottom: 2px; padding: 5px 10px; border: 1px solid; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.sda-debug-wrapper .sda-module { margin-bottom: 2px; padding: 5px 10px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.sda-debug-wrapper .sda-module:hover { border-color: #7986cb; }
 .sda-debug-wrapper .sda-module.omitted { opacity: 0.4; cursor: default; }
-.sda-debug-wrapper .sda-ok { font-weight: 600; }
+.sda-debug-wrapper .sda-ok { color: #2e7d32; font-weight: 600; }
 .sda-debug-wrapper .sda-ok::before { content: "\2713 "; }
-.sda-debug-wrapper .sda-error { font-weight: 600; }
+.sda-debug-wrapper .sda-error { color: #c62828; font-weight: 600; }
 .sda-debug-wrapper .sda-error::before { content: "\2717 "; }
-.sda-debug-wrapper .sda-warning { font-weight: 600; }
+.sda-debug-wrapper .sda-warning { color: #e65100; font-weight: 600; }
 .sda-debug-wrapper .sda-warning::before { content: "\25B2 "; }
-.sda-debug-wrapper .sda-fatal { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; border: 1px solid; margin: 2px 0; }
-.sda-debug-wrapper .sda-query { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 11px; padding: 8px 10px; border-radius: 4px; border: 1px solid; overflow-x: auto; white-space: pre-wrap; word-break: break-all; margin: 4px 0; max-height: 180px; overflow-y: auto; }
+.sda-debug-wrapper .sda-fatal { display: inline-block; padding: 2px 8px; background: #ffebee; color: #b71c1c; border-radius: 3px; font-size: 11px; font-weight: 700; border: 1px solid #ef9a9a; margin: 2px 0; }
+.sda-debug-wrapper .sda-query { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 11px; padding: 8px 10px; border-radius: 4px; background: #fafafa; border: 1px solid #e0e0e0; overflow-x: auto; white-space: pre-wrap; word-break: break-all; margin: 4px 0; max-height: 180px; overflow-y: auto; }
+.sda-debug-wrapper .sda-query.error { border-color: #ef9a9a; background: #fff5f5; }
+.sda-debug-wrapper .sda-query.ok { border-color: #a5d6a7; background: #f1f8e9; }
 .sda-debug-wrapper .sda-enums { list-style: none; padding: 0; margin: 4px 0; display: flex; flex-wrap: wrap; gap: 3px; }
-.sda-debug-wrapper .sda-enums li { padding: 2px 8px; border-radius: 3px; font-size: 11px; border: 1px solid; }
+.sda-debug-wrapper .sda-enums li { background: #f3e5f5; padding: 2px 8px; border-radius: 3px; font-size: 11px; border: 1px solid #ce93d8; }
 .sda-debug-wrapper .sda-url { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 11px; word-break: break-all; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
-.sda-debug-wrapper .sda-subsection { font-size: 12px; font-weight: 600; padding: 6px 12px; border-left: 3px solid; margin: 12px 0 6px; }
-.sda-debug-wrapper .sda-subsection .count { font-size: 10px; padding: 1px 6px; border-radius: 8px; }
-.sda-debug-wrapper .sda-detail { font-size: 11px; padding: 4px 10px; border-radius: 3px; margin: 3px 0; }
+.sda-debug-wrapper .sda-subsection { font-size: 12px; font-weight: 600; color: #37474f; padding: 6px 12px; background: #eceff1; border-left: 3px solid #78909c; margin: 12px 0 6px; }
+.sda-debug-wrapper .sda-subsection .count { background: #78909c; color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 8px; }
+.sda-debug-wrapper .sda-detail { font-size: 11px; color: #757575; padding: 4px 10px; background: #fafafa; border-radius: 3px; margin: 3px 0; }
 
 /* Extra config add button - layout only */
 .sda-page-wrapper .sda-btn-add { border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
 .sda-page-wrapper .sda-btn-add:hover { transform: scale(1.1); }
-.sda-page-wrapper #sda-add-extra-row { border-top: 1px dashed; padding-top: 12px; margin-top: 8px; }
+.sda-page-wrapper #sda-add-extra-row { border-top: 1px dashed #ddd; padding-top: 12px; margin-top: 8px; }
 .sda-page-wrapper #sda-add-extra-row .sda-row-value { align-self: center; }
-.sda-page-wrapper #sda-add-extra-text { font-style: italic; font-size: 13px; cursor: default; }
-.sda-page-wrapper #sda-new-extra-key, .sda-page-wrapper #sda-new-extra-value { font-size: 13px; }
+.sda-page-wrapper #sda-add-extra-text { color: #999; font-style: italic; font-size: 13px; cursor: default; }
+.sda-page-wrapper #sda-new-extra-key, .sda-page-wrapper #sda-new-extra-value { font-size: 13px; color: #666; }

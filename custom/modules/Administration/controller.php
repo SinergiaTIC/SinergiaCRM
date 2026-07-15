@@ -176,7 +176,6 @@ class CustomAdministrationController extends AdministrationController
         $configurator->config['stic_sinergiada']['enabled'] = !empty($_POST['enabled']);
         $configurator->config['stic_sinergiada']['group_permissions_enabled'] = !empty($_POST['group_permissions_enabled']);
         $configurator->config['stic_sinergiada']['auto_rebuild_on_studio_events'] = !empty($_POST['auto_rebuild_on_studio_events']);
-        $configurator->config['stic_sinergiada']['seed_string'] = $_POST['seed_string'] ?? '';
         $configurator->config['stic_sinergiada']['max_users_processed'] = $_POST['max_users_processed'] !== '' ? (int) $_POST['max_users_processed'] : '';
 
         // publish_as_table: handle modules selected via multi-select

@@ -1532,18 +1532,4 @@ html .sda-page-wrapper {
   .sda-page-wrapper .sda-action-card h3 {
     color: $stic-text !important;
   }
-  .sda-action-card,
-  .sda-config-card,
-  .sda-sub-card {
-    border: 2px solid $stic-base;
-    .sda-sub-card {
-      border-color: $stic-darken !important;
-    }
-  }
-
-  select.selectized:focus,
-  .selectize-control.single .selectize-input.focus {
-    border-color: $stic-base;
-    box-shadow: 0 0 0 2px rgba(red($stic-base), green($stic-base), blue($stic-base), 0.15);
-  }
 }

@@ -112,16 +112,6 @@
 
 								<div class="sda-config-row">
 									<div class="sda-row-label">
-										<span>{$MOD.LBL_STIC_SINERGIADA_SEED_STRING_LABEL}</span>
-									</div>
-									<div class="sda-row-value">
-										<input type="text" name="seed_string" value="{$SDA_CONFIG.seed_string}" class="form-control">
-									</div>
-									<div class="sda-help-text">{$MOD.LBL_STIC_SINERGIADA_SEED_STRING_HELP}</div>
-								</div>
-
-								<div class="sda-config-row">
-									<div class="sda-row-label">
 										<span>{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_LABEL}</span>
 									</div>
 									<div class="sda-row-value">
@@ -316,6 +306,13 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 			if (this.querySelector('input[name="' + checkbox.name + '"]')) return;
 			jQuery(this).toggle(checkbox.checked);
 		});
+		if (checkbox.name === 'enabled') {
+			var $siblingCards = jQuery(checkbox).closest('.sda-sub-card').nextAll('.sda-sub-card');
+			$siblingCards.toggle(checkbox.checked);
+			if (checkbox.checked) {
+				$siblingCards.find('input[type="checkbox"][name="cache_enabled"]').trigger('change');
+			}
+		}
 	}
 
 	jQuery(document).ready(function() {
