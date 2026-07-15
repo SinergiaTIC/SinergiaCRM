@@ -713,4 +713,26 @@ class stic_AWF_FormsUtils {
             }
         }
     }
+
+    /**
+     * Detects and saves the form type ('crm' or 'web') for legacy forms if not set.
+     *
+     * @param SugarBean $formBean
+     * @param array $configData
+     * @return void
+     */
+    public static function detectAndSaveFormType(SugarBean $formBean, array $configData): void
+    {
+        if (empty($formBean->form_type)) {
+            $hasCheckSession = false;
+            $mainFlowActions = $configData['flows']['0']['actions'] ?? [];
+            if (!empty($mainFlowActions)) {
+                // Gets the first element and evaluates if its name matches CheckSessionAction
+                $firstAction = reset($mainFlowActions);
+                $hasCheckSession = ($firstAction['name'] ?? '') === 'CheckSessionAction';
+            }
+            $formBean->form_type = $hasCheckSession ? 'crm' : 'web';
+            $formBean->save();
+        }
+    }
 }
