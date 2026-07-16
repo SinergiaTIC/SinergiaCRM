@@ -4193,12 +4193,12 @@ $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 $app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
 
-// Email Templates: Whatsapp category types
+// Plantillas de Correo electrónico: Tipos de categorías de Whatsapp
 $app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Marketing';
 $app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilidad';
 $app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticación';
 
-// Email Templates: Whatsapp status types
+// Plantillas de Correo electrónico: Tipos de estados de Whatsapp
 $app_list_strings['stic_whatsapp_status_list'][''] = '';
 $app_list_strings['stic_whatsapp_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pendiente de aprobación';
