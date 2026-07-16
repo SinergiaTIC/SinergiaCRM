@@ -555,7 +555,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             $result = AOS_InvoicesUtils::queryAeatInvoices(
                 $year,
                 $period,
-                !empty($serieNumber) ? $serieNumber : null,
+                null, // serieNumber: filtering done client-side for substring support
                 !empty($dateFrom) ? $dateFrom : null,
                 !empty($dateTo) ? $dateTo : null,
                 !empty($counterpartyNif) ? $counterpartyNif : null,

@@ -57,6 +57,13 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         $this->ss->assign('FORM_COUNTERPARTY_NIF', htmlspecialchars($counterpartyNif));
         $this->ss->assign('FORM_COUNTERPARTY_NAME', htmlspecialchars($counterpartyName));
 
+        // Panel collapse state persisted in session
+        if (!empty($_POST['panel_state'])) {
+            $_SESSION['VERIFACTU_PANEL_STATE'] = $_POST['panel_state'];
+        }
+        $panelState = $_SESSION['VERIFACTU_PANEL_STATE'] ?? 'collapsed';
+        $this->ss->assign('FORM_PANEL_STATE', $panelState);
+
         $hasPostback = !empty($_POST['query']);
         $nestChecked = (!$hasPostback) || (!empty($_POST['nest_rectified']));
         $this->ss->assign('FORM_NEST_CHECKED', $nestChecked);
@@ -202,6 +209,16 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
                                 }
                             }
                         }
+                    }
+
+                    // Client-side substring filtering on serie number
+                    $serieFilter = $_POST['serie_number'] ?? '';
+                    if ($serieFilter !== '') {
+                        $renderRegs = array_filter($renderRegs, function ($item) use ($serieFilter) {
+                            $numSerie = $item['reg']['idFactura']['numSerie'] ?? '';
+                            return mb_stripos($numSerie, $serieFilter) !== false;
+                        });
+                        $renderRegs = array_values($renderRegs);
                     }
 
                     // Client-side substring filtering on client name
