@@ -23,8 +23,6 @@
 
 $mod_strings['LBL_DASHLET_STIC_NEWS'] = 'SinergiaCRM News';
 
-$mod_strings['LBL_DASHLET_STIC_NEWS'] = 'SinergiaCRM News';
-
 // About page
 $mod_strings['LBL_ABOUT_PAGE_TITLE'] = 'About';
 $mod_strings['LBL_ABOUT_SINERGIACRM_TITLE'] = 'SinergiaCRM - Open Source CRM for nonprofit organizations';
@@ -37,9 +35,9 @@ $mod_strings['LBL_ABOUT_SINERGIACRM_KREPORTER'] = 'Kreporter by Christian Knoll'
 $mod_strings['LBL_ABOUT_SINERGIACRM_MAIL_MERGE'] = 'Mail Merge Reports by Izertis';
 $mod_strings['LBL_ABOUT_SINERGIACRM_OTHER'] = 'Other open source libraries may be found in <i>/vendor</i> and <i>/SticInclude/vendor</i> folders. License information for these libraries can be found in their own files.';
 
-$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL'] = 'Con el apoyo de';
-$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_SUPPORT'] = 'Parte de la funcionalidad de SinergiaCRM ha sido desarrollada con el apoyo financiero de';
-$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_ALT'] = 'Unión Europea - NextGenerationEU - Gobierno de España - Plan de Recuperación, Transformación y Resiliencia - Next Generation Catalunya - Generalitat de Catalunya';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL'] = 'With the support of';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_SUPPORT'] = 'Part of SinergiaCRM functionality has been developed with the financial support of';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_ALT'] = 'European Union - NextGenerationEU - Gobierno de España - Plan de Recuperación, Transformación y Resiliencia - Next Generation Catalunya - Generalitat de Catalunya';
 
 // SinergiaDA
 $mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED'] = 'You do not have access to SinergiaDA. Please, contact the administrator.';
