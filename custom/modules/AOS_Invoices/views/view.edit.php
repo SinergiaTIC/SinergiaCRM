@@ -144,8 +144,6 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
                 'isRectified' => !empty($config['isRectified']),
             ];
         }
-        echo '<script>var sticSeriesConfig = ' . json_encode($seriesForJs) . ';</script>';
-
         // === Filter status dropdown based on current invoice status ===
         if (AOS_InvoicesUtils::isVerifactuActivated() && !empty($this->bean->id)) {
             AOS_InvoicesUtils::filterStatusDropdown($app_list_strings, $this->bean->status);
@@ -154,46 +152,24 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
 
         parent::display();
 
-        // Extend sqs_objects for billing_contact to include address and identification number fields.
-        // This runs during page parsing (before enableQS/YUI processes sqs_objects), so the
-        // AutoComplete widget is created with the extended field_list/populate_list.
-        // The autocomplete will then populate address fields directly from the search results.
-        echo '<script>
-        if (typeof sqs_objects != "undefined" && sqs_objects["EditView_billing_contact"]) {
-            var sqs = sqs_objects["EditView_billing_contact"];
-            sqs.field_list.push(
-                "primary_address_street", "primary_address_city", "primary_address_state",
-                "primary_address_postalcode", "primary_address_country",
-                "alt_address_street", "alt_address_city", "alt_address_state",
-                "alt_address_postalcode", "alt_address_country",
-                "stic_identification_number_c"
-            );
-            sqs.populate_list.push(
-                "billing_address_street", "billing_address_city", "billing_address_state",
-                "billing_address_postalcode", "billing_address_country",
-                "shipping_address_street", "shipping_address_city", "shipping_address_state",
-                "shipping_address_postalcode", "shipping_address_country",
-                "customer_id_number"
-            );
-        }
-        </script>';
-
-        // Pass customer identification number for JS validation
         $customerIdNumber = $this->bean->customer_id_number ?? '';
         echo '<style>
         .stic-disabled { opacity: 0.5; cursor: not-allowed !important; pointer-events: none; }
         input.stic-disabled { background-color: #eee; }
         </style>';
-        echo '<script>var customerIdentificationNumber = ' . json_encode($customerIdNumber) . ';</script>';
         echo '<input type="hidden" name="customer_id_number" id="customer_id_number" value="' . htmlspecialchars($customerIdNumber, ENT_QUOTES, 'UTF-8') . '">';
 
-        // Pass verifactu status to JS for SticUtils.js
         $verifactuStatus = AOS_InvoicesUtils::getVerifactuStatus();
-        echo '<script>var verifactuActivated = ' . (!empty($verifactuStatus['activated']) ? 'true' : 'false') . ';</script>';
+        echo '<script>
+var sticSeriesConfig = ' . json_encode($seriesForJs) . ';
+var isNewRecord = ' . (empty($this->bean->id) ? 'true' : 'false') . ';
+var customerIdentificationNumber = ' . json_encode($customerIdNumber) . ';
+var verifactuActivated = ' . (!empty($verifactuStatus['activated']) ? 'true' : 'false') . ';
+</script>';
 
         SticViews::display($this);
 
-        echo getVersionedScript("custom/modules/AOS_Invoices/SticUtils.js");
+        echo '<script src="custom/modules/AOS_Invoices/SticUtils.js?v=' . filemtime('custom/modules/AOS_Invoices/SticUtils.js') . '"></script>';
     }
 
 }

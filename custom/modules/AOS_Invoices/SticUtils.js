@@ -27,6 +27,28 @@ var module = "AOS_Invoices";
 // Load moment.js to use in validations
 loadScript("include/javascript/moment.min.js");
 
+// Extend billing_contact sqs_objects to include address and identification number fields.
+// Must run at top level (before enableQS/YUI processes sqs_objects in $(document).ready).
+(function() {
+  if (typeof sqs_objects != "undefined" && sqs_objects["EditView_billing_contact"]) {
+    var sqs = sqs_objects["EditView_billing_contact"];
+    sqs.field_list.push(
+      "primary_address_street", "primary_address_city", "primary_address_state",
+      "primary_address_postalcode", "primary_address_country",
+      "alt_address_street", "alt_address_city", "alt_address_state",
+      "alt_address_postalcode", "alt_address_country",
+      "stic_identification_number_c"
+    );
+    sqs.populate_list.push(
+      "billing_address_street", "billing_address_city", "billing_address_state",
+      "billing_address_postalcode", "billing_address_country",
+      "shipping_address_street", "shipping_address_city", "shipping_address_state",
+      "shipping_address_postalcode", "shipping_address_country",
+      "customer_id_number"
+    );
+  }
+})();
+
 /* VALIDATION DEPENDENCIES */
 var validationDependencies = {
   invoice_date: "due_date",
@@ -373,6 +395,24 @@ function filterSeriesDropdown() {
 }
 
 function initSeriesFilter() {
+  var isNew = typeof window.isNewRecord !== 'undefined' && window.isNewRecord;
+
+  if (isNew) {
+    // New invoices: start with non-rectified series only
+    $("#verifactu_is_rectified_c").prop("checked", false);
+    // Pre-select the first non-rectified series before filtering
+    var select = $("#verifactu_invoice_type_c");
+    var firstNonRectified = null;
+    sticSeriesConfig.forEach(function(s) {
+      if (!s.isRectified && !firstNonRectified) {
+        firstNonRectified = s.name;
+      }
+    });
+    if (firstNonRectified) {
+      select.val(firstNonRectified);
+    }
+  }
+
   filterSeriesDropdown();
 
   $("#verifactu_is_rectified_c").on("change", function() {
