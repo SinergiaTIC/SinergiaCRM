@@ -8,17 +8,15 @@
       <span id="filterToggleIcon" class="suitepicon suitepicon-action-caret" style="transform: rotate({if $FORM_PANEL_STATE == 'expanded'}0{else}-90{/if}deg); transition: transform 0.2s; font-size: 16px;"></span>
       <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; color: #fff;">{$MOD.LBL_VERIFACTU_QUERY_FILTERS_LABEL}</span>
       {if $FORM_ACTIVE_COUNT > 0}
-      <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+      <span style="flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
         {foreach from=$FORM_ACTIVE_FILTERS item=filter}
         <span style="display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; margin: 0 3px; background: rgba(255,255,255,0.2); color: #fff; border-radius: 3px; line-height: 20px; vertical-align: middle;">{$filter}</span>
         {/foreach}
       </span>
+      <span onclick="window.location.href='index.php?module=AOS_Invoices&action=QueryAeatInvoices'" style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; background: #D32F2F; color: #fff; border-radius: 3px; font-size: 14px; font-weight: 700; cursor: pointer; vertical-align: middle; font-family: Arial, sans-serif;" title="{$MOD.LBL_VERIFACTU_QUERY_CLEAR}">X</span>
       {/if}
       {if $HAS_RESULT && $RESULT_SUCCESS}
       <span style="margin-left: auto; font-size: 12px; font-weight: 500; color: #fff; white-space: nowrap;">{$RESULT_COUNT} {$MOD.LBL_VERIFACTU_QUERY_REGISTROS}</span>
-      {/if}
-      {if $FORM_ACTIVE_COUNT > 0}
-      <a href="index.php?module=AOS_Invoices&action=QueryAeatInvoices" style="font-size: 11px; font-weight: 500; padding: 1px 7px; background: rgba(255,255,255,0.15); color: #fff; border-radius: 3px; line-height: 20px; vertical-align: middle; text-decoration: none; white-space: nowrap; border: 1px solid rgba(255,255,255,0.25);">✕ {$MOD.LBL_VERIFACTU_QUERY_CLEAR}</a>
       {/if}
     </div>
   </div>
@@ -33,35 +31,36 @@
 
         <div class="row" style="margin-bottom: 4px;">
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_YEAR}</label>
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_YEAR}</label>
             <input type="number" name="year" value="{$FORM_YEAR}" min="2024" max="2099" style="width: 100%;" required>
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_PERIOD}</label>
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_PERIOD}</label>
             <select name="period" style="width: 100%;">
+              <option value="">--</option>
               {foreach from=$FORM_PERIOD_OPTIONS item=opt}
               <option value="{$opt.VALUE}"{if $opt.SELECTED} selected{/if}>{$opt.LABEL}</option>
               {/foreach}
             </select>
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_SERIE_NUMBER}</label>
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_SERIE_NUMBER}</label>
             <input type="text" name="serie_number" value="{$FORM_SERIE_NUMBER}" placeholder="{$MOD.LBL_VERIFACTU_QUERY_SERIE_NUMBER_PLACEHOLDER}" style="width: 100%;">
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_DATE_FROM}</label>
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_DATE_FROM}</label>
             <input type="date" name="date_from" value="{$FORM_DATE_FROM}" style="width: 100%;">
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_DATE_TO}</label>
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_DATE_TO}</label>
             <input type="date" name="date_to" value="{$FORM_DATE_TO}" style="width: 100%;">
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF}</label>
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF}</label>
             <input type="text" name="counterparty_nif" value="{$FORM_COUNTERPARTY_NIF}" placeholder="{$MOD.LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF_PLACEHOLDER}" style="width: 100%;">
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_COUNTERPARTY_NAME}</label>
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_COUNTERPARTY_NAME}</label>
             <input type="text" name="counterparty_name" value="{$FORM_COUNTERPARTY_NAME}" placeholder="{$MOD.LBL_VERIFACTU_QUERY_COUNTERPARTY_NAME_PLACEHOLDER}" style="width: 100%;">
           </div>
           <input type="hidden" name="filter_by_sif" value="1">
@@ -154,6 +153,7 @@
   height: 32px;
   box-sizing: border-box;
 }
+
 </style>
 <script>
 (function () {

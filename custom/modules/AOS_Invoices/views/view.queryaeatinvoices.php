@@ -69,6 +69,9 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         $this->ss->assign('FORM_NEST_CHECKED', $nestChecked);
 
         $activeFilters = [];
+        if ($hasPostback) {
+            $activeFilters[] = 'Mes: ' . $selectedPeriod;
+        }
         if (!empty($serieNumber)) {
             $activeFilters[] = 'Serie: ' . $serieNumber;
         }
