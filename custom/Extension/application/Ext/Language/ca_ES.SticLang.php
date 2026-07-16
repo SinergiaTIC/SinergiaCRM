@@ -31,7 +31,7 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "La validació d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Afegeix Organitzacions i Persones a una llista de públic objectiu';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
-$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Veure conversa de WhatsApp';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Mostra la conversa de WhatsApp';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra les firmes relacionades';
@@ -4181,6 +4181,19 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 $app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'WhatsApp';
 
+// Plantilles de Correu electrònic: Tipus de categoria WhatsApp
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Màrqueting';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilitat';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticació';
+
+// Plantilles de Correu electrònic: Tipus d'estat d'aprovació WhatsApp
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = "Pendent d'aprovació";
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprovada';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rebutjada';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sense enviar';
+
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campanya';
@@ -4196,19 +4209,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
-
-// Email Templates: Tipus de categoria WhatsApp
-$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Màrqueting';
-$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilitat';
-$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticació';
-
-// Email Templates: Tipus d'estat d'aprovació WhatsApp
-$app_list_strings['stic_whatsapp_status_list'][''] = '';
-$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Esborrany';
-$app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pendent d\'aprovació';
-$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprovada';
-$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rebutjada';
-$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sense enviar';
 
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
