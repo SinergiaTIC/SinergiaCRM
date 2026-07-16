@@ -22,24 +22,14 @@
 
 .stic-about-main {
   font-size: 1.4rem;
-  box-sizing: border-box;
 }
 
 .stic-header {
-  display: flex;
   margin-block-end: 2rem;
   gap: 2rem;
-  justify-content: space-between;
-  flex-direction: column;
-  align-items: baseline;
-}
-
-.stic-title-wrapper {
-  flex: 1;
 }
 
 .stic-software-version-card {
-  flex: 0 0 auto;
   border: 1px solid var(--lt-color-gray-300);
   padding: 2rem 1.5rem;
   font-size: 1.4rem;
@@ -52,10 +42,13 @@
   }
 }
 
-.stic-page-subtitle {
-  font-size: 1.6rem;
-  font-weight: 400;
-  color: var(--lt-color-gray-600);
+.stic-page-title {
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: #353535; /* Text color in other modules is hardcoded */
+  margin-block-end: 0.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .stic-sinergiacrm-section {
@@ -91,9 +84,17 @@
   height: auto;
 }
 
-@media (width > 1024px) {
+@media (width > 960px) {
   .stic-header {
     flex-direction: row;
+    position: relative;
+  }
+
+  .stic-software-version-card {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 0;
+    block-size: fit-content;
   }
 
   .stic-about-inner {

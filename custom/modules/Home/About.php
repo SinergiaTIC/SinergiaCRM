@@ -55,9 +55,8 @@ global $sugar_config, $mod_strings;
 
 <main id="stic-about-main" class="stic-about-main">
     <header class="stic-header">
-        <div class="stic-title-wrapper">
-            <h1 class="stic-page-title"><?php echo $mod_strings['LBL_ABOUT_PAGE_TITLE']; ?></h1>
-            <p class="stic-page-subtitle"><?php echo $mod_strings['LBL_ABOUT_SINERGIACRM_1']; ?></p>
+        <div class="stic-title-wrapper moduleTitle">
+            <h1 class="stic-page-title module-title-text"><?php echo $mod_strings['LBL_ABOUT_PAGE_TITLE']; ?></h1>
         </div>
         <div class="stic-software-version-card">
             <div class="stic-software-version">SinergiaCRM:
