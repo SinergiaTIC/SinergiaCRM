@@ -51,8 +51,7 @@ global $sugar_config, $mod_strings;
 
 ?>
 
-<link rel="stylesheet" type="text/css"
-    href="<?php echo $sugar_config['site_url'] . '/custom/modules/Home/css/style.css'; ?>">
+<link rel="stylesheet" type="text/css" href="./custom/modules/Home/css/style.css">
 
 <main id="stic-about-main" class="stic-about-main">
     <header class="stic-header">
