@@ -30,6 +30,7 @@
   margin-block-end: 2rem;
   gap: 2rem;
   justify-content: space-between;
+  flex-direction: column;
   align-items: baseline;
 }
 
@@ -66,21 +67,6 @@
   margin-block: 4rem;
 }
 
-.stic-about-inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.stic-about-content {
-  flex: 1 0 600px;
-  min-width: 600px;
-}
-
-.stic-about-financial {
-  flex-basis: 100%;
-}
-
 .stic-about-title {
   font-size: 1.8rem;
   font-weight: 400;
@@ -100,13 +86,33 @@
 }
 
 .stic-about-financial-image {
-  max-width: 60%;
+  max-width: 100%;
+  width: 100%;
   height: auto;
 }
 
-@media (width < 1024px) {
+@media (width > 1024px) {
+  .stic-header {
+    flex-direction: row;
+  }
+
+  .stic-about-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .stic-about-content {
+    flex: 1;
+    min-width: 400px;
+  }
+
+  .stic-about-financial {
+    flex-basis: 100%;
+  }
+
   .stic-about-financial-image {
-    max-width: 100%;
+    max-width: 60%;
   }
 }
 
