@@ -57,7 +57,11 @@ class CustomContactsViewEdit extends ContactsViewEdit
         $incorporaRequiredFieldsArray = json_encode(array_filter($contactDef, function ($var) { return $var['required'] ?? false; }));
 
         // In SubpanelQuickCreate preDisplay() is not executed, so we need to ensure Utils.js is loaded here too
-        echo getVersionedScript("SticInclude/js/Utils.js");
+        // Avoid loading it twice in regular EditView (where preDisplay() already includes it)
+        $isSubpanelQuickCreate = !empty($this->ev->formName) && strpos($this->ev->formName, 'form_Subpanel') === 0;
+        if ($isSubpanelQuickCreate) {
+            echo getVersionedScript("SticInclude/js/Utils.js");
+        }
 
         echo <<<SCRIPT
         <script>
