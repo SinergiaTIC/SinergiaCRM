@@ -378,11 +378,7 @@ array (
             'name' => 'birthdate',
             'label' => 'LBL_BIRTHDATE',
           ),
-          1 => 
-          array(
-            'name'=>'stic_portal_force_pw_change_c',
-            'label'=>'LBL_STIC_PORTAL_FORCE_PW_CHANGE'
-          ),
+          1 => '',
        ),
         5 => 
         array (
@@ -987,7 +983,14 @@ array (
             'label' => 'LBL_STIC_PORTAL_ENABLED'
           ),
         ),
-        1 => '',
+        1 => 
+        array(
+          0 => 
+          array(
+            'name'=>'stic_portal_force_pw_change_c',
+            'label'=>'LBL_STIC_PORTAL_FORCE_PW_CHANGE'
+          ),
+        ),
       ),
       'LBL_STIC_PANEL_INCORPORA_ADDRESS' => 
       array (

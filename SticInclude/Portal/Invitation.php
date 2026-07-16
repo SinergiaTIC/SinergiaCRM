@@ -39,6 +39,9 @@ $idList = array_filter(array_map('trim', explode(',', $idRaw)));
 $allConfig = SticPortalConfigUtils::getAll();
 $portalTitle = !empty($allConfig['PORTAL_TITLE']) ? $allConfig['PORTAL_TITLE'] : 'SinergiaCRM Portal';
 $portalUrl   = !empty($allConfig['PORTAL_HOME_URL']) ? rtrim($allConfig['PORTAL_HOME_URL'], '/') : $sugar_config['site_url'];
+$redirectUri = $_REQUEST['redirect_uri'] ?? '';
+// If a specific external app was selected, use its URL; otherwise show the portal login URL
+$appUrl = !empty($redirectUri) ? $redirectUri : $portalUrl . '/index.php?entryPoint=sticPortalLogin';
 $templateKey = ($module === 'Accounts') ? 'PORTAL_TMPL_CRED_ACCOUNTS' : 'PORTAL_TMPL_CRED_CONTACTS';
 $templateId  = $allConfig[$templateKey] ?? '';
 
@@ -83,9 +86,9 @@ foreach ($idList as $id) {
     }
 
     // Get template content (or use defaults)
-    $subject  = "$portalTitle - Access your portal";
-    $loginUrl = $portalUrl . '/index.php?entryPoint=sticPortalLogin';
-    $bodyHtml = "<p>Hello {$firstName},</p><p>Your portal account is ready.</p><p>Access: <a href=\"{$loginUrl}\">{$loginUrl}</a></p><p>Username: {$bean->$usernameField}</p><p>Click here to set your password: <a href=\"{$resetLink}\">Set Password</a></p><p>This link expires in 24 hours.</p>";
+    $adminStrings = return_module_language($GLOBALS['current_language'], 'Administration');
+    $subject  = str_replace('{$portal_title}', $portalTitle, $adminStrings['LBL_STIC_PORTAL_INVITATION_SUBJECT']);
+    $bodyHtml = $adminStrings['LBL_STIC_PORTAL_INVITATION_BODY'];
 
     if (!empty($templateId)) {
         $tmpl = BeanFactory::getBean('EmailTemplates', $templateId);
@@ -102,7 +105,7 @@ foreach ($idList as $id) {
         '{$contact_name}'                     => $fullName,
         '{$contact_description}'              => $bean->description ?? '',
         '{$contact_stic_portal_username_c}'   => $bean->$usernameField,
-        '{$portal_address}'                   => $portalUrl,
+        '{$portal_address}'                   => $appUrl,
         '{$portal_login_url}'                 => $loginUrl,
         '{$portal_title}'                     => $portalTitle,
         '{$portal_reset_link}'                => $resetLink,

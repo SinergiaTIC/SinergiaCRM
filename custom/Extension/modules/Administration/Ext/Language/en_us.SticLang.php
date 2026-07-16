@@ -146,15 +146,17 @@ $mod_strings['LBL_STIC_PORTAL_TEMPLATE_CONTACTS'] = 'Portal credentials (Contact
 $mod_strings['LBL_STIC_PORTAL_TEMPLATE_ACCOUNTS'] = 'Portal credentials (Accounts):';
 $mod_strings['LBL_STIC_PORTAL_TEMPLATE_RESET'] = 'Password reset:';
 $mod_strings['LBL_STIC_PORTAL_TEMPLATE_MAGIC'] = 'Magic link:';
-$mod_strings['LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED'] = 'Password changed:';
-$mod_strings['LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN'] = 'New login:';
-$mod_strings['LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED'] = 'Account locked:';
-$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED'] = 'Reset requested:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED'] = 'Enable password changed notification:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN'] = 'Enable new login notification:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED'] = 'Enable account locked notification:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED'] = 'Enable reset requested notification:';
 $mod_strings['LBL_STIC_PORTAL_CREATE'] = 'Create';
 $mod_strings['LBL_STIC_PORTAL_EDIT'] = 'Edit';
 $mod_strings['LBL_STIC_PORTAL_VIEW_LOG'] = 'View Log';
 $mod_strings['LBL_STIC_PORTAL_CLEAR_LOCKOUTS'] = 'Clear All Lockouts';
+$mod_strings['LBL_STIC_PORTAL_CLEAR_LOCKOUTS_HELP'] = 'Remove all portal account lockouts at once. Locked accounts are automatically unlocked after the configured lockout duration. Use this to manually unlock all accounts immediately.';
 $mod_strings['LBL_STIC_PORTAL_CLEAR_SESSIONS'] = 'Clear All Sessions';
+$mod_strings['LBL_STIC_PORTAL_CLEAR_SESSIONS_HELP'] = 'Force logout of all active portal sessions. This invalidates all current portal login sessions. Users will need to log in again.';
 $mod_strings['LBL_STIC_PORTAL_CONFIRM_CLEAR_LOCKOUTS'] = 'Are you sure you want to clear all portal lockouts?';
 $mod_strings['LBL_STIC_PORTAL_CONFIRM_CLEAR_SESSIONS'] = 'Are you sure you want to clear all portal sessions?';
 $mod_strings['LBL_STIC_PORTAL_TITLE_HELP'] = 'Portal name shown on login page and emails.';
@@ -180,3 +182,32 @@ $mod_strings["LBL_STIC_PORTAL_REMOVE_TAB_BUTTON"] = "Remove Portal Tab";
 $mod_strings["LBL_STIC_PORTAL_REMOVE_TAB_CONFIRM"] = "This will remove the Portal Authentication tab from all Contacts views. Continue?";
 $mod_strings['LBL_STIC_PORTAL_APPLY_TAB_CONTACTS'] = 'Contacts';
 $mod_strings['LBL_STIC_PORTAL_APPLY_TAB_ACCOUNTS'] = 'Accounts';
+
+// Email template variable help
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_CONTACTS_HELP'] = 'Available variables:<br><b>&#123;$contact_first_name&#125;</b> — Contact first name<br><b>&#123;$contact_last_name&#125;</b> — Contact last name<br><b>&#123;$contact_name&#125;</b> — Contact full name<br><b>&#123;$contact_stic_portal_username_c&#125;</b> — Portal username<br><b>&#123;$portal_address&#125;</b> — Portal/app URL<br><b>&#123;$portal_reset_link&#125;</b> — Password setup link<br><b>&#123;$portal_title&#125;</b> — Portal title';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_ACCOUNTS_HELP'] = 'Available variables:<br><b>&#123;$account_stic_portal_username_c&#125;</b> — Portal username<br><b>&#123;$portal_address&#125;</b> — Portal/app URL<br><b>&#123;$portal_reset_link&#125;</b> — Password setup link<br><b>&#123;$portal_title&#125;</b> — Portal title';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_RESET_HELP'] = 'Available variables:<br><b>&#123;$portal_reset_link&#125;</b> — Password reset link (valid 1 hour)<br><b>&#123;$portal_title&#125;</b> — Portal title';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_MAGIC_HELP'] = 'Available variables:<br><b>&#123;$portal_magic_link&#125;</b> — One-click login link<br><b>&#123;$portal_title&#125;</b> — Portal title';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_NOTIFY_HELP'] = 'Each security notification can be enabled or disabled using the checkbox next to its label. When disabled, no email will be sent for that event.<br><br>Select an email template to customize the message content. If no template is selected, a default message will be used.<br><br>Available variables in notification templates:<br><b>&#123;$notification_time&#125;</b> — Event date/time<br><b>&#123;$notification_ip&#125;</b> — IP address of the user<br><b>&#123;$notification_ua&#125;</b> — Browser / user-agent<br><b>&#123;$notification_event&#125;</b> — Event type (e.g. new_login, password_changed)<br><b>&#123;$portal_title&#125;</b> — Portal title from General Settings<br><b>&#123;$contact_name&#125;</b> — Contact or account name';
+
+$mod_strings['LBL_STIC_PORTAL_NOTIFICATIONS_HELP'] = 'Security notifications inform portal users about important account events via email. Tick a checkbox to enable a notification, then optionally choose an email template to customise the message. If no template is selected a built-in default is used. Notifications that are not ticked will never be sent.';
+
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED_HELP'] = 'Sent when the user successfully changes their portal password. Tick the checkbox to enable this notification, then optionally choose a custom email template. Available variables: <b>&#123;$notification_time&#125;</b>, <b>&#123;$notification_ip&#125;</b>, <b>&#123;$notification_ua&#125;</b>, <b>&#123;$notification_event&#125;</b>, <b>&#123;$portal_title&#125;</b>, <b>&#123;$contact_name&#125;</b>.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN_HELP'] = 'Sent on every successful portal login so the user can monitor account access. Tick the checkbox to enable, then optionally choose a template. Available variables: <b>&#123;$notification_time&#125;</b>, <b>&#123;$notification_ip&#125;</b>, <b>&#123;$notification_ua&#125;</b>, <b>&#123;$notification_event&#125;</b>, <b>&#123;$portal_title&#125;</b>, <b>&#123;$contact_name&#125;</b>.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED_HELP'] = 'Sent when the account is locked after too many failed login attempts. The user cannot log in until the lockout expires or an admin clears it. Tick the checkbox to enable, then optionally choose a template. Available variables: <b>&#123;$notification_time&#125;</b>, <b>&#123;$notification_ip&#125;</b>, <b>&#123;$notification_ua&#125;</b>, <b>&#123;$notification_event&#125;</b>, <b>&#123;$portal_title&#125;</b>, <b>&#123;$contact_name&#125;</b>.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED_HELP'] = 'Sent when a password reset is requested via the Forgot Password link. Alerts the user if someone else tries to reset their password. Tick the checkbox to enable, then optionally choose a template. Available variables: <b>&#123;$notification_time&#125;</b>, <b>&#123;$notification_ip&#125;</b>, <b>&#123;$notification_ua&#125;</b>, <b>&#123;$notification_event&#125;</b>, <b>&#123;$portal_title&#125;</b>, <b>&#123;$contact_name&#125;</b>.';
+// Portal email default subjects & bodies (used when no template is configured)
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SUBJECT'] = 'SinergiaCRM Portal - Access your portal';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_BODY'] = 'Hello,<br><br>Your portal account is ready.<br><br>Access: <a href=\"{$portal_address}\">{$portal_address}</a><br>Username: {$contact_stic_portal_username_c}<br><br>Click here to set your password: <a href=\"{$portal_reset_link}\">Set Password</a><br><br>This link expires in 24 hours.';
+$mod_strings['LBL_STIC_PORTAL_RESET_SUBJECT'] = 'Password Reset Request';
+$mod_strings['LBL_STIC_PORTAL_RESET_BODY'] = 'A password reset was requested. Click to reset (valid 1 hour): <a href=\"{$portal_reset_link}\">Reset Password</a><br><br>Ignore if not requested.';
+$mod_strings['LBL_STIC_PORTAL_MAGIC_SUBJECT'] = 'Your Login Link';
+$mod_strings['LBL_STIC_PORTAL_MAGIC_BODY'] = 'Click to log in: <a href=\"{$portal_magic_link}\">Login to Portal</a><br><br>Ignore if not requested.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PWCHG_SUBJECT'] = '{$portal_title} - Your password was changed';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PWCHG_BODY'] = 'Your portal password was changed at {$notification_time} from IP {$notification_ip}. Contact support if not you.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOGIN_SUBJECT'] = '{$portal_title} - New login detected';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOGIN_BODY'] = 'New login at {$notification_time}. IP: {$notification_ip}. Browser: {$notification_ua}. Contact support if not you.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOCK_SUBJECT'] = '{$portal_title} - Account locked';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOCK_BODY'] = 'Account locked due to failed attempts at {$notification_time} from IP {$notification_ip}. Will unlock automatically or contact support.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_SUBJECT'] = '{$portal_title} - Password reset requested';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_BODY'] = 'Reset requested at {$notification_time} from IP {$notification_ip}. Contact support if not you.';

@@ -199,13 +199,23 @@
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_STIC_PORTAL_EMAIL_TEMPLATES}</h4></th></tr>
 <tr>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_TEMPLATE_CONTACTS}</td>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_TEMPLATE_CONTACTS}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="15" aria-describedby="qtip-15"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_TEMPLATE_CONTACTS_HELP}</div>
+    </td>
     <td width="25%" valign="middle">
         <select name="PORTAL_TMPL_CRED_CONTACTS">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_CRED_CONTACTS}</select>
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_EDIT|escape}" onclick="var s=document.querySelector('[name=PORTAL_TMPL_CRED_CONTACTS]'); if(s.value) document.location.href='index.php?module=EmailTemplates&action=EditView&record='+s.value;">
     </td>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_TEMPLATE_ACCOUNTS}</td>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_TEMPLATE_ACCOUNTS}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="16" aria-describedby="qtip-16"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_TEMPLATE_ACCOUNTS_HELP}</div>
+    </td>
     <td width="25%" valign="middle">
         <select name="PORTAL_TMPL_CRED_ACCOUNTS">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_CRED_ACCOUNTS}</select>
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
@@ -213,13 +223,23 @@
     </td>
 </tr>
 <tr>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_TEMPLATE_RESET}</td>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_TEMPLATE_RESET}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="17" aria-describedby="qtip-17"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_TEMPLATE_RESET_HELP}</div>
+    </td>
     <td width="25%" valign="middle">
         <select name="PORTAL_TMPL_RESET">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_RESET}</select>
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_EDIT|escape}" onclick="var s=document.querySelector('[name=PORTAL_TMPL_RESET]'); if(s.value) document.location.href='index.php?module=EmailTemplates&action=EditView&record='+s.value;">
     </td>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_TEMPLATE_MAGIC}</td>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_TEMPLATE_MAGIC}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="18" aria-describedby="qtip-18"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_TEMPLATE_MAGIC_HELP}</div>
+    </td>
     <td width="25%" valign="middle">
         <select name="PORTAL_TMPL_MAGIC">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_MAGIC}</select>
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
@@ -229,31 +249,76 @@
 </table>
 
 <!-- SECURITY NOTIFICATIONS -->
-<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+<table width="100%" border="0" cellspacing="1" cellpadding="2" class="edit view">
 <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_STIC_PORTAL_NOTIFICATIONS}</h4></th></tr>
 <tr>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED}</td>
-    <td width="25%" valign="middle">
-        <input type="checkbox" name="PORTAL_NOTIFY_PASSWORD_CHANGED" value="1" {if $SETTINGS.PORTAL_NOTIFY_PASSWORD_CHANGED eq '1'}checked{/if}>
-        <select name="PORTAL_TMPL_NOTIFY_PWCHG">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_PWCHG}</select>
-    </td>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN}</td>
-    <td width="25%" valign="middle">
-        <input type="checkbox" name="PORTAL_NOTIFY_NEW_LOGIN" value="1" {if $SETTINGS.PORTAL_NOTIFY_NEW_LOGIN eq '1'}checked{/if}>
-        <select name="PORTAL_TMPL_NOTIFY_LOGIN">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_LOGIN}</select>
+    <td colspan="4" style="padding: 4px 12px; color: #555; font-size: 12px;">
+        {$MOD.LBL_STIC_PORTAL_NOTIFICATIONS_HELP}
     </td>
 </tr>
 <tr>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED}</td>
-    <td width="25%" valign="middle">
-        <input type="checkbox" name="PORTAL_NOTIFY_ACCOUNT_LOCKED" value="1" {if $SETTINGS.PORTAL_NOTIFY_ACCOUNT_LOCKED eq '1'}checked{/if}>
-        <select name="PORTAL_TMPL_NOTIFY_LOCK">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_LOCK}</select>
+    <td width="40%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED}
+        <i class="inline-help glyphicon glyphicon-info-sign"></i>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED_HELP}</div>
+        <input type="checkbox" name="PORTAL_NOTIFY_PASSWORD_CHANGED" value="1" {if $SETTINGS.PORTAL_NOTIFY_PASSWORD_CHANGED eq '1'}checked{/if}
+               onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_PWCHG')">
     </td>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED}</td>
-    <td width="25%" valign="middle">
-        <input type="checkbox" name="PORTAL_NOTIFY_RESET_REQUESTED" value="1" {if $SETTINGS.PORTAL_NOTIFY_RESET_REQUESTED eq '1'}checked{/if}>
-        <select name="PORTAL_TMPL_NOTIFY_RESET">{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_RESET}</select>
+    <td width="10%" valign="middle">&nbsp;</td>
+    <td width="40%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN}
+        <i class="inline-help glyphicon glyphicon-info-sign"></i>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN_HELP}</div>
+        <input type="checkbox" name="PORTAL_NOTIFY_NEW_LOGIN" value="1" {if $SETTINGS.PORTAL_NOTIFY_NEW_LOGIN eq '1'}checked{/if}
+               onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_LOGIN')">
     </td>
+    <td width="10%" valign="middle">&nbsp;</td>
+</tr>
+<tr>
+    <td width="40%" scope="row" valign="middle" style="padding-left:8px;">
+        <select name="PORTAL_TMPL_NOTIFY_PWCHG" {if $SETTINGS.PORTAL_NOTIFY_PASSWORD_CHANGED neq '1'}disabled{/if}>{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_PWCHG}</select>
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_EDIT|escape}" onclick="var s=document.querySelector('[name=PORTAL_TMPL_NOTIFY_PWCHG]'); if(s.value) document.location.href='index.php?module=EmailTemplates&action=EditView&record='+s.value;">
+    </td>
+    <td width="10%" valign="middle">&nbsp;</td>
+    <td width="40%" scope="row" valign="middle" style="padding-left:8px;">
+        <select name="PORTAL_TMPL_NOTIFY_LOGIN" {if $SETTINGS.PORTAL_NOTIFY_NEW_LOGIN neq '1'}disabled{/if}>{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_LOGIN}</select>
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_EDIT|escape}" onclick="var s=document.querySelector('[name=PORTAL_TMPL_NOTIFY_LOGIN]'); if(s.value) document.location.href='index.php?module=EmailTemplates&action=EditView&record='+s.value;">
+    </td>
+    <td width="10%" valign="middle">&nbsp;</td>
+</tr>
+<tr>
+    <td width="40%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED}
+        <i class="inline-help glyphicon glyphicon-info-sign"></i>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED_HELP}</div>
+        <input type="checkbox" name="PORTAL_NOTIFY_ACCOUNT_LOCKED" value="1" {if $SETTINGS.PORTAL_NOTIFY_ACCOUNT_LOCKED eq '1'}checked{/if}
+               onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_LOCK')">
+    </td>
+    <td width="10%" valign="middle">&nbsp;</td>
+    <td width="40%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED}
+        <i class="inline-help glyphicon glyphicon-info-sign"></i>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED_HELP}</div>
+        <input type="checkbox" name="PORTAL_NOTIFY_RESET_REQUESTED" value="1" {if $SETTINGS.PORTAL_NOTIFY_RESET_REQUESTED eq '1'}checked{/if}
+               onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_RESET')">
+    </td>
+    <td width="10%" valign="middle">&nbsp;</td>
+</tr>
+<tr>
+    <td width="40%" scope="row" valign="middle" style="padding-left:8px;">
+        <select name="PORTAL_TMPL_NOTIFY_LOCK" {if $SETTINGS.PORTAL_NOTIFY_ACCOUNT_LOCKED neq '1'}disabled{/if}>{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_LOCK}</select>
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_EDIT|escape}" onclick="var s=document.querySelector('[name=PORTAL_TMPL_NOTIFY_LOCK]'); if(s.value) document.location.href='index.php?module=EmailTemplates&action=EditView&record='+s.value;">
+    </td>
+    <td width="10%" valign="middle">&nbsp;</td>
+    <td width="40%" scope="row" valign="middle" style="padding-left:8px;">
+        <select name="PORTAL_TMPL_NOTIFY_RESET" {if $SETTINGS.PORTAL_NOTIFY_RESET_REQUESTED neq '1'}disabled{/if}>{html_options options=$EMAIL_TEMPLATES selected=$SETTINGS.PORTAL_TMPL_NOTIFY_RESET}</select>
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CREATE|escape}" onclick="document.location.href='index.php?module=EmailTemplates&action=EditView'">
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_EDIT|escape}" onclick="var s=document.querySelector('[name=PORTAL_TMPL_NOTIFY_RESET]'); if(s.value) document.location.href='index.php?module=EmailTemplates&action=EditView&record='+s.value;">
+    </td>
+    <td width="10%" valign="middle">&nbsp;</td>
 </tr>
 </table>
 
@@ -261,11 +326,21 @@
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_STIC_PORTAL_BULK_ACTIONS}</h4></th></tr>
 <tr>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_CLEAR_LOCKOUTS}</td>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_CLEAR_LOCKOUTS}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="23" aria-describedby="qtip-23"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_CLEAR_LOCKOUTS_HELP}</div>
+    </td>
     <td width="25%" valign="middle">
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CLEAR_LOCKOUTS|escape}" onclick="if(confirm('{$MOD.LBL_STIC_PORTAL_CONFIRM_CLEAR_LOCKOUTS|escape}')) document.location.href='index.php?module=Administration&action=sticportalconfig_clearlockouts';">
     </td>
-    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS}</td>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="24" aria-describedby="qtip-24"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS_HELP}</div>
+    </td>
     <td width="25%" valign="middle">
         <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS|escape}" onclick="if(confirm('{$MOD.LBL_STIC_PORTAL_CONFIRM_CLEAR_SESSIONS|escape}')) document.location.href='index.php?module=Administration&action=sticportalconfig_clearsessions';">
     </td>
@@ -277,6 +352,7 @@
 <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_STIC_PORTAL_LOGIN_AUDIT}</h4></th></tr>
 <tr>
     <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_LOGIN_AUDIT}
         <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="14" aria-describedby="qtip-14"></i>
 <script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_LOGIN_AUDIT_HELP}</div>
@@ -302,5 +378,9 @@ $(function() {
     $("i.inline-help").removeAttr("data-hasqtip");
     setInlineHelpQtip();
 });
+function toggleNotifyTemplate(checkbox, templateName) {
+    var sel = document.querySelector('[name="' + templateName + '"]');
+    if (sel) { sel.disabled = !checkbox.checked; }
+}
 </script>
 {/literal}

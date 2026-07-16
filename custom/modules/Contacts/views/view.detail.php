@@ -49,21 +49,11 @@ class CustomContactsViewDetail extends ContactsViewDetail
 
         SticViews::display($this);
 
-        // Portal: inject configured OAuth2 clients for invitation buttons
-        require_once 'SticInclude/Portal/ConfigUtils.php';
-        global $db;
-        $clients = array();
-        $r = $db->query("SELECT id, name, redirect_url FROM oauth2clients WHERE allowed_grant_type='portal_authorization_code' AND deleted=0 ORDER BY name");
-        while ($row = $db->fetchByAssoc($r)) {
-            $clients[] = array('name' => $row['name'], 'url' => $row['redirect_url']);
-        }
-        echo "<script>STIC.portalClients = " . json_encode($clients) . ";</script>\n";
-        
-        // Portal Actions popup (raw file_get_contents, no Smarty to avoid corrupting $this->ss after display)
-        echo file_get_contents(dirname(__DIR__, 4) . '/custom/themes/SuiteP/tpls/SticPortalActionsPopup.tpl');
+        // Portal: inject OAuth2 clients and popup HTML
+        require_once 'SticInclude/Portal/PortalPopupUtils.php';
+        PortalPopupUtils::echoDetailViewPopup('Contacts');
         
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
-
 
         require_once('modules/stic_Messages/Utils.php');
         stic_MessagesUtils::echoIsMessagesModuleActive();

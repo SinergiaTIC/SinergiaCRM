@@ -347,13 +347,13 @@ class SticPortalAuthUtils
         global $db;
         $hashed = $db->quoted(hash('sha256', $token));
         $id = $db->quoted($recordId);
-        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=$id AND c.deleted=0 AND cc.stic_portal_reset_token_c=$hashed AND cc.stic_portal_reset_expires_c > NOW()", 0, 1);
+        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=$id AND c.deleted=0 AND cc.stic_portal_reset_token_c=$hashed AND cc.stic_portal_reset_expires_c > UTC_TIMESTAMP()", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $GLOBALS['log']->debug(__METHOD__ . " - Valid reset token for Contact: {$row['id']}");
             return array('bean' => BeanFactory::getBean('Contacts', $row['id']), 'type' => 'Contact');
         }
-        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.id=$id AND a.deleted=0 AND ac.stic_portal_reset_token_c=$hashed AND ac.stic_portal_reset_expires_c > NOW()", 0, 1);
+        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.id=$id AND a.deleted=0 AND ac.stic_portal_reset_token_c=$hashed AND ac.stic_portal_reset_expires_c > UTC_TIMESTAMP()", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $GLOBALS['log']->debug(__METHOD__ . " - Valid reset token for Account: {$row['id']}");
@@ -388,7 +388,7 @@ class SticPortalAuthUtils
         global $db;
         $hashed = $db->quoted(hash('sha256', $token));
         $id = $db->quoted($recordId);
-        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=$id AND c.deleted=0 AND cc.stic_portal_magic_token_c=$hashed AND cc.stic_portal_magic_expires_c > NOW()", 0, 1);
+        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.id=$id AND c.deleted=0 AND cc.stic_portal_magic_token_c=$hashed AND cc.stic_portal_magic_expires_c > UTC_TIMESTAMP()", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Contacts', $row['id']);
@@ -397,7 +397,7 @@ class SticPortalAuthUtils
             $bean->save();
             return array('bean' => $bean, 'type' => 'Contact');
         }
-        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.id=$id AND a.deleted=0 AND ac.stic_portal_magic_token_c=$hashed AND ac.stic_portal_magic_expires_c > NOW()", 0, 1);
+        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.id=$id AND a.deleted=0 AND ac.stic_portal_magic_token_c=$hashed AND ac.stic_portal_magic_expires_c > UTC_TIMESTAMP()", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Accounts', $row['id']);
@@ -411,7 +411,7 @@ class SticPortalAuthUtils
 
     public static function sendMagicLinkEmail($bean, $rawToken)
     {
-        $templateId = SticPortalConfigUtils::get('PORTAL_MAGIC_LINK_TEMPLATE', '');
+        $templateId = SticPortalConfigUtils::get('PORTAL_TMPL_MAGIC', '');
         if (empty($templateId)) return false;
         $tpl = BeanFactory::getBean('EmailTemplates', $templateId);
         if (!$tpl || !$tpl->id) return false;
@@ -421,10 +421,14 @@ class SticPortalAuthUtils
         $link = rtrim(SticPortalConfigUtils::get('PORTAL_HOME_URL', ''), '/');
         if (empty($link)) $link = 'http://localhost:8000/sinergiacrm';
         $link .= '/index.php?entryPoint=sticPortalMagicLogin&token=' . urlencode($rawToken) . '&id=' . urlencode($bean->id);
-        $tpl->subject = str_replace(array('$portal_magic_link', '$portal_title'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->subject);
-        $tpl->body = str_replace(array('$portal_magic_link', '$portal_title'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->body);
-        $tpl->body_html = str_replace(array('$portal_magic_link', '$portal_title'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->body_html);
+        $tpl->subject = html_entity_decode($tpl->subject, ENT_QUOTES);
+        $tpl->body = html_entity_decode($tpl->body, ENT_QUOTES);
+        $tpl->body_html = html_entity_decode($tpl->body_html, ENT_QUOTES);
+        $tpl->subject = str_replace(array('{$portal_magic_link}', '{$portal_title}'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->subject);
+        $tpl->body = str_replace(array('{$portal_magic_link}', '{$portal_title}'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->body);
+        $tpl->body_html = str_replace(array('{$portal_magic_link}', '{$portal_title}'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->body_html);
         $mail = new SugarPHPMailer();
+        $mail->setMailerForSystem();
         $mail->From = 'noreply@sinergiacrm.org';
         $mail->FromName = SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal');
         $mail->addAddress($to, self::getRecipientName($bean));
@@ -591,6 +595,7 @@ class SticPortalAuthUtils
     {
         $settingMap = array('password_changed' => 'PORTAL_NOTIFY_PASSWORD_CHANGED', 'new_login' => 'PORTAL_NOTIFY_NEW_LOGIN', 'account_locked' => 'PORTAL_NOTIFY_ACCOUNT_LOCKED', 'reset_requested' => 'PORTAL_NOTIFY_RESET_REQUESTED');
         $templateMap = array('password_changed' => 'PORTAL_TMPL_NOTIFY_PWCHG', 'new_login' => 'PORTAL_TMPL_NOTIFY_LOGIN', 'account_locked' => 'PORTAL_TMPL_NOTIFY_LOCK', 'reset_requested' => 'PORTAL_TMPL_NOTIFY_RESET');
+        $labelKeyMap = array('password_changed' => 'LBL_STIC_PORTAL_NOTIFY_PWCHG', 'new_login' => 'LBL_STIC_PORTAL_NOTIFY_LOGIN', 'account_locked' => 'LBL_STIC_PORTAL_NOTIFY_LOCK', 'reset_requested' => 'LBL_STIC_PORTAL_NOTIFY_RESET');
         if (!isset($settingMap[$eventType]) || SticPortalConfigUtils::get($settingMap[$eventType], '0') !== '1') return false;
         require_once 'include/SugarPHPMailer.php';
         $to = self::getPrimaryEmail($bean);
@@ -601,8 +606,12 @@ class SticPortalAuthUtils
         $now = date('Y-m-d H:i:s');
 
         $templateId = SticPortalConfigUtils::get($templateMap[$eventType], '');
-        $subject = "{$title} - Security notification";
-        $bodyHtml = "<p>A security event occurred on your {$title} account.</p><p>Event: {$eventType}<br>Time: {$now}<br>IP: {$ip}<br>Browser: {$ua}</p><p>If this was not you, please contact support immediately.</p>";
+        // Default subject/body from Administration language strings
+        $adminStrings = return_module_language($GLOBALS['current_language'], 'Administration');
+        $labelKey = $labelKeyMap[$eventType] . '_SUBJECT';
+        $labelKeyBody = $labelKeyMap[$eventType] . '_BODY';
+        $subject = $adminStrings[$labelKey];
+        $bodyHtml = $adminStrings[$labelKeyBody];
 
         if (!empty($templateId)) {
             $tmpl = BeanFactory::getBean('EmailTemplates', $templateId);
