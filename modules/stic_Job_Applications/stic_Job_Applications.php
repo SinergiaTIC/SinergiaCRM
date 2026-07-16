@@ -68,18 +68,19 @@ class stic_Job_Applications extends Basic
 
     public function save($check_notify = false) 
     {
-        // Call the generic save() function from the SugarBean class
-        if (empty($this->name)) {
-            $contact_name = $this->stic_job_applications_contacts_name ?? '';
-            $offer_name = $this->stic_job_applications_stic_job_offers_name ?? '';
-
-            $this->name = $contact_name .' - '.$offer_name;
-        }
-        
         $offerId = $this->getRelatedOfferId();
         $offerBean = !empty($offerId)
             ? BeanFactory::getBean('stic_Job_Offers', $offerId)
             : null;
+
+        // Call the generic save() function from the SugarBean class
+        if (empty($this->name)) {
+            $contact_name = $this->getRelatedContactName();
+            $offer_name = $this->getRelatedName($this->stic_job_applications_stic_job_offers_name ?? '', $offerBean);
+
+            $this->name = $contact_name .' - '.$offer_name;
+        }
+
         // If it is a new record, the assigned user of the offer is indicated in the job application
         if (!empty($offerBean) &&
             $this->assigned_user_id != $offerBean->assigned_user_id) {
@@ -146,25 +147,119 @@ class stic_Job_Applications extends Basic
     }
 
     /**
+     * Get related contact name
+     *
+     * @return string
+     */
+    protected function getRelatedContactName()
+    {
+        $contactId = $this->getRelatedContactId();
+        if (empty($contactId)) {
+            return (string)($this->stic_job_applications_contacts_name ?? '');
+        }
+
+        $contactBean = BeanFactory::getBean('Contacts', $contactId);
+        return $this->getRelatedName(
+            $this->stic_job_applications_contacts_name ?? '',
+            $contactBean,
+            'first_name',
+            'last_name'
+        );
+    }
+
+    /**
+     * Get a related bean display name with fallback to bean fields
+     *
+     * @param mixed $rawName
+     * @param SugarBean|null $bean
+     * @param string $firstField
+     * @param string $lastField
+     * @return string
+     */
+    protected function getRelatedName($rawName, $bean, $firstField = '', $lastField = '')
+    {
+        if (!is_object($rawName) && !empty(trim((string)$rawName))) {
+            return (string)$rawName;
+        }
+
+        if (empty($bean) || empty($bean->id)) {
+            return '';
+        }
+
+        $beanName = $bean->name ?? '';
+        if (!empty($beanName)) {
+            return (string)$beanName;
+        }
+
+        if (!empty($firstField) || !empty($lastField)) {
+            $firstName = !empty($firstField) ? (string)($bean->{$firstField} ?? '') : '';
+            $lastName = !empty($lastField) ? (string)($bean->{$lastField} ?? '') : '';
+
+            return trim($firstName . ' ' . $lastName);
+        }
+
+        return '';
+    }
+
+    /**
+     * Get related contact ID
+     *
+     * @return string
+     */
+    protected function getRelatedContactId()
+    {
+        return $this->getRelatedId(
+            $this->stic_job_applications_contactscontacts_ida ?? '',
+            'stic_job_applications_contactscontacts_ida',
+            'stic_job_applications_contactscontacts_ida',
+            'stic_job_applications_contacts_c',
+            'stic_job_applications_contactscontacts_ida',
+            'stic_job_applications_contactsstic_job_applications_idb'
+        );
+    }
+
+    /**
      * Get related offer ID
      *
      * @return string
      */
     protected function getRelatedOfferId()
     {
-        $rawOfferId = $this->stic_job_applications_stic_job_offersstic_job_offers_ida ?? '';
-        if (!is_object($rawOfferId) && !empty($rawOfferId)) {
-            return (string)$rawOfferId;
+        return $this->getRelatedId(
+            $this->stic_job_applications_stic_job_offersstic_job_offers_ida ?? '',
+            'stic_job_applications_stic_job_offersstic_job_offers_ida',
+            'stic_job_applications_stic_job_offersstic_job_offers_ida',
+            'stic_job_applications_stic_job_offers_c',
+            'stic_job_applications_stic_job_offersstic_job_offers_ida',
+            'stic_job_applications_stic_job_offersstic_job_applications_idb'
+        );
+    }
+
+    /**
+     * Get related ID from raw field, request, fetched row or relationship table
+     *
+     * @param mixed $rawId
+     * @param string $requestKey
+     * @param string $fetchedKey
+     * @param string $table
+     * @param string $idColumn
+     * @param string $applicationIdColumn
+     * @return string
+     */
+    protected function getRelatedId($rawId, $requestKey, $fetchedKey, $table, $idColumn, $applicationIdColumn)
+    {
+        if (!is_object($rawId) && !empty($rawId)) {
+            return (string)$rawId;
         }
 
-        $requestOfferId = (string)($_REQUEST['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? '');
-        if (!empty($requestOfferId)) {
-            return $requestOfferId;
+        $requestId = (string)($_REQUEST[$requestKey] ?? '');
+        if (!empty($requestId)) {
+            return $requestId;
         }
 
-        $fetchedOfferId = (string)($this->fetched_row['stic_job_applications_stic_job_offersstic_job_offers_ida'] ?? '');
-        if (!empty($fetchedOfferId)) {
-            return $fetchedOfferId;
+        $fetchedId = (string)($this->fetched_row[$fetchedKey] ?? '');
+        if (!empty($fetchedId)) {
+            return $fetchedId;
         }
 
         if (empty($this->id)) {
@@ -173,14 +268,14 @@ class stic_Job_Applications extends Basic
 
         global $db;
         $applicationId = $db->quote((string)$this->id);
-        $query = "SELECT rel.stic_job_applications_stic_job_offersstic_job_offers_ida AS offer_id
-            FROM stic_job_applications_stic_job_offers_c rel
+        $query = "SELECT rel.{$idColumn} AS related_id
+            FROM {$table} rel
             WHERE rel.deleted = 0
-              AND rel.stic_job_applications_stic_job_offersstic_job_applications_idb = '{$applicationId}'
+              AND rel.{$applicationIdColumn} = '{$applicationId}'
             ORDER BY rel.date_modified DESC
             LIMIT 1";
         $row = $db->fetchByAssoc($db->query($query));
 
-        return (string)($row['offer_id'] ?? '');
+        return (string)($row['related_id'] ?? '');
     }
 }

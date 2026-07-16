@@ -79,11 +79,19 @@ class stic_Job_ApplicationsUtils
         $workBean->stic_work_9fefcations_idb = $applicationId;
         
         // Safely map properties ensuring $offerBean is loaded correctly
-        $workBean->sector = !empty($offerBean) && !empty($offerBean->id) ? $offerBean->sector : '';
-        $workBean->subsector = !empty($offerBean) && !empty($offerBean->id) ? $offerBean->subsector : '';
-        $workBean->position_type = !empty($offerBean) && !empty($offerBean->id) ? $offerBean->position_type : '';
-        $workBean->workday_type = !empty($offerBean) && !empty($offerBean->id) ? $offerBean->workday_type : '';
-        $workBean->contract_type = !empty($offerBean) && !empty($offerBean->id) ? $offerBean->contract_type : '';
+        $workBean->sector = '';
+        $workBean->subsector = '';
+        $workBean->position_type = '';
+        $workBean->workday_type = '';
+        $workBean->contract_type = '';
+
+        if (!empty($offerBean) && !empty($offerBean->id)) {
+            $workBean->sector = $offerBean->sector;
+            $workBean->subsector = $offerBean->subsector;
+            $workBean->position_type = $offerBean->position_type;
+            $workBean->workday_type = $offerBean->workday_type;
+            $workBean->contract_type = $offerBean->contract_type;
+        }
         $workBean->achieved = true;
         
         $workBean->save();
