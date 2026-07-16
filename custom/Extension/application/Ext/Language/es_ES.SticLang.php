@@ -403,6 +403,7 @@ $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Fir
 $app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidaturas';
 $app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborales';
 $app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Mensajes';
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
