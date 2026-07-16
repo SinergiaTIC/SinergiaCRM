@@ -628,7 +628,7 @@ class stic_AwfField {
   }
 
   acceptPlaceholder() {
-    return this.type_in_form == "text" || this.type_in_form == "textarea" || this.type_in_form == "number";
+    return this.type_in_form == "text" || this.type_in_form == "textarea" || this.type_in_form == "number" || this.type_in_form == "file";
   }
 
   acceptValueOptions() {
