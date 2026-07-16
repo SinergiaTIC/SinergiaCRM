@@ -63,6 +63,19 @@ class FormRenderService {
             if (!is_array($configData)) {
                 $configData = [];
             }
+
+            // CRM form type: detect form_type for legacy forms
+            if (empty($bean->form_type)) {
+                $hasCheckSession = false;
+                $mainFlowActions = $configData['flows']['0']['actions'] ?? [];
+                if (!empty($mainFlowActions)) {
+                    // Gets the first element and evaluates if its name matches CheckSessionAction to determine if it's a CRM form
+                    $firstAction = reset($mainFlowActions);
+                    $hasCheckSession = ($firstAction['name'] ?? '') === 'CheckSessionAction';
+                }
+                $bean->form_type = $hasCheckSession ? 'crm' : 'web';
+                $bean->save();
+            }
         }
 
         // Process ConfigData
@@ -101,8 +114,8 @@ class FormRenderService {
                 
                 if (isset($requestData[$field->name])) {
                     $val = $requestData[$field->name];
-                } elseif (isset($requestData[$block->name . '_' . $field->name])) {
-                    $val = $requestData[$block->name . '_' . $field->name];
+                } elseif (isset($requestData[$field->getPhpKey()])) {
+                    $val = $requestData[$field->getPhpKey()];
                 }
 
                 if ($val !== null) {

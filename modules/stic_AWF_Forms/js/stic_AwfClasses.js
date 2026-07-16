@@ -925,7 +925,21 @@ class stic_AwfAction {
   }
 
   isValid() {
-    return this.parameters.every(param => !param.required || (param.value !== null && param.value !== ''));
+    const allActions = utils.getDefinedActions();
+    const actionDef = allActions.find(a => a.name === this.name);
+    return this.parameters.every(param => {
+      if (!param.required) return true;
+      if (param.type === 'optionSelector' && actionDef) {
+        const paramDef = actionDef.parameters.find(p => p.name === param.name);
+        const optDef = (paramDef?.selectorOptions || []).find(o => o.name === param.selectedOption);
+        if (optDef?.resolvedType === 'empty') {
+          param.value = optDef.name;
+          param.value_text = optDef.text;
+          return true;
+        }
+      }
+      return param.value !== null && param.value !== '';
+    });
   }
 
   static category_in_formList(asString = false){
@@ -962,6 +976,8 @@ class stic_AwfLayout {
     // 1. Set default values
     Object.assign(this, {
       theme: new stic_AwfTheme(),      // Visual variables of the form
+
+      web_title: utils.translate('LBL_THEME_WEB_TITLE_VALUE'),  // Title of the web page
 
       header_html: '',             // Html with the header of the form
       footer_html: '',             // Html with the footer of the form
@@ -1151,6 +1167,7 @@ class stic_AwfLayoutSection {
     Object.assign(this, {
       id: utils.newId('sect'), // ID of the section
       title: "",               // Title to display
+      subtitle: "",            // Subtitle to display
       showTitle: true,         // Indicates if the title will be shown
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
@@ -1876,8 +1893,12 @@ class stic_AwfConfiguration {
     const mainFlow = this.flows.find(f => f.id == '0');
     if (!mainFlow) return;
 
-    // Clean: Remove existing automatic actions from the main flow
-    mainFlow.actions = mainFlow.actions.filter(a => !a.is_automatic);
+    // Clean: Remove only SaveRecord and RelateRecords automatic actions (managed by this method).
+    // Other automatic actions (e.g., CheckSessionAction) are managed separately and must be preserved.
+    mainFlow.actions = mainFlow.actions.filter(a => 
+      !a.is_automatic || 
+      (a.name !== 'SaveRecordAction' && a.name !== 'RelateRecordsAction')
+    );
     
     // Reset saved action IDs on blocks before regenerating
     this.data_blocks.forEach(b => b.save_action_id = "");
@@ -1890,7 +1911,7 @@ class stic_AwfConfiguration {
     this.data_blocks.forEach(block => {
       if (!block.module) return;
       
-      const originalDef = utils.getDefinedActions().find(a => a.name == 'SaveRecordAction');
+      const originalDef = utils.getDefinedAction('SaveRecordAction');
       if (originalDef) {
         // Prepare definition override
         const actionDef = { 
@@ -1929,7 +1950,7 @@ class stic_AwfConfiguration {
           }
           
           if (relationshipName) {
-            const originalDef = utils.getDefinedActions().find(a => a.name == 'RelateRecordsAction');
+            const originalDef = utils.getDefinedAction('RelateRecordsAction');
             if (originalDef) {
               const actionDef = { 
                 ...originalDef, 
