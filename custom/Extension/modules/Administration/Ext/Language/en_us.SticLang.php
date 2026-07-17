@@ -102,26 +102,26 @@ $mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Logging of user sessions and record 
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Set the email template that will be sent when the system generates the password of a new user.';
 
-// SinergiaDA Configuration
-$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SECTION'] = 'SinergiaDA Configuration';
-$mod_strings['LBL_STIC_SINERGIADA_CONFIG_GENERAL'] = 'General configuration';
-$mod_strings['LBL_STIC_SINERGIADA_CONFIG_CACHE'] = 'SinergiaDA Cache';
-$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE'] = 'Save configuration';
-$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_HELP'] = 'Apply general and cache configuration for SinergiaDA';
-$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_SUCCESS'] = 'Configuration saved successfully.';
-$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_ERROR'] = 'Error saving configuration. Check the log for details.';
+// SinergiaDA configuration
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SECTION'] = 'SinergiaDA settings';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_GENERAL'] = 'General settings';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_CACHE'] = 'SinergiaDA cache';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE'] = 'Save settings';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_HELP'] = 'Apply general and cache settings for SinergiaDA';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_SUCCESS'] = 'Settings saved successfully.';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_ERROR'] = 'Error while saving settings. Check the system log for more details.';
 $mod_strings['LBL_STIC_SINERGIADA_ENABLED_LABEL'] = 'Enable SinergiaDA';
 $mod_strings['LBL_STIC_SINERGIADA_ENABLED_HELP'] = 'Enable or disable SinergiaDA functionality. If disabled, menus and synchronization are not available.';
 $mod_strings['LBL_STIC_SINERGIADA_URL_LABEL'] = 'Instance URL';
-$mod_strings['LBL_STIC_SINERGIADA_URL_HELP'] = 'URL where the SinergiaDA instance is located. Used for links and updateModel calls. If empty, a standard SinergiaTIC server is assumed.';
+$mod_strings['LBL_STIC_SINERGIADA_URL_HELP'] = 'URL where the SinergiaDA instance is located. Used for links and updateModel calls. If empty, a standard installation in a SinergiaTIC server is assumed.';
 $mod_strings['LBL_STIC_SINERGIADA_SEED_STRING_LABEL'] = 'Encryption seed';
 $mod_strings['LBL_STIC_SINERGIADA_SEED_STRING_HELP'] = 'Random string used by SinergiaDA to encrypt values and secure the updateModel call.';
 $mod_strings['LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_LABEL'] = 'Publish data as tables';
-$mod_strings['LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP'] = 'Select the modules to be published as tables in SinergiaDA. Modules NOT selected will be published as MySQL views.';
+$mod_strings['LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP'] = 'Select the modules to be published as tables in SinergiaDA. Modules not selected will be published as MySQL views.';
 $mod_strings['LBL_STIC_SINERGIADA_MAX_USERS_LABEL'] = 'Non-admin users limit';
 $mod_strings['LBL_STIC_SINERGIADA_MAX_USERS_HELP'] = 'Maximum number of non-admin users to process. Empty or 0 = no limit.';
 $mod_strings['LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_LABEL'] = 'Group permissions';
-$mod_strings['LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP'] = 'Determines whether SinergiaDA uses SinergiaCRM security group record access permissions.';
+$mod_strings['LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP'] = 'Sets whether SinergiaDA uses SinergiaCRM security group record access permissions.';
 $mod_strings['LBL_STIC_SINERGIADA_AUTO_REBUILD_LABEL'] = 'Auto rebuild';
 $mod_strings['LBL_STIC_SINERGIADA_AUTO_REBUILD_HELP'] = 'Automatically rebuilds after deleting a field in Studio or uninstalling a module.';
 $mod_strings['LBL_STIC_SINERGIADA_CACHE_ENABLED_LABEL'] = 'Enable cache';
