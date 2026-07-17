@@ -68,15 +68,13 @@ class stic_Job_Applications extends Basic
 
     public function save($check_notify = false) 
     {
-        $offerId = $this->getRelatedOfferId();
-        $offerBean = !empty($offerId)
-            ? BeanFactory::getBean('stic_Job_Offers', $offerId)
-            : null;
+        $contactBean = $this->getRelatedContactBean();
+        $offerBean = $this->getRelatedOfferBean();
 
         // Call the generic save() function from the SugarBean class
         if (empty($this->name)) {
-            $contact_name = $this->getRelatedContactName();
-            $offer_name = $this->getRelatedName($this->stic_job_applications_stic_job_offers_name ?? '', $offerBean);
+            $contact_name = $this->getRelatedName($contactBean, 'first_name', 'last_name');
+            $offer_name = $this->getRelatedName($offerBean);
 
             $this->name = $contact_name .' - '.$offer_name;
         }
@@ -147,41 +145,43 @@ class stic_Job_Applications extends Basic
     }
 
     /**
-     * Get related contact name
+     * Get related contact bean
      *
-     * @return string
+     * @return SugarBean|null
      */
-    protected function getRelatedContactName()
+    protected function getRelatedContactBean()
     {
-        $contactId = $this->getRelatedContactId();
-        if (empty($contactId)) {
-            return (string)($this->stic_job_applications_contacts_name ?? '');
-        }
-
-        $contactBean = BeanFactory::getBean('Contacts', $contactId);
-        return $this->getRelatedName(
-            $this->stic_job_applications_contacts_name ?? '',
-            $contactBean,
-            'first_name',
-            'last_name'
+        return $this->getRelatedBean(
+            $this->stic_job_applications_contactscontacts_ida ?? '',
+            'stic_job_applications_contacts',
+            'Contacts'
         );
     }
 
     /**
-     * Get a related bean display name with fallback to bean fields
+     * Get related offer bean
      *
-     * @param mixed $rawName
+     * @return SugarBean|null
+     */
+    protected function getRelatedOfferBean()
+    {
+        return $this->getRelatedBean(
+            $this->stic_job_applications_stic_job_offersstic_job_offers_ida ?? '',
+            'stic_job_applications_stic_job_offers',
+            'stic_Job_Offers'
+        );
+    }
+
+    /**
+     * Get a related bean display name
+     *
      * @param SugarBean|null $bean
      * @param string $firstField
      * @param string $lastField
      * @return string
      */
-    protected function getRelatedName($rawName, $bean, $firstField = '', $lastField = '')
+    protected function getRelatedName($bean, $firstField = '', $lastField = '')
     {
-        if (!is_object($rawName) && !empty(trim((string)$rawName))) {
-            return (string)$rawName;
-        }
-
         if (empty($bean) || empty($bean->id)) {
             return '';
         }
@@ -202,80 +202,30 @@ class stic_Job_Applications extends Basic
     }
 
     /**
-     * Get related contact ID
-     *
-     * @return string
-     */
-    protected function getRelatedContactId()
-    {
-        return $this->getRelatedId(
-            $this->stic_job_applications_contactscontacts_ida ?? '',
-            'stic_job_applications_contactscontacts_ida',
-            'stic_job_applications_contactscontacts_ida',
-            'stic_job_applications_contacts_c',
-            'stic_job_applications_contactscontacts_ida',
-            'stic_job_applications_contactsstic_job_applications_idb'
-        );
-    }
-
-    /**
-     * Get related offer ID
-     *
-     * @return string
-     */
-    protected function getRelatedOfferId()
-    {
-        return $this->getRelatedId(
-            $this->stic_job_applications_stic_job_offersstic_job_offers_ida ?? '',
-            'stic_job_applications_stic_job_offersstic_job_offers_ida',
-            'stic_job_applications_stic_job_offersstic_job_offers_ida',
-            'stic_job_applications_stic_job_offers_c',
-            'stic_job_applications_stic_job_offersstic_job_offers_ida',
-            'stic_job_applications_stic_job_offersstic_job_applications_idb'
-        );
-    }
-
-    /**
-     * Get related ID from raw field, request, fetched row or relationship table
+     * Get a related bean from id field or relationship link
      *
      * @param mixed $rawId
-     * @param string $requestKey
-     * @param string $fetchedKey
-     * @param string $table
-     * @param string $idColumn
-     * @param string $applicationIdColumn
-     * @return string
+     * @param string $linkName
+     * @param string $module
+     * @return SugarBean|null
      */
-    protected function getRelatedId($rawId, $requestKey, $fetchedKey, $table, $idColumn, $applicationIdColumn)
+    protected function getRelatedBean($rawId, $linkName, $module)
     {
         if (!is_object($rawId) && !empty($rawId)) {
-            return (string)$rawId;
+            $bean = BeanFactory::getBean($module, (string)$rawId);
+            if (!empty($bean) && !empty($bean->id)) {
+                return $bean;
+            }
         }
 
-        $requestId = (string)($_REQUEST[$requestKey] ?? '');
-        if (!empty($requestId)) {
-            return $requestId;
+        if ($this->load_relationship($linkName)) {
+            $relatedBeans = $this->{$linkName}->getBeans();
+            if (!empty($relatedBeans)) {
+                $firstBean = reset($relatedBeans);
+                return !empty($firstBean) && !empty($firstBean->id) ? $firstBean : null;
+            }
         }
 
-        $fetchedId = (string)($this->fetched_row[$fetchedKey] ?? '');
-        if (!empty($fetchedId)) {
-            return $fetchedId;
-        }
-
-        if (empty($this->id)) {
-            return '';
-        }
-
-        global $db;
-        $applicationId = $db->quote((string)$this->id);
-        $query = "SELECT rel.{$idColumn} AS related_id
-            FROM {$table} rel
-            WHERE rel.deleted = 0
-              AND rel.{$applicationIdColumn} = '{$applicationId}'
-            ORDER BY rel.date_modified DESC
-            LIMIT 1";
-        $row = $db->fetchByAssoc($db->query($query));
-
-        return (string)($row['related_id'] ?? '');
+        return null;
     }
 }
