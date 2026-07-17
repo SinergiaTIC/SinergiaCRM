@@ -754,7 +754,7 @@ class DynamicField
                         is_string($field->ext3) ? htmlspecialchars_decode($field->ext3, ENT_QUOTES) : $field->ext3;
                 } else {
                     // STIC-Custom 20260604 ART - Prevent warnings when $field->$property is not defined (null) and avoid saving empty values as default ones in the _override file
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
                     // $to_save[$property] =
                     //     is_string($field->$property) ? htmlspecialchars_decode($field->$property, ENT_QUOTES) : $field->$property;
                     $propertyValue = $field->$property ?? null;
@@ -801,7 +801,7 @@ class DynamicField
                 // STIC#679
                 // STIC#949
                 // STIC-Custom 20260604 ART - Prevent warnings when $field->$property is not defined (null) and avoid saving empty values as default ones in the _override file
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
                 // if ($property == 'display_default' && is_null($field->display_default)) {
                 //     $to_save['display_default'] = $field->default;
                 if ($property == 'display_default' && is_null($field->display_default ?? null)) {

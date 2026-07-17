@@ -55,7 +55,7 @@ function addLoadEvent(func) {
 function loadDynamicEnum(field, subfield) {
     if (field != '') {
         // STIC-Custom 20260604 ART - DynamicEnum in quickcreateviews
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
         var el = null;
         // END STIC-Custom
 
@@ -77,7 +77,7 @@ function loadDynamicEnum(field, subfield) {
         //END STIC-Custom
                 var dynamicFieldName = $('form#EditView select').attr('id');
         // STIC-Custom 20260604 ART - DynamicEnum in quickcreateviews
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
         //         var el = $('<input></input>',{
         //         id:recordId+dynamicFieldName,
         //         type: 'hidden',
@@ -153,7 +153,7 @@ function updateDynamicEnum(field, subfield) {
     if (document.getElementById(subfield) != null) {
         var selector = document.getElementById(subfield);
         // STIC-Custom 20260604 ART - DynamicEnum in quickcreateviews
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
         // var de_key = document.getElementById(field).value;
         // Get the value of the parent field to filter the dynamicenum values
         var parentField = (typeof field === 'string') ? document.getElementById(field) : field;
