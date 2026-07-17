@@ -25,6 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once "modules/stic_AWF_Forms/core/includes.php";
+require_once "modules/stic_AWF_Forms/Utils.php";
 
 /**
  * EntryPoint: ResponseHandler
