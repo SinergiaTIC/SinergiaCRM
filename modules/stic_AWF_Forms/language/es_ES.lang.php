@@ -426,8 +426,7 @@ $mod_strings = array (
   // SaveDocumentBlockAction
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Guardar documento',
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Crear un registro de documento a partir de un bloque de documento y vincularlo a la respuesta',
-  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DOCUMENT_TEXT' => 'Bloque de datos del documento',
-
+  
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Añadir a Lista de Público Objetivo',
   'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Añade el registro procesado (persona, interesado, usuario u organización) a una Lista de Público Objetivo existente',

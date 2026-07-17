@@ -426,8 +426,7 @@ $mod_strings = array (
   // SaveDocumentBlockAction
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Desa el document',
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => "Crea un registre de document a partir d'un bloc de dades de document i el vincula a la resposta",
-  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DOCUMENT_TEXT' => 'Bloc de dades del document',
-
+  
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Afegeix a una Llista de Públic Objectiu',
   'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Afegeix el registre processat (persona, interessat, usuari o organització) a una Llista de Públic Objectiu existent',
