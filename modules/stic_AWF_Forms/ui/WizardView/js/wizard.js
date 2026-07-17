@@ -873,9 +873,15 @@ class WizardStep2 {
             onValidatorChange() {
               // Only reset parameters if the user makes a REAL CHANGE of validator
               if (this.validation && this.validation.validator !== this._originalValidator) {
-                  this.validation.params = {};
-                  this.validation.message = '';
-                  this._originalValidator = this.validation.validator; 
+                const def = utils.getDefinedActions().find(a => a.name === this.validation.validator);
+                const defaultParams = {};
+                if (def && def.parameters) {
+                  def.parameters.forEach(p => { defaultParams[p.name] = p.defaultValue || ''; });
+                }
+
+                this.validation.params = defaultParams;
+                this.validation.message = '';
+                this._originalValidator = this.validation.validator; 
               }
             },
 
@@ -1389,6 +1395,8 @@ class WizardStep2 {
               this.field.type = 'date';
             } else if (newType == 'number') {
               this.field.type = 'float';
+            } else if (newType == 'file_upload') {
+              this.field.type = 'file';
             } else {
               this.field.type = 'varchar';
             }

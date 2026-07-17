@@ -214,7 +214,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 $bean->assigned_user_id = $context->defaultAssignedUserId;
             }
             // Fill all bean fields
-            $modifications = $this->populateBean($bean, $block);
+            $modifications = stic_AWF_FormsUtils::populateBeanFromBlock($bean, $block);
             if (property_exists($bean, 'fromAWF')) {
                 $bean->fromAWF = true;
             }

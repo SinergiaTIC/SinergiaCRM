@@ -25,6 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once "modules/stic_AWF_Forms/core/includes.php";
+require_once "modules/stic_AWF_Forms/Utils.php";
 
 /**
  * EntryPoint: ResponseHandler
@@ -674,6 +675,11 @@ class ResponseHandler
                 
                 if ($formField->type == 'relate') {
                     continue; // Skip relate fields
+                }
+
+                // Skip file upload fields — validated separately via $_FILES in SaveDocumentBlockAction
+                if ($formField->type_in_form === 'file') {
+                    continue;
                 }
 
                 // Validation of required field (Required) (in Form)

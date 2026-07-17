@@ -741,6 +741,23 @@ class FormHtmlGeneratorService {
         
         $isFloating = !empty($theme->floating_labels);
 
+        // Dynamically extract the allowed file extensions from the field's validations to set the 'accept' attribute for the file input.
+        $acceptAttr = '';
+        if (!empty($field->validations)) {
+            foreach ($field->validations as $val) {
+                if ($val->validator === 'AllowedExtensionsValidatorAction') {
+                    $extsParam = $val->params['extensions'] ?? $val->params->extensions ?? '';
+                    if (!empty($extsParam)) {
+                        $exts = explode(',', $extsParam);
+                        // Convertim 'pdf, jpg' en '.pdf,.jpg' per al format estàndard accept
+                        $acceptFields = array_map(function($e) { return '.' . trim(strtolower($e)); }, $exts);
+                        $acceptAttr = " accept='" . implode(',', $acceptFields) . "'";
+                        break;
+                    }
+                }
+            }
+        }
+
         $validationsAttr = " @input='resetError(\$el)'";
         if (!empty($field->validations)) {
             $rules = [];
@@ -806,7 +823,7 @@ class FormHtmlGeneratorService {
 
             // The actual file input remains hidden to avoid disrupting the label flow
             $html .= "<input type='file' name='{$inputName}' x-ref='fileInput' id='f_{$inputName}' " .
-                     "style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
+                     "style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$acceptAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
 
             if ($description !== '') {
                 $html .= $description .$this->newLine();

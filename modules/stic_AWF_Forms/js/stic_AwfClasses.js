@@ -194,6 +194,10 @@ class stic_AwfDataBlock {
 
   addField(field) {
     let newField = new stic_AwfField(field);
+
+    // Enforce automatic validators synchronization when the field is added programmatically
+    newField.syncAutomaticValidators();
+
     if (newField.type_field == 'fixed') {
       this.fields.unshift(newField);
     }
@@ -547,6 +551,8 @@ class stic_AwfField {
       case "link":
       case "relate":
         return "relate";
+      case "file": 
+        return "file";
       default:
         return "text";
     }
@@ -727,11 +733,13 @@ class stic_AwfField {
       if (isMatch) {
         // If it needs to be applied and it doesn't exist, we add it.
         if (existingIndex === -1) {
+          const defaultParams = {};
+          (actionDef.parameters || []).forEach(p => { defaultParams[p.name] = p.defaultValue || ''; });
           this.validations.push(new stic_AwfFieldValidation({
             name: utils.newId('val_'),
             validator: actionDef.name,
             message: actionDef.defaultErrorMessage || '',
-            params: {},
+            params: defaultParams,
             is_automatic: true // Mark as automatic
           }));
         }
@@ -1533,6 +1541,7 @@ class stic_AwfConfiguration {
         name: 'file',
         text_original: utils.translate('LBL_FIELD_UPLOAD'),
         label: utils.translateForFieldLabel('LBL_FIELD_UPLOAD'),
+        type: 'file',
         type_field: 'unlinked',
         type_in_form: 'file',
         subtype_in_form: 'file_upload',
