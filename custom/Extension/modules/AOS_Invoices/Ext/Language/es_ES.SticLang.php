@@ -38,3 +38,200 @@ $mod_strings['LBL_BILLING_CONTACT'] = 'Persona';
 $mod_strings['LBL_OPPORTUNITY'] = 'Subvención';
 $mod_strings['LBL_DUE_DATE_ERROR'] = 'La fecha de vencimiento debe ser igual o posterior a la fecha de facturación.';
 $mod_strings['LBL_INVOICE_DATE_ERROR'] = 'La fecha de facturación debe ser igual o anterior a la fecha de vencimiento.';
+
+// Verifactu labels
+$mod_strings['LBL_VERIFACTU_HASH'] = 'Hash de la factura';
+$mod_strings['LBL_VERIFACTU_HASH_HELP'] = 'Huella digital única que identifica este registro de factura en el sistema Verifactu. Este valor se genera automáticamente y garantiza la integridad de la información.';
+$mod_strings['LBL_VERIFACTU_PREVIOUS_HASH'] = 'Hash de la factura anterior';
+$mod_strings['LBL_VERIFACTU_PREVIOUS_HASH_HELP'] = 'Huella digital de la factura anterior en la secuencia. Este campo asegura el encadenamiento continuo de todas las facturas en el sistema Verifactu.';
+$mod_strings['LBL_VERIFACTU_CHECK_URL'] = 'Url de verificación de la factura';
+$mod_strings['LBL_VERIFACTU_CHECK_URL_HELP'] = 'Url de verificación de la factura, que se incluye en las facturas como un código QR . Esta url permite la verificación rápida de la factura en el sistema de la AEAT.';
+$mod_strings['LBL_VERIFACTU_AEAT_STATUS'] = 'Estado AEAT de la factura';
+$mod_strings['LBL_VERIFACTU_AEAT_STATUS_HELP'] = 'Estado actual del envío de esta factura a la Agencia Tributaria. Los valores posibles son: Pendiente de envío (aún no se ha comunicado), Enviado y Aceptado (la AEAT ha confirmado la recepción), o Error de envío (se produjo un problema en la comunicación).';
+$mod_strings['LBL_VERIFACTU_AEAT_RESPONSE'] = 'Respuesta AEAT de la factura';
+$mod_strings['LBL_VERIFACTU_AEAT_RESPONSE_HELP'] = 'Respuesta completa recibida de la AEAT tras el envío de la factura. Si hubo algún error, aquí se detallará la información del mismo para su revisión y corrección.';
+$mod_strings['LBL_VERIFACTU_CANCEL_ID'] = 'ID de la factura rectificada';
+$mod_strings['LBL_VERIFACTU_CANCEL_ID_HELP'] = 'En caso de facturas rectificativas o de anulación, este campo almacena el identificador de la factura original que está siendo anulada o corregida.';
+$mod_strings['LBL_VERIFACTU_CANCEL_NAME'] = 'Factura rectificada';
+$mod_strings['LBL_VERIFACTU_CANCEL_NAME_HELP'] = 'Factura original que está siendo corregida o anulada por esta factura rectificativa. Este campo es obligatorio para facturas rectificativas y permite navegar directamente a la factura original.';
+$mod_strings['LBL_VERIFACTU_CANCEL_HASH'] = 'Hash de anulación AEAT';
+$mod_strings['LBL_VERIFACTU_CANCEL_HASH_HELP'] = 'Huella digital del registro de anulación enviado a la AEAT. Este campo almacena el hash del CancellationRecord sin modificar el hash original de la factura, manteniendo la integridad de la cadena de hashes.';
+$mod_strings['LBL_VERIFACTU_AUDIT_LOG'] = 'Log de auditoría Verifactu';
+$mod_strings['LBL_VERIFACTU_AUDIT_LOG_HELP'] = 'Registro técnico de operaciones Verifactu (envíos, anulaciones, rectificativas). Este campo se limpia al duplicar la factura y no es editable por el usuario.';
+$mod_strings['LBL_VERIFACTU_VALID_INVOICE'] = 'Factura vigente';
+$mod_strings['LBL_VERIFACTU_VALID_INVOICE_HELP'] = 'Indica si la factura es fiscalmente válida. Una factura deja de ser válida cuando es anulada o rectificada por otra factura y la comunicación con la AEAT ha sido aceptada. Este campo se actualiza automáticamente.';
+$mod_strings['LBL_VERIFACTU_PREVIOUS_STATUS'] = 'Estado anterior al envío';
+$mod_strings['LBL_VERIFACTU_PREVIOUS_STATUS_HELP'] = 'Estado de la factura antes de ser enviada a la AEAT. Se utiliza para preservar el estado original (por ejemplo, "Pagada") después del envío.';
+$mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'] = 'No se puede modificar una factura ya aceptada por la AEAT. Debe crear una factura rectificativa si necesita corregir datos.';
+$mod_strings['LBL_VERIFACTU_BLOCK_DELETE_MESSAGE'] = 'No se puede eliminar una factura que ha sido enviada a la AEAT.';
+$mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'] = 'No se puede continuar porque la selección incluye facturas que ya han sido enviadas a la AEAT: %s. Debe crear una anulación desde la factura original.';
+$mod_strings['LBL_VERIFACTU_CANNOT_EDIT_SENT'] = 'No se puede editar una factura que ha sido enviada a la AEAT. Se ha redirigido a la vista de detalle.';
+$mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'] = 'Esta factura ha sido enviada a la AEAT y no puede ser modificada ni eliminada. Para realizar cambios debe crear una factura rectificativa.';
+$mod_strings['LBL_VERIFACTU_CSV'] = 'Codigo seguro de verificación';
+$mod_strings['LBL_VERIFACTU_CSV_HELP'] = 'Código devuelto por AEAT tras el envío de la factura. Este código único permite verificar la autenticidad de la factura en el sistema de la AEAT.';
+$mod_strings['LBL_VERIFACTU_INVOICE_TYPE'] = 'Tipo de factura';
+$mod_strings['LBL_VERIFACTU_INVOICE_TYPE_HELP'] = 'Clasificación de la factura según su naturaleza. Deben ser configuradas en el apartado de Administración -> Ajustes AOP.';
+$mod_strings['LBL_NUMBER_HELP'] = 'El número de factura se asigna automáticamente en el momento del envío a la AEAT. Si el envío no es exitoso, el número queda vacío para poder reintentarlo.';
+$mod_strings['LBL_VERIFACTU_SERIES_NUMBER_TOO_LONG'] = 'El número de factura generado excede los 60 caracteres permitidos por Verifactu.';
+$mod_strings['LBL_VERIFACTU_SUBMITTED_AT'] = 'Fecha de envío a Verifactu';
+$mod_strings['LBL_VERIFACTU_SUBMITTED_AT_HELP'] = 'Fecha y hora en que esta factura fue enviada al sistema Verifactu para su validación y registro ante la AEAT.';
+$mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_WARNING'] = 'Se han eliminado %d facturas. Las siguientes facturas no se han podido eliminar porque ya habían sido enviadas a la AEAT: %s.';
+$mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_BLOCKED'] = 'No se ha eliminado ninguna factura porque todas las seleccionadas ya habían sido enviadas a la AEAT: %s.';
+
+
+$mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE'] = 'Tipo de operación';
+$mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE_HELP'] = 'Tipo de operación fiscal asociada a esta factura, según la clasificación establecida por la AEAT. Este campo ayuda a identificar la naturaleza de la transacción para fines tributarios.';
+
+$mod_strings['LBL_SIGNER_SEND_TO_AEAT'] = 'Enviar a AEAT';
+$mod_strings['LBL_SEND_TO_AEAT_CONFIRM_DRAFT'] = 'Esta factura está en estado "Borrador". ¿Confirma que desea marcarla como "Emitida" y enviarla a la AEAT?';
+$mod_strings['LBL_AEAT_STATUS_PANEL'] = 'Estado de la factura en la AEAT';
+$mod_strings['LBL_VERIFACTU_REQUIRE_ORG_OR_PERSON'] = 'Debe seleccionar una Organización o una Persona';
+$mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX'] = 'BORRADOR-';
+$mod_strings['LBL_INVOICE_INVALID_STATUSES_FOR_SEND_TO_AEAT'] = 'La factura no puede ser enviada a la AEAT. El estado debe ser "Emitida" y el estado AEAT debe ser diferente de "Aceptada".';
+$mod_strings['LBL_MISSING_SETTINGS'] = 'Faltan configuraciones obligatorias: contraseña del certificado (GENERAL_CERTIFICATE_PASSWORD), certificado de sello de entidad (GENERAL_CERTIFICATE_ENTITY_SEAL), NIF de la organización (GENERAL_ORGANIZATION_ID) o  nombre de la organización (GENERAL_ORGANIZATION_NAME). Por favor, revise las configuraciones de SinergiaCRM.';
+$mod_strings['LBL_STATUS_HELP'] = 'Estados del ciclo de vida de la factura (Verifactu activo):<br><b>Borrador:</b> único estado disponible para facturas nuevas. No se puede volver a este estado una vez emitida.<br><b>Emitida:</b> se establece automáticamente tras comunicación exitosa con la AEAT. Se puede cambiar a Pagada, No Pagada o Cancelada.<br><b>Pagada/No Pagada:</b> indican el estado de cobro. Se puede cambiar entre ambos o a Cancelada.<br><b>Cancelada:</b> estado final. No admite cambios de estado.<br><br>Los cambios de estado están limitados según el estado actual de la factura.';
+$mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST'] = 'La fecha de expedición ({0}) es anterior a la última factura emitida de la serie {1} ({2}).';
+$mod_strings['LBL_AOS_SERIES_FORMAT_INVALID'] = 'Error de configuración: El formato de serie';
+$mod_strings['LBL_AOS_SERIES_FORMAT_INVALID_DETAILS'] = 'contiene caracteres no permitidos. Solo se permiten: mayúsculas (A-Z), números (0-9), guión (-), guión bajo (_), barra (/), punto (.) y espacio.';
+$mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_RECTIFIED'] = 'No puede seleccionar la serie seleccionada para una factura rectificativa.';
+$mod_strings['LBL_VERIFACTU_SERIES_TYPE_MISMATCH_NORMAL'] = 'No puede seleccionar la serie seleccionada para una factura normal.';
+$mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'] = 'No se puede cambiar la serie de una factura que ya ha sido enviada a AEAT. Debe crear una factura rectificativa si necesita usar una diferente.';
+$mod_strings['LBL_VERIFACTU_INVOICE_TYPE_RECTIFIED_MISMATCH'] = 'La factura está marcada como rectificativa pero la serie seleccionada ({0}) no es una serie rectificativa. Seleccione una serie rectificativa o desmarque la opción "¿Es factura rectificativa?".';
+$mod_strings['LBL_VERIFACTU_INVOICE_TYPE_NORMAL_MISMATCH'] = 'La factura no está marcada como rectificativa pero la serie seleccionada ({0}) es una serie rectificativa. Seleccione una serie normal o marque la opción "¿Es factura rectificativa?".';
+$mod_strings['LBL_VERIFACTU_CUSTOMER_NIF_REQUIRED'] = 'El cliente (Organización o Persona) no tiene informado el NIF. Por favor, edite el cliente y complete el campo NIF antes de enviar la factura a AEAT.';
+
+// Rectified invoice labels
+$mod_strings['LBL_VERIFACTU_IS_RECTIFIED'] = '¿Es factura rectificativa?';
+$mod_strings['LBL_VERIFACTU_IS_RECTIFIED_HELP'] = 'Marque esta casilla si esta factura corrige o anula una factura emitida anteriormente. Las facturas rectificativas deben hacer referencia a la factura original que están modificando.';
+$mod_strings['LBL_VERIFACTU_RECTIFIED_TYPE'] = 'Tipo de rectificación';
+$mod_strings['LBL_VERIFACTU_RECTIFIED_TYPE_HELP'] = 'Indica la modalidad de rectificación: <ul><li><strong>Por sustitución (S)</strong> anula completamente la factura original y la reemplaza con datos correctos;</li><li><strong>Por diferencias (I)</strong>     solo indica los cambios respecto a la factura original. (Esta modalidad no está actualmente disponible en SinergiaCRM)</li></ul>';
+$mod_strings['LBL_VERIFACTU_RECTIFIED_BASE'] = 'Base de la rectificación';
+$mod_strings['LBL_VERIFACTU_RECTIFIED_BASE_HELP'] = 'Motivo legal que justifica la emisión de esta factura rectificativa, según el artículo 80 de la Ley del IVA (LIVA). Seleccione el código que mejor describa el motivo de la rectificación.';
+$mod_strings['LBL_VERIFACTU_RECTIFIED_DATE'] = 'Fecha de la factura rectificada';
+$mod_strings['LBL_VERIFACTU_RECTIFIED_DATE_HELP'] = 'Fecha de expedición de la factura original que se está rectificando. Este dato permite a la AEAT ubicar temporalmente la factura que se corrige.';
+$mod_strings['LBL_VERIFACTU_RECTIFIED_PANEL'] = 'Datos de factura rectificativa';
+$mod_strings['LBL_CREATE_RECTIFIED_INVOICE'] = 'Crear factura rectificativa';
+$mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'] = 'Para facturas rectificativas son obligatorios: tipo de rectificación, base de rectificación, factura rectificada y fecha de la factura rectificada.';
+$mod_strings['LBL_RECTIFIED'] = 'Rectificativa';
+$mod_strings['LBL_AUDIT_RECTIFIED_CREATED'] = 'Creada factura rectificativa. Factura original: {0} (ID: {1}).';
+$mod_strings['LBL_AUDIT_ORIGINAL_RECTIFIED'] = 'Factura original rectificada por nueva factura: {0} (ID: {1}).';
+$mod_strings['LBL_AUDIT_ORIGINAL_RECTIFIED_SENT'] = 'Factura rectificativa {0} (ID: {1}) enviada y aceptada por AEAT. Factura original marcada como no vigente.';
+$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY'] = 'Se ha creado la factura rectificativa: ';
+$mod_strings['LBL_ORIGINAL_INVOICE_RECTIFICATIVA_SENT'] = 'Se ha enviado la factura rectificativa a AEAT: ';
+$mod_strings['LBL_INVOICE_EMPTY'] = 'No es posible enviar la factura a la AEAT porque no tiene líneas de producto. Añada al menos una línea antes del envío.';
+$mod_strings['LBL_INVOICE_ZERO_AMOUNT'] = 'No es posible enviar la factura a la AEAT porque el importe total es cero. Verifique que los importes son correctos antes del envío.';
+$mod_strings['LBL_RECTIFIED_DATE_BEFORE_ORIGINAL'] = 'No es posible enviar la factura rectificativa a la AEAT porque su fecha es anterior a la fecha de la factura original. La fecha de la rectificativa debe ser igual o posterior a la fecha de la factura que rectifica.';
+
+// Cancellation labels
+$mod_strings['LBL_CANCEL_INVOICE'] = 'Anular factura';
+$mod_strings['LBL_CANCEL_INVOICE_CONFIRM'] = '¿Está seguro de que desea anular esta factura en AEAT?\n\nAl anular esta factura, se enviará un registro de invalidación a la AEAT bajo el sistema Verifactu.\nEsta operación es irreversible y mantiene la trazabilidad del documento original.';
+$mod_strings['LBL_INVOICE_CANCELLED_SUCCESS'] = 'Factura anulada correctamente en AEAT';
+$mod_strings['LBL_INVOICE_NOT_ACCEPTED_BY_AEAT'] = 'La factura debe estar aceptada por AEAT para poder anularla.';
+
+
+// Controller messages
+$mod_strings['LBL_INVOICE_NOT_FOUND'] = 'Factura no encontrada';
+$mod_strings['LBL_ORIGINAL_INVOICE_NOT_SPECIFIED'] = 'No se especificó la factura original.';
+$mod_strings['LBL_ORIGINAL_INVOICE_NOT_FOUND'] = 'No se encontró la factura original.';
+$mod_strings['LBL_ORIGINAL_INVOICE_MUST_BE_SENT_TO_AEAT'] = 'La factura original debe estar enviada a AEAT para poder rectificarla.';
+$mod_strings['LBL_ORIGINAL_INVOICE_NO_CUSTOMER_DATA'] = 'La factura original no tiene datos del destinatario (Organización o Persona). Las facturas rectificativas de sustitución requieren esta información. Por favor, edite la factura original para añadir los datos del cliente.';
+$mod_strings['LBL_CANNOT_RECTIFY_NON_VIGENTE_INVOICE'] = 'No se puede crear una factura rectificativa porque la factura original no es vigente. Solo se pueden rectificar facturas que estén vigentes.';
+$mod_strings['LBL_CANNOT_RECTIFY_CANCELLED_INVOICE'] = 'No se puede crear una factura rectificativa de una factura anulada.';
+$mod_strings['LBL_RECTIFIED_INVOICE_CREATED_SUCCESS'] = 'Factura rectificativa creada correctamente. Recuerde completar el tipo y base de rectificación antes de guardar.';
+
+
+// AEAT communication messages
+$mod_strings['LBL_AEAT_COMMUNICATION_SUCCESS'] = 'Comunicación correcta con la AEAT';
+$mod_strings['LBL_AEAT_COMMUNICATION_AND_ACCEPTED'] = ' y aceptada';
+$mod_strings['LBL_AEAT_SHOW_DETAILS'] = 'Ver detalles';
+$mod_strings['LBL_AEAT_SEND_ERROR'] = 'Error al enviar la factura a la AEAT';
+
+// Validation error field labels
+$mod_strings['LBL_FIELD_RECTIFIED_TYPE'] = 'Tipo de rectificación';
+$mod_strings['LBL_FIELD_RECTIFIED_BASE'] = 'Base de rectificación';
+$mod_strings['LBL_FIELD_RECTIFIED_DATE'] = 'Fecha de la factura rectificada';
+$mod_strings['LBL_MISSING_FIELDS'] = 'Campos faltantes';
+$mod_strings['LBL_INVOICE_DATE_BEFORE_LAST_REGISTERED'] = 'No es posible enviar la factura a la AEAT: su fecha de expedición (%s) es anterior a la de la última factura ya registrada en la cadena Verifactu (nº %s, fecha %s).';
+
+// Verifactu Activation
+$mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_WARNING'] = 'Verifactu no está activado. El certificado digital está configurado pero el envío a AEAT está deshabilitado.';
+$mod_strings['LBL_VERIFACTU_NOT_ACTIVATED_SEND_ERROR'] = 'Verifactu no está activado. Active la integración en stic_Settings para poder enviar facturas a la AEAT.';
+$mod_strings['LBL_VERIFACTU_ACTIVATED_LINK'] = 'Ir a configuración de Verifactu';
+
+$mod_strings['LBL_STIC_SERIES_NORMAL_NAME'] = 'Factura normal';
+$mod_strings['LBL_STIC_SERIES_RECTIFIED_NAME'] = 'Factura rectificativa';
+$mod_strings['LBL_STIC_SERIES_CREATED_TITLE'] = 'Nuevas series de facturas';
+$mod_strings['LBL_STIC_SERIES_AUTO_CREATED'] = 'Se han creado automáticamente las siguientes series de factura:';
+$mod_strings['LBL_STIC_SERIES_FORMAT_INFO'] = 'Las facturas de estas series seguirán el formato AÑO-NÚMERO secuencial (ejemplo: 2026-0001).';
+$mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] = 'Si se desea, un administrador puede modificar estas series desde Administración > Ajustes AOS. Al hacer clic en Aceptar se recargará la página.';
+
+// Customer identification number validation
+$mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING'] = 'La Organización o Persona seleccionada no tiene informado el NIF/DNI/CIF. Por favor, edite el cliente y complete este campo antes de guardar la factura.';
+
+// Verifactu consultation with AEAT
+$mod_strings['LBL_VERIFACTU_QUERY_AEAT'] = 'Consultar facturas en AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_MENU'] = 'Facturas registradas en AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_TITLE'] = 'Consulta de facturas en AEAT (Verifactu)';
+$mod_strings['LBL_VERIFACTU_QUERY_FILTERS_LABEL'] = 'Filtros';
+$mod_strings['LBL_VERIFACTU_QUERY_ACTIVE_LABEL'] = 'activos';
+$mod_strings['LBL_VERIFACTU_QUERY_CLEAR'] = 'Limpiar';
+$mod_strings['LBL_VERIFACTU_QUERY_YEAR'] = 'Ejercicio:';
+$mod_strings['LBL_VERIFACTU_QUERY_PERIOD'] = 'Mes:';
+$mod_strings['LBL_VERIFACTU_QUERY_SERIE_NUMBER'] = 'Serie+Nº:';
+$mod_strings['LBL_VERIFACTU_QUERY_DATE_FROM'] = 'Fecha desde:';
+$mod_strings['LBL_VERIFACTU_QUERY_DATE_TO'] = 'Fecha hasta:';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF'] = 'NIF cliente:';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NAME'] = 'Nombre cliente:';
+$mod_strings['LBL_VERIFACTU_QUERY_BUTTON'] = 'Consultar AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_CANCEL'] = 'Cancelar';
+$mod_strings['LBL_VERIFACTU_QUERY_SERIE_NUMBER_PLACEHOLDER'] = 'Ej: STD/2026-00001';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF_PLACEHOLDER'] = '12345678Z';
+$mod_strings['LBL_VERIFACTU_QUERY_COUNTERPARTY_NAME_PLACEHOLDER'] = 'Nombre del cliente';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_SERIE'] = 'Serie+Número';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_DATE'] = 'Fecha emisión';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_TYPE'] = 'Tipo';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_AMOUNT'] = 'Importe total';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_CLIENT'] = 'Cliente';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_CLIENT_NIF'] = 'NIF Cliente';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_STATUS'] = 'Estado AEAT';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_PRESENTATION'] = 'Presentación';
+$mod_strings['LBL_VERIFACTU_QUERY_HEADER_ERROR'] = 'Error';
+$mod_strings['LBL_VERIFACTU_QUERY_RESULT'] = 'Resultado:';
+$mod_strings['LBL_VERIFACTU_QUERY_REGISTROS'] = 'registros';
+$mod_strings['LBL_VERIFACTU_QUERY_PAGINATION'] = 'Hay más resultados disponibles (paginación activa)';
+$mod_strings['LBL_VERIFACTU_QUERY_LAST_KEY'] = 'Última clave de paginación:';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_PREFIX'] = 'Error:';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_F1'] = 'Factura';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_F2'] = 'Simplificada';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_F3'] = 'Sustitución';
+$mod_strings['LBL_VERIFACTU_QUERY_TYPE_RECTIFYING'] = 'Rectificativa';
+$mod_strings['LBL_VERIFACTU_QUERY_STATUS_CORRECT'] = 'Correcto';
+$mod_strings['LBL_VERIFACTU_QUERY_STATUS_ACCEPTED_WITH_ERRORS'] = 'Aceptado con errores';
+$mod_strings['LBL_VERIFACTU_QUERY_STATUS_CANCELLED'] = 'Anulado';
+$mod_strings['LBL_VERIFACTU_QUERY_NEST_RECTIFIED'] = 'Anidar facturas rectificativas';
+$mod_strings['LBL_VERIFACTU_QUERY_LINK_TOOLTIP'] = 'Abrir factura en SinergiaCRM';
+$mod_strings['LBL_VERIFACTU_QUERY_NO_LINK_TOOLTIP'] = 'Factura no registrada en SinergiaCRM';
+
+// Block draft to non-emitted status change
+$mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';
+
+$mod_strings['LBL_VERIFACTU_INLINE_EDIT_RESTRICTED'] = 'Esta factura ya ha sido enviada a AEAT. Solo se permite modificar los campos: Estado, Usuario asignado y Descripción.';
+
+// Verifactu AEAT query error messages
+$mod_strings['LBL_VERIFACTU_MODE_PRODUCTION'] = 'producción';
+$mod_strings['LBL_VERIFACTU_MODE_TEST'] = 'pruebas';
+$mod_strings['LBL_VERIFACTU_ENDPOINT_PRODUCTION'] = 'www1.agenciatributaria.gob.es / www10.agenciatributaria.gob.es';
+$mod_strings['LBL_VERIFACTU_ENDPOINT_TEST'] = 'prewww1.aeat.es / prewww10.aeat.es';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_CONNECT'] = 'No se pudo conectar con AEAT (%s). Verifique: (a) conexión a Internet, (b) que los endpoints %s sean accesibles desde su red, (c) cortafuegos o proxies que puedan bloquear la conexión. Detalle técnico: %s';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_HTTP'] = 'AEAT respondió con error HTTP %s. Detalle: %s';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_AEAT'] = 'AEAT rechazó la consulta: %s. Verifique que el certificado es válido y está reconocido por la AEAT.';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_CERTIFICATE'] = 'Error de certificado al conectar con AEAT: %s. Verifique que el certificado es válido, no ha caducado y está correctamente cargado en Administración > Certificado Digital.';
+$mod_strings['LBL_VERIFACTU_QUERY_ERROR_GENERIC'] = 'Error al consultar AEAT (%s): %s';
+
+// Mass send to AEAT
+$mod_strings['LBL_MASS_SEND_AEAT'] = 'Enviar facturas a AEAT';
+$mod_strings['LBL_MASS_SEND_AEAT_CONFIRM'] = 'Se van a enviar %d facturas a AEAT. ¿Desea continuar?';
+$mod_strings['LBL_MASS_SEND_AEAT_NO_SELECTION'] = 'No se ha seleccionado ninguna factura.';
+$mod_strings['LBL_MASS_SEND_AEAT_NO_DRAFTS'] = 'Ninguna de las facturas seleccionadas está en estado Borrador.';
+$mod_strings['LBL_MASS_SEND_AEAT_SUMMARY_TITLE'] = 'Resultado del envío masivo a AEAT:';
+

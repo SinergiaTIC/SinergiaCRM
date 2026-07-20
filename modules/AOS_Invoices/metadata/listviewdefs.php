@@ -226,15 +226,20 @@ global $sugar_config;
 
 $listViewDefs['AOS_Invoices'] =
 array(
-    'NUMBER' => array(
-        'width' => '5%',
-        'label' => 'LBL_LIST_NUM',
-        'default' => true,
-    ),
     'NAME' => array(
         'width' => '15%',
         'label' => 'LBL_ACCOUNT_NAME',
         'link' => true,
+        'default' => true,
+    ),
+    'STIC_INVOICE_TYPE_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
+        'default' => true,
+    ),
+    'NUMBER' => array(
+        'width' => '5%',
+        'label' => 'LBL_LIST_NUM',
         'default' => true,
     ),
     'QUOTE_NUMBER' => array(
@@ -247,6 +252,53 @@ array(
         'width' => '10%',
         'label' => 'LBL_STATUS',
         'default' => true,
+    ),
+    'VERIFACTU_HASH_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_HASH',
+        'default' => false,
+    ),
+    'VERIFACTU_PREVIOUS_HASH_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_PREVIOUS_HASH',
+        'default' => false,
+    ),
+    'VERIFACTU_AEAT_STATUS_C' => array(
+        'width' => '10%',
+        'label' => 'LBL_VERIFACTU_AEAT_STATUS',
+        'default' => true,
+    ),
+    'VERIFACTU_VALID_INVOICE_C' => array(
+        'type' => 'enum',
+        'default' => true,
+        'label' => 'LBL_VERIFACTU_VALID_INVOICE',
+        'width' => '10%',
+    ),
+    'VERIFACTU_AEAT_RESPONSE_C' => array(
+        'width' => '20%',
+        'label' => 'LBL_VERIFACTU_AEAT_RESPONSE',
+        'default' => false,
+    ),
+    'VERIFACTU_CANCEL_ID_C' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_CANCEL_ID',
+        'default' => false,
+    ),
+    'VERIFACTU_IS_RECTIFIED_C' => array(
+        'type' => 'bool',
+        'default' => false,
+        'label' => 'LBL_VERIFACTU_IS_RECTIFIED',
+        'width' => '10%',
+    ),
+    'VERIFACTU_RECTIFIED_TYPE_C' => array(
+        'width' => '10%',
+        'label' => 'LBL_VERIFACTU_RECTIFIED_TYPE',
+        'default' => false,
+    ),
+    'VERIFACTU_RECTIFIED_BASE_C' => array(
+        'width' => '10%',
+        'label' => 'LBL_VERIFACTU_RECTIFIED_BASE',
+        'default' => false,
     ),
     'TOTAL_AMOUNT' => array(
         'width' => '10%',

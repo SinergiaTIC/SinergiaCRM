@@ -25,3 +25,4 @@
 $action_view_map['sticmanagesdaintegration'] = 'SticManageSdaIntegration';
 $action_view_map['sticmanagetestdata'] = 'SticManageTestData';
 $action_view_map['sticmanagemainmenu'] = 'SticManageMainMenu';
+$action_view_map['sticmanagecertificate'] = 'SticManageCertificate';

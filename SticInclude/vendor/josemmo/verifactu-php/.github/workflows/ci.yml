@@ -1,0 +1,43 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    name: Run tests
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.3', '8.4', '8.5']
+        include:
+          - php-version: '8.6'
+            experimental: true
+    steps:
+      # Download code from repository
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      # Setup PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      # Setup Composer
+      - name: Setup Composer
+        run: composer install
+
+      # Run linter
+      - name: Run linter
+        run: composer lint -- --test -v
+
+      # Run static analyzer
+      - name: Run static analyzer
+        run: composer stan
+
+      # Run tests
+      - name: Run tests
+        run: composer test

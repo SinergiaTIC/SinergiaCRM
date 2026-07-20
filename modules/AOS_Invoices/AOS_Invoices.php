@@ -34,6 +34,20 @@ class AOS_Invoices extends AOS_Invoices_sugar
     public function __construct()
     {
         parent::__construct();
+        
+        // STIC-Custom - JCH - 20251203 - Populate invoice types list from config (AOS settings)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+        global $app_list_strings, $sugar_config;
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (AOS_InvoicesUtils::isVerifactuActivated()) {
+            foreach($sugar_config['aos']['invoices']['series'] as $invoiceType => $seriesConfig) {
+                $app_list_strings['stic_invoices_types_list'][$invoiceType] = "$invoiceType";
+            }
+        } else {
+            $app_list_strings['stic_invoices_types_list'][''] = '';
+        }
+        // END STIC-Custom
+
     }
 
 
@@ -55,15 +69,6 @@ class AOS_Invoices extends AOS_Invoices_sugar
                 unset($_POST['service_id']);
             }
 
-            if ($sugar_config['dbconfig']['db_type'] == 'mssql') {
-                $this->number = $this->db->getOne("SELECT MAX(CAST(number as INT))+1 FROM aos_invoices");
-            } else {
-                $this->number = $this->db->getOne("SELECT MAX(CAST(number as UNSIGNED))+1 FROM aos_invoices");
-            }
-
-            if ($this->number < $sugar_config['aos']['invoices']['initialNumber']) {
-                $this->number = $sugar_config['aos']['invoices']['initialNumber'];
-            }
         }
 
         require_once('modules/AOS_Products_Quotes/AOS_Utils.php');

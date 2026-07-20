@@ -20,11 +20,17 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+// Make name field not required (auto-generated from Organization/Person + DateTime)
+$dictionary['AOS_Invoices']['fields']['name']['required'] = false;
+
 $dictionary['AOS_Invoices']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 
 // Mass update fields definition:
 $dictionary['AOS_Invoices']['fields']['billing_account']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['billing_contact']['massupdate'] = 1;
+
+// Number field - Add popupHelp to explain when number is assigned
+$dictionary['AOS_Invoices']['fields']['number']['popupHelp'] = 'LBL_NUMBER_HELP';
 $dictionary['AOS_Invoices']['fields']['billing_address_street']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['billing_address_city']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['billing_address_state']['massupdate'] = 1;
@@ -40,9 +46,18 @@ $dictionary['AOS_Invoices']['fields']['quote_date']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['invoice_date']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['due_date']['massupdate'] = 1;
 $dictionary['AOS_Invoices']['fields']['status']['massupdate'] = 1;
+$dictionary['AOS_Invoices']['fields']['status']['default'] = 'draft';
+require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+if (AOS_InvoicesUtils::isVerifactuActivated()) {
+    $dictionary['AOS_Invoices']['fields']['status']['popupHelp'] = 'LBL_STATUS_HELP';
+} 
 
 // Inline edition definition:
 $dictionary['AOS_Invoices']['fields']['number']['inline_edit'] = 0;
+$dictionary['AOS_Invoices']['fields']['number']['type'] = 'varchar';
+$dictionary['AOS_Invoices']['fields']['number']['len'] = 60;
+$dictionary['AOS_Invoices']['fields']['number']['size'] = 60;
+
 $dictionary['AOS_Invoices']['fields']['billing_address_street']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['shipping_address_street']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['currency_id']['inline_edit'] = 0;
@@ -54,3 +69,480 @@ $dictionary['AOS_Invoices']['fields']['shipping_amount']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['shipping_tax_amt']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['tax_amount']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['total_amount']['inline_edit'] = 0;
+
+
+// AEAT Verifactu fields
+$dictionary['AOS_Invoices']['fields']['verifactu_hash_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_hash_c',
+    'name' => 'verifactu_hash_c',
+    'vname' => 'LBL_VERIFACTU_HASH',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'varchar',
+    'len' => '255',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'selected',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_HASH_HELP',
+);
+
+$dictionary['AOS_Invoices']['fields']['verifactu_previous_hash_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_previous_hash_c',
+    'name' => 'verifactu_previous_hash_c',
+    'vname' => 'LBL_VERIFACTU_PREVIOUS_HASH',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'varchar',
+    'len' => '255',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'selected',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_PREVIOUS_HASH_HELP',
+);
+
+$dictionary["AOS_Invoices"]["fields"]["verifactu_check_url_c"] = array(
+    'required' => false,
+    'name' => 'verifactu_check_url_c',
+    'vname' => 'LBL_VERIFACTU_CHECK_URL',
+    'type' => 'text',
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'audited' => false,
+    'inline_edit' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'size' => '20',
+    'studio' => 'visible',
+    'dbType' => 'text',
+    'border' => '',
+    'width' => '120',
+    'height' => '',
+    'popupHelp' => 'LBL_VERIFACTU_CHECK_URL_HELP',
+);
+
+$dictionary["AOS_Invoices"]["fields"]["verifactu_aeat_status_c"] = array(
+    'id' => 'AOS_Invoicesverifactu_aeat_status_c',
+    'name' => 'verifactu_aeat_status_c',
+    'vname' => 'LBL_VERIFACTU_AEAT_STATUS',
+    'custom_module' => 'AOS_Invoices',
+    'required' => false,
+    'source' => 'custom_fields',
+    'type' => 'enum',
+    'massupdate' => '0',
+    'default' => NULL,
+    'no_default' => false,
+    'default' => 'pending',
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => '2',
+    'inline_edit' => 0,
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'enabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'stic_invoices_verifactu_aeat_status_list',
+    'studio' => 'visible',
+    'dependency' => NULL,
+    'popupHelp' => 'LBL_VERIFACTU_AEAT_STATUS_HELP',
+);
+
+$dictionary['AOS_Invoices']['fields']['verifactu_aeat_response_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_aeat_response_c',
+    'name' => 'verifactu_aeat_response_c',
+    'vname' => 'LBL_VERIFACTU_AEAT_RESPONSE',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'varchar',
+    'len' => '255',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'selected',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_AEAT_RESPONSE_HELP',
+);
+
+// ID field for the related invoice (used for both cancellations and rectifications)
+// Following the pattern of contact_id_c for repersona_c in Contacts module
+$dictionary['AOS_Invoices']['fields']['verifactu_cancel_id_c'] = array(
+    'name' => 'verifactu_cancel_id_c',
+    'vname' => 'LBL_VERIFACTU_CANCEL_ID',
+    'type' => 'id',
+    'required' => false,
+    'source' => 'custom_fields',
+    'importable' => true,
+    'reportable' => false,
+    'duplicate_merge' => 'disabled',
+    'merge_filter' => 'disabled',
+    'len' => 36,
+    'size' => 20,
+    'studio' => 'visible',
+    'custom_module' => 'AOS_Invoices',
+);
+
+// Relate field to display and navigate to the related invoice
+// Following the pattern of repersona_c in Contacts module
+$dictionary['AOS_Invoices']['fields']['verifactu_cancel_name_c'] = array(
+    'name' => 'verifactu_cancel_name_c',
+    'vname' => 'LBL_VERIFACTU_CANCEL_NAME',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'id_name' => 'verifactu_cancel_id_c',
+    'module' => 'AOS_Invoices',
+    'ext2' => 'AOS_Invoices',
+    'rname' => 'name',
+    'quicksearch' => 'enabled',
+    'studio' => 'visible',
+    'required' => false,
+    'importable' => true,
+    'duplicate_merge' => 'disabled',
+    'len' => 255,
+    'popupHelp' => 'LBL_VERIFACTU_CANCEL_NAME_HELP',
+);
+
+$dictionary['AOS_Invoices']['fields']['verifactu_csv_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_csv_c',
+    'name' => 'verifactu_csv_c',
+    'vname' => 'LBL_VERIFACTU_CSV',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'varchar',
+    'len' => '255',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'selected',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_CSV_HELP',
+);
+
+$dictionary['AOS_Invoices']['fields']['verifactu_submitted_at_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_submitted_at_c',
+    'name' => 'verifactu_submitted_at_c',
+    'vname' => 'LBL_VERIFACTU_SUBMITTED_AT',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'datetime',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'selected',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_SUBMITTED_AT_HELP',
+);
+
+$dictionary["AOS_Invoices"]["fields"]["verifactu_invoice_type_c"] = array(
+    'id' => 'AOS_Invoicesverifactu_invoice_type_c',
+    'name' => 'verifactu_invoice_type_c',
+    'vname' => 'LBL_VERIFACTU_INVOICE_TYPE',
+    'custom_module' => 'AOS_Invoices',
+    'required' => false,
+    'source' => 'custom_fields',
+    'type' => 'enum',
+    'massupdate' => '0',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => '2',
+    'inline_edit' => 1,
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'enabled',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'stic_invoices_types_list',
+    'studio' => 'visible',
+    'dependency' => NULL,
+    'popupHelp' => 'LBL_VERIFACTU_INVOICE_TYPE_HELP',
+);
+
+// Rectified invoice fields (Factura Rectificativa)
+$dictionary['AOS_Invoices']['fields']['verifactu_is_rectified_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_is_rectified_c',
+    'name' => 'verifactu_is_rectified_c',
+    'vname' => 'LBL_VERIFACTU_IS_RECTIFIED',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'bool',
+    'default' => 0,
+    'required' => 0,
+    'audited' => 1,
+    'unified_search' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_IS_RECTIFIED_HELP',
+);
+
+$dictionary['AOS_Invoices']['fields']['verifactu_rectified_type_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_rectified_type_c',
+    'name' => 'verifactu_rectified_type_c',
+    'vname' => 'LBL_VERIFACTU_RECTIFIED_TYPE',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'enum',
+    'options' => 'verifactu_rectified_type_list',
+    'len' => 1,
+    'size' => '20',
+    'required' => 0,
+    'audited' => 1,
+    'unified_search' => 0,
+    'default' => '',
+    'inline_edit' => 1,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_RECTIFIED_TYPE_HELP',
+);
+
+$dictionary['AOS_Invoices']['fields']['verifactu_rectified_base_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_rectified_base_c',
+    'name' => 'verifactu_rectified_base_c',
+    'vname' => 'LBL_VERIFACTU_RECTIFIED_BASE',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'enum',
+    'options' => 'verifactu_rectified_base_list',
+    'len' => 2,
+    'size' => '20',
+    'required' => 0,
+    'audited' => 1,
+    'unified_search' => 0,
+    'default' => '',
+    'inline_edit' => 1,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_RECTIFIED_BASE_HELP',
+);
+
+$dictionary['AOS_Invoices']['fields']['verifactu_rectified_date_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_rectified_date_c',
+    'name' => 'verifactu_rectified_date_c',
+    'vname' => 'LBL_VERIFACTU_RECTIFIED_DATE',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'date',
+    'required' => 0,
+    'audited' => 1,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 1,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'enable_range_search' => true,
+    'options' => 'date_range_search_dom',
+    'popupHelp' => 'LBL_VERIFACTU_RECTIFIED_DATE_HELP',
+);
+
+// Hash del CancellationRecord (anulación) - campo separado del hash original de la factura
+$dictionary['AOS_Invoices']['fields']['verifactu_cancel_hash_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_cancel_hash_c',
+    'name' => 'verifactu_cancel_hash_c',
+    'vname' => 'LBL_VERIFACTU_CANCEL_HASH',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'varchar',
+    'len' => '64',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'selected',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_CANCEL_HASH_HELP',
+);
+
+// Log técnico de operaciones Verifactu - campo no editable por usuario
+$dictionary['AOS_Invoices']['fields']['verifactu_audit_log_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_audit_log_c',
+    'name' => 'verifactu_audit_log_c',
+    'vname' => 'LBL_VERIFACTU_AUDIT_LOG',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'text',
+    'len' => '',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_AUDIT_LOG_HELP',
+);
+
+// Estado anterior antes de envío AEAT - para preservar estado de pago
+$dictionary['AOS_Invoices']['fields']['verifactu_previous_status_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_previous_status_c',
+    'name' => 'verifactu_previous_status_c',
+    'vname' => 'LBL_VERIFACTU_PREVIOUS_STATUS',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'varchar',
+    'len' => '20',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'selected',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_PREVIOUS_STATUS_HELP',
+);
+
+// Indica si la factura está vigente en Verifactu (1) o ha sido anulada/rectificada (0)
+$dictionary['AOS_Invoices']['fields']['verifactu_valid_invoice_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_valid_invoice_c',
+    'name' => 'verifactu_valid_invoice_c',
+    'vname' => 'LBL_VERIFACTU_VALID_INVOICE',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'enum',
+    'len' => 100,
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => '',
+    'no_default' => 1,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'options' => 'stic_boolean_list',
+    'popupHelp' => 'LBL_VERIFACTU_VALID_INVOICE_HELP',
+);
+

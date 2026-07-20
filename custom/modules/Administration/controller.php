@@ -151,11 +151,117 @@ class CustomAdministrationController extends AdministrationController
 
     }
 
-
-    public function action_configureMainMenu(){
+    public function action_configureMainMenu()
+    {
         // Add specific logic for manage main menu
-        require_once('custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php');
+        require_once 'custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php';
 
-    } 
+    }
+
+    /**
+     * Handle the upload, encryption, and storage of the digital certificate.
+     *
+     * @return void
+     */
+    public function action_SticSaveCertificate()
+    {
+        global $current_user;
+
+        if (!is_admin($current_user)) {
+            sugar_die("Not authorized access.");
+        }
+
+        if (isset($_FILES['certificate_file']) && $_FILES['certificate_file']['error'] === UPLOAD_ERR_OK) {
+
+            // 1. Read file content
+            $fileContent = file_get_contents($_FILES['certificate_file']['tmp_name']);
+            
+            // 2. Get and validate certificate password
+            $password = $_POST['certificate_password'] ?? '';
+            
+            if (empty($password)) {
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_PASSWORD_REQUIRED');
+                return;
+            }
+
+            // 3. Verify password and extract certificate information
+            $certInfo = array();
+            if (!openssl_pkcs12_read($fileContent, $certInfo, $password)) {
+                // Invalid password or corrupted certificate
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to read certificate. Invalid password or corrupted file.');
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_INVALID_PASSWORD');
+                return;
+            }
+
+            // 4. Extract certificate details for metadata
+            $certData = openssl_x509_parse($certInfo['cert']);
+            $certDetails = array(
+                'subject' => $certData['name'] ?? '',
+                'issuer' => $certData['issuer']['CN'] ?? '',
+                'valid_from' => isset($certData['validFrom_time_t']) ? date('Y-m-d H:i:s', $certData['validFrom_time_t']) : '',
+                'valid_to' => isset($certData['validTo_time_t']) ? date('Y-m-d H:i:s', $certData['validTo_time_t']) : '',
+                'serial_number' => $certData['serialNumberHex'] ?? $certData['serialNumber'] ?? '',
+            );
+
+            // 5. Extract components from PKCS12 (certificate and private key in PEM format)
+            $certificate = $certInfo['cert'];      // X.509 certificate (PEM format)
+            $privateKey = $certInfo['pkey'];       // Private key (PEM format)
+            $caChain = $certInfo['extracerts'] ?? array(); // CA chain certificates
+
+            // Validate extracted components
+            if (empty($certificate) || empty($privateKey)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to extract certificate or private key from PKCS12.');
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_INVALID_PASSWORD');
+                return;
+            }
+
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Extracted certificate: ' . strlen($certificate) . ' bytes, private key: ' . strlen($privateKey) . ' bytes');
+
+            // 6. Prepare CA chain in PEM format if exists
+            $caChainPem = '';
+            if (!empty($caChain)) {
+                foreach ($caChain as $caCert) {
+                    $caChainPem .= $caCert . "\n";
+                }
+            }
+
+            // 7. Save certificate components to config table (no encryption - DB access is protected)
+            require_once 'custom/include/SticCertificateUtils.php';
+
+            // Prepare components array (store in PEM format without encryption)
+            $components = array(
+                'private_key' => $privateKey,  // PEM format
+                'certificate' => $certificate,  // PEM format
+                'ca_chain' => $caChainPem,  // PEM format
+            );
+
+            // Prepare metadata
+            $metadata = array(
+                'original_filename' => $_FILES['certificate_file']['name'],
+                'upload_date' => date('Y-m-d H:i:s'),
+                'uploaded_by' => $current_user->id,
+                'uploaded_by_name' => $current_user->name,
+                'cert_details' => $certDetails,
+                'has_ca_chain' => !empty($caChain),
+            );
+
+            // Save to config table
+            $saveResult = SticCertificateUtils::saveCertificateToConfig($components, $metadata);
+            if (!$saveResult) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to save certificate to config table.');
+                SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_WRITE');
+                return;
+            }
+
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate uploaded successfully. Stored in config table.');
+
+            // Redirect successfully to the view
+            SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_SUCCESS');
+
+        } else {
+            // Error uploading
+            SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_UPLOAD');
+        }
+    }
 
 }

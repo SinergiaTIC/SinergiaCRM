@@ -178,6 +178,18 @@ $dashletData['AOS_InvoicesDashlet']['columns'] = array(
         'default' => true,
         'name' => 'status',
     ),
+    'verifactu_aeat_status_c' => array(
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_AEAT_STATUS',
+        'default' => true,
+        'name' => 'verifactu_aeat_status_c',
+    ),
+    'verifactu_invoice_type_c' => array( 
+        'width' => '15%',
+        'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
+        'default' => false,
+        'name' => 'verifactu_invoice_type_c',
+    ),
     'total_amount' => array(
         'width' => '15%',
         'label' => 'LBL_GRAND_TOTAL',
