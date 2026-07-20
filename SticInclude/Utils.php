@@ -917,4 +917,60 @@ EOQ;
         ob_flush();
     }
 
+    /**
+     * Ensures that the JavaScript language cache file for a given module and language
+     * is up to date with respect to its source language files.
+     *
+     * SuiteCRM only regenerates the jsLanguage cache when the file is missing, so edits
+     * performed via Studio (which write to custom/Extension/.../Ext/Language) are not
+     * reflected in client-side labels retrieved through SUGAR.language.get until a manual
+     * "Rebuild JS Language Files" is run. This method compares the modification time of
+     * the cache file against all relevant language sources and regenerates the cache when
+     * any source is newer.
+     *
+     * @param string $module Module name (e.g. 'stic_Resources')
+     * @param string $lang   Language key (e.g. 'ca_ES')
+     * @return void
+     */
+    public static function ensureJsLanguageFresh($module, $lang)
+    {
+        $jsCacheFile = sugar_cached("jsLanguage/{$module}/{$lang}.js");
+        $needsRegen = !is_file($jsCacheFile);
+
+        if (!$needsRegen) {
+            $sources = array();
+
+            $base = "modules/{$module}/language/{$lang}.lang.php";
+            if (is_file($base)) {
+                $sources[] = $base;
+            }
+
+            $extDir = "custom/Extension/modules/{$module}/Ext/Language";
+            if (is_dir($extDir)) {
+                $files = glob("{$extDir}/*{$lang}.lang.php");
+                if ($files) {
+                    $sources = array_merge($sources, $files);
+                }
+            }
+
+            $custom = "custom/modules/{$module}/language/{$lang}.lang.php";
+            if (is_file($custom)) {
+                $sources[] = $custom;
+            }
+
+            $jsMtime = filemtime($jsCacheFile);
+            foreach ($sources as $file) {
+                if (filemtime($file) > $jsMtime) {
+                    $needsRegen = true;
+                    break;
+                }
+            }
+        }
+
+        if ($needsRegen) {
+            require_once 'include/language/jsLanguage.php';
+            jsLanguage::createModuleStringsCache($module, $lang);
+        }
+    }
+
 }

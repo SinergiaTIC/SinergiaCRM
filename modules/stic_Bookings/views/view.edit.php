@@ -154,18 +154,11 @@ class stic_BookingsViewEdit extends ViewEdit
         require_once 'SticInclude/Utils.php';
 
         // Load JS language file for Resources to get field labels in the editview
-        $moduleName = 'stic_Resources';
-        if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
-            require_once 'include/language/jsLanguage.php';
-            jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
+        $lang = $GLOBALS['current_language'];
+        foreach (['stic_Resources', 'stic_Bookings'] as $moduleName) {
+            SticUtils::ensureJsLanguageFresh($moduleName, $lang);
+            echo getVersionedScript("cache/jsLanguage/{$moduleName}/{$lang}.js", $GLOBALS['sugar_config']['js_lang_version']);
         }
-        echo getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-        $moduleName = 'stic_Bookings';
-        if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
-            require_once 'include/language/jsLanguage.php';
-            jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
-        }
-        echo getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
 
         global $mod_strings, $app_strings;
         SticViews::display($this);
