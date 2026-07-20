@@ -56,6 +56,20 @@ class ServerActionFlowExecutor {
             foreach ($actions as $actionConfig) {
                 $lastActionConfig = $actionConfig;
 
+                // Check that all requisite_actions have been executed successfully
+                foreach ($actionConfig->requisite_actions as $reqActionId) {
+                    $reqResult = $this->context->getActionResultById($reqActionId);
+                    if ($reqResult === null) {
+                        throw new \RuntimeException("Action '{$actionConfig->name}' (id: {$actionConfig->id}) requires action with id '{$reqActionId}' but it was not executed. Possible topological sort issue.");
+                    }
+                    if ($reqResult->isError()) {
+                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' skipped because requisite action '{$reqActionId}' failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Requisite action failed.");
+                        $this->context->addActionResult($skippedResult);
+                        continue 2;
+                    }
+                }
+
                 // Check the Conditions (if any)
                 if(!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
                     $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
@@ -111,7 +125,7 @@ class ServerActionFlowExecutor {
                     if ($actionConfig->continue_on_error) {
                         $lastResult->status = ResultStatus::SKIPPED;
                         $lastResult->message = "Ignored Error: " . $lastResult->message;
-                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
+                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
                         continue; 
                     }
 
@@ -145,4 +159,49 @@ class ServerActionFlowExecutor {
         return $lastResult;
     }
 
+    /**
+     * Iterates through all actions in a flow, skips non-terminal ones,
+     * and executes the first terminal action that satisfies its execution conditions.
+     *
+     * @param FormFlow $flowConfig The flow definition to evaluate.
+     */
+    public function executeTerminalActionOnly(FormFlow $flowConfig): void {
+        if (empty($flowConfig->actions)) {
+            return;
+        }
+
+        foreach ($flowConfig->actions as $actionConfig) {
+            try {
+                // Instantiate the action executor to check its type and interface
+                $actionExecutor = $this->factory->createAction($actionConfig);
+
+                // Skip non-terminal actions
+                if (!($actionExecutor instanceof ITerminalAction)) {
+                    continue;
+                }
+
+                // Check the Conditions (if any)
+                if (!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping terminal action '{$actionConfig->text}' because conditions failed.");
+                    continue;
+                }
+
+                $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Executing terminal action '{$actionConfig->name}'.");
+                
+                // Parameter resolution
+                $paramDefinitions  = $actionExecutor->getParameters();
+                $paramConfigurations = $actionConfig->parameters;
+                $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
+                $actionConfig->setResolvedParameters($resolvedParameters);
+
+                // Execute the action
+                $executionResult = $actionExecutor->execute($this->context, $actionConfig);
+                $actionExecutor->performTerminal($this->context, $executionResult);
+                break;
+
+            } catch (\Throwable $t) {
+                $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Failed to evaluate or execute terminal action '{$actionConfig->name}': " . $t->getMessage());
+            }
+        }
+    }
 }

@@ -316,6 +316,12 @@ class WizardNavigation {
     // If going forward, validate the current step
     if (WizardNavigation.validateCurrentStep()) {
       window.alpineComponent.navigation.step = targetStep;
+
+      // Regenerate automatic actions when entering Step 3 to reflect current data block configuration
+      if (targetStep === 3 && !window.alpineComponent.isReadOnly) {
+        window.alpineComponent.formConfig.regenerateAutomaticActions();
+      }
+
       WizardNavigation.autoSave();
       WizardNavigation.loadStep();
     }
@@ -480,15 +486,10 @@ class WizardStep2 {
           Alpine.store('dataBlockRelationships', {
             get formConfig() { return window.alpineComponent.formConfig; },
 
-            _dataBlockRelationships: null,
             get dataBlockRelationships() { 
-              if (this._dataBlockRelationships == null) {
-                this._dataBlockRelationships = this.formConfig.getAllDataBlockRelationships(); 
-              }
-              return this._dataBlockRelationships;
+              return this.formConfig.getAllDataBlockRelationships(); 
             },
             resetDataBlockRelationships() {
-              this._dataBlockRelationships = null;
             },
             usedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
@@ -496,7 +497,35 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
-              return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return [];
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let seen = new Set();
+              return this.dataBlockRelationships[datablockId].filter(r => {
+                if (seen.has(r.name)) return false;
+                // Check if this block is the N side: it has a relate field, or relationship metadata marks it as 1-N
+                let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === r.name);
+                if (!hasRelateField) {
+                  // Fallback: check relationship metadata for virtual 1-N
+                  let relData = moduleInfo?.relationships?.[r.name];
+                  if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                    // Block is N side if its module matches module_orig
+                    if (relData.module_orig === block.module) hasRelateField = true;
+                  }
+                }
+                if (!hasRelateField) {
+                  seen.add(r.name);
+                  return true;
+                }
+                // For self-referencing (hasRelateField on both sides), only hide if the block
+                // is the initiator (role !== 'target'), not when it's the target (1 side).
+                let isUsed = block.relationships.some(br => br.name === r.name && br.role !== 'target');
+                if (!isUsed) {
+                  seen.add(r.name);
+                  return true;
+                }
+                return false;
+              });
             },
             addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText) {
               let dataBlock = this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
@@ -505,26 +534,78 @@ class WizardStep2 {
               }
               return dataBlock;
             },
+            deleteRelationship(datablockId, relName, relatedDatablockId) {
+              this.formConfig.deleteRelationship(datablockId, relName, relatedDatablockId);
+              this.resetDataBlockRelationships();
+            },
+            getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return 'N\u2009\u27f7\u2009M';
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
+              let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              let otherHasRelateField = otherModuleInfo && Object.values(otherModuleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              if (hasRelateField && otherHasRelateField && block.module === otherBlock?.module) {
+                return datablockId === origDatablockId ? 'N\u2009\u27f6\u20091' : '1\u2009\u27f5\u2009N';
+              }
+              if (hasRelateField && !otherHasRelateField) return 'N\u2009\u27f6\u20091';
+              if (!hasRelateField && otherHasRelateField) return '1\u2009\u27f5\u2009N';
+              if (hasRelateField && otherHasRelateField) return '1\u2009\u27f7\u20091';
+              // Fallback: check relationship metadata for virtual/inverse virtual relationships
+              let relData = moduleInfo?.relationships?.[relName];
+              if (!relData && otherModuleInfo) relData = otherModuleInfo.relationships?.[relName];
+              if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                if (relData.module_orig === block.module) return 'N\u2009\u27f6\u20091';
+                if (relData.module_dest === block.module) return '1\u2009\u27f5\u2009N';
+              }
+              return 'N\u2009\u27f7\u2009M';
+            },
             getAvailableDataBlocksForRelationship(datablockId, relName) { 
               return this.formConfig.getAvailableDataBlocksForRelationship(datablockId, relName);
             },
             suggestNewDestDataBlockText(origDatablockId, relName) {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
-            getRelText(datablockId, relName) {
-              let rel = this.dataBlockRelationships[datablockId].find(r => r.name == relName);
-              let dataBlock_orig = this.formConfig.data_blocks.find(d => d.id == rel.datablock_orig);
-              let dataBlock_dest = this.formConfig.data_blocks.find(d => d.id == rel.datablock_dest);
-              let str = "";
-              if (dataBlock_orig && dataBlock_dest) {
-                if (dataBlock_orig.id == datablockId) {
-                  str = `${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
-                } else {
-                  str = `${dataBlock_dest.text} ⟵ ${dataBlock_orig.text}`;
-                }
-                str += ` (${rel.text})`;
+            _relArrow(datablockId, relName, otherBlock, initiatorId) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return '⟷';
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
+              let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              let otherHasRelateField = otherModuleInfo && Object.values(otherModuleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              if (hasRelateField && otherHasRelateField && block.module === otherBlock?.module) {
+                return datablockId === initiatorId ? '⟶' : '⟵';
               }
-              return str;
+              if (hasRelateField && !otherHasRelateField) return '⟶';
+              if (!hasRelateField && otherHasRelateField) return '⟵';
+              // Fallback: check relationship metadata for virtual relationships
+              let relData = moduleInfo?.relationships?.[relName];
+              if (!relData && otherModuleInfo) relData = otherModuleInfo.relationships?.[relName];
+              if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                if (relData.module_orig === block.module) return '⟶';
+                if (relData.module_dest === block.module) return '⟵';
+              }
+              return '⟷';
+            },
+            getRelText(datablockId, rel) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block || !rel) return rel?.text || '';
+              let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              if (!otherBlock) return rel.text;
+
+              let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
+              return `${block.text} ${arrow} ${otherBlock.text}`;
+            },
+            getInvolvedBlocksText(datablockId, rel) {
+              let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              if (!block || !otherBlock) return rel.text;
+
+              let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
+              return `${block.text} (${block.getModuleText()}) ${arrow} ${otherBlock.text} (${otherBlock.getModuleText()})`;
             },
           });
         }
@@ -1578,13 +1659,43 @@ class WizardStep3 {
       flowTabSelected: 0,
       get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
-      showAllActions: false,
 
       selectedCategory: '', 
       selectedActionDefName: '', 
 
+      /**
+       * Indicates whether a terminal action can be added to the flow
+       * @param {stic_AwfFlow} flow 
+       * @returns 
+       */
+      canAddTerminalAction(flow) {
+        if (!flow) return false;
+        if (flow.hasTerminalAction()) return false; // Only one Terminal action per flow
+
+        // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
+        if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
+          for (const f of this.formConfig.flows) {
+            const parentAction = f.actions.find(a => a.flow_success_id == flow.id || a.flow_error_id == flow.id);
+            if (parentAction) {
+              // Check reumptionContext from the deferred action
+              const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
+              if (parentDef && parentDef.resumptionContext !== 'original_user') {
+                return false;
+              }
+              break;
+            }
+          }
+        }
+        return true;
+      },
+
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
+
+        // Regenerate automatic actions when entering Step 3 to reflect current data block relationships
+        if (window.alpineComponent && !window.alpineComponent.isReadOnly) {
+          window.alpineComponent.formConfig.regenerateAutomaticActions();
+        }
 
         // Store for the Action Editor management
         if (!Alpine.store('actionEditor')) {
@@ -1679,12 +1790,57 @@ class WizardStep3 {
               }
             },
 
+            get parentResumptionContext() {
+              if (!this.flow) return 'original_user';
+              if (this.flow.id === '0' || this.flow.id === '-1' || this.flow.id === '1') return 'original_user';
+              
+              for (const f of this.formConfig.flows) {
+                const parentAction = f.actions.find(a => a.flow_success_id == this.flow.id || a.flow_error_id == this.flow.id);
+                if (parentAction) {
+                  const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
+                  return parentDef ? parentDef.resumptionContext : 'original_user';
+                }
+              }
+              return 'original_user';
+            },
+
+            get validDefinitionsForCurrentFlow() {
+              const parentCtx = this.parentResumptionContext;
+              const hasTerminal = this.flow?.hasTerminalAction();
+              
+              return this.allDefinitions.filter(d => {
+                // For UX, every deferred action is considered non Terminal
+                const isTerminalForUser = d.isTerminal && d.type !== 'Deferred';
+
+                // Add Terminal button
+                if (isTerminalForUser !== this.isTerminalFilter) {
+                  return false;
+                }
+
+                // If flow has any real terminal action
+                if (isTerminalForUser && hasTerminal) {
+                  if (!this.isEdit || this.action?.name !== d.name) return false;
+                }
+
+                // Parent context restrictions
+                if (parentCtx === 'server_webhook' || parentCtx === 'third_party_human') {
+                  if (d.isTerminal) return false;
+                  // Do not allow deferred actions that need the original user's browser 
+                  if (d.type === 'Deferred' && d.resumptionContext === 'original_user') {
+                    return false;
+                  }
+                }
+                
+                return true;
+              });
+            },
+
             /** 
              * Returns the categories available according to the valid actions 
              * @returns {Array} List of available categories 
              */
             get availableCategories() {
-              const validActions = this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter);
+              const validActions = this.validDefinitionsForCurrentFlow;
               const uniqueCatIds = [...new Set(validActions.map(a => a.category))];
               return stic_AwfAction.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
             },
@@ -1695,7 +1851,7 @@ class WizardStep3 {
              */
             get filteredActions() {
                 if (!this.selectedCategory) return [];
-                return this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter && d.category == this.selectedCategory);
+                return this.validDefinitionsForCurrentFlow.filter(d => d.category == this.selectedCategory);
             },
 
             get isValid() {
@@ -1830,15 +1986,17 @@ class WizardStep3 {
 
                 // Create an empty instance based on the definition
                 let tempAction = new stic_AwfAction({
-                    name: def.name,
-                    title: def.title,
-                    text: def.title, // By default the title
-                    description: def.description,
-                    category: def.category,
-                    is_terminal: def.isTerminal,
-                    continue_on_error: def.defaultContinueOnError || false,
-                    order: defaultOrder,
-                    is_user_selectable: true
+                  name: def.name,
+                  title: def.title,
+                  text: def.title, // By default the title
+                  description: def.description,
+                  category: def.category,
+                  is_terminal: def.isTerminal,
+                  continue_on_error: def.defaultContinueOnError || false,
+                  order: defaultOrder,
+                  is_user_selectable: true,
+                  flow_success_text: def.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
+                  flow_error_text: def.flowErrorLabel || utils.translate("LBL_FLOW_ONERROR"),
                 });
 
                 // Initialize empty parameters according to the definition
@@ -1951,11 +2109,9 @@ class WizardStep3 {
              */
             saveChanges() {
               const form = document.getElementById('ModalActionConfigForm');
-              if (form) {
-                  // Execute the native function to check input validity and show errors
-                  if (!form.reportValidity()) {
-                      return; // Si no es valido, abortamos el proceso
-                  }
+              // Execute the native function to check input validity and show errors
+              if (form && !form.reportValidity()) {
+                return; // Si no es valido, abortamos el proceso
               }
               if (!this.isValid) {
                 alert(utils.translate('LBL_ACTION_PARAM_MISSING_MESSAGE'));
@@ -1965,23 +2121,12 @@ class WizardStep3 {
               // Recalculate action before saving
               this._recalculateAction(this.action, this.definition);
 
-              if (this.isNewAction) {
-                // Add Action to flow: Insertion based on order
-                let insertIndex = this.flow.actions.length;
-                for (let i = 0; i < this.flow.actions.length; i++) {
-                  if ((this.flow.actions[i].order ?? 0) > (this.action.order ?? 0)) {
-                    insertIndex = i;
-                    break;
-                  }
-                }
-                this.flow.actions.splice(insertIndex, 0, this.action);
-              } else {
-                // Update existing Action in flow
-                const index = this.flow.actions.findIndex(a => a.id == this.original_id);
-                if (index !== -1) {
-                  this.flow.actions[index] = this.action;
-                }
-              }
+              this.formConfig.upsertAction(
+                this.action, 
+                this.definition.type, 
+                this.flow, 
+                this.isNewAction ? null : this.original_id
+              );
               this.close();
             },
 
@@ -2102,7 +2247,7 @@ class WizardStep3 {
        * @return {void} 
        */
       removeAction(action) {
-        this.flow.actions = this.flow.actions.filter(a => a.id != action.id);
+        this.formConfig.removeAction(this.flow.id, action.id)
       },
 
       /**
@@ -2111,18 +2256,17 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveUpAction(action) {
-        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // We cannot move the first action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index <= 0) return false;
 
-        // We cannot skip a fixed order action
         const prevAction = this.actions[index - 1];
         if (prevAction.is_fixed_order) return false;
 
-        // We cannot move before a requisite action
+        // Manual actions cannot move past automatic actions
+        if (!action.is_automatic && prevAction.is_automatic) return false;
+
         if ((action.requisite_actions || []).includes(prevAction.id)) return false;
 
         return true;
@@ -2148,18 +2292,19 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveDownAction(action) {
-        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // We cannot move the last action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index >= this.actions.length - 1) return false;
 
-        // We cannot skip a fixed order action
         const nextAction = this.actions[index + 1];
         if (nextAction.is_fixed_order) return false;
 
-        // We cannot move if we are a requisite of the next action
+        // Manual actions cannot move past automatic actions
+        if (!action.is_automatic && nextAction.is_automatic) return false;
+        // Automatic actions cannot move past manual actions
+        if (action.is_automatic && !nextAction.is_automatic) return false;
+
         if ((nextAction.requisite_actions || []).includes(action.id)) return false;
 
         return true;  
