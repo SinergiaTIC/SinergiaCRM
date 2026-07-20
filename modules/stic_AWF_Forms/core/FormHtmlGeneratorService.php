@@ -55,7 +55,7 @@ class FormHtmlGeneratorService {
             {
                 $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
-                $htmlRaw .= "<title>Advanced Web Form</title>" .$this->newLine();
+                $htmlRaw .= "<title>" . htmlspecialchars($config->layout->web_title) . "</title>" .$this->newLine();
         
                 // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
@@ -209,6 +209,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-section-panel { border: none; background: transparent; box-shadow: none; height: var(--awf-section-height); }
 #{$wrapperId} .awf-section-title-panel { font-size: 1.25em; margin-bottom: 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bs-border-color); }
 #{$wrapperId} .awf-section-title-card { font-weight: 700; margin: 0; }
+#{$wrapperId} .awf-section-subtitle { font-size: 0.9em; margin-top: -0.15rem; margin-left: 0.25rem; }
 #{$wrapperId} .awf-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--bs-border-color); font-size: 0.875em; color: #6c757d; text-align: center; }
 #{$wrapperId} .awf-required { color: #dc3545; font-weight: bold; }
 #{$wrapperId} label, #{$wrapperId} .form-label, #{$wrapperId} .form-check-label { font-weight: var(--awf-label-weight); }
@@ -300,7 +301,7 @@ class FormHtmlGeneratorService {
                     $html .= "<div class='awf-overlay-content'>" .$this->newLine('+');
                     {
                         $html .= "<h3 class='h4 text-danger awf-field'>{$closedFormTitle}</h3>" .$this->newLine();
-                        $html .= "<p class='mb-0 lead' x-text='message'>{$closedFormText}</p>" .$this->newLine();
+                        $html .= "<p class='mb-0 lead'>{$closedFormText}</p>" .$this->newLine();
                     }
                     $html .= "</div>" .$this->newLine('-');
                 }
@@ -323,18 +324,26 @@ class FormHtmlGeneratorService {
                 // Begin Form
                 $html .= "<form x-ref='form' {$formAttributes} {$alpineSubmit} class='needs-validation'>" .$this->newLine('+');
                 {
-                    // Honeypot: Invisible anti-spam
-                    $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" .$this->newLine('+');
+                    // Honeypot: Invisible anti-spam. V2: Dynamic and Semantic
+                    $randomSuffix = substr(md5(uniqid((string)mt_rand(), true)), 0, 6);
+                    $honeypotName = 'awf_website_url_' . $randomSuffix;
+                    $html .= "<div class='awf-form-group' style='opacity: 0; position: absolute; left: -9999px; z-index: -1;' aria-hidden='true'>" .$this->newLine('+');
                     {
-                        $html .= "<label for='awf_website'>".translate('LBL_HONEYPOT_LABEL', 'stic_AWF_Forms')."</label>" .$this->newLine();
-                        $html .= "<input type='text' id='awf_website' name='awf_honey_pot' value='' tabindex='-1' autocomplete='off'>" .$this->newLine();
+                        $html .= "<label for='{$honeypotName}'>Website</label>" .$this->newLine();
+                        $html .= "<input type='text' name='{$honeypotName}' id='{$honeypotName}' tabindex='-1' autocomplete='{$honeypotName}'>" .$this->newLine();
                     }
                     $html .= "</div>" .$this->newLine('-');
 
-                    // TimeTrap: Hidden field to track time spent on form
-                    $html .= "<input type='hidden' name='awf_submission_ts' x-model='loadTime'>";
+                    // TimeTrap: Hidden field to track time spent on form. V2: Server-side + HMAC
+                    global $sugar_config;
+                    $secretKey = $sugar_config['unique_key'] ?? 'default_fallback_key';
+                    // Convert to string to ensure the full precision of microtime is preserved for the HMAC signature
+                    $serverTs = (string)microtime(true);
+                    $signature = hash_hmac('sha256', $serverTs, $secretKey);
+                    $html .= "<input type='hidden' name='awf_submission_ts' value='{$serverTs}'>" .$this->newLine();
+                    $html .= "<input type='hidden' name='awf_submission_token' value='{$signature}'>" .$this->newLine();
 
-                    // Captura de la url del formulario
+                    // Capture the URL of the page where the form is embedded
                     $html .= "<input type='hidden' name='awf_form_url' x-init=\"\$el.value = (window.self !== window.top) ? document.referrer : window.location.href\">" . $this->newLine();
                     
                     // Sections Grid
@@ -353,14 +362,14 @@ class FormHtmlGeneratorService {
                             $html .= "<div class='card {$containerClass}' {$xDataAttr} {$styleAttr}>" .$this->newLine('+');
                             {
                                 // Header
-                                if ($section->showTitle && !empty($section->title)) {
+                                if ($section->showTitle && (!empty($section->title) || !empty($section->subtitle)))  {
                                     $toggleBtn = "";
                                     $cursorStyle = "";
 
                                     if ($isCollapsible) {
                                         $cursorStyle = "cursor: pointer;"; 
                                         $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' " .
-                                                              "@click='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
+                                                              "@click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
                                         {
                                             $toggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" .$this->newLine();
                                         }
@@ -372,7 +381,18 @@ class FormHtmlGeneratorService {
 
                                         $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
                                         {
-                                            $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
+                                            $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
+                                            {
+                                                if (!empty($section->title)) {
+                                                    $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
+                                                }
+                                                if (!empty($section->subtitle)) {
+                                                    $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                                    $marginTop = !empty($section->title) ? "mt-1" : "";
+                                                    $html .= "<div class='awf-section-subtitle text-muted {$marginTop}' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</div>" .$this->newLine();
+                                                }
+                                            }
+                                            $html .= "</div>" .$this->newLine('-');
                                             $html .= $toggleBtn .$this->newLine();
                                         }
                                         $html .= "</div>" .$this->newLine('-');
@@ -383,7 +403,18 @@ class FormHtmlGeneratorService {
 
                                         $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
                                         {
-                                            $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
+                                            $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
+                                            {
+                                                if (!empty($section->title)) {
+                                                    $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
+                                                }
+                                                if (!empty($section->subtitle)) {
+                                                    $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                                    $marginTop = !empty($section->title) ? "mt-1" : "";
+                                                    $html .= "<span class='awf-section-subtitle text-muted d-block {$marginTop}' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</span>" .$this->newLine();
+                                                }
+                                            }
+                                            $html .= "</div>" .$this->newLine('-');
                                             $html .= $toggleBtn .$this->newLine();
                                         }
                                         $html .= "</div>" .$this->newLine('-');
@@ -450,7 +481,7 @@ class FormHtmlGeneratorService {
         $html = "";
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
-            $html .= $this->renderField($block, $field, $theme);
+            $html .= $this->renderField($field, $theme);
         }
         return $html;
     }
@@ -460,13 +491,12 @@ class FormHtmlGeneratorService {
      * It handles special cases such as hidden fields, single checkboxes, switches, and rating fields, as well as common cases for text inputs, textareas, and selects. 
      * It also incorporates validation attributes and help text when provided.
      * 
-     * @param FormDataBlock $block The data block to which the field belongs, used for constructing the input name and ID
      * @param FormDataBlockField $field The field to be rendered, containing all necessary information about its type, label, validations, etc.
      * @param FormTheme $theme The form theme that may affect the rendering of the field (e.g., whether floating labels are used)
      * @return string The generated HTML for the field as a string
      */
-    private function renderField(FormDataBlock $block, FormDataBlockField $field, FormTheme $theme): string {
-        $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+    private function renderField(FormDataBlockField $field, FormTheme $theme): string {
+        $inputName = $field->getKey();
 
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
@@ -551,7 +581,7 @@ class FormHtmlGeneratorService {
         // --- SPECIAL CASES (ratings) ---
 
         if ($field->type_in_form === 'rating') {
-            return $this->generateRatingField($block, $field) .$this->newLine();
+            return $this->generateRatingField($field) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -691,12 +721,11 @@ class FormHtmlGeneratorService {
      * Supports different subtypes: stars, emojis, thumbs, and lights, each with its own visual representation and interaction logic.
      * The method uses AlpineJS for interactivity, allowing users to hover and select their rating, with visual feedback.
      * 
-     * @param FormDataBlock $block The data block to which the rating field belongs, used for constructing the input name and ID
      * @param FormDataBlockField $field The rating field to be rendered, containing all necessary information about its label, description, subtype, and validation requirements
      * @return string The generated HTML for the rating field as a string, including the interactive controls and any associated labels and descriptions
      */
-    private function generateRatingField(FormDataBlock $block, FormDataBlockField $field): string {
-        $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+    private function generateRatingField(FormDataBlockField $field): string {
+        $inputName = $field->getKey();
         $name = htmlspecialchars($inputName);
         $label = htmlspecialchars($field->label ?? '');
         $description = "";
@@ -871,7 +900,7 @@ class FormHtmlGeneratorService {
             }
         }
 
-        // == FRONTEND ACTIONS ==
+        // == UI ACTIONS ==
         if (isset($config->flows['0'])) {
             // Load Hook and UI actions to check for IFrontendAction
             $possibleActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::UI]);
@@ -918,17 +947,17 @@ document.addEventListener('alpine:init', () => {
   // Main Component of the Form
   Alpine.data('awfForm', (config) => ({
     isActive: true,
-    loadTime: 0,
+    clientLoadTime: 0,
     message: config.closedFormText,
     submitting: false,
     serverErrors: {},
     
     init() {
-      this.loadTime = (Date.now() / 1000).toFixed(3);
+      this.clientLoadTime = Date.now();
+
       if (!config.isPreview && config.checkUrl) {
         fetch(config.checkUrl).then(r => r.json()).then(d => {
           this.isActive = d.active;
-          this.message = this.message === config.closedFormText ? d.message : this.message;
         }).catch(e => console.error(e));
       }
       this.prefillFromUrl();
@@ -938,21 +967,79 @@ document.addEventListener('alpine:init', () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const ignore = ['entryPoint', 'id', 'module', 'action', 'ajax_validation_only'];
+        const disablePrefix = '[disabled]';
+        const hiddenPrefix = '[hidden]';
+
+        // Track the panels (cards) we modify to check if they should be hidden entirely
+        const affectedPanels = new Set();
+
         urlParams.forEach((value, key) => {
           if (ignore.includes(key)) return;
           const form = this.$refs.form;
           if (!form) return;
-          
+
+          let isDisabled = false, isHidden = false;
+          if (key.startsWith(disablePrefix)) {
+            isDisabled = true;
+            key = key.substring(disablePrefix.length);
+          } else if (key.startsWith(hiddenPrefix)) {
+            isHidden = true;
+            key = key.substring(hiddenPrefix.length);
+          }
+         
           const selector = `[name='${key}'], [name$='_${key}'], [name$='.${key}']`;
           const inputs = form.querySelectorAll(selector);
           inputs.forEach(input => {
-            if (!input.value && input.type !== 'hidden') {
+            // Ignore our own hidden clones
+            if (input.dataset.clone === 'true') return;
+
+            // Assign value (supporting checkboxes and radios)
+            if (input.type === 'checkbox' || input.type === 'radio') {
+              if (input.value === value) {
+                input.checked = true;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            } else {
               input.value = value;
               input.dispatchEvent(new Event('input', { bubbles: true }));
               input.dispatchEvent(new Event('change', { bubbles: true }));
             }
+
+            // Apply disabled or hidden modifiers
+            if (isDisabled) {
+              // Disabled: disable the input and add a hidden clone to ensure value is submitted in POST
+              input.disabled = true;
+              if (!input.parentNode.querySelector(`input[type="hidden"][name="${input.name}"][data-clone="true"]`)) {
+                const hiddenClone = document.createElement('input');
+                hiddenClone.type = 'hidden';
+                hiddenClone.name = input.name;
+                hiddenClone.value = value;
+                hiddenClone.dataset.clone = 'true';
+                input.parentNode.insertBefore(hiddenClone, input.nextSibling);
+              }
+            } else if (isHidden) {
+              // Hidden: hide the input and its wrapper
+              const wrapper = input.closest('.awf-field') || input.closest('.form-group') || input.parentElement;
+              if (wrapper) {
+                wrapper.style.display = 'none';
+
+                // Track the closest section panel (card)
+                const panel = wrapper.closest('.awf-section-panel');
+                if (panel) affectedPanels.add(panel);
+              }
+            }
           });
         });
+        // Post-process affected panels to hide empty ones
+        affectedPanels.forEach(panel => {
+          const allFields = Array.from(panel.querySelectorAll('.awf-field'));
+          const allHidden = allFields.every(field => field.style.display === 'none');
+          if (allHidden) {
+            panel.style.display = 'none';
+          }
+        });
+
       } catch (e) { console.warn('AWF Prefill Error:', e); }
     },
 
@@ -1051,27 +1138,32 @@ document.addEventListener('alpine:init', () => {
       }
 
       this.submitting = true;
-      const formData = new FormData(formElement);
-      formData.append('ajax_validation_only', '1');
+      const timeElapsedMs = Date.now() - this.clientLoadTime;
+      const delayMs = timeElapsedMs < 2000 ? (2500 - timeElapsedMs) : 0;
+
+      setTimeout(() => {
+        const formData = new FormData(formElement);
+        formData.append('ajax_validation_only', '1');
       
-      fetch(formElement.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-      .then(response => response.json()).then(data => {
-        if (data.status === 'success') {
-          formElement.submit();
-        } else {
-          this.submitting = false;
-          this.serverErrors = data.errors || {};
-          const errorIds = Object.keys(this.serverErrors);
-          if (errorIds.length > 0) {
-            errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
-          } else {
+        fetch(formElement.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+        .then(response => response.json()).then(data => {
+          if (data.status === 'success') {
             formElement.submit();
+          } else {
+            this.submitting = false;
+            this.serverErrors = data.errors || {};
+            const errorIds = Object.keys(this.serverErrors);
+            if (errorIds.length > 0) {
+              errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
+            } else {
+              formElement.submit();
+            }
           }
-        }
-      }).catch(err => {
-        console.error('Validation Error', err);
-        formElement.submit();
-      });
+        }).catch(err => {
+          console.error('Validation Error', err);
+          formElement.submit();
+        });
+      }, delayMs);
     }
   }));
 JS;
@@ -1095,9 +1187,7 @@ JS;
     },
     npsClass(i) { 
       if(this.val !== i) return 'btn-outline-secondary opacity-75';
-      if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
-      if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
-      return 'btn-success text-white border-success shadow-sm';
+      return 'btn-primary border-primary shadow-sm';
     },
     starContainerStyle(i) {
       const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';

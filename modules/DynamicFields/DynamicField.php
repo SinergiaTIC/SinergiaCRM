@@ -442,11 +442,19 @@ class DynamicField
     {
         if ($this->bean->hasCustomFields() && isset($this->bean->id)) {
             $query = '';
-            if ($isUpdate) {
-                $query = 'UPDATE ' . $this->bean->table_name . '_cstm SET ';
-            }
+            // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Use INSERT ... ON DUPLICATE KEY UPDATE
+            // PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
+            // if ($isUpdate) {
+            //     $query = 'UPDATE ' . $this->bean->table_name . '_cstm SET ';
+            // }
+            // END STIC-CUSTOM
             $queryInsert = 'INSERT INTO ' . $this->bean->table_name . '_cstm (id_c';
             $values = "('" . $this->bean->id . "'";
+            // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Use INSERT ... ON DUPLICATE KEY UPDATE
+            // PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
+            $onDuplicate = '';
+            $firstDup = true;
+            // END STIC-CUSTOM
             $first = true;
             foreach ($this->bean->field_defs as $name => $field) {
                 if (empty($field['source']) || $field['source'] != 'custom_fields') {
@@ -497,6 +505,15 @@ class DynamicField
                     $first = false;
                     $queryInsert .= " ,$name";
                     $values .= " ,$quote" . $this->db->quote($val) . $quote;
+                    // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Use INSERT ... ON DUPLICATE KEY UPDATE
+                    // PR https://github.com/SinergiaTIC/SinergiaCRM/pull/1107
+                    if ($firstDup) {
+                        $onDuplicate .= "$name=VALUES($name)";
+                    } else {
+                        $onDuplicate .= ",$name=VALUES($name)";
+                    }
+                    $firstDup = false;
+                    // END STIC-CUSTOM
                 }
             }
             if ($isUpdate) {
@@ -506,16 +523,25 @@ class DynamicField
             $queryInsert .= " ) VALUES $values )";
 
             if (!$first) {
-                if (!$isUpdate) {
-                    $this->db->query($queryInsert);
+                // STIC-CUSTOM - JCH - 20260507 - Fix for Issue #1106: Use INSERT ... ON DUPLICATE KEY UPDATE
+                // to avoid duplicate key errors when record already exists in _cstm without extra SELECT query
+                // if (!$isUpdate) {
+                //     $this->db->query($queryInsert);
+                // } else {
+                //     $checkQuery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
+                //     if ($this->db->getOne($checkQuery)) {
+                //         $this->db->query($query);
+                //     } else {
+                //         $this->db->query($queryInsert);
+                //     }
+                // }                
+                
+                if ($isUpdate) {
+                    $this->db->query($query);
                 } else {
-                    $checkQuery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
-                    if ($this->db->getOne($checkQuery)) {
-                        $this->db->query($query);
-                    } else {
-                        $this->db->query($queryInsert);
-                    }
+                    $this->db->query($queryInsert . " ON DUPLICATE KEY UPDATE $onDuplicate");
                 }
+                // END STIC-CUSTOM
             }
         }
     }
@@ -753,8 +779,14 @@ class DynamicField
                     $to_save[$property] =
                         is_string($field->ext3) ? htmlspecialchars_decode($field->ext3, ENT_QUOTES) : $field->ext3;
                 } else {
+                    // STIC-Custom 20260604 ART - Prevent warnings when $field->$property is not defined (null) and avoid saving empty values as default ones in the _override file
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
+                    // $to_save[$property] =
+                    //     is_string($field->$property) ? htmlspecialchars_decode($field->$property, ENT_QUOTES) : $field->$property;
+                    $propertyValue = $field->$property ?? null;
                     $to_save[$property] =
-                        is_string($field->$property) ? htmlspecialchars_decode($field->$property, ENT_QUOTES) : $field->$property;
+                        is_string($propertyValue) ? htmlspecialchars_decode($propertyValue, ENT_QUOTES) : $propertyValue;
+                    // END STIC-Custom
                 }
 
                 // The property duplicate_merge is dependent of the property duplicate_merge_dom_value.
@@ -794,8 +826,13 @@ class DynamicField
                 // In that case we set the same value as the default property
                 // STIC#679
                 // STIC#949
-                if ($property == 'display_default' && is_null($field->display_default)) {
-                    $to_save['display_default'] = $field->default;
+                // STIC-Custom 20260604 ART - Prevent warnings when $field->$property is not defined (null) and avoid saving empty values as default ones in the _override file
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
+                // if ($property == 'display_default' && is_null($field->display_default)) {
+                //     $to_save['display_default'] = $field->default;
+                if ($property == 'display_default' && is_null($field->display_default ?? null)) {
+                    $to_save['display_default'] = $field->default ?? null;
+                // END STIC-Custom
                 }
             }
             // STIC-custom PCS 20230509 - Adding code for avoid not saving HTML fields.
