@@ -402,7 +402,6 @@ $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Fir
 $app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidaturas';
 $app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborales';
 $app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversaciones';
-$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Mensajes';
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -3947,6 +3946,10 @@ $app_list_strings['stic_awf_forms_processing_mode_list']['async'] = 'Asíncrono'
 $app_list_strings['stic_awf_forms_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_awf_forms_status_list']['public'] = 'Público';
 $app_list_strings['stic_awf_forms_status_list']['closed'] = 'Cerrado';
+
+// Advanced Web Forms: types
+$app_list_strings['stic_awf_forms_types_list']['web'] = 'Formulario web';
+$app_list_strings['stic_awf_forms_types_list']['crm'] = 'Formulario del CRM';
 
 // Advanced Web Forms: configuration->data_block->duplicate_detection->on_duplicate
 $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['enrich'] = 'Ampliar';

@@ -55,6 +55,9 @@ class ActionDefinitionDTO {
     public array $supportedFieldSubTypes;
 
     /** @var string[] */
+    public array $supportedFormTypes = [];
+
+    /** @var string[] */
     public array $supportedDataTypes = [];
     
     /** @var array[] */
@@ -94,6 +97,7 @@ class ActionDefinitionDTO {
         $this->scope = $def->scope->value; // Convert enum to string
         $this->supportedModules = $def->supportedModules;
         $this->supportedFieldSubTypes = $def->supportedFieldSubTypes;
+        $this->supportedFormTypes = $def->supportedFormTypes;
 
         if ($def instanceof ValidatorActionDefinition) {
             $this->supportedDataTypes = array_map(
