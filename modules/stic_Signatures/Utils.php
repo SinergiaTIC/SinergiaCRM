@@ -174,11 +174,6 @@ class stic_SignaturesUtils
             if ($module == 'Leads') {
                 continue;
             }
-            
-            // Exclude Users module except for assigned_user_id field when main module is also Users
-            if ($moduleName != 'Users' && $module == 'Users' && $moduleField != 'assigned_user_id') {
-                continue;
-            }
            
             $app_list_strings['stic_signatures_signer_path_list'][$key] = $value;
         }
@@ -440,6 +435,11 @@ class stic_SignaturesUtils
 
         // The parse_template function requires an array of beans
         $beanArray = [$bean->module_dir => $bean->id];
+
+        // Enable custom parsing in templates
+        if (file_exists('custom/modules/stic_Signatures/customParseTemplate.php')){
+            require_once 'custom/modules/stic_Signatures/customParseTemplate.php';
+        }
 
         // First parse: Parse the template using the record's data
         $converted = templateParser::parse_template($text, $beanArray);

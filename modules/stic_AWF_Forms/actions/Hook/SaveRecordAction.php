@@ -97,7 +97,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     $skipRule = true;
                     break; // Move to the next rule
                 }
-                if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName], $fieldName)) {
+                if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName] ?? null, $fieldName)) {
                     $emailValues[] = $fieldValue;
                 } else {
                     $scalarFields[$fieldName] = $fieldValue;
@@ -351,7 +351,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
             $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
 
-            if (stic_AWF_FormsUtils::isEmailField($bean->field_defs[$targetField], $targetField)) {
+            if (isset($bean->field_defs[$targetField]) && stic_AWF_FormsUtils::isEmailField($bean->field_defs[$targetField], $targetField)) {
                 if ($targetField === 'email') {
                     $targetField = 'email1';
                 }
