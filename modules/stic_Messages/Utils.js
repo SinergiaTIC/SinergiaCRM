@@ -147,10 +147,6 @@ switch (sticViewType) {
         $("#template_id_edit_link").addClass("ui-state-disabled");
         $("#template_id_create_link").addClass("ui-state-disabled");
 
-        // Hide save button for fixed status messages
-        if (!currentConfig.canRetry) {
-          $('#EditView input[type="submit"][name="button"]').hide();
-        }
       }
       
       if ($('#EditView input[name="record"]').val()) {

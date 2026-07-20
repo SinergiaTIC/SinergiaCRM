@@ -108,7 +108,6 @@ $mod_strings = array (
   'LBL_ERROR_FILE_SIZE_EXCEEDED' => 'File exceeds the limit of',
   'LBL_ERROR_CREATING_NOTE' => 'Error while creating attachment record',
   'LBL_ERROR_SAVING_FILE' => 'Error while saving file',
-  'LBL_WHATSAPP_WEB_READONLY_NOTICE' => 'Warning: WhatsApp Web messages cannot be edited once sent.',
   'LBL_WHATSAPP_TEMPLATE_REQUIRED' => 'For sending a WhatsApp message a template must be selected. Free text is only allowed within an open 24h conversation window.',
   'LBL_WHATSAPP_WINDOW_CLOSED_ALERT' => 'When the conversation window is closed a WhatsApp template must be selected to send a message.',
   'LBL_STIC_CONVERSATIONS_STIC_MESSAGES' => 'Conversation',

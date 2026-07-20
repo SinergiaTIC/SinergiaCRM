@@ -294,28 +294,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 $(function() {
   $.fn.qtip.zindex = 26000;
 
-  // Disable editing for whatsapp_web messages
-  if (typeof viewType !== 'undefined' && (viewType() === 'detail' || viewType() === 'edit')) {
-    var messageType = $('select[name="type"]').val() || $('input[name="type"]').val();
-    var messageId = $('input[name="record"]').val();
-    
-    // If editing an existing whatsapp_web message, disable all fields
-    if (messageId && messageType === 'whatsapp_web') {
-      // Disable all form fields except parent relationship
-      $('#EditView input:not([name="parent_name"]):not([name="parent_id"]):not([name="parent_type"])').prop('disabled', true);
-      $('#EditView select:not([name="parent_type"])').prop('disabled', true);
-      $('#EditView textarea').prop('disabled', true);
-      
-      // Hide save button, only allow cancel/back
-      $('#EditView input[type="submit"][name="button"]').hide();
-      
-      // Add a notice
-      if ($('#EditView .whatsapp-readonly-notice').length === 0) {
-        $('#EditView').prepend('<div class="whatsapp-readonly-notice" style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px;">' + SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_READONLY_NOTICE') + '</div>');
-      }
-    }
-  }
-
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 
     const attr = 'sms-button'
