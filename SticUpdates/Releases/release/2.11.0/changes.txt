@@ -218,8 +218,8 @@ SticUpdates/Languages/es/20250302_feature_whatsapp.sql
 SticUpdates/Languages/eu/20250302_feature_whatsapp.sql
 SticUpdates/Languages/gl/20250302_feature_whatsapp.sql
 SticUpdates/Migrations/20260420_feature_whatsappEmailTemplate.sql
-SticUpdates/Releases/bug/ensureJjwg_Maps/post_install.txt
-SticUpdates/Releases/enhancement/updateNewsDashlet/pre_install.txt
-SticUpdates/Releases/feature/whatsAppTwilioIntegration/pre_install.txt
+SticUpdates/Releases/release/2.11.0/changes.txt
+SticUpdates/Releases/release/2.11.0/post_install.txt
+SticUpdates/Releases/release/2.11.0/pre_install.txt
 SticUpdates/Scripts/AddSticNewsDashletToAllUsers.php
 SticUpdates/Scripts/RepairJjwgMapsFields.php
