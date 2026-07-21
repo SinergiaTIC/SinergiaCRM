@@ -1321,7 +1321,7 @@ class WizardStep2 {
         });
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
-          if (this.field.type_field == 'unlinked') {
+          if (this.field.type_field == 'unlinked' && this.field.type_in_form !== 'file') {
             let newName = stic_AwfConfiguration.cleanName(newText);
             if (newName != this.field.name) {
               this.field.name = this.dataBlock.suggestFieldName(newName);

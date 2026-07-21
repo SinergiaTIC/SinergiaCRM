@@ -86,27 +86,24 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
         // Save without logic hooks execution to prevent duplicate triggers
         $document->save(false);
 
-        // Retrieve the native auto-generated DocumentRevision created by the Documents module
-        $revisionId = $document->document_revision_id;
-        if (!$revisionId) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "No auto-generated revision for document.");
-        }
-
-        /** @var DocumentRevision $revision */
-        $revision = BeanFactory::getBean('DocumentRevisions', $revisionId);
-        if (!$revision) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Could not retrieve auto-generated revision.");
-        }
-
-        // Update target metadata on the recycled revision record
+        // Create a DocumentRevision manually (the Documents module auto-creates
+        // one only when $_FILES is populated, which isn't the case here)
+        $revision = BeanFactory::newBean('DocumentRevisions');
+        $revision->id = create_guid();
+        $revision->new_with_id = true;
+        $revision->document_id = $document->id;
         $revision->filename = $fileInfo['name'];
         $revision->file_mime_type = mime_content_type($fileInfo['tmp_name']);
         $revision->file_ext = pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
         $revision->revision = 1;
         $revision->save(false);
 
+        // Link the revision back to the document
+        $document->document_revision_id = $revision->id;
+        $document->save(false);
+
         // Move the temporary binary payload to SuiteCRM permanent storage
-        if (!rename($fileInfo['tmp_name'], "upload://{$revisionId}")) {
+        if (!UploadStream::move_uploaded_file($fileInfo['tmp_name'], "upload://{$revision->id}")) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Failed moving binary payload to target path.");
         }
 
