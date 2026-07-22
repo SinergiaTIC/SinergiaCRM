@@ -1,0 +1,426 @@
+.tts-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #181818;
+    color: #e0e0e0;
+    padding: 0 16px;
+    height: 56px;
+    z-index: 9999;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.6);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.tts-player-idle {
+    opacity: 0.35;
+}
+
+.tts-player-idle:hover {
+    opacity: 1;
+}
+
+.tts-player-left {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.tts-record-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    color: #b3b3b3;
+    max-width: 200px;
+}
+
+.tts-player-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+}
+
+.tts-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.tts-progress-bar {
+    flex: 1;
+    height: 4px;
+    background: #535353;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: height 0.15s ease;
+}
+
+.tts-progress-bar:hover {
+    height: 6px;
+}
+
+.tts-progress-bar:focus-visible {
+    outline: 2px solid #1db954;
+    outline-offset: 2px;
+}
+
+.tts-progress-fill {
+    height: 100%;
+    background: #1db954;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s linear;
+    pointer-events: none;
+}
+
+.tts-loading .tts-progress-fill {
+    width: 100% !important;
+    background: linear-gradient(90deg, #1db954 0%, #1ed760 25%, #1db954 50%, #1ed760 75%, #1db954 100%);
+    background-size: 400% 100%;
+    animation: tts-loading-bar 1.2s linear infinite;
+    opacity: 0.9;
+}
+
+@keyframes tts-loading-bar {
+    0% { background-position: 0% 0; }
+    100% { background-position: -400% 0; }
+}
+
+.tts-loading .tts-time {
+    color: #535353;
+}
+
+.tts-progress-bar:not(.tts-loading) .tts-progress-fill {
+    transition: width 0.15s linear;
+}
+
+.tts-progress-bar:hover .tts-progress-fill {
+    background: #1ed760;
+}
+
+.tts-time {
+    font-size: 11px;
+    color: #b3b3b3;
+    min-width: 70px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.tts-player-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.tts-player button {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: color 0.2s, background 0.2s;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.tts-player button:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tts-player button:focus-visible {
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.5);
+}
+
+.tts-player button:active {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.tts-play-btn {
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+}
+
+.tts-play-btn:hover {
+    transform: scale(1.06);
+    background: #e0e0e0 !important;
+}
+
+.tts-stop-btn {
+    font-size: 12px !important;
+}
+
+.tts-prev-btn,
+.tts-next-btn {
+    font-size: 12px !important;
+}
+
+.tts-speed {
+    background: transparent;
+    color: #b3b3b3;
+    border: 1px solid #535353;
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 11px;
+    cursor: pointer;
+    outline: none;
+    margin-left: 4px;
+    transition: border-color 0.2s;
+}
+
+.tts-speed:hover {
+    border-color: #b3b3b3;
+}
+
+.tts-speed:focus-visible {
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.5);
+}
+
+.tts-textarea-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: 4px 0;
+    margin-bottom: 2px;
+    width: 100%;
+}
+
+.tts-textarea-wrapper .tts-textarea-btn {
+    flex-shrink: 0;
+}
+
+.tts-textarea-lang {
+    font-size: 11px;
+    padding: 1px 4px;
+    border: 1px solid #cbd5e1;
+    border-radius: 3px;
+    background: #fff;
+    color: #475569;
+    outline: none;
+    cursor: pointer;
+    width: auto;
+    min-width: 60px;
+    flex-shrink: 0;
+}
+
+.tts-textarea-btn {
+    cursor: pointer;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 3px 8px;
+    color: #64748b;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.tts-textarea-btn:hover {
+    background: #e2e8f0;
+    color: #334155;
+    border-color: #94a3b8;
+}
+
+.tts-textarea-btn:focus-visible {
+    box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.4);
+}
+
+.tts-textarea-lang {
+    font-size: 12px;
+    padding: 2px 4px;
+    border: 1px solid #cbd5e1;
+    border-radius: 3px;
+    background: #fff;
+    color: #475569;
+    outline: none;
+    cursor: pointer;
+}
+
+.tts-textarea-lang:focus-visible {
+    box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.4);
+}
+
+.tts-playlist-btn {
+    background: none !important;
+    border: none !important;
+    color: #b3b3b3 !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    border-radius: 4px !important;
+    width: auto !important;
+    height: auto !important;
+    margin-right: 6px;
+    flex-shrink: 0;
+    transition: color 0.2s !important;
+}
+
+.tts-playlist-btn:hover {
+    color: #ffffff !important;
+}
+
+.tts-playlist-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 16px;
+    background: #282828;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 6px 0;
+    max-height: 200px;
+    overflow-y: auto;
+    min-width: 200px;
+    z-index: 10000;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tts-playlist-item {
+    padding: 6px 14px;
+    font-size: 12px;
+    color: #b3b3b3;
+    cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tts-playlist-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+}
+
+.tts-playlist-item-active {
+    color: #1db954;
+}
+
+.tts-playlist-item-active::before {
+    content: '▶';
+    margin-right: 6px;
+    font-size: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tts-player {
+        transition: none;
+    }
+    .tts-player button {
+        transition: none;
+    }
+    .tts-progress-fill {
+        transition: none;
+    }
+    .tts-player button {
+        transition: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .tts-player {
+        grid-template-columns: 1fr 2fr;
+        height: auto;
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    .tts-player-left {
+        grid-column: 1 / -1;
+        order: -1;
+        justify-content: center;
+    }
+    .tts-record-name {
+        max-width: 100%;
+        text-align: center;
+    }
+    .tts-player-center {
+        grid-column: 1;
+    }
+    .tts-player-right {
+        grid-column: 2;
+    }
+    .tts-player button {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+        padding: 4px;
+    }
+    .tts-play-btn {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    .tts-speed {
+        font-size: 10px;
+    }
+}
+
+.yui-skin-sam .tts-player {
+    background: #121212;
+}
+
+.yui-skin-sam .tts-player button {
+    color: #909090;
+}
+
+.yui-skin-sam .tts-player button:hover {
+    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.yui-skin-sam .tts-play-btn {
+    background: #d0d0d0 !important;
+    color: #121212 !important;
+}
+
+.yui-skin-sam .tts-play-btn:hover {
+    background: #e8e8e8 !important;
+}
+
+.yui-skin-sam .tts-speed {
+    background: transparent;
+    color: #909090;
+    border-color: #404040;
+}
+
+.yui-skin-sam .tts-speed:hover {
+    border-color: #909090;
+}
+
+.yui-skin-sam .tts-time {
+    color: #909090;
+}
+
+.yui-skin-sam .tts-record-name {
+    color: #909090;
+}
+
+.yui-skin-sam .tts-progress-bar {
+    background: #404040;
+}
+
+.yui-skin-sam .tts-progress-fill {
+    background: #1db954;
+}
