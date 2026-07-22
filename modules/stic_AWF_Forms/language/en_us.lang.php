@@ -418,6 +418,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Creates a relationship between two records',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Relationship destination',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'The destination data block or record for the relationship to save',
+  'LBL_RELATE_RECORDS_ACTION_SOURCE_OBJECT_TEXT' => 'Relationship origin',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Destination data block',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'Destination record ID',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relationship to update',

@@ -418,6 +418,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar',
+  'LBL_RELATE_RECORDS_ACTION_SOURCE_OBJECT_TEXT' => 'Origen de la relación',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',

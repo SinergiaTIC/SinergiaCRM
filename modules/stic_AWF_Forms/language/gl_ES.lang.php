@@ -419,6 +419,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea unha relación entre dous rexistros',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino da relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'O bloque de datos ou rexistro destino da relación a gardar',
+  'LBL_RELATE_RECORDS_ACTION_SOURCE_OBJECT_TEXT' => 'Origen de la relación',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID do rexistro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
@@ -429,7 +430,7 @@ $mod_strings = array (
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Guardar documento',
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Crear un registro de documento a partir de un bloque de documento y vincularlo a la respuesta',
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_FILENAME_TEXT' => 'Nombre del archivo',
-  
+
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Agregar a Lista de Público Obxectivo',
   'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Engade o rexistro procesado (persoa, interesado, usuario ou organización) a unha Lista de Público Obxectivo existente',

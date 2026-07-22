@@ -418,6 +418,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relació entre dos registres',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destí de la relació',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloc de dades o registre destí de la relació a desar',
+  'LBL_RELATE_RECORDS_ACTION_SOURCE_OBJECT_TEXT' => 'Origen de la relació',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Bloc de dades destí',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registre destí',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relació a actualitzar',
