@@ -427,6 +427,7 @@ $mod_strings = array (
   // SaveDocumentBlockAction
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Desa el document',
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => "Crea un registre de document a partir d'un bloc de dades de document i el vincula a la resposta",
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_FILENAME_TEXT' => 'Nom del fitxer',
   
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Afegeix a una Llista de Públic Objectiu',

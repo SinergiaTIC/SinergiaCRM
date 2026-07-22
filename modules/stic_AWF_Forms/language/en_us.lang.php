@@ -427,6 +427,7 @@ $mod_strings = array (
   // SaveDocumentBlockAction
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Save document',
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Create a document record from a document block and link it to the response',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_FILENAME_TEXT' => 'Filename',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Add to Target List',

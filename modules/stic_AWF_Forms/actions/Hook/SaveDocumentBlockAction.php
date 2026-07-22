@@ -112,9 +112,12 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
             $context->responseBean->stic_awf_responses_documents->add($document->id);
         }
 
-        // Return context and register modifications automatically
+        // Register modifications and revision metadata in ActionResult
         $result = new ActionResult(ResultStatus::OK, $actionConfig, "Document '{$document->document_name}' created.");
         $result->registerBeanModificationFromBlock($document, $block, BeanModificationType::CREATED, $modifications);
+        $result->registerActionMetadata($document, [
+            ['key' => 'revision_filename', 'label' => $this->translate('FILENAME_TEXT'), 'value' => $revision->filename],
+        ]);
         return $result;
     }
 }
