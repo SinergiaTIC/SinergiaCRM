@@ -4000,7 +4000,7 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] =
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semàfor';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Polzes';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10';
-$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Adjuntar fitxer';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Fitxer adjunt';
 
 // Advanced Web Forms: configuration->data_block->field->value_type
 $app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
