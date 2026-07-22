@@ -163,7 +163,7 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION' => 'Definició',
   'LBL_FIELD_DEFINITION_FORM' => 'Representació al formulari',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Validació de dades',
-  'LBL_FIELD_UPLOAD' => 'Pujar fitxer',
+  'LBL_FIELD_UPLOAD' => 'Puja un fitxer',
 
   'LBL_FIELD' => 'Camp',
   'LBL_FIELD_NAME' => 'Nom',
@@ -427,7 +427,7 @@ $mod_strings = array (
 
   // SaveDocumentBlockAction
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Desa el document',
-  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => "Crea un registre de document a partir d'un bloc de dades de document i el vincula a la resposta",
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => "Crea un registre de document a partir d'un bloc de dades de document i el vincula a la resposta.",
   'LBL_SAVE_DOCUMENT_BLOCK_ACTION_FILENAME_TEXT' => 'Nom del fitxer',
   
   // AddToTargetListAction
@@ -539,93 +539,93 @@ $mod_strings = array (
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
   'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un camp segons una expressió regular',
   'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Expressió regular',
-  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El format del camp no és vàlid',
+  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El format del camp no és vàlid.',
 
   // EmailValidatorAction
   'LBL_EMAIL_VALIDATOR_ACTION_TITLE' => 'Validador de correu electrònic',
   'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui una adreça de correu electrònic vàlida',
-  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'adreça de correu electrònic no és vàlida",
+  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'adreça de correu electrònic no és vàlida.",
 
   // DniValidatorAction
   'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI/NIF',
   'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui un DNI/NIF espanyol vàlid',
-  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI/NIF no és vàlid',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI/NIF no és vàlid.',
 
   // CifValidatorAction
   'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de NIF de persona jurídica',
   'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui un NIF espanyol de persona jurídica vàlid',
-  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIF no és vàlid',
+  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIF no és vàlid.',
 
   // NieValidatorAction
   'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'Validador de NIE',
   'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui un NIE espanyol vàlid',
-  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no és vàlid',
+  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no és vàlid.',
 
   // CatSalutCipValidatorAction
   'LBL_CATSALUT_CIP_VALIDATOR_ACTION_TITLE' => 'Validador de CIP (CatSalut)',
   'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => "Valida que un camp contingui un Codi d'Identificació Personal (CIP) de CatSalut vàlid",
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIP no és vàlid',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIP no és vàlid.',
 
   // NafValidatorAction
   'LBL_NAF_VALIDATOR_ACTION_TITLE' => 'Validador de NUSS',
   'LBL_NAF_VALIDATOR_ACTION_DESC' => "Valida que un camp contingui un número d'afiliació a la Seguretat Social (NUSS) vàlid",
-  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "El número d'afiliació a la Seguretat Social no és vàlid",
+  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "El número d'afiliació a la Seguretat Social no és vàlid.",
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador numèric',
   'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => "Valida que un camp contingui un valor numèric i que, opcionalment, es trobi dins d'un rang",
   'LBL_NUMERIC_VALIDATOR_ACTION_MIN_TEXT' => 'Valor mínim (opcional)',
   'LBL_NUMERIC_VALIDATOR_ACTION_MAX_TEXT' => 'Valor màxim (opcional)',
-  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El valor ha de ser numèric i estar entre els valors permesos',
+  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El valor ha de ser numèric i estar entre els valors permesos.',
 
   // TextLengthValidatorAction
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_TITLE' => 'Validador de longitud de text',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => "Valida que un camp contingui un text amb una longitud dins d'un rang",
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MIN_LENGTH_TEXT' => 'Longitud mínima (opcional)',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MAX_LENGTH_TEXT' => 'Longitud màxima (opcional)',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El text ha de tenir una longitud entre els valors permesos',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El text ha de tenir una longitud entre els valors permesos.',
 
   // IbanValidatorAction
   'LBL_IBAN_VALIDATOR_ACTION_TITLE' => "Validador d'IBAN",
   'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui un IBAN vàlid',
-  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'IBAN no és vàlid",
+  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'IBAN no és vàlid.",
 
   // PhoneValidatorAction
   'LBL_PHONE_VALIDATOR_ACTION_TITLE' => 'Validador de telèfon',
   'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui un número de telèfon espanyol vàlid (almenys 9 dígits numèrics)',
-  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El telèfon no és vàlid',
+  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El telèfon no és vàlid.',
 
   // SpanishZipValidatorAction
   'LBL_SPANISH_ZIP_VALIDATOR_ACTION_TITLE' => 'Validador de codi postal',
   'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui un codi postal espanyol vàlid (5 dígits numèrics)',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El codi postal no és vàlid',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El codi postal no és vàlid.',
 
   // TrueValidatorAction
   'LBL_TRUE_VALIDATOR_ACTION_TITLE' => 'Selecció obligada',
   'LBL_TRUE_VALIDATOR_ACTION_DESC' => "Assegura que una casella estigui marcada (per exemple, l'acceptació de condicions)",
-  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Cal acceptar aquest camp per continuar',
+  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Cal acceptar aquest camp per continuar.',
 
   // AgeValidatorAction
   'LBL_AGE_VALIDATOR_ACTION_TITLE' => "Validador d'edat",
   'LBL_AGE_VALIDATOR_ACTION_DESC' => "Calcula l'edat a partir de la data de naixement i verifica que estigui entre la mínima i la màxima permeses",
   'LBL_AGE_VALIDATOR_ACTION_MIN_YEARS_TEXT' => 'Edat mínima (opcional)',
   'LBL_AGE_VALIDATOR_ACTION_MAX_YEARS_TEXT' => 'Edat màxima (opcional)',
-  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'edat no està en el rang permès",
+  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'edat no està en el rang permès.",
 
   // UrlValidatorAction
-  'LBL_URL_VALIDATOR_ACTION_TITLE' => "Validador d'URL",
+  'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui una URL vàlida',
-  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'URL no és vàlida",
+  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no és vàlida.',
 
   // MaxDocumentSizeValidatorAction
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Mida màxima de fitxer',
-  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que el fitxer pujat no superi la mida màxima permesa',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que el fitxer pujat no superi la mida màxima permesa.',
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_MAX_SIZE_MB_TEXT' => 'Mida màxima (MB)',
-  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El fitxer supera la mida màxima permesa',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El fitxer supera la mida màxima permesa.',
 
   // AllowedExtensionsValidatorAction
   'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_TITLE' => 'Extensions permeses',
-  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Valida que el fitxer pujat tingui una extensió permesa',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Valida que el fitxer pujat tingui una extensió permesa.',
   'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Extensions permeses (separades per comes)',
-  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'extensió del fitxer no està permesa",
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => "L'extensió del fitxer no està permesa.",
 );
