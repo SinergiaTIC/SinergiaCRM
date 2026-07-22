@@ -380,7 +380,7 @@ class ResponseHandler
                 $this->saveLinks($responseBean, $context);
 
                 // Generate analytical response details
-                $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
+                $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData, $context->uploadedFiles);
 
                 // Generate execution log
                 stic_AWFUtils::updateResponseExecutionLog($context);
@@ -769,7 +769,7 @@ class ResponseHandler
      * @param FormConfig $formConfig Form configuration
      * @param array $submittedData Data sent in the submission
      */
-    private function generateResponseDetails(SugarBean $responseBean, SugarBean $formBean, FormConfig $formConfig, array $submittedData): void {
+    private function generateResponseDetails(SugarBean $responseBean, SugarBean $formBean, FormConfig $formConfig, array $submittedData, array $uploadedFiles = []): void {
         global $app_strings;
 
         // Global counter
@@ -781,8 +781,6 @@ class ResponseHandler
 
         foreach ($formConfig->data_blocks as $block) {
             foreach ($block->fields as $field) {
-                $currentOrder = $orderCounter;
-                $orderCounter += 1;
 
                 // Skip fixed fields
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
@@ -791,6 +789,7 @@ class ResponseHandler
                 if ($field->type_in_form === 'file') {
                     // Store document reference if this is a document block
                     if ($block->is_document_block) {
+                        $currentOrder = $orderCounter++;
                         $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
                         $detailBean->stic_awf_responses_id_c = $responseBean->id;
                         $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
@@ -800,8 +799,11 @@ class ResponseHandler
                         $detailBean->question_label = rtrim($detailBean->question_label, ' :');
                         $detailBean->question_section = $block->text;
                         $detailBean->question_sort_order = $currentOrder;
-                        $detailBean->answer_value = '';
-                        $detailBean->answer_text = translate('LBL_FIELD_UPLOAD', 'stic_AWF_Forms');
+
+                        $phpKey = $field->getPhpKey();
+                        $fileName = $uploadedFiles[$phpKey]['name'] ?? '';
+                        $detailBean->answer_value = $fileName;
+                        $detailBean->answer_text = $fileName;
                         $detailBean->answer_type = 'file';
                         $detailBean->answer_integer = 0;
                         $detailBean->save();
@@ -850,6 +852,7 @@ class ResponseHandler
                 }
 
                 // Create analytical response bean
+                $currentOrder = $orderCounter++;
                 $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
                 $detailBean->stic_awf_responses_id_c = $responseBean->id;
                 $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 

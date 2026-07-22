@@ -289,6 +289,7 @@ $dictionary['Document']['fields']['category_id']['massupdate'] = 1;
 $dictionary['Document']['fields']['subcategory_id']['massupdate'] = 1;
 
 $dictionary['Document']['fields']['name']['massupdate'] = 0;
+$dictionary['Document']['fields']['name']['db_concat_fields'] = array(0 => 'document_name');
 $dictionary['Document']['fields']['document_name']['massupdate'] = 0;
 $dictionary['Document']['fields']['doc_id']['massupdate'] = 0;
 $dictionary['Document']['fields']['doc_type']['massupdate'] = 0;
