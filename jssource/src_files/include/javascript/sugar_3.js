@@ -834,6 +834,9 @@ function add_error_style(formname, input, txt, flash) {
           counter = 0;
           $(".validation-message").each(function () {
             // Get error validation tabs ids
+            // STIC-Custom 20270727 EPS - Mark tab when error is in panel
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1353
+            // CurrentValidationTabId = $(this).closest(".tab-pane-NOBOOTSTRAPTOGGLER").attr("id").split('-').slice(-1);
             var $validationTabPane = $(this).closest(".tab-pane-NOBOOTSTRAPTOGGLER");
             if ($validationTabPane.length) {
               CurrentValidationTabId = $validationTabPane.attr("id").split('-').slice(-1);
@@ -846,6 +849,7 @@ function add_error_style(formname, input, txt, flash) {
                 }
               }
             }
+            // END STIC-Custom 20260727 EPS
             // Get tabs
             $CurrentValidationTabA = $("#EditView_tabs a#tab" + CurrentValidationTabId);
             // Apply error tab style
