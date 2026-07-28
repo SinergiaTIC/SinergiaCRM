@@ -40,10 +40,12 @@
           <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
         </button>
         <!-- Button: Add Document Datablock -->
+        <!-- 
         <button type="button" class="btn w-auto" @click="handleAddDocumentDatablock();" :title="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS_TITLE')">
           <i class="suitepicon suitepicon-module-documents me-2"></i>
           <span x-text="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS')"></span>
         </button>
+        -->
       </div>
     </div>
 
@@ -214,6 +216,7 @@
                               <td x-show="canShowFieldColumn('required_in_form')">
                                 <div class="form-switch" x-show="field.type_in_form != 'hidden'">
                                   <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="field.required_in_form" 
+                                        :disabled="field.type_in_form == 'file'"
                                         :id="`dataBlockFieldReqForm-${item.id}-${field.name}`"/>
                                 </div>
                               </td>
@@ -394,10 +397,12 @@
             <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
           </button>
           <!-- Button: Add Document Datablock -->
+          <!--
           <button type="button" class="btn w-auto" @click="handleAddDocumentDatablock();" :title="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS_TITLE')">
             <i class="suitepicon suitepicon-module-documents me-2"></i>
             <span x-text="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS')"></span>
           </button>
+          -->
         </div>
       </div>
 
@@ -748,7 +753,8 @@
                         <!-- Required in form -->
                         <div class="col-3 form-switch">
                           <label for="modalField_ReqForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
-                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ReqForm" x-model="field.required_in_form"/>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ReqForm" x-model="field.required_in_form" 
+                                 :disabled="field.type_in_form == 'file'"/>
                         </div>
                       </div>
                       <!-- Add Validation Button -->

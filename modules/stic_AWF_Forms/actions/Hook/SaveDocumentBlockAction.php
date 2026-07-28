@@ -58,19 +58,21 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
         $phpKey = $fileField->getPhpKey();
         $fileInfo = $context->uploadedFiles[$phpKey] ?? null;
 
+        // The file field is always required for Document blocks: without a file
+        // no DocumentRevision can be created, so a missing file is always an error.
         if (!$fileInfo || $fileInfo['error'] !== UPLOAD_ERR_OK) {
-            if ($fileField->required_in_form) {
-                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Required file not uploaded.");
-            }
-            return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "No file uploaded.");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Required file not uploaded.");
         }
 
         $document = BeanFactory::newBean('Documents');
-        $document->active_date = TimeDate::getInstance()->nowDbDate();
 
         $modifications = stic_AWF_FormsUtils::populateBeanFromBlock($document, $block);
         
         // Guarantee mandatory fallbacks if not mapped in the form
+        if (empty($document->active_date)) {
+            $document->active_date = TimeDate::getInstance()->nowDbDate();
+            $modifications['active_date'] = new FieldModification('active_date', FieldModificationStatus::APPLIED, $document->active_date);
+        }
         if (empty($document->document_name)) {
             $document->document_name = 'AWF_Upload_' . time();
             $modifications['document_name'] = new FieldModification('document_name', FieldModificationStatus::APPLIED, $document->document_name);
