@@ -225,6 +225,12 @@ class stic_AWF_FormsUtils {
                     $vname = $def['vname'] ?? '';
                     $linkFieldName = '';
                     $relType = $def['relationship_type'] ?? 'many-to-many';
+
+                    // Ignore parent_type relationships
+                    if (($def['relationship_role_column'] ?? '') === 'parent_type') {
+                        $processed[$relName] = true;
+                        continue;
+                    }
                 } else {
                     $relName = $def['relationship'];
                     $lhs = $moduleName;
@@ -447,25 +453,6 @@ class stic_AWF_FormsUtils {
             }
         }
 
-        // Deduplicate by target module + text: if multiple relationships point to the same module_dest
-        // AND have the same text/label, keep only the first non-virtual one (avoids duplicate
-        // Notes/Tasks entries in module selectors). Relationships with different text to the same
-        // module are genuinely distinct (e.g. stic_Personal_Environment has two separate 1-N
-        // relationships to Contacts) and must be kept.
-        // Virtual relationships (is_virtual_relate = true) are always kept, since they represent
-        // distinct standalone relate fields that coexist with canonical relationships to the same module.
-        $seenKeyMap = [];
-        foreach ($result as $relName => $relData) {
-            $dest = $relData['module_dest'];
-            $text = $relData['text'];
-            $isVirtual = $relData['is_virtual_relate'] ?? false;
-            $key = $dest . '|' . $text;
-            if (isset($seenKeyMap[$key]) && !$isVirtual) {
-                unset($result[$relName]);
-            } else {
-                $seenKeyMap[$key] = true;
-            }
-        }
 
         return self::$relationshipsCache[$cacheKey] = $result;
     }
