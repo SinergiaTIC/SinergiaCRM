@@ -1511,6 +1511,7 @@ class stic_AwfConfiguration {
     });
 
     // Document blocks: auto-configure with specific fields instead of the normal loop
+    // TODO: This is a temporary solution. In the future, we should have a more generic way to identify special modules with field files
     if (moduleName === 'Documents') {
       dataBlock.is_document_block = true;
 

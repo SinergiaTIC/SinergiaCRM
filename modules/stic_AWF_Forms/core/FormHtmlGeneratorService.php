@@ -120,10 +120,9 @@ class FormHtmlGeneratorService {
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
         $btnTextColor = $this->getContrastColor($theme->primary_color);
 
-        // Pre-càlcul: Quines icones i funcionalitats s'estan fent servir realment?
+        // Pre-calculation: Which icons and functionalities are actually being used?
         $usedSubtypes = [];
         $hasCollapsible = false;
-        $hasFileField = false; // Flag to detect file fields in layout
 
         foreach ($layout->structure as $section) {
             if (!empty($section->isCollapsible)) {
@@ -134,15 +133,12 @@ class FormHtmlGeneratorService {
                     $block = $config->data_blocks[$element->ref_id];
                     foreach ($block->fields as $field) {
                         $usedSubtypes[$field->subtype_in_form ?? 'text'] = true;
-                        if ($field->type_in_form === 'file') { // Detect files
-                            $hasFileField = true;
-                        }
                     }
                 }
             }
         }
 
-        // Grid i Variables Base
+        // Grid and Base Variables
         $secCols   = intval($theme->sections_per_row ?? 1);
         $fieldCols = intval($theme->fields_per_row ?? 1);
         $secMinPx   = '200px'; 
