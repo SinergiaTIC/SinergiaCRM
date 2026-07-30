@@ -14,7 +14,7 @@ if (!$validation['valid']) {
 }
 
 if (empty($current_user->id)) {
-    ttsOutputJson(array('success' => false, 'error' => 'Authentication required'), 401);
+    ttsOutputJson(array('success' => false, 'error' => 'Autenticación requerida.'), 401);
     return;
 }
 

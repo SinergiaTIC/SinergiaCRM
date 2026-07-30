@@ -96,6 +96,7 @@ class ttsInjectorHook
         $safeTextareaFields = json_encode($textareaFields);
         $safeHighlightFields = json_encode($highlightFields);
 
+        $maxRecords = stic_SettingsUtils::getSetting('TTS_MAX_RECORDS_LIST') ?: '50';
         $config = array(
             'module' => $safeModule,
             'fields' => $highlightFields,
@@ -107,6 +108,7 @@ class ttsInjectorHook
             'hasTextarea' => $hasTextarea,
             'hasHighlight' => $hasHighlight,
             'barColor' => $barColor,
+            'maxRecords' => (int)$maxRecords,
         );
         $safeConfig = json_encode($config);
 

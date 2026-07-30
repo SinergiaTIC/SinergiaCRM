@@ -28,7 +28,7 @@ $scenario = $data['scenario'] ?? '';
 $recordId = $data['recordId'] ?? '';
 
 if ($charCount < 1 || $charCount > 100000) {
-    ttsOutputJson(array('success' => false, 'error' => 'Invalid char count'), 400);
+    ttsOutputJson(array('success' => false, 'error' => 'Recuento de caracteres inválido.'), 400);
     return;
 }
 
@@ -47,7 +47,7 @@ if ($dailyLimit !== false && $dailyLimit !== '-1' && is_numeric($dailyLimit) && 
 
     if ($remaining <= 0) {
         ttsOutputJson(array(
-            'success' => false, 'error' => 'Daily character limit reached',
+            'success' => false, 'error' => 'Límite diario de caracteres alcanzado.',
             'remaining' => 0, 'limit' => $limit,
         ), 429);
         return;
@@ -75,7 +75,7 @@ $sql = "INSERT INTO tts_usage (id, user_id, created_at, char_count, language, mo
 $result = $db->query($sql);
 if (!$result) {
     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to insert usage record');
-    ttsOutputJson(array('success' => false, 'error' => 'Failed to record usage'), 500);
+    ttsOutputJson(array('success' => false, 'error' => 'Error al registrar el uso.'), 500);
     return;
 }
 

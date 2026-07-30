@@ -24,6 +24,7 @@
     };
 
     SttTTS.prototype.injectTextareaButtons = function () {
+        if (!this.config.hasTextarea) return;
         var self = this;
         var textareas = document.querySelectorAll('textarea:not([class*="mce"]):not([class*="htmlarea"])');
         if (this.config.textareaFields && this.config.textareaFields.length > 0) {
@@ -71,6 +72,7 @@
     };
 
     SttTTS.prototype.injectDetailAction = function () {
+        if (!this.config.hasHighlight) return;
         var self = this;
         if (document.querySelector('.tts-detail-btn')) return;
         var menu = document.querySelector('#tab-actions ul.dropdown-menu');
@@ -90,6 +92,7 @@
     };
 
     SttTTS.prototype.injectListviewAction = function () {
+        if (!this.config.hasHighlight) return;
         var self = this;
         if (document.querySelector('.tts-list-btn')) return;
         var topMenu = document.querySelector('ul#actionLinkTop li.sugar_action_button ul.subnav');
