@@ -326,7 +326,7 @@ class ResponseHandler
                         $lastAction->performTerminal($context, $lastResult);
                     } catch (\Throwable $t) {
                         $context->addError($t, $lastResult->actionConfig);
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action {$lastResult->actionConfig?->name}: " . $t->getMessage());
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action {$lastResult->actionConfig?->getName()}: " . $t->getMessage());
                     }
                 }
                 // No terminal (or error runing terminal)
@@ -383,7 +383,7 @@ class ResponseHandler
                         $lastAction->performTerminal($context, $lastResult);
                     } catch (\Throwable $t) {
                         $context->addError($t, $lastResult->actionConfig);
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action in Main flow {$lastResult->actionConfig?->name}: " . $t->getMessage());
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action in Main flow {$lastResult->actionConfig?->getName()}: " . $t->getMessage());
                     }
                 }
                 // No terminal (or error runing terminal): Show generic message
