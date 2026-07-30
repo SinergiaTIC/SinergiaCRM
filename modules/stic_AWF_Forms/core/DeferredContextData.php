@@ -94,7 +94,7 @@ class DeferredContextData
 
     public function captureBlockReferences(ExecutionContext $context): void {
         $this->blockReferences = [];
-        foreach ($context->formConfig->data_blocks as $bId => $b) {
+        foreach ($context->formConfig->getDataBlocks() as $bId => $b) {
             if ($b->getBeanReference() !== null) {
                 $this->blockReferences[$bId] = $b->getBeanReference()->beanId;
             }

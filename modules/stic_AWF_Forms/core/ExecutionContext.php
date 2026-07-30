@@ -120,7 +120,7 @@ class ExecutionContext {
      * @return ?FormDataBlock The data block or null if not found
      */
     public function getDataBlockById(string $blockId): ?FormDataBlock {
-        return $this->formConfig->data_blocks[$blockId] ?? null;
+        return $this->formConfig->getDataBlockById($blockId);
     }
 
     /**
@@ -129,7 +129,7 @@ class ExecutionContext {
      * @return ?FormDataBlock The data block or null if not found
      */
     public function getDataBlockByName(string $blockName): ?FormDataBlock {
-        foreach ($this->formConfig->data_blocks as $block) {
+        foreach ($this->formConfig->getDataBlocks() as $block) {
             if ($block->name === $blockName) {
                 return $block;
             }

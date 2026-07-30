@@ -30,7 +30,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 class FormConfig {
     /** @var FormDataBlock[] */
-    public array $data_blocks;         // The form's data blocks
+    private array $data_blocks;        // The form's data blocks
     /** @var FormFlow[] */
     private array $flows;              // The form's action flows
     public ?FormLayout $layout = null; // The form layout
@@ -47,7 +47,7 @@ class FormConfig {
         if (isset($data['data_blocks'])) {
             foreach ($data['data_blocks'] as $dataBlockData) {
                 $formDataBlock = FormDataBlock::fromJsonArray($dto, $dataBlockData);
-                $dto->data_blocks[$formDataBlock->id] = $formDataBlock;
+                $dto->addDataBlock($formDataBlock);
             }
         }
 
@@ -92,5 +92,31 @@ class FormConfig {
      */
     private function addFlow(FormFlow $flow): void {
         $this->flows[$flow->getId()] = $flow;
+    }
+
+    /**
+     * Returns the data blocks of the form.
+     * @return FormDataBlock[] The data blocks (copy by value)
+     */
+    public function getDataBlocks(): array {
+        return $this->data_blocks;
+    }
+
+    /**
+     * Returns a data block by its ID.
+     * @param string $id The data block ID
+     * @return ?FormDataBlock The data block or null if not found
+     */
+    public function getDataBlockById(string $id): ?FormDataBlock {
+        return $this->data_blocks[$id] ?? null;
+    }
+
+    /**
+     * Adds a data block to the form.
+     * Private: only the construction process (fromJsonArray) should mutate the data blocks.
+     * @param FormDataBlock $dataBlock The data block to add
+     */
+    private function addDataBlock(FormDataBlock $dataBlock): void {
+        $this->data_blocks[$dataBlock->id] = $dataBlock;
     }
 }

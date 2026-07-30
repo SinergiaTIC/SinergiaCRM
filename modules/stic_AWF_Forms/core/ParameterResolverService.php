@@ -171,7 +171,7 @@ class ParameterResolverService {
             return null;
         }
 
-        $dataBlockConfig = $context->formConfig->data_blocks[$dataBlockId] ?? null;
+        $dataBlockConfig = $context->formConfig->getDataBlockById($dataBlockId);
         if ($dataBlockConfig === null) {
             $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": DataBlock config not found with Id: '{$dataBlockId}'.");
             return null;
@@ -220,7 +220,7 @@ class ParameterResolverService {
         $isDetached = str_starts_with($formKey, '_detached.');
         $keyToParse = $isDetached ? substr($formKey, 10) : $formKey; // 10 = strlen('_detached.')
         $foundBlock = null;
-        foreach ($context->formConfig->data_blocks as $block) {
+        foreach ($context->formConfig->getDataBlocks() as $block) {
             $prefix = $block->name . '.';
             if (str_starts_with($keyToParse, $prefix)) {
                 $foundBlock = $block;

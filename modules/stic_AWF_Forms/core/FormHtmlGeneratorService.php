@@ -129,8 +129,8 @@ class FormHtmlGeneratorService {
                 $hasCollapsible = true;
             }
             foreach ($section->elements as $element) {
-                if ($element->type === 'datablock' && isset($config->data_blocks[$element->ref_id])) {
-                    $block = $config->data_blocks[$element->ref_id];
+                if ($element->type === 'datablock' && $config->getDataBlockById($element->ref_id) !== null) {
+                    $block = $config->getDataBlockById($element->ref_id);
                     foreach ($block->fields as $field) {
                         $usedSubtypes[$field->subtype_in_form ?? 'text'] = true;
                     }
@@ -428,7 +428,7 @@ class FormHtmlGeneratorService {
                                     {
                                         foreach ($section->elements as $element) {
                                             if ($element->type == 'datablock') {
-                                                $block = $config->data_blocks[$element->ref_id] ?? null;
+                                                $block = $config->getDataBlockById($element->ref_id) ?? null;
                                                 if ($block) {
                                                     $html .= $this->generateDataBlockHtml($block, $layout->theme);
                                                 }
@@ -869,7 +869,7 @@ class FormHtmlGeneratorService {
         // Get used validators
         $usedValidators = [];
         $hasRating = false;
-        foreach ($config->data_blocks as $block) {
+        foreach ($config->getDataBlocks() as $block) {
             foreach ($block->fields as $field) {
                 if ($field->type_in_form === 'rating') {
                     $hasRating = true;

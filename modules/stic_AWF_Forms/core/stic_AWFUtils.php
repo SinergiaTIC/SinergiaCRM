@@ -878,7 +878,7 @@ class stic_AWFUtils {
      * @param array $formData The submitted form data (passed by reference to be modified)
      */
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
-        foreach ($formConfig->data_blocks as $dataBlock) {
+        foreach ($formConfig->getDataBlocks() as $dataBlock) {
             foreach ($dataBlock->fields as $field) {
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
                     $phpKey = $field->getPhpKey();
@@ -1006,8 +1006,9 @@ class stic_AWFUtils {
 
         // Datablock references to beans
         foreach ($deferredContext->blockReferences as $blockId => $beanId) {
-            if (isset($formConfig->data_blocks[$blockId])) {
-                $formConfig->data_blocks[$blockId]->setBeanReference($beanId);
+            $dataBlock = $formConfig->getDataBlockById($blockId);
+            if ($dataBlock !== null) {
+                $dataBlock->setBeanReference($beanId);
             }
         }
 
@@ -1021,7 +1022,7 @@ class stic_AWFUtils {
     public static function extractBlockReferences(ExecutionContext $context): array
     {
         $blockReferences = [];
-        foreach ($context->formConfig->data_blocks as $bId => $b) {
+        foreach ($context->formConfig->getDataBlocks() as $bId => $b) {
             if ($b->getBeanReference() !== null) {
                 $blockReferences[$bId] = $b->getBeanReference()->beanId;
             }

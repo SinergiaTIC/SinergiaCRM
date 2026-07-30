@@ -577,7 +577,7 @@ class ResponseHandler
         // (browsers don't send unchecked checkboxes)
         stic_AWFUtils::fillMissingBooleanFields($config, $data);
 
-        foreach ($config->data_blocks as $block) {
+        foreach ($config->getDataBlocks() as $block) {
             // Datablock is detached
             if (empty($block->module)) continue; 
             
@@ -747,7 +747,7 @@ class ResponseHandler
         //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
         // }
 
-        foreach ($formConfig->data_blocks as $block) {
+        foreach ($formConfig->getDataBlocks() as $block) {
             foreach ($block->fields as $field) {
                 $currentOrder = $orderCounter;
                 $orderCounter += 1;

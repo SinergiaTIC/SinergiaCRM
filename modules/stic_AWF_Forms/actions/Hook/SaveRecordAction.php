@@ -315,7 +315,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                         $relName = $cfg['relationship_name'] ?? '';
                         $idName = $cfg['id_name'] ?? '';
                         $targetBlockId = $cfg['target_block_id'] ?? '';
-                        $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
+                        $targetBlock = $context->formConfig->getDataBlockById($targetBlockId);
                         $targetBeanRef = $targetBlock?->getBeanReference();
                         $targetId = $targetBeanRef?->beanId ?? '';
                         $metadata[] = ['key' => 'injected_fk', 'label' => $idName, 'value' => "{$relName} → {$targetId}"];
@@ -474,7 +474,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
+            $targetBlock = $context->formConfig->getDataBlockById($targetBlockId);
             if (!$targetBlock) {
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlockId}' not found for relationship '{$relationName}'.");
                 continue;
