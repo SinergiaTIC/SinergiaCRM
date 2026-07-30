@@ -453,46 +453,166 @@ function removeDocumentsFromFS()
     // temp table to store id of files without memory leak
     $tableName = 'cron_remove_documents';
 
-    $resource = $db->limitQuery("SELECT * FROM cron_remove_documents WHERE 1=1 ORDER BY date_modified ASC", 0, 100);
-    $return = true;
-    while ($row = $db->fetchByAssoc($resource)) {
-        $bean = BeanFactory::getBean($row['module']);
-        $bean->retrieve($row['bean_id'], true, false);
-        if (empty($bean->id)) {
-            $isSuccess = true;
-            $bean->id = $row['bean_id'];
-            $directory = $bean->deleteFileDirectory();
-            if (!empty($directory) && is_dir('upload://deleted/' . $directory)) {
-                if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
-                    $directory = explode('/', $directory);
-                    while (!empty($directory)) {
-                        $path = 'upload://deleted/' . implode('/', $directory);
-                        if (is_dir($path)) {
-                            $directoryIterator = new DirectoryIterator($path);
-                            $empty = true;
-                            foreach ($directoryIterator as $item) {
-                                if ($item->getFilename() == '.' || $item->getFilename() == '..') {
-                                    continue;
-                                }
-                                $empty = false;
-                                break;
-                            }
-                            if ($empty) {
-                                rmdir($path);
-                            }
-                        }
-                        array_pop($directory);
-                    }
+    // STIC Custom 20241029 ART - "Removal of Documents from Filesystem" task has erratic behavior
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+    // $resource = $db->limitQuery("SELECT * FROM cron_remove_documents WHERE 1=1 ORDER BY date_modified ASC", 0, 100);
+    // $return = true;
+    // while ($row = $db->fetchByAssoc($resource)) {
+    //     $bean = BeanFactory::getBean($row['module']);
+    //     $bean->retrieve($row['bean_id'], true, false);
+    //     if (empty($bean->id)) {
+    //         $isSuccess = true;
+    //         $bean->id = $row['bean_id'];
+    //         $directory = $bean->deleteFileDirectory();
+    //         if (!empty($directory) && is_dir('upload://deleted/' . $directory)) {
+    //             if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
+    //                 $directory = explode('/', $directory);
+    //                 while (!empty($directory)) {
+    //                     $path = 'upload://deleted/' . implode('/', $directory);
+    //                     if (is_dir($path)) {
+    //                         $directoryIterator = new DirectoryIterator($path);
+    //                         $empty = true;
+    //                         foreach ($directoryIterator as $item) {
+    //                             if ($item->getFilename() == '.' || $item->getFilename() == '..') {
+    //                                 continue;
+    //                             }
+    //                             $empty = false;
+    //                             break;
+    //                         }
+    //                         if ($empty) {
+    //                             rmdir($path);
+    //                         }
+    //                     }
+    //                     array_pop($directory);
+    //                 }
+    //             }
+    //         }
+    //         if ($isSuccess) {
+    //             $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
+    //         } else {
+    //             $return = false;
+    //         }
+    //     } else {
+    //         $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+    //     }
+
+    // Function to recursively clean up empty parent directories under 'upload://deleted/'
+    $cleanupEmptyParentFolders = function ($path) {
+        $parts = explode('/', $path); // Split the path into folder segments
+        array_pop($parts); // Remove the last folder
+
+        while (!empty($parts)) {
+            $parent = 'upload://deleted/' . implode('/', $parts); // Reconstruct parent path
+            $items = @scandir($parent); // List contents of the directory
+
+            if (is_array($items) && count($items) <= 2) { // If directory is empty
+                if (@rmdir($parent)) {
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed empty parent directory: ' . $parent);
+                } else {
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to remove parent directory: ' . $parent);
+                    break;
                 }
-            }
-            if ($isSuccess) {
-                $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
             } else {
+                break;
+            }
+
+            array_pop($parts);
+        }
+    };
+
+    // Fetch up to 100 rows pending removal
+    $resource = $db->limitQuery("SELECT * FROM $tableName WHERE 1=1 ORDER BY date_modified ASC", 0, 100);
+    $return = true;
+
+    while ($row = $db->fetchByAssoc($resource)) {
+        $module = $row['module'];
+        $beanId = $row['bean_id'];
+        $entryId = $row['id'];
+
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Processing entry: ' . $entryId . ', module: ' . $module . ', bean ID: ' . $beanId);
+
+        // Attempt to load the bean from the module
+        $bean = BeanFactory::getBean($module);
+
+        if (!$bean || !($bean instanceof SugarBean)) {
+            // Module no longer exists or is invalid
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Invalid or non-existent module ' . $module . '. Removing associated filesystem data for entry ID: ' . $entryId);
+    
+            // Create a new bean with the beanId to generate directory path
+            $bean = new SugarBean(); 
+            $bean->id = $beanId;
+            // Construct the path
+            $directory = $bean->deleteFileDirectory();
+    
+        } else {
+            $bean->retrieve($beanId, true, false);
+
+            if (empty($bean->id)) {
+                // Bean not found, but module exists — update timestamp for retry
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Bean not found for ID: ' . $beanId . '. Updating timestamp for future retry.');
+
+                $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
+
+                $bean->id = $beanId;
+            }
+    
+            $directory = $bean->deleteFileDirectory();
+        }
+
+        // Build full path and handle file/directory removal
+        $fullPath = 'upload://deleted/' . $directory;
+
+        // Check if the path is a directory (folder with deleted documents)
+        if (is_dir($fullPath)) {
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to remove directory: ' . $fullPath);
+
+            try {
+                // Recursively remove the directory and all its contents
+                if (rmdir_recursive($fullPath)) {
+                    // Clean up any empty parent directories under upload/deleted/
+                    $cleanupEmptyParentFolders($directory);
+                    // Remove the corresponding entry from the tracking table
+                    $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed directory and entry: ' . $entryId);
+                } else {
+                    // Directory removal failed (permissions or other filesystem error)
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to remove directory: ' . $fullPath);
+                    $return = false;
+                    // Update timestamp to retry removal in next scheduler run
+                    $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
+                }
+            } catch (Exception $e) {
+                // Exception during directory removal (e.g., filesystem error)
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Error removing directory: ' . $e->getMessage());
                 $return = false;
+                // Update timestamp to retry removal in next scheduler run
+                $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
+            }
+        // Check if the path is a standalone file (single deleted document)
+        } elseif (is_file($fullPath)) {
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to delete file: ' . $fullPath);
+
+            if (@unlink($fullPath)) {
+                // Clean up any empty parent directories under upload/deleted/
+                $cleanupEmptyParentFolders($directory);
+                // Remove the corresponding entry from the tracking table
+                $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed file and entry: ' . $entryId);
+            } else {
+                // File deletion failed (permissions or other filesystem error)
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to delete file: ' . $fullPath);
+                $return = false;
+                // Update timestamp to retry removal in next scheduler run
+                $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
             }
         } else {
-            $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+            // No directory or file found - orphan entry in database (file already deleted manually or missing)
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': No directory or file found at: ' . $fullPath . '. Removing orphan entry.');
+            // Remove the orphan entry without marking as failure
+            $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed orphan entry: ' . $entryId);
         }
+        // END STIC Custom
     }
 
     return $return;
