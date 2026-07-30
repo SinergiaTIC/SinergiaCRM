@@ -33,7 +33,7 @@ class FormFlow {
     public string $text;             // The text to display
 
     /** @var FormAction[] */
-    public array $actions;           // The actions of the flow
+    private array $actions;           // The actions of the flow
 
     /**
      * Creates an instance of FormFlow from a JSON array.
@@ -53,10 +53,68 @@ class FormFlow {
         if (isset($data['actions'])) {
             foreach ($data['actions'] as $actionData) {
                 $formAction = FormAction::fromJsonArray($dto->id, $actionData);
-                $dto->actions[$formAction->getId()] = $formAction;
+                $dto->addAction($formAction);
             }
         }
 
         return $dto;
+    }
+
+    /**
+     * Creates a virtual flow with a subset of actions.
+     * This is the only supported way to build a flow with a custom action set
+     * from outside the class construction process.
+     * @param FormConfig $formConfig The form configuration the virtual flow belongs to
+     * @param string $id The ID of the virtual flow
+     * @param string $name The name of the virtual flow
+     * @param string $text The text of the virtual flow
+     * @param FormAction[] $actions The actions of the virtual flow
+     * @return FormFlow The created virtual flow
+     */
+    public static function createVirtual(FormConfig $formConfig, string $id, string $name, string $text, array $actions): self {
+        $dto = new self();
+        $dto->form_config = $formConfig;
+        $dto->id = $id;
+        $dto->name = $name;
+        $dto->text = $text;
+        $dto->setActions($actions);
+        return $dto;
+    }
+
+    /**
+     * Returns the actions of the flow.
+     * @return FormAction[] The actions (copy by value)
+     */
+    public function getActions(): array {
+        return $this->actions;
+    }
+
+    /**
+     * Returns an action by its ID.
+     * @param string $id The action ID
+     * @return ?FormAction The action or null if not found
+     */
+    public function getActionById(string $id): ?FormAction {
+        return $this->actions[$id] ?? null;
+    }
+
+    /**
+     * Sets the actions of the flow.
+     * Private: only the construction process and createVirtual should mutate actions.
+     * @param FormAction[] $actions The actions
+     */
+    private function setActions(array $actions): void {
+        $this->actions = [];
+        foreach ($actions as $action) {
+            $this->addAction($action);
+        }
+    }
+
+    /**
+     * Adds an action to the flow.
+     * @param FormAction $action The action to add
+     */
+    private function addAction(FormAction $action): void {
+        $this->actions[$action->getId()] = $action;
     }
 }

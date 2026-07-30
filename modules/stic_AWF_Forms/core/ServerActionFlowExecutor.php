@@ -46,7 +46,7 @@ class ServerActionFlowExecutor {
         $lastResult = new ActionResult(ResultStatus::OK, null);
         $lastActionConfig = null;
         try {
-            $actions = $flowConfig->actions ?? [];
+            $actions = $flowConfig->getActions();
 
             // Preprocess formData to fill in missing boolean/checkbox fields
             // (browsers don't send unchecked checkboxes, so without this the condition would
@@ -170,11 +170,11 @@ class ServerActionFlowExecutor {
      * @param FormFlow $flowConfig The flow definition to evaluate.
      */
     public function executeTerminalActionOnly(FormFlow $flowConfig): void {
-        if (empty($flowConfig->actions)) {
+        if (empty($flowConfig->getActions())) {
             return;
         }
 
-        foreach ($flowConfig->actions as $actionConfig) {
+        foreach ($flowConfig->getActions() as $actionConfig) {
             try {
                 // Instantiate the action executor to check its type and interface
                 $actionExecutor = $this->factory->createAction($actionConfig);

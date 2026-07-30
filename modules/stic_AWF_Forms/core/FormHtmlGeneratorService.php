@@ -910,7 +910,7 @@ class FormHtmlGeneratorService {
                 $actionMap[$a->getName()] = $a;
             }
 
-            foreach ($uiFlow->actions as $formAction) {
+            foreach ($uiFlow->getActions() as $formAction) {
                 if (isset($actionMap[$formAction->getName()])) {
                     $def = $actionMap[$formAction->getName()];
                     if ($def instanceof IFrontendAction) {

@@ -101,7 +101,7 @@ class ResumeHandler
             // Ok case: Execute the action's flow
             $originFlow = null;
             foreach ($context->formConfig->getFlows() as $flow) {
-                if (isset($flow->actions[$ticket->handler_action_id])) {
+                if ($flow->getActionById($ticket->handler_action_id) !== null) {
                     $originFlow = $flow;
                     break;
                 }
@@ -115,7 +115,7 @@ class ResumeHandler
             // Get remaining actions, after current deferred action
             $remainingActions = [];
             $foundPausingAction = false;
-            foreach ($originFlow->actions as $action) {
+            foreach ($originFlow->getActions() as $action) {
                 if ($foundPausingAction) {
                     $remainingActions[$action->getId()] = $action;
                 }
@@ -125,9 +125,13 @@ class ResumeHandler
             }
 
             // Build a virtual flow to resume
-            $virtualFlow = new FormFlow();
-            $virtualFlow->id = 'virtual_resume_flow';
-            $virtualFlow->actions = $remainingActions;
+            $virtualFlow = FormFlow::createVirtual(
+                $originFlow->form_config,
+                'virtual_resume_flow',
+                'virtual_resume_flow',
+                '',
+                $remainingActions
+            );
 
             if ($ticket->status === 'processed') {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed previously. Delegating the terminal action exclusively.");
