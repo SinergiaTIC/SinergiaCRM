@@ -32,7 +32,7 @@ class FormConfig {
     /** @var FormDataBlock[] */
     public array $data_blocks;         // The form's data blocks
     /** @var FormFlow[] */
-    public array $flows;               // The form's action flows
+    private array $flows;              // The form's action flows
     public ?FormLayout $layout = null; // The form layout
 
     /** 
@@ -55,7 +55,7 @@ class FormConfig {
         if (isset($data['flows'])) {
             foreach ($data['flows'] as $flowData) {
                 $formFlow = FormFlow::fromJsonArray($dto, $flowData);
-                $dto->flows[$formFlow->id] = $formFlow;
+                $dto->addFlow($formFlow);
             }
         }
 
@@ -66,5 +66,31 @@ class FormConfig {
             $dto->layout->theme = new FormTheme();
         }
         return $dto;
+    }
+
+    /**
+     * Returns the action flows of the form.
+     * @return FormFlow[] The action flows (copy by value)
+     */
+    public function getFlows(): array {
+        return $this->flows;
+    }
+
+    /**
+     * Returns a flow by its ID.
+     * @param string $id The flow ID
+     * @return ?FormFlow The flow or null if not found
+     */
+    public function getFlowById(string $id): ?FormFlow {
+        return $this->flows[$id] ?? null;
+    }
+
+    /**
+     * Adds an action flow to the form.
+     * Private: only the construction process (fromJsonArray) should mutate the flows.
+     * @param FormFlow $flow The flow to add
+     */
+    private function addFlow(FormFlow $flow): void {
+        $this->flows[$flow->id] = $flow;
     }
 }

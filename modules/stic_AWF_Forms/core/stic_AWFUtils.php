@@ -1049,10 +1049,10 @@ class stic_AWFUtils {
         $errorFlow = null;
 
         if ($flowId !== null && $flowId !== '') {
-            $flow = $context->formConfig->flows[$flowId] ?? null;
+            $flow = $context->formConfig->getFlowById($flowId);
         }
         if ($errorFlowId !== null && $errorFlowId !== '') {
-            $errorFlow =  $context->formConfig->flows[$errorFlowId] ?? null;
+            $errorFlow =  $context->formConfig->getFlowById($errorFlowId);
         }
 
         if ($flow === null) {

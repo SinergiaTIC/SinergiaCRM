@@ -307,9 +307,9 @@ class ResponseHandler
         //    0: Main    (Main)
         //    1: Receipt (Received/Confirmation for 'async')
         //   -1: OnError (Error)
-        $mainFlow = $formConfig->flows['0'] ?? null;
-        $receiptFlow = $formConfig->flows['1'] ?? null;
-        $errorFlow = $formConfig->flows['-1'] ?? null;
+        $mainFlow = $formConfig->getFlowById('0');
+        $receiptFlow = $formConfig->getFlowById('1');
+        $errorFlow = $formConfig->getFlowById('-1');
 
         $isAsync = ($formBean->processing_mode === 'async');
         if ($isAsync) {

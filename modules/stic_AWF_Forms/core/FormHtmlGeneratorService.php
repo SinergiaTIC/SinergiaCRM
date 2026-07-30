@@ -901,7 +901,8 @@ class FormHtmlGeneratorService {
         }
 
         // == UI ACTIONS ==
-        if (isset($config->flows['0'])) {
+        $uiFlow = $config->getFlowById('0');
+        if ($uiFlow !== null) {
             // Load Hook and UI actions to check for IFrontendAction
             $possibleActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::UI]);
             $actionMap = [];
@@ -909,7 +910,7 @@ class FormHtmlGeneratorService {
                 $actionMap[$a->getName()] = $a;
             }
 
-            foreach ($config->flows['0']->actions as $formAction) {
+            foreach ($uiFlow->actions as $formAction) {
                 if (isset($actionMap[$formAction->getName()])) {
                     $def = $actionMap[$formAction->getName()];
                     if ($def instanceof IFrontendAction) {

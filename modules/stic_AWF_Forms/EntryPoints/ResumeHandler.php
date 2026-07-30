@@ -69,7 +69,7 @@ class ResumeHandler
             $contextData = $deferredData->toArray();
 
             $specificErrorFlowId = $contextData['flow_error_id'] ?? '-1';
-            $errorFlow = $context->formConfig->flows[$specificErrorFlowId] ?? $context->formConfig->flows['-1'] ?? null;
+            $errorFlow = $context->formConfig->getFlowById($specificErrorFlowId) ?? $context->formConfig->getFlowById('-1') ?? null;
 
             $executor = new ServerActionFlowExecutor($context);
 
@@ -100,7 +100,7 @@ class ResumeHandler
 
             // Ok case: Execute the action's flow
             $originFlow = null;
-            foreach ($context->formConfig->flows as $flow) {
+            foreach ($context->formConfig->getFlows() as $flow) {
                 if (isset($flow->actions[$ticket->handler_action_id])) {
                     $originFlow = $flow;
                     break;

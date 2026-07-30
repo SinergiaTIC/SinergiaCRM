@@ -216,10 +216,10 @@ class ServerActionFlowExecutor {
      * @return ActionResult The result of the sub-flow execution.
      */
     public function executeSubFlow(string $flowId, ?string $errorFlowId = null): ActionResult {
-        $flow = $this->context->formConfig->flows[$flowId] ?? null;
+        $flow = $this->context->formConfig->getFlowById($flowId);
         $errorFlow = null;
         if ($errorFlowId !== null && $errorFlowId !== '') {
-            $errorFlow = $this->context->formConfig->flows[$errorFlowId] ?? null;
+            $errorFlow = $this->context->formConfig->getFlowById($errorFlowId);
         }
 
         if ($flow === null) {
