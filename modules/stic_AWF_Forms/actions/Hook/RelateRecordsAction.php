@@ -209,6 +209,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
         try {
             $bean->$linkName->add($targetBeanId);
+            $targetModule = $bean->$linkName->getRelatedModuleName();
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error linking records: " . $e->getMessage());
         }
@@ -222,6 +223,18 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             ['key' => 'target_object', 'label' => $this->translate('TARGET_OBJECT_TEXT'), 'value' => $targetBeanId],
         ];
         $actionResult->registerActionMetadata($bean, $dataToLog);
+
+        // Register the target bean as well, so a Link appears for both sides of the N-M relationship
+        if (!empty($targetModule)) {
+            $targetBean = BeanFactory::getBean($targetModule, $targetBeanId);
+            if ($targetBean) {
+                $targetDataToLog = [
+                    ['key' => 'relationship_name', 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],
+                    ['key' => 'source_object', 'label' => $this->translate('SOURCE_OBJECT_TEXT'), 'value' => $bean->id],
+                ];
+                $actionResult->registerActionMetadata($targetBean, $targetDataToLog);
+            }
+        }
 
         return $actionResult;
     }

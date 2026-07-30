@@ -44,7 +44,10 @@ class ExecutionContext {
     public string $defaultAssignedUserId;
     public ?string $visitorUserId = null;
 
-    /** @var ?DeferredContextData Objecte de context per a processos diferits */
+    /** @var array<string, array> Uploaded files from $_FILES, indexed by PHP key */
+    public array $uploadedFiles = [];
+
+    /** @var ?DeferredContextData Context object for deferred processes */
     public ?DeferredContextData $deferredContext = null;
     
     /**
@@ -57,8 +60,9 @@ class ExecutionContext {
      * @param string $defaultAssignedUserId Default assigned user ID (optional)
      * @param ?SugarBean $responseBean The response Bean (optional)
      * @param string $formType The form type (e.g., 'web', 'crm')
+     * @param array $uploadedFiles Uploaded files data from $_FILES (optional)
      */
-    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null, string $formType = '') {
+    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null, string $formType = '', array $uploadedFiles = []) {
         $this->formId = $formId;
         $this->responseId = $responseId;
         $this->formData = $formData;
@@ -68,6 +72,7 @@ class ExecutionContext {
         $this->defaultAssignedUserId = $defaultAssignedUserId;
         $this->responseBean = $responseBean;
         $this->formType = $formType;
+        $this->uploadedFiles = $uploadedFiles;
     }
 
     /**
