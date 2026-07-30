@@ -26,11 +26,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormFlow {
-    public FormConfig $form_config;  // The configuration of the form it belongs to
+    private FormConfig $form_config;  // The configuration of the form it belongs to
 
-    public string $id;               // ID of the action flow
-    public string $name;             // Internal name of the action flow
-    public string $text;             // The text to display
+    private string $id;               // ID of the action flow
+    private string $name;             // Internal name of the action flow
+    private string $text;             // The text to display
 
     /** @var FormAction[] */
     private array $actions;           // The actions of the flow
@@ -116,5 +116,37 @@ class FormFlow {
      */
     private function addAction(FormAction $action): void {
         $this->actions[$action->getId()] = $action;
+    }
+
+    /**
+     * Returns the form configuration this flow belongs to.
+     * @return FormConfig The form configuration
+     */
+    public function getFormConfig(): FormConfig {
+        return $this->form_config;
+    }
+
+    /**
+     * Returns the flow ID.
+     * @return string The flow ID
+     */
+    public function getId(): string {
+        return $this->id;
+    }
+
+    /**
+     * Returns the internal name of the flow.
+     * @return string The flow name
+     */
+    public function getName(): string {
+        return $this->name;
+    }
+
+    /**
+     * Returns the display text of the flow.
+     * @return string The flow text
+     */
+    public function getText(): string {
+        return $this->text;
     }
 }

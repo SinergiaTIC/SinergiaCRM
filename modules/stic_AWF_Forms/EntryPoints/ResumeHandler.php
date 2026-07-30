@@ -126,7 +126,7 @@ class ResumeHandler
 
             // Build a virtual flow to resume
             $virtualFlow = FormFlow::createVirtual(
-                $originFlow->form_config,
+                $originFlow->getFormConfig(),
                 'virtual_resume_flow',
                 'virtual_resume_flow',
                 '',

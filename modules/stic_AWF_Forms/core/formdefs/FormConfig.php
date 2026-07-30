@@ -91,6 +91,6 @@ class FormConfig {
      * @param FormFlow $flow The flow to add
      */
     private function addFlow(FormFlow $flow): void {
-        $this->flows[$flow->id] = $flow;
+        $this->flows[$flow->getId()] = $flow;
     }
 }
