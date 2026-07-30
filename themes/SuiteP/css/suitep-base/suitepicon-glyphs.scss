@@ -1,10 +1,10 @@
 @font-face {
     font-family: "suitepicon";
-    src: url("./suitepicon.eot?099ae3ef14bd5556fc4f5c8abd92e6c2#iefix") format("embedded-opentype"),
-url("./suitepicon.woff?099ae3ef14bd5556fc4f5c8abd92e6c2") format("woff"),
-url("./suitepicon.woff2?099ae3ef14bd5556fc4f5c8abd92e6c2") format("woff2"),
-url("./suitepicon.ttf?099ae3ef14bd5556fc4f5c8abd92e6c2") format("truetype"),
-url("./suitepicon.svg?099ae3ef14bd5556fc4f5c8abd92e6c2#suitepicon") format("svg");
+    src: url("suitepicon.eot?fddceb996d297f9c8b2ca5de2223b21d?#iefix") format("embedded-opentype"),
+url("suitepicon.woff2?fddceb996d297f9c8b2ca5de2223b21d") format("woff2"),
+url("suitepicon.woff?fddceb996d297f9c8b2ca5de2223b21d") format("woff"),
+url("suitepicon.ttf?fddceb996d297f9c8b2ca5de2223b21d") format("truetype"),
+url("suitepicon.svg?fddceb996d297f9c8b2ca5de2223b21d#suitepicon") format("svg");
 }
 
 i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
@@ -18,804 +18,804 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.suitepicon-template-issue:before {
+.suitepicon-action-above:before {
     content: "\f101";
 }
-.suitepicon-template-file:before {
+.suitepicon-action-add:before {
     content: "\f102";
 }
-.suitepicon-template-company:before {
+.suitepicon-action-aeat-query:before {
     content: "\f103";
 }
-.suitepicon-module-users:before {
+.suitepicon-action-alerts-small:before {
     content: "\f104";
 }
-.suitepicon-module-tasks:before {
+.suitepicon-action-alerts:before {
     content: "\f105";
 }
-.suitepicon-module-targets:before {
+.suitepicon-action-back:before {
     content: "\f106";
 }
-.suitepicon-module-surveys:before {
+.suitepicon-action-below:before {
     content: "\f107";
 }
-.suitepicon-module-survey-responses:before {
+.suitepicon-action-caret:before {
     content: "\f108";
 }
-.suitepicon-module-subpanels:before {
+.suitepicon-action-clear:before {
     content: "\f109";
 }
-.suitepicon-module-stic-work-experience:before {
+.suitepicon-action-confirm:before {
     content: "\f10a";
 }
-.suitepicon-module-stic-work-calendar:before {
+.suitepicon-action-create-contact-vcard:before {
     content: "\f10b";
 }
-.suitepicon-module-stic-validation-actions:before {
+.suitepicon-action-create-group-user:before {
     content: "\f10c";
 }
-.suitepicon-module-stic-transactions:before {
+.suitepicon-action-create-person-form:before {
     content: "\f10d";
 }
-.suitepicon-module-stic-training:before {
+.suitepicon-action-create-security-group:before {
     content: "\f10e";
 }
-.suitepicon-module-stic-time-tracker:before {
+.suitepicon-action-create-stic-bookings:before {
     content: "\f10f";
 }
-.suitepicon-module-stic-skills:before {
+.suitepicon-action-create-stic-followups:before {
     content: "\f110";
 }
-.suitepicon-module-stic-signers:before {
+.suitepicon-action-create-stic-resources:before {
     content: "\f111";
 }
-.suitepicon-module-stic-signatures:before {
+.suitepicon-action-create-stic-sessions:before {
     content: "\f112";
 }
-.suitepicon-module-stic-signature-log:before {
+.suitepicon-action-create-stic-web-forms:before {
     content: "\f113";
 }
-.suitepicon-module-stic-sessions:before {
+.suitepicon-action-current-user:before {
     content: "\f114";
 }
-.suitepicon-module-stic-sepe-incidents:before {
+.suitepicon-action-delete:before {
     content: "\f115";
 }
-.suitepicon-module-stic-sepe-files:before {
+.suitepicon-action-down:before {
     content: "\f116";
 }
-.suitepicon-module-stic-sepe-actions:before {
+.suitepicon-action-edit:before {
     content: "\f117";
 }
-.suitepicon-module-stic-security-groups-rules:before {
+.suitepicon-action-empty-action:before {
     content: "\f118";
 }
-.suitepicon-module-stic-resources:before {
+.suitepicon-action-first:before {
     content: "\f119";
 }
-.suitepicon-module-stic-remittances:before {
+.suitepicon-action-forward:before {
     content: "\f11a";
 }
-.suitepicon-module-stic-registrations:before {
+.suitepicon-action-home:before {
     content: "\f11b";
 }
-.suitepicon-module-stic-prescription:before {
+.suitepicon-action-import-line-item:before {
     content: "\f11c";
 }
-.suitepicon-module-stic-personal-environment:before {
+.suitepicon-action-import:before {
     content: "\f11d";
 }
-.suitepicon-module-stic-payments:before {
+.suitepicon-action-info:before {
     content: "\f11e";
 }
-.suitepicon-module-stic-payments-aggregated:before {
+.suitepicon-action-invade:before {
     content: "\f11f";
 }
-.suitepicon-module-stic-payment-commitments:before {
+.suitepicon-action-last:before {
     content: "\f120";
 }
-.suitepicon-module-stic-organizational-environment:before {
+.suitepicon-action-left:before {
     content: "\f121";
 }
-.suitepicon-module-stic-messages:before {
+.suitepicon-action-list-maps:before {
     content: "\f122";
 }
-.suitepicon-module-stic-medication:before {
+.suitepicon-action-m182:before {
     content: "\f123";
 }
-.suitepicon-module-stic-medication-log:before {
+.suitepicon-action-megaphone:before {
     content: "\f124";
 }
-.suitepicon-module-stic-journal:before {
+.suitepicon-action-minus:before {
     content: "\f125";
 }
-.suitepicon-module-stic-job-offers:before {
+.suitepicon-action-move-down:before {
     content: "\f126";
 }
-.suitepicon-module-stic-job-applications:before {
+.suitepicon-action-move-left:before {
     content: "\f127";
 }
-.suitepicon-module-stic-group-opportunities:before {
+.suitepicon-action-move-right:before {
     content: "\f128";
 }
-.suitepicon-module-stic-grants:before {
+.suitepicon-action-move-up:before {
     content: "\f129";
 }
-.suitepicon-module-stic-goals:before {
+.suitepicon-action-norma-43:before {
     content: "\f12a";
 }
-.suitepicon-module-stic-followups:before {
+.suitepicon-action-payments-aggregated:before {
     content: "\f12b";
 }
-.suitepicon-module-stic-financial-products:before {
+.suitepicon-action-plus:before {
     content: "\f12c";
 }
-.suitepicon-module-stic-families:before {
+.suitepicon-action-quick-radius-map:before {
     content: "\f12d";
 }
-.suitepicon-module-stic-events:before {
+.suitepicon-action-reload:before {
     content: "\f12e";
 }
-.suitepicon-module-stic-conversations:before {
+.suitepicon-action-resource-chart:before {
     content: "\f12f";
 }
-.suitepicon-module-stic-contacts-relationships:before {
+.suitepicon-action-right:before {
     content: "\f130";
 }
-.suitepicon-module-stic-centers:before {
+.suitepicon-action-role-management:before {
     content: "\f131";
 }
-.suitepicon-module-stic-bookings:before {
+.suitepicon-action-schedule-call:before {
     content: "\f132";
 }
-.suitepicon-module-stic-awf-responses:before {
+.suitepicon-action-schedule-meeting:before {
     content: "\f133";
 }
-.suitepicon-module-stic-awf-response-details:before {
+.suitepicon-action-schedule:before {
     content: "\f134";
 }
-.suitepicon-module-stic-awf-links:before {
+.suitepicon-action-search:before {
     content: "\f135";
 }
-.suitepicon-module-stic-awf-forms:before {
+.suitepicon-action-security-groups:before {
     content: "\f136";
 }
-.suitepicon-module-stic-attendances:before {
+.suitepicon-action-security-suite-settings:before {
     content: "\f137";
 }
-.suitepicon-module-stic-assets:before {
+.suitepicon-action-select:before {
     content: "\f138";
 }
-.suitepicon-module-stic-assessments:before {
+.suitepicon-action-setup-email:before {
     content: "\f139";
 }
-.suitepicon-module-stic-accounts-relationships:before {
+.suitepicon-action-sorting-ascending:before {
     content: "\f13a";
 }
-.suitepicon-module-spots:before {
+.suitepicon-action-sorting-descending:before {
     content: "\f13b";
 }
-.suitepicon-module-securitygroups:before {
+.suitepicon-action-sorting-none:before {
     content: "\f13c";
 }
-.suitepicon-module-schedulers:before {
+.suitepicon-action-stic-security-groups-rules:before {
     content: "\f13d";
 }
-.suitepicon-module-sale:before {
+.suitepicon-action-subtract:before {
     content: "\f13e";
 }
-.suitepicon-module-relationships:before {
+.suitepicon-action-today:before {
     content: "\f13f";
 }
-.suitepicon-module-quickcreate:before {
+.suitepicon-action-up:before {
     content: "\f140";
 }
-.suitepicon-module-prospectlists:before {
+.suitepicon-action-user-small:before {
     content: "\f141";
 }
-.suitepicon-module-project-tasks:before {
+.suitepicon-action-user:before {
     content: "\f142";
 }
-.suitepicon-module-products:before {
+.suitepicon-action-vcard:before {
     content: "\f143";
 }
-.suitepicon-module-process:before {
+.suitepicon-action-view-create-email-templates:before {
     content: "\f144";
 }
-.suitepicon-module-popupview:before {
+.suitepicon-action-view-diagnostics:before {
     content: "\f145";
 }
-.suitepicon-module-person:before {
+.suitepicon-action-view-email-templates:before {
     content: "\f146";
 }
-.suitepicon-module-overview:before {
+.suitepicon-action-view-process-audit:before {
     content: "\f147";
 }
-.suitepicon-module-other:before {
+.suitepicon-action-view-project-tasks:before {
     content: "\f148";
 }
-.suitepicon-module-opportunities:before {
+.suitepicon-action-view-record:before {
     content: "\f149";
 }
-.suitepicon-module-notes:before {
+.suitepicon-action-view:before {
     content: "\f14a";
 }
-.suitepicon-module-new-package:before {
+.suitepicon-admin-activity-streams:before {
     content: "\f14b";
 }
-.suitepicon-module-new-module:before {
+.suitepicon-admin-address-cache:before {
     content: "\f14c";
 }
-.suitepicon-module-meetings:before {
+.suitepicon-admin-aobh-businesshours:before {
     content: "\f14d";
 }
-.suitepicon-module-listview:before {
+.suitepicon-admin-aod-settings:before {
     content: "\f14e";
 }
-.suitepicon-module-leads:before {
+.suitepicon-admin-aop-settings:before {
     content: "\f14f";
 }
-.suitepicon-module-layouts:before {
+.suitepicon-admin-aos-settings:before {
     content: "\f150";
 }
-.suitepicon-module-labels:before {
+.suitepicon-admin-backups:before {
     content: "\f151";
 }
-.suitepicon-module-jjwg-markers:before {
+.suitepicon-admin-campaign-email-settings:before {
     content: "\f152";
 }
-.suitepicon-module-jjwg-maps:before {
+.suitepicon-admin-configure-module-menu-filters:before {
     content: "\f153";
 }
-.suitepicon-module-issue:before {
+.suitepicon-admin-connectors:before {
     content: "\f154";
 }
-.suitepicon-module-history:before {
+.suitepicon-admin-currencies:before {
     content: "\f155";
 }
-.suitepicon-module-fp-events:before {
+.suitepicon-admin-diagnostic:before {
     content: "\f156";
 }
-.suitepicon-module-fp-event-locations:before {
+.suitepicon-admin-display-modules-and-subpanels:before {
     content: "\f157";
 }
-.suitepicon-module-filter:before {
+.suitepicon-admin-donate:before {
     content: "\f158";
 }
-.suitepicon-module-file:before {
+.suitepicon-admin-dropdown-editor:before {
     content: "\f159";
 }
-.suitepicon-module-fields:before {
+.suitepicon-admin-email-queue:before {
     content: "\f15a";
 }
-.suitepicon-module-existing-package:before {
+.suitepicon-admin-email-settings:before {
     content: "\f15b";
 }
-.suitepicon-module-emails:before {
+.suitepicon-admin-geocode-addresses:before {
     content: "\f15c";
 }
-.suitepicon-module-email-marketing2:before {
+.suitepicon-admin-geocoded-counts:before {
     content: "\f15d";
 }
-.suitepicon-module-email-marketing:before {
+.suitepicon-admin-geocoding-test:before {
     content: "\f15e";
 }
-.suitepicon-module-editview:before {
+.suitepicon-admin-global-search:before {
     content: "\f15f";
 }
-.suitepicon-module-documents:before {
+.suitepicon-admin-google-maps-settings:before {
     content: "\f160";
 }
-.suitepicon-module-document-revisions:before {
+.suitepicon-admin-history-subpanel:before {
     content: "\f161";
 }
-.suitepicon-module-direct-reports:before {
+.suitepicon-admin-import:before {
     content: "\f162";
 }
-.suitepicon-module-detailview:before {
+.suitepicon-admin-inbound-email:before {
     content: "\f163";
 }
-.suitepicon-module-default:before {
+.suitepicon-admin-languages:before {
     content: "\f164";
 }
-.suitepicon-module-contacts:before {
+.suitepicon-admin-locale:before {
     content: "\f165";
 }
-.suitepicon-module-companyc:before {
+.suitepicon-admin-module-builder:before {
     content: "\f166";
 }
-.suitepicon-module-company:before {
+.suitepicon-admin-module-loader:before {
     content: "\f167";
 }
-.suitepicon-module-cases:before {
+.suitepicon-admin-module-trackers:before {
     content: "\f168";
 }
-.suitepicon-module-case-updates:before {
+.suitepicon-admin-oauth-keys:before {
     content: "\f169";
 }
-.suitepicon-module-campaigntrackers:before {
+.suitepicon-admin-oauth2:before {
     content: "\f16a";
 }
-.suitepicon-module-campaigns:before {
+.suitepicon-admin-outbound-email:before {
     content: "\f16b";
 }
-.suitepicon-module-calls:before {
+.suitepicon-admin-password:before {
     content: "\f16c";
 }
-.suitepicon-module-calendar:before {
+.suitepicon-admin-pdf-settings:before {
     content: "\f16d";
 }
-.suitepicon-module-bugs:before {
+.suitepicon-admin-rebuild:before {
     content: "\f16e";
 }
-.suitepicon-module-basic:before {
+.suitepicon-admin-releases:before {
     content: "\f16f";
 }
-.suitepicon-module-areas-maps:before {
+.suitepicon-admin-rename-modules:before {
     content: "\f170";
 }
-.suitepicon-module-aow-workflow:before {
+.suitepicon-admin-repair:before {
     content: "\f171";
 }
-.suitepicon-module-aos-quotes:before {
+.suitepicon-admin-roles:before {
     content: "\f172";
 }
-.suitepicon-module-aos-product-categories:before {
+.suitepicon-admin-scheduler:before {
     content: "\f173";
 }
-.suitepicon-module-aos-pdf-templates:before {
+.suitepicon-admin-security-suite-group-management:before {
     content: "\f174";
 }
-.suitepicon-module-aos-invoices:before {
+.suitepicon-admin-security:before {
     content: "\f175";
 }
-.suitepicon-module-aos-contracts:before {
+.suitepicon-admin-stic-configure-main-menu:before {
     content: "\f176";
 }
-.suitepicon-module-aos-contracts-signature:before {
+.suitepicon-admin-stic-custom-views:before {
     content: "\f177";
 }
-.suitepicon-module-aor-reports:before {
+.suitepicon-admin-stic-messages:before {
     content: "\f178";
 }
-.suitepicon-module-aok-knowledgebase:before {
+.suitepicon-admin-stic-settings:before {
     content: "\f179";
 }
-.suitepicon-module-aok-knowledge-base-categories:before {
+.suitepicon-admin-stic-validation-actions:before {
     content: "\f17a";
 }
-.suitepicon-module-am-tasktemplates:before {
+.suitepicon-admin-studio:before {
     content: "\f17b";
 }
-.suitepicon-module-administration:before {
+.suitepicon-admin-system-settings:before {
     content: "\f17c";
 }
-.suitepicon-module-activities:before {
+.suitepicon-admin-themes:before {
     content: "\f17d";
 }
-.suitepicon-module-aclroles:before {
+.suitepicon-admin-upgrade-wizard:before {
     content: "\f17e";
 }
-.suitepicon-module-accounts:before {
+.suitepicon-admin-user-management:before {
     content: "\f17f";
 }
-.suitepicon-mimetype-tab:before {
+.suitepicon-admin-workflow:before {
     content: "\f180";
 }
-.suitepicon-favorite-star:before {
+.suitepicon-dashlet-charts-funnel:before {
     content: "\f181";
 }
-.suitepicon-favorite-star-outline:before {
+.suitepicon-dashlet-charts-groupby:before {
     content: "\f182";
 }
-.suitepicon-display-folder-open:before {
+.suitepicon-dashlet-charts-horizontal:before {
     content: "\f183";
 }
-.suitepicon-display-folder-closed:before {
+.suitepicon-dashlet-charts-pie:before {
     content: "\f184";
 }
-.suitepicon-dashlet-sugarnews:before {
+.suitepicon-dashlet-charts-vertical:before {
     content: "\f185";
 }
 .suitepicon-dashlet-jotpad:before {
     content: "\f186";
 }
-.suitepicon-dashlet-charts-vertical:before {
+.suitepicon-dashlet-sugarnews:before {
     content: "\f187";
 }
-.suitepicon-dashlet-charts-pie:before {
+.suitepicon-display-folder-closed:before {
     content: "\f188";
 }
-.suitepicon-dashlet-charts-horizontal:before {
+.suitepicon-display-folder-open:before {
     content: "\f189";
 }
-.suitepicon-dashlet-charts-groupby:before {
+.suitepicon-favorite-star-outline:before {
     content: "\f18a";
 }
-.suitepicon-dashlet-charts-funnel:before {
+.suitepicon-favorite-star:before {
     content: "\f18b";
 }
-.suitepicon-admin-workflow:before {
+.suitepicon-mimetype-tab:before {
     content: "\f18c";
 }
-.suitepicon-admin-user-management:before {
+.suitepicon-module-accounts:before {
     content: "\f18d";
 }
-.suitepicon-admin-upgrade-wizard:before {
+.suitepicon-module-aclroles:before {
     content: "\f18e";
 }
-.suitepicon-admin-themes:before {
+.suitepicon-module-activities:before {
     content: "\f18f";
 }
-.suitepicon-admin-system-settings:before {
+.suitepicon-module-administration:before {
     content: "\f190";
 }
-.suitepicon-admin-studio:before {
+.suitepicon-module-am-tasktemplates:before {
     content: "\f191";
 }
-.suitepicon-admin-stic-validation-actions:before {
+.suitepicon-module-aok-knowledge-base-categories:before {
     content: "\f192";
 }
-.suitepicon-admin-stic-settings:before {
+.suitepicon-module-aok-knowledgebase:before {
     content: "\f193";
 }
-.suitepicon-admin-stic-messages:before {
+.suitepicon-module-aor-reports:before {
     content: "\f194";
 }
-.suitepicon-admin-stic-custom-views:before {
+.suitepicon-module-aos-contracts-signature:before {
     content: "\f195";
 }
-.suitepicon-admin-stic-configure-main-menu:before {
+.suitepicon-module-aos-contracts:before {
     content: "\f196";
 }
-.suitepicon-admin-security:before {
+.suitepicon-module-aos-invoices:before {
     content: "\f197";
 }
-.suitepicon-admin-security-suite-group-management:before {
+.suitepicon-module-aos-pdf-templates:before {
     content: "\f198";
 }
-.suitepicon-admin-scheduler:before {
+.suitepicon-module-aos-product-categories:before {
     content: "\f199";
 }
-.suitepicon-admin-roles:before {
+.suitepicon-module-aos-quotes:before {
     content: "\f19a";
 }
-.suitepicon-admin-repair:before {
+.suitepicon-module-aow-workflow:before {
     content: "\f19b";
 }
-.suitepicon-admin-rename-modules:before {
+.suitepicon-module-areas-maps:before {
     content: "\f19c";
 }
-.suitepicon-admin-releases:before {
+.suitepicon-module-basic:before {
     content: "\f19d";
 }
-.suitepicon-admin-rebuild:before {
+.suitepicon-module-bugs:before {
     content: "\f19e";
 }
-.suitepicon-admin-pdf-settings:before {
+.suitepicon-module-calendar:before {
     content: "\f19f";
 }
-.suitepicon-admin-password:before {
+.suitepicon-module-calls:before {
     content: "\f1a0";
 }
-.suitepicon-admin-outbound-email:before {
+.suitepicon-module-campaigns:before {
     content: "\f1a1";
 }
-.suitepicon-admin-oauth2:before {
+.suitepicon-module-campaigntrackers:before {
     content: "\f1a2";
 }
-.suitepicon-admin-oauth-keys:before {
+.suitepicon-module-case-updates:before {
     content: "\f1a3";
 }
-.suitepicon-admin-module-trackers:before {
+.suitepicon-module-cases:before {
     content: "\f1a4";
 }
-.suitepicon-admin-module-loader:before {
+.suitepicon-module-company:before {
     content: "\f1a5";
 }
-.suitepicon-admin-module-builder:before {
+.suitepicon-module-companyc:before {
     content: "\f1a6";
 }
-.suitepicon-admin-locale:before {
+.suitepicon-module-contacts:before {
     content: "\f1a7";
 }
-.suitepicon-admin-languages:before {
+.suitepicon-module-default:before {
     content: "\f1a8";
 }
-.suitepicon-admin-inbound-email:before {
+.suitepicon-module-detailview:before {
     content: "\f1a9";
 }
-.suitepicon-admin-import:before {
+.suitepicon-module-direct-reports:before {
     content: "\f1aa";
 }
-.suitepicon-admin-history-subpanel:before {
+.suitepicon-module-document-revisions:before {
     content: "\f1ab";
 }
-.suitepicon-admin-google-maps-settings:before {
+.suitepicon-module-documents:before {
     content: "\f1ac";
 }
-.suitepicon-admin-global-search:before {
+.suitepicon-module-editview:before {
     content: "\f1ad";
 }
-.suitepicon-admin-geocoding-test:before {
+.suitepicon-module-email-marketing:before {
     content: "\f1ae";
 }
-.suitepicon-admin-geocoded-counts:before {
+.suitepicon-module-email-marketing2:before {
     content: "\f1af";
 }
-.suitepicon-admin-geocode-addresses:before {
+.suitepicon-module-emails:before {
     content: "\f1b0";
 }
-.suitepicon-admin-email-settings:before {
+.suitepicon-module-existing-package:before {
     content: "\f1b1";
 }
-.suitepicon-admin-email-queue:before {
+.suitepicon-module-fields:before {
     content: "\f1b2";
 }
-.suitepicon-admin-dropdown-editor:before {
+.suitepicon-module-file:before {
     content: "\f1b3";
 }
-.suitepicon-admin-donate:before {
+.suitepicon-module-filter:before {
     content: "\f1b4";
 }
-.suitepicon-admin-display-modules-and-subpanels:before {
+.suitepicon-module-fp-event-locations:before {
     content: "\f1b5";
 }
-.suitepicon-admin-diagnostic:before {
+.suitepicon-module-fp-events:before {
     content: "\f1b6";
 }
-.suitepicon-admin-currencies:before {
+.suitepicon-module-history:before {
     content: "\f1b7";
 }
-.suitepicon-admin-connectors:before {
+.suitepicon-module-issue:before {
     content: "\f1b8";
 }
-.suitepicon-admin-configure-module-menu-filters:before {
+.suitepicon-module-jjwg-maps:before {
     content: "\f1b9";
 }
-.suitepicon-admin-campaign-email-settings:before {
+.suitepicon-module-jjwg-markers:before {
     content: "\f1ba";
 }
-.suitepicon-admin-backups:before {
+.suitepicon-module-labels:before {
     content: "\f1bb";
 }
-.suitepicon-admin-aos-settings:before {
+.suitepicon-module-layouts:before {
     content: "\f1bc";
 }
-.suitepicon-admin-aop-settings:before {
+.suitepicon-module-leads:before {
     content: "\f1bd";
 }
-.suitepicon-admin-aod-settings:before {
+.suitepicon-module-listview:before {
     content: "\f1be";
 }
-.suitepicon-admin-aobh-businesshours:before {
+.suitepicon-module-meetings:before {
     content: "\f1bf";
 }
-.suitepicon-admin-address-cache:before {
+.suitepicon-module-new-module:before {
     content: "\f1c0";
 }
-.suitepicon-admin-activity-streams:before {
+.suitepicon-module-new-package:before {
     content: "\f1c1";
 }
-.suitepicon-action-view:before {
+.suitepicon-module-notes:before {
     content: "\f1c2";
 }
-.suitepicon-action-view-record:before {
+.suitepicon-module-opportunities:before {
     content: "\f1c3";
 }
-.suitepicon-action-view-project-tasks:before {
+.suitepicon-module-other:before {
     content: "\f1c4";
 }
-.suitepicon-action-view-process-audit:before {
+.suitepicon-module-overview:before {
     content: "\f1c5";
 }
-.suitepicon-action-view-email-templates:before {
+.suitepicon-module-person:before {
     content: "\f1c6";
 }
-.suitepicon-action-view-diagnostics:before {
+.suitepicon-module-popupview:before {
     content: "\f1c7";
 }
-.suitepicon-action-view-create-email-templates:before {
+.suitepicon-module-process:before {
     content: "\f1c8";
 }
-.suitepicon-action-vcard:before {
+.suitepicon-module-products:before {
     content: "\f1c9";
 }
-.suitepicon-action-user:before {
+.suitepicon-module-project-tasks:before {
     content: "\f1ca";
 }
-.suitepicon-action-user-small:before {
+.suitepicon-module-prospectlists:before {
     content: "\f1cb";
 }
-.suitepicon-action-up:before {
+.suitepicon-module-quickcreate:before {
     content: "\f1cc";
 }
-.suitepicon-action-today:before {
+.suitepicon-module-relationships:before {
     content: "\f1cd";
 }
-.suitepicon-action-subtract:before {
+.suitepicon-module-sale:before {
     content: "\f1ce";
 }
-.suitepicon-action-stic-security-groups-rules:before {
+.suitepicon-module-schedulers:before {
     content: "\f1cf";
 }
-.suitepicon-action-sorting-none:before {
+.suitepicon-module-securitygroups:before {
     content: "\f1d0";
 }
-.suitepicon-action-sorting-descending:before {
+.suitepicon-module-spots:before {
     content: "\f1d1";
 }
-.suitepicon-action-sorting-ascending:before {
+.suitepicon-module-stic-accounts-relationships:before {
     content: "\f1d2";
 }
-.suitepicon-action-setup-email:before {
+.suitepicon-module-stic-assessments:before {
     content: "\f1d3";
 }
-.suitepicon-action-select:before {
+.suitepicon-module-stic-assets:before {
     content: "\f1d4";
 }
-.suitepicon-action-security-suite-settings:before {
+.suitepicon-module-stic-attendances:before {
     content: "\f1d5";
 }
-.suitepicon-action-security-groups:before {
+.suitepicon-module-stic-awf-forms:before {
     content: "\f1d6";
 }
-.suitepicon-action-search:before {
+.suitepicon-module-stic-awf-links:before {
     content: "\f1d7";
 }
-.suitepicon-action-schedule:before {
+.suitepicon-module-stic-awf-response-details:before {
     content: "\f1d8";
 }
-.suitepicon-action-schedule-meeting:before {
+.suitepicon-module-stic-awf-responses:before {
     content: "\f1d9";
 }
-.suitepicon-action-schedule-call:before {
+.suitepicon-module-stic-bookings:before {
     content: "\f1da";
 }
-.suitepicon-action-role-management:before {
+.suitepicon-module-stic-centers:before {
     content: "\f1db";
 }
-.suitepicon-action-right:before {
+.suitepicon-module-stic-contacts-relationships:before {
     content: "\f1dc";
 }
-.suitepicon-action-resource-chart:before {
+.suitepicon-module-stic-conversations:before {
     content: "\f1dd";
 }
-.suitepicon-action-reload:before {
+.suitepicon-module-stic-events:before {
     content: "\f1de";
 }
-.suitepicon-action-quick-radius-map:before {
+.suitepicon-module-stic-families:before {
     content: "\f1df";
 }
-.suitepicon-action-plus:before {
+.suitepicon-module-stic-financial-products:before {
     content: "\f1e0";
 }
-.suitepicon-action-payments-aggregated:before {
+.suitepicon-module-stic-followups:before {
     content: "\f1e1";
 }
-.suitepicon-action-norma-43:before {
+.suitepicon-module-stic-goals:before {
     content: "\f1e2";
 }
-.suitepicon-action-move-up:before {
+.suitepicon-module-stic-grants:before {
     content: "\f1e3";
 }
-.suitepicon-action-move-right:before {
+.suitepicon-module-stic-group-opportunities:before {
     content: "\f1e4";
 }
-.suitepicon-action-move-left:before {
+.suitepicon-module-stic-job-applications:before {
     content: "\f1e5";
 }
-.suitepicon-action-move-down:before {
+.suitepicon-module-stic-job-offers:before {
     content: "\f1e6";
 }
-.suitepicon-action-minus:before {
+.suitepicon-module-stic-journal:before {
     content: "\f1e7";
 }
-.suitepicon-action-megaphone:before {
+.suitepicon-module-stic-medication-log:before {
     content: "\f1e8";
 }
-.suitepicon-action-m182:before {
+.suitepicon-module-stic-medication:before {
     content: "\f1e9";
 }
-.suitepicon-action-list-maps:before {
+.suitepicon-module-stic-messages:before {
     content: "\f1ea";
 }
-.suitepicon-action-left:before {
+.suitepicon-module-stic-organizational-environment:before {
     content: "\f1eb";
 }
-.suitepicon-action-last:before {
+.suitepicon-module-stic-payment-commitments:before {
     content: "\f1ec";
 }
-.suitepicon-action-invade:before {
+.suitepicon-module-stic-payments-aggregated:before {
     content: "\f1ed";
 }
-.suitepicon-action-info:before {
+.suitepicon-module-stic-payments:before {
     content: "\f1ee";
 }
-.suitepicon-action-import:before {
+.suitepicon-module-stic-personal-environment:before {
     content: "\f1ef";
 }
-.suitepicon-action-import-line-item:before {
+.suitepicon-module-stic-prescription:before {
     content: "\f1f0";
 }
-.suitepicon-action-home:before {
+.suitepicon-module-stic-registrations:before {
     content: "\f1f1";
 }
-.suitepicon-action-forward:before {
+.suitepicon-module-stic-remittances:before {
     content: "\f1f2";
 }
-.suitepicon-action-first:before {
+.suitepicon-module-stic-resources:before {
     content: "\f1f3";
 }
-.suitepicon-action-empty-action:before {
+.suitepicon-module-stic-security-groups-rules:before {
     content: "\f1f4";
 }
-.suitepicon-action-edit:before {
+.suitepicon-module-stic-sepe-actions:before {
     content: "\f1f5";
 }
-.suitepicon-action-down:before {
+.suitepicon-module-stic-sepe-files:before {
     content: "\f1f6";
 }
-.suitepicon-action-delete:before {
+.suitepicon-module-stic-sepe-incidents:before {
     content: "\f1f7";
 }
-.suitepicon-action-current-user:before {
+.suitepicon-module-stic-sessions:before {
     content: "\f1f8";
 }
-.suitepicon-action-create-stic-web-forms:before {
+.suitepicon-module-stic-signature-log:before {
     content: "\f1f9";
 }
-.suitepicon-action-create-stic-sessions:before {
+.suitepicon-module-stic-signatures:before {
     content: "\f1fa";
 }
-.suitepicon-action-create-stic-resources:before {
+.suitepicon-module-stic-signers:before {
     content: "\f1fb";
 }
-.suitepicon-action-create-stic-followups:before {
+.suitepicon-module-stic-skills:before {
     content: "\f1fc";
 }
-.suitepicon-action-create-stic-bookings:before {
+.suitepicon-module-stic-time-tracker:before {
     content: "\f1fd";
 }
-.suitepicon-action-create-security-group:before {
+.suitepicon-module-stic-training:before {
     content: "\f1fe";
 }
-.suitepicon-action-create-person-form:before {
+.suitepicon-module-stic-transactions:before {
     content: "\f1ff";
 }
-.suitepicon-action-create-group-user:before {
+.suitepicon-module-stic-validation-actions:before {
     content: "\f200";
 }
-.suitepicon-action-create-contact-vcard:before {
+.suitepicon-module-stic-work-calendar:before {
     content: "\f201";
 }
-.suitepicon-action-confirm:before {
+.suitepicon-module-stic-work-experience:before {
     content: "\f202";
 }
-.suitepicon-action-clear:before {
+.suitepicon-module-subpanels:before {
     content: "\f203";
 }
-.suitepicon-action-caret:before {
+.suitepicon-module-survey-responses:before {
     content: "\f204";
 }
-.suitepicon-action-below:before {
+.suitepicon-module-surveys:before {
     content: "\f205";
 }
-.suitepicon-action-back:before {
+.suitepicon-module-targets:before {
     content: "\f206";
 }
-.suitepicon-action-alerts:before {
+.suitepicon-module-tasks:before {
     content: "\f207";
 }
-.suitepicon-action-alerts-small:before {
+.suitepicon-module-users:before {
     content: "\f208";
 }
-.suitepicon-action-aeat-query:before {
+.suitepicon-template-company:before {
     content: "\f209";
 }
-.suitepicon-action-add:before {
+.suitepicon-template-file:before {
     content: "\f20a";
 }
-.suitepicon-action-above:before {
+.suitepicon-template-issue:before {
     content: "\f20b";
 }
