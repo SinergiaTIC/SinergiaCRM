@@ -58,4 +58,14 @@
     var el = document.getElementById("{{$vardef.parentenum}}");
     addLoadEvent(function(){literal}{loadDynamicEnum({/literal}"{{$vardef.parentenum}}","{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}"{literal})}{/literal});
     if (SUGAR.ajaxUI && SUGAR.ajaxUI.hist_loaded) {literal}{loadDynamicEnum({/literal}"{{$vardef.parentenum}}","{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}"{literal})}{/literal}
+    {* STIC-Custom 20260504 - Initialize dynamicenum immediately in AJAX-loaded forms *}
+    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/1103 *}
+    {* In QuickCreate forms loaded via AJAX, window.onload has already fired, so *}
+    {* addLoadEvent callbacks never execute. Also, SUGAR.ajaxUI.hist_loaded is false *}
+    {* in this context. Checking document.readyState === 'complete' detects this *}
+    {* scenario and calls loadDynamicEnum immediately, exactly like the hist_loaded *}
+    {* check above. On normal page loads, readyState is 'loading'/'interactive' *}
+    {* during script execution, so this does NOT double-fire. *}
+    if (document.readyState === 'complete') {literal}{loadDynamicEnum({/literal}"{{$vardef.parentenum}}","{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}"{literal})}{/literal}
+    {* END STIC-Custom *}
 </script>
