@@ -208,10 +208,10 @@ class DeferredContextData
         $instance = new self(
             $context->formId,
             $actionClass,
-            $actionConfig->text ?? $actionConfig->name,
+            $actionConfig->getText() ?? $actionConfig->getName(),
             $ticket->id,
-            $actionConfig->flow_success_id ?: null,
-            $actionConfig->flow_error_id ?: null,
+            $actionConfig->getFlowSuccessId() ?: null,
+            $actionConfig->getFlowErrorId() ?: null,
             $bean?->id,
             $bean?->module_dir ?? null
         );

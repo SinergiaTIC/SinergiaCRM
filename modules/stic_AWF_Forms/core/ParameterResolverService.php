@@ -50,7 +50,7 @@ class ParameterResolverService {
             $paramConfig = $paramConfigMap[$paramName] ?? null;
             $resolvedValue = $this->resolveSingleParam($paramDef, $paramConfig, $context);
             if ($paramDef->required && $resolvedValue === null) {
-                throw new RequiredParameterException($paramName, $actionConfig->name);
+                throw new RequiredParameterException($paramName, $actionConfig->getName());
             }
             $resolvedParameters[$paramName] = $resolvedValue;
         }

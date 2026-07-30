@@ -200,8 +200,8 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
         $errorFlow = null;
 
         if ($actionConfig !== null) {
-            $successFlowId = $actionConfig->flow_success_id ?? null;
-            $errorFlowId = $actionConfig->flow_error_id ?? null;
+            $successFlowId = $actionConfig->getFlowSuccessId() ?? null;
+            $errorFlowId = $actionConfig->getFlowErrorId() ?? null;
         } elseif ($context->deferredContext !== null) {
             $successFlowId = $context->deferredContext->flowSuccessId ?? null;
             $errorFlowId = $context->deferredContext->flowErrorId ?? null;

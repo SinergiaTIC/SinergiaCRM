@@ -117,9 +117,9 @@ class ResumeHandler
             $foundPausingAction = false;
             foreach ($originFlow->actions as $action) {
                 if ($foundPausingAction) {
-                    $remainingActions[$action->id] = $action;
+                    $remainingActions[$action->getId()] = $action;
                 }
-                if ($action->id === $ticket->handler_action_id) {
+                if ($action->getId() === $ticket->handler_action_id) {
                     $foundPausingAction = true;
                 }
             }

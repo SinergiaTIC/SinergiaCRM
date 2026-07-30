@@ -1212,7 +1212,7 @@ class stic_AWFUtils {
                 $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
             }
 
-            $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
+            $actionName = $result->actionConfig?->getText() ?? $result->actionConfig?->getName() ?? 'Unknown Action';
             $newLogSegment .= "{$icon} {$actionName}";
             if (!empty($result->message)) {
                 $newLogSegment .= ": " . $result->message;

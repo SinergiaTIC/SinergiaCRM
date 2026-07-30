@@ -26,38 +26,38 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormAction {
-    public FormFlow $flow;           // The action flow it belongs to
+    private string $flow_id;          // ID of the action flow it belongs to
 
-    public string $id;               // ID of the action
-    public string $name;             // Name of the action
-    public string $text;             // The text to display
-    public string $description;      // The description of the action
+    private string $id;               // ID of the action
+    private string $name;             // Name of the action
+    private string $text;             // The text to display
+    private string $description;      // The description of the action
     /** @var string[] */
-    public array $requisite_actions; // Array with the identifiers of the actions prior to the current one
+    private array $requisite_actions; // Array with the identifiers of the actions prior to the current one
     /** @var FormActionParameter[] */
-    public array $parameters;        // The parameters of the action
+    private array $parameters;        // The parameters of the action
 
     private array $resolvedParameters = []; // Resolved parameters, with the final value
 
     /** @var FormCondition[] */
-    public array $conditions = [];        // Conditions to execute the validation (all must be accomplished)
+    private array $conditions = [];        // Conditions to execute the validation (all must be accomplished)
 
-    public bool $continue_on_error = false; // Indicates if the flow should continue if this action fails (throws an exception or returns an error result)
+    private bool $continue_on_error = false; // Indicates if the flow should continue if this action fails (throws an exception or returns an error result)
 
     // For deferred actions
-    public ?string $flow_success_id = null; // Flow to execute if the deferred action returns successfully
-    public ?string $flow_error_id = null;   // Flow to execute if the deferred action returns with an error
+    private ?string $flow_success_id = null; // Flow to execute if the deferred action returns successfully
+    private ?string $flow_error_id = null;   // Flow to execute if the deferred action returns with an error
 
 
     /**
      * Creates an instance of FormAction from a JSON array.
-     * @param FormFlow $flow The action flow it belongs to 
+     * @param string $flowId The ID of the action flow it belongs to
      * @param array $data The data in array format
      * @return FormAction The created instance
      */
-    public static function fromJsonArray(FormFlow $flow, array $data): self {
+    public static function fromJsonArray(string $flowId, array $data): self {
         $dto = new self();
-        $dto->flow = $flow;
+        $dto->flow_id = $flowId;
 
         $dto->id = $data['id'];
         $dto->name = $data['name'];
@@ -104,5 +104,93 @@ class FormAction {
      */
     public function getResolvedParameter(string $name, mixed $default = null): mixed { 
         return $this->resolvedParameters[$name] ?? $default;
+    }
+
+    /**
+     * Returns the action ID.
+     * @return string The action ID
+     */
+    public function getId(): string {
+        return $this->id;
+    }
+
+    /**
+     * Returns the ID of the action flow this action belongs to.
+     * @return string The flow ID
+     */
+    public function getFlowId(): string {
+        return $this->flow_id;
+    }
+
+    /**
+     * Returns the action internal name.
+     * @return string The action name
+     */
+    public function getName(): string {
+        return $this->name;
+    }
+
+    /**
+     * Returns the action display text.
+     * @return string The action text
+     */
+    public function getText(): string {
+        return $this->text;
+    }
+
+    /**
+     * Returns the action description.
+     * @return string The action description
+     */
+    public function getDescription(): string {
+        return $this->description;
+    }
+
+    /**
+     * Returns the identifiers of the prerequisite actions.
+     * @return string[] The prerequisite action IDs
+     */
+    public function getRequisiteActions(): array {
+        return $this->requisite_actions;
+    }
+
+    /**
+     * Returns the parameters of the action.
+     * @return FormActionParameter[] The action parameters
+     */
+    public function getParameters(): array {
+        return $this->parameters;
+    }
+
+    /**
+     * Returns the conditions to execute the action.
+     * @return FormCondition[] The action conditions
+     */
+    public function getConditions(): array {
+        return $this->conditions;
+    }
+
+    /**
+     * Returns whether the flow should continue if this action fails.
+     * @return bool True if the flow should continue on error
+     */
+    public function getContinueOnError(): bool {
+        return $this->continue_on_error;
+    }
+
+    /**
+     * Returns the ID of the flow to execute if the deferred action succeeds.
+     * @return ?string The success flow ID
+     */
+    public function getFlowSuccessId(): ?string {
+        return $this->flow_success_id;
+    }
+
+    /**
+     * Returns the ID of the flow to execute if the deferred action fails.
+     * @return ?string The error flow ID
+     */
+    public function getFlowErrorId(): ?string {
+        return $this->flow_error_id;
     }
 }

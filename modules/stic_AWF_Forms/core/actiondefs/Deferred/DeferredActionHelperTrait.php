@@ -85,7 +85,7 @@ trait DeferredActionHelperTrait {
         $ticket->stic_awf_responses_id_c = $context->responseId;
         $ticket->token_hash = bin2hex(random_bytes(32));
         $ticket->status = 'pending';
-        $ticket->handler_action_id = $actionConfig->id;
+        $ticket->handler_action_id = $actionConfig->getId();
 
         // Set the expiration date
         $days = (int)$actionConfig->getResolvedParameter('expiration_days', $defaultDays);

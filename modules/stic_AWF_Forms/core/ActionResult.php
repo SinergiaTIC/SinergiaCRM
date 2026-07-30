@@ -126,7 +126,7 @@ class ActionResult {
 
         $actionText = null;
         if ($this->actionConfig) {
-            $actionText = $this->actionConfig->text ?? $this->actionConfig->title ?? $this->actionConfig->name;
+            $actionText = $this->actionConfig->getText() ?? $this->actionConfig->getName();
         }
 
         $logData = [];

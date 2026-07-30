@@ -910,10 +910,10 @@ class FormHtmlGeneratorService {
             }
 
             foreach ($config->flows['0']->actions as $formAction) {
-                if (isset($actionMap[$formAction->name])) {
-                    $def = $actionMap[$formAction->name];
+                if (isset($actionMap[$formAction->getName()])) {
+                    $def = $actionMap[$formAction->getName()];
                     if ($def instanceof IFrontendAction) {
-                        $assets = $def->getFrontendAssets($formAction->parameters, $config, $formId);
+                        $assets = $def->getFrontendAssets($formAction->getParameters(), $config, $formId);
                         if (!empty($assets['script'])) {
                             foreach ($assets['script'] as $scriptContent) {
                                 $js .= "<script>\n// --- UI ACTIONS ---\n{$scriptContent}".$this->newLine()."</script>".$this->newLine();

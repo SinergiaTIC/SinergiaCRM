@@ -52,8 +52,8 @@ class FormFlow {
         $dto->actions = [];
         if (isset($data['actions'])) {
             foreach ($data['actions'] as $actionData) {
-                $formAction = FormAction::fromJsonArray($dto, $actionData);
-                $dto->actions[$formAction->id] = $formAction;
+                $formAction = FormAction::fromJsonArray($dto->id, $actionData);
+                $dto->actions[$formAction->getId()] = $formAction;
             }
         }
 
